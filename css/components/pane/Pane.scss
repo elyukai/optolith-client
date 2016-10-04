@@ -1,0 +1,42 @@
+nav.pane {
+	flex: none;
+	position: relative;
+	width: ($pane-width + 1px);
+	right: 0;
+	height: 100%;
+	background: $pane-background-color;
+	z-index: 900;
+	overflow: hidden;
+	border-left: 1px solid #1e282d;
+	
+	.scroll {
+		.-horizontal {
+			display: none;
+		}
+		
+		.-vertical {
+			background: transparent;
+			width: 4px;
+			z-index: 100;
+			
+			.thumb {
+				background: #1f282d;
+				border-radius: 0;
+				width: 4px;
+			}
+		}
+	
+		.scroll-inner {
+			position: relative;
+			width: 100%;
+			min-height: 100%;
+		}
+	}
+
+	@import "HeaderDropdown";
+	@import "HeroHeader";
+	@import "HeroListItem";
+	@import "HeroSection";
+	@import "PaneFooter";
+	@import "PaneUser";
+}

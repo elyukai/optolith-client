@@ -1,0 +1,4 @@
+#body > main {
+	@extend %max-size-relative;
+	flex: 1 1 100%;
+}

@@ -1,0 +1,77 @@
+#body > main section#profile {
+	.page#overview {
+		.title-wrapper {
+			margin-top: 11px;
+			display: flex;
+			align-items: center;
+
+			.avatar-wrapper {
+				flex: 1 0 auto;
+				border-radius: 50%;
+				padding: 4px;
+				background: #785a28;
+				@include size(150px);
+
+				> div.avatar {
+					@include size(142px);
+					border-radius: 50%;
+					background-size: 100%;
+					box-shadow: 0 0 1px 1px black inset;
+				}
+
+				&:hover {
+					cursor: pointer;
+
+					> div.avatar {
+						box-shadow: 0 0 0 71px transparentize(black, .15) inset;
+						position: relative;
+
+						&::after {
+							position: absolute;
+							top: 39px;
+							left: 39px;
+							content: "\E2C6";
+							width: 64px;
+							font: 64px/64px Material;
+							color: #f1e6d4;
+							text-align: center;
+						}
+					}
+				}
+			}
+
+			.text-wrapper {
+				flex: 1 1 100%;
+				margin-left: 26px;
+
+				$size: 38px;
+
+				> h1 {
+					margin: 0;
+					font: 400 #{$size}/#{$size} Alegreya Sans;
+					letter-spacing: 0.025em;
+					color: #f1e6d4;
+				}
+
+				> h1, > div.change-name {
+					display: flex;
+					height: $size;
+					align-items: center;
+
+					> div.textfield {
+						margin: 0;
+					}
+
+					> div.iconbutton {
+						margin-left: 11px;
+						letter-spacing: 0;
+					}
+				}
+
+				> div:not(.change-name) {
+					margin: 4px 0 0;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,64 @@
+.hero-list-item {
+	width: 100%;
+	height: 64px;
+	position: relative;
+
+	&:not(:first-child) {
+		margin-top: 8px;
+	}
+
+	+ .hero-list-nomatches {
+		display: none;
+	}
+
+	> * {
+		float: left;
+	}
+
+	.hero-ap {
+		@include size(64px);
+		position: relative;
+
+		> * {
+			position: absolute;
+		}
+
+		span {
+			display: block;
+			@include size(64px);
+			line-height: 64px;
+			text-align: center;
+			color: white;
+			text-shadow: 0 0 5px black;
+			font-family: "Mason-web", Mason;
+			font-size: 32px;
+		}
+	}
+
+	.hero-main {
+		height: 64px;
+		@include calc(width, "100% - 84px");
+		margin-left: 12px;
+
+		* {
+			display: block;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.hero-name {
+			height: 40px;
+			line-height: 36px;
+			font-size: 18px;
+			color: white;
+		}
+
+		.hero-prof {
+			height: 24px;
+			line-height: 24px;
+			font-size: 14px;
+			margin-top: -8px;
+		}
+	}
+}

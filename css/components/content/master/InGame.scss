@@ -1,0 +1,384 @@
+#body > main section#master .page#ingame {
+	flex-direction: column;
+
+	.header-controls {
+		flex: 1 0 auto;
+		margin: 10px 0 0;
+		padding: 0 35px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+	
+		.online-link {
+			margin-right: 33px;
+			flex: 1 1 100%;
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			
+			> .textfield {
+				flex: 1 1 auto;
+				max-width: 280px;
+				width: auto;
+				margin: 0;
+			}
+			
+			> .btn {
+				margin-left: 22px;
+				flex: none;
+			}
+		}
+
+		> div:not(:last-child):not(.online-link) {
+			margin-right: 13px;
+			flex: none;
+		}
+	}
+	
+	.ingame-content {
+		flex: 1 1 100%;
+		display: flex;
+		overflow: hidden;
+	
+		.textfield {
+			input, textarea {
+				background: transparentize(#11161c, 0.35);
+				
+				&:focus, &:active {
+					// color: #f1e6d4;
+					background: linear-gradient(to bottom, transparentize(#11161c, 0.35) 0%, transparentize(#1c2328, 0.35) 100%);
+				}
+			}
+		}
+
+		.-horizontal {
+			display: block;
+		}
+	}
+	
+	.ingame-table {
+		padding-top: 35px;
+		flex: none;
+		display: flex;
+		position: relative;
+
+		&.hide-deac tr.deac, &.hide-enemies tr.enemy {
+			display: none;
+		}
+		
+		table {
+			padding: 0;
+			margin: 0;
+			border-collapse: collapse;
+			
+			tr {
+				border-bottom: 1px solid transparentize(#785a28, 0.6);
+				position: relative;
+				
+				td {
+					padding: 0;
+					text-align: center;
+				}
+			}
+			
+			thead {
+				tr {
+					height: 28px;
+					
+					td {
+						font: 500 12px/27px "Alegreya Sans";
+						color: transparentize(#5b5a56, 0.3);
+					}
+				}
+			}
+			
+			tbody {
+				tr {
+					height: 44px;
+
+					&.deac td{
+						opacity: 0.4;
+					}
+				}
+			}
+		}
+	}
+	
+	.slidein-backdrop {
+		// right: 0;
+		
+		// &.slidein-open {
+		// 	background: transparentize(black, .4);
+		// }
+		
+		.slidein {
+			height: 397px;
+		}
+		
+		.slidein-content {
+			height: 100%;
+			
+			.edit-inner {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				align-content: center;
+				padding: 20px;
+				
+				> div {
+					width: 33.3333%;
+					padding: 0 5px;
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: flex-start;
+					align-content: flex-start;
+					
+					&.edit-main {
+						
+						> div {
+							width: 50%;
+							padding: 0 5px;
+						}
+					}
+					
+					&.edit-health {
+						padding: 0 5px;
+						
+						> div {
+							width: 50%;
+							padding: 0 5px;
+						}
+					}
+					
+					&.edit-options {
+						display: block;
+						
+						.btn {
+							margin: 5px 5px 0 0;
+						}
+						
+						.textfield {
+							width: 100%;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+	
+
+// &.unconsciousness {
+// 	td {
+// 		color: rgb(206, 0, 255);
+
+// 		.bew-time {
+// 			display: inline;
+// 		}
+// 	}
+
+// 	&.PlayerActing {
+// 		background-color: rgba(206, 0, 255, 0.05);
+// 	}
+
+// 	@mixin ini-unconsciousness {
+// 		background-color: rgba(206, 0, 255, 0.05);
+// 		border: 1px solid rgba(206, 0, 255, 0.2);
+// 		color: rgba(206, 0, 255, 0.5);
+// 	}
+
+// 	@mixin ini-unconsciousness-acting {
+// 		background-color: rgba(206, 0, 255, 0.05);
+// 		border: 1px solid rgba(206, 0, 255, 0.2);
+// 		color: rgba(206, 0, 255, 0.5);
+// 	}
+
+// 	& div.Action {
+// 		@include ini-unconsciousness;
+
+// 		&.ActionActing {
+// 			@include ini-unconsciousness-acting;
+// 		}
+// 	}
+
+// 	@at-root .fighter-order > .ordered.unconsciousness {
+// 		@include ini-unconsciousness;
+
+// 		&.acting {
+// 			@include ini-unconsciousness-acting;
+// 		}
+// 	}
+// }
+
+// &.dead {
+// 	td {
+// 		color: rgb(255, 0, 0);
+// 	}
+
+// 	&.PlayerActing {
+// 		background-color: rgba(255, 0, 0, 0.05);
+// 	}
+
+// 	@mixin ini-dead {
+// 		background-color: rgba(255, 0, 0, 0.05);
+// 		border: 1px solid rgba(255, 0, 0, 0.2);
+// 		color: rgba(255, 0, 0, 0.5);
+// 	}
+
+// 	@mixin ini-dead-acting {
+// 		background-color: rgba(255, 0, 0, 0.3);
+// 		border: 1px solid rgba(255, 0, 0, 0.6);
+// 		color: rgb(255, 0, 0);
+// 	}
+
+// 	& div.Action {
+// 		@include ini-dead;
+
+// 		&.ActionActing {
+// 			@include ini-dead-acting;
+// 		}
+// 	}
+
+// 	@at-root .fighter-order > .ordered.dead {
+// 		@include ini-dead;
+
+// 		&.acting {
+// 			@include ini-dead-acting;
+// 		}
+// 	}
+
+// 	&.totalDeath {
+// 		td {
+// 			color: rgb(121, 0, 0);
+// 		}
+
+// 		&.PlayerActing {
+// 			background-color: rgba(0, 0, 0, 0.7);
+// 		}
+
+// 		@mixin ini-totalDeath {
+// 			background-color: rgba(0, 0, 0, 0.05);
+// 			border: 1px solid rgba(0, 0, 0, 0.2);
+// 			color: rgb(121, 0, 0);
+// 		}
+
+// 		@mixin ini-totalDeath-acting {
+// 			background-color: rgba(0, 0, 0, 0.3);
+// 			border: 1px solid rgba(0, 0, 0, 0.6);
+// 			color: rgb(121, 0, 0);
+// 		}
+
+// 		& div.Action {
+// 			@include ini-totalDeath;
+
+// 			&.ActionActing {
+// 				@include ini-totalDeath-acting;
+// 			}
+// 		}
+
+// 		@at-root .fighter-order > .ordered.dead.totalDeath {
+// 			@include ini-totalDeath;
+
+// 			&.acting {
+// 				@include ini-totalDeath-acting;
+// 			}
+// 		}
+// 	}
+// }
+
+// &.lowLE {
+// 	td {
+// 		color: rgb(255, 87, 47);
+// 	}
+
+// 	&.PlayerActing {
+// 		background-color: rgba(255, 87, 47, 0.05);
+// 	}
+
+// 	@mixin ini-lowLE {
+// 		background-color: rgba(255, 87, 47, 0.05);
+// 		border: 1px solid rgba(255, 87, 47, 0.2);
+// 		color: rgba(255, 87, 47, 0.5);
+// 	}
+
+// 	@mixin ini-lowLE-acting {
+// 		background-color: rgba(255, 87, 47, 0.3);
+// 		border: 1px solid rgba(255, 87, 47, 0.6);
+// 		color: rgb(255, 87, 47);
+// 	}
+
+// 	& div.Action {
+// 		@include ini-lowLE;
+
+// 		&.ActionActing {
+// 			@include ini-lowLE-acting;
+// 		}
+// 	}
+
+// 	@at-root .fighter-order > .ordered.lowLE {
+// 		@include ini-lowLE;
+
+// 		&.acting {
+// 			@include ini-lowLE-acting;
+// 		}
+// 	}
+// }
+
+// &.ini-group {
+// 	&.hide-enemies tr.type-f {
+// 		display: none;
+// 	}
+
+// 	&.prepare-player {
+// 		thead td.ini-num {
+// 			opacity: 0;
+// 		}
+
+// 		tr {
+// 			&.type-f td:nth-child(2) > span {
+// 				display: none;
+// 			}
+
+// 			td:nth-child(3), td:nth-child(4), td:nth-child(5) {
+// 				display: none;
+// 			}
+// 		}
+// 	}
+
+// 	&.hide-unused-phases .ini-used-last {
+// 		// border-right: 2px solid $background-color;
+// 	}
+
+// 	&.hide-unused-phases td.ini-unused, &.hide-deac tr.deactivated, &.hide-enemies tr.type-f {
+// 		display: none;
+// 	}
+// }
+
+// &.leaeke-group {
+// 	&.hide-enemies tr.type-f {
+// 		display: none;
+// 	}
+
+// 	&.prepare-player tr {
+// 		&.type-f td:nth-child(2) > span {
+// 			display: none;
+// 		}
+
+// 		td:nth-child(3), td:nth-child(4), td:nth-child(5) {
+// 			> div > span {
+// 				display: none;
+// 			}
+// 		}
+
+// 		&.type-f td:nth-child(4), &.type-f td:nth-child(5) {
+// 			> div > div:nth-child(2) {
+// 				display: none;
+// 			}
+// 		}
+// 	}
+
+// 	&.hide-deac tr.deactivated, &.hide-enemies tr.type-f {
+// 		display: none;
+// 	}
+// }

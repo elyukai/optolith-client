@@ -1,0 +1,14 @@
+.pane-user {
+	width: 100%;
+	background: $pane-background-color;
+	position: relative;
+	padding: 0 11px;
+	border-bottom: 1px solid #785a28;
+		
+	> h2 {
+		font: bold 18px/56px Alegreya;
+		letter-spacing: 0.1em;
+		color: #f1e6d4;
+		text-transform: none;
+	}
+}

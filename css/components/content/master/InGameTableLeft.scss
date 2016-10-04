@@ -1,0 +1,108 @@
+#body > main section#master .page#ingame .ingame-table .ingame-table-left {
+	padding-left: 7px;
+	margin-right: 8px;
+	flex: none;
+	
+	tr:after {
+		display: block;
+		position: absolute;
+		width: 3px;
+		height: 3px;
+		content: "";
+		border: 1px solid transparentize(#785a28, 0.6);
+		left: -5.5px;
+		bottom: -2px;
+		transform: rotate(45deg);
+	}
+
+	table {
+		thead {
+			tr {
+				td.ib {
+					padding-left: 18px;
+				}
+				
+				td.init {
+					padding: 0 0 0 6px;
+				}
+			}
+		}
+		
+		tbody {
+			tr {
+				td.ib {
+					font: 500 11px/43px "Alegreya Sans";
+					padding-left: 15px;
+					color: #878683;
+				}
+
+				td.avatar {
+					padding: 6px 0 6px 6px;
+					
+					div.avatar-outer {
+						@include size(30px);
+						border-radius: 50%;
+						background: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
+						box-shadow: 0 0 4px black;
+						position: relative;
+						
+						.avatar-inner {
+							width: 26px;
+							height: 26px;
+							margin: 2px;
+							border-radius: 50%;
+							background: #090f15;
+							box-shadow: 0 0 4px black inset;
+							overflow: hidden;
+							position: absolute;
+
+							span.init {
+								font: 500 13px/26px "Alegreya Sans";
+								color: #f1e6d4;
+								width: 26px;
+
+							}
+							
+							img {
+								min-height: 100%;
+								min-width: 100%;
+							}
+						}
+					}
+				}
+				
+				td.name {
+					font: 700 14px/43px "Alegreya SC";
+					color: #f1e6d4;
+					letter-spacing: 0.05em;
+					padding: 0 22px 0 13px;
+					text-align: left;
+				}
+			}
+			
+			tr.type-v {
+				td.avatar {
+					div.avatar-outer {
+						background: linear-gradient(to bottom, #689cc4 0%, #3678aa 10%, #306b99 76%, #244c6b 100%);
+					}
+				}
+				
+				td.name {
+					color: #4987b6;
+				}
+			}
+			
+			tr.type-f {
+				td.avatar {
+					div.avatar-outer {
+						background: linear-gradient(to bottom, #c16876 0%, #a83547 10%, #993040 76%, #68232d 100%);
+					}
+				}
+				
+				td.name {
+					color: #e4213f;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,78 @@
+#body > main section#master .page#ingame .ingame-controls {
+	flex: 1 0 auto;
+	width: 200px;
+	margin-left: 35px;
+	position: relative;
+	
+	.rounds {
+		width: 200px;
+		height: 200px;
+		text-align: center;
+		text-transform: lowercase;
+		position: relative;
+		
+		.tag {
+			font: 18px/24px Alegreya SC;
+			letter-spacing: 0.05em;
+			color: #a19b8f;
+			padding-top: 35px;
+		}
+		
+		.phase {
+			font: 60px/60px Alegreya SC;
+			letter-spacing: 0.05em;
+			color: #f1e6d4;
+		}
+		
+		.round {
+			font: 18px/24px Alegreya SC;
+			letter-spacing: 0.05em;
+			color: #a19b8f;
+			padding-top: 11px;
+		}
+
+		.previous-phase {
+			left: -10px;
+		}
+
+		.next-phase {
+			right: -10px;
+		}
+		
+		.previous-phase, .next-phase {
+			top: 75px;
+			position: absolute;
+			font: 32px/44px Material;
+			text-align: center;
+			width: 44px;
+			color: #785a28;
+			border-radius: 50%;
+
+			&:hover {
+				color: #f1e6d4;
+				cursor: pointer;
+				text-shadow: 0 0 2px 4px black;
+				background: transparentize(#5b5a56, 0.8);
+			}
+			
+			&.disabled {
+				pointer-events: none;
+				opacity: 0.5;
+			}
+		}
+	}
+	
+	.resets {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		
+		> div:not(:last-child) {
+			margin-right: 13px;
+		}
+	}
+
+	.options {
+		margin-top: 13px;
+	}
+}

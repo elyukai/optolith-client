@@ -1,0 +1,38 @@
+#home {
+	.devprogress {
+		margin-top: 20px;
+
+		&-step {
+			color: white;
+		}
+
+		&-bar {
+			height: 32px;
+			border: 2px solid black;
+			margin: 8px 0;
+
+			&-bg {
+				height: 28px;
+				background: $scrollbar-color;
+			}
+
+			&-num {
+				color: white;
+				padding-left: 12px;
+				display: block;
+				position: relative;
+				height: 28px;
+				line-height: 28px;
+				margin-top: -28px;
+				font-size: 13px;
+			}
+		}
+
+		&-current {
+			text-align: right;
+			font-size: 12px;
+			width: 100%;
+			display: inline-block;
+		}
+	}
+}

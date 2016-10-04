@@ -1,0 +1,11 @@
+#body > main section#master .page#ingame .ingame-table .ingame-table-center {
+	flex: 1 1 100%;
+	position: relative;
+	overflow: hidden;
+	
+	.ingame-table-center-scroll {
+		overflow-x: scroll;
+		overflow-y: hidden;
+		@include calc(height, "100% + 17px");
+	}
+}

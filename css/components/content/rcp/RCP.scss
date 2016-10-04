@@ -1,0 +1,183 @@
+#body > main section#rcp {
+	background-image: url("images/rcp.png");
+	background-color: #010c0a;
+
+	.page {
+		> .list {
+			ul {
+				margin: 0;
+				padding: 1px 0;
+				list-style: none;
+
+				li {
+					position: relative;
+					padding: 11px;
+					display: flex;
+					align-items: center;
+
+					> .left {
+						flex: 1 1 100%;
+					}
+
+					> .right {
+						flex: 0 0 auto;
+						margin-left: 11px;
+					}
+
+					h2 {
+						line-height: 22px;
+						margin-bottom: 5px;
+					}
+
+					.base-values {
+						display: flex;
+
+						> div:not(:first-child) {
+							margin-left: 11px;
+						}
+					}
+
+					&:not(:first-child) {
+						border-top: 1px solid transparentize(white, .925);
+					}
+
+					&.active {
+						.btn {
+							min-width: 140px;
+						}
+						
+						@extend %yellow-border;
+					}
+				}
+			}
+
+			&.professions {
+				li {
+					h2 {
+						padding: 5px 0 0;
+					}
+
+					h3 {
+						font: 500 13px/15px Alegreya Sans SC;
+						color: #878683;
+						text-transform: uppercase;
+						margin-top: 0;
+						margin-bottom: 7px;
+					}
+				}
+			}
+
+			.iconbutton {
+				border-radius: 50%;
+				background: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
+				padding: 2px;
+				overflow: hidden;
+
+				> div {
+					border-radius: 50%;
+					font-size: 16px;
+					line-height: 28px;
+					background: #1e282d;
+				}
+
+				&:hover {
+					background: linear-gradient(to bottom, #f0e6d2 0%, #c89b3c 100%);
+
+					> div {
+						background-image: linear-gradient(to bottom, transparentize(#c89b3c, 1) 50%, transparentize(#c89b3c, .75) 100%);
+						color: #f0e6d2;
+					}
+				}
+			}
+		}
+		
+		&#professions {
+			.list.curses {
+				> div {
+					display: flex;
+					align-items: center;
+
+					&:hover {
+						background: #1e2328;
+					}
+
+					> .checkbox {
+						flex: 1 1 100%;
+
+						&:hover {
+							background: none;
+						}
+					}
+
+					> span {
+						margin: 0 11px;
+					}
+
+					> .btn {
+						padding: 0 14px 3px;
+						min-width: auto;
+						font-size: 16px;
+						flex: none;
+						margin-left: 4px;
+					}
+				}
+			}
+
+			.list.lang_lit {
+				> h4 > span {
+					&.error {
+						color: #aa1b32;
+					}
+				}
+
+				> div {
+					display: flex;
+					align-items: center;
+
+					&:hover {
+						background: #1e2328;
+					}
+
+					> .checkbox {
+						flex: 1 1 100%;
+
+						&:hover {
+							background: none;
+						}
+					}
+
+					> .dropdown {
+						margin: 0;
+						line-height: 26px;
+
+						> div > div {
+							&.value {
+								height: 28px;
+
+								&::before {
+									top: 9px;
+								}
+
+								&::after {
+									bottom: 9px;
+								}
+							}
+						}
+
+						&.bottom > div > .down {
+							top: 28px;
+						}
+
+						&.top > div > .down {
+							bottom: 28px;
+						}
+					}
+				}
+			}
+
+			.scroll-inner > .btn.primary {
+				margin-top: 20px;
+			}
+		}
+	}
+}

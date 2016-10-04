@@ -1,0 +1,9 @@
+%tr-untyp {
+	&.untyp td {
+		color: #aa1b32;
+
+		&.name h2, &.fw {
+			color: #ff2345;
+		}
+	}
+}

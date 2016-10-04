@@ -1,0 +1,23 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "shared-node-browser": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "installedESLint": true,
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 7,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "semi": 2,
+        "no-unused-vars": 1,
+        "no-console": 0
+    }
+}

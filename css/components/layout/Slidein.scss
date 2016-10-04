@@ -1,0 +1,200 @@
+.slidein-wrapper {
+	pointer-events: none;
+}
+
+.slidein-backdrop {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	// right: ($pane-width + 1px);
+	display: none;
+	justify-content: flex-end;
+	align-items: flex-end;
+	flex-direction: column;
+	background: transparent;
+	pointer-events: none;
+	z-index: 900;
+		
+	&.slidein-open {
+		pointer-events: all;
+		display: flex;
+		// background: rgba(0, 0, 0, 0.25);
+		
+		> .slidein {
+			bottom: 0;
+		}
+	}
+	
+	.slidein {
+		position: relative;
+		background: #010a13;
+		border-top: 2px solid #785a28;
+		@include calc(height, '100% - ' + $titlebar-height);
+		width: 100%;
+		bottom: -100%;
+		right: 0;
+		color: #a1a1a1;
+		font: 13px/14px "Source Sans Pro";
+		letter-spacing: 0.03em;
+		padding: 3px 0;
+			
+		&:before {
+			position: absolute;
+			display: block;
+			content: "";
+			@include calc(width, '100% + 22px');
+			height: 0;
+			border-color: #010a13 transparent #785a28;
+			border-style: solid;
+			border-width: 2px 0 1px;
+			top: 0;
+			left: 0;
+			z-index: 999;
+		}
+			
+		.slidein-close {
+			width: 36px;
+			height: 36px;
+			display: block;
+			position: absolute;
+			border-radius: 50%;
+			background: #010a13;
+			border: 1px solid #785a28;
+			right: 20px;
+			top: -15px;
+			z-index: 1000;
+			
+			> div {
+				border: 2px solid #bda36c;
+				border-radius: 50%;
+				color: #bda36c;
+				margin: 2px;
+				font: 18px/26px Material;
+				text-align: center;
+			}
+			
+			&:hover {
+				cursor: pointer;
+				
+				> div {
+					color: white;
+				}
+			}
+		}
+
+		.slidein-content {
+			position: relative;
+			height: 100%;
+			padding: 3px 0;
+			display: flex;
+			flex-wrap: nowrap;
+			overflow: hidden;
+
+			.gm-scrollbar {
+				z-index: 22;
+			}
+
+			.scroll {
+				flex: 1 1 100%;
+
+				.scroll-inner {
+					padding: 22px 35px !important;
+				}
+			}
+
+			> .options {
+				flex: 1 0 auto;
+				width: 200px;
+				margin-left: 35px;
+				padding-top: 22px;
+				// padding-top: 45px;
+
+				.radiobutton-group {
+					width: 100%;
+				}
+			}
+
+			> .list {
+				table {
+					width: 100%;
+					border-collapse: collapse;
+					white-space: nowrap;
+
+					td {
+						padding: 5px 5px 5px 11px;
+
+						&.name {
+							width: 100%;
+						}
+
+						&.name, &.fw {
+							color: #f0e6d2;
+						}
+					}
+
+					thead {
+						font: bold 13px/22px Alegreya SC;
+
+						tr td {
+							border-bottom: 1px solid transparentize(white, .925);
+						}
+					}
+
+					tbody {
+						tr {
+							&:not(:last-child) td {
+								height: 36px;
+								border-bottom: 1px solid transparentize(white, .925);
+							}
+
+							&:hover {
+								background: transparentize(white, .975);
+							}
+
+							td {
+								height: 36px;
+								
+								&.name {
+									vertical-align: middle;
+
+									h2 {
+										font: 500 15px/15px Alegreya Sans;
+										text-transform: none;
+										color: #f0e6d2;
+										display: inline-block;
+									}
+								}
+
+								&.check, &.skt {
+									font: 13px/13px Alegreya SC;
+								}
+
+								&.inc {
+									font-weight: 500;
+
+									.btn {
+										padding: 0 14px 3px;
+										min-width: auto;
+										font-size: 16px;
+									}
+								}
+
+								.textfield, .dropdown {
+									width: 200px;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			h4 {
+				font-size: 13px;
+				letter-spacing: 0.075em;
+				line-height: 40px;
+			}
+		}
+	}
+}

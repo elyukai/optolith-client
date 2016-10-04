@@ -1,0 +1,15 @@
+#sheets .labelbox {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	> .box {
+		flex: none;
+	}
+
+	> label {
+		flex: 1 1 100%;
+		font: bold 11px Alegreya;
+		display: block;
+	}
+}

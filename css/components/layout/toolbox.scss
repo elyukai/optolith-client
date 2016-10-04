@@ -1,0 +1,77 @@
+.toolbox-wrapper {
+	width: 320px;
+	height: 100%;
+	position: fixed;
+	z-index: 1400;
+	top: 0;
+	right: -320px;
+	background: #121a1a;
+	display: flex;
+	flex-direction: column;
+	color: white;
+
+	@include defaultEasing (all);
+
+	&.active {
+		right: 0;
+		box-shadow: 0 0 36px #0c1010;
+	}
+
+	.-horizontal {
+		display: none !important;
+		opacity: 0 !important;
+	}
+
+	.toolbox-content-wrapper {
+		flex: 1 1 0;
+
+		.gm-scroll-view {
+			padding-right: 22px;
+
+			.toolbox-content {
+				touch-action: pan-y;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+
+				> div:not(.sidebar-button) {
+					padding: 0 6px;
+				}
+
+				> .default-1-1 {
+					flex: 1 100%;
+				}
+
+				> .default-1-2 {
+					flex: 1 50%;
+				}
+
+				> .default-1-3 {
+					flex: 1 33.3333%;
+				}
+
+				> hr {
+					border: 0;
+					margin: 16px 12px;
+					height: 1px;
+					background: rgb(24, 36, 36);
+					@include calc(width, "100% - 24px");
+				}
+			}
+		}
+	}
+
+	.toolbox-bar {
+		flex: 0 0 auto;
+		width: 100%;
+		height: 48px;
+
+		.command {
+			float: right;
+
+			.icon-wrapper {
+				font-size: 16px;
+			}
+		}
+	}
+}

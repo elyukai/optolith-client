@@ -1,0 +1,91 @@
+.checkbox {
+	display: flex;
+	padding: 6px 11px 6px 0;
+	margin: 0 1px;
+
+	&:hover {
+		background: #1e2328;
+		cursor: pointer;
+
+		.icon {
+			.border {
+				border-image: linear-gradient(to bottom, #785a28 0%, #ccbe91 100%);
+				border-image-slice: 1;
+			}
+
+			.hook {
+				border-color: #f1e6d4;
+			}
+		}
+
+		label {
+			color: #f1e6d4;
+			cursor: pointer;
+		}
+	}
+
+	.icon {
+		flex: 1 0%;
+		margin: 4px 0 5px;
+
+		.border {
+			height: 11px;
+			width: 11px;
+			border: 1px solid #785a28;
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 3px 1px rgba(0, 0, 0, 0.15) inset;
+		}
+
+		.hook {
+			visibility: hidden;
+			margin-left: 5px;
+			margin-top: -13px;
+			height: 10px;
+			width: 4px;
+			transform: rotate(45deg);
+			border-width: 0 1px 1px 0;
+			border-color: #c8aa6e;
+			border-style: solid;
+		}
+	}
+
+	&.checked {
+		.hook {
+			visibility: visible;
+		}
+
+		label {
+			color: #f1e6d4;
+		}
+	}
+
+	&.disabled {
+		pointer-events: none;
+
+		.icon {
+			flex: 1 0%;
+			margin: 4px 0 5px;
+
+			.border {
+				border: 1px solid transparentize(#7a7b76, .5);
+				box-shadow: 0 none;
+			}
+
+			.hook {
+				border-color: #7a7b76;
+			}
+		}
+
+		label {
+			color: #7a7b76;
+		}
+	}
+
+	label {
+		flex: 0 100%;
+		color: #c89b3c;
+		font: 400 12px/20px Alegreya Sans;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding-left: 11px;
+	}
+}

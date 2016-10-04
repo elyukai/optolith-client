@@ -1,0 +1,108 @@
+#body > main section#master .page#ingame .ingame-table .ingame-table-health {
+	flex: none;
+
+	table {
+		width: 100%;
+		
+		tr {
+			td {
+				position: relative;
+				width: 25%;
+				
+				.bar {
+					height: 8px;
+					width: 90px;
+					margin: 4px 8px;
+					padding: 1px;
+					display: block;
+					background: linear-gradient(to bottom, #785a28 0%, #463714 100%);
+					
+					.bar-inner {
+						height: 6px;
+						position: relative;
+					}
+
+					.bar-bg, .bar-fg {
+						height: 6px;
+					}
+
+					.bar-bg {
+						border: 1px solid #242328;
+						background: #242328;
+						width: 100%;
+						left: 0;
+					}
+					
+					.bar-fg {
+						transition: width 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+						background: #242328;
+						right: 0;
+						position: absolute;
+					}
+					
+					&:not(.active) > .bar-fg {
+						width: 100%;
+					}
+				
+					&.bar-le.no-le {
+						border: 1px solid transparentize(#5b5a56, 0.7);
+						background: none;
+
+						.bar-bg, .bar-fg {
+							border-color: transparent;
+							background: none;
+						}
+					}
+
+					&.bar-le.active {
+						.bar-bg {
+							background: linear-gradient(to right, #aa1805 0%,#cc4c1f 100%);
+						}
+					}
+					
+					&.bar-au.active {
+						.bar-bg {
+							background: linear-gradient(to right, #5eaa05 0%,#7fc80c 100%);
+						}
+					}
+					
+					&.bar-ae.active {
+						.bar-bg {
+							background: linear-gradient(to right,  #0596aa 0%,#0cc8c6 100%);
+						}
+					}
+					
+					&.bar-ke.active {
+						.bar-bg {
+							background: linear-gradient(to right,  #aa6a05 0%,#c8910c 100%);
+						}
+					}
+
+					// &.bar-le.active {
+					// 	.bar-bg {
+					// 		background: linear-gradient(to right, #aa1805 0%,#cc4c1f 50%,#facdcd 100%);
+					// 	}
+					// }
+					
+					// &.bar-au.active {
+					// 	.bar-bg {
+					// 		background: linear-gradient(to right, #5eaa05 0%,#7fc80c 50%,#e3facc 100%);
+					// 	}
+					// }
+					
+					// &.bar-ae.active {
+					// 	.bar-bg {
+					// 		background: linear-gradient(to right,  #0596aa 0%,#0cc8c6 50%,#ccfafa 100%);
+					// 	}
+					// }
+					
+					// &.bar-ke.active {
+					// 	.bar-bg {
+					// 		background: linear-gradient(to right,  #aa6a05 0%,#c8910c 50%,#fae3cc 100%);
+					// 	}
+					// }
+				}
+			}
+		}
+	}
+}

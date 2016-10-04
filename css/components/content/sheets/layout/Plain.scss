@@ -1,0 +1,22 @@
+#sheets .plain {
+	display: flex;
+	align-items: center;
+	height: 21px;
+
+	div {
+		&.label {
+			font: bold 11px Alegreya;
+			padding-right: 7px;
+			flex: none;
+		}
+
+		&.value {
+			font: 400 13px Alegreya Sans;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			flex: 1 1 100%;
+			padding-right: 5px;
+		}
+	}
+}

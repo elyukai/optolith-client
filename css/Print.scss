@@ -1,0 +1,111 @@
+@page {
+	size: 210mm 297mm;
+	margin: 0;
+}
+
+$border-1px: 0.95pt;
+$border-2px: 1.25pt;
+
+@media print {
+	html {
+		width: 100%;
+	}
+
+	html, body, #bodywrapper, #body {
+		overflow: visible !important;
+	}
+
+	main {
+		.titlebar, .subtabs {
+			display: none;
+		}
+
+		section#misc {
+			padding: 0 !important;
+			overflow: visible !important;
+			background: white !important;
+		}
+	}
+	
+	#sheets {
+		padding: 0 !important;
+		overflow: visible !important;
+
+		.options {
+			display: none;
+		}
+
+		.sheet-wrapper.scroll.gm-scrollbar-container {
+			overflow: visible !important;
+
+			.gm-scroll-view {
+				overflow: visible !important;
+				height: auto !important;
+				width: auto !important;
+			}
+
+			.gm-scrollbar {
+				display: none !important;
+			}
+		}
+
+		.scroll-inner {
+			padding: 0 !important;
+			display: block !important;
+
+			.sheet {
+				display: block !important;
+				margin: 0 !important;
+				height: 296mm !important;
+				page-break-after: always;
+				overflow: hidden !important;
+
+				> .header {
+					.attributes {
+						.attr {
+							> .value {
+								border-width: $border-2px !important;
+
+								> div {
+									border-width: $border-1px !important;
+								}
+							}
+						}
+					}
+				}
+
+				&.main {
+					> .upper {
+						> .ap {
+							> div {
+								span {
+									&:first-child {
+										border-width: $border-1px !important;
+									}
+								}
+							}
+						}
+
+						> .portrait {
+							.avatar {
+								border-width: $border-1px !important;
+							}
+						}
+					}
+
+					> .lower {
+						> .calculated {
+							> div {
+								> .values {
+									> div {
+										border-width: $border-1px !important;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

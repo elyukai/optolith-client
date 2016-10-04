@@ -1,0 +1,14 @@
+#body > main section#disadv {
+	.page {
+		table {
+			tbody {
+				tr {
+					@extend %tr-imp;
+					@extend %tr-typ;
+					@extend %tr-untyp;
+					@extend %large-tr;
+				}
+			}
+		}
+	}
+}

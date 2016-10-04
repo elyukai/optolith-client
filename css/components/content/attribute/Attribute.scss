@@ -1,0 +1,119 @@
+#body > main section#attribute {
+	.page::before {
+		position: absolute;
+		@include calc(width, "100% - 70px");
+		height: 1px;
+		content: "";
+		background: #3c3732;
+		// background: #3a322b;
+		// background: #1f282d;
+		top: 0;
+		left: 35px;
+	}
+
+	.scroll-inner {
+		flex-wrap: wrap;
+		flex-direction: column;
+		align-items: center;
+
+		.attr {
+			margin: 10px;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+			flex: none;
+
+			> .short {
+				font: bold 14px/28px Alegreya;
+				color: #f1e6d4;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+				text-align: center;
+			}
+
+			> .value {
+				border: 2px solid transparent;
+				padding: 2px;
+				background: #0d141c;
+
+				> div {
+					border: 1px solid #3c3c41;
+					padding: 1px;
+
+					> div {
+						@include size(45px);
+						text-align: center;
+						font: bold 28px/45px Alegreya Sans;
+						color: #f1e6d4;
+						letter-spacing: 0.05em;
+						text-transform: uppercase;
+						background: $pane-background-color;
+						overflow: hidden;
+					}
+				}
+			}
+
+			> .iconbutton {
+				margin-top: 5px;
+			}
+
+			&.ATTR_1 > .value {
+				border-color: #aa1b32;
+			}
+
+			&.ATTR_2 > .value {
+				border-color: #6b4497;
+			}
+
+			&.ATTR_3 > .value {
+				border-color: #06a341;
+			}
+
+			&.ATTR_4 > .value {
+				border-color: #3c3c41;
+			}
+
+			&.ATTR_5 > .value {
+				border-color: #aea000;
+			}
+
+			&.ATTR_6 > .value {
+				border-color: #005177;
+			}
+
+			&.ATTR_7 > .value {
+				border-color: #d1c6a4;
+			}
+
+			&.ATTR_8 > .value {
+				border-color: #ac6000;
+			}
+		}
+
+		> .counter {
+			margin-top: 10px;
+			text-align: center;
+		}
+
+		> .main, > .calculated {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		> .main {
+			padding-bottom: 16px;
+			// border-bottom: 1px solid transparentize(white, .925);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		> .calculated {
+			.value {
+				border-color: $pane-background-color;
+			}
+		}
+	}
+}

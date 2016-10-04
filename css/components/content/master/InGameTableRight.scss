@@ -1,0 +1,64 @@
+#body > main section#master .page#ingame .ingame-table .ingame-table-right {
+	padding-right: 7px;
+	margin-left: 8px;
+	flex: none;
+	
+	tr:after {
+		display: block;
+		position: absolute;
+		width: 3px;
+		height: 3px;
+		content: "";
+		border: 1px solid transparentize(#785a28, 0.6);
+		right: -5.5px;
+		bottom: -2px;
+		transform: rotate(45deg);
+	}
+
+	table {
+		tr {
+			td.au, td.a, td.fa {
+				padding-left: 7px;
+			}
+		}
+		
+		tbody {
+			tr {
+				td.au, td.a, td.fa {
+					div {
+						font-size: 15px;
+						color: #878683;
+						line-height: 32px;
+						width: 32px;
+						border-radius: 50%;
+			
+						&:hover {
+							color: #f1e6d4;
+							cursor: pointer;
+							background: transparentize(#5b5a56, 0.8);
+						}
+					}
+				}
+				
+				td.edit {
+					padding-left: 16px;
+					padding-right: 9px;
+					
+					div {
+						font: 18px/36px Material;
+						text-align: center;
+						width: 36px;
+						color: #ccbe91;
+						border-radius: 50%;
+			
+						&:hover {
+							color: #f1e6d4;
+							cursor: pointer;
+							background: transparentize(#5b5a56, 0.8);
+						}
+					}
+				}
+			}
+		}
+	}
+}

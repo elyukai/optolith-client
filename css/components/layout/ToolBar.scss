@@ -1,0 +1,22 @@
+#toolbar {
+	bottom: 2px;
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	left: 0;
+	padding: 0;
+	width: 100%;
+	pointer-events: none;
+
+	.toolbar-inner {
+		flex: none;
+		padding: 5px;
+		border: 1px solid transparentize(#463714, .25);
+		background: rgba(0, 0, 0, .4);
+		pointer-events: all;
+
+		> div:not(:last-child) {
+			margin-right: 4px;
+		}
+	}
+}

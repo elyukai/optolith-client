@@ -1,0 +1,63 @@
+.subtabs {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	position: relative;
+	height: 42px;
+	padding: 10px 0;
+
+	> .tab {
+		font: bold 13px/21px Alegreya SC;
+		flex: 0 1 auto;
+		letter-spacing: 0.1em;
+		margin-left: 35px;
+		text-transform: uppercase;
+		position: relative;
+		color: #cdbe91;
+		min-width: 0;
+
+		&:hover {
+			color: #f1e6d4;
+			cursor: pointer;
+		}
+
+		&:active, &:focus {
+			color: #c89b3c;
+			cursor: pointer;
+		}
+
+		&:last-child {
+			margin-right: 35px;
+		}
+
+		&.active {
+			pointer-events: none;
+			color: #f1e6d4;
+
+			&:after {
+				position: absolute;
+				content: "";
+				width: 4px;
+				height: 4px;
+				bottom: -3px;
+				left: 0;
+				right: 0;
+				margin: 0 auto;
+				border: 1px solid #cdbe91;
+				border-color: transparent #cdbe91 #cdbe91 transparent;
+				transform: rotate(45deg);
+			}
+		}
+
+		&.disabled {
+			pointer-events: none;
+			color: #797974;
+		}
+
+		div {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+	}
+}

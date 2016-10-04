@@ -1,0 +1,100 @@
+.hero-list-item {
+	color: #a19b8f;
+	font: 11px/14px Alegreya Sans;
+	height: 44px;
+	letter-spacing: 0.03em;
+	margin-top: 4px;
+	padding: 4px 15px;
+	position: relative;
+	display: flex;
+	width: $pane-width;
+	
+	> .avatar {
+		flex: 1 0 auto;
+		height: 30px;
+		width: 30px;
+		margin: 3px 11px 3px 0;
+		border-radius: 50%;
+		background: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
+		box-shadow: 0 0 4px black;
+		
+		> .avatar-inner {
+			width: 26px;
+			height: 26px;
+			margin: 2px;
+			border-radius: 50%;
+			background: #090f15;
+			box-shadow: 0 0 4px black inset;
+			overflow: hidden;
+			position: relative;
+			
+			img {
+				min-height: 100%;
+				min-width: 100%;
+			}
+		}
+	}
+
+	> .main {
+		flex: 1 0 auto;
+		display: block;
+		padding: 4px 0;
+		position: relative;
+		width: $pane-width - 71px;
+
+		.name {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			height: 14px;
+			display: block;
+			width: 100%;
+		}
+		
+		.add {
+			display: flex;
+			height: 14px;
+			opacity: 0.5;
+			font-size: 10px;
+			width: 100%;
+			
+			.prof {
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				flex: 1 1 100%;
+				padding-right: 6px;
+			}
+
+			.ap {
+				white-space: nowrap;
+				flex: 1 0 auto;
+			}
+		}
+	}
+	
+	&:hover {
+		cursor: pointer;
+		background: #0d141b;
+
+		.main .name {
+			color: #f1e6d4;
+		}
+	}
+	
+	&.active {
+		color: #f1e6d4;
+		pointer-events: none;
+		
+		&:before {
+			display: block;
+			position: absolute;
+			width: 2px;
+			height: 28px;
+			content: "";
+			left: 0;
+			top: 8px;
+			background: #c89b3d;
+		}
+	}
+}

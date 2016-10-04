@@ -1,0 +1,27 @@
+$defaultEase: cubic-bezier(.28,.3,.09,.82);
+
+
+$background: black;
+
+$pane-background-color: #010a13;
+$pane-width: 222px;
+
+$titlebar-height: 80px;
+// $titlebar-height: 76px;
+
+
+
+
+
+
+
+
+$scrollbar: #073532;
+$highlight: #238b7a;
+
+
+//@mixin defaultEasing($property, $duration: 0.3s) {
+@mixin defaultEasing($property, $duration: 0.45s) {
+//	@include transition($property $duration cubic-bezier(.28,.3,.09,.82));
+	@include transition($property $duration cubic-bezier(.23, 1, .32, 1));
+}

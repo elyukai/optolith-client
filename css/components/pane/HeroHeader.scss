@@ -1,0 +1,68 @@
+.hero-header {
+	position: relative;
+	width: 100%;
+	
+	.header-bar {
+		display: flex;
+		padding: 0 11px;
+		height: 37px;
+		align-items: center;
+
+	
+		span {
+			flex: 1 1 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font: bold 12px/12px Alegreya SC;
+			letter-spacing: 0.11em;
+			text-transform: uppercase;
+			color: #a19b8f;
+		}
+		
+		div.pane-button {
+			flex: 1 0 auto;
+			font: 16px/16px Material;
+			color: #c8aa6e;
+			margin: 0 0 0 11px;
+			
+			&:hover {
+				color: #f0e6d2;
+				cursor: pointer;
+			}
+		}
+	}
+	
+	&.dropdown-active {
+		div.pane-button {
+			color: #463714;
+			
+			&.active {
+				color: #c89b3c;
+			
+				&:hover {
+					color: #f0e6d2;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+
+	.sort-options {
+		.icon {
+			margin-left: 10px;
+		}
+
+		label {
+			color: #c8aa6e;
+			text-transform: none;
+			letter-spacing: 0.03em;
+		}
+
+		&.active {
+			label {
+				color: #c8aa6e;
+			}
+		}
+	}
+}

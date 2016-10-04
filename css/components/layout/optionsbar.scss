@@ -1,0 +1,54 @@
+.options-wrapper {
+	width: 320px;
+	height: 100%;
+	position: fixed;
+	z-index: 1200;
+	top: 0;
+	right: -320px;
+	background: #121a1a;
+	display: flex;
+	flex-direction: column;
+	color: white;
+
+	@include defaultEasing (all);
+
+	&.active {
+		right: 0;
+		box-shadow: 0 0 36px #0c1010;
+	}
+
+	.-horizontal {
+		display: none !important;
+		opacity: 0 !important;
+	}
+
+	.options-content-wrapper {
+		flex: 1 1 0;
+
+		.options-content {
+			touch-action: pan-y;
+
+			> hr {
+				border: 0;
+				margin: 16px 12px;
+				height: 1px;
+				background: rgb(24, 36, 36);
+				@include calc(width, "100% - 24px");
+			}
+		}
+	}
+
+	.options-bar {
+		flex: 0 0 auto;
+		width: 100%;
+		height: 48px;
+
+		.command {
+			float: right;
+
+			.icon-wrapper {
+				font-size: 16px;
+			}
+		}
+	}
+}

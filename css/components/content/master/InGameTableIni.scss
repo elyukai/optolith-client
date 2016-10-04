@@ -1,0 +1,28 @@
+#body > main section#master .page#ingame .ingame-table .ingame-table-ini {
+	margin-right: 8px;
+	flex: none;
+
+	table {
+		width: 100%;
+		
+		tr {
+			td {
+				width: 44px;
+				
+				> div {
+					width: 34px;
+					height: 34px;
+					margin: 0 5px;
+					position: relative;
+					
+					&.indicator {
+						border: 1px solid transparentize(#785a28, 0.4);
+						background: rgba(0, 0, 0, 0.4);
+						color: #f1e6d4;
+						font: 24px/28px Alegreya SC;
+					}
+				}
+			}
+		}
+	}
+}

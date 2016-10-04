@@ -1,0 +1,20 @@
+#body > main section#skills {
+	.page {
+		&#talents table {
+			tbody {
+				tr {
+					@extend %tr-typ;
+					@extend %tr-untyp;
+				}
+			}
+		}
+
+		&#specialabilities table {
+			tbody {
+				tr {
+					@extend %large-tr;
+				}
+			}
+		}
+	}
+}
