@@ -21,8 +21,6 @@ const SKT = [
 	[15,15,15,30,45,60,75,90,105,120,135,150,165,180]
 ];
 
-// jh3ugpywc6dp7f7ylwfuur5vtpcrqh3z4jwnjzskneaztusgnyfa
-
 var _max = 1100;
 var _used = 224;
 var _rcp = [0, 12, 212, 0];
