@@ -49,7 +49,7 @@ function _assignRCP(selections) {
 	list.forEach(e => {
 		ListStore.activate(e[0]);
 		if (e[1] !== null)
-		ListStore.setSR(e[0], e[1]);
+			ListStore.setSR(e[0], e[1]);
 	});
 }
 
@@ -90,15 +90,15 @@ function _filterAndSort(array) {
 	
 var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 
-	init: function(rawLiturgies) {
-		for (let id in rawLiturgies) {
-			rawLiturgies[id].fw = 0;
-			rawLiturgies[id].check = rawLiturgies[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
-			rawLiturgies[id].active = false;
-			rawLiturgies[id].category = CATEGORY;
-			rawLiturgies[id].dependencies = [];
+	init: function(obj) {
+		for (let id in obj) {
+			obj[id].fw = 0;
+			obj[id].check = obj[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
+			obj[id].active = false;
+			obj[id].category = CATEGORY;
+			obj[id].dependencies = [];
 		}
-		ListStore.init(rawLiturgies);
+		ListStore.init(obj);
 	},
 	
 	emitChange: function() {
@@ -244,7 +244,7 @@ LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:
-			LiturgiesStore.init(payload.rawLiturgies);
+			LiturgiesStore.init(payload.liturgies);
 			break;
 		
 		default:

@@ -9,6 +9,7 @@ import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import SpecialAbilitiesStore from './SpecialAbilitiesStore';
 import ActionTypes from '../constants/ActionTypes';
 import reactAlert from '../utils/reactAlert';
+import reqPurchase from '../utils/reqPurchase';
 
 // AP = Adventure Points
 
@@ -89,32 +90,21 @@ function _calculateRCPDiff(index, next) {
 }
 
 function _assignRCP(selections) {
-	if (selections.useCulturePackage) {
+	if (!selections.useCulturePackage) {
 		_used -= _rcp[1];
 	}
 
 	if (selections.buyLiteracy) {
-		_used += ListStore.get('SA_28').sel[selections.litc - 1][2];
+		const culture = CultureStore.getCurrent();
+		let id = culture.literacy.length > 1 ? selections.litc : culture.literacy[0];
+		_used += ListStore.get('SA_28').sel[id - 1][2];
 	}
-	
-	// var list = [];
 
-	// if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-	// 	list.push(...ProfessionStore.getCurrent().spells);
-
-	// list.forEach(e => {
-	// 	ListStore.activate(e[0]);
-	// 	ListStore.setSR(e[0], e[1]);
-	// });
-
-	// Array.from(selections.cantrips).forEach(e => {
-	// 	ListStore.activate(e);
-	// });
-
-	// for (let [key, value] of selections.curses) {
-	// 	ListStore.activate(key);
-	// 	ListStore.setSR(key, value);
-	// }
+	let p = ProfessionStore.getCurrent();
+	if (p) {
+		let apCosts = reqPurchase(p.req);
+		_used += apCosts;
+	}
 }
 
 var APStore = Object.assign({}, EventEmitter.prototype, {
@@ -244,23 +234,9 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_calculateRCPDiff(3, 0);
 			break;
 
-		case ActionTypes.CHANGE_CULTURE_PACKAGE:
-			AppDispatcher.waitFor([CultureStore.dispatchToken]);
-			_calculateRCPDiff(1, CultureStore.isPackageUsed() ? CultureStore.getCurrent().ap : 0);
-			break;
-
-		case ActionTypes.CHANGE_CULTURE_LITERACY:
-			AppDispatcher.waitFor([CultureStore.dispatchToken]);
-			if (CultureStore.getCurrentID() !== null && CultureStore.getCurrent().literacy.length === 1) {
-				let ap = SpecialAbilitiesStore.get('SA_28').sel[CultureStore.getCurrent().literacy[0] - 1][2];
-				if (!CultureStore.isLiteracyUsed()) ap = -ap;
-				_addUsed(ap);
-			}
-			break;
-
 		case ActionTypes.SELECT_PROFESSION:
 			AppDispatcher.waitFor([ProfessionStore.dispatchToken]);
-			_calculateRCPDiff(2, ProfessionStore.getCurrent().ap);
+			_calculateRCPDiff(2, ProfessionStore.getCurrentID() === 'P_0' ? 0 : ProfessionStore.getCurrent().ap);
 			_calculateRCPDiff(3, 0);
 			break;
 

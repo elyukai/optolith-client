@@ -95,7 +95,7 @@ class Professions extends Component {
 
 								var vars;
 
-								if (profession.id === this.state.currentID && profession.vars[0] !== null) {
+								if (profession.id === this.state.currentID && profession.vars.length > 0) {
 									var varList = ProfessionVariantStore.getAllForView();
 									if (varList.length > 1) {
 										vars = (

@@ -94,7 +94,7 @@ class Overview extends Component {
 								} &middot; {
 									CultureStore.getCurrent() !== undefined ? CultureStore.getCurrent().name : null
 								} &middot; {
-									ProfessionStore.getCurrent() !== undefined ? (ProfessionVariantStore.getCurrentID() !== null ? `${ProfessionStore.getCurrent().name} (${ProfessionVariantStore.getCurrent().name})`: ProfessionStore.getCurrent().name) : null
+									ProfessionStore.getCurrentID() === 'P_0' ? 'Eigene Profession' : ProfessionStore.getCurrent() !== undefined ? (ProfessionVariantStore.getCurrentID() !== null ? `${ProfessionStore.getCurrent().name} (${ProfessionVariantStore.getCurrent().name})`: ProfessionStore.getCurrent().name) : null
 								}
 							</div>
 							<div className="el">

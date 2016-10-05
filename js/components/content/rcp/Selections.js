@@ -15,6 +15,7 @@ import SelectionsCantrips from './SelectionsCantrips';
 import SelectionsCt from './SelectionsCt';
 import SelectionsCurses from './SelectionsCurses';
 import SelectionsLangLitc from './SelectionsLangLitc';
+import SelectionsTalentSpec from './SelectionsTalentSpec';
 import Slidein from '../../layout/Slidein';
 import SpecialAbilitiesStore from '../../../stores/SpecialAbilitiesStore';
 import TalentsStore from '../../../stores/TalentsStore';
@@ -37,7 +38,8 @@ class Selections extends Component {
 		cantrips: new Set(),
 		combattech: new Set(),
 		curses: new Map(),
-		langLitc: new Map()
+		langLitc: new Map(),
+		spec: [null, '']
 	};
 
 	constructor(props) {
@@ -88,32 +90,51 @@ class Selections extends Component {
 			langLitc.set(id, ap);
 		this.setState({ langLitc });
 	};
+	changeSpec = (i, value) => {
+		var spec = this.state.spec;
+		switch (i) {
+			case 0:
+				spec[i] = value;
+				break;
+			case 1:
+				spec[i] = value.target.value;
+				break;
+		}
+		this.setState({ spec });
+	};
 
-	assignRCPEntries = selMap => ProfessionActions.assignRCPEntries(Object.assign({}, this.state, { combattech: [this.state.combattech, selMap.get('ct')[1]]}));
+	assignRCPEntries = selMap => {
+		ProfessionActions.assignRCPEntries(Object.assign({}, this.state, {
+			map: selMap,
+			spec: this.state.spec[1] !== '' ? this.state.spec[1] : this.state.spec[0]
+		}));
+	};
 
 	render() {
 
 		const { close } = this.props;
-		const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc } = this.state;
+		const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = this.state;
 
 		const selectLang = CultureStore.getCurrent().lang.length > 1;
 		const selectLitc = CultureStore.getCurrent().literacy.length > 1;
 
 		const professionSel = new Map();
 
-		ProfessionStore.getCurrent().sel.forEach(e => {
-			let [ id, ...other ] = e;
-			professionSel.set(id, other);
-		});
-
-		if (ProfessionVariantStore.getCurrentID() !== null) {
-			ProfessionVariantStore.getCurrent().sel.forEach(e => {
+		if (ProfessionStore.getCurrentID() !== 'P_0') {
+			ProfessionStore.getCurrent().sel.forEach(e => {
 				let [ id, ...other ] = e;
-				if (other.length === 1 && other[0] === false)
-					professionSel.delete(id);
-				else
-					professionSel.set(id, other);
+				professionSel.set(id, other);
 			});
+
+			if (ProfessionVariantStore.getCurrentID() !== null) {
+				ProfessionVariantStore.getCurrent().sel.forEach(e => {
+					let [ id, ...other ] = e;
+					if (other.length === 1 && other[0] === false)
+						professionSel.delete(id);
+					else
+						professionSel.set(id, other);
+				});
+			}
 		}
 
 		var langLitcElement = null;
@@ -134,14 +155,14 @@ class Selections extends Component {
 				let ap = SA_28.sel[sid - 1][2];
 				let name = SA_28.sel[sid - 1][0];
 				let disabled = buyLiteracy && ((!selectLitc && sid === CultureStore.getCurrent().literacy[0]) || (selectLitc && sid === litc));
-				list.push({ id: `LITC_${e}`, name, ap, disabled });
+				list.push({ id: `LITC_${sid}`, name, ap, disabled });
 			});
 
 			SA_30.sel.forEach(e => {
 				let sid = e[1];
 				let name = SA_30.sel[sid - 1][0];
 				let disabled = (!selectLang && sid === CultureStore.getCurrent().lang[0]) || (selectLang && sid === lang);
-				list.push({ id: `LANG_${e}`, name, disabled });
+				list.push({ id: `LANG_${sid}`, name, disabled });
 			});
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
@@ -195,6 +216,22 @@ class Selections extends Component {
 			cantripsElement = <SelectionsCantrips list={list} active={active} num={num} change={this.changeCantrip} />;
 		}
 
+		var specElement = null;
+
+		if (professionSel.has('spec')) {
+			let active = spec;
+			let params = professionSel.get('spec');
+			let id = params[0];
+
+			let talent = ListStore.get(id);
+			let name = talent.name;
+			let list = talent.spec || [];
+			list = list.map((e, i) => [e, i]);
+			let input = talent.spec_input;
+
+			specElement = <SelectionsTalentSpec list={list} active={active} name={name} input={input} change={this.changeSpec} />;
+		}
+
 		return (
 			<Slidein isOpen close={close}>
 				<Scroll>
@@ -243,7 +280,8 @@ class Selections extends Component {
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					<h3>Profession</h3>
+					{ProfessionStore.getCurrentID() !== 'P_0' ? <h3>Profession</h3> : null}
+					{specElement}
 					{langLitcElement}
 					{ctElement}
 					{cursesElement}
@@ -255,6 +293,7 @@ class Selections extends Component {
 							attrSel === 'ATTR_0' ||
 							(selectLang && lang === 0) ||
 							(buyLiteracy && selectLitc && litc === 0) ||
+							(professionSel.has('spec') && (spec[1] === '' && spec[0] === null)) ||
 							(professionSel.has('lang_lit') && langLitcApLeft !== 0) ||
 							(professionSel.has('curses') && cursesApLeft !== 0) ||
 							(professionSel.has('ct') && combattech.size !== professionSel.get('ct')[0]) ||

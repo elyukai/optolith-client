@@ -1,6 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ListStore from './ListStore';
+import RaceStore from './rcp/RaceStore';
 import ActionTypes from '../constants/ActionTypes';
 import validate from '../utils/validate';
 
@@ -151,6 +152,21 @@ function _updateTier(id, tier, sid) {
 	}
 	ListStore.set(id, obj);
 }
+
+function _assignRCP(selections) {
+	var list = new Set();
+
+	RaceStore.getCurrent().auto_adv.forEach(e => {
+		let [ id ] = e;
+		list.add(id);
+	});
+
+	list.forEach(id => {
+		let obj = ListStore.get(id);
+		ListStore.activate(id);
+		ListStore.addDependencies(obj.req);
+	});
+}
 	
 var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 
@@ -159,7 +175,6 @@ var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 			rawAdv[id].active = rawAdv[id].max === null ? false : [];
 			rawAdv[id].category = CATEGORY_1;
 			rawAdv[id].dependencies = [];
-			if (id === 'ADV_50') rawAdv[id].active = true;
 			if (['ADV_4','ADV_16','ADV_17','ADV_47'].indexOf(id) > -1) {
 				rawAdv[id].sel = rawAdv[id].sel.map(e => e[0]);
 				rawAdv[id].sel = ListStore.getAllByCategory(...rawAdv[id].sel).filter(e => {
@@ -535,6 +550,10 @@ DisAdvStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.UPDATE_DISADV_TIER:
 			_updateTier(payload.id, payload.tier, payload.sid);
+			break;
+
+		case ActionTypes.ASSIGN_RCP_ENTRIES:
+			_assignRCP(payload.selections);
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:

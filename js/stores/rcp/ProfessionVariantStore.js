@@ -2,6 +2,7 @@ import AppDispatcher from '../../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import { EventEmitter } from 'events';
 import ProfessionStore from './ProfessionStore';
+import ProfileStore from '../ProfileStore';
 import ActionTypes from '../../constants/ActionTypes';
 
 var _currentID = null;
@@ -67,15 +68,17 @@ var ProfessionVariantStore = Object.assign({}, EventEmitter.prototype, {
 				for (let id in _professionVariants) {
 					if (profession.vars.indexOf(id) > -1) {
 						if (_professionVariants[id].pre_req !== null) {
-							var reqsPassed = true;
-							var cultureID = CultureStore.getCurrentID();
-							for (let req of _professionVariants[id].pre_req) {
-								if (req[0] === 'c' && req[1].indexOf('C_' + cultureID) === -1) {
-									reqsPassed = false;
-									break;
+							var reqsUnmet = _professionVariants[id].pre_req.some(req => {
+								if (req[0] === 'c') {
+									let cultureID = CultureStore.getCurrentID();
+									return req[1].indexOf(cultureID) === -1;
+								} else if (req[0] === 'g') {
+									let gender = ProfileStore.getGender();
+									return gender !== req[1];
 								}
-							}
-							if (!reqsPassed) continue;
+								return false;
+							});
+							if (reqsUnmet) continue;
 						}
 						professionVariants.push({
 							name: `${_professionVariants[id].name} (${profession.ap + _professionVariants[id].ap} AP)`,
