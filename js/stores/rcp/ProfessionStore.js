@@ -95,37 +95,27 @@ var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getAllForView: function() {
-		var professions = [];
+		var array = [{
+			id: 'P_0',
+			name: 'Eigene Profession',
+			subname: '',
+			ap: 0,
+			vars: []
+		}];
+		for (let id in _professions) {
+			array.push(_professions[id]);
+		}
+		if (_filter !== '') {
+			let filter = _filter.toLowerCase();
+			array = array.filter(obj => obj.name.toLowerCase().match(filter) || obj.name.toLowerCase().match(filter));
+		}
 		let cultureID = CultureStore.getCurrentID();
-		if (cultureID !== null && !_showAll && _filter !== '') {
+		if (cultureID !== null && !_showAll) {
 			let currentCulture = CultureStore.getCurrent();
-			let filter = _filter.toLowerCase();
-			for (let id in _professions) {
-				if ((_professions[id].name.toLowerCase().match(filter) || _professions[id].subname.toLowerCase().match(filter)) && currentCulture.typ_prof.indexOf(id) > -1) {
-					professions.push(_professions[id]);
-				}
-			}
-		} else if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			for (let id in _professions) {
-				if (_professions[id].name.toLowerCase().match(filter) || _professions[id].subname.toLowerCase().match(filter)) {
-					professions.push(_professions[id]);
-				}
-			}
-		} else if (cultureID !== null && !_showAll) {
-			let currentCulture = CultureStore.getCurrent();
-			for (let id in _professions) {
-				if (currentCulture.typ_prof.indexOf(id) > -1) {
-					professions.push(_professions[id]);
-				}
-			}
-		} else {
-			for (let id in _professions) {
-				professions.push(_professions[id]);
-			}
+			array = array.filter(obj => currentCulture.typ_prof.indexOf(obj.id) > -1 || obj.id === 'P_0');
 		}
 		if (_sortOrder == 'name') {
-			professions.sort((a, b) => {
+			array.sort((a, b) => {
 				if (a.name < b.name) {
 					return -1;
 				} else if (a.name > b.name) {
@@ -136,7 +126,7 @@ var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
 			});
 		}
 		else if (_sortOrder == 'ap') {
-			professions.sort((a, b) => {
+			array.sort((a, b) => {
 				if (a.ap < b.ap) {
 					return -1;
 				} else if (a.ap > b.ap) {
@@ -152,7 +142,7 @@ var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
 				}
 			});
 		}
-		return professions;
+		return array;
 	},
 
 	getCurrentID: function() {

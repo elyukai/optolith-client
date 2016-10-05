@@ -120,19 +120,21 @@ class Selections extends Component {
 
 		const professionSel = new Map();
 
-		ProfessionStore.getCurrent().sel.forEach(e => {
-			let [ id, ...other ] = e;
-			professionSel.set(id, other);
-		});
-
-		if (ProfessionVariantStore.getCurrentID() !== null) {
-			ProfessionVariantStore.getCurrent().sel.forEach(e => {
+		if (ProfessionStore.getCurrentID() !== 'P_0') {
+			ProfessionStore.getCurrent().sel.forEach(e => {
 				let [ id, ...other ] = e;
-				if (other.length === 1 && other[0] === false)
-					professionSel.delete(id);
-				else
-					professionSel.set(id, other);
+				professionSel.set(id, other);
 			});
+
+			if (ProfessionVariantStore.getCurrentID() !== null) {
+				ProfessionVariantStore.getCurrent().sel.forEach(e => {
+					let [ id, ...other ] = e;
+					if (other.length === 1 && other[0] === false)
+						professionSel.delete(id);
+					else
+						professionSel.set(id, other);
+				});
+			}
 		}
 
 		var langLitcElement = null;
@@ -278,7 +280,7 @@ class Selections extends Component {
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					<h3>Profession</h3>
+					{ProfessionStore.getCurrentID() !== 'P_0' ? <h3>Profession</h3> : null}
 					{specElement}
 					{langLitcElement}
 					{ctElement}

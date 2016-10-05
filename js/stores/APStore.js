@@ -234,23 +234,9 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_calculateRCPDiff(3, 0);
 			break;
 
-		case ActionTypes.CHANGE_CULTURE_PACKAGE:
-			AppDispatcher.waitFor([CultureStore.dispatchToken]);
-			_calculateRCPDiff(1, CultureStore.isPackageUsed() ? CultureStore.getCurrent().ap : 0);
-			break;
-
-		case ActionTypes.CHANGE_CULTURE_LITERACY:
-			AppDispatcher.waitFor([CultureStore.dispatchToken]);
-			if (CultureStore.getCurrentID() !== null && CultureStore.getCurrent().literacy.length === 1) {
-				let ap = SpecialAbilitiesStore.get('SA_28').sel[CultureStore.getCurrent().literacy[0] - 1][2];
-				if (!CultureStore.isLiteracyUsed()) ap = -ap;
-				_addUsed(ap);
-			}
-			break;
-
 		case ActionTypes.SELECT_PROFESSION:
 			AppDispatcher.waitFor([ProfessionStore.dispatchToken]);
-			_calculateRCPDiff(2, ProfessionStore.getCurrent().ap);
+			_calculateRCPDiff(2, ProfessionStore.getCurrentID() === 'P_0' ? 0 : ProfessionStore.getCurrent().ap);
 			_calculateRCPDiff(3, 0);
 			break;
 

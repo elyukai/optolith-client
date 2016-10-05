@@ -8345,7 +8345,7 @@ var Overview = function (_Component) {
 								' · ',
 								_CultureStore2.default.getCurrent() !== undefined ? _CultureStore2.default.getCurrent().name : null,
 								' · ',
-								_ProfessionStore2.default.getCurrent() !== undefined ? _ProfessionVariantStore2.default.getCurrentID() !== null ? _ProfessionStore2.default.getCurrent().name + ' (' + _ProfessionVariantStore2.default.getCurrent().name + ')' : _ProfessionStore2.default.getCurrent().name : null
+								_ProfessionStore2.default.getCurrentID() === 'P_0' ? 'Eigene Profession' : _ProfessionStore2.default.getCurrent() !== undefined ? _ProfessionVariantStore2.default.getCurrentID() !== null ? _ProfessionStore2.default.getCurrent().name + ' (' + _ProfessionVariantStore2.default.getCurrent().name + ')' : _ProfessionStore2.default.getCurrent().name : null
 							),
 							_react2.default.createElement(
 								'div',
@@ -9457,7 +9457,7 @@ var Professions = function (_Component) {
 
 							var vars;
 
-							if (profession.id === _this2.state.currentID && profession.vars[0] !== null) {
+							if (profession.id === _this2.state.currentID && profession.vars.length > 0) {
 								var varList = _ProfessionVariantStore2.default.getAllForView();
 								if (varList.length > 1) {
 									vars = _react2.default.createElement(_RadioButtonGroup2.default, { active: _this2.state.currentVID, onClick: _this2.selectProfessionVariant, array: varList });
@@ -10052,26 +10052,28 @@ var Selections = function (_Component) {
 
 			var professionSel = new Map();
 
-			_ProfessionStore2.default.getCurrent().sel.forEach(function (e) {
-				var _e = _toArray(e);
+			if (_ProfessionStore2.default.getCurrentID() !== 'P_0') {
+				_ProfessionStore2.default.getCurrent().sel.forEach(function (e) {
+					var _e = _toArray(e);
 
-				var id = _e[0];
+					var id = _e[0];
 
-				var other = _e.slice(1);
+					var other = _e.slice(1);
 
-				professionSel.set(id, other);
-			});
-
-			if (_ProfessionVariantStore2.default.getCurrentID() !== null) {
-				_ProfessionVariantStore2.default.getCurrent().sel.forEach(function (e) {
-					var _e2 = _toArray(e);
-
-					var id = _e2[0];
-
-					var other = _e2.slice(1);
-
-					if (other.length === 1 && other[0] === false) professionSel.delete(id);else professionSel.set(id, other);
+					professionSel.set(id, other);
 				});
+
+				if (_ProfessionVariantStore2.default.getCurrentID() !== null) {
+					_ProfessionVariantStore2.default.getCurrent().sel.forEach(function (e) {
+						var _e2 = _toArray(e);
+
+						var id = _e2[0];
+
+						var other = _e2.slice(1);
+
+						if (other.length === 1 && other[0] === false) professionSel.delete(id);else professionSel.set(id, other);
+					});
+				}
 			}
 
 			var langLitcElement = null;
@@ -10247,11 +10249,11 @@ var Selections = function (_Component) {
 							return [lit[0] + ' (' + lit[2] + ' AP)', e];
 						}),
 						disabled: !buyLiteracy || langLitc.size > 0 }) : null,
-					_react2.default.createElement(
+					_ProfessionStore2.default.getCurrentID() !== 'P_0' ? _react2.default.createElement(
 						'h3',
 						null,
 						'Profession'
-					),
+					) : null,
 					specElement,
 					langLitcElement,
 					ctElement,
@@ -15468,23 +15470,9 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 			_calculateRCPDiff(3, 0);
 			break;
 
-		case _ActionTypes2.default.CHANGE_CULTURE_PACKAGE:
-			_AppDispatcher2.default.waitFor([_CultureStore2.default.dispatchToken]);
-			_calculateRCPDiff(1, _CultureStore2.default.isPackageUsed() ? _CultureStore2.default.getCurrent().ap : 0);
-			break;
-
-		case _ActionTypes2.default.CHANGE_CULTURE_LITERACY:
-			_AppDispatcher2.default.waitFor([_CultureStore2.default.dispatchToken]);
-			if (_CultureStore2.default.getCurrentID() !== null && _CultureStore2.default.getCurrent().literacy.length === 1) {
-				var ap = _SpecialAbilitiesStore2.default.get('SA_28').sel[_CultureStore2.default.getCurrent().literacy[0] - 1][2];
-				if (!_CultureStore2.default.isLiteracyUsed()) ap = -ap;
-				_addUsed(ap);
-			}
-			break;
-
 		case _ActionTypes2.default.SELECT_PROFESSION:
 			_AppDispatcher2.default.waitFor([_ProfessionStore2.default.dispatchToken]);
-			_calculateRCPDiff(2, _ProfessionStore2.default.getCurrent().ap);
+			_calculateRCPDiff(2, _ProfessionStore2.default.getCurrentID() === 'P_0' ? 0 : _ProfessionStore2.default.getCurrent().ap);
 			_calculateRCPDiff(3, 0);
 			break;
 
@@ -16740,7 +16728,7 @@ var _el = {
 	}
 };
 
-var _start = 'EL_4';
+var _start = 'EL_3';
 
 function _update(el) {
 	_start = el;
@@ -20264,37 +20252,35 @@ var ProfessionStore = _extends({}, _events.EventEmitter.prototype, {
 	},
 
 	getAllForView: function getAllForView() {
-		var professions = [];
+		var array = [{
+			id: 'P_0',
+			name: 'Eigene Profession',
+			subname: '',
+			ap: 0,
+			vars: []
+		}];
+		for (var id in _professions) {
+			array.push(_professions[id]);
+		}
+		if (_filter !== '') {
+			(function () {
+				var filter = _filter.toLowerCase();
+				array = array.filter(function (obj) {
+					return obj.name.toLowerCase().match(filter) || obj.name.toLowerCase().match(filter);
+				});
+			})();
+		}
 		var cultureID = _CultureStore2.default.getCurrentID();
-		if (cultureID !== null && !_showAll && _filter !== '') {
-			var currentCulture = _CultureStore2.default.getCurrent();
-			var filter = _filter.toLowerCase();
-			for (var id in _professions) {
-				if ((_professions[id].name.toLowerCase().match(filter) || _professions[id].subname.toLowerCase().match(filter)) && currentCulture.typ_prof.indexOf(id) > -1) {
-					professions.push(_professions[id]);
-				}
-			}
-		} else if (_filter !== '') {
-			var _filter2 = _filter.toLowerCase();
-			for (var _id in _professions) {
-				if (_professions[_id].name.toLowerCase().match(_filter2) || _professions[_id].subname.toLowerCase().match(_filter2)) {
-					professions.push(_professions[_id]);
-				}
-			}
-		} else if (cultureID !== null && !_showAll) {
-			var _currentCulture = _CultureStore2.default.getCurrent();
-			for (var _id2 in _professions) {
-				if (_currentCulture.typ_prof.indexOf(_id2) > -1) {
-					professions.push(_professions[_id2]);
-				}
-			}
-		} else {
-			for (var _id3 in _professions) {
-				professions.push(_professions[_id3]);
-			}
+		if (cultureID !== null && !_showAll) {
+			(function () {
+				var currentCulture = _CultureStore2.default.getCurrent();
+				array = array.filter(function (obj) {
+					return currentCulture.typ_prof.indexOf(obj.id) > -1 || obj.id === 'P_0';
+				});
+			})();
 		}
 		if (_sortOrder == 'name') {
-			professions.sort(function (a, b) {
+			array.sort(function (a, b) {
 				if (a.name < b.name) {
 					return -1;
 				} else if (a.name > b.name) {
@@ -20304,7 +20290,7 @@ var ProfessionStore = _extends({}, _events.EventEmitter.prototype, {
 				}
 			});
 		} else if (_sortOrder == 'ap') {
-			professions.sort(function (a, b) {
+			array.sort(function (a, b) {
 				if (a.ap < b.ap) {
 					return -1;
 				} else if (a.ap > b.ap) {
@@ -20320,7 +20306,7 @@ var ProfessionStore = _extends({}, _events.EventEmitter.prototype, {
 				}
 			});
 		}
-		return professions;
+		return array;
 	},
 
 	getCurrentID: function getCurrentID() {
