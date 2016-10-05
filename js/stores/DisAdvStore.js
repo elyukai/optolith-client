@@ -1,6 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ListStore from './ListStore';
+import RaceStore from './rcp/RaceStore';
 import ActionTypes from '../constants/ActionTypes';
 import validate from '../utils/validate';
 
@@ -150,6 +151,21 @@ function _updateTier(id, tier, sid) {
 		obj.tier = tier;
 	}
 	ListStore.set(id, obj);
+}
+
+function _assignRCP(selections) {
+	var list = new Set();
+
+	RaceStore.getCurrent().auto_adv.forEach(e => {
+		let [ id ] = e;
+		list.add(id);
+	});
+
+	list.forEach(id => {
+		let obj = ListStore.get(id);
+		ListStore.activate(id);
+		ListStore.addDependencies(obj.req);
+	});
 }
 	
 var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
@@ -534,6 +550,10 @@ DisAdvStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.UPDATE_DISADV_TIER:
 			_updateTier(payload.id, payload.tier, payload.sid);
+			break;
+
+		case ActionTypes.ASSIGN_RCP_ENTRIES:
+			_assignRCP(payload.selections);
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:

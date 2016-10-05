@@ -36,8 +36,7 @@ PhaseStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
-		case ActionTypes.CREATE_HERO:
-		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.CREATE_NEW_HERO:
 			_update(1);
 			break;
 

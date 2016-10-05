@@ -9,7 +9,7 @@ import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import SpecialAbilitiesStore from './SpecialAbilitiesStore';
 import ActionTypes from '../constants/ActionTypes';
 import reactAlert from '../utils/reactAlert';
-import reqCosts from '../utils/reqCosts';
+import reqPurchase from '../utils/reqPurchase';
 
 // AP = Adventure Points
 
@@ -95,12 +95,15 @@ function _assignRCP(selections) {
 	}
 
 	if (selections.buyLiteracy) {
-		_used += ListStore.get('SA_28').sel[selections.litc - 1][2];
+		const culture = CultureStore.getCurrent();
+		let id = culture.literacy.length > 1 ? selections.litc : culture.literacy[0];
+		_used += ListStore.get('SA_28').sel[id - 1][2];
 	}
 
 	let p = ProfessionStore.getCurrent();
 	if (p) {
-		_used += reqCosts(p.req);
+		let apCosts = reqPurchase(p.req);
+		_used += apCosts;
 	}
 }
 

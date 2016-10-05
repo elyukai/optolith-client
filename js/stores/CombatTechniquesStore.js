@@ -38,9 +38,9 @@ function _assignRCP(selections) {
 
 	list.forEach(e => ListStore.addSR(e[0], e[1]));
 
-	Array.from(selections.combattech[0]).forEach(e => {
+	Array.from(selections.combattech).forEach(e => {
 		ListStore.activate(e);
-		ListStore.addSR(e, selections.combattech[1]);
+		ListStore.addSR(e, selections.map.get('ct')[1]);
 	});
 }
 	

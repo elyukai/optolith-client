@@ -92,6 +92,17 @@
 		}
 		
 		&#professions {
+
+			.spec {
+				> div {
+					display: flex;
+
+					> div:last-child:not(:first-child) {
+						margin-left: 11px;
+					}
+				}
+			}
+
 			.list.curses {
 				> div {
 					display: flex;
