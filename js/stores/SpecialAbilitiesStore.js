@@ -119,7 +119,6 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 			rawSA[id].active = rawSA[id].max === null ? false : [];
 			rawSA[id].category = CATEGORY;
 			rawSA[id].dependencies = [];
-			// if (id === 'SA_86') { rawSA[id].active = true; rawSA[id].sid = 1; }
 			if (id === 'SA_72') {
 				rawSA[id].sel = rawSA[id].sel.map((e,i) => [ListStore.get(e[0]).name, i + 1, e[1]]);
 			} else if (id === 'SA_10') {

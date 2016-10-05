@@ -16038,7 +16038,6 @@ var DisAdvStore = _extends({}, _events.EventEmitter.prototype, {
 			rawAdv[id].active = rawAdv[id].max === null ? false : [];
 			rawAdv[id].category = CATEGORY_1;
 			rawAdv[id].dependencies = [];
-			// if (id === 'ADV_50') rawAdv[id].active = true;
 			if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].indexOf(id) > -1) {
 				rawAdv[id].sel = rawAdv[id].sel.map(function (e) {
 					return e[0];
@@ -18152,7 +18151,6 @@ var SpecialAbilitiesStore = _extends({}, _events.EventEmitter.prototype, {
 			rawSA[id].active = rawSA[id].max === null ? false : [];
 			rawSA[id].category = CATEGORY;
 			rawSA[id].dependencies = [];
-			// if (id === 'SA_86') { rawSA[id].active = true; rawSA[id].sid = 1; }
 			if (id === 'SA_72') {
 				rawSA[id].sel = rawSA[id].sel.map(function (e, i) {
 					return [_ListStore2.default.get(e[0]).name, i + 1, e[1]];
