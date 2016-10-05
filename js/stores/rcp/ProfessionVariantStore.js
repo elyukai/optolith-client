@@ -68,15 +68,15 @@ var ProfessionVariantStore = Object.assign({}, EventEmitter.prototype, {
 				for (let id in _professionVariants) {
 					if (profession.vars.indexOf(id) > -1) {
 						if (_professionVariants[id].pre_req !== null) {
-							var cultureID = CultureStore.getCurrentID();
-							var gender = ProfileStore.getGender();
 							var reqsUnmet = _professionVariants[id].pre_req.some(req => {
-								if (id === 'PV_26') {
-									console.log(req[0] === 'c' && req[1].indexOf('C_' + cultureID) === -1);
-									console.log(req[0] === 'g' && gender !== req[1]);
+								if (req[0] === 'c') {
+									let cultureID = CultureStore.getCurrentID();
+									return req[1].indexOf(cultureID) === -1;
+								} else if (req[0] === 'g') {
+									let gender = ProfileStore.getGender();
+									return gender !== req[1];
 								}
-								return (req[0] === 'c' && req[1].indexOf('C_' + cultureID) === -1) ||
-								(req[0] === 'g' && gender !== req[1]);
+								return false;
 							});
 							if (reqsUnmet) continue;
 						}

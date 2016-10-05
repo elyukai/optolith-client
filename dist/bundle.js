@@ -20486,37 +20486,26 @@ var ProfessionVariantStore = _extends({}, _events.EventEmitter.prototype, {
 					name: 'Keine Variante',
 					value: null
 				}];
-
-				var _loop = function _loop(id) {
+				for (var id in _professionVariants) {
 					if (profession.vars.indexOf(id) > -1) {
 						if (_professionVariants[id].pre_req !== null) {
-							cultureID = _CultureStore2.default.getCurrentID();
-							gender = _ProfileStore2.default.getGender();
-							reqsUnmet = _professionVariants[id].pre_req.some(function (req) {
-								if (id === 'PV_26') {
-									console.log(req[0] === 'c' && req[1].indexOf('C_' + cultureID) === -1);
-									console.log(req[0] === 'g' && gender !== req[1]);
+							var reqsUnmet = _professionVariants[id].pre_req.some(function (req) {
+								if (req[0] === 'c') {
+									var cultureID = _CultureStore2.default.getCurrentID();
+									return req[1].indexOf(cultureID) === -1;
+								} else if (req[0] === 'g') {
+									var gender = _ProfileStore2.default.getGender();
+									return gender !== req[1];
 								}
-								return req[0] === 'c' && req[1].indexOf('C_' + cultureID) === -1 || req[0] === 'g' && gender !== req[1];
+								return false;
 							});
-
-							if (reqsUnmet) return 'continue';
+							if (reqsUnmet) continue;
 						}
 						professionVariants.push({
 							name: _professionVariants[id].name + ' (' + (profession.ap + _professionVariants[id].ap) + ' AP)',
 							value: _professionVariants[id].id
 						});
 					}
-				};
-
-				for (var id in _professionVariants) {
-					var cultureID;
-					var gender;
-					var reqsUnmet;
-
-					var _ret = _loop(id);
-
-					if (_ret === 'continue') continue;
 				}
 				return professionVariants;
 			}
