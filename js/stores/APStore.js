@@ -9,6 +9,7 @@ import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import SpecialAbilitiesStore from './SpecialAbilitiesStore';
 import ActionTypes from '../constants/ActionTypes';
 import reactAlert from '../utils/reactAlert';
+import reqCosts from '../utils/reqCosts';
 
 // AP = Adventure Points
 
@@ -89,32 +90,18 @@ function _calculateRCPDiff(index, next) {
 }
 
 function _assignRCP(selections) {
-	if (selections.useCulturePackage) {
+	if (!selections.useCulturePackage) {
 		_used -= _rcp[1];
 	}
 
 	if (selections.buyLiteracy) {
 		_used += ListStore.get('SA_28').sel[selections.litc - 1][2];
 	}
-	
-	// var list = [];
 
-	// if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-	// 	list.push(...ProfessionStore.getCurrent().spells);
-
-	// list.forEach(e => {
-	// 	ListStore.activate(e[0]);
-	// 	ListStore.setSR(e[0], e[1]);
-	// });
-
-	// Array.from(selections.cantrips).forEach(e => {
-	// 	ListStore.activate(e);
-	// });
-
-	// for (let [key, value] of selections.curses) {
-	// 	ListStore.activate(key);
-	// 	ListStore.setSR(key, value);
-	// }
+	let p = ProfessionStore.getCurrent();
+	if (p) {
+		_used += reqCosts(p.req);
+	}
 }
 
 var APStore = Object.assign({}, EventEmitter.prototype, {

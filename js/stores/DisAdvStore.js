@@ -159,7 +159,7 @@ var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 			rawAdv[id].active = rawAdv[id].max === null ? false : [];
 			rawAdv[id].category = CATEGORY_1;
 			rawAdv[id].dependencies = [];
-			if (id === 'ADV_50') rawAdv[id].active = true;
+			// if (id === 'ADV_50') rawAdv[id].active = true;
 			if (['ADV_4','ADV_16','ADV_17','ADV_47'].indexOf(id) > -1) {
 				rawAdv[id].sel = rawAdv[id].sel.map(e => e[0]);
 				rawAdv[id].sel = ListStore.getAllByCategory(...rawAdv[id].sel).filter(e => {

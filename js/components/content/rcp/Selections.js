@@ -89,7 +89,14 @@ class Selections extends Component {
 		this.setState({ langLitc });
 	};
 
-	assignRCPEntries = selMap => ProfessionActions.assignRCPEntries(Object.assign({}, this.state, { combattech: [this.state.combattech, selMap.get('ct')[1]]}));
+	assignRCPEntries = selMap => {
+		var param = selMap.has('ct') ? Object.assign({}, this.state, {
+			combattech: [this.state.combattech, selMap.get('ct')[1]]
+		}) : Object.assign({}, this.state, {
+			combattech: [this.state.combattech]
+		});
+		ProfessionActions.assignRCPEntries(param);
+	};
 
 	render() {
 
