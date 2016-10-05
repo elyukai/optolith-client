@@ -72,8 +72,6 @@ class TitleBar extends Component {
 		ProfileStore.removeChangeListener(this._updateProfileStore);
 	}
 
-	increasePhase = () => PhaseActions.increasePhase();
-	resetPhase = () => PhaseActions.resetPhase();
 	back = () => TabActions.showSection('main');
 
 	render() {
@@ -107,8 +105,6 @@ class TitleBar extends Component {
 				break;
 			}
 			case 'hero': {
-				var phaseElement;
-
 				switch (phase) {
 					case 1:
 						tabsElement = (
@@ -117,7 +113,6 @@ class TitleBar extends Component {
 								{ label: 'Spezies, Kultur & Profession', tag: 'rcp' }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 2:
 						tabsElement = (
@@ -128,7 +123,6 @@ class TitleBar extends Component {
 								{ label: 'Fertigkeiten', tag: 'skills' }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 3:
 						tabsElement = (
@@ -139,7 +133,6 @@ class TitleBar extends Component {
 								{ label: 'Gegenstände', tag: 'items', disabled: true }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 4:
 						tabsElement = (
@@ -152,7 +145,6 @@ class TitleBar extends Component {
 								{ label: 'Items', tag: 'items', disabled: true }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE8B3;" primary onClick={this.resetPhase} />;
 						break;
 				}
 
@@ -161,7 +153,6 @@ class TitleBar extends Component {
 						<div className="ap">{ap - used} AP</div>
 						<IconButton icon="&#xE166;" disabled />
 						<BorderButton label="Speichern" disabled />
-						{phaseElement}
 					</div>
 				);
 				break;

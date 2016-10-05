@@ -14423,14 +14423,6 @@ var TitleBar = function (_Component2) {
 			return _this2.setState({ portrait: _ProfileStore2.default.getPortrait() });
 		};
 
-		_this2.increasePhase = function () {
-			return _PhaseActions2.default.increasePhase();
-		};
-
-		_this2.resetPhase = function () {
-			return _PhaseActions2.default.resetPhase();
-		};
-
 		_this2.back = function () {
 			return _TabActions2.default.showSection('main');
 		};
@@ -14485,24 +14477,18 @@ var TitleBar = function (_Component2) {
 					}
 				case 'hero':
 					{
-						var phaseElement;
-
 						switch (phase) {
 							case 1:
 								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profil', tag: 'profile' }, { label: 'Spezies, Kultur & Profession', tag: 'rcp' }] });
-								phaseElement = _react2.default.createElement(_IconButton2.default, { icon: '', primary: true, onClick: this.increasePhase });
 								break;
 							case 2:
 								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profil', tag: 'profile' }, { label: 'Eigenschaften', tag: 'attributes' }, { label: 'Vorteile & Nachteile', tag: 'disadv' }, { label: 'Fertigkeiten', tag: 'skills' }] });
-								phaseElement = _react2.default.createElement(_IconButton2.default, { icon: '', primary: true, onClick: this.increasePhase });
 								break;
 							case 3:
 								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profil', tag: 'profile' }, { label: 'Eigenschaften', tag: 'attributes' }, { label: 'Fertigkeiten', tag: 'skills' }, { label: 'Gegenstände', tag: 'items', disabled: true }] });
-								phaseElement = _react2.default.createElement(_IconButton2.default, { icon: '', primary: true, onClick: this.increasePhase });
 								break;
 							case 4:
 								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profile', tag: 'profile' }, { label: 'RCP', tag: 'rcp' }, { label: 'Attributes', tag: 'attributes' }, { label: 'Adv & Disadv', tag: 'disadv' }, { label: 'Skills', tag: 'skills' }, { label: 'Items', tag: 'items', disabled: true }] });
-								phaseElement = _react2.default.createElement(_IconButton2.default, { icon: '', primary: true, onClick: this.resetPhase });
 								break;
 						}
 
@@ -14516,8 +14502,7 @@ var TitleBar = function (_Component2) {
 								' AP'
 							),
 							_react2.default.createElement(_IconButton2.default, { icon: '', disabled: true }),
-							_react2.default.createElement(_BorderButton2.default, { label: 'Speichern', disabled: true }),
-							phaseElement
+							_react2.default.createElement(_BorderButton2.default, { label: 'Speichern', disabled: true })
 						);
 						break;
 					}
