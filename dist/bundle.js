@@ -20144,6 +20144,14 @@ var _CultureStore = require('./CultureStore');
 
 var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
+var _ELStore = require('../ELStore');
+
+var _ELStore2 = _interopRequireDefault(_ELStore);
+
+var _RaceStore = require('./RaceStore');
+
+var _RaceStore2 = _interopRequireDefault(_RaceStore);
+
 var _events = require('events');
 
 var _ActionTypes = require('../../constants/ActionTypes');
@@ -20260,7 +20268,18 @@ var ProfessionStore = _extends({}, _events.EventEmitter.prototype, {
 			vars: []
 		}];
 		for (var id in _professions) {
-			array.push(_professions[id]);
+			var valid = _professions[id].req.every(function (req) {
+				if (!req[0].match('ATTR')) {
+					return true;
+				} else {
+					var max_attr = _ELStore2.default.getStart().max_attr;
+					var race = _RaceStore2.default.getCurrent();
+					return !(req[1] > max_attr || race.attr_sel[1].indexOf(req[0]) > -1 && req[1] > max_attr + race.attr_sel[0]);
+				}
+			});
+			if (valid) {
+				array.push(_professions[id]);
+			}
 		}
 		if (_filter !== '') {
 			(function () {
@@ -20379,7 +20398,7 @@ ProfessionStore.dispatchToken = _AppDispatcher2.default.register(function (paylo
 
 exports.default = ProfessionStore;
 
-},{"../../constants/ActionTypes":118,"../../dispatcher/AppDispatcher":119,"./CultureStore":137,"events":1}],139:[function(require,module,exports){
+},{"../../constants/ActionTypes":118,"../../dispatcher/AppDispatcher":119,"../ELStore":124,"./CultureStore":137,"./RaceStore":140,"events":1}],139:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

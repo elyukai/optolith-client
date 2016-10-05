@@ -1,5 +1,7 @@
 import AppDispatcher from '../../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
+import ELStore from '../ELStore';
+import RaceStore from './RaceStore';
 import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
@@ -103,7 +105,18 @@ var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
 			vars: []
 		}];
 		for (let id in _professions) {
-			array.push(_professions[id]);
+			let valid = _professions[id].req.every(req => {
+				if (!req[0].match('ATTR')) {
+					return true;
+				} else {
+					let max_attr = ELStore.getStart().max_attr;
+					let race = RaceStore.getCurrent();
+					return !(req[1] > max_attr || (race.attr_sel[1].indexOf(req[0]) > -1 && req[1] > (max_attr + race.attr_sel[0]) ));
+				}
+			});
+			if (valid) {
+				array.push(_professions[id]);
+			}
 		}
 		if (_filter !== '') {
 			let filter = _filter.toLowerCase();
