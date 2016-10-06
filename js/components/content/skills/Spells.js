@@ -113,7 +113,7 @@ class Spells extends Component {
 												name={name}
 												isNotActive
 												activate={this.addToList.bind(null, spell.id)}
-												activateDisabled={this.state.addSpellsDisabled}
+												activateDisabled={this.state.addSpellsDisabled && spell.gr < 3}
 												{...obj}
 												>
 												<td className="merk">{MERK[spell.merk - 1]}</td>
@@ -144,7 +144,6 @@ class Spells extends Component {
 					<BorderButton
 						label="Hinzufügen"
 						onClick={this.showAddSlidein}
-						disabled={this.state.addSpellsDisabled}
 						/>
 				</div>
 				<Scroll className="list">

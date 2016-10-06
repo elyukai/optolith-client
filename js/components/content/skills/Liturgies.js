@@ -110,7 +110,7 @@ class Liturgies extends Component {
 												name={name}
 												isNotActive
 												activate={this.addToList.bind(null, liturgy.id)}
-												activateDisabled={this.state.addChantsDisabled}
+												activateDisabled={this.state.addChantsDisabled && liturgy.gr < 3}
 												{...obj}
 												>
 												<td className="aspc">{aspc}</td>
@@ -137,7 +137,6 @@ class Liturgies extends Component {
 					<BorderButton
 						label="Hinzufügen"
 						onClick={this.showAddSlidein}
-						disabled={this.state.addChantsDisabled}
 						/>
 				</div>
 				<Scroll className="list">

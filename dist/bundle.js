@@ -11536,7 +11536,7 @@ var Liturgies = function (_Component) {
 											name: name,
 											isNotActive: true,
 											activate: _this2.addToList.bind(null, liturgy.id),
-											activateDisabled: _this2.state.addChantsDisabled
+											activateDisabled: _this2.state.addChantsDisabled && liturgy.gr < 3
 										}, obj),
 										_react2.default.createElement(
 											'td',
@@ -11562,8 +11562,7 @@ var Liturgies = function (_Component) {
 						}] }),
 					_react2.default.createElement(_BorderButton2.default, {
 						label: 'Hinzufügen',
-						onClick: this.showAddSlidein,
-						disabled: this.state.addChantsDisabled
+						onClick: this.showAddSlidein
 					})
 				),
 				_react2.default.createElement(
@@ -12841,7 +12840,7 @@ var Spells = function (_Component) {
 											name: name,
 											isNotActive: true,
 											activate: _this2.addToList.bind(null, spell.id),
-											activateDisabled: _this2.state.addSpellsDisabled
+											activateDisabled: _this2.state.addSpellsDisabled && spell.gr < 3
 										}, obj),
 										_react2.default.createElement(
 											'td',
@@ -12870,8 +12869,7 @@ var Spells = function (_Component) {
 						}] }),
 					_react2.default.createElement(_BorderButton2.default, {
 						label: 'Hinzufügen',
-						onClick: this.showAddSlidein,
-						disabled: this.state.addSpellsDisabled
+						onClick: this.showAddSlidein
 					})
 				),
 				_react2.default.createElement(
