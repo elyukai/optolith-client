@@ -11376,6 +11376,7 @@ var Liturgies = function (_Component) {
 		_this.state = {
 			liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
 			liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
+			addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
 			filter: _LiturgiesStore2.default.getFilter(),
 			sortOrder: _LiturgiesStore2.default.getSortOrder(),
 			showAddSlidein: false
@@ -11385,6 +11386,7 @@ var Liturgies = function (_Component) {
 			return _this.setState({
 				liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
 				liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
+				addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
 				filter: _LiturgiesStore2.default.getFilter(),
 				sortOrder: _LiturgiesStore2.default.getSortOrder()
 			});
@@ -11533,7 +11535,8 @@ var Liturgies = function (_Component) {
 											group: GR[liturgy.gr - 1],
 											name: name,
 											isNotActive: true,
-											activate: _this2.addToList.bind(null, liturgy.id)
+											activate: _this2.addToList.bind(null, liturgy.id),
+											activateDisabled: _this2.state.addChantsDisabled
 										}, obj),
 										_react2.default.createElement(
 											'td',
@@ -11557,7 +11560,11 @@ var Liturgies = function (_Component) {
 							name: 'Gruppen',
 							value: 'groups'
 						}] }),
-					_react2.default.createElement(_BorderButton2.default, { label: 'Hinzufügen', onClick: this.showAddSlidein })
+					_react2.default.createElement(_BorderButton2.default, {
+						label: 'Hinzufügen',
+						onClick: this.showAddSlidein,
+						disabled: this.state.addChantsDisabled
+					})
 				),
 				_react2.default.createElement(
 					_Scroll2.default,
@@ -11713,6 +11720,7 @@ var SkillListItem = function (_Component) {
 			var skt = _props.skt;
 			var isNotActive = _props.isNotActive;
 			var activate = _props.activate;
+			var activateDisabled = _props.activateDisabled;
 			var addPoint = _props.addPoint;
 			var addDisabled = _props.addDisabled;
 			var removePoint = _props.removePoint;
@@ -11766,7 +11774,11 @@ var SkillListItem = function (_Component) {
 			var btnElement = isNotActive ? _react2.default.createElement(
 				'td',
 				{ className: 'inc' },
-				_react2.default.createElement(_BorderButton2.default, { label: 'Aktivieren', onClick: activate })
+				_react2.default.createElement(_BorderButton2.default, {
+					label: 'Aktivieren',
+					onClick: activate,
+					disabled: activateDisabled
+				})
 			) : _react2.default.createElement(
 				'td',
 				{ className: 'inc' },
@@ -11811,6 +11823,7 @@ SkillListItem.propTypes = {
 	skt: _react.PropTypes.number,
 	isNotActive: _react.PropTypes.bool,
 	activate: _react.PropTypes.func,
+	activateDisabled: _react.PropTypes.bool,
 	addPoint: _react.PropTypes.func,
 	addDisabled: _react.PropTypes.bool,
 	removePoint: _react.PropTypes.func,
@@ -12668,6 +12681,7 @@ var Spells = function (_Component) {
 		_this.state = {
 			spellsActive: _SpellsStore2.default.getActiveForView(),
 			spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
+			addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
 			filter: _SpellsStore2.default.getFilter(),
 			sortOrder: _SpellsStore2.default.getSortOrder(),
 			showAddSlidein: false
@@ -12677,6 +12691,7 @@ var Spells = function (_Component) {
 			return _this.setState({
 				spellsActive: _SpellsStore2.default.getActiveForView(),
 				spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
+				addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
 				filter: _SpellsStore2.default.getFilter(),
 				sortOrder: _SpellsStore2.default.getSortOrder()
 			});
@@ -12825,7 +12840,8 @@ var Spells = function (_Component) {
 											group: GR[spell.gr - 1],
 											name: name,
 											isNotActive: true,
-											activate: _this2.addToList.bind(null, spell.id)
+											activate: _this2.addToList.bind(null, spell.id),
+											activateDisabled: _this2.state.addSpellsDisabled
 										}, obj),
 										_react2.default.createElement(
 											'td',
@@ -12852,7 +12868,11 @@ var Spells = function (_Component) {
 							name: 'Merkmal',
 							value: 'merk'
 						}] }),
-					_react2.default.createElement(_BorderButton2.default, { label: 'Hinzufügen', onClick: this.showAddSlidein })
+					_react2.default.createElement(_BorderButton2.default, {
+						label: 'Hinzufügen',
+						onClick: this.showAddSlidein,
+						disabled: this.state.addSpellsDisabled
+					})
 				),
 				_react2.default.createElement(
 					_Scroll2.default,
@@ -17878,6 +17898,13 @@ var LiturgiesStore = _extends({}, _events.EventEmitter.prototype, {
 		return _filterAndSort(liturgies);
 	},
 
+	isActivationDisabled: function isActivationDisabled() {
+		var maxSpellsLiturgies = _ELStore2.default.getStart().max_spells_liturgies;
+		return _PhaseStore2.default.get() < 3 && _ListStore2.default.getAllByCategory(CATEGORY).filter(function (e) {
+			return e.gr < 3 && e.active;
+		}).length >= maxSpellsLiturgies;
+	},
+
 	getFilter: function getFilter() {
 		return _filter;
 	},
@@ -19168,6 +19195,12 @@ var SpellsStore = _extends({}, _events.EventEmitter.prototype, {
 		var spellsObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var spells = [];
 
+		var maxUnfamiliar = _PhaseStore2.default.get() < 3 && _ListStore2.default.getAllByCategory(CATEGORY).filter(function (e) {
+			return !e.trad.some(function (e) {
+				return e === 1 || e === _ListStore2.default.get('SA_86').sid + 1;
+			}) && e.gr < 3 && e.active;
+		}).length >= _ELStore2.default.getStart().max_unfamiliar_spells;
+
 		for (var id in spellsObj) {
 			var spell = spellsObj[id];
 			var active = spell.active;
@@ -19181,15 +19214,26 @@ var SpellsStore = _extends({}, _events.EventEmitter.prototype, {
 				return e === 1 || e === _ListStore2.default.get('SA_86').sid + 1;
 			});
 			if (!available) {
-				if (_gr > 2) continue;else spell.add = _trad.map(function (e) {
-					return TRADITIONS[e - 1];
-				}).join(', ');
+				if (_gr > 2 || maxUnfamiliar) {
+					continue;
+				} else {
+					spell.add = _trad.map(function (e) {
+						return TRADITIONS[e - 1];
+					}).join(', ');
+				}
 			}
 			spell.ownTradition = available;
 
 			spells.push(spell);
 		}
 		return _filterAndSort(spells);
+	},
+
+	isActivationDisabled: function isActivationDisabled() {
+		var maxSpellsLiturgies = _ELStore2.default.getStart().max_spells_liturgies;
+		return _PhaseStore2.default.get() < 3 && _ListStore2.default.getAllByCategory(CATEGORY).filter(function (e) {
+			return e.gr < 3 && e.active;
+		}).length >= maxSpellsLiturgies;
 	},
 
 	getFilter: function getFilter() {

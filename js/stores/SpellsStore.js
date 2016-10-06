@@ -199,6 +199,13 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 	getDeactiveForView: function() {
 		var spellsObj = ListStore.getObjByCategory(CATEGORY);
 		var spells = [];
+
+		const maxUnfamiliar = PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e =>
+				!e.trad.some(e =>
+					e === 1 ||
+					e === ListStore.get('SA_86').sid + 1
+				) && e.gr < 3 && e.active
+			).length >= ELStore.getStart().max_unfamiliar_spells;
 		
 		for (let id in spellsObj) {
 			let spell = spellsObj[id];
@@ -208,16 +215,22 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 
 			var available = trad.some(e => e === 1 || e === ListStore.get('SA_86').sid + 1);
 			if (!available) {
-				if (gr > 2)
+				if (gr > 2 || maxUnfamiliar) {
 					continue;
-				else
+				} else {
 					spell.add = trad.map(e => TRADITIONS[e - 1]).join(', ');
+				}
 			}
 			spell.ownTradition = available;
 
 			spells.push(spell);
 		}
 		return _filterAndSort(spells);
+	},
+
+	isActivationDisabled: function() {
+		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
+		return PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 	},
 
 	getFilter: function() {

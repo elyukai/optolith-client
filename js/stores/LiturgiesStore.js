@@ -193,6 +193,11 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 		return _filterAndSort(liturgies);
 	},
 
+	isActivationDisabled: function() {
+		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
+		return PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
+	},
+
 	getFilter: function() {
 		return _filter;
 	},

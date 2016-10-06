@@ -14,6 +14,7 @@ class Spells extends Component {
 	state = { 
 		spellsActive: SpellsStore.getActiveForView(),
 		spellsDeactive: SpellsStore.getDeactiveForView(),
+		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		filter: SpellsStore.getFilter(),
 		sortOrder: SpellsStore.getSortOrder(),
 		showAddSlidein: false
@@ -26,6 +27,7 @@ class Spells extends Component {
 	_updateSpellsStore = () => this.setState({ 
 		spellsActive: SpellsStore.getActiveForView(),
 		spellsDeactive: SpellsStore.getDeactiveForView(),
+		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		filter: SpellsStore.getFilter(),
 		sortOrder: SpellsStore.getSortOrder()
 	});
@@ -111,7 +113,9 @@ class Spells extends Component {
 												name={name}
 												isNotActive
 												activate={this.addToList.bind(null, spell.id)}
-												{...obj} >
+												activateDisabled={this.state.addSpellsDisabled}
+												{...obj}
+												>
 												<td className="merk">{MERK[spell.merk - 1]}</td>
 											</SkillListItem>
 										);
@@ -137,7 +141,11 @@ class Spells extends Component {
 							value: 'merk'
 						}
 					]} />
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
+					<BorderButton
+						label="Hinzufügen"
+						onClick={this.showAddSlidein}
+						disabled={this.state.addSpellsDisabled}
+						/>
 				</div>
 				<Scroll className="list">
 					<table>

@@ -14,6 +14,7 @@ class Liturgies extends Component {
 	state = { 
 		liturgiesActive: LiturgiesStore.getActiveForView(),
 		liturgiesDeactive: LiturgiesStore.getDeactiveForView(),
+		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filter: LiturgiesStore.getFilter(),
 		sortOrder: LiturgiesStore.getSortOrder(),
 		showAddSlidein: false
@@ -26,6 +27,7 @@ class Liturgies extends Component {
 	_updateLiturgiesStore = () => this.setState({ 
 		liturgiesActive: LiturgiesStore.getActiveForView(),
 		liturgiesDeactive: LiturgiesStore.getDeactiveForView(),
+		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filter: LiturgiesStore.getFilter(),
 		sortOrder: LiturgiesStore.getSortOrder()
 	});
@@ -108,7 +110,9 @@ class Liturgies extends Component {
 												name={name}
 												isNotActive
 												activate={this.addToList.bind(null, liturgy.id)}
-												{...obj} >
+												activateDisabled={this.state.addChantsDisabled}
+												{...obj}
+												>
 												<td className="aspc">{aspc}</td>
 											</SkillListItem>
 										);
@@ -130,7 +134,11 @@ class Liturgies extends Component {
 							value: 'groups'
 						}
 					]} />
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
+					<BorderButton
+						label="Hinzufügen"
+						onClick={this.showAddSlidein}
+						disabled={this.state.addChantsDisabled}
+						/>
 				</div>
 				<Scroll className="list">
 					<table>
