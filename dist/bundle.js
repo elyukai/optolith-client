@@ -9519,13 +9519,25 @@ var _Cultures = require('./Cultures');
 
 var _Cultures2 = _interopRequireDefault(_Cultures);
 
+var _CultureStore = require('../../../stores/rcp/CultureStore');
+
+var _CultureStore2 = _interopRequireDefault(_CultureStore);
+
 var _Professions = require('./Professions');
 
 var _Professions2 = _interopRequireDefault(_Professions);
 
+var _ProfessionStore = require('../../../stores/rcp/ProfessionStore');
+
+var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
+
 var _Races = require('./Races');
 
 var _Races2 = _interopRequireDefault(_Races);
+
+var _RaceStore = require('../../../stores/rcp/RaceStore');
+
+var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
 var _react = require('react');
 
@@ -9552,7 +9564,17 @@ var RCP = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RCP).call(this, props));
 
 		_this.state = {
-			tab: 'race'
+			tab: 'race',
+			raceID: _RaceStore2.default.getCurrentID(),
+			cultureID: _CultureStore2.default.getCurrentID()
+		};
+
+		_this._updateCultureStore = function () {
+			return _this.setState({ cultureID: _CultureStore2.default.getCurrentID() });
+		};
+
+		_this._updateRaceStore = function () {
+			return _this.setState({ raceID: _RaceStore2.default.getCurrentID() });
 		};
 
 		_this.handleClick = function (tab) {
@@ -9563,6 +9585,18 @@ var RCP = function (_Component) {
 	}
 
 	_createClass(RCP, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			_CultureStore2.default.addChangeListener(this._updateCultureStore);
+			_RaceStore2.default.addChangeListener(this._updateRaceStore);
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			_CultureStore2.default.removeChangeListener(this._updateCultureStore);
+			_RaceStore2.default.removeChangeListener(this._updateRaceStore);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 
@@ -9580,6 +9614,11 @@ var RCP = function (_Component) {
 					break;
 			}
 
+			var _state = this.state;
+			var raceID = _state.raceID;
+			var cultureID = _state.cultureID;
+
+
 			return _react2.default.createElement(
 				'section',
 				{ id: 'rcp' },
@@ -9589,10 +9628,12 @@ var RCP = function (_Component) {
 						tag: 'race'
 					}, {
 						label: 'Kultur',
-						tag: 'culture'
+						tag: 'culture',
+						disabled: raceID === null
 					}, {
 						label: 'Profession',
-						tag: 'profession'
+						tag: 'profession',
+						disabled: cultureID === null
 					}],
 					active: this.state.tab,
 					onClick: this.handleClick }),
@@ -9606,7 +9647,7 @@ var RCP = function (_Component) {
 
 exports.default = RCP;
 
-},{"../../layout/SubTabs":108,"./Cultures":77,"./Professions":78,"./Races":80,"react":324}],80:[function(require,module,exports){
+},{"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/RaceStore":140,"../../layout/SubTabs":108,"./Cultures":77,"./Professions":78,"./Races":80,"react":324}],80:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19906,7 +19947,7 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _currentID = 'C_8';
+var _currentID = null;
 var _cultures = {};
 
 var _filter = '';
@@ -20187,7 +20228,7 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _currentID = 'P_16';
+var _currentID = null;
 var _professions = {};
 
 var _filter = '';
@@ -20613,7 +20654,7 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _currentID = 'R_1';
+var _currentID = null;
 var _races = {};
 
 var _filter = '';

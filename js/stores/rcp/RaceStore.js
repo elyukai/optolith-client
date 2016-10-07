@@ -2,7 +2,7 @@ import AppDispatcher from '../../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
-var _currentID = 'R_1';
+var _currentID = null;
 var _races = {};
 
 var _filter = '';

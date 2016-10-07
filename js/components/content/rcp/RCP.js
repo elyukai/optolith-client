@@ -1,20 +1,38 @@
 import Cultures from './Cultures';
+import CultureStore from '../../../stores/rcp/CultureStore';
 import Professions from './Professions';
+import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import Races from './Races';
+import RaceStore from '../../../stores/rcp/RaceStore';
 import React, { Component } from 'react';
 import SubTabs from '../../layout/SubTabs';
 
 class RCP extends Component {
 
 	state = {
-		tab: 'race'
+		tab: 'race',
+		raceID: RaceStore.getCurrentID(),
+		cultureID: CultureStore.getCurrentID()
 	};
 
 	constructor(props) {
 		super(props);
 	}
+	
+	_updateCultureStore = () => this.setState({ cultureID: CultureStore.getCurrentID() });
+	_updateRaceStore = () => this.setState({ raceID: RaceStore.getCurrentID() });
 
 	handleClick = tab => this.setState({ tab });
+	
+	componentDidMount() {
+		CultureStore.addChangeListener(this._updateCultureStore);
+		RaceStore.addChangeListener(this._updateRaceStore);
+	}
+	
+	componentWillUnmount() {
+		CultureStore.removeChangeListener(this._updateCultureStore);
+		RaceStore.removeChangeListener(this._updateRaceStore);
+	}
 
 	render() {
 
@@ -32,6 +50,8 @@ class RCP extends Component {
 				break;
 		}
 
+		const { raceID, cultureID } = this.state;
+
 		return (
 			<section id="rcp">
 				<SubTabs
@@ -42,11 +62,13 @@ class RCP extends Component {
 						},
 						{
 							label: 'Kultur',
-							tag: 'culture'
+							tag: 'culture',
+							disabled: raceID === null
 						},
 						{
 							label: 'Profession',
-							tag: 'profession'
+							tag: 'profession',
+							disabled: cultureID === null
 						}
 					]}
 					active={this.state.tab}

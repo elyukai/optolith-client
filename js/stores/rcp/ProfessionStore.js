@@ -5,7 +5,7 @@ import RaceStore from './RaceStore';
 import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
-var _currentID = 'P_16';
+var _currentID = null;
 var _professions = {};
 
 var _filter = '';

@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import RaceStore from './RaceStore';
 import ActionTypes from '../../constants/ActionTypes';
 
-var _currentID = 'C_8';
+var _currentID = null;
 var _cultures = {};
 
 var _filter = '';
