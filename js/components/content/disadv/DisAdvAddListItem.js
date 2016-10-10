@@ -105,9 +105,11 @@ class DisAdvAddListItem extends Component {
 			args.tier = this.state.selected_tier;
 		} else if (['DISADV_34','DISADV_50'].indexOf(disadv.id) > -1) {
 			if (this.state.selected_tier > 0) {
-				ap = disadv.ap * this.state.selected_tier;
+				let maxCurrentTier = DisAdvStore.get(disadv.id).active.reduce((a,b) => b[1] > a ? b[1] : a, 0);
+				ap = maxCurrentTier >= this.state.selected_tier ? 0 : disadv.ap * (this.state.selected_tier - maxCurrentTier);
 			}
-			var sel = disadv.sel.filter(e => this.state.selected_tier === e[2]);
+			let currentSelIDs = new Set(DisAdvStore.get(disadv.id).active.map(e => e[0]));
+			let sel = disadv.sel.filter(e => this.state.selected_tier === e[2] && !currentSelIDs.has(e[1]));
 			selectElement = (
 				<Dropdown
 					value={this.state.selected}

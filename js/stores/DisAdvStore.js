@@ -1,5 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
+import ELStore from './ELStore';
 import ListStore from './ListStore';
 import RaceStore from './rcp/RaceStore';
 import ActionTypes from '../constants/ActionTypes';
@@ -153,7 +154,7 @@ function _updateTier(id, tier, sid) {
 	ListStore.set(id, obj);
 }
 
-function _assignRCP(selections) {
+function _assignRCP() {
 	var list = new Set();
 
 	RaceStore.getCurrent().auto_adv.forEach(e => {
@@ -310,14 +311,26 @@ var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 					let ap;
 					switch (id) {
 						case 'ADV_4':
-						case 'ADV_16':
-						case 'ADV_17':
-						case 'DISADV_48':
+						case 'DISADV_48': {
 							sid = adv.active[i];
-							var skill = ListStore.get(sid);
+							let skill = ListStore.get(sid);
 							add = skill.name;
 							ap = adv.ap[skill.skt - 1];
 							break;
+						}
+						case 'ADV_16':
+						case 'ADV_17': {
+							sid = adv.active[i];
+							let skill = ListStore.get(sid);
+							let counter = 0;
+							active.forEach(e => {
+								if (e === sid) counter++;
+							});
+							add = skill.name;
+							ap = adv.ap[skill.skt - 1];
+							disabled = ELStore.getStart().max_skill + counter === skill.fw;
+							break;
+						}
 						case 'ADV_28':
 						case 'ADV_29':
 							if (typeof active[i] === 'number') {
@@ -331,14 +344,23 @@ var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 							}
 							break;
 						case 'DISADV_1':
-						case 'DISADV_34':
-						case 'DISADV_50':
 							sid = adv.active[i][0];
 							add = typeof sid === 'number' ? adv.sel[sid - 1][0] : sid;
 							tier = adv.active[i][1];
 							tiers = adv.tiers;
 							ap = adv.ap;
 							break;
+						case 'DISADV_34':
+						case 'DISADV_50': {
+							let maxCurrentTier = active.reduce((a,b) => b[1] > a ? b[1] : a, 0);
+							let subMaxCurrentTier = active.reduce((a,b) => b[1] > a && b[1] < maxCurrentTier ? b[1] : a, 0);
+							sid = adv.active[i][0];
+							add = typeof sid === 'number' ? adv.sel[sid - 1][0] : sid;
+							tier = adv.active[i][1];
+							tiers = adv.tiers;
+							ap = maxCurrentTier > tier || active.filter(e => e[1] === tier).length > 1 ? 0 : adv.ap * (tier - subMaxCurrentTier);
+							break;
+						}
 						case 'DISADV_33': {
 							sid = Array.isArray(adv.active[i]) ? adv.active[i].join('&') : adv.active[i];
 							let sid_alt = Array.isArray(adv.active[i]) ? adv.active[i][0] : sid;

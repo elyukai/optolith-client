@@ -35,6 +35,14 @@ export default keyMirror({
 	// ProfileStore
 	UPDATE_HERO_NAME: null,
 	UPDATE_HERO_PORTRAIT: null,
+	UPDATE_HAIRCOLOR: null,
+	UPDATE_EYECOLOR: null,
+	UPDATE_SIZE: null,
+	UPDATE_WEIGHT: null,
+	REROLL_HAIRCOLOR: null,
+	REROLL_EYECOLOR: null,
+	REROLL_SIZE: null,
+	REROLL_WEIGHT: null,
 
 	RECEIVE_HERO: null,
 	UNLOAD_HERO: null,

@@ -1,5 +1,4 @@
 import BorderButton from '../../layout/BorderButton';
-import Dropdown from '../../layout/Dropdown';
 import LiturgiesActions from '../../../actions/LiturgiesActions';
 import LiturgiesStore from '../../../stores/LiturgiesStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';

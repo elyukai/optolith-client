@@ -1,7 +1,6 @@
 import Cultures from './Cultures';
 import CultureStore from '../../../stores/rcp/CultureStore';
 import Professions from './Professions';
-import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import Races from './Races';
 import RaceStore from '../../../stores/rcp/RaceStore';
 import React, { Component } from 'react';

@@ -1,5 +1,4 @@
 import BorderButton from '../../layout/BorderButton';
-import Dropdown from '../../layout/Dropdown';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
