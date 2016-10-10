@@ -31,6 +31,19 @@
 
 			.scroll-inner {
 				padding: 0 35px;
+				display: flex;
+				flex-wrap: wrap;
+
+				> div:not(.btn):not(.iconbutton):not(.textfield):not(.dropdown), > h2, > h3, > h4, > ul {
+					flex: 1 0 auto;
+					width: 100%;
+				}
+
+				.textfield, .dropdown {
+					+ .iconbutton {
+						margin: 10px 0 10px 11px;
+					}
+				}
 			}
 		}
 

@@ -1,5 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
+import saveHero from '../utils/saveHero';
 
 var TabActions = {
 	openTab: function(tab) {
@@ -27,11 +28,7 @@ var TabActions = {
 		
 	},
 	saveHero: function() {
-		
-		var heroCtrl = CharbaseStore.getHeroCore();
-		
-		WebAPIUtils.saveHero(heroCtrl);
-		
+		saveHero();
 	},
 	clearCurrentHero: function() {
 

@@ -68,7 +68,10 @@ function _rerollWeight() {
 		let elements = Array.from({ length: e[0] }, () => e[1]);
 		arr.push(...elements);
 	});
-	_weight = _size + base + arr.map(e => {
+	_weight = (parseInt(_size) || do {
+		_rerollSize();
+		_size;
+	}) + base + arr.map(e => {
 		let result = dice(Math.abs(e));
 		if (new Set(['R_1','R_2','R_3','R_4','R_5','R_6','R_7']).has(raceID)) {
 			return result % 2 > 0 ? -result : result;

@@ -151,7 +151,7 @@ class TitleBar extends Component {
 					<div className="right">
 						<div className="ap">{ap - used} AP</div>
 						<IconButton icon="&#xE166;" disabled />
-						<BorderButton label="Speichern" disabled />
+						<BorderButton label="Speichern" onClick={TabActions.saveHero} />
 					</div>
 				);
 				break;

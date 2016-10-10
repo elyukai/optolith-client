@@ -121,6 +121,10 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
+	getForSave: function() {
+		return { _max, _used, _rcp, _adv, _adv_mag, _adv_kar, _disadv, _disadv_mag, _disadv_kar };
+	},
+
 	get: function() {
 		return _max;
 	},
