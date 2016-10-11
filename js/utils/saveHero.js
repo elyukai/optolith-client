@@ -1,25 +1,48 @@
 import APStore from '../stores/APStore';
+import AttributeStore from '../stores/AttributeStore';
+import CombatTechniquesStore from '../stores/CombatTechniquesStore';
 import CultureStore from '../stores/rcp/CultureStore';
-import ELStore from '../stores/ListStore';
-import ListStore from '../stores/ListStore';
+import DisAdvStore from '../stores/DisAdvStore';
+import ELStore from '../stores/ELStore';
+import LiturgiesStore from '../stores/LiturgiesStore';
 import ProfessionStore from '../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../stores/rcp/ProfessionVariantStore';
+import ProfileStore from '../stores/ProfileStore';
 import RaceStore from '../stores/rcp/RaceStore';
+import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
+import SpellsStore from '../stores/SpellsStore';
+import TalentsStore from '../stores/TalentsStore';
+import WebAPIUtils from './WebAPIUtils';
 
 export default () => {
-	var obj = {
-		ap: APStore.getForSave()
-	};
+	var data = [
+		{
+			id: 'H_0',
+			name: ProfileStore.getName(),
+			avatar: ProfileStore.getPortrait(),
+			ap: APStore.getForSave(),
+			el: ELStore.getStartID(),
+			r: RaceStore.getCurrentID(),
+			c: CultureStore.getCurrentID(),
+			p: ProfessionStore.getCurrentID(),
+			pv: ProfessionVariantStore.getCurrentID()
+		},
+		{
+			sex: ProfileStore.getGender(),
+			pers: ProfileStore.getAppearance(),
+			attr: AttributeStore.getForSave(),
+			disadv: DisAdvStore.getForSave(),
+			talents: TalentsStore.getForSave(),
+			ct: CombatTechniquesStore.getForSave(),
+			spells: SpellsStore.getForSave(),
+			chants: LiturgiesStore.getForSave(),
+			sa: SpecialAbilitiesStore.getForSave()
+		}
+	];
 
-	var json = JSON.stringify(obj);
-    var blob = new Blob([json], {type: "application/json"});
-    var url  = window.URL.createObjectURL(blob);
-    window.open(url);
-	// window.open('data:application/json;' + json);
-	// var w = window.open();
-	// w.document.open();
-	// w.document.write('<html><body><pre>' + json + '</pre></body></html>');
-    // w.document.close();
+	var json = JSON.stringify(data);
+
+	WebAPIUtils.saveHero(json);
 
 	return true;
 };

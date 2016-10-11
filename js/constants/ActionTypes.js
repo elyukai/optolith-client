@@ -27,10 +27,11 @@ export default keyMirror({
 	COLLAPSE_HEROES: null,
 	
 	// HeroesStore
-	FILTER_HEROLIST_BY: null,
-	SORT_HEROLIST_BY: null,
-	CREATE_NEW_HERO: null,
 	RECEIVE_RAW_HEROLIST: null,
+	FILTER_HEROLIST: null,
+	SORT_HEROLIST: null,
+	CREATE_NEW_HERO: null,
+	RECEIVE_HERO: null,
 	
 	// ProfileStore
 	UPDATE_HERO_NAME: null,
@@ -44,7 +45,6 @@ export default keyMirror({
 	REROLL_SIZE: null,
 	REROLL_WEIGHT: null,
 
-	RECEIVE_HERO: null,
 	UNLOAD_HERO: null,
 	CLEAR_HERO: null,
 

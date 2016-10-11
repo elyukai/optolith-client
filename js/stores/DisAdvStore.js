@@ -271,6 +271,23 @@ var DisAdvStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
+	getForSave: function() {
+		var all = [].concat(ListStore.getAllByCategory(CATEGORY_1), ListStore.getAllByCategory(CATEGORY_2));
+		var result = new Map();
+		all.forEach(e => {
+			let { active, id, sid, tier } = e;
+			if (typeof active === 'boolean' && active) {
+				result.set(id, { sid, tier });
+			} else if (Array.isArray(active) && active.length > 0) {
+				result.set(id, active);
+			}
+		});
+		return {
+			active: Array.from(result),
+			_showRating
+		};
+	},
+
 	get: function(id) {
 		return ListStore.get(id);
 	},

@@ -74,6 +74,21 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
+	getForSave: function() {
+		var all = ListStore.getAllByCategory(CATEGORY);
+		var result = new Map();
+		all.forEach(e => {
+			let { id, fw } = e;
+			if (fw > 0) {
+				result.set(id, fw);
+			}
+		});
+		return {
+			active: Array.from(result),
+			_talentRating
+		};
+	},
+
 	get: function(id) {
 		return ListStore.get(id);
 	},

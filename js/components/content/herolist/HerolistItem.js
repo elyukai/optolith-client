@@ -12,13 +12,15 @@ import classNames from 'classnames';
 class HerolistItem extends Component {
 
 	static propTypes = {
-		ap: PropTypes.number,
-		apUsed: PropTypes.number,
-		avatar: PropTypes.string,
-		culture: PropTypes.string,
+		id: PropTypes.string,
 		name: PropTypes.string,
-		profession: PropTypes.string,
-		race: PropTypes.string
+		avatar: PropTypes.string,
+		ap: PropTypes.object,
+		el: PropTypes.string,
+		r: PropTypes.string,
+		c: PropTypes.string,
+		p: PropTypes.string,
+		pv: PropTypes.string
 	};
 
 	constructor(props) {
@@ -29,7 +31,8 @@ class HerolistItem extends Component {
 
 	render() {
 
-		const { ap, apUsed, avatar, culture, name, profession, professionVariant, race } = this.props;
+		const { name, avatar, ap, r, c, p, pv } = this.props;
+		const { _max: apTotal } = ap;
 
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
@@ -37,13 +40,13 @@ class HerolistItem extends Component {
 		var currentEL = 6;
 
 		for (let i = 0; i < elAp.length; i++) {
-			if (elAp[i] >= ap) {
+			if (elAp[i] >= apTotal) {
 				currentEL = i - 1;
 				break;
 			}
 		}
 
-		var elProgress = currentEL === 6 ? 1 : ((ap - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
+		var elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
 
 		return (
 			<li className="hero-list-item">
@@ -57,7 +60,7 @@ class HerolistItem extends Component {
 				<div className="main">
 					<h2>{name}</h2>
 					<div className="rcp">
-						{RaceStore.getNameByID(race)} • {CultureStore.getNameByID(culture)} • {ProfessionStore.getNameByID(profession)}{professionVariant ? ` (${ProfessionVariantStore.getNameByID(professionVariant)})` : ''}
+						{RaceStore.getNameByID(r)} • {CultureStore.getNameByID(c)} • {ProfessionStore.getNameByID(p)}{pv ? ` (${ProfessionVariantStore.getNameByID(pv)})` : ''}
 					</div>
 				</div>
 				<BorderButton label="Öffnen" onClick={this.load} />

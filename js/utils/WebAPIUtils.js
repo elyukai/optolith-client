@@ -4,13 +4,8 @@ import AccountStore from '../stores/core/AccountStore';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import jQuery from 'jQuery';
 import React from 'react';
-import reactAlert from './reactAlert';
 import ReactDOM from 'react-dom';
 import ServerActions from '../actions/ServerActions';
-
-function connectionError(error) {
-	reactAlert('Verbindung nicht möglich', `Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ${error}`);
-}
 
 var WebAPIUtils = {
 	getAllData: function() {
@@ -24,10 +19,7 @@ var WebAPIUtils = {
 						ServerActions.receiveLists(result);
 					},
 					error: function(error) {
-						connectionError(error);
-						AppDispatcher.dispatch({
-							actionType: ActionTypes.WAIT_END
-						});
+						ServerActions.connectionError(error);
 					}
 				}
 			);
@@ -206,18 +198,23 @@ var WebAPIUtils = {
 			);
 		});
 	},
-	getHero: function(heroid) {
-		return new Promise(function(resolve, reject){
-			jQuery.ajax(
-				{
-					url: 'http://cha5app.dsa-sh.de/php/gethero.php?hid=' + heroid,
-					type: 'GET',
-					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
-				}
-			);
-		});
+	loadHero: function(id) {
+		ServerActions.loadHeroSuccess(id, {});
+		// return new Promise(function(){
+		// 	jQuery.ajax(
+		// 		{
+		// 			url: 'http://cha5app.dsa-sh.de/php/gethero.php?hid=' + id,
+		// 			type: 'GET',
+		// 			dataType: 'text',
+		// 			success: function(result) {
+		// 				ServerActions.loadHeroSuccess(id, result);
+		// 			},
+		// 			error: function(error) {
+		// 				ServerActions.connectionError(error);
+		// 			}
+		// 		}
+		// 	);
+		// });
 	},
 	createNewHero: function(heroname) {
 		return new Promise(function(resolve, reject){
@@ -232,35 +229,30 @@ var WebAPIUtils = {
 			);
 		});
 	},
-	saveHero: function() {
-		// var herolist, heroPosition;
-			
-		// if (WebHeroList !== undefined) {
-		// 	herolist = JSON.parse(WebHeroList);
-		// } else {
-		// 	herolist = [];
-		// }
-			
-		// for (var i = 0; i < herolist.length; i++) {
-		// 	if (herolist[i].id === obj.id) {
-		// 		heroPosition = i;
-		// 		break;
-		// 	}
-		// }
-		
-		// if (heroPosition === undefined) {
-		// 	herolist.push(obj);
-		// 	herolist[herolist.length - 1].id = herolist.length;
-		// 	herolist[herolist.length - 1].g = 1;
-		// } else {
-		// 	herolist[heroPosition] = obj;
-		// }
-		
-		// WebHeroList = JSON.stringify(herolist);
-		
-		console.log('FEATURE MISSING');
-		
-		return true;
+	saveHero: function(data) {
+		// var blob = new Blob([json], { type: "application/json" });
+		// var url  = window.URL.createObjectURL(blob);
+		// window.open(url);
+		// window.open('data:application/json;' + json);
+		// var w = window.open();
+		// w.document.open();
+		// w.document.write('<html><body><pre>' + json + '</pre></body></html>');
+		// w.document.close();
+		return new Promise(function(){
+			jQuery.ajax(
+				{
+					url: 'http://cha5app.dsa-sh.de/php/save.php?short=' + data[0] + '&full=' + data[1],
+					type: 'POST',
+					dataType: 'json',
+					success: function() {
+						ServerActions.saveHeroSuccess();
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
+				}
+			);
+		});
 	},
 	deleteHero: function(heroid) {
 		return new Promise(function(resolve, reject){

@@ -12,7 +12,6 @@ const TRADITIONS = ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
 
 var _filter = '';
 var _sortOrder = 'name';
-var _view = true;
 
 function _activate(id) {
 	ListStore.activate(id);
@@ -36,10 +35,6 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
-}
-
-function _updateView(option) {
-	_view = option;
 }
 
 function _assignRCP(selections) {
@@ -138,6 +133,20 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 
 	removeChangeListener: function(callback) {
 		this.removeListener('change', callback);
+	},
+
+	getForSave: function() {
+		var all = ListStore.getAllByCategory(CATEGORY);
+		var result = new Map();
+		all.forEach(e => {
+			let { active, id, fw } = e;
+			if (active) {
+				result.set(id, fw);
+			}
+		});
+		return {
+			active: Array.from(result)
+		};
 	},
 
 	get: function(id) {
@@ -239,10 +248,6 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 
 	getSortOrder: function() {
 		return _sortOrder;
-	},
-
-	getView: function() {
-		return _view;
 	}
 
 });
@@ -257,10 +262,6 @@ SpellsStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.SORT_SPELLS:
 			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.UPDATE_SPELL_VIEW:
-			_updateView(payload.option);
 			break;
 
 		case ActionTypes.ACTIVATE_SPELL:

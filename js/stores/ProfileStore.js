@@ -4,6 +4,7 @@ import ActionTypes from '../constants/ActionTypes';
 import RaceStore from './rcp/RaceStore';
 import dice from '../utils/dice';
 
+var _id = null;
 var _name = 'Heldenname';
 var _gender = 'm';
 var _portrait = 'images/portrait.png';
@@ -11,6 +12,10 @@ var _hair = '';
 var _eyes = '';
 var _size = '';
 var _weight = '';
+
+function _updateID(id) {
+	_id = id;
+}
 
 function _updateName(text) {
 	_name = text;
@@ -95,6 +100,10 @@ var ProfileStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
+	getID: function() {
+		return _id;
+	},
+
 	getName: function() {
 		return _name;
 	},
@@ -105,6 +114,12 @@ var ProfileStore = Object.assign({}, EventEmitter.prototype, {
 
 	getPortrait: function() {
 		return _portrait;
+	},
+
+	getAppearance: function() {
+		return {
+			_hair, _eyes, _size, _weight
+		};
 	},
 
 	getHair: function() {
@@ -132,6 +147,17 @@ ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.CREATE_NEW_HERO:
 			_updateName(payload.name);
 			_updateGender(payload.gender);
+			break;
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateID(payload.id);
+			_updateName(payload.name);
+			// _updateGender(payload.gender);
+			_updatePortrait(payload.avatar);
+			// _updateHair(payload.pers._hair);
+			// _updateEyes(payload.pers._eyes);
+			// _updateSize(payload.pers._size);
+			// _updateWeight(payload.pers._weight);
 			break;
 
 		case ActionTypes.UPDATE_HERO_NAME:

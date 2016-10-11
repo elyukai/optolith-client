@@ -191,6 +191,10 @@ CultureStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.RECEIVE_HERO:
+			_updateCurrentID(payload.c);
+			break;
+
 		case ActionTypes.SELECT_RACE:
 			_updateCurrentID(null);
 			break;

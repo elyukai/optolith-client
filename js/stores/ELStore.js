@@ -126,6 +126,10 @@ ELStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_update(payload.el);
 			break;
 
+		case ActionTypes.RECEIVE_HERO:
+			_update(payload.el);
+			break;
+
 		case ActionTypes.CLEAR_HERO:
 			_update('EL_1');
 			break;

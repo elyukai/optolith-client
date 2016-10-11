@@ -2,6 +2,7 @@ import BorderButton from '../../layout/BorderButton';
 import CultureStore from '../../../stores/rcp/CultureStore';
 import HerolistActions from '../../../actions/HerolistActions';
 import HerolistItem from './HerolistItem';
+import HerolistStore from '../../../stores/core/HerolistStore';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import RaceStore from '../../../stores/rcp/RaceStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
@@ -12,62 +13,62 @@ import TextField from '../../layout/TextField';
 class Herolist extends Component {
 
 	state = {
-		list: [
-			{
-				id: 'H_2',
-				ap: 1460,
-				apUsed: 1459,
-				avatar: 'images/portrait.png',
-				culture: 'C_7',
-				name: 'Shimo ibn Rashdul',
-				profession: 'P_24',
-				professionVariant: null,
-				race: 'R_5'
-			},
-			{
-				id: 'H_1',
-				ap: 1160,
-				apUsed: 936,
-				avatar: 'images/portrait2.png',
-				culture: 'C_8',
-				name: 'Yendan Keres',
-				profession: 'P_16',
-				professionVariant: 'PV_52',
-				race: 'R_1'
-			}
-		]
+		list: HerolistStore.getAllForView(),
+		filter: HerolistStore.getFilter(),
+		sortOrder: HerolistStore.getSortOrder()
 	};
 
 	constructor(props) {
 		super(props);
 	}
+	
+	_updateHerolistStore = () => this.setState({ 
+		list: HerolistStore.getAllForView(),
+		filter: HerolistStore.getFilter(),
+		sortOrder: HerolistStore.getSortOrder()
+	});
 
 	filter = event => HerolistActions.filter(event.target.value);
 	sort = option => HerolistActions.sort(option);
 	showHeroCreation = () => HerolistActions.showHeroCreation();
+	
+	componentDidMount() {
+		HerolistStore.addChangeListener(this._updateHerolistStore );
+	}
+	
+	componentWillUnmount() {
+		HerolistStore.removeChangeListener(this._updateHerolistStore );
+	}
 
 	render() {
+
+		const { filter, list, sortOrder } = this.state;
+
 		return (
 			<section id="herolist">
 				<div className="page">
 					<div className="options">
-						<TextField hint="Suchen" value={''} onChange={this.filter} fullWidth disabled />
-						<RadioButtonGroup active={'name'} onClick={this.sort} array={[
-							{
-								name: 'Alphabetisch',
-								value: 'name'
-							},
-							{
-								name: 'AP',
-								value: 'ap'
-							}
-						]} disabled/>
+						<TextField hint="Suchen" value={filter} onChange={this.filter} fullWidth />
+						<RadioButtonGroup
+							active={sortOrder}
+							onClick={this.sort}
+							array={[
+								{
+									name: 'Alphabetisch',
+									value: 'name'
+								},
+								{
+									name: 'AP',
+									value: 'ap'
+								}
+							]}
+							/>
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} />
 					</div>
 					<Scroll className="list">
 						<ul>
 							{
-								this.state.list.map(hero => <HerolistItem key={hero.id} {...hero} />)
+								list.map(hero => <HerolistItem key={hero.id} {...hero} />)
 							}
 						</ul>
 					</Scroll>

@@ -17,7 +17,6 @@ class SpecialAbilities extends Component {
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
 		filter: SpecialAbilitiesStore.getFilter(),
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
-		view: SpecialAbilitiesStore.getView(),
 		showAddSlidein: false
 	};
 
@@ -29,8 +28,7 @@ class SpecialAbilities extends Component {
 		saActive: SpecialAbilitiesStore.getActiveForView(),
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
 		filter: SpecialAbilitiesStore.getFilter(),
-		sortOrder: SpecialAbilitiesStore.getSortOrder(),
-		view: SpecialAbilitiesStore.getView()
+		sortOrder: SpecialAbilitiesStore.getSortOrder()
 	});
 
 	filter = event => SpecialAbilitiesActions.filter(event.target.value);

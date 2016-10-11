@@ -134,7 +134,7 @@ class Overview extends Component {
 
 		for (let i = 0; i < elAp.length; i++) {
 			if (elAp[i] >= ap) {
-				currentEL = `EL_${i + 1}`;
+				currentEL = `EL_${i > 0 ? i : 1}`;
 				break;
 			}
 		}
