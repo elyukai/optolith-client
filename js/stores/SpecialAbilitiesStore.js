@@ -14,7 +14,6 @@ const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 
 
 var _filter = '';
 var _sortOrder = 'groups';
-var _view = true;
 
 function _updateFilterText(text) {
 	_filter = text;
@@ -22,10 +21,6 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
-}
-
-function _updateView(option) {
-	_view = option;
 }
 
 function _activate(payload) {
@@ -232,6 +227,22 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 	validate: function(id) {
 		let obj = this.get(id);
 		return validate(obj.req);
+	},
+
+	getForSave: function() {
+		var all = ListStore.getAllByCategory(CATEGORY);
+		var result = new Map();
+		all.forEach(e => {
+			let { active, id, sid, tier } = e;
+			if (typeof active === 'boolean' && active) {
+				result.set(id, { sid, tier });
+			} else if (Array.isArray(active) && active.length > 0) {
+				result.set(id, active);
+			}
+		});
+		return {
+			active: Array.from(result)
+		};
 	},
 
 	get: function(id) {
@@ -537,10 +548,6 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 
 	getSortOrder: function() {
 		return _sortOrder;
-	},
-
-	getView: function() {
-		return _view;
 	}
 
 });
@@ -555,10 +562,6 @@ SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload 
 
 		case ActionTypes.SORT_SPECIALABILITIES:
 			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.UPDATE_SPECIALABILITY_VIEW:
-			_updateView(payload.option);
 			break;
 
 		case ActionTypes.ACTIVATE_SPECIALABILITY:

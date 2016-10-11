@@ -10,7 +10,6 @@ const CATEGORY = 'liturgies';
 
 var _filter = '';
 var _sortOrder = 'name';
-var _view = true;
 
 function _activate(id) {
 	ListStore.activate(id);
@@ -36,11 +35,7 @@ function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
-function _updateView(option) {
-	_view = option;
-}
-
-function _assignRCP(selections) {
+function _assignRCP() {
 	var list = [];
 
 	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
@@ -111,6 +106,20 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 
 	removeChangeListener: function(callback) {
 		this.removeListener('change', callback);
+	},
+
+	getForSave: function() {
+		var all = ListStore.getAllByCategory(CATEGORY);
+		var result = new Map();
+		all.forEach(e => {
+			let { active, id, fw } = e;
+			if (active) {
+				result.set(id, fw);
+			}
+		});
+		return {
+			active: Array.from(result)
+		};
 	},
 
 	get: function(id) {
@@ -193,16 +202,17 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 		return _filterAndSort(liturgies);
 	},
 
+	isActivationDisabled: function() {
+		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
+		return PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
+	},
+
 	getFilter: function() {
 		return _filter;
 	},
 
 	getSortOrder: function() {
 		return _sortOrder;
-	},
-
-	getView: function() {
-		return _view;
 	}
 
 });
@@ -217,10 +227,6 @@ LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.SORT_LITURGIES:
 			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.UPDATE_LITURGY_VIEW:
-			_updateView(payload.option);
 			break;
 
 		case ActionTypes.ACTIVATE_LITURGY:

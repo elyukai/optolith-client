@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import RaceStore from './RaceStore';
 import ActionTypes from '../../constants/ActionTypes';
 
-var _currentID = 'C_8';
+var _currentID = null;
 var _cultures = {};
 
 var _filter = '';
@@ -190,6 +190,10 @@ var CultureStore = Object.assign({}, EventEmitter.prototype, {
 CultureStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateCurrentID(payload.c);
+			break;
 
 		case ActionTypes.SELECT_RACE:
 			_updateCurrentID(null);

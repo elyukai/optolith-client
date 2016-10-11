@@ -55,7 +55,6 @@ class InGame extends Component {
 	
 	load = () => InGameActions.load();
 	resetAll = () => InGameActions.resetAll();
-	save = () => InGameActions.save();
 	addFighter = () => InGameActions.addFighter();
 	
 	setOnline = event => InGameActions.setOnline(event.target.value);
@@ -82,7 +81,6 @@ class InGame extends Component {
 					</div>
 					<IconButton className="add-fighter" icon="&#xE7FE;" onClick={this.addFighter} />
 					<IconButton className="reset-all" icon="&#xE16C;" onClick={this.resetAll} />
-					<BorderButton label="Speichern" onClick={this.save} />
 				</div>
 				<div className="ingame-content">
 					<InGameControls

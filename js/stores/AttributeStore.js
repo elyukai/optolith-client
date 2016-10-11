@@ -75,6 +75,13 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
+	getForSave: function() {
+		return {
+			values: ListStore.getAllByCategory(CATEGORY).map(e => [e.value, e.mod]),
+			_le, _le_add, _ae_add, _ke_add, _sk, _zk, _gs
+		};
+	},
+
 	get: function(id) {
 		return ListStore.get(id);
 	},

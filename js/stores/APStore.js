@@ -6,7 +6,6 @@ import ListStore from '../stores/ListStore';
 import RaceStore from './rcp/RaceStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ProfessionVariantStore from './rcp/ProfessionVariantStore';
-import SpecialAbilitiesStore from './SpecialAbilitiesStore';
 import ActionTypes from '../constants/ActionTypes';
 import reactAlert from '../utils/reactAlert';
 import reqPurchase from '../utils/reqPurchase';
@@ -89,6 +88,18 @@ function _calculateRCPDiff(index, next) {
 	_rcp[index] = next;
 }
 
+function _updateAll(obj) {
+	_max = obj._max;
+	_used = obj._used;
+	_rcp = obj._rcp;
+	_adv = obj._adv;
+	_adv_mag = obj._adv_mag;
+	_adv_kar = obj._adv_kar;
+	_disadv = obj._disadv;
+	_disadv_mag = obj._disadv_mag;
+	_disadv_kar = obj._disadv_kar;
+}
+
 function _assignRCP(selections) {
 	if (!selections.useCulturePackage) {
 		_used -= _rcp[1];
@@ -119,6 +130,10 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 
 	removeChangeListener: function(callback) {
 		this.removeListener('change', callback);
+	},
+
+	getForSave: function() {
+		return { _max, _used, _rcp, _adv, _adv_mag, _adv_kar, _disadv, _disadv_mag, _disadv_kar };
 	},
 
 	get: function() {
@@ -191,6 +206,10 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.ap);
+			break;
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:

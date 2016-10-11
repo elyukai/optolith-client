@@ -16,6 +16,7 @@ class SkillListItem extends Component {
 		skt: PropTypes.number,
 		isNotActive: PropTypes.bool,
 		activate: PropTypes.func,
+		activateDisabled: PropTypes.bool,
 		addPoint: PropTypes.func,
 		addDisabled: PropTypes.bool,
 		removePoint: PropTypes.func,
@@ -28,7 +29,7 @@ class SkillListItem extends Component {
 
 	render() {
 
-		const { typ, untyp, group, name, fw, children, check, checkmod, skt, isNotActive, activate, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+		const { typ, untyp, group, name, fw, children, check, checkmod, skt, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
 
 		const className = classNames({
 			'typ': typ,
@@ -68,7 +69,11 @@ class SkillListItem extends Component {
 		
 		const btnElement = isNotActive ? (
 			<td className="inc">
-				<BorderButton label="Aktivieren" onClick={activate} />
+				<BorderButton
+					label="Aktivieren"
+					onClick={activate}
+					disabled={activateDisabled}
+					/>
 			</td>
 		) : (
 			<td className="inc">

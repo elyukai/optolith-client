@@ -114,6 +114,10 @@ ProfessionVariantStore.dispatchToken = AppDispatcher.register( function( payload
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.RECEIVE_HERO:
+			_updateCurrentID(payload.pv);
+			break;
+
 		case ActionTypes.SELECT_RACE:
 		case ActionTypes.SELECT_CULTURE:
 		case ActionTypes.SELECT_PROFESSION:

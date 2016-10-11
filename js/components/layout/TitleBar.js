@@ -2,7 +2,7 @@ import APStore from '../../stores/APStore';
 import Avatar from './Avatar';
 import BorderButton from './BorderButton';
 import IconButton from './IconButton';
-import PhaseActions from '../../actions/PhaseActions';
+import InGameActions from '../../actions/InGameActions';
 import PhaseStore from '../../stores/PhaseStore';
 import ProfileStore from '../../stores/ProfileStore';
 import React, { Component, PropTypes } from 'react';
@@ -72,8 +72,6 @@ class TitleBar extends Component {
 		ProfileStore.removeChangeListener(this._updateProfileStore);
 	}
 
-	increasePhase = () => PhaseActions.increasePhase();
-	resetPhase = () => PhaseActions.resetPhase();
 	back = () => TabActions.showSection('main');
 
 	render() {
@@ -90,25 +88,22 @@ class TitleBar extends Component {
 				showBackNav = false;
 				tabsElement = (
 					<TitleBarNav active={tab} tabs={[
-						{ label: 'Startseite', tag: 'home', disabled: true },
-						{ label: 'Konto', tag: 'account', disabled: true },
+						{ label: 'Start', tag: 'home', disabled: true },
 						{ label: 'Helden', tag: 'herolist' },
 						{ label: 'Gruppen', tag: 'grouplist' },
+						{ label: 'Konto', tag: 'account', disabled: true },
 						{ label: 'Über', tag: 'about' }
 					]} />
 				);
 
 				actionsElement = (
 					<div className="right">
-						<IconButton icon="&#xE8B8;" disabled />
 						<BorderButton label="Abmelden" disabled />
 					</div>
 				);
 				break;
 			}
 			case 'hero': {
-				var phaseElement;
-
 				switch (phase) {
 					case 1:
 						tabsElement = (
@@ -117,7 +112,6 @@ class TitleBar extends Component {
 								{ label: 'Spezies, Kultur & Profession', tag: 'rcp' }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 2:
 						tabsElement = (
@@ -128,7 +122,6 @@ class TitleBar extends Component {
 								{ label: 'Fertigkeiten', tag: 'skills' }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 3:
 						tabsElement = (
@@ -139,7 +132,6 @@ class TitleBar extends Component {
 								{ label: 'Gegenstände', tag: 'items', disabled: true }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE044;" primary onClick={this.increasePhase} />;
 						break;
 					case 4:
 						tabsElement = (
@@ -152,7 +144,6 @@ class TitleBar extends Component {
 								{ label: 'Items', tag: 'items', disabled: true }
 							]} />
 						);
-						phaseElement = <IconButton icon="&#xE8B3;" primary onClick={this.resetPhase} />;
 						break;
 				}
 
@@ -160,8 +151,7 @@ class TitleBar extends Component {
 					<div className="right">
 						<div className="ap">{ap - used} AP</div>
 						<IconButton icon="&#xE166;" disabled />
-						<BorderButton label="Speichern" disabled />
-						{phaseElement}
+						<BorderButton label="Speichern" onClick={TabActions.saveHero} />
 					</div>
 				);
 				break;
@@ -175,7 +165,7 @@ class TitleBar extends Component {
 
 				actionsElement = (
 					<div className="right">
-						<BorderButton label="Speichern" disabled />
+						<BorderButton label="Speichern" onClick={InGameActions.save} />
 					</div>
 				);
 				break;

@@ -30,23 +30,20 @@ var HerolistActions = {
 			});	
 		});
 	},
-	filter: function(filter) {
+	filter: function(text) {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.FILTER_HEROLIST_BY,
-			filter
+			actionType: ActionTypes.FILTER_HEROLIST,
+			text
 		});
 	},
-	sort: function(sortOrder) {
+	sort: function(option) {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.SORT_HEROLIST_BY,
-			sortOrder
+			actionType: ActionTypes.SORT_HEROLIST,
+			option
 		});
 	},
 	load: function(id) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_HERO,
-			id
-		});
+		WebAPIUtils.loadHero(id);
 	},
 	showHeroCreation: function() {
 		var node = createDialogNode();

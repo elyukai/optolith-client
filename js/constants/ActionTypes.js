@@ -27,16 +27,24 @@ export default keyMirror({
 	COLLAPSE_HEROES: null,
 	
 	// HeroesStore
-	FILTER_HEROLIST_BY: null,
-	SORT_HEROLIST_BY: null,
-	CREATE_NEW_HERO: null,
 	RECEIVE_RAW_HEROLIST: null,
+	FILTER_HEROLIST: null,
+	SORT_HEROLIST: null,
+	CREATE_NEW_HERO: null,
+	RECEIVE_HERO: null,
 	
 	// ProfileStore
 	UPDATE_HERO_NAME: null,
 	UPDATE_HERO_PORTRAIT: null,
+	UPDATE_HAIRCOLOR: null,
+	UPDATE_EYECOLOR: null,
+	UPDATE_SIZE: null,
+	UPDATE_WEIGHT: null,
+	REROLL_HAIRCOLOR: null,
+	REROLL_EYECOLOR: null,
+	REROLL_SIZE: null,
+	REROLL_WEIGHT: null,
 
-	RECEIVE_HERO: null,
 	UNLOAD_HERO: null,
 	CLEAR_HERO: null,
 

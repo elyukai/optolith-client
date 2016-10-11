@@ -5,7 +5,7 @@ import RaceStore from './RaceStore';
 import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
-var _currentID = 'P_16';
+var _currentID = null;
 var _professions = {};
 
 var _filter = '';
@@ -191,6 +191,10 @@ var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
 ProfessionStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateCurrentID(payload.p);
+			break;
 
 		case ActionTypes.SELECT_RACE:
 		case ActionTypes.SELECT_CULTURE:

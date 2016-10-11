@@ -161,6 +161,10 @@ RaceStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.RECEIVE_HERO:
+			_updateCurrentID(payload.r);
+			break;
+
 		case ActionTypes.SELECT_RACE:
 			_updateCurrentID(payload.raceID);
 			break;

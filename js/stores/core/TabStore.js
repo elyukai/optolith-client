@@ -98,9 +98,9 @@ TabStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.CREATE_NEW_HERO:
 			_updateSection('hero', 'rcp');
 			break;
-
+			
 		case ActionTypes.RECEIVE_HERO:
-			_updateSection('hero');
+			_updateSection('hero', 'profile');
 			break;
 
 		case ActionTypes.ASSIGN_RCP_ENTRIES:
@@ -109,20 +109,6 @@ TabStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			
 		case ActionTypes.CLEAR_ACCOUNT:
 			_updateTab('login');
-			break;
-			
-		// case ActionTypes.SELECT_RACE:
-		// 	updateTab('culture');
-		// 	break;
-
-		// case ActionTypes.SELECT_CULTURE:
-		// 	updateTab('profession');
-		// 	break;
-			
-		case ActionTypes.INCREASE_PHASE:
-		case ActionTypes.RESET_PHASE:
-			AppDispatcher.waitFor([PhaseStore.dispatchToken]);
-			_updateByPhase();
 			break;
 			
 		default:
