@@ -11,6 +11,7 @@ import Attribute from './attributes/Attribute';
 import DisAdv from './disadv/DisAdv';
 import Grouplist from './grouplist/Grouplist';
 import Herolist from './herolist/Herolist';
+import Home from './home/Home';
 import Items from './items/Items';
 import Master from './master/Master';
 import Profile from './profile/Profile';
@@ -63,6 +64,9 @@ class Content extends Component {
 				tabElement = <DeleteAccount />;
 				break;
 
+			case 'home':
+				tabElement = <Home />;
+				break;
 			case 'herolist':
 				tabElement = <Herolist />;
 				break;

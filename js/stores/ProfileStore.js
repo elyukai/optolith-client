@@ -152,12 +152,12 @@ ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.RECEIVE_HERO:
 			_updateID(payload.id);
 			_updateName(payload.name);
-			// _updateGender(payload.gender);
+			_updateGender(payload.sex);
 			_updatePortrait(payload.avatar);
-			// _updateHair(payload.pers._hair);
-			// _updateEyes(payload.pers._eyes);
-			// _updateSize(payload.pers._size);
-			// _updateWeight(payload.pers._weight);
+			_updateHair(payload.pers._hair);
+			_updateEyes(payload.pers._eyes);
+			_updateSize(payload.pers._size);
+			_updateWeight(payload.pers._weight);
 			break;
 
 		case ActionTypes.UPDATE_HERO_NAME:

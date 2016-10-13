@@ -199,7 +199,15 @@ var WebAPIUtils = {
 		});
 	},
 	loadHero: function(id) {
-		ServerActions.loadHeroSuccess(id, {});
+		ServerActions.loadHeroSuccess(id, {
+			sex: 'm',
+			pers: {
+				_hair: 1,
+				_eyes: 1,
+				_size: 167,
+				_weight: 71
+			}
+		});
 		// return new Promise(function(){
 		// 	jQuery.ajax(
 		// 		{
@@ -230,29 +238,29 @@ var WebAPIUtils = {
 		});
 	},
 	saveHero: function(data) {
-		// var blob = new Blob([json], { type: "application/json" });
-		// var url  = window.URL.createObjectURL(blob);
-		// window.open(url);
+		var blob = new Blob([data], { type: "application/json" });
+		var url  = window.URL.createObjectURL(blob);
+		window.open(url);
 		// window.open('data:application/json;' + json);
 		// var w = window.open();
 		// w.document.open();
 		// w.document.write('<html><body><pre>' + json + '</pre></body></html>');
 		// w.document.close();
-		return new Promise(function(){
-			jQuery.ajax(
-				{
-					url: 'http://cha5app.dsa-sh.de/php/save.php?short=' + data[0] + '&full=' + data[1],
-					type: 'POST',
-					dataType: 'json',
-					success: function() {
-						ServerActions.saveHeroSuccess();
-					},
-					error: function(error) {
-						ServerActions.connectionError(error);
-					}
-				}
-			);
-		});
+		// return new Promise(function(){
+		// 	jQuery.ajax(
+		// 		{
+		// 			url: 'http://cha5app.dsa-sh.de/php/save.php?short=' + data[0] + '&full=' + data[1],
+		// 			type: 'POST',
+		// 			dataType: 'json',
+		// 			success: function() {
+		// 				ServerActions.saveHeroSuccess();
+		// 			},
+		// 			error: function(error) {
+		// 				ServerActions.connectionError(error);
+		// 			}
+		// 		}
+		// 	);
+		// });
 	},
 	deleteHero: function(heroid) {
 		return new Promise(function(resolve, reject){

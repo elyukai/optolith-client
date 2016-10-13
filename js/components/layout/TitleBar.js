@@ -88,9 +88,9 @@ class TitleBar extends Component {
 				showBackNav = false;
 				tabsElement = (
 					<TitleBarNav active={tab} tabs={[
-						{ label: 'Start', tag: 'home', disabled: true },
+						{ label: 'Start', tag: 'home' },
 						{ label: 'Helden', tag: 'herolist' },
-						{ label: 'Gruppen', tag: 'grouplist' },
+						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
 						{ label: 'Konto', tag: 'account', disabled: true },
 						{ label: 'Über', tag: 'about' }
 					]} />
@@ -98,7 +98,8 @@ class TitleBar extends Component {
 
 				actionsElement = (
 					<div className="right">
-						<BorderButton label="Abmelden" disabled />
+						<BorderButton label="Registrieren" disabled />
+						<BorderButton label="Anmelden" disabled />
 					</div>
 				);
 				break;

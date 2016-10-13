@@ -1,11 +1,12 @@
+import VersionStore from '../../../stores/core/VersionStore';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
 
 class About extends Component {
 
-	constructor(props) {
-		super(props);
-	}
+	state = {
+		version: VersionStore.get()
+	};
 
 	render() {
 		return (
@@ -47,7 +48,7 @@ class About extends Component {
 						<h3>Haftung für Inhalte</h3>
 						Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
 
-						<h2>Cha5App Browser Client v0.14</h2>
+						<h2>Cha5App Browser Client v{this.state.version}</h2>
 						<h2>Drittanbietersoftware</h2>
 						<div className="third-party-software">
 							browserify<br/>
