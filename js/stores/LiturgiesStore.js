@@ -5,8 +5,9 @@ import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
-const CATEGORY = 'liturgies';
+const CATEGORY = Categories.CHANTS;
 
 var _filter = '';
 var _sortOrder = 'name';
@@ -33,6 +34,15 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _updateAll(obj) {
+	obj.active.forEach(e => {
+		ListStore.activate(e[0]);
+		if (ListStore.get(e[0]).gr !== 3) {
+			ListStore.setSR(...e);
+		}
+	});
 }
 
 function _assignRCP() {
@@ -220,6 +230,10 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.chants);
+			break;
 
 		case ActionTypes.FILTER_LITURGIES:
 			_updateFilterText(payload.text);

@@ -6,8 +6,9 @@ import PhaseStore from './PhaseStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
-const CATEGORY = 'combattech';
+const CATEGORY = Categories.COMBAT_TECHNIQUES;
 
 var _filter = '';
 var _sortOrder = 'name';
@@ -26,6 +27,12 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _updateAll(obj) {
+	obj.active.forEach(e => {
+		ListStore.setSR(...e);
+	});
 }
 
 function _assignRCP(selections) {
@@ -173,6 +180,11 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 CombatTechniquesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.ct);
+			break;
+
 		case ActionTypes.FILTER_COMBATTECHNIQUES:
 			_updateFilterText(payload.text);
 			break;

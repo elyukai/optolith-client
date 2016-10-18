@@ -3,8 +3,8 @@ import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 import PhaseStore from '../PhaseStore';
 
-var _currentTab = 'profile';
-var _currentSection = 'hero';
+var _currentTab = 'herolist';
+var _currentSection = 'main';
 
 function _updateTab(tab) {
 	_currentTab = tab;

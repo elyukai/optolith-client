@@ -5,8 +5,9 @@ import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
-const CATEGORY = 'spells';
+const CATEGORY = Categories.SPELLS;
 
 const TRADITIONS = ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
 
@@ -35,6 +36,15 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _updateAll(obj) {
+	obj.active.forEach(e => {
+		ListStore.activate(e[0]);
+		if (ListStore.get(e[0]).gr !== 5) {
+			ListStore.setSR(...e);
+		}
+	});
 }
 
 function _assignRCP(selections) {
@@ -255,6 +265,10 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 SpellsStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.spells);
+			break;
 
 		case ActionTypes.FILTER_SPELLS:
 			_updateFilterText(payload.text);

@@ -7,8 +7,9 @@ import PhaseStore from './PhaseStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
-const CATEGORY = 'talents';
+const CATEGORY = Categories.TALENTS;
 
 var _filter = '';
 var _sortOrder = 'groups';
@@ -32,6 +33,13 @@ function _updateSortOrder(option) {
 
 function _updateTalentRating() {
 	_talentRating = !_talentRating;
+}
+
+function _updateAll(obj) {
+	obj.active.forEach(e => {
+		ListStore.setSR(...e);
+	});
+	_talentRating = obj._talentRating;
 }
 
 function _assignRCP(selections) {
@@ -172,6 +180,10 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 TalentsStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.talents);
+			break;
 
 		case ActionTypes.FILTER_TALENTS:
 			_updateFilterText(payload.text);

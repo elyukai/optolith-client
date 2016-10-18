@@ -2,12 +2,16 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
+import LiturgiesStore from './LiturgiesStore';
 import RaceStore from './rcp/RaceStore';
+import SpellsStore from './SpellsStore';
+import TalentsStore from './TalentsStore';
 import ActionTypes from '../constants/ActionTypes';
 import validate from '../utils/validate';
+import Categories from '../constants/Categories';
 
-const CATEGORY_1 = 'adv';
-const CATEGORY_2 = 'disadv';
+const CATEGORY_1 = Categories.ADVANTAGES;
+const CATEGORY_2 = Categories.DISADVANTAGES;
 
 var _filter = '';
 var _showRating = true;
@@ -31,13 +35,6 @@ function _activate(payload) {
 			case 'DISADV_48':
 				obj.active.push(sel);
 				new_sid = sel;
-				break;
-			case 'ADV_28':
-			case 'ADV_29':
-				if (input[0] === '' && input[1] === '')
-					obj.active.push(sel);
-				else if (obj.active.filter(e => e[0] === input[0]).length === 0)
-					obj.active.push(input);
 				break;
 			case 'DISADV_1':
 			case 'DISADV_34':
@@ -152,6 +149,36 @@ function _updateTier(id, tier, sid) {
 		obj.tier = tier;
 	}
 	ListStore.set(id, obj);
+}
+
+function _updateAll(payload) {
+	payload.active.forEach(e => {
+		let [ id, options ] = e;
+		var obj = ListStore.get(id);
+		if (obj.max !== null) {
+			ListStore.setProperty(id, 'active', options);
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_16':
+				case 'DISADV_48':
+					options.forEach(p => {
+						ListStore.addDependencies(obj.req, p);
+					});
+					break;
+				default:
+					options.forEach(() => {
+						ListStore.addDependencies(obj.req);
+					});
+			}
+		} else {
+			ListStore.activate(id);
+			ListStore.addDependencies(obj.req);
+			for (let property in options) {
+				ListStore.setProperty(id, property, options[property]);
+			}
+		}
+	});
+	_showRating = payload._showRating;
 }
 
 function _assignRCP() {
@@ -571,6 +598,10 @@ DisAdvStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.disadv);
+			break;
+
 		case ActionTypes.FILTER_DISADV:
 			_updateFilterText(payload.text);
 			break;
@@ -596,6 +627,7 @@ DisAdvStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:
+			AppDispatcher.waitFor([LiturgiesStore.dispatchToken, SpellsStore.dispatchToken, TalentsStore.dispatchToken]);
 			DisAdvStore.init(payload.adv, payload.disadv);
 			break;
 		

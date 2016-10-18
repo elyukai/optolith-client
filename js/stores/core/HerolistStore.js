@@ -3,16 +3,29 @@ import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
 var _heroes = {
+
 	'H_0': {
+		client_version: '1.0.0',
+		date: new Date('2016-10-18T16:18:28.420Z'),
 		id: 'H_0',
 		name: 'Shimo ibn Rashdul',
 		avatar: 'images/portrait.png',
-		ap: { _max: 1460, _used: 1459 },
+		ap: {
+			_max: 1100,
+			_used: 799,
+			_rcp: [0, 12, 207, 14],
+			_adv: 63,
+			_adv_mag: 0,
+			_adv_kar: 0,
+			_disadv: 39,
+			_disadv_mag: 0,
+			_disadv_kar: 0
+		},
 		el: 'EL_3',
-		r: 'R_5',
-		c: 'C_7',
-		p: 'P_24',
-		pv: null
+		r: 'R_1',
+		c: 'C_8',
+		p: 'P_6',
+		pv: 'PV_21'
 	},
 	'H_1': {
 		id: 'H_1',

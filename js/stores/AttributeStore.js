@@ -5,8 +5,9 @@ import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
 import RaceStore from './rcp/RaceStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
-const CATEGORY = 'attributes';
+const CATEGORY = Categories.ATTRIBUTES;
 
 var _le = 5;
 var _le_add = 0;
@@ -36,6 +37,20 @@ function _addMaxEnergyPoint(id) {
 			_ke_add++;
 			break;
 	}
+}
+
+function _updateAll(obj) {
+	obj.values.forEach(e => {
+		ListStore.setProperty(e[0], 'value', e[1]);
+		ListStore.setProperty(e[0], 'mod', e[2]);
+	});
+	_le = obj._le;
+	_le_add = obj._le_add;
+	_ae_add = obj._ae_add;
+	_ke_add = obj._ke_add;
+	_sk = obj._sk;
+	_zk = obj._zk;
+	_gs = obj._gs;
 }
 
 function _assignRCP(selections) {
@@ -77,7 +92,7 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 
 	getForSave: function() {
 		return {
-			values: ListStore.getAllByCategory(CATEGORY).map(e => [e.value, e.mod]),
+			values: ListStore.getAllByCategory(CATEGORY).map(e => [e.id, e.value, e.mod]),
 			_le, _le_add, _ae_add, _ke_add, _sk, _zk, _gs
 		};
 	},
@@ -154,6 +169,10 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.attr);
+			break;
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 			_addPoint(payload.id);

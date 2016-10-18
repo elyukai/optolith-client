@@ -12,11 +12,14 @@ import RaceStore from '../stores/rcp/RaceStore';
 import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
+import VersionStore from '../stores/core/VersionStore';
 import WebAPIUtils from './WebAPIUtils';
 
 export default () => {
 	var data = [
 		{
+			client_version: VersionStore.get(),
+			date: (new Date()).toJSON(),
 			id: 'H_0',
 			name: ProfileStore.getName(),
 			avatar: ProfileStore.getPortrait(),

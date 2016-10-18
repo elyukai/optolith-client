@@ -7,9 +7,10 @@ import ProfessionStore from './rcp/ProfessionStore';
 import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import TalentsStore from './TalentsStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 import validate from '../utils/validate';
 
-const CATEGORY = 'special';
+const CATEGORY = Categories.SPECIAL_ABILITIES;
 const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
 var _filter = '';
@@ -28,7 +29,6 @@ function _activate(payload) {
 	var addreq = [];
 	if (obj.max !== null) {
 		if (obj.id === 'SA_10') {
-			console.log(payload);
 			if (payload.input === '') {
 				obj.active.push([payload.sel, payload.sel2]);
 				addreq.push([payload.sel, obj.active.filter(e => e[0] === payload.sel).length * 6]);
@@ -107,6 +107,40 @@ function _updateTier(id, tier, sid) {
 		obj.tier = tier;
 	}
 	ListStore.set(id, obj);
+}
+
+function _updateAll(payload) {
+	payload.active.forEach(e => {
+		let [ id, options ] = e;
+		var obj = ListStore.get(id);
+		if (obj.max !== null) {
+			ListStore.setProperty(id, 'active', options);
+			switch (id) {
+				case 'SA_10': {
+					let counter = new Map();
+					options.forEach(p => {
+						if (counter.has(p[0])) {
+							counter.set(p[0], counter.get(p[0]) + 1);
+						} else {
+							counter.set(p[0], 1);
+						}
+						ListStore.addDependencies(obj.req.concat([[p[0], counter.get(p[0]) * 6]]));
+					});
+					break;
+				}
+				default:
+					options.forEach(() => {
+						ListStore.addDependencies(obj.req);
+					});
+			}
+		} else {
+			ListStore.activate(id);
+			ListStore.addDependencies(obj.req);
+			for (let property in options) {
+				ListStore.setProperty(id, property, options[property]);
+			}
+		}
+	});
 }
 
 function _assignRCP(selections) {
@@ -555,6 +589,10 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload.sa);
+			break;
 
 		case ActionTypes.FILTER_SPECIALABILITIES:
 			_updateFilterText(payload.text);

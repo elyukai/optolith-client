@@ -118,6 +118,10 @@ var ListStore = Object.assign({}, EventEmitter.prototype, {
 		_list[id].fw = value;
 	},
 
+	setProperty: function(id, property, value) {
+		_list[id][property] = value;
+	},
+
 	addToProperty: function(id, property, value) {
 		_list[id][property] += value;
 	},
