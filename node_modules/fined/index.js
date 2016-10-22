@@ -4,7 +4,6 @@ var fs = require('fs');
 var path = require('path');
 
 var isString = require('lodash.isstring');
-var isArray = require('lodash.isarray');
 var isPlainObject = require('lodash.isplainobject');
 var isEmpty = require('lodash.isempty');
 var pick = require('lodash.pick');
@@ -132,7 +131,7 @@ function createExtensionArray(exts) {
     return [exts];
   }
 
-  if (isArray(exts)) {
+  if (Array.isArray(exts)) {
     exts = exts.filter(isString);
     return (exts.length > 0) ? exts : [''];
   }

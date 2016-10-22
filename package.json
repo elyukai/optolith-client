@@ -24,8 +24,14 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-1": "^6.13.0",
     "babel-preset-stage-2": "^6.13.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0",
     "eslint": "^2.13.1",
-    "eslint-plugin-react": "^5.2.2"
+    "eslint-plugin-react": "^5.2.2",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
   },
   "scripts": {
     "watch": "watchify -t [babelify] js/AppBootstrap.js -o dist/bundle.js -v",

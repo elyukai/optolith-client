@@ -19,35 +19,41 @@ var mm = require('micromatch');
  */
 
 module.exports = function(patterns, options) {
+  options = options || {};
+  var cwd = path.resolve(resolveDir(options.cwd || ''));
+
   if (typeof patterns === 'string') {
-    return lookup(patterns, options);
+    return lookup(cwd, [patterns], options);
   }
 
   if (!Array.isArray(patterns)) {
     throw new TypeError('findup-sync expects a string or array as the first argument.');
   }
 
+  return lookup(cwd, patterns, options);
+};
+
+function lookup(cwd, patterns, options) {
   var len = patterns.length;
   var idx = -1;
+  var res;
 
   while (++idx < len) {
-    var res = lookup(patterns[idx], options);
+    if (isGlob(patterns[idx])) {
+      res = matchFile(cwd, patterns[idx], options);
+    } else {
+      res = findFile(cwd, patterns[idx], options);
+    }
     if (res) {
       return res;
     }
   }
 
-  return null;
-};
-
-function lookup(pattern, options) {
-  options = options || {};
-  var cwd = path.resolve(resolveDir(options.cwd || ''));
-  if (isGlob(pattern)) {
-    return matchFile(cwd, pattern, options);
-  } else {
-    return findFile(cwd, pattern, options);
+  var dir = path.dirname(cwd);
+  if (dir === cwd) {
+    return null;
   }
+  return lookup(dir, patterns, options);
 }
 
 function matchFile(cwd, pattern, opts) {
@@ -63,32 +69,12 @@ function matchFile(cwd, pattern, opts) {
       return fp;
     }
   }
-
-  var dir = path.dirname(cwd);
-  if (dir === cwd) {
-    return null;
-  }
-  return matchFile(dir, pattern, opts);
+  return null;
 }
 
 function findFile(cwd, filename, options) {
-  var res;
   var fp = cwd ? path.resolve(cwd, filename) : filename;
-  if (res = detect(fp, options)) {
-    return res;
-  }
-
-  var segs = cwd.split(path.sep);
-  var len = segs.length;
-
-  while (len--) {
-    cwd = segs.slice(0, len).join(path.sep);
-    fp = path.resolve(cwd, filename);
-    if (res = detect(fp, options)) {
-      return res;
-    }
-  }
-  return null;
+  return detect(fp, options);
 }
 
 function tryReaddirSync(fp) {

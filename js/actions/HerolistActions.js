@@ -1,6 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import createOverlay from '../utils/createOverlay';
+import ELStore from '../stores/ELStore';
 import HeroCreation from '../components/content/herolist/HeroCreation';
 import React from 'react';
 import reactAlert from '../utils/reactAlert';
@@ -24,6 +25,25 @@ var HerolistActions = {
 		});
 	},
 	load: function(id) {
+		if (ELStore.getStartID() !== 'EL_0') {
+			reactAlert(
+				'Nicht gespeicherter Held',
+				'Du hast offenbar bereits einen Helden geöffnet, der noch nicht vollständig gespeichert wurde. Möchtest du trotzdem fortfahren oder vorher den anderen Helden speichern, damit keine Änderungen verloren gehen?',
+				[
+					{
+						label: 'Laden',
+						onClick: this.loadFx.bind(null, id)
+					},
+					{
+						label: 'Abbrechen'
+					}
+				]
+			);
+		} else {
+			this.loadFx(id);
+		}
+	},
+	loadFx: function(id) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.CLEAR_HERO
 		});

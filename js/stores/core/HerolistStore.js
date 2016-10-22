@@ -32,7 +32,7 @@ var _heroes = {
 		phase: 2,
 		name: 'Yendan Keres',
 		avatar: 'images/portrait2.png',
-		ap: { _max: 1160, _used: 936 },
+		ap: { _max: 1160, _used: 937 },
 		el: 'EL_3',
 		r: 'R_1',
 		c: 'C_8',

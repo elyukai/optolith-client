@@ -1,6 +1,8 @@
-# Fined [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Build Status][appveyor-image]][appveyor-url]
+# Fined [![Build Status][travis-image]][travis-url] [![Build Status][appveyor-image]][appveyor-url]
 
-Find a file given a declaration of locations
+> Find a file given a declaration of locations
+
+[![NPM](https://nodei.co/npm/fined.png)](https://nodei.co/npm/fined/)
 
 ## Usage
 
