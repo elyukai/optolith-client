@@ -84,10 +84,14 @@ var _el = {
 	}
 };
 
-var _start = 'EL_3';
+var _start = 'EL_0';
 
 function _update(el) {
 	_start = el;
+}
+
+function _clear() {
+	_start = 'EL_0';
 }
 
 var ELStore = Object.assign({}, EventEmitter.prototype, {
@@ -126,12 +130,12 @@ ELStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_update(payload.el);
 			break;
 
-		case ActionTypes.RECEIVE_HERO:
-			_update(payload.el);
+		case ActionTypes.CLEAR_HERO:
+			_clear();
 			break;
 
-		case ActionTypes.CLEAR_HERO:
-			_update('EL_1');
+		case ActionTypes.RECEIVE_HERO:
+			_update(payload.el);
 			break;
 
 		default:

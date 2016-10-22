@@ -1,34 +1,29 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
+import reactAlert from '../utils/reactAlert';
 import saveHero from '../utils/saveHero';
+import AccountStore from '../stores/core/AccountStore';
 
 var TabActions = {
 	openTab: function(tab) {
-
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SHOW_TAB,
 			tab
 		});
-
 	},
 	showSection: function(section) {
-
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SHOW_TAB_SECTION,
 			section
 		});
-
-	},
-	openHero: function(id) {
-
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_HERO_STRING,
-			data: WebAPIUtils.getHero(id)
-		});
-		
 	},
 	saveHero: function() {
-		saveHero();
+		let currentAccountID = AccountStore.getID();
+		if (currentAccountID === null) {
+			reactAlert('Speichern nicht möglich', 'Um einen Charakter zu speichern, musst du angemeldet sein. Dein Fortschritt geht jedoch nicht verloren. Du kannst den Charakter nach der Anmeldung speichern, solange du diese Seite nicht verlässt oder neu lädst.');
+		} else {
+			saveHero();
+		}
 	},
 	clearCurrentHero: function() {
 

@@ -397,13 +397,13 @@ process.umask = function() { return 0; };
 },{}],3:[function(require,module,exports){
 'use strict';
 
-var _AccountActions = require('./actions/AccountActions');
-
-var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
 var _AppController = require('./components/AppController');
 
 var _AppController2 = _interopRequireDefault(_AppController);
+
+var _AppDispatcher = require('./dispatcher/AppDispatcher');
+
+var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
 var _react = require('react');
 
@@ -428,19 +428,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // }
 
 window.onunload = function () {
-	_AccountActions2.default.logout('end');
+	// WebAPIUtils.logoutSync();
+	_AppDispatcher2.default.dispatch({
+		actionType: 'LOGOUT_SUCCESS'
+	});
 };
 
 _reactDom2.default.render(_react2.default.createElement(_AppController2.default, null), document.getElementById('bodywrapper'));
 
 _WebAPIUtils2.default.getAllData();
 
-},{"./actions/AccountActions":4,"./components/AppController":24,"./utils/WebAPIUtils":145,"react":330,"react-dom":160}],4:[function(require,module,exports){
+},{"./components/AppController":24,"./dispatcher/AppDispatcher":117,"./utils/WebAPIUtils":141,"react":326,"react-dom":156}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
@@ -454,337 +459,128 @@ var _WebAPIUtils = require('../utils/WebAPIUtils');
 
 var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
-var _reactAlert = require('../utils/reactAlert');
+var _createOverlay = require('../utils/createOverlay');
 
-var _reactAlert2 = _interopRequireDefault(_reactAlert);
+var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
 var _AccountStore = require('../stores/core/AccountStore');
 
 var _AccountStore2 = _interopRequireDefault(_AccountStore);
 
+var _ForgotUsername = require('../components/content/account/ForgotUsername');
+
+var _ForgotUsername2 = _interopRequireDefault(_ForgotUsername);
+
+var _ForgotPassword = require('../components/content/account/ForgotPassword');
+
+var _ForgotPassword2 = _interopRequireDefault(_ForgotPassword);
+
+var _Login = require('../components/content/account/Login');
+
+var _Login2 = _interopRequireDefault(_Login);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactAlert = require('../utils/reactAlert');
+
+var _reactAlert2 = _interopRequireDefault(_reactAlert);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _Register = require('../components/content/account/Register');
+
+var _Register2 = _interopRequireDefault(_Register);
+
+var _ResendActivation = require('../components/content/account/ResendActivation');
+
+var _ResendActivation2 = _interopRequireDefault(_ResendActivation);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AccountActions = {
+	showRegister: function showRegister() {
+		(0, _createOverlay2.default)(_react2.default.createElement(_Register2.default, null));
+	},
+	showForgotName: function showForgotName() {
+		(0, _createOverlay2.default)(_react2.default.createElement(_ForgotUsername2.default, null));
+	},
+	showForgotPassword: function showForgotPassword() {
+		(0, _createOverlay2.default)(_react2.default.createElement(_ForgotPassword2.default, null));
+	},
+	showResend: function showResend() {
+		(0, _createOverlay2.default)(_react2.default.createElement(_ResendActivation2.default, null));
+	},
+	showLogin: function showLogin() {
+		(0, _createOverlay2.default)(_react2.default.createElement(_Login2.default, null));
+	},
 	register: function register(email, username, password) {
+		Promise.all([_WebAPIUtils2.default.checkEmail(email), _WebAPIUtils2.default.checkUsername(username)]).then(function (_ref) {
+			var _ref2 = _slicedToArray(_ref, 2);
 
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
+			var v_email = _ref2[0];
+			var v_name = _ref2[1];
 
-		Promise.all([_WebAPIUtils2.default.checkEmail(email), _WebAPIUtils2.default.checkUsername(username)]).then(function (used) {
-
-			if (used[0] == 'true' && used[1] == 'true') {
-
-				(0, _reactAlert2.default)('Daten bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.\n\nHast du deine Bestätigungs-E-Mail nicht empfangen? Dann melde dich einfach mit deinen Benutzerdaten an, sodass du deine E-Mail neu oder an einer andere Adresse verschicken kannst.');
-
+			if (v_email === 'true' && v_name === 'true') {
+				(0, _reactAlert2.default)('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.');
 				_AppDispatcher2.default.dispatch({
 					actionType: _ActionTypes2.default.WAIT_END
 				});
-			} else if (used[0] == 'true' && used[1] == 'false') {
-
-				(0, _reactAlert2.default)('E-Mail-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
-
+			} else if (v_email === 'true' && v_name === 'false') {
+				(0, _reactAlert2.default)('Email-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
 				_AppDispatcher2.default.dispatch({
 					actionType: _ActionTypes2.default.WAIT_END
 				});
-			} else if (used[0] == 'false' && used[1] == 'true') {
-
+			} else if (v_email === 'false' && v_name === 'true') {
 				(0, _reactAlert2.default)('Benutzername bereits vorhanden', 'Der Benutzername wird bereits verwendet.');
-
 				_AppDispatcher2.default.dispatch({
 					actionType: _ActionTypes2.default.WAIT_END
 				});
-			} else if (used[0] == 'false' && used[1] == 'false') {
-
-				return _WebAPIUtils2.default.register(email, username, password);
+			} else if (v_email && v_name) {
+				_WebAPIUtils2.default.register(email, username, password);
 			}
-		}).then(function (callback) {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.REGISTRATION_SUCCESS
-			});
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
 		});
 	},
 	forgotPassword: function forgotPassword(email) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.sendPasswordCode(email).then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit dem Link zum Zurücksetzen deines Passworts geschickt!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.sendPasswordCode(email);
 	},
 	forgotUsername: function forgotUsername(email) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.sendUsername(email).then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit deinem Benutzernamen geschickt!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.sendUsername(email);
 	},
 	resendActivation: function resendActivation(email) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.resendActivation(email).then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir dieAktivierungsemail erneut geschickt!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.resendActivation(email);
 	},
 	login: function login(username, password) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		var userid;
-
-		_WebAPIUtils2.default.login(username, password).then(function (callback) {
-
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('Anmeldeversuch fehlgeschlagen', 'Die eigegebene Kombination aus Benutzername und Passwort wurde nicht erkannt. Stelle sicher, dass du dich nicht vertippt hast und versuche es nochmal.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'notactive') {
-
-				(0, _reactAlert2.default)('Benutzerkonto nicht aktiviert', 'Das hinterlegte Benutzerkonto wurde noch nicht aktivert. Bitte aktiviere das Konto über den Aktivierungslink in der Aktivierungsemail.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'logged') {
-
-				(0, _reactAlert2.default)('Benutzer bereits angemeldet', 'Das Konto ist momentan an einem anderen Ort (Gerät oder Browser) angemeldet. Es kann nicht mehrere Male auf ein Konto zugegriffen werden.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else {
-
-				userid = callback;
-
-				return _WebAPIUtils2.default.getHeroes(userid);
-			}
-		}).then(function (callback) {
-
-			if (userid !== undefined) {
-				if (callback == 'false') {
-
-					(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-
-					_AppDispatcher2.default.dispatch({
-						actionType: _ActionTypes2.default.WAIT_END
-					});
-				} else {
-
-					_AppDispatcher2.default.dispatch({
-						actionType: _ActionTypes2.default.RECEIVE_ACCOUNT,
-						userid: userid,
-						username: username,
-						raw: callback
-					});
-				}
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.login(username, password);
 	},
-	logout: function logout(src) {
-
-		var userid = _AccountStore2.default.getID();
-
-		if (userid > 0) {
-			if (src == 'end') {
-				_WebAPIUtils2.default.logoutSync();
-			} else {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_START
-				});
-
-				_WebAPIUtils2.default.logout().then(function (callback) {
-
-					if (callback == 'true') {
-
-						(0, _reactAlert2.default)('Abmeldung erfolgreich', 'Du wurdest erfolgreich abgemeldet.');
-
-						_AppDispatcher2.default.dispatch({
-							actionType: _ActionTypes2.default.CLEAR_ACCOUNT
-						});
-					}
-				}).catch(function () {
-
-					_AppDispatcher2.default.dispatch({
-						actionType: _ActionTypes2.default.WAIT_END
-					});
-				});
-			}
-		}
+	logout: function logout() {
+		_WebAPIUtils2.default.logout();
 	},
 	changeUsername: function changeUsername(username) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.setNewUsername(username).then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('E-Benutzernamen erfolgreich geändert', 'Dein Benutzername wurde erfolgreich geändert.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.UPDATE_USERNAME,
-					username: username
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.setNewUsername(username);
 	},
 	changePassword: function changePassword(password) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.setNewPassword(password).then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.PASSWORD_CHANGE_SUCCESS
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.setNewPassword(password);
 	},
-	delete: function _delete(password) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-
-		_WebAPIUtils2.default.deleteAccount().then(function (callback) {
-			if (callback == 'false') {
-
-				(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else if (callback == 'true') {
-
-				(0, _reactAlert2.default)('Konto gelöscht', 'Dein Konto wurde mitsamt aller Helden und Gruppen erfolgreich gelöscht.');
-
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.CLEAR_ACCOUNT
-				});
-			}
-		}).catch(function () {
-
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+	deleteConfirm: function deleteConfirm() {
+		(0, _reactAlert2.default)('Konto wirklich löschen?', 'Soll dein Konto wirklich gelöscht werden? Wenn du diesem zustimmst, werden sämtliche deiner eigenen Helden und Gruppen unwiederbringlich gelöscht. Möchtest du wirklich fortfahren?', [{
+			label: 'Konto löschen',
+			onClick: this.delete
+		}, {
+			label: 'Abbrechen'
+		}]);
+	},
+	delete: function _delete() {
+		_WebAPIUtils2.default.deleteAccount();
 	}
 };
 
 exports.default = AccountActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/core/AccountStore":136,"../utils/WebAPIUtils":145,"../utils/reactAlert":148}],5:[function(require,module,exports){
+},{"../components/content/account/ForgotPassword":28,"../components/content/account/ForgotUsername":29,"../components/content/account/Login":30,"../components/content/account/Register":31,"../components/content/account/ResendActivation":32,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/core/AccountStore":132,"../utils/WebAPIUtils":141,"../utils/createOverlay":142,"../utils/reactAlert":144,"react":326,"react-dom":156}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -848,7 +644,7 @@ var AttributeActions = {
 
 exports.default = AttributeActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122,"../stores/AttributeStore":123}],6:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118,"../stores/AttributeStore":119}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -916,7 +712,7 @@ var CombatTechniquesActions = {
 
 exports.default = CombatTechniquesActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122,"../stores/CombatTechniquesStore":124}],7:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118,"../stores/CombatTechniquesStore":120}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -983,7 +779,7 @@ var CultureActions = {
 
 exports.default = CultureActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],8:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1050,7 +846,7 @@ var DisAdvActions = {
 
 exports.default = DisAdvActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122}],9:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1071,7 +867,7 @@ var EquipmentActions = {};
 
 exports.default = EquipmentActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],10:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1103,7 +899,7 @@ var GroupsActions = {
 
 exports.default = GroupsActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],11:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1120,9 +916,9 @@ var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-var _createDialogNode = require('../utils/createDialogNode');
+var _createOverlay = require('../utils/createOverlay');
 
-var _createDialogNode2 = _interopRequireDefault(_createDialogNode);
+var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
 var _HeroCreation = require('../components/content/herolist/HeroCreation');
 
@@ -1148,26 +944,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var HerolistActions = {
 	refresh: function refresh() {
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.WAIT_START
-		});
-		_WebAPIUtils2.default.getHeroes().then(function (callback) {
-			if (callback == 'false') {
-				(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.WAIT_END
-				});
-			} else {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.RECEIVE_RAW_HEROLIST,
-					raw: callback
-				});
-			}
-		}).catch(function () {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.WAIT_END
-			});
-		});
+		_WebAPIUtils2.default.getHeroes();
 	},
 	filter: function filter(text) {
 		_AppDispatcher2.default.dispatch({
@@ -1182,11 +959,13 @@ var HerolistActions = {
 		});
 	},
 	load: function load(id) {
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.CLEAR_HERO
+		});
 		_WebAPIUtils2.default.loadHero(id);
 	},
 	showHeroCreation: function showHeroCreation() {
-		var node = (0, _createDialogNode2.default)();
-		_reactDom2.default.render(_react2.default.createElement(_HeroCreation2.default, { node: node }), node);
+		(0, _createOverlay2.default)(_react2.default.createElement(_HeroCreation2.default, null));
 	},
 	createNewHero: function createNewHero(options) {
 		_AppDispatcher2.default.dispatch(_extends({
@@ -1197,7 +976,7 @@ var HerolistActions = {
 
 exports.default = HerolistActions;
 
-},{"../components/content/herolist/HeroCreation":48,"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/WebAPIUtils":145,"../utils/createDialogNode":146,"../utils/reactAlert":148,"react":330,"react-dom":160}],12:[function(require,module,exports){
+},{"../components/content/herolist/HeroCreation":46,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../utils/WebAPIUtils":141,"../utils/createOverlay":142,"../utils/reactAlert":144,"react":326,"react-dom":156}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1212,9 +991,9 @@ var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-var _createDialogNode = require('../utils/createDialogNode');
+var _createOverlay = require('../utils/createOverlay');
 
-var _createDialogNode2 = _interopRequireDefault(_createDialogNode);
+var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
 var _Dialog = require('../components/layout/Dialog');
 
@@ -1236,71 +1015,60 @@ var InGameActions = {
 			actionType: _ActionTypes2.default.LOAD_RAW_INGAME_DATA
 		});
 	},
-
 	previousPhase: function previousPhase() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_PREVIOUS_PHASE
 		});
 	},
-
 	nextPhase: function nextPhase() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_NEXT_PHASE
 		});
 	},
-
 	cast: function cast() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.UPDATE_INGAME_CAST
 		});
 	},
-
 	stopCast: function stopCast() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.CANCEL_INGAME_CAST
 		});
 	},
-
 	useEndurance: function useEndurance(id) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_USE_ENDURANCE,
 			id: id
 		});
 	},
-
 	useAction: function useAction(id) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_USE_ACTION,
 			id: id
 		});
 	},
-
 	useFreeAction: function useFreeAction(id) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_USE_FREE_ACTION,
 			id: id
 		});
 	},
-
 	activateFighter: function activateFighter() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_ACTIVATE_FIGHTER
 		});
 	},
-
 	deactivateFighter: function deactivateFighter() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_DEACTIVATE_FIGHTER
 		});
 	},
-
 	edit: function edit(id) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_EDIT_START,
 			id: id
 		});
 	},
-
 	editValue: function editValue(tag, value) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_EDIT_UPDATE_VALUE,
@@ -1308,88 +1076,71 @@ var InGameActions = {
 			value: value
 		});
 	},
-
 	editCast: function editCast(value) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_EDIT_UPDATE_CAST_VALUE,
 			value: value
 		});
 	},
-
 	editDuplicate: function editDuplicate(value) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_EDIT_UPDATE_DUPLICATE_VALUE,
 			value: value
 		});
 	},
-
 	closeEdit: function closeEdit() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_EDIT_END
 		});
 	},
-
 	addFighter: function addFighter() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_ADD_FIGHTER
 		});
 	},
-
 	duplicateFighter: function duplicateFighter() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_DUPLICATE_FIGHTER
 		});
 	},
-
 	removeFighter: function removeFighter() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_REMOVE_FIGHTER
 		});
 	},
-
 	resetAll: function resetAll() {
-
-		var node = (0, _createDialogNode2.default)();
-
 		var resetAllFinal = function resetAllFinal() {
 			_AppDispatcher2.default.dispatch({ actionType: _ActionTypes2.default.INGAME_RESET_ALL });
 		};
-
-		_reactDom2.default.render(_react2.default.createElement(
+		(0, _createOverlay2.default)(_react2.default.createElement(
 			_Dialog2.default,
 			{
 				title: 'Liste zurücksetzen',
-				node: node,
 				buttons: [{ label: 'Ja', onClick: resetAllFinal }, { label: 'Nein' }] },
 			'Bist du dir sicher, dass du die gesamte Liste zurücksetzen möchtest? Der Vorgang kann nicht rückgängig gemacht werden!'
-		), node);
+		));
 	},
-
 	resetPhases: function resetPhases() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_RESET_PHASES
 		});
 	},
-
 	resetHealth: function resetHealth() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_RESET_HEALTH
 		});
 	},
-
 	setOnline: function setOnline(value) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_UPDATE_ONLINE_LINK,
 			value: value
 		});
 	},
-
 	save: function save() {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_SAVE
 		});
 	},
-
 	switchOption: function switchOption(option) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.INGAME_SWITCH_OPTION,
@@ -1400,7 +1151,7 @@ var InGameActions = {
 
 exports.default = InGameActions;
 
-},{"../components/layout/Dialog":102,"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/createDialogNode":146,"react":330,"react-dom":160}],13:[function(require,module,exports){
+},{"../components/layout/Dialog":98,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../utils/createOverlay":142,"react":326,"react-dom":156}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1421,7 +1172,7 @@ var InventoryActions = {};
 
 exports.default = InventoryActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],14:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1521,7 +1272,7 @@ var LiturgiesActions = {
 
 exports.default = LiturgiesActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122,"../stores/LiturgiesStore":130}],15:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118,"../stores/LiturgiesStore":126}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1535,10 +1286,6 @@ var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-var _createDialogNode = require('../utils/createDialogNode');
-
-var _createDialogNode2 = _interopRequireDefault(_createDialogNode);
 
 var _react = require('react');
 
@@ -1595,7 +1342,7 @@ var ProfessionActions = {
 
 exports.default = ProfessionActions;
 
-},{"../components/content/rcp/Selections":82,"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/createDialogNode":146,"react":330,"react-dom":160}],16:[function(require,module,exports){
+},{"../components/content/rcp/Selections":80,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"react":326,"react-dom":156}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1629,7 +1376,7 @@ var ProfessionVariantActions = {
 
 exports.default = ProfessionVariantActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],17:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1643,10 +1390,6 @@ var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-var _createDialogNode = require('../utils/createDialogNode');
-
-var _createDialogNode2 = _interopRequireDefault(_createDialogNode);
 
 var _react = require('react');
 
@@ -1717,7 +1460,7 @@ var ProfileActions = {
 
 exports.default = ProfileActions;
 
-},{"../components/content/rcp/Selections":82,"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/createDialogNode":146,"react":330,"react-dom":160}],18:[function(require,module,exports){
+},{"../components/content/rcp/Selections":80,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"react":326,"react-dom":156}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1768,12 +1511,14 @@ var RaceActions = {
 
 exports.default = RaceActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121}],19:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -1796,27 +1541,179 @@ var _reactAlert2 = _interopRequireDefault(_reactAlert);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ServerActions = {
-	connectionError: function connectionError(error) {
-		(0, _reactAlert2.default)('Verbindung nicht möglich', 'Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ' + error);
+	startLoading: function startLoading() {
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.WAIT_START
+		});
+	},
+	runtimeError: function runtimeError() {
+		(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.WAIT_END
 		});
 	},
+	connectionError: function connectionError(error) {
+		(0, _reactAlert2.default)('Verbindung nicht möglich', 'Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ' + error + ' Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!');
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.WAIT_END
+		});
+	},
+
 	receiveLists: function receiveLists(raw) {
 		_AppDispatcher2.default.dispatch(_extends({
 			actionType: _ActionTypes2.default.RECEIVE_RAW_LISTS
 		}, raw));
 	},
 	registrationSuccess: function registrationSuccess() {
+		(0, _reactAlert2.default)('Konto bestätigen', 'Wir haben dir eine E-Mail an die angegebene Adresse geschickt. Dort wirst du einen Bestätigungslink finden, dem du einfach nur zu folgen brauchst, um dein Konto zu aktivieren.');
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.REGISTRATION_SUCCESS
 		});
 	},
-	receiveUser: function receiveUser(raw) {
+	forgotPasswordSuccess: function forgotPasswordSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				(0, _reactAlert2.default)('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+
+			default:
+				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit dem Link zum Zurücksetzen deines Passworts geschickt!');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+		}
+	},
+	forgotUsernameSuccess: function forgotUsernameSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				(0, _reactAlert2.default)('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+
+			default:
+				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit deinem Benutzernamen geschickt!');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+		}
+	},
+	resendActivationSuccess: function resendActivationSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				this.runtimeError();
+				break;
+
+			default:
+				(0, _reactAlert2.default)('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die Aktivierungsemail erneut geschickt!');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+		}
+	},
+	logoutSuccess: function logoutSuccess() {
 		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.LOGIN_SUCCESS,
-			raw: raw
+			actionType: _ActionTypes2.default.LOGOUT_SUCCESS
 		});
+	},
+	receiveAccount: function receiveAccount(callback, name) {
+		switch (callback) {
+			case 'false':
+				(0, _reactAlert2.default)('Anmeldeversuch fehlgeschlagen', 'Die eigegebene Kombination aus Benutzername und Passwort wurde nicht erkannt. Stelle sicher, dass du dich nicht vertippt hast und versuche es nochmal.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+			case 'notactive':
+				(0, _reactAlert2.default)('Benutzerkonto nicht aktiviert', 'Das hinterlegte Benutzerkonto wurde noch nicht aktivert. Bitte aktiviere das Konto über den Aktivierungslink in der Aktivierungsemail.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+			case 'logged':
+				(0, _reactAlert2.default)('Benutzer bereits angemeldet', 'Das Konto ist momentan an einem anderen Ort (Gerät oder Browser) angemeldet. Es kann nicht mehrere Male auf ein Konto zugegriffen werden.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.WAIT_END
+				});
+				break;
+			default:
+				{
+					var _JSON$parse = JSON.parse(callback);
+
+					var _JSON$parse2 = _slicedToArray(_JSON$parse, 2);
+
+					var id = _JSON$parse2[0];
+					var heroes = _JSON$parse2[1];
+
+					_AppDispatcher2.default.dispatch({
+						actionType: _ActionTypes2.default.RECEIVE_ACCOUNT,
+						id: id, name: name, heroes: heroes
+					});
+				}
+		}
+	},
+	changeUsernameSuccess: function changeUsernameSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				this.runtimeError();
+				break;
+
+			default:
+				(0, _reactAlert2.default)('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.PASSWORD_CHANGE_SUCCESS
+				});
+				break;
+		}
+	},
+	changePasswordSuccess: function changePasswordSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				this.runtimeError();
+				break;
+
+			default:
+				(0, _reactAlert2.default)('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.PASSWORD_CHANGE_SUCCESS
+				});
+				break;
+		}
+	},
+	deleteAccountSuccess: function deleteAccountSuccess(callback) {
+		switch (callback) {
+			case 'false':
+				this.runtimeError();
+				break;
+
+			default:
+				(0, _reactAlert2.default)('Konto gelöscht', 'Dein Konto wurde mitsamt aller Helden und Gruppen erfolgreich gelöscht.');
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.CLEAR_ACCOUNT
+				});
+				break;
+		}
+	},
+	herolistRefreshSuccess: function herolistRefreshSuccess(rawHeroes) {
+		switch (rawHeroes) {
+			case 'false':
+				this.runtimeError();
+				break;
+
+			default:
+				_AppDispatcher2.default.dispatch({
+					actionType: _ActionTypes2.default.RECEIVE_RAW_HEROLIST,
+					rawHeroes: rawHeroes
+				});
+				break;
+		}
 	},
 	loadHeroSuccess: function loadHeroSuccess(id, data) {
 		var short = _HerolistStore2.default.get(id);
@@ -1833,7 +1730,7 @@ var ServerActions = {
 
 exports.default = ServerActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/core/HerolistStore":137,"../utils/reactAlert":148}],20:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/core/HerolistStore":133,"../utils/reactAlert":144}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1907,7 +1804,7 @@ var SpecialAbilitiesActions = {
 
 exports.default = SpecialAbilitiesActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122}],21:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2007,7 +1904,7 @@ var SpellsActions = {
 
 exports.default = SpellsActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122,"../stores/SpellsStore":134}],22:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118,"../stores/SpellsStore":130}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2022,36 +1919,40 @@ var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
+var _reactAlert = require('../utils/reactAlert');
+
+var _reactAlert2 = _interopRequireDefault(_reactAlert);
+
 var _saveHero2 = require('../utils/saveHero');
 
 var _saveHero3 = _interopRequireDefault(_saveHero2);
+
+var _AccountStore = require('../stores/core/AccountStore');
+
+var _AccountStore2 = _interopRequireDefault(_AccountStore);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TabActions = {
 	openTab: function openTab(tab) {
-
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.SHOW_TAB,
 			tab: tab
 		});
 	},
 	showSection: function showSection(section) {
-
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.SHOW_TAB_SECTION,
 			section: section
 		});
 	},
-	openHero: function openHero(id) {
-
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.RECEIVE_RAW_HERO_STRING,
-			data: WebAPIUtils.getHero(id)
-		});
-	},
 	saveHero: function saveHero() {
-		(0, _saveHero3.default)();
+		var currentAccountID = _AccountStore2.default.getID();
+		if (currentAccountID === null) {
+			(0, _reactAlert2.default)('Speichern nicht möglich', 'Um einen Charakter zu speichern, musst du angemeldet sein. Dein Fortschritt geht jedoch nicht verloren. Du kannst den Charakter nach der Anmeldung speichern, solange du diese Seite nicht verlässt oder neu lädst.');
+		} else {
+			(0, _saveHero3.default)();
+		}
 	},
 	clearCurrentHero: function clearCurrentHero() {
 
@@ -2064,7 +1965,7 @@ var TabActions = {
 		WebAPIUtils.deleteHero(PaneStore.getUser().id, ControllerStore.getHeroCore().id).then(function (callback) {
 			if (callback == 'false') {
 
-				reactAlert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
+				(0, _reactAlert2.default)('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
 
 				_AppDispatcher2.default.dispatch({
 					actionType: _ActionTypes2.default.SET_SECTION,
@@ -2088,7 +1989,7 @@ var TabActions = {
 
 exports.default = TabActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/saveHero":150}],23:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/core/AccountStore":132,"../utils/reactAlert":144,"../utils/saveHero":146}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2161,7 +2062,7 @@ var TalentsActions = {
 
 exports.default = TalentsActions;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/APStore":122,"../stores/TalentsStore":135}],24:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/APStore":118,"../stores/TalentsStore":131}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2260,7 +2161,7 @@ var AppController = function (_Component) {
 
 exports.default = AppController;
 
-},{"../stores/core/TabStore":138,"../stores/core/WaitStore":140,"./content/Content":25,"react":330}],25:[function(require,module,exports){
+},{"../stores/core/TabStore":134,"../stores/core/WaitStore":136,"./content/Content":25,"react":326}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2273,37 +2174,9 @@ var _About = require('./about/About');
 
 var _About2 = _interopRequireDefault(_About);
 
-var _ChangeAccount = require('./account/ChangeAccount');
+var _Account = require('./account/Account');
 
-var _ChangeAccount2 = _interopRequireDefault(_ChangeAccount);
-
-var _DeleteAccount = require('./account/DeleteAccount');
-
-var _DeleteAccount2 = _interopRequireDefault(_DeleteAccount);
-
-var _ForgotPassword = require('./account/ForgotPassword');
-
-var _ForgotPassword2 = _interopRequireDefault(_ForgotPassword);
-
-var _ForgotUsername = require('./account/ForgotUsername');
-
-var _ForgotUsername2 = _interopRequireDefault(_ForgotUsername);
-
-var _Login = require('./account/Login');
-
-var _Login2 = _interopRequireDefault(_Login);
-
-var _Registration = require('./account/Registration');
-
-var _Registration2 = _interopRequireDefault(_Registration);
-
-var _RegistrationConfirm = require('./account/RegistrationConfirm');
-
-var _RegistrationConfirm2 = _interopRequireDefault(_RegistrationConfirm);
-
-var _ResendActivation = require('./account/ResendActivation');
-
-var _ResendActivation2 = _interopRequireDefault(_ResendActivation);
+var _Account2 = _interopRequireDefault(_Account);
 
 var _Attribute = require('./attributes/Attribute');
 
@@ -2377,34 +2250,6 @@ var Content = function (_Component) {
 			var tabElement;
 
 			switch (this.props.tab) {
-				case 'registration':
-					tabElement = _react2.default.createElement(_Registration2.default, null);
-					break;
-				case 'confirmRegistration':
-					tabElement = _react2.default.createElement(_RegistrationConfirm2.default, null);
-					break;
-				case 'forgotPassword':
-					tabElement = _react2.default.createElement(_ForgotPassword2.default, null);
-					break;
-				case 'forgotUsername':
-					tabElement = _react2.default.createElement(_ForgotUsername2.default, null);
-					break;
-				case 'resendActivation':
-					tabElement = _react2.default.createElement(_ResendActivation2.default, null);
-					break;
-				case 'login':
-					tabElement = _react2.default.createElement(_Login2.default, null);
-					break;
-				case 'changeAccountUsername':
-					tabElement = _react2.default.createElement(_ChangeAccount2.default, { type: 'username' });
-					break;
-				case 'changeAccountPassword':
-					tabElement = _react2.default.createElement(_ChangeAccount2.default, { type: 'password' });
-					break;
-				case 'deleteAccount':
-					tabElement = _react2.default.createElement(_DeleteAccount2.default, null);
-					break;
-
 				case 'home':
 					tabElement = _react2.default.createElement(_Home2.default, null);
 					break;
@@ -2413,6 +2258,9 @@ var Content = function (_Component) {
 					break;
 				case 'grouplist':
 					tabElement = _react2.default.createElement(_Grouplist2.default, null);
+					break;
+				case 'account':
+					tabElement = _react2.default.createElement(_Account2.default, null);
 					break;
 				case 'about':
 					tabElement = _react2.default.createElement(_About2.default, null);
@@ -2460,7 +2308,7 @@ Content.propTypes = {
 };
 exports.default = Content;
 
-},{"../layout/TitleBar":112,"./about/About":26,"./account/ChangeAccount":27,"./account/DeleteAccount":28,"./account/ForgotPassword":29,"./account/ForgotUsername":30,"./account/Login":31,"./account/Registration":32,"./account/RegistrationConfirm":33,"./account/ResendActivation":34,"./attributes/Attribute":35,"./disadv/DisAdv":42,"./grouplist/Grouplist":47,"./herolist/Herolist":49,"./home/Home":51,"./items/Items":54,"./master/Master":64,"./profile/Profile":73,"./rcp/RCP":80,"./skills/Skills":93,"react":330}],26:[function(require,module,exports){
+},{"../layout/TitleBar":108,"./about/About":26,"./account/Account":27,"./attributes/Attribute":33,"./disadv/DisAdv":40,"./grouplist/Grouplist":45,"./herolist/Herolist":47,"./home/Home":49,"./items/Items":52,"./master/Master":62,"./profile/Profile":71,"./rcp/RCP":78,"./skills/Skills":89,"react":326}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2530,32 +2378,40 @@ var About = function (_Component) {
 							null,
 							'Thore Schuchardt'
 						),
-						'Online Client, Server',
-						_react2.default.createElement('br', null),
-						'Lehmberg 7b',
-						_react2.default.createElement('br', null),
-						'24361 Groß Wittensee',
-						_react2.default.createElement('br', null),
 						_react2.default.createElement(
-							'a',
-							{ href: 'mailto:schuchi@dsa-sh.de' },
-							'schuchi@dsa-sh.de'
+							'div',
+							null,
+							'Backend-Dev',
+							_react2.default.createElement('br', null),
+							'Lehmberg 7b',
+							_react2.default.createElement('br', null),
+							'24361 Groß Wittensee',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
+								'a',
+								{ href: 'mailto:schuchi@dsa-sh.de' },
+								'schuchi@dsa-sh.de'
+							)
 						),
 						_react2.default.createElement(
 							'h3',
 							null,
 							'Lukas Obermann'
 						),
-						'Design, Online Client',
-						_react2.default.createElement('br', null),
-						'Eekholl 11',
-						_react2.default.createElement('br', null),
-						'24361 Groß Wittensee',
-						_react2.default.createElement('br', null),
 						_react2.default.createElement(
-							'a',
-							{ href: 'mailto:lukas@dsa-sh.de' },
-							'lukas@dsa-sh.de'
+							'div',
+							null,
+							'Frontend-Dev',
+							_react2.default.createElement('br', null),
+							'Eekholl 11',
+							_react2.default.createElement('br', null),
+							'24361 Groß Wittensee',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
+								'a',
+								{ href: 'mailto:lukas@dsa-sh.de' },
+								'lukas@dsa-sh.de'
+							)
 						),
 						_react2.default.createElement(
 							'h2',
@@ -2611,6 +2467,83 @@ var About = function (_Component) {
 						_react2.default.createElement(
 							'div',
 							{ className: 'third-party-software' },
+							'Alegreya font',
+							_react2.default.createElement('br', null),
+							'Copyright (c) 2011, Juan Pablo del Peral (juan@huertatipografica.com.ar),',
+							_react2.default.createElement('br', null),
+							'with Reserved Font Names "Alegreya" "Alegreya SC"',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'This Font Software is licensed under the SIL Open Font License, Version 1.1.',
+							_react2.default.createElement('br', null),
+							'This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'--------------------',
+							_react2.default.createElement('br', null),
+							'SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007',
+							_react2.default.createElement('br', null),
+							'--------------------',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'PREAMBLE',
+							_react2.default.createElement('br', null),
+							'The goals of the Open Font License (OFL) are to stimulate worldwide development of collaborative font projects, to support the font creation efforts of academic and linguistic communities, and to provide a free and open framework in which fonts may be shared and improved in partnership with others.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'The OFL allows the licensed fonts to be used, studied, modified and redistributed freely as long as they are not sold by themselves. The fonts, including any derivative works, can be bundled, embedded, redistributed and/or sold with any software provided that any reserved names are not used by derivative works. The fonts and derivatives, however, cannot be released under any other type of license. The requirement for fonts to remain under this license does not apply to any document created using the fonts or their derivatives.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'DEFINITIONS',
+							_react2.default.createElement('br', null),
+							'"Font Software" refers to the set of files released by the Copyright Holder(s) under this license and clearly marked as such. This may include source files, build scripts and documentation.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'"Reserved Font Name" refers to any names specified as such after the copyright statement(s).',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'"Original Version" refers to the collection of Font Software components as distributed by the Copyright Holder(s).',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'"Modified Version" refers to any derivative made by adding to, deleting, or substituting -- in part or in whole -- any of the components of the Original Version, by changing formats or by porting the Font Software to a new environment.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'"Author" refers to any designer, engineer, programmer, technical writer or other person who contributed to the Font Software.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'PERMISSION & CONDITIONS',
+							_react2.default.createElement('br', null),
+							'Permission is hereby granted, free of charge, to any person obtaining a copy of the Font Software, to use, study, copy, merge, embed, modify, redistribute, and sell modified and unmodified copies of the Font Software, subject to the following conditions:',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'1) Neither the Font Software nor any of its individual components, in Original or Modified Versions, may be sold by itself.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'2) Original or Modified Versions of the Font Software may be bundled, redistributed and/or sold with any software, provided that each copy contains the above copyright notice and this license. These can be included either as stand-alone text files, human-readable headers or in the appropriate machine-readable metadata fields within text or binary files as long as those fields can be easily viewed by the user.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'3) No Modified Version of the Font Software may use the Reserved Font Name(s) unless explicit written permission is granted by the corresponding Copyright Holder. This restriction only applies to the primary font name as presented to the users.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font Software shall not be used to promote, endorse or advertise any Modified Version, except to acknowledge the contribution(s) of the Copyright Holder(s) and the Author(s) or with their explicit written permission.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'5) The Font Software, modified or unmodified, in part or in whole, must be distributed entirely under this license, and must not be distributed under any other license. The requirement for fonts to remain under this license does not apply to any document created using the Font Software.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'TERMINATION',
+							_react2.default.createElement('br', null),
+							'This license becomes null and void if any of the above conditions are not met.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'DISCLAIMER',
+							_react2.default.createElement('br', null),
+							'THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
+							'------------------------------------------------------------',
+							_react2.default.createElement('br', null),
+							_react2.default.createElement('br', null),
 							'browserify',
 							_react2.default.createElement('br', null),
 							'Some pieces from builtins/ taken from node core under this license:',
@@ -2947,7 +2880,7 @@ var About = function (_Component) {
 
 exports.default = About;
 
-},{"../../../stores/core/VersionStore":139,"../../layout/Scroll":107,"react":330}],27:[function(require,module,exports){
+},{"../../../stores/core/VersionStore":135,"../../layout/Scroll":103,"react":326}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2960,143 +2893,29 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _AccountStore = require('../../../stores/core/AccountStore');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _AccountStore2 = _interopRequireDefault(_AccountStore);
 
-var _react = require('react');
+var _BorderButton = require('../../layout/BorderButton');
 
-var _react2 = _interopRequireDefault(_react);
+var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _IconButton = require('../../layout/IconButton');
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ChangeAccount = function (_Component) {
-	_inherits(ChangeAccount, _Component);
-
-	function ChangeAccount(props) {
-		_classCallCheck(this, ChangeAccount);
-
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ChangeAccount).call(this, props));
-
-		_this.changeUsername = function () {
-			return _AccountActions2.default.changeUsername(_this.state.value1);
-		};
-
-		_this.changePassword = function () {
-			return _AccountActions2.default.changePassword(_this.state.value1);
-		};
-
-		_this.back = function () {
-			return _TabActions2.default.openTab('list');
-		};
-
-		_this._onChange = function (option, event) {
-			return _this.setState(_defineProperty({}, option, event.target.value));
-		};
-
-		_this._change = function () {
-			if (_this.props.type == 'username') {
-				_this.changeUsername();
-			} else if (_this.props.type == 'password') {
-				_this.changePassword();
-			}
-		};
-
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && _this.state.value1 != '' && _this.state.value1 == _this.state.value2) _this._change();
-		};
-
-		_this.state = {
-			value1: '',
-			value2: ''
-		};
-		return _this;
-	}
-
-	_createClass(ChangeAccount, [{
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'changeaccount' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					this.props.type == 'username' ? 'Kontonamen ändern' : 'Passwort ändern'
-				),
-				_react2.default.createElement(TextField, {
-					hint: this.props.type == 'username' ? 'Benutzername' : 'Passwort',
-					value: this.state.value1,
-					onChange: this._onChange.bind(null, 'value1'),
-					onKeyPress: this._onEnter,
-					type: this.props.type == 'password' ? 'password' : undefined,
-					fullWidth: true
-				}),
-				_react2.default.createElement(TextField, {
-					hint: this.props.type == 'username' ? 'Benutzernamen bestätigen' : 'Passwort bestätigen',
-					value: this.state.value2,
-					onChange: this._onChange.bind(null, 'value2'),
-					onKeyPress: this._onEnter,
-					type: this.props.type == 'password' ? 'password' : undefined,
-					fullWidth: true
-				}),
-				_react2.default.createElement(BorderButton, { label: 'Ändern', onClick: this._change, primary: true, fullWidth: true, disabled: !equal(this.state.value1, this.state.value2)
-				}),
-				this.state.value1 !== this.state.value2 && this.state.value2 !== '' ? _react2.default.createElement(
-					'p',
-					{ key: 'change-account-warning' },
-					this.props.type == 'username' ? 'Die Benutzernamen sind nicht identisch!' : 'Die Passwörter sind nicht identisch!'
-				) : null,
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück'
-					)
-				)
-			);
-		}
-	}]);
-
-	return ChangeAccount;
-}(_react.Component);
-
-ChangeAccount.propTypes = {
-	type: _react2.default.PropTypes.string.isRequired
-};
-
-exports.default = ChangeAccount;
-
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],28:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _AccountActions = require('../../../actions/AccountActions');
-
-var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-var _TabActions = require('../../../actions/TabActions');
-
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _IconButton2 = _interopRequireDefault(_IconButton);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _Scroll = require('../../layout/Scroll');
+
+var _Scroll2 = _interopRequireDefault(_Scroll);
+
+var _TextField = require('../../layout/TextField');
+
+var _TextField2 = _interopRequireDefault(_TextField);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3106,71 +2925,94 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DeleteAccount = function (_Component) {
-	_inherits(DeleteAccount, _Component);
+var Account = function (_Component) {
+	_inherits(Account, _Component);
 
-	function DeleteAccount(props) {
-		_classCallCheck(this, DeleteAccount);
+	function Account() {
+		var _Object$getPrototypeO;
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DeleteAccount).call(this, props));
+		var _temp, _this, _ret;
 
-		_this.deleteAccount = function () {
-			return _AccountActions2.default.deleteAccount();
-		};
+		_classCallCheck(this, Account);
 
-		_this.back = function () {
-			return _TabActions2.default.openTab('list');
-		};
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		return _this;
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Account)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+			newName: '',
+			newPassword: ''
+		}, _this.handleName = function (event) {
+			return _this.setState({ newName: event.target.value });
+		}, _this.changeName = function () {
+			return _AccountActions2.default.changeUsername(_this.state.newName);
+		}, _this.handlePassword = function (event) {
+			return _this.setState({ newPassword: event.target.value });
+		}, _this.changePassword = function () {
+			return _AccountActions2.default.changePassword(_this.state.newPassword);
+		}, _this.delete = function () {
+			return _AccountActions2.default.deleteConfirm();
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
-	_createClass(DeleteAccount, [{
+	_createClass(Account, [{
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'deleteaccount' },
+				'section',
+				{ id: 'account' },
 				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Konto löschen'
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					'Du bist dabei, dein Konto zu löschen.'
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					'Diese Aktion kann NICHT rückgängig gemacht werden! Durch das Löschen des Kontos werden alle Helden und Gruppen, die diesem Konto gehören, ebenfalls gelöscht!'
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					'Bist du dir GANZ sicher, dass du fortfahren möchtest?'
-				),
-				_react2.default.createElement(BorderButton, { label: 'Konto löschen', onClick: this.deleteAccount, primary: true, fullWIdth: true }),
-				_react2.default.createElement(
-					'p',
-					null,
+					'div',
+					{ className: 'page' },
 					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück'
+						_Scroll2.default,
+						null,
+						_react2.default.createElement(_TextField2.default, {
+							hint: 'Benutzernamen ändern',
+							value: this.state.newName,
+							onChange: this.handleName
+						}),
+						_react2.default.createElement(_IconButton2.default, {
+							icon: '',
+							onClick: this.changeName,
+							disabled: this.state.newName === '' || this.state.newName.length < 3 || this.state.newName.length > 20
+						}),
+						_react2.default.createElement(
+							'div',
+							{ className: 'padding' },
+							(this.state.newName.length < 3 || this.state.newName.length > 20) && this.state.newName !== '' ? 'Der Benutzername muss mindestens 3 und darf maximal 20 Zeichen umfassen.' : null
+						),
+						_react2.default.createElement(_TextField2.default, {
+							hint: 'Passwort ändern',
+							value: this.state.newPassword,
+							onChange: this.handlePassword
+						}),
+						_react2.default.createElement(_IconButton2.default, {
+							icon: '',
+							onClick: this.changePassword,
+							disabled: this.state.newPassword === '' || this.state.newPassword.length < 5 || this.state.newPassword.length > 20
+						}),
+						_react2.default.createElement(
+							'div',
+							{ className: 'padding' },
+							(this.state.newPassword.length < 5 || this.state.newPassword.length > 20) && this.state.newPassword !== '' ? 'Das Passwort muss mindestens 5 und darf maximal 20 Zeichen umfassen.' : null
+						),
+						_react2.default.createElement(_BorderButton2.default, {
+							label: 'Konto löschen',
+							onClick: this.delete
+						})
 					)
 				)
 			);
 		}
 	}]);
 
-	return DeleteAccount;
+	return Account;
 }(_react.Component);
 
-exports.default = DeleteAccount;
+exports.default = Account;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],29:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../stores/core/AccountStore":132,"../../layout/BorderButton":96,"../../layout/IconButton":100,"../../layout/Scroll":103,"../../layout/TextField":107,"react":326}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3183,13 +3025,19 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _Dialog = require('../../layout/Dialog');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _TextField = require('../../layout/TextField');
+
+var _TextField2 = _interopRequireDefault(_TextField);
+
+var _createOverlay = require('../../../utils/createOverlay');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3202,60 +3050,58 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ForgotPassword = function (_Component) {
 	_inherits(ForgotPassword, _Component);
 
-	function ForgotPassword(props) {
+	function ForgotPassword() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, ForgotPassword);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ForgotPassword).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.forgotPassword = function () {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(ForgotPassword)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+			email: ''
+		}, _this.forgotPassword = function () {
 			return _AccountActions2.default.forgotPassword(_this.state.email);
-		};
-
-		_this.back = function () {
-			return _TabActions2.default.openTab('login');
-		};
-
-		_this._onChange = function (event) {
+		}, _this.back = function () {
+			return _AccountActions2.default.showLogin();
+		}, _this._onChange = function (event) {
 			return _this.setState({ email: event.target.value });
-		};
-
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && _this.state.email != '') _this.forgotPassword();
-		};
-
-		_this.state = { email: '' };
-		return _this;
+		}, _this._onEnter = function (event) {
+			if (event.charCode === 13 && _this.state.email !== '') {
+				_this.forgotPassword();
+				(0, _createOverlay.close)(_this.props.node);
+			}
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(ForgotPassword, [{
 		key: 'render',
 		value: function render() {
+			var email = this.state.email;
+
+
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'forgotpassword' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Passwort vergessen'
-				),
-				_react2.default.createElement(TextField, {
+				_Dialog2.default,
+				{ id: 'forgotpassword', title: 'Passwort vergessen', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.forgotPassword,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Registrierte E-Mail-Adresse',
-					value: this.state.email,
+					value: email,
 					onChange: this._onChange,
 					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'email'
-				}),
-				_react2.default.createElement(BorderButton, { label: 'E-Mail anfordern', onClick: this.forgotPassword, primary: true, fullWidth: true, disabled: this.state.email == '' }),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück zur Anmeldeseite'
-					)
-				)
+					type: 'email',
+					fullWidth: true
+				})
 			);
 		}
 	}]);
@@ -3263,9 +3109,12 @@ var ForgotPassword = function (_Component) {
 	return ForgotPassword;
 }(_react.Component);
 
+ForgotPassword.props = {
+	node: _react.PropTypes.any
+};
 exports.default = ForgotPassword;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],30:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../utils/createOverlay":142,"../../layout/Dialog":98,"../../layout/TextField":107,"react":326}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3278,13 +3127,19 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _Dialog = require('../../layout/Dialog');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _TextField = require('../../layout/TextField');
+
+var _TextField2 = _interopRequireDefault(_TextField);
+
+var _createOverlay = require('../../../utils/createOverlay');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3297,60 +3152,58 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ForgotUsername = function (_Component) {
 	_inherits(ForgotUsername, _Component);
 
-	function ForgotUsername(props) {
+	function ForgotUsername() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, ForgotUsername);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ForgotUsername).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.forgotUsername = function () {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(ForgotUsername)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+			email: ''
+		}, _this.forgotUsername = function () {
 			return _AccountActions2.default.forgotUsername(_this.state.email);
-		};
-
-		_this.back = function () {
-			return _TabActions2.default.openTab('login');
-		};
-
-		_this._onChange = function (event) {
+		}, _this.back = function () {
+			return _AccountActions2.default.showLogin();
+		}, _this._onChange = function (event) {
 			return _this.setState({ email: event.target.value });
-		};
-
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && _this.state.email != '') _this.forgotUsername();
-		};
-
-		_this.state = { email: '' };
-		return _this;
+		}, _this._onEnter = function (event) {
+			if (event.charCode === 13 && _this.state.email !== '') {
+				_this.forgotUsername();
+				(0, _createOverlay.close)(_this.props.node);
+			}
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(ForgotUsername, [{
 		key: 'render',
 		value: function render() {
+			var email = this.state.email;
+
+
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'forgotusername' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Benutzername vergessen'
-				),
-				_react2.default.createElement(TextField, {
+				_Dialog2.default,
+				{ id: 'forgotusername', title: 'Benutzername vergessen', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.forgotUsername,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Registrierte E-Mail-Adresse',
-					value: this.state.email,
+					value: email,
 					onChange: this._onChange,
 					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'email'
-				}),
-				_react2.default.createElement(BorderButton, { label: 'E-Mail anfordern', onClick: this.forgotUsername, primary: true, fullWidth: true, disabled: this.state.email == '' }),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück zur Anmeldeseite'
-					)
-				)
+					type: 'email',
+					fullWidth: true
+				})
 			);
 		}
 	}]);
@@ -3358,9 +3211,12 @@ var ForgotUsername = function (_Component) {
 	return ForgotUsername;
 }(_react.Component);
 
+ForgotUsername.props = {
+	node: _react.PropTypes.any
+};
 exports.default = ForgotUsername;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],31:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../utils/createOverlay":142,"../../layout/Dialog":98,"../../layout/TextField":107,"react":326}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3373,13 +3229,19 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _Dialog = require('../../layout/Dialog');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _TextField = require('../../layout/TextField');
+
+var _TextField2 = _interopRequireDefault(_TextField);
+
+var _createOverlay = require('../../../utils/createOverlay');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3394,79 +3256,74 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Login = function (_Component) {
 	_inherits(Login, _Component);
 
-	function Login(props) {
+	function Login() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, Login);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Login).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.login = function () {
-			return _AccountActions2.default.login(_this.state.username, _this.state.password);
-		};
-
-		_this.forgotUsername = function () {
-			return _TabActions2.default.openTab('forgotUsername');
-		};
-
-		_this.forgotPassword = function () {
-			return _TabActions2.default.openTab('forgotPassword');
-		};
-
-		_this.registration = function () {
-			return _TabActions2.default.openTab('registration');
-		};
-
-		_this.resendActivation = function () {
-			return _TabActions2.default.openTab('resendActivation');
-		};
-
-		_this._onChange = function (option, event) {
-			return _this.setState(_defineProperty({}, option, event.target.value));
-		};
-
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && _this.state.username != '' && _this.state.password != '') _this.login();
-		};
-
-		_this.state = {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Login)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 			username: '',
 			password: ''
-		};
-		return _this;
+		}, _this.login = function () {
+			return _AccountActions2.default.login(_this.state.username, _this.state.password);
+		}, _this.forgotUsername = function () {
+			_AccountActions2.default.showForgotName();(0, _createOverlay.close)(_this.props.node);
+		}, _this.forgotPassword = function () {
+			_AccountActions2.default.showForgotPassword();(0, _createOverlay.close)(_this.props.node);
+		}, _this.register = function () {
+			return _AccountActions2.default.showRegister();
+		}, _this.resendActivation = function () {
+			_AccountActions2.default.showResend();(0, _createOverlay.close)(_this.props.node);
+		}, _this._onChange = function (option, event) {
+			return _this.setState(_defineProperty({}, option, event.target.value));
+		}, _this._onEnter = function (event) {
+			if (event.charCode === 13 && _this.state.username !== '' && _this.state.password !== '') {
+				_this.login();
+				(0, _createOverlay.close)(_this.props.node);
+			}
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(Login, [{
-		key: 'shouldComponentUpdate',
-		value: function shouldComponentUpdate(nextProps, nextState) {
-			return nextState.username !== this.state.username || nextState.password !== this.state.password;
-		}
-	}, {
 		key: 'render',
 		value: function render() {
+			var _state = this.state;
+			var username = _state.username;
+			var password = _state.password;
+
 
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'login' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Anmelden'
-				),
-				_react2.default.createElement(TextField, {
+				_Dialog2.default,
+				{ id: 'login', title: 'Anmelden', node: this.props.node, buttons: [{
+						label: 'Anmelden',
+						onClick: this.login,
+						primary: true,
+						disabled: username === '' || password === ''
+					}, {
+						label: 'Registrieren',
+						onClick: this.register
+					}] },
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Benutzername',
-					value: this.state.username,
+					value: username,
 					onChange: this._onChange.bind(null, 'username'),
 					onKeyPress: this._onEnter,
 					fullWidth: true
 				}),
-				_react2.default.createElement(TextField, {
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Passwort',
-					value: this.state.password,
+					value: password,
 					onChange: this._onChange.bind(null, 'password'),
 					onKeyPress: this._onEnter,
 					type: 'password',
 					fullWidth: true
 				}),
-				_react2.default.createElement(BorderButton, { label: 'Anmelden', onClick: this.login, primary: true, fullWidth: true, disabled: this.state.username == '' || this.state.password == '' }),
 				_react2.default.createElement(
 					'p',
 					null,
@@ -3482,11 +3339,6 @@ var Login = function (_Component) {
 					),
 					_react2.default.createElement(
 						'span',
-						{ className: 'link', onClick: this.registration },
-						'Konto erstellen'
-					),
-					_react2.default.createElement(
-						'span',
 						{ className: 'link', onClick: this.resendActivation },
 						'Aktivierungs-E-Mail nicht erhalten?'
 					)
@@ -3498,9 +3350,12 @@ var Login = function (_Component) {
 	return Login;
 }(_react.Component);
 
+Login.props = {
+	node: _react.PropTypes.any
+};
 exports.default = Login;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],32:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../utils/createOverlay":142,"../../layout/Dialog":98,"../../layout/TextField":107,"react":326}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3513,13 +3368,19 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _Dialog = require('../../layout/Dialog');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _TextField = require('../../layout/TextField');
+
+var _TextField2 = _interopRequireDefault(_TextField);
+
+var _createOverlay = require('../../../utils/createOverlay');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3531,195 +3392,151 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Registration = function (_Component) {
-	_inherits(Registration, _Component);
+function _validateEmail(email) {
+	var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return regex.test(email);
+}
 
-	function Registration(props) {
-		_classCallCheck(this, Registration);
+var Register = function (_Component) {
+	_inherits(Register, _Component);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Registration).call(this, props));
+	function Register() {
+		var _Object$getPrototypeO;
 
-		_this.register = function () {
-			return _AccountActions2.default.register(_this.state.email, _this.state.username, _this.state.password);
-		};
+		var _temp, _this, _ret;
 
-		_this.back = function () {
-			return _TabActions2.default.openTab('login');
-		};
+		_classCallCheck(this, Register);
 
-		_this._onChange = function (option, event) {
-			return _this.setState(_defineProperty({}, option, event.target.value));
-		};
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && equal(_this.state.email, _this.state.email2) && equal(_this.state.password, _this.state.password2) && _this.state.username != '') _this.register();
-		};
-
-		_this.state = {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Register)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 			email: '',
 			email2: '',
 			username: '',
 			password: '',
 			password2: ''
-		};
-		return _this;
+		}, _this.register = function () {
+			return _AccountActions2.default.register(_this.state.email, _this.state.username, _this.state.password);
+		}, _this.back = function () {
+			return _AccountActions2.default.showLogin();
+		}, _this._onChange = function (option, event) {
+			return _this.setState(_defineProperty({}, option, event.target.value));
+		}, _this._onEnter = function (event) {
+			var _this$state = _this.state;
+			var email = _this$state.email;
+			var email2 = _this$state.email2;
+			var username = _this$state.username;
+			var password = _this$state.password;
+			var password2 = _this$state.password2;
+
+			if (event.charCode === 13 && email !== '' && _validateEmail(email) && email === email2 && username !== '' && username.length >= 3 && username.length <= 20 && password !== '' && password.length >= 5 && password.length <= 20 && password === password2) {
+				_this.register();
+				(0, _createOverlay.close)(_this.props.node);
+			}
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
-	_createClass(Registration, [{
+	_createClass(Register, [{
 		key: 'render',
 		value: function render() {
+			var _state = this.state;
+			var email = _state.email;
+			var email2 = _state.email2;
+			var username = _state.username;
+			var password = _state.password;
+			var password2 = _state.password2;
+
+
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'registration' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Registrieren'
-				),
-				_react2.default.createElement(TextField, {
+				_Dialog2.default,
+				{ id: 'login', title: 'Registrieren', node: this.props.node, buttons: [{
+						label: 'Registrieren',
+						onClick: this.register,
+						primary: true,
+						disabled: email === '' || !_validateEmail(email) || email !== email2 || username === '' || username.length < 3 || username.length > 20 || password === '' || password.length < 5 || password.length > 20 || password !== password2
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'E-Mail-Adresse',
-					value: this.state.email,
+					value: email,
 					onChange: this._onChange.bind(null, 'email'),
 					onKeyPress: this._onEnter,
 					fullWidth: true,
 					type: 'email'
 				}),
-				_react2.default.createElement(TextField, {
+				email !== '' && !_validateEmail(email) ? _react2.default.createElement(
+					'p',
+					null,
+					'Es wurde keine gültige Email-Adresse eingegeben!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'E-Mail-Adresse bestätigen',
-					value: this.state.email2,
+					value: email2,
 					onChange: this._onChange.bind(null, 'email2'),
 					onKeyPress: this._onEnter,
 					fullWidth: true,
 					type: 'email'
 				}),
-				this.state.email != this.state.email2 && this.state.email2 != '' ? _react2.default.createElement(
+				email !== email2 && email2 !== '' ? _react2.default.createElement(
 					'p',
 					null,
 					'Die E-Mail-Adressen sind nicht identisch!'
 				) : null,
-				_react2.default.createElement(TextField, {
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Benutzername',
-					value: this.state.username,
+					value: username,
 					onChange: this._onChange.bind(null, 'username'),
 					onKeyPress: this._onEnter,
 					fullWidth: true
 				}),
-				_react2.default.createElement(TextField, {
+				username.length > 0 && (username.length < 3 || username.length > 20) ? _react2.default.createElement(
+					'p',
+					null,
+					'Der Benutzername muss zwischen 3 und 20 Zeichen lang sein!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Passwort',
-					value: this.state.password,
+					value: password,
 					onChange: this._onChange.bind(null, 'password'),
 					onKeyPress: this._onEnter,
 					fullWidth: true,
 					type: 'password'
 				}),
-				_react2.default.createElement(TextField, {
+				password.length > 0 && (password.length < 5 || password.length > 20) ? _react2.default.createElement(
+					'p',
+					null,
+					'Das Passwort muss zwischen 5 und 20 Zeichen lang sein!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Passwort bestätigen',
-					value: this.state.password2,
+					value: password2,
 					onChange: this._onChange.bind(null, 'password2'),
 					onKeyPress: this._onEnter,
 					fullWidth: true,
 					type: 'password'
 				}),
-				this.state.password != this.state.password2 && this.state.password2 != '' ? _react2.default.createElement(
+				password !== password2 && password2 !== '' ? _react2.default.createElement(
 					'p',
 					null,
 					'Die Passwörter sind nicht identisch!'
-				) : null,
-				_react2.default.createElement(BorderButton, { label: 'Registrieren', onClick: this.register, primary: true, fullWidth: true, disabled: !(equal(this.state.email, this.state.email2) && equal(this.state.password, this.state.password2) && this.state.username != '') }),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück zur Anmeldeseite'
-					)
-				)
+				) : null
 			);
 		}
 	}]);
 
-	return Registration;
+	return Register;
 }(_react.Component);
 
-exports.default = Registration;
+Register.props = {
+	node: _react.PropTypes.any
+};
+exports.default = Register;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],33:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _TabActions = require('../../../actions/TabActions');
-
-var _TabActions2 = _interopRequireDefault(_TabActions);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var RegistrationConfirm = function (_Component) {
-	_inherits(RegistrationConfirm, _Component);
-
-	function RegistrationConfirm(props) {
-		_classCallCheck(this, RegistrationConfirm);
-
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RegistrationConfirm).call(this, props));
-
-		_this._back = function () {
-			return _TabActions2.default.openTab('login');
-		};
-
-		_this._back = _this._back.bind(_this);
-		return _this;
-	}
-
-	_createClass(RegistrationConfirm, [{
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'confirmregistration' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Konto bestätigen'
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					'Wir haben dir eine E-Mail an die angegebene Adresse geschickt. Dort wirst du einen Bestätigungslink finden, dem du einfach nur zu folgen brauchst, um dein Konto zu aktivieren.'
-				),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this._back },
-						'Zurück zur Anmeldeseite'
-					)
-				)
-			);
-		}
-	}]);
-
-	return RegistrationConfirm;
-}(_react.Component);
-
-exports.default = RegistrationConfirm;
-
-},{"../../../actions/TabActions":22,"react":330}],34:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../utils/createOverlay":142,"../../layout/Dialog":98,"../../layout/TextField":107,"react":326}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3732,17 +3549,21 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _TabActions = require('../../../actions/TabActions');
+var _Dialog = require('../../layout/Dialog');
 
-var _TabActions2 = _interopRequireDefault(_TabActions);
+var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _TextField = require('../../layout/TextField');
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+var _TextField2 = _interopRequireDefault(_TextField);
+
+var _createOverlay = require('../../../utils/createOverlay');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3753,60 +3574,58 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ResendActivation = function (_Component) {
 	_inherits(ResendActivation, _Component);
 
-	function ResendActivation(props) {
+	function ResendActivation() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, ResendActivation);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ResendActivation).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.resendActivation = function () {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(ResendActivation)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+			email: ''
+		}, _this.resendActivation = function () {
 			return _AccountActions2.default.resendActivation(_this.state.email);
-		};
-
-		_this.back = function () {
-			return _TabActions2.default.openTab('login');
-		};
-
-		_this._onChange = function (option, event) {
-			return _this.setState(_defineProperty({}, option, event.target.value));
-		};
-
-		_this._onEnter = function (event) {
-			if (event.charCode === 13 && _this.state.email != '') _this.resendActivation();
-		};
-
-		_this.state = { email: '' };
-		return _this;
+		}, _this.back = function () {
+			return _AccountActions2.default.showLogin();
+		}, _this._onChange = function (event) {
+			return _this.setState({ email: event.target.value });
+		}, _this._onEnter = function (event) {
+			if (event.charCode === 13 && _this.state.email !== '') {
+				_this.resendActivation();
+				(0, _createOverlay.close)(_this.props.node);
+			}
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(ResendActivation, [{
 		key: 'render',
 		value: function render() {
+			var email = this.state.email;
+
+
 			return _react2.default.createElement(
-				AccountContainer,
-				{ id: 'resendactivation' },
-				_react2.default.createElement(
-					'h2',
-					{ className: 'header' },
-					'Aktivierungs-E-Mail erneut senden'
-				),
-				_react2.default.createElement(TextField, {
+				_Dialog2.default,
+				{ id: 'resendactivation', title: 'Aktivierungslink erneut senden', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.resendActivation,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
 					hint: 'Registrierte E-Mail-Adresse',
-					value: this.state.email,
+					value: email,
 					onChange: this._onChange,
 					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'email'
-				}),
-				_react2.default.createElement(BorderButton, { label: 'E-Mail anfordern', onClick: this.resendActivation, primary: true, fullWidth: true, disabled: this.state.email == '' }),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.back },
-						'Zurück zur Anmeldeseite'
-					)
-				)
+					type: 'email',
+					fullWidth: true
+				})
 			);
 		}
 	}]);
@@ -3814,9 +3633,12 @@ var ResendActivation = function (_Component) {
 	return ResendActivation;
 }(_react.Component);
 
+ResendActivation.props = {
+	node: _react.PropTypes.any
+};
 exports.default = ResendActivation;
 
-},{"../../../actions/AccountActions":4,"../../../actions/TabActions":22,"react":330}],35:[function(require,module,exports){
+},{"../../../actions/AccountActions":4,"../../../utils/createOverlay":142,"../../layout/Dialog":98,"../../layout/TextField":107,"react":326}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3930,7 +3752,7 @@ var Attribute = function (_Component) {
 
 exports.default = Attribute;
 
-},{"../../../stores/AttributeStore":123,"../../../stores/ELStore":126,"../../layout/Scroll":107,"./AttributeCalc":37,"./AttributeList":39,"react":330}],36:[function(require,module,exports){
+},{"../../../stores/AttributeStore":119,"../../../stores/ELStore":122,"../../layout/Scroll":103,"./AttributeCalc":35,"./AttributeList":37,"react":326}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4006,7 +3828,7 @@ AttributeBorder.propTypes = {
 };
 exports.default = AttributeBorder;
 
-},{"classnames":152,"react":330}],37:[function(require,module,exports){
+},{"classnames":148,"react":326}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4146,7 +3968,7 @@ AttributeCalc.propTypes = {
 };
 exports.default = AttributeCalc;
 
-},{"../../../stores/AttributeStore":123,"../../../stores/ListStore":129,"./AttributeCalcItem":38,"react":330}],38:[function(require,module,exports){
+},{"../../../stores/AttributeStore":119,"../../../stores/ListStore":125,"./AttributeCalcItem":36,"react":326}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4229,7 +4051,7 @@ AttributeCalcItem.propTypes = {
 };
 exports.default = AttributeCalcItem;
 
-},{"../../../actions/AttributeActions":5,"../../layout/IconButton":104,"./AttributeBorder":36,"react":330}],39:[function(require,module,exports){
+},{"../../../actions/AttributeActions":5,"../../layout/IconButton":100,"./AttributeBorder":34,"react":326}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4295,7 +4117,7 @@ AttributeList.propTypes = {
 };
 exports.default = AttributeList;
 
-},{"./AttributeListItem":40,"react":330}],40:[function(require,module,exports){
+},{"./AttributeListItem":38,"react":326}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4375,7 +4197,7 @@ AttributeListItem.propTypes = {
 };
 exports.default = AttributeListItem;
 
-},{"../../../actions/AttributeActions":5,"../../layout/IconButton":104,"./AttributeBorder":36,"react":330}],41:[function(require,module,exports){
+},{"../../../actions/AttributeActions":5,"../../layout/IconButton":100,"./AttributeBorder":34,"react":326}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4566,7 +4388,7 @@ var Advantages = function (_Component) {
 
 exports.default = Advantages;
 
-},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":125,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/RaceStore":144,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Slidein":108,"../../layout/TextField":111,"./DisAdvList":44,"react":330}],42:[function(require,module,exports){
+},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":121,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/RaceStore":140,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Slidein":104,"../../layout/TextField":107,"./DisAdvList":42,"react":326}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4668,7 +4490,7 @@ var DisAdv = function (_React$Component) {
 
 exports.default = DisAdv;
 
-},{"../../layout/BorderButton":100,"../../layout/SubTabs":109,"../../layout/TextField":111,"./Advantages":41,"./Disadvantages":46,"classnames":152,"react":330}],43:[function(require,module,exports){
+},{"../../layout/BorderButton":96,"../../layout/SubTabs":105,"../../layout/TextField":107,"./Advantages":39,"./Disadvantages":44,"classnames":148,"react":326}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4979,7 +4801,7 @@ DisAdvAddListItem.propTypes = {
 };
 exports.default = DisAdvAddListItem;
 
-},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":125,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],44:[function(require,module,exports){
+},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":121,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5089,7 +4911,7 @@ DisAdvList.propTypes = {
 };
 exports.default = DisAdvList;
 
-},{"../../layout/Scroll":107,"./DisAdvAddListItem":43,"./DisAdvRemoveListItem":45,"classnames":152,"react":330}],45:[function(require,module,exports){
+},{"../../layout/Scroll":103,"./DisAdvAddListItem":41,"./DisAdvRemoveListItem":43,"classnames":148,"react":326}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5221,7 +5043,7 @@ DisAdvRemoveListItem.propTypes = {
 };
 exports.default = DisAdvRemoveListItem;
 
-},{"../../../actions/DisAdvActions":8,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],46:[function(require,module,exports){
+},{"../../../actions/DisAdvActions":8,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5412,7 +5234,7 @@ var Disadvantages = function (_Component) {
 
 exports.default = Disadvantages;
 
-},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":125,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/RaceStore":144,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Slidein":108,"../../layout/TextField":111,"./DisAdvList":44,"react":330}],47:[function(require,module,exports){
+},{"../../../actions/DisAdvActions":8,"../../../stores/DisAdvStore":121,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/RaceStore":140,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Slidein":104,"../../layout/TextField":107,"./DisAdvList":42,"react":326}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5502,7 +5324,7 @@ var Grouplist = function (_Component) {
 
 exports.default = Grouplist;
 
-},{"../../../actions/TabActions":22,"../../layout/BorderButton":100,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"react":330}],48:[function(require,module,exports){
+},{"../../../actions/TabActions":22,"../../layout/BorderButton":96,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"react":326}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5609,7 +5431,7 @@ HeroCreation.props = {
 };
 exports.default = HeroCreation;
 
-},{"../../../actions/HerolistActions":11,"../../layout/Dialog":102,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],49:[function(require,module,exports){
+},{"../../../actions/HerolistActions":11,"../../layout/Dialog":98,"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5620,6 +5442,10 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _APStore = require('../../../stores/APStore');
+
+var _APStore2 = _interopRequireDefault(_APStore);
+
 var _BorderButton = require('../../layout/BorderButton');
 
 var _BorderButton2 = _interopRequireDefault(_BorderButton);
@@ -5627,6 +5453,10 @@ var _BorderButton2 = _interopRequireDefault(_BorderButton);
 var _CultureStore = require('../../../stores/rcp/CultureStore');
 
 var _CultureStore2 = _interopRequireDefault(_CultureStore);
+
+var _ELStore = require('../../../stores/ELStore');
+
+var _ELStore2 = _interopRequireDefault(_ELStore);
 
 var _HerolistActions = require('../../../actions/HerolistActions');
 
@@ -5643,6 +5473,10 @@ var _HerolistStore2 = _interopRequireDefault(_HerolistStore);
 var _ProfessionStore = require('../../../stores/rcp/ProfessionStore');
 
 var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
+
+var _ProfileStore = require('../../../stores/ProfileStore');
+
+var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
 var _RaceStore = require('../../../stores/rcp/RaceStore');
 
@@ -5706,6 +5540,10 @@ var Herolist = function (_Component) {
 			return _HerolistActions2.default.showHeroCreation();
 		};
 
+		_this.refresh = function () {
+			return _HerolistActions2.default.refresh();
+		};
+
 		return _this;
 	}
 
@@ -5749,7 +5587,8 @@ var Herolist = function (_Component) {
 								value: 'ap'
 							}]
 						}),
-						_react2.default.createElement(_BorderButton2.default, { label: 'Erstellen', onClick: this.showHeroCreation })
+						_react2.default.createElement(_BorderButton2.default, { label: 'Aktualisieren', onClick: this.refresh }),
+						_react2.default.createElement(_BorderButton2.default, { label: 'Erstellen', onClick: this.showHeroCreation, primary: true })
 					),
 					_react2.default.createElement(
 						_Scroll2.default,
@@ -5757,6 +5596,11 @@ var Herolist = function (_Component) {
 						_react2.default.createElement(
 							'ul',
 							null,
+							_ProfileStore2.default.getID() === null && _ELStore2.default.getStartID() !== 'EL_0' ? _react2.default.createElement(_HerolistItem2.default, {
+								id: null,
+								name: 'Ungespeicherter Held',
+								ap: { _max: _APStore2.default.get() }
+							}) : null,
 							list.map(function (hero) {
 								return _react2.default.createElement(_HerolistItem2.default, _extends({ key: hero.id }, hero));
 							})
@@ -5772,7 +5616,7 @@ var Herolist = function (_Component) {
 
 exports.default = Herolist;
 
-},{"../../../actions/HerolistActions":11,"../../../stores/core/HerolistStore":137,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/RaceStore":144,"../../layout/BorderButton":100,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"./HerolistItem":50,"react":330}],50:[function(require,module,exports){
+},{"../../../actions/HerolistActions":11,"../../../stores/APStore":118,"../../../stores/ELStore":122,"../../../stores/ProfileStore":128,"../../../stores/core/HerolistStore":133,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/RaceStore":140,"../../layout/BorderButton":96,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"./HerolistItem":48,"react":326}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5805,6 +5649,10 @@ var _ProfessionVariantStore = require('../../../stores/rcp/ProfessionVariantStor
 
 var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
+var _ProfileStore = require('../../../stores/ProfileStore');
+
+var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
+
 var _reactProgressArc = require('react-progress-arc');
 
 var _reactProgressArc2 = _interopRequireDefault(_reactProgressArc);
@@ -5816,6 +5664,10 @@ var _RaceStore2 = _interopRequireDefault(_RaceStore);
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _TabActions = require('../../../actions/TabActions');
+
+var _TabActions2 = _interopRequireDefault(_TabActions);
 
 var _classnames = require('classnames');
 
@@ -5841,6 +5693,10 @@ var HerolistItem = function (_Component) {
 			return _HerolistActions2.default.load(_this.props.id);
 		};
 
+		_this.show = function () {
+			return _TabActions2.default.showSection('hero');
+		};
+
 		return _this;
 	}
 
@@ -5848,6 +5704,7 @@ var HerolistItem = function (_Component) {
 		key: 'render',
 		value: function render() {
 			var _props = this.props;
+			var id = _props.id;
 			var name = _props.name;
 			var avatar = _props.avatar;
 			var ap = _props.ap;
@@ -5864,7 +5721,10 @@ var HerolistItem = function (_Component) {
 			var currentEL = 6;
 
 			for (var i = 0; i < elAp.length; i++) {
-				if (elAp[i] >= apTotal) {
+				if (elAp[i] === apTotal) {
+					currentEL = i;
+					break;
+				} else if (elAp[i] > apTotal) {
 					currentEL = i - 1;
 					break;
 				}
@@ -5878,7 +5738,7 @@ var HerolistItem = function (_Component) {
 				_react2.default.createElement(_reactProgressArc2.default, { completed: elProgress, diameter: 63, strokeWidth: 4 }),
 				_react2.default.createElement(
 					'div',
-					{ className: (0, _classnames2.default)('el', !avatar && 'no-avatar') },
+					{ className: (0, _classnames2.default)('el avatar-wrapper', !avatar && 'no-avatar') },
 					_react2.default.createElement(
 						'div',
 						{ className: 'overlay' },
@@ -5901,15 +5761,10 @@ var HerolistItem = function (_Component) {
 					_react2.default.createElement(
 						'div',
 						{ className: 'rcp' },
-						_RaceStore2.default.getNameByID(r),
-						' • ',
-						_CultureStore2.default.getNameByID(c),
-						' • ',
-						_ProfessionStore2.default.getNameByID(p),
-						pv ? ' (' + _ProfessionVariantStore2.default.getNameByID(pv) + ')' : ''
+						id === null ? null : _RaceStore2.default.getNameByID(r) + ' • ' + _CultureStore2.default.getNameByID(c) + ' • ' + _ProfessionStore2.default.getNameByID(p) + (pv ? ' (' + _ProfessionVariantStore2.default.getNameByID(pv) + ')' : '')
 					)
 				),
-				_react2.default.createElement(_BorderButton2.default, { label: 'Öffnen', onClick: this.load })
+				id === _ProfileStore2.default.getID() ? _react2.default.createElement(_BorderButton2.default, { label: 'Anzeigen', onClick: this.show, primary: true }) : _react2.default.createElement(_BorderButton2.default, { label: 'Öffnen', onClick: this.load })
 			);
 		}
 	}]);
@@ -5930,7 +5785,7 @@ HerolistItem.propTypes = {
 };
 exports.default = HerolistItem;
 
-},{"../../../actions/HerolistActions":11,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/BorderButton":100,"classnames":152,"react":330,"react-progress-arc":162}],51:[function(require,module,exports){
+},{"../../../actions/HerolistActions":11,"../../../actions/TabActions":22,"../../../stores/ProfileStore":128,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/BorderButton":96,"classnames":148,"react":326,"react-progress-arc":158}],49:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6016,7 +5871,7 @@ var Home = function (_Component) {
 
 exports.default = Home;
 
-},{"../../layout/Scroll":107,"react":330}],52:[function(require,module,exports){
+},{"../../layout/Scroll":103,"react":326}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6070,7 +5925,7 @@ var Equipment = function (_Component) {
 
 exports.default = Equipment;
 
-},{"../../../actions/EquipmentActions":9,"react":330}],53:[function(require,module,exports){
+},{"../../../actions/EquipmentActions":9,"react":326}],51:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6124,7 +5979,7 @@ var Inventory = function (_Component) {
 
 exports.default = Inventory;
 
-},{"../../../actions/InventoryActions":13,"react":330}],54:[function(require,module,exports){
+},{"../../../actions/InventoryActions":13,"react":326}],52:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6214,7 +6069,7 @@ var Items = function (_Component) {
 
 exports.default = Items;
 
-},{"../../layout/SubTabs":109,"./Equipment":52,"./Inventory":53,"react":330}],55:[function(require,module,exports){
+},{"../../layout/SubTabs":105,"./Equipment":50,"./Inventory":51,"react":326}],53:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6319,7 +6174,7 @@ var Groups = function (_Component) {
 
 exports.default = Groups;
 
-},{"../../../actions/GroupsActions":10,"../../../stores/GroupsStore":127,"../../layout/BorderButton":100,"../../layout/Scroll":107,"../../layout/Slidein":108,"react":330}],56:[function(require,module,exports){
+},{"../../../actions/GroupsActions":10,"../../../stores/GroupsStore":123,"../../layout/BorderButton":96,"../../layout/Scroll":103,"../../layout/Slidein":104,"react":326}],54:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6533,7 +6388,7 @@ var InGame = function (_Component) {
 
 exports.default = InGame;
 
-},{"../../../actions/InGameActions":12,"../../../stores/InGameStore":128,"../../layout/BorderButton":100,"../../layout/IconButton":104,"../../layout/Scroll":107,"../../layout/TextField":111,"./InGameControls":57,"./InGameEdit":58,"./InGameTableHealth":59,"./InGameTableIni":61,"./InGameTableLeft":62,"./InGameTableRight":63,"classnames":152,"react":330}],57:[function(require,module,exports){
+},{"../../../actions/InGameActions":12,"../../../stores/InGameStore":124,"../../layout/BorderButton":96,"../../layout/IconButton":100,"../../layout/Scroll":103,"../../layout/TextField":107,"./InGameControls":55,"./InGameEdit":56,"./InGameTableHealth":57,"./InGameTableIni":59,"./InGameTableLeft":60,"./InGameTableRight":61,"classnames":148,"react":326}],55:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6693,7 +6548,7 @@ InGameControls.propTypes = {
 };
 exports.default = InGameControls;
 
-},{"../../../actions/InGameActions":12,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/IconButton":104,"classnames":152,"react":330}],58:[function(require,module,exports){
+},{"../../../actions/InGameActions":12,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/IconButton":100,"classnames":148,"react":326}],56:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6922,7 +6777,7 @@ InGameEdit.propTypes = {
 
 exports.default = InGameEdit;
 
-},{"../../../actions/InGameActions":12,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/Slidein":108,"../../layout/TextField":111,"react":330,"react-gemini-scrollbar":161}],59:[function(require,module,exports){
+},{"../../../actions/InGameActions":12,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/Slidein":104,"../../layout/TextField":107,"react":326,"react-gemini-scrollbar":157}],57:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7020,7 +6875,7 @@ InGameTableHealth.propTypes = {
 };
 exports.default = InGameTableHealth;
 
-},{"./InGameTableHealthBar":60,"classnames":152,"react":330}],60:[function(require,module,exports){
+},{"./InGameTableHealthBar":58,"classnames":148,"react":326}],58:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7082,7 +6937,7 @@ InGameTableHealthBar.propTypes = {
 };
 exports.default = InGameTableHealthBar;
 
-},{"classnames":152,"react":330}],61:[function(require,module,exports){
+},{"classnames":148,"react":326}],59:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7177,7 +7032,7 @@ InGameTableIni.propTypes = {
 };
 exports.default = InGameTableIni;
 
-},{"classnames":152,"react":330}],62:[function(require,module,exports){
+},{"classnames":148,"react":326}],60:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7294,7 +7149,7 @@ InGameTableLeft.propTypes = {
 };
 exports.default = InGameTableLeft;
 
-},{"classnames":152,"react":330}],63:[function(require,module,exports){
+},{"classnames":148,"react":326}],61:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7463,7 +7318,7 @@ InGameTableRight.propTypes = {
 
 exports.default = InGameTableRight;
 
-},{"../../../actions/InGameActions":12,"classnames":152,"react":330}],64:[function(require,module,exports){
+},{"../../../actions/InGameActions":12,"classnames":148,"react":326}],62:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7554,7 +7409,7 @@ var Master = function (_Component) {
 
 exports.default = Master;
 
-},{"../../layout/SubTabs":109,"./Groups":55,"./InGame":56,"react":330}],65:[function(require,module,exports){
+},{"../../layout/SubTabs":105,"./Groups":53,"./InGame":54,"react":326}],63:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7672,7 +7527,7 @@ var ChantSheet = function (_Component) {
 
 exports.default = ChantSheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],66:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],64:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7815,7 +7670,7 @@ var CombatSheet = function (_Component) {
 
 exports.default = CombatSheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],67:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],65:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7930,7 +7785,7 @@ var InventorySheet = function (_Component) {
 
 exports.default = InventorySheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],68:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],66:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8242,7 +8097,7 @@ var MainSheet = function (_Component) {
 
 exports.default = MainSheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/ListStore":129,"../../../stores/ProfileStore":132,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],69:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/ListStore":125,"../../../stores/ProfileStore":128,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],67:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8361,7 +8216,7 @@ MainSheetCalcItem.propTypes = {
 };
 exports.default = MainSheetCalcItem;
 
-},{"classnames":152,"react":330}],70:[function(require,module,exports){
+},{"classnames":148,"react":326}],68:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8699,7 +8554,7 @@ var Overview = function (_Component) {
 
 exports.default = Overview;
 
-},{"../../../actions/ProfileActions":17,"../../../stores/APStore":122,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/ProfileStore":132,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/Dropdown":103,"../../layout/IconButton":104,"../../layout/Scroll":107,"../../layout/TextField":111,"./OverviewDisAdv":71,"./OverviewNameChange":72,"react":330}],71:[function(require,module,exports){
+},{"../../../actions/ProfileActions":17,"../../../stores/APStore":118,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/ProfileStore":128,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/Dropdown":99,"../../layout/IconButton":100,"../../layout/Scroll":103,"../../layout/TextField":107,"./OverviewDisAdv":69,"./OverviewNameChange":70,"react":326}],69:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8762,7 +8617,7 @@ OverviewDisAdv.propTypes = {
 };
 exports.default = OverviewDisAdv;
 
-},{"react":330}],72:[function(require,module,exports){
+},{"react":326}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8845,7 +8700,7 @@ OverviewNameChange.propTypes = {
 };
 exports.default = OverviewNameChange;
 
-},{"../../layout/IconButton":104,"../../layout/TextField":111,"react":330}],73:[function(require,module,exports){
+},{"../../layout/IconButton":100,"../../layout/TextField":107,"react":326}],71:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8941,7 +8796,7 @@ var Profile = function (_Component) {
 
 exports.default = Profile;
 
-},{"../../layout/SubTabs":109,"./Overview":70,"./Sheets":75,"react":330}],74:[function(require,module,exports){
+},{"../../layout/SubTabs":105,"./Overview":68,"./Sheets":73,"react":326}],72:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9029,7 +8884,7 @@ SheetHeader.propTypes = {
 };
 exports.default = SheetHeader;
 
-},{"../../../stores/AttributeStore":123,"../attributes/AttributeBorder":36,"react":330}],75:[function(require,module,exports){
+},{"../../../stores/AttributeStore":119,"../attributes/AttributeBorder":34,"react":326}],73:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9127,7 +8982,7 @@ var Sheets = function (_Component) {
 
 exports.default = Sheets;
 
-},{"../../layout/BorderButton":100,"../../layout/Scroll":107,"./ChantSheet":65,"./CombatSheet":66,"./InventorySheet":67,"./MainSheet":68,"./SpellsSheet":76,"./TalentsSheet":77,"react":330}],76:[function(require,module,exports){
+},{"../../layout/BorderButton":96,"../../layout/Scroll":103,"./ChantSheet":63,"./CombatSheet":64,"./InventorySheet":65,"./MainSheet":66,"./SpellsSheet":74,"./TalentsSheet":75,"react":326}],74:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9245,7 +9100,7 @@ var SpellsSheet = function (_Component) {
 
 exports.default = SpellsSheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],77:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],75:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9386,7 +9241,7 @@ var TalentsSheet = function (_Component) {
 
 exports.default = TalentsSheet;
 
-},{"../../../stores/APStore":122,"../../../stores/AttributeStore":123,"../../../stores/DisAdvStore":125,"../../../stores/ELStore":126,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/Avatar":99,"../../layout/sheets/Box":115,"../../layout/sheets/LabelBox":116,"../../layout/sheets/Plain":117,"../../layout/sheets/TextBox":118,"./MainSheetCalcItem":69,"./OverviewDisAdv":71,"./SheetHeader":74,"react":330}],78:[function(require,module,exports){
+},{"../../../stores/APStore":118,"../../../stores/AttributeStore":119,"../../../stores/DisAdvStore":121,"../../../stores/ELStore":122,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":95,"../../layout/sheets/Box":111,"../../layout/sheets/LabelBox":112,"../../layout/sheets/Plain":113,"../../layout/sheets/TextBox":114,"./MainSheetCalcItem":67,"./OverviewDisAdv":69,"./SheetHeader":72,"react":326}],76:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9590,7 +9445,7 @@ Cultures.propTypes = {
 };
 exports.default = Cultures;
 
-},{"../../../actions/CultureActions":7,"../../../stores/TalentsStore":135,"../../../stores/rcp/CultureStore":141,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Dropdown":103,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"classnames":152,"react":330}],79:[function(require,module,exports){
+},{"../../../actions/CultureActions":7,"../../../stores/TalentsStore":131,"../../../stores/rcp/CultureStore":137,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Dropdown":99,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"classnames":148,"react":326}],77:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9826,7 +9681,7 @@ Professions.propTypes = {
 };
 exports.default = Professions;
 
-},{"../../../actions/ProfessionActions":15,"../../../actions/ProfessionVariantActions":16,"../../../stores/TalentsStore":135,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Dropdown":103,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"./Selections":82,"classnames":152,"react":330}],80:[function(require,module,exports){
+},{"../../../actions/ProfessionActions":15,"../../../actions/ProfessionVariantActions":16,"../../../stores/TalentsStore":131,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Dropdown":99,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"./Selections":80,"classnames":148,"react":326}],78:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -9963,7 +9818,7 @@ var RCP = function (_Component) {
 
 exports.default = RCP;
 
-},{"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/RaceStore":144,"../../layout/SubTabs":109,"./Cultures":78,"./Professions":79,"./Races":81,"react":330}],81:[function(require,module,exports){
+},{"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/RaceStore":140,"../../layout/SubTabs":105,"./Cultures":76,"./Professions":77,"./Races":79,"react":326}],79:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10173,7 +10028,7 @@ Races.propTypes = {
 };
 exports.default = Races;
 
-},{"../../../actions/RaceActions":18,"../../../stores/rcp/RaceStore":144,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Dropdown":103,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"classnames":152,"react":330}],82:[function(require,module,exports){
+},{"../../../actions/RaceActions":18,"../../../stores/rcp/RaceStore":140,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Dropdown":99,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"classnames":148,"react":326}],80:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10636,7 +10491,7 @@ Selections.propTypes = {
 };
 exports.default = Selections;
 
-},{"../../../actions/ProfessionActions":15,"../../../stores/AttributeStore":123,"../../../stores/ListStore":129,"../../../stores/SpecialAbilitiesStore":133,"../../../stores/TalentsStore":135,"../../../stores/rcp/CultureStore":141,"../../../stores/rcp/ProfessionStore":142,"../../../stores/rcp/ProfessionVariantStore":143,"../../../stores/rcp/RaceStore":144,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/Dropdown":103,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/Slidein":108,"../../layout/TextField":111,"./SelectionsCantrips":83,"./SelectionsCt":84,"./SelectionsCurses":85,"./SelectionsLangLitc":86,"./SelectionsTalentSpec":87,"classnames":152,"react":330}],83:[function(require,module,exports){
+},{"../../../actions/ProfessionActions":15,"../../../stores/AttributeStore":119,"../../../stores/ListStore":125,"../../../stores/SpecialAbilitiesStore":129,"../../../stores/TalentsStore":131,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/Dropdown":99,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/Slidein":104,"../../layout/TextField":107,"./SelectionsCantrips":81,"./SelectionsCt":82,"./SelectionsCurses":83,"./SelectionsLangLitc":84,"./SelectionsTalentSpec":85,"classnames":148,"react":326}],81:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10718,7 +10573,7 @@ SelectionsCantrips.propTypes = {
 };
 exports.default = SelectionsCantrips;
 
-},{"../../layout/Checkbox":101,"react":330}],84:[function(require,module,exports){
+},{"../../layout/Checkbox":97,"react":326}],82:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10803,7 +10658,7 @@ SelectionsCt.propTypes = {
 };
 exports.default = SelectionsCt;
 
-},{"../../layout/Checkbox":101,"react":330}],85:[function(require,module,exports){
+},{"../../layout/Checkbox":97,"react":326}],83:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10823,14 +10678,6 @@ var _Checkbox2 = _interopRequireDefault(_Checkbox);
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
-
-var _SpecialAbilitiesListAddItem = require('./SpecialAbilitiesListAddItem');
-
-var _SpecialAbilitiesListAddItem2 = _interopRequireDefault(_SpecialAbilitiesListAddItem);
-
-var _SpecialAbilitiesListRemoveItem = require('./SpecialAbilitiesListRemoveItem');
-
-var _SpecialAbilitiesListRemoveItem2 = _interopRequireDefault(_SpecialAbilitiesListRemoveItem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10918,7 +10765,7 @@ SelectionsCurses.propTypes = {
 };
 exports.default = SelectionsCurses;
 
-},{"../../layout/BorderButton":100,"../../layout/Checkbox":101,"./SpecialAbilitiesListAddItem":88,"./SpecialAbilitiesListRemoveItem":89,"react":330}],86:[function(require,module,exports){
+},{"../../layout/BorderButton":96,"../../layout/Checkbox":97,"react":326}],84:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11022,7 +10869,7 @@ SelectionsLangLitc.propTypes = {
 };
 exports.default = SelectionsLangLitc;
 
-},{"../../layout/Checkbox":101,"../../layout/Dropdown":103,"react":330}],87:[function(require,module,exports){
+},{"../../layout/Checkbox":97,"../../layout/Dropdown":99,"react":326}],85:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11114,310 +10961,7 @@ SelectionsTalentSpec.propTypes = {
 };
 exports.default = SelectionsTalentSpec;
 
-},{"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],88:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _BorderButton = require('../../layout/BorderButton');
-
-var _BorderButton2 = _interopRequireDefault(_BorderButton);
-
-var _SpecialAbilitiesActions = require('../../../actions/SpecialAbilitiesActions');
-
-var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
-
-var _SpecialAbilitiesStore = require('../../../stores/SpecialAbilitiesStore');
-
-var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
-
-var _Dropdown = require('../../layout/Dropdown');
-
-var _Dropdown2 = _interopRequireDefault(_Dropdown);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SpecialAbilitiesListAddItem = function (_Component) {
-	_inherits(SpecialAbilitiesListAddItem, _Component);
-
-	function SpecialAbilitiesListAddItem(props) {
-		_classCallCheck(this, SpecialAbilitiesListAddItem);
-
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecialAbilitiesListAddItem).call(this, props));
-
-		_this.state = {
-			selected: '',
-			selected_tier: 0
-		};
-
-		_this.handleSelect = function (selected) {
-			if (_this.props.item.id === 'SA_10') _this.setState({ selected: selected, selected2: '', input: '' });else _this.setState({ selected: selected });
-		};
-
-		_this.handleSelectTier = function (selected_tier) {
-			return _this.setState({ selected_tier: selected_tier });
-		};
-
-		_this.addToList = function (args) {
-			_SpecialAbilitiesActions2.default.addToList(args);
-			if (_this.state.selected !== '' || _this.state.selected_tier !== 0 || _this.state.input !== '') {
-				_this.setState({
-					selected: '',
-					selected_tier: 0
-				});
-			}
-		};
-
-		return _this;
-	}
-
-	_createClass(SpecialAbilitiesListAddItem, [{
-		key: 'render',
-		value: function render() {
-			var _this2 = this;
-
-			var item = this.props.item;
-
-			var ap;
-			var disabled = false;
-			var args = { id: item.id };
-
-			var tierElement;
-			var selectElement;
-
-			if (item.id === 'SA_30') {
-				args.sel = this.state.selected;
-				args.tier = this.state.selected_tier;
-				if (this.state.selected !== '' && this.state.selected_tier !== 0) ap = item.ap * this.state.selected_tier;
-			} else {
-				if (this.state.selected !== '') {
-					ap = _SpecialAbilitiesStore2.default.get(item.id).sel[this.state.selected - 1][2];
-				}
-				args.sel = this.state.selected;
-			}
-
-			args.costs = 0;
-
-			var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
-			if (item.tiers !== undefined && item.tiers !== null) {
-				var array = [];
-				if (this.props.apLeft < 4) item.tiers = 1;else if (this.props.apLeft < 6) item.tiers = 2;
-				for (var i = 0; i < item.tiers; i++) {
-					array.push([roman[i], i + 1]);
-				}
-				tierElement = _react2.default.createElement(_Dropdown2.default, {
-					className: 'tiers',
-					value: this.state.selected_tier,
-					onChange: this.handleSelectTier,
-					options: array });
-				if (this.state.selected_tier === 0) disabled = true;
-			}
-
-			if (item.sel !== undefined && item.sel.length > 0) {
-				if (item.id === 'SA_28') item.sel = item.sel.filter(function (e) {
-					return _SpecialAbilitiesStore2.default.get(item.id).sel[e[1] - 1][2] <= _this2.props.apLeft;
-				});
-				selectElement = _react2.default.createElement(_Dropdown2.default, {
-					value: this.state.selected,
-					onChange: this.handleSelect,
-					options: item.sel });
-				if (this.state.selected === '') disabled = true;
-			}
-
-			return _react2.default.createElement(
-				'tr',
-				null,
-				_react2.default.createElement(
-					'td',
-					{ className: 'name' },
-					_react2.default.createElement(
-						'div',
-						null,
-						_react2.default.createElement(
-							'h2',
-							null,
-							item.name
-						),
-						selectElement,
-						tierElement
-					)
-				),
-				_react2.default.createElement(
-					'td',
-					{ className: 'ap' },
-					ap
-				),
-				_react2.default.createElement(
-					'td',
-					{ className: 'inc' },
-					_react2.default.createElement(_BorderButton2.default, { label: '+', disabled: disabled, onClick: this.addToList.bind(null, args) })
-				)
-			);
-		}
-	}]);
-
-	return SpecialAbilitiesListAddItem;
-}(_react.Component);
-
-SpecialAbilitiesListAddItem.propTypes = {
-	apLeft: _react.PropTypes.number,
-	item: _react.PropTypes.object
-};
-exports.default = SpecialAbilitiesListAddItem;
-
-},{"../../../actions/SpecialAbilitiesActions":20,"../../../stores/SpecialAbilitiesStore":133,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"react":330}],89:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _BorderButton = require('../../layout/BorderButton');
-
-var _BorderButton2 = _interopRequireDefault(_BorderButton);
-
-var _SpecialAbilitiesActions = require('../../../actions/SpecialAbilitiesActions');
-
-var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
-
-var _Dropdown = require('../../layout/Dropdown');
-
-var _Dropdown2 = _interopRequireDefault(_Dropdown);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _TextField = require('../../layout/TextField');
-
-var _TextField2 = _interopRequireDefault(_TextField);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var SpecialAbilitiesListRemoveItem = function (_Component) {
-	_inherits(SpecialAbilitiesListRemoveItem, _Component);
-
-	function SpecialAbilitiesListRemoveItem(props) {
-		_classCallCheck(this, SpecialAbilitiesListRemoveItem);
-
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SpecialAbilitiesListRemoveItem).call(this, props));
-
-		_this.state = {
-			selected_tier: 0
-		};
-
-		_this.handleSelectTier = function (selected_tier) {
-			var item = _this.props.item;
-			_SpecialAbilitiesActions2.default.updateTier(item.id, selected_tier, 0, item.sid);
-		};
-
-		_this.removeFromList = function (args) {
-			return _SpecialAbilitiesActions2.default.removeFromList(args);
-		};
-
-		return _this;
-	}
-
-	_createClass(SpecialAbilitiesListRemoveItem, [{
-		key: 'render',
-		value: function render() {
-
-			var item = this.props.item;
-
-			var ap = item.ap;
-			var disabled = item.disabled;
-			var args = { id: item.id };
-
-			var name = item.name;
-
-			var tierElement;
-
-			var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
-			if (item.tiers !== undefined && item.tiers !== null) {
-				var array = [];
-				item.tiers = Math.min(item.tiers, item.tier + Math.floor(this.props.apLeft / 2));
-				for (var i = 0; i < item.tiers; i++) {
-					array.push([roman[i], i + 1]);
-				}
-				tierElement = _react2.default.createElement(_Dropdown2.default, {
-					className: 'tiers',
-					value: item.tier,
-					onChange: this.handleSelectTier,
-					options: array });
-				ap = item.ap * item.tier;
-			}
-
-			args.costs = 0;
-
-			if (item.hasOwnProperty('sid')) args.sid = item.sid;
-
-			if (item.hasOwnProperty('add')) name += ' (' + item.add + ')';
-
-			return _react2.default.createElement(
-				'tr',
-				null,
-				_react2.default.createElement(
-					'td',
-					{ className: 'name' },
-					_react2.default.createElement(
-						'div',
-						null,
-						_react2.default.createElement(
-							'h2',
-							null,
-							name
-						),
-						tierElement
-					)
-				),
-				_react2.default.createElement(
-					'td',
-					{ className: 'ap' },
-					ap
-				),
-				_react2.default.createElement(
-					'td',
-					{ className: 'inc' },
-					_react2.default.createElement(_BorderButton2.default, { label: '-', onClick: this.removeFromList.bind(null, args), disabled: disabled })
-				)
-			);
-		}
-	}]);
-
-	return SpecialAbilitiesListRemoveItem;
-}(_react.Component);
-
-SpecialAbilitiesListRemoveItem.propTypes = {
-	apLeft: _react.PropTypes.number,
-	item: _react.PropTypes.object
-};
-exports.default = SpecialAbilitiesListRemoveItem;
-
-},{"../../../actions/SpecialAbilitiesActions":20,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],90:[function(require,module,exports){
+},{"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],86:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11661,7 +11205,7 @@ var CombatTechniques = function (_Component) {
 
 exports.default = CombatTechniques;
 
-},{"../../../actions/CombatTechniquesActions":6,"../../../stores/CombatTechniquesStore":124,"../../layout/BorderButton":100,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"react":330}],91:[function(require,module,exports){
+},{"../../../actions/CombatTechniquesActions":6,"../../../stores/CombatTechniquesStore":120,"../../layout/BorderButton":96,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"react":326}],87:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12019,7 +11563,7 @@ var Liturgies = function (_Component) {
 
 exports.default = Liturgies;
 
-},{"../../../actions/LiturgiesActions":14,"../../../stores/LiturgiesStore":130,"../../layout/BorderButton":100,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/Slidein":108,"../../layout/TextField":111,"./SkillListItem":92,"react":330}],92:[function(require,module,exports){
+},{"../../../actions/LiturgiesActions":14,"../../../stores/LiturgiesStore":126,"../../layout/BorderButton":96,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/Slidein":104,"../../layout/TextField":107,"./SkillListItem":88,"react":326}],88:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12183,7 +11727,7 @@ SkillListItem.propTypes = {
 };
 exports.default = SkillListItem;
 
-},{"../../layout/BorderButton":100,"classnames":152,"react":330}],93:[function(require,module,exports){
+},{"../../layout/BorderButton":96,"classnames":148,"react":326}],89:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12332,7 +11876,7 @@ var Skills = function (_Component) {
 
 exports.default = Skills;
 
-},{"../../../stores/SpecialAbilitiesStore":133,"../../layout/SubTabs":109,"./CombatTechniques":90,"./Liturgies":91,"./SpecialAbilities":94,"./Spells":97,"./Talents":98,"react":330}],94:[function(require,module,exports){
+},{"../../../stores/SpecialAbilitiesStore":129,"../../layout/SubTabs":105,"./CombatTechniques":86,"./Liturgies":87,"./SpecialAbilities":90,"./Spells":93,"./Talents":94,"react":326}],90:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12581,7 +12125,7 @@ var SpecialAbilities = function (_Component) {
 
 exports.default = SpecialAbilities;
 
-},{"../../../actions/SpecialAbilitiesActions":20,"../../../stores/SpecialAbilitiesStore":133,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/Slidein":108,"../../layout/TextField":111,"./SpecialAbilitiesListAddItem":95,"./SpecialAbilitiesListRemoveItem":96,"react":330}],95:[function(require,module,exports){
+},{"../../../actions/SpecialAbilitiesActions":20,"../../../stores/SpecialAbilitiesStore":129,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/Slidein":104,"../../layout/TextField":107,"./SpecialAbilitiesListAddItem":91,"./SpecialAbilitiesListRemoveItem":92,"react":326}],91:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12816,7 +12360,7 @@ SpecialAbilitiesListAddItem.propTypes = {
 };
 exports.default = SpecialAbilitiesListAddItem;
 
-},{"../../../actions/SpecialAbilitiesActions":20,"../../../stores/SpecialAbilitiesStore":133,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],96:[function(require,module,exports){
+},{"../../../actions/SpecialAbilitiesActions":20,"../../../stores/SpecialAbilitiesStore":129,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],92:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12959,7 +12503,7 @@ SpecialAbilitiesListRemoveItem.propTypes = {
 };
 exports.default = SpecialAbilitiesListRemoveItem;
 
-},{"../../../actions/SpecialAbilitiesActions":20,"../../layout/BorderButton":100,"../../layout/Dropdown":103,"../../layout/TextField":111,"react":330}],97:[function(require,module,exports){
+},{"../../../actions/SpecialAbilitiesActions":20,"../../layout/BorderButton":96,"../../layout/Dropdown":99,"../../layout/TextField":107,"react":326}],93:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13317,7 +12861,7 @@ var Spells = function (_Component) {
 
 exports.default = Spells;
 
-},{"../../../actions/SpellsActions":21,"../../../stores/SpellsStore":134,"../../layout/BorderButton":100,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/Slidein":108,"../../layout/TextField":111,"./SkillListItem":92,"react":330}],98:[function(require,module,exports){
+},{"../../../actions/SpellsActions":21,"../../../stores/SpellsStore":130,"../../layout/BorderButton":96,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/Slidein":104,"../../layout/TextField":107,"./SkillListItem":88,"react":326}],94:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13533,7 +13077,7 @@ var Talents = function (_Component) {
 
 exports.default = Talents;
 
-},{"../../../actions/TalentsActions":23,"../../../stores/TalentsStore":135,"../../../stores/rcp/CultureStore":141,"../../layout/BorderButton":100,"../../layout/Checkbox":101,"../../layout/RadioButtonGroup":106,"../../layout/Scroll":107,"../../layout/TextField":111,"./SkillListItem":92,"react":330}],99:[function(require,module,exports){
+},{"../../../actions/TalentsActions":23,"../../../stores/TalentsStore":131,"../../../stores/rcp/CultureStore":137,"../../layout/BorderButton":96,"../../layout/Checkbox":97,"../../layout/RadioButtonGroup":102,"../../layout/Scroll":103,"../../layout/TextField":107,"./SkillListItem":88,"react":326}],95:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13597,7 +13141,7 @@ Avatar.propTypes = {
 };
 exports.default = Avatar;
 
-},{"classnames":152,"react":330}],100:[function(require,module,exports){
+},{"classnames":148,"react":326}],96:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13663,7 +13207,7 @@ BorderButton.propTypes = {
 };
 exports.default = BorderButton;
 
-},{"classnames":152,"react":330}],101:[function(require,module,exports){
+},{"classnames":148,"react":326}],97:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13733,7 +13277,7 @@ Checkbox.propTypes = {
 };
 exports.default = Checkbox;
 
-},{"classnames":152,"react":330}],102:[function(require,module,exports){
+},{"classnames":148,"react":326}],98:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13764,7 +13308,11 @@ var _classnames = require('classnames');
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _createOverlay = require('../../utils/createOverlay');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13781,8 +13329,7 @@ var Dialog = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Dialog).call(this, props));
 
 		_this.close = function () {
-			_reactDom2.default.unmountComponentAtNode(_this.props.node);
-			document.body.removeChild(_this.props.node);
+			return (0, _createOverlay.close)(_this.props.node);
 		};
 
 		_this.clickButton = function (func) {
@@ -13796,24 +13343,27 @@ var Dialog = function (_Component) {
 	_createClass(Dialog, [{
 		key: 'render',
 		value: function render() {
+			var _props = this.props;
+			var _props$buttons = _props.buttons;
+			var btns = _props$buttons === undefined ? [] : _props$buttons;
+			var title = _props.title;
+			var node = _props.node;
 
-			var props = {
-				className: (0, _classnames2.default)('modal-backdrop', this.props.className)
-			};
+			var props = _objectWithoutProperties(_props, ['buttons', 'title', 'node']);
 
-			if (this.props.id) props.id = this.props.id;
+			props.className = (0, _classnames2.default)('modal-backdrop', props.className);
 
 			var buttons = [];
 
-			if (this.props.buttons) {
-				for (var i = 0; i < this.props.buttons.length; i++) {
-					var btnProps = this.props.buttons[i];
+			for (var i = 0; i < btns.length; i++) {
+				var btnProps = btns[i];
 
-					btnProps.onClick = this.clickButton.bind(null, btnProps.onClick);
+				btnProps.onClick = this.clickButton.bind(null, btnProps.onClick);
 
-					buttons.push(_react2.default.createElement(_BorderButton2.default, _extends({ key: 'popup-button-' + i }, btnProps)));
-				}
+				buttons.push(_react2.default.createElement(_BorderButton2.default, _extends({ key: 'popup-button-' + i }, btnProps)));
 			}
+
+			var contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
 
 			return _react2.default.createElement(
 				'div',
@@ -13836,7 +13386,7 @@ var Dialog = function (_Component) {
 						_react2.default.createElement(
 							'div',
 							{ className: 'modal-header-inner' },
-							this.props.title
+							title
 						)
 					),
 					_react2.default.createElement(
@@ -13844,7 +13394,7 @@ var Dialog = function (_Component) {
 						{ className: 'modal-content' },
 						_react2.default.createElement(
 							'div',
-							{ className: 'modal-content-inner' },
+							{ className: 'modal-content-inner', style: contentStyle },
 							this.props.children
 						)
 					),
@@ -13869,11 +13419,12 @@ Dialog.propTypes = {
 	buttons: _react.PropTypes.array,
 	className: _react.PropTypes.any,
 	id: _react.PropTypes.string,
+	node: _react.PropTypes.any,
 	title: _react.PropTypes.any
 };
 exports.default = Dialog;
 
-},{"./BorderButton":100,"classnames":152,"react":330,"react-dom":160,"react-gemini-scrollbar":161}],103:[function(require,module,exports){
+},{"../../utils/createOverlay":142,"./BorderButton":96,"classnames":148,"react":326,"react-dom":156,"react-gemini-scrollbar":157}],99:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14036,7 +13587,7 @@ Dropdown.propTypes = {
 };
 exports.default = Dropdown;
 
-},{"classnames":152,"react":330,"react-gemini-scrollbar":161}],104:[function(require,module,exports){
+},{"classnames":148,"react":326,"react-gemini-scrollbar":157}],100:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14100,7 +13651,7 @@ IconButton.propTypes = {
 };
 exports.default = IconButton;
 
-},{"classnames":152,"react":330}],105:[function(require,module,exports){
+},{"classnames":148,"react":326}],101:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14168,7 +13719,7 @@ RadioButton.propTypes = {
 };
 exports.default = RadioButton;
 
-},{"classnames":152,"react":330}],106:[function(require,module,exports){
+},{"classnames":148,"react":326}],102:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14243,7 +13794,7 @@ RadioButtonGroup.props = {
 };
 exports.default = RadioButtonGroup;
 
-},{"./RadioButton":105,"react":330}],107:[function(require,module,exports){
+},{"./RadioButton":101,"react":326}],103:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14307,7 +13858,7 @@ Scroll.propTypes = {
 };
 exports.default = Scroll;
 
-},{"classnames":152,"react":330,"react-gemini-scrollbar":161}],108:[function(require,module,exports){
+},{"classnames":148,"react":326,"react-gemini-scrollbar":157}],104:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14389,7 +13940,7 @@ Slidein.propTypes = {
 };
 exports.default = Slidein;
 
-},{"classnames":152,"react":330,"react-gemini-scrollbar":161}],109:[function(require,module,exports){
+},{"classnames":148,"react":326,"react-gemini-scrollbar":157}],105:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14456,7 +14007,7 @@ Subtabs.propTypes = {
 };
 exports.default = Subtabs;
 
-},{"./Tab":110,"react":330}],110:[function(require,module,exports){
+},{"./Tab":106,"react":326}],106:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14527,7 +14078,7 @@ Tab.propTypes = {
 };
 exports.default = Tab;
 
-},{"classnames":152,"react":330}],111:[function(require,module,exports){
+},{"classnames":148,"react":326}],107:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -14653,16 +14204,22 @@ TextField.defaultProps = {
 };
 exports.default = TextField;
 
-},{"classnames":152,"react":330,"react-dom":160}],112:[function(require,module,exports){
+},{"classnames":148,"react":326,"react-dom":156}],108:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _AccountActions = require('../../actions/AccountActions');
+
+var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+var _AccountStore = require('../../stores/core/AccountStore');
+
+var _AccountStore2 = _interopRequireDefault(_AccountStore);
 
 var _APStore = require('../../stores/APStore');
 
@@ -14675,6 +14232,14 @@ var _Avatar2 = _interopRequireDefault(_Avatar);
 var _BorderButton = require('./BorderButton');
 
 var _BorderButton2 = _interopRequireDefault(_BorderButton);
+
+var _ELStore = require('../../stores/ELStore');
+
+var _ELStore2 = _interopRequireDefault(_ELStore);
+
+var _HerolistActions = require('../../actions/HerolistActions');
+
+var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
 var _IconButton = require('./IconButton');
 
@@ -14714,61 +14279,22 @@ var _TitleBarNav2 = _interopRequireDefault(_TitleBarNav);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var PageTab = function (_Component) {
-	_inherits(PageTab, _Component);
-
-	function PageTab(props) {
-		_classCallCheck(this, PageTab);
-
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PageTab).call(this, props));
-
-		_this.handleClick = function (tab) {
-			return _TabActions2.default.openTab(tab);
-		};
-
-		return _this;
-	}
-
-	_createClass(PageTab, [{
-		key: 'render',
-		value: function render() {
-			var _props = this.props;
-			var tag = _props.tag;
-
-			var other = _objectWithoutProperties(_props, ['tag']);
-
-			return _react2.default.createElement(_Tab2.default, _extends({}, other, { onClick: this.handleClick.bind(null, tag) }));
-		}
-	}]);
-
-	return PageTab;
-}(_react.Component);
-
-PageTab.propTypes = {
-	active: _react.PropTypes.bool.isRequired,
-	className: _react.PropTypes.any,
-	disabled: _react.PropTypes.bool,
-	label: _react.PropTypes.string,
-	tag: _react.PropTypes.string.isRequired
-};
-
-var TitleBar = function (_Component2) {
-	_inherits(TitleBar, _Component2);
+var TitleBar = function (_Component) {
+	_inherits(TitleBar, _Component);
 
 	function TitleBar(props) {
 		_classCallCheck(this, TitleBar);
 
-		var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(TitleBar).call(this, props));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TitleBar).call(this, props));
 
-		_this2.state = {
+		_this.state = {
+			account: _AccountStore2.default.getAll(),
 			ap: _APStore2.default.get(),
 			used: _APStore2.default.getUsed(),
 			disadv: _APStore2.default.getForDisAdv(),
@@ -14776,28 +14302,41 @@ var TitleBar = function (_Component2) {
 			portrait: _ProfileStore2.default.getPortrait()
 		};
 
-		_this2._updateAPStore = function () {
-			return _this2.setState({ ap: _APStore2.default.get(), used: _APStore2.default.getUsed(), disadv: _APStore2.default.getForDisAdv() });
+		_this._updateAccountStore = function () {
+			return _this.setState({ account: _AccountStore2.default.getAll() });
 		};
 
-		_this2._updatePhaseStore = function () {
-			return _this2.setState({ phase: _PhaseStore2.default.get() });
+		_this._updateAPStore = function () {
+			return _this.setState({ ap: _APStore2.default.get(), used: _APStore2.default.getUsed(), disadv: _APStore2.default.getForDisAdv() });
 		};
 
-		_this2._updateProfileStore = function () {
-			return _this2.setState({ portrait: _ProfileStore2.default.getPortrait() });
+		_this._updatePhaseStore = function () {
+			return _this.setState({ phase: _PhaseStore2.default.get() });
 		};
 
-		_this2.back = function () {
+		_this._updateProfileStore = function () {
+			return _this.setState({ portrait: _ProfileStore2.default.getPortrait() });
+		};
+
+		_this.back = function () {
 			return _TabActions2.default.showSection('main');
 		};
 
-		return _this2;
+		_this.test = function () {
+			if (_ELStore2.default.getStartID() === 'EL_0') {
+				_HerolistActions2.default.showHeroCreation();
+			} else {
+				_TabActions2.default.showSection('hero');
+			}
+		};
+
+		return _this;
 	}
 
 	_createClass(TitleBar, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			_AccountStore2.default.addChangeListener(this._updateAccountStore);
 			_APStore2.default.addChangeListener(this._updateAPStore);
 			_PhaseStore2.default.addChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.addChangeListener(this._updateProfileStore);
@@ -14805,6 +14344,7 @@ var TitleBar = function (_Component2) {
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
+			_AccountStore2.default.removeChangeListener(this._updateAccountStore);
 			_APStore2.default.removeChangeListener(this._updateAPStore);
 			_PhaseStore2.default.removeChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.removeChangeListener(this._updateProfileStore);
@@ -14812,14 +14352,16 @@ var TitleBar = function (_Component2) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _props2 = this.props;
-			var section = _props2.section;
-			var tab = _props2.tab;
+			var _props = this.props;
+			var section = _props.section;
+			var tab = _props.tab;
 			var _state = this.state;
+			var account = _state.account;
 			var ap = _state.ap;
 			var used = _state.used;
 			var phase = _state.phase;
-			var portrait = _state.portrait;
+			var _state$portrait = _state.portrait;
+			var portrait = _state$portrait === undefined ? '' : _state$portrait;
 
 
 			var showBackNav = true;
@@ -14830,14 +14372,27 @@ var TitleBar = function (_Component2) {
 				case 'main':
 					{
 						showBackNav = false;
-						tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, tabs: [{ label: 'Start', tag: 'home' }, { label: 'Helden', tag: 'herolist' }, { label: 'Gruppen', tag: 'grouplist', disabled: true }, { label: 'Konto', tag: 'account', disabled: true }, { label: 'Über', tag: 'about' }] });
-
-						actionsElement = _react2.default.createElement(
-							'div',
-							{ className: 'right' },
-							_react2.default.createElement(_BorderButton2.default, { label: 'Registrieren', disabled: true }),
-							_react2.default.createElement(_BorderButton2.default, { label: 'Anmelden', disabled: true })
-						);
+						if (account.id === null) {
+							tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, tabs: [{ label: 'Start', tag: 'home' }, { label: 'Über', tag: 'about' }] });
+							actionsElement = _react2.default.createElement(
+								'div',
+								{ className: 'right' },
+								_react2.default.createElement(_BorderButton2.default, { label: 'Testen', onClick: this.test }),
+								_react2.default.createElement(_BorderButton2.default, { label: 'Anmelden', onClick: _AccountActions2.default.showLogin, primary: true })
+							);
+						} else {
+							tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, tabs: [{ label: 'Start', tag: 'home' }, { label: 'Helden', tag: 'herolist' }, { label: 'Gruppen', tag: 'grouplist', disabled: true }, { label: 'Konto', tag: 'account' }, { label: 'Über', tag: 'about' }] });
+							actionsElement = _react2.default.createElement(
+								'div',
+								{ className: 'right' },
+								_react2.default.createElement(
+									'div',
+									{ className: 'account' },
+									account.name
+								),
+								_react2.default.createElement(_BorderButton2.default, { label: 'Abmelden', onClick: _AccountActions2.default.logout })
+							);
+						}
 						break;
 					}
 				case 'hero':
@@ -14936,7 +14491,7 @@ TitleBar.propTypes = {
 };
 exports.default = TitleBar;
 
-},{"../../actions/InGameActions":12,"../../actions/TabActions":22,"../../stores/APStore":122,"../../stores/PhaseStore":131,"../../stores/ProfileStore":132,"./Avatar":99,"./BorderButton":100,"./IconButton":104,"./Tab":110,"./TitleBarArrow":113,"./TitleBarNav":114,"react":330}],113:[function(require,module,exports){
+},{"../../actions/AccountActions":4,"../../actions/HerolistActions":11,"../../actions/InGameActions":12,"../../actions/TabActions":22,"../../stores/APStore":118,"../../stores/ELStore":122,"../../stores/PhaseStore":127,"../../stores/ProfileStore":128,"../../stores/core/AccountStore":132,"./Avatar":95,"./BorderButton":96,"./IconButton":100,"./Tab":106,"./TitleBarArrow":109,"./TitleBarNav":110,"react":326}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14985,7 +14540,7 @@ TitleBarArrow.propTypes = {
 };
 exports.default = TitleBarArrow;
 
-},{"react":330}],114:[function(require,module,exports){
+},{"react":326}],110:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15011,6 +14566,10 @@ var _Tab2 = _interopRequireDefault(_Tab);
 var _TabActions = require('../../actions/TabActions');
 
 var _TabActions2 = _interopRequireDefault(_TabActions);
+
+var _classnames = require('classnames');
+
+var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15049,9 +14608,9 @@ var TitleBarNav = function (_Component) {
 			var tabs = _props.tabs;
 
 
-			var avatarElement = avatar ? _react2.default.createElement(
+			var avatarElement = avatar !== undefined ? _react2.default.createElement(
 				'div',
-				{ className: 'avatar-wrapper' },
+				{ className: (0, _classnames2.default)('avatar-wrapper', !avatar && 'no-avatar') },
 				_react2.default.createElement(_Avatar2.default, { src: avatar })
 			) : null;
 
@@ -15086,7 +14645,7 @@ TitleBarNav.propTypes = {
 };
 exports.default = TitleBarNav;
 
-},{"../../actions/TabActions":22,"./Avatar":99,"./Tab":110,"react":330}],115:[function(require,module,exports){
+},{"../../actions/TabActions":22,"./Avatar":95,"./Tab":106,"classnames":148,"react":326}],111:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15151,7 +14710,7 @@ Box.propTypes = {
 };
 exports.default = Box;
 
-},{"classnames":152,"react":330}],116:[function(require,module,exports){
+},{"classnames":148,"react":326}],112:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15227,7 +14786,7 @@ LabelBox.propTypes = {
 };
 exports.default = LabelBox;
 
-},{"./Box":115,"classnames":152,"react":330}],117:[function(require,module,exports){
+},{"./Box":111,"classnames":148,"react":326}],113:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15294,7 +14853,7 @@ Plain.propTypes = {
 };
 exports.default = Plain;
 
-},{"classnames":152,"react":330}],118:[function(require,module,exports){
+},{"classnames":148,"react":326}],114:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15366,7 +14925,7 @@ TextBox.propTypes = {
 };
 exports.default = TextBox;
 
-},{"classnames":152,"react":330}],119:[function(require,module,exports){
+},{"classnames":148,"react":326}],115:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15395,6 +14954,7 @@ exports.default = (0, _keymirror2.default)({
 	// AccountStore
 	RECEIVE_ACCOUNT: null,
 	UPDATE_USERNAME: null,
+	LOGOUT_SUCCESS: null,
 	CLEAR_ACCOUNT: null,
 
 	// Registration
@@ -15545,7 +15105,7 @@ exports.default = (0, _keymirror2.default)({
 	INGAME_SWITCH_OPTION: null
 });
 
-},{"keymirror":158}],120:[function(require,module,exports){
+},{"keymirror":154}],116:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15575,7 +15135,7 @@ exports.default = {
 // 	TALENTS: null
 // });
 
-},{}],121:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15585,7 +15145,7 @@ var Dispatcher = require('flux').Dispatcher;
 
 exports.default = new Dispatcher();
 
-},{"flux":154}],122:[function(require,module,exports){
+},{"flux":150}],118:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15643,9 +15203,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var AKTV = [1, 2, 3, 4];
 var SKT = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28], [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42], [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56], [15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180]];
 
-var _max = 1100;
-var _used = 224;
-var _rcp = [0, 12, 212, 0];
+var _max = 0;
+var _used = 0;
+var _rcp = [0, 0, 0, 0];
 var _adv = 0;
 var _adv_mag = 0;
 var _adv_kar = 0;
@@ -15702,6 +15262,18 @@ function _calculateRCPDiff(index, next) {
 	var diff = next - current;
 	_addUsed(diff);
 	_rcp[index] = next;
+}
+
+function _clear() {
+	_max = 0;
+	_used = 0;
+	_rcp = [0, 0, 0, 0];
+	_adv = 0;
+	_adv_mag = 0;
+	_adv_kar = 0;
+	_disadv = 0;
+	_disadv_mag = 0;
+	_disadv_kar = 0;
 }
 
 function _updateAll(obj) {
@@ -15828,6 +15400,10 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.ap);
 			break;
@@ -15895,6 +15471,7 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 		case _ActionTypes2.default.CREATE_NEW_HERO:
 			{
+				_clear();
 				_AppDispatcher2.default.waitFor([_ELStore2.default.dispatchToken]);
 				_max = _ELStore2.default.getStart().ap;
 				break;
@@ -15911,7 +15488,7 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = APStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/ListStore":129,"../utils/reactAlert":148,"../utils/reqPurchase":149,"./ELStore":126,"./rcp/CultureStore":141,"./rcp/ProfessionStore":142,"./rcp/ProfessionVariantStore":143,"./rcp/RaceStore":144,"events":1}],123:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/ListStore":125,"../utils/reactAlert":144,"../utils/reqPurchase":145,"./ELStore":122,"./rcp/CultureStore":137,"./rcp/ProfessionStore":138,"./rcp/ProfessionVariantStore":139,"./rcp/RaceStore":140,"events":1}],119:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -15956,13 +15533,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var CATEGORY = _Categories2.default.ATTRIBUTES;
 
-var _le = 5;
+var _le = 0;
 var _le_add = 0;
 var _ae_add = 0;
 var _ke_add = 0;
-var _sk = -5;
-var _zk = -5;
-var _gs = 8;
+var _sk = 0;
+var _zk = 0;
+var _gs = 0;
 
 function _addPoint(id) {
 	_ListStore2.default.addAttrPoint(id);
@@ -15984,6 +15561,21 @@ function _addMaxEnergyPoint(id) {
 			_ke_add++;
 			break;
 	}
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.setProperty(e.id, 'value', 8);
+		_ListStore2.default.setProperty(e.id, 'mod', 0);
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
+	_le = 0;
+	_le_add = 0;
+	_ae_add = 0;
+	_ke_add = 0;
+	_sk = 0;
+	_zk = 0;
+	_gs = 0;
 }
 
 function _updateAll(obj) {
@@ -16017,10 +15609,7 @@ var AttributeStore = _extends({}, _events.EventEmitter.prototype, {
 
 	init: function init(rawAttributes) {
 		for (var id in rawAttributes) {
-			rawAttributes[id].value = 8;
 			rawAttributes[id].category = CATEGORY;
-			rawAttributes[id].dependencies = [];
-			rawAttributes[id].mod = 0;
 		}
 		_ListStore2.default.init(rawAttributes);
 	},
@@ -16122,6 +15711,11 @@ AttributeStore.dispatchToken = _AppDispatcher2.default.register(function (payloa
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.attr);
 			break;
@@ -16157,7 +15751,7 @@ AttributeStore.dispatchToken = _AppDispatcher2.default.register(function (payloa
 
 exports.default = AttributeStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"./ELStore":126,"./ListStore":129,"./PhaseStore":131,"./rcp/RaceStore":144,"events":1}],124:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"./ELStore":122,"./ListStore":125,"./PhaseStore":127,"./rcp/RaceStore":140,"events":1}],120:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -16223,6 +15817,13 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.setSR(e.id, 0);
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(obj) {
@@ -16397,6 +15998,11 @@ CombatTechniquesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.ct);
 			break;
@@ -16436,7 +16042,7 @@ CombatTechniquesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 exports.default = CombatTechniquesStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"./ELStore":126,"./ListStore":129,"./PhaseStore":131,"./rcp/ProfessionStore":142,"./rcp/ProfessionVariantStore":143,"events":1}],125:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"./ELStore":122,"./ListStore":125,"./PhaseStore":127,"./rcp/ProfessionStore":138,"./rcp/ProfessionVariantStore":139,"events":1}],121:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -16634,6 +16240,15 @@ function _updateTier(id, tier, sid) {
 		obj.tier = tier;
 	}
 	_ListStore2.default.set(id, obj);
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY_1, CATEGORY_2).forEach(function (e) {
+		_ListStore2.default.setProperty(e.id, 'active', _ListStore2.default.get(e.id).max === null ? false : []);
+		_ListStore2.default.setProperty(e.id, 'tier');
+		_ListStore2.default.setProperty(e.id, 'sid');
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(payload) {
@@ -17162,6 +16777,11 @@ DisAdvStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.disadv);
 			break;
@@ -17206,7 +16826,7 @@ DisAdvStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 exports.default = DisAdvStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"../utils/validate":151,"./ELStore":126,"./ListStore":129,"./LiturgiesStore":130,"./SpellsStore":134,"./TalentsStore":135,"./rcp/RaceStore":144,"events":1}],126:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"../utils/validate":147,"./ELStore":122,"./ListStore":125,"./LiturgiesStore":126,"./SpellsStore":130,"./TalentsStore":131,"./rcp/RaceStore":140,"events":1}],122:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -17311,10 +16931,14 @@ var _el = {
 	}
 };
 
-var _start = 'EL_3';
+var _start = 'EL_0';
 
 function _update(el) {
 	_start = el;
+}
+
+function _clear() {
+	_start = 'EL_0';
 }
 
 var ELStore = _extends({}, _events2.default.prototype, {
@@ -17353,12 +16977,12 @@ ELStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 			_update(payload.el);
 			break;
 
-		case _ActionTypes2.default.RECEIVE_HERO:
-			_update(payload.el);
+		case _ActionTypes2.default.CLEAR_HERO:
+			_clear();
 			break;
 
-		case _ActionTypes2.default.CLEAR_HERO:
-			_update('EL_1');
+		case _ActionTypes2.default.RECEIVE_HERO:
+			_update(payload.el);
 			break;
 
 		default:
@@ -17372,7 +16996,7 @@ ELStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = ELStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"events":1}],127:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"events":1}],123:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -17437,7 +17061,7 @@ GroupsStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 exports.default = GroupsStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"events":1}],128:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"events":1}],124:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -17945,7 +17569,7 @@ InGameStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 exports.default = InGameStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"events":1}],129:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"events":1}],125:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -18101,7 +17725,11 @@ var ListStore = _extends({}, _events.EventEmitter.prototype, {
 	},
 
 	setProperty: function setProperty(id, property, value) {
-		_list[id][property] = value;
+		if (value === undefined) {
+			delete _list[id][property];
+		} else {
+			_list[id][property] = value;
+		}
 	},
 
 	addToProperty: function addToProperty(id, property, value) {
@@ -18233,7 +17861,7 @@ var ListStore = _extends({}, _events.EventEmitter.prototype, {
 
 exports.default = ListStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"events":1}],130:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"events":1}],126:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -18303,6 +17931,14 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.deactivate(e.id);
+		_ListStore2.default.setSR(e.id, 0);
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(obj) {
@@ -18530,6 +18166,11 @@ LiturgiesStore.dispatchToken = _AppDispatcher2.default.register(function (payloa
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.chants);
 			break;
@@ -18577,7 +18218,7 @@ LiturgiesStore.dispatchToken = _AppDispatcher2.default.register(function (payloa
 
 exports.default = LiturgiesStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"./ELStore":126,"./ListStore":129,"./PhaseStore":131,"./rcp/ProfessionStore":142,"events":1}],131:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"./ELStore":122,"./ListStore":125,"./PhaseStore":127,"./rcp/ProfessionStore":138,"events":1}],127:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -18598,7 +18239,7 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _phase = 4;
+var _phase = 1;
 
 function _update(phase) {
 	_phase = phase;
@@ -18632,20 +18273,16 @@ PhaseStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.RECEIVE_HERO:
+			_update(payload.phase);
+			break;
+
 		case _ActionTypes2.default.CREATE_NEW_HERO:
 			_update(1);
 			break;
 
 		case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
 			_update(2);
-			break;
-
-		case _ActionTypes2.default.INCREASE_PHASE:
-			_increase();
-			break;
-
-		case _ActionTypes2.default.RESET_PHASE:
-			_update(1);
 			break;
 
 		default:
@@ -18659,7 +18296,7 @@ PhaseStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = PhaseStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"events":1}],132:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"events":1}],128:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -18693,9 +18330,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 
 var _id = null;
-var _name = 'Heldenname';
-var _gender = 'm';
-var _portrait = 'images/portrait.png';
+var _name = '';
+var _gender = '';
+var _portrait = '';
 var _hair = '';
 var _eyes = '';
 var _size = '';
@@ -18791,6 +18428,17 @@ function _rerollWeight() {
 	}, 0);
 }
 
+function _clear() {
+	_id = null;
+	_name = '';
+	_gender = '';
+	_portrait = '';
+	_hair = '';
+	_eyes = '';
+	_size = '';
+	_weight = '';
+}
+
 var ProfileStore = _extends({}, _events.EventEmitter.prototype, {
 
 	emitChange: function emitChange() {
@@ -18850,8 +18498,13 @@ ProfileStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 	switch (payload.actionType) {
 
 		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
 			_updateName(payload.name);
 			_updateGender(payload.gender);
+			break;
+
+		case _ActionTypes2.default.CLEAR_HERO:
+			_clear();
 			break;
 
 		case _ActionTypes2.default.RECEIVE_HERO:
@@ -18916,7 +18569,7 @@ ProfileStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 exports.default = ProfileStore;
 
-},{"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../utils/dice":147,"./rcp/RaceStore":144,"events":1}],133:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../utils/dice":143,"./rcp/RaceStore":140,"events":1}],129:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19086,6 +18739,15 @@ function _updateTier(id, tier, sid) {
 		obj.tier = tier;
 	}
 	_ListStore2.default.set(id, obj);
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.setProperty(e.id, 'active', _ListStore2.default.get(e.id).max === null ? false : []);
+		_ListStore2.default.setProperty(e.id, 'tier');
+		_ListStore2.default.setProperty(e.id, 'sid');
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(payload) {
@@ -19697,6 +19359,11 @@ SpecialAbilitiesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.sa);
 			break;
@@ -19741,7 +19408,7 @@ SpecialAbilitiesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 exports.default = SpecialAbilitiesStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"../utils/validate":151,"./CombatTechniquesStore":124,"./ListStore":129,"./TalentsStore":135,"./rcp/CultureStore":141,"./rcp/ProfessionStore":142,"./rcp/ProfessionVariantStore":143,"events":1}],134:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"../utils/validate":147,"./CombatTechniquesStore":120,"./ListStore":125,"./TalentsStore":131,"./rcp/CultureStore":137,"./rcp/ProfessionStore":138,"./rcp/ProfessionVariantStore":139,"events":1}],130:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19815,6 +19482,14 @@ function _updateFilterText(text) {
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.deactivate(e.id);
+		_ListStore2.default.setSR(e.id, 0);
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(obj) {
@@ -20103,6 +19778,11 @@ SpellsStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.spells);
 			break;
@@ -20150,7 +19830,7 @@ SpellsStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 exports.default = SpellsStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"./ELStore":126,"./ListStore":129,"./PhaseStore":131,"./rcp/ProfessionStore":142,"events":1}],135:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"./ELStore":122,"./ListStore":125,"./PhaseStore":127,"./rcp/ProfessionStore":138,"events":1}],131:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20225,6 +19905,13 @@ function _updateSortOrder(option) {
 
 function _updateTalentRating() {
 	_talentRating = !_talentRating;
+}
+
+function _clear() {
+	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
+		_ListStore2.default.setSR(e.id, 0);
+		_ListStore2.default.setProperty(e.id, 'dependencies', []);
+	});
 }
 
 function _updateAll(obj) {
@@ -20390,6 +20077,11 @@ TalentsStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 	switch (payload.actionType) {
 
+		case _ActionTypes2.default.CLEAR_HERO:
+		case _ActionTypes2.default.CREATE_NEW_HERO:
+			_clear();
+			break;
+
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.talents);
 			break;
@@ -20433,7 +20125,7 @@ TalentsStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 exports.default = TalentsStore;
 
-},{"../constants/ActionTypes":119,"../constants/Categories":120,"../dispatcher/AppDispatcher":121,"./ELStore":126,"./ListStore":129,"./PhaseStore":131,"./rcp/CultureStore":141,"./rcp/ProfessionStore":142,"./rcp/ProfessionVariantStore":143,"events":1}],136:[function(require,module,exports){
+},{"../constants/ActionTypes":115,"../constants/Categories":116,"../dispatcher/AppDispatcher":117,"./ELStore":122,"./ListStore":125,"./PhaseStore":127,"./rcp/CultureStore":137,"./rcp/ProfessionStore":138,"./rcp/ProfessionVariantStore":139,"events":1}],132:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20457,17 +20149,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _id = 4;
 var _name = 'Elytherion';
 
-function updateName(name) {
-	_name = name;
-}
-
 function updateAll(id, name) {
 	_id = id;
 	_name = name;
 }
 
+function updateName(name) {
+	_name = name;
+}
+
 function reset() {
-	_id = 0;
+	_id = null;
 	_name = '';
 }
 
@@ -20507,14 +20199,14 @@ AccountStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 	switch (payload.actionType) {
 
 		case _ActionTypes2.default.RECEIVE_ACCOUNT:
-			updateAll(payload.userid, payload.username);
+			updateAll(payload.id, payload.name);
 			break;
 
 		case _ActionTypes2.default.UPDATE_USERNAME:
 			updateName(payload.username);
 			break;
 
-		case _ActionTypes2.default.CLEAR_ACCOUNT:
+		case _ActionTypes2.default.LOGOUT_SUCCESS:
 			reset();
 			break;
 
@@ -20529,7 +20221,7 @@ AccountStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 exports.default = AccountStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"events":1}],137:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"events":1}],133:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20551,11 +20243,11 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _heroes = {
-
-	'H_0': {
+	'H_1': {
 		client_version: '1.0.0',
 		date: new Date('2016-10-18T16:18:28.420Z'),
-		id: 'H_0',
+		id: 'H_1',
+		phase: 2,
 		name: 'Shimo ibn Rashdul',
 		avatar: 'images/portrait.png',
 		ap: {
@@ -20575,8 +20267,9 @@ var _heroes = {
 		p: 'P_6',
 		pv: 'PV_21'
 	},
-	'H_1': {
-		id: 'H_1',
+	'H_2': {
+		id: 'H_2',
+		phase: 2,
 		name: 'Yendan Keres',
 		avatar: 'images/portrait2.png',
 		ap: { _max: 1160, _used: 936 },
@@ -20599,22 +20292,12 @@ function _updateSortOrder(option) {
 }
 
 function _updateHeroes(rawHeroes) {
-	rawHeroes.split('#§');
-	for (var i = 0; i < rawHeroes.length - 1; i++) {
-		rawHeroes[i] = rawHeroes[i].split('#%');
-		rawHeroes[i][2] = rawHeroes[i][2].split('#$');
-		rawHeroes[i] = {
-			id: rawHeroes[i][0],
-			name: rawHeroes[i][1],
-			phase: rawHeroes[i][2][0],
-			ap: rawHeroes[i][2][1],
-			prof: rawHeroes[i][2][2],
-			group: 1
-			// group: raw[i][3],
-			// player: raw[i][4]
-		};
-	}
-	_heroes = rawHeroes;
+	var heroes = JSON.parse(rawHeroes);
+	var obj = {};
+	heroes.forEach(function (e) {
+		return obj[e.id] = e;
+	});
+	_heroes = obj;
 }
 
 var HerolistStore = _extends({}, _events.EventEmitter.prototype, {
@@ -20692,7 +20375,7 @@ HerolistStore.dispatchToken = _AppDispatcher2.default.register(function (payload
 
 		case _ActionTypes2.default.RECEIVE_ACCOUNT:
 		case _ActionTypes2.default.RECEIVE_RAW_HEROES:
-			_updateHeroes(payload.raw);
+			_updateHeroes(payload.rawHeroes);
 			break;
 
 		default:
@@ -20706,7 +20389,7 @@ HerolistStore.dispatchToken = _AppDispatcher2.default.register(function (payload
 
 exports.default = HerolistStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"events":1}],138:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"events":1}],134:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20724,6 +20407,10 @@ var _events = require('events');
 var _ActionTypes = require('../../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+var _AccountStore = require('./AccountStore');
+
+var _AccountStore2 = _interopRequireDefault(_AccountStore);
 
 var _PhaseStore = require('../PhaseStore');
 
@@ -20745,7 +20432,15 @@ function _updateSection(section, tab) {
 
 	if (tab) _updateTab(tab);else switch (section) {
 		case 'main':
-			if (before === 'hero') _currentTab = 'herolist';else if (before === 'group') _currentTab = 'grouplist';
+			if (before === 'hero') {
+				if (_AccountStore2.default.getID() === null) {
+					_currentTab = 'home';
+				} else {
+					_currentTab = 'herolist';
+				}
+			} else if (before === 'group') {
+				_currentTab = 'grouplist';
+			}
 			break;
 		case 'hero':
 			_currentTab = 'profile';
@@ -20813,7 +20508,7 @@ TabStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 			_updateTab('confirmRegistration');
 			break;
 
-		case _ActionTypes2.default.RECEIVE_ACCOUNT:
+		case _ActionTypes2.default.LOGOUT_SUCCESS:
 		case _ActionTypes2.default.CLEAR_HERO:
 			_updateTab('home');
 			break;
@@ -20845,7 +20540,7 @@ TabStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = TabStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"../PhaseStore":131,"events":1}],139:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"../PhaseStore":127,"./AccountStore":132,"events":1}],135:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20881,7 +20576,7 @@ var VersionStore = {
 
 exports.default = VersionStore;
 
-},{}],140:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20949,6 +20644,7 @@ WaitStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 		case _ActionTypes2.default.CREATE_HERO:
 		case _ActionTypes2.default.RECEIVE_HERO:
 		case _ActionTypes2.default.RECEIVE_RAW_LISTS:
+		case _ActionTypes2.default.SAVE_HERO_SUCCESS:
 			stopWaiting();
 			break;
 
@@ -20963,7 +20659,7 @@ WaitStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = WaitStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"events":1}],141:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"events":1}],137:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21240,7 +20936,7 @@ CultureStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 exports.default = CultureStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"./RaceStore":144,"events":1}],142:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"./RaceStore":140,"events":1}],138:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21515,7 +21211,7 @@ ProfessionStore.dispatchToken = _AppDispatcher2.default.register(function (paylo
 
 exports.default = ProfessionStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"../ELStore":126,"./CultureStore":141,"./RaceStore":144,"events":1}],143:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"../ELStore":122,"./CultureStore":137,"./RaceStore":140,"events":1}],139:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21686,7 +21382,7 @@ ProfessionVariantStore.dispatchToken = _AppDispatcher2.default.register(function
 
 exports.default = ProfessionVariantStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"../ProfileStore":132,"./CultureStore":141,"./ProfessionStore":142,"events":1}],144:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"../ProfileStore":128,"./CultureStore":137,"./ProfessionStore":138,"events":1}],140:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21912,7 +21608,7 @@ RaceStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = RaceStore;
 
-},{"../../constants/ActionTypes":119,"../../dispatcher/AppDispatcher":121,"events":1}],145:[function(require,module,exports){
+},{"../../constants/ActionTypes":115,"../../dispatcher/AppDispatcher":117,"events":1}],141:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -21970,7 +21666,8 @@ var WebAPIUtils = {
 		});
 	},
 	register: function register(email, username, password) {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/register.php?e=' + email + '&u=' + username + '&p=' + password,
 				type: 'GET',
@@ -21979,14 +21676,13 @@ var WebAPIUtils = {
 					_ServerActions2.default.registrationSuccess();
 				},
 				error: function error(_error2) {
-					connectionError(_error2);
-					reject();
+					_ServerActions2.default.connectionError(_error2);
 				}
 			});
 		});
 	},
 	checkEmail: function checkEmail(email) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/checkemail.php?e=' + email,
 				type: 'GET',
@@ -21995,13 +21691,13 @@ var WebAPIUtils = {
 					resolve(result);
 				},
 				error: function error(_error3) {
-					connectionError(_error3);reject();
+					_ServerActions2.default.connectionError(_error3);
 				}
 			});
 		});
 	},
 	checkUsername: function checkUsername(username) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/checkuser.php?u=' + username,
 				type: 'GET',
@@ -22010,85 +21706,90 @@ var WebAPIUtils = {
 					resolve(result);
 				},
 				error: function error(_error4) {
-					connectionError(_error4);reject();
+					_ServerActions2.default.connectionError(_error4);
 				}
 			});
 		});
 	},
 	sendPasswordCode: function sendPasswordCode(email) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/forgetpw.php?e=' + email,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.forgotPasswordSuccess(result);
 				},
 				error: function error(_error5) {
-					connectionError(_error5);reject();
+					_ServerActions2.default.connectionError(_error5);
 				}
 			});
 		});
 	},
 	sendUsername: function sendUsername(email) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/forgetusername.php?e=' + email,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.forgotUsernameSuccess(result);
 				},
 				error: function error(_error6) {
-					connectionError(_error6);reject();
+					_ServerActions2.default.connectionError(_error6);
 				}
 			});
 		});
 	},
 	resendActivation: function resendActivation(email) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/regmailagain.php?e=' + email,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.resendActivationSuccess(result);
 				},
 				error: function error(_error7) {
-					connectionError(_error7);reject();
+					_ServerActions2.default.connectionError(_error7);
 				}
 			});
 		});
 	},
 	login: function login(username, password) {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/login.php?u=' + username + '&p=' + password,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					_ServerActions2.default.receiveUser(result);
+					_ServerActions2.default.receiveAccount(result, username);
 				},
 				error: function error(_error8) {
-					connectionError(_error8);reject();
+					_ServerActions2.default.connectionError(_error8);
 				}
 			});
 		});
 	},
 	logout: function logout() {
-		return new Promise(function (resolve, reject) {
-			_jQuery2.default.ajax({
-				url: 'http://cha5app.dsa-sh.de/php/logout.php?uid=' + _AccountStore2.default.getID(),
-				type: 'GET',
-				dataType: 'text',
-				success: function success(result) {
-					resolve(result);
-				},
-				error: function error(_error9) {
-					connectionError(_error9);reject();
-				}
-			});
-		});
+		// ServerActions.startLoading();
+		_ServerActions2.default.logoutSuccess();
+		// return new Promise(function(){
+		// 	jQuery.ajax(
+		// 		{
+		// 			url: 'http://cha5app.dsa-sh.de/php/logout.php?uid=' + AccountStore.getID(),
+		// 			type: 'GET',
+		// 			dataType: 'text',
+		// 			success: function(result) {
+		// ServerActions.logoutSuccess(result);
+		// 			},
+		// 			error: function(error) {
+		// 				ServerActions.connectionError(error);
+		// 			}
+		// 		}
+		// 	);
+		// });
 	},
 	logoutSync: function logoutSync() {
 		_jQuery2.default.ajax({
@@ -22098,67 +21799,72 @@ var WebAPIUtils = {
 			async: false
 		});
 	},
-	setNewUsername: function setNewUsername(username) {
-		return new Promise(function (resolve, reject) {
+	setNewUsername: function setNewUsername(name) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
-				url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + _AccountStore2.default.getID() + '&src=username&v=' + username,
+				url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + _AccountStore2.default.getID() + '&src=username&v=' + name,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.changeUsernameSuccess(result, name);
 				},
-				error: function error(_error10) {
-					connectionError(_error10);reject();
+				error: function error(_error9) {
+					_ServerActions2.default.connectionError(_error9);
 				}
 			});
 		});
 	},
 	setNewPassword: function setNewPassword(password) {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + _AccountStore2.default.getID() + '&src=password&v=' + password,
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.changePasswordSuccess(result);
 				},
-				error: function error(_error11) {
-					connectionError(_error11);reject();
+				error: function error(_error10) {
+					_ServerActions2.default.connectionError(_error10);
 				}
 			});
 		});
 	},
 	deleteAccount: function deleteAccount() {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/deleteaccount.php?uid=' + _AccountStore2.default.getID(),
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.deleteAccountSuccess(result);
 				},
-				error: function error(_error12) {
-					connectionError(_error12);reject();
+				error: function error(_error11) {
+					_ServerActions2.default.connectionError(_error11);
 				}
 			});
 		});
 	},
 	getHeroes: function getHeroes(userid) {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function () {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/getherolist.php?uid=' + (typeof userid === 'undefined' ? _AccountStore2.default.getID() : userid),
 				type: 'GET',
 				dataType: 'text',
 				success: function success(result) {
-					resolve(result);
+					_ServerActions2.default.herolistRefreshSuccess(result);
 				},
-				error: function error(_error13) {
-					connectionError(_error13);reject();
+				error: function error(_error12) {
+					_ServerActions2.default.connectionError(_error12);
 				}
 			});
 		});
 	},
 	loadHero: function loadHero(id) {
+		_ServerActions2.default.startLoading();
 		_ServerActions2.default.loadHeroSuccess(id, {
 			"sex": "m",
 			"pers": {
@@ -22208,7 +21914,7 @@ var WebAPIUtils = {
 		// });
 	},
 	createNewHero: function createNewHero(heroname) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/newhero.php?uid=' + _AccountStore2.default.getID() + '&n=' + heroname,
 				type: 'GET',
@@ -22216,13 +21922,14 @@ var WebAPIUtils = {
 				success: function success(result) {
 					resolve(result);
 				},
-				error: function error(_error14) {
-					connectionError(_error14);reject();
+				error: function error(_error13) {
+					_ServerActions2.default.connectionError(_error13);
 				}
 			});
 		});
 	},
 	saveHero: function saveHero(data) {
+		_ServerActions2.default.startLoading();
 		var blob = new Blob([data], { type: "application/json" });
 		var url = window.URL.createObjectURL(blob);
 		window.open(url);
@@ -22238,7 +21945,7 @@ var WebAPIUtils = {
 		// 			type: 'POST',
 		// 			dataType: 'json',
 		// 			success: function() {
-		// 				ServerActions.saveHeroSuccess();
+		_ServerActions2.default.saveHeroSuccess();
 		// 			},
 		// 			error: function(error) {
 		// 				ServerActions.connectionError(error);
@@ -22248,7 +21955,8 @@ var WebAPIUtils = {
 		// });
 	},
 	deleteHero: function deleteHero(heroid) {
-		return new Promise(function (resolve, reject) {
+		_ServerActions2.default.startLoading();
+		return new Promise(function (resolve) {
 			_jQuery2.default.ajax({
 				url: 'http://cha5app.dsa-sh.de/php/deletehero.php?uid=' + _AccountStore2.default.getID() + '&hid=' + heroid,
 				type: 'GET',
@@ -22256,8 +21964,8 @@ var WebAPIUtils = {
 				success: function success(result) {
 					resolve(result);
 				},
-				error: function error(_error15) {
-					connectionError(_error15);reject();
+				error: function error(_error14) {
+					_ServerActions2.default.connectionError(_error14);
 				}
 			});
 		});
@@ -22266,56 +21974,20 @@ var WebAPIUtils = {
 
 exports.default = WebAPIUtils;
 
-},{"../actions/AccountActions":4,"../actions/ServerActions":19,"../constants/ActionTypes":119,"../dispatcher/AppDispatcher":121,"../stores/core/AccountStore":136,"jQuery":157,"react":330,"react-dom":160}],146:[function(require,module,exports){
+},{"../actions/AccountActions":4,"../actions/ServerActions":19,"../constants/ActionTypes":115,"../dispatcher/AppDispatcher":117,"../stores/core/AccountStore":132,"jQuery":153,"react":326,"react-dom":156}],142:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.close = close;
+exports.createDialogNode = createDialogNode;
 
-exports.default = function () {
-	var node = document.createElement('div');
-
-	document.body.appendChild(node);
-
-	return node;
+exports.default = function (element) {
+	var node = createDialogNode();
+	_reactDom2.default.render(_react2.default.cloneElement(element, { node: node }), node);
+	return true;
 };
-
-},{}],147:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (sides) {
-  return Math.floor(Math.random() * sides) + 1;
-};
-
-},{}],148:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-exports.default = function (title, content) {
-	var node = (0, _createDialogNode2.default)();
-
-	_reactDom2.default.render(_react2.default.createElement(
-		_Dialog2.default,
-		{ title: title, node: node },
-		content
-	), node);
-};
-
-var _createDialogNode = require('./createDialogNode');
-
-var _createDialogNode2 = _interopRequireDefault(_createDialogNode);
-
-var _Dialog = require('../components/layout/Dialog');
-
-var _Dialog2 = _interopRequireDefault(_Dialog);
 
 var _react = require('react');
 
@@ -22327,7 +21999,62 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"../components/layout/Dialog":102,"./createDialogNode":146,"react":330,"react-dom":160}],149:[function(require,module,exports){
+function close(node) {
+	_reactDom2.default.unmountComponentAtNode(node);
+	document.body.removeChild(node);
+	return true;
+}
+
+function createDialogNode() {
+	var node = document.createElement('div');
+	document.body.appendChild(node);
+	return node;
+}
+
+},{"react":326,"react-dom":156}],143:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (sides) {
+  return Math.floor(Math.random() * sides) + 1;
+};
+
+},{}],144:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+exports.default = function (title, content, buttons) {
+	(0, _createOverlay2.default)(_react2.default.createElement(
+		_Dialog2.default,
+		{
+			title: title,
+			buttons: buttons
+		},
+		content
+	));
+};
+
+var _createOverlay = require('./createOverlay');
+
+var _createOverlay2 = _interopRequireDefault(_createOverlay);
+
+var _Dialog = require('../components/layout/Dialog');
+
+var _Dialog2 = _interopRequireDefault(_Dialog);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+},{"../components/layout/Dialog":98,"./createOverlay":142,"react":326}],145:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22415,7 +22142,7 @@ exports.default = function (reqs) {
 	}, 0);
 };
 
-},{"../stores/APStore":122,"../stores/ListStore":129}],150:[function(require,module,exports){
+},{"../stores/APStore":118,"../stores/ListStore":125}],146:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22449,6 +22176,10 @@ var _ELStore2 = _interopRequireDefault(_ELStore);
 var _LiturgiesStore = require('../stores/LiturgiesStore');
 
 var _LiturgiesStore2 = _interopRequireDefault(_LiturgiesStore);
+
+var _PhaseStore = require('../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
 var _ProfessionStore = require('../stores/rcp/ProfessionStore');
 
@@ -22493,6 +22224,7 @@ exports.default = function () {
 		client_version: _VersionStore2.default.get(),
 		date: new Date().toJSON(),
 		id: 'H_0',
+		phase: _PhaseStore2.default.get(),
 		name: _ProfileStore2.default.getName(),
 		avatar: _ProfileStore2.default.getPortrait(),
 		ap: _APStore2.default.getForSave(),
@@ -22520,7 +22252,7 @@ exports.default = function () {
 	return true;
 };
 
-},{"../stores/APStore":122,"../stores/AttributeStore":123,"../stores/CombatTechniquesStore":124,"../stores/DisAdvStore":125,"../stores/ELStore":126,"../stores/LiturgiesStore":130,"../stores/ProfileStore":132,"../stores/SpecialAbilitiesStore":133,"../stores/SpellsStore":134,"../stores/TalentsStore":135,"../stores/core/VersionStore":139,"../stores/rcp/CultureStore":141,"../stores/rcp/ProfessionStore":142,"../stores/rcp/ProfessionVariantStore":143,"../stores/rcp/RaceStore":144,"./WebAPIUtils":145}],151:[function(require,module,exports){
+},{"../stores/APStore":118,"../stores/AttributeStore":119,"../stores/CombatTechniquesStore":120,"../stores/DisAdvStore":121,"../stores/ELStore":122,"../stores/LiturgiesStore":126,"../stores/PhaseStore":127,"../stores/ProfileStore":128,"../stores/SpecialAbilitiesStore":129,"../stores/SpellsStore":130,"../stores/TalentsStore":131,"../stores/core/VersionStore":135,"../stores/rcp/CultureStore":137,"../stores/rcp/ProfessionStore":138,"../stores/rcp/ProfessionVariantStore":139,"../stores/rcp/RaceStore":140,"./WebAPIUtils":141}],147:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22633,7 +22365,7 @@ exports.default = function (reqs, id) {
 	});
 };
 
-},{"../stores/ListStore":129,"../stores/rcp/CultureStore":141,"../stores/rcp/ProfessionStore":142,"../stores/rcp/RaceStore":144}],152:[function(require,module,exports){
+},{"../stores/ListStore":125,"../stores/rcp/CultureStore":137,"../stores/rcp/ProfessionStore":138,"../stores/rcp/RaceStore":140}],148:[function(require,module,exports){
 /*!
   Copyright (c) 2016 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -22683,7 +22415,7 @@ exports.default = function (reqs, id) {
 	}
 }());
 
-},{}],153:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -22735,7 +22467,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":2}],154:[function(require,module,exports){
+},{"_process":2}],150:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -22747,7 +22479,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":155}],155:[function(require,module,exports){
+},{"./lib/Dispatcher":151}],151:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -22981,7 +22713,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":2,"fbjs/lib/invariant":153}],156:[function(require,module,exports){
+},{"_process":2,"fbjs/lib/invariant":149}],152:[function(require,module,exports){
 /**
  * gemini-scrollbar
  * @version 1.3.2
@@ -23302,7 +23034,7 @@ module.exports = Dispatcher;
   }
 })();
 
-},{}],157:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -33118,7 +32850,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],158:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 /**
  * Copyright 2013-2014 Facebook, Inc.
  *
@@ -33173,7 +32905,7 @@ var keyMirror = function(obj) {
 
 module.exports = keyMirror;
 
-},{}],159:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 'use strict';
 /* eslint-disable no-unused-vars */
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -33258,12 +32990,12 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],160:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 'use strict';
 
 module.exports = require('react/lib/ReactDOM');
 
-},{"react/lib/ReactDOM":200}],161:[function(require,module,exports){
+},{"react/lib/ReactDOM":196}],157:[function(require,module,exports){
 'use strict';
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -33348,7 +33080,7 @@ module.exports = React.createClass({
     }
 });
 
-},{"gemini-scrollbar":156,"react":330,"react-dom":160}],162:[function(require,module,exports){
+},{"gemini-scrollbar":152,"react":326,"react-dom":156}],158:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -33432,7 +33164,7 @@ ProgressArc.defaultProps = {
 
 exports.default = ProgressArc;
 module.exports = exports['default'];
-},{"react":330}],163:[function(require,module,exports){
+},{"react":326}],159:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -33457,7 +33189,7 @@ var AutoFocusUtils = {
 };
 
 module.exports = AutoFocusUtils;
-},{"./ReactDOMComponentTree":204,"fbjs/lib/focusNode":314}],164:[function(require,module,exports){
+},{"./ReactDOMComponentTree":200,"fbjs/lib/focusNode":310}],160:[function(require,module,exports){
 /**
  * Copyright 2013-present Facebook, Inc.
  * All rights reserved.
@@ -33848,7 +33580,7 @@ var BeforeInputEventPlugin = {
 };
 
 module.exports = BeforeInputEventPlugin;
-},{"./EventConstants":178,"./EventPropagators":182,"./FallbackCompositionState":183,"./SyntheticCompositionEvent":261,"./SyntheticInputEvent":265,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/keyOf":324}],165:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPropagators":178,"./FallbackCompositionState":179,"./SyntheticCompositionEvent":257,"./SyntheticInputEvent":261,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/keyOf":320}],161:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -33997,7 +33729,7 @@ var CSSProperty = {
 };
 
 module.exports = CSSProperty;
-},{}],166:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -34205,7 +33937,7 @@ var CSSPropertyOperations = {
 
 module.exports = CSSPropertyOperations;
 }).call(this,require('_process'))
-},{"./CSSProperty":165,"./ReactInstrumentation":234,"./dangerousStyleValue":279,"_process":2,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/camelizeStyleName":308,"fbjs/lib/hyphenateStyleName":319,"fbjs/lib/memoizeStringOnly":325,"fbjs/lib/warning":329}],167:[function(require,module,exports){
+},{"./CSSProperty":161,"./ReactInstrumentation":230,"./dangerousStyleValue":275,"_process":2,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/camelizeStyleName":304,"fbjs/lib/hyphenateStyleName":315,"fbjs/lib/memoizeStringOnly":321,"fbjs/lib/warning":325}],163:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -34314,7 +34046,7 @@ PooledClass.addPoolingTo(CallbackQueue);
 
 module.exports = CallbackQueue;
 }).call(this,require('_process'))
-},{"./PooledClass":187,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"object-assign":159}],168:[function(require,module,exports){
+},{"./PooledClass":183,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"object-assign":155}],164:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -34640,7 +34372,7 @@ var ChangeEventPlugin = {
 };
 
 module.exports = ChangeEventPlugin;
-},{"./EventConstants":178,"./EventPluginHub":179,"./EventPropagators":182,"./ReactDOMComponentTree":204,"./ReactUpdates":254,"./SyntheticEvent":263,"./getEventTarget":287,"./isEventSupported":294,"./isTextInputElement":295,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/keyOf":324}],169:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPluginHub":175,"./EventPropagators":178,"./ReactDOMComponentTree":200,"./ReactUpdates":250,"./SyntheticEvent":259,"./getEventTarget":283,"./isEventSupported":290,"./isTextInputElement":291,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/keyOf":320}],165:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -34837,7 +34569,7 @@ var DOMChildrenOperations = {
 
 module.exports = DOMChildrenOperations;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":170,"./Danger":174,"./ReactDOMComponentTree":204,"./ReactInstrumentation":234,"./ReactMultiChildUpdateTypes":239,"./createMicrosoftUnsafeLocalFunction":278,"./setInnerHTML":300,"./setTextContent":301,"_process":2}],170:[function(require,module,exports){
+},{"./DOMLazyTree":166,"./Danger":170,"./ReactDOMComponentTree":200,"./ReactInstrumentation":230,"./ReactMultiChildUpdateTypes":235,"./createMicrosoftUnsafeLocalFunction":274,"./setInnerHTML":296,"./setTextContent":297,"_process":2}],166:[function(require,module,exports){
 /**
  * Copyright 2015-present, Facebook, Inc.
  * All rights reserved.
@@ -34956,7 +34688,7 @@ DOMLazyTree.queueHTML = queueHTML;
 DOMLazyTree.queueText = queueText;
 
 module.exports = DOMLazyTree;
-},{"./DOMNamespaces":171,"./createMicrosoftUnsafeLocalFunction":278,"./setInnerHTML":300,"./setTextContent":301}],171:[function(require,module,exports){
+},{"./DOMNamespaces":167,"./createMicrosoftUnsafeLocalFunction":274,"./setInnerHTML":296,"./setTextContent":297}],167:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -34977,7 +34709,7 @@ var DOMNamespaces = {
 };
 
 module.exports = DOMNamespaces;
-},{}],172:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -35186,7 +34918,7 @@ var DOMProperty = {
 
 module.exports = DOMProperty;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],173:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],169:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -35410,7 +35142,7 @@ var DOMPropertyOperations = {
 
 module.exports = DOMPropertyOperations;
 }).call(this,require('_process'))
-},{"./DOMProperty":172,"./ReactDOMComponentTree":204,"./ReactInstrumentation":234,"./quoteAttributeValueForBrowser":297,"_process":2,"fbjs/lib/warning":329}],174:[function(require,module,exports){
+},{"./DOMProperty":168,"./ReactDOMComponentTree":200,"./ReactInstrumentation":230,"./quoteAttributeValueForBrowser":293,"_process":2,"fbjs/lib/warning":325}],170:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -35461,7 +35193,7 @@ var Danger = {
 
 module.exports = Danger;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":170,"./reactProdInvariant":298,"_process":2,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/createNodesFromMarkup":311,"fbjs/lib/emptyFunction":312,"fbjs/lib/invariant":320}],175:[function(require,module,exports){
+},{"./DOMLazyTree":166,"./reactProdInvariant":294,"_process":2,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/createNodesFromMarkup":307,"fbjs/lib/emptyFunction":308,"fbjs/lib/invariant":316}],171:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -35489,7 +35221,7 @@ var keyOf = require('fbjs/lib/keyOf');
 var DefaultEventPluginOrder = [keyOf({ ResponderEventPlugin: null }), keyOf({ SimpleEventPlugin: null }), keyOf({ TapEventPlugin: null }), keyOf({ EnterLeaveEventPlugin: null }), keyOf({ ChangeEventPlugin: null }), keyOf({ SelectEventPlugin: null }), keyOf({ BeforeInputEventPlugin: null })];
 
 module.exports = DefaultEventPluginOrder;
-},{"fbjs/lib/keyOf":324}],176:[function(require,module,exports){
+},{"fbjs/lib/keyOf":320}],172:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -35540,7 +35272,7 @@ var DisabledInputUtils = {
 };
 
 module.exports = DisabledInputUtils;
-},{}],177:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -35646,7 +35378,7 @@ var EnterLeaveEventPlugin = {
 };
 
 module.exports = EnterLeaveEventPlugin;
-},{"./EventConstants":178,"./EventPropagators":182,"./ReactDOMComponentTree":204,"./SyntheticMouseEvent":267,"fbjs/lib/keyOf":324}],178:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPropagators":178,"./ReactDOMComponentTree":200,"./SyntheticMouseEvent":263,"fbjs/lib/keyOf":320}],174:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -35744,7 +35476,7 @@ var EventConstants = {
 };
 
 module.exports = EventConstants;
-},{"fbjs/lib/keyMirror":323}],179:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":319}],175:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -35998,7 +35730,7 @@ var EventPluginHub = {
 
 module.exports = EventPluginHub;
 }).call(this,require('_process'))
-},{"./EventPluginRegistry":180,"./EventPluginUtils":181,"./ReactErrorUtils":225,"./accumulateInto":274,"./forEachAccumulated":283,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],180:[function(require,module,exports){
+},{"./EventPluginRegistry":176,"./EventPluginUtils":177,"./ReactErrorUtils":221,"./accumulateInto":270,"./forEachAccumulated":279,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],176:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -36248,7 +35980,7 @@ var EventPluginRegistry = {
 
 module.exports = EventPluginRegistry;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],181:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],177:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -36480,7 +36212,7 @@ var EventPluginUtils = {
 
 module.exports = EventPluginUtils;
 }).call(this,require('_process'))
-},{"./EventConstants":178,"./ReactErrorUtils":225,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],182:[function(require,module,exports){
+},{"./EventConstants":174,"./ReactErrorUtils":221,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],178:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -36620,7 +36352,7 @@ var EventPropagators = {
 
 module.exports = EventPropagators;
 }).call(this,require('_process'))
-},{"./EventConstants":178,"./EventPluginHub":179,"./EventPluginUtils":181,"./accumulateInto":274,"./forEachAccumulated":283,"_process":2,"fbjs/lib/warning":329}],183:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPluginHub":175,"./EventPluginUtils":177,"./accumulateInto":270,"./forEachAccumulated":279,"_process":2,"fbjs/lib/warning":325}],179:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -36716,7 +36448,7 @@ _assign(FallbackCompositionState.prototype, {
 PooledClass.addPoolingTo(FallbackCompositionState);
 
 module.exports = FallbackCompositionState;
-},{"./PooledClass":187,"./getTextContentAccessor":291,"object-assign":159}],184:[function(require,module,exports){
+},{"./PooledClass":183,"./getTextContentAccessor":287,"object-assign":155}],180:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -36929,7 +36661,7 @@ var HTMLDOMPropertyConfig = {
 };
 
 module.exports = HTMLDOMPropertyConfig;
-},{"./DOMProperty":172}],185:[function(require,module,exports){
+},{"./DOMProperty":168}],181:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -36989,7 +36721,7 @@ var KeyEscapeUtils = {
 };
 
 module.exports = KeyEscapeUtils;
-},{}],186:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -37128,7 +36860,7 @@ var LinkedValueUtils = {
 
 module.exports = LinkedValueUtils;
 }).call(this,require('_process'))
-},{"./ReactPropTypeLocations":244,"./ReactPropTypes":245,"./ReactPropTypesSecret":246,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],187:[function(require,module,exports){
+},{"./ReactPropTypeLocations":240,"./ReactPropTypes":241,"./ReactPropTypesSecret":242,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],183:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -37252,7 +36984,7 @@ var PooledClass = {
 
 module.exports = PooledClass;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],188:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],184:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -37344,7 +37076,7 @@ var React = {
 
 module.exports = React;
 }).call(this,require('_process'))
-},{"./ReactChildren":191,"./ReactClass":193,"./ReactComponent":194,"./ReactDOMFactories":207,"./ReactElement":222,"./ReactElementValidator":223,"./ReactPropTypes":245,"./ReactPureComponent":247,"./ReactVersion":255,"./onlyChild":296,"_process":2,"fbjs/lib/warning":329,"object-assign":159}],189:[function(require,module,exports){
+},{"./ReactChildren":187,"./ReactClass":189,"./ReactComponent":190,"./ReactDOMFactories":203,"./ReactElement":218,"./ReactElementValidator":219,"./ReactPropTypes":241,"./ReactPureComponent":243,"./ReactVersion":251,"./onlyChild":292,"_process":2,"fbjs/lib/warning":325,"object-assign":155}],185:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -37675,7 +37407,7 @@ var ReactBrowserEventEmitter = _assign({}, ReactEventEmitterMixin, {
 });
 
 module.exports = ReactBrowserEventEmitter;
-},{"./EventConstants":178,"./EventPluginRegistry":180,"./ReactEventEmitterMixin":226,"./ViewportMetrics":273,"./getVendorPrefixedEventName":292,"./isEventSupported":294,"object-assign":159}],190:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPluginRegistry":176,"./ReactEventEmitterMixin":222,"./ViewportMetrics":269,"./getVendorPrefixedEventName":288,"./isEventSupported":290,"object-assign":155}],186:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -37832,7 +37564,7 @@ var ReactChildReconciler = {
 
 module.exports = ReactChildReconciler;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":185,"./ReactComponentTreeHook":197,"./ReactReconciler":249,"./instantiateReactComponent":293,"./shouldUpdateReactComponent":302,"./traverseAllChildren":303,"_process":2,"fbjs/lib/warning":329}],191:[function(require,module,exports){
+},{"./KeyEscapeUtils":181,"./ReactComponentTreeHook":193,"./ReactReconciler":245,"./instantiateReactComponent":289,"./shouldUpdateReactComponent":298,"./traverseAllChildren":299,"_process":2,"fbjs/lib/warning":325}],187:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -38024,7 +37756,7 @@ var ReactChildren = {
 };
 
 module.exports = ReactChildren;
-},{"./PooledClass":187,"./ReactElement":222,"./traverseAllChildren":303,"fbjs/lib/emptyFunction":312}],192:[function(require,module,exports){
+},{"./PooledClass":183,"./ReactElement":218,"./traverseAllChildren":299,"fbjs/lib/emptyFunction":308}],188:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -38081,7 +37813,7 @@ var ReactChildrenMutationWarningHook = {
 
 module.exports = ReactChildrenMutationWarningHook;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":197,"_process":2,"fbjs/lib/warning":329}],193:[function(require,module,exports){
+},{"./ReactComponentTreeHook":193,"_process":2,"fbjs/lib/warning":325}],189:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -38816,7 +38548,7 @@ var ReactClass = {
 
 module.exports = ReactClass;
 }).call(this,require('_process'))
-},{"./ReactComponent":194,"./ReactElement":222,"./ReactNoopUpdateQueue":241,"./ReactPropTypeLocationNames":243,"./ReactPropTypeLocations":244,"./reactProdInvariant":298,"_process":2,"fbjs/lib/emptyObject":313,"fbjs/lib/invariant":320,"fbjs/lib/keyMirror":323,"fbjs/lib/keyOf":324,"fbjs/lib/warning":329,"object-assign":159}],194:[function(require,module,exports){
+},{"./ReactComponent":190,"./ReactElement":218,"./ReactNoopUpdateQueue":237,"./ReactPropTypeLocationNames":239,"./ReactPropTypeLocations":240,"./reactProdInvariant":294,"_process":2,"fbjs/lib/emptyObject":309,"fbjs/lib/invariant":316,"fbjs/lib/keyMirror":319,"fbjs/lib/keyOf":320,"fbjs/lib/warning":325,"object-assign":155}],190:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -38937,7 +38669,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactComponent;
 }).call(this,require('_process'))
-},{"./ReactNoopUpdateQueue":241,"./canDefineProperty":276,"./reactProdInvariant":298,"_process":2,"fbjs/lib/emptyObject":313,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],195:[function(require,module,exports){
+},{"./ReactNoopUpdateQueue":237,"./canDefineProperty":272,"./reactProdInvariant":294,"_process":2,"fbjs/lib/emptyObject":309,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],191:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -38968,7 +38700,7 @@ var ReactComponentBrowserEnvironment = {
 };
 
 module.exports = ReactComponentBrowserEnvironment;
-},{"./DOMChildrenOperations":169,"./ReactDOMIDOperations":209}],196:[function(require,module,exports){
+},{"./DOMChildrenOperations":165,"./ReactDOMIDOperations":205}],192:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -39016,7 +38748,7 @@ var ReactComponentEnvironment = {
 
 module.exports = ReactComponentEnvironment;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],197:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],193:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2016-present, Facebook, Inc.
@@ -39361,7 +39093,7 @@ var ReactComponentTreeHook = {
 
 module.exports = ReactComponentTreeHook;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":199,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],198:[function(require,module,exports){
+},{"./ReactCurrentOwner":195,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],194:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -40268,7 +40000,7 @@ var ReactCompositeComponent = {
 
 module.exports = ReactCompositeComponent;
 }).call(this,require('_process'))
-},{"./ReactComponentEnvironment":196,"./ReactCurrentOwner":199,"./ReactElement":222,"./ReactErrorUtils":225,"./ReactInstanceMap":233,"./ReactInstrumentation":234,"./ReactNodeTypes":240,"./ReactPropTypeLocations":244,"./ReactReconciler":249,"./checkReactTypeSpec":277,"./reactProdInvariant":298,"./shouldUpdateReactComponent":302,"_process":2,"fbjs/lib/emptyObject":313,"fbjs/lib/invariant":320,"fbjs/lib/shallowEqual":328,"fbjs/lib/warning":329,"object-assign":159}],199:[function(require,module,exports){
+},{"./ReactComponentEnvironment":192,"./ReactCurrentOwner":195,"./ReactElement":218,"./ReactErrorUtils":221,"./ReactInstanceMap":229,"./ReactInstrumentation":230,"./ReactNodeTypes":236,"./ReactPropTypeLocations":240,"./ReactReconciler":245,"./checkReactTypeSpec":273,"./reactProdInvariant":294,"./shouldUpdateReactComponent":298,"_process":2,"fbjs/lib/emptyObject":309,"fbjs/lib/invariant":316,"fbjs/lib/shallowEqual":324,"fbjs/lib/warning":325,"object-assign":155}],195:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -40300,7 +40032,7 @@ var ReactCurrentOwner = {
 };
 
 module.exports = ReactCurrentOwner;
-},{}],200:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -40413,7 +40145,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactDOM;
 }).call(this,require('_process'))
-},{"./ReactDOMComponentTree":204,"./ReactDOMNullInputValuePropHook":211,"./ReactDOMUnknownPropertyHook":218,"./ReactDefaultInjection":221,"./ReactInstrumentation":234,"./ReactMount":237,"./ReactReconciler":249,"./ReactUpdates":254,"./ReactVersion":255,"./findDOMNode":281,"./getHostComponentFromComposite":288,"./renderSubtreeIntoContainer":299,"_process":2,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/warning":329}],201:[function(require,module,exports){
+},{"./ReactDOMComponentTree":200,"./ReactDOMNullInputValuePropHook":207,"./ReactDOMUnknownPropertyHook":214,"./ReactDefaultInjection":217,"./ReactInstrumentation":230,"./ReactMount":233,"./ReactReconciler":245,"./ReactUpdates":250,"./ReactVersion":251,"./findDOMNode":277,"./getHostComponentFromComposite":284,"./renderSubtreeIntoContainer":295,"_process":2,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/warning":325}],197:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -40438,7 +40170,7 @@ var ReactDOMButton = {
 };
 
 module.exports = ReactDOMButton;
-},{"./DisabledInputUtils":176}],202:[function(require,module,exports){
+},{"./DisabledInputUtils":172}],198:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -41447,7 +41179,7 @@ _assign(ReactDOMComponent.prototype, ReactDOMComponent.Mixin, ReactMultiChild.Mi
 
 module.exports = ReactDOMComponent;
 }).call(this,require('_process'))
-},{"./AutoFocusUtils":163,"./CSSPropertyOperations":166,"./DOMLazyTree":170,"./DOMNamespaces":171,"./DOMProperty":172,"./DOMPropertyOperations":173,"./EventConstants":178,"./EventPluginHub":179,"./EventPluginRegistry":180,"./ReactBrowserEventEmitter":189,"./ReactDOMButton":201,"./ReactDOMComponentFlags":203,"./ReactDOMComponentTree":204,"./ReactDOMInput":210,"./ReactDOMOption":212,"./ReactDOMSelect":213,"./ReactDOMTextarea":216,"./ReactInstrumentation":234,"./ReactMultiChild":238,"./ReactServerRenderingTransaction":251,"./escapeTextContentForBrowser":280,"./isEventSupported":294,"./reactProdInvariant":298,"./validateDOMNesting":304,"_process":2,"fbjs/lib/emptyFunction":312,"fbjs/lib/invariant":320,"fbjs/lib/keyOf":324,"fbjs/lib/shallowEqual":328,"fbjs/lib/warning":329,"object-assign":159}],203:[function(require,module,exports){
+},{"./AutoFocusUtils":159,"./CSSPropertyOperations":162,"./DOMLazyTree":166,"./DOMNamespaces":167,"./DOMProperty":168,"./DOMPropertyOperations":169,"./EventConstants":174,"./EventPluginHub":175,"./EventPluginRegistry":176,"./ReactBrowserEventEmitter":185,"./ReactDOMButton":197,"./ReactDOMComponentFlags":199,"./ReactDOMComponentTree":200,"./ReactDOMInput":206,"./ReactDOMOption":208,"./ReactDOMSelect":209,"./ReactDOMTextarea":212,"./ReactInstrumentation":230,"./ReactMultiChild":234,"./ReactServerRenderingTransaction":247,"./escapeTextContentForBrowser":276,"./isEventSupported":290,"./reactProdInvariant":294,"./validateDOMNesting":300,"_process":2,"fbjs/lib/emptyFunction":308,"fbjs/lib/invariant":316,"fbjs/lib/keyOf":320,"fbjs/lib/shallowEqual":324,"fbjs/lib/warning":325,"object-assign":155}],199:[function(require,module,exports){
 /**
  * Copyright 2015-present, Facebook, Inc.
  * All rights reserved.
@@ -41466,7 +41198,7 @@ var ReactDOMComponentFlags = {
 };
 
 module.exports = ReactDOMComponentFlags;
-},{}],204:[function(require,module,exports){
+},{}],200:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -41657,7 +41389,7 @@ var ReactDOMComponentTree = {
 
 module.exports = ReactDOMComponentTree;
 }).call(this,require('_process'))
-},{"./DOMProperty":172,"./ReactDOMComponentFlags":203,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],205:[function(require,module,exports){
+},{"./DOMProperty":168,"./ReactDOMComponentFlags":199,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],201:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -41693,7 +41425,7 @@ function ReactDOMContainerInfo(topLevelWrapper, node) {
 
 module.exports = ReactDOMContainerInfo;
 }).call(this,require('_process'))
-},{"./validateDOMNesting":304,"_process":2}],206:[function(require,module,exports){
+},{"./validateDOMNesting":300,"_process":2}],202:[function(require,module,exports){
 /**
  * Copyright 2014-present, Facebook, Inc.
  * All rights reserved.
@@ -41754,7 +41486,7 @@ _assign(ReactDOMEmptyComponent.prototype, {
 });
 
 module.exports = ReactDOMEmptyComponent;
-},{"./DOMLazyTree":170,"./ReactDOMComponentTree":204,"object-assign":159}],207:[function(require,module,exports){
+},{"./DOMLazyTree":166,"./ReactDOMComponentTree":200,"object-assign":155}],203:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -41927,7 +41659,7 @@ var ReactDOMFactories = {
 
 module.exports = ReactDOMFactories;
 }).call(this,require('_process'))
-},{"./ReactElement":222,"./ReactElementValidator":223,"_process":2}],208:[function(require,module,exports){
+},{"./ReactElement":218,"./ReactElementValidator":219,"_process":2}],204:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -41946,7 +41678,7 @@ var ReactDOMFeatureFlags = {
 };
 
 module.exports = ReactDOMFeatureFlags;
-},{}],209:[function(require,module,exports){
+},{}],205:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -41981,7 +41713,7 @@ var ReactDOMIDOperations = {
 };
 
 module.exports = ReactDOMIDOperations;
-},{"./DOMChildrenOperations":169,"./ReactDOMComponentTree":204}],210:[function(require,module,exports){
+},{"./DOMChildrenOperations":165,"./ReactDOMComponentTree":200}],206:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -42253,7 +41985,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMInput;
 }).call(this,require('_process'))
-},{"./DOMPropertyOperations":173,"./DisabledInputUtils":176,"./LinkedValueUtils":186,"./ReactDOMComponentTree":204,"./ReactUpdates":254,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329,"object-assign":159}],211:[function(require,module,exports){
+},{"./DOMPropertyOperations":169,"./DisabledInputUtils":172,"./LinkedValueUtils":182,"./ReactDOMComponentTree":200,"./ReactUpdates":250,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325,"object-assign":155}],207:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -42299,7 +42031,7 @@ var ReactDOMNullInputValuePropHook = {
 
 module.exports = ReactDOMNullInputValuePropHook;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":197,"_process":2,"fbjs/lib/warning":329}],212:[function(require,module,exports){
+},{"./ReactComponentTreeHook":193,"_process":2,"fbjs/lib/warning":325}],208:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -42425,7 +42157,7 @@ var ReactDOMOption = {
 
 module.exports = ReactDOMOption;
 }).call(this,require('_process'))
-},{"./ReactChildren":191,"./ReactDOMComponentTree":204,"./ReactDOMSelect":213,"_process":2,"fbjs/lib/warning":329,"object-assign":159}],213:[function(require,module,exports){
+},{"./ReactChildren":187,"./ReactDOMComponentTree":200,"./ReactDOMSelect":209,"_process":2,"fbjs/lib/warning":325,"object-assign":155}],209:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -42629,7 +42361,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMSelect;
 }).call(this,require('_process'))
-},{"./DisabledInputUtils":176,"./LinkedValueUtils":186,"./ReactDOMComponentTree":204,"./ReactUpdates":254,"_process":2,"fbjs/lib/warning":329,"object-assign":159}],214:[function(require,module,exports){
+},{"./DisabledInputUtils":172,"./LinkedValueUtils":182,"./ReactDOMComponentTree":200,"./ReactUpdates":250,"_process":2,"fbjs/lib/warning":325,"object-assign":155}],210:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -42842,7 +42574,7 @@ var ReactDOMSelection = {
 };
 
 module.exports = ReactDOMSelection;
-},{"./getNodeForCharacterOffset":290,"./getTextContentAccessor":291,"fbjs/lib/ExecutionEnvironment":306}],215:[function(require,module,exports){
+},{"./getNodeForCharacterOffset":286,"./getTextContentAccessor":287,"fbjs/lib/ExecutionEnvironment":302}],211:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -43009,7 +42741,7 @@ _assign(ReactDOMTextComponent.prototype, {
 
 module.exports = ReactDOMTextComponent;
 }).call(this,require('_process'))
-},{"./DOMChildrenOperations":169,"./DOMLazyTree":170,"./ReactDOMComponentTree":204,"./escapeTextContentForBrowser":280,"./reactProdInvariant":298,"./validateDOMNesting":304,"_process":2,"fbjs/lib/invariant":320,"object-assign":159}],216:[function(require,module,exports){
+},{"./DOMChildrenOperations":165,"./DOMLazyTree":166,"./ReactDOMComponentTree":200,"./escapeTextContentForBrowser":276,"./reactProdInvariant":294,"./validateDOMNesting":300,"_process":2,"fbjs/lib/invariant":316,"object-assign":155}],212:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -43167,7 +42899,7 @@ function _handleChange(event) {
 
 module.exports = ReactDOMTextarea;
 }).call(this,require('_process'))
-},{"./DisabledInputUtils":176,"./LinkedValueUtils":186,"./ReactDOMComponentTree":204,"./ReactUpdates":254,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329,"object-assign":159}],217:[function(require,module,exports){
+},{"./DisabledInputUtils":172,"./LinkedValueUtils":182,"./ReactDOMComponentTree":200,"./ReactUpdates":250,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325,"object-assign":155}],213:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -43306,7 +43038,7 @@ module.exports = {
   traverseEnterLeave: traverseEnterLeave
 };
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],218:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],214:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -43421,7 +43153,7 @@ var ReactDOMUnknownPropertyHook = {
 
 module.exports = ReactDOMUnknownPropertyHook;
 }).call(this,require('_process'))
-},{"./DOMProperty":172,"./EventPluginRegistry":180,"./ReactComponentTreeHook":197,"_process":2,"fbjs/lib/warning":329}],219:[function(require,module,exports){
+},{"./DOMProperty":168,"./EventPluginRegistry":176,"./ReactComponentTreeHook":193,"_process":2,"fbjs/lib/warning":325}],215:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2016-present, Facebook, Inc.
@@ -43725,7 +43457,7 @@ if (/[?&]react_perf\b/.test(url)) {
 
 module.exports = ReactDebugTool;
 }).call(this,require('_process'))
-},{"./ReactChildrenMutationWarningHook":192,"./ReactComponentTreeHook":197,"./ReactHostOperationHistoryHook":230,"./ReactInvalidSetStateWarningHook":235,"_process":2,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/performanceNow":327,"fbjs/lib/warning":329}],220:[function(require,module,exports){
+},{"./ReactChildrenMutationWarningHook":188,"./ReactComponentTreeHook":193,"./ReactHostOperationHistoryHook":226,"./ReactInvalidSetStateWarningHook":231,"_process":2,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/performanceNow":323,"fbjs/lib/warning":325}],216:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -43794,7 +43526,7 @@ var ReactDefaultBatchingStrategy = {
 };
 
 module.exports = ReactDefaultBatchingStrategy;
-},{"./ReactUpdates":254,"./Transaction":272,"fbjs/lib/emptyFunction":312,"object-assign":159}],221:[function(require,module,exports){
+},{"./ReactUpdates":250,"./Transaction":268,"fbjs/lib/emptyFunction":308,"object-assign":155}],217:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -43879,7 +43611,7 @@ function inject() {
 module.exports = {
   inject: inject
 };
-},{"./BeforeInputEventPlugin":164,"./ChangeEventPlugin":168,"./DefaultEventPluginOrder":175,"./EnterLeaveEventPlugin":177,"./HTMLDOMPropertyConfig":184,"./ReactComponentBrowserEnvironment":195,"./ReactDOMComponent":202,"./ReactDOMComponentTree":204,"./ReactDOMEmptyComponent":206,"./ReactDOMTextComponent":215,"./ReactDOMTreeTraversal":217,"./ReactDefaultBatchingStrategy":220,"./ReactEventListener":227,"./ReactInjection":231,"./ReactReconcileTransaction":248,"./SVGDOMPropertyConfig":256,"./SelectEventPlugin":257,"./SimpleEventPlugin":258}],222:[function(require,module,exports){
+},{"./BeforeInputEventPlugin":160,"./ChangeEventPlugin":164,"./DefaultEventPluginOrder":171,"./EnterLeaveEventPlugin":173,"./HTMLDOMPropertyConfig":180,"./ReactComponentBrowserEnvironment":191,"./ReactDOMComponent":198,"./ReactDOMComponentTree":200,"./ReactDOMEmptyComponent":202,"./ReactDOMTextComponent":211,"./ReactDOMTreeTraversal":213,"./ReactDefaultBatchingStrategy":216,"./ReactEventListener":223,"./ReactInjection":227,"./ReactReconcileTransaction":244,"./SVGDOMPropertyConfig":252,"./SelectEventPlugin":253,"./SimpleEventPlugin":254}],218:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -44230,7 +43962,7 @@ ReactElement.REACT_ELEMENT_TYPE = REACT_ELEMENT_TYPE;
 
 module.exports = ReactElement;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":199,"./canDefineProperty":276,"_process":2,"fbjs/lib/warning":329,"object-assign":159}],223:[function(require,module,exports){
+},{"./ReactCurrentOwner":195,"./canDefineProperty":272,"_process":2,"fbjs/lib/warning":325,"object-assign":155}],219:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -44461,7 +44193,7 @@ var ReactElementValidator = {
 
 module.exports = ReactElementValidator;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":197,"./ReactCurrentOwner":199,"./ReactElement":222,"./ReactPropTypeLocations":244,"./canDefineProperty":276,"./checkReactTypeSpec":277,"./getIteratorFn":289,"_process":2,"fbjs/lib/warning":329}],224:[function(require,module,exports){
+},{"./ReactComponentTreeHook":193,"./ReactCurrentOwner":195,"./ReactElement":218,"./ReactPropTypeLocations":240,"./canDefineProperty":272,"./checkReactTypeSpec":273,"./getIteratorFn":285,"_process":2,"fbjs/lib/warning":325}],220:[function(require,module,exports){
 /**
  * Copyright 2014-present, Facebook, Inc.
  * All rights reserved.
@@ -44492,7 +44224,7 @@ var ReactEmptyComponent = {
 ReactEmptyComponent.injection = ReactEmptyComponentInjection;
 
 module.exports = ReactEmptyComponent;
-},{}],225:[function(require,module,exports){
+},{}],221:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -44571,7 +44303,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactErrorUtils;
 }).call(this,require('_process'))
-},{"_process":2}],226:[function(require,module,exports){
+},{"_process":2}],222:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -44605,7 +44337,7 @@ var ReactEventEmitterMixin = {
 };
 
 module.exports = ReactEventEmitterMixin;
-},{"./EventPluginHub":179}],227:[function(require,module,exports){
+},{"./EventPluginHub":175}],223:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -44763,7 +44495,7 @@ var ReactEventListener = {
 };
 
 module.exports = ReactEventListener;
-},{"./PooledClass":187,"./ReactDOMComponentTree":204,"./ReactUpdates":254,"./getEventTarget":287,"fbjs/lib/EventListener":305,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/getUnboundedScrollPosition":317,"object-assign":159}],228:[function(require,module,exports){
+},{"./PooledClass":183,"./ReactDOMComponentTree":200,"./ReactUpdates":250,"./getEventTarget":283,"fbjs/lib/EventListener":301,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/getUnboundedScrollPosition":313,"object-assign":155}],224:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -44786,7 +44518,7 @@ var ReactFeatureFlags = {
 };
 
 module.exports = ReactFeatureFlags;
-},{}],229:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -44865,7 +44597,7 @@ var ReactHostComponent = {
 
 module.exports = ReactHostComponent;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"object-assign":159}],230:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"object-assign":155}],226:[function(require,module,exports){
 /**
  * Copyright 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -44903,7 +44635,7 @@ var ReactHostOperationHistoryHook = {
 };
 
 module.exports = ReactHostOperationHistoryHook;
-},{}],231:[function(require,module,exports){
+},{}],227:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -44940,7 +44672,7 @@ var ReactInjection = {
 };
 
 module.exports = ReactInjection;
-},{"./DOMProperty":172,"./EventPluginHub":179,"./EventPluginUtils":181,"./ReactBrowserEventEmitter":189,"./ReactClass":193,"./ReactComponentEnvironment":196,"./ReactEmptyComponent":224,"./ReactHostComponent":229,"./ReactUpdates":254}],232:[function(require,module,exports){
+},{"./DOMProperty":168,"./EventPluginHub":175,"./EventPluginUtils":177,"./ReactBrowserEventEmitter":185,"./ReactClass":189,"./ReactComponentEnvironment":192,"./ReactEmptyComponent":220,"./ReactHostComponent":225,"./ReactUpdates":250}],228:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -45065,7 +44797,7 @@ var ReactInputSelection = {
 };
 
 module.exports = ReactInputSelection;
-},{"./ReactDOMSelection":214,"fbjs/lib/containsNode":309,"fbjs/lib/focusNode":314,"fbjs/lib/getActiveElement":315}],233:[function(require,module,exports){
+},{"./ReactDOMSelection":210,"fbjs/lib/containsNode":305,"fbjs/lib/focusNode":310,"fbjs/lib/getActiveElement":311}],229:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -45114,7 +44846,7 @@ var ReactInstanceMap = {
 };
 
 module.exports = ReactInstanceMap;
-},{}],234:[function(require,module,exports){
+},{}],230:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2016-present, Facebook, Inc.
@@ -45138,7 +44870,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = { debugTool: debugTool };
 }).call(this,require('_process'))
-},{"./ReactDebugTool":219,"_process":2}],235:[function(require,module,exports){
+},{"./ReactDebugTool":215,"_process":2}],231:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2016-present, Facebook, Inc.
@@ -45177,7 +44909,7 @@ var ReactInvalidSetStateWarningHook = {
 
 module.exports = ReactInvalidSetStateWarningHook;
 }).call(this,require('_process'))
-},{"_process":2,"fbjs/lib/warning":329}],236:[function(require,module,exports){
+},{"_process":2,"fbjs/lib/warning":325}],232:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -45228,7 +44960,7 @@ var ReactMarkupChecksum = {
 };
 
 module.exports = ReactMarkupChecksum;
-},{"./adler32":275}],237:[function(require,module,exports){
+},{"./adler32":271}],233:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -45765,7 +45497,7 @@ var ReactMount = {
 
 module.exports = ReactMount;
 }).call(this,require('_process'))
-},{"./DOMLazyTree":170,"./DOMProperty":172,"./ReactBrowserEventEmitter":189,"./ReactCurrentOwner":199,"./ReactDOMComponentTree":204,"./ReactDOMContainerInfo":205,"./ReactDOMFeatureFlags":208,"./ReactElement":222,"./ReactFeatureFlags":228,"./ReactInstanceMap":233,"./ReactInstrumentation":234,"./ReactMarkupChecksum":236,"./ReactReconciler":249,"./ReactUpdateQueue":253,"./ReactUpdates":254,"./instantiateReactComponent":293,"./reactProdInvariant":298,"./setInnerHTML":300,"./shouldUpdateReactComponent":302,"_process":2,"fbjs/lib/emptyObject":313,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],238:[function(require,module,exports){
+},{"./DOMLazyTree":166,"./DOMProperty":168,"./ReactBrowserEventEmitter":185,"./ReactCurrentOwner":195,"./ReactDOMComponentTree":200,"./ReactDOMContainerInfo":201,"./ReactDOMFeatureFlags":204,"./ReactElement":218,"./ReactFeatureFlags":224,"./ReactInstanceMap":229,"./ReactInstrumentation":230,"./ReactMarkupChecksum":232,"./ReactReconciler":245,"./ReactUpdateQueue":249,"./ReactUpdates":250,"./instantiateReactComponent":289,"./reactProdInvariant":294,"./setInnerHTML":296,"./shouldUpdateReactComponent":298,"_process":2,"fbjs/lib/emptyObject":309,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],234:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -46219,7 +45951,7 @@ var ReactMultiChild = {
 
 module.exports = ReactMultiChild;
 }).call(this,require('_process'))
-},{"./ReactChildReconciler":190,"./ReactComponentEnvironment":196,"./ReactCurrentOwner":199,"./ReactInstanceMap":233,"./ReactInstrumentation":234,"./ReactMultiChildUpdateTypes":239,"./ReactReconciler":249,"./flattenChildren":282,"./reactProdInvariant":298,"_process":2,"fbjs/lib/emptyFunction":312,"fbjs/lib/invariant":320}],239:[function(require,module,exports){
+},{"./ReactChildReconciler":186,"./ReactComponentEnvironment":192,"./ReactCurrentOwner":195,"./ReactInstanceMap":229,"./ReactInstrumentation":230,"./ReactMultiChildUpdateTypes":235,"./ReactReconciler":245,"./flattenChildren":278,"./reactProdInvariant":294,"_process":2,"fbjs/lib/emptyFunction":308,"fbjs/lib/invariant":316}],235:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -46252,7 +45984,7 @@ var ReactMultiChildUpdateTypes = keyMirror({
 });
 
 module.exports = ReactMultiChildUpdateTypes;
-},{"fbjs/lib/keyMirror":323}],240:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":319}],236:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -46295,7 +46027,7 @@ var ReactNodeTypes = {
 
 module.exports = ReactNodeTypes;
 }).call(this,require('_process'))
-},{"./ReactElement":222,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],241:[function(require,module,exports){
+},{"./ReactElement":218,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],237:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -46394,7 +46126,7 @@ var ReactNoopUpdateQueue = {
 
 module.exports = ReactNoopUpdateQueue;
 }).call(this,require('_process'))
-},{"_process":2,"fbjs/lib/warning":329}],242:[function(require,module,exports){
+},{"_process":2,"fbjs/lib/warning":325}],238:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -46491,7 +46223,7 @@ var ReactOwner = {
 
 module.exports = ReactOwner;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],243:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],239:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -46518,7 +46250,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = ReactPropTypeLocationNames;
 }).call(this,require('_process'))
-},{"_process":2}],244:[function(require,module,exports){
+},{"_process":2}],240:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -46541,7 +46273,7 @@ var ReactPropTypeLocations = keyMirror({
 });
 
 module.exports = ReactPropTypeLocations;
-},{"fbjs/lib/keyMirror":323}],245:[function(require,module,exports){
+},{"fbjs/lib/keyMirror":319}],241:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -46975,7 +46707,7 @@ function getClassName(propValue) {
 
 module.exports = ReactPropTypes;
 }).call(this,require('_process'))
-},{"./ReactElement":222,"./ReactPropTypeLocationNames":243,"./ReactPropTypesSecret":246,"./getIteratorFn":289,"_process":2,"fbjs/lib/emptyFunction":312,"fbjs/lib/warning":329}],246:[function(require,module,exports){
+},{"./ReactElement":218,"./ReactPropTypeLocationNames":239,"./ReactPropTypesSecret":242,"./getIteratorFn":285,"_process":2,"fbjs/lib/emptyFunction":308,"fbjs/lib/warning":325}],242:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -46992,7 +46724,7 @@ module.exports = ReactPropTypes;
 var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
-},{}],247:[function(require,module,exports){
+},{}],243:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -47035,7 +46767,7 @@ _assign(ReactPureComponent.prototype, ReactComponent.prototype);
 ReactPureComponent.prototype.isPureReactComponent = true;
 
 module.exports = ReactPureComponent;
-},{"./ReactComponent":194,"./ReactNoopUpdateQueue":241,"fbjs/lib/emptyObject":313,"object-assign":159}],248:[function(require,module,exports){
+},{"./ReactComponent":190,"./ReactNoopUpdateQueue":237,"fbjs/lib/emptyObject":309,"object-assign":155}],244:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -47216,7 +46948,7 @@ PooledClass.addPoolingTo(ReactReconcileTransaction);
 
 module.exports = ReactReconcileTransaction;
 }).call(this,require('_process'))
-},{"./CallbackQueue":167,"./PooledClass":187,"./ReactBrowserEventEmitter":189,"./ReactInputSelection":232,"./ReactInstrumentation":234,"./ReactUpdateQueue":253,"./Transaction":272,"_process":2,"object-assign":159}],249:[function(require,module,exports){
+},{"./CallbackQueue":163,"./PooledClass":183,"./ReactBrowserEventEmitter":185,"./ReactInputSelection":228,"./ReactInstrumentation":230,"./ReactUpdateQueue":249,"./Transaction":268,"_process":2,"object-assign":155}],245:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -47387,7 +47119,7 @@ var ReactReconciler = {
 
 module.exports = ReactReconciler;
 }).call(this,require('_process'))
-},{"./ReactInstrumentation":234,"./ReactRef":250,"_process":2,"fbjs/lib/warning":329}],250:[function(require,module,exports){
+},{"./ReactInstrumentation":230,"./ReactRef":246,"_process":2,"fbjs/lib/warning":325}],246:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -47468,7 +47200,7 @@ ReactRef.detachRefs = function (instance, element) {
 };
 
 module.exports = ReactRef;
-},{"./ReactOwner":242}],251:[function(require,module,exports){
+},{"./ReactOwner":238}],247:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -47561,7 +47293,7 @@ PooledClass.addPoolingTo(ReactServerRenderingTransaction);
 
 module.exports = ReactServerRenderingTransaction;
 }).call(this,require('_process'))
-},{"./PooledClass":187,"./ReactInstrumentation":234,"./ReactServerUpdateQueue":252,"./Transaction":272,"_process":2,"object-assign":159}],252:[function(require,module,exports){
+},{"./PooledClass":183,"./ReactInstrumentation":230,"./ReactServerUpdateQueue":248,"./Transaction":268,"_process":2,"object-assign":155}],248:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -47705,7 +47437,7 @@ var ReactServerUpdateQueue = function () {
 
 module.exports = ReactServerUpdateQueue;
 }).call(this,require('_process'))
-},{"./ReactUpdateQueue":253,"./Transaction":272,"_process":2,"fbjs/lib/warning":329}],253:[function(require,module,exports){
+},{"./ReactUpdateQueue":249,"./Transaction":268,"_process":2,"fbjs/lib/warning":325}],249:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -47934,7 +47666,7 @@ var ReactUpdateQueue = {
 
 module.exports = ReactUpdateQueue;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":199,"./ReactInstanceMap":233,"./ReactInstrumentation":234,"./ReactUpdates":254,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],254:[function(require,module,exports){
+},{"./ReactCurrentOwner":195,"./ReactInstanceMap":229,"./ReactInstrumentation":230,"./ReactUpdates":250,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],250:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -48188,7 +47920,7 @@ var ReactUpdates = {
 
 module.exports = ReactUpdates;
 }).call(this,require('_process'))
-},{"./CallbackQueue":167,"./PooledClass":187,"./ReactFeatureFlags":228,"./ReactReconciler":249,"./Transaction":272,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"object-assign":159}],255:[function(require,module,exports){
+},{"./CallbackQueue":163,"./PooledClass":183,"./ReactFeatureFlags":224,"./ReactReconciler":245,"./Transaction":268,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"object-assign":155}],251:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -48203,7 +47935,7 @@ module.exports = ReactUpdates;
 'use strict';
 
 module.exports = '15.3.2';
-},{}],256:[function(require,module,exports){
+},{}],252:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -48506,7 +48238,7 @@ Object.keys(ATTRS).forEach(function (key) {
 });
 
 module.exports = SVGDOMPropertyConfig;
-},{}],257:[function(require,module,exports){
+},{}],253:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -48703,7 +48435,7 @@ var SelectEventPlugin = {
 };
 
 module.exports = SelectEventPlugin;
-},{"./EventConstants":178,"./EventPropagators":182,"./ReactDOMComponentTree":204,"./ReactInputSelection":232,"./SyntheticEvent":263,"./isTextInputElement":295,"fbjs/lib/ExecutionEnvironment":306,"fbjs/lib/getActiveElement":315,"fbjs/lib/keyOf":324,"fbjs/lib/shallowEqual":328}],258:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPropagators":178,"./ReactDOMComponentTree":200,"./ReactInputSelection":228,"./SyntheticEvent":259,"./isTextInputElement":291,"fbjs/lib/ExecutionEnvironment":302,"fbjs/lib/getActiveElement":311,"fbjs/lib/keyOf":320,"fbjs/lib/shallowEqual":324}],254:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -49341,7 +49073,7 @@ var SimpleEventPlugin = {
 
 module.exports = SimpleEventPlugin;
 }).call(this,require('_process'))
-},{"./EventConstants":178,"./EventPropagators":182,"./ReactDOMComponentTree":204,"./SyntheticAnimationEvent":259,"./SyntheticClipboardEvent":260,"./SyntheticDragEvent":262,"./SyntheticEvent":263,"./SyntheticFocusEvent":264,"./SyntheticKeyboardEvent":266,"./SyntheticMouseEvent":267,"./SyntheticTouchEvent":268,"./SyntheticTransitionEvent":269,"./SyntheticUIEvent":270,"./SyntheticWheelEvent":271,"./getEventCharCode":284,"./reactProdInvariant":298,"_process":2,"fbjs/lib/EventListener":305,"fbjs/lib/emptyFunction":312,"fbjs/lib/invariant":320,"fbjs/lib/keyOf":324}],259:[function(require,module,exports){
+},{"./EventConstants":174,"./EventPropagators":178,"./ReactDOMComponentTree":200,"./SyntheticAnimationEvent":255,"./SyntheticClipboardEvent":256,"./SyntheticDragEvent":258,"./SyntheticEvent":259,"./SyntheticFocusEvent":260,"./SyntheticKeyboardEvent":262,"./SyntheticMouseEvent":263,"./SyntheticTouchEvent":264,"./SyntheticTransitionEvent":265,"./SyntheticUIEvent":266,"./SyntheticWheelEvent":267,"./getEventCharCode":280,"./reactProdInvariant":294,"_process":2,"fbjs/lib/EventListener":301,"fbjs/lib/emptyFunction":308,"fbjs/lib/invariant":316,"fbjs/lib/keyOf":320}],255:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49381,7 +49113,7 @@ function SyntheticAnimationEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticAnimationEvent, AnimationEventInterface);
 
 module.exports = SyntheticAnimationEvent;
-},{"./SyntheticEvent":263}],260:[function(require,module,exports){
+},{"./SyntheticEvent":259}],256:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49420,7 +49152,7 @@ function SyntheticClipboardEvent(dispatchConfig, dispatchMarker, nativeEvent, na
 SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 
 module.exports = SyntheticClipboardEvent;
-},{"./SyntheticEvent":263}],261:[function(require,module,exports){
+},{"./SyntheticEvent":259}],257:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49457,7 +49189,7 @@ function SyntheticCompositionEvent(dispatchConfig, dispatchMarker, nativeEvent, 
 SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface);
 
 module.exports = SyntheticCompositionEvent;
-},{"./SyntheticEvent":263}],262:[function(require,module,exports){
+},{"./SyntheticEvent":259}],258:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49494,7 +49226,7 @@ function SyntheticDragEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeE
 SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 
 module.exports = SyntheticDragEvent;
-},{"./SyntheticMouseEvent":267}],263:[function(require,module,exports){
+},{"./SyntheticMouseEvent":263}],259:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -49765,7 +49497,7 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
   }
 }
 }).call(this,require('_process'))
-},{"./PooledClass":187,"_process":2,"fbjs/lib/emptyFunction":312,"fbjs/lib/warning":329,"object-assign":159}],264:[function(require,module,exports){
+},{"./PooledClass":183,"_process":2,"fbjs/lib/emptyFunction":308,"fbjs/lib/warning":325,"object-assign":155}],260:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49802,7 +49534,7 @@ function SyntheticFocusEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 
 module.exports = SyntheticFocusEvent;
-},{"./SyntheticUIEvent":270}],265:[function(require,module,exports){
+},{"./SyntheticUIEvent":266}],261:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49840,7 +49572,7 @@ function SyntheticInputEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 
 module.exports = SyntheticInputEvent;
-},{"./SyntheticEvent":263}],266:[function(require,module,exports){
+},{"./SyntheticEvent":259}],262:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49925,7 +49657,7 @@ function SyntheticKeyboardEvent(dispatchConfig, dispatchMarker, nativeEvent, nat
 SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 
 module.exports = SyntheticKeyboardEvent;
-},{"./SyntheticUIEvent":270,"./getEventCharCode":284,"./getEventKey":285,"./getEventModifierState":286}],267:[function(require,module,exports){
+},{"./SyntheticUIEvent":266,"./getEventCharCode":280,"./getEventKey":281,"./getEventModifierState":282}],263:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -49998,7 +49730,7 @@ function SyntheticMouseEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticMouseEvent, MouseEventInterface);
 
 module.exports = SyntheticMouseEvent;
-},{"./SyntheticUIEvent":270,"./ViewportMetrics":273,"./getEventModifierState":286}],268:[function(require,module,exports){
+},{"./SyntheticUIEvent":266,"./ViewportMetrics":269,"./getEventModifierState":282}],264:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50044,7 +49776,7 @@ function SyntheticTouchEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 
 module.exports = SyntheticTouchEvent;
-},{"./SyntheticUIEvent":270,"./getEventModifierState":286}],269:[function(require,module,exports){
+},{"./SyntheticUIEvent":266,"./getEventModifierState":282}],265:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50084,7 +49816,7 @@ function SyntheticTransitionEvent(dispatchConfig, dispatchMarker, nativeEvent, n
 SyntheticEvent.augmentClass(SyntheticTransitionEvent, TransitionEventInterface);
 
 module.exports = SyntheticTransitionEvent;
-},{"./SyntheticEvent":263}],270:[function(require,module,exports){
+},{"./SyntheticEvent":259}],266:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50144,7 +49876,7 @@ function SyntheticUIEvent(dispatchConfig, dispatchMarker, nativeEvent, nativeEve
 SyntheticEvent.augmentClass(SyntheticUIEvent, UIEventInterface);
 
 module.exports = SyntheticUIEvent;
-},{"./SyntheticEvent":263,"./getEventTarget":287}],271:[function(require,module,exports){
+},{"./SyntheticEvent":259,"./getEventTarget":283}],267:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50199,7 +49931,7 @@ function SyntheticWheelEvent(dispatchConfig, dispatchMarker, nativeEvent, native
 SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 
 module.exports = SyntheticWheelEvent;
-},{"./SyntheticMouseEvent":267}],272:[function(require,module,exports){
+},{"./SyntheticMouseEvent":263}],268:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -50435,7 +50167,7 @@ var Transaction = {
 
 module.exports = Transaction;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],273:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],269:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50463,7 +50195,7 @@ var ViewportMetrics = {
 };
 
 module.exports = ViewportMetrics;
-},{}],274:[function(require,module,exports){
+},{}],270:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-present, Facebook, Inc.
@@ -50524,7 +50256,7 @@ function accumulateInto(current, next) {
 
 module.exports = accumulateInto;
 }).call(this,require('_process'))
-},{"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],275:[function(require,module,exports){
+},{"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],271:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50569,7 +50301,7 @@ function adler32(data) {
 }
 
 module.exports = adler32;
-},{}],276:[function(require,module,exports){
+},{}],272:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -50596,7 +50328,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = canDefineProperty;
 }).call(this,require('_process'))
-},{"_process":2}],277:[function(require,module,exports){
+},{"_process":2}],273:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -50686,7 +50418,7 @@ function checkReactTypeSpec(typeSpecs, values, location, componentName, element,
 
 module.exports = checkReactTypeSpec;
 }).call(this,require('_process'))
-},{"./ReactComponentTreeHook":197,"./ReactPropTypeLocationNames":243,"./ReactPropTypesSecret":246,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],278:[function(require,module,exports){
+},{"./ReactComponentTreeHook":193,"./ReactPropTypeLocationNames":239,"./ReactPropTypesSecret":242,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],274:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -50719,7 +50451,7 @@ var createMicrosoftUnsafeLocalFunction = function (func) {
 };
 
 module.exports = createMicrosoftUnsafeLocalFunction;
-},{}],279:[function(require,module,exports){
+},{}],275:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -50801,7 +50533,7 @@ function dangerousStyleValue(name, value, component) {
 
 module.exports = dangerousStyleValue;
 }).call(this,require('_process'))
-},{"./CSSProperty":165,"_process":2,"fbjs/lib/warning":329}],280:[function(require,module,exports){
+},{"./CSSProperty":161,"_process":2,"fbjs/lib/warning":325}],276:[function(require,module,exports){
 /**
  * Copyright 2016-present, Facebook, Inc.
  * All rights reserved.
@@ -50925,7 +50657,7 @@ function escapeTextContentForBrowser(text) {
 }
 
 module.exports = escapeTextContentForBrowser;
-},{}],281:[function(require,module,exports){
+},{}],277:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -50988,7 +50720,7 @@ function findDOMNode(componentOrElement) {
 
 module.exports = findDOMNode;
 }).call(this,require('_process'))
-},{"./ReactCurrentOwner":199,"./ReactDOMComponentTree":204,"./ReactInstanceMap":233,"./getHostComponentFromComposite":288,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],282:[function(require,module,exports){
+},{"./ReactCurrentOwner":195,"./ReactDOMComponentTree":200,"./ReactInstanceMap":229,"./getHostComponentFromComposite":284,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],278:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -51067,7 +50799,7 @@ function flattenChildren(children, selfDebugID) {
 
 module.exports = flattenChildren;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":185,"./ReactComponentTreeHook":197,"./traverseAllChildren":303,"_process":2,"fbjs/lib/warning":329}],283:[function(require,module,exports){
+},{"./KeyEscapeUtils":181,"./ReactComponentTreeHook":193,"./traverseAllChildren":299,"_process":2,"fbjs/lib/warning":325}],279:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51099,7 +50831,7 @@ function forEachAccumulated(arr, cb, scope) {
 }
 
 module.exports = forEachAccumulated;
-},{}],284:[function(require,module,exports){
+},{}],280:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51150,7 +50882,7 @@ function getEventCharCode(nativeEvent) {
 }
 
 module.exports = getEventCharCode;
-},{}],285:[function(require,module,exports){
+},{}],281:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51253,7 +50985,7 @@ function getEventKey(nativeEvent) {
 }
 
 module.exports = getEventKey;
-},{"./getEventCharCode":284}],286:[function(require,module,exports){
+},{"./getEventCharCode":280}],282:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51297,7 +51029,7 @@ function getEventModifierState(nativeEvent) {
 }
 
 module.exports = getEventModifierState;
-},{}],287:[function(require,module,exports){
+},{}],283:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51333,7 +51065,7 @@ function getEventTarget(nativeEvent) {
 }
 
 module.exports = getEventTarget;
-},{}],288:[function(require,module,exports){
+},{}],284:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51364,7 +51096,7 @@ function getHostComponentFromComposite(inst) {
 }
 
 module.exports = getHostComponentFromComposite;
-},{"./ReactNodeTypes":240}],289:[function(require,module,exports){
+},{"./ReactNodeTypes":236}],285:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51406,7 +51138,7 @@ function getIteratorFn(maybeIterable) {
 }
 
 module.exports = getIteratorFn;
-},{}],290:[function(require,module,exports){
+},{}],286:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51481,7 +51213,7 @@ function getNodeForCharacterOffset(root, offset) {
 }
 
 module.exports = getNodeForCharacterOffset;
-},{}],291:[function(require,module,exports){
+},{}],287:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51515,7 +51247,7 @@ function getTextContentAccessor() {
 }
 
 module.exports = getTextContentAccessor;
-},{"fbjs/lib/ExecutionEnvironment":306}],292:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":302}],288:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51617,7 +51349,7 @@ function getVendorPrefixedEventName(eventName) {
 }
 
 module.exports = getVendorPrefixedEventName;
-},{"fbjs/lib/ExecutionEnvironment":306}],293:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":302}],289:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -51739,7 +51471,7 @@ function instantiateReactComponent(node, shouldHaveDebugID) {
 
 module.exports = instantiateReactComponent;
 }).call(this,require('_process'))
-},{"./ReactCompositeComponent":198,"./ReactEmptyComponent":224,"./ReactHostComponent":229,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329,"object-assign":159}],294:[function(require,module,exports){
+},{"./ReactCompositeComponent":194,"./ReactEmptyComponent":220,"./ReactHostComponent":225,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325,"object-assign":155}],290:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51800,7 +51532,7 @@ function isEventSupported(eventNameSuffix, capture) {
 }
 
 module.exports = isEventSupported;
-},{"fbjs/lib/ExecutionEnvironment":306}],295:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":302}],291:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51852,7 +51584,7 @@ function isTextInputElement(elem) {
 }
 
 module.exports = isTextInputElement;
-},{}],296:[function(require,module,exports){
+},{}],292:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -51893,7 +51625,7 @@ function onlyChild(children) {
 
 module.exports = onlyChild;
 }).call(this,require('_process'))
-},{"./ReactElement":222,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320}],297:[function(require,module,exports){
+},{"./ReactElement":218,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316}],293:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51920,7 +51652,7 @@ function quoteAttributeValueForBrowser(value) {
 }
 
 module.exports = quoteAttributeValueForBrowser;
-},{"./escapeTextContentForBrowser":280}],298:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":276}],294:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51960,7 +51692,7 @@ function reactProdInvariant(code) {
 }
 
 module.exports = reactProdInvariant;
-},{}],299:[function(require,module,exports){
+},{}],295:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -51977,7 +51709,7 @@ module.exports = reactProdInvariant;
 var ReactMount = require('./ReactMount');
 
 module.exports = ReactMount.renderSubtreeIntoContainer;
-},{"./ReactMount":237}],300:[function(require,module,exports){
+},{"./ReactMount":233}],296:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -52076,7 +51808,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setInnerHTML;
-},{"./DOMNamespaces":171,"./createMicrosoftUnsafeLocalFunction":278,"fbjs/lib/ExecutionEnvironment":306}],301:[function(require,module,exports){
+},{"./DOMNamespaces":167,"./createMicrosoftUnsafeLocalFunction":274,"fbjs/lib/ExecutionEnvironment":302}],297:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -52125,7 +51857,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = setTextContent;
-},{"./escapeTextContentForBrowser":280,"./setInnerHTML":300,"fbjs/lib/ExecutionEnvironment":306}],302:[function(require,module,exports){
+},{"./escapeTextContentForBrowser":276,"./setInnerHTML":296,"fbjs/lib/ExecutionEnvironment":302}],298:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -52168,7 +51900,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 }
 
 module.exports = shouldUpdateReactComponent;
-},{}],303:[function(require,module,exports){
+},{}],299:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-present, Facebook, Inc.
@@ -52338,7 +52070,7 @@ function traverseAllChildren(children, callback, traverseContext) {
 
 module.exports = traverseAllChildren;
 }).call(this,require('_process'))
-},{"./KeyEscapeUtils":185,"./ReactCurrentOwner":199,"./ReactElement":222,"./getIteratorFn":289,"./reactProdInvariant":298,"_process":2,"fbjs/lib/invariant":320,"fbjs/lib/warning":329}],304:[function(require,module,exports){
+},{"./KeyEscapeUtils":181,"./ReactCurrentOwner":195,"./ReactElement":218,"./getIteratorFn":285,"./reactProdInvariant":294,"_process":2,"fbjs/lib/invariant":316,"fbjs/lib/warning":325}],300:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2015-present, Facebook, Inc.
@@ -52723,7 +52455,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = validateDOMNesting;
 }).call(this,require('_process'))
-},{"_process":2,"fbjs/lib/emptyFunction":312,"fbjs/lib/warning":329,"object-assign":159}],305:[function(require,module,exports){
+},{"_process":2,"fbjs/lib/emptyFunction":308,"fbjs/lib/warning":325,"object-assign":155}],301:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -52809,7 +52541,7 @@ var EventListener = {
 
 module.exports = EventListener;
 }).call(this,require('_process'))
-},{"./emptyFunction":312,"_process":2}],306:[function(require,module,exports){
+},{"./emptyFunction":308,"_process":2}],302:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -52845,7 +52577,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],307:[function(require,module,exports){
+},{}],303:[function(require,module,exports){
 "use strict";
 
 /**
@@ -52877,7 +52609,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],308:[function(require,module,exports){
+},{}],304:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -52917,7 +52649,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":307}],309:[function(require,module,exports){
+},{"./camelize":303}],305:[function(require,module,exports){
 'use strict';
 
 /**
@@ -52957,7 +52689,7 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":322}],310:[function(require,module,exports){
+},{"./isTextNode":318}],306:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -53086,7 +52818,7 @@ function createArrayFromMixed(obj) {
 
 module.exports = createArrayFromMixed;
 }).call(this,require('_process'))
-},{"./invariant":320,"_process":2}],311:[function(require,module,exports){
+},{"./invariant":316,"_process":2}],307:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -53172,7 +52904,7 @@ function createNodesFromMarkup(markup, handleScript) {
 
 module.exports = createNodesFromMarkup;
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":306,"./createArrayFromMixed":310,"./getMarkupWrap":316,"./invariant":320,"_process":2}],312:[function(require,module,exports){
+},{"./ExecutionEnvironment":302,"./createArrayFromMixed":306,"./getMarkupWrap":312,"./invariant":316,"_process":2}],308:[function(require,module,exports){
 "use strict";
 
 /**
@@ -53211,7 +52943,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],313:[function(require,module,exports){
+},{}],309:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -53233,7 +52965,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = emptyObject;
 }).call(this,require('_process'))
-},{"_process":2}],314:[function(require,module,exports){
+},{"_process":2}],310:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53260,7 +52992,7 @@ function focusNode(node) {
 }
 
 module.exports = focusNode;
-},{}],315:[function(require,module,exports){
+},{}],311:[function(require,module,exports){
 'use strict';
 
 /**
@@ -53295,7 +53027,7 @@ function getActiveElement() /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-},{}],316:[function(require,module,exports){
+},{}],312:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -53392,7 +53124,7 @@ function getMarkupWrap(nodeName) {
 
 module.exports = getMarkupWrap;
 }).call(this,require('_process'))
-},{"./ExecutionEnvironment":306,"./invariant":320,"_process":2}],317:[function(require,module,exports){
+},{"./ExecutionEnvironment":302,"./invariant":316,"_process":2}],313:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53431,7 +53163,7 @@ function getUnboundedScrollPosition(scrollable) {
 }
 
 module.exports = getUnboundedScrollPosition;
-},{}],318:[function(require,module,exports){
+},{}],314:[function(require,module,exports){
 'use strict';
 
 /**
@@ -53464,7 +53196,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],319:[function(require,module,exports){
+},{}],315:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53503,7 +53235,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":318}],320:[function(require,module,exports){
+},{"./hyphenate":314}],316:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -53555,7 +53287,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":2}],321:[function(require,module,exports){
+},{"_process":2}],317:[function(require,module,exports){
 'use strict';
 
 /**
@@ -53578,7 +53310,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],322:[function(require,module,exports){
+},{}],318:[function(require,module,exports){
 'use strict';
 
 /**
@@ -53603,7 +53335,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":321}],323:[function(require,module,exports){
+},{"./isNode":317}],319:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -53653,7 +53385,7 @@ var keyMirror = function keyMirror(obj) {
 
 module.exports = keyMirror;
 }).call(this,require('_process'))
-},{"./invariant":320,"_process":2}],324:[function(require,module,exports){
+},{"./invariant":316,"_process":2}],320:[function(require,module,exports){
 "use strict";
 
 /**
@@ -53688,7 +53420,7 @@ var keyOf = function keyOf(oneKeyObj) {
 };
 
 module.exports = keyOf;
-},{}],325:[function(require,module,exports){
+},{}],321:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53718,7 +53450,7 @@ function memoizeStringOnly(callback) {
 }
 
 module.exports = memoizeStringOnly;
-},{}],326:[function(require,module,exports){
+},{}],322:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53741,7 +53473,7 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 module.exports = performance || {};
-},{"./ExecutionEnvironment":306}],327:[function(require,module,exports){
+},{"./ExecutionEnvironment":302}],323:[function(require,module,exports){
 'use strict';
 
 /**
@@ -53775,7 +53507,7 @@ if (performance.now) {
 }
 
 module.exports = performanceNow;
-},{"./performance":326}],328:[function(require,module,exports){
+},{"./performance":322}],324:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -53843,7 +53575,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],329:[function(require,module,exports){
+},{}],325:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2014-2015, Facebook, Inc.
@@ -53912,9 +53644,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 }).call(this,require('_process'))
-},{"./emptyFunction":312,"_process":2}],330:[function(require,module,exports){
+},{"./emptyFunction":308,"_process":2}],326:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/React');
 
-},{"./lib/React":188}]},{},[3]);
+},{"./lib/React":184}]},{},[3]);

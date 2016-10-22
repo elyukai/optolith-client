@@ -21,9 +21,9 @@ const SKT = [
 	[15,15,15,30,45,60,75,90,105,120,135,150,165,180]
 ];
 
-var _max = 1100;
-var _used = 224;
-var _rcp = [0, 12, 212, 0];
+var _max = 0;
+var _used = 0;
+var _rcp = [0, 0, 0, 0];
 var _adv = 0;
 var _adv_mag = 0;
 var _adv_kar = 0;
@@ -86,6 +86,18 @@ function _calculateRCPDiff(index, next) {
 	let diff = next - current;
 	_addUsed(diff);
 	_rcp[index] = next;
+}
+
+function _clear() {
+	_max = 0;
+	_used = 0;
+	_rcp = [ 0, 0, 0, 0 ];
+	_adv = 0;
+	_adv_mag = 0;
+	_adv_kar = 0;
+	_disadv = 0;
+	_disadv_mag = 0;
+	_disadv_kar = 0;
 }
 
 function _updateAll(obj) {
@@ -207,6 +219,10 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.CLEAR_HERO:
+			_clear();
+			break;
+
 		case ActionTypes.RECEIVE_HERO:
 			_updateAll(payload.ap);
 			break;
@@ -273,6 +289,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			break;
 
 		case ActionTypes.CREATE_NEW_HERO: {
+			_clear();
 			AppDispatcher.waitFor([ELStore.dispatchToken]);
 			_max = ELStore.getStart().ap;
 			break;

@@ -1,6 +1,10 @@
+import AccountActions from '../../actions/AccountActions';
+import AccountStore from '../../stores/core/AccountStore';
 import APStore from '../../stores/APStore';
 import Avatar from './Avatar';
 import BorderButton from './BorderButton';
+import ELStore from '../../stores/ELStore';
+import HerolistActions from '../../actions/HerolistActions';
 import IconButton from './IconButton';
 import InGameActions from '../../actions/InGameActions';
 import PhaseStore from '../../stores/PhaseStore';
@@ -11,32 +15,6 @@ import TabActions from '../../actions/TabActions';
 import TitleBarArrow from './TitleBarArrow';
 import TitleBarNav from './TitleBarNav';
 
-class PageTab extends Component {
-
-	static propTypes = {
-		active: PropTypes.bool.isRequired,
-		className: PropTypes.any,
-		disabled: PropTypes.bool,
-		label: PropTypes.string,
-		tag: PropTypes.string.isRequired
-	};
-
-	constructor(props) {
-		super(props);
-	}
-
-	handleClick = tab => TabActions.openTab(tab);
-
-	render() {
-
-		const { tag, ...other } = this.props;
-
-		return (
-			<Tab {...other} onClick={this.handleClick.bind(null, tag)} />
-		);
-	}
-}
-
 class TitleBar extends Component {
 
 	static propTypes = {
@@ -45,6 +23,7 @@ class TitleBar extends Component {
 	};
 
 	state = {
+		account: AccountStore.getAll(),
 		ap: APStore.get(),
 		used: APStore.getUsed(),
 		disadv: APStore.getForDisAdv(),
@@ -56,28 +35,38 @@ class TitleBar extends Component {
 		super(props);
 	}
 
+	_updateAccountStore = () => this.setState({ account: AccountStore.getAll() });
 	_updateAPStore = () => this.setState({ ap: APStore.get(), used: APStore.getUsed(), disadv: APStore.getForDisAdv() });
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() });
 	_updateProfileStore = () => this.setState({ portrait: ProfileStore.getPortrait() });
 
 	componentDidMount() {
+		AccountStore.addChangeListener(this._updateAccountStore);
 		APStore.addChangeListener(this._updateAPStore);
 		PhaseStore.addChangeListener(this._updatePhaseStore);
 		ProfileStore.addChangeListener(this._updateProfileStore);
 	}
 
 	componentWillUnmount() {
+		AccountStore.removeChangeListener(this._updateAccountStore);
 		APStore.removeChangeListener(this._updateAPStore);
 		PhaseStore.removeChangeListener(this._updatePhaseStore);
 		ProfileStore.removeChangeListener(this._updateProfileStore);
 	}
 
 	back = () => TabActions.showSection('main');
+	test = () => {
+		if (ELStore.getStartID() === 'EL_0') {
+			HerolistActions.showHeroCreation();
+		} else {
+			TabActions.showSection('hero');
+		}
+	}
 
 	render() {
 
 		const { section, tab } = this.props;
-		const { ap, used, phase, portrait } = this.state;
+		const { account, ap, used, phase, portrait = '' } = this.state;
 
 		var showBackNav = true;
 		var tabsElement;
@@ -86,22 +75,36 @@ class TitleBar extends Component {
 		switch (section) {
 			case 'main': {
 				showBackNav = false;
-				tabsElement = (
-					<TitleBarNav active={tab} tabs={[
-						{ label: 'Start', tag: 'home' },
-						{ label: 'Helden', tag: 'herolist' },
-						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
-						{ label: 'Konto', tag: 'account', disabled: true },
-						{ label: 'Über', tag: 'about' }
-					]} />
-				);
-
-				actionsElement = (
-					<div className="right">
-						<BorderButton label="Registrieren" disabled />
-						<BorderButton label="Anmelden" disabled />
-					</div>
-				);
+				if (account.id === null) {
+					tabsElement = (
+						<TitleBarNav active={tab} tabs={[
+							{ label: 'Start', tag: 'home' },
+							{ label: 'Über', tag: 'about' }
+						]} />
+					);
+					actionsElement = (
+						<div className="right">
+							<BorderButton label="Testen" onClick={this.test} />
+							<BorderButton label="Anmelden" onClick={AccountActions.showLogin} primary />
+						</div>
+					);
+				} else {
+					tabsElement = (
+						<TitleBarNav active={tab} tabs={[
+							{ label: 'Start', tag: 'home' },
+							{ label: 'Helden', tag: 'herolist' },
+							{ label: 'Gruppen', tag: 'grouplist', disabled: true },
+							{ label: 'Konto', tag: 'account' },
+							{ label: 'Über', tag: 'about' }
+						]} />
+					);
+					actionsElement = (
+						<div className="right">
+							<div className="account">{account.name}</div>
+							<BorderButton label="Abmelden" onClick={AccountActions.logout} />
+						</div>
+					);
+				}
 				break;
 			}
 			case 'hero': {

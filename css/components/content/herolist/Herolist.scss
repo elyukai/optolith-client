@@ -36,9 +36,6 @@
 						z-index: 1;
 						flex: none;
 						@include size($size);
-						border-radius: 50%;
-						padding: $padding;
-						background: linear-gradient(to bottom, #9a7830 0%, #6d5024 100%);
 
 						> div {
 							@include size($size - $padding * 2);
@@ -55,11 +52,6 @@
 								line-height: $size - $padding * 2;
 								font-size: 21px;
 							}
-						}
-
-						> div.avatar {
-							box-shadow: 0 0 1px 1px black inset;
-							background-size: 100%;
 						}
 					}
 
@@ -91,6 +83,10 @@
 						> svg, > .el > div.overlay {
 							visibility: visible;
 						}
+					}
+
+					> .btn.primary {
+						min-width: 140px;
 					}
 				}
 			}

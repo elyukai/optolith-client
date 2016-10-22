@@ -1,4 +1,4 @@
-$modal-padding: 19px;
+$modal-padding: 24px;
 
 .modal-backdrop {
 	position: fixed;
@@ -67,15 +67,13 @@ $modal-padding: 19px;
 		}
 		
 		.modal-header {
-			padding: 7px $modal-padding 0;
+			padding: $modal-padding $modal-padding $modal-padding * 5/8;
 
 			.modal-header-inner {
-				font: bold 16px/30px Alegreya SC;
+				font: bold 20px/24px Alegreya SC;
 				color: #f1e6d4;
 				letter-spacing: 0.1em;
 				text-transform: uppercase;
-				border-bottom: 1px solid #3c3c41;
-				padding-bottom: 6px;
 			}
 		}
 		
@@ -87,14 +85,30 @@ $modal-padding: 19px;
 				color: #878683;
 				font: 11px/16px "Source Sans Pro";
 				letter-spacing: 0.05em;
-				padding: 22px $modal-padding 55px;
+				padding: 0 $modal-padding 55px;
 				
 				p {
-					margin-top: 10px;
+					margin-top: 14px;
+
+					span.link {
+						color: #015175;
+						display: block;
+						letter-spacing: 0.03em;
+						line-height: 22px;
+						
+						&:hover {
+							color: #3685a7;
+							cursor: pointer;
+						}
+					}
 				}
 
-				> div:first-child {
-					margin-top: 0;
+				> div {
+					&:first-child {
+						margin-top: 0;
+					}
+					
+					margin-top: 14px;
 				}
 			}
 		}

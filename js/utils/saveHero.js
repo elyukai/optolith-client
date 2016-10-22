@@ -5,6 +5,7 @@ import CultureStore from '../stores/rcp/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import ELStore from '../stores/ELStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
+import PhaseStore from '../stores/PhaseStore';
 import ProfessionStore from '../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../stores/rcp/ProfessionVariantStore';
 import ProfileStore from '../stores/ProfileStore';
@@ -21,6 +22,7 @@ export default () => {
 			client_version: VersionStore.get(),
 			date: (new Date()).toJSON(),
 			id: 'H_0',
+			phase: PhaseStore.get(),
 			name: ProfileStore.getName(),
 			avatar: ProfileStore.getPortrait(),
 			ap: APStore.getForSave(),

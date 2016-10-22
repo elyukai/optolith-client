@@ -1,8 +1,6 @@
 import BorderButton from '../../layout/BorderButton';
 import Checkbox from '../../layout/Checkbox';
 import React, { Component, PropTypes } from 'react';
-import SpecialAbilitiesListAddItem from './SpecialAbilitiesListAddItem';
-import SpecialAbilitiesListRemoveItem from './SpecialAbilitiesListRemoveItem';
 
 class SelectionsCurses extends Component {
 

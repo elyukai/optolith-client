@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ActionTypes from '../constants/ActionTypes';
 
-var _phase = 4;
+var _phase = 1;
 
 function _update(phase) {
 	_phase = phase;
@@ -36,20 +36,16 @@ PhaseStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
+		case ActionTypes.RECEIVE_HERO:
+			_update(payload.phase);
+			break;
+
 		case ActionTypes.CREATE_NEW_HERO:
 			_update(1);
 			break;
 
 		case ActionTypes.ASSIGN_RCP_ENTRIES:
 			_update(2);
-			break;
-
-		case ActionTypes.INCREASE_PHASE:
-			_increase();
-			break;
-
-		case ActionTypes.RESET_PHASE:
-			_update(1);
 			break;
 
 		default:

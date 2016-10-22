@@ -9,13 +9,13 @@ import Categories from '../constants/Categories';
 
 const CATEGORY = Categories.ATTRIBUTES;
 
-var _le = 5;
+var _le = 0;
 var _le_add = 0;
 var _ae_add = 0;
 var _ke_add = 0;
-var _sk = -5;
-var _zk = -5;
-var _gs = 8;
+var _sk = 0;
+var _zk = 0;
+var _gs = 0;
 
 function _addPoint(id) {
 	ListStore.addAttrPoint(id);
@@ -37,6 +37,21 @@ function _addMaxEnergyPoint(id) {
 			_ke_add++;
 			break;
 	}
+}
+
+function _clear() {
+	ListStore.getAllByCategory(CATEGORY).forEach(e => {
+		ListStore.setProperty(e.id, 'value', 8);
+		ListStore.setProperty(e.id, 'mod', 0);
+		ListStore.setProperty(e.id, 'dependencies', []);
+	});
+	_le = 0;
+	_le_add = 0;
+	_ae_add = 0;
+	_ke_add = 0;
+	_sk = 0;
+	_zk = 0;
+	_gs = 0;
 }
 
 function _updateAll(obj) {
@@ -70,10 +85,7 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 
 	init: function(rawAttributes) {
 		for (let id in rawAttributes) {
-			rawAttributes[id].value = 8;
 			rawAttributes[id].category = CATEGORY;
-			rawAttributes[id].dependencies = [];
-			rawAttributes[id].mod = 0;
 		}
 		ListStore.init(rawAttributes);
 	},
@@ -169,6 +181,11 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.CREATE_NEW_HERO:
+			_clear();
+			break;
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateAll(payload.attr);

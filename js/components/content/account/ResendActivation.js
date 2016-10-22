@@ -1,44 +1,58 @@
 import AccountActions from '../../../actions/AccountActions';
-import TabActions from '../../../actions/TabActions';
-import React, { Component } from 'react';
+import Dialog from '../../layout/Dialog';
+import React, { Component, PropTypes } from 'react';
+import TextField from '../../layout/TextField';
+import { close } from '../../../utils/createOverlay';
 
 class ResendActivation extends Component {
-	
-	constructor(props) {
-		super(props);
-		this.state = { email: '' };
-	}
+
+	static props = { 
+		node: PropTypes.any
+	};
+
+	state = {
+		email: ''
+	};
 	
 	resendActivation = () => AccountActions.resendActivation(this.state.email);
+	back = () => AccountActions.showLogin();
 	
-	back = () => TabActions.openTab('login');
-	
-	_onChange = (option, event) => this.setState({ [option]: event.target.value });
-	
+	_onChange = event => this.setState({ email: event.target.value });
 	_onEnter = event => {
-		if (event.charCode === 13 && this.state.email != '') this.resendActivation();
+		if (event.charCode === 13 && this.state.email !== '') {
+			this.resendActivation();
+			close(this.props.node);
+		}
 	};
 
 	render() {
+
+		const { email } = this.state;
+
 		return (
-			<AccountContainer id="resendactivation">
-				<h2 className="header">Aktivierungs-E-Mail erneut senden</h2>
+			<Dialog id="resendactivation" title="Aktivierungslink erneut senden" node={this.props.node} buttons={[
+				{
+					label: 'E-Mail anfordern',
+					onClick: this.resendActivation,
+					primary: true,
+					disabled: email === ''
+				},
+				{
+					label: 'Zurück',
+					onClick: this.back
+				}
+			]}>
 				<TextField
 					hint="Registrierte E-Mail-Adresse"
-					value={this.state.email}
+					value={email}
 					onChange={this._onChange}
 					onKeyPress={this._onEnter}
-					fullWidth
 					type="email"
+					fullWidth
 				/>
-				<BorderButton label="E-Mail anfordern" onClick={this.resendActivation} primary fullWidth disabled={this.state.email == ''} />
-				<p>
-					<span className="link" onClick={this.back}>
-						Zurück zur Anmeldeseite
-					</span>
-				</p>
-			</AccountContainer>
+			</Dialog>
 		);
+		
 	}
 }
 

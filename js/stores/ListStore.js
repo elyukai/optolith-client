@@ -119,7 +119,11 @@ var ListStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	setProperty: function(id, property, value) {
-		_list[id][property] = value;
+		if (value === undefined) {
+			delete _list[id][property];
+		} else {
+			_list[id][property] = value;
+		}
 	},
 
 	addToProperty: function(id, property, value) {

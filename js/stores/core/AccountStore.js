@@ -5,17 +5,17 @@ import ActionTypes from '../../constants/ActionTypes';
 var _id = 4;
 var _name = 'Elytherion';
 
-function updateName(name) {
-	_name = name;
-}
-
 function updateAll(id, name) {
 	_id = id;
 	_name = name;
 }
 
+function updateName(name) {
+	_name = name;
+}
+
 function reset() {
-	_id = 0;
+	_id = null;
 	_name = '';
 }
 
@@ -55,14 +55,14 @@ AccountStore.dispatchToken = AppDispatcher.register( function( payload ) {
 	switch( payload.actionType ) {
 			
 		case ActionTypes.RECEIVE_ACCOUNT:
-			updateAll(payload.userid, payload.username);
+			updateAll(payload.id, payload.name);
 			break;
 			
 		case ActionTypes.UPDATE_USERNAME:
 			updateName(payload.username);
 			break;
 
-		case ActionTypes.CLEAR_ACCOUNT:
+		case ActionTypes.LOGOUT_SUCCESS:
 			reset();
 			break;
 			

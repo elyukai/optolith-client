@@ -1,5 +1,5 @@
-import AccountActions from './actions/AccountActions';
 import AppController from './components/AppController';
+import AppDispatcher from './dispatcher/AppDispatcher';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import WebAPIUtils from './utils/WebAPIUtils';
@@ -13,7 +13,10 @@ import WebAPIUtils from './utils/WebAPIUtils';
 // }
 
 window.onunload = function() {
-	AccountActions.logout('end');
+	// WebAPIUtils.logoutSync();
+	AppDispatcher.dispatch({
+		actionType: 'LOGOUT_SUCCESS'
+	});
 };
 
 ReactDOM.render( <AppController />, document.getElementById('bodywrapper') );

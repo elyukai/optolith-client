@@ -16,6 +16,7 @@ export default keyMirror({
 	// AccountStore
 	RECEIVE_ACCOUNT: null,
 	UPDATE_USERNAME: null,
+	LOGOUT_SUCCESS: null,
 	CLEAR_ACCOUNT: null,
 	
 	// Registration

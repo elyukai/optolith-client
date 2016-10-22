@@ -2,4 +2,22 @@
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: 50%;
+	box-shadow: 0 0 1px 1px black inset;
+	border-radius: 50%;
+}
+
+.avatar-wrapper {
+	background: linear-gradient(to bottom, #9a7830 0%, #6d5024 100%);
+	padding: 2px;
+	border-radius: 50%;
+
+	&.no-avatar {
+		border: 2px solid #2b2f34;
+		padding: 0;
+		background: none;
+
+		> .avatar {
+			box-shadow: none;
+		}
+	}
 }

@@ -1,0 +1,15 @@
+#body > main section#account {
+	.page {
+		.scroll-inner {
+			padding-bottom: 22px;
+
+			> div.padding {
+				height: 22px;
+			}
+
+			> .btn {
+				margin-top: 20px;
+			}
+		}
+	}
+}

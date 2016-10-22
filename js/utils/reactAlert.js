@@ -1,10 +1,14 @@
-import createDialogNode from './createDialogNode';
+import createOverlay from './createOverlay';
 import Dialog from '../components/layout/Dialog';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-export default function(title, content) {
-	var node = createDialogNode();
-	
-	ReactDOM.render( <Dialog title={title} node={node}>{content}</Dialog>, node );
+export default function(title, content, buttons) {
+	createOverlay(
+		<Dialog
+			title={title}
+			buttons={buttons}
+			>
+			{content}
+		</Dialog>
+	);
 }

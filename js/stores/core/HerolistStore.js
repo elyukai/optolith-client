@@ -3,11 +3,11 @@ import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
 
 var _heroes = {
-
-	'H_0': {
+	'H_1': {
 		client_version: '1.0.0',
 		date: new Date('2016-10-18T16:18:28.420Z'),
-		id: 'H_0',
+		id: 'H_1',
+		phase: 2,
 		name: 'Shimo ibn Rashdul',
 		avatar: 'images/portrait.png',
 		ap: {
@@ -27,8 +27,9 @@ var _heroes = {
 		p: 'P_6',
 		pv: 'PV_21'
 	},
-	'H_1': {
-		id: 'H_1',
+	'H_2': {
+		id: 'H_2',
+		phase: 2,
 		name: 'Yendan Keres',
 		avatar: 'images/portrait2.png',
 		ap: { _max: 1160, _used: 936 },
@@ -51,22 +52,10 @@ function _updateSortOrder(option) {
 }
 
 function _updateHeroes(rawHeroes) {
-	rawHeroes.split('#§');
-	for (let i = 0; i < (rawHeroes.length - 1); i++) {
-		rawHeroes[i] = rawHeroes[i].split('#%');
-		rawHeroes[i][2] = rawHeroes[i][2].split('#$');
-		rawHeroes[i] = {
-			id: rawHeroes[i][0],
-			name: rawHeroes[i][1],
-			phase: rawHeroes[i][2][0],
-			ap: rawHeroes[i][2][1],
-			prof: rawHeroes[i][2][2],
-			group: 1
-			// group: raw[i][3],
-			// player: raw[i][4]
-		};
-	}
-	_heroes = rawHeroes;
+	var heroes = JSON.parse(rawHeroes);
+	var obj = {};
+	heroes.forEach(e => obj[e.id] = e);
+	_heroes = obj;
 }
 
 var HerolistStore = Object.assign({}, EventEmitter.prototype, {
@@ -150,7 +139,7 @@ HerolistStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.RECEIVE_ACCOUNT:
 		case ActionTypes.RECEIVE_RAW_HEROES:
-			_updateHeroes(payload.raw);
+			_updateHeroes(payload.rawHeroes);
 			break;
 
 		default:

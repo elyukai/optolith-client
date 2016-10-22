@@ -5,9 +5,9 @@ import RaceStore from './rcp/RaceStore';
 import dice from '../utils/dice';
 
 var _id = null;
-var _name = 'Heldenname';
-var _gender = 'm';
-var _portrait = 'images/portrait.png';
+var _name = '';
+var _gender = '';
+var _portrait = '';
 var _hair = '';
 var _eyes = '';
 var _size = '';
@@ -86,6 +86,17 @@ function _rerollWeight() {
 	}).reduce((a,b) => a + b, 0);
 }
 
+function _clear() {
+	_id = null;
+	_name = '';
+	_gender = '';
+	_portrait = '';
+	_hair = '';
+	_eyes = '';
+	_size = '';
+	_weight = '';
+}
+
 var ProfileStore = Object.assign({}, EventEmitter.prototype, {
 
 	emitChange: function() {
@@ -145,8 +156,13 @@ ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
 	switch( payload.actionType ) {
 
 		case ActionTypes.CREATE_NEW_HERO:
+			_clear();
 			_updateName(payload.name);
 			_updateGender(payload.gender);
+			break;
+
+		case ActionTypes.CLEAR_HERO:
+			_clear();
 			break;
 
 		case ActionTypes.RECEIVE_HERO:

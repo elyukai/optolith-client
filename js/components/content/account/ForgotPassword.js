@@ -1,44 +1,58 @@
 import AccountActions from '../../../actions/AccountActions';
-import TabActions from '../../../actions/TabActions';
-import React, { Component } from 'react';
+import Dialog from '../../layout/Dialog';
+import React, { Component, PropTypes } from 'react';
+import TextField from '../../layout/TextField';
+import { close } from '../../../utils/createOverlay';
 
 class ForgotPassword extends Component {
-	
-	constructor(props) {
-		super(props);
-		this.state = { email: '' };
-	}
+
+	static props = { 
+		node: PropTypes.any
+	};
+
+	state = {
+		email: ''
+	};
 	
 	forgotPassword = () => AccountActions.forgotPassword(this.state.email);
-	
-	back = () => TabActions.openTab('login');
+	back = () => AccountActions.showLogin();
 	
 	_onChange = event => this.setState({ email: event.target.value });
-	
 	_onEnter = event => {
-		if (event.charCode === 13 && this.state.email != '') this.forgotPassword();
+		if (event.charCode === 13 && this.state.email !== '') {
+			this.forgotPassword();
+			close(this.props.node);
+		}
 	};
 
 	render() {
+
+		const { email } = this.state;
+
 		return (
-			<AccountContainer id="forgotpassword">
-				<h2 className="header">Passwort vergessen</h2>
+			<Dialog id="forgotpassword" title="Passwort vergessen" node={this.props.node} buttons={[
+				{
+					label: 'E-Mail anfordern',
+					onClick: this.forgotPassword,
+					primary: true,
+					disabled: email === ''
+				},
+				{
+					label: 'Zurück',
+					onClick: this.back
+				}
+			]}>
 				<TextField
 					hint="Registrierte E-Mail-Adresse"
-					value={this.state.email}
+					value={email}
 					onChange={this._onChange}
 					onKeyPress={this._onEnter}
-					fullWidth
 					type="email"
+					fullWidth
 				/>
-				<BorderButton label="E-Mail anfordern" onClick={this.forgotPassword} primary fullWidth disabled={this.state.email == ''} />
-				<p>
-					<span className="link" onClick={this.back}>
-						Zurück zur Anmeldeseite
-					</span>
-				</p>
-			</AccountContainer>
+			</Dialog>
 		);
+		
 	}
 }
 

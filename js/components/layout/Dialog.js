@@ -3,6 +3,7 @@ import GeminiScrollbar from 'react-gemini-scrollbar';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import classNames from 'classnames';
+import { close } from '../../utils/createOverlay';
 
 class Dialog extends Component {
 
@@ -10,6 +11,7 @@ class Dialog extends Component {
 		buttons: PropTypes.array,
 		className: PropTypes.any,
 		id: PropTypes.string,
+		node: PropTypes.any,
 		title: PropTypes.any
 	}
 
@@ -17,10 +19,7 @@ class Dialog extends Component {
 		super(props);
 	}
 
-	close = () => {
-		ReactDOM.unmountComponentAtNode(this.props.node);
-		document.body.removeChild(this.props.node);
-	};
+	close = () => close(this.props.node);
 
 	clickButton = (func) => {
 		if (func) func();
@@ -29,33 +28,31 @@ class Dialog extends Component {
 
     render() {
 
-		const props = {
-			className: classNames('modal-backdrop', this.props.className)
-		};
+		var { buttons: btns = [], title, node, ...props } = this.props;
 
-		if (this.props.id) props.id = this.props.id;
+		props.className = classNames('modal-backdrop', props.className);
 
 		var buttons = [];
 
-		if (this.props.buttons) {
-			for (let i = 0; i < this.props.buttons.length; i++) {
-				const btnProps = this.props.buttons[i];
+		for (let i = 0; i < btns.length; i++) {
+			const btnProps = btns[i];
 
-				btnProps.onClick = this.clickButton.bind(null, btnProps.onClick);
+			btnProps.onClick = this.clickButton.bind(null, btnProps.onClick);
 
-				buttons.push(
-					<BorderButton key={'popup-button-' + i} {...btnProps} />
-				);
-			}
+			buttons.push(
+				<BorderButton key={'popup-button-' + i} {...btnProps} />
+			);
 		}
+
+		var contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
 
 		return (
 			<div {...props}>
 				<div className="modal-container">
 					<div className="modal-close" onClick={this.close}><div>&#xe900;</div></div>
-					<div className="modal-header"><div className="modal-header-inner">{this.props.title}</div></div>
+					<div className="modal-header"><div className="modal-header-inner">{title}</div></div>
 					<div className="modal-content">
-						<div className="modal-content-inner">
+						<div className="modal-content-inner" style={contentStyle}>
 							{this.props.children}
 						</div>
 					</div>

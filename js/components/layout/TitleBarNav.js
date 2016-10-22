@@ -2,6 +2,7 @@ import Avatar from './Avatar';
 import React, { Component, PropTypes } from 'react';
 import Tab from './Tab';
 import TabActions from '../../actions/TabActions';
+import classNames from 'classnames';
 
 class TitleBarNav extends Component {
 
@@ -20,8 +21,8 @@ class TitleBarNav extends Component {
 
 		const { active, avatar, children, tabs } = this.props;
 
-		const avatarElement = avatar ? (
-			<div className="avatar-wrapper">
+		const avatarElement = avatar !== undefined ? (
+			<div className={classNames( 'avatar-wrapper', !avatar && 'no-avatar' )}>
 				<Avatar src={avatar} />
 			</div>
 		) : null;

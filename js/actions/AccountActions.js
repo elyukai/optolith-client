@@ -1,388 +1,94 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
-import reactAlert from '../utils/reactAlert';
+import createOverlay from '../utils/createOverlay';
 import AccountStore from '../stores/core/AccountStore';
+import ForgotUsername from '../components/content/account/ForgotUsername';
+import ForgotPassword from '../components/content/account/ForgotPassword';
+import Login from '../components/content/account/Login';
+import React from 'react';
+import reactAlert from '../utils/reactAlert';
+import ReactDOM from 'react-dom';
+import Register from '../components/content/account/Register';
+import ResendActivation from '../components/content/account/ResendActivation';
 
 var AccountActions = {
+	showRegister: function() {
+		createOverlay(<Register />);
+	},
+	showForgotName: function() {
+		createOverlay(<ForgotUsername />);
+	},
+	showForgotPassword: function() {
+		createOverlay(<ForgotPassword />);
+	},
+	showResend: function() {
+		createOverlay(<ResendActivation />);
+	},
+	showLogin: function() {
+		createOverlay(<Login />);
+	},
 	register: function(email, username, password) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		Promise.all([WebAPIUtils.checkEmail(email), WebAPIUtils.checkUsername(username)])
-		.then(function(used){
-		
-			if (used[0] == 'true' && used[1] == 'true') {
-			
-				reactAlert('Daten bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.\n\nHast du deine Bestätigungs-E-Mail nicht empfangen? Dann melde dich einfach mit deinen Benutzerdaten an, sodass du deine E-Mail neu oder an einer andere Adresse verschicken kannst.');
-		
+		Promise.all([ WebAPIUtils.checkEmail(email), WebAPIUtils.checkUsername(username) ])
+		.then(function([ v_email, v_name ]){
+			if (v_email === 'true' && v_name === 'true') {
+				reactAlert('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.');
 				AppDispatcher.dispatch({
 					actionType: ActionTypes.WAIT_END
 				});
-				
-			} else if (used[0] == 'true' && used[1] == 'false') {
-			
-				reactAlert('E-Mail-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
-		
+			} else if (v_email === 'true' && v_name === 'false') {
+				reactAlert('Email-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
 				AppDispatcher.dispatch({
 					actionType: ActionTypes.WAIT_END
 				});
-				
-			} else if (used[0] == 'false' && used[1] == 'true') {
-			
+			} else if (v_email === 'false' && v_name === 'true') {
 				reactAlert('Benutzername bereits vorhanden', 'Der Benutzername wird bereits verwendet.');
-		
 				AppDispatcher.dispatch({
 					actionType: ActionTypes.WAIT_END
 				});
-				
-			} else if (used[0] == 'false' && used[1] == 'false') {
-			
-				return WebAPIUtils.register(email, username, password);
-				
+			} else if (v_email && v_name ) {
+				WebAPIUtils.register(email, username, password);
 			}
-		})
-		.then(function(callback) {
-			
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.REGISTRATION_SUCCESS
-			});
-			
-		})
-		.catch(function() {
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-			
 		});
-
 	},
 	forgotPassword: function(email) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.sendPasswordCode(email)
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-			
-				reactAlert('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit dem Link zum Zurücksetzen deines Passworts geschickt!');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-
+		WebAPIUtils.sendPasswordCode(email);
 	},
 	forgotUsername: function(email) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.sendUsername(email)
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-			
-				reactAlert('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit deinem Benutzernamen geschickt!');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-
+		WebAPIUtils.sendUsername(email);
 	},
 	resendActivation: function(email) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.resendActivation(email)
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-				
-				reactAlert('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir dieAktivierungsemail erneut geschickt!');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-
+		WebAPIUtils.resendActivation(email);
 	},
 	login: function(username, password) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		var userid;
-		
-		WebAPIUtils.login(username, password)
-		.then(function(callback) {
-			
-			if ( callback == 'false' ) {
-			
-				reactAlert('Anmeldeversuch fehlgeschlagen', 'Die eigegebene Kombination aus Benutzername und Passwort wurde nicht erkannt. Stelle sicher, dass du dich nicht vertippt hast und versuche es nochmal.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-			
-			} else if ( callback == 'notactive' ) {
-			
-				reactAlert('Benutzerkonto nicht aktiviert', 'Das hinterlegte Benutzerkonto wurde noch nicht aktivert. Bitte aktiviere das Konto über den Aktivierungslink in der Aktivierungsemail.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-			
-			} else if ( callback == 'logged' ) {
-			
-				reactAlert('Benutzer bereits angemeldet', 'Das Konto ist momentan an einem anderen Ort (Gerät oder Browser) angemeldet. Es kann nicht mehrere Male auf ein Konto zugegriffen werden.');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else {
-				
-				userid = callback;
-				
-				return WebAPIUtils.getHeroes(userid);
-				
-			}
-		})
-		.then(function(callback) {
-			
-			if ( userid !== undefined ) {
-				if ( callback == 'false' ) {
-					
-					reactAlert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-			
-					AppDispatcher.dispatch({
-						actionType: ActionTypes.WAIT_END
-					});
-					
-				} else {
-					
-					AppDispatcher.dispatch({
-						actionType: ActionTypes.RECEIVE_ACCOUNT,
-						userid,
-						username,
-						raw: callback
-					});
-					
-				}
-			}
-			
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-
+		WebAPIUtils.login(username, password);
 	},
-	logout: function(src) {
-		
-		let userid = AccountStore.getID();
-		
-		if (userid > 0) {
-			if (src == 'end') {
-				WebAPIUtils.logoutSync();
-			}
-			else {
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_START
-				});
-			
-				WebAPIUtils.logout()
-				.then(function(callback) {
-					
-					if ( callback == 'true' ) {
-				
-						reactAlert('Abmeldung erfolgreich', 'Du wurdest erfolgreich abgemeldet.');
-						
-						AppDispatcher.dispatch({
-							actionType: ActionTypes.CLEAR_ACCOUNT
-						});
-						
-					}
-					
-				})
-				.catch(function(){
-			
-					AppDispatcher.dispatch({
-						actionType: ActionTypes.WAIT_END
-					});
-						
-				});
-			}
-		}
-		
+	logout: function() {
+		WebAPIUtils.logout();
 	},
 	changeUsername: function(username) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.setNewUsername(username)
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-				
-				reactAlert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('E-Benutzernamen erfolgreich geändert', 'Dein Benutzername wurde erfolgreich geändert.');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.UPDATE_USERNAME,
-					username
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
+		WebAPIUtils.setNewUsername(username);
 	},
 	changePassword: function(password) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.setNewPassword(password)
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-				
-				reactAlert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.PASSWORD_CHANGE_SUCCESS
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-		
+		WebAPIUtils.setNewPassword(password);
 	},
-	delete: function(password) {
-		
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.WAIT_START
-		});
-		
-		WebAPIUtils.deleteAccount()
-		.then(function(callback) {
-			if ( callback == 'false' ) {
-				
-				reactAlert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
-		
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-				
-			} else if ( callback == 'true' ) {
-			
-				reactAlert('Konto gelöscht', 'Dein Konto wurde mitsamt aller Helden und Gruppen erfolgreich gelöscht.');
-				
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.CLEAR_ACCOUNT
-				});
-				
-			}
-		})
-		.catch(function(){
-	
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.WAIT_END
-			});
-				
-		});
-		
+	deleteConfirm: function() {
+		reactAlert(
+			'Konto wirklich löschen?',
+			'Soll dein Konto wirklich gelöscht werden? Wenn du diesem zustimmst, werden sämtliche deiner eigenen Helden und Gruppen unwiederbringlich gelöscht. Möchtest du wirklich fortfahren?',
+			[
+				{
+					label: 'Konto löschen',
+					onClick: this.delete
+				},
+				{
+					label: 'Abbrechen'
+				}
+			]
+		);
+	},
+	delete: function() {
+		WebAPIUtils.deleteAccount();
 	}
 };
 

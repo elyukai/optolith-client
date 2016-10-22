@@ -26,7 +26,8 @@ var WebAPIUtils = {
 		});
 	},
 	register: function(email, username, password) {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/register.php?e=' + email + '&u=' + username + '&p=' + password,
@@ -36,105 +37,133 @@ var WebAPIUtils = {
 						ServerActions.registrationSuccess();
 					},
 					error: function(error) {
-						connectionError(error);
-						reject();
+						ServerActions.connectionError(error);
 					}
 				}
 			);
 		});
 	},
 	checkEmail: function(email) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(resolve){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/checkemail.php?e=' + email,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						resolve(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	checkUsername: function(username) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(resolve){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/checkuser.php?u=' + username,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						resolve(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	sendPasswordCode: function(email) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/forgetpw.php?e=' + email,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.forgotPasswordSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	sendUsername: function(email) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/forgetusername.php?e=' + email,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.forgotUsernameSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	resendActivation: function(email) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/regmailagain.php?e=' + email,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.resendActivationSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	login: function(username, password) {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/login.php?u=' + username + '&p=' + password,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { 
-						ServerActions.receiveUser(result);
+					success: function(result) {
+						ServerActions.receiveAccount(result, username);
 					},
-					error: function(error) { connectionError(error); reject(); }
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	logout: function() {
-		return new Promise(function(resolve, reject){
-			jQuery.ajax(
-				{
-					url: 'http://cha5app.dsa-sh.de/php/logout.php?uid=' + AccountStore.getID(),
-					type: 'GET',
-					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
-				}
-			);
-		});
+		// ServerActions.startLoading();
+		ServerActions.logoutSuccess();
+		// return new Promise(function(){
+		// 	jQuery.ajax(
+		// 		{
+		// 			url: 'http://cha5app.dsa-sh.de/php/logout.php?uid=' + AccountStore.getID(),
+		// 			type: 'GET',
+		// 			dataType: 'text',
+		// 			success: function(result) {
+						// ServerActions.logoutSuccess(result);
+		// 			},
+		// 			error: function(error) {
+		// 				ServerActions.connectionError(error);
+		// 			}
+		// 		}
+		// 	);
+		// });
 	},
 	logoutSync: function() {
 		jQuery.ajax(
@@ -146,59 +175,80 @@ var WebAPIUtils = {
 			}
 		);
 	},
-	setNewUsername: function(username) {
-		return new Promise(function(resolve, reject){
+	setNewUsername: function(name) {
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
-					url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + AccountStore.getID() + '&src=username&v=' + username,
+					url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + AccountStore.getID() + '&src=username&v=' + name,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.changeUsernameSuccess(result, name);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	setNewPassword: function(password) {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/php.php?uid=' + AccountStore.getID() + '&src=password&v=' + password,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.changePasswordSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	deleteAccount: function() {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/deleteaccount.php?uid=' + AccountStore.getID(),
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.deleteAccountSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	getHeroes: function(userid) {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/getherolist.php?uid=' + (typeof userid === 'undefined' ? AccountStore.getID(): userid),
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						ServerActions.herolistRefreshSuccess(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	loadHero: function(id) {
+		ServerActions.startLoading();
 		ServerActions.loadHeroSuccess(id, {
 			"sex":"m",
 			"pers":{
@@ -259,19 +309,24 @@ var WebAPIUtils = {
 		// });
 	},
 	createNewHero: function(heroname) {
-		return new Promise(function(resolve, reject){
+		return new Promise(function(resolve){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/newhero.php?uid=' + AccountStore.getID() + '&n=' + heroname,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						resolve(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});
 	},
 	saveHero: function(data) {
+		ServerActions.startLoading();
 		var blob = new Blob([data], { type: "application/json" });
 		var url  = window.URL.createObjectURL(blob);
 		window.open(url);
@@ -287,7 +342,7 @@ var WebAPIUtils = {
 		// 			type: 'POST',
 		// 			dataType: 'json',
 		// 			success: function() {
-		// 				ServerActions.saveHeroSuccess();
+						ServerActions.saveHeroSuccess();
 		// 			},
 		// 			error: function(error) {
 		// 				ServerActions.connectionError(error);
@@ -297,14 +352,19 @@ var WebAPIUtils = {
 		// });
 	},
 	deleteHero: function(heroid) {
-		return new Promise(function(resolve, reject){
+		ServerActions.startLoading();
+		return new Promise(function(resolve){
 			jQuery.ajax(
 				{
 					url: 'http://cha5app.dsa-sh.de/php/deletehero.php?uid=' + AccountStore.getID() + '&hid=' + heroid,
 					type: 'GET',
 					dataType: 'text',
-					success: function(result) { resolve(result); },
-					error: function(error) { connectionError(error); reject(); }
+					success: function(result) {
+						resolve(result);
+					},
+					error: function(error) {
+						ServerActions.connectionError(error);
+					}
 				}
 			);
 		});

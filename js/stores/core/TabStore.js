@@ -1,6 +1,7 @@
 import AppDispatcher from '../../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import ActionTypes from '../../constants/ActionTypes';
+import AccountStore from './AccountStore';
 import PhaseStore from '../PhaseStore';
 
 var _currentTab = 'herolist';
@@ -19,10 +20,15 @@ function _updateSection(section, tab) {
 		_updateTab(tab);
 	else switch (section) {
 		case 'main':
-			if (before === 'hero')
-				_currentTab = 'herolist';
-			else if (before === 'group')
+			if (before === 'hero') {
+				if (AccountStore.getID() === null) {
+					_currentTab = 'home';
+				} else {
+					_currentTab = 'herolist';
+				}
+			} else if (before === 'group') {
 				_currentTab = 'grouplist';
+			}
 			break;
 		case 'hero':
 			_currentTab = 'profile';
@@ -89,8 +95,8 @@ TabStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.REGISTRATION_SUCCESS:
 			_updateTab('confirmRegistration');
 			break;
-			
-		case ActionTypes.RECEIVE_ACCOUNT:
+
+		case ActionTypes.LOGOUT_SUCCESS:
 		case ActionTypes.CLEAR_HERO:
 			_updateTab('home');
 			break;

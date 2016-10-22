@@ -109,6 +109,15 @@ function _updateTier(id, tier, sid) {
 	ListStore.set(id, obj);
 }
 
+function _clear() {
+	ListStore.getAllByCategory(CATEGORY).forEach(e => {
+		ListStore.setProperty(e.id, 'active', ListStore.get(e.id).max === null ? false : []);
+		ListStore.setProperty(e.id, 'tier');
+		ListStore.setProperty(e.id, 'sid');
+		ListStore.setProperty(e.id, 'dependencies', []);
+	});
+}
+
 function _updateAll(payload) {
 	payload.active.forEach(e => {
 		let [ id, options ] = e;
@@ -589,6 +598,11 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.CREATE_NEW_HERO:
+			_clear();
+			break;
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateAll(payload.sa);

@@ -4,9 +4,11 @@ import CultureStore from '../../../stores/rcp/CultureStore';
 import HerolistActions from '../../../actions/HerolistActions';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../../../stores/rcp/ProfessionVariantStore';
+import ProfileStore from '../../../stores/ProfileStore';
 import ProgressArc from 'react-progress-arc';
 import RaceStore from '../../../stores/rcp/RaceStore';
 import React, { PropTypes, Component } from 'react';
+import TabActions from '../../../actions/TabActions';
 import classNames from 'classnames';
 
 class HerolistItem extends Component {
@@ -28,10 +30,11 @@ class HerolistItem extends Component {
 	}
 
 	load = () => HerolistActions.load(this.props.id);
+	show = () => TabActions.showSection('hero');
 
 	render() {
 
-		const { name, avatar, ap, r, c, p, pv } = this.props;
+		const { id, name, avatar, ap, r, c, p, pv } = this.props;
 		const { _max: apTotal } = ap;
 
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
@@ -40,7 +43,10 @@ class HerolistItem extends Component {
 		var currentEL = 6;
 
 		for (let i = 0; i < elAp.length; i++) {
-			if (elAp[i] >= apTotal) {
+			if (elAp[i] === apTotal) {
+				currentEL = i;
+				break;
+			} else if (elAp[i] > apTotal) {
 				currentEL = i - 1;
 				break;
 			}
@@ -51,7 +57,7 @@ class HerolistItem extends Component {
 		return (
 			<li className="hero-list-item">
 				<ProgressArc completed={elProgress} diameter={63} strokeWidth={4} />
-				<div className={classNames( 'el', !avatar && 'no-avatar' )}>
+				<div className={classNames( 'el avatar-wrapper', !avatar && 'no-avatar' )}>
 					<div className="overlay">
 						<h2>{elRoman[currentEL]}</h2>
 					</div>
@@ -60,10 +66,22 @@ class HerolistItem extends Component {
 				<div className="main">
 					<h2>{name}</h2>
 					<div className="rcp">
-						{RaceStore.getNameByID(r)} • {CultureStore.getNameByID(c)} • {ProfessionStore.getNameByID(p)}{pv ? ` (${ProfessionVariantStore.getNameByID(pv)})` : ''}
+						{ do {
+							if (id === null) {
+								null;
+							} else {
+								RaceStore.getNameByID(r) + ' • ' + CultureStore.getNameByID(c) + ' • ' + ProfessionStore.getNameByID(p) + (pv ? ` (${ProfessionVariantStore.getNameByID(pv)})` : '');
+							}
+						}}
 					</div>
 				</div>
-				<BorderButton label="Öffnen" onClick={this.load} />
+				{ do {
+					if (id === ProfileStore.getID()) {
+						<BorderButton label="Anzeigen" onClick={this.show} primary />;
+					} else {
+						<BorderButton label="Öffnen" onClick={this.load} />;
+					}
+				}}
 			</li>
 		);
 	}

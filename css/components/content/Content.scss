@@ -1,3 +1,26 @@
+@import "components/content/about/About";
+@import "components/content/account/Account";
+@import "components/content/attribute/Attribute";
+@import "components/content/disadv/DisAdv";
+@import "components/content/herolist/Herolist";
+@import "components/content/master/Master";
+@import "components/content/master/InGame";
+@import "components/content/master/InGameControls";
+@import "components/content/master/InGameTableCenter";
+@import "components/content/master/InGameTableHealth";
+@import "components/content/master/InGameTableIni";
+@import "components/content/master/InGameTableLeft";
+@import "components/content/master/InGameTableRight";
+@import "components/content/profile/Profile";
+@import "components/content/rcp/RCP";
+@import "components/content/sheets/InventorySheet";
+@import "components/content/sheets/LiturgiesSheet";
+@import "components/content/sheets/MainSheet";
+@import "components/content/sheets/Sheets";
+@import "components/content/sheets/SpellsSheet";
+@import "components/content/sheets/TalentsSheet";
+@import "components/content/skills/Skills";
+
 #body > main > section {
 	@extend %max-size-relative;
 	padding-top: $titlebar-height;

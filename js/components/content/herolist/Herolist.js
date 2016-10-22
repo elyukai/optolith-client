@@ -1,9 +1,12 @@
+import APStore from '../../../stores/APStore';
 import BorderButton from '../../layout/BorderButton';
 import CultureStore from '../../../stores/rcp/CultureStore';
+import ELStore from '../../../stores/ELStore';
 import HerolistActions from '../../../actions/HerolistActions';
 import HerolistItem from './HerolistItem';
 import HerolistStore from '../../../stores/core/HerolistStore';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
+import ProfileStore from '../../../stores/ProfileStore';
 import RaceStore from '../../../stores/rcp/RaceStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
@@ -31,6 +34,7 @@ class Herolist extends Component {
 	filter = event => HerolistActions.filter(event.target.value);
 	sort = option => HerolistActions.sort(option);
 	showHeroCreation = () => HerolistActions.showHeroCreation();
+	refresh = () => HerolistActions.refresh();
 	
 	componentDidMount() {
 		HerolistStore.addChangeListener(this._updateHerolistStore );
@@ -63,10 +67,20 @@ class Herolist extends Component {
 								}
 							]}
 							/>
-						<BorderButton label="Erstellen" onClick={this.showHeroCreation} />
+						<BorderButton label="Aktualisieren" onClick={this.refresh} />
+						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
 					</div>
 					<Scroll className="list">
 						<ul>
+							{
+								ProfileStore.getID() === null && ELStore.getStartID() !== 'EL_0' ? (
+									<HerolistItem 
+										id={null}
+										name="Ungespeicherter Held"
+										ap={{ _max: APStore.get() }}
+										/>
+								) : null
+							}
 							{
 								list.map(hero => <HerolistItem key={hero.id} {...hero} />)
 							}

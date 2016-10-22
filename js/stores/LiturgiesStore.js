@@ -36,6 +36,14 @@ function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
+function _clear() {
+	ListStore.getAllByCategory(CATEGORY).forEach(e => {
+		ListStore.deactivate(e.id);
+		ListStore.setSR(e.id, 0);
+		ListStore.setProperty(e.id, 'dependencies', []);
+	});
+}
+
 function _updateAll(obj) {
 	obj.active.forEach(e => {
 		ListStore.activate(e[0]);
@@ -230,6 +238,11 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.CREATE_NEW_HERO:
+			_clear();
+			break;
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateAll(payload.chants);

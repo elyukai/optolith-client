@@ -1,58 +1,66 @@
 import AccountActions from '../../../actions/AccountActions';
-import TabActions from '../../../actions/TabActions';
-import React, { Component } from 'react';
+import Dialog from '../../layout/Dialog';
+import React, { Component, PropTypes } from 'react';
+import TextField from '../../layout/TextField';
+import { close } from '../../../utils/createOverlay';
 
 class Login extends Component {
-	
-	constructor(props) {
-		super(props);
-		this.state = {
-			username: '',
-			password: ''
-		};
-	}
-	
-	login = () => AccountActions.login(this.state.username, this.state.password);
-	
-	forgotUsername = () => TabActions.openTab('forgotUsername');
-	
-	forgotPassword = () => TabActions.openTab('forgotPassword');
-	
-	registration = () => TabActions.openTab('registration');
-	
-	resendActivation = () => TabActions.openTab('resendActivation');
-	
-	_onChange = (option, event) => this.setState({ [option]: event.target.value });
-	
-	_onEnter = event => {
-		if (event.charCode === 13 && this.state.username != '' && this.state.password != '') this.login();
+
+	static props = { 
+		node: PropTypes.any
 	};
 
-	shouldComponentUpdate(nextProps, nextState) {
-		return nextState.username !== this.state.username || nextState.password !== this.state.password;
-	}
+	state = {
+		username: '',
+		password: ''
+	};
+	
+	login = () => AccountActions.login(this.state.username, this.state.password);
+	forgotUsername = () => { AccountActions.showForgotName(); close(this.props.node); };
+	forgotPassword = () => { AccountActions.showForgotPassword(); close(this.props.node); };
+	register = () => AccountActions.showRegister();
+	resendActivation = () => { AccountActions.showResend(); close(this.props.node); };
+	
+	_onChange = (option, event) => this.setState({ [option]: event.target.value });
+	_onEnter = event => {
+		if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
+			this.login();
+			close(this.props.node);
+		}
+	};
 
 	render() {
-		
+
+		const { username, password } = this.state;
+
 		return (
-			<AccountContainer id="login">
-				<h2 className="header">Anmelden</h2>
+			<Dialog id="login" title="Anmelden" node={this.props.node} buttons={[
+				{
+					label: 'Anmelden',
+					onClick: this.login,
+					primary: true,
+					disabled: username === '' || password === ''
+				},
+				{
+					label: 'Registrieren',
+					onClick: this.register
+				}
+			]}>
 				<TextField
 					hint="Benutzername"
-					value={this.state.username}
+					value={username}
 					onChange={this._onChange.bind(null, 'username')}
 					onKeyPress={this._onEnter}
 					fullWidth
 				/>
 				<TextField
 					hint="Passwort"
-					value={this.state.password}
+					value={password}
 					onChange={this._onChange.bind(null, 'password')}
 					onKeyPress={this._onEnter}
 					type="password"
 					fullWidth
 				/>
-				<BorderButton label="Anmelden" onClick={this.login} primary fullWidth disabled={this.state.username == '' || this.state.password == ''} />
 				<p>
 					<span className="link" onClick={this.forgotUsername}>
 						Benutzername vergessen
@@ -60,14 +68,11 @@ class Login extends Component {
 					<span className="link" onClick={this.forgotPassword}>
 						Passwort vergessen
 					</span>
-					<span className="link" onClick={this.registration}>
-						Konto erstellen
-					</span>
 					<span className="link" onClick={this.resendActivation}>
 						Aktivierungs-E-Mail nicht erhalten?
 					</span>
 				</p>
-			</AccountContainer>
+			</Dialog>
 		);
 		
 	}
