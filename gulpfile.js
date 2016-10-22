@@ -4,9 +4,10 @@ var source = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var babelify = require('babelify');
+var streamify = require('gulp-streamify');
+var uglify = require('gulp-uglify');
  
 // "watch": "watchify -t [babelify] js/AppBootstrap.js -o dist/bundle.js -v",
-// "build": "browserify -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
 
 var bundler = browserify('./js/AppBootstrap.js').transform(babelify);
 
@@ -29,6 +30,18 @@ gulp.task('watch', function() {
     });
 
     bundle();
+});
+
+// "build": "browserify -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
+
+gulp.task('build', function() {
+    bundler.bundle()
+    .pipe(source('bundle.min.js'))
+    .pipe(streamify(uglify({ mangle: false })))
+    .on('error', function(e) {
+        gutil.log(e);
+    })
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('default', ['watch']);
