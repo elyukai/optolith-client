@@ -9,22 +9,30 @@ class Avatar extends Component {
 
 	static propTypes = {
 		className: PropTypes.any,
-		src: PropTypes.string
+		src: PropTypes.string,
+		onClick: PropTypes.func,
+		wrapper: PropTypes.bool
 	};
-
-	constructor(props) {
-		super(props);
-	}
 
 	render() {
 
 		const className = classNames('avatar', this.props.className);
+		const { src, onClick, wrapper } = this.props;
 
-		if (this.props.src) {
+		if (wrapper) {
 			return (
-				<div className={className} style={{ backgroundImage: `url(${this.props.src})` }}></div>
+				<div className={classNames('avatar-wrapper', !src && 'no-avatar')} onClick={onClick}>
+					{this.props.children}
+					<div className={className} style={{ backgroundImage: `url(${src})` }}></div>
+				</div>
 			);
-		} else {
+		}
+		else if (src) {
+			return (
+				<div className={className} style={{ backgroundImage: `url(${src})` }}></div>
+			);
+		}
+		else {
 			return (
 				<div className={className}>
 					{this.props.children}

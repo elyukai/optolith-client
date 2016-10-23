@@ -11,24 +11,13 @@
 
 			.avatar-wrapper {
 				flex: 1 0 auto;
-				border-radius: 50%;
-				padding: 4px;
-				background: #785a28;
 				@include size(150px);
-
-				> div.avatar {
-					@include size(142px);
-					border-radius: 50%;
-					background-size: 100%;
-					box-shadow: 0 0 1px 1px black inset;
-				}
 
 				&:hover {
 					cursor: pointer;
 
 					> div.avatar {
 						box-shadow: 0 0 0 71px transparentize(black, .15) inset;
-						position: relative;
 
 						&::after {
 							position: absolute;
@@ -41,6 +30,20 @@
 							text-align: center;
 						}
 					}
+				}
+
+				&:not(.no-avatar) {
+					padding: 4px;
+					background: #785a28;
+
+					> div.avatar::after {
+						top: 43px;
+						left: 43px;
+					}
+				}
+				
+				&.no-avatar {
+					border-width: 4px;
 				}
 			}
 
@@ -77,5 +80,11 @@
 				}
 			}
 		}
+	}
+}
+
+#profileavatarchange {
+	.avatar-wrapper {
+		@include size(64px);
 	}
 }

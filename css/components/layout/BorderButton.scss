@@ -1,11 +1,10 @@
 .btn, input[type="submit"] {
 	text-align: center;
-	background: #1a1a1a;
+	background-color: #1a1a1a;
 	padding: 3px 14px 6px;
 	letter-spacing: 0.05em;
 	border: 2px solid transparent;
-	border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
-	border-image-slice: 1;
+	border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%) 1 1 1 1;
 	display: inline-block;
 	box-shadow: 0 0 2px black inset, 0 0 2px black;
 	font: 400 17px/19px "Alegreya SC";
@@ -16,10 +15,17 @@
 	
 	&:hover, &:active {
 		background-image: linear-gradient(to bottom, transparentize(#c89b3c, 1) 50%, transparentize(#c89b3c, .75) 100%);
-		border-image: linear-gradient(to bottom, #f0e6d2 0%, #c89b3c 100%);
-		border-image-slice: 1;
 		cursor: pointer;
+	}
+	
+	&:hover {
+		border-image: linear-gradient(to bottom, #f0e6d2 0%, #c89b3c 100%) 1 1 1 1;
 		color: #f0e6d2;
+	}
+
+	&:active {
+		border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%) 1 1 1 1;
+		color: #5c5b57;
 	}
 }
 
@@ -28,19 +34,26 @@
 	text-decoration: none;
 
 	&.primary {
-		border-image: linear-gradient(to bottom, #0abdb7 0%, #0abdb7 60%, #0c4550 100%);
-		border-image-slice: 1;
+		border-image: linear-gradient(to bottom, #0abdb7 0%, #0abdb7 60%, #0c4550 100%) 1 1 1 1;
 		color: #a3c7c7;
-		background: #101721;
+		background-color: transparentize(#101721, .5);
 		min-width: 160px;
 
-		&:hover, &:active {
-			border-image: linear-gradient(to bottom, #b4fbfb 0%, #4bb8d9 100%);
-			border-image-slice: 1;
+		&:hover {
+			border-image: linear-gradient(to bottom, #b4fbfb 0%, #4bb8d9 100%) 1 1 1 1;
 			color: #caf8f7;
-			background-image: linear-gradient(to bottom, #102120 20%, #214341 100%);
-			box-shadow: 0 0 4px transparentize(#4be3de, .4), 0 0 4px transparentize(#4be3de, .4) inset;
 			text-shadow: 0 0 3px #4be3de;
+			box-shadow: 0 0 4px transparentize(#4be3de, .4), 0 0 4px transparentize(#4be3de, .4) inset;
+			background-image: linear-gradient(transparentize(#4bb8d9, 1) 0%, transparentize(#4bb8d9, .75) 100%);
+		}
+
+		&:active {
+			background-color: transparent;
+			color: #0d404c;
+			text-shadow: none;
+			border: 2px solid #0c4550;
+			box-shadow: 0 0 4px transparentize(#4be3de, .8), 0 0 4px transparentize(#4be3de, .8) inset;
+			background-image: linear-gradient(transparentize(#4bb8d9, 1) 0%, transparentize(#4bb8d9, .875) 100%);
 		}
 	}
 

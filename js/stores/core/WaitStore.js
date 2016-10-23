@@ -50,6 +50,7 @@ WaitStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.RECEIVE_HERO:
 		case ActionTypes.RECEIVE_RAW_LISTS:
 		case ActionTypes.SAVE_HERO_SUCCESS:
+		case ActionTypes.UPDATE_HERO_AVATAR:
 			stopWaiting();
 			break;
 			

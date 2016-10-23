@@ -3,6 +3,7 @@ import AccountActions from '../actions/AccountActions';
 import AccountStore from '../stores/core/AccountStore';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import jQuery from 'jQuery';
+import ProfileStore from '../stores/ProfileStore';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ServerActions from '../actions/ServerActions';
@@ -349,6 +350,29 @@ var WebAPIUtils = {
 		// 			}
 		// 		}
 		// 	);
+		// });
+	},
+	changeHeroAvatar: function(type, data) {
+		ServerActions.startLoading();
+		var urlAdd = '';
+		var finalData;
+		if (type === 'ext') {
+			urlAdd = '&url=' + data;
+		} else if (type === 'file') {
+			finalData = new FormData(data);
+		}
+		// return new Promise(function(){
+		// 	jQuery.ajax({
+		// 		url: 'http://cha5app.dsa-sh.de/php/uploadheropic.php?hid=' + ProfileStore.getID() + '&type=' + type + urlAdd,
+		// 		type: 'POST',
+		// 		data: finalData,
+		// 		success: function(result) {
+					ServerActions.changeHeroAvatarSuccess(type === 'file' ? result : data);
+		// 		},
+		// 		error: function(error) {
+		// 			ServerActions.connectionError(error);
+		// 		}
+		// 	});
 		// });
 	},
 	deleteHero: function(heroid) {

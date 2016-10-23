@@ -180,7 +180,7 @@ ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_updateName(payload.name);
 			break;
 
-		case ActionTypes.UPDATE_HERO_PORTRAIT:
+		case ActionTypes.UPDATE_HERO_AVATAR:
 			_updatePortrait(payload.url);
 			break;
 

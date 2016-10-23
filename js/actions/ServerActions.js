@@ -183,6 +183,20 @@ var ServerActions = {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SAVE_HERO_SUCCESS
 		});
+	},
+	changeHeroAvatarSuccess: function(url) {
+		switch (url) {
+			case 'false':
+				this.runtimeError();
+				break;
+		
+			default:
+				AppDispatcher.dispatch({
+					actionType: ActionTypes.UPDATE_HERO_AVATAR,
+					url
+				});
+				break;
+		}
 	}
 };
 

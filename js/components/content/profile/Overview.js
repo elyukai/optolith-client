@@ -46,8 +46,7 @@ class Overview extends Component {
 		weight: ProfileStore.getWeight()
 	});
 
-	showImageUpload = () => this.setState({ showImageUpload: true });
-	hideImageUpload = () => this.setState({ showImageUpload: false });
+	showImageUpload = () => ProfileActions.showImageUpload();
 	changeName = name => {
 		ProfileActions.changeName(name);
 		this.setState({ editName: false });
@@ -155,9 +154,7 @@ class Overview extends Component {
 			<div className="page" id="overview">
 				<Scroll>
 					<div className="title-wrapper">
-						<div className="avatar-wrapper" onClick={this.showImageUpload}>
-							<Avatar src={portrait} />
-						</div>
+						<Avatar src={portrait} onClick={this.showImageUpload} wrapper />
 						<div className="text-wrapper">
 							{nameElement}
 							<div className="rcp">

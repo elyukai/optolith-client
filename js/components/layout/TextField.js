@@ -6,17 +6,18 @@ import classNames from 'classnames';
 class TextField extends Component {
 
 	static propTypes = {
+		autoFocus: PropTypes.bool,
 		className: PropTypes.any,
+		countCurrent: PropTypes.any,
+		countMax: PropTypes.any,
 		disabled: PropTypes.bool,
+		hint: PropTypes.string,
 		labelText: PropTypes.any,
 		multiLine: PropTypes.bool,
-		type: PropTypes.string,
-		value: PropTypes.any.isRequired,
 		onChange: PropTypes.func,
 		onKeyDown: PropTypes.func,
-		autoFocus: PropTypes.bool,
-		countCurrent: PropTypes.any,
-		countMax: PropTypes.any
+		type: PropTypes.string,
+		value: PropTypes.any
 	};
 
 	static defaultProps = {
@@ -32,44 +33,46 @@ class TextField extends Component {
 		if (this.props.autoFocus) ReactDOM.findDOMNode(this.refs.inputElement).focus();
 	}
 
-	shouldComponentUpdate(nextProps) {
-		return nextProps.className !== this.props.className || nextProps.value !== this.props.value || nextProps.disabled !== this.props.disabled || nextProps.countCurrent !== this.props.countCurrent;
-	}
+	// shouldComponentUpdate(nextProps) {
+	// 	let { className: _className, value: _value, disabled: _disabled, countCurrent: _countCurrent, type: _type, hint: _hint } = nextProps;
+	// 	let { className, value, disabled, countCurrent, type, hint } = this.props;
+	// 	return _className !== className || _value !== value || _disabled !== disabled || _countCurrent !== countCurrent || _type !== type || _hint !== hint;
+	// }
 
 	render() {
 
-		const className = classNames('textfield', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
+		let { className, countCurrent, countMax, disabled, fullWidth, hint, labelText, onChange, onKeyDown, type, value } = this.props;
 
-		const hintElementClassName = classNames('textfield-hint', this.props.value !== '' && 'hide');
+		className = classNames('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
 
-		const hintElement = this.props.hint && (
-			<div className={hintElementClassName}>{this.props.hint}</div>
-		);
+		const hintElement = hint ? (
+			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>
+		) : null;
 
-		const labelTextElement = this.props.labelText && (
-			<label>{this.props.labelText}</label>
-		);
+		const labelTextElement = labelText ? (
+			<label>{labelText}</label>
+		) : null;
 
 		// const inputElement = this.props.multiLine ? (
 		// 	<TextareaAutosize
-		// 		defaultValue={this.props.value}
-		// 		onChange={this.props.onChange}
-		// 		onKeyPress={this.props.onKeyPress}
+		// 		defaultValue={value}
+		// 		onChange={onChange}
+		// 		onKeyPress={onKeyDown}
 		// 	/>
 		// ) : (
 		const inputElement = (
 			<input
-				type={this.props.type}
-				value={this.props.value}
-				onChange={this.props.onChange}
-				onKeyPress={this.props.onKeyPress}
+				type={type}
+				value={value}
+				onChange={onChange}
+				onKeyPress={onKeyDown}
 				ref='inputElement'
 			/>
 		);
 
-		const counterTextElement = this.props.countMax && (
-			<div>{this.props.countCurrent} / {this.props.countMax}</div>
-		);
+		const counterTextElement = countMax ? (
+			<div>{countCurrent} / {countMax}</div>
+		) : null;
 
 		return (
 			<div className={className}>

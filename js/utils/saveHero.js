@@ -4,6 +4,7 @@ import CombatTechniquesStore from '../stores/CombatTechniquesStore';
 import CultureStore from '../stores/rcp/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import ELStore from '../stores/ELStore';
+import HistoryStore from '../stores/HistoryStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import PhaseStore from '../stores/PhaseStore';
 import ProfessionStore from '../stores/rcp/ProfessionStore';
@@ -21,7 +22,7 @@ export default () => {
 		{
 			client_version: VersionStore.get(),
 			date: (new Date()).toJSON(),
-			id: 'H_0',
+			id: ProfileStore.getID(),
 			phase: PhaseStore.get(),
 			name: ProfileStore.getName(),
 			avatar: ProfileStore.getPortrait(),
@@ -41,7 +42,10 @@ export default () => {
 			ct: CombatTechniquesStore.getForSave(),
 			spells: SpellsStore.getForSave(),
 			chants: LiturgiesStore.getForSave(),
-			sa: SpecialAbilitiesStore.getForSave()
+			sa: SpecialAbilitiesStore.getForSave(),
+			eq: {},
+			items: {},
+			history: HistoryStore.getAll()
 		}
 	];
 

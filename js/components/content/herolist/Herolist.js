@@ -76,6 +76,7 @@ class Herolist extends Component {
 								ProfileStore.getID() === null && ELStore.getStartID() !== 'EL_0' ? (
 									<HerolistItem 
 										id={null}
+										avatar={ProfileStore.getPortrait()}
 										name="Ungespeicherter Held"
 										ap={{ _max: APStore.get() }}
 										/>

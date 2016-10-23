@@ -1,5 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
+import WebAPIUtils from '../utils/WebAPIUtils';
+import createOverlay from '../utils/createOverlay';
+import ProfileAvatarChange from '../components/content/profile/ProfileAvatarChange';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Selections from '../components/content/rcp/Selections';
@@ -10,6 +13,12 @@ var ProfileActions = {
 			actionType: ActionTypes.UPDATE_HERO_NAME,
 			name
 		});
+	},
+	showImageUpload: function() {
+		createOverlay(<ProfileAvatarChange />);
+	},
+	changeAvatar: function({ source: type, extern, file }) {
+		WebAPIUtils.changeHeroAvatar(type, type === 'ext' ? extern : file);
 	},
 	changeHair: function(option) {
 		AppDispatcher.dispatch({
