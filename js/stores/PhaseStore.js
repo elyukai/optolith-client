@@ -48,6 +48,10 @@ PhaseStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_update(2);
 			break;
 
+		case ActionTypes.FINALIZE_CHARACTER_CREATION:
+			_update(3);
+			break;
+
 		default:
 			return true;
 	}

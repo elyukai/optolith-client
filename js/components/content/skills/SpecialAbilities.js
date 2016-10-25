@@ -1,5 +1,6 @@
 import BorderButton from '../../layout/BorderButton';
 import Dropdown from '../../layout/Dropdown';
+import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
@@ -17,6 +18,7 @@ class SpecialAbilities extends Component {
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
 		filter: SpecialAbilitiesStore.getFilter(),
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
+		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
 
@@ -103,12 +105,14 @@ class SpecialAbilities extends Component {
 								<td className="type">Gruppe</td>
 								<td className="name">Sonderfertigkeit</td>
 								<td className="ap">AP</td>
-								<td className="inc"></td>
+								{ this.state.phase < 3 ? (
+									<td className="inc"></td>
+								) : null }
 							</tr>
 						</thead>
 						<tbody>
 							{
-								this.state.saActive.map((sa, index) => <SpecialAbilitiesListRemoveItem key={`SA_ACTIVE_${index}`} item={sa} />)
+								this.state.saActive.map((sa, index) => <SpecialAbilitiesListRemoveItem key={`SA_ACTIVE_${index}`} item={sa} phase={this.state.phase} />)
 							}
 						</tbody>
 					</table>

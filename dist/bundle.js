@@ -1097,6 +1097,11 @@ var ProfileActions = {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.REROLL_WEIGHT
 		});
+	},
+	endCharacterCreation: function endCharacterCreation() {
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.FINALIZE_CHARACTER_CREATION
+		});
 	}
 };
 
@@ -1359,6 +1364,7 @@ var ServerActions = {
 	},
 	loadHeroSuccess: function loadHeroSuccess(id, data) {
 		var short = _HerolistStore2.default.get(id);
+		data = JSON.parse(data);
 		_AppDispatcher2.default.dispatch(_extends({
 			actionType: _ActionTypes2.default.RECEIVE_HERO
 		}, _extends({}, short, data)));
@@ -3323,6 +3329,8 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _AttributeCalc = require('./AttributeCalc');
@@ -3341,6 +3349,10 @@ var _ELStore = require('../../../stores/ELStore');
 
 var _ELStore2 = _interopRequireDefault(_ELStore);
 
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -3351,6 +3363,8 @@ var _Scroll2 = _interopRequireDefault(_Scroll);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -3360,44 +3374,58 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Attribute = function (_Component) {
 	_inherits(Attribute, _Component);
 
-	function Attribute(props) {
+	function Attribute() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, Attribute);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Attribute).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Attribute)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 			attributes: _AttributeStore2.default.getAllForView(),
 			baseValues: _AttributeStore2.default.getBaseValues(),
+			phase: _PhaseStore2.default.get(),
 			sum: _AttributeStore2.default.getSum()
-		};
-
-		_this._updateAttributeStore = function () {
+		}, _this._updateAttributeStore = function () {
 			return _this.setState({
 				attributes: _AttributeStore2.default.getAllForView(),
 				baseValues: _AttributeStore2.default.getBaseValues(),
 				sum: _AttributeStore2.default.getSum()
 			});
-		};
-
-		return _this;
+		}, _this._updatePhaseStore = function () {
+			return _this.setState({
+				phase: _PhaseStore2.default.get()
+			});
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(Attribute, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			_AttributeStore2.default.addChangeListener(this._updateAttributeStore);
+			_PhaseStore2.default.addChangeListener(this._updatePhaseStore);
 		}
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
 			_AttributeStore2.default.removeChangeListener(this._updateAttributeStore);
+			_PhaseStore2.default.removeChangeListener(this._updatePhaseStore);
 		}
 	}, {
 		key: 'render',
 		value: function render() {
+			var _state = this.state;
+			var baseValues = _state.baseValues;
+			var sum = _state.sum;
+
+			var other = _objectWithoutProperties(_state, ['baseValues', 'sum']);
 
 			var START_EL = _ELStore2.default.getStart();
-			var sumMax = this.state.sum >= START_EL.max_attrsum;
+			var sumMax = sum >= START_EL.max_attrsum;
 			var max = START_EL.max_attr;
 
 			var element = this.state.attributes.length === 8 ? _react2.default.createElement(
@@ -3413,10 +3441,10 @@ var Attribute = function (_Component) {
 							'div',
 							{ className: 'counter' },
 							'Punkte in Eigenschaften: ',
-							this.state.sum
+							sum
 						),
-						_react2.default.createElement(_AttributeList2.default, { attributes: this.state.attributes, max: max, sumMax: sumMax }),
-						_react2.default.createElement(_AttributeCalc2.default, { attributes: this.state.attributes, baseValues: this.state.baseValues })
+						_react2.default.createElement(_AttributeList2.default, _extends({}, other, { max: max, sumMax: sumMax })),
+						_react2.default.createElement(_AttributeCalc2.default, _extends({}, other, { baseValues: baseValues }))
 					)
 				)
 			) : null;
@@ -3430,7 +3458,7 @@ var Attribute = function (_Component) {
 
 exports.default = Attribute;
 
-},{"../../../stores/AttributeStore":118,"../../../stores/ELStore":121,"../../layout/Scroll":102,"./AttributeCalc":33,"./AttributeList":35,"react":328}],32:[function(require,module,exports){
+},{"../../../stores/AttributeStore":118,"../../../stores/ELStore":121,"../../../stores/PhaseStore":127,"../../layout/Scroll":102,"./AttributeCalc":33,"./AttributeList":35,"react":328}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3458,10 +3486,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AttributeBorder = function (_Component) {
 	_inherits(AttributeBorder, _Component);
 
-	function AttributeBorder(props) {
+	function AttributeBorder() {
 		_classCallCheck(this, AttributeBorder);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeBorder).call(this, props));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeBorder).apply(this, arguments));
 	}
 
 	_createClass(AttributeBorder, [{
@@ -3542,10 +3570,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AttributeCalc = function (_Component) {
 	_inherits(AttributeCalc, _Component);
 
-	function AttributeCalc(props) {
+	function AttributeCalc() {
 		_classCallCheck(this, AttributeCalc);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeCalc).call(this, props));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeCalc).apply(this, arguments));
 	}
 
 	_createClass(AttributeCalc, [{
@@ -3554,6 +3582,7 @@ var AttributeCalc = function (_Component) {
 			var _props = this.props;
 			var attributes = _props.attributes;
 			var baseValues = _props.baseValues;
+			var phase = _props.phase;
 
 
 			var calculated = [{
@@ -3631,7 +3660,11 @@ var AttributeCalc = function (_Component) {
 				'div',
 				{ className: 'calculated' },
 				calculated.map(function (attribute) {
-					return _react2.default.createElement(_AttributeCalcItem2.default, { key: attribute.label, attribute: attribute });
+					return _react2.default.createElement(_AttributeCalcItem2.default, {
+						key: attribute.label,
+						attribute: attribute,
+						phase: phase
+					});
 				})
 			);
 		}
@@ -3642,7 +3675,8 @@ var AttributeCalc = function (_Component) {
 
 AttributeCalc.propTypes = {
 	attributes: _react.PropTypes.array.isRequired,
-	baseValues: _react.PropTypes.object.isRequired
+	baseValues: _react.PropTypes.object.isRequired,
+	phase: _react.PropTypes.number.isRequired
 };
 exports.default = AttributeCalc;
 
@@ -3684,32 +3718,40 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AttributeCalcItem = function (_Component) {
 	_inherits(AttributeCalcItem, _Component);
 
-	function AttributeCalcItem(props) {
+	function AttributeCalcItem() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, AttributeCalcItem);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeCalcItem).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.addMaxEnergyPoint = function () {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(AttributeCalcItem)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.addMaxEnergyPoint = function () {
 			return _AttributeActions2.default.addMaxEnergyPoint(_this.props.attribute.label);
-		};
-
-		return _this;
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(AttributeCalcItem, [{
 		key: 'render',
 		value: function render() {
-			var _props$attribute = this.props.attribute;
+			var _props = this.props;
+			var _props$attribute = _props.attribute;
 			var disabledIncrease = _props$attribute.disabledIncrease;
 			var disabledPermanent = _props$attribute.disabledPermanent;
 
 			var other = _objectWithoutProperties(_props$attribute, ['disabledIncrease', 'disabledPermanent']);
 
-			var increaseElement = this.props.attribute.hasOwnProperty('disabledIncrease') && other.value !== '-' ? _react2.default.createElement(_IconButton2.default, { className: 'add', icon: '', onClick: this.addMaxEnergyPoint, disabled: disabledIncrease }) : null;
+			var phase = _props.phase;
 
-			var rebuyElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy', icon: '', disabled: disabledPermanent }) : null;
 
-			var rebuyUndoElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy-undo', icon: '', disabled: disabledPermanent }) : null;
+			var increaseElement = this.props.attribute.hasOwnProperty('disabledIncrease') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'add', icon: '', onClick: this.addMaxEnergyPoint, disabled: disabledIncrease }) : null;
+
+			var rebuyElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy', icon: '', disabled: disabledPermanent }) : null;
+
+			var rebuyUndoElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy-undo', icon: '', disabled: disabledPermanent }) : null;
 
 			return _react2.default.createElement(
 				_AttributeBorder2.default,
@@ -3725,7 +3767,8 @@ var AttributeCalcItem = function (_Component) {
 }(_react.Component);
 
 AttributeCalcItem.propTypes = {
-	attribute: _react.PropTypes.object.isRequired
+	attribute: _react.PropTypes.object.isRequired,
+	phase: _react.PropTypes.number.isRequired
 };
 exports.default = AttributeCalcItem;
 
@@ -3761,10 +3804,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AttributeList = function (_Component) {
 	_inherits(AttributeList, _Component);
 
-	function AttributeList(props) {
+	function AttributeList() {
 		_classCallCheck(this, AttributeList);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeList).call(this, props));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeList).apply(this, arguments));
 	}
 
 	_createClass(AttributeList, [{
@@ -3791,6 +3834,7 @@ var AttributeList = function (_Component) {
 AttributeList.propTypes = {
 	attributes: _react.PropTypes.array.isRequired,
 	max: _react.PropTypes.number.isRequired,
+	phase: _react.PropTypes.number.isRequired,
 	sumMax: _react.PropTypes.bool.isRequired
 };
 exports.default = AttributeList;
@@ -3831,38 +3875,42 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var AttributeListItem = function (_Component) {
 	_inherits(AttributeListItem, _Component);
 
-	function AttributeListItem(props) {
+	function AttributeListItem() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, AttributeListItem);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AttributeListItem).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.addPoint = function () {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(AttributeListItem)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.addPoint = function () {
 			return _AttributeActions2.default.addPoint(_this.props.attribute.id);
-		};
-
-		_this.removePoint = function () {
+		}, _this.removePoint = function () {
 			return _AttributeActions2.default.removePoint(_this.props.attribute.id);
-		};
-
-		return _this;
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(AttributeListItem, [{
 		key: 'render',
 		value: function render() {
-			var _props$attribute = this.props.attribute;
+			var _props = this.props;
+			var _props$attribute = _props.attribute;
 			var id = _props$attribute.id;
 			var short = _props$attribute.short;
 			var value = _props$attribute.value;
 			var disabledIncrease = _props$attribute.disabledIncrease;
 			var disabledDecrease = _props$attribute.disabledDecrease;
+			var phase = _props.phase;
 
 
 			return _react2.default.createElement(
 				_AttributeBorder2.default,
 				{ className: id, label: short, value: value },
 				_react2.default.createElement(_IconButton2.default, { className: 'add', icon: '', onClick: this.addPoint, disabled: disabledIncrease }),
-				_react2.default.createElement(_IconButton2.default, { className: 'remove', icon: '', onClick: this.removePoint, disabled: disabledDecrease })
+				phase < 3 ? _react2.default.createElement(_IconButton2.default, { className: 'remove', icon: '', onClick: this.removePoint, disabled: disabledDecrease }) : null
 			);
 		}
 	}]);
@@ -3871,7 +3919,8 @@ var AttributeListItem = function (_Component) {
 }(_react.Component);
 
 AttributeListItem.propTypes = {
-	attribute: _react.PropTypes.object.isRequired
+	attribute: _react.PropTypes.object.isRequired,
+	phase: _react.PropTypes.number.isRequired
 };
 exports.default = AttributeListItem;
 
@@ -4280,7 +4329,6 @@ var DisAdvAddListItem = function (_Component) {
 			var inputElement2;
 
 			if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].indexOf(disadv.id) > -1) {
-				console.log(disadv.sel);
 				if (this.state.selected !== '') {
 					ap = disadv.ap[_DisAdvStore2.default.get(this.state.selected).skt - 1];
 				}
@@ -7943,6 +7991,10 @@ var _APStore = require('../../../stores/APStore');
 
 var _APStore2 = _interopRequireDefault(_APStore);
 
+var _BorderButton = require('../../layout/BorderButton');
+
+var _BorderButton2 = _interopRequireDefault(_BorderButton);
+
 var _CultureStore = require('../../../stores/rcp/CultureStore');
 
 var _CultureStore2 = _interopRequireDefault(_CultureStore);
@@ -7983,6 +8035,10 @@ var _RaceStore = require('../../../stores/rcp/RaceStore');
 
 var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
+
 var _ProfileActions = require('../../../actions/ProfileActions');
 
 var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
@@ -8014,12 +8070,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Overview = function (_Component) {
 	_inherits(Overview, _Component);
 
-	function Overview(props) {
+	function Overview() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, Overview);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Overview).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Overview)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
 			advActive: _DisAdvStore2.default.getActiveForView(true),
 			disadvActive: _DisAdvStore2.default.getActiveForView(false),
 			name: _ProfileStore2.default.getName(),
@@ -8029,11 +8091,10 @@ var Overview = function (_Component) {
 			eyes: _ProfileStore2.default.getEyes(),
 			size: _ProfileStore2.default.getSize(),
 			weight: _ProfileStore2.default.getWeight(),
+			phase: _PhaseStore2.default.get(),
 			showImageUpload: false,
 			editName: false
-		};
-
-		_this._updateProfileStore = function () {
+		}, _this._updateProfileStore = function () {
 			return _this.setState({
 				name: _ProfileStore2.default.getName(),
 				gender: _ProfileStore2.default.getGender(),
@@ -8043,68 +8104,50 @@ var Overview = function (_Component) {
 				size: _ProfileStore2.default.getSize(),
 				weight: _ProfileStore2.default.getWeight()
 			});
-		};
-
-		_this.showImageUpload = function () {
+		}, _this._updatePhaseStore = function () {
+			return _this.setState({
+				phase: _PhaseStore2.default.get()
+			});
+		}, _this.showImageUpload = function () {
 			return _ProfileActions2.default.showImageUpload();
-		};
-
-		_this.changeName = function (name) {
+		}, _this.changeName = function (name) {
 			_ProfileActions2.default.changeName(name);
 			_this.setState({ editName: false });
-		};
-
-		_this.editName = function () {
+		}, _this.editName = function () {
 			return _this.setState({ editName: true });
-		};
-
-		_this.editNameCancel = function () {
+		}, _this.editNameCancel = function () {
 			return _this.setState({ editName: false });
-		};
-
-		_this.changeHair = function (option) {
+		}, _this.changeHair = function (option) {
 			return _ProfileActions2.default.changeHair(option);
-		};
-
-		_this.changeEyes = function (option) {
+		}, _this.changeEyes = function (option) {
 			return _ProfileActions2.default.changeEyes(option);
-		};
-
-		_this.changeSize = function (event) {
+		}, _this.changeSize = function (event) {
 			return _ProfileActions2.default.changeSize(event.target.value);
-		};
-
-		_this.changeWeight = function (event) {
+		}, _this.changeWeight = function (event) {
 			return _ProfileActions2.default.changeWeight(event.target.value);
-		};
-
-		_this.rerollHair = function () {
+		}, _this.rerollHair = function () {
 			return _ProfileActions2.default.rerollHair();
-		};
-
-		_this.rerollEyes = function () {
+		}, _this.rerollEyes = function () {
 			return _ProfileActions2.default.rerollEyes();
-		};
-
-		_this.rerollSize = function () {
+		}, _this.rerollSize = function () {
 			return _ProfileActions2.default.rerollSize();
-		};
-
-		_this.rerollWeight = function () {
+		}, _this.rerollWeight = function () {
 			return _ProfileActions2.default.rerollWeight();
-		};
-
-		return _this;
+		}, _this.endCharacterCreation = function () {
+			return _ProfileActions2.default.endCharacterCreation();
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(Overview, [{
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			_PhaseStore2.default.addChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.addChangeListener(this._updateProfileStore);
 		}
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {
+			_PhaseStore2.default.removeChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.removeChangeListener(this._updateProfileStore);
 		}
 	}, {
@@ -8118,6 +8161,7 @@ var Overview = function (_Component) {
 			var eyes = _state.eyes;
 			var size = _state.size;
 			var weight = _state.weight;
+			var phase = _state.phase;
 
 
 			var hairArr = _RaceStore2.default.getCurrent() ? [['blauschwarz', 1], ['blond', 2], ['braun', 3], ['dunkelblond', 4], ['dunkelbraun', 5], ['goldblond', 6], ['grau', 7], ['hellblond', 8], ['hellbraun', 9], ['kupferrot', 10], ['mittelblond', 11], ['mittelbraun', 12], ['rot', 13], ['rotblond', 14], ['schneeweiß', 15], ['schwarz', 16], ['silbern', 17], ['weißblond', 18], ['dunkelgrau', 19], ['hellgrau', 20], ['salzweiß', 21], ['silberweiß', 22], ['feuerrot', 23]].filter(function (e) {
@@ -8234,18 +8278,31 @@ var Overview = function (_Component) {
 						onChange: this.changeWeight
 					}),
 					_react2.default.createElement(_IconButton2.default, { icon: '', onClick: this.rerollWeight }),
-					_react2.default.createElement(
-						'h3',
+					phase === 2 ? _react2.default.createElement(
+						'div',
 						null,
-						'Vorteile'
-					),
-					_react2.default.createElement(_OverviewDisAdv2.default, { list: this.state.advActive }),
-					_react2.default.createElement(
-						'h3',
+						_react2.default.createElement(_BorderButton2.default, {
+							label: 'Heldenerstellung beenden',
+							onClick: this.endCharacterCreation,
+							primary: true
+						})
+					) : null,
+					phase === 3 ? _react2.default.createElement(
+						'div',
 						null,
-						'Nachteile'
-					),
-					_react2.default.createElement(_OverviewDisAdv2.default, { list: this.state.disadvActive })
+						_react2.default.createElement(
+							'h3',
+							null,
+							'Vorteile'
+						),
+						_react2.default.createElement(_OverviewDisAdv2.default, { list: this.state.advActive }),
+						_react2.default.createElement(
+							'h3',
+							null,
+							'Nachteile'
+						),
+						_react2.default.createElement(_OverviewDisAdv2.default, { list: this.state.disadvActive })
+					) : null
 				)
 			);
 		}
@@ -8256,7 +8313,7 @@ var Overview = function (_Component) {
 
 exports.default = Overview;
 
-},{"../../../actions/ProfileActions":15,"../../../stores/APStore":117,"../../../stores/DisAdvStore":120,"../../../stores/ELStore":121,"../../../stores/ProfileStore":128,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":94,"../../layout/Dropdown":98,"../../layout/IconButton":99,"../../layout/Scroll":102,"../../layout/TextField":106,"./OverviewDisAdv":67,"./OverviewNameChange":68,"react":328}],67:[function(require,module,exports){
+},{"../../../actions/ProfileActions":15,"../../../stores/APStore":117,"../../../stores/DisAdvStore":120,"../../../stores/ELStore":121,"../../../stores/PhaseStore":127,"../../../stores/ProfileStore":128,"../../../stores/rcp/CultureStore":137,"../../../stores/rcp/ProfessionStore":138,"../../../stores/rcp/ProfessionVariantStore":139,"../../../stores/rcp/RaceStore":140,"../../layout/Avatar":94,"../../layout/BorderButton":95,"../../layout/Dropdown":98,"../../layout/IconButton":99,"../../layout/Scroll":102,"../../layout/TextField":106,"./OverviewDisAdv":67,"./OverviewNameChange":68,"react":328}],67:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8415,6 +8472,10 @@ var _Overview = require('./Overview');
 
 var _Overview2 = _interopRequireDefault(_Overview);
 
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -8438,29 +8499,50 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Profile = function (_Component) {
 	_inherits(Profile, _Component);
 
-	function Profile(props) {
+	function Profile() {
+		var _Object$getPrototypeO;
+
+		var _temp, _this, _ret;
+
 		_classCallCheck(this, Profile);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Profile).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Profile)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+			phase: _PhaseStore2.default.get(),
 			tab: 'overview'
-		};
-
-		_this.handleClick = function (tab) {
+		}, _this._updatePhaseStore = function () {
+			return _this.setState({
+				phase: _PhaseStore2.default.get()
+			});
+		}, _this.handleClick = function (tab) {
 			return _this.setState({ tab: tab });
-		};
-
-		return _this;
+		}, _temp), _possibleConstructorReturn(_this, _ret);
 	}
 
 	_createClass(Profile, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			_PhaseStore2.default.addChangeListener(this._updatePhaseStore);
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			_PhaseStore2.default.removeChangeListener(this._updatePhaseStore);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var _state = this.state;
+			var phase = _state.phase;
+			var tab = _state.tab;
+
 
 			var element;
 
-			switch (this.state.tab) {
+			switch (tab) {
 				case 'overview':
 					element = _react2.default.createElement(_Overview2.default, null);
 					break;
@@ -8484,7 +8566,8 @@ var Profile = function (_Component) {
 					// },
 					{
 						label: 'Heldenbogen',
-						tag: 'sheets'
+						tag: 'sheets',
+						disabled: phase < 3
 					}],
 					active: this.state.tab,
 					onClick: this.handleClick }),
@@ -8498,7 +8581,7 @@ var Profile = function (_Component) {
 
 exports.default = Profile;
 
-},{"../../layout/SubTabs":104,"./Overview":66,"./Sheets":72,"react":328}],70:[function(require,module,exports){
+},{"../../../stores/PhaseStore":127,"../../layout/SubTabs":104,"./Overview":66,"./Sheets":72,"react":328}],70:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10889,6 +10972,10 @@ var _CombatTechniquesStore = require('../../../stores/CombatTechniquesStore');
 
 var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
 
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
+
 var _RadioButtonGroup = require('../../layout/RadioButtonGroup');
 
 var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
@@ -10900,6 +10987,10 @@ var _react2 = _interopRequireDefault(_react);
 var _Scroll = require('../../layout/Scroll');
 
 var _Scroll2 = _interopRequireDefault(_Scroll);
+
+var _SkillListItem = require('./SkillListItem');
+
+var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
 var _TextField = require('../../layout/TextField');
 
@@ -10924,7 +11015,8 @@ var CombatTechniques = function (_Component) {
 		_this.state = {
 			combattech: _CombatTechniquesStore2.default.getAllForView(),
 			filter: _CombatTechniquesStore2.default.getFilter(),
-			sortOrder: _CombatTechniquesStore2.default.getSortOrder()
+			sortOrder: _CombatTechniquesStore2.default.getSortOrder(),
+			phase: _PhaseStore2.default.get()
 		};
 
 		_this._updateCombatTechniquesStore = function () {
@@ -11051,27 +11143,19 @@ var CombatTechniques = function (_Component) {
 									return ATTR[attr];
 								}).join('/');
 								return _react2.default.createElement(
-									'tr',
-									{ key: ct.id },
-									_react2.default.createElement(
-										'td',
-										{ className: 'type' },
-										GR[ct.gr - 1]
-									),
-									_react2.default.createElement(
-										'td',
-										{ className: 'name' },
-										_react2.default.createElement(
-											'h2',
-											null,
-											ct.name
-										)
-									),
-									_react2.default.createElement(
-										'td',
-										{ className: 'fw' },
-										ct.fw
-									),
+									_SkillListItem2.default,
+									{
+										key: ct.id,
+										group: GR[ct.gr - 1],
+										name: ct.name,
+										fw: ct.fw,
+										skt: ct.skt,
+										checkDisabled: true,
+										addPoint: _this2.addPoint.bind(null, ct.id),
+										addDisabled: ct.disabledIncrease,
+										removePoint: _this2.state.phase < 3 ? _this2.removePoint.bind(null, ct.id) : undefined,
+										removeDisabled: ct.disabledDecrease
+									},
 									_react2.default.createElement(
 										'td',
 										{ className: 'leit' },
@@ -11086,17 +11170,6 @@ var CombatTechniques = function (_Component) {
 										'td',
 										{ className: 'pa' },
 										ct.gr == 2 ? '--' : ct.pa
-									),
-									_react2.default.createElement(
-										'td',
-										{ className: 'skt' },
-										COMP[ct.skt - 1]
-									),
-									_react2.default.createElement(
-										'td',
-										{ className: 'inc' },
-										_react2.default.createElement(_BorderButton2.default, { label: '+', onClick: _this2.addPoint.bind(null, ct.id), disabled: ct.disabledIncrease }),
-										_react2.default.createElement(_BorderButton2.default, { label: '-', onClick: _this2.removePoint.bind(null, ct.id), disabled: ct.disabledDecrease })
 									)
 								);
 							})
@@ -11112,7 +11185,7 @@ var CombatTechniques = function (_Component) {
 
 exports.default = CombatTechniques;
 
-},{"../../../actions/CombatTechniquesActions":4,"../../../stores/CombatTechniquesStore":119,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/TextField":106,"react":328}],86:[function(require,module,exports){
+},{"../../../actions/CombatTechniquesActions":4,"../../../stores/CombatTechniquesStore":119,"../../../stores/PhaseStore":127,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],86:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11136,6 +11209,10 @@ var _LiturgiesActions2 = _interopRequireDefault(_LiturgiesActions);
 var _LiturgiesStore = require('../../../stores/LiturgiesStore');
 
 var _LiturgiesStore2 = _interopRequireDefault(_LiturgiesStore);
+
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
 var _RadioButtonGroup = require('../../layout/RadioButtonGroup');
 
@@ -11183,6 +11260,7 @@ var Liturgies = function (_Component) {
 			addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
 			filter: _LiturgiesStore2.default.getFilter(),
 			sortOrder: _LiturgiesStore2.default.getSortOrder(),
+			phase: _PhaseStore2.default.get(),
 			showAddSlidein: false
 		};
 
@@ -11448,7 +11526,7 @@ var Liturgies = function (_Component) {
 										key: liturgy.id,
 										group: GR[liturgy.gr - 1],
 										name: name,
-										removePoint: _this2.removePoint.bind(null, liturgy.id),
+										removePoint: _this2.state.phase < 3 ? _this2.removePoint.bind(null, liturgy.id) : undefined,
 										removeDisabled: liturgy.disabledDecrease
 									}, obj),
 									_react2.default.createElement(
@@ -11470,7 +11548,7 @@ var Liturgies = function (_Component) {
 
 exports.default = Liturgies;
 
-},{"../../../actions/LiturgiesActions":12,"../../../stores/LiturgiesStore":126,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],87:[function(require,module,exports){
+},{"../../../actions/LiturgiesActions":12,"../../../stores/LiturgiesStore":126,"../../../stores/PhaseStore":127,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],87:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11519,6 +11597,7 @@ var SkillListItem = function (_Component) {
 			var fw = _props.fw;
 			var children = _props.children;
 			var check = _props.check;
+			var checkDisabled = _props.checkDisabled;
 			var checkmod = _props.checkmod;
 			var skt = _props.skt;
 			var isNotActive = _props.isNotActive;
@@ -11558,13 +11637,13 @@ var SkillListItem = function (_Component) {
 				ATTR_8: 'KK'
 			};
 
-			var checkElement = _react2.default.createElement(
+			var checkElement = !checkDisabled ? _react2.default.createElement(
 				'td',
 				{ className: 'check' },
 				check ? check.map(function (attr) {
 					return ATTR[attr];
 				}).join('/') + ' ' + (checkmod ? '(+' + checkmod + ')' : '') : null
-			);
+			) : null;
 
 			var COMP = ['A', 'B', 'C', 'D', 'E'];
 
@@ -11586,7 +11665,7 @@ var SkillListItem = function (_Component) {
 				'td',
 				{ className: 'inc' },
 				addPoint ? _react2.default.createElement(_BorderButton2.default, { label: '+', onClick: addPoint, disabled: addDisabled }) : null,
-				_react2.default.createElement(_BorderButton2.default, { label: '-', onClick: removePoint, disabled: removeDisabled })
+				removePoint ? _react2.default.createElement(_BorderButton2.default, { label: '-', onClick: removePoint, disabled: removeDisabled }) : null
 			);
 
 			return _react2.default.createElement(
@@ -11622,6 +11701,7 @@ SkillListItem.propTypes = {
 	fw: _react.PropTypes.number,
 	children: _react.PropTypes.node,
 	check: _react.PropTypes.array,
+	checkDisabled: _react.PropTypes.bool,
 	checkmod: _react.PropTypes.string,
 	skt: _react.PropTypes.number,
 	isNotActive: _react.PropTypes.bool,
@@ -11800,6 +11880,10 @@ var _Dropdown = require('../../layout/Dropdown');
 
 var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
+
 var _RadioButtonGroup = require('../../layout/RadioButtonGroup');
 
 var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
@@ -11857,6 +11941,7 @@ var SpecialAbilities = function (_Component) {
 			saDeactive: _SpecialAbilitiesStore2.default.getDeactiveForView(),
 			filter: _SpecialAbilitiesStore2.default.getFilter(),
 			sortOrder: _SpecialAbilitiesStore2.default.getSortOrder(),
+			phase: _PhaseStore2.default.get(),
 			showAddSlidein: false
 		};
 
@@ -11913,6 +11998,8 @@ var SpecialAbilities = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			return _react2.default.createElement(
 				'div',
 				{ className: 'page', id: 'specialabilities' },
@@ -12011,14 +12098,14 @@ var SpecialAbilities = function (_Component) {
 									{ className: 'ap' },
 									'AP'
 								),
-								_react2.default.createElement('td', { className: 'inc' })
+								this.state.phase < 3 ? _react2.default.createElement('td', { className: 'inc' }) : null
 							)
 						),
 						_react2.default.createElement(
 							'tbody',
 							null,
 							this.state.saActive.map(function (sa, index) {
-								return _react2.default.createElement(_SpecialAbilitiesListRemoveItem2.default, { key: 'SA_ACTIVE_' + index, item: sa });
+								return _react2.default.createElement(_SpecialAbilitiesListRemoveItem2.default, { key: 'SA_ACTIVE_' + index, item: sa, phase: _this2.state.phase });
 							})
 						)
 					)
@@ -12032,7 +12119,7 @@ var SpecialAbilities = function (_Component) {
 
 exports.default = SpecialAbilities;
 
-},{"../../../actions/SpecialAbilitiesActions":18,"../../../stores/SpecialAbilitiesStore":129,"../../layout/BorderButton":95,"../../layout/Dropdown":98,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SpecialAbilitiesListAddItem":90,"./SpecialAbilitiesListRemoveItem":91,"react":328}],90:[function(require,module,exports){
+},{"../../../actions/SpecialAbilitiesActions":18,"../../../stores/PhaseStore":127,"../../../stores/SpecialAbilitiesStore":129,"../../layout/BorderButton":95,"../../layout/Dropdown":98,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SpecialAbilitiesListAddItem":90,"./SpecialAbilitiesListRemoveItem":91,"react":328}],90:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12341,20 +12428,27 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 			var name = item.name;
 
 			var tierElement;
+			var addSpecial;
 
 			var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
 			if (item.tiers !== undefined && item.tiers !== null) {
 				var array = [];
-				if (item.id === 'SA_30') array.push(['MS', 4]);
+				if (item.id === 'SA_30' && (item.tier === 4 || this.props.phase < 3)) array.push(['MS', 4]);
 				for (var i = 0; i < item.tiers; i++) {
-					array.push([roman[i], i + 1]);
+					if (this.props.phase < 3 || i + 1 >= item.tier) {
+						array.push([roman[i], i + 1]);
+					}
 				}
-				tierElement = _react2.default.createElement(_Dropdown2.default, {
-					className: 'tiers',
-					value: item.tier,
-					onChange: this.handleSelectTier,
-					options: array });
+				if (array.length > 1) {
+					tierElement = _react2.default.createElement(_Dropdown2.default, {
+						className: 'tiers',
+						value: item.tier,
+						onChange: this.handleSelectTier,
+						options: array });
+				} else {
+					addSpecial = ' ' + array[0][0];
+				}
 				ap = item.tier === 4 && item.id === 'SA_30' ? 0 : item.ap * item.tier;
 			}
 
@@ -12363,6 +12457,7 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 			if (item.hasOwnProperty('sid')) args.sid = item.sid;
 
 			if (item.hasOwnProperty('add')) name += ' (' + item.add + ')';
+			if (addSpecial) name += addSpecial;
 
 			var GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
@@ -12393,11 +12488,11 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 					{ className: 'ap' },
 					ap
 				),
-				_react2.default.createElement(
+				this.props.phase < 3 ? _react2.default.createElement(
 					'td',
 					{ className: 'inc' },
 					_react2.default.createElement(_BorderButton2.default, { label: '-', onClick: this.removeFromList.bind(null, args), disabled: disabled })
-				)
+				) : null
 			);
 		}
 	}]);
@@ -12406,7 +12501,8 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 }(_react.Component);
 
 SpecialAbilitiesListRemoveItem.propTypes = {
-	item: _react.PropTypes.object
+	item: _react.PropTypes.object,
+	phase: _react.PropTypes.number
 };
 exports.default = SpecialAbilitiesListRemoveItem;
 
@@ -12426,6 +12522,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _BorderButton = require('../../layout/BorderButton');
 
 var _BorderButton2 = _interopRequireDefault(_BorderButton);
+
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
 var _RadioButtonGroup = require('../../layout/RadioButtonGroup');
 
@@ -12481,6 +12581,7 @@ var Spells = function (_Component) {
 			addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
 			filter: _SpellsStore2.default.getFilter(),
 			sortOrder: _SpellsStore2.default.getSortOrder(),
+			phase: _PhaseStore2.default.get(),
 			showAddSlidein: false
 		};
 
@@ -12746,7 +12847,7 @@ var Spells = function (_Component) {
 										key: spell.id,
 										group: GR[spell.gr - 1],
 										name: name,
-										removePoint: _this2.removePoint.bind(null, spell.id),
+										removePoint: _this2.state.phase < 3 ? _this2.removePoint.bind(null, spell.id) : undefined,
 										removeDisabled: spell.disabledDecrease
 									}, obj),
 									_react2.default.createElement(
@@ -12768,7 +12869,7 @@ var Spells = function (_Component) {
 
 exports.default = Spells;
 
-},{"../../../actions/SpellsActions":19,"../../../stores/SpellsStore":130,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],93:[function(require,module,exports){
+},{"../../../actions/SpellsActions":19,"../../../stores/PhaseStore":127,"../../../stores/SpellsStore":130,"../../layout/BorderButton":95,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/Slidein":103,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],93:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12788,6 +12889,10 @@ var _Checkbox2 = _interopRequireDefault(_Checkbox);
 var _CultureStore = require('../../../stores/rcp/CultureStore');
 
 var _CultureStore2 = _interopRequireDefault(_CultureStore);
+
+var _PhaseStore = require('../../../stores/PhaseStore');
+
+var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
 var _RadioButtonGroup = require('../../layout/RadioButtonGroup');
 
@@ -12834,16 +12939,17 @@ var Talents = function (_Component) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Talents).call(this, props));
 
 		_this.state = {
-			talents: _TalentsStore2.default.getAllForView(),
+			list: _TalentsStore2.default.getAllForView(),
 			filter: _TalentsStore2.default.getFilter(),
 			sortOrder: _TalentsStore2.default.getSortOrder(),
 			talentRating: _TalentsStore2.default.getTalentRating(),
-			currentCulture: _CultureStore2.default.getCurrent()
+			currentCulture: _CultureStore2.default.getCurrent(),
+			phase: _PhaseStore2.default.get()
 		};
 
 		_this._updateTalentsStore = function () {
 			return _this.setState({
-				talents: _TalentsStore2.default.getAllForView(),
+				list: _TalentsStore2.default.getAllForView(),
 				filter: _TalentsStore2.default.getFilter(),
 				sortOrder: _TalentsStore2.default.getSortOrder(),
 				talentRating: _TalentsStore2.default.getTalentRating()
@@ -12957,7 +13063,7 @@ var Talents = function (_Component) {
 						_react2.default.createElement(
 							'tbody',
 							null,
-							this.state.talents.map(function (talent) {
+							this.state.list.map(function (talent) {
 								return _react2.default.createElement(_SkillListItem2.default, {
 									key: talent.id,
 									typ: _this2.state.talentRating && typ_talents.indexOf(talent.id) > -1,
@@ -12969,7 +13075,7 @@ var Talents = function (_Component) {
 									skt: talent.skt,
 									addPoint: _this2.addPoint.bind(null, talent.id),
 									addDisabled: talent.disabledIncrease,
-									removePoint: _this2.removePoint.bind(null, talent.id),
+									removePoint: _this2.state.phase < 3 ? _this2.removePoint.bind(null, talent.id) : undefined,
 									removeDisabled: talent.disabledDecrease });
 							})
 						)
@@ -12984,7 +13090,7 @@ var Talents = function (_Component) {
 
 exports.default = Talents;
 
-},{"../../../actions/TalentsActions":21,"../../../stores/TalentsStore":131,"../../../stores/rcp/CultureStore":137,"../../layout/BorderButton":95,"../../layout/Checkbox":96,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],94:[function(require,module,exports){
+},{"../../../actions/TalentsActions":21,"../../../stores/PhaseStore":127,"../../../stores/TalentsStore":131,"../../../stores/rcp/CultureStore":137,"../../layout/BorderButton":95,"../../layout/Checkbox":96,"../../layout/RadioButtonGroup":101,"../../layout/Scroll":102,"../../layout/TextField":106,"./SkillListItem":87,"react":328}],94:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13090,17 +13196,17 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var BorderButton = function (_Component) {
 	_inherits(BorderButton, _Component);
 
-	function BorderButton(props) {
+	function BorderButton() {
 		_classCallCheck(this, BorderButton);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(BorderButton).call(this, props));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(BorderButton).apply(this, arguments));
 	}
 
 	_createClass(BorderButton, [{
 		key: 'render',
 		value: function render() {
 
-			var className = (0, _classnames2.default)('btn', this.props.primary && 'primary', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
+			var className = (0, _classnames2.default)('btn', this.props.primary && 'btn-primary', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
 
 			var labelTextElement = this.props.label ? _react2.default.createElement(
 				'span',
@@ -13546,7 +13652,7 @@ var IconButton = function (_Component) {
 		key: 'render',
 		value: function render() {
 
-			var className = (0, _classnames2.default)('iconbutton', this.props.primary && 'primary', this.props.disabled && 'disabled', this.props.className);
+			var className = (0, _classnames2.default)('btn-icon', this.props.primary && 'btn-primary', this.props.disabled && 'disabled', this.props.className);
 
 			return _react2.default.createElement(
 				'div',
@@ -14925,6 +15031,7 @@ exports.default = (0, _keymirror2.default)({
 	// PhaseStore
 	INCREASE_PHASE: null,
 	RESET_PHASE: null,
+	FINALIZE_CHARACTER_CREATION: null,
 
 	// CharbaseStore
 	SET_RULES: null,
@@ -15590,8 +15697,7 @@ var AttributeStore = _extends({}, _events.EventEmitter.prototype, {
 	},
 
 	getAllForView: function getAllForView() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = _PhaseStore2.default.get();
 
 		var attrsObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var attrs = [];
@@ -15756,7 +15862,7 @@ function _updateSortOrder(option) {
 
 function _clear() {
 	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
-		_ListStore2.default.setSR(e.id, 0);
+		_ListStore2.default.setSR(e.id, 6);
 		_ListStore2.default.setProperty(e.id, 'dependencies', []);
 	});
 }
@@ -15838,10 +15944,7 @@ var CombatTechniquesStore = _extends({}, _events.EventEmitter.prototype, {
 	},
 
 	getAllForView: function getAllForView() {
-		var _this2 = this;
-
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = _PhaseStore2.default.get();
 
 		var combatTechniquesObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var combatTechniques = [];
@@ -15863,7 +15966,7 @@ var CombatTechniquesStore = _extends({}, _events.EventEmitter.prototype, {
 			var _max_bonus = this.get('ADV_17').active.indexOf(id) > -1 ? 1 : 0;
 			if (phase < 3) _max = _ELStore2.default.getStart().max_combattech + _max_bonus;else {
 				var primary = leit.map(function (e) {
-					return _this2.get('ATTR_' + e).value;
+					return _ListStore2.default.get(e).value;
 				});
 				_max = Math.max.apply(Math, _toConsumableArray(primary)) + 2 + _max_bonus;
 			}
@@ -17050,35 +17153,82 @@ var _reqPurchase2 = _interopRequireDefault(_reqPurchase);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _history = [];
+var _lastSaveIndex = -1;
 
-function _add(obj) {
-	_history.push(obj);
+function _add(actionType) {
+	var costs = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+	var previousState = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+	var options = arguments[3];
+
+	_history.push({
+		actionType: actionType,
+		costs: costs,
+		previousState: previousState,
+		options: options
+	});
 }
 
 function _clear() {
 	_history = [];
 }
 
+function _resetSaveIndex() {
+	_lastSaveIndex = _history.length - 1;
+}
+
 function _updateAll(array) {
 	_history = array;
+	_lastSaveIndex = _history.length - 1;
 }
 
 function _assignRCP(selections) {
-	// if (!selections.useCulturePackage) {
-	// 	_used -= _rcp[1];
-	// }
+	var race = _RaceStore2.default.getCurrent();
+	_add(_ActionTypes2.default.SELECT_RACE, race.ap, undefined, race.id);
+	var culture = _CultureStore2.default.getCurrent();
+	_add(_ActionTypes2.default.SELECT_CULTURE, culture.ap, undefined, race.id);
+	var profession = _ProfessionStore2.default.getCurrent() || { id: 'P_0', ap: 0 };
+	_add(_ActionTypes2.default.SELECT_PROFESSION, profession.ap, undefined, profession.id);
+	var professionVariant = _ProfessionVariantStore2.default.getCurrent();
+	if (professionVariant) {
+		_add(_ActionTypes2.default.SELECT_PROFESSION_VARIANT, professionVariant.ap, undefined, professionVariant.id);
+	}
 
-	// if (selections.buyLiteracy) {
-	// 	const culture = CultureStore.getCurrent();
-	// 	let id = culture.literacy.length > 1 ? selections.litc : culture.literacy[0];
-	// 	_used += ListStore.get('SA_28').sel[id - 1][2];
-	// }
+	var attrSel = selections.attrSel;
+	var useCulturePackage = selections.useCulturePackage;
+	var lang = selections.lang;
+	var buyLiteracy = selections.buyLiteracy;
+	var litc = selections.litc;
+	var cantrips = selections.cantrips;
+	var combattech = selections.combattech;
+	var curses = selections.curses;
+	var langLitc = selections.langLitc;
+	var spec = selections.spec;
 
-	// let p = ProfessionStore.getCurrent();
-	// if (p) {
-	// 	let apCosts = reqPurchase(p.req);
-	// 	_used += apCosts;
-	// }
+
+	_add('SELECT_ATTRIBUTE_MOD', undefined, undefined, attrSel);
+	_add('PURCHASE_CULTURE_PACKAGE', undefined, undefined, useCulturePackage);
+	if (lang !== 0) {
+		_add('SELECT_MOTHER_TONGUE', undefined, undefined, lang);
+	}
+	_add('PURCHASE_MAIN_LITERACY', undefined, undefined, buyLiteracy);
+	if (spec[0] !== null || spec[1] !== '') {
+		_add('SELECT_SKILL_SPECIALISATION', undefined, undefined, spec);
+	}
+	if (litc !== 0) {
+		_add('SELECT_MAIN_LITERACY', undefined, undefined, litc);
+	}
+	if (cantrips.size > 0) {
+		_add('SELECT_CANTRIPS', undefined, undefined, Array.from(cantrips));
+	}
+	if (combattech.size > 0) {
+		_add('SELECT_COMBAT_TECHNIQUES', undefined, undefined, Array.from(combattech));
+	}
+	if (curses.size > 0) {
+		_add('SELECT_CURSES', undefined, undefined, Array.from(curses));
+	}
+	if (langLitc.size > 0) {
+		_add('SELECT_LANGUAGES_AND_LITERACIES', undefined, undefined, Array.from(langLitc));
+	}
 }
 
 var HistoryStore = _extends({}, _events.EventEmitter.prototype, {
@@ -17111,18 +17261,31 @@ HistoryStore.dispatchToken = _AppDispatcher2.default.register(function (payload)
 
 		case _ActionTypes2.default.CLEAR_HERO:
 			_clear();
+			_resetSaveIndex();
 			break;
 
 		case _ActionTypes2.default.RECEIVE_HERO:
+			_clear();
 			_updateAll(payload.history);
+			_resetSaveIndex();
 			break;
 
 		case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
 			_assignRCP(payload.selections);
+			_resetSaveIndex();
+			break;
+
+		case _ActionTypes2.default.FINALIZE_CHARACTER_CREATION:
+			_resetSaveIndex();
 			break;
 
 		case _ActionTypes2.default.CREATE_NEW_HERO:
 			_clear();
+			_resetSaveIndex();
+			break;
+
+		case _ActionTypes2.default.SAVE_HERO_SUCCESS:
+			_resetSaveIndex();
 			break;
 
 		default:
@@ -18126,8 +18289,7 @@ var LiturgiesStore = _extends({}, _events.EventEmitter.prototype, {
 	getActiveForView: function getActiveForView() {
 		var _this = this;
 
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = _PhaseStore2.default.get();
 
 		var liturgiesObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var liturgies = [];
@@ -18166,7 +18328,7 @@ var LiturgiesStore = _extends({}, _events.EventEmitter.prototype, {
 			}).length;
 			if (phase < 3) _max = _ELStore2.default.getStart().max_skill + _max_bonus;else {
 				var checkValues = liturgy.check.map(function (attr) {
-					return _this.get('ATTR_' + attr).value;
+					return _ListStore2.default.get(attr).value;
 				});
 				_max = Math.max.apply(Math, _toConsumableArray(checkValues)) + 2 + _max_bonus;
 			}
@@ -18358,6 +18520,10 @@ PhaseStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 		case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
 			_update(2);
+			break;
+
+		case _ActionTypes2.default.FINALIZE_CHARACTER_CREATION:
+			_update(3);
 			break;
 
 		default:
@@ -19729,8 +19895,7 @@ var SpellsStore = _extends({}, _events.EventEmitter.prototype, {
 	getActiveForView: function getActiveForView() {
 		var _this = this;
 
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = _PhaseStore2.default.get();
 
 		var spellsObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var spells = [];
@@ -19773,7 +19938,7 @@ var SpellsStore = _extends({}, _events.EventEmitter.prototype, {
 			}).length;
 			if (phase < 3) _max = _ELStore2.default.getStart().max_skill + _max_bonus;else {
 				var checkValues = spell.check.map(function (attr) {
-					return _this.get('ATTR_' + attr).value;
+					return _ListStore2.default.get(attr).value;
 				});
 				_max = Math.max.apply(Math, _toConsumableArray(checkValues)) + 2 + _max_bonus;
 			}
@@ -20057,10 +20222,7 @@ var TalentsStore = _extends({}, _events.EventEmitter.prototype, {
 	},
 
 	getAllForView: function getAllForView() {
-		var _this = this;
-
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = _PhaseStore2.default.get();
 
 		var talentsObj = _ListStore2.default.getObjByCategory(CATEGORY);
 		var talents = [];
@@ -20080,7 +20242,7 @@ var TalentsStore = _extends({}, _events.EventEmitter.prototype, {
 			}).length;
 			if (phase < 3) _max = _ELStore2.default.getStart().max_skill + _max_bonus;else {
 				var checkValues = check.map(function (attr) {
-					return _this.get('ATTR_' + attr).value;
+					return _ListStore2.default.get(attr).value;
 				});
 				_max = Math.max.apply(Math, _toConsumableArray(checkValues)) + 2 + _max_bonus;
 			}
@@ -21945,38 +22107,7 @@ var WebAPIUtils = {
 	},
 	loadHero: function loadHero(id) {
 		_ServerActions2.default.startLoading();
-		_ServerActions2.default.loadHeroSuccess(id, {
-			"sex": "m",
-			"pers": {
-				_hair: 1,
-				_eyes: 1,
-				_size: 167,
-				_weight: 71
-			},
-			"attr": {
-				"values": [["ATTR_1", 12, 0], ["ATTR_2", 13, 0], ["ATTR_3", 12, 0], ["ATTR_4", 13, 0], ["ATTR_5", 14, 1], ["ATTR_6", 13, 0], ["ATTR_7", 12, 0], ["ATTR_8", 11, 0]],
-				"_le": 5,
-				"_le_add": 0,
-				"_ae_add": 0,
-				"_ke_add": 0,
-				"_sk": -5,
-				"_zk": -5,
-				"_gs": 8
-			},
-			"disadv": {
-				"active": [["ADV_3", {}], ["ADV_5", {}], ["ADV_40", {}], ["ADV_47", { "sid": "CT_2" }], ["ADV_49", {}], ["DISADV_1", [[2, 2]]], ["DISADV_15", {}], ["DISADV_25", {}], ["DISADV_40", { "tier": 1 }]],
-				"_showRating": true
-			},
-			"talents": {
-				"active": [["TAL_8", 6], ["TAL_10", 4], ["TAL_18", 7], ["TAL_20", 5], ["TAL_21", 4], ["TAL_25", 4], ["TAL_28", 9], ["TAL_29", 7], ["TAL_34", 4], ["TAL_38", 5], ["TAL_39", 3], ["TAL_40", 2], ["TAL_47", 5], ["TAL_48", 8], ["TAL_50", 7], ["TAL_51", 1], ["TAL_55", 1], ["TAL_59", 1]],
-				"_talentRating": true },
-			"ct": {
-				"active": [["CT_3", 8], ["CT_5", 8]] }, "spells": { "active": [] }, "chants": { "active": []
-			},
-			"sa": {
-				"active": [["SA_10", [["TAL_48", "Test"]]], ["SA_28", [9, 14]], ["SA_30", [[8, 4], [23, 2], [6, 1]]]]
-			}
-		});
+		_ServerActions2.default.loadHeroSuccess(id, '{\n\t\t\t"sex":"m",\n\t\t\t"pers":{\n\t\t\t\t"_hair": 1,\n\t\t\t\t"_eyes": 1,\n\t\t\t\t"_size": 167,\n\t\t\t\t"_weight": 71\n\t\t\t},\n\t\t\t"attr":{\n\t\t\t\t"values":[\n\t\t\t\t\t["ATTR_1",12,0],\n\t\t\t\t\t["ATTR_2",13,0],\n\t\t\t\t\t["ATTR_3",12,0],\n\t\t\t\t\t["ATTR_4",13,0],\n\t\t\t\t\t["ATTR_5",14,1],\n\t\t\t\t\t["ATTR_6",13,0],\n\t\t\t\t\t["ATTR_7",12,0],\n\t\t\t\t\t["ATTR_8",11,0]\n\t\t\t\t],\n\t\t\t\t"_le":5,\n\t\t\t\t"_le_add":0,\n\t\t\t\t"_ae_add":0,\n\t\t\t\t"_ke_add":0,\n\t\t\t\t"_sk":-5,\n\t\t\t\t"_zk":-5,\n\t\t\t\t"_gs":8\n\t\t\t},\n\t\t\t"disadv":{\n\t\t\t\t"active":[\n\t\t\t\t\t["ADV_3",{}],["ADV_5",{}],["ADV_40",{}],["ADV_47",{"sid":"CT_2"}],["ADV_49",{}],["DISADV_1",[[2,2]]],["DISADV_15",{}],["DISADV_25",{}],["DISADV_40",{"tier":1}]\n\t\t\t\t],\n\t\t\t\t"_showRating":true\n\t\t\t},\n\t\t\t"talents":{\n\t\t\t\t"active":[["TAL_8",6],["TAL_10",4],["TAL_18",7],["TAL_20",5],["TAL_21",4],["TAL_25",4],["TAL_28",9],["TAL_29",7],["TAL_34",4],["TAL_38",5],["TAL_39",3],["TAL_40",2],["TAL_47",5],["TAL_48",8],["TAL_50",7],["TAL_51",1],["TAL_55",1],["TAL_59",1]],\n\t\t\t\t"_talentRating":true},\n\t\t\t"ct":{\n\t\t\t\t"active":[["CT_3",8],["CT_5",8]]},"spells":{"active":[]},"chants":{"active":[]\n\t\t\t},\n\t\t\t"sa":{\n\t\t\t\t"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]]]\n\t\t\t},\n\t\t\t"history": []\n\t\t}');
 		// return new Promise(function(){
 		// 	jQuery.ajax(
 		// 		{
@@ -22043,19 +22174,19 @@ var WebAPIUtils = {
 		} else if (type === 'file') {
 			finalData = new FormData(data);
 		}
-		// return new Promise(function(){
-		// 	jQuery.ajax({
-		// 		url: 'http://cha5app.dsa-sh.de/php/uploadheropic.php?hid=' + ProfileStore.getID() + '&type=' + type + urlAdd,
-		// 		type: 'POST',
-		// 		data: finalData,
-		// 		success: function(result) {
-		_ServerActions2.default.changeHeroAvatarSuccess(type === 'file' ? result : data);
-		// 		},
-		// 		error: function(error) {
-		// 			ServerActions.connectionError(error);
-		// 		}
-		// 	});
-		// });
+		return new Promise(function () {
+			_jQuery2.default.ajax({
+				url: 'http://cha5app.dsa-sh.de/php/uploadheropic.php?hid=' + _ProfileStore2.default.getID() + '&type=' + type + urlAdd,
+				type: 'POST',
+				data: finalData,
+				success: function success(result) {
+					_ServerActions2.default.changeHeroAvatarSuccess(type === 'file' ? result : data);
+				},
+				error: function error(_error14) {
+					_ServerActions2.default.connectionError(_error14);
+				}
+			});
+		});
 	},
 	deleteHero: function deleteHero(heroid) {
 		_ServerActions2.default.startLoading();
@@ -22067,8 +22198,8 @@ var WebAPIUtils = {
 				success: function success(result) {
 					resolve(result);
 				},
-				error: function error(_error14) {
-					_ServerActions2.default.connectionError(_error14);
+				error: function error(_error15) {
+					_ServerActions2.default.connectionError(_error15);
 				}
 			});
 		});

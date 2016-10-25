@@ -1,4 +1,5 @@
 import BorderButton from '../../layout/BorderButton';
+import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
@@ -16,6 +17,7 @@ class Spells extends Component {
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		filter: SpellsStore.getFilter(),
 		sortOrder: SpellsStore.getSortOrder(),
+		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
 
@@ -181,7 +183,7 @@ class Spells extends Component {
 											key={spell.id}
 											group={GR[spell.gr - 1]}
 											name={name}
-											removePoint={this.removePoint.bind(null, spell.id)}
+											removePoint={this.state.phase < 3 ? this.removePoint.bind(null, spell.id) : undefined}
 											removeDisabled={spell.disabledDecrease}
 											{...obj} >
 											<td className="merk">{MERK[spell.merk - 1]}</td>

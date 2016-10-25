@@ -63,6 +63,11 @@ var ProfileActions = {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.REROLL_WEIGHT
 		});
+	},
+	endCharacterCreation: function() {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.FINALIZE_CHARACTER_CREATION
+		});
 	}
 };
 

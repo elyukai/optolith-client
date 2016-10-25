@@ -33,7 +33,7 @@
 	margin-top: 0;
 	text-decoration: none;
 
-	&.primary {
+	&.btn-primary {
 		border-image: linear-gradient(to bottom, #0abdb7 0%, #0abdb7 60%, #0c4550 100%) 1 1 1 1;
 		color: #a3c7c7;
 		background-color: transparentize(#101721, .5);
@@ -64,7 +64,7 @@
 	&.disabled {
 		pointer-events: none;
 		border-color: #2b2f34 !important;
-		background: transparent !important;
+		background: none !important;
 		color: #31353a !important;
 		border-image: none !important;
 		box-shadow: none;

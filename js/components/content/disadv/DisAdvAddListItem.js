@@ -63,7 +63,6 @@ class DisAdvAddListItem extends Component {
 		var inputElement2;
 
 		if (['ADV_4','ADV_16','ADV_17','ADV_47','DISADV_48'].indexOf(disadv.id) > -1) {
-			console.log(disadv.sel);
 			if (this.state.selected !== '') {
 				ap = disadv.ap[DisAdvStore.get(this.state.selected).skt - 1];
 			}

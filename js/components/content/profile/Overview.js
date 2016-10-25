@@ -1,5 +1,6 @@
 import Avatar from '../../layout/Avatar';
 import APStore from '../../../stores/APStore';
+import BorderButton from '../../layout/BorderButton';
 import CultureStore from '../../../stores/rcp/CultureStore';
 import DisAdvStore from '../../../stores/DisAdvStore';
 import Dropdown from '../../layout/Dropdown';
@@ -10,6 +11,7 @@ import OverviewNameChange from './OverviewNameChange';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../../../stores/rcp/ProfessionVariantStore';
 import RaceStore from '../../../stores/rcp/RaceStore';
+import PhaseStore from '../../../stores/PhaseStore';
 import ProfileActions from '../../../actions/ProfileActions';
 import ProfileStore from '../../../stores/ProfileStore';
 import React, { Component } from 'react';
@@ -28,13 +30,10 @@ class Overview extends Component {
 		eyes: ProfileStore.getEyes(),
 		size: ProfileStore.getSize(),
 		weight: ProfileStore.getWeight(),
+		phase: PhaseStore.get(),
 		showImageUpload: false,
 		editName: false
 	};
-
-	constructor(props) {
-		super(props);
-	}
 	
 	_updateProfileStore = () => this.setState({
 		name: ProfileStore.getName(),
@@ -44,6 +43,9 @@ class Overview extends Component {
 		eyes: ProfileStore.getEyes(),
 		size: ProfileStore.getSize(),
 		weight: ProfileStore.getWeight()
+	});
+	_updatePhaseStore = () => this.setState({
+		phase: PhaseStore.get()
 	});
 
 	showImageUpload = () => ProfileActions.showImageUpload();
@@ -61,18 +63,21 @@ class Overview extends Component {
 	rerollEyes = () => ProfileActions.rerollEyes();
 	rerollSize = () => ProfileActions.rerollSize();
 	rerollWeight = () => ProfileActions.rerollWeight();
+	endCharacterCreation = () => ProfileActions.endCharacterCreation();
 	
 	componentDidMount() {
+		PhaseStore.addChangeListener(this._updatePhaseStore );
 		ProfileStore.addChangeListener(this._updateProfileStore );
 	}
 	
 	componentWillUnmount() {
+		PhaseStore.removeChangeListener(this._updatePhaseStore );
 		ProfileStore.removeChangeListener(this._updateProfileStore );
 	}
 
 	render() {
 
-		const { editName, name, portrait, hair, eyes, size, weight } = this.state;
+		const { editName, name, portrait, hair, eyes, size, weight, phase } = this.state;
 
 		const hairArr = RaceStore.getCurrent() ? [
 			['blauschwarz',1],
@@ -198,10 +203,27 @@ class Overview extends Component {
 						onChange={this.changeWeight}
 						/>
 					<IconButton icon="&#xE863;" onClick={this.rerollWeight} />
-					<h3>Vorteile</h3>
-					<OverviewDisAdv list={this.state.advActive} />
-					<h3>Nachteile</h3>
-					<OverviewDisAdv list={this.state.disadvActive} />
+					{
+						phase === 2 ? (
+							<div>
+								<BorderButton
+									label="Heldenerstellung beenden"
+									onClick={this.endCharacterCreation}
+									primary
+									/>
+							</div>
+						) : null
+					}
+					{
+						phase === 3 ? (
+							<div>
+								<h3>Vorteile</h3>
+								<OverviewDisAdv list={this.state.advActive} />
+								<h3>Nachteile</h3>
+								<OverviewDisAdv list={this.state.disadvActive} />
+							</div>
+						) : null
+					}
 				</Scroll>
 			</div>
 		);

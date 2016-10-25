@@ -109,8 +109,7 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getAllForView: function() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = PhaseStore.get();
 
 		var talentsObj = ListStore.getObjByCategory(CATEGORY);
 		var talents = [];
@@ -127,7 +126,7 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 			if (phase < 3)
 				_max = ELStore.getStart().max_skill + _max_bonus;
 			else {
-				let checkValues = check.map(attr => this.get(`ATTR_${attr}`).value);
+				let checkValues = check.map(attr => ListStore.get(attr).value);
 				_max = Math.max(...checkValues) + 2 + _max_bonus;
 			}
 			talent.disabledIncrease = fw >= _max;

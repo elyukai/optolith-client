@@ -6,12 +6,9 @@ class AttributeList extends Component {
 	static propTypes = {
 		attributes: PropTypes.array.isRequired,
 		max: PropTypes.number.isRequired,
+		phase: PropTypes.number.isRequired,
 		sumMax: PropTypes.bool.isRequired
 	};
-
-	constructor(props) {
-		super(props);
-	}
 
 	render() {
 

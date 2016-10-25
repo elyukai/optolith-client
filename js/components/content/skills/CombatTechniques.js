@@ -1,9 +1,11 @@
 import BorderButton from '../../layout/BorderButton';
 import CombatTechniquesActions from '../../../actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../../stores/CombatTechniquesStore';
+import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
+import SkillListItem from './SkillListItem';
 import TextField from '../../layout/TextField';
 
 class CombatTechniques extends Component {
@@ -11,7 +13,8 @@ class CombatTechniques extends Component {
 	state = { 
 		combattech: CombatTechniquesStore.getAllForView(),
 		filter: CombatTechniquesStore.getFilter(),
-		sortOrder: CombatTechniquesStore.getSortOrder()
+		sortOrder: CombatTechniquesStore.getSortOrder(),
+		phase: PhaseStore.get()
 	};
 
 	constructor(props) {
@@ -82,19 +85,22 @@ class CombatTechniques extends Component {
 								this.state.combattech.map(ct => {
 									const leit = ct.leit.map(attr => ATTR[attr]).join('/');
 									return (
-										<tr key={ct.id}>
-											<td className="type">{GR[ct.gr - 1]}</td>
-											<td className="name"><h2>{ct.name}</h2></td>
-											<td className="fw">{ct.fw}</td>
+										<SkillListItem
+											key={ct.id}
+											group={GR[ct.gr - 1]}
+											name={ct.name}
+											fw={ct.fw}
+											skt={ct.skt}
+											checkDisabled
+											addPoint={this.addPoint.bind(null, ct.id)}
+											addDisabled={ct.disabledIncrease}
+											removePoint={this.state.phase < 3 ? this.removePoint.bind(null, ct.id) : undefined}
+											removeDisabled={ct.disabledDecrease}
+											>
 											<td className="leit">{leit}</td>
 											<td className="at">{ct.at}</td>
 											<td className="pa">{ct.gr == 2 ? '--' : ct.pa}</td>
-											<td className="skt">{COMP[ct.skt - 1]}</td>
-											<td className="inc">
-												<BorderButton label="+" onClick={this.addPoint.bind(null, ct.id)} disabled={ct.disabledIncrease} />
-												<BorderButton label="-" onClick={this.removePoint.bind(null, ct.id)} disabled={ct.disabledDecrease} />
-											</td>
-										</tr>
+										</SkillListItem>
 									);
 								})
 							}

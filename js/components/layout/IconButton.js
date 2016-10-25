@@ -17,7 +17,7 @@ class IconButton extends Component {
 
 	render() {
 
-		const className = classNames('iconbutton', this.props.primary && 'primary', this.props.disabled && 'disabled',  this.props.className);
+		const className = classNames('btn-icon', this.props.primary && 'btn-primary', this.props.disabled && 'disabled',  this.props.className);
 
 		return (
 			<div className={className} onClick={this.props.onClick}>

@@ -174,6 +174,7 @@ var ServerActions = {
 	},
 	loadHeroSuccess: function(id, data) {
 		var short = HerolistStore.get(id);
+		data = JSON.parse(data);
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.RECEIVE_HERO,
 			...(Object.assign({}, short, data))

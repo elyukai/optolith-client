@@ -12,10 +12,6 @@ class AttributeBorder extends Component {
 		])
 	};
 
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 
 		const className = classNames( 'attr', this.props.className );

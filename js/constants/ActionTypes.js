@@ -52,6 +52,7 @@ export default keyMirror({
 	// PhaseStore
 	INCREASE_PHASE: null,
 	RESET_PHASE: null,
+	FINALIZE_CHARACTER_CREATION: null,
 	
 	// CharbaseStore
 	SET_RULES: null,

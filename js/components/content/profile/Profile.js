@@ -1,4 +1,5 @@
 import Overview from './Overview';
+import PhaseStore from '../../../stores/PhaseStore';
 import React, { Component } from 'react';
 import Sheets from './Sheets';
 import SubTabs from '../../layout/SubTabs';
@@ -6,20 +7,31 @@ import SubTabs from '../../layout/SubTabs';
 class Profile extends Component {
 
 	state = {
+		phase: PhaseStore.get(),
 		tab: 'overview'
 	};
 
-	constructor(props) {
-		super(props);
-	}
+	_updatePhaseStore = () => this.setState({
+		phase: PhaseStore.get()
+	});
 
 	handleClick = tab => this.setState({ tab });
+	
+	componentDidMount() {
+		PhaseStore.addChangeListener(this._updatePhaseStore );
+	}
+	
+	componentWillUnmount() {
+		PhaseStore.removeChangeListener(this._updatePhaseStore );
+	}
 
 	render() {
 
+		const { phase, tab } = this.state;
+
 		var element;
 
-		switch (this.state.tab) {
+		switch (tab) {
 			case 'overview':
 				element = <Overview />;
 				break;
@@ -43,7 +55,8 @@ class Profile extends Component {
 						// },
 						{
 							label: 'Heldenbogen',
-							tag: 'sheets'
+							tag: 'sheets',
+							disabled: phase < 3
 						}
 					]}
 					active={this.state.tab}

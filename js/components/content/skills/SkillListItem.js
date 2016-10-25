@@ -12,6 +12,7 @@ class SkillListItem extends Component {
 		fw: PropTypes.number,
 		children: PropTypes.node,
 		check: PropTypes.array,
+		checkDisabled: PropTypes.bool,
 		checkmod: PropTypes.string,
 		skt: PropTypes.number,
 		isNotActive: PropTypes.bool,
@@ -29,7 +30,7 @@ class SkillListItem extends Component {
 
 	render() {
 
-		const { typ, untyp, group, name, fw, children, check, checkmod, skt, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+		const { typ, untyp, group, name, fw, children, check, checkDisabled, checkmod, skt, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
 
 		const className = classNames({
 			'typ': typ,
@@ -57,9 +58,9 @@ class SkillListItem extends Component {
 			ATTR_8: 'KK'
 		};
 
-		const checkElement = (
+		const checkElement = !checkDisabled ? (
 			<td className="check">{check ? `${check.map(attr => ATTR[attr]).join('/')} ${checkmod ? `(+${checkmod})` : ''}` : null}</td>
-		);
+		) : null;
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
 		
@@ -78,7 +79,7 @@ class SkillListItem extends Component {
 		) : (
 			<td className="inc">
 				{ addPoint ? <BorderButton label="+" onClick={addPoint} disabled={addDisabled} /> : null }
-				<BorderButton label="-" onClick={removePoint} disabled={removeDisabled} />
+				{ removePoint ? <BorderButton label="-" onClick={removePoint} disabled={removeDisabled} /> : null }
 			</td>
 		);
 

@@ -7,16 +7,13 @@ class AttributeCalc extends Component {
 
 	static propTypes = {
 		attributes: PropTypes.array.isRequired,
-		baseValues: PropTypes.object.isRequired
+		baseValues: PropTypes.object.isRequired,
+		phase: PropTypes.number.isRequired
 	};
-
-	constructor(props) {
-		super(props);
-	}
 
 	render() {
 
-		const { attributes, baseValues } = this.props;
+		const { attributes, baseValues, phase } = this.props;
 
 		const calculated = [
 			{
@@ -124,7 +121,13 @@ class AttributeCalc extends Component {
 		return (
 			<div className="calculated">
 				{
-					calculated.map(attribute => <AttributeCalcItem key={attribute.label} attribute={attribute} />)
+					calculated.map(attribute => (
+						<AttributeCalcItem
+							key={attribute.label}
+							attribute={attribute}
+							phase={phase}
+							/>
+					))
 				}
 			</div>
 		);

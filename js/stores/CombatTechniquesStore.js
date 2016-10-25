@@ -31,7 +31,7 @@ function _updateSortOrder(option) {
 
 function _clear() {
 	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.setSR(e.id, 0);
+		ListStore.setSR(e.id, 6);
 		ListStore.setProperty(e.id, 'dependencies', []);
 	});
 }
@@ -105,8 +105,7 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getAllForView: function() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = PhaseStore.get();
 
 		var combatTechniquesObj = ListStore.getObjByCategory(CATEGORY);
 		var combatTechniques = [];
@@ -123,7 +122,7 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 			if (phase < 3)
 				_max = ELStore.getStart().max_combattech + _max_bonus;
 			else {
-				let primary = leit.map(e => this.get(`ATTR_${e}`).value);
+				let primary = leit.map(e => ListStore.get(e).value);
 				_max = Math.max(...primary) + 2 + _max_bonus;
 			}
 			combatTechnique.disabledIncrease = fw >= _max;

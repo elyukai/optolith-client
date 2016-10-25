@@ -1,6 +1,7 @@
 import BorderButton from '../../layout/BorderButton';
 import Checkbox from '../../layout/Checkbox';
 import CultureStore from '../../../stores/rcp/CultureStore';
+import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
@@ -12,11 +13,12 @@ import TextField from '../../layout/TextField';
 class Talents extends Component {
 	
 	state = { 
-		talents: TalentsStore.getAllForView(),
+		list: TalentsStore.getAllForView(),
 		filter: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.getTalentRating(),
-		currentCulture: CultureStore.getCurrent()
+		currentCulture: CultureStore.getCurrent(),
+		phase: PhaseStore.get()
 	};
 
 	constructor(props) {
@@ -24,7 +26,7 @@ class Talents extends Component {
 	}
 	
 	_updateTalentsStore = () => this.setState({
-		talents: TalentsStore.getAllForView(),
+		list: TalentsStore.getAllForView(),
 		filter: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.getTalentRating()
@@ -82,7 +84,7 @@ class Talents extends Component {
 						</thead>
 						<tbody>
 							{
-								this.state.talents.map(talent => (
+								this.state.list.map(talent => (
 									<SkillListItem
 										key={talent.id}
 										typ={this.state.talentRating && typ_talents.indexOf(talent.id) > -1}
@@ -94,7 +96,7 @@ class Talents extends Component {
 										skt={talent.skt}
 										addPoint={this.addPoint.bind(null, talent.id)}
 										addDisabled={talent.disabledIncrease}
-										removePoint={this.removePoint.bind(null, talent.id)}
+										removePoint={this.state.phase < 3 ? this.removePoint.bind(null, talent.id) : undefined}
 										removeDisabled={talent.disabledDecrease} />
 								))
 							}

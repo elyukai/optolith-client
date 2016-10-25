@@ -145,8 +145,7 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getActiveForView: function() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = PhaseStore.get();
 
 		var liturgiesObj = ListStore.getObjByCategory(CATEGORY);
 		var liturgies = [];
@@ -177,7 +176,7 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 			if (phase < 3)
 				_max = ELStore.getStart().max_skill + _max_bonus;
 			else {
-				let checkValues = liturgy.check.map(attr => this.get(`ATTR_${attr}`).value);
+				let checkValues = liturgy.check.map(attr => ListStore.get(attr).value);
 				_max = Math.max(...checkValues) + 2 + _max_bonus;
 			}
 			aspc.some(e => {

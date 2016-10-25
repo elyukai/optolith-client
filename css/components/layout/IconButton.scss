@@ -1,4 +1,4 @@
-.iconbutton {
+.btn-icon {
 	width: 32px;
 	height: 32px;
 	color: #c8aa6e;
@@ -24,7 +24,7 @@
 		}
 	}
 
-	&.primary {
+	&.btn-primary {
 		background: linear-gradient(to bottom, #0abdb7 0%, #0abdb7 60%, #0c4550 100%);
 		color: #a3c7c7;
 

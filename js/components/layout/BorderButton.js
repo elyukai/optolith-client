@@ -11,13 +11,9 @@ class BorderButton extends Component {
 		label: PropTypes.string
 	};
 
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 
-		const className = classNames('btn', this.props.primary && 'primary', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
+		const className = classNames('btn', this.props.primary && 'btn-primary', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
 
 		const labelTextElement = this.props.label ? (
 			<span>{this.props.label}</span>

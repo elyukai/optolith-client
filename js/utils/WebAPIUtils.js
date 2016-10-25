@@ -250,13 +250,13 @@ var WebAPIUtils = {
 	},
 	loadHero: function(id) {
 		ServerActions.startLoading();
-		ServerActions.loadHeroSuccess(id, {
+		ServerActions.loadHeroSuccess(id, `{
 			"sex":"m",
 			"pers":{
-				_hair: 1,
-				_eyes: 1,
-				_size: 167,
-				_weight: 71
+				"_hair": 1,
+				"_eyes": 1,
+				"_size": 167,
+				"_weight": 71
 			},
 			"attr":{
 				"values":[
@@ -291,8 +291,9 @@ var WebAPIUtils = {
 			},
 			"sa":{
 				"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]]]
-			}
-		});
+			},
+			"history": []
+		}`);
 		// return new Promise(function(){
 		// 	jQuery.ajax(
 		// 		{
@@ -361,19 +362,19 @@ var WebAPIUtils = {
 		} else if (type === 'file') {
 			finalData = new FormData(data);
 		}
-		// return new Promise(function(){
-		// 	jQuery.ajax({
-		// 		url: 'http://cha5app.dsa-sh.de/php/uploadheropic.php?hid=' + ProfileStore.getID() + '&type=' + type + urlAdd,
-		// 		type: 'POST',
-		// 		data: finalData,
-		// 		success: function(result) {
+		return new Promise(function(){
+			jQuery.ajax({
+				url: 'http://cha5app.dsa-sh.de/php/uploadheropic.php?hid=' + ProfileStore.getID() + '&type=' + type + urlAdd,
+				type: 'POST',
+				data: finalData,
+				success: function(result) {
 					ServerActions.changeHeroAvatarSuccess(type === 'file' ? result : data);
-		// 		},
-		// 		error: function(error) {
-		// 			ServerActions.connectionError(error);
-		// 		}
-		// 	});
-		// });
+				},
+				error: function(error) {
+					ServerActions.connectionError(error);
+				}
+			});
+		});
 	},
 	deleteHero: function(heroid) {
 		ServerActions.startLoading();

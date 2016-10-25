@@ -11,35 +11,68 @@ import reactAlert from '../utils/reactAlert';
 import reqPurchase from '../utils/reqPurchase';
 
 var _history = [];
+var _lastSaveIndex = -1;
 
-function _add(obj) {
-	_history.push(obj);
+function _add(actionType, costs = 0, previousState = null, options) {
+	_history.push({
+		actionType,
+		costs,
+		previousState,
+		options
+	});
 }
 
 function _clear() {
 	_history = [];
 }
 
+function _resetSaveIndex() {
+	_lastSaveIndex = _history.length - 1;
+}
+
 function _updateAll(array) {
 	_history = array;
+	_lastSaveIndex = _history.length - 1;
 }
 
 function _assignRCP(selections) {
-	// if (!selections.useCulturePackage) {
-	// 	_used -= _rcp[1];
-	// }
+	let race = RaceStore.getCurrent();
+	_add(ActionTypes.SELECT_RACE, race.ap, undefined, race.id);
+	let culture = CultureStore.getCurrent();
+	_add(ActionTypes.SELECT_CULTURE, culture.ap, undefined, race.id);
+	let profession = ProfessionStore.getCurrent() || { id: 'P_0', ap: 0 };
+	_add(ActionTypes.SELECT_PROFESSION, profession.ap, undefined, profession.id);
+	let professionVariant = ProfessionVariantStore.getCurrent();
+	if (professionVariant) {
+		_add(ActionTypes.SELECT_PROFESSION_VARIANT, professionVariant.ap, undefined, professionVariant.id);
+	}
 
-	// if (selections.buyLiteracy) {
-	// 	const culture = CultureStore.getCurrent();
-	// 	let id = culture.literacy.length > 1 ? selections.litc : culture.literacy[0];
-	// 	_used += ListStore.get('SA_28').sel[id - 1][2];
-	// }
+	let { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = selections;
 
-	// let p = ProfessionStore.getCurrent();
-	// if (p) {
-	// 	let apCosts = reqPurchase(p.req);
-	// 	_used += apCosts;
-	// }
+	_add('SELECT_ATTRIBUTE_MOD', undefined, undefined, attrSel);
+	_add('PURCHASE_CULTURE_PACKAGE', undefined, undefined, useCulturePackage);
+	if (lang !== 0) {
+		_add('SELECT_MOTHER_TONGUE', undefined, undefined, lang);
+	}
+	_add('PURCHASE_MAIN_LITERACY', undefined, undefined, buyLiteracy);
+	if (spec[0] !== null || spec[1] !== '') {
+		_add('SELECT_SKILL_SPECIALISATION', undefined, undefined, spec);
+	}
+	if (litc !== 0) {
+		_add('SELECT_MAIN_LITERACY', undefined, undefined, litc);
+	}
+	if (cantrips.size > 0) {
+		_add('SELECT_CANTRIPS', undefined, undefined, Array.from(cantrips));
+	}
+	if (combattech.size > 0) {
+		_add('SELECT_COMBAT_TECHNIQUES', undefined, undefined, Array.from(combattech));
+	}
+	if (curses.size > 0) {
+		_add('SELECT_CURSES', undefined, undefined, Array.from(curses));
+	}
+	if (langLitc.size > 0) {
+		_add('SELECT_LANGUAGES_AND_LITERACIES', undefined, undefined, Array.from(langLitc));
+	}
 }
 
 var HistoryStore = Object.assign({}, EventEmitter.prototype, {
@@ -72,18 +105,31 @@ HistoryStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.CLEAR_HERO:
 			_clear();
+			_resetSaveIndex();
 			break;
 
 		case ActionTypes.RECEIVE_HERO:
+			_clear();
 			_updateAll(payload.history);
+			_resetSaveIndex();
 			break;
 
 		case ActionTypes.ASSIGN_RCP_ENTRIES:
 			_assignRCP(payload.selections);
+			_resetSaveIndex();
+			break;
+
+		case ActionTypes.FINALIZE_CHARACTER_CREATION:
+			_resetSaveIndex();
 			break;
 			
 		case ActionTypes.CREATE_NEW_HERO:
 			_clear();
+			_resetSaveIndex();
+			break;
+			
+		case ActionTypes.SAVE_HERO_SUCCESS:
+			_resetSaveIndex();
 			break;
 
 		default:

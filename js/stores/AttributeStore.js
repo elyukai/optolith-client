@@ -129,8 +129,7 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getAllForView: function() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = PhaseStore.get();
 
 		var attrsObj = ListStore.getObjByCategory(CATEGORY);
 		var attrs = [];

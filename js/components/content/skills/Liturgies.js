@@ -1,6 +1,7 @@
 import BorderButton from '../../layout/BorderButton';
 import LiturgiesActions from '../../../actions/LiturgiesActions';
 import LiturgiesStore from '../../../stores/LiturgiesStore';
+import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
@@ -16,6 +17,7 @@ class Liturgies extends Component {
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filter: LiturgiesStore.getFilter(),
 		sortOrder: LiturgiesStore.getSortOrder(),
+		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
 
@@ -175,7 +177,7 @@ class Liturgies extends Component {
 											key={liturgy.id}
 											group={GR[liturgy.gr - 1]}
 											name={name}
-											removePoint={this.removePoint.bind(null, liturgy.id)}
+											removePoint={this.state.phase < 3 ? this.removePoint.bind(null, liturgy.id) : undefined}
 											removeDisabled={liturgy.disabledDecrease}
 											{...obj} >
 											<td className="aspc">{aspc}</td>

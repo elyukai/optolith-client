@@ -172,8 +172,7 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getActiveForView: function() {
-		// var phase = PhaseStore.get();
-		var phase = 1;
+		var phase = PhaseStore.get();
 
 		var spellsObj = ListStore.getObjByCategory(CATEGORY);
 		var spells = [];
@@ -209,7 +208,7 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 			if (phase < 3)
 				_max = ELStore.getStart().max_skill + _max_bonus;
 			else {
-				let checkValues = spell.check.map(attr => this.get(`ATTR_${attr}`).value);
+				let checkValues = spell.check.map(attr => ListStore.get(attr).value);
 				_max = Math.max(...checkValues) + 2 + _max_bonus;
 			}
 			if (SA_88_ACTIVE.indexOf(merk) === -1)
