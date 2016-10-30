@@ -239,6 +239,15 @@ var ListStore = Object.assign({}, EventEmitter.prototype, {
 			if (_list[id].category === category && _list[id].gr === gr) list.push(_list[id]);
 		}
 		return list;
+	},
+
+	getObjByCategoryGroup: function(category, ...gr) {
+		var list = {};
+		var grs = new Set(gr);
+		for (let id in _list) {
+			if (_list[id].category === category && grs.has(_list[id].gr)) list[id] = _list[id];
+		}
+		return list;
 	}
 
 });

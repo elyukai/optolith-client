@@ -3,6 +3,7 @@ import CultureStore from './rcp/CultureStore';
 import CombatTechniquesStore from './CombatTechniquesStore';
 import { EventEmitter } from 'events';
 import ListStore from './ListStore';
+import PhaseStore from './PhaseStore';
 import ProfessionStore from './rcp/ProfessionStore';
 import ProfessionVariantStore from './rcp/ProfessionVariantStore';
 import TalentsStore from './TalentsStore';
@@ -292,18 +293,30 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 		return ListStore.get(id);
 	},
 
-	getActiveForView: function() {
-		var sasObj = ListStore.getObjByCategory(CATEGORY), sas = [];
+	getActiveForView: function(...cgr) {
+		var sasObj;
+		if (cgr.length > 0) {
+			sasObj = ListStore.getObjByCategoryGroup(CATEGORY, ...cgr);
+		} else {
+			sasObj = ListStore.getObjByCategory(CATEGORY);
+		}
+		var sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
 			let { name, active, ap, sid, sel, gr, dependencies } = sa;
 			if (active === true) {
 				let disabled = dependencies.length > 0;
 				if (sel.length > 0 && ap === 'sel') {
-					if (id === 'SA_86' && ListStore.getAllByCategory('spells').some(e => e.active)) disabled = true; 
+					if (id === 'SA_86' && ListStore.getAllByCategory('spells').some(e => e.active)) {
+						disabled = true;
+					}
 					if (id === 'SA_102' && ListStore.getAllByCategory('liturgies').some(e => e.active)) disabled = true; 
 					sas.push({ id, name, add: sel[sid - 1][0], ap: sel[sid - 1][2], gr, disabled });
 				} else {
+					let phase = PhaseStore.get();
+					if (id === 'SA_92' && phase < 3) {
+						ap += 4;
+					}
 					sas.push({ id, name, ap, gr, disabled });
 				}
 			} else if (Array.isArray(active) && active.length > 0) {
@@ -427,6 +440,10 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 							let _sel = sel.filter(e => dependencies.indexOf(e[1]) === -1);
 							sas.push({ id, name, sel: _sel, ap, gr });
 						} else {
+							let phase = PhaseStore.get();
+							if (id === 'SA_92' && phase < 3) {
+								ap += 4;
+							}
 							sas.push({ id, name, ap, gr });
 						}
 						break;

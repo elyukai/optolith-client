@@ -9,6 +9,7 @@ class Avatar extends Component {
 
 	static propTypes = {
 		className: PropTypes.any,
+		img: PropTypes.bool,
 		src: PropTypes.string,
 		onClick: PropTypes.func,
 		wrapper: PropTypes.bool
@@ -17,9 +18,16 @@ class Avatar extends Component {
 	render() {
 
 		const className = classNames('avatar', this.props.className);
-		const { src, onClick, wrapper } = this.props;
+		const { src, img, onClick, wrapper } = this.props;
 
-		if (wrapper) {
+		if (img) {
+			return (
+				<div className={classNames('avatar-wrapper', !src && 'no-avatar')} onClick={onClick} className={className}>
+					<img src={src} alt="" />
+				</div>
+			);
+		}
+		else if (wrapper) {
 			return (
 				<div className={classNames('avatar-wrapper', !src && 'no-avatar')} onClick={onClick}>
 					{this.props.children}

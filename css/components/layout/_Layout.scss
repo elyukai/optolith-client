@@ -1,3 +1,13 @@
+%label {
+	label {
+		color: #a19b8f;
+		letter-spacing: 0.05em;
+		display: block;
+		font: 500 12px/1 Alegreya Sans;
+		padding-bottom: 6px;
+	}
+}
+
 @import "Avatar";
 @import "BorderButton";
 @import "Card";
@@ -13,5 +23,6 @@
 @import "Slider";
 @import "SubTabs";
 @import "TextField";
+@import "TextFieldButtonGroup";
 @import "TitleBar";
 @import "ToolBar";

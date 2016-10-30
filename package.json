@@ -17,9 +17,11 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
+    "babel-jest": "^16.0.0",
     "babel-plugin-transform-class-properties": "^6.11.5",
     "babel-plugin-transform-do-expressions": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-polyfill": "^6.16.0",
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-1": "^6.13.0",
@@ -32,13 +34,16 @@
     "gulp-streamify": "^1.0.2",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
+    "jest-cli": "^16.0.2",
+    "react-test-renderer": "^15.3.2",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
   },
   "scripts": {
     "watch": "watchify -t [babelify] js/AppBootstrap.js -o dist/bundle.js -v",
-    "build": "browserify -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "browserify -t [babelify] js/AppBootstrap.js -o dist/bundle.js",
+    "build-prod": "browserify -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
+    "test": "jest"
   },
   "author": "Lukas Obermann",
   "license": "ISC",

@@ -7,7 +7,6 @@ import DisAdvStore from '../../../stores/DisAdvStore';
 import ELStore from '../../../stores/ELStore';
 import LabelBox from '../../layout/sheets/LabelBox';
 import MainSheetCalcItem from './MainSheetCalcItem';
-import OverviewDisAdv from './OverviewDisAdv';
 import Plain from '../../layout/sheets/Plain';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../../../stores/rcp/ProfessionVariantStore';

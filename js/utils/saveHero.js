@@ -25,7 +25,7 @@ export default () => {
 			id: ProfileStore.getID(),
 			phase: PhaseStore.get(),
 			name: ProfileStore.getName(),
-			avatar: ProfileStore.getPortrait(),
+			avatar: ProfileStore.getAvatar(),
 			ap: APStore.getForSave(),
 			el: ELStore.getStartID(),
 			r: RaceStore.getCurrentID(),
@@ -34,7 +34,7 @@ export default () => {
 			pv: ProfessionVariantStore.getCurrentID()
 		},
 		{
-			sex: ProfileStore.getGender(),
+			sex: ProfileStore.getSex(),
 			pers: ProfileStore.getAppearance(),
 			attr: AttributeStore.getForSave(),
 			disadv: DisAdvStore.getForSave(),

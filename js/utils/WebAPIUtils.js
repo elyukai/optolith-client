@@ -253,10 +253,18 @@ var WebAPIUtils = {
 		ServerActions.loadHeroSuccess(id, `{
 			"sex":"m",
 			"pers":{
-				"_hair": 1,
-				"_eyes": 1,
+				"_family": "ibn Rashtul",
+				"_placeofbirth": "Rashdul",
+				"_dateofbirth": "10. Boron 1001 BF",
+				"_age": "6",
+				"_haircolor": 2,
+				"_eyecolor": 3,
 				"_size": 167,
-				"_weight": 71
+				"_weight": 71,
+				"_title": "al'Eshta",
+				"_socialstatus": 2,
+				"_characteristics": "Reibt sich die Hände",
+				"_otherinfo": "Hat einen Golem ..."
 			},
 			"attr":{
 				"values":[
@@ -279,7 +287,7 @@ var WebAPIUtils = {
 			},
 			"disadv":{
 				"active":[
-					["ADV_3",{}],["ADV_5",{}],["ADV_40",{}],["ADV_47",{"sid":"CT_2"}],["ADV_49",{}],["DISADV_1",[[2,2]]],["DISADV_15",{}],["DISADV_25",{}],["DISADV_40",{"tier":1}]
+					["ADV_3",{}],["ADV_5",{}],["ADV_40",{}],["ADV_47",{"sid":"CT_2"}],["ADV_49",{}],["ADV_50",{}],["DISADV_1",[[2,2]]],["DISADV_15",{}],["DISADV_25",{}],["DISADV_40",{"tier":1}]
 				],
 				"_showRating":true
 			},
@@ -287,10 +295,16 @@ var WebAPIUtils = {
 				"active":[["TAL_8",6],["TAL_10",4],["TAL_18",7],["TAL_20",5],["TAL_21",4],["TAL_25",4],["TAL_28",9],["TAL_29",7],["TAL_34",4],["TAL_38",5],["TAL_39",3],["TAL_40",2],["TAL_47",5],["TAL_48",8],["TAL_50",7],["TAL_51",1],["TAL_55",1],["TAL_59",1]],
 				"_talentRating":true},
 			"ct":{
-				"active":[["CT_3",8],["CT_5",8]]},"spells":{"active":[]},"chants":{"active":[]
+				"active":[["CT_3",8],["CT_5",8]]
+			},
+			"spells":{
+				"active":[]
+			},
+			"chants":{
+				"active":[]
 			},
 			"sa":{
-				"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]]]
+				"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]],["SA_86",{"sid":1}]]
 			},
 			"history": []
 		}`);

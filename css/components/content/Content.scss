@@ -21,7 +21,7 @@
 @import "components/content/sheets/TalentsSheet";
 @import "components/content/skills/Skills";
 
-#body > main > section {
+section {
 	@extend %max-size-relative;
 	padding-top: $titlebar-height;
 	z-index: 0;
@@ -37,6 +37,20 @@
 		flex: none;
 	}
 
+	.scroll {
+		flex: 1 1 100%;
+
+		.scroll-inner {
+			padding: 0 35px;
+
+			.textfield, .dropdown {
+				+ .btn-icon {
+					margin: 10px 0 10px 11px;
+				}
+			}
+		}
+	}
+
 	> .page {
 		flex: 1 1 auto;
 		padding: 11px 0 3px;
@@ -48,28 +62,6 @@
 		position: relative;
 		overflow: hidden;
 		height: 100%;
-
-		.scroll {
-			flex: 1 1 100%;
-
-			.scroll-inner {
-				padding: 0 35px;
-				display: flex;
-				flex-wrap: wrap;
-
-				> div:not(.btn):not(.btn-icon):not(.textfield):not(.dropdown), > h2, > h3, > h4, > ul {
-					flex: 1 0 auto;
-					width: 100%;
-					margin-top: 20px;
-				}
-
-				.textfield, .dropdown {
-					+ .btn-icon {
-						margin: 10px 0 10px 11px;
-					}
-				}
-			}
-		}
 
 		> .options {
 			flex: 1 0 auto;

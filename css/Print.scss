@@ -19,8 +19,8 @@ $border-2px: 1.25pt;
 		.titlebar, .subtabs {
 			display: none;
 		}
-
-		section#misc {
+		
+		section#profile {
 			padding: 0 !important;
 			overflow: visible !important;
 			background: white !important;
@@ -62,12 +62,17 @@ $border-2px: 1.25pt;
 
 				> .header {
 					.attributes {
-						.attr {
+						> .attr {
 							> .value {
-								border-width: $border-2px !important;
+								border-width: calc(0.5mm - 0.57pt/2) !important;
 
 								> div {
-									border-width: $border-1px !important;
+									border-width: 0.57pt !important;
+									position: relative;
+
+									> div {
+										@include size(100%);
+									}
 								}
 							}
 						}
@@ -99,6 +104,11 @@ $border-2px: 1.25pt;
 								> .values {
 									> div {
 										border-width: $border-1px !important;
+
+										> div {
+											width: calc(1.2mm - 0.57pt);
+											height: calc(1.2mm - 0.57pt);
+										}
 									}
 								}
 							}

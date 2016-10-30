@@ -19,9 +19,6 @@ class Sheets extends Component {
 	render() {
 		return (
 			<div className="page" id="sheets">
-				<div className="options">
-					<BorderButton className="print-cs" label="Dokument drucken" onClick={this.print} />
-				</div>
 				<Scroll className="sheet-wrapper">
 					<MainSheet />
 					<TalentsSheet />
@@ -34,5 +31,8 @@ class Sheets extends Component {
 		);
 	}
 }
+				// <div className="options">
+				// 	<BorderButton className="print-cs" label="Dokument drucken" onClick={this.print} />
+				// </div>
 
 export default Sheets;

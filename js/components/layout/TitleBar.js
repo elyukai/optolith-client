@@ -28,7 +28,7 @@ class TitleBar extends Component {
 		used: APStore.getUsed(),
 		disadv: APStore.getForDisAdv(),
 		phase: PhaseStore.get(),
-		portrait: ProfileStore.getPortrait()
+		portrait: ProfileStore.getAvatar()
 	};
 
 	constructor(props) {
@@ -38,7 +38,7 @@ class TitleBar extends Component {
 	_updateAccountStore = () => this.setState({ account: AccountStore.getAll() });
 	_updateAPStore = () => this.setState({ ap: APStore.get(), used: APStore.getUsed(), disadv: APStore.getForDisAdv() });
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() });
-	_updateProfileStore = () => this.setState({ portrait: ProfileStore.getPortrait() });
+	_updateProfileStore = () => this.setState({ portrait: ProfileStore.getAvatar() });
 
 	componentDidMount() {
 		AccountStore.addChangeListener(this._updateAccountStore);

@@ -80,6 +80,25 @@
 				}
 			}
 		}
+
+		.personal-data {
+			display: flex;
+			flex-wrap: wrap;
+
+			> div {
+				flex: none;
+				display: flex;
+				flex-wrap: wrap;
+				width: 323px;
+				margin-right: 22px;
+				margin-bottom: 10px;
+				align-items: flex-end;
+			}
+		}
+
+		.end-char-creation {
+			margin-top: 20px;
+		}
 	}
 }
 

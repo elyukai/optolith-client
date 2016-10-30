@@ -42,22 +42,22 @@
 
 		> .ap-portrait {
 			flex: none;
-			width: 290px;
+			width: 7.6cm;
 			margin-left: 10px;
 			display: flex;
 			flex-wrap: wrap;
 
 			> .labelbox {
 				display: flex;
-				height: 40px;
-				margin: 14px 0 0;
-				width: 170px;
+				height: 1cm;
+				margin: 0.38cm 0 0;
+				width: 4.4cm;
 
 				&.el {
 					width: 100%;
 
 					.box {
-						width: 170px;
+						width: 4.4cm;
 						font-size: 20px;
 						font-weight: 400;
 					}
@@ -71,7 +71,7 @@
 				.box {
 					font: bold 24px/40px Alegreya Sans;
 					text-align: center;
-					width: 70px;
+					width: 2cm;
 				}
 
 				label {
@@ -84,11 +84,16 @@
 				flex-direction: column;
 
 				.box {
-					width: 120px;
+					width: 3.2cm;
 					height: 148px;
 
 					.avatar {
 						@include size(100%);
+
+						> img {
+							object-fit: cover;
+							@include size(100%);
+						}
 					}
 				}
 
@@ -194,145 +199,5 @@
 				}
 			}
 		}
-	}
-
-
-	> .head {
-		padding-bottom: 20px;
-		border-bottom: 2px solid black;
-		height: 172px;
-
-		> * {
-			float: left;
-		}
-
-		.head-left {
-			@include size(150px);
-
-			.portrait {
-				@include size(100%);
-				overflow: hidden;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-
-				img {
-					border: 4px solid black;
-					max-height: 100%;
-					max-width: 100%;
-					border-radius: 50%;
-				}
-			}
-		}
-
-		.head-right {
-			@include size(568px 150px);
-			padding-left: 20px;
-			padding-top: 15px;
-			line-height: 23px;
-			position: relative;
-
-			div.classes {
-				h1.name {
-					font: bold 20px/28px Caudex;
-					margin-bottom: 10px;
-					letter-spacing: 0.05em;
-					text-transform: uppercase;
-				}
-
-				h2.race-culture {
-					font: bold 14px/20px Caudex;
-					letter-spacing: 0.05em;
-					margin-bottom: 10px;
-				}
-
-				h2.prof {
-					font: bold 14px/20px Caudex;
-					letter-spacing: 0.05em;
-				}
-			}
-
-			div.main-values {
-				text-align: right;
-				padding-top: 5px;
-				position: absolute;
-				top: 0;
-				right: 0;
-
-				div.ap > span:not(.level) {
-					opacity: 0.25;
-				}
-
-				div.so {
-					padding-top: 10px;
-				}
-			}
-
-			div.qualities {
-				width: 100%;
-				float: left;
-				margin-top: 10px;
-				display: flex;
-				justify-content: space-between;
-				font: 13px/20px "Source Sans Pro";
-
-				.q-available {
-					opacity: 0.5;
-				}
-			}
-		}
-	}
-
-	> .left {
-		margin-top: 20px;
-		border-right: 2px solid black;
-		width: 200px;
-		@include calc(height, '100% - 192px');
-		float: left;
-
-		.base-stats {
-			> div {
-				height: 16px;
-
-				> div {
-					float: left;
-
-					> span:first-child {
-						display: inline-block;
-						width: 30px;
-					}
-				}
-			}
-		}
-
-		.vt-list, .nt-list {
-			list-style: none outside none;
-
-			> li {
-				display: flex;
-				
-				> div {
-					flex: 1 0 auto;
-
-					&:first-child {
-						width: 170px;
-						padding-left: 10px;
-						text-indent: -10px;
-					}
-
-					&:last-child {
-						width: 28px;
-					}
-				}
-			}
-		}
-	}
-
-	> .right {
-		@include calc(height, '100% - 192px');
-		float: right;
-		width: 518px;
-		margin-top: 20px;
-		padding-left: 20px;
 	}
 }

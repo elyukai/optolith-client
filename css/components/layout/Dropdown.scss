@@ -3,13 +3,7 @@
 	margin: 10px 0;
 	font: 500 13px/30px Alegreya Sans;
 		
-	label {
-		color: #a19b8f;
-		letter-spacing: 0.05em;
-		display: block;
-		font: 500 10px/1 Alegreya Sans;
-		padding-bottom: 6px;
-	}
+	@extend %label;
 
 	> div {
 		position: relative;

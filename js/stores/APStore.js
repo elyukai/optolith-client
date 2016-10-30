@@ -12,15 +12,6 @@ import reqPurchase from '../utils/reqPurchase';
 
 // AP = Adventure Points
 
-const AKTV = [1, 2, 3, 4];
-const SKT = [
-	[1,2,3,4,5,6,7,8,9,10,11,12,13,14],
-	[2,4,6,8,10,12,14,16,18,20,22,24,26,28],
-	[3,6,9,12,15,18,21,24,27,30,33,36,39,42],
-	[4,8,12,16,20,24,28,32,36,40,44,48,52,56],
-	[15,15,15,30,45,60,75,90,105,120,135,150,165,180]
-];
-
 var _max = 0;
 var _used = 0;
 var _rcp = [0, 0, 0, 0];
@@ -146,6 +137,10 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 
 	getForSave: function() {
 		return { _max, _used, _rcp, _adv, _adv_mag, _adv_kar, _disadv, _disadv_mag, _disadv_kar };
+	},
+
+	getAll: function() {
+		return { total: _max, spent: _used };
 	},
 
 	get: function() {

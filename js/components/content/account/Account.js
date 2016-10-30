@@ -5,6 +5,7 @@ import IconButton from '../../layout/IconButton';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
 import TextField from '../../layout/TextField';
+import TextFieldButtonGroup from '../../layout/TextFieldButtonGroup';
 
 class Account extends Component {
 
@@ -24,29 +25,33 @@ class Account extends Component {
 			<section id="account">
 				<div className="page">
 					<Scroll>
-						<TextField
-							hint="Benutzernamen ändern"
-							value={this.state.newName}
-							onChange={this.handleName}
-							/>
-						<IconButton
-							icon="&#xE876;"
-							onClick={this.changeName}
-							disabled={this.state.newName === '' || this.state.newName.length < 3 || this.state.newName.length > 20}
-							/>
+						<TextFieldButtonGroup>
+							<TextField
+								hint="Benutzernamen ändern"
+								value={this.state.newName}
+								onChange={this.handleName}
+								/>
+							<IconButton
+								icon="&#xE876;"
+								onClick={this.changeName}
+								disabled={this.state.newName === '' || this.state.newName.length < 3 || this.state.newName.length > 20}
+								/>
+						</TextFieldButtonGroup>
 						<div className="padding">
 							{(this.state.newName.length < 3 || this.state.newName.length > 20) && this.state.newName !== '' ? 'Der Benutzername muss mindestens 3 und darf maximal 20 Zeichen umfassen.' : null}
 						</div>
-						<TextField
-							hint="Passwort ändern"
-							value={this.state.newPassword}
-							onChange={this.handlePassword}
-							/>
-						<IconButton
-							icon="&#xE876;"
-							onClick={this.changePassword}
-							disabled={this.state.newPassword === '' || this.state.newPassword.length < 5 || this.state.newPassword.length > 20}
-							/>
+						<TextFieldButtonGroup>
+							<TextField
+								hint="Passwort ändern"
+								value={this.state.newPassword}
+								onChange={this.handlePassword}
+								/>
+							<IconButton
+								icon="&#xE876;"
+								onClick={this.changePassword}
+								disabled={this.state.newPassword === '' || this.state.newPassword.length < 5 || this.state.newPassword.length > 20}
+								/>
+						</TextFieldButtonGroup>
 						<div className="padding">
 							{(this.state.newPassword.length < 5 || this.state.newPassword.length > 20) && this.state.newPassword !== '' ? 'Das Passwort muss mindestens 5 und darf maximal 20 Zeichen umfassen.' : null}
 						</div>

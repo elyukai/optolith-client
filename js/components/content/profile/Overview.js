@@ -6,7 +6,7 @@ import DisAdvStore from '../../../stores/DisAdvStore';
 import Dropdown from '../../layout/Dropdown';
 import ELStore from '../../../stores/ELStore';
 import IconButton from '../../layout/IconButton';
-import OverviewDisAdv from './OverviewDisAdv';
+import OverviewConstSkills from './OverviewConstSkills';
 import OverviewNameChange from './OverviewNameChange';
 import ProfessionStore from '../../../stores/rcp/ProfessionStore';
 import ProfessionVariantStore from '../../../stores/rcp/ProfessionVariantStore';
@@ -23,47 +23,15 @@ class Overview extends Component {
 	state = { 
 		advActive: DisAdvStore.getActiveForView(true),
 		disadvActive: DisAdvStore.getActiveForView(false),
-		name: ProfileStore.getName(),
-		gender: ProfileStore.getGender(),
-		portrait: ProfileStore.getPortrait(),
-		hair: ProfileStore.getHair(),
-		eyes: ProfileStore.getEyes(),
-		size: ProfileStore.getSize(),
-		weight: ProfileStore.getWeight(),
+		...(ProfileStore.getAll()),
 		phase: PhaseStore.get(),
-		showImageUpload: false,
 		editName: false
 	};
 	
-	_updateProfileStore = () => this.setState({
-		name: ProfileStore.getName(),
-		gender: ProfileStore.getGender(),
-		portrait: ProfileStore.getPortrait(),
-		hair: ProfileStore.getHair(),
-		eyes: ProfileStore.getEyes(),
-		size: ProfileStore.getSize(),
-		weight: ProfileStore.getWeight()
-	});
+	_updateProfileStore = () => this.setState(ProfileStore.getAll());
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()
 	});
-
-	showImageUpload = () => ProfileActions.showImageUpload();
-	changeName = name => {
-		ProfileActions.changeName(name);
-		this.setState({ editName: false });
-	};
-	editName = () => this.setState({ editName: true });
-	editNameCancel = () => this.setState({ editName: false });
-	changeHair = option => ProfileActions.changeHair(option);
-	changeEyes = option => ProfileActions.changeEyes(option);
-	changeSize = event => ProfileActions.changeSize(event.target.value);
-	changeWeight = event => ProfileActions.changeWeight(event.target.value);
-	rerollHair = () => ProfileActions.rerollHair();
-	rerollEyes = () => ProfileActions.rerollEyes();
-	rerollSize = () => ProfileActions.rerollSize();
-	rerollWeight = () => ProfileActions.rerollWeight();
-	endCharacterCreation = () => ProfileActions.endCharacterCreation();
 	
 	componentDidMount() {
 		PhaseStore.addChangeListener(this._updatePhaseStore );
@@ -75,70 +43,62 @@ class Overview extends Component {
 		ProfileStore.removeChangeListener(this._updateProfileStore );
 	}
 
+	showImageUpload = () => ProfileActions.showImageUpload();
+	changeName = name => {
+		ProfileActions.changeName(name);
+		this.setState({ editName: false });
+	};
+	editName = () => this.setState({ editName: true });
+	editNameCancel = () => this.setState({ editName: false });
+
+	changeFamily = e => ProfileActions.changeFamily(e.target.value);
+	changePlaceOfBirth = e => ProfileActions.changePlaceOfBirth(e.target.value);
+	changeDateOfBirth = e => ProfileActions.changeDateOfBirth(e.target.value);
+	changeAge = e => ProfileActions.changeAge(e.target.value);
+	changeHaircolor = result => ProfileActions.changeHaircolor(result);
+	changeEyecolor = result => ProfileActions.changeEyecolor(result);
+	changeSize = e => ProfileActions.changeSize(e.target.value);
+	changeWeight = e => ProfileActions.changeWeight(e.target.value);
+	changeTitle = e => ProfileActions.changeTitle(e.target.value);
+	changeSocialStatus = result => ProfileActions.changeSocialStatus(result);
+	changeCharacteristics = e => ProfileActions.changeCharacteristics(e.target.value);
+	changeOtherInfo = e => ProfileActions.changeOtherInfo(e.target.value);
+
+	rerollHair = () => ProfileActions.rerollHair();
+	rerollEyes = () => ProfileActions.rerollEyes();
+	rerollSize = () => ProfileActions.rerollSize();
+	rerollWeight = () => ProfileActions.rerollWeight();
+
+	endCharacterCreation = () => ProfileActions.endCharacterCreation();
+
 	render() {
 
-		const { editName, name, portrait, hair, eyes, size, weight, phase } = this.state;
+		const { age, avatar, characteristics, editName, eyecolor, dateofbirth, family, haircolor, name, otherinfo, placeofbirth, size, socialstatus, title, weight, phase } = this.state;
 
-		const hairArr = RaceStore.getCurrent() ? [
-			['blauschwarz',1],
-			['blond',2],
-			['braun',3],
-			['dunkelblond',4],
-			['dunkelbraun',5],
-			['goldblond',6],
-			['grau',7],
-			['hellblond',8],
-			['hellbraun',9],
-			['kupferrot',10],
-			['mittelblond', 11],
-			['mittelbraun', 12],
-			['rot', 13],
-			['rotblond', 14],
-			['schneeweiß', 15],
-			['schwarz', 16],
-			['silbern', 17],
-			['weißblond', 18],
-			['dunkelgrau', 19],
-			['hellgrau', 20],
-			['salzweiß', 21],
-			['silberweiß', 22],
-			['feuerrot', 23]
-		].filter(e =>
+		const hairArr = RaceStore.getCurrent() ? ProfileStore.getHaircolorTags().map((e,i) => [ e, i + 1 ]).filter(e =>
 			RaceStore.getCurrent().hair.indexOf(e[1]) > -1
 		) : [];
 
-		const eyesArr = RaceStore.getCurrent() ? [
-			['amethystviolett',1],
-			['bernsteinfarben',2],
-			['blau',3],
-			['braun',4],
-			['dunkelbraun',5],
-			['dunkelviolett',6],
-			['eisgrau',7],
-			['goldgesprenkelt',8],
-			['grau',9],
-			['graublau',10],
-			['grün', 11],
-			['hellbraun', 12],
-			['rubinrot', 13],
-			['saphirblau', 14],
-			['schwarz', 15],
-			['schwarzbraun', 16],
-			['silbergrau', 17],
-			['smaragdgrün', 18]
-		].filter(e =>
+		const eyesArr = RaceStore.getCurrent() ? ProfileStore.getEyecolorTags().map((e,i) => [ e, i + 1 ]).filter(e =>
 			RaceStore.getCurrent().eyes.indexOf(e[1]) > -1
 		) : [];
 
-		const gender = this.state.gender === 'm' ? 'Männlich' : 'Weiblich';
+		const socialstatusArr = CultureStore.getCurrent() ? ProfileStore.getSocialstatusTags().map((e,i) => [ e, i + 1 ]).filter(e =>
+			CultureStore.getCurrent().social.indexOf(e[1]) > -1
+		) : [];
+
+		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ], ap = APStore.get();
 
-		var currentEL = 'EL_7';
+		var currentEL = 6;
 
 		for (let i = 0; i < elAp.length; i++) {
-			if (elAp[i] >= ap) {
-				currentEL = `EL_${i > 0 ? i : 1}`;
+			if (elAp[i] === ap) {
+				currentEL = i;
+				break;
+			} else if (elAp[i] > ap) {
+				currentEL = i - 1;
 				break;
 			}
 		}
@@ -159,11 +119,11 @@ class Overview extends Component {
 			<div className="page" id="overview">
 				<Scroll>
 					<div className="title-wrapper">
-						<Avatar src={portrait} onClick={this.showImageUpload} wrapper />
+						<Avatar src={avatar} onClick={this.showImageUpload} wrapper />
 						<div className="text-wrapper">
 							{nameElement}
 							<div className="rcp">
-								{ gender } &middot; {
+								{ sex } &middot; {
 									RaceStore.getCurrent() !== undefined ? RaceStore.getCurrent().name : null
 								} &middot; {
 									CultureStore.getCurrent() !== undefined ? CultureStore.getCurrent().name : null
@@ -172,55 +132,121 @@ class Overview extends Component {
 								}
 							</div>
 							<div className="el">
-								{ELStore.get(currentEL).name} &middot; {ap} AP
+								{ELStore.get(`EL_${currentEL + 1}`).name} &middot; {ap} AP
 							</div>
 						</div>
 					</div>
-					<h3>Aussehen</h3>
-					<h4>Haarfarbe</h4>
-					<Dropdown
-						value={hair}
-						onChange={this.changeHair}
-						options={hairArr}
-						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollHair} />
-					<h4>Augenfarbe</h4>
-					<Dropdown
-						value={eyes}
-						onChange={this.changeEyes}
-						options={eyesArr}
-						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollEyes} />
-					<h4>Körpergröße</h4>
-					<TextField
-						value={size}
-						onChange={this.changeSize}
-						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollSize} />
-					<h4>Gewicht</h4>
-					<TextField
-						value={weight}
-						onChange={this.changeWeight}
-						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollWeight} />
+					<h3>Persönliche Daten</h3>
+					<div className="personal-data">
+						<div>
+							<TextField
+								labelText="Familie"
+								value={family}
+								onChange={this.changeFamily}
+								/>
+						</div>
+						<div>
+							<TextField
+								labelText="Geburtsort"
+								value={placeofbirth}
+								onChange={this.changePlaceOfBirth}
+								/>
+						</div>
+						<div>
+							<TextField
+								labelText="Geburtsdatum"
+								value={dateofbirth}
+								onChange={this.changeDateOfBirth}
+								/>
+						</div>
+						<div>
+							<TextField
+								labelText="Alter"
+								value={age}
+								onChange={this.changeAge}
+								/>
+						</div>
+						<div className="reroll">
+							<Dropdown
+								label="Haarfarbe"
+								value={haircolor}
+								onChange={this.changeHaircolor}
+								options={hairArr}
+								/>
+							<IconButton icon="&#xE863;" onClick={this.rerollHair} />
+						</div>
+						<div className="reroll">
+							<Dropdown
+								label="Augenfarbe"
+								value={eyecolor}
+								onChange={this.changeEyecolor}
+								options={eyesArr}
+								/>
+							<IconButton icon="&#xE863;" onClick={this.rerollEyes} />
+						</div>
+						<div className="reroll">
+							<TextField
+								labelText="Körpergröße"
+								value={size}
+								onChange={this.changeSize}
+								/>
+							<IconButton icon="&#xE863;" onClick={this.rerollSize} />
+						</div>
+						<div className="reroll">
+							<TextField
+								labelText="Gewicht"
+								value={weight}
+								onChange={this.changeWeight}
+								/>
+							<IconButton icon="&#xE863;" onClick={this.rerollWeight} />
+						</div>
+						<div>
+							<TextField
+								labelText="Titel"
+								value={title}
+								onChange={this.changeTitle}
+								/>
+						</div>
+						<div>
+							<Dropdown
+								label="Sozialstatus"
+								value={socialstatus}
+								onChange={this.changeSocialStatus}
+								options={socialstatusArr}
+								/>
+						</div>
+						<div>
+							<TextField
+								labelText="Charakteristika"
+								value={characteristics}
+								onChange={this.changeCharacteristics}
+								/>
+						</div>
+						<div>
+							<TextField
+								labelText="Sonstiges"
+								value={otherinfo}
+								onChange={this.changeOtherInfo}
+								/>
+						</div>
+					</div>
 					{
 						phase === 2 ? (
-							<div>
-								<BorderButton
-									label="Heldenerstellung beenden"
-									onClick={this.endCharacterCreation}
-									primary
-									/>
-							</div>
+							<BorderButton
+								className="end-char-creation"
+								label="Heldenerstellung beenden"
+								onClick={this.endCharacterCreation}
+								primary
+								/>
 						) : null
 					}
 					{
 						phase === 3 ? (
 							<div>
 								<h3>Vorteile</h3>
-								<OverviewDisAdv list={this.state.advActive} />
+								<OverviewConstSkills list={this.state.advActive} />
 								<h3>Nachteile</h3>
-								<OverviewDisAdv list={this.state.disadvActive} />
+								<OverviewConstSkills list={this.state.disadvActive} />
 							</div>
 						) : null
 					}

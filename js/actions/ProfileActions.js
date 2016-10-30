@@ -20,13 +20,37 @@ var ProfileActions = {
 	changeAvatar: function({ source: type, extern, file }) {
 		WebAPIUtils.changeHeroAvatar(type, type === 'ext' ? extern : file);
 	},
-	changeHair: function(option) {
+	changeFamily: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_FAMILY,
+			value
+		});
+	},
+	changePlaceOfBirth: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_PLACEOFBIRTH,
+			value
+		});
+	},
+	changeDateOfBirth: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_DATEOFBIRTH,
+			value
+		});
+	},
+	changeAge: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_AGE,
+			value
+		});
+	},
+	changeHaircolor: function(option) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.UPDATE_HAIRCOLOR,
 			option
 		});
 	},
-	changeEyes: function(option) {
+	changeEyecolor: function(option) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.UPDATE_EYECOLOR,
 			option
@@ -41,6 +65,30 @@ var ProfileActions = {
 	changeWeight: function(value) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.UPDATE_WEIGHT,
+			value
+		});
+	},
+	changeTitle: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_TITLE,
+			value
+		});
+	},
+	changeSocialStatus: function(option) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_SOCIALSTATUS,
+			option
+		});
+	},
+	changeCharacteristics: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_CHARACTERISTICS,
+			value
+		});
+	},
+	changeOtherInfo: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_OTHERINFO,
 			value
 		});
 	},
