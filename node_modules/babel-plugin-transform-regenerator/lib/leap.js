@@ -16,15 +16,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function Entry() {
   _assert2.default.ok(this instanceof Entry);
-} /**
-   * Copyright (c) 2014, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * https://raw.github.com/facebook/regenerator/master/LICENSE file. An
-   * additional grant of patent rights can be found in the PATENTS file in
-   * the same directory.
-   */
+}
 
 function FunctionEntry(returnLoc) {
   Entry.call(this);
@@ -81,7 +73,6 @@ function TryEntry(firstLoc, catchEntry, finallyEntry) {
     finallyEntry = null;
   }
 
-  // Have to have one or the other (or both).
   _assert2.default.ok(catchEntry || finallyEntry);
 
   this.firstLoc = firstLoc;
@@ -162,10 +153,7 @@ LMp._findLeapLocation = function (property, label) {
         if (entry.label && entry.label.name === label.name) {
           return loc;
         }
-      } else if (entry instanceof LabeledEntry) {
-        // Ignore LabeledEntry entries unless we are actually breaking to
-        // a label.
-      } else {
+      } else if (entry instanceof LabeledEntry) {} else {
         return loc;
       }
     }

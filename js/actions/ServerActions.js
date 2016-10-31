@@ -1,6 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
-import HerolistStore from '../stores/core/HerolistStore';
+import HerolistStore from '../stores/HerolistStore';
 import reactAlert from '../utils/reactAlert';
 
 var ServerActions = {
@@ -82,11 +82,6 @@ var ServerActions = {
 				break;
 		}
 	},
-	logoutSuccess: function() {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.LOGOUT_SUCCESS
-		});
-	},
 	receiveAccount: function(callback, name) {
 		switch (callback) {
 			case 'false':
@@ -108,13 +103,20 @@ var ServerActions = {
 				});
 				break;
 			default: {
-				let [ id, heroes ] = JSON.parse(callback);
+				// let [ id, heroes ] = JSON.parse(callback);
+				let id = parseInt(callback);
+				let heroes = [];
 				AppDispatcher.dispatch({
 					actionType: ActionTypes.RECEIVE_ACCOUNT,
 					id, name, heroes
 				});
 			}
 		}
+	},
+	logoutSuccess: function() {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.LOGOUT_SUCCESS
+		});
 	},
 	changeUsernameSuccess: function(callback) {
 		switch (callback) {

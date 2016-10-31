@@ -1,4 +1,4 @@
 {
-  "presets": ["react", "es2015", "stage-1"],
-  "plugins": ["transform-class-properties", "transform-object-assign", "transform-do-expressions"]
+  "presets": ["es2015", "react", "stage-1"],
+  "plugins": ["transform-class-properties", "transform-do-expressions", "transform-object-assign", "transform-object-rest-spread", "transform-runtime"]
 }

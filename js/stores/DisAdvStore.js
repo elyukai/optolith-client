@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import LiturgiesStore from './LiturgiesStore';
-import RaceStore from './rcp/RaceStore';
+import RaceStore from './RaceStore';
 import SpellsStore from './SpellsStore';
 import TalentsStore from './TalentsStore';
 import ActionTypes from '../constants/ActionTypes';

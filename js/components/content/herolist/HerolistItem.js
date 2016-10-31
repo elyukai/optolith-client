@@ -1,12 +1,12 @@
 import Avatar from '../../layout/Avatar';
 import BorderButton from '../../layout/BorderButton';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import HerolistActions from '../../../actions/HerolistActions';
-import ProfessionStore from '../../../stores/rcp/ProfessionStore';
-import ProfessionVariantStore from '../../../stores/rcp/ProfessionVariantStore';
+import ProfessionStore from '../../../stores/ProfessionStore';
+import ProfessionVariantStore from '../../../stores/ProfessionVariantStore';
 import ProfileStore from '../../../stores/ProfileStore';
 import ProgressArc from 'react-progress-arc';
-import RaceStore from '../../../stores/rcp/RaceStore';
+import RaceStore from '../../../stores/RaceStore';
 import React, { PropTypes, Component } from 'react';
 import TabActions from '../../../actions/TabActions';
 import classNames from 'classnames';

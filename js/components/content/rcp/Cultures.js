@@ -4,7 +4,7 @@ import Dropdown from '../../layout/Dropdown';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
 import CultureActions from '../../../actions/CultureActions';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import Scroll from '../../layout/Scroll';
 import TalentsStore from '../../../stores/TalentsStore';
 import TextField from '../../layout/TextField';

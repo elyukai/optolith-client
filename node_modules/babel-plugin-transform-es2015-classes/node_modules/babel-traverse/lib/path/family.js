@@ -44,7 +44,7 @@ function getStatementParent() {
   }
 
   return path;
-} // This file contains methods responsible for dealing with/retrieving children or siblings.
+}
 
 function getOpposite() {
   if (this.key === "left") {
@@ -95,10 +95,8 @@ function get(key, context) {
   if (context === true) context = this.context;
   var parts = key.split(".");
   if (parts.length === 1) {
-    // "foo"
     return this._getKey(key, context);
   } else {
-    // "foo.bar"
     return this._getPattern(parts, context);
   }
 }
@@ -110,7 +108,6 @@ function _getKey(key, context) {
   var container = node[key];
 
   if (Array.isArray(container)) {
-    // requested a container so give them all the paths
     return container.map(function (_, i) {
       return _index2.default.get({
         listKey: key,

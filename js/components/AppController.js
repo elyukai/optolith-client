@@ -1,7 +1,7 @@
 import Content from './content/Content';
 import React, { Component } from 'react';
-import TabStore from '../stores/core/TabStore';
-import WaitStore from '../stores/core/WaitStore';
+import TabStore from '../stores/TabStore';
+import WaitStore from '../stores/WaitStore';
 
 class AppController extends Component {
 

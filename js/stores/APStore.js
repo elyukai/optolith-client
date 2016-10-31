@@ -1,12 +1,13 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import CultureStore from './rcp/CultureStore';
+import CultureStore from './CultureStore';
 import ELStore from './ELStore';
 import { EventEmitter } from 'events';
 import ListStore from '../stores/ListStore';
-import RaceStore from './rcp/RaceStore';
-import ProfessionStore from './rcp/ProfessionStore';
-import ProfessionVariantStore from './rcp/ProfessionVariantStore';
+import RaceStore from './RaceStore';
+import ProfessionStore from './ProfessionStore';
+import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
+import iccalc from '../utils/iccalc';
 import reactAlert from '../utils/reactAlert';
 import reqPurchase from '../utils/reqPurchase';
 
@@ -162,8 +163,8 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 		};
 	},
 
-	getCosts: function(fw, skt, add = true) {
-		var costs = skt !== undefined ? (fw == 'aktv' ? AKTV[skt - 1] : fw < 13 ? SKT[skt - 1][0] : SKT[skt - 1][fw - 12]) : fw;
+	getCosts: function(sr, ic, add = true) {
+		var costs = ic !== undefined ? (sr === 'aktv' ? iccalc.getAC(ic) : iccalc.getIC(ic, sr)) : sr;
 		if (!add) costs = -costs;
 		return costs;
 	},

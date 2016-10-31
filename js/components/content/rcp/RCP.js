@@ -1,8 +1,8 @@
 import Cultures from './Cultures';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import Professions from './Professions';
 import Races from './Races';
-import RaceStore from '../../../stores/rcp/RaceStore';
+import RaceStore from '../../../stores/RaceStore';
 import React, { Component } from 'react';
 import SubTabs from '../../layout/SubTabs';
 

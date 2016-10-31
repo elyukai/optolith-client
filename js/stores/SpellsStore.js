@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './rcp/ProfessionStore';
+import ProfessionStore from './ProfessionStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 

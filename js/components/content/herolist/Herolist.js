@@ -1,13 +1,13 @@
 import APStore from '../../../stores/APStore';
 import BorderButton from '../../layout/BorderButton';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import ELStore from '../../../stores/ELStore';
 import HerolistActions from '../../../actions/HerolistActions';
 import HerolistItem from './HerolistItem';
-import HerolistStore from '../../../stores/core/HerolistStore';
-import ProfessionStore from '../../../stores/rcp/ProfessionStore';
+import HerolistStore from '../../../stores/HerolistStore';
+import ProfessionStore from '../../../stores/ProfessionStore';
 import ProfileStore from '../../../stores/ProfileStore';
-import RaceStore from '../../../stores/rcp/RaceStore';
+import RaceStore from '../../../stores/RaceStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';

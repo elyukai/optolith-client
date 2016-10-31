@@ -4,7 +4,7 @@ import Dropdown from '../../layout/Dropdown';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
 import RaceActions from '../../../actions/RaceActions';
-import RaceStore from '../../../stores/rcp/RaceStore';
+import RaceStore from '../../../stores/RaceStore';
 import Scroll from '../../layout/Scroll';
 import TextField from '../../layout/TextField';
 import classNames from 'classnames';

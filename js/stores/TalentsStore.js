@@ -1,11 +1,11 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import CultureStore from './rcp/CultureStore';
+import CultureStore from './CultureStore';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './rcp/ProfessionStore';
-import ProfessionVariantStore from './rcp/ProfessionVariantStore';
+import ProfessionStore from './ProfessionStore';
+import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 

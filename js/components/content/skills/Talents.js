@@ -1,6 +1,6 @@
 import BorderButton from '../../layout/BorderButton';
 import Checkbox from '../../layout/Checkbox';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import PhaseStore from '../../../stores/PhaseStore';
 import RadioButtonGroup from '../../layout/RadioButtonGroup';
 import React, { Component } from 'react';

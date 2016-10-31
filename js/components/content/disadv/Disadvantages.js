@@ -1,11 +1,11 @@
 import BorderButton from '../../layout/BorderButton';
 import Checkbox from '../../layout/Checkbox';
-import CultureStore from '../../../stores/rcp/CultureStore';
+import CultureStore from '../../../stores/CultureStore';
 import DisAdvActions from '../../../actions/DisAdvActions';
 import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../../stores/DisAdvStore';
-import ProfessionStore from '../../../stores/rcp/ProfessionStore';
-import RaceStore from '../../../stores/rcp/RaceStore';
+import ProfessionStore from '../../../stores/ProfessionStore';
+import RaceStore from '../../../stores/RaceStore';
 import React, { Component } from 'react';
 import Slidein from '../../layout/Slidein';
 import TextField from '../../layout/TextField';

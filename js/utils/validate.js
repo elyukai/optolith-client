@@ -1,6 +1,6 @@
-import CultureStore from '../stores/rcp/CultureStore';
-import ProfessionStore from '../stores/rcp/ProfessionStore';
-import RaceStore from '../stores/rcp/RaceStore';
+import CultureStore from '../stores/CultureStore';
+import ProfessionStore from '../stores/ProfessionStore';
+import RaceStore from '../stores/RaceStore';
 import ListStore from '../stores/ListStore';
 
 export const fn = (req, id) => {

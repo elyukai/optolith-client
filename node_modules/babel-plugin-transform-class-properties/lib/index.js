@@ -66,7 +66,6 @@ exports.default = function (_ref) {
           (0, _babelHelperFunctionName2.default)(path);
           ref = path.scope.generateUidIdentifier("class");
         } else {
-          // path.isClassDeclaration() && path.node.id
           ref = path.node.id;
         }
 
@@ -91,11 +90,12 @@ exports.default = function (_ref) {
           if (!propNode.value) continue;
 
           var isStatic = propNode.static;
+          var isComputed = propNode.computed || t.isLiteral(_prop.key);
 
           if (isStatic) {
-            nodes.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(ref, propNode.key), propNode.value)));
+            nodes.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(ref, propNode.key, isComputed), propNode.value)));
           } else {
-            instanceBody.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(t.thisExpression(), propNode.key), propNode.value)));
+            instanceBody.push(t.expressionStatement(t.assignmentExpression("=", t.memberExpression(t.thisExpression(), propNode.key, isComputed), propNode.value)));
           }
         }
 
@@ -142,8 +142,6 @@ exports.default = function (_ref) {
 
             instanceBody = [t.expressionStatement(t.callExpression(t.memberExpression(initialisePropsRef, t.identifier("call")), [t.thisExpression()]))];
           }
-
-          //
 
           if (isDerived) {
             var bareSupers = [];
@@ -192,7 +190,6 @@ exports.default = function (_ref) {
           path.scope.push({ id: ref });
           path.replaceWith(t.assignmentExpression("=", ref, path.node));
         } else {
-          // path.isClassDeclaration()
           if (!path.node.id) {
             path.node.id = ref;
           }
@@ -226,6 +223,4 @@ var _babelHelperFunctionName2 = _interopRequireDefault(_babelHelperFunctionName)
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* eslint max-len: 0 */
-// todo: define instead of assign
 module.exports = exports["default"];

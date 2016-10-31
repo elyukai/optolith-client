@@ -1,4 +1,4 @@
-import VersionStore from '../../../stores/core/VersionStore';
+import VersionStore from '../../../stores/VersionStore';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
 

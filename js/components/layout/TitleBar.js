@@ -1,5 +1,5 @@
 import AccountActions from '../../actions/AccountActions';
-import AccountStore from '../../stores/core/AccountStore';
+import AccountStore from '../../stores/AccountStore';
 import APStore from '../../stores/APStore';
 import Avatar from './Avatar';
 import BorderButton from './BorderButton';

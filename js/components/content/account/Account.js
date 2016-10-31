@@ -1,5 +1,5 @@
 import AccountActions from '../../../actions/AccountActions';
-import AccountStore from '../../../stores/core/AccountStore';
+import AccountStore from '../../../stores/AccountStore';
 import BorderButton from '../../layout/BorderButton';
 import IconButton from '../../layout/IconButton';
 import React, { Component } from 'react';
