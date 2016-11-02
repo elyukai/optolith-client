@@ -3,8 +3,6 @@ import { EventEmitter } from 'events';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 
@@ -13,14 +11,6 @@ const CATEGORY = Categories.COMBAT_TECHNIQUES;
 var _filter = '';
 var _sortOrder = 'name';
 
-function _addPoint(id) {
-	ListStore.addPoint(id);
-}
-
-function _removePoint(id) {
-	ListStore.removePoint(id);
-}
-
 function _updateFilterText(text) {
 	_filter = text;
 }
@@ -28,46 +18,8 @@ function _updateFilterText(text) {
 function _updateSortOrder(option) {
 	_sortOrder = option;
 }
-
-function _clear() {
-	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.setSR(e.id, 6);
-		ListStore.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(obj) {
-	obj.active.forEach(e => {
-		ListStore.setSR(...e);
-	});
-}
-
-function _assignRCP(selections) {
-	var list = [];
-
-	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-		list.push(...ProfessionStore.getCurrent().combattech);
-	if (ProfessionVariantStore.getCurrentID() !== null)
-		list.push(...ProfessionVariantStore.getCurrent().combattech);
-
-	list.forEach(e => ListStore.addSR(e[0], e[1]));
-
-	Array.from(selections.combattech).forEach(e => {
-		ListStore.activate(e);
-		ListStore.addSR(e, selections.map.get('ct')[1]);
-	});
-}
 	
 var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(rawTechniques) {
-		for (let id in rawTechniques) {
-			rawTechniques[id].fw = 6;
-			rawTechniques[id].category = CATEGORY;
-			rawTechniques[id].dependencies = [];
-		}
-		ListStore.init(rawTechniques);
-	},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -187,13 +139,8 @@ CombatTechniquesStore.dispatchToken = AppDispatcher.register( function( payload 
 
 	switch( payload.actionType ) {
 
-		case ActionTypes.CLEAR_HERO:
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			break;
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.ct);
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 			break;
 
 		case ActionTypes.FILTER_COMBATTECHNIQUES:
@@ -202,22 +149,6 @@ CombatTechniquesStore.dispatchToken = AppDispatcher.register( function( payload 
 
 		case ActionTypes.SORT_COMBATTECHNIQUES:
 			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-			_addPoint(payload.id);
-			break;
-
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-			_removePoint(payload.id);
-			break;
-
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			CombatTechniquesStore.init(payload.combattech);
 			break;
 		
 		default:

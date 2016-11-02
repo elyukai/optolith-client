@@ -37,6 +37,10 @@ var ELStore = Object.assign({}, EventEmitter.prototype, {
 		return _el[id];
 	},
 
+	getAll: function() {
+		return _el;
+	},
+
 	getStartID: function() {
 		return _start;
 	},

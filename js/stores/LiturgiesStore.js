@@ -3,7 +3,6 @@ import { EventEmitter } from 'events';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './ProfessionStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 
@@ -12,58 +11,12 @@ const CATEGORY = Categories.CHANTS;
 var _filter = '';
 var _sortOrder = 'name';
 
-function _activate(id) {
-	ListStore.activate(id);
-}
-
-function _deactivate(id) {
-	ListStore.deactivate(id);
-}
-
-function _addPoint(id) {
-	ListStore.addPoint(id);
-}
-
-function _removePoint(id) {
-	ListStore.removePoint(id);
-}
-
 function _updateFilterText(text) {
 	_filter = text;
 }
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
-}
-
-function _clear() {
-	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.deactivate(e.id);
-		ListStore.setSR(e.id, 0);
-		ListStore.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(obj) {
-	obj.active.forEach(e => {
-		ListStore.activate(e[0]);
-		if (ListStore.get(e[0]).gr !== 3) {
-			ListStore.setSR(...e);
-		}
-	});
-}
-
-function _assignRCP() {
-	var list = [];
-
-	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-		list.push(...ProfessionStore.getCurrent().chants);
-
-	list.forEach(e => {
-		ListStore.activate(e[0]);
-		if (e[1] !== null)
-			ListStore.setSR(e[0], e[1]);
-	});
 }
 
 function _filterAndSort(array) {
@@ -102,17 +55,6 @@ function _filterAndSort(array) {
 }
 	
 var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(obj) {
-		for (let id in obj) {
-			obj[id].fw = 0;
-			obj[id].check = obj[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
-			obj[id].active = false;
-			obj[id].category = CATEGORY;
-			obj[id].dependencies = [];
-		}
-		ListStore.init(obj);
-	},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -238,13 +180,10 @@ LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
-		case ActionTypes.CLEAR_HERO:
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			break;
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.chants);
+		case ActionTypes.ACTIVATE_LITURGY:
+		case ActionTypes.DEACTIVATE_LITURGY:
+		case ActionTypes.ADD_LITURGY_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT:
 			break;
 
 		case ActionTypes.FILTER_LITURGIES:
@@ -253,30 +192,6 @@ LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.SORT_LITURGIES:
 			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.ACTIVATE_LITURGY:
-			_activate(payload.id);
-			break;
-
-		case ActionTypes.DEACTIVATE_LITURGY:
-			_deactivate(payload.id);
-			break;
-
-		case ActionTypes.ADD_LITURGY_POINT:
-			_addPoint(payload.id);
-			break;
-
-		case ActionTypes.REMOVE_LITURGY_POINT:
-			_removePoint(payload.id);
-			break;
-
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			LiturgiesStore.init(payload.liturgies);
 			break;
 		
 		default:

@@ -1,6 +1,11 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
+import CultureStore from './CultureStore';
+import ProfessionStore from './ProfessionStore';
+import ProfessionVariantStore from './ProfessionVariantStore';
+import RaceStore from './RaceStore';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
 
 var _list = {};
 
@@ -13,19 +18,19 @@ function _deactivate(id) {
 }
 
 function _addPoint(id) {
-	_list[id].fw++;
-}
-
-function _removePoint(id) {
-	_list[id].fw--;
-}
-
-function _addAttrPoint(id) {
 	_list[id].value++;
 }
 
-function _removeAttrPoint(id) {
+function _removePoint(id) {
 	_list[id].value--;
+}
+
+function _setValue(id, value) {
+	_list[id].value = value;
+}
+
+function _addSR(id, amount) {
+	_list[id].value += amount;
 }
 
 function _addDependencies(reqs, sel) {
@@ -91,12 +96,147 @@ function _removeDependencies(reqs, sel) {
 		}
 	});
 }
+
+
+
+function _init({ attributes, talents, combattech, spells, liturgies }) {
+	for (let id in attributes) {
+		_list[id] = attributes[id];
+		_list[id].category = Categories.ATTRIBUTES;
+		_list[id].dependencies = [];
+	}
+	for (let id in talents) {
+		_list[id] = talents[id];
+		_list[id].value = 0;
+		_list[id].category = Categories.TALENTS;
+		_list[id].dependencies = [];
+	}
+	for (let id in combattech) {
+		_list[id] = combattech[id];
+		_list[id].value = 6;
+		_list[id].category = Categories.COMBAT_TECHNIQUES;
+		_list[id].dependencies = [];
+	}
+	for (let id in spells) {
+		_list[id] = spells[id];
+		_list[id].value = 0;
+		_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
+		_list[id].active = false;
+		_list[id].category = Categories.SPELLS;
+		_list[id].dependencies = [];
+	}
+	for (let id in liturgies) {
+		_list[id] = liturgies[id];
+		_list[id].value = 0;
+		_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
+		_list[id].active = false;
+		_list[id].category = Categories.CHANTS;
+		_list[id].dependencies = [];
+	}
+}
+
+function _updateAll({ attr, talents, ct, spells, chants }) {
+	attr.values.forEach(e => {
+		let [ id, value, mod ] = e;
+		_setValue(id, value);
+		_list[id].mod = mod;
+	});
+	talents.active.forEach(e => {
+		_setValue(...e);
+	});
+	ct.active.forEach(e => {
+		_setValue(...e);
+	});
+	spells.active.forEach(e => {
+		_activate(e[0]);
+		if (_list[e[0]].gr !== 5) {
+			_setValue(...e);
+		}
+	});
+	chants.active.forEach(e => {
+		_activate(e[0]);
+		if (_list[e[0]].gr !== 3) {
+			_setValue(...e);
+		}
+	});
+}
+
+function _assignRCP(selections) {
+	let currentRace = RaceStore.getCurrent() || {};
+	_list[selections.attrSel].mod = currentRace.attr_sel[0] || 0;
+
+	var addSRList = [];
+	var addSRActivateList = [];
+
+	if (selections.useCulturePackage) {
+		addSRList.push(...CultureStore.getCurrent().talents);
+	}
+	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1) {
+		addSRList.push(...ProfessionStore.getCurrent().talents);
+		addSRList.push(...ProfessionStore.getCurrent().combattech);
+		addSRActivateList.push(...ProfessionStore.getCurrent().spells);
+		addSRActivateList.push(...ProfessionStore.getCurrent().chants);
+	}
+	if (ProfessionVariantStore.getCurrentID() !== null) {
+		addSRList.push(...ProfessionVariantStore.getCurrent().talents);
+		addSRList.push(...ProfessionVariantStore.getCurrent().combattech);
+	}
+
+	Array.from(selections.combattech).forEach(e => {
+		addSRList.push([e, selections.map.get('ct')[1]]);
+	});
+
+	Array.from(selections.cantrips).forEach(e => {
+		addSRList.push([e, null]);
+	});
+
+	Array.from(selections.curses).forEach(e => {
+		addSRList.push(e);
+	});
+
+	addSRList.forEach(e => _addSR(...e));
+	addSRActivateList.forEach(e => {
+		_activate(e[0]);
+		if (e[1] !== null) {
+			_setValue(e[0], e[1]);
+		}
+	});
+}
+
+function _clear() {
+	for (let id in _list) {
+		let e = _list[id];
+		switch (e.category) {
+			case Categories.ATTRIBUTES:
+				e.value = 8;
+				e.value = 0;
+				e.dependencies = [];
+				break;
+			case Categories.TALENTS:
+				e.value = 0;
+				e.dependencies = [];
+				break;
+			case Categories.COMBAT_TECHNIQUES:
+				e.value = 6;
+				e.dependencies = [];
+				break;
+			case Categories.SPELLS:
+				e.active = false;
+				e.value = 0;
+				e.dependencies = [];
+				break;
+			case Categories.CHANTS:
+				e.active = false;
+				e.value = 0;
+				e.dependencies = [];
+				break;
+		}
+	}
+}
 	
 var ListStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(...obj) {
-		_list = Object.assign(_list, ...obj);
-	},
+	
+	init: function() {},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -110,60 +250,12 @@ var ListStore = Object.assign({}, EventEmitter.prototype, {
 		this.removeListener('change', callback);
 	},
 
-	set: function(id, obj) {
-		_list[id] = obj;
+	addDependencies: function(...props) {
+		_addDependencies(...props);
 	},
 
-	setSR: function(id, value) {
-		_list[id].fw = value;
-	},
-
-	setProperty: function(id, property, value) {
-		if (value === undefined) {
-			delete _list[id][property];
-		} else {
-			_list[id][property] = value;
-		}
-	},
-
-	addToProperty: function(id, property, value) {
-		_list[id][property] += value;
-	},
-
-	addSR: function(id, value) {
-		this.addToProperty(id, 'fw', value);
-	},
-
-	addDependencies: function(reqs, sel) {
-		_addDependencies(reqs, sel);
-	},
-
-	removeDependencies: function(reqs, sel) {
-		_removeDependencies(reqs, sel);
-	},
-
-	activate: function(id) {
-		_activate(id);
-	},
-
-	deactivate: function(id) {
-		_deactivate(id);
-	},
-
-	addPoint: function(id) {
-		_addPoint(id);
-	},
-
-	removePoint: function(id) {
-		_removePoint(id);
-	},
-
-	addAttrPoint: function(id) {
-		_addAttrPoint(id);
-	},
-
-	removeAttrPoint: function(id) {
-		_removeAttrPoint(id);
+	removeDependencies: function(...props) {
+		_removeDependencies(...props);
 	},
 
 	get: function(id) {
@@ -249,6 +341,63 @@ var ListStore = Object.assign({}, EventEmitter.prototype, {
 		}
 		return list;
 	}
+
+});
+
+ListStore.dispatchToken = AppDispatcher.register( function( payload ) {
+
+	switch( payload.actionType ) {
+
+		case ActionTypes.RECEIVE_RAW_LISTS:
+			_init(payload);
+			break;
+
+		case ActionTypes.RECEIVE_HERO:
+			_updateAll(payload);
+			break;
+
+		case ActionTypes.ASSIGN_RCP_ENTRIES:
+			_assignRCP(payload.selections);
+			break;
+
+		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.CREATE_NEW_HERO:
+			_clear();
+			break;
+
+		case ActionTypes.ACTIVATE_SPELL:
+		case ActionTypes.ACTIVATE_LITURGY:
+			_activate(payload.id);
+			break;
+
+		case ActionTypes.DEACTIVATE_SPELL:
+		case ActionTypes.DEACTIVATE_LITURGY:
+			_deactivate(payload.id);
+			break;
+
+		case ActionTypes.ADD_ATTRIBUTE_POINT:
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.ADD_LITURGY_POINT:
+			_addPoint(payload.id);
+			break;
+
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT:
+			_removePoint(payload.id);
+			break;
+		
+		default:
+			return true;
+	}
+	
+	ListStore.emitChange();
+
+	return true;
 
 });
 

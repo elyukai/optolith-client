@@ -36,16 +36,6 @@ var CultureActions = {
 			actionType: ActionTypes.CHANGE_CULTURE_VIEW,
 			view
 		});
-	},
-	changePackage: function() {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.CHANGE_CULTURE_PACKAGE
-		});
-	},
-	changeLiteracy: function() {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.CHANGE_CULTURE_LITERACY
-		});
 	}
 };
 

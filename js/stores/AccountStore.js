@@ -1,9 +1,9 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 
-var _id = 4;
-var _name = 'Elytherion';
+var _id = null;
+var _name = '';
 
 function updateAll(id, name) {
 	_id = id;
@@ -64,6 +64,10 @@ AccountStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.LOGOUT_SUCCESS:
 			reset();
+			break;
+			
+		case ActionTypes.RECEIVE_RAW_LISTS:
+			updateAll(4, 'Elytherion');
 			break;
 			
 		default:

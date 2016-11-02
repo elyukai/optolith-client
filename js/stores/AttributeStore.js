@@ -17,14 +17,6 @@ var _sk = 0;
 var _zk = 0;
 var _gs = 0;
 
-function _addPoint(id) {
-	ListStore.addAttrPoint(id);
-}
-
-function _removePoint(id) {
-	ListStore.removeAttrPoint(id);
-}
-
 function _addMaxEnergyPoint(id) {
 	switch (id) {
 		case 'LE':
@@ -40,11 +32,6 @@ function _addMaxEnergyPoint(id) {
 }
 
 function _clear() {
-	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.setProperty(e.id, 'value', 8);
-		ListStore.setProperty(e.id, 'mod', 0);
-		ListStore.setProperty(e.id, 'dependencies', []);
-	});
 	_le = 0;
 	_le_add = 0;
 	_ae_add = 0;
@@ -55,10 +42,6 @@ function _clear() {
 }
 
 function _updateAll(obj) {
-	obj.values.forEach(e => {
-		ListStore.setProperty(e[0], 'value', e[1]);
-		ListStore.setProperty(e[0], 'mod', e[2]);
-	});
 	_le = obj._le;
 	_le_add = obj._le_add;
 	_ae_add = obj._ae_add;
@@ -68,27 +51,15 @@ function _updateAll(obj) {
 	_gs = obj._gs;
 }
 
-function _assignRCP(selections) {
-	let currentRace = RaceStore.getCurrent() || {};
-	let mod = 0;
-
-	mod = currentRace.attr_sel[0];
+function _assignRCP() {
+	let currentRace = RaceStore.getCurrent() || { le: 0, sk: 0, zk: 0, gs: 0 };
 	_le = currentRace.le;
 	_sk = currentRace.sk;
 	_zk = currentRace.zk;
 	_gs = currentRace.gs;
-
-	ListStore.addToProperty(selections.attrSel, 'mod', mod);
 }
 
 var AttributeStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(rawAttributes) {
-		for (let id in rawAttributes) {
-			rawAttributes[id].category = CATEGORY;
-		}
-		ListStore.init(rawAttributes);
-	},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -191,11 +162,7 @@ AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			break;
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
-			_addPoint(payload.id);
-			break;
-
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-			_removePoint(payload.id);
 			break;
 
 		case ActionTypes.ADD_MAX_ENERGY_POINT:
@@ -204,10 +171,6 @@ AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.ASSIGN_RCP_ENTRIES:
 			_assignRCP(payload.selections);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			AttributeStore.init(payload.attributes);
 			break;
 		
 		default:

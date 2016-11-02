@@ -17,6 +17,7 @@ import ProfileStore from '../../../stores/ProfileStore';
 import React, { Component } from 'react';
 import Scroll from '../../layout/Scroll';
 import TextField from '../../layout/TextField';
+import calcEL from '../../../utils/calcEL';
 
 class Overview extends Component {
 	
@@ -70,6 +71,7 @@ class Overview extends Component {
 	rerollWeight = () => ProfileActions.rerollWeight();
 
 	endCharacterCreation = () => ProfileActions.endCharacterCreation();
+	deleteHero = () => ProfileActions.deleteHero();
 
 	render() {
 
@@ -89,19 +91,8 @@ class Overview extends Component {
 
 		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
-		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ], ap = APStore.get();
-
-		var currentEL = 6;
-
-		for (let i = 0; i < elAp.length; i++) {
-			if (elAp[i] === ap) {
-				currentEL = i;
-				break;
-			} else if (elAp[i] > ap) {
-				currentEL = i - 1;
-				break;
-			}
-		}
+		const ap = APStore.get();
+		const currentEL = calcEL(ap);
 
 		const nameElement = editName ? (
 			<OverviewNameChange
@@ -132,7 +123,7 @@ class Overview extends Component {
 								}
 							</div>
 							<div className="el">
-								{ELStore.get(`EL_${currentEL + 1}`).name} &middot; {ap} AP
+								{ELStore.get(currentEL).name} &middot; {ap} AP
 							</div>
 						</div>
 					</div>
@@ -232,12 +223,14 @@ class Overview extends Component {
 					</div>
 					{
 						phase === 2 ? (
-							<BorderButton
-								className="end-char-creation"
-								label="Heldenerstellung beenden"
-								onClick={this.endCharacterCreation}
-								primary
-								/>
+							<div>
+								<BorderButton
+									className="end-char-creation"
+									label="Heldenerstellung beenden"
+									onClick={this.endCharacterCreation}
+									primary
+									/>
+							</div>
 						) : null
 					}
 					{
@@ -247,6 +240,11 @@ class Overview extends Component {
 								<OverviewConstSkills list={this.state.advActive} />
 								<h3>Nachteile</h3>
 								<OverviewConstSkills list={this.state.disadvActive} />
+								<BorderButton
+									className="delete-char"
+									label="Held löschen"
+									onClick={this.deleteHero}
+									/>
 							</div>
 						) : null
 					}

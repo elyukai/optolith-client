@@ -1,9 +1,7 @@
+import APStore from '../stores/APStore';
+
 // AC = Activation Cost
 // IC = Improvement Cost
-
-export function getAC(ic) {
-	return ic === 5 ? 15 : ic;
-}
 
 export function getIC(ic, sr) {
 	const f = ic === 5 ? 15 : ic;
@@ -14,4 +12,27 @@ export function getIC(ic, sr) {
 	}
 }
 
-export default { getAC, getIC };
+export function final(ic, sr) {
+	if (sr) {
+		let add = 1;
+		if (ic < 0) {
+			ic = Math.abs(ic);
+			add = -1;
+		}
+		return getIC(ic, sr) * add;
+	} else {
+		return ic;
+	}
+}
+
+export function check(cost) {
+	if (cost > 0) {
+		let available = APStore.getAvailable();
+		return cost <= available;
+	}
+	return true;
+}
+
+export const validate = (ic, sr) => check(final(ic, sr));
+
+export default validate;

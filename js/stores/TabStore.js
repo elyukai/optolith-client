@@ -1,8 +1,8 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 import AccountStore from './AccountStore';
-import PhaseStore from '../PhaseStore';
+import PhaseStore from './PhaseStore';
 
 var _currentTab = 'herolist';
 var _currentSection = 'main';

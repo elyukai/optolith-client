@@ -1,6 +1,6 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 
 var _waiting = true;
 

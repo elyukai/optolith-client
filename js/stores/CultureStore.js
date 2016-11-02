@@ -1,7 +1,7 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
 import RaceStore from './RaceStore';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 
 var _currentID = null;
 var _cultures = {};

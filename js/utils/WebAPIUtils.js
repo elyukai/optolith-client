@@ -131,7 +131,7 @@ var WebAPIUtils = {
 		}
 	},
 	loadHero: async function(id) {
-		try {
+		// try {
 			ServerActions.startLoading();
 			ServerActions.loadHeroSuccess(id, `{
 				"sex":"m",
@@ -176,7 +176,8 @@ var WebAPIUtils = {
 				},
 				"talents":{
 					"active":[["TAL_8",6],["TAL_10",4],["TAL_18",7],["TAL_20",5],["TAL_21",4],["TAL_25",4],["TAL_28",9],["TAL_29",7],["TAL_34",4],["TAL_38",5],["TAL_39",3],["TAL_40",2],["TAL_47",5],["TAL_48",8],["TAL_50",7],["TAL_51",1],["TAL_55",1],["TAL_59",1]],
-					"_talentRating":true},
+					"_talentRating":true
+				},
 				"ct":{
 					"active":[["CT_3",8],["CT_5",8]]
 				},
@@ -193,9 +194,9 @@ var WebAPIUtils = {
 			}`);
 			// let result = await request.get('php/gethero.php?hid=' + id);
 			// ServerActions.loadHeroSuccess(id, result);
-		} catch(e) {
-			ServerActions.connectionError(e);
-		}
+		// } catch(e) {
+		// 	ServerActions.connectionError(e);
+		// }
 	},
 	createNewHero: async function(heroname) {
 		try {

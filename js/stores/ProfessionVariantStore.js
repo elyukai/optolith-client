@@ -1,9 +1,9 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import { EventEmitter } from 'events';
 import ProfessionStore from './ProfessionStore';
-import ProfileStore from '../ProfileStore';
-import ActionTypes from '../../constants/ActionTypes';
+import ProfileStore from './ProfileStore';
+import ActionTypes from '../constants/ActionTypes';
 
 var _currentID = null;
 var _professionVariants = [];

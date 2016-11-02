@@ -1,11 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import CultureStore from './CultureStore';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 
@@ -14,14 +11,6 @@ const CATEGORY = Categories.TALENTS;
 var _filter = '';
 var _sortOrder = 'groups';
 var _talentRating = true;
-
-function _addPoint(id) {
-	ListStore.addPoint(id);
-}
-
-function _removePoint(id) {
-	ListStore.removePoint(id);
-}
 
 function _updateFilterText(text) {
 	_filter = text;
@@ -34,48 +23,8 @@ function _updateSortOrder(option) {
 function _updateTalentRating() {
 	_talentRating = !_talentRating;
 }
-
-function _clear() {
-	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.setSR(e.id, 0);
-		ListStore.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(obj) {
-	obj.active.forEach(e => {
-		ListStore.setSR(...e);
-	});
-	_talentRating = obj._talentRating;
-}
-
-function _assignRCP(selections) {
-	var list = [];
-
-	if (selections.useCulturePackage)
-		list.push(...CultureStore.getCurrent().talents);
-	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-		list.push(...ProfessionStore.getCurrent().talents);
-	if (ProfessionVariantStore.getCurrentID() !== null)
-		list.push(...ProfessionVariantStore.getCurrent().talents);
-
-	list.forEach(e => ListStore.addSR(e[0], e[1]));
-}
 	
 var TalentsStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(rawTalents) {
-		for (let id in rawTalents) {
-			rawTalents[id].fw = 0;
-			rawTalents[id].category = CATEGORY;
-			rawTalents[id].dependencies = [];
-		}
-		ListStore.init(rawTalents);
-	},
-
-	getNameByID: function(id) {
-		return ListStore.get(id).name;
-	},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -106,6 +55,10 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 
 	get: function(id) {
 		return ListStore.get(id);
+	},
+
+	getNameByID: function(id) {
+		return ListStore.get(id).name;
 	},
 
 	getAllForView: function() {
@@ -187,13 +140,8 @@ TalentsStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 	switch( payload.actionType ) {
 
-		case ActionTypes.CLEAR_HERO:
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			break;
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.talents);
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
 			break;
 
 		case ActionTypes.FILTER_TALENTS:
@@ -206,22 +154,6 @@ TalentsStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.CHANGE_TALENT_RATING:
 			_updateTalentRating();
-			break;
-
-		case ActionTypes.ADD_TALENT_POINT:
-			_addPoint(payload.id);
-			break;
-
-		case ActionTypes.REMOVE_TALENT_POINT:
-			_removePoint(payload.id);
-			break;
-
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			TalentsStore.init(payload.talents);
 			break;
 		
 		default:

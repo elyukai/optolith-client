@@ -1,6 +1,6 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 
 var _heroes = {
 	'H_1': {
@@ -139,7 +139,7 @@ HerolistStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.RECEIVE_ACCOUNT:
 		case ActionTypes.RECEIVE_RAW_HEROES:
-			_updateHeroes(payload.rawHeroes);
+			_updateHeroes(payload.heroes);
 			break;
 
 		default:

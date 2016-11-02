@@ -156,6 +156,10 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 		return _max - _used;
 	},
 
+	getAvailable: function() {
+		return _max - _used;
+	},
+
 	getForDisAdv: function() {
 		return {
 			adv: [_adv, _adv_mag, _adv_kar],

@@ -1,9 +1,9 @@
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
-import ELStore from '../ELStore';
+import ELStore from './ELStore';
 import RaceStore from './RaceStore';
 import { EventEmitter } from 'events';
-import ActionTypes from '../../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 
 var _currentID = null;
 var _professions = {};
