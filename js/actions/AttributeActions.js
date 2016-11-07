@@ -11,32 +11,22 @@ var AttributeActions = {
 		});
 	},
 	addPoint: function(id) {
-		var attribute = AttributeStore.get(id);
-		var costs = APStore.validate(attribute.value + 1, 5);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.ADD_ATTRIBUTE_POINT,
-				id, costs
-			});
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ADD_ATTRIBUTE_POINT,
+			id
+		});
 	},
 	removePoint: function(id) {
-		var attribute = AttributeStore.get(id);
-		var costs = APStore.getCosts(attribute.value, 5, false);
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.REMOVE_ATTRIBUTE_POINT,
-			id, costs
+			id
 		});
 	},
 	addMaxEnergyPoint: function(id) {
-		var value = AttributeStore.getAdd(id);
-		var costs = APStore.validate(value + 1, 4);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.ADD_MAX_ENERGY_POINT,
-				id, costs
-			});
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ADD_MAX_ENERGY_POINT,
+			id
+		});
 	}
 };
 

@@ -67,7 +67,7 @@ class SpecialAbilitiesListRemoveItem extends Component {
 			ap = item.tier === 4 && item.id === 'SA_30' ? 0 : item.ap * item.tier;
 		}
 
-		args.costs = -ap;
+		args.costs = ap;
 
 		if (item.hasOwnProperty('sid')) args.sid = item.sid;
 
@@ -85,7 +85,7 @@ class SpecialAbilitiesListRemoveItem extends Component {
 						{tierElement}
 					</div>
 				</td>
-				<td className="ap">{ap}</td>
+				<td className="ap">-{ap}</td>
 				{ this.props.phase < 3 ? (
 					<td className="inc">
 						<BorderButton label="-" onClick={this.removeFromList.bind(null, args)} disabled={disabled} />

@@ -93,7 +93,7 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 		var liturgies = [];
 
 		var SA_103_ACTIVE = this.get('SA_103').active;
-		var liturgiesAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.fw >= 10);
+		var liturgiesAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10);
 		var counter = {};
 		liturgiesAbove10.forEach(n => {
 			n.aspc.forEach(e => {

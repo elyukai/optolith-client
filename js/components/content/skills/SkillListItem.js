@@ -5,23 +5,22 @@ import classNames from 'classnames';
 class SkillListItem extends Component {
 
 	static propTypes = {
-		typ: PropTypes.bool,
-		untyp: PropTypes.bool,
-		group: PropTypes.string,
-		name: PropTypes.string,
-		fw: PropTypes.number,
-		children: PropTypes.node,
-		check: PropTypes.array,
-		checkDisabled: PropTypes.bool,
-		checkmod: PropTypes.string,
-		skt: PropTypes.number,
-		isNotActive: PropTypes.bool,
 		activate: PropTypes.func,
 		activateDisabled: PropTypes.bool,
 		addPoint: PropTypes.func,
 		addDisabled: PropTypes.bool,
+		check: PropTypes.array,
+		checkDisabled: PropTypes.bool,
+		checkmod: PropTypes.string,
+		group: PropTypes.string,
+		ic: PropTypes.number,
+		isNotActive: PropTypes.bool,
+		name: PropTypes.string,
 		removePoint: PropTypes.func,
-		removeDisabled: PropTypes.bool
+		removeDisabled: PropTypes.bool,
+		sr: PropTypes.number,
+		typ: PropTypes.bool,
+		untyp: PropTypes.bool
 	};
 
 	constructor(props) {
@@ -30,7 +29,7 @@ class SkillListItem extends Component {
 
 	render() {
 
-		const { typ, untyp, group, name, fw, children, check, checkDisabled, checkmod, skt, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+		const { typ, untyp, group, name, sr, children, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
 
 		const className = classNames({
 			'typ': typ,
@@ -41,8 +40,8 @@ class SkillListItem extends Component {
 			<td className="type">{group}</td>
 		) : null;
 
-		const fwElement = fw || fw === 0 ? (
-			<td className="fw">{fw}</td>
+		const fwElement = sr || sr === 0 ? (
+			<td className="fw">{sr}</td>
 		) : !addPoint && !isNotActive ? (
 			<td className="fw"></td>
 		) : null;
@@ -65,7 +64,7 @@ class SkillListItem extends Component {
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
 		
 		const sktElement = (
-			<td className="skt">{skt ? COMP[skt - 1] : ''}</td>
+			<td className="skt">{ic ? COMP[ic - 1] : ''}</td>
 		);
 		
 		const btnElement = isNotActive ? (

@@ -20,10 +20,6 @@ class Liturgies extends Component {
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
-
-	constructor(props) {
-		super(props);
-	}
 	
 	_updateLiturgiesStore = () => this.setState({ 
 		liturgiesActive: LiturgiesStore.getActiveForView(),
@@ -101,7 +97,7 @@ class Liturgies extends Component {
 										const obj = liturgy.gr === 3 ? {} : {
 											check,
 											checkmod,
-											skt: liturgy.skt
+											ic: liturgy.skt
 										};
 
 										return (
@@ -164,10 +160,10 @@ class Liturgies extends Component {
 									const aspc = liturgy.aspc.map(asp => ASPC[asp - 1]).sort().join(', ');
 
 									const obj = liturgy.gr === 3 ? {} : {
-										fw: liturgy.fw,
+										sr: liturgy.value,
 										check,
 										checkmod,
-										skt: liturgy.skt,
+										ic: liturgy.skt,
 										addPoint: this.addPoint.bind(null, liturgy.id),
 										addDisabled: liturgy.disabledIncrease
 									};

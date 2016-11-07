@@ -21,26 +21,24 @@ var DisAdvActions = {
 		});
 	},
 	addToList: function(args) {
-		var costs = APStore.validate(args.costs, !args.id.match('DIS'), true, true);
-		if (costs) {
-			AppDispatcher.dispatch(Object.assign({
-				actionType: ActionTypes.ACTIVATE_DISADV
-			}, args));
-		}
+		AppDispatcher.dispatch(Object.assign({
+			actionType: ActionTypes.ACTIVATE_DISADV
+		},
+			args
+		));
 	},
 	removeFromList: function(args) {
 		AppDispatcher.dispatch(Object.assign({
 			actionType: ActionTypes.DEACTIVATE_DISADV
-		}, args));
+		},
+			args
+		));
 	},
 	updateTier: function(id, tier, ap_difference, sid) {
-		var costs = APStore.validate(ap_difference, true, true, true);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.UPDATE_DISADV_TIER,
-				id, tier, costs: ap_difference, sid
-			});
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_DISADV_TIER,
+			id, tier, costs: ap_difference, sid
+		});
 	}
 };
 

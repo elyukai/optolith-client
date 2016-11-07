@@ -13,14 +13,16 @@ class BorderButton extends Component {
 
 	render() {
 
-		const className = classNames('btn', this.props.primary && 'btn-primary', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.props.className);
+		const { primary, fullWidth, disabled, label, children, onClick } = this.props;
 
-		const labelTextElement = this.props.label ? (
-			<span>{this.props.label}</span>
-		) : this.props.children;
+		const className = classNames('btn', primary && 'btn-primary', fullWidth && 'fullWidth', disabled && 'disabled', this.props.className);
+
+		const labelTextElement = label ? (
+			<span>{label}</span>
+		) : children;
 
 		return (
-			<div className={className} onClick={this.props.onClick}>
+			<div className={className} onClick={disabled ? undefined : onClick}>
 				{labelTextElement}
 			</div>
 		);

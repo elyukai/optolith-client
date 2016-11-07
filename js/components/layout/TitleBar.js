@@ -31,10 +31,6 @@ class TitleBar extends Component {
 		portrait: ProfileStore.getAvatar()
 	};
 
-	constructor(props) {
-		super(props);
-	}
-
 	_updateAccountStore = () => this.setState({ account: AccountStore.getAll() });
 	_updateAPStore = () => this.setState({ ap: APStore.get(), used: APStore.getUsed(), disadv: APStore.getForDisAdv() });
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() });
@@ -68,13 +64,12 @@ class TitleBar extends Component {
 		const { section, tab } = this.props;
 		const { account, ap, used, phase, portrait = '' } = this.state;
 
-		var showBackNav = true;
+		var showBackNav = section !== 'main';
 		var tabsElement;
 		var actionsElement;
 
 		switch (section) {
 			case 'main': {
-				showBackNav = false;
 				if (account.id === null) {
 					tabsElement = (
 						<TitleBarNav active={tab} tabs={[
@@ -84,8 +79,8 @@ class TitleBar extends Component {
 					);
 					actionsElement = (
 						<div className="right">
-							<BorderButton label="Testen" onClick={this.test} />
-							<BorderButton label="Anmelden" onClick={AccountActions.showLogin} primary />
+							<BorderButton label="Testen" onClick={this.test} disabled />
+							<BorderButton label="Anmelden" onClick={AccountActions.showLogin} primary disabled />
 						</div>
 					);
 				} else {
@@ -134,18 +129,6 @@ class TitleBar extends Component {
 								{ label: 'Eigenschaften', tag: 'attributes' },
 								{ label: 'Fertigkeiten', tag: 'skills' },
 								{ label: 'Gegenstände', tag: 'items', disabled: true }
-							]} />
-						);
-						break;
-					case 4:
-						tabsElement = (
-							<TitleBarNav active={tab} avatar={portrait} tabs={[
-								{ label: 'Profile', tag: 'profile' },
-								{ label: 'RCP', tag: 'rcp' },
-								{ label: 'Attributes', tag: 'attributes' },
-								{ label: 'Adv & Disadv', tag: 'disadv' },
-								{ label: 'Skills', tag: 'skills' },
-								{ label: 'Items', tag: 'items', disabled: true }
 							]} />
 						);
 						break;

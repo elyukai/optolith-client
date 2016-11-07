@@ -2,7 +2,6 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 import createOverlay from '../utils/createOverlay';
-import AccountStore from '../stores/AccountStore';
 import ForgotUsername from '../components/content/account/ForgotUsername';
 import ForgotPassword from '../components/content/account/ForgotPassword';
 import Login from '../components/content/account/Login';

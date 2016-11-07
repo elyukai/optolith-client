@@ -4,12 +4,6 @@ import SpellsStore from '../stores/SpellsStore';
 import ActionTypes from '../constants/ActionTypes';
 
 var SpellsActions = {
-	receiveAll: function(rawSpells) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_SPELLS,
-			rawSpells
-		});
-	},
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_SPELLS,

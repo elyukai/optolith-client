@@ -1,18 +1,13 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import CultureStore from './CultureStore';
-import CombatTechniquesStore from './CombatTechniquesStore';
 import { EventEmitter } from 'events';
 import ListStore from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
-import TalentsStore from './TalentsStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 import validate from '../utils/validate';
 
 const CATEGORY = Categories.SPECIAL_ABILITIES;
-const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
+// const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
 var _filter = '';
 var _sortOrder = 'groups';
@@ -25,236 +20,7 @@ function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
-function _activate(payload) {
-	var obj = ListStore.get(payload.id);
-	var addreq = [];
-	if (obj.max !== null) {
-		if (obj.id === 'SA_10') {
-			if (payload.input === '') {
-				obj.active.push([payload.sel, payload.sel2]);
-				addreq.push([payload.sel, obj.active.filter(e => e[0] === payload.sel).length * 6]);
-			} else if (obj.active.filter(e => e[0] === payload.input).length === 0) {
-				obj.active.push([payload.sel, payload.input]);
-				addreq.push([payload.sel, obj.active.filter(e => e[0] === payload.sel).length * 6]);
-			}
-		} else if (obj.id === 'SA_30') {
-			obj.active.push([payload.sel, payload.tier]);
-		} else if (payload.hasOwnProperty('sel')) {
-			obj.active.push(payload.sel);
-		} else if (payload.hasOwnProperty('input')) {
-			if (obj.active.filter(e => e === payload.input).length === 0) {
-				obj.active.push(payload.input);
-			}
-		}
-	} else {
-		obj.active = true;
-		if (payload.hasOwnProperty('tier')) {
-			obj.tier = payload.tier;
-		}
-		if (obj.hasOwnProperty('sel')) {
-			if (obj.hasOwnProperty('input') && payload.input !== '' && payload.input !== undefined) {
-				obj.sid = payload.input;
-			} else {
-				obj.sid = payload.sel;
-			}
-		}
-	}
-	ListStore.addDependencies(obj.req.concat(addreq));
-	ListStore.set(payload.id, obj);
-}
-
-function _deactivate(payload) {
-	var obj = ListStore.get(payload.id);
-	var addreq = [];
-	if (obj.max !== null) {
-		if (obj.id === 'SA_10') {
-			let arr = payload.sid.split('&');
-			arr = [arr.shift(), arr.join('&')];
-			for (let i = 0; i < obj.active.length; i++) {
-				if (obj.active[i][0] === arr[0] && (obj.active[i][1] === arr[1] || obj.active[i][1] === parseInt(arr[1]))) {
-					addreq.push([arr[0], obj.active.filter(e => e[0] === arr[0]).length * 6]);
-					obj.active.splice(i, 1);
-					break;
-				}
-			}
-		} else if (obj.id === 'SA_30') {
-			obj.active = obj.active.filter(e => e[0] !== payload.sid);
-		} else if (payload.hasOwnProperty('sid')) {
-			obj.active.splice(obj.active.indexOf(payload.sid), 1);
-		}
-	} else {
-		obj.active = false;
-		if (payload.hasOwnProperty('tier')) {
-			delete obj.tier;
-		}
-		if (obj.hasOwnProperty('sid')) {
-			delete obj.sid;
-		}
-	}
-	ListStore.removeDependencies(obj.req.concat(addreq));
-	ListStore.set(payload.id, obj);
-}
-
-function _updateTier(id, tier, sid) {
-	var obj = ListStore.get(id);
-	if (id === 'SA_30') {
-		for (let i = 0; i < obj.active.length; i++) {
-			if (obj.active[i][0] === sid) {
-				obj.active[i][1] = tier;
-				break;
-			}
-		}
-	} else {
-		obj.tier = tier;
-	}
-	ListStore.set(id, obj);
-}
-
-function _clear() {
-	ListStore.getAllByCategory(CATEGORY).forEach(e => {
-		ListStore.setProperty(e.id, 'active', ListStore.get(e.id).max === null ? false : []);
-		ListStore.setProperty(e.id, 'tier');
-		ListStore.setProperty(e.id, 'sid');
-		ListStore.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(payload) {
-	payload.active.forEach(e => {
-		let [ id, options ] = e;
-		var obj = ListStore.get(id);
-		if (obj.max !== null) {
-			ListStore.setProperty(id, 'active', options);
-			switch (id) {
-				case 'SA_10': {
-					let counter = new Map();
-					options.forEach(p => {
-						if (counter.has(p[0])) {
-							counter.set(p[0], counter.get(p[0]) + 1);
-						} else {
-							counter.set(p[0], 1);
-						}
-						ListStore.addDependencies(obj.req.concat([[p[0], counter.get(p[0]) * 6]]));
-					});
-					break;
-				}
-				default:
-					options.forEach(() => {
-						ListStore.addDependencies(obj.req);
-					});
-			}
-		} else {
-			ListStore.activate(id);
-			ListStore.addDependencies(obj.req);
-			for (let property in options) {
-				ListStore.setProperty(id, property, options[property]);
-			}
-		}
-	});
-}
-
-function _assignRCP(selections) {
-	var list = new Set();
-
-	if (selections.spec !== null)
-		list.add([ 'SA_10', selections.map.get('spec')[0], selections.spec ]);
-
-	if ([null, 'P_0'].indexOf(ProfessionStore.getCurrentID()) === -1)
-		ProfessionStore.getCurrent().sa.forEach(e => {
-			let [ id, value, ...options ] = e;
-			if (!value) {
-				list = new Set([...list].filter(e => e[0] !== id));
-			} else {
-				list.add([ id, ...options ]);
-			}
-		});
-	if (ProfessionVariantStore.getCurrentID() !== null)
-		ProfessionVariantStore.getCurrent().sa.forEach(e => {
-			let [ id, value, ...options ] = e;
-			if (!value) {
-				list = new Set([...list].filter(e => e[0] !== id));
-			} else {
-				list.add([ id, ...options ]);
-			}
-		});
-
-	list.forEach(e => {
-		let [ id, ...options ] = e;
-		let obj = ListStore.get(id);
-		let addreq = [];
-
-		if (options.length === 0) {
-			ListStore.activate(id);
-		} else {
-			if (obj.tiers !== null && obj.tiers) {
-				if (obj.max === null) {
-					ListStore.activate(id);
-					obj.tier = options[0];
-				} else {
-					obj.active.push(options.reverse());
-				}
-			} else if (obj.sel.length > 0) {
-				if (obj.max === null) {
-					ListStore.activate(id);
-					obj.sid = options[0];
-				} else if (obj.id === 'SA_10') {
-					obj.active.push([options[0], Number.isInteger(options[1]) ? options[1] + 1 : options[1]]);
-					addreq.push([options[0], obj.active.filter(e => e[0] === options[0]).length * 6]);
-				} else if (options.length > 1) {
-					obj.active.push(options.reverse());
-				} else {
-					obj.active.push(options[0]);
-				}
-			}
-		}
-		ListStore.addDependencies(obj.req.concat(addreq));
-	});
-
-	const culture = CultureStore.getCurrent();
-	var langs = new Map();
-	var litcs = new Set();
-
-	langs.set(culture.lang.length > 1 ? selections.lang : culture.lang[0], 4);
-	if (selections.buyLiteracy) {
-		litcs.add(culture.literacy.length > 1 ? selections.litc : culture.literacy[0]);
-	}
-	selections.langLitc.forEach((value, key) => {
-		let [ category, id ] = key.split('_');
-		if (category === 'LANG') {
-			langs.set(parseInt(id), value / 2);
-		} else {
-			litcs.add(parseInt(id));
-		}
-	});
-
-	var SA_28 = ListStore.get('SA_28');
-	var SA_30 = ListStore.get('SA_30');
-
-	SA_28.active.push(...litcs);
-	SA_30.active.push(...langs);
-}
-
 var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
-
-	init: function(rawSA) {
-		for (let id in rawSA) {
-			rawSA[id].active = rawSA[id].max === null ? false : [];
-			rawSA[id].category = CATEGORY;
-			rawSA[id].dependencies = [];
-			if (id === 'SA_72') {
-				rawSA[id].sel = rawSA[id].sel.map((e,i) => [ListStore.get(e[0]).name, i + 1, e[1]]);
-			} else if (id === 'SA_10') {
-				rawSA[id].sel = ListStore.getAllByCategory('talents').map(e => [e.name, e.id, e.skt, e.spec === null ? [] : e.spec.map((n, index) => [n, index + 1]), e.spec_input]);
-			} else if (rawSA[id].sel.length > 0 && ['SA_3', 'SA_28', 'SA_30'].indexOf(id) === -1) {
-				for (let i = 0; i < rawSA[id].sel.length; i++) {
-					let arr = [rawSA[id].sel[i][0], i + 1];
-					if (rawSA[id].sel[i][1] !== null) arr[2] = rawSA[id].sel[i][1];
-					rawSA[id].sel[i] = arr;
-				}
-			}
-		}
-		ListStore.init(rawSA);
-	},
 	
 	emitChange: function() {
 		this.emit('change');
@@ -616,15 +382,6 @@ SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload 
 
 	switch( payload.actionType ) {
 
-		case ActionTypes.CLEAR_HERO:
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			break;
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.sa);
-			break;
-
 		case ActionTypes.FILTER_SPECIALABILITIES:
 			_updateFilterText(payload.text);
 			break;
@@ -632,26 +389,10 @@ SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload 
 		case ActionTypes.SORT_SPECIALABILITIES:
 			_updateSortOrder(payload.option);
 			break;
-
+			
 		case ActionTypes.ACTIVATE_SPECIALABILITY:
-			_activate(payload);
-			break;
-
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
-			_deactivate(payload);
-			break;
-
 		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-			_updateTier(payload.id, payload.tier, payload.sid);
-			break;
-
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			AppDispatcher.waitFor([CombatTechniquesStore.dispatchToken, TalentsStore.dispatchToken]);
-			SpecialAbilitiesStore.init(payload.specialabilities);
 			break;
 		
 		default:

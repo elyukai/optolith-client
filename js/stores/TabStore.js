@@ -4,7 +4,7 @@ import ActionTypes from '../constants/ActionTypes';
 import AccountStore from './AccountStore';
 import PhaseStore from './PhaseStore';
 
-var _currentTab = 'herolist';
+var _currentTab = 'home';
 var _currentSection = 'main';
 
 function _updateTab(tab) {

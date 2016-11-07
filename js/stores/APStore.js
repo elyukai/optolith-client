@@ -1,4 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import AttributeStore from './AttributeStore';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
 import { EventEmitter } from 'events';
@@ -7,7 +8,8 @@ import RaceStore from './RaceStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
-import iccalc from '../utils/iccalc';
+import Categories from '../constants/Categories';
+import { getIC } from '../utils/iccalc';
 import reactAlert from '../utils/reactAlert';
 import reqPurchase from '../utils/reqPurchase';
 
@@ -23,60 +25,86 @@ var _disadv = 0;
 var _disadv_mag = 0;
 var _disadv_kar = 0;
 
-function _addUsed(value) {
-	_used += value;
+function _spend(value) {
+	if ((value > 0 && _used + value <= _max) || value < 1) {
+		_used += value;
+		return true;
+	}
+	reactAlert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
+	return false;
 }
 
 function _addAdv(value) {
-	_adv += value;
+	if ((value > 0 && _adv + value <= 80) || value < 1) {
+		_adv += value;
+		return true;
+	}
+	reactAlert('Obergrenze für Vorteile erreicht', 'Du kannst nicht mehr als 80 AP für Vorteile ausgeben!');
+	return false;
 }
 
 function _addAdvMag(value) {
-	_addAdv(value);
-	_adv_mag += value;
+	if ((value > 0 && _adv_mag + value <= 50) || value < 1) {
+		_adv_mag += value;
+		return _addAdv(value);
+	}
+	return false;
 }
 
 function _addAdvKar(value) {
-	_addAdv(value);
-	_adv_kar += value;
+	if ((value > 0 && _adv_kar + value <= 50) || value < 1) {
+		_adv_kar += value;
+		return _addAdv(value);
+	}
+	return false;
 }
 
 function _addDisadv(value) {
-	_disadv += value;
+	if ((value > 0 && _disadv + value <= 80) || value < 1) {
+		_disadv += value;
+		return true;
+	}
+	reactAlert('Obergrenze für Nachteile erreicht', 'Du kannst nicht mehr als 80 AP durch Nachteile erhalten!');
+	return false;
 }
 
 function _addDisadvMag(value) {
-	_addDisadv(value);
-	_disadv_mag += value;
+	if ((value > 0 && _disadv_mag + value <= 50) || value < 1) {
+		_disadv_mag += value;
+		return _addDisadv(value);
+	}
+	return false;
 }
 
 function _addDisadvKar(value) {
-	_addDisadv(value);
-	_disadv_kar += value;
+	if ((value > 0 && _disadv_kar + value <= 50) || value < 1) {
+		_disadv_kar += value;
+		return _addDisadv(value);
+	}
+	return false;
 }
 
-function _addAdvDisadv(payload) {
-	var disadv = ListStore.get(payload.id);
-	var adv = disadv.category === 'adv';
-	var type = 'cmn'; // common
-	for (let i = 0; i < disadv.req.length; i++) {
-		if (disadv.req[i][0] === 'ADV_50' && disadv.req[i][1] === true) type = 'mag';
-		else if (disadv.req[i][0] === 'ADV_12' && disadv.req[i][1] === true) type = 'kar';
+function _spendDisadv(payload) {
+	const { id, costs } = payload;
+	const { category, req } = ListStore.get(id);
+	const add = category === Categories.ADVANTAGES;
+	const valid = _spend(add ? costs : -costs);
+	if (valid) {
+		let type = req.some(e => e[0] === 'ADV_12' && e[1]) ? 'kar' : req.some(e => e[0] === 'ADV_50' && e[1]) ? 'mag' : 'cmn';
+		if (add && type === 'cmn') _addAdv(costs);
+		else if (add && type === 'kar') _addAdvKar(costs);
+		else if (add && type === 'mag') _addAdvMag(costs);
+		else if (!add && type === 'cmn') _addDisadv(costs);
+		else if (!add && type === 'kar') _addDisadvKar(costs);
+		else if (!add && type === 'mag') _addDisadvMag(costs);
 	}
-	_addUsed(payload.costs);
-	if (adv && type === 'cmn') _addAdv(payload.costs);
-	else if (adv && type === 'mag') _addAdvMag(payload.costs);
-	else if (adv && type === 'kar') _addAdvKar(payload.costs);
-	else if (!adv && type === 'cmn') _addDisadv(-payload.costs);
-	else if (!adv && type === 'mag') _addDisadvMag(-payload.costs);
-	else if (!adv && type === 'kar') _addDisadvKar(-payload.costs);
 }
 
 function _calculateRCPDiff(index, next) {
 	var current = _rcp[index] || 0;
 	next = next || 0;
 	let diff = next - current;
-	_addUsed(diff);
+	_spend(diff);
 	_rcp[index] = next;
 }
 
@@ -165,52 +193,6 @@ var APStore = Object.assign({}, EventEmitter.prototype, {
 			adv: [_adv, _adv_mag, _adv_kar],
 			disadv: [_disadv, _disadv_mag, _disadv_kar]
 		};
-	},
-
-	getCosts: function(sr, ic, add = true) {
-		var costs = ic !== undefined ? (sr === 'aktv' ? iccalc.getAC(ic) : iccalc.getIC(ic, sr)) : sr;
-		if (!add) costs = -costs;
-		return costs;
-	},
-
-	validate: function(fw, skt, add = true, adv = false) {
-		if (adv && add) {
-			// fw = ap, skt = [Adv/Disadv, common/magic/karm]
-			if (skt) {
-				if ((_adv + fw) > 80) {
-					reactAlert('Obergrenze für Vorteile erreicht', 'Du kannst nicht mehr als 80 AP für Vorteile ausgeben!');
-					return false;
-				}
-				if ((_max - _used - fw) < 0) {
-					reactAlert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-					return false;
-				}
-				if (skt[1] === 2) {
-					if (_adv_mag + fw <= 50) return true;
-				} else if (skt[1] === 3) {
-					if (_adv_kar + fw <= 50) return true;
-				} else {
-					return true;
-				}
-			} else if (!skt) {
-				if ((_disadv - fw) > 80) {
-					reactAlert('Obergrenze für Nachteile erreicht', 'Du kannst nicht mehr als 80 AP durch Nachteile erhalten!');
-					return false;
-				}
-				if (skt[1] === 2) {
-					if (_disadv_mag - fw <= 50) return true;
-				} else if (skt[1] === 3) {
-					if (_disadv_kar - fw <= 50) return true;
-				} else {
-					return true;
-				}
-			}
-		} else {
-			var costs = this.getCosts(fw, skt, add);
-			if ((_max - _used - costs) >= 0) return costs;
-		}
-		reactAlert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-		return false;
 	}
 
 });
@@ -227,31 +209,57 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_updateAll(payload.ap);
 			break;
 
-		case ActionTypes.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-		case ActionTypes.ADD_MAX_ENERGY_POINT:
-		case ActionTypes.ADD_TALENT_POINT:
-		case ActionTypes.REMOVE_TALENT_POINT:
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 		case ActionTypes.ACTIVATE_SPELL:
-		case ActionTypes.DEACTIVATE_SPELL:
-		case ActionTypes.ADD_SPELL_POINT:
-		case ActionTypes.REMOVE_SPELL_POINT:
 		case ActionTypes.ACTIVATE_LITURGY:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(getIC(ListStore.get(payload.id).skt, 0));
+			break;
+		
+		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY:
-		case ActionTypes.ADD_LITURGY_POINT:
-		case ActionTypes.REMOVE_LITURGY_POINT:
-		case ActionTypes.ACTIVATE_SPECIALABILITY:
-		case ActionTypes.DEACTIVATE_SPECIALABILITY:
-		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-			_addUsed(payload.costs);
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(-getIC(ListStore.get(payload.id).skt, 0));
 			break;
 
 		case ActionTypes.ACTIVATE_DISADV:
-		case ActionTypes.DEACTIVATE_DISADV:
 		case ActionTypes.UPDATE_DISADV_TIER:
-			_addAdvDisadv(payload);
+		case ActionTypes.DEACTIVATE_DISADV:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spendDisadv(payload);
+			break;
+
+		case ActionTypes.ACTIVATE_SPECIALABILITY:
+		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(payload.costs);
+			break;
+
+		case ActionTypes.DEACTIVATE_SPECIALABILITY:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(-payload.costs);
+			break;
+
+		case ActionTypes.ADD_ATTRIBUTE_POINT:
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.ADD_LITURGY_POINT:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(getIC(ListStore.get(payload.id).skt, ListStore.get(payload.id).value));
+			break;
+
+		case ActionTypes.ADD_MAX_ENERGY_POINT:
+			AppDispatcher.waitFor([AttributeStore.dispatchToken]);
+			_spend(getIC(4, AttributeStore.getAdd(payload.id)));
+			break;
+
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
+			_spend(-getIC(ListStore.get(payload.id).skt, ListStore.get(payload.id).value + 1));
 			break;
 
 		case ActionTypes.SELECT_RACE:

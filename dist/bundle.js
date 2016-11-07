@@ -73,10 +73,6 @@ var _createOverlay = require('../utils/createOverlay');
 
 var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-var _AccountStore = require('../stores/AccountStore');
-
-var _AccountStore2 = _interopRequireDefault(_AccountStore);
-
 var _ForgotUsername = require('../components/content/account/ForgotUsername');
 
 var _ForgotUsername2 = _interopRequireDefault(_ForgotUsername);
@@ -189,7 +185,7 @@ var AccountActions = {
 
 exports.default = AccountActions;
 
-},{"../components/content/account/ForgotPassword":26,"../components/content/account/ForgotUsername":27,"../components/content/account/Login":28,"../components/content/account/Register":29,"../components/content/account/ResendActivation":30,"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../stores/AccountStore":121,"../utils/WebAPIUtils":144,"../utils/createOverlay":146,"../utils/reactAlert":149,"babel-runtime/core-js/promise":166,"babel-runtime/helpers/slicedToArray":178,"react":482,"react-dom":312}],3:[function(require,module,exports){
+},{"../components/content/account/ForgotPassword":26,"../components/content/account/ForgotUsername":27,"../components/content/account/Login":28,"../components/content/account/Register":29,"../components/content/account/ResendActivation":30,"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../utils/WebAPIUtils":144,"../utils/createOverlay":146,"../utils/reactAlert":149,"babel-runtime/core-js/promise":166,"babel-runtime/helpers/slicedToArray":178,"react":482,"react-dom":312}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -222,32 +218,22 @@ var AttributeActions = {
 		});
 	},
 	addPoint: function addPoint(id) {
-		var attribute = _AttributeStore2.default.get(id);
-		var costs = _APStore2.default.validate(attribute.value + 1, 5);
-		if (costs) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.ADD_ATTRIBUTE_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.ADD_ATTRIBUTE_POINT,
+			id: id
+		});
 	},
 	removePoint: function removePoint(id) {
-		var attribute = _AttributeStore2.default.get(id);
-		var costs = _APStore2.default.getCosts(attribute.value, 5, false);
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT,
-			id: id, costs: costs
+			id: id
 		});
 	},
 	addMaxEnergyPoint: function addMaxEnergyPoint(id) {
-		var value = _AttributeStore2.default.getAdd(id);
-		var costs = _APStore2.default.validate(value + 1, 4);
-		if (costs) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.ADD_MAX_ENERGY_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.ADD_MAX_ENERGY_POINT,
+			id: id
+		});
 	}
 };
 
@@ -264,14 +250,6 @@ var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
 var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-var _APStore = require('../stores/APStore');
-
-var _APStore2 = _interopRequireDefault(_APStore);
-
-var _CombatTechniquesStore = require('../stores/CombatTechniquesStore');
-
-var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
-
 var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
@@ -279,12 +257,6 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CombatTechniquesActions = {
-	receiveAll: function receiveAll(rawTechniques) {
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.RECEIVE_RAW_COMBATTECHNIQUES,
-			rawTechniques: rawTechniques
-		});
-	},
 	filter: function filter(text) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.FILTER_TALENTS,
@@ -298,30 +270,22 @@ var CombatTechniquesActions = {
 		});
 	},
 	addPoint: function addPoint(id) {
-		var talent = _CombatTechniquesStore2.default.get(id);
-		var costs = _APStore2.default.validate(talent.fw + 1, talent.skt);
-		if (talent !== false && costs !== false) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT,
+			id: id
+		});
 	},
 	removePoint: function removePoint(id) {
-		var talent = _CombatTechniquesStore2.default.get(id);
-		var costs = _APStore2.default.getCosts(talent.fw, talent.skt, false);
-		if (talent !== false && costs !== false) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT,
+			id: id
+		});
 	}
 };
 
 exports.default = CombatTechniquesActions;
 
-},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../stores/APStore":120,"../stores/CombatTechniquesStore":123}],5:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -422,12 +386,9 @@ var DisAdvActions = {
 		});
 	},
 	addToList: function addToList(args) {
-		var costs = _APStore2.default.validate(args.costs, !args.id.match('DIS'), true, true);
-		if (costs) {
-			_AppDispatcher2.default.dispatch((0, _extends3.default)({
-				actionType: _ActionTypes2.default.ACTIVATE_DISADV
-			}, args));
-		}
+		_AppDispatcher2.default.dispatch((0, _extends3.default)({
+			actionType: _ActionTypes2.default.ACTIVATE_DISADV
+		}, args));
 	},
 	removeFromList: function removeFromList(args) {
 		_AppDispatcher2.default.dispatch((0, _extends3.default)({
@@ -435,13 +396,10 @@ var DisAdvActions = {
 		}, args));
 	},
 	updateTier: function updateTier(id, tier, ap_difference, sid) {
-		var costs = _APStore2.default.validate(ap_difference, true, true, true);
-		if (costs) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.UPDATE_DISADV_TIER,
-				id: id, tier: tier, costs: ap_difference, sid: sid
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.UPDATE_DISADV_TIER,
+			id: id, tier: tier, costs: ap_difference, sid: sid
+		});
 	}
 };
 
@@ -1547,12 +1505,6 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SpellsActions = {
-	receiveAll: function receiveAll(rawSpells) {
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.RECEIVE_RAW_SPELLS,
-			rawSpells: rawSpells
-		});
-	},
 	filter: function filter(text) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.FILTER_SPELLS,
@@ -1676,14 +1628,6 @@ var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
 var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-var _APStore = require('../stores/APStore');
-
-var _APStore2 = _interopRequireDefault(_APStore);
-
-var _TalentsStore = require('../stores/TalentsStore');
-
-var _TalentsStore2 = _interopRequireDefault(_TalentsStore);
-
 var _ActionTypes = require('../constants/ActionTypes');
 
 var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
@@ -1691,12 +1635,6 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TalentsActions = {
-	receiveAll: function receiveAll(rawTalents) {
-		_AppDispatcher2.default.dispatch({
-			actionType: _ActionTypes2.default.RECEIVE_RAW_TALENTS,
-			rawTalents: rawTalents
-		});
-	},
 	filter: function filter(text) {
 		_AppDispatcher2.default.dispatch({
 			actionType: _ActionTypes2.default.FILTER_TALENTS,
@@ -1715,30 +1653,22 @@ var TalentsActions = {
 		});
 	},
 	addPoint: function addPoint(id) {
-		var talent = _TalentsStore2.default.get(id);
-		var costs = _APStore2.default.validate(talent.fw + 1, talent.skt);
-		if (talent !== false && costs !== false) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.ADD_TALENT_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.ADD_TALENT_POINT,
+			id: id
+		});
 	},
 	removePoint: function removePoint(id) {
-		var talent = _TalentsStore2.default.get(id);
-		var costs = _APStore2.default.getCosts(talent.fw, talent.skt, false);
-		if (talent !== false && costs !== false) {
-			_AppDispatcher2.default.dispatch({
-				actionType: _ActionTypes2.default.REMOVE_TALENT_POINT,
-				id: id, costs: costs
-			});
-		}
+		_AppDispatcher2.default.dispatch({
+			actionType: _ActionTypes2.default.REMOVE_TALENT_POINT,
+			id: id
+		});
 	}
 };
 
 exports.default = TalentsActions;
 
-},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../stores/APStore":120,"../stores/TalentsStore":141}],22:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2660,10 +2590,6 @@ var _AccountActions = require('../../../actions/AccountActions');
 
 var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-var _AccountStore = require('../../../stores/AccountStore');
-
-var _AccountStore2 = _interopRequireDefault(_AccountStore);
-
 var _BorderButton = require('../../layout/BorderButton');
 
 var _BorderButton2 = _interopRequireDefault(_BorderButton);
@@ -2784,7 +2710,7 @@ var Account = function (_Component) {
 
 exports.default = Account;
 
-},{"../../../actions/AccountActions":2,"../../../stores/AccountStore":121,"../../layout/BorderButton":97,"../../layout/IconButton":101,"../../layout/Scroll":104,"../../layout/TextField":108,"../../layout/TextFieldButtonGroup":109,"babel-runtime/core-js/object/get-prototype-of":164,"babel-runtime/helpers/classCallCheck":171,"babel-runtime/helpers/createClass":172,"babel-runtime/helpers/inherits":175,"babel-runtime/helpers/possibleConstructorReturn":177,"react":482}],26:[function(require,module,exports){
+},{"../../../actions/AccountActions":2,"../../layout/BorderButton":97,"../../layout/IconButton":101,"../../layout/Scroll":104,"../../layout/TextField":108,"../../layout/TextFieldButtonGroup":109,"babel-runtime/core-js/object/get-prototype-of":164,"babel-runtime/helpers/classCallCheck":171,"babel-runtime/helpers/createClass":172,"babel-runtime/helpers/inherits":175,"babel-runtime/helpers/possibleConstructorReturn":177,"react":482}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -12052,43 +11978,37 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var CombatTechniques = function (_Component) {
 	(0, _inherits3.default)(CombatTechniques, _Component);
 
-	function CombatTechniques(props) {
+	function CombatTechniques() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, CombatTechniques);
 
-		var _this = (0, _possibleConstructorReturn3.default)(this, (CombatTechniques.__proto__ || (0, _getPrototypeOf2.default)(CombatTechniques)).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = CombatTechniques.__proto__ || (0, _getPrototypeOf2.default)(CombatTechniques)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 			combattech: _CombatTechniquesStore2.default.getAllForView(),
 			filter: _CombatTechniquesStore2.default.getFilter(),
 			sortOrder: _CombatTechniquesStore2.default.getSortOrder(),
 			phase: _PhaseStore2.default.get()
-		};
-
-		_this._updateCombatTechniquesStore = function () {
+		}, _this._updateCombatTechniquesStore = function () {
 			return _this.setState({
 				combattech: _CombatTechniquesStore2.default.getAllForView(),
 				filter: _CombatTechniquesStore2.default.getFilter(),
 				sortOrder: _CombatTechniquesStore2.default.getSortOrder()
 			});
-		};
-
-		_this.filter = function (event) {
+		}, _this.filter = function (event) {
 			return _this.setState({ filterBy: event.target.value });
-		};
-
-		_this.sort = function (option) {
+		}, _this.sort = function (option) {
 			return _CombatTechniquesActions2.default.sort(option);
-		};
-
-		_this.addPoint = function (id) {
+		}, _this.addPoint = function (id) {
 			return _CombatTechniquesActions2.default.addPoint(id);
-		};
-
-		_this.removePoint = function (id) {
+		}, _this.removePoint = function (id) {
 			return _CombatTechniquesActions2.default.removePoint(id);
-		};
-
-		return _this;
+		}, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	}
 
 	(0, _createClass3.default)(CombatTechniques, [{
@@ -12193,8 +12113,8 @@ var CombatTechniques = function (_Component) {
 										key: ct.id,
 										group: GR[ct.gr - 1],
 										name: ct.name,
-										fw: ct.fw,
-										skt: ct.skt,
+										sr: ct.value,
+										ic: ct.skt,
 										checkDisabled: true,
 										addPoint: _this2.addPoint.bind(null, ct.id),
 										addDisabled: ct.disabledIncrease,
@@ -12309,12 +12229,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Liturgies = function (_Component) {
 	(0, _inherits3.default)(Liturgies, _Component);
 
-	function Liturgies(props) {
+	function Liturgies() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, Liturgies);
 
-		var _this = (0, _possibleConstructorReturn3.default)(this, (Liturgies.__proto__ || (0, _getPrototypeOf2.default)(Liturgies)).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Liturgies.__proto__ || (0, _getPrototypeOf2.default)(Liturgies)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 			liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
 			liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
 			addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
@@ -12322,9 +12248,7 @@ var Liturgies = function (_Component) {
 			sortOrder: _LiturgiesStore2.default.getSortOrder(),
 			phase: _PhaseStore2.default.get(),
 			showAddSlidein: false
-		};
-
-		_this._updateLiturgiesStore = function () {
+		}, _this._updateLiturgiesStore = function () {
 			return _this.setState({
 				liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
 				liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
@@ -12332,41 +12256,25 @@ var Liturgies = function (_Component) {
 				filter: _LiturgiesStore2.default.getFilter(),
 				sortOrder: _LiturgiesStore2.default.getSortOrder()
 			});
-		};
-
-		_this.filter = function (event) {
+		}, _this.filter = function (event) {
 			return _LiturgiesActions2.default.filter(event.target.value);
-		};
-
-		_this.sort = function (option) {
+		}, _this.sort = function (option) {
 			return _LiturgiesActions2.default.sort(option);
-		};
-
-		_this.addToList = function (id) {
+		}, _this.addToList = function (id) {
 			return _LiturgiesActions2.default.addToList(id);
-		};
-
-		_this.addPoint = function (id) {
+		}, _this.addPoint = function (id) {
 			return _LiturgiesActions2.default.addPoint(id);
-		};
-
-		_this.removePoint = function (id, fw) {
+		}, _this.removePoint = function (id, fw) {
 			if (fw === 0) {
 				_LiturgiesActions2.default.removeFromList(id);
 			} else {
 				_LiturgiesActions2.default.removePoint(id);
 			}
-		};
-
-		_this.showAddSlidein = function () {
+		}, _this.showAddSlidein = function () {
 			return _this.setState({ showAddSlidein: true });
-		};
-
-		_this.hideAddSlidein = function () {
+		}, _this.hideAddSlidein = function () {
 			return _this.setState({ showAddSlidein: false });
-		};
-
-		return _this;
+		}, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	}
 
 	(0, _createClass3.default)(Liturgies, [{
@@ -12466,7 +12374,7 @@ var Liturgies = function (_Component) {
 									var obj = liturgy.gr === 3 ? {} : {
 										check: check,
 										checkmod: checkmod,
-										skt: liturgy.skt
+										ic: liturgy.skt
 									};
 
 									return _react2.default.createElement(
@@ -12570,10 +12478,10 @@ var Liturgies = function (_Component) {
 								}).sort().join(', ');
 
 								var obj = liturgy.gr === 3 ? {} : {
-									fw: liturgy.fw,
+									sr: liturgy.value,
 									check: check,
 									checkmod: checkmod,
-									skt: liturgy.skt,
+									ic: liturgy.skt,
 									addPoint: _this2.addPoint.bind(null, liturgy.id),
 									addDisabled: liturgy.disabledIncrease
 								};
@@ -12662,12 +12570,12 @@ var SkillListItem = function (_Component) {
 			    untyp = _props.untyp,
 			    group = _props.group,
 			    name = _props.name,
-			    fw = _props.fw,
+			    sr = _props.sr,
 			    children = _props.children,
 			    check = _props.check,
 			    checkDisabled = _props.checkDisabled,
 			    checkmod = _props.checkmod,
-			    skt = _props.skt,
+			    ic = _props.ic,
 			    isNotActive = _props.isNotActive,
 			    activate = _props.activate,
 			    activateDisabled = _props.activateDisabled,
@@ -12688,10 +12596,10 @@ var SkillListItem = function (_Component) {
 				group
 			) : null;
 
-			var fwElement = fw || fw === 0 ? _react2.default.createElement(
+			var fwElement = sr || sr === 0 ? _react2.default.createElement(
 				'td',
 				{ className: 'fw' },
-				fw
+				sr
 			) : !addPoint && !isNotActive ? _react2.default.createElement('td', { className: 'fw' }) : null;
 
 			var ATTR = {
@@ -12718,7 +12626,7 @@ var SkillListItem = function (_Component) {
 			var sktElement = _react2.default.createElement(
 				'td',
 				{ className: 'skt' },
-				skt ? COMP[skt - 1] : ''
+				ic ? COMP[ic - 1] : ''
 			);
 
 			var btnElement = isNotActive ? _react2.default.createElement(
@@ -12761,23 +12669,22 @@ var SkillListItem = function (_Component) {
 }(_react.Component);
 
 SkillListItem.propTypes = {
-	typ: _react.PropTypes.bool,
-	untyp: _react.PropTypes.bool,
-	group: _react.PropTypes.string,
-	name: _react.PropTypes.string,
-	fw: _react.PropTypes.number,
-	children: _react.PropTypes.node,
-	check: _react.PropTypes.array,
-	checkDisabled: _react.PropTypes.bool,
-	checkmod: _react.PropTypes.string,
-	skt: _react.PropTypes.number,
-	isNotActive: _react.PropTypes.bool,
 	activate: _react.PropTypes.func,
 	activateDisabled: _react.PropTypes.bool,
 	addPoint: _react.PropTypes.func,
 	addDisabled: _react.PropTypes.bool,
+	check: _react.PropTypes.array,
+	checkDisabled: _react.PropTypes.bool,
+	checkmod: _react.PropTypes.string,
+	group: _react.PropTypes.string,
+	ic: _react.PropTypes.number,
+	isNotActive: _react.PropTypes.bool,
+	name: _react.PropTypes.string,
 	removePoint: _react.PropTypes.func,
-	removeDisabled: _react.PropTypes.bool
+	removeDisabled: _react.PropTypes.bool,
+	sr: _react.PropTypes.number,
+	typ: _react.PropTypes.bool,
+	untyp: _react.PropTypes.bool
 };
 exports.default = SkillListItem;
 
@@ -13564,7 +13471,7 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 				ap = item.tier === 4 && item.id === 'SA_30' ? 0 : item.ap * item.tier;
 			}
 
-			args.costs = -ap;
+			args.costs = ap;
 
 			if (item.hasOwnProperty('sid')) args.sid = item.sid;
 
@@ -13598,6 +13505,7 @@ var SpecialAbilitiesListRemoveItem = function (_Component) {
 				_react2.default.createElement(
 					'td',
 					{ className: 'ap' },
+					'-',
 					ap
 				),
 				this.props.phase < 3 ? _react2.default.createElement(
@@ -13697,12 +13605,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Spells = function (_Component) {
 	(0, _inherits3.default)(Spells, _Component);
 
-	function Spells(props) {
+	function Spells() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, Spells);
 
-		var _this = (0, _possibleConstructorReturn3.default)(this, (Spells.__proto__ || (0, _getPrototypeOf2.default)(Spells)).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Spells.__proto__ || (0, _getPrototypeOf2.default)(Spells)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 			spellsActive: _SpellsStore2.default.getActiveForView(),
 			spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
 			addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
@@ -13710,9 +13624,7 @@ var Spells = function (_Component) {
 			sortOrder: _SpellsStore2.default.getSortOrder(),
 			phase: _PhaseStore2.default.get(),
 			showAddSlidein: false
-		};
-
-		_this._updateSpellsStore = function () {
+		}, _this._updateSpellsStore = function () {
 			return _this.setState({
 				spellsActive: _SpellsStore2.default.getActiveForView(),
 				spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
@@ -13720,41 +13632,25 @@ var Spells = function (_Component) {
 				filter: _SpellsStore2.default.getFilter(),
 				sortOrder: _SpellsStore2.default.getSortOrder()
 			});
-		};
-
-		_this.filter = function (event) {
+		}, _this.filter = function (event) {
 			return _SpellsActions2.default.filter(event.target.value);
-		};
-
-		_this.sort = function (option) {
+		}, _this.sort = function (option) {
 			return _SpellsActions2.default.sort(option);
-		};
-
-		_this.addToList = function (id) {
+		}, _this.addToList = function (id) {
 			return _SpellsActions2.default.addToList(id);
-		};
-
-		_this.addPoint = function (id) {
+		}, _this.addPoint = function (id) {
 			return _SpellsActions2.default.addPoint(id);
-		};
-
-		_this.removePoint = function (id, fw) {
+		}, _this.removePoint = function (id, fw) {
 			if (fw === 0) {
 				_SpellsActions2.default.removeFromList(id);
 			} else {
 				_SpellsActions2.default.removePoint(id);
 			}
-		};
-
-		_this.showAddSlidein = function () {
+		}, _this.showAddSlidein = function () {
 			return _this.setState({ showAddSlidein: true });
-		};
-
-		_this.hideAddSlidein = function () {
+		}, _this.hideAddSlidein = function () {
 			return _this.setState({ showAddSlidein: false });
-		};
-
-		return _this;
+		}, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	}
 
 	(0, _createClass3.default)(Spells, [{
@@ -13854,7 +13750,7 @@ var Spells = function (_Component) {
 									var obj = spell.gr === 5 ? {} : {
 										check: check,
 										checkmod: checkmod,
-										skt: spell.skt
+										ic: spell.skt
 									};
 
 									return _react2.default.createElement(
@@ -13958,10 +13854,10 @@ var Spells = function (_Component) {
 								if (!spell.ownTradition) name += ' (' + spell.add + ')';
 
 								var obj = spell.gr === 5 ? {} : {
-									fw: spell.fw,
+									sr: spell.value,
 									check: check,
 									checkmod: checkmod,
-									skt: spell.skt,
+									ic: spell.skt,
 									addPoint: _this2.addPoint.bind(null, spell.id),
 									addDisabled: spell.disabledIncrease
 								};
@@ -14069,50 +13965,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Talents = function (_Component) {
 	(0, _inherits3.default)(Talents, _Component);
 
-	function Talents(props) {
+	function Talents() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, Talents);
 
-		var _this = (0, _possibleConstructorReturn3.default)(this, (Talents.__proto__ || (0, _getPrototypeOf2.default)(Talents)).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = Talents.__proto__ || (0, _getPrototypeOf2.default)(Talents)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 			list: _TalentsStore2.default.getAllForView(),
 			filter: _TalentsStore2.default.getFilter(),
 			sortOrder: _TalentsStore2.default.getSortOrder(),
 			talentRating: _TalentsStore2.default.getTalentRating(),
 			currentCulture: _CultureStore2.default.getCurrent(),
 			phase: _PhaseStore2.default.get()
-		};
-
-		_this._updateTalentsStore = function () {
+		}, _this._updateTalentsStore = function () {
 			return _this.setState({
 				list: _TalentsStore2.default.getAllForView(),
 				filter: _TalentsStore2.default.getFilter(),
 				sortOrder: _TalentsStore2.default.getSortOrder(),
 				talentRating: _TalentsStore2.default.getTalentRating()
 			});
-		};
-
-		_this.filter = function (event) {
+		}, _this.filter = function (event) {
 			return _TalentsActions2.default.filter(event.target.value);
-		};
-
-		_this.sort = function (option) {
+		}, _this.sort = function (option) {
 			return _TalentsActions2.default.sort(option);
-		};
-
-		_this.changeTalentRating = function () {
+		}, _this.changeTalentRating = function () {
 			return _TalentsActions2.default.changeTalentRating();
-		};
-
-		_this.addPoint = function (id) {
+		}, _this.addPoint = function (id) {
 			return _TalentsActions2.default.addPoint(id);
-		};
-
-		_this.removePoint = function (id) {
+		}, _this.removePoint = function (id) {
 			return _TalentsActions2.default.removePoint(id);
-		};
-
-		return _this;
+		}, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	}
 
 	(0, _createClass3.default)(Talents, [{
@@ -14206,9 +14094,9 @@ var Talents = function (_Component) {
 									untyp: _this2.state.talentRating && untyp_talents.indexOf(talent.id) > -1,
 									group: GR[talent.gr - 1],
 									name: talent.name,
-									fw: talent.fw,
+									sr: talent.value,
 									check: talent.check,
-									skt: talent.skt,
+									ic: talent.skt,
 									addPoint: _this2.addPoint.bind(null, talent.id),
 									addDisabled: talent.disabledIncrease,
 									removePoint: _this2.state.phase < 3 ? _this2.removePoint.bind(null, talent.id) : undefined,
@@ -15683,49 +15571,41 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var TitleBar = function (_Component) {
 	(0, _inherits3.default)(TitleBar, _Component);
 
-	function TitleBar(props) {
+	function TitleBar() {
+		var _ref;
+
+		var _temp, _this, _ret;
+
 		(0, _classCallCheck3.default)(this, TitleBar);
 
-		var _this = (0, _possibleConstructorReturn3.default)(this, (TitleBar.__proto__ || (0, _getPrototypeOf2.default)(TitleBar)).call(this, props));
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+			args[_key] = arguments[_key];
+		}
 
-		_this.state = {
+		return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = TitleBar.__proto__ || (0, _getPrototypeOf2.default)(TitleBar)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 			account: _AccountStore2.default.getAll(),
 			ap: _APStore2.default.get(),
 			used: _APStore2.default.getUsed(),
 			disadv: _APStore2.default.getForDisAdv(),
 			phase: _PhaseStore2.default.get(),
 			portrait: _ProfileStore2.default.getAvatar()
-		};
-
-		_this._updateAccountStore = function () {
+		}, _this._updateAccountStore = function () {
 			return _this.setState({ account: _AccountStore2.default.getAll() });
-		};
-
-		_this._updateAPStore = function () {
+		}, _this._updateAPStore = function () {
 			return _this.setState({ ap: _APStore2.default.get(), used: _APStore2.default.getUsed(), disadv: _APStore2.default.getForDisAdv() });
-		};
-
-		_this._updatePhaseStore = function () {
+		}, _this._updatePhaseStore = function () {
 			return _this.setState({ phase: _PhaseStore2.default.get() });
-		};
-
-		_this._updateProfileStore = function () {
+		}, _this._updateProfileStore = function () {
 			return _this.setState({ portrait: _ProfileStore2.default.getAvatar() });
-		};
-
-		_this.back = function () {
+		}, _this.back = function () {
 			return _TabActions2.default.showSection('main');
-		};
-
-		_this.test = function () {
+		}, _this.test = function () {
 			if (_ELStore2.default.getStartID() === 'EL_0') {
 				_HerolistActions2.default.showHeroCreation();
 			} else {
 				_TabActions2.default.showSection('hero');
 			}
-		};
-
-		return _this;
+		}, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	}
 
 	(0, _createClass3.default)(TitleBar, [{
@@ -15759,14 +15639,13 @@ var TitleBar = function (_Component) {
 			    portrait = _state$portrait === undefined ? '' : _state$portrait;
 
 
-			var showBackNav = true;
+			var showBackNav = section !== 'main';
 			var tabsElement;
 			var actionsElement;
 
 			switch (section) {
 				case 'main':
 					{
-						showBackNav = false;
 						if (account.id === null) {
 							tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, tabs: [{ label: 'Start', tag: 'home' }, { label: 'Über', tag: 'about' }] });
 							actionsElement = _react2.default.createElement(
@@ -15801,9 +15680,6 @@ var TitleBar = function (_Component) {
 								break;
 							case 3:
 								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profil', tag: 'profile' }, { label: 'Eigenschaften', tag: 'attributes' }, { label: 'Fertigkeiten', tag: 'skills' }, { label: 'Gegenstände', tag: 'items', disabled: true }] });
-								break;
-							case 4:
-								tabsElement = _react2.default.createElement(_TitleBarNav2.default, { active: tab, avatar: portrait, tabs: [{ label: 'Profile', tag: 'profile' }, { label: 'RCP', tag: 'rcp' }, { label: 'Attributes', tag: 'attributes' }, { label: 'Adv & Disadv', tag: 'disadv' }, { label: 'Skills', tag: 'skills' }, { label: 'Items', tag: 'items', disabled: true }] });
 								break;
 						}
 
@@ -16631,6 +16507,10 @@ var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
 var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
+var _AttributeStore = require('./AttributeStore');
+
+var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
+
 var _CultureStore = require('./CultureStore');
 
 var _CultureStore2 = _interopRequireDefault(_CultureStore);
@@ -16663,8 +16543,6 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 var _iccalc = require('../utils/iccalc');
 
-var _iccalc2 = _interopRequireDefault(_iccalc);
-
 var _reactAlert = require('../utils/reactAlert');
 
 var _reactAlert2 = _interopRequireDefault(_reactAlert);
@@ -16687,7 +16565,7 @@ var _disadv = 0;
 var _disadv_mag = 0;
 var _disadv_kar = 0;
 
-function _addUsed(value) {
+function _spend(value) {
 	_used += value;
 }
 
@@ -16828,7 +16706,7 @@ var APStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, {
 	getCosts: function getCosts(sr, ic) {
 		var add = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-		var costs = ic !== undefined ? sr === 'aktv' ? _iccalc2.default.getAC(ic) : _iccalc2.default.getIC(ic, sr) : sr;
+		var costs = ic !== undefined ? sr === 'aktv' ? iccalc.getAC(ic) : iccalc.getIC(ic, sr) : sr;
 		if (!add) costs = -costs;
 		return costs;
 	},
@@ -16890,31 +16768,57 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 			_updateAll(payload.ap);
 			break;
 
-		case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
-		case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-		case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
-		case _ActionTypes2.default.ADD_TALENT_POINT:
-		case _ActionTypes2.default.REMOVE_TALENT_POINT:
-		case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
-		case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
 		case _ActionTypes2.default.ACTIVATE_SPELL:
-		case _ActionTypes2.default.DEACTIVATE_SPELL:
-		case _ActionTypes2.default.ADD_SPELL_POINT:
-		case _ActionTypes2.default.REMOVE_SPELL_POINT:
 		case _ActionTypes2.default.ACTIVATE_LITURGY:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend((0, _iccalc.getIC)(_ListStore2.default.get(payload.id).skt, 0));
+			break;
+
+		case _ActionTypes2.default.DEACTIVATE_SPELL:
 		case _ActionTypes2.default.DEACTIVATE_LITURGY:
-		case _ActionTypes2.default.ADD_LITURGY_POINT:
-		case _ActionTypes2.default.REMOVE_LITURGY_POINT:
-		case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
-		case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
-		case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
-			_addUsed(payload.costs);
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend(-(0, _iccalc.getIC)(_ListStore2.default.get(payload.id).skt, 0));
 			break;
 
 		case _ActionTypes2.default.ACTIVATE_DISADV:
-		case _ActionTypes2.default.DEACTIVATE_DISADV:
 		case _ActionTypes2.default.UPDATE_DISADV_TIER:
-			_addAdvDisadv(payload);
+		case _ActionTypes2.default.DEACTIVATE_DISADV:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spendDisadv(payload);
+			break;
+
+		case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+		case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend(payload.costs);
+			break;
+
+		case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend(-payload.costs);
+			break;
+
+		case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+		case _ActionTypes2.default.ADD_TALENT_POINT:
+		case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
+		case _ActionTypes2.default.ADD_SPELL_POINT:
+		case _ActionTypes2.default.ADD_LITURGY_POINT:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend((0, _iccalc.getIC)(_ListStore2.default.get(payload.id).skt, _ListStore2.default.get(payload.id).value));
+			break;
+
+		case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+			_AppDispatcher2.default.waitFor([_AttributeStore2.default.dispatchToken]);
+			_spend((0, _iccalc.getIC)(4, _AttributeStore2.default.getAdd(payload.id)));
+			break;
+
+		case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+		case _ActionTypes2.default.REMOVE_TALENT_POINT:
+		case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
+		case _ActionTypes2.default.REMOVE_SPELL_POINT:
+		case _ActionTypes2.default.REMOVE_LITURGY_POINT:
+			_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
+			_spend(-(0, _iccalc.getIC)(_ListStore2.default.get(payload.id).skt, _ListStore2.default.get(payload.id).value + 1));
 			break;
 
 		case _ActionTypes2.default.SELECT_RACE:
@@ -16970,7 +16874,7 @@ APStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = APStore;
 
-},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../stores/ListStore":131,"../utils/iccalc":148,"../utils/reactAlert":149,"../utils/reqPurchase":150,"./CultureStore":124,"./ELStore":126,"./ProfessionStore":134,"./ProfessionVariantStore":135,"./RaceStore":137,"babel-runtime/helpers/extends":174,"events":303}],121:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../dispatcher/AppDispatcher":119,"../stores/ListStore":131,"../utils/iccalc":148,"../utils/reactAlert":149,"../utils/reqPurchase":150,"./AttributeStore":122,"./CultureStore":124,"./ELStore":126,"./ProfessionStore":134,"./ProfessionVariantStore":135,"./RaceStore":137,"babel-runtime/helpers/extends":174,"events":303}],121:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -17418,7 +17322,7 @@ var CombatTechniquesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 
 		var SA_19 = this.get('SA_19').active;
 		var SA_19_REQ = SA_19 && _ListStore2.default.getAllByCategoryGroup(CATEGORY, 2).filter(function (e) {
-			return e.fw >= 10;
+			return e.value >= 10;
 		}).length === 1;
 
 		for (var id in combatTechniquesObj) {
@@ -17480,10 +17384,10 @@ var CombatTechniquesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 		}
 		for (var i = 0; i < combatTechniques.length; i++) {
 			if (combatTechniques[i].gr === 2) {
-				combatTechniques[i].at = combatTechniques[i].fw + this.getLeitMod(combatTechniques[i].leit);
+				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(combatTechniques[i].leit);
 			} else {
-				combatTechniques[i].at = combatTechniques[i].fw + this.getLeitMod(['ATTR_1']);
-				combatTechniques[i].pa = Math.round(combatTechniques[i].fw / 2) + this.getLeitMod(combatTechniques[i].leit);
+				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(['ATTR_1']);
+				combatTechniques[i].pa = Math.round(combatTechniques[i].value / 2) + this.getLeitMod(combatTechniques[i].leit);
 			}
 		}
 		return combatTechniques;
@@ -17820,21 +17724,9 @@ var _map = require('babel-runtime/core-js/map');
 
 var _map2 = _interopRequireDefault(_map);
 
-var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
-
-var _set = require('babel-runtime/core-js/set');
-
-var _set2 = _interopRequireDefault(_set);
-
-var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
-
-var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
 var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
@@ -17894,266 +17786,11 @@ function _updateRating() {
 	_showRating = !_showRating;
 }
 
-function _activate(payload) {
-	var id = payload.id,
-	    sel = payload.sel,
-	    input = payload.input,
-	    tier = payload.tier;
-
-	var obj = _ListStore2.default.get(id);
-	var new_sid;
-	if (obj.max !== null) {
-		switch (id) {
-			case 'ADV_4':
-			case 'ADV_16':
-			case 'DISADV_48':
-				obj.active.push(sel);
-				new_sid = sel;
-				break;
-			case 'DISADV_1':
-			case 'DISADV_34':
-			case 'DISADV_50':
-				if (input === '') obj.active.push([sel, tier]);else if (obj.active.filter(function (e) {
-					return e[0] === input;
-				}).length === 0) obj.active.push([input, tier]);
-				break;
-			case 'DISADV_33':
-				if ([7, 8].indexOf(sel) > -1 && input !== '') {
-					if (obj.active.filter(function (e) {
-						return e[1] === input;
-					}).length === 0) obj.active.push([sel, input]);
-				} else obj.active.push(sel);
-				break;
-			case 'DISADV_36':
-				if (input === '') obj.active.push(sel);else if (obj.active.filter(function (e) {
-					return e === input;
-				}).length === 0) obj.active.push(input);
-				break;
-			default:
-				if (payload.hasOwnProperty('sel')) obj.active.push(sel);else if (payload.hasOwnProperty('input') && obj.active.filter(function (e) {
-					return e === input;
-				}).length === 0) obj.active.push(input);
-				break;
-		}
-	} else {
-		obj.active = true;
-		if (payload.hasOwnProperty('tier')) {
-			obj.tier = payload.tier;
-		}
-		if (obj.hasOwnProperty('sel')) {
-			if (obj.hasOwnProperty('input') && payload.input !== '' && payload.input !== undefined) {
-				obj.sid = payload.input;
-			} else {
-				obj.sid = payload.sel;
-			}
-		}
-	}
-	_ListStore2.default.addDependencies(obj.req, new_sid);
-	_ListStore2.default.set(payload.id, obj);
-}
-
-function _deactivate(payload) {
-	var id = payload.id,
-	    sid = payload.sid;
-
-	var obj = _ListStore2.default.get(payload.id);
-	var old_sid;
-	if (obj.max !== null) {
-		switch (id) {
-			case 'ADV_4':
-			case 'ADV_16':
-			case 'DISADV_48':
-				obj.active.splice(obj.active.indexOf(sid), 1);
-				old_sid = sid;
-				break;
-			case 'ADV_28':
-			case 'ADV_29':
-				if (typeof sid === 'number') obj.active.splice(obj.active.indexOf(sid), 1);else obj.active = obj.active.filter(function (e) {
-					return e[0] !== sid;
-				});
-				break;
-			case 'DISADV_1':
-			case 'DISADV_34':
-			case 'DISADV_50':
-				obj.active = obj.active.filter(function (e) {
-					return e[0] !== sid;
-				});
-				break;
-			case 'DISADV_33':
-				if (typeof sid === 'string') {
-					var arr = sid.split('&');
-					arr = [parseInt(arr.shift()), arr.join('&')];
-					for (var i = 0; i < obj.active.length; i++) {
-						if (obj.active[i][0] === arr[0] && obj.active[i][1] === arr[1]) {
-							obj.active.splice(i, 1);
-							break;
-						}
-					}
-				} else obj.active.splice(obj.active.indexOf(sid), 1);
-				break;
-			default:
-				if (payload.hasOwnProperty('sid')) obj.active.splice(obj.active.indexOf(sid), 1);
-				break;
-		}
-	} else {
-		obj.active = false;
-		if (payload.hasOwnProperty('tier')) {
-			delete obj.tier;
-		}
-		if (obj.hasOwnProperty('sid')) {
-			delete obj.sid;
-		}
-	}
-	_ListStore2.default.removeDependencies(obj.req, old_sid);
-	_ListStore2.default.set(payload.id, obj);
-}
-
-function _updateTier(id, tier, sid) {
-	var obj = _ListStore2.default.get(id);
-	if (id === 'DISADV_1') {
-		for (var i = 0; i < obj.active.length; i++) {
-			if (obj.active[i][0] === sid) {
-				obj.active[i][1] = tier;
-				break;
-			}
-		}
-	} else {
-		obj.tier = tier;
-	}
-	_ListStore2.default.set(id, obj);
-}
-
-function _clear() {
-	_ListStore2.default.getAllByCategory(CATEGORY_1, CATEGORY_2).forEach(function (e) {
-		_ListStore2.default.setProperty(e.id, 'active', _ListStore2.default.get(e.id).max === null ? false : []);
-		_ListStore2.default.setProperty(e.id, 'tier');
-		_ListStore2.default.setProperty(e.id, 'sid');
-		_ListStore2.default.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(payload) {
-	payload.active.forEach(function (e) {
-		var _e = (0, _slicedToArray3.default)(e, 2),
-		    id = _e[0],
-		    options = _e[1];
-
-		var obj = _ListStore2.default.get(id);
-		if (obj.max !== null) {
-			_ListStore2.default.setProperty(id, 'active', options);
-			switch (id) {
-				case 'ADV_4':
-				case 'ADV_16':
-				case 'DISADV_48':
-					options.forEach(function (p) {
-						_ListStore2.default.addDependencies(obj.req, p);
-					});
-					break;
-				default:
-					options.forEach(function () {
-						_ListStore2.default.addDependencies(obj.req);
-					});
-			}
-		} else {
-			_ListStore2.default.activate(id);
-			_ListStore2.default.addDependencies(obj.req);
-			for (var property in options) {
-				_ListStore2.default.setProperty(id, property, options[property]);
-			}
-		}
-	});
-	_showRating = payload._showRating;
-}
-
-function _assignRCP() {
-	var list = new _set2.default();
-
-	_RaceStore2.default.getCurrent().auto_adv.forEach(function (e) {
-		var _e2 = (0, _slicedToArray3.default)(e, 1),
-		    id = _e2[0];
-
-		list.add(id);
-	});
-
-	list.forEach(function (id) {
-		var obj = _ListStore2.default.get(id);
-		_ListStore2.default.activate(id);
-		_ListStore2.default.addDependencies(obj.req);
-	});
+function _updateAll(disadv) {
+	_showRating = disadv._showRating;
 }
 
 var DisAdvStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, {
-
-	init: function init(rawAdv, rawDisAdv) {
-		for (var id in rawAdv) {
-			rawAdv[id].active = rawAdv[id].max === null ? false : [];
-			rawAdv[id].category = CATEGORY_1;
-			rawAdv[id].dependencies = [];
-			if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].indexOf(id) > -1) {
-				rawAdv[id].sel = rawAdv[id].sel.map(function (e) {
-					return e[0];
-				});
-				rawAdv[id].sel = _ListStore2.default.getAllByCategory.apply(_ListStore2.default, (0, _toConsumableArray3.default)(rawAdv[id].sel)).filter(function (e) {
-					return !(e.category === 'spells' && e.gr === 5 || e.category === 'liturgies' && e.gr === 3);
-				}).sort(function (a, b) {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				});
-				rawAdv[id].sel = rawAdv[id].sel.map(function (e) {
-					return [e.name, e.id];
-				});
-			} else if (['ADV_28', 'ADV_29', 'ADV_32'].indexOf(id) > -1) {
-				for (var i = 0; i < rawAdv[id].sel.length; i++) {
-					var arr = [rawAdv[id].sel[i][0], i + 1];
-					if (rawAdv[id].sel[i][1] !== null) arr[2] = rawAdv[id].sel[i][1];
-					rawAdv[id].sel[i] = arr;
-				}
-			}
-		}
-		for (var _id in rawDisAdv) {
-			rawDisAdv[_id].active = rawDisAdv[_id].max === null ? false : [];
-			rawDisAdv[_id].category = CATEGORY_2;
-			rawDisAdv[_id].dependencies = [];
-			if (rawDisAdv[_id].sel.length > 0) {
-				if (_id === 'DISADV_48') {
-					rawDisAdv[_id].sel = rawDisAdv[_id].sel.map(function (e) {
-						return e[0];
-					});
-					rawDisAdv[_id].sel = _ListStore2.default.getAllByCategory.apply(_ListStore2.default, (0, _toConsumableArray3.default)(rawDisAdv[_id].sel)).filter(function (e) {
-						return !(e.category === 'spells' && e.gr === 5 || e.category === 'liturgies' && e.gr === 3);
-					}).sort(function (a, b) {
-						if (a.name < b.name) {
-							return -1;
-						} else if (a.name > b.name) {
-							return 1;
-						} else {
-							return 0;
-						}
-					});
-					rawDisAdv[_id].sel = rawDisAdv[_id].sel.map(function (e) {
-						return [e.name, e.id];
-					});
-				} else {
-					for (var _i = 0; _i < rawDisAdv[_id].sel.length; _i++) {
-						var _arr = [rawDisAdv[_id].sel[_i][0], _i + 1];
-						if (rawDisAdv[_id].sel[_i][1] !== null) _arr[2] = rawDisAdv[_id].sel[_i][1];
-						rawDisAdv[_id].sel[_i] = _arr;
-					}
-				}
-			}
-			if (_id === 'DISADV_34') {
-				rawDisAdv[_id].sel = [['99 Gesetze', 1, 1], ['Moralkodex der Hesindekirche', 2, 1], ['Moralkodex der Phexkirche', 3, 1], ['Moralkodex der Perainekirche', 4, 1], ['99 Gesetze (streng)', 5, 2], ['Ehrenkodex der Krieger', 6, 2], ['Ehrenkodex der Ritter', 7, 2], ['Elfische Weltsicht', 8, 2], ['Moralkodex der Boronkirche', 9, 2], ['Moralkodex der Praioskirche', 10, 2], ['Moralkodex der Rondrakirche', 11, 2], ['Zwergischer Ehrenkodex', 12, 2], ['99 Gesetze (radikal)', 13, 3], ['Pazifismus', 14, 3]];
-			} else if (_id === 'DISADV_50') {
-				rawDisAdv[_id].sel = [['Sippenmitglied gegenüber der Sippe', 1, 1], ['Verschuldeter Held', 2, 1], ['Adliger gegenüber seinem Lehnsherrn', 3, 2], ['Geweihter gegenüber seinem Tempel', 5, 2], ['Geweihter gegenüber seiner Kirche', 4, 2], ['Magier gegenüber seinem Lehrmeister', 6, 2], ['Magier gegenüber seiner Akademie', 7, 2], ['Magier gegenüber seiner Gilde', 8, 2], ['Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe', 9, 3]];
-			}
-		}
-		_ListStore2.default.init(rawAdv, rawDisAdv);
-	},
 
 	emitChange: function emitChange() {
 		this.emit('change');
@@ -18556,11 +18193,6 @@ DisAdvStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 	switch (payload.actionType) {
 
-		case _ActionTypes2.default.CLEAR_HERO:
-		case _ActionTypes2.default.CREATE_NEW_HERO:
-			_clear();
-			break;
-
 		case _ActionTypes2.default.RECEIVE_HERO:
 			_updateAll(payload.disadv);
 			break;
@@ -18574,24 +18206,8 @@ DisAdvStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 			break;
 
 		case _ActionTypes2.default.ACTIVATE_DISADV:
-			_activate(payload);
-			break;
-
 		case _ActionTypes2.default.DEACTIVATE_DISADV:
-			_deactivate(payload);
-			break;
-
 		case _ActionTypes2.default.UPDATE_DISADV_TIER:
-			_updateTier(payload.id, payload.tier, payload.sid);
-			break;
-
-		case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case _ActionTypes2.default.RECEIVE_RAW_LISTS:
-			_AppDispatcher2.default.waitFor([_LiturgiesStore2.default.dispatchToken, _SpellsStore2.default.dispatchToken, _TalentsStore2.default.dispatchToken]);
-			DisAdvStore.init(payload.adv, payload.disadv);
 			break;
 
 		default:
@@ -18605,7 +18221,7 @@ DisAdvStore.dispatchToken = _AppDispatcher2.default.register(function (payload) 
 
 exports.default = DisAdvStore;
 
-},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"../utils/validate":153,"./ELStore":126,"./ListStore":131,"./LiturgiesStore":132,"./RaceStore":137,"./SpellsStore":139,"./TalentsStore":141,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/map":158,"babel-runtime/core-js/set":167,"babel-runtime/helpers/extends":174,"babel-runtime/helpers/slicedToArray":178,"babel-runtime/helpers/toConsumableArray":180,"events":303}],126:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"../utils/validate":153,"./ELStore":126,"./ListStore":131,"./LiturgiesStore":132,"./RaceStore":137,"./SpellsStore":139,"./TalentsStore":141,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/map":158,"babel-runtime/helpers/extends":174,"events":303}],126:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19674,21 +19290,33 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _set = require('babel-runtime/core-js/set');
+var _isInteger = require('babel-runtime/core-js/number/is-integer');
 
-var _set2 = _interopRequireDefault(_set);
-
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
+var _isInteger2 = _interopRequireDefault(_isInteger);
 
 var _from = require('babel-runtime/core-js/array/from');
 
 var _from2 = _interopRequireDefault(_from);
 
+var _toArray2 = require('babel-runtime/helpers/toArray');
+
+var _toArray3 = _interopRequireDefault(_toArray2);
+
+var _set = require('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
+var _map = require('babel-runtime/core-js/map');
+
+var _map2 = _interopRequireDefault(_map);
+
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _isNan = require('babel-runtime/core-js/number/is-nan');
 
@@ -19727,6 +19355,10 @@ var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 var _Categories = require('../constants/Categories');
 
 var _Categories2 = _interopRequireDefault(_Categories);
+
+var _iccalc = require('../utils/iccalc');
+
+var _iccalc2 = _interopRequireDefault(_iccalc);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19830,12 +19462,192 @@ function _removeDependencies(reqs, sel) {
 	});
 }
 
+function _activateDASA(payload) {
+	var id = payload.id,
+	    sel = payload.sel,
+	    sel2 = payload.sel2,
+	    input = payload.input,
+	    tier = payload.tier;
+
+	var obj = _list[id];
+	var addreq = [];
+	var new_sid;
+	if (obj.max !== null) {
+		switch (id) {
+			case 'ADV_4':
+			case 'ADV_16':
+			case 'DISADV_48':
+				obj.active.push(sel);
+				new_sid = sel;
+				break;
+			case 'DISADV_1':
+			case 'DISADV_34':
+			case 'DISADV_50':
+				if (input === '') obj.active.push([sel, tier]);else if (obj.active.filter(function (e) {
+					return e[0] === input;
+				}).length === 0) obj.active.push([input, tier]);
+				break;
+			case 'DISADV_33':
+				if ([7, 8].indexOf(sel) > -1 && input !== '') {
+					if (obj.active.filter(function (e) {
+						return e[1] === input;
+					}).length === 0) obj.active.push([sel, input]);
+				} else obj.active.push(sel);
+				break;
+			case 'DISADV_36':
+				if (input === '') obj.active.push(sel);else if (obj.active.filter(function (e) {
+					return e === input;
+				}).length === 0) obj.active.push(input);
+				break;
+			case 'SA_10':
+				if (input === '') {
+					obj.active.push([sel, sel2]);
+					addreq.push([sel, obj.active.filter(function (e) {
+						return e[0] === sel;
+					}).length * 6]);
+				} else if (obj.active.filter(function (e) {
+					return e[0] === input;
+				}).length === 0) {
+					obj.active.push([sel, input]);
+					addreq.push([sel, obj.active.filter(function (e) {
+						return e[0] === sel;
+					}).length * 6]);
+				}
+				break;
+			case 'SA_30':
+				obj.active.push([sel, tier]);
+				break;
+			default:
+				if (payload.hasOwnProperty('sel')) obj.active.push(sel);else if (payload.hasOwnProperty('input') && obj.active.filter(function (e) {
+					return e === input;
+				}).length === 0) obj.active.push(input);
+				break;
+		}
+	} else {
+		obj.active = true;
+		if (payload.hasOwnProperty('tier')) {
+			obj.tier = tier;
+		}
+		if (obj.hasOwnProperty('sel')) {
+			if (obj.hasOwnProperty('input') && input !== '' && input !== undefined) {
+				obj.sid = input;
+			} else {
+				obj.sid = sel;
+			}
+		}
+	}
+	_addDependencies(obj.req.concat(addreq), new_sid);
+}
+
+function _deactivateDASA(payload) {
+	var id = payload.id,
+	    sid = payload.sid;
+
+	var obj = _list[id];
+	var addreq = [];
+	var old_sid;
+	if (obj.max !== null) {
+		switch (id) {
+			case 'ADV_4':
+			case 'ADV_16':
+			case 'DISADV_48':
+				obj.active.splice(obj.active.indexOf(sid), 1);
+				old_sid = sid;
+				break;
+			case 'ADV_28':
+			case 'ADV_29':
+				if (typeof sid === 'number') obj.active.splice(obj.active.indexOf(sid), 1);else obj.active = obj.active.filter(function (e) {
+					return e[0] !== sid;
+				});
+				break;
+			case 'DISADV_1':
+			case 'DISADV_34':
+			case 'DISADV_50':
+				obj.active = obj.active.filter(function (e) {
+					return e[0] !== sid;
+				});
+				break;
+			case 'DISADV_33':
+				if (typeof sid === 'string') {
+					var arr = sid.split('&');
+					arr = [parseInt(arr.shift()), arr.join('&')];
+					for (var i = 0; i < obj.active.length; i++) {
+						if (obj.active[i][0] === arr[0] && obj.active[i][1] === arr[1]) {
+							obj.active.splice(i, 1);
+							break;
+						}
+					}
+				} else {
+					obj.active.splice(obj.active.indexOf(sid), 1);
+				}
+				break;
+			case 'SA_10':
+				{
+					var _ret = function () {
+						var arr = payload.sid.split('&');
+						arr = [arr.shift(), arr.join('&')];
+						for (var _i2 = 0; _i2 < obj.active.length; _i2++) {
+							if (obj.active[_i2][0] === arr[0] && (obj.active[_i2][1] === arr[1] || obj.active[_i2][1] === parseInt(arr[1]))) {
+								addreq.push([arr[0], obj.active.filter(function (e) {
+									return e[0] === arr[0];
+								}).length * 6]);
+								obj.active.splice(_i2, 1);
+								break;
+							}
+						}
+						return 'break';
+					}();
+
+					if (_ret === 'break') break;
+				}
+			case 'SA_30':
+				obj.active = obj.active.filter(function (e) {
+					return e[0] !== payload.sid;
+				});
+				break;
+			default:
+				if (payload.hasOwnProperty('sid')) obj.active.splice(obj.active.indexOf(sid), 1);
+				break;
+		}
+	} else {
+		obj.active = false;
+		if (payload.hasOwnProperty('tier')) {
+			delete obj.tier;
+		}
+		if (obj.hasOwnProperty('sid')) {
+			delete obj.sid;
+		}
+	}
+	_removeDependencies(obj.req.concat(addreq), old_sid);
+}
+
+function _updateTier(id, tier, sid) {
+	var obj = _list[id];
+	switch (id) {
+		case 'DISADV_1':
+		case 'SA_30':
+			for (var i = 0; i < obj.active.length; i++) {
+				if (obj.active[i][0] === sid) {
+					obj.active[i][1] = tier;
+					break;
+				}
+			}
+			break;
+		default:
+			obj.tier = tier;
+			break;
+	}
+}
+
 function _init(_ref) {
 	var attributes = _ref.attributes,
+	    adv = _ref.adv,
+	    disadv = _ref.disadv,
 	    talents = _ref.talents,
 	    combattech = _ref.combattech,
 	    spells = _ref.spells,
-	    liturgies = _ref.liturgies;
+	    liturgies = _ref.liturgies,
+	    specialabilities = _ref.specialabilities;
 
 	for (var id in attributes) {
 		_list[id] = attributes[id];
@@ -19874,6 +19686,58 @@ function _init(_ref) {
 		_list[_id4].category = _Categories2.default.CHANTS;
 		_list[_id4].dependencies = [];
 	}
+	for (var _id5 in adv) {
+		adv[_id5].category = _Categories2.default.ADVANTAGES;
+	}
+	for (var _id6 in disadv) {
+		disadv[_id6].category = _Categories2.default.DISADVANTAGES;
+	}
+	for (var _id7 in specialabilities) {
+		specialabilities[_id7].category = _Categories2.default.SPECIAL_ABILITIES;
+	}
+	var adsa = (0, _extends3.default)({}, adv, disadv, specialabilities);
+	for (var _id8 in adsa) {
+		_list[_id8] = adsa[_id8];
+		_list[_id8].active = _list[_id8].max === null ? false : [];
+		_list[_id8].dependencies = [];
+		if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].indexOf(_id8) > -1) {
+			_list[_id8].sel = _list[_id8].sel.map(function (e) {
+				return e[0];
+			});
+			_list[_id8].sel = ListStore.getAllByCategory.apply(ListStore, (0, _toConsumableArray3.default)(_list[_id8].sel)).filter(function (e) {
+				return !(e.category === 'spells' && e.gr === 5 || e.category === 'liturgies' && e.gr === 3);
+			}).sort(function (a, b) {
+				if (a.name < b.name) {
+					return -1;
+				} else if (a.name > b.name) {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+			_list[_id8].sel = _list[_id8].sel.map(function (e) {
+				return [e.name, e.id];
+			});
+		} else if (_id8 === 'SA_72') {
+			_list[_id8].sel = _list[_id8].sel.map(function (e, i) {
+				return [ListStore.get(e[0]).name, i + 1, e[1]];
+			});
+		} else if (_id8 === 'SA_10') {
+			_list[_id8].sel = ListStore.getAllByCategory('talents').map(function (e) {
+				return [e.name, e.id, e.skt, e.spec === null ? [] : e.spec.map(function (n, index) {
+					return [n, index + 1];
+				}), e.spec_input];
+			});
+		} else if (['ADV_28', 'ADV_29', 'ADV_32'].indexOf(_id8) > -1 || _list[_id8].category === _Categories2.default.DISADVANTAGES || _list[_id8].category === _Categories2.default.SPECIAL_ABILITIES && ['SA_3', 'SA_28', 'SA_30'].indexOf(_id8) === -1) {
+			for (var i = 0; i < _list[_id8].sel.length; i++) {
+				var arr = [_list[_id8].sel[i][0], i + 1];
+				if (_list[_id8].sel[i][1] !== null) arr[2] = _list[_id8].sel[i][1];
+				_list[_id8].sel[i] = arr;
+			}
+		}
+	}
+	_list['DISADV_34'].sel = [['99 Gesetze', 1, 1], ['Moralkodex der Hesindekirche', 2, 1], ['Moralkodex der Phexkirche', 3, 1], ['Moralkodex der Perainekirche', 4, 1], ['99 Gesetze (streng)', 5, 2], ['Ehrenkodex der Krieger', 6, 2], ['Ehrenkodex der Ritter', 7, 2], ['Elfische Weltsicht', 8, 2], ['Moralkodex der Boronkirche', 9, 2], ['Moralkodex der Praioskirche', 10, 2], ['Moralkodex der Rondrakirche', 11, 2], ['Zwergischer Ehrenkodex', 12, 2], ['99 Gesetze (radikal)', 13, 3], ['Pazifismus', 14, 3]];
+	_list['DISADV_50'].sel = [['Sippenmitglied gegenüber der Sippe', 1, 1], ['Verschuldeter Held', 2, 1], ['Adliger gegenüber seinem Lehnsherrn', 3, 2], ['Geweihter gegenüber seinem Tempel', 5, 2], ['Geweihter gegenüber seiner Kirche', 4, 2], ['Magier gegenüber seinem Lehrmeister', 6, 2], ['Magier gegenüber seiner Akademie', 7, 2], ['Magier gegenüber seiner Gilde', 8, 2], ['Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe', 9, 3]];
 }
 
 function _updateAll(_ref2) {
@@ -19881,7 +19745,9 @@ function _updateAll(_ref2) {
 	    talents = _ref2.talents,
 	    ct = _ref2.ct,
 	    spells = _ref2.spells,
-	    chants = _ref2.chants;
+	    chants = _ref2.chants,
+	    disadv = _ref2.disadv,
+	    sa = _ref2.sa;
 
 	attr.values.forEach(function (e) {
 		var _e = (0, _slicedToArray3.default)(e, 3),
@@ -19910,41 +19776,138 @@ function _updateAll(_ref2) {
 			_setValue.apply(undefined, (0, _toConsumableArray3.default)(e));
 		}
 	});
+	[].concat(disadv.active, sa.active).forEach(function (e) {
+		var _e2 = (0, _slicedToArray3.default)(e, 2),
+		    id = _e2[0],
+		    options = _e2[1];
+
+		var obj = _list[id];
+		if (obj.max !== null) {
+			obj.active = options;
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_16':
+				case 'DISADV_48':
+					options.forEach(function (p) {
+						return _addDependencies(obj.req, p);
+					});
+					break;
+				case 'SA_10':
+					{
+						var _ret2 = function () {
+							var counter = new _map2.default();
+							options.forEach(function (p) {
+								if (counter.has(p[0])) {
+									counter.set(p[0], counter.get(p[0]) + 1);
+								} else {
+									counter.set(p[0], 1);
+								}
+								_addDependencies(obj.req.concat([[p[0], counter.get(p[0]) * 6]]));
+							});
+							return 'break';
+						}();
+
+						if (_ret2 === 'break') break;
+					}
+				default:
+					options.forEach(function () {
+						return _addDependencies(obj.req);
+					});
+			}
+		} else {
+			_activate(id);
+			_addDependencies(obj.req);
+			for (var property in options) {
+				obj[property] = options[property];
+			}
+		}
+	});
 }
 
 function _assignRCP(selections) {
-	var currentRace = _RaceStore2.default.getCurrent() || {};
-	_list[selections.attrSel].mod = currentRace.attr_sel[0] || 0;
+	var _list$SA_28$active, _list$SA_30$active;
+
+	var race = _RaceStore2.default.getCurrent();
+	var culture = _CultureStore2.default.getCurrent();
+	var profession = _ProfessionStore2.default.getCurrent();
+	var professionVariant = _ProfessionVariantStore2.default.getCurrent();
 
 	var addSRList = [];
 	var addSRActivateList = [];
+	var disadvs = new _set2.default();
+	var sas = new _set2.default();
+	var langs = new _map2.default();
+	var litcs = new _set2.default();
+
+	var addSA = function addSA(e) {
+		var _e3 = (0, _toArray3.default)(e),
+		    id = _e3[0],
+		    value = _e3[1],
+		    options = _e3.slice(2);
+
+		if (!value) {
+			sas = new _set2.default([].concat((0, _toConsumableArray3.default)(sas)).filter(function (e) {
+				return e[0] !== id;
+			}));
+		} else {
+			sas.add([id].concat((0, _toConsumableArray3.default)(options)));
+		}
+	};
 
 	if (selections.useCulturePackage) {
-		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(_CultureStore2.default.getCurrent().talents));
+		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(culture.talents));
 	}
-	if ([null, 'P_0'].indexOf(_ProfessionStore2.default.getCurrentID()) === -1) {
-		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(_ProfessionStore2.default.getCurrent().talents));
-		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(_ProfessionStore2.default.getCurrent().combattech));
-		addSRActivateList.push.apply(addSRActivateList, (0, _toConsumableArray3.default)(_ProfessionStore2.default.getCurrent().spells));
-		addSRActivateList.push.apply(addSRActivateList, (0, _toConsumableArray3.default)(_ProfessionStore2.default.getCurrent().chants));
+	if (selections.spec !== null) {
+		sas.add(['SA_10', selections.map.get('spec')[0], selections.spec]);
 	}
-	if (_ProfessionVariantStore2.default.getCurrentID() !== null) {
-		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(_ProfessionVariantStore2.default.getCurrent().talents));
-		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(_ProfessionVariantStore2.default.getCurrent().combattech));
+	langs.set(culture.lang.length > 1 ? selections.lang : culture.lang[0], 4);
+	if (selections.buyLiteracy) {
+		litcs.add(culture.literacy.length > 1 ? selections.litc : culture.literacy[0]);
+	}
+	selections.langLitc.forEach(function (value, key) {
+		var _key$split = key.split('_'),
+		    _key$split2 = (0, _slicedToArray3.default)(_key$split, 2),
+		    category = _key$split2[0],
+		    id = _key$split2[1];
+
+		if (category === 'LANG') {
+			langs.set(parseInt(id), value / 2);
+		} else {
+			litcs.add(parseInt(id));
+		}
+	});
+	if (race) {
+		race.auto_adv.forEach(function (e) {
+			var _e4 = (0, _slicedToArray3.default)(e, 1),
+			    id = _e4[0];
+
+			disadvs.add(id);
+		});
+	}
+	if (profession) {
+		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(profession.talents));
+		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(profession.combattech));
+		addSRActivateList.push.apply(addSRActivateList, (0, _toConsumableArray3.default)(profession.spells));
+		addSRActivateList.push.apply(addSRActivateList, (0, _toConsumableArray3.default)(profession.chants));
+		profession.sa.forEach(addSA);
+	}
+	if (professionVariant) {
+		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(professionVariant.talents));
+		addSRList.push.apply(addSRList, (0, _toConsumableArray3.default)(professionVariant.combattech));
+		professionVariant.sa.forEach(addSA);
 	}
 
 	(0, _from2.default)(selections.combattech).forEach(function (e) {
 		addSRList.push([e, selections.map.get('ct')[1]]);
 	});
-
 	(0, _from2.default)(selections.cantrips).forEach(function (e) {
 		addSRList.push([e, null]);
 	});
-
 	(0, _from2.default)(selections.curses).forEach(function (e) {
 		addSRList.push(e);
 	});
 
+	_list[selections.attrSel].mod = race.attr_sel[0] || 0;
 	addSRList.forEach(function (e) {
 		return _addSR.apply(undefined, (0, _toConsumableArray3.default)(e));
 	});
@@ -19954,6 +19917,48 @@ function _assignRCP(selections) {
 			_setValue(e[0], e[1]);
 		}
 	});
+	disadvs.forEach(function (id) {
+		_activate(id);
+		_addDependencies(_list[id].req);
+	});
+	sas.forEach(function (e) {
+		var _e5 = (0, _toArray3.default)(e),
+		    id = _e5[0],
+		    options = _e5.slice(1);
+
+		var obj = _list[id];
+		var addreq = [];
+
+		if (options.length === 0) {
+			_activate(id);
+		} else {
+			if (obj.tiers !== null && obj.tiers) {
+				if (obj.max === null) {
+					_activate(id);
+					obj.tier = options[0];
+				} else {
+					obj.active.push(options.reverse());
+				}
+			} else if (obj.sel.length > 0) {
+				if (obj.max === null) {
+					_activate(id);
+					obj.sid = options[0];
+				} else if (obj.id === 'SA_10') {
+					obj.active.push([options[0], (0, _isInteger2.default)(options[1]) ? options[1] + 1 : options[1]]);
+					addreq.push([options[0], obj.active.filter(function (e) {
+						return e[0] === options[0];
+					}).length * 6]);
+				} else if (options.length > 1) {
+					obj.active.push(options.reverse());
+				} else {
+					obj.active.push(options[0]);
+				}
+			}
+		}
+		_addDependencies(obj.req.concat(addreq));
+	});
+	(_list$SA_28$active = _list['SA_28'].active).push.apply(_list$SA_28$active, (0, _toConsumableArray3.default)(litcs));
+	(_list$SA_30$active = _list['SA_30'].active).push.apply(_list$SA_30$active, (0, _toConsumableArray3.default)(langs));
 }
 
 function _clear() {
@@ -19981,6 +19986,14 @@ function _clear() {
 			case _Categories2.default.CHANTS:
 				e.active = false;
 				e.value = 0;
+				e.dependencies = [];
+				break;
+			case _Categories2.default.ADVANTAGES:
+			case _Categories2.default.DISADVANTAGES:
+			case _Categories2.default.SPECIAL_ABILITIES:
+				e.active = e.max === null ? false : [];
+				delete e.sid;
+				delete e.tier;
 				e.dependencies = [];
 				break;
 		}
@@ -20135,7 +20148,9 @@ ListStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 		case _ActionTypes2.default.ACTIVATE_SPELL:
 		case _ActionTypes2.default.ACTIVATE_LITURGY:
-			_activate(payload.id);
+			if ((0, _iccalc2.default)(_list[payload.id].skt, 0)) {
+				_activate(payload.id);
+			}
 			break;
 
 		case _ActionTypes2.default.DEACTIVATE_SPELL:
@@ -20143,12 +20158,33 @@ ListStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 			_deactivate(payload.id);
 			break;
 
+		case _ActionTypes2.default.ACTIVATE_DISADV:
+		case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+			if ((0, _iccalc2.default)(payload.costs)) {
+				_activateDASA(payload);
+			}
+			break;
+
+		case _ActionTypes2.default.DEACTIVATE_DISADV:
+		case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+			_deactivateDASA(payload);
+			break;
+
+		case _ActionTypes2.default.UPDATE_DISADV_TIER:
+		case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+			if ((0, _iccalc2.default)(payload.costs)) {
+				_updateTier(payload.id, payload.tier, payload.sid);
+			}
+			break;
+
 		case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
 		case _ActionTypes2.default.ADD_TALENT_POINT:
 		case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
 		case _ActionTypes2.default.ADD_SPELL_POINT:
 		case _ActionTypes2.default.ADD_LITURGY_POINT:
-			_addPoint(payload.id);
+			if ((0, _iccalc2.default)(_list[payload.id].skt, _list[payload.id].value + 1)) {
+				_activate(payload.id);
+			}
 			break;
 
 		case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
@@ -20170,7 +20206,7 @@ ListStore.dispatchToken = _AppDispatcher2.default.register(function (payload) {
 
 exports.default = ListStore;
 
-},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"./CultureStore":124,"./ProfessionStore":134,"./ProfessionVariantStore":135,"./RaceStore":137,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/number/is-nan":160,"babel-runtime/core-js/set":167,"babel-runtime/helpers/extends":174,"babel-runtime/helpers/slicedToArray":178,"babel-runtime/helpers/toConsumableArray":180,"events":303}],132:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"../utils/iccalc":148,"./CultureStore":124,"./ProfessionStore":134,"./ProfessionVariantStore":135,"./RaceStore":137,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/map":158,"babel-runtime/core-js/number/is-integer":159,"babel-runtime/core-js/number/is-nan":160,"babel-runtime/core-js/set":167,"babel-runtime/helpers/extends":174,"babel-runtime/helpers/slicedToArray":178,"babel-runtime/helpers/toArray":179,"babel-runtime/helpers/toConsumableArray":180,"events":303}],132:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20318,7 +20354,7 @@ var LiturgiesStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, 
 
 		var SA_103_ACTIVE = this.get('SA_103').active;
 		var liturgiesAbove10 = _ListStore2.default.getAllByCategory(CATEGORY).filter(function (e) {
-			return e.fw >= 10;
+			return e.value >= 10;
 		});
 		var counter = {};
 		liturgiesAbove10.forEach(function (n) {
@@ -21630,45 +21666,17 @@ var _from = require('babel-runtime/core-js/array/from');
 
 var _from2 = _interopRequireDefault(_from);
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _isInteger = require('babel-runtime/core-js/number/is-integer');
-
-var _isInteger2 = _interopRequireDefault(_isInteger);
-
-var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
-var _toArray2 = require('babel-runtime/helpers/toArray');
-
-var _toArray3 = _interopRequireDefault(_toArray2);
-
-var _set = require('babel-runtime/core-js/set');
-
-var _set2 = _interopRequireDefault(_set);
-
 var _map = require('babel-runtime/core-js/map');
 
 var _map2 = _interopRequireDefault(_map);
 
-var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
+var _extends2 = require('babel-runtime/helpers/extends');
 
-var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _AppDispatcher = require('../dispatcher/AppDispatcher');
 
 var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-var _CultureStore = require('./CultureStore');
-
-var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-var _CombatTechniquesStore = require('./CombatTechniquesStore');
-
-var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
 
 var _events = require('events');
 
@@ -21679,18 +21687,6 @@ var _ListStore2 = _interopRequireDefault(_ListStore);
 var _PhaseStore = require('./PhaseStore');
 
 var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
-
-var _ProfessionStore = require('./ProfessionStore');
-
-var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-var _ProfessionVariantStore = require('./ProfessionVariantStore');
-
-var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-var _TalentsStore = require('./TalentsStore');
-
-var _TalentsStore2 = _interopRequireDefault(_TalentsStore);
 
 var _ActionTypes = require('../constants/ActionTypes');
 
@@ -21707,7 +21703,7 @@ var _validate3 = _interopRequireDefault(_validate2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CATEGORY = _Categories2.default.SPECIAL_ABILITIES;
-var GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
+// const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
 var _filter = '';
 var _sortOrder = 'groups';
@@ -21720,284 +21716,7 @@ function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
-function _activate(payload) {
-	var obj = _ListStore2.default.get(payload.id);
-	var addreq = [];
-	if (obj.max !== null) {
-		if (obj.id === 'SA_10') {
-			if (payload.input === '') {
-				obj.active.push([payload.sel, payload.sel2]);
-				addreq.push([payload.sel, obj.active.filter(function (e) {
-					return e[0] === payload.sel;
-				}).length * 6]);
-			} else if (obj.active.filter(function (e) {
-				return e[0] === payload.input;
-			}).length === 0) {
-				obj.active.push([payload.sel, payload.input]);
-				addreq.push([payload.sel, obj.active.filter(function (e) {
-					return e[0] === payload.sel;
-				}).length * 6]);
-			}
-		} else if (obj.id === 'SA_30') {
-			obj.active.push([payload.sel, payload.tier]);
-		} else if (payload.hasOwnProperty('sel')) {
-			obj.active.push(payload.sel);
-		} else if (payload.hasOwnProperty('input')) {
-			if (obj.active.filter(function (e) {
-				return e === payload.input;
-			}).length === 0) {
-				obj.active.push(payload.input);
-			}
-		}
-	} else {
-		obj.active = true;
-		if (payload.hasOwnProperty('tier')) {
-			obj.tier = payload.tier;
-		}
-		if (obj.hasOwnProperty('sel')) {
-			if (obj.hasOwnProperty('input') && payload.input !== '' && payload.input !== undefined) {
-				obj.sid = payload.input;
-			} else {
-				obj.sid = payload.sel;
-			}
-		}
-	}
-	_ListStore2.default.addDependencies(obj.req.concat(addreq));
-	_ListStore2.default.set(payload.id, obj);
-}
-
-function _deactivate(payload) {
-	var obj = _ListStore2.default.get(payload.id);
-	var addreq = [];
-	if (obj.max !== null) {
-		if (obj.id === 'SA_10') {
-			(function () {
-				var arr = payload.sid.split('&');
-				arr = [arr.shift(), arr.join('&')];
-				for (var i = 0; i < obj.active.length; i++) {
-					if (obj.active[i][0] === arr[0] && (obj.active[i][1] === arr[1] || obj.active[i][1] === parseInt(arr[1]))) {
-						addreq.push([arr[0], obj.active.filter(function (e) {
-							return e[0] === arr[0];
-						}).length * 6]);
-						obj.active.splice(i, 1);
-						break;
-					}
-				}
-			})();
-		} else if (obj.id === 'SA_30') {
-			obj.active = obj.active.filter(function (e) {
-				return e[0] !== payload.sid;
-			});
-		} else if (payload.hasOwnProperty('sid')) {
-			obj.active.splice(obj.active.indexOf(payload.sid), 1);
-		}
-	} else {
-		obj.active = false;
-		if (payload.hasOwnProperty('tier')) {
-			delete obj.tier;
-		}
-		if (obj.hasOwnProperty('sid')) {
-			delete obj.sid;
-		}
-	}
-	_ListStore2.default.removeDependencies(obj.req.concat(addreq));
-	_ListStore2.default.set(payload.id, obj);
-}
-
-function _updateTier(id, tier, sid) {
-	var obj = _ListStore2.default.get(id);
-	if (id === 'SA_30') {
-		for (var i = 0; i < obj.active.length; i++) {
-			if (obj.active[i][0] === sid) {
-				obj.active[i][1] = tier;
-				break;
-			}
-		}
-	} else {
-		obj.tier = tier;
-	}
-	_ListStore2.default.set(id, obj);
-}
-
-function _clear() {
-	_ListStore2.default.getAllByCategory(CATEGORY).forEach(function (e) {
-		_ListStore2.default.setProperty(e.id, 'active', _ListStore2.default.get(e.id).max === null ? false : []);
-		_ListStore2.default.setProperty(e.id, 'tier');
-		_ListStore2.default.setProperty(e.id, 'sid');
-		_ListStore2.default.setProperty(e.id, 'dependencies', []);
-	});
-}
-
-function _updateAll(payload) {
-	payload.active.forEach(function (e) {
-		var _e = (0, _slicedToArray3.default)(e, 2),
-		    id = _e[0],
-		    options = _e[1];
-
-		var obj = _ListStore2.default.get(id);
-		if (obj.max !== null) {
-			_ListStore2.default.setProperty(id, 'active', options);
-			switch (id) {
-				case 'SA_10':
-					{
-						var _ret2 = function () {
-							var counter = new _map2.default();
-							options.forEach(function (p) {
-								if (counter.has(p[0])) {
-									counter.set(p[0], counter.get(p[0]) + 1);
-								} else {
-									counter.set(p[0], 1);
-								}
-								_ListStore2.default.addDependencies(obj.req.concat([[p[0], counter.get(p[0]) * 6]]));
-							});
-							return 'break';
-						}();
-
-						if (_ret2 === 'break') break;
-					}
-				default:
-					options.forEach(function () {
-						_ListStore2.default.addDependencies(obj.req);
-					});
-			}
-		} else {
-			_ListStore2.default.activate(id);
-			_ListStore2.default.addDependencies(obj.req);
-			for (var property in options) {
-				_ListStore2.default.setProperty(id, property, options[property]);
-			}
-		}
-	});
-}
-
-function _assignRCP(selections) {
-	var _SA_28$active, _SA_30$active;
-
-	var list = new _set2.default();
-
-	if (selections.spec !== null) list.add(['SA_10', selections.map.get('spec')[0], selections.spec]);
-
-	if ([null, 'P_0'].indexOf(_ProfessionStore2.default.getCurrentID()) === -1) _ProfessionStore2.default.getCurrent().sa.forEach(function (e) {
-		var _e2 = (0, _toArray3.default)(e),
-		    id = _e2[0],
-		    value = _e2[1],
-		    options = _e2.slice(2);
-
-		if (!value) {
-			list = new _set2.default([].concat((0, _toConsumableArray3.default)(list)).filter(function (e) {
-				return e[0] !== id;
-			}));
-		} else {
-			list.add([id].concat((0, _toConsumableArray3.default)(options)));
-		}
-	});
-	if (_ProfessionVariantStore2.default.getCurrentID() !== null) _ProfessionVariantStore2.default.getCurrent().sa.forEach(function (e) {
-		var _e3 = (0, _toArray3.default)(e),
-		    id = _e3[0],
-		    value = _e3[1],
-		    options = _e3.slice(2);
-
-		if (!value) {
-			list = new _set2.default([].concat((0, _toConsumableArray3.default)(list)).filter(function (e) {
-				return e[0] !== id;
-			}));
-		} else {
-			list.add([id].concat((0, _toConsumableArray3.default)(options)));
-		}
-	});
-
-	list.forEach(function (e) {
-		var _e4 = (0, _toArray3.default)(e),
-		    id = _e4[0],
-		    options = _e4.slice(1);
-
-		var obj = _ListStore2.default.get(id);
-		var addreq = [];
-
-		if (options.length === 0) {
-			_ListStore2.default.activate(id);
-		} else {
-			if (obj.tiers !== null && obj.tiers) {
-				if (obj.max === null) {
-					_ListStore2.default.activate(id);
-					obj.tier = options[0];
-				} else {
-					obj.active.push(options.reverse());
-				}
-			} else if (obj.sel.length > 0) {
-				if (obj.max === null) {
-					_ListStore2.default.activate(id);
-					obj.sid = options[0];
-				} else if (obj.id === 'SA_10') {
-					obj.active.push([options[0], (0, _isInteger2.default)(options[1]) ? options[1] + 1 : options[1]]);
-					addreq.push([options[0], obj.active.filter(function (e) {
-						return e[0] === options[0];
-					}).length * 6]);
-				} else if (options.length > 1) {
-					obj.active.push(options.reverse());
-				} else {
-					obj.active.push(options[0]);
-				}
-			}
-		}
-		_ListStore2.default.addDependencies(obj.req.concat(addreq));
-	});
-
-	var culture = _CultureStore2.default.getCurrent();
-	var langs = new _map2.default();
-	var litcs = new _set2.default();
-
-	langs.set(culture.lang.length > 1 ? selections.lang : culture.lang[0], 4);
-	if (selections.buyLiteracy) {
-		litcs.add(culture.literacy.length > 1 ? selections.litc : culture.literacy[0]);
-	}
-	selections.langLitc.forEach(function (value, key) {
-		var _key$split = key.split('_'),
-		    _key$split2 = (0, _slicedToArray3.default)(_key$split, 2),
-		    category = _key$split2[0],
-		    id = _key$split2[1];
-
-		if (category === 'LANG') {
-			langs.set(parseInt(id), value / 2);
-		} else {
-			litcs.add(parseInt(id));
-		}
-	});
-
-	var SA_28 = _ListStore2.default.get('SA_28');
-	var SA_30 = _ListStore2.default.get('SA_30');
-
-	(_SA_28$active = SA_28.active).push.apply(_SA_28$active, (0, _toConsumableArray3.default)(litcs));
-	(_SA_30$active = SA_30.active).push.apply(_SA_30$active, (0, _toConsumableArray3.default)(langs));
-}
-
 var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, {
-
-	init: function init(rawSA) {
-		for (var id in rawSA) {
-			rawSA[id].active = rawSA[id].max === null ? false : [];
-			rawSA[id].category = CATEGORY;
-			rawSA[id].dependencies = [];
-			if (id === 'SA_72') {
-				rawSA[id].sel = rawSA[id].sel.map(function (e, i) {
-					return [_ListStore2.default.get(e[0]).name, i + 1, e[1]];
-				});
-			} else if (id === 'SA_10') {
-				rawSA[id].sel = _ListStore2.default.getAllByCategory('talents').map(function (e) {
-					return [e.name, e.id, e.skt, e.spec === null ? [] : e.spec.map(function (n, index) {
-						return [n, index + 1];
-					}), e.spec_input];
-				});
-			} else if (rawSA[id].sel.length > 0 && ['SA_3', 'SA_28', 'SA_30'].indexOf(id) === -1) {
-				for (var i = 0; i < rawSA[id].sel.length; i++) {
-					var arr = [rawSA[id].sel[i][0], i + 1];
-					if (rawSA[id].sel[i][1] !== null) arr[2] = rawSA[id].sel[i][1];
-					rawSA[id].sel[i] = arr;
-				}
-			}
-		}
-		_ListStore2.default.init(rawSA);
-	},
 
 	emitChange: function emitChange() {
 		this.emit('change');
@@ -22255,7 +21974,7 @@ var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 						}
 					case 'SA_10':
 						{
-							var _ret9 = function () {
+							var _ret7 = function () {
 								var counter = {};
 								active.forEach(function (n) {
 									if (!counter.hasOwnProperty(n[0])) {
@@ -22288,7 +22007,7 @@ var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 								return 'break';
 							}();
 
-							if (_ret9 === 'break') break;
+							if (_ret7 === 'break') break;
 						}
 					case 'SA_29':
 						{
@@ -22341,7 +22060,7 @@ var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 						}
 					case 'SA_103':
 						{
-							var _ret10 = function () {
+							var _ret8 = function () {
 								var liturgiesAbove10 = _ListStore2.default.getAllByCategory('liturgies').filter(function (e) {
 									return e.fw >= 10;
 								});
@@ -22366,7 +22085,7 @@ var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 								return 'break';
 							}();
 
-							if (_ret10 === 'break') break;
+							if (_ret8 === 'break') break;
 						}
 					default:
 						if (sel.length > 0) {
@@ -22388,9 +22107,9 @@ var SpecialAbilitiesStore = (0, _extends3.default)({}, _events.EventEmitter.prot
 		};
 
 		for (var id in sasObj) {
-			var _ret7 = _loop2(id);
+			var _ret5 = _loop2(id);
 
-			if (_ret7 === 'continue') continue;
+			if (_ret5 === 'continue') continue;
 		}
 		if (_filter !== '') {
 			(function () {
@@ -22448,15 +22167,6 @@ SpecialAbilitiesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 	switch (payload.actionType) {
 
-		case _ActionTypes2.default.CLEAR_HERO:
-		case _ActionTypes2.default.CREATE_NEW_HERO:
-			_clear();
-			break;
-
-		case _ActionTypes2.default.RECEIVE_HERO:
-			_updateAll(payload.sa);
-			break;
-
 		case _ActionTypes2.default.FILTER_SPECIALABILITIES:
 			_updateFilterText(payload.text);
 			break;
@@ -22466,24 +22176,8 @@ SpecialAbilitiesStore.dispatchToken = _AppDispatcher2.default.register(function 
 			break;
 
 		case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
-			_activate(payload);
-			break;
-
 		case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
-			_deactivate(payload);
-			break;
-
 		case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
-			_updateTier(payload.id, payload.tier, payload.sid);
-			break;
-
-		case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-
-		case _ActionTypes2.default.RECEIVE_RAW_LISTS:
-			_AppDispatcher2.default.waitFor([_CombatTechniquesStore2.default.dispatchToken, _TalentsStore2.default.dispatchToken]);
-			SpecialAbilitiesStore.init(payload.specialabilities);
 			break;
 
 		default:
@@ -22497,7 +22191,7 @@ SpecialAbilitiesStore.dispatchToken = _AppDispatcher2.default.register(function 
 
 exports.default = SpecialAbilitiesStore;
 
-},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"../utils/validate":153,"./CombatTechniquesStore":123,"./CultureStore":124,"./ListStore":131,"./PhaseStore":133,"./ProfessionStore":134,"./ProfessionVariantStore":135,"./TalentsStore":141,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/map":158,"babel-runtime/core-js/number/is-integer":159,"babel-runtime/core-js/set":167,"babel-runtime/helpers/extends":174,"babel-runtime/helpers/slicedToArray":178,"babel-runtime/helpers/toArray":179,"babel-runtime/helpers/toConsumableArray":180,"events":303}],139:[function(require,module,exports){
+},{"../constants/ActionTypes":117,"../constants/Categories":118,"../dispatcher/AppDispatcher":119,"../utils/validate":153,"./ListStore":131,"./PhaseStore":133,"babel-runtime/core-js/array/from":154,"babel-runtime/core-js/map":158,"babel-runtime/helpers/extends":174,"events":303}],139:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22670,7 +22364,7 @@ var SpellsStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, {
 
 		var SA_88_ACTIVE = this.get('SA_88').active;
 		var spellsAbove10 = _ListStore2.default.getAllByCategory(CATEGORY).filter(function (e) {
-			return e.fw >= 10;
+			return e.value >= 10;
 		});
 		var counter = {};
 		for (var i = 0; i < spellsAbove10.length; i++) {
@@ -23079,7 +22773,7 @@ var TalentsStore = (0, _extends3.default)({}, _events.EventEmitter.prototype, {
 		var talents = [];
 
 		var SA_18 = this.get('SA_18').active;
-		var SA_18_REQ = SA_18 && talentsObj['TAL_51'].fw + talentsObj['TAL_55'].fw < 12;
+		var SA_18_REQ = SA_18 && talentsObj['TAL_51'].value + talentsObj['TAL_55'].value < 12;
 
 		var _loop = function _loop(id) {
 			var talent = talentsObj[id];
@@ -23676,37 +23370,62 @@ var WebAPIUtils = {
 
 		return login;
 	}(),
-	logout: function () {
-		var _ref9 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee9() {
+	logout: function logout() {
+		_ServerActions2.default.logoutSuccess();
+	},
+	// logout: async function() {
+	// 	try {
+	// 		ServerActions.startLoading();
+	// 		let result = await request.get('php/logout.php?uid=' + AccountStore.getID());
+	// 		ServerActions.logoutSuccess(result);
+	// 	} catch(e) {
+	// 		ServerActions.connectionError(e);
+	// 	}
+	// },
+	setNewUsername: function () {
+		var _ref9 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee9(name) {
+			var userID, url, result;
 			return _regenerator2.default.wrap(function _callee9$(_context9) {
 				while (1) {
 					switch (_context9.prev = _context9.next) {
 						case 0:
-							_ServerActions2.default.logoutSuccess();
-							// try {
-							// 	ServerActions.startLoading();
-							// 	let result = await request.get('php/logout.php?uid=' + AccountStore.getID());
-							// 	ServerActions.logoutSuccess(result);
-							// } catch(e) {
-							// 	ServerActions.connectionError(e);
-							// }
+							_context9.prev = 0;
 
-						case 1:
+							_ServerActions2.default.startLoading();
+							userID = _AccountStore2.default.getID();
+							url = 'php/changeaccount.php?uid=' + userID + '&src=username&v=' + name;
+							_context9.next = 6;
+							return _request2.default.get(url);
+
+						case 6:
+							result = _context9.sent;
+
+							_ServerActions2.default.changeUsernameSuccess(result, name);
+							_context9.next = 13;
+							break;
+
+						case 10:
+							_context9.prev = 10;
+							_context9.t0 = _context9['catch'](0);
+
+							_ServerActions2.default.connectionError(_context9.t0);
+
+						case 13:
 						case 'end':
 							return _context9.stop();
 					}
 				}
-			}, _callee9, this);
+			}, _callee9, this, [[0, 10]]);
 		}));
 
-		function logout() {
+		function setNewUsername(_x11) {
 			return _ref9.apply(this, arguments);
 		}
 
-		return logout;
+		return setNewUsername;
 	}(),
-	setNewUsername: function () {
-		var _ref10 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10(name) {
+	setNewPassword: function () {
+		var _ref10 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee10(password) {
 			var userID, url, result;
 			return _regenerator2.default.wrap(function _callee10$(_context10) {
 				while (1) {
@@ -23716,14 +23435,14 @@ var WebAPIUtils = {
 
 							_ServerActions2.default.startLoading();
 							userID = _AccountStore2.default.getID();
-							url = 'php/changeaccount.php?uid=' + userID + '&src=username&v=' + name;
+							url = 'php/changeaccount.php?uid=' + userID + '&src=password&v=' + password;
 							_context10.next = 6;
 							return _request2.default.get(url);
 
 						case 6:
 							result = _context10.sent;
 
-							_ServerActions2.default.changeUsernameSuccess(result, name);
+							_ServerActions2.default.changePasswordSuccess(result);
 							_context10.next = 13;
 							break;
 
@@ -23741,15 +23460,15 @@ var WebAPIUtils = {
 			}, _callee10, this, [[0, 10]]);
 		}));
 
-		function setNewUsername(_x11) {
+		function setNewPassword(_x12) {
 			return _ref10.apply(this, arguments);
 		}
 
-		return setNewUsername;
+		return setNewPassword;
 	}(),
-	setNewPassword: function () {
-		var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee11(password) {
-			var userID, url, result;
+	deleteAccount: function () {
+		var _ref11 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee11() {
+			var result;
 			return _regenerator2.default.wrap(function _callee11$(_context11) {
 				while (1) {
 					switch (_context11.prev = _context11.next) {
@@ -23757,39 +23476,37 @@ var WebAPIUtils = {
 							_context11.prev = 0;
 
 							_ServerActions2.default.startLoading();
-							userID = _AccountStore2.default.getID();
-							url = 'php/changeaccount.php?uid=' + userID + '&src=password&v=' + password;
-							_context11.next = 6;
-							return _request2.default.get(url);
+							_context11.next = 4;
+							return _request2.default.get('php/deleteaccount.php?uid=' + _AccountStore2.default.getID());
 
-						case 6:
+						case 4:
 							result = _context11.sent;
 
-							_ServerActions2.default.changePasswordSuccess(result);
-							_context11.next = 13;
+							_ServerActions2.default.deleteAccountSuccess(result);
+							_context11.next = 11;
 							break;
 
-						case 10:
-							_context11.prev = 10;
+						case 8:
+							_context11.prev = 8;
 							_context11.t0 = _context11['catch'](0);
 
 							_ServerActions2.default.connectionError(_context11.t0);
 
-						case 13:
+						case 11:
 						case 'end':
 							return _context11.stop();
 					}
 				}
-			}, _callee11, this, [[0, 10]]);
+			}, _callee11, this, [[0, 8]]);
 		}));
 
-		function setNewPassword(_x12) {
+		function deleteAccount() {
 			return _ref11.apply(this, arguments);
 		}
 
-		return setNewPassword;
+		return deleteAccount;
 	}(),
-	deleteAccount: function () {
+	getHeroes: function () {
 		var _ref12 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee12() {
 			var result;
 			return _regenerator2.default.wrap(function _callee12$(_context12) {
@@ -23800,12 +23517,12 @@ var WebAPIUtils = {
 
 							_ServerActions2.default.startLoading();
 							_context12.next = 4;
-							return _request2.default.get('php/deleteaccount.php?uid=' + _AccountStore2.default.getID());
+							return _request2.default.get('php/getherolist.php?uid=' + _AccountStore2.default.getID());
 
 						case 4:
 							result = _context12.sent;
 
-							_ServerActions2.default.deleteAccountSuccess(result);
+							_ServerActions2.default.herolistRefreshSuccess(result);
 							_context12.next = 11;
 							break;
 
@@ -23823,15 +23540,28 @@ var WebAPIUtils = {
 			}, _callee12, this, [[0, 8]]);
 		}));
 
-		function deleteAccount() {
+		function getHeroes() {
 			return _ref12.apply(this, arguments);
 		}
 
-		return deleteAccount;
+		return getHeroes;
 	}(),
-	getHeroes: function () {
-		var _ref13 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee13() {
-			var result;
+	loadHero: function loadHero(id) {
+		_ServerActions2.default.startLoading();
+		_ServerActions2.default.loadHeroSuccess(id, '{\n\t\t\t"sex":"m",\n\t\t\t"pers":{\n\t\t\t\t"_family": "ibn Rashtul",\n\t\t\t\t"_placeofbirth": "Rashdul",\n\t\t\t\t"_dateofbirth": "10. Boron 1001 BF",\n\t\t\t\t"_age": "6",\n\t\t\t\t"_haircolor": 2,\n\t\t\t\t"_eyecolor": 3,\n\t\t\t\t"_size": 167,\n\t\t\t\t"_weight": 71,\n\t\t\t\t"_title": "al\'Eshta",\n\t\t\t\t"_socialstatus": 2,\n\t\t\t\t"_characteristics": "Reibt sich die H\xE4nde",\n\t\t\t\t"_otherinfo": "Hat einen Golem ..."\n\t\t\t},\n\t\t\t"attr":{\n\t\t\t\t"values":[\n\t\t\t\t\t["ATTR_1",12,0],\n\t\t\t\t\t["ATTR_2",13,0],\n\t\t\t\t\t["ATTR_3",12,0],\n\t\t\t\t\t["ATTR_4",13,0],\n\t\t\t\t\t["ATTR_5",14,1],\n\t\t\t\t\t["ATTR_6",13,0],\n\t\t\t\t\t["ATTR_7",12,0],\n\t\t\t\t\t["ATTR_8",11,0]\n\t\t\t\t],\n\t\t\t\t"_le":5,\n\t\t\t\t"_le_add":0,\n\t\t\t\t"_ae_add":0,\n\t\t\t\t"_ke_add":0,\n\t\t\t\t"_sk":-5,\n\t\t\t\t"_zk":-5,\n\t\t\t\t"_gs":8\n\t\t\t},\n\t\t\t"disadv":{\n\t\t\t\t"active":[\n\t\t\t\t\t["ADV_3",{}],["ADV_5",{}],["ADV_40",{}],["ADV_47",{"sid":"CT_2"}],["ADV_49",{}],["ADV_50",{}],["DISADV_1",[[2,2]]],["DISADV_15",{}],["DISADV_25",{}],["DISADV_40",{"tier":1}]\n\t\t\t\t],\n\t\t\t\t"_showRating":true\n\t\t\t},\n\t\t\t"talents":{\n\t\t\t\t"active":[["TAL_8",6],["TAL_10",4],["TAL_18",7],["TAL_20",5],["TAL_21",4],["TAL_25",4],["TAL_28",9],["TAL_29",7],["TAL_34",4],["TAL_38",5],["TAL_39",3],["TAL_40",2],["TAL_47",5],["TAL_48",8],["TAL_50",7],["TAL_51",1],["TAL_55",1],["TAL_59",1]],\n\t\t\t\t"_talentRating":true\n\t\t\t},\n\t\t\t"ct":{\n\t\t\t\t"active":[["CT_3",8],["CT_5",8]]\n\t\t\t},\n\t\t\t"spells":{\n\t\t\t\t"active":[]\n\t\t\t},\n\t\t\t"chants":{\n\t\t\t\t"active":[]\n\t\t\t},\n\t\t\t"sa":{\n\t\t\t\t"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]],["SA_86",{"sid":1}]]\n\t\t\t},\n\t\t\t"history": []\n\t\t}');
+	},
+	// loadHero: async function(id) {
+	// 	try {
+	// 		ServerActions.startLoading();
+	// 		let result = await request.get('php/gethero.php?hid=' + id);
+	// 		ServerActions.loadHeroSuccess(id, result);
+	// 	} catch(e) {
+	// 		ServerActions.connectionError(e);
+	// 	}
+	// },
+	createNewHero: function () {
+		var _ref13 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee13(heroname) {
+			var url, result;
 			return _regenerator2.default.wrap(function _callee13$(_context13) {
 				while (1) {
 					switch (_context13.prev = _context13.next) {
@@ -23839,67 +23569,103 @@ var WebAPIUtils = {
 							_context13.prev = 0;
 
 							_ServerActions2.default.startLoading();
-							_context13.next = 4;
-							return _request2.default.get('php/getherolist.php?uid=' + _AccountStore2.default.getID());
+							url = 'php/newhero.php?uid=' + _AccountStore2.default.getID() + '&n=' + heroname;
+							_context13.next = 5;
+							return _request2.default.get(url);
 
-						case 4:
+						case 5:
 							result = _context13.sent;
 
-							_ServerActions2.default.herolistRefreshSuccess(result);
-							_context13.next = 11;
+							_ServerActions2.default.createNewHeroSuccess(result);
+							_context13.next = 12;
 							break;
 
-						case 8:
-							_context13.prev = 8;
+						case 9:
+							_context13.prev = 9;
 							_context13.t0 = _context13['catch'](0);
 
 							_ServerActions2.default.connectionError(_context13.t0);
 
-						case 11:
+						case 12:
 						case 'end':
 							return _context13.stop();
 					}
 				}
-			}, _callee13, this, [[0, 8]]);
+			}, _callee13, this, [[0, 9]]);
 		}));
 
-		function getHeroes() {
+		function createNewHero(_x13) {
 			return _ref13.apply(this, arguments);
 		}
 
-		return getHeroes;
+		return createNewHero;
 	}(),
-	loadHero: function () {
-		var _ref14 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee14(id) {
+	saveHero: function saveHero(data) {
+		_ServerActions2.default.startLoading();
+		var blob = new Blob([data], { type: "application/json" });
+		var url = window.URL.createObjectURL(blob);
+		window.open(url);
+	},
+	// saveHero: async function(data) {
+	// 	try {
+	// 		ServerActions.startLoading();
+	// 		let url = 'php/save.php?short=' + data[0] + '&full=' + data[1];
+	// 		let result = await request.get(url);
+	// 		ServerActions.saveHeroSuccess(result);
+	// 	} catch(e) {
+	// 		ServerActions.connectionError(e);
+	// 	}
+	// },
+	changeHeroAvatar: function () {
+		var _ref14 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee14(type, data) {
+			var urlAdd, finalData, url, result;
 			return _regenerator2.default.wrap(function _callee14$(_context14) {
 				while (1) {
 					switch (_context14.prev = _context14.next) {
 						case 0:
-							// try {
-							_ServerActions2.default.startLoading();
-							_ServerActions2.default.loadHeroSuccess(id, '{\n\t\t\t\t"sex":"m",\n\t\t\t\t"pers":{\n\t\t\t\t\t"_family": "ibn Rashtul",\n\t\t\t\t\t"_placeofbirth": "Rashdul",\n\t\t\t\t\t"_dateofbirth": "10. Boron 1001 BF",\n\t\t\t\t\t"_age": "6",\n\t\t\t\t\t"_haircolor": 2,\n\t\t\t\t\t"_eyecolor": 3,\n\t\t\t\t\t"_size": 167,\n\t\t\t\t\t"_weight": 71,\n\t\t\t\t\t"_title": "al\'Eshta",\n\t\t\t\t\t"_socialstatus": 2,\n\t\t\t\t\t"_characteristics": "Reibt sich die H\xE4nde",\n\t\t\t\t\t"_otherinfo": "Hat einen Golem ..."\n\t\t\t\t},\n\t\t\t\t"attr":{\n\t\t\t\t\t"values":[\n\t\t\t\t\t\t["ATTR_1",12,0],\n\t\t\t\t\t\t["ATTR_2",13,0],\n\t\t\t\t\t\t["ATTR_3",12,0],\n\t\t\t\t\t\t["ATTR_4",13,0],\n\t\t\t\t\t\t["ATTR_5",14,1],\n\t\t\t\t\t\t["ATTR_6",13,0],\n\t\t\t\t\t\t["ATTR_7",12,0],\n\t\t\t\t\t\t["ATTR_8",11,0]\n\t\t\t\t\t],\n\t\t\t\t\t"_le":5,\n\t\t\t\t\t"_le_add":0,\n\t\t\t\t\t"_ae_add":0,\n\t\t\t\t\t"_ke_add":0,\n\t\t\t\t\t"_sk":-5,\n\t\t\t\t\t"_zk":-5,\n\t\t\t\t\t"_gs":8\n\t\t\t\t},\n\t\t\t\t"disadv":{\n\t\t\t\t\t"active":[\n\t\t\t\t\t\t["ADV_3",{}],["ADV_5",{}],["ADV_40",{}],["ADV_47",{"sid":"CT_2"}],["ADV_49",{}],["ADV_50",{}],["DISADV_1",[[2,2]]],["DISADV_15",{}],["DISADV_25",{}],["DISADV_40",{"tier":1}]\n\t\t\t\t\t],\n\t\t\t\t\t"_showRating":true\n\t\t\t\t},\n\t\t\t\t"talents":{\n\t\t\t\t\t"active":[["TAL_8",6],["TAL_10",4],["TAL_18",7],["TAL_20",5],["TAL_21",4],["TAL_25",4],["TAL_28",9],["TAL_29",7],["TAL_34",4],["TAL_38",5],["TAL_39",3],["TAL_40",2],["TAL_47",5],["TAL_48",8],["TAL_50",7],["TAL_51",1],["TAL_55",1],["TAL_59",1]],\n\t\t\t\t\t"_talentRating":true\n\t\t\t\t},\n\t\t\t\t"ct":{\n\t\t\t\t\t"active":[["CT_3",8],["CT_5",8]]\n\t\t\t\t},\n\t\t\t\t"spells":{\n\t\t\t\t\t"active":[]\n\t\t\t\t},\n\t\t\t\t"chants":{\n\t\t\t\t\t"active":[]\n\t\t\t\t},\n\t\t\t\t"sa":{\n\t\t\t\t\t"active":[["SA_10",[["TAL_48","Test"]]],["SA_28",[9,14]],["SA_30",[[8,4],[23,2],[6,1]]],["SA_86",{"sid":1}]]\n\t\t\t\t},\n\t\t\t\t"history": []\n\t\t\t}');
-							// let result = await request.get('php/gethero.php?hid=' + id);
-							// ServerActions.loadHeroSuccess(id, result);
-							// } catch(e) {
-							// 	ServerActions.connectionError(e);
-							// }
+							_context14.prev = 0;
 
-						case 2:
+							_ServerActions2.default.startLoading();
+							urlAdd = '';
+
+							if (type === 'ext') {
+								urlAdd = '&url=' + data;
+							} else if (type === 'file') {
+								finalData = new FormData(data);
+							}
+							url = 'php/uploadheropic.php?hid=' + _ProfileStore2.default.getID() + '&type=' + type + urlAdd;
+							_context14.next = 7;
+							return _request2.default.post(url, finalData);
+
+						case 7:
+							result = _context14.sent;
+
+							_ServerActions2.default.changeHeroAvatarSuccess(type === 'file' ? result : data);
+							_context14.next = 14;
+							break;
+
+						case 11:
+							_context14.prev = 11;
+							_context14.t0 = _context14['catch'](0);
+
+							_ServerActions2.default.connectionError(_context14.t0);
+
+						case 14:
 						case 'end':
 							return _context14.stop();
 					}
 				}
-			}, _callee14, this);
+			}, _callee14, this, [[0, 11]]);
 		}));
 
-		function loadHero(_x13) {
+		function changeHeroAvatar(_x14, _x15) {
 			return _ref14.apply(this, arguments);
 		}
 
-		return loadHero;
+		return changeHeroAvatar;
 	}(),
-	createNewHero: function () {
-		var _ref15 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee15(heroname) {
+	deleteHero: function () {
+		var _ref15 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee15(heroid) {
 			var url, result;
 			return _regenerator2.default.wrap(function _callee15$(_context15) {
 				while (1) {
@@ -23908,14 +23674,14 @@ var WebAPIUtils = {
 							_context15.prev = 0;
 
 							_ServerActions2.default.startLoading();
-							url = 'php/newhero.php?uid=' + _AccountStore2.default.getID() + '&n=' + heroname;
+							url = 'php/deletehero.php?uid=' + _AccountStore2.default.getID() + '&hid=' + heroid;
 							_context15.next = 5;
 							return _request2.default.get(url);
 
 						case 5:
 							result = _context15.sent;
 
-							_ServerActions2.default.createNewHeroSuccess(result);
+							_ServerActions2.default.deleteHeroSuccess(result);
 							_context15.next = 12;
 							break;
 
@@ -23933,132 +23699,8 @@ var WebAPIUtils = {
 			}, _callee15, this, [[0, 9]]);
 		}));
 
-		function createNewHero(_x14) {
+		function deleteHero(_x16) {
 			return _ref15.apply(this, arguments);
-		}
-
-		return createNewHero;
-	}(),
-	saveHero: function () {
-		var _ref16 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee16(data) {
-			var blob, url;
-			return _regenerator2.default.wrap(function _callee16$(_context16) {
-				while (1) {
-					switch (_context16.prev = _context16.next) {
-						case 0:
-							// try {
-							// 	ServerActions.startLoading();
-							// 	let url = 'php/save.php?short=' + data[0] + '&full=' + data[1];
-							// 	let result = await request.get(url);
-							// 	ServerActions.saveHeroSuccess(result);
-							// } catch(e) {
-							// 	ServerActions.connectionError(e);
-							// }
-							_ServerActions2.default.startLoading();
-							blob = new Blob([data], { type: "application/json" });
-							url = window.URL.createObjectURL(blob);
-
-							window.open(url);
-
-						case 4:
-						case 'end':
-							return _context16.stop();
-					}
-				}
-			}, _callee16, this);
-		}));
-
-		function saveHero(_x15) {
-			return _ref16.apply(this, arguments);
-		}
-
-		return saveHero;
-	}(),
-	changeHeroAvatar: function () {
-		var _ref17 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee17(type, data) {
-			var urlAdd, finalData, url, result;
-			return _regenerator2.default.wrap(function _callee17$(_context17) {
-				while (1) {
-					switch (_context17.prev = _context17.next) {
-						case 0:
-							_context17.prev = 0;
-
-							_ServerActions2.default.startLoading();
-							urlAdd = '';
-
-							if (type === 'ext') {
-								urlAdd = '&url=' + data;
-							} else if (type === 'file') {
-								finalData = new FormData(data);
-							}
-							url = 'php/uploadheropic.php?hid=' + _ProfileStore2.default.getID() + '&type=' + type + urlAdd;
-							_context17.next = 7;
-							return _request2.default.post(url, finalData);
-
-						case 7:
-							result = _context17.sent;
-
-							_ServerActions2.default.changeHeroAvatarSuccess(type === 'file' ? result : data);
-							_context17.next = 14;
-							break;
-
-						case 11:
-							_context17.prev = 11;
-							_context17.t0 = _context17['catch'](0);
-
-							_ServerActions2.default.connectionError(_context17.t0);
-
-						case 14:
-						case 'end':
-							return _context17.stop();
-					}
-				}
-			}, _callee17, this, [[0, 11]]);
-		}));
-
-		function changeHeroAvatar(_x16, _x17) {
-			return _ref17.apply(this, arguments);
-		}
-
-		return changeHeroAvatar;
-	}(),
-	deleteHero: function () {
-		var _ref18 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee18(heroid) {
-			var url, result;
-			return _regenerator2.default.wrap(function _callee18$(_context18) {
-				while (1) {
-					switch (_context18.prev = _context18.next) {
-						case 0:
-							_context18.prev = 0;
-
-							_ServerActions2.default.startLoading();
-							url = 'php/deletehero.php?uid=' + _AccountStore2.default.getID() + '&hid=' + heroid;
-							_context18.next = 5;
-							return _request2.default.get(url);
-
-						case 5:
-							result = _context18.sent;
-
-							_ServerActions2.default.deleteHeroSuccess(result);
-							_context18.next = 12;
-							break;
-
-						case 9:
-							_context18.prev = 9;
-							_context18.t0 = _context18['catch'](0);
-
-							_ServerActions2.default.connectionError(_context18.t0);
-
-						case 12:
-						case 'end':
-							return _context18.stop();
-					}
-				}
-			}, _callee18, this, [[0, 9]]);
-		}));
-
-		function deleteHero(_x18) {
-			return _ref18.apply(this, arguments);
 		}
 
 		return deleteHero;

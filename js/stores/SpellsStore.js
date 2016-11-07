@@ -113,7 +113,7 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 		var spells = [];
 
 		var SA_88_ACTIVE = this.get('SA_88').active;
-		var spellsAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.fw >= 10);
+		var spellsAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10);
 		var counter = {};
 		for (let i = 0; i < spellsAbove10.length; i++) {
 			let spell = spellsAbove10[i];

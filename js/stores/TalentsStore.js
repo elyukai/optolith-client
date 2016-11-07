@@ -68,7 +68,7 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 		var talents = [];
 
 		var SA_18 = this.get('SA_18').active;
-		var SA_18_REQ = SA_18 && (talentsObj['TAL_51'].fw + talentsObj['TAL_55'].fw) < 12;
+		var SA_18_REQ = SA_18 && (talentsObj['TAL_51'].value + talentsObj['TAL_55'].value) < 12;
 
 		for (let id in talentsObj) {
 			let talent = talentsObj[id];

@@ -20,10 +20,6 @@ class Spells extends Component {
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
-
-	constructor(props) {
-		super(props);
-	}
 	
 	_updateSpellsStore = () => this.setState({ 
 		spellsActive: SpellsStore.getActiveForView(),
@@ -104,7 +100,7 @@ class Spells extends Component {
 										const obj = spell.gr === 5 ? {} : {
 											check,
 											checkmod,
-											skt: spell.skt
+											ic: spell.skt
 										};
 
 										return (
@@ -170,10 +166,10 @@ class Spells extends Component {
 									if (!spell.ownTradition) name += ` (${spell.add})`;
 
 									const obj = spell.gr === 5 ? {} : {
-										fw: spell.fw,
+										sr: spell.value,
 										check,
 										checkmod,
-										skt: spell.skt,
+										ic: spell.skt,
 										addPoint: this.addPoint.bind(null, spell.id),
 										addDisabled: spell.disabledIncrease
 									};

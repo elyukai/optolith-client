@@ -16,19 +16,21 @@ class Tab extends Component {
 
 	render() {
 
-		const className = classNames('tab', this.props.disabled && 'disabled', this.props.active && 'active', this.props.className);
+		const { disabled, active, label, children, onClick } = this.props;
 
-		if (this.props.label) {
+		const className = classNames('tab', disabled && 'disabled', active && 'active', this.props.className);
+
+		if (label) {
 			return (
-				<div className={className} onClick={this.props.onClick}>
-					<div>{this.props.label}</div>
+				<div className={className} onClick={disabled ? undefined : onClick}>
+					<div>{label}</div>
 				</div>
 			);
 		}
 
 		return (
-			<div className={className} onClick={this.props.onClick}>
-				{this.props.children}
+			<div className={className} onClick={onClick}>
+				{children}
 			</div>
 		);
 	}

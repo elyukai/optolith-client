@@ -63,7 +63,7 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 		var combatTechniques = [];
 
 		var SA_19 = this.get('SA_19').active;
-		var SA_19_REQ = SA_19 && ListStore.getAllByCategoryGroup(CATEGORY, 2).filter(e => e.fw >= 10).length === 1;
+		var SA_19_REQ = SA_19 && ListStore.getAllByCategoryGroup(CATEGORY, 2).filter(e => e.value >= 10).length === 1;
 
 		for (let id in combatTechniquesObj) {
 			let combatTechnique = combatTechniquesObj[id];
@@ -116,10 +116,10 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 		}
 		for (let i = 0; i < combatTechniques.length; i++) {
 			if (combatTechniques[i].gr === 2) {
-				combatTechniques[i].at = combatTechniques[i].fw + this.getLeitMod(combatTechniques[i].leit);
+				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(combatTechniques[i].leit);
 			} else {
-				combatTechniques[i].at = combatTechniques[i].fw + this.getLeitMod(['ATTR_1']);
-				combatTechniques[i].pa = Math.round(combatTechniques[i].fw / 2) + this.getLeitMod(combatTechniques[i].leit);
+				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(['ATTR_1']);
+				combatTechniques[i].pa = Math.round(combatTechniques[i].value / 2) + this.getLeitMod(combatTechniques[i].leit);
 			}
 		}
 		return combatTechniques;

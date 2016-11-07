@@ -20,10 +20,6 @@ class Talents extends Component {
 		currentCulture: CultureStore.getCurrent(),
 		phase: PhaseStore.get()
 	};
-
-	constructor(props) {
-		super(props);
-	}
 	
 	_updateTalentsStore = () => this.setState({
 		list: TalentsStore.getAllForView(),
@@ -91,9 +87,9 @@ class Talents extends Component {
 										untyp={this.state.talentRating && untyp_talents.indexOf(talent.id) > -1}
 										group={GR[talent.gr - 1]}
 										name={talent.name}
-										fw={talent.fw}
+										sr={talent.value}
 										check={talent.check}
-										skt={talent.skt}
+										ic={talent.skt}
 										addPoint={this.addPoint.bind(null, talent.id)}
 										addDisabled={talent.disabledIncrease}
 										removePoint={this.state.phase < 3 ? this.removePoint.bind(null, talent.id) : undefined}

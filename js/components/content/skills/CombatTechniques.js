@@ -16,10 +16,6 @@ class CombatTechniques extends Component {
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 		phase: PhaseStore.get()
 	};
-
-	constructor(props) {
-		super(props);
-	}
 	
 	_updateCombatTechniquesStore = () => this.setState({ 
 		combattech: CombatTechniquesStore.getAllForView(),
@@ -89,8 +85,8 @@ class CombatTechniques extends Component {
 											key={ct.id}
 											group={GR[ct.gr - 1]}
 											name={ct.name}
-											fw={ct.fw}
-											skt={ct.skt}
+											sr={ct.value}
+											ic={ct.skt}
 											checkDisabled
 											addPoint={this.addPoint.bind(null, ct.id)}
 											addDisabled={ct.disabledIncrease}
