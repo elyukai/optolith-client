@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import createOverlay from '../utils/createOverlay';
 import ELStore from '../stores/ELStore';
-import HeroCreation from '../components/content/herolist/HeroCreation';
+import HeroCreation from '../views/herolist/HeroCreation';
 import React from 'react';
 import reactAlert from '../utils/reactAlert';
 import ReactDOM from 'react-dom';

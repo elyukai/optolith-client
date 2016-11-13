@@ -218,7 +218,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY:
 			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(-getIC(ListStore.get(payload.id).skt, 0));
+			_spend(-(getIC(ListStore.get(payload.id).skt, 0)));
 			break;
 
 		case ActionTypes.ACTIVATE_DISADV:
@@ -236,7 +236,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(-payload.costs);
+			_spend(-(payload.costs));
 			break;
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
@@ -245,7 +245,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.ADD_SPELL_POINT:
 		case ActionTypes.ADD_LITURGY_POINT:
 			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(getIC(ListStore.get(payload.id).skt, ListStore.get(payload.id).value));
+			_spend(getIC(ListStore.get(payload.id).ic, ListStore.get(payload.id).value));
 			break;
 
 		case ActionTypes.ADD_MAX_ENERGY_POINT:
@@ -259,7 +259,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.REMOVE_SPELL_POINT:
 		case ActionTypes.REMOVE_LITURGY_POINT:
 			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(-getIC(ListStore.get(payload.id).skt, ListStore.get(payload.id).value + 1));
+			_spend(-(getIC(ListStore.get(payload.id).ic, ListStore.get(payload.id).value + 1)));
 			break;
 
 		case ActionTypes.SELECT_RACE:

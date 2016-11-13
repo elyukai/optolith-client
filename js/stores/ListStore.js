@@ -4,6 +4,11 @@ import CultureStore from './CultureStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
+import Attribute from './data/Attribute';
+import CombatTechnique from './data/CombatTechnique';
+import Liturgy from './data/Liturgy';
+import Spell from './data/Spell';
+import Talent from './data/Talent';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 import iccalc from '../utils/iccalc';
@@ -19,19 +24,19 @@ function _deactivate(id) {
 }
 
 function _addPoint(id) {
-	_list[id].value++;
+	_list[id].addPoint();
 }
 
 function _removePoint(id) {
-	_list[id].value--;
+	_list[id].removePoint();
 }
 
 function _setValue(id, value) {
-	_list[id].value = value;
+	_list[id].set(value);
 }
 
 function _addSR(id, amount) {
-	_list[id].value += amount;
+	_list[id].add(amount);
 }
 
 function _addDependencies(reqs, sel) {
@@ -68,11 +73,13 @@ function _removeDependencies(reqs, sel) {
 		if (id === 'auto_req' || option === 'TAL_GR_2') return;
 		else if (id === 'ATTR_PRIMARY') {
 			id = this.getPrimaryAttrID(option);
-			for (let i = 0; i < _list[id].dependencies.length; i++)
-				if (_list[id].dependencies[i] === value) {
+			_list[id].dependencies.some((e, i) => {
+				if (e === value) {
 					_list[id].dependencies.splice(i, 1);
-					break;
+					return true;
 				}
+				return false;
+			});
 		}
 		else {
 			let sid;
@@ -258,38 +265,53 @@ function _updateTier(id, tier, sid) {
 
 function _init({ attributes, adv, disadv, talents, combattech, spells, liturgies, specialabilities }) {
 	for (let id in attributes) {
-		_list[id] = attributes[id];
-		_list[id].category = Categories.ATTRIBUTES;
-		_list[id].dependencies = [];
+		_list[id] = new Attribute(attributes[id]);
 	}
 	for (let id in talents) {
-		_list[id] = talents[id];
-		_list[id].value = 0;
-		_list[id].category = Categories.TALENTS;
-		_list[id].dependencies = [];
+		_list[id] = new Talent(talents[id]);
 	}
 	for (let id in combattech) {
-		_list[id] = combattech[id];
-		_list[id].value = 6;
-		_list[id].category = Categories.COMBAT_TECHNIQUES;
-		_list[id].dependencies = [];
+		_list[id] = new CombatTechnique(combattech[id]);
 	}
 	for (let id in spells) {
-		_list[id] = spells[id];
-		_list[id].value = 0;
-		_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
-		_list[id].active = false;
-		_list[id].category = Categories.SPELLS;
-		_list[id].dependencies = [];
+		_list[id] = new Spell(spells[id]);
 	}
 	for (let id in liturgies) {
-		_list[id] = liturgies[id];
-		_list[id].value = 0;
-		_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
-		_list[id].active = false;
-		_list[id].category = Categories.CHANTS;
-		_list[id].dependencies = [];
+		_list[id] = new Liturgy(liturgies[id]);
 	}
+	// for (let id in attributes) {
+	// 	_list[id] = attributes[id];
+	// 	_list[id].category = Categories.ATTRIBUTES;
+	// 	_list[id].dependencies = [];
+	// }
+	// for (let id in talents) {
+	// 	_list[id] = talents[id];
+	// 	_list[id].value = 0;
+	// 	_list[id].category = Categories.TALENTS;
+	// 	_list[id].dependencies = [];
+	// }
+	// for (let id in combattech) {
+	// 	_list[id] = combattech[id];
+	// 	_list[id].value = 6;
+	// 	_list[id].category = Categories.COMBAT_TECHNIQUES;
+	// 	_list[id].dependencies = [];
+	// }
+	// for (let id in spells) {
+	// 	_list[id] = spells[id];
+	// 	_list[id].value = 0;
+	// 	_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
+	// 	_list[id].active = false;
+	// 	_list[id].category = Categories.SPELLS;
+	// 	_list[id].dependencies = [];
+	// }
+	// for (let id in liturgies) {
+	// 	_list[id] = liturgies[id];
+	// 	_list[id].value = 0;
+	// 	_list[id].check = _list[id].check.map((e,i) => i < 3 ? `ATTR_${e}` : e);
+	// 	_list[id].active = false;
+	// 	_list[id].category = Categories.CHANTS;
+	// 	_list[id].dependencies = [];
+	// }
 	for (let id in adv) {
 		adv[id].category = Categories.ADVANTAGES;
 	}
@@ -575,6 +597,8 @@ function _clear() {
 		}
 	}
 }
+
+export const get = id => _list[id];
 	
 var ListStore = Object.assign({}, EventEmitter.prototype, {
 	
@@ -744,7 +768,7 @@ ListStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.ADD_SPELL_POINT:
 		case ActionTypes.ADD_LITURGY_POINT:
 			if (iccalc(_list[payload.id].skt, _list[payload.id].value + 1)) {
-				_activate(payload.id);
+				_addPoint(payload.id);
 			}
 			break;
 

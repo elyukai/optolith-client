@@ -51,38 +51,16 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 		return ListStore.get(id);
 	},
 
-	getLeitMod: function(array) {
-		var max = array.map(attr => this.get(attr).value).reduce((a, b) => Math.max(a, b), 0);
-		return Math.max(Math.floor((max - 8) / 3), 0);
+	getMaxPrimaryAttributeValueByID: function(array) {
+		return array.map(attr => this.get(attr).value).reduce((a, b) => Math.max(a, b), 0);
+	},
+
+	getPrimaryAttributeMod: function(array) {
+		return Math.max(Math.floor((this.getMaxPrimaryAttributeValueByID(array) - 8) / 3), 0);
 	},
 
 	getAllForView: function() {
-		var phase = PhaseStore.get();
-
-		var combatTechniquesObj = ListStore.getObjByCategory(CATEGORY);
-		var combatTechniques = [];
-
-		var SA_19 = this.get('SA_19').active;
-		var SA_19_REQ = SA_19 && ListStore.getAllByCategoryGroup(CATEGORY, 2).filter(e => e.value >= 10).length === 1;
-
-		for (let id in combatTechniquesObj) {
-			let combatTechnique = combatTechniquesObj[id];
-			let { fw, leit, gr, dependencies } = combatTechnique;
-
-			let _max = 25;
-			let _max_bonus = this.get('ADV_17').active.indexOf(id) > -1 ? 1 : 0;
-			if (phase < 3)
-				_max = ELStore.getStart().max_combattech + _max_bonus;
-			else {
-				let primary = leit.map(e => ListStore.get(e).value);
-				_max = Math.max(...primary) + 2 + _max_bonus;
-			}
-			combatTechnique.disabledIncrease = fw >= _max;
-
-			combatTechnique.disabledDecrease = (SA_19_REQ && fw >= 10 && gr === 2) || fw <= Math.max(6, ...dependencies);
-
-			combatTechniques.push(combatTechnique);
-		}
+		var combatTechniques = ListStore.getAllByCategory(CATEGORY);
 		if (_filter !== '') {
 			let filter = _filter.toLowerCase();
 			combatTechniques = combatTechniques.filter(obj => obj.name.toLowerCase().match(filter));
@@ -113,14 +91,6 @@ var CombatTechniquesStore = Object.assign({}, EventEmitter.prototype, {
 					}
 				}
 			});
-		}
-		for (let i = 0; i < combatTechniques.length; i++) {
-			if (combatTechniques[i].gr === 2) {
-				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(combatTechniques[i].leit);
-			} else {
-				combatTechniques[i].at = combatTechniques[i].value + this.getLeitMod(['ATTR_1']);
-				combatTechniques[i].pa = Math.round(combatTechniques[i].value / 2) + this.getLeitMod(combatTechniques[i].leit);
-			}
 		}
 		return combatTechniques;
 	},

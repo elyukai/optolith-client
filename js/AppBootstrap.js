@@ -1,7 +1,7 @@
-import AppController from './components/AppController';
 import AppDispatcher from './dispatcher/AppDispatcher';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Router from './views/Router';
 import WebAPIUtils from './utils/WebAPIUtils';
 
 // if (localStorage['lastUrl'] !== '') {
@@ -19,6 +19,6 @@ window.onunload = function() {
 	});
 };
 
-ReactDOM.render( <AppController />, document.getElementById('bodywrapper') );
+ReactDOM.render( <Router />, document.getElementById('bodywrapper') );
 
 WebAPIUtils.getAllData();

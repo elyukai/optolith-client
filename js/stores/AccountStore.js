@@ -66,9 +66,9 @@ AccountStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			reset();
 			break;
 			
-		// case ActionTypes.RECEIVE_RAW_LISTS:
-		// 	updateAll(4, 'Elytherion');
-		// 	break;
+		case ActionTypes.RECEIVE_RAW_LISTS:
+			updateAll(4, 'Elytherion');
+			break;
 			
 		default:
 			return true;

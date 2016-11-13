@@ -1,5 +1,5 @@
 import createOverlay from './createOverlay';
-import Dialog from '../components/layout/Dialog';
+import Dialog from '../components/Dialog';
 import React from 'react';
 
 export default function(title, content, buttons) {

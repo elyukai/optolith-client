@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import createOverlay from '../utils/createOverlay';
-import Dialog from '../components/layout/Dialog';
+import Dialog from '../components/Dialog';
 import React from 'react';
 import ReactDOM from 'react-dom';
 

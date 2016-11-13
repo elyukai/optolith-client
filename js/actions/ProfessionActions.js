@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Selections from '../components/content/rcp/Selections';
+import Selections from '../views/rcp/Selections';
 
 var ProfessionActions = {
 	receiveAll: function(rawProfessions) {

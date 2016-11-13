@@ -106,86 +106,43 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 		return ListStore.get(id);
 	},
 
+	getPropertyCounter: function() {
+		return ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
+			if (!a.has(b.property)) {
+				a.set(b.property, 1);
+			} else {
+				a.set(b.property, a.get(b.property) + 1);
+			}
+		}, new Map());
+	},
+
 	getActiveForView: function() {
-		var phase = PhaseStore.get();
-
-		var spellsObj = ListStore.getObjByCategory(CATEGORY);
-		var spells = [];
-
-		var SA_88_ACTIVE = this.get('SA_88').active;
-		var spellsAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10);
-		var counter = {};
-		for (let i = 0; i < spellsAbove10.length; i++) {
-			let spell = spellsAbove10[i];
-			if (!counter.hasOwnProperty(spell.merk))
-				counter[spell.merk] = 1;
-			else
-				counter[spell.merk]++;
-		}
-		
-		for (let id in spellsObj) {
-			let spell = spellsObj[id];
-			let { active, fw, merk, trad, gr } = spell;
-
-			if (!active) continue;
-
-			var available = trad.some(e => e === 1 || e === ListStore.get('SA_86').sid + 1);
-			if (!available) {
-				if (gr > 2)
-					continue;
-				else
-					spell.add = trad.map(e => TRADITIONS[e - 1]).join(', ');
-			}
-			spell.ownTradition = available;
-
-			let _max = 25;
-			let _max_bonus = this.get('ADV_16').active.filter(e => e === id).length;
-			if (phase < 3)
-				_max = ELStore.getStart().max_skill + _max_bonus;
-			else {
-				let checkValues = spell.check.map(attr => ListStore.get(attr).value);
-				_max = Math.max(...checkValues) + 2 + _max_bonus;
-			}
-			if (SA_88_ACTIVE.indexOf(merk) === -1)
-				_max = Math.min(14, _max);
-			spell.disabledIncrease = fw >= _max;
-
-			if (SA_88_ACTIVE.indexOf(merk) > -1)
-				spell.disabledDecrease = counter[merk] <= 3 && fw === 10 && gr !== 5;
-			spells.push(spell);
-		}
+		var spells = ListStore.getAllByCategory(CATEGORY).filter(e => e.active);
 		return _filterAndSort(spells);
 	},
 
 	getDeactiveForView: function() {
-		var spellsObj = ListStore.getObjByCategory(CATEGORY);
-		var spells = [];
-
 		const maxUnfamiliar = PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e =>
-				!e.trad.some(e =>
-					e === 1 ||
-					e === ListStore.get('SA_86').sid + 1
-				) && e.gr < 3 && e.active
-			).length >= ELStore.getStart().max_unfamiliar_spells;
-		
-		for (let id in spellsObj) {
-			let spell = spellsObj[id];
-			let { active, trad, gr } = spell;
+			!e.tradition.some(e =>
+				e === 1 ||
+				e === ListStore.get('SA_86').sid + 1
+			) && e.gr < 3 && e.active
+		).length >= ELStore.getStart().max_unfamiliar_spells;
 
-			if (active) continue;
-
-			var available = trad.some(e => e === 1 || e === ListStore.get('SA_86').sid + 1);
-			if (!available) {
-				if (gr > 2 || maxUnfamiliar) {
-					continue;
-				} else {
-					spell.add = trad.map(e => TRADITIONS[e - 1]).join(', ');
+		var spells = ListStore.getAllByCategory(CATEGORY).filter(e => {
+			if (!e.active) {
+				if (!e.isOwnTradition) {
+					if (e.gr > 2 || maxUnfamiliar) {
+						return false;
+					} else {
+						e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).join(', ');
+						return true;
+					}
 				}
+				return true;
 			}
-			spell.ownTradition = available;
-
-			spells.push(spell);
-		}
+			return false;
+		});
 		return _filterAndSort(spells);
 	},
 

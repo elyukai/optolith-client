@@ -48,7 +48,7 @@
   "scripts": {
     "watch": "watchify -t [babelify] js/AppBootstrap.js -o dist/bundle.js -v",
     "build": "browserify -t [babelify] js/AppBootstrap.js -o dist/bundle.js",
-    "build-prod": "browserify -g [envify --NODE_ENV production] -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
+    "build-prod": "SET NODE_ENV=production && browserify -t [babelify] js/AppBootstrap.js | uglifyjs -mc > dist/bundle.min.js",
     "test": "jest"
   },
   "author": "Lukas Obermann",

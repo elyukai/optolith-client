@@ -1,8 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { EventEmitter } from 'events';
-import ELStore from './ELStore';
 import ListStore from './ListStore';
-import PhaseStore from './PhaseStore';
 import RaceStore from './RaceStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
@@ -85,7 +83,7 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getValue: function(id) {
-		return this.get(id).value;
+		return ListStore.get(id).value;
 	},
 
 	getAdd: function(id) {
@@ -100,28 +98,6 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 	},
 
 	getAllForView: function() {
-		var phase = PhaseStore.get();
-
-		var attrsObj = ListStore.getObjByCategory(CATEGORY);
-		var attrs = [];
-
-		var sum = this.getSum();
-		
-		for (let id in attrsObj) {
-			let attr = attrsObj[id];
-			let { value, mod, dependencies } = attr;
-
-			let _max = 25;
-			if (phase < 3) {
-				_max = sum >= ELStore.getStart().max_attrsum ? 0 : ELStore.getStart().max_attr + mod;
-			}
-			attr.disabledIncrease = value >= _max;
-
-			let _min = Math.max(8, ...dependencies);
-			attr.disabledDecrease = value <= _min;
-
-			attrs.push(attr);
-		}
 		return ListStore.getAllByCategory(CATEGORY);
 	},
 

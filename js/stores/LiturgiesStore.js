@@ -86,78 +86,31 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 		return ListStore.get(id);
 	},
 
-	getActiveForView: function() {
-		var phase = PhaseStore.get();
-
-		var liturgiesObj = ListStore.getObjByCategory(CATEGORY);
-		var liturgies = [];
-
-		var SA_103_ACTIVE = this.get('SA_103').active;
-		var liturgiesAbove10 = ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10);
-		var counter = {};
-		liturgiesAbove10.forEach(n => {
-			n.aspc.forEach(e => {
-				if (!counter.hasOwnProperty(e))
-					counter[e] = 1;
-				else
-					counter[e]++;
-			});
-		});
-
-		for (let id in liturgiesObj) {
-			let liturgy = liturgiesObj[id];
-			let { active, fw, aspc, trad, gr } = liturgy;
-
-			if (!active) continue;
-
-			var available = trad.some(e => e === 1 || e === ListStore.get('SA_102').sid + 1);
-			if (!available) continue;
-
-			let _max = 25;
-			let _max_bonus = this.get('ADV_16').active.filter(e => e === id).length;
-			if (phase < 3)
-				_max = ELStore.getStart().max_skill + _max_bonus;
-			else {
-				let checkValues = liturgy.check.map(attr => ListStore.get(attr).value);
-				_max = Math.max(...checkValues) + 2 + _max_bonus;
+	getAspectCounter: function() {
+		return ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
+			if (!a.has(b.aspect)) {
+				a.set(b.aspect, 1);
+			} else {
+				a.set(b.aspect, a.get(b.aspect) + 1);
 			}
-			aspc.some(e => {
-				if (SA_103_ACTIVE.indexOf(e) === -1) {
-					_max = Math.min(14, _max);
-					return true;
-				}
-				else return false;
-			});
-			liturgy.disabledIncrease = fw >= _max;
+		}, new Map());
+	},
 
-			aspc.some(e => {
-				if (SA_103_ACTIVE.indexOf(e) > -1 && counter[e] <= 3 && gr !== 3) {
-					liturgy.disabledDecrease = fw <= 10;
-					return true;
-				}
-				else return false;
-			});
-
-			liturgies.push(liturgy);
-		}
+	getActiveForView: function() {
+		var liturgies = ListStore.getAllByCategory(CATEGORY).filter(e => e.active);
 		return _filterAndSort(liturgies);
 	},
 
 	getDeactiveForView: function() {
-		var liturgiesObj = ListStore.getObjByCategory(CATEGORY);
-		var liturgies = [];
-
-		for (let id in liturgiesObj) {
-			let liturgy = liturgiesObj[id];
-			let { active, trad } = liturgy;
-
-			if (active) continue;
-
-			var available = trad.some(e => e === 1 || e === ListStore.get('SA_102').sid + 1);
-			if (!available) continue;
-
-			liturgies.push(liturgy);
-		}
+		var liturgies = ListStore.getObjByCategory(CATEGORY).filter(e => {
+			if (!e.active) {
+				if (!e.isOwnTradition) {
+					return false;
+				}
+				return true;
+			}
+			return false;
+		});
 		return _filterAndSort(liturgies);
 	},
 

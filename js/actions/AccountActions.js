@@ -2,14 +2,14 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 import createOverlay from '../utils/createOverlay';
-import ForgotUsername from '../components/content/account/ForgotUsername';
-import ForgotPassword from '../components/content/account/ForgotPassword';
-import Login from '../components/content/account/Login';
+import ForgotUsername from '../views/account/ForgotUsername';
+import ForgotPassword from '../views/account/ForgotPassword';
+import Login from '../views/account/Login';
 import React from 'react';
 import reactAlert from '../utils/reactAlert';
 import ReactDOM from 'react-dom';
-import Register from '../components/content/account/Register';
-import ResendActivation from '../components/content/account/ResendActivation';
+import Register from '../views/account/Register';
+import ResendActivation from '../views/account/ResendActivation';
 
 var AccountActions = {
 	showRegister: function() {
