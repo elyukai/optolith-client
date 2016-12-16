@@ -1,0 +1,87 @@
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	-webkit-border-horizontal-spacing: 0px; 
+	-webkit-border-vertical-spacing: 0px;
+	table-layout: auto;
+	width: 100%;
+	white-space: nowrap;
+
+	td {
+		padding: 5px 5px 5px 11px;
+
+		&.name {
+			width: 100%;
+		}
+
+		&.name, &.fw {
+			color: #f0e6d2;
+		}
+	}
+
+	thead {
+		font: bold 13px/22px Alegreya SC;
+
+		tr td {
+			border-bottom: 1px solid transparentize(white, .925);
+		}
+	}
+
+	tbody {
+		tr {
+			&:not(:last-child) td {
+				height: 36px;
+				border-bottom: 1px solid transparentize(white, .925);
+			}
+
+			&:hover {
+				background: transparentize(white, .975);
+			}
+
+			td {
+				height: 36px;
+				
+				&.name h2, &.fw {
+					font: 500 15px/15px Alegreya Sans;
+					text-transform: none;
+					color: #f0e6d2;
+				}
+
+				&.check, &.skt {
+					font: 13px/13px Alegreya SC;
+				}
+
+				&.inc {
+					font-weight: 500;
+					display: flex;
+					justify-content: flex-end;
+					align-items: center;
+
+					.btn {
+						height: 26px;
+						padding: 0 14px 3px;
+						min-width: auto;
+						font-size: 16px;
+						flex: none;
+
+						&:nth-child(2) {
+							margin-left: 4px;
+						}
+					}
+				}
+			}
+
+			// &.min {
+			// 	td {
+			// 		color: transparentize(#878683, .4);
+
+			// 		&.name h2, &.fw {
+			// 			font: 500 15px/15px Alegreya Sans;
+			// 			text-transform: none;
+			// 			color: transparentize(#f0e6d2, .4);
+			// 		}
+			// 	}
+			// }
+		}
+	}
+}

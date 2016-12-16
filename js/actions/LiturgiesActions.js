@@ -3,13 +3,7 @@ import APStore from '../stores/APStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import ActionTypes from '../constants/ActionTypes';
 
-var LiturgiesActions = {
-	receiveAll: function(rawLiturgies) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_LITURGIES,
-			rawLiturgies
-		});
-	},
+export default {
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_LITURGIES,
@@ -61,7 +55,7 @@ var LiturgiesActions = {
 	removePoint: function(id) {
 		var liturgy = LiturgiesStore.get(id);
 		if (liturgy.fw === 0) {
-			LiturgiesActions.removeFromList(id);
+			this.removeFromList(id);
 		} else {
 			var costs = APStore.getCosts(liturgy.fw, liturgy.skt, false);
 			if (costs) {
@@ -73,5 +67,3 @@ var LiturgiesActions = {
 		}
 	}
 };
-
-export default LiturgiesActions;

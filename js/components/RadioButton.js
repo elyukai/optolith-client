@@ -1,28 +1,31 @@
+import Activate from './Activate';
+import Icon from './Icon';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import Text from './Text';
 
-class RadioButton extends Component {
+export default class RadioButton extends Component {
 
 	static propTypes = {
-		active: PropTypes.bool,
-		disabled: PropTypes.bool,
+		active: PropTypes.bool.isRequired,
+		className: PropTypes.string,
+		label: PropTypes.string,
 		onClick: PropTypes.func.isRequired
 	};
 
 	render() {
 
-		const className = classNames('radiobutton', this.props.active && 'active', this.props.disabled && 'disabled');
+		const { children, label, onClick, ...other } = this.props;
 
 		return (
-			<div className={className} onClick={this.props.onClick}>
-				<div className="icon">
+			<Activate {...other} className="radio" onClick={onClick}>
+				<Icon>
 					<div className="border"></div>
 					<div className="dot"></div>
-				</div>
-				<label>{this.props.children}</label>
-			</div>
+				</Icon>
+				<Text>
+					{label || children}
+				</Text>
+			</Activate>
 		);
 	}
 }
-
-export default RadioButton;

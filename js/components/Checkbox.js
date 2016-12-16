@@ -1,30 +1,31 @@
+import Activate from './Activate';
+import Icon from './Icon';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import Text from './Text';
 
-class Checkbox extends Component {
+export default class Checkbox extends Component {
 
 	static propTypes = {
-		className: PropTypes.any,
 		checked: PropTypes.bool.isRequired,
+		className: PropTypes.string,
 		label: PropTypes.string,
-		onClick: PropTypes.func.isRequired,
-		disabled: PropTypes.bool
+		onClick: PropTypes.func.isRequired
 	};
 
 	render() {
 
-		const className = classNames('checkbox', this.props.checked && 'checked', this.props.disabled && 'disabled', this.props.className);
+		const { checked, children, label, onClick, ...other } = this.props;
 
 		return (
-			<div className={className} onClick={this.props.onClick}>
-				<div className="icon">
+			<Activate {...other} active={checked} className="checkbox" onClick={onClick}>
+				<Icon>
 					<div className="border"></div>
 					<div className="hook"></div>
-				</div>
-				<label>{this.props.label || this.props.children}</label>
-			</div>
+				</Icon>
+				<Text>
+					{label || children}
+				</Text>
+			</Activate>
 		);
 	}
 }
-
-export default Checkbox;

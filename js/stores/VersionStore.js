@@ -3,13 +3,13 @@ const _minor = 0;
 const _patch = 0;
 const _version = [ _major, _minor, _patch ];
 
-var VersionStore = {
+class _VersionStore {
 	
-	get: function() {
+	get() {
 		return _version.join('.');
-	},
+	}
 
-	isLower: function(version) {
+	isLower(version) {
 		version = version.split('.').map(e => parseInt(e));
 		if (version[0] < _version[0]) {
 			return true;
@@ -22,6 +22,8 @@ var VersionStore = {
 		}
 	}
 	
-};
+}
+
+const VersionStore = new _VersionStore();
 
 export default VersionStore;

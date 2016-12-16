@@ -1,5 +1,4 @@
 import BorderButton from '../../components/BorderButton';
-import Dropdown from '../../components/Dropdown';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component } from 'react';
@@ -11,7 +10,7 @@ import SpecialAbilitiesListRemoveItem from './SpecialAbilitiesListRemoveItem';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import TextField from '../../components/TextField';
 
-class SpecialAbilities extends Component {
+export default class SpecialAbilities extends Component {
 	
 	state = { 
 		saActive: SpecialAbilitiesStore.getActiveForView(),
@@ -117,5 +116,3 @@ class SpecialAbilities extends Component {
 		);
 	}
 }
-
-export default SpecialAbilities;

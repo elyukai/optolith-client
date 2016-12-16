@@ -1,36 +1,38 @@
 import APStore from '../stores/APStore';
-import ListStore from '../stores/ListStore';
+import iccalc from './iccalc';
+import { get } from '../stores/ListStore';
+import Categories from '../constants/Categories';
 
 export const fn = req => {
 	const [ id, value, ...options ] = req;
-	let obj = ListStore.get(id);
+	let obj = get(id);
 
 	switch (obj.category) {
-		case 'attributes': {
+		case Categories.ATTRIBUTES: {
 			let values = Array.from({ length: value - 8 }, (v, i) => i + 8);
-			ListStore.addToProperty(id, 'value', value - 8);
-			return values.map(e => APStore.getCosts(e, 5)).reduce((a,b) => a + b, 0);
+			obj.value = value;
+			return values.map(e => iccalc(5, e)).reduce((a,b) => a + b, 0);
 		}
-		case 'adv':
-		case 'disadv':
-		case 'special': {
-			ListStore.addDependencies(obj.req);
+		case Categories.ADVANTAGES:
+		case Categories.DISADVANTAGES:
+		case Categories.SPECIAL_ABILITIES: {
+			obj.addDependencies();
 			if (options.length === 0) {
-				ListStore.activate(id);
-				return obj.ap;
+				obj.activate(id);
+				return obj.cost;
 			} else {
 				if (obj.tiers !== null && obj.tiers) {
 					if (obj.max === null) {
-						ListStore.activate(id);
+						obj.activate(id);
 						obj.tier = options[0];
-						return obj.ap * options[0];
+						return obj.cost * options[0];
 					} else {
 						obj.active.push(options.reverse());
-						return obj.ap * options[options.length - 1];
+						return obj.cost * options[options.length - 1];
 					}
 				} else if (obj.sel.length > 0) {
 					if (obj.max === null) {
-						ListStore.activate(id);
+						obj.activate(id);
 						obj.sid = options[0];
 						return obj.sel[options[0] - 1][2];
 					} else if (options.length > 1) {
@@ -45,6 +47,8 @@ export const fn = req => {
 			break;
 		}
 	}
+
+	
 };
 
 export default reqs => reqs.map(req => fn(req)).reduce((a,b) => a + b, 0);

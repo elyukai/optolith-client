@@ -13,7 +13,7 @@ import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 import classNames from 'classnames';
 
-class InGame extends Component {
+export default class InGame extends Component {
 	
 	state = { 
 		options: InGameStore.getOptions(),
@@ -113,5 +113,3 @@ class InGame extends Component {
 		);
 	}
 }
-
-export default InGame;

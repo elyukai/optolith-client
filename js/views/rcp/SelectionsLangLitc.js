@@ -2,12 +2,12 @@ import Checkbox from '../../components/Checkbox';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
 
-class SelectionsLangLitc extends Component {
+export default class SelectionsLangLitc extends Component {
 
 	static propTypes = {
 		active: PropTypes.object,
-		apTotal: PropTypes.number,
 		apLeft: PropTypes.number,
+		apTotal: PropTypes.number,
 		change: PropTypes.func,
 		list: PropTypes.array
 	};
@@ -50,5 +50,3 @@ class SelectionsLangLitc extends Component {
 		);
 	}
 }
-
-export default SelectionsLangLitc;

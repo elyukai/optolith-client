@@ -4,10 +4,10 @@ import HerolistActions from '../../actions/HerolistActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-class HeroCreation extends Component {
+export default class HeroCreation extends Component {
 
-	static props = { 
-		node: PropTypes.node
+	static propTypes = { 
+		node: PropTypes.any
 	};
 
 	state = { 
@@ -57,5 +57,3 @@ class HeroCreation extends Component {
 		);
 	}
 }
-
-export default HeroCreation;

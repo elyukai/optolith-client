@@ -1,14 +1,15 @@
 import BorderButton from '../../components/BorderButton';
+import { get } from '../../stores/ListStore';
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 
-class SkillListItem extends Component {
+export default class SkillListItem extends Component {
 
 	static propTypes = {
 		activate: PropTypes.func,
 		activateDisabled: PropTypes.bool,
-		addPoint: PropTypes.func,
 		addDisabled: PropTypes.bool,
+		addPoint: PropTypes.func,
 		check: PropTypes.array,
 		checkDisabled: PropTypes.bool,
 		checkmod: PropTypes.string,
@@ -16,8 +17,8 @@ class SkillListItem extends Component {
 		ic: PropTypes.number,
 		isNotActive: PropTypes.bool,
 		name: PropTypes.string,
-		removePoint: PropTypes.func,
 		removeDisabled: PropTypes.bool,
+		removePoint: PropTypes.func,
 		sr: PropTypes.number,
 		typ: PropTypes.bool,
 		untyp: PropTypes.bool
@@ -42,20 +43,17 @@ class SkillListItem extends Component {
 			<td className="fw"></td>
 		) : null;
 
-		const ATTR = {
-			ATTR_1: 'MU',
-			ATTR_2: 'KL',
-			ATTR_3: 'IN',
-			ATTR_4: 'CH',
-			ATTR_5: 'FF',
-			ATTR_6: 'GE',
-			ATTR_7: 'KO',
-			ATTR_8: 'KK'
-		};
-
-		const checkElement = !checkDisabled ? (
-			<td className="check">{check ? `${check.map(attr => ATTR[attr]).join('/')} ${checkmod ? `(+${checkmod})` : ''}` : null}</td>
-		) : null;
+		let checkElement = null;
+		if (!checkDisabled) {
+			let content = '';
+			if (check) {
+				content = check.map(attr => get(attr).short).join('/');
+				if (checkmod) {
+					content += `(+${checkmod})`;
+				}
+			}
+			checkElement = <td className="check">{content}</td>;
+		}
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
 		
@@ -91,5 +89,3 @@ class SkillListItem extends Component {
 		);
 	}
 }
-
-export default SkillListItem;

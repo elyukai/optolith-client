@@ -1,7 +1,7 @@
 import AttributeListItem from './AttributeListItem';
 import React, { Component, PropTypes } from 'react';
 
-class AttributeList extends Component {
+export default class AttributeList extends Component {
 
 	static propTypes = {
 		attributes: PropTypes.array.isRequired,
@@ -23,5 +23,3 @@ class AttributeList extends Component {
 		);
 	}
 }
-
-export default AttributeList;

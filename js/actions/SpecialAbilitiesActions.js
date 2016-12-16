@@ -2,13 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import APStore from '../stores/APStore';
 import ActionTypes from '../constants/ActionTypes';
 
-var SpecialAbilitiesActions = {
-	receiveAll: function(rawSA) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_SPECIALABILITIES,
-			rawSA
-		});
-	},
+export default {
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_SPECIALABILITIES,
@@ -50,5 +44,3 @@ var SpecialAbilitiesActions = {
 		}
 	}
 };
-
-export default SpecialAbilitiesActions;

@@ -1,6 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
-import ListStore from './ListStore';
+import Store from './Store';
+import ListStore, { getAllByCategory } from './ListStore';
 import RaceStore from './RaceStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
@@ -40,53 +40,30 @@ function _clear() {
 }
 
 function _updateAll(obj) {
-	_le = obj._le;
-	_le_add = obj._le_add;
-	_ae_add = obj._ae_add;
-	_ke_add = obj._ke_add;
-	_sk = obj._sk;
-	_zk = obj._zk;
-	_gs = obj._gs;
+	_le = obj.le;
+	_le_add = obj.le_add;
+	_ae_add = obj.ae_add;
+	_ke_add = obj.ke_add;
+	_sk = obj.sk;
+	_zk = obj.zk;
+	_gs = obj.gs;
 }
 
 function _assignRCP() {
-	let currentRace = RaceStore.getCurrent() || { le: 0, sk: 0, zk: 0, gs: 0 };
-	_le = currentRace.le;
-	_sk = currentRace.sk;
-	_zk = currentRace.zk;
-	_gs = currentRace.gs;
+	let currentRace = RaceStore.getCurrent();
+	_le = currentRace.lp;
+	_sk = currentRace.spi;
+	_zk = currentRace.tou;
+	_gs = currentRace.mov;
 }
 
-var AttributeStore = Object.assign({}, EventEmitter.prototype, {
-	
-	emitChange: function() {
-		this.emit('change');
-	},
+class _AttributeStore extends Store {
 
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
+	getAll() {
+		return getAllByCategory(CATEGORY);
+	}
 
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getForSave: function() {
-		return {
-			values: ListStore.getAllByCategory(CATEGORY).map(e => [e.id, e.value, e.mod]),
-			_le, _le_add, _ae_add, _ke_add, _sk, _zk, _gs
-		};
-	},
-
-	get: function(id) {
-		return ListStore.get(id);
-	},
-
-	getValue: function(id) {
-		return ListStore.get(id).value;
-	},
-
-	getAdd: function(id) {
+	getAdd(id) {
 		switch (id) {
 			case 'LE':
 				return _le_add;
@@ -94,14 +71,12 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 				return _ae_add;
 			case 'KE':
 				return _ke_add;
+			default:
+				return 0;
 		}
-	},
+	}
 
-	getAllForView: function() {
-		return ListStore.getAllByCategory(CATEGORY);
-	},
-
-	getBaseValues: function() {
+	getBaseValues() {
 		return {
 			le: _le,
 			leAdd: _le_add,
@@ -111,20 +86,23 @@ var AttributeStore = Object.assign({}, EventEmitter.prototype, {
 			zk: _zk,
 			gs: _gs
 		};
-	},
-
-	getSum: function() {
-		var sum = 0;
-		var attrsObj = ListStore.getObjByCategory(CATEGORY);
-		for (let id in attrsObj) {
-			sum += attrsObj[id].value;
-		}
-		return sum;
 	}
 
-});
+	getSum() {
+		return this.getAll().reduce((a,b) => a + b.value, 0);
+	}
 
-AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
+	getForSave() {
+		return Object.assign({}, {
+			values: this.getAll().map(e => [e.id, e.value, e.mod])
+		}, this.getBaseValues());
+	}
+
+}
+
+const AttributeStore = new _AttributeStore();
+
+AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 
@@ -139,6 +117,7 @@ AttributeStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			break;
 
 		case ActionTypes.ADD_MAX_ENERGY_POINT:

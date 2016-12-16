@@ -1,28 +1,27 @@
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
+import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
+import { filterAndSort } from '../../utils/ListUtils';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
 import ProfessionActions from '../../actions/ProfessionActions';
+import ProfessionsListItem from './ProfessionsListItem';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantActions from '../../actions/ProfessionVariantActions';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import Scroll from '../../components/Scroll';
 import Selections from './Selections';
-import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
-import classNames from 'classnames';
 
-class Professions extends Component {
+export default class Professions extends Component {
 
 	static propTypes = {
 		changeTab: PropTypes.func
 	};
 
 	state = {
-		professions: ProfessionStore.getAllForView(),
+		professions: ProfessionStore.getAll(),
 		currentID: ProfessionStore.getCurrentID(),
-		filter: ProfessionStore.getFilter(),
+		filterText: ProfessionStore.getFilter(),
 		sortOrder: ProfessionStore.getSortOrder(),
 		showAllProfessions: ProfessionStore.areAllVisible(),
 		currentVID: ProfessionVariantStore.getCurrentID(),
@@ -30,9 +29,9 @@ class Professions extends Component {
 	};
 	
 	_updateProfessionStore = () => this.setState({
-		professions: ProfessionStore.getAllForView(),
+		professions: ProfessionStore.getAll(),
 		currentID: ProfessionStore.getCurrentID(),
-		filter: ProfessionStore.getFilter(),
+		filterText: ProfessionStore.getFilter(),
 		sortOrder: ProfessionStore.getSortOrder(),
 		showAllProfessions: ProfessionStore.areAllVisible()
 	});
@@ -40,7 +39,6 @@ class Professions extends Component {
 		currentVID: ProfessionVariantStore.getCurrentID()
 	});
 
-	selectProfession = id => ProfessionActions.selectProfession(id);
 	filter = event => ProfessionActions.filter(event.target.value);
 	sort = option => ProfessionActions.sort(option);
 	changeView = view => ProfessionActions.changeView(view);
@@ -60,19 +58,26 @@ class Professions extends Component {
 	}
 
 	render() {
+
+		const { currentID, currentVID, filterText, professions, showAddSlidein, showAllProfessions, sortOrder } = this.state;
+		
+		const currentCulture = CultureStore.getCurrent();
+
+		const list = filterAndSort(professions.filter(e => showAllProfessions || currentCulture.typ_prof.includes(e.id) || e.id === 'P_0'), filterText, sortOrder);
+
 		return (
 			<div className="page" id="professions">
 				{
-					this.state.showAddSlidein ? <Selections close={this.hideAddSlidein} /> : null
+					showAddSlidein ? <Selections close={this.hideAddSlidein} /> : null
 				}
 				<div className="options">
-					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
-						value={this.state.showAllProfessions}
+						value={showAllProfessions}
 						onChange={this.changeView}
 						options={[['Alle Professionen', true], ['Übliche Professionen', false]]}
 						fullWidth />
-					<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
+					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
 						{
 							name: 'Alphabetisch',
 							value: 'name'
@@ -86,41 +91,14 @@ class Professions extends Component {
 				<Scroll className="list professions">
 					<ul>
 						{
-							this.state.professions.map(profession => {
-								const className = classNames(profession.id === this.state.currentID && 'active');
-
-								var vars;
-
-								if (profession.id === this.state.currentID && profession.vars.length > 0) {
-									var varList = ProfessionVariantStore.getAllForView();
-									if (varList.length > 1) {
-										vars = (
-											<RadioButtonGroup active={this.state.currentVID} onClick={this.selectProfessionVariant} array={varList} />
-										);
-									}
-								}
-
-								return (
-									<li key={profession.id} className={className}>
-										<div className="left">
-											<h2>{profession.name} ({profession.ap} AP)</h2>
-											{profession.subname !== '' ? (
-												<h3>{profession.subname}</h3>
-											) : null}
-											{vars}
-										</div>
-										<div className="right">
-											{
-												profession.id === this.state.currentID ? (
-													<BorderButton label="Weiter" onClick={this.showAddSlidein} primary />
-												) : (
-													<BorderButton label="Auswählen" onClick={this.selectProfession.bind(null, profession.id)} />
-												)
-											}
-										</div>
-									</li>
-								);
-							})
+							list.map(profession => <ProfessionsListItem
+								key={profession.id}
+								showAddSlidein={this.showAddSlidein}
+								currentID={currentID}
+								currentVID={currentVID}
+								profession={profession}
+								/>
+							)
 						}
 					</ul>
 				</Scroll>
@@ -128,5 +106,3 @@ class Professions extends Component {
 		);
 	}
 }
-
-export default Professions;

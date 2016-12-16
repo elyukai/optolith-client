@@ -3,7 +3,7 @@ import InGame from './InGame';
 import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
-class Master extends Component {
+export default class Master extends Component {
 
 	state = {
 		tab: 'ingame'
@@ -45,5 +45,3 @@ class Master extends Component {
 		);
 	}
 }
-
-export default Master;

@@ -1,16 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Selections from '../views/rcp/Selections';
 
-var ProfessionActions = {
-	receiveAll: function(rawProfessions) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_PROFESSIONS,
-			rawProfessions
-		});
-	},
+export default {
 	selectProfession: function(professionID) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SELECT_PROFESSION,
@@ -42,5 +33,3 @@ var ProfessionActions = {
 		});
 	}
 };
-
-export default ProfessionActions;

@@ -1,7 +1,7 @@
 import Checkbox from '../../components/Checkbox';
 import React, { Component, PropTypes } from 'react';
 
-class SelectionsCantrips extends Component {
+export default class SelectionsCantrips extends Component {
 
 	static propTypes = {
 		active: PropTypes.object,
@@ -36,5 +36,3 @@ class SelectionsCantrips extends Component {
 		);
 	}
 }
-
-export default SelectionsCantrips;

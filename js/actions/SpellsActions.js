@@ -3,7 +3,7 @@ import APStore from '../stores/APStore';
 import SpellsStore from '../stores/SpellsStore';
 import ActionTypes from '../constants/ActionTypes';
 
-var SpellsActions = {
+export default {
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_SPELLS,
@@ -55,7 +55,7 @@ var SpellsActions = {
 	removePoint: function(id) {
 		var spell = SpellsStore.get(id);
 		if (spell.fw === 0) {
-			SpellsActions.removeFromList(id);
+			this.removeFromList(id);
 		} else {
 			var costs = APStore.getCosts(spell.fw, spell.skt, false);
 			if (costs) {
@@ -67,5 +67,3 @@ var SpellsActions = {
 		}
 	}
 };
-
-export default SpellsActions;

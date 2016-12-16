@@ -1,5 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
 
 var _fighters = [];
@@ -326,81 +326,71 @@ function updateOption(option) {
 	_options[option] = !_options[option];
 }
 
-var InGameStore = Object.assign({}, EventEmitter.prototype, {
+class _InGameStore extends Store {
 
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getIni: function() {
+	getIni() {
 		return getMaxIni();
-	},
+	}
 
-	getIniArray: function() {
+	getIniArray() {
 		const maxIni = getMaxIni();
 		var iniArray = [];
 		for (let i = maxIni; i > 0; i--) {
 			iniArray.push(i);
 		}
 		return iniArray;
-	},
+	}
 
-	getUsedPhases: function() {
+	getUsedPhases() {
 		return getUsedPhases();
-	},
+	}
 
-	getOptions: function() {
+	getOptions() {
 		return _options;
-	},
+	}
 
-	getFighters: function() {
+	getFighters() {
 		return _fighters;
-	},
+	}
 
-	getFighterByID: function(id) {
+	getFighterByID(id) {
 		return _fighters[_fightersIdIndex[id]];
-	},
+	}
 
-	getFighterIndex: function(id) {
+	getFighterIndex(id) {
 		return _fightersIdIndex[id];
-	},
+	}
 
-	getEditIndex: function() {
+	getEditIndex() {
 		if (_edit > -1) return this.getFighterIndex(_edit);
 		return -1;
-	},
+	}
 
-	getStatus: function() {
+	getStatus() {
 		return _status;
-	},
+	}
 
-	getOnline: function() {
+	getOnline() {
 		return _online;
-	},
+	}
 
-	getEdit: function() {
+	getEdit() {
 		return _edit;
-	},
+	}
 
-	getEditCast: function() {
+	getEditCast() {
 		return _editCast;
-	},
+	}
 
-	getEditDuplicate: function() {
+	getEditDuplicate() {
 		return _editDuplicate;
 	}
 
-});
+}
 
-InGameStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const InGameStore = new _InGameStore();
+
+InGameStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 

@@ -1,15 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import APStore from '../stores/APStore';
-import AttributeStore from '../stores/AttributeStore';
 import ActionTypes from '../constants/ActionTypes';
 
-var AttributeActions = {
-	receiveAll: function(rawAttributes) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_ATTRIBUTES,
-			rawAttributes
-		});
-	},
+export default {
 	addPoint: function(id) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.ADD_ATTRIBUTE_POINT,
@@ -29,5 +21,3 @@ var AttributeActions = {
 		});
 	}
 };
-
-export default AttributeActions;

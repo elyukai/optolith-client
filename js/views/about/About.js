@@ -2,17 +2,16 @@ import VersionStore from '../../stores/VersionStore';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 
-class About extends Component {
-
-	state = {
-		version: VersionStore.get()
-	};
-
+export default class About extends Component {
+	
 	render() {
+
+		const version = VersionStore.get();
+
 		return (
 			<section id="about">
 				<div className="page">
-					<Scroll>
+					<Scroll className="text">
 						<h2>Impressum</h2>
 
 						<h3>Thore Schuchardt</h3>
@@ -63,7 +62,7 @@ class About extends Component {
 							Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
 						</p>
 
-						<h2>Cha5App Browser Client v{this.state.version}</h2>
+						<h2>Cha5App Browser Client v{version}</h2>
 						<h2>Drittanbietersoftware</h2>
 						<div className="third-party-software">
 							Alegreya font<br/>
@@ -347,5 +346,3 @@ class About extends Component {
 		);
 	}
 }
-
-export default About;

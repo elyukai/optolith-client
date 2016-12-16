@@ -1,9 +1,10 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
-import ListStore from './ListStore';
+import Store from './Store';
+import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory, getObjByCategoryGroup } from './ListStore';
 import PhaseStore from './PhaseStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
+import count from '../utils/count';
 import validate from '../utils/validate';
 
 const CATEGORY = Categories.SPECIAL_ABILITIES;
@@ -20,27 +21,15 @@ function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
-var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
-	
-	emitChange: function() {
-		this.emit('change');
-	},
+class _SpecialAbilitiesStore extends Store {
 
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	validate: function(id) {
+	validate(id) {
 		let obj = this.get(id);
 		return validate(obj.req);
-	},
+	}
 
-	getForSave: function() {
-		var all = ListStore.getAllByCategory(CATEGORY);
+	getForSave() {
+		var all = getAllByCategory(CATEGORY);
 		var result = new Map();
 		all.forEach(e => {
 			let { active, id, sid, tier } = e;
@@ -53,83 +42,77 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 		return {
 			active: Array.from(result)
 		};
-	},
+	}
 
-	get: function(id) {
-		return ListStore.get(id);
-	},
+	get(id) {
+		return get(id);
+	}
 
-	getActiveForView: function(...cgr) {
+	getActiveForView(...cgr) {
 		var sasObj;
 		if (cgr.length > 0) {
-			sasObj = ListStore.getObjByCategoryGroup(CATEGORY, ...cgr);
+			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr);
 		} else {
-			sasObj = ListStore.getObjByCategory(CATEGORY);
+			sasObj = getObjByCategory(CATEGORY);
 		}
 		var sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
-			let { name, active, ap, sid, sel, gr, dependencies } = sa;
+			let { name, active, cost, sid, sel, gr, dependencies } = sa;
 			if (active === true) {
 				let disabled = dependencies.length > 0;
-				if (sel.length > 0 && ap === 'sel') {
-					if (id === 'SA_86' && ListStore.getAllByCategory('spells').some(e => e.active)) {
+				if (sel.length > 0 && cost === 'sel') {
+					if (id === 'SA_86' && getAllByCategory('spells').some(e => e.active)) {
 						disabled = true;
 					}
-					if (id === 'SA_102' && ListStore.getAllByCategory('liturgies').some(e => e.active)) disabled = true; 
-					sas.push({ id, name, add: sel[sid - 1][0], ap: sel[sid - 1][2], gr, disabled });
+					if (id === 'SA_102' && getAllByCategory('liturgies').some(e => e.active)) disabled = true; 
+					sas.push({ id, name, add: sel[sid - 1][0], cost: sel[sid - 1][2], gr, disabled });
 				} else {
 					let phase = PhaseStore.get();
 					if (id === 'SA_92' && phase < 3) {
-						ap += 4;
+						cost += 4;
 					}
-					sas.push({ id, name, ap, gr, disabled });
+					sas.push({ id, name, cost, gr, disabled });
 				}
 			} else if (Array.isArray(active) && active.length > 0) {
 				let disabled = dependencies.length > 0;
-				let ap_default = ap;
+				let ap_default = cost;
 				if (id === 'SA_10') {
-					let counter = new Map();
-					active.forEach(n => {
-						if (!counter.has(n[0]))
-							counter.set(n[0], 1);
-						else
-							counter.set(n[0], counter.get(n[0]) + 1);
-					});
+					let counter = count(active);
 					active.forEach(n => {
 						let sid = n.join('&');
-						let tal = ListStore.get(n[0]);
-						let ap = tal.skt * counter.get(n[0]);
+						let tal = get(n[0]);
+						let cost = tal.ic * counter.get(n[0]);
 						let add = `${tal.name}: ${typeof n[1] === 'number' ? tal.spec[n[1] - 1] : n[1]}`;
-						sas.push({ id, name, sid, add, ap, gr, disabled });
+						sas.push({ id, name, sid, add, cost, gr, disabled });
 					});
 				} else for (let i = 0; i < active.length; i++) {
 					let sid;
 					let add;
 					let tier;
 					let tiers;
-					let ap;
+					let cost;
 					if (id === 'SA_30') {
 						sid = sa.active[i][0];
-						ap = ap_default;
+						cost = ap_default;
 						tier = sa.active[i][1];
 						tiers = 3;
 						add = sa.sel[sid - 1][0];
 					} else if (sel.length > 0 && ap_default === 'sel') {
 						sid = sa.active[i];
-						ap = sa.sel[sid - 1][2];
+						cost = sa.sel[sid - 1][2];
 						add = sa.sel[sid - 1][0];
 					} else if (sel.length > 0 && typeof ap_default === 'number') {
 						sid = sa.active[i];
-						ap = sa.ap;
+						cost = sa.cost;
 						add = sa.sel[sid - 1][0];
 					} else if (sa.input !== null) {
 						sid = sa.active[i];
 						add = sa.active[i];
-						ap = sa.ap;
+						cost = sa.cost;
 					}
-					if (dependencies.indexOf(sid) > -1) disabled = true;
-					sas.push({ id, name, sid, add, ap, tier, tiers, gr, disabled });
+					if (dependencies.includes(sid)) disabled = true;
+					sas.push({ id, name, sid, add, cost, tier, tiers, gr, disabled });
 				}
 			}
 		}
@@ -181,61 +164,54 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 			});
 		}
 		return sas;
-	},
+	}
 
-	getDeactiveForView: function() {
-		var sasObj = ListStore.getObjByCategory(CATEGORY), sas = [];
+	getDeactiveForView() {
+		var sasObj = getObjByCategory(CATEGORY), sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
-			let { name, active, ap, max, sel, input, gr, dependencies, req } = sa;
-			if (!validate(req) || dependencies.indexOf(false) > -1) continue;
+			let { name, active, cost, max, sel, input, gr, dependencies, reqs } = sa;
+			if (!validate(reqs) || dependencies.includes(false)) continue;
 			if (active === false) {
 				switch (id) {
 					case 'SA_18': {
-						let sum = ListStore.getAllByCategory('talents').filter(e => ['TAL_51','TAL_55'].indexOf(e.id) > -1).reduce((a,b) => a.fw + b.fw);
+						let sum = getAllByCategory('talents').filter(e => ['TAL_51','TAL_55'].includes(e.id)).reduce((a,b) => a.value + b.value, 0);
 						if (sum >= 12)
-							sas.push({ id, name, ap, gr });
+							sas.push({ id, name, cost, gr });
 						break;
 					}
 					case 'SA_19':
-						if (ListStore.getAllByCategoryGroup('combattech', 2).filter(e => e.fw >= 10).length > 0)
-							sas.push({ id, name, ap, gr });
+						if (getAllByCategoryGroup('combattech', 2).filter(e => e.value >= 10).length > 0)
+							sas.push({ id, name, cost, gr });
 						break;
 					default:
-						if (sel.length > 0 && ap === 'sel') {
-							let _sel = sel.filter(e => dependencies.indexOf(e[1]) === -1);
-							sas.push({ id, name, sel: _sel, ap, gr });
+						if (sel.length > 0 && cost === 'sel') {
+							let _sel = sel.filter(e => !dependencies.includes(e[1]));
+							sas.push({ id, name, sel: _sel, cost, gr });
 						} else {
 							let phase = PhaseStore.get();
 							if (id === 'SA_92' && phase < 3) {
-								ap += 4;
+								cost += 4;
 							}
-							sas.push({ id, name, ap, gr });
+							sas.push({ id, name, cost, gr });
 						}
 						break;
 				}
 			} else if (active.length === 0 || max === false || (active.length < sa.max)) {
 				switch (id) {
 					case 'SA_3': {
-						let _sel = sel.filter(e => active.indexOf(e[1]) === -1 && validate(e[3]) && dependencies.indexOf(e[1]) === -1);
+						let _sel = sel.filter(e => !active.includes(e[1]) && validate(e[3]) && !dependencies.includes(e[1]));
 						if (_sel.length > 0) {
-							sas.push({ id, name, sel: _sel, ap, gr });
+							sas.push({ id, name, sel: _sel, cost, gr });
 						}
 						break;
 					}
 					case 'SA_10': {
-						let counter = {};
-						active.forEach(n => {
-							if (!counter.hasOwnProperty(n[0])) {
-								counter[n[0]] = [n[1]];
-							} else {
-								counter[n[0]].push(n[1]);
-							}
-						});
+						let counter = count(active, true);
 						let _sel = sel.filter(e => (
-								(!counter.hasOwnProperty(e[1]) && this.get(e[1]).fw >= 6) ||
-								(counter.hasOwnProperty(e[1]) && counter[e[1]].length < 3 && this.get(e[1]).fw >= 6 * (counter[e[1]].length + 1))
-							) && dependencies.indexOf(e[1]) === -1).map(e => {
+								(!counter.hasOwnProperty(e[1]) && get(e[1]).value >= 6) ||
+								(counter.hasOwnProperty(e[1]) && counter[e[1]].length < 3 && get(e[1]).value >= 6 * (counter[e[1]].length + 1))
+							) && !dependencies.includes(e[1])).map(e => {
 								if (counter[e[1]]) {
 									e[2] *= counter[e[1]].length + 1;
 								}
@@ -243,34 +219,34 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 									if (counter[e[1]] === undefined) {
 										return true;
 									} else {
-										return counter[e[1]].indexOf(n[1]) === -1;
+										return !counter[e[1]].includes(n[1]);
 									}
 								});
 								return e;
 							});
 						_sel.sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 						if (_sel.length > 0) {
-							sas.push({ id, name, sel: _sel, ap, gr });
+							sas.push({ id, name, sel: _sel, cost, gr });
 						}
 						break;
 					}
 					case 'SA_29': {
-						let _sel = sel.filter(e => active.indexOf(e[1]) === -1 && this.get(e[2][0]).fw >= e[2][1] && dependencies.indexOf(e[1]) === -1);
+						let _sel = sel.filter(e => !active.includes(e[1]) && get(e[2][0]).value >= e[2][1] && !dependencies.includes(e[1]));
 						if (_sel.length > 0) {
-							sas.push({ id, name, sel: _sel, ap, gr });
+							sas.push({ id, name, sel: _sel, cost, gr });
 						}
 						break;
 					}
 					case 'SA_30': {
-						let _sel = sel.filter(e => active.every(n => n[0] !== e[1]) && dependencies.indexOf(e[1]) === -1);
+						let _sel = sel.filter(e => active.every(n => n[0] !== e[1]) && !dependencies.includes(e[1]));
 						_sel.sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 						if (_sel.length > 0) {
-							sas.push({ id, name, sel: _sel, ap, tiers: 3, gr });
+							sas.push({ id, name, sel: _sel, cost, tiers: 3, gr });
 						}
 						break;
 					}
 					case 'SA_88': {
-						let spellsAbove10 = ListStore.getAllByCategory('spells').filter(e => e.fw >= 10);
+						let spellsAbove10 = getAllByCategory('spells').filter(e => e.value >= 10);
 						let counter = {};
 						for (let i = 0; i < spellsAbove10.length; i++) {
 							let spell = spellsAbove10[i];
@@ -281,19 +257,19 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 						}
 						let newSel = [];
 						for (let i = 0; i < sel.length; i++) {
-							if (counter[sel[i][1]] >= 3 && active.indexOf(sel[i][1]) === -1 && dependencies.indexOf(sel[i][1]) === -1)
+							if (counter[sel[i][1]] >= 3 && !active.includes(sel[i][1]) && !dependencies.includes(sel[i][1]))
 								newSel.push(sel[i]);
 						}
 						newSel.sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 						if (newSel.length > 0) {
 							let apArr = [10,20,40];
 							let newAp = apArr[active.length];
-							sas.push({ id, name, sel: newSel, ap: newAp, gr });
+							sas.push({ id, name, sel: newSel, cost: newAp, gr });
 						}
 						break;
 					}
 					case 'SA_103': {
-						let liturgiesAbove10 = ListStore.getAllByCategory('liturgies').filter(e => e.fw >= 10);
+						let liturgiesAbove10 = getAllByCategory('liturgies').filter(e => e.value >= 10);
 						let counter = {};
 						liturgiesAbove10.forEach(n => {
 							n.aspc.forEach(e => {
@@ -305,26 +281,26 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 						});
 						let newSel = [];
 						for (let i = 0; i < sel.length; i++) {
-							if (counter[sel[i][1]] >= 3 && active.indexOf(sel[i][1]) === -1 && dependencies.indexOf(sel[i][1]) === -1)
+							if (counter[sel[i][1]] >= 3 && !active.includes(sel[i][1]) && !dependencies.includes(sel[i][1]))
 								newSel.push(sel[i]);
 						}
 						newSel.sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 						if (newSel.length > 0) {
 							let apArr = [15,25,45];
 							let newAp = apArr[active.length];
-							sas.push({ id, name, sel: newSel, ap: newAp, gr });
+							sas.push({ id, name, sel: newSel, cost: newAp, gr });
 						}
 						break;
 					}
 					default:
 						if (sel.length > 0) {
-							let _sel = sel.filter(e => active.indexOf(e[1]) === -1 && dependencies.indexOf(e[1]) === -1);
+							let _sel = sel.filter(e => !active.includes(e[1]) && !dependencies.includes(e[1]));
 							_sel.sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 							if (_sel.length > 0) {
-								sas.push({ id, name, sel: _sel, ap, gr });
+								sas.push({ id, name, sel: _sel, cost, gr });
 							}
 						} else if (input !== null) {
-							sas.push({ id, name, input, ap, gr });
+							sas.push({ id, name, input, cost, gr });
 						}
 						break;
 				}
@@ -366,19 +342,21 @@ var SpecialAbilitiesStore = Object.assign({}, EventEmitter.prototype, {
 			});
 		}
 		return sas;
-	},
+	}
 
-	getFilter: function() {
+	getFilter() {
 		return _filter;
-	},
+	}
 
-	getSortOrder: function() {
+	getSortOrder() {
 		return _sortOrder;
 	}
 
-});
+}
 
-SpecialAbilitiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const SpecialAbilitiesStore = new _SpecialAbilitiesStore();
+
+SpecialAbilitiesStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 

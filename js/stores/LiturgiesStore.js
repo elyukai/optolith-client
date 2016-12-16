@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ELStore from './ELStore';
-import ListStore from './ListStore';
+import { get, getAllByCategory, getObjByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
@@ -54,22 +54,10 @@ function _filterAndSort(array) {
 	return array;
 }
 	
-var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
-	
-	emitChange: function() {
-		this.emit('change');
-	},
+class _LiturgiesStore extends Store {
 
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getForSave: function() {
-		var all = ListStore.getAllByCategory(CATEGORY);
+	getForSave() {
+		var all = getAllByCategory(CATEGORY);
 		var result = new Map();
 		all.forEach(e => {
 			let { active, id, fw } = e;
@@ -80,29 +68,29 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 		return {
 			active: Array.from(result)
 		};
-	},
+	}
 
-	get: function(id) {
-		return ListStore.get(id);
-	},
+	get(id) {
+		return get(id);
+	}
 
-	getAspectCounter: function() {
-		return ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
+	getAspectCounter() {
+		return getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
 			if (!a.has(b.aspect)) {
 				a.set(b.aspect, 1);
 			} else {
 				a.set(b.aspect, a.get(b.aspect) + 1);
 			}
 		}, new Map());
-	},
+	}
 
-	getActiveForView: function() {
-		var liturgies = ListStore.getAllByCategory(CATEGORY).filter(e => e.active);
+	getActiveForView() {
+		var liturgies = getAllByCategory(CATEGORY).filter(e => e.active);
 		return _filterAndSort(liturgies);
-	},
+	}
 
-	getDeactiveForView: function() {
-		var liturgies = ListStore.getObjByCategory(CATEGORY).filter(e => {
+	getDeactiveForView() {
+		var liturgies = getObjByCategory(CATEGORY).filter(e => {
 			if (!e.active) {
 				if (!e.isOwnTradition) {
 					return false;
@@ -112,24 +100,26 @@ var LiturgiesStore = Object.assign({}, EventEmitter.prototype, {
 			return false;
 		});
 		return _filterAndSort(liturgies);
-	},
+	}
 
-	isActivationDisabled: function() {
+	isActivationDisabled() {
 		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
-		return PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
-	},
+		return PhaseStore.get() < 3 && getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
+	}
 
-	getFilter: function() {
+	getFilter() {
 		return _filter;
-	},
+	}
 
-	getSortOrder: function() {
+	getSortOrder() {
 		return _sortOrder;
 	}
 
-});
+}
 
-LiturgiesStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const LiturgiesStore = new _LiturgiesStore();
+
+LiturgiesStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 

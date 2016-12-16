@@ -1,0 +1,35 @@
+.titlebar-left {
+	flex: 1 1 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: stretch;
+
+	> div {
+		&:first-child {
+			&:not(.titlebar-tabs), &.titlebar-tabs > div:first-child {
+				margin-left: 40px;
+			}
+		}
+
+		&.avatar-wrapper {
+			flex-shrink: 0;
+			align-self: center;
+			@include size($avatar-height);
+
+			+ div {
+				margin-left: 24px;
+			}
+
+			> div.avatar {
+				@include size($avatar-height - 4px);
+			}
+		}
+		
+		&.text {
+			color: #f1e6d4;
+			text-transform: uppercase;
+			margin-left: 24px;
+			letter-spacing: 0.1em;
+		}
+	}
+}

@@ -2,14 +2,16 @@ import InGameActions from '../../actions/InGameActions';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
-class InGameTableRight extends Component {
+export default class InGameTableRight extends Component {
+
+	static propTypes = {
+		fighters: React.PropTypes.array.isRequired,
+		options: React.PropTypes.object.isRequired
+	};
 	
 	useEndurance = id => InGameActions.useEndurance(id);
-	
 	useAction = id => InGameActions.useAction(id);
-	
 	useFreeAction = id => InGameActions.useFreeAction(id);
-	
 	edit = id => InGameActions.edit(id);
 	
 	render() {
@@ -72,10 +74,3 @@ class InGameTableRight extends Component {
 		);
 	}
 }
-
-InGameTableRight.propTypes = {
-	fighters: React.PropTypes.array.isRequired,
-	options: React.PropTypes.object.isRequired
-};
-
-export default InGameTableRight;

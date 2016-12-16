@@ -1,24 +1,26 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
-import { EventEmitter } from 'events';
-import ListStore from '../stores/ListStore';
+import Store from './Store';
+import { get } from '../stores/ListStore';
 import RaceStore from './RaceStore';
+import RequirementsStore from './RequirementsStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
-import reactAlert from '../utils/reactAlert';
+import { check, final } from '../utils/iccalc';
+import alert from '../utils/alert';
 import reqPurchase from '../utils/reqPurchase';
 
 var _history = [];
 var _lastSaveIndex = -1;
 
-function _add(actionType, costs = 0, previousState = null, options) {
+function _add(actionType, cost = 0, options = {}, previousState = {}) {
 	_history.push({
 		actionType,
-		costs,
-		previousState,
-		options
+		cost,
+		options,
+		previousState
 	});
 }
 
@@ -36,72 +38,87 @@ function _updateAll(array) {
 }
 
 function _assignRCP(selections) {
+	let el = ELStore.getStart();
+	_add(ActionTypes.SELECT_EXPERIENCE_LEVEL, -el.ap, { id: el.id });
 	let race = RaceStore.getCurrent();
-	_add(ActionTypes.SELECT_RACE, race.ap, undefined, race.id);
+	_add(ActionTypes.SELECT_RACE, race.ap, { id: race.id });
 	let culture = CultureStore.getCurrent();
-	_add(ActionTypes.SELECT_CULTURE, culture.ap, undefined, race.id);
-	let profession = ProfessionStore.getCurrent() || { id: 'P_0', ap: 0 };
-	_add(ActionTypes.SELECT_PROFESSION, profession.ap, undefined, profession.id);
+	_add(ActionTypes.SELECT_CULTURE, culture.ap, { id: culture.id });
+	let profession = ProfessionStore.getCurrent();
+	_add(ActionTypes.SELECT_PROFESSION, profession.ap, { id: profession.id });
 	let professionVariant = ProfessionVariantStore.getCurrent();
 	if (professionVariant) {
-		_add(ActionTypes.SELECT_PROFESSION_VARIANT, professionVariant.ap, undefined, professionVariant.id);
+		_add(ActionTypes.SELECT_PROFESSION_VARIANT, professionVariant.ap, { id: professionVariant.id });
 	}
 
 	let { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = selections;
 
-	_add('SELECT_ATTRIBUTE_MOD', undefined, undefined, attrSel);
-	_add('PURCHASE_CULTURE_PACKAGE', undefined, undefined, useCulturePackage);
+	_add('SELECT_ATTRIBUTE_MOD', 0, { id: attrSel });
+	_add('PURCHASE_CULTURE_PACKAGE', 0, { buy: useCulturePackage });
 	if (lang !== 0) {
-		_add('SELECT_MOTHER_TONGUE', undefined, undefined, lang);
+		_add('SELECT_MOTHER_TONGUE', 0, { id: lang });
 	}
-	_add('PURCHASE_MAIN_LITERACY', undefined, undefined, buyLiteracy);
+	_add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
 	if (spec[0] !== null || spec[1] !== '') {
-		_add('SELECT_SKILL_SPECIALISATION', undefined, undefined, spec);
+		_add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
 	}
 	if (litc !== 0) {
-		_add('SELECT_MAIN_LITERACY', undefined, undefined, litc);
+		_add('SELECT_MAIN_LITERACY', 0, { id: litc });
 	}
 	if (cantrips.size > 0) {
-		_add('SELECT_CANTRIPS', undefined, undefined, Array.from(cantrips));
+		_add('SELECT_CANTRIPS', 0, { list: Array.from(cantrips) });
 	}
 	if (combattech.size > 0) {
-		_add('SELECT_COMBAT_TECHNIQUES', undefined, undefined, Array.from(combattech));
+		_add('SELECT_COMBAT_TECHNIQUES', 0, { list: Array.from(combattech) });
 	}
 	if (curses.size > 0) {
-		_add('SELECT_CURSES', undefined, undefined, Array.from(curses));
+		_add('SELECT_CURSES', 0, { list: Array.from(curses) });
 	}
 	if (langLitc.size > 0) {
-		_add('SELECT_LANGUAGES_AND_LITERACIES', undefined, undefined, Array.from(langLitc));
+		_add('SELECT_LANGUAGES_AND_LITERACIES', 0, { list: Array.from(langLitc) });
 	}
 }
 
-var HistoryStore = Object.assign({}, EventEmitter.prototype, {
+class _HistoryStore extends Store {
 
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	get: function(index) {
+	get(index) {
 		return _history[index];
-	},
+	}
 
-	getAll: function() {
+	getAll() {
 		return _history;
 	}
 
-});
+	isUndoAvailable() {
+		return _lastSaveIndex < _history.length - 1;
+	}
 
-HistoryStore.dispatchToken = AppDispatcher.register( function( payload ) {
+	getUndo() {
+		let lastIndex = _history.length - 1;
+		if (_lastSaveIndex < lastIndex) {
+			return _history[_history.length - 1];
+		}
+		return false;
+	}
+
+}
+
+const HistoryStore = new _HistoryStore();
+
+HistoryStore.dispatchToken = AppDispatcher.register(payload => {
+
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+
+	if (payload.undoAction && HistoryStore.isUndoAvailable()) {
+		_history.splice(_history.length - 1, 1);
+		HistoryStore.emitChange();
+		return true;
+	}
 
 	switch( payload.actionType ) {
+
+		case ActionTypes.UNDO:
+			break;
 
 		case ActionTypes.CLEAR_HERO:
 			_clear();
@@ -130,6 +147,34 @@ HistoryStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			
 		case ActionTypes.SAVE_HERO_SUCCESS:
 			_resetSaveIndex();
+			break;
+
+		case ActionTypes.ADD_ATTRIBUTE_POINT:
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.ADD_LITURGY_POINT:
+			if (RequirementsStore.isValid()) {
+				const id = payload.id;
+				const oldValue = get(id).value;
+				const newValue = oldValue + 1;
+				const cost = RequirementsStore.getCurrentCost();
+				_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+			}
+			break;
+
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT:
+			if (RequirementsStore.isValid()) {
+				const id = payload.id;
+				const oldValue = get(id).value;
+				const newValue = oldValue - 1;
+				const cost = RequirementsStore.getCurrentCost();
+				_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+			}
 			break;
 
 		default:

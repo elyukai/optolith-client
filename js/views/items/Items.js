@@ -3,7 +3,7 @@ import Inventory from './Inventory';
 import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
-class Items extends Component {
+export default class Items extends Component {
 
 	state = {
 		tab: 'inventory'
@@ -44,5 +44,3 @@ class Items extends Component {
 		);
 	}
 }
-
-export default Items;

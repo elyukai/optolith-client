@@ -1,14 +1,8 @@
 import AttributeStore from '../../stores/AttributeStore';
 import APStore from '../../stores/APStore';
-import Avatar from '../../components/Avatar';
-import Box from '../../components/Box';
 import CultureStore from '../../stores/CultureStore';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ELStore from '../../stores/ELStore';
-import LabelBox from '../../components/LabelBox';
-import MainSheetCalcItem from './MainSheetCalcItem';
-import OverviewConstSkills from './OverviewConstSkills';
-import Plain from '../../components/Plain';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
@@ -16,7 +10,7 @@ import React, { Component } from 'react';
 import SheetHeader from './SheetHeader';
 import TextBox from '../../components/TextBox';
 
-class CombatSheet extends Component {
+export default class CombatSheet extends Component {
 	render() {
 
 		const source = {
@@ -54,5 +48,3 @@ class CombatSheet extends Component {
 		);
 	}
 }
-
-export default CombatSheet;

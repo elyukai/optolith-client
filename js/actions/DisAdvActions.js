@@ -1,14 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import APStore from '../stores/APStore';
 import ActionTypes from '../constants/ActionTypes';
 
-var DisAdvActions = {
-	receiveAll: function(rawAdv, rawDisAdv) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_DISADV,
-			rawAdv, rawDisAdv
-		});
-	},
+export default {
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_DISADV,
@@ -21,25 +14,17 @@ var DisAdvActions = {
 		});
 	},
 	addToList: function(args) {
-		AppDispatcher.dispatch(Object.assign({
-			actionType: ActionTypes.ACTIVATE_DISADV
-		},
-			args
-		));
+		args.actionType = ActionTypes.ACTIVATE_DISADV;
+		AppDispatcher.dispatch(args);
 	},
 	removeFromList: function(args) {
-		AppDispatcher.dispatch(Object.assign({
-			actionType: ActionTypes.DEACTIVATE_DISADV
-		},
-			args
-		));
+		args.actionType = ActionTypes.DEACTIVATE_DISADV;
+		AppDispatcher.dispatch(args);
 	},
-	updateTier: function(id, tier, ap_difference, sid) {
+	updateTier: function(id, tier, costs, sid) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.UPDATE_DISADV_TIER,
-			id, tier, costs: ap_difference, sid
+			id, tier, costs, sid
 		});
 	}
 };
-
-export default DisAdvActions;

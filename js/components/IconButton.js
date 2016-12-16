@@ -1,28 +1,21 @@
+import Button from './Button';
+import Icon from './Icon';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 
-class IconButton extends Component {
+export default class IconButton extends Component {
 
 	static propTypes = {
-		className: PropTypes.any,
-		disabled: PropTypes.bool,
-		icon: PropTypes.string,
-		onClick: PropTypes.func,
-		primary: PropTypes.bool
+		icon: PropTypes.string
 	};
 
 	render() {
-
-		const className = classNames('btn-icon', this.props.primary && 'btn-primary', this.props.disabled && 'disabled',  this.props.className);
+		
+		const { icon, ...other } = this.props;
 
 		return (
-			<div className={className} onClick={this.props.onClick}>
-				<div>
-					{this.props.icon}
-				</div>
-			</div>
+			<Button {...other} round>
+				<Icon>{icon}</Icon>
+			</Button>
 		);
 	}
 }
-
-export default IconButton;

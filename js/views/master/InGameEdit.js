@@ -1,33 +1,29 @@
 import React, { Component } from 'react';
-import GeminiScrollbar from 'react-gemini-scrollbar';
 import InGameActions from '../../actions/InGameActions';
 import BorderButton from '../../components/BorderButton';
 import Dropdown from '../../components/Dropdown';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
-class InGameEdit extends Component {
+export default class InGameEdit extends Component {
 	
+	static propTypes = {
+		editCast: React.PropTypes.string.isRequired,
+		editDuplicate: React.PropTypes.string.isRequired,
+		editIndex: React.PropTypes.number.isRequired,
+		fighters: React.PropTypes.array.isRequired
+	};
+
 	editValue = (tag, event) => InGameActions.editValue(tag, event.target.value);
-	
 	editValueDropdown = (tag, value) => InGameActions.editValue(tag, value);
-	
 	activateFighter = () => InGameActions.activateFighter();
-	
 	deactivateFighter = () => InGameActions.deactivateFighter();
-	
 	editCast = event => InGameActions.editCast(event.target.value);
-	
 	editDuplicate = event => InGameActions.editDuplicate(event.target.value);
-	
 	cast = () => InGameActions.cast();
-	
 	stopCast = () => InGameActions.stopCast();
-	
 	duplicateFighter = () => InGameActions.duplicateFighter();
-	
 	removeFighter = () => InGameActions.removeFighter();
-	
 	closeEdit = () => InGameActions.closeEdit();
 	
 	render() {
@@ -146,12 +142,3 @@ class InGameEdit extends Component {
 		);
 	}
 }
-
-InGameEdit.propTypes = {
-	fighters: React.PropTypes.array.isRequired,
-	editIndex: React.PropTypes.number.isRequired,
-	editCast: React.PropTypes.string.isRequired,
-	editDuplicate: React.PropTypes.string.isRequired
-};
-
-export default InGameEdit;

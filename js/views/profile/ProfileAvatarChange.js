@@ -56,7 +56,7 @@ function Source({ extern, file, fileValid, filePreview, source, changeExtern, ch
 	return null;
 }
 
-class ProfileAvatarChange extends Component {
+export default class ProfileAvatarChange extends Component {
 
 	static props = { 
 		node: PropTypes.node
@@ -111,5 +111,3 @@ class ProfileAvatarChange extends Component {
 		);
 	}
 }
-
-export default ProfileAvatarChange;

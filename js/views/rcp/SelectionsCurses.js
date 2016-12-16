@@ -2,12 +2,12 @@ import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import React, { Component, PropTypes } from 'react';
 
-class SelectionsCurses extends Component {
+export default class SelectionsCurses extends Component {
 
 	static propTypes = {
 		active: PropTypes.object,
-		apTotal: PropTypes.number,
 		apLeft: PropTypes.number,
+		apTotal: PropTypes.number,
 		change: PropTypes.func,
 		list: PropTypes.array
 	};
@@ -47,5 +47,3 @@ class SelectionsCurses extends Component {
 		);
 	}
 }
-
-export default SelectionsCurses;

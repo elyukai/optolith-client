@@ -1,11 +1,11 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
+import { Race } from '../utils/DataUtils';
 import RaceStore from './RaceStore';
-import dice from '../utils/dice';
 
-const HAIRCOLORS = [ 'blauschwarz', 'blond', 'braun', 'dunkelblond', 'dunkelbraun', 'goldblond', 'grau', 'hellblond', 'hellbraun', 'kupferrot', 'mittelblond', 'mittelbraun', 'rot', 'rotblond', 'schneeweiß', 'schwarz', 'silbern', 'weißblond', 'dunkelgrau', 'hellgrau', 'salzweiß', 'silberweiß', 'feuerrot' ];
-const EYECOLORS = [ 'amethystviolett', 'bernsteinfarben', 'blau', 'braun', 'dunkelbraun', 'dunkelviolett', 'eisgrau', 'goldgesprenkelt', 'grau', 'graublau', 'grün', 'hellbraun', 'rubinrot', 'saphirblau', 'schwarz', 'schwarzbraun', 'silbergrau', 'smaragdgrün' ];
+const HAIRCOLORS = Race.haircolors;
+const EYECOLORS = Race.eyecolors;
 const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 var _id = null;
@@ -90,44 +90,19 @@ function _updateOtherInfo(text) {
 }
 
 function _rerollHair() {
-	var result = dice(20);
-	_haircolor = RaceStore.getCurrent().hair[result - 1];
+	_haircolor = Race.rerollHaircolor(RaceStore.getCurrent());
 }
 
 function _rerollEyes() {
-	var result = dice(20);
-	_eyecolor = RaceStore.getCurrent().eyes[result - 1];
+	_eyecolor = Race.rerollEyecolor(RaceStore.getCurrent());
 }
 
 function _rerollSize() {
-	var [ base, ...dices ] = RaceStore.getCurrent().size;
-	var arr = [];
-	dices.forEach(e => {
-		let elements = Array.from({ length: e[0] }, () => e[1]);
-		arr.push(...elements);
-	});
-	_size = base + arr.map(e => dice(e)).reduce((a,b) => a + b, 0);
+	_size = Race.rerollSize(RaceStore.getCurrent());
 }
 
 function _rerollWeight() {
-	var [ base, ...dices ] = RaceStore.getCurrent().weight;
-	var raceID = RaceStore.getCurrentID();
-	var arr = [];
-	dices.forEach(e => {
-		let elements = Array.from({ length: e[0] }, () => e[1]);
-		arr.push(...elements);
-	});
-	_weight = (parseInt(_size) || do {
-		_rerollSize();
-		_size;
-	}) + base + arr.map(e => {
-		let result = dice(Math.abs(e));
-		if (new Set(['R_1','R_2','R_3','R_4','R_5','R_6','R_7']).has(raceID)) {
-			return result % 2 > 0 ? -result : result;
-		} else {
-			return e < 0 ? -result : result;
-		}
-	}).reduce((a,b) => a + b, 0);
+	_weight = Race.rerollWeight(RaceStore.getCurrent(), _size);
 }
 
 function _clear() {
@@ -149,21 +124,9 @@ function _clear() {
 	_otherinfo = '';
 }
 
-var ProfileStore = Object.assign({}, EventEmitter.prototype, {
+class _ProfileStore extends Store {
 
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getAll: function() {
+	getAll() {
 		return {
 			name: _name,
 			sex: _sex,
@@ -181,61 +144,63 @@ var ProfileStore = Object.assign({}, EventEmitter.prototype, {
 			characteristics: _characteristics,
 			otherinfo: _otherinfo
 		};
-	},
+	}
 
-	getID: function() {
+	getID() {
 		return _id;
-	},
+	}
 
-	getName: function() {
+	getName() {
 		return _name;
-	},
+	}
 
-	getSex: function() {
+	getSex() {
 		return _sex;
-	},
+	}
 
-	getAvatar: function() {
+	getAvatar() {
 		return _avatar;
-	},
+	}
 
-	getAppearance: function() {
+	getAppearance() {
 		return {
 			_haircolor, _eyecolor, _size, _weight
 		};
-	},
+	}
 
-	getHaircolor: function() {
+	getHaircolor() {
 		return _haircolor;
-	},
+	}
 
-	getHaircolorTags: function() {
+	getHaircolorTags() {
 		return HAIRCOLORS;
-	},
+	}
 
-	getEyecolor: function() {
+	getEyecolor() {
 		return _eyecolor;
-	},
+	}
 
-	getEyecolorTags: function() {
+	getEyecolorTags() {
 		return EYECOLORS;
-	},
+	}
 
-	getSize: function() {
+	getSize() {
 		return _size;
-	},
+	}
 
-	getWeight: function() {
+	getWeight() {
 		return _weight;
-	},
+	}
 
-	getSocialstatusTags: function() {
+	getSocialstatusTags() {
 		return SOCIALSTATUS;
 	}
 
-});
+}
 
-ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const ProfileStore = new _ProfileStore();
+
+ProfileStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 
@@ -254,18 +219,18 @@ ProfileStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			_updateName(payload.name);
 			_updateSex(payload.sex);
 			_updateAvatar(payload.avatar);
-			_updateFamily(payload.pers._family);
-			_updatePlaceOfBirth(payload.pers._placeofbirth);
-			_updateDateOfBirth(payload.pers._dateofbirth);
-			_updateAge(payload.pers._age);
-			_updateHaircolor(payload.pers._haircolor);
-			_updateEyecolor(payload.pers._eyecolor);
-			_updateSize(payload.pers._size);
-			_updateWeight(payload.pers._weight);
-			_updateTitle(payload.pers._title);
-			_updateSocialStatus(payload.pers._socialstatus);
-			_updateCharacteristics(payload.pers._characteristics);
-			_updateOtherInfo(payload.pers._otherinfo);
+			_updateFamily(payload.pers.family);
+			_updatePlaceOfBirth(payload.pers.placeofbirth);
+			_updateDateOfBirth(payload.pers.dateofbirth);
+			_updateAge(payload.pers.age);
+			_updateHaircolor(payload.pers.haircolor);
+			_updateEyecolor(payload.pers.eyecolor);
+			_updateSize(payload.pers.size);
+			_updateWeight(payload.pers.weight);
+			_updateTitle(payload.pers.title);
+			_updateSocialStatus(payload.pers.socialstatus);
+			_updateCharacteristics(payload.pers.characteristics);
+			_updateOtherInfo(payload.pers.otherinfo);
 			break;
 
 		case ActionTypes.UPDATE_HERO_NAME:

@@ -1,11 +1,9 @@
-import BorderButton from './BorderButton';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import DialogButtons from './DialogButtons';
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { close } from '../utils/createOverlay';
 
-class Dialog extends Component {
+export default class Dialog extends Component {
 
 	static propTypes = {
 		buttons: PropTypes.array,
@@ -24,26 +22,15 @@ class Dialog extends Component {
 
     render() {
 
-		var { buttons: btns = [], title, node, ...props } = this.props;
+		var { buttons = [], title, ...other } = this.props;
 
-		props.className = classNames('modal-backdrop', props.className);
-
-		var buttons = [];
-
-		for (let i = 0; i < btns.length; i++) {
-			const btnProps = btns[i];
-
-			btnProps.onClick = this.clickButton.bind(null, btnProps.onClick);
-
-			buttons.push(
-				<BorderButton key={'popup-button-' + i} {...btnProps} />
-			);
-		}
+		other.className = classNames('modal-backdrop', other.className);
+		delete other.node;
 
 		var contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
 
 		return (
-			<div {...props}>
+			<div {...other}>
 				<div className="modal-container">
 					<div className="modal-close" onClick={this.close}><div>&#xe900;</div></div>
 					<div className="modal-header"><div className="modal-header-inner">{title}</div></div>
@@ -52,19 +39,9 @@ class Dialog extends Component {
 							{this.props.children}
 						</div>
 					</div>
-					{
-						buttons.length > 0 && (
-							<div className="modal-footer">
-								<div className="modal-footer-inner">
-									{buttons}
-								</div>
-							</div>
-						)
-					}
+					<DialogButtons list={buttons} onClickDefault={this.clickButton} />
 				</div>
 			</div>
 		);
     }
 }
-
-export default Dialog;

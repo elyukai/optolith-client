@@ -1,40 +1,34 @@
-import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
+import CultureActions from '../../actions/CultureActions';
+import CulturesListItem from './CulturesListItem';
+import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
+import { filterAndSort } from '../../utils/ListUtils';
+import RaceStore from '../../stores/RaceStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
-import CultureActions from '../../actions/CultureActions';
-import CultureStore from '../../stores/CultureStore';
 import Scroll from '../../components/Scroll';
-import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
-import classNames from 'classnames';
 
-class Cultures extends Component {
+const getCultureStore = () => ({
+	cultures: CultureStore.getAll(),
+	currentID: CultureStore.getCurrentID(),
+	filterText: CultureStore.getFilter(),
+	sortOrder: CultureStore.getSortOrder(),
+	showDetails: CultureStore.areValuesVisible(),
+	showAllCultures: CultureStore.areAllVisible()
+});
+
+export default class Cultures extends Component {
 
 	static propTypes = {
 		changeTab: PropTypes.func
 	};
 
-	state = {
-		cultures: CultureStore.getAllForView(),
-		currentID: CultureStore.getCurrentID(),
-		filter: CultureStore.getFilter(),
-		sortOrder: CultureStore.getSortOrder(),
-		showValues: CultureStore.areValuesVisible(),
-		showAllCultures: CultureStore.areAllVisible()
-	};
+	state = getCultureStore();
 	
-	_updateCultureStore = () => this.setState({
-		cultures: CultureStore.getAllForView(),
-		currentID: CultureStore.getCurrentID(),
-		filter: CultureStore.getFilter(),
-		sortOrder: CultureStore.getSortOrder(),
-		showValues: CultureStore.areValuesVisible(),
-		showAllCultures: CultureStore.areAllVisible()
-	});
+	_updateCultureStore = () => this.setState(getCultureStore());
 
-	selectCulture = id => CultureActions.selectCulture(id);
 	filter = event => CultureActions.filter(event.target.value);
 	sort = option => CultureActions.sort(option);
 	changeValueVisibility = () => CultureActions.changeValueVisibility();
@@ -49,59 +43,44 @@ class Cultures extends Component {
 	}
 
 	render() {
+
+		const { currentID, filterText, cultures, showAllCultures, showDetails, sortOrder } = this.state;
+
+		const currentRace = RaceStore.getCurrent();
+
+		const list = filterAndSort(cultures.filter(e => showAllCultures || currentRace.typ_cultures.includes(e.id)), filterText, sortOrder);
+
 		return (
 			<div className="page" id="cultures">
 				<div className="options">
-					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
-						value={this.state.showAllCultures}
+						value={showAllCultures}
 						onChange={this.changeView}
 						options={[['Alle Kulturen', true], ['Übliche Kulturen', false]]}
-						fullWidth />
-					<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name'
-						},
-						{
-							name: 'AP',
-							value: 'ap'
-						}
-					]} />
-					<Checkbox checked={this.state.showValues} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
+						fullWidth
+						/>
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={[
+							{ name: 'Alphabetisch', value: 'name' },
+							{ name: 'AP', value: 'ap' }
+						]}
+						/>
+					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>
 						{
-							this.state.cultures.map(culture => {
-								const className = classNames(culture.id === this.state.currentID && 'active');
-
-								return (
-									<li key={culture.id} className={className}>
-										<div className="left">
-											<h2>{culture.name} ({culture.ap} AP)</h2>
-											{
-												this.state.showValues ? (
-													<div className="talents">
-														{
-															culture.talents.map(talent => `${TalentsStore.getNameByID(talent[0])} +${talent[1]}`).join(', ')
-														}
-													</div>
-												) : null
-											}
-										</div>
-										<div className="right">
-											{
-												culture.id === this.state.currentID ? (
-													<BorderButton label="Weiter" onClick={this.props.changeTab.bind(null, 'profession')} primary />
-												) : (
-													<BorderButton label="Auswählen" onClick={this.selectCulture.bind(null, culture.id)} />
-												)
-											}
-										</div>
-									</li>
-								);
-							})
+							list.map(culture => <CulturesListItem
+								key={culture.id}
+								changeTab={this.props.changeTab.bind(null, 'profession')}
+								currentID={currentID}
+								culture={culture}
+								showDetails={showDetails}
+								/>
+							)
 						}
 					</ul>
 				</Scroll>
@@ -109,5 +88,3 @@ class Cultures extends Component {
 		);
 	}
 }
-
-export default Cultures;

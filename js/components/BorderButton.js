@@ -1,32 +1,21 @@
+import Button from './Button';
+import Text from './Text';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 
-class BorderButton extends Component {
+export default class BorderButton extends Component {
 
 	static propTypes = {
-		className: PropTypes.any,
-		primary: PropTypes.bool,
-		fullWidth: PropTypes.bool,
-		disabled: PropTypes.bool,
 		label: PropTypes.string
 	};
 
 	render() {
 
-		const { primary, fullWidth, disabled, label, children, onClick } = this.props;
-
-		const className = classNames('btn', primary && 'btn-primary', fullWidth && 'fullWidth', disabled && 'disabled', this.props.className);
-
-		const labelTextElement = label ? (
-			<span>{label}</span>
-		) : children;
+		const { children, label, ...other } = this.props;
 
 		return (
-			<div className={className} onClick={disabled ? undefined : onClick}>
-				{labelTextElement}
-			</div>
+			<Button {...other}>
+				<Text>{label || children}</Text>
+			</Button>
 		);
 	}
 }
-
-export default BorderButton;

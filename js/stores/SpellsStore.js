@@ -1,9 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ELStore from './ELStore';
-import ListStore from './ListStore';
+import { get, getAllByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
-import ProfessionStore from './ProfessionStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
 
@@ -74,22 +73,10 @@ function _filterAndSort(array) {
 	return array;
 }
 	
-var SpellsStore = Object.assign({}, EventEmitter.prototype, {
-	
-	emitChange: function() {
-		this.emit('change');
-	},
+class _SpellsStore extends Store {
 
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getForSave: function() {
-		var all = ListStore.getAllByCategory(CATEGORY);
+	getForSave() {
+		var all = getAllByCategory(CATEGORY);
 		var result = new Map();
 		all.forEach(e => {
 			let { active, id, fw } = e;
@@ -100,36 +87,36 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 		return {
 			active: Array.from(result)
 		};
-	},
+	}
 
-	get: function(id) {
-		return ListStore.get(id);
-	},
+	get(id) {
+		return get(id);
+	}
 
-	getPropertyCounter: function() {
-		return ListStore.getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
+	getPropertyCounter() {
+		return getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
 			if (!a.has(b.property)) {
 				a.set(b.property, 1);
 			} else {
 				a.set(b.property, a.get(b.property) + 1);
 			}
 		}, new Map());
-	},
+	}
 
-	getActiveForView: function() {
-		var spells = ListStore.getAllByCategory(CATEGORY).filter(e => e.active);
+	getActiveForView() {
+		var spells = getAllByCategory(CATEGORY).filter(e => e.active);
 		return _filterAndSort(spells);
-	},
+	}
 
-	getDeactiveForView: function() {
-		const maxUnfamiliar = PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e =>
+	getDeactiveForView() {
+		const maxUnfamiliar = PhaseStore.get() < 3 && getAllByCategory(CATEGORY).filter(e =>
 			!e.tradition.some(e =>
 				e === 1 ||
-				e === ListStore.get('SA_86').sid + 1
+				e === get('SA_86').sid + 1
 			) && e.gr < 3 && e.active
 		).length >= ELStore.getStart().max_unfamiliar_spells;
 
-		var spells = ListStore.getAllByCategory(CATEGORY).filter(e => {
+		var spells = getAllByCategory(CATEGORY).filter(e => {
 			if (!e.active) {
 				if (!e.isOwnTradition) {
 					if (e.gr > 2 || maxUnfamiliar) {
@@ -144,24 +131,26 @@ var SpellsStore = Object.assign({}, EventEmitter.prototype, {
 			return false;
 		});
 		return _filterAndSort(spells);
-	},
+	}
 
-	isActivationDisabled: function() {
+	isActivationDisabled() {
 		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
-		return PhaseStore.get() < 3 && ListStore.getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
-	},
+		return PhaseStore.get() < 3 && getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
+	}
 
-	getFilter: function() {
+	getFilter() {
 		return _filter;
-	},
+	}
 
-	getSortOrder: function() {
+	getSortOrder() {
 		return _sortOrder;
 	}
 
-});
+}
 
-SpellsStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const SpellsStore = new _SpellsStore();
+
+SpellsStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 

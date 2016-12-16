@@ -2,7 +2,7 @@ import InGameTableHealthBar from './InGameTableHealthBar';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class InGameTableHealth extends Component {
+export default class InGameTableHealth extends Component {
 	
 	static propTypes = {
 		fighters: PropTypes.array.isRequired,
@@ -54,5 +54,3 @@ class InGameTableHealth extends Component {
 		);
 	}
 }
-
-export default InGameTableHealth;

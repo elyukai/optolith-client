@@ -1,13 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
-var CultureActions = {
-	receiveAll: function(rawCultures) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_CULTURES,
-			rawCultures
-		});
-	},
+export default {
 	selectCulture: function(cultureID) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SELECT_CULTURE,
@@ -38,5 +32,3 @@ var CultureActions = {
 		});
 	}
 };
-
-export default CultureActions;

@@ -1,11 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
-import reactAlert from '../utils/reactAlert';
-import saveHero from '../utils/saveHero';
-import AccountStore from '../stores/AccountStore';
 
-var TabActions = {
-	openTab: function(tab) {
+export default {
+	showTab: function(tab) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SHOW_TAB,
 			tab
@@ -18,5 +15,3 @@ var TabActions = {
 		});
 	}
 };
-
-export default TabActions;

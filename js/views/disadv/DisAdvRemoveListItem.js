@@ -2,9 +2,8 @@ import BorderButton from '../../components/BorderButton';
 import DisAdvActions from '../../actions/DisAdvActions';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
-import TextField from '../../components/TextField';
 
-class DisAdvRemoveListItem extends Component {
+export default class DisAdvRemoveListItem extends Component {
 
 	static propTypes = {
 		item: PropTypes.object
@@ -12,7 +11,7 @@ class DisAdvRemoveListItem extends Component {
 	
 	handleSelectTier = selected_tier => {
 		var disadv = this.props.item;
-		DisAdvActions.updateTier( disadv.id, selected_tier, (selected_tier - disadv.tier) * disadv.ap * (disadv.id.match('DIS') ? -1 : 1), disadv.sid );
+		DisAdvActions.updateTier( disadv.id, selected_tier, (selected_tier - disadv.tier) * disadv.cost * (disadv.id.match('DIS') ? -1 : 1), disadv.sid );
 	};
 	removeFromList = args => DisAdvActions.removeFromList(args);
 
@@ -24,7 +23,7 @@ class DisAdvRemoveListItem extends Component {
 		var args = { id: disadv.id };
 
 		var name = disadv.name;
-		var ap = disadv.ap;
+		var ap = disadv.cost;
 		var tierElement;
 
 		var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -41,7 +40,7 @@ class DisAdvRemoveListItem extends Component {
 					onChange={this.handleSelectTier}
 					options={array} />
 			);
-			ap = disadv.ap * disadv.tier;
+			ap = disadv.cost * disadv.tier;
 		}
 
 		if (disadv.id.match('DIS')) ap = -ap;
@@ -71,5 +70,3 @@ class DisAdvRemoveListItem extends Component {
 		);
 	}
 }
-
-export default DisAdvRemoveListItem;

@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
-class Advantages extends Component {
+export default class Advantages extends Component {
 	
 	state = { 
 		filter: DisAdvStore.getFilter(),
@@ -46,7 +46,7 @@ class Advantages extends Component {
 	render() {
 
 		const rating = {};
-		let { race, culture, profession } = this.state;
+		let { culture, profession, race, showRating } = this.state;
 
 		profession = profession || {};
 
@@ -54,22 +54,24 @@ class Advantages extends Component {
 		const TYP = 'typ';
 		const UNTYP = 'untyp';
 
-		race.typ_adv.forEach(e => { rating[e] = TYP; });
-		race.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-		culture.typ_adv.forEach(e => { rating[e] = TYP; });
-		culture.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-		if (profession.hasOwnProperty('typ_adv'))
-			profession.typ_adv.forEach(e => { rating[e] = TYP; });
-		if (profession.hasOwnProperty('untyp_adv'))
-			profession.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-		race.imp_adv.forEach(e => { rating[e[0]] = IMP; });
+		if (showRating) {
+			race.typ_adv.forEach(e => { rating[e] = TYP; });
+			race.untyp_adv.forEach(e => { rating[e] = UNTYP; });
+			culture.typ_adv.forEach(e => { rating[e] = TYP; });
+			culture.untyp_adv.forEach(e => { rating[e] = UNTYP; });
+			if (profession.hasOwnProperty('typ_adv'))
+				profession.typ_adv.forEach(e => { rating[e] = TYP; });
+			if (profession.hasOwnProperty('untyp_adv'))
+				profession.untyp_adv.forEach(e => { rating[e] = UNTYP; });
+			race.imp_adv.forEach(e => { rating[e[0]] = IMP; });
+		}
 
 		return (
 			<div className="page" id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<div className="options">
 						<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-						<Checkbox checked={this.state.showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
+						<Checkbox checked={showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
 					</div>
 					<DisAdvList list={this.state.advDeactive} type="ADV" rating={rating} showRating={this.state.showRating} />
 				</Slidein>
@@ -77,10 +79,8 @@ class Advantages extends Component {
 					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 				</div>
-				<DisAdvList list={this.state.advActive} type="ADV" rating={rating} showRating={this.state.showRating} active />
+				<DisAdvList list={this.state.advActive} type="ADV" rating={rating} showRating={showRating} active />
 			</div>
 		);
 	}
 }
-
-export default Advantages;

@@ -1,14 +1,13 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import CultureStore from './CultureStore';
-import ELStore from './ELStore';
-import RaceStore from './RaceStore';
-import { EventEmitter } from 'events';
+import { get, getAllByCategory } from './ListStore';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
+
+const CATEGORY = Categories.PROFESSIONS;
 
 var _currentID = null;
-var _professions = {};
-
-var _filter = '';
+var _filterText = '';
 var _sortOrder = 'name';
 var _showAll = false;
 
@@ -17,178 +16,60 @@ function _updateCurrentID(id) {
 }
 
 function _updateFilterText(text) {
-	_filter = text;
+	_filterText = text;
 }
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
 }
 
-function _changeView(view) {
+function _updateView(view) {
 	_showAll = view;
 }
 
-var ProfessionStore = Object.assign({}, EventEmitter.prototype, {
+class _ProfessionStore extends Store {
 
-	init: function(rawProfessions) {
-		for (let id in rawProfessions) {
-			let obj = rawProfessions[id];
+	get(id) {
+		return get(id);
+	}
 
-			obj.sa = obj.sa.map(e => {
-				e[0] = `SA_${e[0]}`;
-				return e;
-			});
-			obj.combattech = obj.combattech.map(e => {
-				e[0] = `CT_${e[0]}`;
-				return e;
-			});
-			obj.talents = obj.talents.map(e => {
-				e[0] = `TAL_${e[0]}`;
-				return e;
-			});
-			obj.spells = obj.spells.map(e => {
-				e[0] = `SPELL_${e[0]}`;
-				return e;
-			});
-			obj.chants = obj.chants.map(e => {
-				e[0] = `LITURGY_${e[0]}`;
-				return e;
-			});
+	getAll() {
+		return getAllByCategory(CATEGORY);
+	}
 
-			obj.sel = obj.sel.map(e => do {
-				if (e[0] === 'ct') {
-					e[3] = e[3].split(',').map(e => `CT_${e}`);
-					e;
-				} else if (e[0] === 'cantrips') {
-					e[2] = e[2].split(',').map(e => parseInt(e));
-					e;
-				} else e;
-			});
-
-			obj.typ_adv = obj.typ_adv.map(e => `ADV_${e}`);
-			obj.typ_dadv = obj.typ_dadv.map(e => `DISADV_${e}`);
-			obj.untyp_adv = obj.untyp_adv.map(e => `ADV_${e}`);
-			obj.untyp_dadv = obj.untyp_dadv.map(e => `DISADV_${e}`);
-			obj.vars = obj.vars.map(e => `PV_${e}`);
-
-			rawProfessions[id] = obj;
-		}
-		_professions = rawProfessions;
-	},
-
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	get: function(id) {
-		return _professions[id];
-	},
-
-	getAll: function() {
-		return _professions;
-	},
-
-	getAllForView: function() {
-		var array = [{
-			id: 'P_0',
-			name: 'Eigene Profession',
-			subname: '',
-			ap: 0,
-			vars: []
-		}];
-		for (let id in _professions) {
-			let valid = _professions[id].req.every(req => {
-				if (!req[0].match('ATTR')) {
-					return true;
-				} else {
-					let max_attr = ELStore.getStart().max_attr;
-					let race = RaceStore.getCurrent();
-					return !(req[1] > max_attr || (race.attr_sel[1].indexOf(req[0]) > -1 && req[1] > (max_attr + race.attr_sel[0]) ));
-				}
-			});
-			if (valid) {
-				array.push(_professions[id]);
-			}
-		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			array = array.filter(obj => obj.name.toLowerCase().match(filter) || obj.name.toLowerCase().match(filter));
-		}
-		let cultureID = CultureStore.getCurrentID();
-		if (cultureID !== null && !_showAll) {
-			let currentCulture = CultureStore.getCurrent();
-			array = array.filter(obj => currentCulture.typ_prof.indexOf(obj.id) > -1 || obj.id === 'P_0');
-		}
-		if (_sortOrder == 'name') {
-			array.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		}
-		else if (_sortOrder == 'ap') {
-			array.sort((a, b) => {
-				if (a.ap < b.ap) {
-					return -1;
-				} else if (a.ap > b.ap) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
-		return array;
-	},
-
-	getCurrentID: function() {
+	getCurrentID() {
 		return _currentID;
-	},
+	}
 
-	getCurrent: function() {
-		return this.get(this.getCurrentID());
-	},
+	getCurrent() {
+		return get(this.getCurrentID());
+	}
 
-	getCurrentName: function() {
-		return this.getCurrent() !== undefined ? this.getCurrent().name : null;
-	},
+	getCurrentName() {
+		return this.getCurrent() ? this.getCurrent().name : null;
+	}
 
-	getNameByID: function(id) {
-		return this.get(id) !== undefined ? this.get(id).name : null;
-	},
+	getNameByID(id) {
+		return get(id) ? get(id).name : null;
+	}
 
-	getFilter: function() {
-		return _filter;
-	},
+	getFilter() {
+		return _filterText;
+	}
 
-	getSortOrder: function() {
+	getSortOrder() {
 		return _sortOrder;
-	},
+	}
 
-	areAllVisible: function() {
+	areAllVisible() {
 		return _showAll;
 	}
 
-});
+}
 
-ProfessionStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const ProfessionStore = new _ProfessionStore();
+
+ProfessionStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 
@@ -214,11 +95,7 @@ ProfessionStore.dispatchToken = AppDispatcher.register( function( payload ) {
 			break;
 
 		case ActionTypes.CHANGE_PROFESSION_VIEW:
-			_changeView(payload.view);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			ProfessionStore.init(payload.professions);
+			_updateView(payload.view);
 			break;
 
 		default:

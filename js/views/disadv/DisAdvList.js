@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import Scroll from '../../components/Scroll';
 import classNames from 'classnames';
 
-class DisAdvList extends Component {
+export default class DisAdvList extends Component {
 
 	static propTypes = {
 		active: PropTypes.bool,
@@ -50,5 +50,3 @@ class DisAdvList extends Component {
 		);
 	}
 }
-
-export default DisAdvList;

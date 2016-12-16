@@ -2,14 +2,21 @@ import GeminiScrollbar from 'react-gemini-scrollbar';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Dropdown extends Component {
+export default class Dropdown extends Component {
 
 	static propTypes = {
-		className: PropTypes.any,
-		value: PropTypes.any,
-		hint: PropTypes.any,
-		onChange: PropTypes.func,
-		options: PropTypes.array
+		className: PropTypes.string,
+		disabled: PropTypes.bool,
+		fullWidth: PropTypes.bool,
+		hint: PropTypes.string,
+		label: PropTypes.string,
+		onChange: PropTypes.func.isRequired,
+		options: PropTypes.array.isRequired,
+		value: PropTypes.oneOfType([
+			PropTypes.bool,
+			PropTypes.number,
+			PropTypes.string
+		])
 	};
 
 	state = {
@@ -38,8 +45,9 @@ class Dropdown extends Component {
 	};
 
 	outsideClick = () => {
-		if (this.clickInside) return;
-		if (this.state.isOpen) this.setState({ isOpen: false });
+		if (!this.clickInside && this.state.isOpen) {
+			this.setState({ isOpen: false });
+		}
 	}
 
 	insideFocus = () => this.clickInside = true;
@@ -101,5 +109,3 @@ class Dropdown extends Component {
 		);
 	}
 }
-
-export default Dropdown;

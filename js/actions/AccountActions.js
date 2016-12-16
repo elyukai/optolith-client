@@ -1,17 +1,16 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
-import WebAPIUtils from '../utils/WebAPIUtils';
+import alert from '../utils/alert';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import createOverlay from '../utils/createOverlay';
-import ForgotUsername from '../views/account/ForgotUsername';
 import ForgotPassword from '../views/account/ForgotPassword';
+import ForgotUsername from '../views/account/ForgotUsername';
 import Login from '../views/account/Login';
 import React from 'react';
-import reactAlert from '../utils/reactAlert';
-import ReactDOM from 'react-dom';
 import Register from '../views/account/Register';
 import ResendActivation from '../views/account/ResendActivation';
+import WebAPIUtils from '../utils/WebAPIUtils';
 
-var AccountActions = {
+export default {
 	showRegister: function() {
 		createOverlay(<Register />);
 	},
@@ -27,28 +26,39 @@ var AccountActions = {
 	showLogin: function() {
 		createOverlay(<Login />);
 	},
-	register: function(email, username, password) {
-		Promise.all([ WebAPIUtils.checkEmail(email), WebAPIUtils.checkUsername(username) ])
-		.then(function([ v_email, v_name ]){
-			if (v_email === 'true' && v_name === 'true') {
-				reactAlert('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.');
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-			} else if (v_email === 'true' && v_name === 'false') {
-				reactAlert('Email-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-			} else if (v_email === 'false' && v_name === 'true') {
-				reactAlert('Benutzername bereits vorhanden', 'Der Benutzername wird bereits verwendet.');
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.WAIT_END
-				});
-			} else if (v_email && v_name ) {
+	register: async function(email, username, password) {
+		try {
+			let existingEmail = await WebAPIUtils.checkEmail(email);
+			let existingUsername = await WebAPIUtils.checkEmail(username);
+
+			existingEmail = existingEmail === 'true';
+			existingUsername = existingUsername === 'true';
+
+			if (!existingEmail && !existingUsername) {
 				WebAPIUtils.register(email, username, password);
 			}
-		});
+			else if (existingEmail && !existingUsername) {
+				alert('Email-Adresse bereits vorhanden', 'Die E-Mail-Adresse wird bereits verwendet.');
+				AppDispatcher.dispatch({
+					actionType: ActionTypes.WAIT_END
+				});
+			}
+			else if (!existingEmail && existingUsername) {
+				alert('Benutzername bereits vorhanden', 'Der Benutzername wird bereits verwendet.');
+				AppDispatcher.dispatch({
+					actionType: ActionTypes.WAIT_END
+				});
+			}
+			else if (existingEmail && existingUsername) {
+				alert('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername sind bereits vorhanden.');
+				AppDispatcher.dispatch({
+					actionType: ActionTypes.WAIT_END
+				});
+			}
+		}
+		catch (e) {
+			WebAPIUtils.connectionError(e);
+		}
 	},
 	forgotPassword: function(email) {
 		WebAPIUtils.sendPasswordCode(email);
@@ -72,7 +82,7 @@ var AccountActions = {
 		WebAPIUtils.setNewPassword(password);
 	},
 	deleteConfirm: function() {
-		reactAlert(
+		alert(
 			'Konto wirklich löschen?',
 			'Soll dein Konto wirklich gelöscht werden? Wenn du diesem zustimmst, werden sämtliche deiner eigenen Helden und Gruppen unwiederbringlich gelöscht. Möchtest du wirklich fortfahren?',
 			[
@@ -90,5 +100,3 @@ var AccountActions = {
 		WebAPIUtils.deleteAccount();
 	}
 };
-
-export default AccountActions;

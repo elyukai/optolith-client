@@ -1,17 +1,16 @@
-import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import IconButton from '../../components/IconButton';
 import InGameActions from '../../actions/InGameActions';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class InGameControls extends Component {
+export default class InGameControls extends Component {
 	
 	static propTypes = {
-		status: PropTypes.array.isRequired,
-		usedPhases: PropTypes.array.isRequired,
 		maxIni: PropTypes.number.isRequired,
-		options: PropTypes.object.isRequired
+		options: PropTypes.object.isRequired,
+		status: PropTypes.array.isRequired,
+		usedPhases: PropTypes.array.isRequired
 	};
 	
 	resetAll = () => InGameActions.resetAll();
@@ -50,5 +49,3 @@ class InGameControls extends Component {
 		);
 	}
 }
-
-export default InGameControls;

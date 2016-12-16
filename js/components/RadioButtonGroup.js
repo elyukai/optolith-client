@@ -1,13 +1,13 @@
 import RadioButton from './RadioButton';
 import React, { Component, PropTypes } from 'react';
 
-class RadioButtonGroup extends Component {
+export default class RadioButtonGroup extends Component {
 
-	static props = {
+	static propTypes = {
 		active: PropTypes.any,
+		array: PropTypes.array.isRequired,
 		disabled: PropTypes.bool,
-		onClick: PropTypes.func.isRequired,
-		array: PropTypes.array.isRequired
+		onClick: PropTypes.func.isRequired
 	};
 
 	render() {
@@ -31,5 +31,3 @@ class RadioButtonGroup extends Component {
 		);
 	}
 }
-
-export default RadioButtonGroup;

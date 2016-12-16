@@ -9,8 +9,15 @@ export default ap => {
 		tiers.push(els[id].ap);
 	}
 
-	for (let i = 0; i < tiers.length; i++) {
-		if (ap <= tiers[i])
-			return ids[i];
-	}
+	let index = ids.length - 1;
+
+	tiers.some((e,i) => {
+		if (e > ap) {
+			index = i - 1;
+			return true;
+		}
+		return false;
+	});
+
+	return ids[index];
 };

@@ -9,20 +9,22 @@ import ProgressArc from 'react-progress-arc';
 import RaceStore from '../../stores/RaceStore';
 import React, { PropTypes, Component } from 'react';
 import TabActions from '../../actions/TabActions';
+import VerticalList from '../../components/VerticalList';
 import classNames from 'classnames';
 
-class HerolistItem extends Component {
+export default class HerolistItem extends Component {
 
 	static propTypes = {
+		ap: PropTypes.object,
+		avatar: PropTypes.string,
+		c: PropTypes.string,
+		el: PropTypes.string,
 		id: PropTypes.string,
 		name: PropTypes.string,
-		avatar: PropTypes.string,
-		ap: PropTypes.object,
-		el: PropTypes.string,
-		r: PropTypes.string,
-		c: PropTypes.string,
 		p: PropTypes.string,
-		pv: PropTypes.string
+		player: PropTypes.array,
+		pv: PropTypes.string,
+		r: PropTypes.string
 	};
 
 	load = () => HerolistActions.load(this.props.id);
@@ -30,8 +32,7 @@ class HerolistItem extends Component {
 
 	render() {
 
-		const { id, name, avatar, ap, r, c, p, pv } = this.props;
-		const { _max: apTotal } = ap;
+		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv } = this.props;
 
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
@@ -50,6 +51,34 @@ class HerolistItem extends Component {
 
 		var elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
 
+		const playerElement = player ? (
+			<span className="player">{player[1]}</span>
+		) : null;
+
+		const rcpElement = id !== null ? (
+			<VerticalList className="rcp">
+				<span className="race">
+					{(() => {
+						const { name } = RaceStore.get(r) || { name: 'Loading...' };
+						return name;
+					})()}
+				</span>
+				<span className="culture">
+					{(() => {
+						const { name } = CultureStore.get(c) || { name: 'Loading...' };
+						return name;
+					})()}
+				</span>
+				<span className="profession">
+					{(() => {
+						const { name, subname } = ProfessionStore.get(p) || { name: 'Loading...' };
+						const { name: vname } = ProfessionVariantStore.get(pv) || { name: 'Loading...' };
+						return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
+					})()}
+				</span>
+			</VerticalList>
+		) : null;
+
 		return (
 			<li className="hero-list-item">
 				<ProgressArc completed={elProgress} diameter={63} strokeWidth={4} />
@@ -60,27 +89,15 @@ class HerolistItem extends Component {
 					<Avatar src={avatar} />
 				</div>
 				<div className="main">
-					<h2>{name}</h2>
-					<div className="rcp">
-						{ do {
-							if (id === null) {
-								null;
-							} else {
-								RaceStore.getNameByID(r) + ' • ' + CultureStore.getNameByID(c) + ' • ' + ProfessionStore.getNameByID(p) + (pv ? ` (${ProfessionVariantStore.getNameByID(pv)})` : '');
-							}
-						}}
-					</div>
+					<h2>{name}{playerElement}</h2>
+					{rcpElement}
 				</div>
-				{ do {
-					if (id === ProfileStore.getID()) {
-						<BorderButton label="Anzeigen" onClick={this.show} primary />;
-					} else {
-						<BorderButton label="Öffnen" onClick={this.load} />;
-					}
-				}}
+				{(() => id === ProfileStore.getID() ? (
+					<BorderButton label="Anzeigen" onClick={this.show} primary />
+				) : (
+					<BorderButton label="Öffnen" onClick={this.load} />
+				))()}
 			</li>
 		);
 	}
 }
-
-export default HerolistItem;

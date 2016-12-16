@@ -1,4 +1,3 @@
-import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
 import PhaseStore from '../../stores/PhaseStore';
@@ -10,7 +9,7 @@ import TalentsActions from '../../actions/TalentsActions';
 import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
 
-class Talents extends Component {
+export default class Talents extends Component {
 	
 	state = { 
 		list: TalentsStore.getAllForView(),
@@ -45,10 +44,6 @@ class Talents extends Component {
 	render() {
 
 		const GR = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
-
-		var culture = this.state.currentCulture || { typ_talents: [], untyp_talents: [] };
-		var typ_talents = culture.typ_talents;
-		var untyp_talents = culture.untyp_talents;
 
 		return (
 			<div className="page" id="talents">
@@ -103,5 +98,3 @@ class Talents extends Component {
 		);
 	}
 }
-
-export default Talents;

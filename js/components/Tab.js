@@ -1,35 +1,31 @@
+import Text from './Text';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Tab extends Component {
+export default class Tab extends Component {
 
 	static propTypes = {
-		className: PropTypes.any,
-		label: PropTypes.any,
 		active: PropTypes.bool,
+		className: PropTypes.any,
+		disabled: PropTypes.bool,
+		label: PropTypes.any,
 		onClick: PropTypes.func
 	};
 
 	render() {
 
-		const { disabled, active, label, children, onClick } = this.props;
+		const { active, children, disabled, label, onClick } = this.props;
 
-		const className = classNames('tab', disabled && 'disabled', active && 'active', this.props.className);
-
-		if (label) {
-			return (
-				<div className={className} onClick={disabled ? undefined : onClick}>
-					<div>{label}</div>
-				</div>
-			);
-		}
+		const className = classNames(this.props.className, {
+			'tab': true,
+			'disabled': disabled,
+			'active': active
+		});
 
 		return (
-			<div className={className} onClick={onClick}>
-				{children}
+			<div className={className} onClick={disabled ? undefined : onClick}>
+				<Text>{label || children}</Text>
 			</div>
 		);
 	}
 }
-
-export default Tab;

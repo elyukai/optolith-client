@@ -1,7 +1,7 @@
-import EquipmentActions from '../../actions/EquipmentActions';
+// import EquipmentActions from '../../actions/EquipmentActions';
 import React, { Component } from 'react';
 
-class Equipment extends Component {
+export default class Equipment extends Component {
 
 	render() {
 		return (
@@ -13,5 +13,3 @@ class Equipment extends Component {
 		);
 	}
 }
-
-export default Equipment;

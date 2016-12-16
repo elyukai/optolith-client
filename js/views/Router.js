@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import Route from './Route';
 import TabStore from '../stores/TabStore';
-import TitleBar from './TitleBar';
-import Wait from './Wait';
+import TitleBar from '../components/titlebar/TitleBar';
+import Loader from '../components/Loader';
 import WaitStore from '../stores/WaitStore';
 
-class Router extends Component {
+export default class Router extends Component {
 
 	state = {
-		section: TabStore.getCurrentSID(),
-		tab: TabStore.getCurrentID(),
-		wait: WaitStore.getWaiting()
+		tabs: TabStore.getAll(),
+		isWaiting: WaitStore.isWaiting()
 	};
 
-	_updateTabStore = () => this.setState({ section: TabStore.getCurrentSID(), tab: TabStore.getCurrentID() });
-	_updateWaitStore = () => this.setState({ wait: WaitStore.getWaiting() });
+	_updateTabStore = () => this.setState({ tabs: TabStore.getAll() });
+	_updateWaitStore = () => this.setState({ isWaiting: WaitStore.isWaiting() });
 
 	componentDidMount() {
 		TabStore.addChangeListener(this._updateTabStore);
@@ -28,18 +27,16 @@ class Router extends Component {
 
 	render() {
 
-		const { section, tab, wait } = this.state;
+		const { isWaiting, tabs: { section, tab } } = this.state;
 
 		return (
 			<div id="body">
-				<Wait show={wait} />
+				<Loader isLoading={isWaiting} />
 				<main>
-					<TitleBar section={section} tab={tab} />
+					<TitleBar currentSection={section} currentTab={tab} />
 					<Route id={tab} />
 				</main>
 			</div>
 		);
 	}
 }
-
-export default Router;

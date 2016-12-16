@@ -3,7 +3,7 @@ import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import React, { Component, PropTypes } from 'react';
 
-class AttributeCalcItem extends Component {
+export default class AttributeCalcItem extends Component {
 
 	static propTypes = {
 		attribute: PropTypes.object.isRequired,
@@ -37,5 +37,3 @@ class AttributeCalcItem extends Component {
 		);
 	}
 }
-
-export default AttributeCalcItem;

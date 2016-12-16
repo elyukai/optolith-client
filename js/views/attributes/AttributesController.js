@@ -4,10 +4,10 @@ import ELStore from '../../stores/ELStore';
 import PhaseStore from '../../stores/PhaseStore';
 import React, { Component } from 'react';
 
-class AttributesController extends Component {
+export default class AttributesController extends Component {
 
 	state = {
-		attributes: AttributeStore.getAllForView(),
+		attributes: AttributeStore.getAll(),
 		baseValues: AttributeStore.getBaseValues(),
 		el: ELStore.getStart(),
 		phase: PhaseStore.get(),
@@ -15,7 +15,7 @@ class AttributesController extends Component {
 	};
 	
 	_updateAttributeStore = () => this.setState({
-		attributes: AttributeStore.getAllForView(),
+		attributes: AttributeStore.getAll(),
 		baseValues: AttributeStore.getBaseValues(),
 		sum: AttributeStore.getSum()
 	});
@@ -39,5 +39,3 @@ class AttributesController extends Component {
 		);
 	}
 }
-
-export default AttributesController;

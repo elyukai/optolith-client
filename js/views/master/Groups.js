@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 
-class Groups extends Component {
+export default class Groups extends Component {
 
 	state = { 
 		requestsOpen: GroupsStore.getRequestsSlideinState()
@@ -39,5 +39,3 @@ class Groups extends Component {
 		);
 	}
 }
-
-export default Groups;

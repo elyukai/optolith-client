@@ -10,7 +10,7 @@ import React, { Component } from 'react';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
-class Disadvantages extends Component {
+export default class Disadvantages extends Component {
 	
 	state = { 
 		filter: DisAdvStore.getFilter(),
@@ -82,5 +82,3 @@ class Disadvantages extends Component {
 		);
 	}
 }
-
-export default Disadvantages;

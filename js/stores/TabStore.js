@@ -1,8 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
-import AccountStore from './AccountStore';
-import PhaseStore from './PhaseStore';
+import AuthStore from './AuthStore';
 
 var _currentTab = 'herolist';
 var _currentSection = 'main';
@@ -21,7 +20,7 @@ function _updateSection(section, tab) {
 	else switch (section) {
 		case 'main':
 			if (before === 'hero') {
-				if (AccountStore.getID() === null) {
+				if (AuthStore.getID() === null) {
 					_currentTab = 'home';
 				} else {
 					_currentTab = 'herolist';
@@ -39,48 +38,28 @@ function _updateSection(section, tab) {
 	}
 }
 
-function _updateByPhase() {
-	switch (PhaseStore.get()) {
-		case 1:
-			_currentTab = 'rcp';
-			break;
-		case 2:
-			_currentTab = 'attributes';
-			break;
-		case 3:
-			_currentTab = 'profile';
-			break;
-		case 4:
-			_currentTab = 'profile';
-			break;
+class _TabStore extends Store {
+
+	getAll() {
+		return {
+			section: _currentSection,
+			tab: _currentTab
+		};
 	}
-}
-
-var TabStore = Object.assign({}, EventEmitter.prototype, {
 	
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-	
-	getCurrentID: function() {
+	getCurrentID() {
 		return _currentTab;
-	},
+	}
 	
-	getCurrentSID: function() {
+	getCurrentSID() {
 		return _currentSection;
 	}
 
-});
+}
 
-TabStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const TabStore = new _TabStore();
+
+TabStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 		

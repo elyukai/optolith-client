@@ -9,9 +9,9 @@ function _validateEmail(email) {
 	return regex.test(email);
 }
 
-class Register extends Component {
+export default class Register extends Component {
 
-	static props = { 
+	static propTypes = { 
 		node: PropTypes.any
 	};
 
@@ -121,5 +121,3 @@ class Register extends Component {
 		
 	}
 }
-
-export default Register;

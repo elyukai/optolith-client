@@ -4,11 +4,10 @@ import createOverlay from '../utils/createOverlay';
 import ELStore from '../stores/ELStore';
 import HeroCreation from '../views/herolist/HeroCreation';
 import React from 'react';
-import reactAlert from '../utils/reactAlert';
-import ReactDOM from 'react-dom';
+import alert from '../utils/alert';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
-var HerolistActions = {
+export default {
 	refresh: function() {
 		WebAPIUtils.getHeroes();
 	},
@@ -24,9 +23,15 @@ var HerolistActions = {
 			option
 		});
 	},
+	changeView: function(view) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.CHANGE_HEROLIST_VIEW,
+			view
+		});
+	},
 	load: function(id) {
 		if (ELStore.getStartID() !== 'EL_0') {
-			reactAlert(
+			alert(
 				'Nicht gespeicherter Held',
 				'Du hast offenbar bereits einen Helden geöffnet, der noch nicht vollständig gespeichert wurde. Möchtest du trotzdem fortfahren oder vorher den anderen Helden speichern, damit keine Änderungen verloren gehen?',
 				[
@@ -59,5 +64,3 @@ var HerolistActions = {
 		});
 	}
 };
-
-export default HerolistActions;

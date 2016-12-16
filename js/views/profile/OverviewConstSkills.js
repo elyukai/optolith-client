@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-class OverviewConstSkills extends Component {
+export default class OverviewConstSkills extends Component {
 
 	static propTypes = {
 		list: PropTypes.array
@@ -41,5 +41,3 @@ class OverviewConstSkills extends Component {
 		);
 	}
 }
-
-export default OverviewConstSkills;

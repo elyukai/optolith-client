@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Tab from './Tab';
 
-class Subtabs extends Component {
+export default class Subtabs extends Component {
 
 	static propTypes = {
 		active: PropTypes.string,
@@ -15,12 +15,17 @@ class Subtabs extends Component {
 				{
 					this.props.tabs.map((tab, index) => {
 						const { tag, ...other } = tab;
-						return <Tab key={'subtab-' + index} {...other} active={this.props.active === tag} onClick={this.props.onClick.bind(null, tab.tag)}/>;
+						return (
+							<Tab
+								key={'subtab-' + index}
+								{...other}
+								active={this.props.active === tag}
+								onClick={this.props.onClick.bind(null, tag)}
+								/>
+						);
 					})
 				}
 			</div>
 		);
 	}
 }
-
-export default Subtabs;

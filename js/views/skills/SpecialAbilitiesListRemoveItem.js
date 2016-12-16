@@ -2,9 +2,8 @@ import BorderButton from '../../components/BorderButton';
 import SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
-import TextField from '../../components/TextField';
 
-class SpecialAbilitiesListRemoveItem extends Component {
+export default class SpecialAbilitiesListRemoveItem extends Component {
 
 	static propTypes = {
 		item: PropTypes.object,
@@ -20,7 +19,7 @@ class SpecialAbilitiesListRemoveItem extends Component {
 		SpecialAbilitiesActions.updateTier(
 			item.id,
 			selected_tier,
-			(selected_tier === 4 && item.id === 'SA_30' ? 0 : item.ap * selected_tier) - (item.tier === 4 && item.id === 'SA_30' ? 0 : item.ap * item.tier),
+			(selected_tier === 4 && item.id === 'SA_30' ? 0 : item.cost * selected_tier) - (item.tier === 4 && item.id === 'SA_30' ? 0 : item.cost * item.tier),
 			item.sid
 		);
 	};
@@ -30,7 +29,7 @@ class SpecialAbilitiesListRemoveItem extends Component {
 
 		const item = this.props.item;
 
-		var ap = item.ap;
+		var cost = item.cost;
 		var disabled = item.disabled;
 		var args = { id: item.id };
 
@@ -60,10 +59,10 @@ class SpecialAbilitiesListRemoveItem extends Component {
 			} else {
 				addSpecial = ' ' + array[0][0];
 			}
-			ap = item.tier === 4 && item.id === 'SA_30' ? 0 : item.ap * item.tier;
+			cost = item.tier === 4 && item.id === 'SA_30' ? 0 : item.cost * item.tier;
 		}
 
-		args.costs = ap;
+		args.costs = cost;
 
 		if (item.hasOwnProperty('sid')) args.sid = item.sid;
 
@@ -81,7 +80,7 @@ class SpecialAbilitiesListRemoveItem extends Component {
 						{tierElement}
 					</div>
 				</td>
-				<td className="ap">-{ap}</td>
+				<td className="ap">{cost}</td>
 				{ this.props.phase < 3 ? (
 					<td className="inc">
 						<BorderButton label="-" onClick={this.removeFromList.bind(null, args)} disabled={disabled} />
@@ -91,5 +90,3 @@ class SpecialAbilitiesListRemoveItem extends Component {
 		);
 	}
 }
-
-export default SpecialAbilitiesListRemoveItem;

@@ -1,0 +1,7 @@
+#body > main {
+	@extend %max-size-relative;
+	flex: 1 1 100%;
+}
+
+@import "components/_Components";
+@import "views/_Views";

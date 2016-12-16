@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ELStore from './ELStore';
-import ListStore from './ListStore';
+import { get, getAllByCategory, getObjByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
@@ -24,22 +24,10 @@ function _updateTalentRating() {
 	_talentRating = !_talentRating;
 }
 	
-var TalentsStore = Object.assign({}, EventEmitter.prototype, {
-	
-	emitChange: function() {
-		this.emit('change');
-	},
+class _TalentsStore extends Store {
 
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getForSave: function() {
-		var all = ListStore.getAllByCategory(CATEGORY);
+	getForSave() {
+		var all = getAllByCategory(CATEGORY);
 		var result = new Map();
 		all.forEach(e => {
 			let { id, fw } = e;
@@ -51,20 +39,20 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 			active: Array.from(result),
 			_talentRating
 		};
-	},
+	}
 
-	get: function(id) {
-		return ListStore.get(id);
-	},
+	get(id) {
+		return get(id);
+	}
 
-	getNameByID: function(id) {
-		return ListStore.get(id).name;
-	},
+	getNameByID(id) {
+		return get(id).name;
+	}
 
-	getAllForView: function() {
+	getAllForView() {
 		var phase = PhaseStore.get();
 
-		var talentsObj = ListStore.getObjByCategory(CATEGORY);
+		var talentsObj = getObjByCategory(CATEGORY);
 		var talents = [];
 
 		var SA_18 = this.get('SA_18').active;
@@ -75,11 +63,11 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 			let { fw, check, dependencies } = talent;
 
 			var _max = 25;
-			let _max_bonus = ListStore.get('ADV_16').active.filter(e => e === id).length;
+			let _max_bonus = get('ADV_16').active.filter(e => e === id).length;
 			if (phase < 3)
 				_max = ELStore.getStart().max_skill + _max_bonus;
 			else {
-				let checkValues = check.map(attr => ListStore.get(attr).value);
+				let checkValues = check.map(attr => get(attr).value);
 				_max = Math.max(...checkValues) + 2 + _max_bonus;
 			}
 			talent.disabledIncrease = fw >= _max;
@@ -120,23 +108,25 @@ var TalentsStore = Object.assign({}, EventEmitter.prototype, {
 			});
 		}
 		return talents;
-	},
+	}
 
-	getFilter: function() {
+	getFilter() {
 		return _filter;
-	},
+	}
 
-	getSortOrder: function() {
+	getSortOrder() {
 		return _sortOrder;
-	},
+	}
 
-	getTalentRating: function() {
+	getTalentRating() {
 		return _talentRating;
 	}
 
-});
+}
 
-TalentsStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const TalentsStore = new _TalentsStore();
+
+TalentsStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 

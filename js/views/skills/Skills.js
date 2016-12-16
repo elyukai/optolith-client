@@ -3,21 +3,22 @@ import Liturgies from './Liturgies';
 import React, { Component } from 'react';
 import SpecialAbilities from './SpecialAbilities';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
+import { get } from '../../stores/ListStore';
 import Spells from './Spells';
 import SubTabs from '../../components/SubTabs';
 import Talents from './Talents';
 
-class Skills extends Component {
+export default class Skills extends Component {
 
 	state = {
 		tab: 'talents',
-		showSpells: SpecialAbilitiesStore.get('SA_86').active,
-		showChants: SpecialAbilitiesStore.get('SA_102').active
+		showSpells: get('SA_86').active,
+		showChants: get('SA_102').active
 	};
 	
 	_updateSpecialAbilitiesStore = () => this.setState({
-		showSpells: SpecialAbilitiesStore.get('SA_86').active,
-		showChants: SpecialAbilitiesStore.get('SA_102').active
+		showSpells: get('SA_86').active,
+		showChants: get('SA_102').active
 	});
 
 	handleClick = tab => this.setState({ tab });
@@ -32,9 +33,11 @@ class Skills extends Component {
 
 	render() {
 
-		var skillElement;
+		const { showChants, showSpells, tab } = this.state;
 
-		switch (this.state.tab) {
+		let skillElement;
+
+		switch (tab) {
 			case 'talents':
 				skillElement = <Talents />;
 				break;
@@ -67,14 +70,14 @@ class Skills extends Component {
 			}
 		];
 
-		if (this.state.showSpells) tabs.push({
+		if (showSpells) tabs.push({
 			label: 'Zauber',
 			tag: 'spells'
 		});
 		
-		if (this.state.showChants) tabs.push({
+		if (showChants) tabs.push({
 			label: 'Liturgien',
-				tag: 'liturgies'
+			tag: 'liturgies'
 		});
 
 		return (
@@ -88,5 +91,3 @@ class Skills extends Component {
 		);
 	}
 }
-
-export default Skills;

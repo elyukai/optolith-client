@@ -1,15 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Slider extends Component {
+export default class Slider extends Component {
 
 	static propTypes = {
 		className: PropTypes.any,
 		label: PropTypes.string.isRequired,
-		value: PropTypes.number.isRequired,
-		onChange: PropTypes.func.isRequired,
+		max: PropTypes.number.isRequired,
 		min: PropTypes.number.isRequired,
-		max: PropTypes.number.isRequired
+		onChange: PropTypes.func.isRequired,
+		value: PropTypes.number.isRequired
 	};
 
 	render() {
@@ -34,5 +34,3 @@ class Slider extends Component {
 		);
 	}
 }
-
-export default Slider;

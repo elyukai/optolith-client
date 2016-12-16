@@ -1,13 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
-var RaceActions = {
-	receiveAll: function(rawRaces) {
-		AppDispatcher.dispatch({
-			actionType: ActionTypes.RECEIVE_RAW_RACES,
-			rawRaces
-		});
-	},
+export default {
 	selectRace: function(raceID) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SELECT_RACE,
@@ -32,5 +26,3 @@ var RaceActions = {
 		});
 	}
 };
-
-export default RaceActions;

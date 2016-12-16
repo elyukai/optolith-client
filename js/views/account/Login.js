@@ -4,9 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import { close } from '../../utils/createOverlay';
 
-class Login extends Component {
+export default class Login extends Component {
 
-	static props = { 
+	static propTypes = { 
 		node: PropTypes.any
 	};
 
@@ -74,8 +74,5 @@ class Login extends Component {
 				</p>
 			</Dialog>
 		);
-		
 	}
 }
-
-export default Login;

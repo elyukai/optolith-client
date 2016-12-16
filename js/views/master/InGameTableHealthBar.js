@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class InGameTableHealthBar extends Component {
+export default class InGameTableHealthBar extends Component {
 	
 	static propTypes = {
 		current: PropTypes.number.isRequired,
-		max: PropTypes.number.isRequired
+		max: PropTypes.number.isRequired,
+		type: PropTypes.string.isRequired
 	};
 	
 	render() {
@@ -22,5 +23,3 @@ class InGameTableHealthBar extends Component {
 		);
 	}
 }
-
-export default InGameTableHealthBar;

@@ -1,116 +1,48 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import CultureStore from './CultureStore';
-import { EventEmitter } from 'events';
-import ProfessionStore from './ProfessionStore';
-import ProfileStore from './ProfileStore';
+import { get, getAllByCategory } from './ListStore';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
+import Categories from '../constants/Categories';
+
+const CATEGORY = Categories.PROFESSION_VARIANTS;
 
 var _currentID = null;
-var _professionVariants = [];
 
 function _updateCurrentID(id) {
 	_currentID = id;
 }
 
-var ProfessionVariantStore = Object.assign({}, EventEmitter.prototype, {
+class _ProfessionVariantStore extends Store {
 
-	init: function(rawProfessionVariants) {
-		for (let id in rawProfessionVariants) {
-			let obj = rawProfessionVariants[id];
+	get(id) {
+		return get(id);
+	}
 
-			obj.sa = obj.sa.map(e => {
-				e[0] = `SA_${e[0]}`;
-				return e;
-			});
-			obj.combattech = obj.combattech.map(e => {
-				e[0] = `CT_${e[0]}`;
-				return e;
-			});
-			obj.talents = obj.talents.map(e => {
-				e[0] = `TAL_${e[0]}`;
-				return e;
-			});
+	getAll() {
+		return getAllByCategory(CATEGORY);
+	}
 
-			rawProfessionVariants[id] = obj;
-		}
-		_professionVariants = rawProfessionVariants;
-	},
-
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	get: function(id) {
-		return _professionVariants[id];
-	},
-
-	getAll: function() {
-		return _professionVariants;
-	},
-
-	getAllForView: function() {
-		var professionID = ProfessionStore.getCurrentID();
-		if (professionID !== null) {
-			var profession = ProfessionStore.get(professionID);
-			if (profession.vars[0] !== null) {
-				var professionVariants = [{
-					name: 'Keine Variante',
-					value: null
-				}];
-				for (let id in _professionVariants) {
-					if (profession.vars.indexOf(id) > -1) {
-						if (_professionVariants[id].pre_req !== null) {
-							var reqsUnmet = _professionVariants[id].pre_req.some(req => {
-								if (req[0] === 'c') {
-									let cultureID = CultureStore.getCurrentID();
-									return req[1].indexOf(cultureID) === -1;
-								} else if (req[0] === 'g') {
-									let gender = ProfileStore.getGender();
-									return gender !== req[1];
-								}
-								return false;
-							});
-							if (reqsUnmet) continue;
-						}
-						professionVariants.push({
-							name: `${_professionVariants[id].name} (${profession.ap + _professionVariants[id].ap} AP)`,
-							value: _professionVariants[id].id
-						});
-					}
-				}
-				return professionVariants;
-			}
-			return [];
-		}
-	},
-
-	getCurrentID: function() {
+	getCurrentID() {
 		return _currentID;
-	},
+	}
 
-	getCurrent: function() {
+	getCurrent() {
 		return this.get(this.getCurrentID());
-	},
+	}
 
-	getCurrentName: function() {
+	getCurrentName() {
 		return this.getCurrent() !== undefined ? this.getCurrent().name : null;
-	},
+	}
 
-	getNameByID: function(id) {
+	getNameByID(id) {
 		return this.get(id) !== undefined ? this.get(id).name : null;
 	}
 
-});
+}
 
-ProfessionVariantStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const ProfessionVariantStore = new _ProfessionVariantStore();
+
+ProfessionVariantStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 
@@ -126,10 +58,6 @@ ProfessionVariantStore.dispatchToken = AppDispatcher.register( function( payload
 
 		case ActionTypes.SELECT_PROFESSION_VARIANT:
 			_updateCurrentID(payload.professionVariantID);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			ProfessionVariantStore.init(payload.professionVariants);
 			break;
 
 		default:

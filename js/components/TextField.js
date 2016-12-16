@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 // import TextareaAutosize from 'react-textarea-autosize';
 import classNames from 'classnames';
 
-class TextField extends Component {
+export default class TextField extends Component {
 
 	static propTypes = {
 		autoFocus: PropTypes.bool,
@@ -11,6 +11,7 @@ class TextField extends Component {
 		countCurrent: PropTypes.any,
 		countMax: PropTypes.any,
 		disabled: PropTypes.bool,
+		fullWidth: PropTypes.bool,
 		hint: PropTypes.string,
 		labelText: PropTypes.any,
 		multiLine: PropTypes.bool,
@@ -28,12 +29,6 @@ class TextField extends Component {
 	componentDidMount() {
 		if (this.props.autoFocus) ReactDOM.findDOMNode(this.refs.inputElement).focus();
 	}
-
-	// shouldComponentUpdate(nextProps) {
-	// 	let { className: _className, value: _value, disabled: _disabled, countCurrent: _countCurrent, type: _type, hint: _hint } = nextProps;
-	// 	let { className, value, disabled, countCurrent, type, hint } = this.props;
-	// 	return _className !== className || _value !== value || _disabled !== disabled || _countCurrent !== countCurrent || _type !== type || _hint !== hint;
-	// }
 
 	render() {
 
@@ -80,5 +75,3 @@ class TextField extends Component {
 		);
 	}
 }
-
-export default TextField;

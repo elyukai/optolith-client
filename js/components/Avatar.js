@@ -1,53 +1,43 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Avatar extends Component {
+export default class Avatar extends Component {
+
+	static propTypes = {
+		className: PropTypes.any,
+		hasWrapper: PropTypes.bool,
+		img: PropTypes.bool,
+		onClick: PropTypes.func,
+		src: PropTypes.string
+	};
 
 	static defaultProps = {
 		src: ''
 	};
 
-	static propTypes = {
-		className: PropTypes.any,
-		img: PropTypes.bool,
-		src: PropTypes.string,
-		onClick: PropTypes.func,
-		wrapper: PropTypes.bool
-	};
-
 	render() {
 
-		const className = classNames('avatar', this.props.className);
-		const { src, img, onClick, wrapper } = this.props;
+		const { className, hasWrapper, img, onClick, src } = this.props;
 
-		if (img) {
-			return (
-				<div className={classNames('avatar-wrapper', !src && 'no-avatar')} onClick={onClick} className={className}>
-					<img src={src} alt="" />
-				</div>
-			);
-		}
-		else if (wrapper) {
-			return (
-				<div className={classNames('avatar-wrapper', !src && 'no-avatar')} onClick={onClick}>
-					{this.props.children}
-					<div className={className} style={{ backgroundImage: `url(${src})` }}></div>
-				</div>
-			);
-		}
-		else if (src) {
-			return (
-				<div className={className} style={{ backgroundImage: `url(${src})` }}></div>
-			);
-		}
-		else {
-			return (
-				<div className={className}>
-					{this.props.children}
-				</div>
-			);
-		}
+		const allClassNames = classNames({
+			'avatar': true,
+			'no-avatar': !hasWrapper && !src,
+			[className]: !hasWrapper && className
+		});
+		
+		return img ? (
+			<img
+				className={allClassNames}
+				src={src}
+				onClick={onClick}
+				alt=""
+				/>
+		) : (
+			<div
+				className={allClassNames}
+				style={{ backgroundImage: `url(${src})` }}
+				onClick={onClick}
+				/>
+		);
 	}
 }
-
-export default Avatar;

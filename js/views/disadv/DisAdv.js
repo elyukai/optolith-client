@@ -1,12 +1,9 @@
 import Advantages from './Advantages';
-import BorderButton from '../../components/BorderButton';
 import Disadvantages from './Disadvantages';
 import React from 'react';
 import SubTabs from '../../components/SubTabs';
-import TextField from '../../components/TextField';
-import classNames from 'classnames';
 
-class DisAdv extends React.Component {
+export default class DisAdv extends React.Component {
 
 	state = {
 		tab: 'adv'
@@ -47,5 +44,3 @@ class DisAdv extends React.Component {
 		);
 	}
 }
-
-export default DisAdv;

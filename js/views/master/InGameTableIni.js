@@ -1,14 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class InGameTableIni extends Component {
+export default class InGameTableIni extends Component {
 	
 	static propTypes = {
 		fighters: PropTypes.array.isRequired,
-		status: PropTypes.array.isRequired,
 		iniArray: PropTypes.array.isRequired,
-		usedPhases: PropTypes.array.isRequired,
-		options: PropTypes.object.isRequired
+		options: PropTypes.object.isRequired,
+		status: PropTypes.array.isRequired,
+		usedPhases: PropTypes.array.isRequired
 	};
 	
 	render() {
@@ -47,5 +47,3 @@ class InGameTableIni extends Component {
 		);
 	}
 }
-
-export default InGameTableIni;

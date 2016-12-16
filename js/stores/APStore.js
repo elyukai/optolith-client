@@ -1,102 +1,67 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import AttributeStore from './AttributeStore';
+import Store from './Store';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
-import { EventEmitter } from 'events';
-import ListStore from '../stores/ListStore';
+import ListStore, { get } from '../stores/ListStore';
 import RaceStore from './RaceStore';
+import RequirementsStore from './RequirementsStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
 import Categories from '../constants/Categories';
-import { getIC } from '../utils/iccalc';
-import reactAlert from '../utils/reactAlert';
+import alert from '../utils/alert';
 import reqPurchase from '../utils/reqPurchase';
 
 // AP = Adventure Points
 
-var _max = 0;
-var _used = 0;
+var _total = 0;
+var _spent = 0;
 var _rcp = [0, 0, 0, 0];
-var _adv = 0;
-var _adv_mag = 0;
-var _adv_kar = 0;
-var _disadv = 0;
-var _disadv_mag = 0;
-var _disadv_kar = 0;
+var _adv = [0, 0, 0];
+var _disadv = [0, 0, 0];
 
 function _spend(value) {
-	if ((value > 0 && _used + value <= _max) || value < 1) {
-		_used += value;
-		return true;
+	const valid = _spent + value <= _total;
+	if (valid) {
+		_spent += value;
+	} else {
+		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');		
 	}
-	reactAlert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-	return false;
-}
-
-function _addAdv(value) {
-	if ((value > 0 && _adv + value <= 80) || value < 1) {
-		_adv += value;
-		return true;
-	}
-	reactAlert('Obergrenze für Vorteile erreicht', 'Du kannst nicht mehr als 80 AP für Vorteile ausgeben!');
-	return false;
-}
-
-function _addAdvMag(value) {
-	if ((value > 0 && _adv_mag + value <= 50) || value < 1) {
-		_adv_mag += value;
-		return _addAdv(value);
-	}
-	return false;
-}
-
-function _addAdvKar(value) {
-	if ((value > 0 && _adv_kar + value <= 50) || value < 1) {
-		_adv_kar += value;
-		return _addAdv(value);
-	}
-	return false;
-}
-
-function _addDisadv(value) {
-	if ((value > 0 && _disadv + value <= 80) || value < 1) {
-		_disadv += value;
-		return true;
-	}
-	reactAlert('Obergrenze für Nachteile erreicht', 'Du kannst nicht mehr als 80 AP durch Nachteile erhalten!');
-	return false;
-}
-
-function _addDisadvMag(value) {
-	if ((value > 0 && _disadv_mag + value <= 50) || value < 1) {
-		_disadv_mag += value;
-		return _addDisadv(value);
-	}
-	return false;
-}
-
-function _addDisadvKar(value) {
-	if ((value > 0 && _disadv_kar + value <= 50) || value < 1) {
-		_disadv_kar += value;
-		return _addDisadv(value);
-	}
-	return false;
+	return valid;
 }
 
 function _spendDisadv(payload) {
-	const { id, costs } = payload;
-	const { category, req } = ListStore.get(id);
+	const { id, costs: value } = payload;
+	const { category, reqs } = get(id);
 	const add = category === Categories.ADVANTAGES;
-	const valid = _spend(add ? costs : -costs);
-	if (valid) {
-		let type = req.some(e => e[0] === 'ADV_12' && e[1]) ? 'kar' : req.some(e => e[0] === 'ADV_50' && e[1]) ? 'mag' : 'cmn';
-		if (add && type === 'cmn') _addAdv(costs);
-		else if (add && type === 'kar') _addAdvKar(costs);
-		else if (add && type === 'mag') _addAdvMag(costs);
-		else if (!add && type === 'cmn') _addDisadv(costs);
-		else if (!add && type === 'kar') _addDisadvKar(costs);
-		else if (!add && type === 'mag') _addDisadvMag(costs);
+	const target = () => add ? _adv : _disadv;
+
+	const isKar = reqs.some(e => e[0] === 'ADV_12' && e[1]);
+	const isMag = reqs.some(e => e[0] === 'ADV_50' && e[1]);
+	const index = isKar ? 2 : isMag ? 1 : 0;
+
+	const subValid = index > 0 ? target[index] + value <= 50 : true;
+	const mainValid = target[0] + value <= 80;
+	const totalValid = _spent + value <= _total;
+
+	if ([subValid, mainValid, totalValid].every(e => e)) {
+		_spent += add ? value : -value;
+		target[0] += value;
+		if (index > 0) {
+			target[index] += value;
+		}
+	}
+	else if (!subValid) {
+		const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
+		const text = add ? 'Vorteile' : 'Nachteile';
+		alert(`Obergrenze für ${sub} ${text} erreicht`, `Du kannst nicht mehr als 50 AP für ${sub} ${text} ausgeben!`);
+	}
+	else if (!mainValid) {
+		const text = add ? 'Vorteile' : 'Nachteile';
+		alert(`Obergrenze für ${text} erreicht`, `Du kannst nicht mehr als 80 AP für ${text} ausgeben!`);
+	}
+	else {
+		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');		
 	}
 }
 
@@ -109,95 +74,83 @@ function _calculateRCPDiff(index, next) {
 }
 
 function _clear() {
-	_max = 0;
-	_used = 0;
+	_total = 0;
+	_spent = 0;
 	_rcp = [ 0, 0, 0, 0 ];
-	_adv = 0;
-	_adv_mag = 0;
-	_adv_kar = 0;
-	_disadv = 0;
-	_disadv_mag = 0;
-	_disadv_kar = 0;
+	_adv = [ 0, 0, 0 ];
+	_disadv = [ 0, 0, 0 ];
 }
 
 function _updateAll(obj) {
-	_max = obj._max;
-	_used = obj._used;
-	_rcp = obj._rcp;
-	_adv = obj._adv;
-	_adv_mag = obj._adv_mag;
-	_adv_kar = obj._adv_kar;
-	_disadv = obj._disadv;
-	_disadv_mag = obj._disadv_mag;
-	_disadv_kar = obj._disadv_kar;
+	_total = obj.total;
+	_spent = obj.spent;
+	_rcp = obj.rcp;
+	_adv = obj.adv;
+	_disadv = obj.disadv;
 }
 
 function _assignRCP(selections) {
 	if (!selections.useCulturePackage) {
-		_used -= _rcp[1];
+		_spent -= _rcp[1];
 	}
 
 	if (selections.buyLiteracy) {
 		const culture = CultureStore.getCurrent();
-		let id = culture.literacy.length > 1 ? selections.litc : culture.literacy[0];
-		_used += ListStore.get('SA_28').sel[id - 1][2];
+		let id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
+		_spent += get('SA_28').sel[id - 1][2];
 	}
 
 	let p = ProfessionStore.getCurrent();
-	if (p) {
-		let apCosts = reqPurchase(p.req);
-		_used += apCosts;
+	if (p && p.id !== 'P_0') {
+		let apCosts = reqPurchase(p.reqs);
+		_spent += apCosts;
 	}
 }
 
-var APStore = Object.assign({}, EventEmitter.prototype, {
+class _APStore extends Store {
 
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-
-	getForSave: function() {
-		return { _max, _used, _rcp, _adv, _adv_mag, _adv_kar, _disadv, _disadv_mag, _disadv_kar };
-	},
-
-	getAll: function() {
-		return { total: _max, spent: _used };
-	},
-
-	get: function() {
-		return _max;
-	},
-
-	getUsed: function() {
-		return _used;
-	},
-
-	getUnused: function() {
-		return _max - _used;
-	},
-
-	getAvailable: function() {
-		return _max - _used;
-	},
-
-	getForDisAdv: function() {
+	getAll() {
 		return {
-			adv: [_adv, _adv_mag, _adv_kar],
-			disadv: [_disadv, _disadv_mag, _disadv_kar]
+			total: _total,
+			spent: _spent,
+			rcp: _rcp,
+			adv: _adv,
+			disadv: _disadv,
 		};
 	}
 
-});
+	getTotal() {
+		return _total;
+	}
 
-APStore.dispatchToken = AppDispatcher.register( function( payload ) {
+	getSpent() {
+		return _spent;
+	}
+
+	getAvailable() {
+		return _total - _spent;
+	}
+
+	getForDisAdv() {
+		return {
+			adv: _adv,
+			disadv: _disadv
+		};
+	}
+
+}
+
+const APStore = new _APStore();
+
+APStore.dispatchToken = AppDispatcher.register(payload => {
+
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+
+	if (payload.undoAction) {
+		_spend(RequirementsStore.getCurrentCost());
+		APStore.emitChange();
+		return true;
+	}
 
 	switch( payload.actionType ) {
 
@@ -211,14 +164,22 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.ACTIVATE_LITURGY:
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(getIC(ListStore.get(payload.id).skt, 0));
-			break;
-		
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY:
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(-(getIC(ListStore.get(payload.id).skt, 0)));
+		case ActionTypes.ADD_ATTRIBUTE_POINT:
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.ADD_LITURGY_POINT:
+		case ActionTypes.ADD_MAX_ENERGY_POINT:
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT:
+			if (RequirementsStore.isValid()) {
+				_spend(RequirementsStore.getCurrentCost());
+			}
 			break;
 
 		case ActionTypes.ACTIVATE_DISADV:
@@ -237,29 +198,6 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			_spend(-(payload.costs));
-			break;
-
-		case ActionTypes.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.ADD_TALENT_POINT:
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.ADD_SPELL_POINT:
-		case ActionTypes.ADD_LITURGY_POINT:
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(getIC(ListStore.get(payload.id).ic, ListStore.get(payload.id).value));
-			break;
-
-		case ActionTypes.ADD_MAX_ENERGY_POINT:
-			AppDispatcher.waitFor([AttributeStore.dispatchToken]);
-			_spend(getIC(4, AttributeStore.getAdd(payload.id)));
-			break;
-
-		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-		case ActionTypes.REMOVE_TALENT_POINT:
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-		case ActionTypes.REMOVE_SPELL_POINT:
-		case ActionTypes.REMOVE_LITURGY_POINT:
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			_spend(-(getIC(ListStore.get(payload.id).ic, ListStore.get(payload.id).value + 1)));
 			break;
 
 		case ActionTypes.SELECT_RACE:
@@ -299,7 +237,7 @@ APStore.dispatchToken = AppDispatcher.register( function( payload ) {
 		case ActionTypes.CREATE_NEW_HERO: {
 			_clear();
 			AppDispatcher.waitFor([ELStore.dispatchToken]);
-			_max = ELStore.getStart().ap;
+			_total = ELStore.getStart().ap;
 			break;
 		}
 

@@ -3,7 +3,7 @@ import APStore from '../../stores/APStore';
 import CultureStore from '../../stores/CultureStore';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ELStore from '../../stores/ELStore';
-import ListStore from '../../stores/ListStore';
+import { getPrimaryAttrID } from '../../stores/ListStore';
 import MainSheetCalc from './MainSheetCalc';
 import MainSheetPersonalData from './MainSheetPersonalData';
 import OverviewConstSkills from './OverviewConstSkills';
@@ -16,7 +16,7 @@ import SheetHeader from './SheetHeader';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import TextBox from '../../components/TextBox';
 
-class MainSheet extends Component {
+export default class MainSheet extends Component {
 	render() {
 
 		const ap = APStore.getAll();
@@ -34,7 +34,7 @@ class MainSheet extends Component {
 		const commonsaActive = SpecialAbilitiesStore.getActiveForView(1,2);
 
 		const attributes = AttributeStore.getAllForView();
-		const attrPrimary = [ListStore.getPrimaryAttrID(1), ListStore.getPrimaryAttrID(2)];
+		const attrPrimary = [getPrimaryAttrID(1), getPrimaryAttrID(2)];
 		const baseValues = AttributeStore.getBaseValues();
 
 		return (
@@ -73,5 +73,3 @@ class MainSheet extends Component {
 		);
 	}
 }
-
-export default MainSheet;

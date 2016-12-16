@@ -13,7 +13,7 @@ export default keyMirror({
 	SHOW_TAB: null,
 	SHOW_TAB_SECTION: null,
 	
-	// AccountStore
+	// AuthStore
 	RECEIVE_ACCOUNT: null,
 	UPDATE_USERNAME: null,
 	LOGOUT_SUCCESS: null,
@@ -27,10 +27,11 @@ export default keyMirror({
 	HEROES_HIDE: null,
 	COLLAPSE_HEROES: null,
 	
-	// HeroesStore
+	// HerolistStore
 	RECEIVE_RAW_HEROLIST: null,
 	FILTER_HEROLIST: null,
 	SORT_HEROLIST: null,
+	CHANGE_HEROLIST_VIEW: null,
 	CREATE_NEW_HERO: null,
 	RECEIVE_HERO: null,
 	

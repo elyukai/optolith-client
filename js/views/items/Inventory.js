@@ -1,7 +1,7 @@
-import InventoryActions from '../../actions/InventoryActions';
+// import InventoryActions from '../../actions/InventoryActions';
 import React, { Component } from 'react';
 
-class Inventory extends Component {
+export default class Inventory extends Component {
 
 	render() {
 		return (
@@ -13,5 +13,3 @@ class Inventory extends Component {
 		);
 	}
 }
-
-export default Inventory;

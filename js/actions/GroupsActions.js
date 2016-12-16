@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
-var GroupsActions = {
+export default {
 	checkRequests: function(){
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SHOW_MASTER_REQUESTED_LIST
@@ -13,5 +13,3 @@ var GroupsActions = {
 		});
 	}
 };
-
-export default GroupsActions;

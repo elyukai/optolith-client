@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import Sheets from './Sheets';
 import SubTabs from '../../components/SubTabs';
 
-class Profile extends Component {
+export default class Profile extends Component {
 
 	state = {
 		phase: PhaseStore.get(),
@@ -66,5 +66,3 @@ class Profile extends Component {
 		);
 	}
 }
-
-export default Profile;

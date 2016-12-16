@@ -1,7 +1,7 @@
 import CultureStore from '../stores/CultureStore';
 import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
-import ListStore from '../stores/ListStore';
+import { get, getPrimaryAttr, getAllByCategoryGroup } from '../stores/ListStore';
 
 export const fn = (req, id) => {
 	if (req[0] === 'auto_req') {
@@ -33,7 +33,7 @@ export const fn = (req, id) => {
 	} else if (req.length === 2) {
 		if (req[0] === 'r')
 			return req[1].map(e => `R_${e}`).indexOf(RaceStore.getCurrentID) > -1;
-		let obj = ListStore.get(req[0]);
+		let obj = get(req[0]);
 		if (!obj.hasOwnProperty('active') && typeof req[1] === 'number') {
 			if (obj.hasOwnProperty('fw')) {
 				return obj.fw >= req[1];
@@ -45,15 +45,15 @@ export const fn = (req, id) => {
 		}
 	} else if (req.length === 3) {
 		if (req[0] === 'ATTR_PRIMARY') {
-			let obj = ListStore.getPrimaryAttr(req[2]);
+			let obj = getPrimaryAttr(req[2]);
 			return obj === undefined ? false : obj.value >= req[1];
 		}
-		let obj = ListStore.get(req[0]);
+		let obj = get(req[0]);
 		if (req[2] === 'sel') {
 			return true;
 		} else if (typeof req[2] !== 'number' && req[2].match('GR')) {
 			let gr = parseInt(req[2].split('_')[2]);
-			var arr = ListStore.getAllByCategoryGroup('talents', gr).map(e => e.id);
+			var arr = getAllByCategoryGroup('talents', gr).map(e => e.id);
 			for (let n = 0; n < obj.active.length; n++) {
 				if (arr.indexOf(obj.active[n]) > -1) return false;
 			}

@@ -4,9 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 import { close } from '../../utils/createOverlay';
 
-class ResendActivation extends Component {
+export default class ResendActivation extends Component {
 
-	static props = { 
+	static propTypes = { 
 		node: PropTypes.any
 	};
 
@@ -55,5 +55,3 @@ class ResendActivation extends Component {
 		
 	}
 }
-
-export default ResendActivation;

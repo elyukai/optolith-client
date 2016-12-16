@@ -8,38 +8,35 @@ import Home from './home/Home';
 import Items from './items/Items';
 import Master from './master/Master';
 import Profile from './profile/Profile';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import RCP  from './rcp/RCP';
 import Skills from './skills/Skills';
 
-export default props => {
-	const { id } = props;
-	switch (id) {
-		case 'home':
-			return <Home />;
-		case 'herolist':
-			return <Herolist />;
-		case 'grouplist':
-			return <Grouplist />;
-		case 'account':
-			return <Account />;
-		case 'about':
-			return <About />;
-		case 'rcp':
-			return <RCP />;
-		case 'profile':
-			return <Profile />;
-		case 'attributes':
-			return <Attribute />;
-		case 'disadv':
-			return <DisAdv />;
-		case 'skills':
-			return <Skills />;
-		case 'items':
-			return <Items />;
-		case 'master':
-			return <Master />;
-		default:
-			return null;
+export default class Route extends Component {
+
+	static propTypes = {
+		id: PropTypes.string.isRequired
+	};
+
+	render() {
+
+		const VIEWS = {
+			home: <Home />,
+			herolist: <Herolist />,
+			grouplist: <Grouplist />,
+			account: <Account />,
+			about: <About />,
+			
+			rcp: <RCP />,
+			profile: <Profile />,
+			attributes: <Attribute />,
+			disadv: <DisAdv />,
+			skills: <Skills />,
+			items: <Items />,
+
+			master: <Master />
+		};
+
+		return VIEWS[this.props.id] || null;
 	}
-};
+}

@@ -9,7 +9,7 @@ import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
-class Liturgies extends Component {
+export default class Liturgies extends Component {
 	
 	state = { 
 		liturgiesActive: LiturgiesStore.getActiveForView(),
@@ -188,5 +188,3 @@ class Liturgies extends Component {
 		);
 	}
 }
-
-export default Liturgies;

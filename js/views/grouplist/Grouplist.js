@@ -1,11 +1,10 @@
 import BorderButton from '../../components/BorderButton';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import TabActions from '../../actions/TabActions';
 import TextField from '../../components/TextField';
 
-class Grouplist extends Component {
+export default class Grouplist extends Component {
 
 	filter = event => event.target.value;
 	openGroup = () => TabActions.showSection('group');
@@ -26,5 +25,3 @@ class Grouplist extends Component {
 		);
 	}
 }
-
-export default Grouplist;

@@ -2,7 +2,7 @@ import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-class SelectionsTalentSpec extends Component {
+export default class SelectionsTalentSpec extends Component {
 
 	static propTypes = {
 		active: PropTypes.array,
@@ -49,4 +49,3 @@ class SelectionsTalentSpec extends Component {
 	}
 }
 
-export default SelectionsTalentSpec;

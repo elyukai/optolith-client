@@ -1,7 +1,7 @@
 import TabActions from '../../actions/TabActions';
 import React, { Component } from 'react';
 
-class RegistrationConfirm extends Component {
+export default class RegistrationConfirm extends Component {
 	
 	constructor(props) {
 		super(props);
@@ -26,5 +26,3 @@ class RegistrationConfirm extends Component {
 		);
 	}
 }
-
-export default RegistrationConfirm;

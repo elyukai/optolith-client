@@ -1,9 +1,8 @@
 import AttributeCalcItem from './AttributeCalcItem';
-import AttributeStore from '../../stores/AttributeStore';
-import ListStore from '../../stores/ListStore';
+import { get, getPrimaryAttrID } from '../../stores/ListStore';
 import React, { Component, PropTypes } from 'react';
 
-class AttributeCalc extends Component {
+export default class AttributeCalc extends Component {
 
 	static propTypes = {
 		attributes: PropTypes.array.isRequired,
@@ -20,35 +19,35 @@ class AttributeCalc extends Component {
 				label: 'LE',
 				value: do {
 					let a = baseValues.le + attributes[6].value * 2 + baseValues.leAdd;
-					if (ListStore.get('ADV_25') && ListStore.get('ADV_25').active)
-						a += ListStore.get('ADV_25').tier;
-					else if (ListStore.get('DISADV_28') && ListStore.get('DISADV_28').active)
-						a -= ListStore.get('DISADV_28').tier;
+					if (get('ADV_25').active)
+						a += get('ADV_25').tier;
+					else if (get('DISADV_28').active)
+						a -= get('DISADV_28').tier;
 					a;
 				},
-				disabledIncrease: baseValues.leAdd >= ListStore.get('ATTR_7').value
+				disabledIncrease: baseValues.leAdd >= get('ATTR_7').value
 			},
 			{
 				label: 'AE',
 				value: do {
-					let primary = ListStore.getPrimaryAttrID(1);
+					let primary = getPrimaryAttrID(1);
 					if (primary === 'ATTR_0')
 						'-';
 					else {
-						let a = 20 + AttributeStore.get(primary).value + baseValues.aeAdd;
-						if (ListStore.get('ADV_23') && ListStore.get('ADV_23').active)
-							a += ListStore.get('ADV_23').tier;
-						else if (ListStore.get('DISADV_26') && ListStore.get('DISADV_26').active)
-							a -= ListStore.get('DISADV_26').tier;
+						let a = 20 + get(primary).value + baseValues.aeAdd;
+						if (get('ADV_23').active)
+							a += get('ADV_23').tier;
+						else if (get('DISADV_26').active)
+							a -= get('DISADV_26').tier;
 						a;
 					}
 				},
 				disabledIncrease: do {
-					let primary = ListStore.getPrimaryAttrID(1);
+					let primary = getPrimaryAttrID(1);
 					if (primary === 'ATTR_0')
 						false;
 					else {
-						baseValues.aeAdd >= ListStore.get(primary).value;
+						baseValues.aeAdd >= get(primary).value;
 					}
 				},
 				permanent: 0,
@@ -58,24 +57,24 @@ class AttributeCalc extends Component {
 			{
 				label: 'KE',
 				value: do {
-					let primary = ListStore.getPrimaryAttrID(2);
+					let primary = getPrimaryAttrID(2);
 					if (primary === 'ATTR_0')
 						'-';
 					else {
-						let a = 20 + AttributeStore.get(primary).value + baseValues.keAdd;
-						if (ListStore.get('ADV_24') && ListStore.get('ADV_24').active)
-							a += ListStore.get('ADV_24').tier;
-						else if (ListStore.get('DISADV_27') && ListStore.get('DISADV_27').active)
-							a -= ListStore.get('DISADV_27').tier;
+						let a = 20 + get(primary).value + baseValues.keAdd;
+						if (get('ADV_24').active)
+							a += get('ADV_24').tier;
+						else if (get('DISADV_27').active)
+							a -= get('DISADV_27').tier;
 						a;
 					}
 				},
 				disabledIncrease: do {
-					let primary = ListStore.getPrimaryAttrID(2);
+					let primary = getPrimaryAttrID(2);
 					if (primary === 'ATTR_0')
 						false;
 					else {
-						baseValues.keAdd >= ListStore.get(primary).value;
+						baseValues.keAdd >= get(primary).value;
 					}
 				},
 				permanent: 0,
@@ -86,9 +85,9 @@ class AttributeCalc extends Component {
 				label: 'SK',
 				value: do {
 					let a = baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6);
-					if (ListStore.get('ADV_26') && ListStore.get('ADV_26').active)
+					if (get('ADV_26').active)
 						a++;
-					else if (ListStore.get('DISADV_29') && ListStore.get('DISADV_29').active)
+					else if (get('DISADV_29').active)
 						a--;
 					a;
 				}
@@ -97,9 +96,9 @@ class AttributeCalc extends Component {
 				label: 'ZK',
 				value: do {
 					let a = baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6);
-					if (ListStore.get('ADV_27') && ListStore.get('ADV_27').active)
+					if (get('ADV_27').active)
 						a++;
-					else if (ListStore.get('DISADV_30') && ListStore.get('DISADV_30').active)
+					else if (get('DISADV_30').active)
 						a--;
 					a;
 				}
@@ -133,5 +132,3 @@ class AttributeCalc extends Component {
 		);
 	}
 }
-
-export default AttributeCalc;

@@ -3,9 +3,8 @@ import ActionTypes from '../constants/ActionTypes';
 import createOverlay from '../utils/createOverlay';
 import Dialog from '../components/Dialog';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-var InGameActions = {
+export default {
 	load: function() {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.LOAD_RAW_INGAME_DATA
@@ -105,9 +104,7 @@ var InGameActions = {
 		});
 	},
 	resetAll: function(){
-		var resetAllFinal = function() {
-			AppDispatcher.dispatch({ actionType: ActionTypes.INGAME_RESET_ALL });
-		};
+		const resetAllFinal = () =>	AppDispatcher.dispatch({ actionType: ActionTypes.INGAME_RESET_ALL });
 		createOverlay(
 			<Dialog
 				title='Liste zurücksetzen'
@@ -147,5 +144,3 @@ var InGameActions = {
 		});
 	}
 };
-
-export default InGameActions;

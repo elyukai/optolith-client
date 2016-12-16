@@ -3,7 +3,7 @@ import LabelBox from '../../components/LabelBox';
 import Plain from '../../components/Plain';
 import React, { Component, PropTypes } from 'react';
 
-class MainSheetPersonalData extends Component {
+export default class MainSheetPersonalData extends Component {
 
 	static propTypes = {
 		ap: PropTypes.object.isRequired,
@@ -52,5 +52,3 @@ class MainSheetPersonalData extends Component {
 		);
 	}
 }
-
-export default MainSheetPersonalData;

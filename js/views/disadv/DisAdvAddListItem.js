@@ -1,11 +1,11 @@
 import BorderButton from '../../components/BorderButton';
 import DisAdvActions from '../../actions/DisAdvActions';
-import DisAdvStore from '../../stores/DisAdvStore';
+import { get } from '../../stores/ListStore';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-class DisAdvAddListItem extends Component {
+export default class DisAdvAddListItem extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
@@ -60,7 +60,7 @@ class DisAdvAddListItem extends Component {
 
 		if (['ADV_4','ADV_16','ADV_17','ADV_47','DISADV_48'].indexOf(disadv.id) > -1) {
 			if (this.state.selected !== '') {
-				ap = disadv.ap[DisAdvStore.get(this.state.selected).skt - 1];
+				ap = disadv.cost[get(this.state.selected).skt - 1];
 			}
 			args.sel = this.state.selected;
 		} else if (['ADV_28','ADV_29'].indexOf(disadv.id) > -1) {
@@ -83,9 +83,9 @@ class DisAdvAddListItem extends Component {
 			// 		value={this.state.input2}
 			// 		onChange={this.handleSecondInput} />
 			// );
-			ap = this.state.selected !== '' ? DisAdvStore.get(disadv.id).sel[this.state.selected - 1][2] : '';
+			ap = this.state.selected !== '' ? get(disadv.id).sel[this.state.selected - 1][2] : '';
 			if (this.state.selected === '') disabled = true;
-			// ap = this.state.input2 !== '' && !Number.isNaN(parseInt(this.state.input2)) ? Math.round(parseInt(this.state.input2) / 2) : this.state.selected !== '' ? DisAdvStore.get(disadv.id).sel[this.state.selected - 1][2] : '';
+			// ap = this.state.input2 !== '' && !Number.isNaN(parseInt(this.state.input2)) ? Math.round(parseInt(this.state.input2) / 2) : this.state.selected !== '' ? get(disadv.id).sel[this.state.selected - 1][2] : '';
 			// if (!((this.state.selected !== '' && this.state.input === '' && this.state.input2 === '') || 
 			// 	(this.state.input !== '' && this.state.input2 !== '' && !Number.isNaN(parseInt(this.state.input2)))
 			// )) disabled = true;
@@ -93,7 +93,7 @@ class DisAdvAddListItem extends Component {
 			args.sel = this.state.selected;
 		} else if (disadv.id === 'DISADV_1') {
 			if (this.state.selected_tier > 0) {
-				ap = disadv.ap * this.state.selected_tier;
+				ap = disadv.cost * this.state.selected_tier;
 			}
 			if (this.state.selected === '' && this.state.input === '') disabled = true;
 			args.sel = this.state.selected;
@@ -101,10 +101,10 @@ class DisAdvAddListItem extends Component {
 			args.tier = this.state.selected_tier;
 		} else if (['DISADV_34','DISADV_50'].indexOf(disadv.id) > -1) {
 			if (this.state.selected_tier > 0) {
-				let maxCurrentTier = DisAdvStore.get(disadv.id).active.reduce((a,b) => b[1] > a ? b[1] : a, 0);
-				ap = maxCurrentTier >= this.state.selected_tier ? 0 : disadv.ap * (this.state.selected_tier - maxCurrentTier);
+				let maxCurrentTier = get(disadv.id).active.reduce((a,b) => b[1] > a ? b[1] : a, 0);
+				ap = maxCurrentTier >= this.state.selected_tier ? 0 : disadv.cost * (this.state.selected_tier - maxCurrentTier);
 			}
-			let currentSelIDs = new Set(DisAdvStore.get(disadv.id).active.map(e => e[0]));
+			let currentSelIDs = new Set(get(disadv.id).active.map(e => e[0]));
 			let sel = disadv.sel.filter(e => this.state.selected_tier === e[2] && !currentSelIDs.has(e[1]));
 			selectElement = (
 				<Dropdown
@@ -121,13 +121,13 @@ class DisAdvAddListItem extends Component {
 			if (this.state.selected === '' && this.state.input === '') disabled = true;
 			args.sel = this.state.selected;
 			args.input = this.state.input;
-			ap = disadv.ap;
+			ap = disadv.cost;
 		} else if (['DISADV_33','DISADV_37','DISADV_51'].indexOf(disadv.id) > -1) {
 			if (disadv.id === 'DISADV_33') {
 				var disab = true;
 				if ([7,8].indexOf(this.state.selected) > -1) {
 					args.input = this.state.input;
-					ap = DisAdvStore.get(disadv.id).sel[this.state.selected - 1][2];
+					ap = get(disadv.id).sel[this.state.selected - 1][2];
 					disab = false;
 				}
 				inputElement = (
@@ -137,31 +137,31 @@ class DisAdvAddListItem extends Component {
 						disabled={disab} />
 				);
 			}
-			if (this.state.selected === 7 && DisAdvStore.get(disadv.id).active.filter(e => Array.isArray(e) && e[0] === 7).length > 0) {
+			if (this.state.selected === 7 && get(disadv.id).active.filter(e => Array.isArray(e) && e[0] === 7).length > 0) {
 				ap = 0;
 			} else if (this.state.selected !== '') {
-				ap = DisAdvStore.get(disadv.id).sel[this.state.selected - 1][2];
+				ap = get(disadv.id).sel[this.state.selected - 1][2];
 			}
 			args.sel = this.state.selected;
 		} else if (['DISADV_36','DISADV_45'].indexOf(disadv.id) > -1) {
 			if (this.state.selected === '' && this.state.input === '') disabled = true;
-			if (disadv.id === 'DISADV_36' && DisAdvStore.get(disadv.id).active.length > 2) {
+			if (disadv.id === 'DISADV_36' && get(disadv.id).active.length > 2) {
 				ap = 0;
 			} else {
-				ap = disadv.ap;
+				ap = disadv.cost;
 			}
 			args.sel = this.state.selected;
 			args.input = this.state.input;
 		} else if (disadv.tiers !== undefined && disadv.tiers !== null) {
 			if (this.state.selected_tier > 0) {
-				ap = disadv.ap * this.state.selected_tier;
+				ap = disadv.cost * this.state.selected_tier;
 			}
 			args.tier = this.state.selected_tier;
 		} else if (disadv.input !== undefined && disadv.input !== null) {
 			args.input = this.state.input;
-			ap = disadv.ap;
+			ap = disadv.cost;
 		} else {
-			ap = disadv.ap;
+			ap = disadv.cost;
 		}
 
 		if (disadv.id.match('DIS') && ap !== undefined) ap = -ap;
@@ -235,5 +235,3 @@ class DisAdvAddListItem extends Component {
 		);
 	}
 }
-
-export default DisAdvAddListItem;

@@ -1,23 +1,17 @@
-// import keyMirror from 'keymirror';
+import keyMirror from 'keymirror';
 
-export default {
-	ADVANTAGES: 'adv',
-	ATTRIBUTES: 'attributes',
+export default Object.assign({}, {
 	CHANTS: 'liturgies',
 	COMBAT_TECHNIQUES: 'combattech',
-	DISADVANTAGES: 'disadv',
-	SPECIAL_ABILITIES: 'sa',
 	SPELLS: 'spells',
 	TALENTS: 'talents'
-};
-
-// export default keyMirror({
-// 	ADVANTAGES: null,
-// 	ATTRIBUTES: null,
-// 	CHANTS: null,
-// 	COMBAT_TECHNIQUES: null,
-// 	DISADVANTAGES: null,
-// 	SPECIAL_ABILITIES: null,
-// 	SPELLS: null,
-// 	TALENTS: null
-// });
+}, keyMirror({
+	ADVANTAGES: null,
+	ATTRIBUTES: null,
+	CULTURES: null,
+	DISADVANTAGES: null,
+	PROFESSIONS: null,
+	PROFESSION_VARIANTS: null,
+	RACES: null,
+	SPECIAL_ABILITIES: null
+}));

@@ -1,11 +1,11 @@
 import BorderButton from '../../components/BorderButton';
 import SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
+import { get } from '../../stores/ListStore';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-class SpecialAbilitiesListAddItem extends Component {
+export default class SpecialAbilitiesListAddItem extends Component {
 
 	static propTypes = {
 		item: PropTypes.object
@@ -43,7 +43,7 @@ class SpecialAbilitiesListAddItem extends Component {
 
 		const item = this.props.item;
 
-		var ap;
+		var cost;
 		var disabled = false;
 		var args = { id: item.id };
 
@@ -57,8 +57,8 @@ class SpecialAbilitiesListAddItem extends Component {
 
 		if (item.id === 'SA_10') {
 			if (this.state.selected !== '') {
-				let option = SpecialAbilitiesStore.get(item.id).sel.filter(e => e[1] === this.state.selected)[0];
-				ap = option[2];
+				let option = get(item.id).sel.filter(e => e[1] === this.state.selected)[0];
+				cost = option[2];
 				_sel2 = option[3];
 				_input = option[4];
 			}
@@ -69,23 +69,23 @@ class SpecialAbilitiesListAddItem extends Component {
 			args.sel = this.state.selected;
 			args.tier = this.state.selected_tier;
 			if (this.state.selected !== '' && this.state.selected_tier !== 0)
-				ap = this.state.selected_tier === 4 ? 0 : item.ap * this.state.selected_tier;
-		} else if (item.ap === 'sel') {
+				cost = this.state.selected_tier === 4 ? 0 : item.cost * this.state.selected_tier;
+		} else if (item.cost === 'sel') {
 			if (this.state.selected !== '') {
-				ap = SpecialAbilitiesStore.get(item.id).sel[this.state.selected - 1][2];
+				cost = get(item.id).sel[this.state.selected - 1][2];
 			}
 			args.sel = this.state.selected;
 		} else if (item.input !== undefined && item.input !== null) {
 			args.input = this.state.input;
-			ap = item.ap;
+			cost = item.cost;
 		} else if (item.sel !== undefined && item.sel.length > 0) {
 			args.sel = this.state.selected;
-			ap = item.ap;
+			cost = item.cost;
 		} else {
-			ap = item.ap;
+			cost = item.cost;
 		}
 
-		args.costs = ap;
+		args.costs = cost;
 
 		var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
@@ -158,7 +158,7 @@ class SpecialAbilitiesListAddItem extends Component {
 						{tierElement}
 					</div>
 				</td>
-				<td className="ap">{ap}</td>
+				<td className="ap">{cost}</td>
 				<td className="inc">
 					<BorderButton label="+" disabled={disabled} onClick={this.addToList.bind(null, args)} />
 				</td>
@@ -166,5 +166,3 @@ class SpecialAbilitiesListAddItem extends Component {
 		);
 	}
 }
-
-export default SpecialAbilitiesListAddItem;

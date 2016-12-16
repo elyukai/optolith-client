@@ -9,7 +9,7 @@ import SpellsActions from '../../actions/SpellsActions';
 import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
 
-class Spells extends Component {
+export default class Spells extends Component {
 	
 	state = { 
 		spellsActive: SpellsStore.getActiveForView(),
@@ -194,5 +194,3 @@ class Spells extends Component {
 		);
 	}
 }
-
-export default Spells;

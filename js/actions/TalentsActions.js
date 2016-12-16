@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
-var TalentsActions = {
+export default {
 	filter: function(text) {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.FILTER_TALENTS,
@@ -32,5 +32,3 @@ var TalentsActions = {
 		});
 	}
 };
-
-export default TalentsActions;

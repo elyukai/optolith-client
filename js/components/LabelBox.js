@@ -2,7 +2,7 @@ import Box from './Box';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class LabelBox extends Component {
+export default class LabelBox extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
@@ -24,5 +24,3 @@ class LabelBox extends Component {
 		);
 	}
 }
-
-export default LabelBox;

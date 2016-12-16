@@ -1,15 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class AttributeBorder extends Component {
+export default class AttributeBorder extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
 		label: PropTypes.string.isRequired,
-		value: PropTypes.oneOfType([
-			PropTypes.number,
-			PropTypes.string
-		])
+		value: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ])
 	};
 
 	render() {
@@ -25,5 +22,3 @@ class AttributeBorder extends Component {
 		);
 	}
 }
-
-export default AttributeBorder;

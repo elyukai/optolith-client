@@ -2,7 +2,7 @@ import AttributeBorder from '../attributes/AttributeBorder';
 import AttributeStore from '../../stores/AttributeStore';
 import React, { Component, PropTypes } from 'react';
 
-class SheetHeader extends Component {
+export default class SheetHeader extends Component {
 
 	static defaultProps = {
 		add: []
@@ -34,5 +34,3 @@ class SheetHeader extends Component {
 		);
 	}
 }
-
-export default SheetHeader;

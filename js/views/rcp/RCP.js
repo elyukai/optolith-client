@@ -6,7 +6,7 @@ import RaceStore from '../../stores/RaceStore';
 import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
-class RCP extends Component {
+export default class RCP extends Component {
 
 	state = {
 		tab: 'race',
@@ -73,5 +73,3 @@ class RCP extends Component {
 		);
 	}
 }
-
-export default RCP;

@@ -1,34 +1,35 @@
 import APStore from '../../stores/APStore';
 import BorderButton from '../../components/BorderButton';
-import CultureStore from '../../stores/CultureStore';
+import Dropdown from '../../components/Dropdown';
 import ELStore from '../../stores/ELStore';
 import HerolistActions from '../../actions/HerolistActions';
 import HerolistItem from './HerolistItem';
 import HerolistStore from '../../stores/HerolistStore';
-import ProfessionStore from '../../stores/ProfessionStore';
 import ProfileStore from '../../stores/ProfileStore';
-import RaceStore from '../../stores/RaceStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 
-class Herolist extends Component {
+export default class Herolist extends Component {
 
 	state = {
 		list: HerolistStore.getAllForView(),
 		filter: HerolistStore.getFilter(),
+		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
 	};
 	
 	_updateHerolistStore = () => this.setState({ 
 		list: HerolistStore.getAllForView(),
 		filter: HerolistStore.getFilter(),
+		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
 	});
 
 	filter = event => HerolistActions.filter(event.target.value);
 	sort = option => HerolistActions.sort(option);
+	changeView = option => HerolistActions.changeView(option);
 	showHeroCreation = () => HerolistActions.showHeroCreation();
 	refresh = () => HerolistActions.refresh();
 	
@@ -42,13 +43,24 @@ class Herolist extends Component {
 
 	render() {
 
-		const { filter, list, sortOrder } = this.state;
+		const { filter, list, sortOrder, view } = this.state;
 
 		return (
 			<section id="herolist">
 				<div className="page">
 					<div className="options">
-						<TextField hint="Suchen" value={filter} onChange={this.filter} fullWidth />
+						<TextField
+							hint="Suchen"
+							value={filter}
+							onChange={this.filter}
+							fullWidth
+							/>
+						<Dropdown
+							value={view}
+							onChange={this.changeView}
+							options={[['Alle Helden', 'all'], ['Eigene Helden', 'own'], ['Geteilte Helden', 'shared']]}
+							fullWidth
+							/>
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
@@ -72,9 +84,9 @@ class Herolist extends Component {
 								ProfileStore.getID() === null && ELStore.getStartID() !== 'EL_0' ? (
 									<HerolistItem 
 										id={null}
-										avatar={ProfileStore.getPortrait()}
+										avatar={ProfileStore.getAvatar()}
 										name="Ungespeicherter Held"
-										ap={{ _max: APStore.get() }}
+										ap={{ total: APStore.getTotal() }}
 										/>
 								) : null
 							}
@@ -88,5 +100,3 @@ class Herolist extends Component {
 		);
 	}
 }
-
-export default Herolist;

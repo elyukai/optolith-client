@@ -1,5 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { EventEmitter } from 'events';
+import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
 
 var _waiting = true;
@@ -12,27 +12,17 @@ function stopWaiting() {
 	_waiting = false;
 }
 
-var WaitStore = Object.assign({}, EventEmitter.prototype, {
+class _WaitStore extends Store {
 	
-	emitChange: function() {
-		this.emit('change');
-	},
-
-	addChangeListener: function(callback) {
-		this.on('change', callback);
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('change', callback);
-	},
-	
-	getWaiting: function() {
+	isWaiting() {
 		return _waiting;
 	}
 	
-});
+}
 
-WaitStore.dispatchToken = AppDispatcher.register( function( payload ) {
+const WaitStore = new _WaitStore();
+
+WaitStore.dispatchToken = AppDispatcher.register(payload => {
 
 	switch( payload.actionType ) {
 		

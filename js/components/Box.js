@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Box extends Component {
+export default class Box extends Component {
 
 	static propTypes = {
 		className: PropTypes.string
@@ -20,5 +20,3 @@ class Box extends Component {
 		);
 	}
 }
-
-export default Box;

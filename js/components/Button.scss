@@ -1,0 +1,17 @@
+.btn {
+	height: 32px;
+	color: #c8aa6e;
+	text-align: center;
+	overflow: hidden;
+
+	&:hover, &:active {
+		cursor: pointer;
+	}
+
+	&.disabled {
+		border: 2px solid #31353a;
+		background: none;
+		color: #31353a;
+		pointer-events: none;
+	}
+}

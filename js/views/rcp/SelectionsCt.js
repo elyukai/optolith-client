@@ -1,7 +1,7 @@
 import Checkbox from '../../components/Checkbox';
 import React, { Component, PropTypes } from 'react';
 
-class SelectionsCt extends Component {
+export default class SelectionsCt extends Component {
 
 	static propTypes = {
 		active: PropTypes.object,
@@ -37,5 +37,3 @@ class SelectionsCt extends Component {
 		);
 	}
 }
-
-export default SelectionsCt;

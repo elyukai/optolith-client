@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class MainSheetCalcItem extends Component {
+export default class MainSheetCalcItem extends Component {
 
 	static propTypes = {
 		add: PropTypes.number,
@@ -52,5 +52,3 @@ class MainSheetCalcItem extends Component {
 		);
 	}
 }
-
-export default MainSheetCalcItem;

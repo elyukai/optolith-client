@@ -1,10 +1,11 @@
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import Scroll from './Scroll';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class Slidein extends Component {
+export default class Slidein extends Component {
 
 	static propTypes = {
+		close: PropTypes.func.isRequired,
 		isOpen: PropTypes.bool
 	};
 
@@ -14,21 +15,22 @@ class Slidein extends Component {
 
 	render() {
 
-		const className = classNames('slidein-backdrop', { 'slidein-open': this.props.isOpen });
+		const { children, close, isOpen } = this.props;
+		const className = classNames('slidein-backdrop', { 'slidein-open': isOpen });
 
 		return (
 			<div className={className}>
 				<div className="slidein">
-					<div className="slidein-close" onClick={this.props.close}><div>&#xE5CD;</div></div>
-					<div className="slidein-content">
+					<div className="slidein-close" onClick={close}><div>&#xE5CD;</div></div>
 						{
-							this.props.isOpen ? this.props.children : null
+							isOpen ? (
+								<div className="slidein-content">
+									{children}
+								</div>
+							) : null
 						}
-					</div>
 				</div>
 			</div>
 		);
 	}
 }
-
-export default Slidein;

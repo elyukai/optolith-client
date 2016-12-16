@@ -1,0 +1,10 @@
+.avatar {
+	background: center/cover no-repeat black;
+	box-shadow: 0 0 1px 1px black inset;
+	border-radius: 50%;
+
+	&.no-avatar {
+		box-shadow: none;
+		background: none;
+	}
+}

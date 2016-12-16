@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class InGameTableLeft extends Component {
+export default class InGameTableLeft extends Component {
 	
 	static propTypes = {
 		fighters: PropTypes.array.isRequired,
@@ -51,5 +51,3 @@ class InGameTableLeft extends Component {
 		);
 	}
 }
-
-export default InGameTableLeft;

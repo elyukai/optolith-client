@@ -2,7 +2,7 @@ import IconButton from '../../components/IconButton';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-class OverviewNameChange extends Component {
+export default class OverviewNameChange extends Component {
 
 	static propTypes = {
 		cancel: PropTypes.func,
@@ -39,5 +39,3 @@ class OverviewNameChange extends Component {
 		);
 	}
 }
-
-export default OverviewNameChange;

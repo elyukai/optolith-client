@@ -27,5 +27,3 @@ export function post(path, data) {
 		);
 	});
 }
-
-export default { get, post };
