@@ -103,8 +103,21 @@ export default class Overview extends Component {
 								</span>
 								<span className="profession">
 									{(() => {
-										const { name, subname } = ProfessionStore.getCurrent();
-										const { name: vname } = ProfessionVariantStore.getCurrent() || {};
+										let { name, subname } = ProfessionStore.getCurrent();
+										
+										if (typeof name === 'object') {
+											name = name[this.state.sex];
+										}
+										if (typeof subname === 'object') {
+											subname = subname[this.state.sex];
+										}
+
+										let { name: vname } = ProfessionVariantStore.getCurrent() || {};
+
+										if (typeof vname === 'object') {
+											vname = vname[this.state.sex];
+										}
+
 										return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
 									})()}
 								</span>

@@ -24,7 +24,8 @@ export default class HerolistItem extends Component {
 		p: PropTypes.string,
 		player: PropTypes.array,
 		pv: PropTypes.string,
-		r: PropTypes.string
+		r: PropTypes.string,
+		sex: PropTypes.string
 	};
 
 	load = () => HerolistActions.load(this.props.id);
@@ -32,7 +33,7 @@ export default class HerolistItem extends Component {
 
 	render() {
 
-		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv } = this.props;
+		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
 
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
@@ -71,8 +72,17 @@ export default class HerolistItem extends Component {
 				</span>
 				<span className="profession">
 					{(() => {
-						const { name, subname } = ProfessionStore.get(p) || { name: 'Loading...' };
-						const { name: vname } = ProfessionVariantStore.get(pv) || { name: 'Loading...' };
+						let { name, subname } = ProfessionStore.get(p) || { name: 'Loading...' };
+						if (typeof name === 'object') {
+							name = name[sex];
+						}
+						if (typeof subname === 'object') {
+							subname = subname[sex];
+						}
+						let { name: vname } = ProfessionVariantStore.get(pv) || { name: 'Loading...' };
+						if (typeof vname === 'object') {
+							vname = vname[sex];
+						}
 						return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
 					})()}
 				</span>

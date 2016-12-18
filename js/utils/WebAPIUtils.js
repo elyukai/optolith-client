@@ -134,7 +134,6 @@ var WebAPIUtils = {
 	loadHero: function(id) {
 		ServerActions.startLoading();
 		ServerActions.loadHeroSuccess(id, `{
-			"sex":"m",
 			"pers":{
 				"family": "ibn Rashtul",
 				"placeofbirth": "Rashdul",

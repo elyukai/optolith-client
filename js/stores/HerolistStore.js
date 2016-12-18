@@ -22,7 +22,8 @@ var _heroes = {
 		r: 'R_5',
 		c: 'C_7',
 		p: 'P_24',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_2': {
 		id: 'H_2',
@@ -34,7 +35,8 @@ var _heroes = {
 		r: 'R_1',
 		c: 'C_8',
 		p: 'P_23',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_3': {
 		id: 'H_3',
@@ -46,7 +48,8 @@ var _heroes = {
 		r: 'R_4',
 		c: 'C_17',
 		p: 'P_23',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_4': {
 		id: 'H_4',
@@ -58,7 +61,8 @@ var _heroes = {
 		r: 'R_1',
 		c: 'C_15',
 		p: 'P_22',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_5': {
 		id: 'H_5',
@@ -70,7 +74,8 @@ var _heroes = {
 		r: 'R_1',
 		c: 'C_8',
 		p: 'P_26',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_6': {
 		id: 'H_6',
@@ -82,7 +87,8 @@ var _heroes = {
 		r: 'R_5',
 		c: 'C_14',
 		p: 'P_4',
-		pv: 'PV_13'
+		pv: 'PV_13',
+		sex: 'm'
 	},
 	'H_7': {
 		id: 'H_7',
@@ -94,7 +100,8 @@ var _heroes = {
 		r: 'R_1',
 		c: 'C_1',
 		p: 'P_16',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_8': {
 		id: 'H_8',
@@ -106,7 +113,8 @@ var _heroes = {
 		r: 'R_6',
 		c: 'C_9',
 		p: 'P_4',
-		pv: null
+		pv: null,
+		sex: 'm'
 	},
 	'H_9': {
 		player: ['U_5', 'Maradas'],
@@ -119,7 +127,8 @@ var _heroes = {
 		r: 'R_1',
 		c: 'C_15',
 		p: 'P_24',
-		pv: null
+		pv: null,
+		sex: 'm'
 	}
 };
 var _filter = 'Shimo';

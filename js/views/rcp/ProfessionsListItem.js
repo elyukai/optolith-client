@@ -15,6 +15,7 @@ export default class ProfessionsListItem extends Component {
 		currentID: PropTypes.string,
 		currentVID: PropTypes.string,
 		profession: PropTypes.instanceOf(Profession).isRequired,
+		sex: PropTypes.string.isRequired,
 		showAddSlidein: PropTypes.func.isRequired
 	};
 
@@ -23,7 +24,7 @@ export default class ProfessionsListItem extends Component {
 
 	render() {
 
-		const { showAddSlidein, currentID, currentVID, profession } = this.props;
+		const { showAddSlidein, currentID, currentVID, profession, sex } = this.props;
 
 		const className = classNames({
 			'active': profession.id === currentID
@@ -34,13 +35,13 @@ export default class ProfessionsListItem extends Component {
 			var allVariants = ProfessionVariantStore.getAll().filter(e => {
 				if (profession.variants.includes(e.id)) {
 					if (e.reqs_p !== null) {
-						return e.reqs_p.some(req => {
+						return e.reqs_p.every(req => {
 							if (req[0] === 'c') {
 								let cultureID = CultureStore.getCurrentID();
-								return !req[1].includes(cultureID);
+								return req[1].includes(cultureID);
 							} else if (req[0] === 'g') {
 								let gender = ProfileStore.getGender();
-								return gender !== req[1];
+								return gender === req[1];
 							}
 							return false;
 						});
@@ -49,11 +50,17 @@ export default class ProfessionsListItem extends Component {
 				}
 				return false;
 			});
-			if (allVariants.length > 1) {
-				allVariants = allVariants.map(e => ({
-					name: `${e.name} (${profession.ap + e.ap} AP)`,
-					value: e.id
-				}));
+			if (allVariants.length > 0) {
+				allVariants = allVariants.map(e => {
+					let { ap, id, name } = e;
+					if (typeof name === 'object') {
+						name = name[sex];
+					}
+					return {
+						name: `${name} (${profession.ap + ap} AP)`,
+						value: id
+					};
+				});
 				allVariants.splice(0, 0, {
 					name: 'Keine Variante',
 					value: null
@@ -64,11 +71,20 @@ export default class ProfessionsListItem extends Component {
 			}
 		}
 
+		let { name, subname } = profession;
+
+		if (typeof name === 'object') {
+			name = name[sex];
+		}
+		if (typeof subname === 'object') {
+			subname = subname[sex];
+		}
+
 		return (
 			<li className={className}>
 				<div className="left">
-					<h2>{profession.name} ({profession.ap} AP)</h2>
-					{profession.subname !== '' ? <h3>{profession.subname}</h3> : null}
+					<h2>{name} ({profession.ap} AP)</h2>
+					{subname ? <h3>{subname}</h3> : null}
 					{variants}
 				</div>
 				<div className="right">

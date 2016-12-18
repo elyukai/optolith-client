@@ -30,10 +30,10 @@ export const generateArray = () => [
 		r: RaceStore.getCurrentID(),
 		c: CultureStore.getCurrentID(),
 		p: ProfessionStore.getCurrentID(),
-		pv: ProfessionVariantStore.getCurrentID()
+		pv: ProfessionVariantStore.getCurrentID(),
+		sex: ProfileStore.getSex()
 	},
 	{
-		sex: ProfileStore.getSex(),
 		pers: ProfileStore.getAppearance(),
 		attr: AttributeStore.getForSave(),
 		disadv: DisAdvStore.getForSave(),

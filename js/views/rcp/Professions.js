@@ -8,6 +8,7 @@ import ProfessionsListItem from './ProfessionsListItem';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantActions from '../../actions/ProfessionVariantActions';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
+import ProfileStore from '../../stores/ProfileStore';
 import Scroll from '../../components/Scroll';
 import Selections from './Selections';
 import TextField from '../../components/TextField';
@@ -63,7 +64,9 @@ export default class Professions extends Component {
 		
 		const currentCulture = CultureStore.getCurrent();
 
-		const list = filterAndSort(professions.filter(e => showAllProfessions || currentCulture.typ_prof.includes(e.id) || e.id === 'P_0'), filterText, sortOrder);
+		const sex = ProfileStore.getSex();
+
+		const list = filterAndSort(professions.filter(e => showAllProfessions || currentCulture.typ_prof.includes(e.id) || e.id === 'P_0'), filterText, sortOrder, sex);
 
 		return (
 			<div className="page" id="professions">
@@ -83,8 +86,8 @@ export default class Professions extends Component {
 							value: 'name'
 						},
 						{
-							name: 'AP',
-							value: 'ap'
+							name: 'Kosten',
+							value: 'cost'
 						}
 					]} />
 				</div>
@@ -97,6 +100,7 @@ export default class Professions extends Component {
 								currentID={currentID}
 								currentVID={currentVID}
 								profession={profession}
+								sex={sex}
 								/>
 							)
 						}

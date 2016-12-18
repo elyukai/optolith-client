@@ -53,7 +53,7 @@ export default class Races extends Component {
 						onClick={this.sort}
 						array={[
 							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'AP', value: 'ap' }
+							{ name: 'Kosten', value: 'cost' }
 						]}
 						/>
 					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
