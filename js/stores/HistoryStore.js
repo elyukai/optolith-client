@@ -8,19 +8,16 @@ import RequirementsStore from './RequirementsStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import ActionTypes from '../constants/ActionTypes';
-import { check, final } from '../utils/iccalc';
-import alert from '../utils/alert';
-import reqPurchase from '../utils/reqPurchase';
 
 var _history = [];
 var _lastSaveIndex = -1;
 
-function _add(actionType, cost = 0, options = {}, previousState = {}) {
+function _add(actionType, cost = 0, options = {}, prevState = {}) {
 	_history.push({
 		actionType,
 		cost,
 		options,
-		previousState
+		prevState
 	});
 }
 
@@ -59,7 +56,7 @@ function _assignRCP(selections) {
 		_add('SELECT_MOTHER_TONGUE', 0, { id: lang });
 	}
 	_add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
-	if (spec[0] !== null || spec[1] !== '') {
+	if (spec && (spec[0] !== null || spec[1] !== '')) {
 		_add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
 	}
 	if (litc !== 0) {
@@ -111,74 +108,121 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 
 	if (payload.undoAction && HistoryStore.isUndoAvailable()) {
 		_history.splice(_history.length - 1, 1);
-		HistoryStore.emitChange();
-		return true;
 	}
+	else {
+		switch( payload.actionType ) {
+			case ActionTypes.CLEAR_HERO:
+				_clear();
+				_resetSaveIndex();
+				break;
 
-	switch( payload.actionType ) {
+			case ActionTypes.RECEIVE_HERO:
+				_clear();
+				_updateAll(payload.history);
+				_resetSaveIndex();
+				break;
 
-		case ActionTypes.UNDO:
-			break;
+			case ActionTypes.ASSIGN_RCP_ENTRIES:
+				_assignRCP(payload.selections);
+				_resetSaveIndex();
+				break;
 
-		case ActionTypes.CLEAR_HERO:
-			_clear();
-			_resetSaveIndex();
-			break;
+			case ActionTypes.FINALIZE_CHARACTER_CREATION:
+				_resetSaveIndex();
+				break;
+				
+			case ActionTypes.CREATE_NEW_HERO:
+				_clear();
+				_resetSaveIndex();
+				break;
+				
+			case ActionTypes.SAVE_HERO_SUCCESS:
+				_resetSaveIndex();
+				break;
 
-		case ActionTypes.RECEIVE_HERO:
-			_clear();
-			_updateAll(payload.history);
-			_resetSaveIndex();
-			break;
+			case ActionTypes.ADD_ATTRIBUTE_POINT:
+			case ActionTypes.ADD_TALENT_POINT:
+			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+			case ActionTypes.ADD_SPELL_POINT:
+			case ActionTypes.ADD_LITURGY_POINT:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const oldValue = get(id).value;
+					const newValue = oldValue + 1;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+				}
+				break;
 
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			_resetSaveIndex();
-			break;
+			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+			case ActionTypes.REMOVE_TALENT_POINT:
+			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+			case ActionTypes.REMOVE_SPELL_POINT:
+			case ActionTypes.REMOVE_LITURGY_POINT:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const oldValue = get(id).value;
+					const newValue = oldValue - 1;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+				}
+				break;
 
-		case ActionTypes.FINALIZE_CHARACTER_CREATION:
-			_resetSaveIndex();
-			break;
-			
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			_resetSaveIndex();
-			break;
-			
-		case ActionTypes.SAVE_HERO_SUCCESS:
-			_resetSaveIndex();
-			break;
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const oldValue = get(id).value;
+					const newValue = oldValue - 1;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+				}
+				break;
 
-		case ActionTypes.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.ADD_TALENT_POINT:
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.ADD_SPELL_POINT:
-		case ActionTypes.ADD_LITURGY_POINT:
-			if (RequirementsStore.isValid()) {
-				const id = payload.id;
-				const oldValue = get(id).value;
-				const newValue = oldValue + 1;
-				const cost = RequirementsStore.getCurrentCost();
-				_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
-			}
-			break;
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const oldValue = get(id).value;
+					const newValue = oldValue - 1;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+				}
+				break;
 
-		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-		case ActionTypes.REMOVE_TALENT_POINT:
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-		case ActionTypes.REMOVE_SPELL_POINT:
-		case ActionTypes.REMOVE_LITURGY_POINT:
-			if (RequirementsStore.isValid()) {
-				const id = payload.id;
-				const oldValue = get(id).value;
-				const newValue = oldValue - 1;
-				const cost = RequirementsStore.getCurrentCost();
-				_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
-			}
-			break;
+			case ActionTypes.UPDATE_DISADV_TIER:
+			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+				if (RequirementsStore.isValid()) {
+					const { id, sid, tier } = payload;
+					let oldValue;
+					switch (id) {
+						case 'DISADV_1':
+						case 'SA_30':
+							get(id).active.some(e => {
+								if (e[0] === sid) {
+									oldValue = e[1];
+									return true;
+								}
+								return false;
+							});
+							break;
+						default:
+							oldValue = get(id).tier;
+							break;
+					}
+					const newValue = tier;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, tier: newValue, sid }, { tier: oldValue });
+				}
+				break;
 
-		default:
-			return true;
+			case ActionTypes.ADD_ADVENTURE_POINTS:
+				_add(payload.actionType, 0, { value: payload.value });
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	HistoryStore.emitChange();

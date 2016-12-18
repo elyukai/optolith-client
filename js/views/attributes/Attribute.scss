@@ -55,12 +55,6 @@
 				}
 			}
 
-			> .number-box {
-				top: 70px;
-				right: -6px;
-				width: 24px;
-			}
-
 			> .btn-round {
 				margin-top: 5px;
 			}
@@ -107,6 +101,12 @@
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: center;
+
+			.number-box {
+				top: 70px;
+				right: -6px;
+				width: 24px;
+			}
 		}
 
 		> .main {
@@ -115,11 +115,19 @@
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: center;
+
+			.number-box {
+				width: 24px;
+			}
 		}
 
 		> .calculated {
 			.value {
 				border-color: $pane-background-color;
+			}
+
+			.number-box {
+				width: 40px;
 			}
 		}
 	}

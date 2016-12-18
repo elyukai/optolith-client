@@ -59,16 +59,10 @@ export default keyMirror({
 	CLEAR_HERO: null,
 
 	// PhaseStore
-	INCREASE_PHASE: null,
-	RESET_PHASE: null,
 	FINALIZE_CHARACTER_CREATION: null,
 	
-	// CharbaseStore
-	SET_RULES: null,
-	SET_GENDER: null,
-	SET_GP_MAXIMUM: null,
-	SET_GP_FOR_ATTRIBUTES: null,
-	SET_ATTRIBUTE_MAXIMUM: null,
+	// APStore
+	ADD_ADVENTURE_POINTS: null,
 	
 	// RaceStore
 	SELECT_RACE: null,
@@ -145,6 +139,10 @@ export default keyMirror({
 	ACTIVATE_SPECIALABILITY: null,
 	DEACTIVATE_SPECIALABILITY: null,
 	UPDATE_SPECIALABILITY_TIER: null,
+
+	// InventoryStore
+	FILTER_ITEMS: null,
+	SORT_ITEMS: null,
 	
 	// GroupsStore
 	SHOW_MASTER_REQUESTED_LIST: null,

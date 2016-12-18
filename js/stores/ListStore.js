@@ -1,14 +1,13 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import CultureStore from './CultureStore';
+import HistoryStore from './HistoryStore';
 import init from '../utils/init';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
-import iccalc from '../utils/iccalc';
 
 var _list = {};
 
@@ -250,7 +249,7 @@ function _clear() {
 const ListStore = new Store();
 
 ListStore.dispatchToken = AppDispatcher.register(payload => {
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
 
 	if (payload.undoAction) {
 		switch( payload.actionType ) {
@@ -264,24 +263,17 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 				_activate(payload.options.id);
 				break;
 
-			// case ActionTypes.ACTIVATE_DISADV:
-			// case ActionTypes.ACTIVATE_SPECIALABILITY:
-			// 	if (iccalc(payload.costs)) {
-			// 		_activateDASA(payload);
-			// 	}
-			// 	break;
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				console.debug('UNDO for ' + payload.actionType + ' not yet implemented.\nFind a solution how to implement this feature. It has to be implemented for the first release.');
+				break;
 
-			// case ActionTypes.DEACTIVATE_DISADV:
-			// case ActionTypes.DEACTIVATE_SPECIALABILITY:
-			// 	_deactivateDASA(payload);
-			// 	break;
-
-			// case ActionTypes.UPDATE_DISADV_TIER:
-			// case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-			// 	if (iccalc(payload.costs)) {
-			// 		_updateTier(payload.id, payload.tier, payload.sid);
-			// 	}
-			// 	break;
+			case ActionTypes.UPDATE_DISADV_TIER:
+			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+				_updateTier(payload.options.id, payload.prevState.tier, payload.options.sid);
+				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.ADD_TALENT_POINT:
@@ -338,19 +330,21 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
-				if (iccalc(payload.costs)) {
+				if (RequirementsStore.isValid()) {
 					_activateDASA(payload);
 				}
 				break;
 
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				_deactivateDASA(payload);
+				if (RequirementsStore.isValid()) {
+					_deactivateDASA(payload);
+				}
 				break;
 
 			case ActionTypes.UPDATE_DISADV_TIER:
 			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-				if (iccalc(payload.costs)) {
+				if (RequirementsStore.isValid()) {
 					_updateTier(payload.id, payload.tier, payload.sid);
 				}
 				break;
@@ -388,7 +382,29 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 
 export default ListStore;
 
-export const get = id => _list[id];
+export const get = id => {
+	switch (id) {
+		case 'COU':
+			return _list['ATTR_1'];
+		case 'SGC':
+			return _list['ATTR_2'];
+		case 'INT':
+			return _list['ATTR_3'];
+		case 'CHA':
+			return _list['ATTR_4'];
+		case 'DEX':
+			return _list['ATTR_5'];
+		case 'AGI':
+			return _list['ATTR_6'];
+		case 'CON':
+			return _list['ATTR_7'];
+		case 'STR':
+			return _list['ATTR_8'];
+
+		default: 
+			return _list[id];
+	}
+};
 
 export const getValue = id => get(id).value;
 
@@ -441,34 +457,34 @@ export const getPrimaryAttrID = type => {
 	if (type === 1) {
 		switch (get('SA_86').sid) {
 			case 1:
-				attr = 'ATTR_2';
+				attr = 'SGC';
 				break;
 			case 2:
-				attr = 'ATTR_4';
+				attr = 'CHA';
 				break;
 			case 3:
-				attr = 'ATTR_3';
+				attr = 'INT';
 				break;
 		}
 	} else if (type === 2) {
 		switch (get('SA_102').sid) {
 			case 1:
-				attr = 'ATTR_2';
+				attr = 'SGC';
 				break;
 			case 2:
-				attr = 'ATTR_1';
+				attr = 'COU';
 				break;
 			case 3:
-				attr = 'ATTR_1';
+				attr = 'COU';
 				break;
 			case 4:
-				attr = 'ATTR_2';
+				attr = 'SGC';
 				break;
 			case 5:
-				attr = 'ATTR_3';
+				attr = 'INT';
 				break;
 			case 6:
-				attr = 'ATTR_3';
+				attr = 'INT';
 				break;
 		}
 	}

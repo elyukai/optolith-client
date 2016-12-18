@@ -1,5 +1,6 @@
 import Dependent from './Dependent';
 import { get } from '../../stores/ListStore';
+import validate from '../validate';
 
 export default class Activatable extends Dependent {
 	
@@ -20,6 +21,14 @@ export default class Activatable extends Dependent {
 
 	get isMultiselect() {
 		return Array.isArray(this.active);
+	}
+
+	get isActivatable() {
+		return validate(this.reqs);
+	}
+
+	get isDeactivatable() {
+		return this.dependencies.length === 0;
 	}
 
 	activate({ sel, sel2, input, tier }) {

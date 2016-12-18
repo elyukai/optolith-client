@@ -62,13 +62,13 @@
 
 	var _Router2 = _interopRequireDefault(_Router);
 
-	var _WebAPIUtils = __webpack_require__(265);
+	var _WebAPIUtils = __webpack_require__(279);
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	__webpack_require__(497);
 
-	__webpack_require__(490);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// if (localStorage['lastUrl'] !== '') {
 	// 	setTimeout(function() {
@@ -21774,19 +21774,19 @@
 
 	var _Route2 = _interopRequireDefault(_Route);
 
-	var _TabStore = __webpack_require__(480);
+	var _TabStore = __webpack_require__(486);
 
 	var _TabStore2 = _interopRequireDefault(_TabStore);
 
-	var _TitleBar = __webpack_require__(481);
+	var _TitleBar = __webpack_require__(487);
 
 	var _TitleBar2 = _interopRequireDefault(_TitleBar);
 
-	var _Loader = __webpack_require__(488);
+	var _Loader = __webpack_require__(495);
 
 	var _Loader2 = _interopRequireDefault(_Loader);
 
-	var _WaitStore = __webpack_require__(489);
+	var _WaitStore = __webpack_require__(496);
 
 	var _WaitStore2 = _interopRequireDefault(_WaitStore);
 
@@ -21853,35 +21853,35 @@
 
 	var _Account2 = _interopRequireDefault(_Account);
 
-	var _AttributesController = __webpack_require__(367);
+	var _AttributesController = __webpack_require__(371);
 
 	var _AttributesController2 = _interopRequireDefault(_AttributesController);
 
-	var _DisAdv = __webpack_require__(376);
+	var _DisAdv = __webpack_require__(380);
 
 	var _DisAdv2 = _interopRequireDefault(_DisAdv);
 
-	var _Grouplist = __webpack_require__(391);
+	var _Grouplist = __webpack_require__(394);
 
 	var _Grouplist2 = _interopRequireDefault(_Grouplist);
 
-	var _Herolist = __webpack_require__(393);
+	var _Herolist = __webpack_require__(396);
 
 	var _Herolist2 = _interopRequireDefault(_Herolist);
 
-	var _Home = __webpack_require__(402);
+	var _Home = __webpack_require__(405);
 
 	var _Home2 = _interopRequireDefault(_Home);
 
-	var _Items = __webpack_require__(404);
+	var _Items = __webpack_require__(407);
 
 	var _Items2 = _interopRequireDefault(_Items);
 
-	var _Master = __webpack_require__(407);
+	var _Master = __webpack_require__(414);
 
 	var _Master2 = _interopRequireDefault(_Master);
 
-	var _Profile = __webpack_require__(421);
+	var _Profile = __webpack_require__(428);
 
 	var _Profile2 = _interopRequireDefault(_Profile);
 
@@ -21889,11 +21889,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RCP = __webpack_require__(447);
+	var _RCP = __webpack_require__(454);
 
 	var _RCP2 = _interopRequireDefault(_RCP);
 
-	var _Skills = __webpack_require__(465);
+	var _Skills = __webpack_require__(471);
 
 	var _Skills2 = _interopRequireDefault(_Skills);
 
@@ -23656,15 +23656,15 @@
 
 	var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-	var _AccountChangeName = __webpack_require__(362);
+	var _AccountChangeName = __webpack_require__(366);
 
 	var _AccountChangeName2 = _interopRequireDefault(_AccountChangeName);
 
-	var _AccountChangePassword = __webpack_require__(366);
+	var _AccountChangePassword = __webpack_require__(370);
 
 	var _AccountChangePassword2 = _interopRequireDefault(_AccountChangePassword);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
@@ -23726,7 +23726,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _alert = __webpack_require__(492);
+	var _alert = __webpack_require__(265);
 
 	var _alert2 = _interopRequireDefault(_alert);
 
@@ -23734,19 +23734,19 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _createOverlay = __webpack_require__(323);
+	var _createOverlay = __webpack_require__(266);
 
 	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-	var _ForgotPassword = __webpack_require__(358);
+	var _ForgotPassword = __webpack_require__(272);
 
 	var _ForgotPassword2 = _interopRequireDefault(_ForgotPassword);
 
-	var _ForgotUsername = __webpack_require__(356);
+	var _ForgotUsername = __webpack_require__(275);
 
 	var _ForgotUsername2 = _interopRequireDefault(_ForgotUsername);
 
-	var _Login = __webpack_require__(359);
+	var _Login = __webpack_require__(276);
 
 	var _Login2 = _interopRequireDefault(_Login);
 
@@ -23754,15 +23754,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Register = __webpack_require__(360);
+	var _Register = __webpack_require__(277);
 
 	var _Register2 = _interopRequireDefault(_Register);
 
-	var _ResendActivation = __webpack_require__(361);
+	var _ResendActivation = __webpack_require__(278);
 
 	var _ResendActivation2 = _interopRequireDefault(_ResendActivation);
 
-	var _WebAPIUtils = __webpack_require__(265);
+	var _WebAPIUtils = __webpack_require__(279);
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
@@ -25047,16 +25047,10 @@
 		CLEAR_HERO: null,
 
 		// PhaseStore
-		INCREASE_PHASE: null,
-		RESET_PHASE: null,
 		FINALIZE_CHARACTER_CREATION: null,
 
-		// CharbaseStore
-		SET_RULES: null,
-		SET_GENDER: null,
-		SET_GP_MAXIMUM: null,
-		SET_GP_FOR_ATTRIBUTES: null,
-		SET_ATTRIBUTE_MAXIMUM: null,
+		// APStore
+		ADD_ADVENTURE_POINTS: null,
 
 		// RaceStore
 		SELECT_RACE: null,
@@ -25133,6 +25127,10 @@
 		ACTIVATE_SPECIALABILITY: null,
 		DEACTIVATE_SPECIALABILITY: null,
 		UPDATE_SPECIALABILITY_TIER: null,
+
+		// InventoryStore
+		FILTER_ITEMS: null,
+		SORT_ITEMS: null,
 
 		// GroupsStore
 		SHOW_MASTER_REQUESTED_LIST: null,
@@ -25234,21 +25232,1048 @@
 		value: true
 	});
 
+	exports.default = function (title, content, buttons) {
+		(0, _createOverlay2.default)(_react2.default.createElement(
+			_Dialog2.default,
+			{
+				title: title,
+				buttons: buttons
+			},
+			content
+		));
+	};
+
+	var _createOverlay = __webpack_require__(266);
+
+	var _createOverlay2 = _interopRequireDefault(_createOverlay);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.close = close;
+	exports.createDialogNode = createDialogNode;
+
+	exports.default = function (element) {
+		let node = createDialogNode();
+		_reactDom2.default.render(_react2.default.cloneElement(element, { node }), node);
+		return true;
+	};
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(36);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function close(node) {
+		_reactDom2.default.unmountComponentAtNode(node);
+		document.body.removeChild(node);
+		return true;
+	}
+
+	function createDialogNode() {
+		let node = document.createElement('div');
+		document.body.appendChild(node);
+		return node;
+	}
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _objectWithoutProperties2 = __webpack_require__(220);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _DialogButtons = __webpack_require__(268);
+
+	var _DialogButtons2 = _interopRequireDefault(_DialogButtons);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(223);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Dialog extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.close = () => (0, _createOverlay.close)(this.props.node), this.clickButton = func => {
+				if (func) func();
+				this.close(this.props.node);
+			}, _temp;
+		}
+
+		render() {
+			var _props = this.props,
+			    _props$buttons = _props.buttons,
+			    buttons = _props$buttons === undefined ? [] : _props$buttons,
+			    title = _props.title,
+			    other = (0, _objectWithoutProperties3.default)(_props, ['buttons', 'title']);
+
+
+			other.className = (0, _classnames2.default)('modal-backdrop', other.className);
+			delete other.node;
+
+			var contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
+
+			return _react2.default.createElement(
+				'div',
+				other,
+				_react2.default.createElement(
+					'div',
+					{ className: 'modal-container' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'modal-close', onClick: this.close },
+						_react2.default.createElement(
+							'div',
+							null,
+							'\uE900'
+						)
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'modal-header' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal-header-inner' },
+							title
+						)
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'modal-content' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'modal-content-inner', style: contentStyle },
+							this.props.children
+						)
+					),
+					_react2.default.createElement(_DialogButtons2.default, { list: buttons, onClickDefault: this.clickButton })
+				)
+			);
+		}
+	}
+	exports.default = Dialog;
+	Dialog.propTypes = {
+		buttons: _react.PropTypes.array,
+		className: _react.PropTypes.any,
+		id: _react.PropTypes.string,
+		node: _react.PropTypes.any,
+		title: _react.PropTypes.any
+	};
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends2 = __webpack_require__(182);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	var _BorderButton = __webpack_require__(269);
+
+	var _BorderButton2 = _interopRequireDefault(_BorderButton);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class DialogButtons extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const list = _props.list,
+			      onClickDefault = _props.onClickDefault;
+
+
+			let buttons = Array.isArray(list) && list.length > 0 ? list : [];
+
+			buttons = buttons.map((e, i) => {
+				e.onClick = onClickDefault.bind(null, e.onClick);
+				return _react2.default.createElement(_BorderButton2.default, (0, _extends3.default)({}, e, { key: 'popup-button-' + i }));
+			});
+
+			return _react2.default.createElement(
+				'div',
+				{ className: 'dialog-buttons' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'dialog-buttons-inner' },
+					buttons
+				)
+			);
+		}
+	}
+	exports.default = DialogButtons;
+	DialogButtons.propTypes = {
+		list: _react.PropTypes.array.isRequired,
+		onClickDefault: _react.PropTypes.func.isRequired
+	};
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _objectWithoutProperties2 = __webpack_require__(220);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _Button = __webpack_require__(270);
+
+	var _Button2 = _interopRequireDefault(_Button);
+
+	var _Text = __webpack_require__(271);
+
+	var _Text2 = _interopRequireDefault(_Text);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class BorderButton extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const children = _props.children,
+			      label = _props.label,
+			      other = (0, _objectWithoutProperties3.default)(_props, ['children', 'label']);
+
+
+			return _react2.default.createElement(
+				_Button2.default,
+				other,
+				_react2.default.createElement(
+					_Text2.default,
+					null,
+					label || children
+				)
+			);
+		}
+	}
+	exports.default = BorderButton;
+	BorderButton.propTypes = {
+		label: _react.PropTypes.string
+	};
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends2 = __webpack_require__(182);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	var _objectWithoutProperties2 = __webpack_require__(220);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(223);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Button extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const className = _props.className,
+			      primary = _props.primary,
+			      fullWidth = _props.fullWidth,
+			      disabled = _props.disabled,
+			      round = _props.round,
+			      children = _props.children,
+			      onClick = _props.onClick,
+			      other = (0, _objectWithoutProperties3.default)(_props, ['className', 'primary', 'fullWidth', 'disabled', 'round', 'children', 'onClick']);
+
+
+			const allClassNames = (0, _classnames2.default)({
+				'btn': true,
+				'btn-round': round,
+				'btn-text': !round,
+				'btn-primary': primary,
+				'fullWidth': fullWidth,
+				'disabled': disabled,
+				[className]: className
+			});
+
+			return _react2.default.createElement(
+				'div',
+				(0, _extends3.default)({}, other, { className: allClassNames, onClick: disabled ? undefined : onClick }),
+				children
+			);
+		}
+	}
+	exports.default = Button;
+	Button.propTypes = {
+		className: _react.PropTypes.any,
+		disabled: _react.PropTypes.bool,
+		fullWidth: _react.PropTypes.bool,
+		onClick: _react.PropTypes.func,
+		primary: _react.PropTypes.bool,
+		round: _react.PropTypes.bool
+	};
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _objectWithoutProperties2 = __webpack_require__(220);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Text extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const children = _props.children,
+			      other = (0, _objectWithoutProperties3.default)(_props, ['children']);
+
+
+			return _react2.default.createElement(
+				'div',
+				other,
+				children
+			);
+		}
+	}
+	exports.default = Text;
+	Text.defaultProps = {
+		className: 'text'
+	};
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AccountActions = __webpack_require__(225);
+
+	var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class ForgotPassword extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				email: ''
+			}, this.forgotPassword = () => _AccountActions2.default.forgotPassword(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
+				if (event.charCode === 13 && this.state.email !== '') {
+					this.forgotPassword();
+					(0, _createOverlay.close)(this.props.node);
+				}
+			}, _temp;
+		}
+
+		render() {
+			const email = this.state.email;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'forgotpassword', title: 'Passwort vergessen', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.forgotPassword,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Registrierte E-Mail-Adresse',
+					value: email,
+					onChange: this._onChange,
+					onKeyPress: this._onEnter,
+					type: 'email',
+					fullWidth: true
+				})
+			);
+		}
+	}
+	exports.default = ForgotPassword;
+	ForgotPassword.propTypes = {
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Label = __webpack_require__(274);
+
+	var _Label2 = _interopRequireDefault(_Label);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(36);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _classnames = __webpack_require__(223);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class TextField extends _react.Component {
+
+		componentDidMount() {
+			if (this.props.autoFocus) _reactDom2.default.findDOMNode(this.refs.inputElement).focus();
+		}
+
+		render() {
+			var _props = this.props;
+			let className = _props.className,
+			    countCurrent = _props.countCurrent,
+			    countMax = _props.countMax,
+			    disabled = _props.disabled,
+			    fullWidth = _props.fullWidth,
+			    hint = _props.hint,
+			    label = _props.label,
+			    onChange = _props.onChange,
+			    onKeyDown = _props.onKeyDown,
+			    type = _props.type,
+			    value = _props.value;
+
+
+			className = (0, _classnames2.default)('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
+
+			const hintElement = hint ? _react2.default.createElement(
+				'div',
+				{ className: (0, _classnames2.default)('textfield-hint', value && 'hide') },
+				hint
+			) : null;
+
+			// const inputElement = this.props.multiLine ? (
+			// 	<TextareaAutosize
+			// 		defaultValue={value}
+			// 		onChange={onChange}
+			// 		onKeyPress={onKeyDown}
+			// 	/>
+			// ) : (
+			const inputElement = _react2.default.createElement('input', {
+				type: type,
+				value: value,
+				onChange: onChange,
+				onKeyPress: onKeyDown,
+				ref: 'inputElement'
+			});
+
+			const counterTextElement = countMax ? _react2.default.createElement(
+				'div',
+				null,
+				countCurrent,
+				' / ',
+				countMax
+			) : null;
+
+			return _react2.default.createElement(
+				'div',
+				{ className: className },
+				hintElement,
+				_react2.default.createElement(_Label2.default, { text: label }),
+				inputElement,
+				counterTextElement
+			);
+		}
+	}
+	exports.default = TextField;
+	// import TextareaAutosize from 'react-textarea-autosize';
+
+	TextField.propTypes = {
+		autoFocus: _react.PropTypes.bool,
+		className: _react.PropTypes.any,
+		countCurrent: _react.PropTypes.any,
+		countMax: _react.PropTypes.any,
+		disabled: _react.PropTypes.bool,
+		fullWidth: _react.PropTypes.bool,
+		hint: _react.PropTypes.string,
+		label: _react.PropTypes.string,
+		multiLine: _react.PropTypes.bool,
+		onChange: _react.PropTypes.func,
+		onKeyDown: _react.PropTypes.func,
+		type: _react.PropTypes.string,
+		value: _react.PropTypes.any
+	};
+	TextField.defaultProps = {
+		multiLine: false,
+		type: 'text'
+	};
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Label extends _react.Component {
+
+		render() {
+			let text = this.props.text;
+
+
+			return text ? _react2.default.createElement(
+				'label',
+				null,
+				text
+			) : null;
+		}
+	}
+	exports.default = Label;
+	Label.propTypes = {
+		text: _react.PropTypes.string
+	};
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AccountActions = __webpack_require__(225);
+
+	var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class ForgotUsername extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				email: ''
+			}, this.forgotUsername = () => _AccountActions2.default.forgotUsername(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
+				if (event.charCode === 13 && this.state.email !== '') {
+					this.forgotUsername();
+					(0, _createOverlay.close)(this.props.node);
+				}
+			}, _temp;
+		}
+
+		render() {
+			const email = this.state.email;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'forgotusername', title: 'Benutzername vergessen', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.forgotUsername,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Registrierte E-Mail-Adresse',
+					value: email,
+					onChange: this._onChange,
+					onKeyPress: this._onEnter,
+					type: 'email',
+					fullWidth: true
+				})
+			);
+		}
+	}
+	exports.default = ForgotUsername;
+	ForgotUsername.propTypes = {
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AccountActions = __webpack_require__(225);
+
+	var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Login extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				username: '',
+				password: ''
+			}, this.login = () => _AccountActions2.default.login(this.state.username, this.state.password), this.forgotUsername = () => {
+				_AccountActions2.default.showForgotName();(0, _createOverlay.close)(this.props.node);
+			}, this.forgotPassword = () => {
+				_AccountActions2.default.showForgotPassword();(0, _createOverlay.close)(this.props.node);
+			}, this.register = () => _AccountActions2.default.showRegister(), this.resendActivation = () => {
+				_AccountActions2.default.showResend();(0, _createOverlay.close)(this.props.node);
+			}, this._onChange = (option, event) => this.setState({ [option]: event.target.value }), this._onEnter = event => {
+				if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
+					this.login();
+					(0, _createOverlay.close)(this.props.node);
+				}
+			}, _temp;
+		}
+
+		render() {
+			var _state = this.state;
+			const username = _state.username,
+			      password = _state.password;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'login', title: 'Anmelden', node: this.props.node, buttons: [{
+						label: 'Anmelden',
+						onClick: this.login,
+						primary: true,
+						disabled: username === '' || password === ''
+					}, {
+						label: 'Registrieren',
+						onClick: this.register
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Benutzername',
+					value: username,
+					onChange: this._onChange.bind(null, 'username'),
+					onKeyPress: this._onEnter,
+					fullWidth: true
+				}),
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Passwort',
+					value: password,
+					onChange: this._onChange.bind(null, 'password'),
+					onKeyPress: this._onEnter,
+					type: 'password',
+					fullWidth: true
+				}),
+				_react2.default.createElement(
+					'p',
+					null,
+					_react2.default.createElement(
+						'span',
+						{ className: 'link', onClick: this.forgotUsername },
+						'Benutzername vergessen'
+					),
+					_react2.default.createElement(
+						'span',
+						{ className: 'link', onClick: this.forgotPassword },
+						'Passwort vergessen'
+					),
+					_react2.default.createElement(
+						'span',
+						{ className: 'link', onClick: this.resendActivation },
+						'Aktivierungs-E-Mail nicht erhalten?'
+					)
+				)
+			);
+		}
+	}
+	exports.default = Login;
+	Login.propTypes = {
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AccountActions = __webpack_require__(225);
+
+	var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _validateEmail(email) {
+		var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		return regex.test(email);
+	}
+
+	class Register extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				email: '',
+				email2: '',
+				username: '',
+				password: '',
+				password2: ''
+			}, this.register = () => _AccountActions2.default.register(this.state.email, this.state.username, this.state.password), this.back = () => _AccountActions2.default.showLogin(), this._onChange = (option, event) => this.setState({ [option]: event.target.value }), this._onEnter = event => {
+				var _state = this.state;
+				let email = _state.email,
+				    email2 = _state.email2,
+				    username = _state.username,
+				    password = _state.password,
+				    password2 = _state.password2;
+
+				if (event.charCode === 13 && email !== '' && _validateEmail(email) && email === email2 && username !== '' && username.length >= 3 && username.length <= 20 && password !== '' && password.length >= 5 && password.length <= 20 && password === password2) {
+					this.register();
+					(0, _createOverlay.close)(this.props.node);
+				}
+			}, _temp;
+		}
+
+		render() {
+			var _state2 = this.state;
+			const email = _state2.email,
+			      email2 = _state2.email2,
+			      username = _state2.username,
+			      password = _state2.password,
+			      password2 = _state2.password2;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'login', title: 'Registrieren', node: this.props.node, buttons: [{
+						label: 'Registrieren',
+						onClick: this.register,
+						primary: true,
+						disabled: email === '' || !_validateEmail(email) || email !== email2 || username === '' || username.length < 3 || username.length > 20 || password === '' || password.length < 5 || password.length > 20 || password !== password2
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'E-Mail-Adresse',
+					value: email,
+					onChange: this._onChange.bind(null, 'email'),
+					onKeyPress: this._onEnter,
+					fullWidth: true,
+					type: 'email'
+				}),
+				email !== '' && !_validateEmail(email) ? _react2.default.createElement(
+					'p',
+					null,
+					'Es wurde keine g\xFCltige Email-Adresse eingegeben!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'E-Mail-Adresse best\xE4tigen',
+					value: email2,
+					onChange: this._onChange.bind(null, 'email2'),
+					onKeyPress: this._onEnter,
+					fullWidth: true,
+					type: 'email'
+				}),
+				email !== email2 && email2 !== '' ? _react2.default.createElement(
+					'p',
+					null,
+					'Die E-Mail-Adressen sind nicht identisch!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Benutzername',
+					value: username,
+					onChange: this._onChange.bind(null, 'username'),
+					onKeyPress: this._onEnter,
+					fullWidth: true
+				}),
+				username.length > 0 && (username.length < 3 || username.length > 20) ? _react2.default.createElement(
+					'p',
+					null,
+					'Der Benutzername muss zwischen 3 und 20 Zeichen lang sein!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Passwort',
+					value: password,
+					onChange: this._onChange.bind(null, 'password'),
+					onKeyPress: this._onEnter,
+					fullWidth: true,
+					type: 'password'
+				}),
+				password.length > 0 && (password.length < 5 || password.length > 20) ? _react2.default.createElement(
+					'p',
+					null,
+					'Das Passwort muss zwischen 5 und 20 Zeichen lang sein!'
+				) : null,
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Passwort best\xE4tigen',
+					value: password2,
+					onChange: this._onChange.bind(null, 'password2'),
+					onKeyPress: this._onEnter,
+					fullWidth: true,
+					type: 'password'
+				}),
+				password !== password2 && password2 !== '' ? _react2.default.createElement(
+					'p',
+					null,
+					'Die Passw\xF6rter sind nicht identisch!'
+				) : null
+			);
+		}
+	}
+	exports.default = Register;
+	Register.propTypes = {
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AccountActions = __webpack_require__(225);
+
+	var _AccountActions2 = _interopRequireDefault(_AccountActions);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	var _createOverlay = __webpack_require__(266);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class ResendActivation extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				email: ''
+			}, this.resendActivation = () => _AccountActions2.default.resendActivation(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
+				if (event.charCode === 13 && this.state.email !== '') {
+					this.resendActivation();
+					(0, _createOverlay.close)(this.props.node);
+				}
+			}, _temp;
+		}
+
+		render() {
+			const email = this.state.email;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'resendactivation', title: 'Aktivierungslink erneut senden', node: this.props.node, buttons: [{
+						label: 'E-Mail anfordern',
+						onClick: this.resendActivation,
+						primary: true,
+						disabled: email === ''
+					}, {
+						label: 'Zurück',
+						onClick: this.back
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Registrierte E-Mail-Adresse',
+					value: email,
+					onChange: this._onChange,
+					onKeyPress: this._onEnter,
+					type: 'email',
+					fullWidth: true
+				})
+			);
+		}
+	}
+	exports.default = ResendActivation;
+	ResendActivation.propTypes = {
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
 	var _asyncToGenerator2 = __webpack_require__(226);
 
 	var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-	var _AuthStore = __webpack_require__(266);
+	var _AuthStore = __webpack_require__(280);
 
 	var _AuthStore2 = _interopRequireDefault(_AuthStore);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _request = __webpack_require__(350);
+	var _request = __webpack_require__(360);
 
-	var _ServerActions = __webpack_require__(352);
+	var _ServerActions = __webpack_require__(362);
 
 	var _ServerActions2 = _interopRequireDefault(_ServerActions);
 
@@ -25595,7 +26620,7 @@
 	exports.default = WebAPIUtils;
 
 /***/ },
-/* 266 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25608,7 +26633,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -25701,7 +26726,7 @@
 	exports.default = AuthStore;
 
 /***/ },
-/* 267 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25710,7 +26735,7 @@
 		value: true
 	});
 
-	var _events = __webpack_require__(268);
+	var _events = __webpack_require__(282);
 
 	const CHANGE_EVENT = 'change';
 
@@ -25731,7 +26756,7 @@
 	exports.default = Store;
 
 /***/ },
-/* 268 */
+/* 282 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -26039,7 +27064,7 @@
 
 
 /***/ },
-/* 269 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26052,7 +27077,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -26060,9 +27085,9 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -26381,7 +27406,7 @@
 	exports.default = ProfileStore;
 
 /***/ },
-/* 270 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26390,7 +27415,7 @@
 		value: true
 	});
 
-	var _Activatable = __webpack_require__(271);
+	var _Activatable = __webpack_require__(285);
 
 	Object.defineProperty(exports, 'Activatable', {
 		enumerable: true,
@@ -26399,7 +27424,7 @@
 		}
 	});
 
-	var _Advantage = __webpack_require__(330);
+	var _Advantage = __webpack_require__(340);
 
 	Object.defineProperty(exports, 'Advantage', {
 		enumerable: true,
@@ -26408,7 +27433,7 @@
 		}
 	});
 
-	var _Attribute = __webpack_require__(331);
+	var _Attribute = __webpack_require__(341);
 
 	Object.defineProperty(exports, 'Attribute', {
 		enumerable: true,
@@ -26417,7 +27442,7 @@
 		}
 	});
 
-	var _CombatTechnique = __webpack_require__(334);
+	var _CombatTechnique = __webpack_require__(344);
 
 	Object.defineProperty(exports, 'CombatTechnique', {
 		enumerable: true,
@@ -26426,7 +27451,7 @@
 		}
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	Object.defineProperty(exports, 'Core', {
 		enumerable: true,
@@ -26435,7 +27460,7 @@
 		}
 	});
 
-	var _Culture = __webpack_require__(336);
+	var _Culture = __webpack_require__(346);
 
 	Object.defineProperty(exports, 'Culture', {
 		enumerable: true,
@@ -26444,7 +27469,7 @@
 		}
 	});
 
-	var _Dependent = __webpack_require__(286);
+	var _Dependent = __webpack_require__(300);
 
 	Object.defineProperty(exports, 'Dependent', {
 		enumerable: true,
@@ -26453,7 +27478,7 @@
 		}
 	});
 
-	var _Disadvantage = __webpack_require__(337);
+	var _Disadvantage = __webpack_require__(347);
 
 	Object.defineProperty(exports, 'Disadvantage', {
 		enumerable: true,
@@ -26462,7 +27487,7 @@
 		}
 	});
 
-	var _Increasable = __webpack_require__(332);
+	var _Increasable = __webpack_require__(342);
 
 	Object.defineProperty(exports, 'Increasable', {
 		enumerable: true,
@@ -26471,7 +27496,7 @@
 		}
 	});
 
-	var _Item = __webpack_require__(338);
+	var _Item = __webpack_require__(348);
 
 	Object.defineProperty(exports, 'Item', {
 		enumerable: true,
@@ -26480,7 +27505,7 @@
 		}
 	});
 
-	var _Liturgy = __webpack_require__(339);
+	var _Liturgy = __webpack_require__(349);
 
 	Object.defineProperty(exports, 'Liturgy', {
 		enumerable: true,
@@ -26489,7 +27514,7 @@
 		}
 	});
 
-	var _Profession = __webpack_require__(342);
+	var _Profession = __webpack_require__(352);
 
 	Object.defineProperty(exports, 'Profession', {
 		enumerable: true,
@@ -26498,7 +27523,7 @@
 		}
 	});
 
-	var _ProfessionVariant = __webpack_require__(343);
+	var _ProfessionVariant = __webpack_require__(353);
 
 	Object.defineProperty(exports, 'ProfessionVariant', {
 		enumerable: true,
@@ -26507,7 +27532,7 @@
 		}
 	});
 
-	var _Race = __webpack_require__(344);
+	var _Race = __webpack_require__(354);
 
 	Object.defineProperty(exports, 'Race', {
 		enumerable: true,
@@ -26516,7 +27541,7 @@
 		}
 	});
 
-	var _Skill = __webpack_require__(340);
+	var _Skill = __webpack_require__(350);
 
 	Object.defineProperty(exports, 'Skill', {
 		enumerable: true,
@@ -26525,7 +27550,7 @@
 		}
 	});
 
-	var _SpecialAbility = __webpack_require__(346);
+	var _SpecialAbility = __webpack_require__(356);
 
 	Object.defineProperty(exports, 'SpecialAbility', {
 		enumerable: true,
@@ -26534,7 +27559,7 @@
 		}
 	});
 
-	var _Spell = __webpack_require__(347);
+	var _Spell = __webpack_require__(357);
 
 	Object.defineProperty(exports, 'Spell', {
 		enumerable: true,
@@ -26543,7 +27568,7 @@
 		}
 	});
 
-	var _Talent = __webpack_require__(349);
+	var _Talent = __webpack_require__(359);
 
 	Object.defineProperty(exports, 'Talent', {
 		enumerable: true,
@@ -26564,7 +27589,7 @@
 	};
 
 /***/ },
-/* 271 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26573,23 +27598,27 @@
 		value: true
 	});
 
-	var _isNan = __webpack_require__(272);
+	var _isNan = __webpack_require__(286);
 
 	var _isNan2 = _interopRequireDefault(_isNan);
 
-	var _slicedToArray2 = __webpack_require__(275);
+	var _slicedToArray2 = __webpack_require__(289);
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
-	var _isInteger = __webpack_require__(282);
+	var _isInteger = __webpack_require__(296);
 
 	var _isInteger2 = _interopRequireDefault(_isInteger);
 
-	var _Dependent = __webpack_require__(286);
+	var _Dependent = __webpack_require__(300);
 
 	var _Dependent2 = _interopRequireDefault(_Dependent);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
+
+	var _validate = __webpack_require__(339);
+
+	var _validate2 = _interopRequireDefault(_validate);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -26619,6 +27648,14 @@
 
 		get isMultiselect() {
 			return Array.isArray(this.active);
+		}
+
+		get isActivatable() {
+			return (0, _validate2.default)(this.reqs);
+		}
+
+		get isDeactivatable() {
+			return this.dependencies.length === 0;
 		}
 
 		activate(_ref) {
@@ -26861,20 +27898,20 @@
 	exports.default = Activatable;
 
 /***/ },
-/* 272 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(273), __esModule: true };
+	module.exports = { "default": __webpack_require__(287), __esModule: true };
 
 /***/ },
-/* 273 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(274);
+	__webpack_require__(288);
 	module.exports = __webpack_require__(188).Number.isNaN;
 
 /***/ },
-/* 274 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.4 Number.isNaN(number)
@@ -26887,18 +27924,18 @@
 	});
 
 /***/ },
-/* 275 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	exports.__esModule = true;
 
-	var _isIterable2 = __webpack_require__(276);
+	var _isIterable2 = __webpack_require__(290);
 
 	var _isIterable3 = _interopRequireDefault(_isIterable2);
 
-	var _getIterator2 = __webpack_require__(279);
+	var _getIterator2 = __webpack_require__(293);
 
 	var _getIterator3 = _interopRequireDefault(_getIterator2);
 
@@ -26943,21 +27980,21 @@
 	}();
 
 /***/ },
-/* 276 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(277), __esModule: true };
+	module.exports = { "default": __webpack_require__(291), __esModule: true };
 
 /***/ },
-/* 277 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(243);
 	__webpack_require__(230);
-	module.exports = __webpack_require__(278);
+	module.exports = __webpack_require__(292);
 
 /***/ },
-/* 278 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var classof   = __webpack_require__(248)
@@ -26971,21 +28008,21 @@
 	};
 
 /***/ },
-/* 279 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(280), __esModule: true };
+	module.exports = { "default": __webpack_require__(294), __esModule: true };
 
 /***/ },
-/* 280 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(243);
 	__webpack_require__(230);
-	module.exports = __webpack_require__(281);
+	module.exports = __webpack_require__(295);
 
 /***/ },
-/* 281 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var anObject = __webpack_require__(193)
@@ -26997,29 +28034,29 @@
 	};
 
 /***/ },
-/* 282 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(283), __esModule: true };
+	module.exports = { "default": __webpack_require__(297), __esModule: true };
 
 /***/ },
-/* 283 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(284);
+	__webpack_require__(298);
 	module.exports = __webpack_require__(188).Number.isInteger;
 
 /***/ },
-/* 284 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.3 Number.isInteger(number)
 	var $export = __webpack_require__(186);
 
-	$export($export.S, 'Number', {isInteger: __webpack_require__(285)});
+	$export($export.S, 'Number', {isInteger: __webpack_require__(299)});
 
 /***/ },
-/* 285 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 20.1.2.3 Number.isInteger(number)
@@ -27030,7 +28067,7 @@
 	};
 
 /***/ },
-/* 286 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27039,7 +28076,7 @@
 		value: true
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
@@ -27069,7 +28106,7 @@
 	exports.default = Dependent;
 
 /***/ },
-/* 287 */
+/* 301 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -27090,7 +28127,7 @@
 	exports.default = Core;
 
 /***/ },
-/* 288 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27100,27 +28137,27 @@
 	});
 	exports.getPrimaryAttr = exports.getPrimaryAttrID = exports.getAllByCategoryGroup = exports.getAllByCategory = exports.getObjByCategoryGroup = exports.getObjByCategory = exports.getValue = exports.get = undefined;
 
-	var _isInteger = __webpack_require__(282);
+	var _isInteger = __webpack_require__(296);
 
 	var _isInteger2 = _interopRequireDefault(_isInteger);
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _toArray2 = __webpack_require__(293);
+	var _toArray2 = __webpack_require__(307);
 
 	var _toArray3 = _interopRequireDefault(_toArray2);
 
-	var _set = __webpack_require__(294);
+	var _set = __webpack_require__(308);
 
 	var _set2 = _interopRequireDefault(_set);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _slicedToArray2 = __webpack_require__(275);
+	var _slicedToArray2 = __webpack_require__(289);
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
@@ -27132,45 +28169,41 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _init2 = __webpack_require__(313);
+	var _HistoryStore = __webpack_require__(327);
+
+	var _HistoryStore2 = _interopRequireDefault(_HistoryStore);
+
+	var _init2 = __webpack_require__(338);
 
 	var _init3 = _interopRequireDefault(_init2);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _RequirementsStore = __webpack_require__(317);
+	var _RequirementsStore = __webpack_require__(330);
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
 	var _ActionTypes = __webpack_require__(263);
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _Categories = __webpack_require__(312);
-
-	var _Categories2 = _interopRequireDefault(_Categories);
-
-	var _iccalc = __webpack_require__(319);
-
-	var _iccalc2 = _interopRequireDefault(_iccalc);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27457,7 +28490,7 @@
 	const ListStore = new _Store2.default();
 
 	ListStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
+		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken, _HistoryStore2.default.dispatchToken]);
 
 		if (payload.undoAction) {
 			switch (payload.actionType) {
@@ -27471,24 +28504,17 @@
 					_activate(payload.options.id);
 					break;
 
-				// case ActionTypes.ACTIVATE_DISADV:
-				// case ActionTypes.ACTIVATE_SPECIALABILITY:
-				// 	if (iccalc(payload.costs)) {
-				// 		_activateDASA(payload);
-				// 	}
-				// 	break;
+				case _ActionTypes2.default.ACTIVATE_DISADV:
+				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+				case _ActionTypes2.default.DEACTIVATE_DISADV:
+				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+					console.debug('UNDO for ' + payload.actionType + ' not yet implemented.\nFind a solution how to implement this feature. It has to be implemented for the first release.');
+					break;
 
-				// case ActionTypes.DEACTIVATE_DISADV:
-				// case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				// 	_deactivateDASA(payload);
-				// 	break;
-
-				// case ActionTypes.UPDATE_DISADV_TIER:
-				// case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-				// 	if (iccalc(payload.costs)) {
-				// 		_updateTier(payload.id, payload.tier, payload.sid);
-				// 	}
-				// 	break;
+				case _ActionTypes2.default.UPDATE_DISADV_TIER:
+				case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+					_updateTier(payload.options.id, payload.prevState.tier, payload.options.sid);
+					break;
 
 				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
 				case _ActionTypes2.default.ADD_TALENT_POINT:
@@ -27544,19 +28570,21 @@
 
 				case _ActionTypes2.default.ACTIVATE_DISADV:
 				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
-					if ((0, _iccalc2.default)(payload.costs)) {
+					if (_RequirementsStore2.default.isValid()) {
 						_activateDASA(payload);
 					}
 					break;
 
 				case _ActionTypes2.default.DEACTIVATE_DISADV:
 				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
-					_deactivateDASA(payload);
+					if (_RequirementsStore2.default.isValid()) {
+						_deactivateDASA(payload);
+					}
 					break;
 
 				case _ActionTypes2.default.UPDATE_DISADV_TIER:
 				case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
-					if ((0, _iccalc2.default)(payload.costs)) {
+					if (_RequirementsStore2.default.isValid()) {
 						_updateTier(payload.id, payload.tier, payload.sid);
 					}
 					break;
@@ -27592,7 +28620,29 @@
 	});
 
 	exports.default = ListStore;
-	const get = exports.get = id => _list[id];
+	const get = exports.get = id => {
+		switch (id) {
+			case 'COU':
+				return _list['ATTR_1'];
+			case 'SGC':
+				return _list['ATTR_2'];
+			case 'INT':
+				return _list['ATTR_3'];
+			case 'CHA':
+				return _list['ATTR_4'];
+			case 'DEX':
+				return _list['ATTR_5'];
+			case 'AGI':
+				return _list['ATTR_6'];
+			case 'CON':
+				return _list['ATTR_7'];
+			case 'STR':
+				return _list['ATTR_8'];
+
+			default:
+				return _list[id];
+		}
+	};
 
 	const getValue = exports.getValue = id => get(id).value;
 
@@ -27661,34 +28711,34 @@
 		if (type === 1) {
 			switch (get('SA_86').sid) {
 				case 1:
-					attr = 'ATTR_2';
+					attr = 'SGC';
 					break;
 				case 2:
-					attr = 'ATTR_4';
+					attr = 'CHA';
 					break;
 				case 3:
-					attr = 'ATTR_3';
+					attr = 'INT';
 					break;
 			}
 		} else if (type === 2) {
 			switch (get('SA_102').sid) {
 				case 1:
-					attr = 'ATTR_2';
+					attr = 'SGC';
 					break;
 				case 2:
-					attr = 'ATTR_1';
+					attr = 'COU';
 					break;
 				case 3:
-					attr = 'ATTR_1';
+					attr = 'COU';
 					break;
 				case 4:
-					attr = 'ATTR_2';
+					attr = 'SGC';
 					break;
 				case 5:
-					attr = 'ATTR_3';
+					attr = 'INT';
 					break;
 				case 6:
-					attr = 'ATTR_3';
+					attr = 'INT';
 					break;
 			}
 		}
@@ -27698,21 +28748,21 @@
 	const getPrimaryAttr = exports.getPrimaryAttr = type => get(getPrimaryAttrID(type));
 
 /***/ },
-/* 289 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(290), __esModule: true };
+	module.exports = { "default": __webpack_require__(304), __esModule: true };
 
 /***/ },
-/* 290 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(230);
-	__webpack_require__(291);
+	__webpack_require__(305);
 	module.exports = __webpack_require__(188).Array.from;
 
 /***/ },
-/* 291 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27722,7 +28772,7 @@
 	  , call           = __webpack_require__(251)
 	  , isArrayIter    = __webpack_require__(252)
 	  , toLength       = __webpack_require__(210)
-	  , createProperty = __webpack_require__(292)
+	  , createProperty = __webpack_require__(306)
 	  , getIterFn      = __webpack_require__(253);
 
 	$export($export.S + $export.F * !__webpack_require__(262)(function(iter){ Array.from(iter); }), 'Array', {
@@ -27755,7 +28805,7 @@
 
 
 /***/ },
-/* 292 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27768,14 +28818,14 @@
 	};
 
 /***/ },
-/* 293 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	exports.__esModule = true;
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
@@ -27786,31 +28836,31 @@
 	};
 
 /***/ },
-/* 294 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(295), __esModule: true };
+	module.exports = { "default": __webpack_require__(309), __esModule: true };
 
 /***/ },
-/* 295 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(229);
 	__webpack_require__(230);
 	__webpack_require__(243);
-	__webpack_require__(296);
-	__webpack_require__(304);
+	__webpack_require__(310);
+	__webpack_require__(318);
 	module.exports = __webpack_require__(188).Set;
 
 /***/ },
-/* 296 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strong = __webpack_require__(297);
+	var strong = __webpack_require__(311);
 
 	// 23.2 Set Objects
-	module.exports = __webpack_require__(299)('Set', function(get){
+	module.exports = __webpack_require__(313)('Set', function(get){
 	  return function Set(){ return get(this, arguments.length > 0 ? arguments[0] : undefined); };
 	}, {
 	  // 23.2.3.1 Set.prototype.add(value)
@@ -27820,7 +28870,7 @@
 	}, strong);
 
 /***/ },
-/* 297 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27836,7 +28886,7 @@
 	  , step        = __webpack_require__(246)
 	  , setSpecies  = __webpack_require__(261)
 	  , DESCRIPTORS = __webpack_require__(196)
-	  , fastKey     = __webpack_require__(298).fastKey
+	  , fastKey     = __webpack_require__(312).fastKey
 	  , SIZE        = DESCRIPTORS ? '_s' : 'size';
 
 	var getEntry = function(that, key){
@@ -27968,7 +29018,7 @@
 	};
 
 /***/ },
-/* 298 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var META     = __webpack_require__(215)('meta')
@@ -28026,13 +29076,13 @@
 	};
 
 /***/ },
-/* 299 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	var global         = __webpack_require__(187)
 	  , $export        = __webpack_require__(186)
-	  , meta           = __webpack_require__(298)
+	  , meta           = __webpack_require__(312)
 	  , fails          = __webpack_require__(197)
 	  , hide           = __webpack_require__(191)
 	  , redefineAll    = __webpack_require__(260)
@@ -28041,7 +29091,7 @@
 	  , isObject       = __webpack_require__(194)
 	  , setToStringTag = __webpack_require__(240)
 	  , dP             = __webpack_require__(192).f
-	  , each           = __webpack_require__(300)(0)
+	  , each           = __webpack_require__(314)(0)
 	  , DESCRIPTORS    = __webpack_require__(196);
 
 	module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
@@ -28090,7 +29140,7 @@
 	};
 
 /***/ },
-/* 300 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 0 -> Array#forEach
@@ -28104,7 +29154,7 @@
 	  , IObject  = __webpack_require__(206)
 	  , toObject = __webpack_require__(219)
 	  , toLength = __webpack_require__(210)
-	  , asc      = __webpack_require__(301);
+	  , asc      = __webpack_require__(315);
 	module.exports = function(TYPE, $create){
 	  var IS_MAP        = TYPE == 1
 	    , IS_FILTER     = TYPE == 2
@@ -28139,22 +29189,22 @@
 	};
 
 /***/ },
-/* 301 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
-	var speciesConstructor = __webpack_require__(302);
+	var speciesConstructor = __webpack_require__(316);
 
 	module.exports = function(original, length){
 	  return new (speciesConstructor(original))(length);
 	};
 
 /***/ },
-/* 302 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var isObject = __webpack_require__(194)
-	  , isArray  = __webpack_require__(303)
+	  , isArray  = __webpack_require__(317)
 	  , SPECIES  = __webpack_require__(241)('species');
 
 	module.exports = function(original){
@@ -28171,7 +29221,7 @@
 	};
 
 /***/ },
-/* 303 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.2.2 IsArray(argument)
@@ -28181,21 +29231,21 @@
 	};
 
 /***/ },
-/* 304 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 	var $export  = __webpack_require__(186);
 
-	$export($export.P + $export.R, 'Set', {toJSON: __webpack_require__(305)('Set')});
+	$export($export.P + $export.R, 'Set', {toJSON: __webpack_require__(319)('Set')});
 
 /***/ },
-/* 305 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 	var classof = __webpack_require__(248)
-	  , from    = __webpack_require__(306);
+	  , from    = __webpack_require__(320);
 	module.exports = function(NAME){
 	  return function toJSON(){
 	    if(classof(this) != NAME)throw TypeError(NAME + "#toJSON isn't generic");
@@ -28204,7 +29254,7 @@
 	};
 
 /***/ },
-/* 306 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var forOf = __webpack_require__(250);
@@ -28217,31 +29267,31 @@
 
 
 /***/ },
-/* 307 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(308), __esModule: true };
+	module.exports = { "default": __webpack_require__(322), __esModule: true };
 
 /***/ },
-/* 308 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(229);
 	__webpack_require__(230);
 	__webpack_require__(243);
-	__webpack_require__(309);
-	__webpack_require__(310);
+	__webpack_require__(323);
+	__webpack_require__(324);
 	module.exports = __webpack_require__(188).Map;
 
 /***/ },
-/* 309 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var strong = __webpack_require__(297);
+	var strong = __webpack_require__(311);
 
 	// 23.1 Map Objects
-	module.exports = __webpack_require__(299)('Map', function(get){
+	module.exports = __webpack_require__(313)('Map', function(get){
 	  return function Map(){ return get(this, arguments.length > 0 ? arguments[0] : undefined); };
 	}, {
 	  // 23.1.3.6 Map.prototype.get(key)
@@ -28256,16 +29306,16 @@
 	}, strong, true);
 
 /***/ },
-/* 310 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/DavidBruant/Map-Set.prototype.toJSON
 	var $export  = __webpack_require__(186);
 
-	$export($export.P + $export.R, 'Map', {toJSON: __webpack_require__(305)('Map')});
+	$export($export.P + $export.R, 'Map', {toJSON: __webpack_require__(319)('Map')});
 
 /***/ },
-/* 311 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28278,9 +29328,9 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -28288,7 +29338,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -28412,7 +29462,7 @@
 	exports.default = CultureStore;
 
 /***/ },
-/* 312 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28448,7 +29498,7 @@
 	}));
 
 /***/ },
-/* 313 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28457,140 +29507,291 @@
 		value: true
 	});
 
-	var _Categories = __webpack_require__(312);
+	var _from = __webpack_require__(303);
 
-	var _Categories2 = _interopRequireDefault(_Categories);
+	var _from2 = _interopRequireDefault(_from);
 
-	var _DataUtils = __webpack_require__(270);
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _CultureStore = __webpack_require__(325);
+
+	var _CultureStore2 = _interopRequireDefault(_CultureStore);
+
+	var _ELStore = __webpack_require__(328);
+
+	var _ELStore2 = _interopRequireDefault(_ELStore);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _RaceStore = __webpack_require__(329);
+
+	var _RaceStore2 = _interopRequireDefault(_RaceStore);
+
+	var _RequirementsStore = __webpack_require__(330);
+
+	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
+
+	var _ProfessionStore = __webpack_require__(333);
+
+	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
+
+	var _ProfessionVariantStore = __webpack_require__(334);
+
+	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = (_ref) => {
-		let attributes = _ref.attributes,
-		    adv = _ref.adv,
-		    cultures = _ref.cultures,
-		    disadv = _ref.disadv,
-		    talents = _ref.talents,
-		    combattech = _ref.combattech,
-		    professions = _ref.professions,
-		    professionVariants = _ref.professionVariants,
-		    races = _ref.races,
-		    spells = _ref.spells,
-		    liturgies = _ref.liturgies,
-		    specialabilities = _ref.specialabilities;
+	var _history = [];
+	var _lastSaveIndex = -1;
 
-		const _list = {};
+	function _add(actionType) {
+		let cost = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+		let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+		let prevState = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-		const iterate = (source, DataClass) => {
-			for (let id in source) {
-				_list[id] = new DataClass(source[id]);
-			}
-		};
-
-		const getAllByCategory = function () {
-			for (var _len = arguments.length, categories = Array(_len), _key = 0; _key < _len; _key++) {
-				categories[_key] = arguments[_key];
-			}
-
-			var list = [];
-			for (const id in _list) {
-				const obj = _list[id];
-				if (categories.includes(obj.category)) {
-					list.push(obj);
-				}
-			}
-			return list;
-		};
-
-		iterate(races, _DataUtils.Race);
-		iterate(cultures, _DataUtils.Culture);
-		iterate(professions, _DataUtils.Profession);
-		_list['P_0'] = new _DataUtils.Profession({
-			id: 'P_0',
-			name: 'Eigene Profession',
-			subname: '',
-			ap: 0,
-			pre_req: [],
-			req: [],
-			sel: [],
-			sa: [],
-			combattech: [],
-			talents: [],
-			spells: [],
-			chants: [],
-			typ_adv: [],
-			typ_dadv: [],
-			untyp_adv: [],
-			untyp_dadv: [],
-			vars: []
+		_history.push({
+			actionType,
+			cost,
+			options,
+			prevState
 		});
-		iterate(professionVariants, _DataUtils.ProfessionVariant);
-		iterate(attributes, _DataUtils.Attribute);
-		iterate(talents, _DataUtils.Talent);
-		iterate(combattech, _DataUtils.CombatTechnique);
-		iterate(spells, _DataUtils.Spell);
-		iterate(liturgies, _DataUtils.Liturgy);
-		iterate(adv, _DataUtils.Advantage);
-		iterate(disadv, _DataUtils.Disadvantage);
-		iterate(specialabilities, _DataUtils.SpecialAbility);
+	}
 
-		for (const id in _list) {
-			var _list$id = _list[id];
-			let category = _list$id.category,
-			    sel = _list$id.sel;
+	function _clear() {
+		_history = [];
+	}
 
-			if ([_Categories2.default.ADVANTAGES, _Categories2.default.DISADVANTAGES, _Categories2.default.SPECIAL_ABILITIES].includes(category)) {
-				_list[id].sel = (() => {
-					if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
-						return getAllByCategory(...sel.map(e => e[0])).filter((_ref2) => {
-							let cg = _ref2.category,
-							    gr = _ref2.gr;
-							return !(cg === 'spells' && gr === 5 || cg === 'liturgies' && gr === 3);
-						}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0).map(e => [e.name, e.id]);
+	function _resetSaveIndex() {
+		_lastSaveIndex = _history.length - 1;
+	}
+
+	function _updateAll(array) {
+		_history = array;
+		_lastSaveIndex = _history.length - 1;
+	}
+
+	function _assignRCP(selections) {
+		let el = _ELStore2.default.getStart();
+		_add(_ActionTypes2.default.SELECT_EXPERIENCE_LEVEL, -el.ap, { id: el.id });
+		let race = _RaceStore2.default.getCurrent();
+		_add(_ActionTypes2.default.SELECT_RACE, race.ap, { id: race.id });
+		let culture = _CultureStore2.default.getCurrent();
+		_add(_ActionTypes2.default.SELECT_CULTURE, culture.ap, { id: culture.id });
+		let profession = _ProfessionStore2.default.getCurrent();
+		_add(_ActionTypes2.default.SELECT_PROFESSION, profession.ap, { id: profession.id });
+		let professionVariant = _ProfessionVariantStore2.default.getCurrent();
+		if (professionVariant) {
+			_add(_ActionTypes2.default.SELECT_PROFESSION_VARIANT, professionVariant.ap, { id: professionVariant.id });
+		}
+
+		let attrSel = selections.attrSel,
+		    useCulturePackage = selections.useCulturePackage,
+		    lang = selections.lang,
+		    buyLiteracy = selections.buyLiteracy,
+		    litc = selections.litc,
+		    cantrips = selections.cantrips,
+		    combattech = selections.combattech,
+		    curses = selections.curses,
+		    langLitc = selections.langLitc,
+		    spec = selections.spec;
+
+
+		_add('SELECT_ATTRIBUTE_MOD', 0, { id: attrSel });
+		_add('PURCHASE_CULTURE_PACKAGE', 0, { buy: useCulturePackage });
+		if (lang !== 0) {
+			_add('SELECT_MOTHER_TONGUE', 0, { id: lang });
+		}
+		_add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
+		if (spec && (spec[0] !== null || spec[1] !== '')) {
+			_add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
+		}
+		if (litc !== 0) {
+			_add('SELECT_MAIN_LITERACY', 0, { id: litc });
+		}
+		if (cantrips.size > 0) {
+			_add('SELECT_CANTRIPS', 0, { list: (0, _from2.default)(cantrips) });
+		}
+		if (combattech.size > 0) {
+			_add('SELECT_COMBAT_TECHNIQUES', 0, { list: (0, _from2.default)(combattech) });
+		}
+		if (curses.size > 0) {
+			_add('SELECT_CURSES', 0, { list: (0, _from2.default)(curses) });
+		}
+		if (langLitc.size > 0) {
+			_add('SELECT_LANGUAGES_AND_LITERACIES', 0, { list: (0, _from2.default)(langLitc) });
+		}
+	}
+
+	class _HistoryStore extends _Store2.default {
+
+		get(index) {
+			return _history[index];
+		}
+
+		getAll() {
+			return _history;
+		}
+
+		isUndoAvailable() {
+			return _lastSaveIndex < _history.length - 1;
+		}
+
+		getUndo() {
+			let lastIndex = _history.length - 1;
+			if (_lastSaveIndex < lastIndex) {
+				return _history[_history.length - 1];
+			}
+			return false;
+		}
+
+	}
+
+	const HistoryStore = new _HistoryStore();
+
+	HistoryStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
+
+		if (payload.undoAction && HistoryStore.isUndoAvailable()) {
+			_history.splice(_history.length - 1, 1);
+		} else {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.CLEAR_HERO:
+					_clear();
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.RECEIVE_HERO:
+					_clear();
+					_updateAll(payload.history);
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
+					_assignRCP(payload.selections);
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.FINALIZE_CHARACTER_CREATION:
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.CREATE_NEW_HERO:
+					_clear();
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.SAVE_HERO_SUCCESS:
+					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.ADD_TALENT_POINT:
+				case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.ADD_SPELL_POINT:
+				case _ActionTypes2.default.ADD_LITURGY_POINT:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const oldValue = (0, _ListStore.get)(id).value;
+						const newValue = oldValue + 1;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
 					}
+					break;
 
-					if (id === 'SA_72') {
-						return sel.map((e, i) => [_list[e[0]].name, i + 1, e[1]]);
+				case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.REMOVE_TALENT_POINT:
+				case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.REMOVE_SPELL_POINT:
+				case _ActionTypes2.default.REMOVE_LITURGY_POINT:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const oldValue = (0, _ListStore.get)(id).value;
+						const newValue = oldValue - 1;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
 					}
+					break;
 
-					if (id === 'SA_10') {
-						return getAllByCategory('talents').map((_ref3) => {
-							let id = _ref3.id,
-							    name = _ref3.name,
-							    ic = _ref3.ic,
-							    spec = _ref3.spec,
-							    spec_input = _ref3.spec_input;
-
-							spec = spec === null ? [] : spec.map((n, i) => [n, i + 1]);
-							return [name, id, ic, spec, spec_input];
-						});
+				case _ActionTypes2.default.ACTIVATE_DISADV:
+				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const oldValue = (0, _ListStore.get)(id).value;
+						const newValue = oldValue - 1;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
 					}
+					break;
 
-					let isAdv = ['ADV_28', 'ADV_29', 'ADV_32'].includes(id);
-					let isSA = !['SA_3', 'SA_28', 'SA_30'].includes(id) && category === _Categories2.default.SPECIAL_ABILITIES;
-					let isDisadv = category === _Categories2.default.DISADVANTAGES;
-
-					if (isAdv || isSA || isDisadv) {
-						return sel.map((e, i) => {
-							let arr = [e[0], i + 1];
-							if (e[1] !== null) arr[2] = e[1];
-							return arr;
-						});
+				case _ActionTypes2.default.DEACTIVATE_DISADV:
+				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const oldValue = (0, _ListStore.get)(id).value;
+						const newValue = oldValue - 1;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
 					}
+					break;
 
-					return sel;
-				})();
+				case _ActionTypes2.default.UPDATE_DISADV_TIER:
+				case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id,
+						      sid = payload.sid,
+						      tier = payload.tier;
+
+						let oldValue;
+						switch (id) {
+							case 'DISADV_1':
+							case 'SA_30':
+								(0, _ListStore.get)(id).active.some(e => {
+									if (e[0] === sid) {
+										oldValue = e[1];
+										return true;
+									}
+									return false;
+								});
+								break;
+							default:
+								oldValue = (0, _ListStore.get)(id).tier;
+								break;
+						}
+						const newValue = tier;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, tier: newValue, sid }, { tier: oldValue });
+					}
+					break;
+
+				case _ActionTypes2.default.ADD_ADVENTURE_POINTS:
+					_add(payload.actionType, 0, { value: payload.value });
+					break;
+
+				default:
+					return true;
 			}
 		}
 
-		_list['DISADV_34'].sel = [['99 Gesetze', 1, 1], ['Moralkodex der Hesindekirche', 2, 1], ['Moralkodex der Phexkirche', 3, 1], ['Moralkodex der Perainekirche', 4, 1], ['99 Gesetze (streng)', 5, 2], ['Ehrenkodex der Krieger', 6, 2], ['Ehrenkodex der Ritter', 7, 2], ['Elfische Weltsicht', 8, 2], ['Moralkodex der Boronkirche', 9, 2], ['Moralkodex der Praioskirche', 10, 2], ['Moralkodex der Rondrakirche', 11, 2], ['Zwergischer Ehrenkodex', 12, 2], ['99 Gesetze (radikal)', 13, 3], ['Pazifismus', 14, 3]];
-		_list['DISADV_50'].sel = [['Sippenmitglied gegenüber der Sippe', 1, 1], ['Verschuldeter Held', 2, 1], ['Adliger gegenüber seinem Lehnsherrn', 3, 2], ['Geweihter gegenüber seinem Tempel', 5, 2], ['Geweihter gegenüber seiner Kirche', 4, 2], ['Magier gegenüber seinem Lehrmeister', 6, 2], ['Magier gegenüber seiner Akademie', 7, 2], ['Magier gegenüber seiner Gilde', 8, 2], ['Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe', 9, 3]];
+		HistoryStore.emitChange();
 
-		return _list;
-	};
+		return true;
+	});
+
+	exports.default = HistoryStore;
 
 /***/ },
-/* 314 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28603,9 +29804,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _ListStore = __webpack_require__(288);
-
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -28613,7 +29812,820 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// EL = Experience Level
+
+	var _el = {};
+	var _start = 'EL_0';
+
+	function _init(el) {
+		_el = el;
+	}
+
+	function _update(el) {
+		_start = el;
+	}
+
+	function _clear() {
+		_start = 'EL_0';
+	}
+
+	class _ELStore extends _Store2.default {
+
+		get(id) {
+			return _el[id];
+		}
+
+		getAll() {
+			return _el;
+		}
+
+		getStartID() {
+			return _start;
+		}
+
+		getStart() {
+			return this.get(this.getStartID());
+		}
+
+	}
+
+	const ELStore = new _ELStore();
+
+	ELStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		switch (payload.actionType) {
+
+			case _ActionTypes2.default.CREATE_NEW_HERO:
+				_update(payload.el);
+				break;
+
+			case _ActionTypes2.default.CLEAR_HERO:
+				_clear();
+				break;
+
+			case _ActionTypes2.default.RECEIVE_HERO:
+				_update(payload.el);
+				break;
+
+			case _ActionTypes2.default.RECEIVE_RAW_LISTS:
+				_init(payload.el);
+				break;
+
+			default:
+				return true;
+		}
+
+		ELStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = ELStore;
+
+/***/ },
+/* 329 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _Categories = __webpack_require__(326);
+
+	var _Categories2 = _interopRequireDefault(_Categories);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const CATEGORY = _Categories2.default.RACES;
+
+	var _currentID = null;
+	var _filterText = '';
+	var _sortOrder = 'name';
+	var _showDetails = true;
+
+	function _updateCurrentID(id) {
+		_currentID = id;
+	}
+
+	function _updateFilterText(text) {
+		_filterText = text;
+	}
+
+	function _updateSortOrder(option) {
+		_sortOrder = option;
+	}
+
+	function _updateDetails() {
+		_showDetails = !_showDetails;
+	}
+
+	class _RaceStore extends _Store2.default {
+
+		get(id) {
+			return (0, _ListStore.get)(id);
+		}
+
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
+		}
+
+		getCurrentID() {
+			return _currentID;
+		}
+
+		getCurrent() {
+			return (0, _ListStore.get)(this.getCurrentID());
+		}
+
+		getCurrentName() {
+			return this.getCurrent() ? this.getCurrent().name : null;
+		}
+
+		getNameByID(id) {
+			return (0, _ListStore.get)(id) ? (0, _ListStore.get)(id).name : null;
+		}
+
+		getFilter() {
+			return _filterText;
+		}
+
+		getSortOrder() {
+			return _sortOrder;
+		}
+
+		areValuesVisible() {
+			return _showDetails;
+		}
+
+	}
+
+	const RaceStore = new _RaceStore();
+
+	RaceStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		switch (payload.actionType) {
+
+			case _ActionTypes2.default.RECEIVE_HERO:
+				_updateCurrentID(payload.r);
+				break;
+
+			case _ActionTypes2.default.SELECT_RACE:
+				_updateCurrentID(payload.raceID);
+				break;
+
+			case _ActionTypes2.default.FILTER_RACES:
+				_updateFilterText(payload.text);
+				break;
+
+			case _ActionTypes2.default.SORT_RACES:
+				_updateSortOrder(payload.option);
+				break;
+
+			case _ActionTypes2.default.CHANGE_RACE_VALUE_VISIBILITY:
+				_updateDetails();
+				break;
+
+			default:
+				return true;
+		}
+
+		RaceStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = RaceStore;
+
+/***/ },
+/* 330 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _iccalc = __webpack_require__(331);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _alert = __webpack_require__(265);
+
+	var _alert2 = _interopRequireDefault(_alert);
+
+	var _APStore = __webpack_require__(332);
+
+	var _APStore2 = _interopRequireDefault(_APStore);
+
+	var _secondaryAttributes = __webpack_require__(336);
+
+	var secondaryAttributes = _interopRequireWildcard(_secondaryAttributes);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _AttributeStore = __webpack_require__(337);
+
+	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
+
+	var _Categories = __webpack_require__(326);
+
+	var _Categories2 = _interopRequireDefault(_Categories);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var _cost = 0;
+	var _validCost = false;
+	var _disadv = [];
+	var _validOwnRequirements = false;
+
+	function _updateCost(cost, valid) {
+		_cost = cost;
+		_validCost = valid || (0, _iccalc.check)(_cost);
+		if (valid !== undefined) {
+			_validCost = valid;
+		} else {
+			_validCost = (0, _iccalc.check)(cost);
+		}
+		if (!_validCost) {
+			(0, _alert2.default)('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
+		}
+	}
+
+	function _updateDisAdvCost(id, cost, valid) {
+		_cost = cost;
+		if (valid !== undefined) {
+			_validCost = valid;
+			if (!_validCost) {
+				(0, _alert2.default)('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
+			}
+		} else {
+			var _get = (0, _ListStore.get)(id);
+
+			const category = _get.category,
+			      reqs = _get.reqs;
+
+			var _APStore$getAll = _APStore2.default.getAll();
+
+			const adv = _APStore$getAll.adv,
+			      disadv = _APStore$getAll.disadv,
+			      spent = _APStore$getAll.spent,
+			      total = _APStore$getAll.total;
+
+			const add = category === _Categories2.default.ADVANTAGES;
+			const target = () => add ? adv : disadv;
+
+			const isKar = reqs.some(e => e[0] === 'ADV_12' && e[1]);
+			const isMag = reqs.some(e => e[0] === 'ADV_50' && e[1]);
+			const index = isKar ? 2 : isMag ? 1 : 0;
+
+			_validCost = (0, _iccalc.checkDisAdvantages)(id, cost, index, target(), spent, total, add);
+
+			const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
+			const text = add ? 'Vorteile' : 'Nachteile';
+
+			if (!_validCost[2]) {
+				(0, _alert2.default)(`Obergrenze für ${ sub } ${ text } erreicht`, `Du kannst nicht mehr als 50 AP für ${ sub } ${ text } ausgeben!`);
+			} else if (!_validCost[1]) {
+				(0, _alert2.default)(`Obergrenze für ${ text } erreicht`, `Du kannst nicht mehr als 80 AP für ${ text } ausgeben!`);
+			} else if (!_validCost[0]) {
+				(0, _alert2.default)('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
+			} else {
+				_disadv = [add, index];
+			}
+
+			console.log(_validCost);
+
+			_validCost = _validCost.every(e => e);
+
+			console.log(_validCost);
+		}
+	}
+
+	function _updateOwnRequirements(isValid) {
+		_validOwnRequirements = isValid;
+	}
+
+	class _RequirementsStore extends _Store2.default {
+
+		getCurrentCost() {
+			return _cost;
+		}
+
+		getDisAdvDetails() {
+			return _disadv;
+		}
+
+		isValid() {
+			return _validCost && _validOwnRequirements;
+		}
+
+	}
+
+	const RequirementsStore = new _RequirementsStore();
+
+	RequirementsStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		if (payload.undoAction) {
+			_updateOwnRequirements(true);
+			_updateCost(-payload.cost, true);
+		} else {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.ACTIVATE_SPELL:
+				case _ActionTypes2.default.ACTIVATE_LITURGY:
+					_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0));
+					break;
+
+				case _ActionTypes2.default.DEACTIVATE_SPELL:
+				case _ActionTypes2.default.DEACTIVATE_LITURGY:
+					_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0) * -1);
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_DISADV:
+					_updateOwnRequirements((0, _ListStore.get)(payload.id).isActivatable);
+					_updateDisAdvCost(payload.id, payload.costs);
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+					_updateOwnRequirements((0, _ListStore.get)(payload.id).isActivatable);
+					_updateCost(payload.costs);
+					break;
+
+				case _ActionTypes2.default.DEACTIVATE_DISADV:
+					_updateOwnRequirements((0, _ListStore.get)(payload.id).isDeactivatable);
+					_updateDisAdvCost(payload.id, payload.costs);
+					break;
+
+				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+					_updateOwnRequirements((0, _ListStore.get)(payload.id).isDeactivatable);
+					_updateCost(-payload.costs);
+					break;
+
+				case _ActionTypes2.default.UPDATE_DISADV_TIER:
+					_updateOwnRequirements(true);
+					_updateDisAdvCost(payload.id, payload.costs);
+					break;
+
+				case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+					_updateOwnRequirements(true);
+					_updateCost(payload.costs);
+					break;
+
+				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.ADD_TALENT_POINT:
+				case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.ADD_SPELL_POINT:
+				case _ActionTypes2.default.ADD_LITURGY_POINT:
+					{
+						const obj = (0, _ListStore.get)(payload.id);
+						_updateOwnRequirements(obj.isIncreasable);
+						_updateCost((0, _iccalc.final)(obj.ic, obj.value + 1));
+						break;
+					}
+
+				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+					{
+						const obj = secondaryAttributes.get(payload.id);
+						_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
+						_updateCost((0, _iccalc.final)(4, _AttributeStore2.default.getAdd(payload.id) + 1));
+						break;
+					}
+
+				case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.REMOVE_TALENT_POINT:
+				case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.REMOVE_SPELL_POINT:
+				case _ActionTypes2.default.REMOVE_LITURGY_POINT:
+					{
+						const obj = (0, _ListStore.get)(payload.id);
+						_updateOwnRequirements(obj.isDecreasable);
+						_updateCost((0, _iccalc.final)(obj.ic, obj.value) * -1);
+						break;
+					}
+
+				default:
+					return true;
+			}
+		}
+
+		RequirementsStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = RequirementsStore;
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.checkDisAdvantages = exports.validate = undefined;
+	exports.getIC = getIC;
+	exports.final = final;
+	exports.check = check;
+
+	var _APStore = __webpack_require__(332);
+
+	var _APStore2 = _interopRequireDefault(_APStore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// AC = Activation Cost
+	// IC = Improvement Cost
+
+	function getIC(ic, sr) {
+		const f = ic === 5 ? 15 : ic;
+		if (sr < 12 || ic === 5 && sr < 14) {
+			return f;
+		} else {
+			return (sr - (ic === 5 ? 13 : 11)) * f;
+		}
+	}
+
+	function final(ic, sr) {
+		if (sr) {
+			let add = 1;
+			if (ic < 0) {
+				ic = Math.abs(ic);
+				add = -1;
+			}
+			return getIC(ic, sr) * add;
+		} else {
+			return ic;
+		}
+	}
+
+	function check(cost) {
+		if (cost > 0) {
+			let available = _APStore2.default.getAvailable();
+			return cost <= available;
+		}
+		return true;
+	}
+
+	const validate = exports.validate = (ic, sr) => check(final(ic, sr));
+
+	exports.default = validate;
+	const checkDisAdvantages = exports.checkDisAdvantages = (id, cost, index, target, spent, total, add) => {
+		const absCost = add ? cost : -cost;
+		const subValid = index > 0 ? target[index] + absCost <= 50 : true;
+		const mainValid = target[0] + absCost <= 80;
+		const totalValid = spent + cost <= total;
+
+		return [totalValid, mainValid, subValid];
+	};
+
+/***/ },
+/* 332 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _slicedToArray2 = __webpack_require__(289);
+
+	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _CultureStore = __webpack_require__(325);
+
+	var _CultureStore2 = _interopRequireDefault(_CultureStore);
+
+	var _ELStore = __webpack_require__(328);
+
+	var _ELStore2 = _interopRequireDefault(_ELStore);
+
+	var _ProfessionStore = __webpack_require__(333);
+
+	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
+
+	var _ProfessionVariantStore = __webpack_require__(334);
+
+	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
+
+	var _RaceStore = __webpack_require__(329);
+
+	var _RaceStore2 = _interopRequireDefault(_RaceStore);
+
+	var _reqPurchase = __webpack_require__(335);
+
+	var _reqPurchase2 = _interopRequireDefault(_reqPurchase);
+
+	var _RequirementsStore = __webpack_require__(330);
+
+	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// AP = Adventure Points
+
+	var _total = 0;
+	var _spent = 0;
+	var _rcp = [0, 0, 0, 0];
+	var _adv = [0, 0, 0];
+	var _disadv = [0, 0, 0];
+
+	function _spend(cost) {
+		_spent += cost;
+	}
+
+	function _spendDisadv(cost, _ref) {
+		var _ref2 = (0, _slicedToArray3.default)(_ref, 2);
+
+		let add = _ref2[0],
+		    index = _ref2[1];
+
+		const target = () => add ? _adv : _disadv;
+		_spent += cost;
+		const absCost = add ? cost : -cost;
+		target()[0] += absCost;
+		if (index > 0) {
+			target()[index] += absCost;
+		}
+	}
+
+	function _calculateRCPDiff(index, next) {
+		var current = _rcp[index] || 0;
+		next = next || 0;
+		let diff = next - current;
+		_spend(diff);
+		_rcp[index] = next;
+	}
+
+	function _clear() {
+		_total = 0;
+		_spent = 0;
+		_rcp = [0, 0, 0, 0];
+		_adv = [0, 0, 0];
+		_disadv = [0, 0, 0];
+	}
+
+	function _updateAll(obj) {
+		_total = obj.total;
+		_spent = obj.spent;
+		_rcp = obj.rcp;
+		_adv = obj.adv;
+		_disadv = obj.disadv;
+	}
+
+	function _assignRCP(selections) {
+		if (!selections.useCulturePackage) {
+			_spent -= _rcp[1];
+		}
+
+		if (selections.buyLiteracy) {
+			const culture = _CultureStore2.default.getCurrent();
+			let id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
+			_spent += (0, _ListStore.get)('SA_28').sel[id - 1][2];
+		}
+
+		let p = _ProfessionStore2.default.getCurrent();
+		if (p && p.id !== 'P_0') {
+			let apCosts = (0, _reqPurchase2.default)(p.reqs);
+			_spent += apCosts;
+		}
+	}
+
+	class _APStore extends _Store2.default {
+
+		getAll() {
+			return {
+				total: _total,
+				spent: _spent,
+				rcp: _rcp,
+				adv: _adv,
+				disadv: _disadv
+			};
+		}
+
+		getTotal() {
+			return _total;
+		}
+
+		getSpent() {
+			return _spent;
+		}
+
+		getAvailable() {
+			return _total - _spent;
+		}
+
+		getForDisAdv() {
+			return {
+				adv: _adv,
+				disadv: _disadv
+			};
+		}
+
+	}
+
+	const APStore = new _APStore();
+
+	APStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
+
+		if (payload.undoAction) {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.ACTIVATE_DISADV:
+				case _ActionTypes2.default.DEACTIVATE_DISADV:
+				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+					return true;
+
+				case _ActionTypes2.default.ADD_ADVENTURE_POINTS:
+					_total -= payload.options.value;
+					break;
+
+				default:
+					_spend(_RequirementsStore2.default.getCurrentCost());
+					break;
+			}
+		} else {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.CLEAR_HERO:
+					_clear();
+					break;
+
+				case _ActionTypes2.default.RECEIVE_HERO:
+					_updateAll(payload.ap);
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_SPELL:
+				case _ActionTypes2.default.ACTIVATE_LITURGY:
+				case _ActionTypes2.default.DEACTIVATE_SPELL:
+				case _ActionTypes2.default.DEACTIVATE_LITURGY:
+				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.ADD_TALENT_POINT:
+				case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.ADD_SPELL_POINT:
+				case _ActionTypes2.default.ADD_LITURGY_POINT:
+				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+				case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.REMOVE_TALENT_POINT:
+				case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
+				case _ActionTypes2.default.REMOVE_SPELL_POINT:
+				case _ActionTypes2.default.REMOVE_LITURGY_POINT:
+					if (_RequirementsStore2.default.isValid()) {
+						_spend(_RequirementsStore2.default.getCurrentCost());
+					}
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_DISADV:
+				case _ActionTypes2.default.UPDATE_DISADV_TIER:
+				case _ActionTypes2.default.DEACTIVATE_DISADV:
+					if (_RequirementsStore2.default.isValid()) {
+						_spendDisadv(_RequirementsStore2.default.getCurrentCost(), _RequirementsStore2.default.getDisAdvDetails());
+					}
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
+				case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
+					if (_RequirementsStore2.default.isValid()) {
+						_spend(payload.costs);
+					}
+					break;
+
+				case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
+					if (_RequirementsStore2.default.isValid()) {
+						_spend(-payload.costs);
+					}
+					break;
+
+				case _ActionTypes2.default.ADD_ADVENTURE_POINTS:
+					_total += payload.value;
+					break;
+
+				case _ActionTypes2.default.SELECT_RACE:
+					_AppDispatcher2.default.waitFor([_RaceStore2.default.dispatchToken]);
+					_calculateRCPDiff(0, _RaceStore2.default.getCurrent().ap);
+					_calculateRCPDiff(1, 0);
+					_calculateRCPDiff(2, 0);
+					_calculateRCPDiff(3, 0);
+					break;
+
+				case _ActionTypes2.default.SELECT_CULTURE:
+					_AppDispatcher2.default.waitFor([_CultureStore2.default.dispatchToken]);
+					_calculateRCPDiff(1, _CultureStore2.default.getCurrent().ap);
+					_calculateRCPDiff(2, 0);
+					_calculateRCPDiff(3, 0);
+					break;
+
+				case _ActionTypes2.default.SELECT_PROFESSION:
+					_AppDispatcher2.default.waitFor([_ProfessionStore2.default.dispatchToken]);
+					_calculateRCPDiff(2, _ProfessionStore2.default.getCurrentID() === 'P_0' ? 0 : _ProfessionStore2.default.getCurrent().ap);
+					_calculateRCPDiff(3, 0);
+					break;
+
+				case _ActionTypes2.default.SELECT_PROFESSION_VARIANT:
+					_AppDispatcher2.default.waitFor([_ProfessionVariantStore2.default.dispatchToken]);
+					if (_ProfessionVariantStore2.default.getCurrentID() === null) {
+						_calculateRCPDiff(3, 0);
+					} else {
+						_calculateRCPDiff(3, _ProfessionVariantStore2.default.getCurrent().ap);
+					}
+					break;
+
+				case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
+					_assignRCP(payload.selections);
+					break;
+
+				case _ActionTypes2.default.CREATE_NEW_HERO:
+					{
+						_clear();
+						_AppDispatcher2.default.waitFor([_ELStore2.default.dispatchToken]);
+						_total = _ELStore2.default.getStart().ap;
+						break;
+					}
+
+				default:
+					return true;
+			}
+		}
+
+		APStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = APStore;
+
+/***/ },
+/* 333 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -28725,7 +30737,7 @@
 	exports.default = ProfessionStore;
 
 /***/ },
-/* 315 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28738,9 +30750,9 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -28748,7 +30760,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -28822,7 +30834,7 @@
 	exports.default = ProfessionVariantStore;
 
 /***/ },
-/* 316 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28830,129 +30842,89 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	exports.fn = undefined;
 
-	var _AppDispatcher = __webpack_require__(1);
+	var _from = __webpack_require__(303);
 
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+	var _from2 = _interopRequireDefault(_from);
 
-	var _ListStore = __webpack_require__(288);
+	var _toArray2 = __webpack_require__(307);
 
-	var _Store = __webpack_require__(267);
+	var _toArray3 = _interopRequireDefault(_toArray2);
 
-	var _Store2 = _interopRequireDefault(_Store);
+	var _APStore = __webpack_require__(332);
 
-	var _ActionTypes = __webpack_require__(263);
+	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+	var _iccalc = __webpack_require__(331);
 
-	var _Categories = __webpack_require__(312);
+	var _iccalc2 = _interopRequireDefault(_iccalc);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const CATEGORY = _Categories2.default.RACES;
+	const fn = exports.fn = req => {
+		var _req = (0, _toArray3.default)(req);
 
-	var _currentID = null;
-	var _filterText = '';
-	var _sortOrder = 'name';
-	var _showDetails = true;
+		const id = _req[0],
+		      value = _req[1],
+		      options = _req.slice(2);
 
-	function _updateCurrentID(id) {
-		_currentID = id;
-	}
+		let obj = (0, _ListStore.get)(id);
 
-	function _updateFilterText(text) {
-		_filterText = text;
-	}
-
-	function _updateSortOrder(option) {
-		_sortOrder = option;
-	}
-
-	function _updateDetails() {
-		_showDetails = !_showDetails;
-	}
-
-	class _RaceStore extends _Store2.default {
-
-		get(id) {
-			return (0, _ListStore.get)(id);
+		switch (obj.category) {
+			case _Categories2.default.ATTRIBUTES:
+				{
+					let values = (0, _from2.default)({ length: value - 8 }, (v, i) => i + 8);
+					obj.value = value;
+					return values.map(e => (0, _iccalc2.default)(5, e)).reduce((a, b) => a + b, 0);
+				}
+			case _Categories2.default.ADVANTAGES:
+			case _Categories2.default.DISADVANTAGES:
+			case _Categories2.default.SPECIAL_ABILITIES:
+				{
+					obj.addDependencies();
+					if (options.length === 0) {
+						obj.activate(id);
+						return obj.cost;
+					} else {
+						if (obj.tiers !== null && obj.tiers) {
+							if (obj.max === null) {
+								obj.activate(id);
+								obj.tier = options[0];
+								return obj.cost * options[0];
+							} else {
+								obj.active.push(options.reverse());
+								return obj.cost * options[options.length - 1];
+							}
+						} else if (obj.sel.length > 0) {
+							if (obj.max === null) {
+								obj.activate(id);
+								obj.sid = options[0];
+								return obj.sel[options[0] - 1][2];
+							} else if (options.length > 1) {
+								obj.active.push(options.reverse());
+								return obj.sel[options.length - 2][2];
+							} else {
+								obj.active.push(options[0]);
+								return obj.sel[options[0] - 1][2];
+							}
+						}
+					}
+					break;
+				}
 		}
+	};
 
-		getAll() {
-			return (0, _ListStore.getAllByCategory)(CATEGORY);
-		}
-
-		getCurrentID() {
-			return _currentID;
-		}
-
-		getCurrent() {
-			return (0, _ListStore.get)(this.getCurrentID());
-		}
-
-		getCurrentName() {
-			return this.getCurrent() ? this.getCurrent().name : null;
-		}
-
-		getNameByID(id) {
-			return (0, _ListStore.get)(id) ? (0, _ListStore.get)(id).name : null;
-		}
-
-		getFilter() {
-			return _filterText;
-		}
-
-		getSortOrder() {
-			return _sortOrder;
-		}
-
-		areValuesVisible() {
-			return _showDetails;
-		}
-
-	}
-
-	const RaceStore = new _RaceStore();
-
-	RaceStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_updateCurrentID(payload.r);
-				break;
-
-			case _ActionTypes2.default.SELECT_RACE:
-				_updateCurrentID(payload.raceID);
-				break;
-
-			case _ActionTypes2.default.FILTER_RACES:
-				_updateFilterText(payload.text);
-				break;
-
-			case _ActionTypes2.default.SORT_RACES:
-				_updateSortOrder(payload.option);
-				break;
-
-			case _ActionTypes2.default.CHANGE_RACE_VALUE_VISIBILITY:
-				_updateDetails();
-				break;
-
-			default:
-				return true;
-		}
-
-		RaceStore.emitChange();
-
-		return true;
-	});
-
-	exports.default = RaceStore;
+	exports.default = reqs => reqs.map(req => fn(req)).reduce((a, b) => a + b, 0);
 
 /***/ },
-/* 317 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28960,133 +30932,151 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	exports.getAll = exports.get = exports.getMOV = exports.getINI = exports.getDO = exports.getTOU = exports.getSPI = exports.getKP = exports.getAE = exports.getLP = undefined;
 
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _iccalc = __webpack_require__(319);
-
-	var _ListStore = __webpack_require__(288);
-
-	var _Store = __webpack_require__(267);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+	var _ListStore = __webpack_require__(302);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var _cost = 0;
-	var _validCost = false;
-	var _validOwnRequirements = false;
+	const baseValues = () => _AttributeStore2.default.getBaseValues();
 
-	function _updateCost(cost, valid) {
-		_cost = cost;
-		_validCost = valid || (0, _iccalc.check)(_cost);
-	}
-
-	function _updateOwnRequirements(isValid) {
-		_validOwnRequirements = isValid;
-	}
-
-	class _RequirementsStore extends _Store2.default {
-
-		getCurrentCost() {
-			return _cost;
+	const getLP = exports.getLP = () => {
+		let value = baseValues().le + (0, _ListStore.get)('CON').value * 2 + baseValues().leAdd;
+		if ((0, _ListStore.get)('ADV_25').active) {
+			value += (0, _ListStore.get)('ADV_25').tier;
+		} else if ((0, _ListStore.get)('DISADV_28').active) {
+			value -= (0, _ListStore.get)('DISADV_28').tier;
 		}
+		return {
+			id: 'LP',
+			label: 'LE',
+			value,
+			maxAdd: (0, _ListStore.get)('CON'),
+			currentAdd: baseValues().leAdd
+		};
+	};
 
-		isValid() {
-			return _validCost && _validOwnRequirements;
+	const getAE = exports.getAE = () => {
+		let primary = (0, _ListStore.getPrimaryAttrID)(1);
+		let value;
+		if (primary === 'ATTR_0') {
+			value = '-';
+		} else {
+			value = 20 + (0, _ListStore.get)(primary).value + baseValues().aeAdd;
+			if ((0, _ListStore.get)('ADV_23').active) {
+				value += (0, _ListStore.get)('ADV_23').tier;
+			} else if ((0, _ListStore.get)('DISADV_26').active) {
+				value -= (0, _ListStore.get)('DISADV_26').tier;
+			}
 		}
+		return {
+			id: 'AE',
+			label: 'AE',
+			value,
+			maxAdd: (0, _ListStore.get)(primary),
+			currentAdd: baseValues().aeAdd
+		};
+	};
 
-	}
-
-	const RequirementsStore = new _RequirementsStore();
-
-	RequirementsStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		if (payload.undoAction) {
-			_updateOwnRequirements(true);
-			_updateCost(-payload.cost, true);
-			RequirementsStore.emitChange();
-			return true;
+	const getKP = exports.getKP = () => {
+		let primary = (0, _ListStore.getPrimaryAttrID)(2);
+		let value;
+		if (primary === 'ATTR_0') {
+			value = '-';
+		} else {
+			value = 20 + (0, _ListStore.get)(primary).value + baseValues().keAdd;
+			if ((0, _ListStore.get)('ADV_24').active) {
+				value += (0, _ListStore.get)('ADV_24').tier;
+			} else if ((0, _ListStore.get)('DISADV_27').active) {
+				value -= (0, _ListStore.get)('DISADV_27').tier;
+			}
 		}
+		return {
+			id: 'KP',
+			label: 'KE',
+			value,
+			maxAdd: (0, _ListStore.get)(primary),
+			currentAdd: baseValues().keAdd
+		};
+	};
 
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.ACTIVATE_SPELL:
-			case _ActionTypes2.default.ACTIVATE_LITURGY:
-				_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0));
-				break;
-
-			case _ActionTypes2.default.DEACTIVATE_SPELL:
-			case _ActionTypes2.default.DEACTIVATE_LITURGY:
-				_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0) * -1);
-				break;
-
-			case _ActionTypes2.default.ACTIVATE_DISADV:
-			case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
-				_updateCost(payload.costs);
-				break;
-
-			case _ActionTypes2.default.DEACTIVATE_DISADV:
-			case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
-				_updateCost(-payload.costs);
-				break;
-
-			case _ActionTypes2.default.UPDATE_DISADV_TIER:
-			case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
-				_updateCost(payload.costs);
-				break;
-
-			case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.ADD_TALENT_POINT:
-			case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.ADD_SPELL_POINT:
-			case _ActionTypes2.default.ADD_LITURGY_POINT:
-				{
-					const obj = (0, _ListStore.get)(payload.id);
-					_updateOwnRequirements(obj.isIncreasable);
-					_updateCost((0, _iccalc.final)(obj.ic, obj.value + 1));
-					break;
-				}
-
-			case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
-				_updateCost((0, _iccalc.final)(4, _AttributeStore2.default.getAdd(payload.id) + 1));
-				break;
-
-			case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.REMOVE_TALENT_POINT:
-			case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.REMOVE_SPELL_POINT:
-			case _ActionTypes2.default.REMOVE_LITURGY_POINT:
-				{
-					const obj = (0, _ListStore.get)(payload.id);
-					_updateOwnRequirements(obj.isDecreasable);
-					_updateCost((0, _iccalc.final)(obj.ic, obj.value) * -1);
-					break;
-				}
-
-			default:
-				return true;
+	const getSPI = exports.getSPI = () => {
+		let value = baseValues().sk + Math.round(((0, _ListStore.get)('COU').value + (0, _ListStore.get)('SGC').value + (0, _ListStore.get)('INT').value) / 6);
+		if ((0, _ListStore.get)('ADV_26').active) {
+			value++;
+		} else if ((0, _ListStore.get)('DISADV_29').active) {
+			value--;
 		}
+		return {
+			id: 'SPI',
+			label: 'SK',
+			value
+		};
+	};
 
-		RequirementsStore.emitChange();
+	const getTOU = exports.getTOU = () => {
+		let value = baseValues().zk + Math.round(((0, _ListStore.get)('CON').value * 2 + (0, _ListStore.get)('STR').value) / 6);
+		if ((0, _ListStore.get)('ADV_27').active) {
+			value++;
+		} else if ((0, _ListStore.get)('DISADV_30').active) {
+			value--;
+		}
+		return {
+			id: 'TOU',
+			label: 'ZK',
+			value
+		};
+	};
 
-		return true;
+	const getDO = exports.getDO = () => ({
+		id: 'DO',
+		label: 'AW',
+		value: Math.round((0, _ListStore.get)('AGI').value / 2)
 	});
 
-	exports.default = RequirementsStore;
+	const getINI = exports.getINI = () => ({
+		id: 'INI',
+		label: 'INI',
+		value: Math.round(((0, _ListStore.get)('COU').value + (0, _ListStore.get)('AGI').value) / 2)
+	});
+
+	const getMOV = exports.getMOV = () => ({
+		id: 'MOV',
+		label: 'GS',
+		value: baseValues().gs
+	});
+
+	const get = exports.get = id => {
+		switch (id) {
+			case 'LP':
+				return getLP();
+			case 'AE':
+				return getAE();
+			case 'KP':
+				return getKP();
+			case 'SPI':
+				return getSPI();
+			case 'TOU':
+				return getTOU();
+			case 'DO':
+				return getDO();
+			case 'INI':
+				return getINI();
+			case 'MOV':
+				return getMOV();
+		}
+	};
+
+	const getAll = exports.getAll = () => [getLP(), getAE(), getKP(), getSPI(), getTOU(), getDO(), getINI(), getMOV()];
+
+	exports.default = getAll;
 
 /***/ },
-/* 318 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29103,15 +31093,15 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _ListStore2 = _interopRequireDefault(_ListStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -29119,7 +31109,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -29260,64 +31250,7 @@
 	exports.default = AttributeStore;
 
 /***/ },
-/* 319 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.validate = undefined;
-	exports.getIC = getIC;
-	exports.final = final;
-	exports.check = check;
-
-	var _APStore = __webpack_require__(320);
-
-	var _APStore2 = _interopRequireDefault(_APStore);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// AC = Activation Cost
-	// IC = Improvement Cost
-
-	function getIC(ic, sr) {
-		const f = ic === 5 ? 15 : ic;
-		if (sr < 12 || ic === 5 && sr < 14) {
-			return f;
-		} else {
-			return (sr - (ic === 5 ? 13 : 11)) * f;
-		}
-	}
-
-	function final(ic, sr) {
-		if (sr) {
-			let add = 1;
-			if (ic < 0) {
-				ic = Math.abs(ic);
-				add = -1;
-			}
-			return getIC(ic, sr) * add;
-		} else {
-			return ic;
-		}
-	}
-
-	function check(cost) {
-		if (cost > 0) {
-			let available = _APStore2.default.getAvailable();
-			return cost <= available;
-		}
-		return true;
-	}
-
-	const validate = exports.validate = (ic, sr) => check(final(ic, sr));
-
-	exports.default = validate;
-
-/***/ },
-/* 320 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29326,759 +31259,140 @@
 		value: true
 	});
 
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _Store = __webpack_require__(267);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _CultureStore = __webpack_require__(311);
-
-	var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-	var _ELStore = __webpack_require__(321);
-
-	var _ELStore2 = _interopRequireDefault(_ELStore);
-
-	var _ListStore = __webpack_require__(288);
-
-	var _ListStore2 = _interopRequireDefault(_ListStore);
-
-	var _RaceStore = __webpack_require__(316);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
-
-	var _RequirementsStore = __webpack_require__(317);
-
-	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
-
-	var _ProfessionStore = __webpack_require__(314);
-
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _ProfessionVariantStore = __webpack_require__(315);
-
-	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
-	var _alert = __webpack_require__(492);
-
-	var _alert2 = _interopRequireDefault(_alert);
-
-	var _reqPurchase = __webpack_require__(329);
-
-	var _reqPurchase2 = _interopRequireDefault(_reqPurchase);
+	var _DataUtils = __webpack_require__(284);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// AP = Adventure Points
+	exports.default = (_ref) => {
+		let attributes = _ref.attributes,
+		    adv = _ref.adv,
+		    cultures = _ref.cultures,
+		    disadv = _ref.disadv,
+		    talents = _ref.talents,
+		    combattech = _ref.combattech,
+		    professions = _ref.professions,
+		    professionVariants = _ref.professionVariants,
+		    races = _ref.races,
+		    spells = _ref.spells,
+		    liturgies = _ref.liturgies,
+		    specialabilities = _ref.specialabilities;
 
-	var _total = 0;
-	var _spent = 0;
-	var _rcp = [0, 0, 0, 0];
-	var _adv = [0, 0, 0];
-	var _disadv = [0, 0, 0];
+		const _list = {};
 
-	function _spend(value) {
-		const valid = _spent + value <= _total;
-		if (valid) {
-			_spent += value;
-		} else {
-			(0, _alert2.default)('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-		}
-		return valid;
-	}
-
-	function _spendDisadv(payload) {
-		const id = payload.id,
-		      value = payload.costs;
-
-		var _get = (0, _ListStore.get)(id);
-
-		const category = _get.category,
-		      reqs = _get.reqs;
-
-		const add = category === _Categories2.default.ADVANTAGES;
-		const target = () => add ? _adv : _disadv;
-
-		const isKar = reqs.some(e => e[0] === 'ADV_12' && e[1]);
-		const isMag = reqs.some(e => e[0] === 'ADV_50' && e[1]);
-		const index = isKar ? 2 : isMag ? 1 : 0;
-
-		const subValid = index > 0 ? target[index] + value <= 50 : true;
-		const mainValid = target[0] + value <= 80;
-		const totalValid = _spent + value <= _total;
-
-		if ([subValid, mainValid, totalValid].every(e => e)) {
-			_spent += add ? value : -value;
-			target[0] += value;
-			if (index > 0) {
-				target[index] += value;
+		const iterate = (source, DataClass) => {
+			for (let id in source) {
+				_list[id] = new DataClass(source[id]);
 			}
-		} else if (!subValid) {
-			const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
-			const text = add ? 'Vorteile' : 'Nachteile';
-			(0, _alert2.default)(`Obergrenze für ${ sub } ${ text } erreicht`, `Du kannst nicht mehr als 50 AP für ${ sub } ${ text } ausgeben!`);
-		} else if (!mainValid) {
-			const text = add ? 'Vorteile' : 'Nachteile';
-			(0, _alert2.default)(`Obergrenze für ${ text } erreicht`, `Du kannst nicht mehr als 80 AP für ${ text } ausgeben!`);
-		} else {
-			(0, _alert2.default)('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-		}
-	}
+		};
 
-	function _calculateRCPDiff(index, next) {
-		var current = _rcp[index] || 0;
-		next = next || 0;
-		let diff = next - current;
-		_spend(diff);
-		_rcp[index] = next;
-	}
+		const getAllByCategory = function () {
+			for (var _len = arguments.length, categories = Array(_len), _key = 0; _key < _len; _key++) {
+				categories[_key] = arguments[_key];
+			}
 
-	function _clear() {
-		_total = 0;
-		_spent = 0;
-		_rcp = [0, 0, 0, 0];
-		_adv = [0, 0, 0];
-		_disadv = [0, 0, 0];
-	}
-
-	function _updateAll(obj) {
-		_total = obj.total;
-		_spent = obj.spent;
-		_rcp = obj.rcp;
-		_adv = obj.adv;
-		_disadv = obj.disadv;
-	}
-
-	function _assignRCP(selections) {
-		if (!selections.useCulturePackage) {
-			_spent -= _rcp[1];
-		}
-
-		if (selections.buyLiteracy) {
-			const culture = _CultureStore2.default.getCurrent();
-			let id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-			_spent += (0, _ListStore.get)('SA_28').sel[id - 1][2];
-		}
-
-		let p = _ProfessionStore2.default.getCurrent();
-		if (p && p.id !== 'P_0') {
-			let apCosts = (0, _reqPurchase2.default)(p.reqs);
-			_spent += apCosts;
-		}
-	}
-
-	class _APStore extends _Store2.default {
-
-		getAll() {
-			return {
-				total: _total,
-				spent: _spent,
-				rcp: _rcp,
-				adv: _adv,
-				disadv: _disadv
-			};
-		}
-
-		getTotal() {
-			return _total;
-		}
-
-		getSpent() {
-			return _spent;
-		}
-
-		getAvailable() {
-			return _total - _spent;
-		}
-
-		getForDisAdv() {
-			return {
-				adv: _adv,
-				disadv: _disadv
-			};
-		}
-
-	}
-
-	const APStore = new _APStore();
-
-	APStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
-
-		if (payload.undoAction) {
-			_spend(_RequirementsStore2.default.getCurrentCost());
-			APStore.emitChange();
-			return true;
-		}
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.CLEAR_HERO:
-				_clear();
-				break;
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_updateAll(payload.ap);
-				break;
-
-			case _ActionTypes2.default.ACTIVATE_SPELL:
-			case _ActionTypes2.default.ACTIVATE_LITURGY:
-			case _ActionTypes2.default.DEACTIVATE_SPELL:
-			case _ActionTypes2.default.DEACTIVATE_LITURGY:
-			case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.ADD_TALENT_POINT:
-			case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.ADD_SPELL_POINT:
-			case _ActionTypes2.default.ADD_LITURGY_POINT:
-			case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
-			case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.REMOVE_TALENT_POINT:
-			case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.REMOVE_SPELL_POINT:
-			case _ActionTypes2.default.REMOVE_LITURGY_POINT:
-				if (_RequirementsStore2.default.isValid()) {
-					_spend(_RequirementsStore2.default.getCurrentCost());
+			var list = [];
+			for (const id in _list) {
+				const obj = _list[id];
+				if (categories.includes(obj.category)) {
+					list.push(obj);
 				}
-				break;
+			}
+			return list;
+		};
 
-			case _ActionTypes2.default.ACTIVATE_DISADV:
-			case _ActionTypes2.default.UPDATE_DISADV_TIER:
-			case _ActionTypes2.default.DEACTIVATE_DISADV:
-				_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
-				_spendDisadv(payload);
-				break;
+		iterate(races, _DataUtils.Race);
+		iterate(cultures, _DataUtils.Culture);
+		iterate(professions, _DataUtils.Profession);
+		_list['P_0'] = new _DataUtils.Profession({
+			id: 'P_0',
+			name: 'Eigene Profession',
+			subname: '',
+			ap: 0,
+			pre_req: [],
+			req: [],
+			sel: [],
+			sa: [],
+			combattech: [],
+			talents: [],
+			spells: [],
+			chants: [],
+			typ_adv: [],
+			typ_dadv: [],
+			untyp_adv: [],
+			untyp_dadv: [],
+			vars: []
+		});
+		iterate(professionVariants, _DataUtils.ProfessionVariant);
+		iterate(attributes, _DataUtils.Attribute);
+		iterate(talents, _DataUtils.Talent);
+		iterate(combattech, _DataUtils.CombatTechnique);
+		iterate(spells, _DataUtils.Spell);
+		iterate(liturgies, _DataUtils.Liturgy);
+		iterate(adv, _DataUtils.Advantage);
+		iterate(disadv, _DataUtils.Disadvantage);
+		iterate(specialabilities, _DataUtils.SpecialAbility);
 
-			case _ActionTypes2.default.ACTIVATE_SPECIALABILITY:
-			case _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER:
-				_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
-				_spend(payload.costs);
-				break;
+		for (const id in _list) {
+			var _list$id = _list[id];
+			let category = _list$id.category,
+			    sel = _list$id.sel;
 
-			case _ActionTypes2.default.DEACTIVATE_SPECIALABILITY:
-				_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
-				_spend(-payload.costs);
-				break;
+			if ([_Categories2.default.ADVANTAGES, _Categories2.default.DISADVANTAGES, _Categories2.default.SPECIAL_ABILITIES].includes(category)) {
+				_list[id].sel = (() => {
+					if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
+						return getAllByCategory(...sel.map(e => e[0])).filter((_ref2) => {
+							let cg = _ref2.category,
+							    gr = _ref2.gr;
+							return !(cg === 'spells' && gr === 5 || cg === 'liturgies' && gr === 3);
+						}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0).map(e => [e.name, e.id]);
+					}
 
-			case _ActionTypes2.default.SELECT_RACE:
-				_AppDispatcher2.default.waitFor([_RaceStore2.default.dispatchToken]);
-				_calculateRCPDiff(0, _RaceStore2.default.getCurrent().ap);
-				_calculateRCPDiff(1, 0);
-				_calculateRCPDiff(2, 0);
-				_calculateRCPDiff(3, 0);
-				break;
+					if (id === 'SA_72') {
+						return sel.map((e, i) => [_list[e[0]].name, i + 1, e[1]]);
+					}
 
-			case _ActionTypes2.default.SELECT_CULTURE:
-				_AppDispatcher2.default.waitFor([_CultureStore2.default.dispatchToken]);
-				_calculateRCPDiff(1, _CultureStore2.default.getCurrent().ap);
-				_calculateRCPDiff(2, 0);
-				_calculateRCPDiff(3, 0);
-				break;
+					if (id === 'SA_10') {
+						return getAllByCategory('talents').map((_ref3) => {
+							let id = _ref3.id,
+							    name = _ref3.name,
+							    ic = _ref3.ic,
+							    spec = _ref3.spec,
+							    spec_input = _ref3.spec_input;
 
-			case _ActionTypes2.default.SELECT_PROFESSION:
-				_AppDispatcher2.default.waitFor([_ProfessionStore2.default.dispatchToken]);
-				_calculateRCPDiff(2, _ProfessionStore2.default.getCurrentID() === 'P_0' ? 0 : _ProfessionStore2.default.getCurrent().ap);
-				_calculateRCPDiff(3, 0);
-				break;
+							spec = spec === null ? [] : spec.map((n, i) => [n, i + 1]);
+							return [name, id, ic, spec, spec_input];
+						});
+					}
 
-			case _ActionTypes2.default.SELECT_PROFESSION_VARIANT:
-				_AppDispatcher2.default.waitFor([_ProfessionVariantStore2.default.dispatchToken]);
-				if (_ProfessionVariantStore2.default.getCurrentID() === null) {
-					_calculateRCPDiff(3, 0);
-				} else {
-					_calculateRCPDiff(3, _ProfessionVariantStore2.default.getCurrent().ap);
-				}
-				break;
+					let isAdv = ['ADV_28', 'ADV_29', 'ADV_32'].includes(id);
+					let isSA = !['SA_3', 'SA_28', 'SA_30'].includes(id) && category === _Categories2.default.SPECIAL_ABILITIES;
+					let isDisadv = category === _Categories2.default.DISADVANTAGES;
 
-			case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
-				break;
+					if (isAdv || isSA || isDisadv) {
+						return sel.map((e, i) => {
+							let arr = [e[0], i + 1];
+							if (e[1] !== null) arr[2] = e[1];
+							return arr;
+						});
+					}
 
-			case _ActionTypes2.default.CREATE_NEW_HERO:
-				{
-					_clear();
-					_AppDispatcher2.default.waitFor([_ELStore2.default.dispatchToken]);
-					_total = _ELStore2.default.getStart().ap;
-					break;
-				}
-
-			default:
-				return true;
+					return sel;
+				})();
+			}
 		}
 
-		APStore.emitChange();
+		_list['DISADV_34'].sel = [['99 Gesetze', 1, 1], ['Moralkodex der Hesindekirche', 2, 1], ['Moralkodex der Phexkirche', 3, 1], ['Moralkodex der Perainekirche', 4, 1], ['99 Gesetze (streng)', 5, 2], ['Ehrenkodex der Krieger', 6, 2], ['Ehrenkodex der Ritter', 7, 2], ['Elfische Weltsicht', 8, 2], ['Moralkodex der Boronkirche', 9, 2], ['Moralkodex der Praioskirche', 10, 2], ['Moralkodex der Rondrakirche', 11, 2], ['Zwergischer Ehrenkodex', 12, 2], ['99 Gesetze (radikal)', 13, 3], ['Pazifismus', 14, 3]];
+		_list['DISADV_50'].sel = [['Sippenmitglied gegenüber der Sippe', 1, 1], ['Verschuldeter Held', 2, 1], ['Adliger gegenüber seinem Lehnsherrn', 3, 2], ['Geweihter gegenüber seinem Tempel', 5, 2], ['Geweihter gegenüber seiner Kirche', 4, 2], ['Magier gegenüber seinem Lehrmeister', 6, 2], ['Magier gegenüber seiner Akademie', 7, 2], ['Magier gegenüber seiner Gilde', 8, 2], ['Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe', 9, 3]];
 
-		return true;
-	});
-
-	exports.default = APStore;
-
-/***/ },
-/* 321 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _Store = __webpack_require__(267);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// EL = Experience Level
-
-	var _el = {};
-	var _start = 'EL_0';
-
-	function _init(el) {
-		_el = el;
-	}
-
-	function _update(el) {
-		_start = el;
-	}
-
-	function _clear() {
-		_start = 'EL_0';
-	}
-
-	class _ELStore extends _Store2.default {
-
-		get(id) {
-			return _el[id];
-		}
-
-		getAll() {
-			return _el;
-		}
-
-		getStartID() {
-			return _start;
-		}
-
-		getStart() {
-			return this.get(this.getStartID());
-		}
-
-	}
-
-	const ELStore = new _ELStore();
-
-	ELStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.CREATE_NEW_HERO:
-				_update(payload.el);
-				break;
-
-			case _ActionTypes2.default.CLEAR_HERO:
-				_clear();
-				break;
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_update(payload.el);
-				break;
-
-			case _ActionTypes2.default.RECEIVE_RAW_LISTS:
-				_init(payload.el);
-				break;
-
-			default:
-				return true;
-		}
-
-		ELStore.emitChange();
-
-		return true;
-	});
-
-	exports.default = ELStore;
-
-/***/ },
-/* 322 */,
-/* 323 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.close = close;
-	exports.createDialogNode = createDialogNode;
-
-	exports.default = function (element) {
-		let node = createDialogNode();
-		_reactDom2.default.render(_react2.default.cloneElement(element, { node }), node);
-		return true;
-	};
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(36);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function close(node) {
-		_reactDom2.default.unmountComponentAtNode(node);
-		document.body.removeChild(node);
-		return true;
-	}
-
-	function createDialogNode() {
-		let node = document.createElement('div');
-		document.body.appendChild(node);
-		return node;
-	}
-
-/***/ },
-/* 324 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _objectWithoutProperties2 = __webpack_require__(220);
-
-	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
-
-	var _DialogButtons = __webpack_require__(325);
-
-	var _DialogButtons2 = _interopRequireDefault(_DialogButtons);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(223);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class Dialog extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.close = () => (0, _createOverlay.close)(this.props.node), this.clickButton = func => {
-				if (func) func();
-				this.close(this.props.node);
-			}, _temp;
-		}
-
-		render() {
-			var _props = this.props,
-			    _props$buttons = _props.buttons,
-			    buttons = _props$buttons === undefined ? [] : _props$buttons,
-			    title = _props.title,
-			    other = (0, _objectWithoutProperties3.default)(_props, ['buttons', 'title']);
-
-
-			other.className = (0, _classnames2.default)('modal-backdrop', other.className);
-			delete other.node;
-
-			var contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
-
-			return _react2.default.createElement(
-				'div',
-				other,
-				_react2.default.createElement(
-					'div',
-					{ className: 'modal-container' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'modal-close', onClick: this.close },
-						_react2.default.createElement(
-							'div',
-							null,
-							'\uE900'
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'modal-header' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'modal-header-inner' },
-							title
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'modal-content' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'modal-content-inner', style: contentStyle },
-							this.props.children
-						)
-					),
-					_react2.default.createElement(_DialogButtons2.default, { list: buttons, onClickDefault: this.clickButton })
-				)
-			);
-		}
-	}
-	exports.default = Dialog;
-	Dialog.propTypes = {
-		buttons: _react.PropTypes.array,
-		className: _react.PropTypes.any,
-		id: _react.PropTypes.string,
-		node: _react.PropTypes.any,
-		title: _react.PropTypes.any
+		return _list;
 	};
 
 /***/ },
-/* 325 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends2 = __webpack_require__(182);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	var _BorderButton = __webpack_require__(326);
-
-	var _BorderButton2 = _interopRequireDefault(_BorderButton);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class DialogButtons extends _react.Component {
-
-		render() {
-			var _props = this.props;
-			const list = _props.list,
-			      onClickDefault = _props.onClickDefault;
-
-
-			let buttons = Array.isArray(list) && list.length > 0 ? list : [];
-
-			buttons = buttons.map((e, i) => {
-				e.onClick = onClickDefault.bind(null, e.onClick);
-				return _react2.default.createElement(_BorderButton2.default, (0, _extends3.default)({}, e, { key: 'popup-button-' + i }));
-			});
-
-			return _react2.default.createElement(
-				'div',
-				{ className: 'dialog-buttons' },
-				_react2.default.createElement(
-					'div',
-					{ className: 'dialog-buttons-inner' },
-					buttons
-				)
-			);
-		}
-	}
-	exports.default = DialogButtons;
-	DialogButtons.propTypes = {
-		list: _react.PropTypes.array.isRequired,
-		onClickDefault: _react.PropTypes.func.isRequired
-	};
-
-/***/ },
-/* 326 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _objectWithoutProperties2 = __webpack_require__(220);
-
-	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
-
-	var _Button = __webpack_require__(327);
-
-	var _Button2 = _interopRequireDefault(_Button);
-
-	var _Text = __webpack_require__(328);
-
-	var _Text2 = _interopRequireDefault(_Text);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class BorderButton extends _react.Component {
-
-		render() {
-			var _props = this.props;
-			const children = _props.children,
-			      label = _props.label,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['children', 'label']);
-
-
-			return _react2.default.createElement(
-				_Button2.default,
-				other,
-				_react2.default.createElement(
-					_Text2.default,
-					null,
-					label || children
-				)
-			);
-		}
-	}
-	exports.default = BorderButton;
-	BorderButton.propTypes = {
-		label: _react.PropTypes.string
-	};
-
-/***/ },
-/* 327 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends2 = __webpack_require__(182);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	var _objectWithoutProperties2 = __webpack_require__(220);
-
-	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(223);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class Button extends _react.Component {
-
-		render() {
-			var _props = this.props;
-			const className = _props.className,
-			      primary = _props.primary,
-			      fullWidth = _props.fullWidth,
-			      disabled = _props.disabled,
-			      round = _props.round,
-			      children = _props.children,
-			      onClick = _props.onClick,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['className', 'primary', 'fullWidth', 'disabled', 'round', 'children', 'onClick']);
-
-
-			const allClassNames = (0, _classnames2.default)({
-				'btn': true,
-				'btn-round': round,
-				'btn-text': !round,
-				'btn-primary': primary,
-				'fullWidth': fullWidth,
-				'disabled': disabled,
-				[className]: className
-			});
-
-			return _react2.default.createElement(
-				'div',
-				(0, _extends3.default)({}, other, { className: allClassNames, onClick: disabled ? undefined : onClick }),
-				children
-			);
-		}
-	}
-	exports.default = Button;
-	Button.propTypes = {
-		className: _react.PropTypes.any,
-		disabled: _react.PropTypes.bool,
-		fullWidth: _react.PropTypes.bool,
-		onClick: _react.PropTypes.func,
-		primary: _react.PropTypes.bool,
-		round: _react.PropTypes.bool
-	};
-
-/***/ },
-/* 328 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _objectWithoutProperties2 = __webpack_require__(220);
-
-	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class Text extends _react.Component {
-
-		render() {
-			var _props = this.props;
-			const children = _props.children,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['children']);
-
-
-			return _react2.default.createElement(
-				'div',
-				other,
-				children
-			);
-		}
-	}
-	exports.default = Text;
-	Text.defaultProps = {
-		className: 'text'
-	};
-
-/***/ },
-/* 329 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30088,87 +31402,87 @@
 	});
 	exports.fn = undefined;
 
-	var _from = __webpack_require__(289);
+	var _isNan = __webpack_require__(286);
 
-	var _from2 = _interopRequireDefault(_from);
+	var _isNan2 = _interopRequireDefault(_isNan);
 
-	var _toArray2 = __webpack_require__(293);
+	var _CultureStore = __webpack_require__(325);
 
-	var _toArray3 = _interopRequireDefault(_toArray2);
+	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _APStore = __webpack_require__(320);
+	var _ProfessionStore = __webpack_require__(333);
 
-	var _APStore2 = _interopRequireDefault(_APStore);
+	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _iccalc = __webpack_require__(319);
+	var _RaceStore = __webpack_require__(329);
 
-	var _iccalc2 = _interopRequireDefault(_iccalc);
+	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _ListStore = __webpack_require__(288);
-
-	var _Categories = __webpack_require__(312);
-
-	var _Categories2 = _interopRequireDefault(_Categories);
+	var _ListStore = __webpack_require__(302);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const fn = exports.fn = req => {
-		var _req = (0, _toArray3.default)(req);
+	const fn = exports.fn = (req, id) => {
+		if (req[0] === 'auto_req') {
+			let currentRace = _RaceStore2.default.getCurrent() || {};
+			let currentCulture = _CultureStore2.default.getCurrent() || {};
+			let currentProfession = _ProfessionStore2.default.getCurrent() || {};
+			let array = [];
 
-		const id = _req[0],
-		      value = _req[1],
-		      options = _req.slice(2);
+			if (currentRace.hasOwnProperty('imp_adv')) array.push(...currentRace.imp_adv.map(e => e[0]));
+			if (currentRace.hasOwnProperty('imp_dadv')) array.push(...currentRace.imp_dadv.map(e => e[0]));
+			if (currentRace.hasOwnProperty('typ_adv')) array.push(...currentRace.typ_adv);
+			if (currentRace.hasOwnProperty('typ_dadv')) array.push(...currentRace.typ_dadv);
 
-		let obj = (0, _ListStore.get)(id);
+			if (currentCulture.hasOwnProperty('typ_adv')) array.push(...currentCulture.typ_adv);
+			if (currentCulture.hasOwnProperty('typ_dadv')) array.push(...currentCulture.typ_dadv);
 
-		switch (obj.category) {
-			case _Categories2.default.ATTRIBUTES:
-				{
-					let values = (0, _from2.default)({ length: value - 8 }, (v, i) => i + 8);
-					obj.value = value;
-					return values.map(e => (0, _iccalc2.default)(5, e)).reduce((a, b) => a + b, 0);
+			if (currentProfession.hasOwnProperty('typ_adv')) array.push(...currentProfession.typ_adv);
+			if (currentProfession.hasOwnProperty('typ_dadv')) array.push(...currentProfession.typ_dadv);
+
+			return array.some(e => e === id);
+		} else if (req.length === 2) {
+			if (req[0] === 'r') return req[1].map(e => `R_${ e }`).indexOf(_RaceStore2.default.getCurrentID) > -1;
+			let obj = (0, _ListStore.get)(req[0]);
+			if (!obj.hasOwnProperty('active') && typeof req[1] === 'number') {
+				if (obj.hasOwnProperty('fw')) {
+					return obj.fw >= req[1];
+				} else if (obj.hasOwnProperty('value')) {
+					return obj.value >= req[1];
 				}
-			case _Categories2.default.ADVANTAGES:
-			case _Categories2.default.DISADVANTAGES:
-			case _Categories2.default.SPECIAL_ABILITIES:
-				{
-					obj.addDependencies();
-					if (options.length === 0) {
-						obj.activate(id);
-						return obj.cost;
-					} else {
-						if (obj.tiers !== null && obj.tiers) {
-							if (obj.max === null) {
-								obj.activate(id);
-								obj.tier = options[0];
-								return obj.cost * options[0];
-							} else {
-								obj.active.push(options.reverse());
-								return obj.cost * options[options.length - 1];
-							}
-						} else if (obj.sel.length > 0) {
-							if (obj.max === null) {
-								obj.activate(id);
-								obj.sid = options[0];
-								return obj.sel[options[0] - 1][2];
-							} else if (options.length > 1) {
-								obj.active.push(options.reverse());
-								return obj.sel[options.length - 2][2];
-							} else {
-								obj.active.push(options[0]);
-								return obj.sel[options[0] - 1][2];
-							}
-						}
-					}
-					break;
+			} else {
+				return obj.max !== null && obj.active.length > 0 === req[1] || obj.active === req[1];
+			}
+		} else if (req.length === 3) {
+			if (req[0] === 'ATTR_PRIMARY') {
+				let obj = (0, _ListStore.getPrimaryAttr)(req[2]);
+				return obj === undefined ? false : obj.value >= req[1];
+			}
+			let obj = (0, _ListStore.get)(req[0]);
+			if (req[2] === 'sel') {
+				return true;
+			} else if (typeof req[2] !== 'number' && req[2].match('GR')) {
+				let gr = parseInt(req[2].split('_')[2]);
+				var arr = (0, _ListStore.getAllByCategoryGroup)('talents', gr).map(e => e.id);
+				for (let n = 0; n < obj.active.length; n++) {
+					if (arr.indexOf(obj.active[n]) > -1) return false;
 				}
+				return true;
+			} else {
+				let req2 = (0, _isNan2.default)(parseInt(req[2])) ? req[2] : parseInt(req[2]);
+				if (obj.max === null) {
+					return req2 === obj.sid === req[1];
+				} else {
+					return !obj.active.every(e => Array.isArray(e) ? e[1] !== req2 : e !== req2) === req[1];
+				}
+			}
 		}
 	};
 
-	exports.default = reqs => reqs.map(req => fn(req)).reduce((a, b) => a + b, 0);
+	exports.default = (reqs, id) => reqs.every(req => fn(req, id));
 
 /***/ },
-/* 330 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30177,11 +31491,11 @@
 		value: true
 	});
 
-	var _Activatable = __webpack_require__(271);
+	var _Activatable = __webpack_require__(285);
 
 	var _Activatable2 = _interopRequireDefault(_Activatable);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30197,7 +31511,7 @@
 	exports.default = Advantage;
 
 /***/ },
-/* 331 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30206,23 +31520,23 @@
 		value: true
 	});
 
-	var _Increasable = __webpack_require__(332);
+	var _Increasable = __webpack_require__(342);
 
 	var _Increasable2 = _interopRequireDefault(_Increasable);
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30264,7 +31578,7 @@
 	exports.default = Attribute;
 
 /***/ },
-/* 332 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30273,7 +31587,7 @@
 		value: true
 	});
 
-	var _Dependent = __webpack_require__(286);
+	var _Dependent = __webpack_require__(300);
 
 	var _Dependent2 = _interopRequireDefault(_Dependent);
 
@@ -30309,7 +31623,7 @@
 	exports.default = Increasable;
 
 /***/ },
-/* 333 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30322,7 +31636,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -30380,7 +31694,7 @@
 	exports.default = PhaseStore;
 
 /***/ },
-/* 334 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30389,25 +31703,25 @@
 		value: true
 	});
 
-	var _Increasable = __webpack_require__(332);
+	var _Increasable = __webpack_require__(342);
 
 	var _Increasable2 = _interopRequireDefault(_Increasable);
 
-	var _CombatTechniquesStore = __webpack_require__(335);
+	var _CombatTechniquesStore = __webpack_require__(345);
 
 	var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30467,7 +31781,7 @@
 	exports.default = CombatTechnique;
 
 /***/ },
-/* 335 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30476,11 +31790,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -30488,17 +31802,17 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _ActionTypes = __webpack_require__(263);
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30591,7 +31905,7 @@
 	exports.default = CombatTechniquesStore;
 
 /***/ },
-/* 336 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30600,13 +31914,13 @@
 			value: true
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30656,7 +31970,7 @@
 	Culture.socialstatus = ['Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel'];
 
 /***/ },
-/* 337 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30665,11 +31979,11 @@
 		value: true
 	});
 
-	var _Activatable = __webpack_require__(271);
+	var _Activatable = __webpack_require__(285);
 
 	var _Activatable2 = _interopRequireDefault(_Activatable);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30685,7 +31999,7 @@
 	exports.default = Disadvantage;
 
 /***/ },
-/* 338 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30694,7 +32008,7 @@
 		value: true
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
@@ -30714,7 +32028,7 @@
 	exports.default = Item;
 
 /***/ },
-/* 339 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30723,25 +32037,25 @@
 		value: true
 	});
 
-	var _Skill = __webpack_require__(340);
+	var _Skill = __webpack_require__(350);
 
 	var _Skill2 = _interopRequireDefault(_Skill);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _LiturgiesStore = __webpack_require__(341);
+	var _LiturgiesStore = __webpack_require__(351);
 
 	var _LiturgiesStore2 = _interopRequireDefault(_LiturgiesStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -30803,7 +32117,7 @@
 	exports.default = Spell;
 
 /***/ },
-/* 340 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30812,7 +32126,7 @@
 		value: true
 	});
 
-	var _Increasable = __webpack_require__(332);
+	var _Increasable = __webpack_require__(342);
 
 	var _Increasable2 = _interopRequireDefault(_Increasable);
 
@@ -30834,7 +32148,7 @@
 	exports.default = Skill;
 
 /***/ },
-/* 341 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30843,11 +32157,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -30855,17 +32169,17 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -30873,7 +32187,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31025,7 +32339,7 @@
 	exports.default = LiturgiesStore;
 
 /***/ },
-/* 342 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31034,13 +32348,13 @@
 		value: true
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31103,7 +32417,7 @@
 	exports.default = Profession;
 
 /***/ },
-/* 343 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31112,13 +32426,13 @@
 			value: true
 	});
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31153,7 +32467,7 @@
 	exports.default = ProfessionVariant;
 
 /***/ },
-/* 344 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31162,25 +32476,25 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _toArray2 = __webpack_require__(293);
+	var _toArray2 = __webpack_require__(307);
 
 	var _toArray3 = _interopRequireDefault(_toArray2);
 
-	var _Core = __webpack_require__(287);
+	var _Core = __webpack_require__(301);
 
 	var _Core2 = _interopRequireDefault(_Core);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _dice = __webpack_require__(345);
+	var _dice = __webpack_require__(355);
 
 	var _dice2 = _interopRequireDefault(_dice);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31295,7 +32609,7 @@
 	Race.eyecolors = ['amethystviolett', 'bernsteinfarben', 'blau', 'braun', 'dunkelbraun', 'dunkelviolett', 'eisgrau', 'goldgesprenkelt', 'grau', 'graublau', 'grün', 'hellbraun', 'rubinrot', 'saphirblau', 'schwarz', 'schwarzbraun', 'silbergrau', 'smaragdgrün'];
 
 /***/ },
-/* 345 */
+/* 355 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31307,7 +32621,7 @@
 	exports.default = sides => Math.floor(Math.random() * sides) + 1;
 
 /***/ },
-/* 346 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31316,11 +32630,11 @@
 		value: true
 	});
 
-	var _Activatable = __webpack_require__(271);
+	var _Activatable = __webpack_require__(285);
 
 	var _Activatable2 = _interopRequireDefault(_Activatable);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31336,7 +32650,7 @@
 	exports.default = SpecialAbilities;
 
 /***/ },
-/* 347 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31345,25 +32659,25 @@
 		value: true
 	});
 
-	var _Skill = __webpack_require__(340);
+	var _Skill = __webpack_require__(350);
 
 	var _Skill2 = _interopRequireDefault(_Skill);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _SpellsStore = __webpack_require__(348);
+	var _SpellsStore = __webpack_require__(358);
 
 	var _SpellsStore2 = _interopRequireDefault(_SpellsStore);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31424,7 +32738,7 @@
 	exports.default = Spell;
 
 /***/ },
-/* 348 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31433,11 +32747,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -31445,17 +32759,17 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -31463,7 +32777,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31641,7 +32955,7 @@
 	exports.default = SpellsStore;
 
 /***/ },
-/* 349 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31650,25 +32964,25 @@
 		value: true
 	});
 
-	var _Skill = __webpack_require__(340);
+	var _Skill = __webpack_require__(350);
 
 	var _Skill2 = _interopRequireDefault(_Skill);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -31727,7 +33041,7 @@
 	exports.default = Talent;
 
 /***/ },
-/* 350 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31743,7 +33057,7 @@
 	exports.get = get;
 	exports.post = post;
 
-	var _jQuery = __webpack_require__(351);
+	var _jQuery = __webpack_require__(361);
 
 	var _jQuery2 = _interopRequireDefault(_jQuery);
 
@@ -31776,7 +33090,7 @@
 	}
 
 /***/ },
-/* 351 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -41596,7 +42910,7 @@
 
 
 /***/ },
-/* 352 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41613,7 +42927,7 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _stringify = __webpack_require__(353);
+	var _stringify = __webpack_require__(363);
 
 	var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -41621,7 +42935,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _alert = __webpack_require__(492);
+	var _alert = __webpack_require__(265);
 
 	var _alert2 = _interopRequireDefault(_alert);
 
@@ -41629,7 +42943,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _HerolistStore = __webpack_require__(355);
+	var _HerolistStore = __webpack_require__(365);
 
 	var _HerolistStore2 = _interopRequireDefault(_HerolistStore);
 
@@ -41835,13 +43149,13 @@
 	};
 
 /***/ },
-/* 353 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(354), __esModule: true };
+	module.exports = { "default": __webpack_require__(364), __esModule: true };
 
 /***/ },
-/* 354 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var core  = __webpack_require__(188)
@@ -41851,7 +43165,7 @@
 	};
 
 /***/ },
-/* 355 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41864,7 +43178,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -41880,7 +43194,7 @@
 			date: new Date('2016-10-18T16:18:28.420Z'),
 			player: ['U_1', 'schuchi'],
 			id: 'H_1',
-			phase: 2,
+			phase: 3,
 			name: 'Shimo ibn Rashdul',
 			avatar: 'images/portrait.png',
 			ap: {
@@ -42104,7 +43418,7 @@
 	exports.default = HerolistStore;
 
 /***/ },
-/* 356 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42117,609 +43431,7 @@
 
 	var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-	var _Dialog = __webpack_require__(324);
-
-	var _Dialog2 = _interopRequireDefault(_Dialog);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _TextField = __webpack_require__(357);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class ForgotUsername extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.state = {
-				email: ''
-			}, this.forgotUsername = () => _AccountActions2.default.forgotUsername(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
-				if (event.charCode === 13 && this.state.email !== '') {
-					this.forgotUsername();
-					(0, _createOverlay.close)(this.props.node);
-				}
-			}, _temp;
-		}
-
-		render() {
-			const email = this.state.email;
-
-
-			return _react2.default.createElement(
-				_Dialog2.default,
-				{ id: 'forgotusername', title: 'Benutzername vergessen', node: this.props.node, buttons: [{
-						label: 'E-Mail anfordern',
-						onClick: this.forgotUsername,
-						primary: true,
-						disabled: email === ''
-					}, {
-						label: 'Zurück',
-						onClick: this.back
-					}] },
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Registrierte E-Mail-Adresse',
-					value: email,
-					onChange: this._onChange,
-					onKeyPress: this._onEnter,
-					type: 'email',
-					fullWidth: true
-				})
-			);
-		}
-	}
-	exports.default = ForgotUsername;
-	ForgotUsername.propTypes = {
-		node: _react.PropTypes.any
-	};
-
-/***/ },
-/* 357 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(36);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _classnames = __webpack_require__(223);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class TextField extends _react.Component {
-
-		componentDidMount() {
-			if (this.props.autoFocus) _reactDom2.default.findDOMNode(this.refs.inputElement).focus();
-		}
-
-		render() {
-			var _props = this.props;
-			let className = _props.className,
-			    countCurrent = _props.countCurrent,
-			    countMax = _props.countMax,
-			    disabled = _props.disabled,
-			    fullWidth = _props.fullWidth,
-			    hint = _props.hint,
-			    labelText = _props.labelText,
-			    onChange = _props.onChange,
-			    onKeyDown = _props.onKeyDown,
-			    type = _props.type,
-			    value = _props.value;
-
-
-			className = (0, _classnames2.default)('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
-
-			const hintElement = hint ? _react2.default.createElement(
-				'div',
-				{ className: (0, _classnames2.default)('textfield-hint', value && 'hide') },
-				hint
-			) : null;
-
-			const labelTextElement = labelText ? _react2.default.createElement(
-				'label',
-				null,
-				labelText
-			) : null;
-
-			// const inputElement = this.props.multiLine ? (
-			// 	<TextareaAutosize
-			// 		defaultValue={value}
-			// 		onChange={onChange}
-			// 		onKeyPress={onKeyDown}
-			// 	/>
-			// ) : (
-			const inputElement = _react2.default.createElement('input', {
-				type: type,
-				value: value,
-				onChange: onChange,
-				onKeyPress: onKeyDown,
-				ref: 'inputElement'
-			});
-
-			const counterTextElement = countMax ? _react2.default.createElement(
-				'div',
-				null,
-				countCurrent,
-				' / ',
-				countMax
-			) : null;
-
-			return _react2.default.createElement(
-				'div',
-				{ className: className },
-				hintElement,
-				labelTextElement,
-				inputElement,
-				counterTextElement
-			);
-		}
-	}
-	exports.default = TextField;
-	// import TextareaAutosize from 'react-textarea-autosize';
-
-	TextField.propTypes = {
-		autoFocus: _react.PropTypes.bool,
-		className: _react.PropTypes.any,
-		countCurrent: _react.PropTypes.any,
-		countMax: _react.PropTypes.any,
-		disabled: _react.PropTypes.bool,
-		fullWidth: _react.PropTypes.bool,
-		hint: _react.PropTypes.string,
-		labelText: _react.PropTypes.any,
-		multiLine: _react.PropTypes.bool,
-		onChange: _react.PropTypes.func,
-		onKeyDown: _react.PropTypes.func,
-		type: _react.PropTypes.string,
-		value: _react.PropTypes.any
-	};
-	TextField.defaultProps = {
-		multiLine: false,
-		type: 'text'
-	};
-
-/***/ },
-/* 358 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AccountActions = __webpack_require__(225);
-
-	var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-	var _Dialog = __webpack_require__(324);
-
-	var _Dialog2 = _interopRequireDefault(_Dialog);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _TextField = __webpack_require__(357);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class ForgotPassword extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.state = {
-				email: ''
-			}, this.forgotPassword = () => _AccountActions2.default.forgotPassword(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
-				if (event.charCode === 13 && this.state.email !== '') {
-					this.forgotPassword();
-					(0, _createOverlay.close)(this.props.node);
-				}
-			}, _temp;
-		}
-
-		render() {
-			const email = this.state.email;
-
-
-			return _react2.default.createElement(
-				_Dialog2.default,
-				{ id: 'forgotpassword', title: 'Passwort vergessen', node: this.props.node, buttons: [{
-						label: 'E-Mail anfordern',
-						onClick: this.forgotPassword,
-						primary: true,
-						disabled: email === ''
-					}, {
-						label: 'Zurück',
-						onClick: this.back
-					}] },
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Registrierte E-Mail-Adresse',
-					value: email,
-					onChange: this._onChange,
-					onKeyPress: this._onEnter,
-					type: 'email',
-					fullWidth: true
-				})
-			);
-		}
-	}
-	exports.default = ForgotPassword;
-	ForgotPassword.propTypes = {
-		node: _react.PropTypes.any
-	};
-
-/***/ },
-/* 359 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AccountActions = __webpack_require__(225);
-
-	var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-	var _Dialog = __webpack_require__(324);
-
-	var _Dialog2 = _interopRequireDefault(_Dialog);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _TextField = __webpack_require__(357);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class Login extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.state = {
-				username: '',
-				password: ''
-			}, this.login = () => _AccountActions2.default.login(this.state.username, this.state.password), this.forgotUsername = () => {
-				_AccountActions2.default.showForgotName();(0, _createOverlay.close)(this.props.node);
-			}, this.forgotPassword = () => {
-				_AccountActions2.default.showForgotPassword();(0, _createOverlay.close)(this.props.node);
-			}, this.register = () => _AccountActions2.default.showRegister(), this.resendActivation = () => {
-				_AccountActions2.default.showResend();(0, _createOverlay.close)(this.props.node);
-			}, this._onChange = (option, event) => this.setState({ [option]: event.target.value }), this._onEnter = event => {
-				if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
-					this.login();
-					(0, _createOverlay.close)(this.props.node);
-				}
-			}, _temp;
-		}
-
-		render() {
-			var _state = this.state;
-			const username = _state.username,
-			      password = _state.password;
-
-
-			return _react2.default.createElement(
-				_Dialog2.default,
-				{ id: 'login', title: 'Anmelden', node: this.props.node, buttons: [{
-						label: 'Anmelden',
-						onClick: this.login,
-						primary: true,
-						disabled: username === '' || password === ''
-					}, {
-						label: 'Registrieren',
-						onClick: this.register
-					}] },
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Benutzername',
-					value: username,
-					onChange: this._onChange.bind(null, 'username'),
-					onKeyPress: this._onEnter,
-					fullWidth: true
-				}),
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Passwort',
-					value: password,
-					onChange: this._onChange.bind(null, 'password'),
-					onKeyPress: this._onEnter,
-					type: 'password',
-					fullWidth: true
-				}),
-				_react2.default.createElement(
-					'p',
-					null,
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.forgotUsername },
-						'Benutzername vergessen'
-					),
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.forgotPassword },
-						'Passwort vergessen'
-					),
-					_react2.default.createElement(
-						'span',
-						{ className: 'link', onClick: this.resendActivation },
-						'Aktivierungs-E-Mail nicht erhalten?'
-					)
-				)
-			);
-		}
-	}
-	exports.default = Login;
-	Login.propTypes = {
-		node: _react.PropTypes.any
-	};
-
-/***/ },
-/* 360 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AccountActions = __webpack_require__(225);
-
-	var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-	var _Dialog = __webpack_require__(324);
-
-	var _Dialog2 = _interopRequireDefault(_Dialog);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _TextField = __webpack_require__(357);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _validateEmail(email) {
-		var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return regex.test(email);
-	}
-
-	class Register extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.state = {
-				email: '',
-				email2: '',
-				username: '',
-				password: '',
-				password2: ''
-			}, this.register = () => _AccountActions2.default.register(this.state.email, this.state.username, this.state.password), this.back = () => _AccountActions2.default.showLogin(), this._onChange = (option, event) => this.setState({ [option]: event.target.value }), this._onEnter = event => {
-				var _state = this.state;
-				let email = _state.email,
-				    email2 = _state.email2,
-				    username = _state.username,
-				    password = _state.password,
-				    password2 = _state.password2;
-
-				if (event.charCode === 13 && email !== '' && _validateEmail(email) && email === email2 && username !== '' && username.length >= 3 && username.length <= 20 && password !== '' && password.length >= 5 && password.length <= 20 && password === password2) {
-					this.register();
-					(0, _createOverlay.close)(this.props.node);
-				}
-			}, _temp;
-		}
-
-		render() {
-			var _state2 = this.state;
-			const email = _state2.email,
-			      email2 = _state2.email2,
-			      username = _state2.username,
-			      password = _state2.password,
-			      password2 = _state2.password2;
-
-
-			return _react2.default.createElement(
-				_Dialog2.default,
-				{ id: 'login', title: 'Registrieren', node: this.props.node, buttons: [{
-						label: 'Registrieren',
-						onClick: this.register,
-						primary: true,
-						disabled: email === '' || !_validateEmail(email) || email !== email2 || username === '' || username.length < 3 || username.length > 20 || password === '' || password.length < 5 || password.length > 20 || password !== password2
-					}, {
-						label: 'Zurück',
-						onClick: this.back
-					}] },
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'E-Mail-Adresse',
-					value: email,
-					onChange: this._onChange.bind(null, 'email'),
-					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'email'
-				}),
-				email !== '' && !_validateEmail(email) ? _react2.default.createElement(
-					'p',
-					null,
-					'Es wurde keine g\xFCltige Email-Adresse eingegeben!'
-				) : null,
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'E-Mail-Adresse best\xE4tigen',
-					value: email2,
-					onChange: this._onChange.bind(null, 'email2'),
-					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'email'
-				}),
-				email !== email2 && email2 !== '' ? _react2.default.createElement(
-					'p',
-					null,
-					'Die E-Mail-Adressen sind nicht identisch!'
-				) : null,
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Benutzername',
-					value: username,
-					onChange: this._onChange.bind(null, 'username'),
-					onKeyPress: this._onEnter,
-					fullWidth: true
-				}),
-				username.length > 0 && (username.length < 3 || username.length > 20) ? _react2.default.createElement(
-					'p',
-					null,
-					'Der Benutzername muss zwischen 3 und 20 Zeichen lang sein!'
-				) : null,
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Passwort',
-					value: password,
-					onChange: this._onChange.bind(null, 'password'),
-					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'password'
-				}),
-				password.length > 0 && (password.length < 5 || password.length > 20) ? _react2.default.createElement(
-					'p',
-					null,
-					'Das Passwort muss zwischen 5 und 20 Zeichen lang sein!'
-				) : null,
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Passwort best\xE4tigen',
-					value: password2,
-					onChange: this._onChange.bind(null, 'password2'),
-					onKeyPress: this._onEnter,
-					fullWidth: true,
-					type: 'password'
-				}),
-				password !== password2 && password2 !== '' ? _react2.default.createElement(
-					'p',
-					null,
-					'Die Passw\xF6rter sind nicht identisch!'
-				) : null
-			);
-		}
-	}
-	exports.default = Register;
-	Register.propTypes = {
-		node: _react.PropTypes.any
-	};
-
-/***/ },
-/* 361 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AccountActions = __webpack_require__(225);
-
-	var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-	var _Dialog = __webpack_require__(324);
-
-	var _Dialog2 = _interopRequireDefault(_Dialog);
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _TextField = __webpack_require__(357);
-
-	var _TextField2 = _interopRequireDefault(_TextField);
-
-	var _createOverlay = __webpack_require__(323);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class ResendActivation extends _react.Component {
-		constructor() {
-			var _temp;
-
-			return _temp = super(...arguments), this.state = {
-				email: ''
-			}, this.resendActivation = () => _AccountActions2.default.resendActivation(this.state.email), this.back = () => _AccountActions2.default.showLogin(), this._onChange = event => this.setState({ email: event.target.value }), this._onEnter = event => {
-				if (event.charCode === 13 && this.state.email !== '') {
-					this.resendActivation();
-					(0, _createOverlay.close)(this.props.node);
-				}
-			}, _temp;
-		}
-
-		render() {
-			const email = this.state.email;
-
-
-			return _react2.default.createElement(
-				_Dialog2.default,
-				{ id: 'resendactivation', title: 'Aktivierungslink erneut senden', node: this.props.node, buttons: [{
-						label: 'E-Mail anfordern',
-						onClick: this.resendActivation,
-						primary: true,
-						disabled: email === ''
-					}, {
-						label: 'Zurück',
-						onClick: this.back
-					}] },
-				_react2.default.createElement(_TextField2.default, {
-					hint: 'Registrierte E-Mail-Adresse',
-					value: email,
-					onChange: this._onChange,
-					onKeyPress: this._onEnter,
-					type: 'email',
-					fullWidth: true
-				})
-			);
-		}
-	}
-	exports.default = ResendActivation;
-	ResendActivation.propTypes = {
-		node: _react.PropTypes.any
-	};
-
-/***/ },
-/* 362 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AccountActions = __webpack_require__(225);
-
-	var _AccountActions2 = _interopRequireDefault(_AccountActions);
-
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
@@ -42727,11 +43439,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
-	var _InputButtonGroup = __webpack_require__(365);
+	var _InputButtonGroup = __webpack_require__(369);
 
 	var _InputButtonGroup2 = _interopRequireDefault(_InputButtonGroup);
 
@@ -42780,7 +43492,7 @@
 	exports.default = Account;
 
 /***/ },
-/* 363 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42797,11 +43509,11 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _Button = __webpack_require__(327);
+	var _Button = __webpack_require__(270);
 
 	var _Button2 = _interopRequireDefault(_Button);
 
-	var _Icon = __webpack_require__(364);
+	var _Icon = __webpack_require__(368);
 
 	var _Icon2 = _interopRequireDefault(_Icon);
 
@@ -42836,7 +43548,7 @@
 	};
 
 /***/ },
-/* 364 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42876,7 +43588,7 @@
 	};
 
 /***/ },
-/* 365 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42926,7 +43638,7 @@
 	};
 
 /***/ },
-/* 366 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42939,7 +43651,7 @@
 
 	var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
@@ -42947,11 +43659,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
-	var _InputButtonGroup = __webpack_require__(365);
+	var _InputButtonGroup = __webpack_require__(369);
 
 	var _InputButtonGroup2 = _interopRequireDefault(_InputButtonGroup);
 
@@ -43000,7 +43712,7 @@
 	exports.default = Account;
 
 /***/ },
-/* 367 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43009,19 +43721,19 @@
 		value: true
 	});
 
-	var _Attributes = __webpack_require__(368);
+	var _Attributes = __webpack_require__(372);
 
 	var _Attributes2 = _interopRequireDefault(_Attributes);
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -43067,7 +43779,7 @@
 	exports.default = AttributesController;
 
 /***/ },
-/* 368 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43084,11 +43796,11 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _AttributeCalc = __webpack_require__(369);
+	var _AttributeCalc = __webpack_require__(373);
 
 	var _AttributeCalc2 = _interopRequireDefault(_AttributeCalc);
 
-	var _AttributeList = __webpack_require__(373);
+	var _AttributeList = __webpack_require__(378);
 
 	var _AttributeList2 = _interopRequireDefault(_AttributeList);
 
@@ -43147,7 +43859,7 @@
 	};
 
 /***/ },
-/* 369 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43156,103 +43868,33 @@
 		value: true
 	});
 
-	var _AttributeCalcItem = __webpack_require__(370);
+	var _AttributeCalcItem = __webpack_require__(374);
 
 	var _AttributeCalcItem2 = _interopRequireDefault(_AttributeCalcItem);
-
-	var _ListStore = __webpack_require__(288);
 
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _secondaryAttributes = __webpack_require__(336);
+
+	var _secondaryAttributes2 = _interopRequireDefault(_secondaryAttributes);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	class AttributeCalc extends _react.Component {
 
 		render() {
-			var _props = this.props;
-			const attributes = _props.attributes,
-			      baseValues = _props.baseValues,
-			      phase = _props.phase;
+			const phase = this.props.phase;
 
 
-			const calculated = [{
-				label: 'LE',
-				value: function () {
-					let a = baseValues.le + attributes[6].value * 2 + baseValues.leAdd;
-					if ((0, _ListStore.get)('ADV_25').active) a += (0, _ListStore.get)('ADV_25').tier;else if ((0, _ListStore.get)('DISADV_28').active) a -= (0, _ListStore.get)('DISADV_28').tier;
-					return a;
-				}(),
-				disabledIncrease: baseValues.leAdd >= (0, _ListStore.get)('ATTR_7').value
-			}, {
-				label: 'AE',
-				value: function () {
-					let primary = (0, _ListStore.getPrimaryAttrID)(1);
-					if (primary === 'ATTR_0') return '-';else {
-						let a = 20 + (0, _ListStore.get)(primary).value + baseValues.aeAdd;
-						if ((0, _ListStore.get)('ADV_23').active) a += (0, _ListStore.get)('ADV_23').tier;else if ((0, _ListStore.get)('DISADV_26').active) a -= (0, _ListStore.get)('DISADV_26').tier;
-						return a;
-					}
-				}(),
-				disabledIncrease: function () {
-					let primary = (0, _ListStore.getPrimaryAttrID)(1);
-					if (primary === 'ATTR_0') return false;else {
-						return baseValues.aeAdd >= (0, _ListStore.get)(primary).value;
-					}
-				}(),
-				permanent: 0,
-				permanentRe: 0,
-				disabledPermanent: true
-			}, {
-				label: 'KE',
-				value: function () {
-					let primary = (0, _ListStore.getPrimaryAttrID)(2);
-					if (primary === 'ATTR_0') return '-';else {
-						let a = 20 + (0, _ListStore.get)(primary).value + baseValues.keAdd;
-						if ((0, _ListStore.get)('ADV_24').active) a += (0, _ListStore.get)('ADV_24').tier;else if ((0, _ListStore.get)('DISADV_27').active) a -= (0, _ListStore.get)('DISADV_27').tier;
-						return a;
-					}
-				}(),
-				disabledIncrease: function () {
-					let primary = (0, _ListStore.getPrimaryAttrID)(2);
-					if (primary === 'ATTR_0') return false;else {
-						return baseValues.keAdd >= (0, _ListStore.get)(primary).value;
-					}
-				}(),
-				permanent: 0,
-				permanentRe: 0,
-				disabledPermanent: true
-			}, {
-				label: 'SK',
-				value: function () {
-					let a = baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6);
-					if ((0, _ListStore.get)('ADV_26').active) a++;else if ((0, _ListStore.get)('DISADV_29').active) a--;
-					return a;
-				}()
-			}, {
-				label: 'ZK',
-				value: function () {
-					let a = baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6);
-					if ((0, _ListStore.get)('ADV_27').active) a++;else if ((0, _ListStore.get)('DISADV_30').active) a--;
-					return a;
-				}()
-			}, {
-				label: 'AW',
-				value: Math.round(attributes[5].value / 2)
-			}, {
-				label: 'INI',
-				value: Math.round((attributes[0].value + attributes[5].value) / 2)
-			}, {
-				label: 'GS',
-				value: baseValues.gs
-			}];
+			const calculated = (0, _secondaryAttributes2.default)();
 
 			return _react2.default.createElement(
 				'div',
 				{ className: 'calculated' },
 				calculated.map(attribute => _react2.default.createElement(_AttributeCalcItem2.default, {
-					key: attribute.label,
+					key: attribute.id,
 					attribute: attribute,
 					phase: phase
 				}))
@@ -43267,7 +43909,7 @@
 	};
 
 /***/ },
-/* 370 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43280,17 +43922,21 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _AttributeActions = __webpack_require__(371);
+	var _AttributeActions = __webpack_require__(375);
 
 	var _AttributeActions2 = _interopRequireDefault(_AttributeActions);
 
-	var _AttributeBorder = __webpack_require__(372);
+	var _AttributeBorder = __webpack_require__(376);
 
 	var _AttributeBorder2 = _interopRequireDefault(_AttributeBorder);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
+
+	var _NumberBox = __webpack_require__(377);
+
+	var _NumberBox2 = _interopRequireDefault(_NumberBox);
 
 	var _react = __webpack_require__(6);
 
@@ -43302,41 +43948,46 @@
 		constructor() {
 			var _temp;
 
-			return _temp = super(...arguments), this.addMaxEnergyPoint = () => _AttributeActions2.default.addMaxEnergyPoint(this.props.attribute.label), _temp;
+			return _temp = super(...arguments), this.addMaxEnergyPoint = () => _AttributeActions2.default.addMaxEnergyPoint(this.props.attribute.id), _temp;
 		}
 
 		render() {
 			var _props = this.props,
 			    _props$attribute = _props.attribute;
-			const disabledIncrease = _props$attribute.disabledIncrease,
-			      disabledPermanent = _props$attribute.disabledPermanent,
-			      other = (0, _objectWithoutProperties3.default)(_props$attribute, ['disabledIncrease', 'disabledPermanent']),
+			const currentAdd = _props$attribute.currentAdd,
+			      maxAdd = _props$attribute.maxAdd,
+			      other = (0, _objectWithoutProperties3.default)(_props$attribute, ['currentAdd', 'maxAdd']),
 			      phase = _props.phase;
 
 
-			const increaseElement = this.props.attribute.hasOwnProperty('disabledIncrease') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'add', icon: '\uE145', onClick: this.addMaxEnergyPoint, disabled: disabledIncrease }) : null;
+			const increaseElement = maxAdd && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'add', icon: '\uE145', onClick: this.addMaxEnergyPoint, disabled: !maxAdd || currentAdd >= maxAdd.value }) : null;
 
-			const rebuyElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy', icon: '\uE923', disabled: disabledPermanent }) : null;
+			// const rebuyElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? (
+			// 	<IconButton className="rebuy" icon="&#xE923;" disabled={disabledPermanent} />
+			// ) : null;
 
-			const rebuyUndoElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? _react2.default.createElement(_IconButton2.default, { className: 'rebuy-undo', icon: '\uE8B3', disabled: disabledPermanent }) : null;
+			// const rebuyUndoElement = this.props.attribute.hasOwnProperty('disabledPermanent') && other.value !== '-' && phase > 2 ? (
+			// 	<IconButton className="rebuy-undo" icon="&#xE8B3;" disabled={disabledPermanent} />
+			// ) : null;
 
 			return _react2.default.createElement(
 				_AttributeBorder2.default,
 				other,
-				increaseElement,
-				rebuyElement,
-				rebuyUndoElement
+				phase > 2 && maxAdd ? _react2.default.createElement(_NumberBox2.default, { current: currentAdd, max: maxAdd.value }) : null,
+				increaseElement
 			);
 		}
 	}
-	exports.default = AttributeCalcItem;
+	exports.default = AttributeCalcItem; // {rebuyElement}
+	// {rebuyUndoElement}
+
 	AttributeCalcItem.propTypes = {
 		attribute: _react.PropTypes.object.isRequired,
 		phase: _react.PropTypes.number.isRequired
 	};
 
 /***/ },
-/* 371 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43377,7 +44028,7 @@
 	};
 
 /***/ },
-/* 372 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43435,7 +44086,53 @@
 	};
 
 /***/ },
-/* 373 */
+/* 377 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class NumberBox extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const current = _props.current,
+			      max = _props.max;
+
+
+			return _react2.default.createElement(
+				"div",
+				{ className: "number-box" },
+				current || current === 0 ? _react2.default.createElement(
+					"span",
+					{ className: "current" },
+					current
+				) : null,
+				max ? _react2.default.createElement(
+					"span",
+					{ className: "max" },
+					max
+				) : null
+			);
+		}
+	}
+	exports.default = NumberBox;
+	NumberBox.propTypes = {
+		current: _react.PropTypes.number,
+		max: _react.PropTypes.number
+	};
+
+/***/ },
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43452,7 +44149,7 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _AttributeListItem = __webpack_require__(374);
+	var _AttributeListItem = __webpack_require__(379);
 
 	var _AttributeListItem2 = _interopRequireDefault(_AttributeListItem);
 
@@ -43486,7 +44183,7 @@
 	};
 
 /***/ },
-/* 374 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43495,19 +44192,19 @@
 		value: true
 	});
 
-	var _AttributeActions = __webpack_require__(371);
+	var _AttributeActions = __webpack_require__(375);
 
 	var _AttributeActions2 = _interopRequireDefault(_AttributeActions);
 
-	var _AttributeBorder = __webpack_require__(372);
+	var _AttributeBorder = __webpack_require__(376);
 
 	var _AttributeBorder2 = _interopRequireDefault(_AttributeBorder);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _NumberBox = __webpack_require__(375);
+	var _NumberBox = __webpack_require__(377);
 
 	var _NumberBox2 = _interopRequireDefault(_NumberBox);
 
@@ -43552,53 +44249,7 @@
 	};
 
 /***/ },
-/* 375 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class NumberBox extends _react.Component {
-
-		render() {
-			var _props = this.props;
-			const current = _props.current,
-			      max = _props.max;
-
-
-			return _react2.default.createElement(
-				"div",
-				{ className: "number-box" },
-				current ? _react2.default.createElement(
-					"span",
-					{ className: "current" },
-					current
-				) : null,
-				max ? _react2.default.createElement(
-					"span",
-					{ className: "max" },
-					max
-				) : null
-			);
-		}
-	}
-	exports.default = NumberBox;
-	NumberBox.propTypes = {
-		current: _react.PropTypes.number,
-		max: _react.PropTypes.number
-	};
-
-/***/ },
-/* 376 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43607,11 +44258,11 @@
 		value: true
 	});
 
-	var _Advantages = __webpack_require__(377);
+	var _Advantages = __webpack_require__(381);
 
 	var _Advantages2 = _interopRequireDefault(_Advantages);
 
-	var _Disadvantages = __webpack_require__(388);
+	var _Disadvantages = __webpack_require__(391);
 
 	var _Disadvantages2 = _interopRequireDefault(_Disadvantages);
 
@@ -43619,7 +44270,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -43667,7 +44318,7 @@
 	exports.default = DisAdv;
 
 /***/ },
-/* 377 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43676,35 +44327,35 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvActions = __webpack_require__(380);
+	var _DisAdvActions = __webpack_require__(384);
 
 	var _DisAdvActions2 = _interopRequireDefault(_DisAdvActions);
 
-	var _DisAdvList = __webpack_require__(381);
+	var _DisAdvList = __webpack_require__(385);
 
 	var _DisAdvList2 = _interopRequireDefault(_DisAdvList);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -43712,11 +44363,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -43822,7 +44473,7 @@
 	exports.default = Advantages;
 
 /***/ },
-/* 378 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43839,11 +44490,15 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _Activate = __webpack_require__(379);
+	var _Activate = __webpack_require__(383);
 
 	var _Activate2 = _interopRequireDefault(_Activate);
 
-	var _Icon = __webpack_require__(364);
+	var _classnames = __webpack_require__(223);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _Icon = __webpack_require__(368);
 
 	var _Icon2 = _interopRequireDefault(_Icon);
 
@@ -43851,7 +44506,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Text = __webpack_require__(328);
+	var _Text = __webpack_require__(271);
 
 	var _Text2 = _interopRequireDefault(_Text);
 
@@ -43863,14 +44518,15 @@
 			var _props = this.props;
 			const checked = _props.checked,
 			      children = _props.children,
+			      className = _props.className,
 			      label = _props.label,
 			      onClick = _props.onClick,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['checked', 'children', 'label', 'onClick']);
+			      other = (0, _objectWithoutProperties3.default)(_props, ['checked', 'children', 'className', 'label', 'onClick']);
 
 
 			return _react2.default.createElement(
 				_Activate2.default,
-				(0, _extends3.default)({}, other, { active: checked, className: 'checkbox', onClick: onClick }),
+				(0, _extends3.default)({}, other, { active: checked, className: (0, _classnames2.default)('checkbox', className), onClick: onClick }),
 				_react2.default.createElement(
 					_Icon2.default,
 					null,
@@ -43894,7 +44550,7 @@
 	};
 
 /***/ },
-/* 379 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43956,7 +44612,7 @@
 	};
 
 /***/ },
-/* 380 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44004,7 +44660,7 @@
 	};
 
 /***/ },
-/* 381 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44013,11 +44669,11 @@
 		value: true
 	});
 
-	var _DisAdvAddListItem = __webpack_require__(382);
+	var _DisAdvAddListItem = __webpack_require__(386);
 
 	var _DisAdvAddListItem2 = _interopRequireDefault(_DisAdvAddListItem);
 
-	var _DisAdvRemoveListItem = __webpack_require__(384);
+	var _DisAdvRemoveListItem = __webpack_require__(388);
 
 	var _DisAdvRemoveListItem2 = _interopRequireDefault(_DisAdvRemoveListItem);
 
@@ -44094,7 +44750,7 @@
 	};
 
 /***/ },
-/* 382 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44103,21 +44759,21 @@
 		value: true
 	});
 
-	var _set = __webpack_require__(294);
+	var _set = __webpack_require__(308);
 
 	var _set2 = _interopRequireDefault(_set);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _DisAdvActions = __webpack_require__(380);
+	var _DisAdvActions = __webpack_require__(384);
 
 	var _DisAdvActions2 = _interopRequireDefault(_DisAdvActions);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -44125,7 +44781,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -44376,7 +45032,7 @@
 	};
 
 /***/ },
-/* 383 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44506,7 +45162,7 @@
 	};
 
 /***/ },
-/* 384 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44515,15 +45171,15 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _DisAdvActions = __webpack_require__(380);
+	var _DisAdvActions = __webpack_require__(384);
 
 	var _DisAdvActions2 = _interopRequireDefault(_DisAdvActions);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -44619,7 +45275,7 @@
 	};
 
 /***/ },
-/* 385 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44628,11 +45284,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -44640,25 +45296,25 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _ActionTypes = __webpack_require__(263);
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _validate = __webpack_require__(386);
+	var _validate = __webpack_require__(339);
 
 	var _validate2 = _interopRequireDefault(_validate);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -45040,97 +45696,7 @@
 	exports.default = DisAdvStore;
 
 /***/ },
-/* 386 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.fn = undefined;
-
-	var _isNan = __webpack_require__(272);
-
-	var _isNan2 = _interopRequireDefault(_isNan);
-
-	var _CultureStore = __webpack_require__(311);
-
-	var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-	var _ProfessionStore = __webpack_require__(314);
-
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _RaceStore = __webpack_require__(316);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
-
-	var _ListStore = __webpack_require__(288);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	const fn = exports.fn = (req, id) => {
-		if (req[0] === 'auto_req') {
-			let currentRace = _RaceStore2.default.getCurrent() || {};
-			let currentCulture = _CultureStore2.default.getCurrent() || {};
-			let currentProfession = _ProfessionStore2.default.getCurrent() || {};
-			let array = [];
-
-			if (currentRace.hasOwnProperty('imp_adv')) array.push(...currentRace.imp_adv.map(e => e[0]));
-			if (currentRace.hasOwnProperty('imp_dadv')) array.push(...currentRace.imp_dadv.map(e => e[0]));
-			if (currentRace.hasOwnProperty('typ_adv')) array.push(...currentRace.typ_adv);
-			if (currentRace.hasOwnProperty('typ_dadv')) array.push(...currentRace.typ_dadv);
-
-			if (currentCulture.hasOwnProperty('typ_adv')) array.push(...currentCulture.typ_adv);
-			if (currentCulture.hasOwnProperty('typ_dadv')) array.push(...currentCulture.typ_dadv);
-
-			if (currentProfession.hasOwnProperty('typ_adv')) array.push(...currentProfession.typ_adv);
-			if (currentProfession.hasOwnProperty('typ_dadv')) array.push(...currentProfession.typ_dadv);
-
-			return array.some(e => e === id);
-		} else if (req.length === 2) {
-			if (req[0] === 'r') return req[1].map(e => `R_${ e }`).indexOf(_RaceStore2.default.getCurrentID) > -1;
-			let obj = (0, _ListStore.get)(req[0]);
-			if (!obj.hasOwnProperty('active') && typeof req[1] === 'number') {
-				if (obj.hasOwnProperty('fw')) {
-					return obj.fw >= req[1];
-				} else if (obj.hasOwnProperty('value')) {
-					return obj.value >= req[1];
-				}
-			} else {
-				return obj.max !== null && obj.active.length > 0 === req[1] || obj.active === req[1];
-			}
-		} else if (req.length === 3) {
-			if (req[0] === 'ATTR_PRIMARY') {
-				let obj = (0, _ListStore.getPrimaryAttr)(req[2]);
-				return obj === undefined ? false : obj.value >= req[1];
-			}
-			let obj = (0, _ListStore.get)(req[0]);
-			if (req[2] === 'sel') {
-				return true;
-			} else if (typeof req[2] !== 'number' && req[2].match('GR')) {
-				let gr = parseInt(req[2].split('_')[2]);
-				var arr = (0, _ListStore.getAllByCategoryGroup)('talents', gr).map(e => e.id);
-				for (let n = 0; n < obj.active.length; n++) {
-					if (arr.indexOf(obj.active[n]) > -1) return false;
-				}
-				return true;
-			} else {
-				let req2 = (0, _isNan2.default)(parseInt(req[2])) ? req[2] : parseInt(req[2]);
-				if (obj.max === null) {
-					return req2 === obj.sid === req[1];
-				} else {
-					return !obj.active.every(e => Array.isArray(e) ? e[1] !== req2 : e !== req2) === req[1];
-				}
-			}
-		}
-	};
-
-	exports.default = (reqs, id) => reqs.every(req => fn(req, id));
-
-/***/ },
-/* 387 */
+/* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45198,7 +45764,7 @@
 	};
 
 /***/ },
-/* 388 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45207,35 +45773,35 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvActions = __webpack_require__(380);
+	var _DisAdvActions = __webpack_require__(384);
 
 	var _DisAdvActions2 = _interopRequireDefault(_DisAdvActions);
 
-	var _DisAdvList = __webpack_require__(381);
+	var _DisAdvList = __webpack_require__(385);
 
 	var _DisAdvList2 = _interopRequireDefault(_DisAdvList);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -45243,11 +45809,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -45350,7 +45916,7 @@
 	exports.default = Disadvantages;
 
 /***/ },
-/* 389 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45371,7 +45937,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Tab = __webpack_require__(390);
+	var _Tab = __webpack_require__(393);
 
 	var _Tab2 = _interopRequireDefault(_Tab);
 
@@ -45405,7 +45971,7 @@
 	};
 
 /***/ },
-/* 390 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45414,7 +45980,7 @@
 		value: true
 	});
 
-	var _Text = __webpack_require__(328);
+	var _Text = __webpack_require__(271);
 
 	var _Text2 = _interopRequireDefault(_Text);
 
@@ -45466,7 +46032,7 @@
 	};
 
 /***/ },
-/* 391 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45475,7 +46041,7 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
@@ -45487,11 +46053,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _TabActions = __webpack_require__(392);
+	var _TabActions = __webpack_require__(395);
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -45529,7 +46095,7 @@
 	exports.default = Grouplist;
 
 /***/ },
-/* 392 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45564,7 +46130,7 @@
 	};
 
 /***/ },
-/* 393 */
+/* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45577,39 +46143,39 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _HerolistActions = __webpack_require__(394);
+	var _HerolistActions = __webpack_require__(397);
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _HerolistItem = __webpack_require__(396);
+	var _HerolistItem = __webpack_require__(399);
 
 	var _HerolistItem2 = _interopRequireDefault(_HerolistItem);
 
-	var _HerolistStore = __webpack_require__(355);
+	var _HerolistStore = __webpack_require__(365);
 
 	var _HerolistStore2 = _interopRequireDefault(_HerolistStore);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -45621,7 +46187,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -45717,7 +46283,7 @@
 	exports.default = Herolist;
 
 /***/ },
-/* 394 */
+/* 397 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45738,15 +46304,15 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _createOverlay = __webpack_require__(323);
+	var _createOverlay = __webpack_require__(266);
 
 	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _HeroCreation = __webpack_require__(395);
+	var _HeroCreation = __webpack_require__(398);
 
 	var _HeroCreation2 = _interopRequireDefault(_HeroCreation);
 
@@ -45754,11 +46320,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _alert = __webpack_require__(492);
+	var _alert = __webpack_require__(265);
 
 	var _alert2 = _interopRequireDefault(_alert);
 
-	var _WebAPIUtils = __webpack_require__(265);
+	var _WebAPIUtils = __webpack_require__(279);
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
@@ -45815,7 +46381,7 @@
 	};
 
 /***/ },
-/* 395 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45824,15 +46390,15 @@
 		value: true
 	});
 
-	var _Dialog = __webpack_require__(324);
+	var _Dialog = __webpack_require__(267);
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _HerolistActions = __webpack_require__(394);
+	var _HerolistActions = __webpack_require__(397);
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
@@ -45840,7 +46406,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -45889,7 +46455,7 @@
 	};
 
 /***/ },
-/* 396 */
+/* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45898,39 +46464,39 @@
 		value: true
 	});
 
-	var _Avatar = __webpack_require__(397);
+	var _Avatar = __webpack_require__(400);
 
 	var _Avatar2 = _interopRequireDefault(_Avatar);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _HerolistActions = __webpack_require__(394);
+	var _HerolistActions = __webpack_require__(397);
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _reactProgressArc = __webpack_require__(398);
+	var _reactProgressArc = __webpack_require__(401);
 
 	var _reactProgressArc2 = _interopRequireDefault(_reactProgressArc);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -45938,11 +46504,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TabActions = __webpack_require__(392);
+	var _TabActions = __webpack_require__(395);
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _VerticalList = __webpack_require__(399);
+	var _VerticalList = __webpack_require__(402);
 
 	var _VerticalList2 = _interopRequireDefault(_VerticalList);
 
@@ -46086,7 +46652,7 @@
 	};
 
 /***/ },
-/* 397 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46147,7 +46713,7 @@
 	};
 
 /***/ },
-/* 398 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -46235,7 +46801,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 399 */
+/* 402 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46286,7 +46852,7 @@
 	};
 
 /***/ },
-/* 400 */
+/* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46295,7 +46861,7 @@
 		value: true
 	});
 
-	var _RadioButton = __webpack_require__(401);
+	var _RadioButton = __webpack_require__(404);
 
 	var _RadioButton2 = _interopRequireDefault(_RadioButton);
 
@@ -46341,7 +46907,7 @@
 	};
 
 /***/ },
-/* 401 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46358,11 +46924,11 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _Activate = __webpack_require__(379);
+	var _Activate = __webpack_require__(383);
 
 	var _Activate2 = _interopRequireDefault(_Activate);
 
-	var _Icon = __webpack_require__(364);
+	var _Icon = __webpack_require__(368);
 
 	var _Icon2 = _interopRequireDefault(_Icon);
 
@@ -46370,7 +46936,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Text = __webpack_require__(328);
+	var _Text = __webpack_require__(271);
 
 	var _Text2 = _interopRequireDefault(_Text);
 
@@ -46412,7 +46978,7 @@
 	};
 
 /***/ },
-/* 402 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46421,7 +46987,7 @@
 		value: true
 	});
 
-	var _Overview = __webpack_require__(403);
+	var _Overview = __webpack_require__(406);
 
 	var _Overview2 = _interopRequireDefault(_Overview);
 
@@ -46429,7 +46995,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -46481,7 +47047,7 @@
 	exports.default = Home;
 
 /***/ },
-/* 403 */
+/* 406 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46575,7 +47141,7 @@
 	exports.default = Overview;
 
 /***/ },
-/* 404 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46584,11 +47150,11 @@
 		value: true
 	});
 
-	var _Equipment = __webpack_require__(405);
+	var _Equipment = __webpack_require__(408);
 
 	var _Equipment2 = _interopRequireDefault(_Equipment);
 
-	var _Inventory = __webpack_require__(406);
+	var _Inventory = __webpack_require__(409);
 
 	var _Inventory2 = _interopRequireDefault(_Inventory);
 
@@ -46596,7 +47162,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -46633,7 +47199,8 @@
 						tag: 'inventory'
 					}, {
 						label: 'Ausrüstung',
-						tag: 'equipment'
+						tag: 'equipment',
+						disabled: true
 					}],
 					active: this.state.tab,
 					onClick: this.handleClick }),
@@ -46644,7 +47211,7 @@
 	exports.default = Items;
 
 /***/ },
-/* 405 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -46676,39 +47243,7 @@
 	exports.default = Equipment; // import EquipmentActions from '../../actions/EquipmentActions';
 
 /***/ },
-/* 406 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _react = __webpack_require__(6);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	class Inventory extends _react.Component {
-
-		render() {
-			return _react2.default.createElement(
-				"div",
-				{ className: "page" },
-				_react2.default.createElement(
-					"div",
-					{ className: "options" },
-					"Inventar"
-				)
-			);
-		}
-	}
-	exports.default = Inventory; // import InventoryActions from '../../actions/InventoryActions';
-
-/***/ },
-/* 407 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46717,11 +47252,685 @@
 		value: true
 	});
 
-	var _Groups = __webpack_require__(408);
+	var _ListUtils = __webpack_require__(410);
+
+	var _BorderButton = __webpack_require__(269);
+
+	var _BorderButton2 = _interopRequireDefault(_BorderButton);
+
+	var _InventoryActions = __webpack_require__(411);
+
+	var _InventoryActions2 = _interopRequireDefault(_InventoryActions);
+
+	var _InventoryStore = __webpack_require__(413);
+
+	var _InventoryStore2 = _interopRequireDefault(_InventoryStore);
+
+	var _RadioButtonGroup = __webpack_require__(403);
+
+	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Scroll = __webpack_require__(181);
+
+	var _Scroll2 = _interopRequireDefault(_Scroll);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const getInventoryStore = () => ({
+		items: _InventoryStore2.default.getAll(),
+		filterText: _InventoryStore2.default.getFilterText(),
+		sortOrder: _InventoryStore2.default.getSortOrder()
+	});
+
+	class Inventory extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = getInventoryStore(), this._updateInventoryStore = () => this.setState(getInventoryStore()), this.filter = event => _InventoryActions2.default.filter(event.target.value), this.sort = option => _InventoryActions2.default.sort(option), this.showItemCreation = () => _InventoryActions2.default.showItemCreation(), _temp;
+		}
+
+		componentDidMount() {
+			_InventoryStore2.default.addChangeListener(this._updateInventoryStore);
+		}
+
+		componentWillUnmount() {
+			_InventoryStore2.default.removeChangeListener(this._updateInventoryStore);
+		}
+
+		render() {
+			var _state = this.state;
+			const filterText = _state.filterText,
+			      items = _state.items,
+			      sortOrder = _state.sortOrder;
+
+
+			const list = (0, _ListUtils.filterAndSort)(items, filterText, sortOrder);
+
+			return _react2.default.createElement(
+				'div',
+				{ className: 'page', id: 'inventory' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'options' },
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, {
+						active: sortOrder,
+						onClick: this.sort,
+						array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Gruppen', value: 'group' }]
+					}),
+					_react2.default.createElement(_BorderButton2.default, { label: 'Hinzuf\xFCgen', disabled: true }),
+					_react2.default.createElement(_BorderButton2.default, { label: 'Erstellen', onClick: this.showItemCreation })
+				),
+				_react2.default.createElement(
+					_Scroll2.default,
+					{ className: 'list' },
+					_react2.default.createElement(
+						'ul',
+						null,
+						list
+					)
+				)
+			);
+		}
+	}
+	exports.default = Inventory;
+
+/***/ },
+/* 410 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	const filter = exports.filter = (list, filterText) => {
+		if (filterText !== '') {
+			filterText = filterText.toLowerCase();
+			return list.filter(obj => obj.name.toLowerCase().match(filterText));
+		}
+		return list;
+	};
+
+	const sortByName = exports.sortByName = list => {
+		return list.sort((a, b) => {
+			if (a.name < b.name) {
+				return -1;
+			} else if (a.name > b.name) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+	};
+
+	const sortByGroup = exports.sortByGroup = list => {
+		return list.sort((a, b) => {
+			if (a.gr < b.gr) {
+				return -1;
+			} else if (a.gr > b.gr) {
+				return 1;
+			} else {
+				if (a.name < b.name) {
+					return -1;
+				} else if (a.name > b.name) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+	};
+
+	const sortByAP = exports.sortByAP = list => {
+		return list.sort((a, b) => {
+			if (a.ap < b.ap) {
+				return -1;
+			} else if (a.ap > b.ap) {
+				return 1;
+			} else {
+				if (a.name < b.name) {
+					return -1;
+				} else if (a.name > b.name) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+	};
+
+	const sort = exports.sort = (list, sortOrder) => {
+		switch (sortOrder) {
+			case 'name':
+				return sortByName(list);
+			case 'group':
+				return sortByGroup(list);
+
+			default:
+				return list;
+		}
+	};
+
+	const filterAndSort = exports.filterAndSort = (list, filterText, sortOrder) => {
+		return sort(filter(list, filterText), sortOrder);
+	};
+
+/***/ },
+/* 411 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _createOverlay = __webpack_require__(266);
+
+	var _createOverlay2 = _interopRequireDefault(_createOverlay);
+
+	var _ItemEditor = __webpack_require__(412);
+
+	var _ItemEditor2 = _interopRequireDefault(_ItemEditor);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+		filter: function (text) {
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.FILTER_ITEMS,
+				text
+			});
+		},
+		sort: function (option) {
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.SORT_ITEMS,
+				option
+			});
+		},
+		showItemCreation: function () {
+			(0, _createOverlay2.default)(_react2.default.createElement(_ItemEditor2.default, { create: true }));
+		},
+		showItemEditor: function (item) {
+			(0, _createOverlay2.default)(_react2.default.createElement(_ItemEditor2.default, { item: item }));
+		}
+	};
+
+/***/ },
+/* 412 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Checkbox = __webpack_require__(382);
+
+	var _Checkbox2 = _interopRequireDefault(_Checkbox);
+
+	var _CombatTechniquesStore = __webpack_require__(345);
+
+	var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
+
+	var _Dialog = __webpack_require__(267);
+
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _Dropdown = __webpack_require__(387);
+
+	var _Dropdown2 = _interopRequireDefault(_Dropdown);
+
+	var _Label = __webpack_require__(274);
+
+	var _Label2 = _interopRequireDefault(_Label);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextField = __webpack_require__(273);
+
+	var _TextField2 = _interopRequireDefault(_TextField);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class ItemEditor extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				name: '',
+				price: '',
+				weight: '',
+				amount: '1',
+				where: '',
+				gr: 5,
+				tpl: 'ITEMTPL_0',
+
+				ct: 'CT_0', // Combat Technique
+				dpdn: '', // Number of dices
+				dpds: null, // Amount of sides per dice
+				dpf: '', // Flat damage
+				dpb: '', // Damage bonus with primary attribute
+				at: '', // AT mod
+				pa: '', // PA mod
+				re: 0,
+				length: '',
+				stp: '',
+				rb1: '', // Range brackets
+				rb2: '', // Range brackets
+				rb3: '', // Range brackets
+				rt: '', // Reload time
+				am: null, // Ammunition type
+				pro: '', // Protection
+				enc: '',
+				addp: false // Add. penalties
+			}, this.onEvent = (prop, e) => this.setState({ [prop]: e.target.value }), this.onSwitch = prop => this.setState({ [prop]: !this.state[prop] }), this.onValue = (prop, value) => this.setState({ [prop]: value }), _temp;
+		}
+
+		render() {
+			var _props = this.props;
+			const create = _props.create,
+			      node = _props.node;
+			var _state = this.state;
+			const addp = _state.addp,
+			      am = _state.am,
+			      amount = _state.amount,
+			      at = _state.at,
+			      ct = _state.ct,
+			      dpb = _state.dpb,
+			      dpdn = _state.dpdn,
+			      dpds = _state.dpds,
+			      dpf = _state.dpf,
+			      enc = _state.enc,
+			      gr = _state.gr,
+			      length = _state.length,
+			      name = _state.name,
+			      pa = _state.pa,
+			      price = _state.price,
+			      pro = _state.pro,
+			      rb1 = _state.rb1,
+			      rb2 = _state.rb2,
+			      rb3 = _state.rb3,
+			      re = _state.re,
+			      rt = _state.rt,
+			      stp = _state.stp,
+			      tpl = _state.tpl,
+			      weight = _state.weight,
+			      where = _state.where;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{
+					id: 'item-editor',
+					title: 'Gegenstand ' + (create ? 'erstellen' : 'bearbeiten'),
+					node: node,
+					buttons: [{
+						label: 'Speichern',
+						onClick: null
+					}] },
+				_react2.default.createElement(
+					'div',
+					{ className: 'main' },
+					_react2.default.createElement(_TextField2.default, {
+						className: 'name',
+						label: 'Name',
+						value: name,
+						onChange: this.onEvent.bind(null, 'name')
+					}),
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_TextField2.default, {
+							className: 'price',
+							label: 'Preis in S',
+							value: price,
+							onChange: this.onEvent.bind(null, 'price')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'weight',
+							label: 'Gewicht in St',
+							value: weight,
+							onChange: this.onEvent.bind(null, 'weight')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'amount',
+							label: 'Menge',
+							value: amount,
+							onChange: this.onEvent.bind(null, 'amount')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'where',
+							label: 'Wo getragen',
+							value: where,
+							onChange: this.onEvent.bind(null, 'where')
+						})
+					),
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 'gr',
+						label: 'Art',
+						value: gr,
+						options: [['Allgemein', 5], ['Nahkampfwaffe', 1], ['Fernkampfwaffe', 2], ['Rüstung', 3], ['Munition', 4]],
+						onChange: this.onValue.bind(null, 'gr')
+					}),
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 'tpl',
+						label: 'Vorlage',
+						hint: 'Keine',
+						value: tpl,
+						options: [],
+						onChange: this.onValue.bind(null, 'tpl')
+					})
+				),
+				gr === 1 ? _react2.default.createElement(
+					'div',
+					{ className: 'melee' },
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 'ct',
+						label: 'Kampftechnik',
+						hint: 'Keine',
+						value: ct,
+						options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id]),
+						onChange: this.onValue.bind(null, 'ct')
+					}),
+					_react2.default.createElement(_TextField2.default, {
+						className: 'dpb',
+						label: 'Schadensb.',
+						value: dpb,
+						onChange: this.onEvent.bind(null, 'dpb')
+					}),
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'dpdn',
+							value: dpdn,
+							onChange: this.onEvent.bind(null, 'dpdn')
+						}),
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 'dpds',
+							hint: 'W',
+							value: dpds,
+							options: [['W3', 3], ['W6', 6], ['W20', 20]],
+							onChange: this.onValue.bind(null, 'dpds')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'dpf',
+							value: dpf,
+							onChange: this.onEvent.bind(null, 'dpf')
+						})
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_Label2.default, { text: 'AT/PA-Mod' }),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'at',
+							value: at,
+							onChange: this.onEvent.bind(null, 'at')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'pa',
+							value: pa,
+							onChange: this.onEvent.bind(null, 'pa')
+						})
+					),
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 're',
+						label: 'Reichweite',
+						hint: 'Ausw\xE4hlen',
+						value: re,
+						options: [['Kurz', 1], ['Mittel', 2], ['Lang', 3]],
+						onChange: this.onValue.bind(null, 're')
+					}),
+					ct === 'CT_10' ? _react2.default.createElement(_TextField2.default, {
+						className: 'stp',
+						label: 'Strukturp.',
+						value: stp,
+						onChange: this.onEvent.bind(null, 'length')
+					}) : _react2.default.createElement(_TextField2.default, {
+						className: 'length',
+						label: 'L\xE4nge in Hf.',
+						value: length,
+						onChange: this.onEvent.bind(null, 'length')
+					})
+				) : null,
+				gr === 2 ? _react2.default.createElement(
+					'div',
+					{ className: 'ranged' },
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 'ct',
+						label: 'Kampftechnik',
+						hint: 'Keine',
+						value: ct,
+						options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id]),
+						onChange: this.onValue.bind(null, 'ct')
+					}),
+					_react2.default.createElement(_TextField2.default, {
+						className: 'rt',
+						label: 'Ladezeiten',
+						value: rt,
+						onChange: this.onEvent.bind(null, 'rt')
+					}),
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'dpdn',
+							value: dpdn,
+							onChange: this.onEvent.bind(null, 'dpdn')
+						}),
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 'dpds',
+							value: dpds,
+							options: [['W3', 3], ['W6', 6], ['W20', 20]],
+							onChange: this.onValue.bind(null, 'dpds')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'dpf',
+							value: dpf,
+							onChange: this.onEvent.bind(null, 'dpf')
+						})
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_TextField2.default, {
+							className: 'rb1',
+							label: 'Nah',
+							value: rb1,
+							onChange: this.onValue.bind(null, 'rb1')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'rb2',
+							label: 'Mittel',
+							value: rb2,
+							onChange: this.onValue.bind(null, 'rb2')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'rb3',
+							label: 'Weit',
+							value: rb3,
+							onChange: this.onValue.bind(null, 'rb3')
+						})
+					),
+					_react2.default.createElement(_Dropdown2.default, {
+						className: 'am',
+						label: 'Munition',
+						hint: 'Keine',
+						value: am,
+						options: [['Keine', null]],
+						onChange: this.onValue.bind(null, 'am')
+					}),
+					_react2.default.createElement(_TextField2.default, {
+						className: 'length',
+						label: 'L\xE4nge in Hf.',
+						value: length,
+						onChange: this.onEvent.bind(null, 'length')
+					})
+				) : null,
+				gr === 3 ? _react2.default.createElement(
+					'div',
+					{ className: 'armor' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(_TextField2.default, {
+							className: 'pro',
+							label: 'RS',
+							value: pro,
+							onChange: this.onEvent.bind(null, 'pro')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'enc',
+							label: 'BE',
+							value: enc,
+							onChange: this.onEvent.bind(null, 'enc')
+						})
+					),
+					_react2.default.createElement(_Checkbox2.default, {
+						className: 'addp',
+						label: 'Zus\xE4tzliche Abz\xFCge',
+						checked: addp,
+						onClick: this.onSwitch.bind(null, 'addp')
+					})
+				) : null
+			);
+		}
+	}
+	exports.default = ItemEditor;
+	ItemEditor.propTypes = {
+		create: _react.PropTypes.bool,
+		item: _react.PropTypes.object,
+		node: _react.PropTypes.any
+	};
+
+/***/ },
+/* 413 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var _items = {};
+	var _filterText = '';
+	var _sortOrder = 'name';
+
+	function _updateFilterText(text) {
+		_filterText = text;
+	}
+
+	function _updateSortOrder(option) {
+		_sortOrder = option;
+	}
+
+	class _InventoryStore extends _Store2.default {
+
+		get(id) {
+			return _items[id];
+		}
+
+		getAll() {
+			let arr = [];
+			for (const id in _items) {
+				arr.push(_items[id]);
+			}
+			return arr;
+		}
+
+		getFilterText() {
+			return _filterText;
+		}
+
+		getSortOrder() {
+			return _sortOrder;
+		}
+
+	}
+
+	const InventoryStore = new _InventoryStore();
+
+	InventoryStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		switch (payload.actionType) {
+
+			case _ActionTypes2.default.FILTER_ITEMS:
+				_updateFilterText(payload.text);
+				break;
+
+			case _ActionTypes2.default.SORT_ITEMS:
+				_updateSortOrder(payload.option);
+				break;
+
+			default:
+				return true;
+		}
+
+		InventoryStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = InventoryStore;
+
+/***/ },
+/* 414 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _Groups = __webpack_require__(415);
 
 	var _Groups2 = _interopRequireDefault(_Groups);
 
-	var _InGame = __webpack_require__(411);
+	var _InGame = __webpack_require__(418);
 
 	var _InGame2 = _interopRequireDefault(_InGame);
 
@@ -46729,7 +47938,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -46778,7 +47987,7 @@
 	exports.default = Master;
 
 /***/ },
-/* 408 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46787,15 +47996,15 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _GroupsActions = __webpack_require__(409);
+	var _GroupsActions = __webpack_require__(416);
 
 	var _GroupsActions2 = _interopRequireDefault(_GroupsActions);
 
-	var _GroupsStore = __webpack_require__(410);
+	var _GroupsStore = __webpack_require__(417);
 
 	var _GroupsStore2 = _interopRequireDefault(_GroupsStore);
 
@@ -46807,7 +48016,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
@@ -46852,7 +48061,7 @@
 	exports.default = Groups;
 
 /***/ },
-/* 409 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46885,7 +48094,7 @@
 	};
 
 /***/ },
-/* 410 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46898,7 +48107,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -46943,7 +48152,7 @@
 	exports.default = GroupsStore;
 
 /***/ },
-/* 411 */
+/* 418 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46952,43 +48161,43 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(412);
+	var _InGameActions = __webpack_require__(419);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
-	var _InGameControls = __webpack_require__(413);
+	var _InGameControls = __webpack_require__(420);
 
 	var _InGameControls2 = _interopRequireDefault(_InGameControls);
 
-	var _InGameEdit = __webpack_require__(414);
+	var _InGameEdit = __webpack_require__(421);
 
 	var _InGameEdit2 = _interopRequireDefault(_InGameEdit);
 
-	var _InGameStore = __webpack_require__(415);
+	var _InGameStore = __webpack_require__(422);
 
 	var _InGameStore2 = _interopRequireDefault(_InGameStore);
 
-	var _InGameTableHealth = __webpack_require__(416);
+	var _InGameTableHealth = __webpack_require__(423);
 
 	var _InGameTableHealth2 = _interopRequireDefault(_InGameTableHealth);
 
-	var _InGameTableIni = __webpack_require__(418);
+	var _InGameTableIni = __webpack_require__(425);
 
 	var _InGameTableIni2 = _interopRequireDefault(_InGameTableIni);
 
-	var _InGameTableLeft = __webpack_require__(419);
+	var _InGameTableLeft = __webpack_require__(426);
 
 	var _InGameTableLeft2 = _interopRequireDefault(_InGameTableLeft);
 
-	var _InGameTableRight = __webpack_require__(420);
+	var _InGameTableRight = __webpack_require__(427);
 
 	var _InGameTableRight2 = _interopRequireDefault(_InGameTableRight);
 
@@ -47000,7 +48209,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -47118,7 +48327,7 @@
 	exports.default = InGame;
 
 /***/ },
-/* 412 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47135,11 +48344,11 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _createOverlay = __webpack_require__(323);
+	var _createOverlay = __webpack_require__(266);
 
 	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-	var _Dialog = __webpack_require__(324);
+	var _Dialog = __webpack_require__(267);
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
 
@@ -47288,7 +48497,7 @@
 	};
 
 /***/ },
-/* 413 */
+/* 420 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47297,15 +48506,15 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(412);
+	var _InGameActions = __webpack_require__(419);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -47397,7 +48606,7 @@
 	};
 
 /***/ },
-/* 414 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47410,23 +48619,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _InGameActions = __webpack_require__(412);
+	var _InGameActions = __webpack_require__(419);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -47562,7 +48771,7 @@
 	};
 
 /***/ },
-/* 415 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47571,7 +48780,7 @@
 		value: true
 	});
 
-	var _stringify = __webpack_require__(353);
+	var _stringify = __webpack_require__(363);
 
 	var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -47579,7 +48788,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -48067,7 +49276,7 @@
 	exports.default = InGameStore;
 
 /***/ },
-/* 416 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48076,7 +49285,7 @@
 		value: true
 	});
 
-	var _InGameTableHealthBar = __webpack_require__(417);
+	var _InGameTableHealthBar = __webpack_require__(424);
 
 	var _InGameTableHealthBar2 = _interopRequireDefault(_InGameTableHealthBar);
 
@@ -48146,7 +49355,7 @@
 	};
 
 /***/ },
-/* 417 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48191,7 +49400,7 @@
 	};
 
 /***/ },
-/* 418 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48266,7 +49475,7 @@
 	};
 
 /***/ },
-/* 419 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48365,7 +49574,7 @@
 	};
 
 /***/ },
-/* 420 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48374,7 +49583,7 @@
 		value: true
 	});
 
-	var _InGameActions = __webpack_require__(412);
+	var _InGameActions = __webpack_require__(419);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -48500,7 +49709,7 @@
 	};
 
 /***/ },
-/* 421 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48509,11 +49718,11 @@
 		value: true
 	});
 
-	var _Overview = __webpack_require__(422);
+	var _Overview = __webpack_require__(429);
 
 	var _Overview2 = _interopRequireDefault(_Overview);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -48521,11 +49730,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Sheets = __webpack_require__(430);
+	var _Sheets = __webpack_require__(437);
 
 	var _Sheets2 = _interopRequireDefault(_Sheets);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -48595,7 +49804,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 422 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48612,67 +49821,67 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _AvatarWrapper = __webpack_require__(423);
+	var _AvatarWrapper = __webpack_require__(430);
 
 	var _AvatarWrapper2 = _interopRequireDefault(_AvatarWrapper);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _OverviewConstSkills = __webpack_require__(424);
+	var _OverviewConstSkills = __webpack_require__(431);
 
 	var _OverviewConstSkills2 = _interopRequireDefault(_OverviewConstSkills);
 
-	var _OverviewNameChange = __webpack_require__(425);
+	var _OverviewNameChange = __webpack_require__(432);
 
 	var _OverviewNameChange2 = _interopRequireDefault(_OverviewNameChange);
 
-	var _OverviewPersonalData = __webpack_require__(426);
+	var _OverviewPersonalData = __webpack_require__(433);
 
 	var _OverviewPersonalData2 = _interopRequireDefault(_OverviewPersonalData);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _ProfileActions = __webpack_require__(427);
+	var _ProfileActions = __webpack_require__(434);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
@@ -48684,11 +49893,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _VerticalList = __webpack_require__(399);
+	var _VerticalList = __webpack_require__(402);
 
 	var _VerticalList2 = _interopRequireDefault(_VerticalList);
 
-	var _calcEL = __webpack_require__(429);
+	var _calcEL = __webpack_require__(436);
 
 	var _calcEL2 = _interopRequireDefault(_calcEL);
 
@@ -48699,41 +49908,44 @@
 			var _temp;
 
 			return _temp = super(...arguments), this.state = (0, _extends3.default)({
+				ap: _APStore2.default.getTotal(),
 				advActive: _DisAdvStore2.default.getActiveForView(true),
 				disadvActive: _DisAdvStore2.default.getActiveForView(false)
 			}, _ProfileStore2.default.getAll(), {
 				phase: _PhaseStore2.default.get(),
 				editName: false
-			}), this._updateProfileStore = () => this.setState(_ProfileStore2.default.getAll()), this._updatePhaseStore = () => this.setState({
+			}), this._updateAPStore = () => this.setState({ ap: _APStore2.default.getTotal() }), this._updateProfileStore = () => this.setState(_ProfileStore2.default.getAll()), this._updatePhaseStore = () => this.setState({
 				phase: _PhaseStore2.default.get()
 			}), this.showImageUpload = () => _ProfileActions2.default.showImageUpload(), this.changeName = name => {
 				_ProfileActions2.default.changeName(name);
 				this.setState({ editName: false });
-			}, this.editName = () => this.setState({ editName: true }), this.editNameCancel = () => this.setState({ editName: false }), this.endCharacterCreation = () => _ProfileActions2.default.endCharacterCreation(), this.deleteHero = () => _ProfileActions2.default.deleteHero(), _temp;
+			}, this.editName = () => this.setState({ editName: true }), this.editNameCancel = () => this.setState({ editName: false }), this.endCharacterCreation = () => _ProfileActions2.default.endCharacterCreation(), this.deleteHero = () => _ProfileActions2.default.deleteHero(), this.addAP = () => _ProfileActions2.default.showAddAP(), _temp;
 		}
 
 		componentDidMount() {
+			_APStore2.default.addChangeListener(this._updateAPStore);
 			_PhaseStore2.default.addChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.addChangeListener(this._updateProfileStore);
 		}
 
 		componentWillUnmount() {
+			_APStore2.default.removeChangeListener(this._updateAPStore);
 			_PhaseStore2.default.removeChangeListener(this._updatePhaseStore);
 			_ProfileStore2.default.removeChangeListener(this._updateProfileStore);
 		}
 
 		render() {
 			var _state = this.state;
-			const avatar = _state.avatar,
+			const ap = _state.ap,
+			      avatar = _state.avatar,
 			      editName = _state.editName,
 			      name = _state.name,
 			      phase = _state.phase,
-			      personal = (0, _objectWithoutProperties3.default)(_state, ['avatar', 'editName', 'name', 'phase']);
+			      personal = (0, _objectWithoutProperties3.default)(_state, ['ap', 'avatar', 'editName', 'name', 'phase']);
 
 
 			const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
-			const ap = _APStore2.default.getTotal();
 			const currentEL = (0, _calcEL2.default)(ap);
 
 			const nameElement = editName ? _react2.default.createElement(_OverviewNameChange2.default, {
@@ -48830,6 +50042,11 @@
 							)
 						)
 					),
+					phase === 3 ? _react2.default.createElement(_BorderButton2.default, {
+						className: 'add-ap',
+						label: 'AP hinzuf\xFCgen',
+						onClick: this.addAP
+					}) : null,
 					_react2.default.createElement(
 						'h3',
 						null,
@@ -48880,7 +50097,7 @@
 	exports.default = Overview;
 
 /***/ },
-/* 423 */
+/* 430 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48889,7 +50106,7 @@
 		value: true
 	});
 
-	var _Avatar = __webpack_require__(397);
+	var _Avatar = __webpack_require__(400);
 
 	var _Avatar2 = _interopRequireDefault(_Avatar);
 
@@ -48937,7 +50154,7 @@
 	};
 
 /***/ },
-/* 424 */
+/* 431 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48946,7 +50163,7 @@
 		value: true
 	});
 
-	var _set = __webpack_require__(294);
+	var _set = __webpack_require__(308);
 
 	var _set2 = _interopRequireDefault(_set);
 
@@ -48999,7 +50216,7 @@
 	};
 
 /***/ },
-/* 425 */
+/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49008,7 +50225,7 @@
 		value: true
 	});
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
@@ -49016,7 +50233,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -49057,7 +50274,7 @@
 	};
 
 /***/ },
-/* 426 */
+/* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49066,19 +50283,19 @@
 		value: true
 	});
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InputButtonGroup = __webpack_require__(365);
+	var _InputButtonGroup = __webpack_require__(369);
 
 	var _InputButtonGroup2 = _interopRequireDefault(_InputButtonGroup);
 
-	var _ProfileActions = __webpack_require__(427);
+	var _ProfileActions = __webpack_require__(434);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -49086,7 +50303,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -49131,7 +50348,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Familie',
+						label: 'Familie',
 						value: family,
 						onChange: this.changeFamily
 					})
@@ -49140,7 +50357,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Geburtsort',
+						label: 'Geburtsort',
 						value: placeofbirth,
 						onChange: this.changePlaceOfBirth
 					})
@@ -49149,7 +50366,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Geburtsdatum',
+						label: 'Geburtsdatum',
 						value: dateofbirth,
 						onChange: this.changeDateOfBirth
 					})
@@ -49158,7 +50375,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Alter',
+						label: 'Alter',
 						value: age,
 						onChange: this.changeAge
 					})
@@ -49189,7 +50406,7 @@
 					_InputButtonGroup2.default,
 					{ className: 'reroll' },
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'K\xF6rpergr\xF6\xDFe',
+						label: 'K\xF6rpergr\xF6\xDFe',
 						value: size,
 						onChange: this.changeSize
 					}),
@@ -49199,7 +50416,7 @@
 					_InputButtonGroup2.default,
 					{ className: 'reroll' },
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Gewicht',
+						label: 'Gewicht',
 						value: weight,
 						onChange: this.changeWeight
 					}),
@@ -49209,7 +50426,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Titel',
+						label: 'Titel',
 						value: title,
 						onChange: this.changeTitle
 					})
@@ -49228,7 +50445,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Charakteristika',
+						label: 'Charakteristika',
 						value: characteristics,
 						onChange: this.changeCharacteristics
 					})
@@ -49237,7 +50454,7 @@
 					'div',
 					null,
 					_react2.default.createElement(_TextField2.default, {
-						labelText: 'Sonstiges',
+						label: 'Sonstiges',
 						value: otherinfo,
 						onChange: this.changeOtherInfo
 					})
@@ -49267,7 +50484,7 @@
 	};
 
 /***/ },
-/* 427 */
+/* 434 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49284,17 +50501,21 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _WebAPIUtils = __webpack_require__(265);
+	var _WebAPIUtils = __webpack_require__(279);
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
-	var _createOverlay = __webpack_require__(323);
+	var _createOverlay = __webpack_require__(266);
 
 	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-	var _ProfileAvatarChange = __webpack_require__(428);
+	var _ProfileAvatarChange = __webpack_require__(435);
 
 	var _ProfileAvatarChange2 = _interopRequireDefault(_ProfileAvatarChange);
+
+	var _OverviewAddAP = __webpack_require__(499);
+
+	var _OverviewAddAP2 = _interopRequireDefault(_OverviewAddAP);
 
 	var _react = __webpack_require__(6);
 
@@ -49311,6 +50532,15 @@
 		},
 		showImageUpload: function () {
 			(0, _createOverlay2.default)(_react2.default.createElement(_ProfileAvatarChange2.default, null));
+		},
+		showAddAP: function () {
+			(0, _createOverlay2.default)(_react2.default.createElement(_OverviewAddAP2.default, null));
+		},
+		addAP: function (value) {
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.ADD_ADVENTURE_POINTS,
+				value
+			});
 		},
 		changeAvatar: function (_ref) {
 			let source = _ref.source,
@@ -49426,7 +50656,7 @@
 	};
 
 /***/ },
-/* 428 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49439,7 +50669,7 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _set = __webpack_require__(294);
+	var _set = __webpack_require__(308);
 
 	var _set2 = _interopRequireDefault(_set);
 
@@ -49447,19 +50677,19 @@
 
 	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
 
-	var _Avatar = __webpack_require__(397);
+	var _Avatar = __webpack_require__(400);
 
 	var _Avatar2 = _interopRequireDefault(_Avatar);
 
-	var _Dialog = __webpack_require__(324);
+	var _Dialog = __webpack_require__(267);
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ProfileActions = __webpack_require__(427);
+	var _ProfileActions = __webpack_require__(434);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -49467,7 +50697,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -49607,7 +50837,7 @@
 	};
 
 /***/ },
-/* 429 */
+/* 436 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49616,7 +50846,7 @@
 		value: true
 	});
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
@@ -49645,7 +50875,7 @@
 	};
 
 /***/ },
-/* 430 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49654,19 +50884,19 @@
 		value: true
 	});
 
-	var _ChantSheet = __webpack_require__(431);
+	var _ChantSheet = __webpack_require__(438);
 
 	var _ChantSheet2 = _interopRequireDefault(_ChantSheet);
 
-	var _CombatSheet = __webpack_require__(434);
+	var _CombatSheet = __webpack_require__(441);
 
 	var _CombatSheet2 = _interopRequireDefault(_CombatSheet);
 
-	var _InventorySheet = __webpack_require__(435);
+	var _InventorySheet = __webpack_require__(442);
 
 	var _InventorySheet2 = _interopRequireDefault(_InventorySheet);
 
-	var _MainSheet = __webpack_require__(436);
+	var _MainSheet = __webpack_require__(443);
 
 	var _MainSheet2 = _interopRequireDefault(_MainSheet);
 
@@ -49678,11 +50908,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SpellsSheet = __webpack_require__(445);
+	var _SpellsSheet = __webpack_require__(452);
 
 	var _SpellsSheet2 = _interopRequireDefault(_SpellsSheet);
 
-	var _TalentsSheet = __webpack_require__(446);
+	var _TalentsSheet = __webpack_require__(453);
 
 	var _TalentsSheet2 = _interopRequireDefault(_TalentsSheet);
 
@@ -49717,7 +50947,7 @@
 	// </div>
 
 /***/ },
-/* 431 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49730,11 +50960,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -49760,7 +50990,7 @@
 	exports.default = ChantSheet;
 
 /***/ },
-/* 432 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49769,11 +50999,11 @@
 		value: true
 	});
 
-	var _AttributeBorder = __webpack_require__(372);
+	var _AttributeBorder = __webpack_require__(376);
 
 	var _AttributeBorder2 = _interopRequireDefault(_AttributeBorder);
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
@@ -49826,7 +51056,7 @@
 	};
 
 /***/ },
-/* 433 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49880,7 +51110,7 @@
 	};
 
 /***/ },
-/* 434 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49889,35 +51119,35 @@
 		value: true
 	});
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -49925,11 +51155,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -49980,7 +51210,7 @@
 	exports.default = CombatSheet;
 
 /***/ },
-/* 435 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49993,11 +51223,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -50020,7 +51250,7 @@
 	exports.default = InventorySheet;
 
 /***/ },
-/* 436 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50029,53 +51259,53 @@
 		value: true
 	});
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _MainSheetCalc = __webpack_require__(437);
+	var _MainSheetCalc = __webpack_require__(444);
 
 	var _MainSheetCalc2 = _interopRequireDefault(_MainSheetCalc);
 
-	var _MainSheetPersonalData = __webpack_require__(439);
+	var _MainSheetPersonalData = __webpack_require__(446);
 
 	var _MainSheetPersonalData2 = _interopRequireDefault(_MainSheetPersonalData);
 
-	var _OverviewConstSkills = __webpack_require__(424);
+	var _OverviewConstSkills = __webpack_require__(431);
 
 	var _OverviewConstSkills2 = _interopRequireDefault(_OverviewConstSkills);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -50083,15 +51313,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _SpecialAbilitiesStore = __webpack_require__(443);
+	var _SpecialAbilitiesStore = __webpack_require__(450);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -50167,7 +51397,7 @@
 	exports.default = MainSheet;
 
 /***/ },
-/* 437 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50176,9 +51406,9 @@
 		value: true
 	});
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _MainSheetCalcItem = __webpack_require__(438);
+	var _MainSheetCalcItem = __webpack_require__(445);
 
 	var _MainSheetCalcItem2 = _interopRequireDefault(_MainSheetCalcItem);
 
@@ -50308,7 +51538,7 @@
 	};
 
 /***/ },
-/* 438 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50406,7 +51636,7 @@
 	};
 
 /***/ },
-/* 439 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50415,15 +51645,15 @@
 		value: true
 	});
 
-	var _Avatar = __webpack_require__(397);
+	var _Avatar = __webpack_require__(400);
 
 	var _Avatar2 = _interopRequireDefault(_Avatar);
 
-	var _LabelBox = __webpack_require__(440);
+	var _LabelBox = __webpack_require__(447);
 
 	var _LabelBox2 = _interopRequireDefault(_LabelBox);
 
-	var _Plain = __webpack_require__(442);
+	var _Plain = __webpack_require__(449);
 
 	var _Plain2 = _interopRequireDefault(_Plain);
 
@@ -50517,7 +51747,7 @@
 	};
 
 /***/ },
-/* 440 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50526,7 +51756,7 @@
 		value: true
 	});
 
-	var _Box = __webpack_require__(441);
+	var _Box = __webpack_require__(448);
 
 	var _Box2 = _interopRequireDefault(_Box);
 
@@ -50575,7 +51805,7 @@
 	};
 
 /***/ },
-/* 441 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50626,7 +51856,7 @@
 	};
 
 /***/ },
-/* 442 */
+/* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50675,7 +51905,7 @@
 	};
 
 /***/ },
-/* 443 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50684,11 +51914,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -50696,13 +51926,13 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -50710,15 +51940,15 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
-	var _count = __webpack_require__(444);
+	var _count = __webpack_require__(451);
 
 	var _count2 = _interopRequireDefault(_count);
 
-	var _validate = __webpack_require__(386);
+	var _validate = __webpack_require__(339);
 
 	var _validate2 = _interopRequireDefault(_validate);
 
@@ -51122,7 +52352,7 @@
 	exports.default = SpecialAbilitiesStore;
 
 /***/ },
-/* 444 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -51131,7 +52361,7 @@
 		value: true
 	});
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -51162,7 +52392,7 @@
 	};
 
 /***/ },
-/* 445 */
+/* 452 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51175,11 +52405,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -51205,7 +52435,7 @@
 	exports.default = SpellsSheet;
 
 /***/ },
-/* 446 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51214,35 +52444,35 @@
 		value: true
 	});
 
-	var _AttributeStore = __webpack_require__(318);
+	var _AttributeStore = __webpack_require__(337);
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DisAdvStore = __webpack_require__(385);
+	var _DisAdvStore = __webpack_require__(389);
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -51250,11 +52480,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(432);
+	var _SheetHeader = __webpack_require__(439);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(433);
+	var _TextBox = __webpack_require__(440);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -51303,7 +52533,7 @@
 	exports.default = TalentsSheet;
 
 /***/ },
-/* 447 */
+/* 454 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51312,23 +52542,23 @@
 		value: true
 	});
 
-	var _Cultures = __webpack_require__(448);
+	var _Cultures = __webpack_require__(455);
 
 	var _Cultures2 = _interopRequireDefault(_Cultures);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Professions = __webpack_require__(452);
+	var _Professions = __webpack_require__(458);
 
 	var _Professions2 = _interopRequireDefault(_Professions);
 
-	var _Races = __webpack_require__(462);
+	var _Races = __webpack_require__(468);
 
 	var _Races2 = _interopRequireDefault(_Races);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -51336,7 +52566,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
@@ -51409,7 +52639,7 @@
 	exports.default = RCP;
 
 /***/ },
-/* 448 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51418,33 +52648,33 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureActions = __webpack_require__(449);
+	var _CultureActions = __webpack_require__(456);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
-	var _CulturesListItem = __webpack_require__(450);
+	var _CulturesListItem = __webpack_require__(457);
 
 	var _CulturesListItem2 = _interopRequireDefault(_CulturesListItem);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ListUtils = __webpack_require__(451);
+	var _ListUtils = __webpack_require__(410);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -51456,7 +52686,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -51548,7 +52778,7 @@
 	};
 
 /***/ },
-/* 449 */
+/* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51600,7 +52830,7 @@
 	};
 
 /***/ },
-/* 450 */
+/* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51609,17 +52839,17 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureActions = __webpack_require__(449);
+	var _CultureActions = __webpack_require__(456);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _react = __webpack_require__(6);
 
@@ -51694,88 +52924,7 @@
 	};
 
 /***/ },
-/* 451 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	const filter = exports.filter = (list, filterText) => {
-		if (filterText !== '') {
-			filterText = filterText.toLowerCase();
-			return list.filter(obj => obj.name.toLowerCase().match(filterText));
-		}
-		return list;
-	};
-
-	const sortByName = exports.sortByName = list => {
-		return list.sort((a, b) => {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-	};
-
-	const sortByGroup = exports.sortByGroup = list => {
-		return list.sort((a, b) => {
-			if (a.gr < b.gr) {
-				return -1;
-			} else if (a.gr > b.gr) {
-				return 1;
-			} else {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
-	};
-
-	const sortByAP = exports.sortByAP = list => {
-		return list.sort((a, b) => {
-			if (a.ap < b.ap) {
-				return -1;
-			} else if (a.ap > b.ap) {
-				return 1;
-			} else {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
-	};
-
-	const sort = exports.sort = (list, sortOrder) => {
-		switch (sortOrder) {
-			case 'name':
-				return sortByName(list);
-			case 'group':
-				return sortByGroup(list);
-
-			default:
-				return list;
-		}
-	};
-
-	const filterAndSort = exports.filterAndSort = (list, filterText, sortOrder) => {
-		return sort(filter(list, filterText), sortOrder);
-	};
-
-/***/ },
-/* 452 */
+/* 458 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51784,17 +52933,17 @@
 		value: true
 	});
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ListUtils = __webpack_require__(451);
+	var _ListUtils = __webpack_require__(410);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -51802,23 +52951,23 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(453);
+	var _ProfessionActions = __webpack_require__(459);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionsListItem = __webpack_require__(454);
+	var _ProfessionsListItem = __webpack_require__(460);
 
 	var _ProfessionsListItem2 = _interopRequireDefault(_ProfessionsListItem);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantActions = __webpack_require__(455);
+	var _ProfessionVariantActions = __webpack_require__(461);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
@@ -51826,11 +52975,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _Selections = __webpack_require__(456);
+	var _Selections = __webpack_require__(462);
 
 	var _Selections2 = _interopRequireDefault(_Selections);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -51929,7 +53078,7 @@
 	};
 
 /***/ },
-/* 453 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51982,7 +53131,7 @@
 	};
 
 /***/ },
-/* 454 */
+/* 460 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51991,33 +53140,33 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
-	var _ProfessionActions = __webpack_require__(453);
+	var _ProfessionActions = __webpack_require__(459);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionVariantActions = __webpack_require__(455);
+	var _ProfessionVariantActions = __webpack_require__(461);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -52128,7 +53277,7 @@
 	};
 
 /***/ },
-/* 455 */
+/* 461 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52157,7 +53306,7 @@
 	};
 
 /***/ },
-/* 456 */
+/* 462 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52166,11 +53315,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _toArray2 = __webpack_require__(293);
+	var _toArray2 = __webpack_require__(307);
 
 	var _toArray3 = _interopRequireDefault(_toArray2);
 
@@ -52178,49 +53327,49 @@
 
 	var _assign2 = _interopRequireDefault(_assign);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
-	var _set = __webpack_require__(294);
+	var _set = __webpack_require__(308);
 
 	var _set2 = _interopRequireDefault(_set);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(453);
+	var _ProfessionActions = __webpack_require__(459);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionStore = __webpack_require__(314);
+	var _ProfessionStore = __webpack_require__(333);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(315);
+	var _ProfessionVariantStore = __webpack_require__(334);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -52228,27 +53377,27 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SelectionsCantrips = __webpack_require__(457);
+	var _SelectionsCantrips = __webpack_require__(463);
 
 	var _SelectionsCantrips2 = _interopRequireDefault(_SelectionsCantrips);
 
-	var _SelectionsCt = __webpack_require__(458);
+	var _SelectionsCt = __webpack_require__(464);
 
 	var _SelectionsCt2 = _interopRequireDefault(_SelectionsCt);
 
-	var _SelectionsCurses = __webpack_require__(459);
+	var _SelectionsCurses = __webpack_require__(465);
 
 	var _SelectionsCurses2 = _interopRequireDefault(_SelectionsCurses);
 
-	var _SelectionsLangLitc = __webpack_require__(460);
+	var _SelectionsLangLitc = __webpack_require__(466);
 
 	var _SelectionsLangLitc2 = _interopRequireDefault(_SelectionsLangLitc);
 
-	var _SelectionsTalentSpec = __webpack_require__(461);
+	var _SelectionsTalentSpec = __webpack_require__(467);
 
 	var _SelectionsTalentSpec2 = _interopRequireDefault(_SelectionsTalentSpec);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
@@ -52541,7 +53690,7 @@
 	};
 
 /***/ },
-/* 457 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52550,7 +53699,7 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
@@ -52605,7 +53754,7 @@
 	};
 
 /***/ },
-/* 458 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52614,7 +53763,7 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
@@ -52672,7 +53821,7 @@
 	};
 
 /***/ },
-/* 459 */
+/* 465 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52681,11 +53830,11 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
@@ -52761,7 +53910,7 @@
 	};
 
 /***/ },
-/* 460 */
+/* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52770,11 +53919,11 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -52845,7 +53994,7 @@
 	};
 
 /***/ },
-/* 461 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52854,7 +54003,7 @@
 		value: true
 	});
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -52862,7 +54011,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -52919,7 +54068,7 @@
 	};
 
 /***/ },
-/* 462 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52928,13 +54077,13 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _ListUtils = __webpack_require__(451);
+	var _ListUtils = __webpack_require__(410);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -52942,15 +54091,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(463);
+	var _RaceActions = __webpack_require__(469);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
-	var _RacesListItem = __webpack_require__(464);
+	var _RacesListItem = __webpack_require__(470);
 
 	var _RacesListItem2 = _interopRequireDefault(_RacesListItem);
 
-	var _RaceStore = __webpack_require__(316);
+	var _RaceStore = __webpack_require__(329);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -52958,7 +54107,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -53040,7 +54189,7 @@
 	};
 
 /***/ },
-/* 463 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53086,7 +54235,7 @@
 	};
 
 /***/ },
-/* 464 */
+/* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53095,21 +54244,21 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _DataUtils = __webpack_require__(270);
+	var _DataUtils = __webpack_require__(284);
 
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(463);
+	var _RaceActions = __webpack_require__(469);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
-	var _VerticalList = __webpack_require__(399);
+	var _VerticalList = __webpack_require__(402);
 
 	var _VerticalList2 = _interopRequireDefault(_VerticalList);
 
@@ -53205,7 +54354,7 @@
 	};
 
 /***/ },
-/* 465 */
+/* 471 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53214,11 +54363,11 @@
 		value: true
 	});
 
-	var _CombatTechniques = __webpack_require__(466);
+	var _CombatTechniques = __webpack_require__(472);
 
 	var _CombatTechniques2 = _interopRequireDefault(_CombatTechniques);
 
-	var _Liturgies = __webpack_require__(469);
+	var _Liturgies = __webpack_require__(475);
 
 	var _Liturgies2 = _interopRequireDefault(_Liturgies);
 
@@ -53226,25 +54375,25 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SpecialAbilities = __webpack_require__(471);
+	var _SpecialAbilities = __webpack_require__(477);
 
 	var _SpecialAbilities2 = _interopRequireDefault(_SpecialAbilities);
 
-	var _SpecialAbilitiesStore = __webpack_require__(443);
+	var _SpecialAbilitiesStore = __webpack_require__(450);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _Spells = __webpack_require__(475);
+	var _Spells = __webpack_require__(481);
 
 	var _Spells2 = _interopRequireDefault(_Spells);
 
-	var _SubTabs = __webpack_require__(389);
+	var _SubTabs = __webpack_require__(392);
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
-	var _Talents = __webpack_require__(477);
+	var _Talents = __webpack_require__(483);
 
 	var _Talents2 = _interopRequireDefault(_Talents);
 
@@ -53334,7 +54483,7 @@
 	exports.default = Skills;
 
 /***/ },
-/* 466 */
+/* 472 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53343,25 +54492,25 @@
 		value: true
 	});
 
-	var _CombatTechniquesActions = __webpack_require__(467);
+	var _CombatTechniquesActions = __webpack_require__(473);
 
 	var _CombatTechniquesActions2 = _interopRequireDefault(_CombatTechniquesActions);
 
-	var _CombatTechniquesStore = __webpack_require__(335);
+	var _CombatTechniquesStore = __webpack_require__(345);
 
 	var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _ListUtils = __webpack_require__(451);
+	var _ListUtils = __webpack_require__(410);
 
 	var ListUtils = _interopRequireWildcard(_ListUtils);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -53373,11 +54522,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(468);
+	var _SkillListItem = __webpack_require__(474);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -53531,7 +54680,7 @@
 	exports.default = CombatTechniques;
 
 /***/ },
-/* 467 */
+/* 473 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53578,7 +54727,7 @@
 	};
 
 /***/ },
-/* 468 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53587,11 +54736,11 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
 	var _react = __webpack_require__(6);
 
@@ -53724,7 +54873,7 @@
 	};
 
 /***/ },
-/* 469 */
+/* 475 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53737,27 +54886,27 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _slicedToArray2 = __webpack_require__(275);
+	var _slicedToArray2 = __webpack_require__(289);
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _LiturgiesActions = __webpack_require__(470);
+	var _LiturgiesActions = __webpack_require__(476);
 
 	var _LiturgiesActions2 = _interopRequireDefault(_LiturgiesActions);
 
-	var _LiturgiesStore = __webpack_require__(341);
+	var _LiturgiesStore = __webpack_require__(351);
 
 	var _LiturgiesStore2 = _interopRequireDefault(_LiturgiesStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -53769,15 +54918,15 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(468);
+	var _SkillListItem = __webpack_require__(474);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -54037,7 +55186,7 @@
 	exports.default = Liturgies;
 
 /***/ },
-/* 470 */
+/* 476 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54050,11 +55199,11 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _LiturgiesStore = __webpack_require__(341);
+	var _LiturgiesStore = __webpack_require__(351);
 
 	var _LiturgiesStore2 = _interopRequireDefault(_LiturgiesStore);
 
@@ -54130,7 +55279,7 @@
 	};
 
 /***/ },
-/* 471 */
+/* 477 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54139,15 +55288,15 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -54159,27 +55308,27 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpecialAbilitiesActions = __webpack_require__(472);
+	var _SpecialAbilitiesActions = __webpack_require__(478);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
-	var _SpecialAbilitiesListAddItem = __webpack_require__(473);
+	var _SpecialAbilitiesListAddItem = __webpack_require__(479);
 
 	var _SpecialAbilitiesListAddItem2 = _interopRequireDefault(_SpecialAbilitiesListAddItem);
 
-	var _SpecialAbilitiesListRemoveItem = __webpack_require__(474);
+	var _SpecialAbilitiesListRemoveItem = __webpack_require__(480);
 
 	var _SpecialAbilitiesListRemoveItem2 = _interopRequireDefault(_SpecialAbilitiesListRemoveItem);
 
-	var _SpecialAbilitiesStore = __webpack_require__(443);
+	var _SpecialAbilitiesStore = __webpack_require__(450);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -54325,7 +55474,7 @@
 	exports.default = SpecialAbilities;
 
 /***/ },
-/* 472 */
+/* 478 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54334,17 +55483,9 @@
 		value: true
 	});
 
-	var _assign = __webpack_require__(183);
-
-	var _assign2 = _interopRequireDefault(_assign);
-
 	var _AppDispatcher = __webpack_require__(1);
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _APStore = __webpack_require__(320);
-
-	var _APStore2 = _interopRequireDefault(_APStore);
 
 	var _ActionTypes = __webpack_require__(263);
 
@@ -54372,31 +55513,23 @@
 			});
 		},
 		addToList: function (args) {
-			var costs = _APStore2.default.validate(args.costs);
-			if (costs !== false) {
-				_AppDispatcher2.default.dispatch((0, _assign2.default)({
-					actionType: _ActionTypes2.default.ACTIVATE_SPECIALABILITY
-				}, args));
-			}
+			args.actionType = _ActionTypes2.default.ACTIVATE_SPECIALABILITY;
+			_AppDispatcher2.default.dispatch(args);
 		},
 		removeFromList: function (args) {
-			_AppDispatcher2.default.dispatch((0, _assign2.default)({
-				actionType: _ActionTypes2.default.DEACTIVATE_SPECIALABILITY
-			}, args));
+			args.actionType = _ActionTypes2.default.DEACTIVATE_SPECIALABILITY;
+			_AppDispatcher2.default.dispatch(args);
 		},
-		updateTier: function (id, tier, ap_difference, sid) {
-			var costs = _APStore2.default.validate(ap_difference, true, true, true);
-			if (costs) {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER,
-					id, tier, costs: ap_difference, sid
-				});
-			}
+		updateTier: function (id, tier, costs, sid) {
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.UPDATE_SPECIALABILITY_TIER,
+				id, tier, costs, sid
+			});
 		}
 	};
 
 /***/ },
-/* 473 */
+/* 479 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54405,17 +55538,17 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(472);
+	var _SpecialAbilitiesActions = __webpack_require__(478);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -54423,7 +55556,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -54607,7 +55740,7 @@
 	};
 
 /***/ },
-/* 474 */
+/* 480 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54616,15 +55749,15 @@
 		value: true
 	});
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(472);
+	var _SpecialAbilitiesActions = __webpack_require__(478);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
-	var _Dropdown = __webpack_require__(383);
+	var _Dropdown = __webpack_require__(387);
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
@@ -54740,7 +55873,7 @@
 	};
 
 /***/ },
-/* 475 */
+/* 481 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54753,19 +55886,19 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _slicedToArray2 = __webpack_require__(275);
+	var _slicedToArray2 = __webpack_require__(289);
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -54777,23 +55910,23 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(468);
+	var _SkillListItem = __webpack_require__(474);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _Slidein = __webpack_require__(387);
+	var _Slidein = __webpack_require__(390);
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpellsActions = __webpack_require__(476);
+	var _SpellsActions = __webpack_require__(482);
 
 	var _SpellsActions2 = _interopRequireDefault(_SpellsActions);
 
-	var _SpellsStore = __webpack_require__(348);
+	var _SpellsStore = __webpack_require__(358);
 
 	var _SpellsStore2 = _interopRequireDefault(_SpellsStore);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -55057,7 +56190,7 @@
 	exports.default = Spells;
 
 /***/ },
-/* 476 */
+/* 482 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55070,11 +56203,11 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _SpellsStore = __webpack_require__(348);
+	var _SpellsStore = __webpack_require__(358);
 
 	var _SpellsStore2 = _interopRequireDefault(_SpellsStore);
 
@@ -55150,7 +56283,7 @@
 	};
 
 /***/ },
-/* 477 */
+/* 483 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55159,19 +56292,19 @@
 		value: true
 	});
 
-	var _Checkbox = __webpack_require__(378);
+	var _Checkbox = __webpack_require__(382);
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureStore = __webpack_require__(311);
+	var _CultureStore = __webpack_require__(325);
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _RadioButtonGroup = __webpack_require__(400);
+	var _RadioButtonGroup = __webpack_require__(403);
 
 	var _RadioButtonGroup2 = _interopRequireDefault(_RadioButtonGroup);
 
@@ -55183,19 +56316,19 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(468);
+	var _SkillListItem = __webpack_require__(474);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _TalentsActions = __webpack_require__(478);
+	var _TalentsActions = __webpack_require__(484);
 
 	var _TalentsActions2 = _interopRequireDefault(_TalentsActions);
 
-	var _TalentsStore = __webpack_require__(479);
+	var _TalentsStore = __webpack_require__(485);
 
 	var _TalentsStore2 = _interopRequireDefault(_TalentsStore);
 
-	var _TextField = __webpack_require__(357);
+	var _TextField = __webpack_require__(273);
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
@@ -55317,7 +56450,7 @@
 	exports.default = Talents;
 
 /***/ },
-/* 478 */
+/* 484 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55369,7 +56502,7 @@
 	};
 
 /***/ },
-/* 479 */
+/* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55378,11 +56511,11 @@
 		value: true
 	});
 
-	var _from = __webpack_require__(289);
+	var _from = __webpack_require__(303);
 
 	var _from2 = _interopRequireDefault(_from);
 
-	var _map = __webpack_require__(307);
+	var _map = __webpack_require__(321);
 
 	var _map2 = _interopRequireDefault(_map);
 
@@ -55390,17 +56523,17 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
-	var _ELStore = __webpack_require__(321);
+	var _ELStore = __webpack_require__(328);
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ListStore = __webpack_require__(288);
+	var _ListStore = __webpack_require__(302);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
@@ -55408,7 +56541,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _Categories = __webpack_require__(312);
+	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
@@ -55569,7 +56702,7 @@
 	exports.default = TalentsStore;
 
 /***/ },
-/* 480 */
+/* 486 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55582,7 +56715,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -55590,7 +56723,7 @@
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
-	var _AuthStore = __webpack_require__(266);
+	var _AuthStore = __webpack_require__(280);
 
 	var _AuthStore2 = _interopRequireDefault(_AuthStore);
 
@@ -55699,7 +56832,7 @@
 	exports.default = TabStore;
 
 /***/ },
-/* 481 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55712,47 +56845,47 @@
 
 	var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-	var _APStore = __webpack_require__(320);
+	var _APStore = __webpack_require__(332);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _AuthStore = __webpack_require__(266);
+	var _AuthStore = __webpack_require__(280);
 
 	var _AuthStore2 = _interopRequireDefault(_AuthStore);
 
-	var _AvatarWrapper = __webpack_require__(423);
+	var _AvatarWrapper = __webpack_require__(430);
 
 	var _AvatarWrapper2 = _interopRequireDefault(_AvatarWrapper);
 
-	var _BorderButton = __webpack_require__(326);
+	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _HerolistActions = __webpack_require__(394);
+	var _HerolistActions = __webpack_require__(397);
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _HistoryActions = __webpack_require__(493);
+	var _HistoryActions = __webpack_require__(488);
 
 	var _HistoryActions2 = _interopRequireDefault(_HistoryActions);
 
-	var _HistoryStore = __webpack_require__(494);
+	var _HistoryStore = __webpack_require__(327);
 
 	var _HistoryStore2 = _interopRequireDefault(_HistoryStore);
 
-	var _IconButton = __webpack_require__(363);
+	var _IconButton = __webpack_require__(367);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(412);
+	var _InGameActions = __webpack_require__(419);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
-	var _PhaseStore = __webpack_require__(333);
+	var _PhaseStore = __webpack_require__(343);
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _ProfileStore = __webpack_require__(269);
+	var _ProfileStore = __webpack_require__(283);
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
@@ -55760,31 +56893,31 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TabActions = __webpack_require__(392);
+	var _TabActions = __webpack_require__(395);
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _Text = __webpack_require__(328);
+	var _Text = __webpack_require__(271);
 
 	var _Text2 = _interopRequireDefault(_Text);
 
-	var _TitleBarBack = __webpack_require__(482);
+	var _TitleBarBack = __webpack_require__(489);
 
 	var _TitleBarBack2 = _interopRequireDefault(_TitleBarBack);
 
-	var _TitleBarLeft = __webpack_require__(484);
+	var _TitleBarLeft = __webpack_require__(491);
 
 	var _TitleBarLeft2 = _interopRequireDefault(_TitleBarLeft);
 
-	var _TitleBarRight = __webpack_require__(485);
+	var _TitleBarRight = __webpack_require__(492);
 
 	var _TitleBarRight2 = _interopRequireDefault(_TitleBarRight);
 
-	var _TitleBarTabs = __webpack_require__(486);
+	var _TitleBarTabs = __webpack_require__(493);
 
 	var _TitleBarTabs2 = _interopRequireDefault(_TitleBarTabs);
 
-	var _TitleBarWrapper = __webpack_require__(487);
+	var _TitleBarWrapper = __webpack_require__(494);
 
 	var _TitleBarWrapper2 = _interopRequireDefault(_TitleBarWrapper);
 
@@ -55896,7 +57029,7 @@
 								tabs.push({ label: 'Eigenschaften', tag: 'attributes' }, { label: 'Vorteile & Nachteile', tag: 'disadv' }, { label: 'Fertigkeiten', tag: 'skills' });
 								break;
 							case 3:
-								tabs.push({ label: 'Eigenschaften', tag: 'attributes' }, { label: 'Fertigkeiten', tag: 'skills' }, { label: 'Gegenstände', tag: 'items', disabled: true });
+								tabs.push({ label: 'Eigenschaften', tag: 'attributes' }, { label: 'Fertigkeiten', tag: 'skills' }, { label: 'Gegenstände', tag: 'items' });
 								break;
 						}
 						return _react2.default.createElement(
@@ -55970,7 +57103,39 @@
 	};
 
 /***/ },
-/* 482 */
+/* 488 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _HistoryStore = __webpack_require__(327);
+
+	var _HistoryStore2 = _interopRequireDefault(_HistoryStore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+		undoLastAction: function () {
+			const lastAction = _HistoryStore2.default.getUndo();
+			lastAction.undoAction = true;
+			_AppDispatcher2.default.dispatch(lastAction);
+		}
+	};
+
+/***/ },
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55983,11 +57148,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TabActions = __webpack_require__(392);
+	var _TabActions = __webpack_require__(395);
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _TitleBarBackArrow = __webpack_require__(483);
+	var _TitleBarBackArrow = __webpack_require__(490);
 
 	var _TitleBarBackArrow2 = _interopRequireDefault(_TitleBarBackArrow);
 
@@ -56015,7 +57180,7 @@
 	exports.default = TitleBarBack;
 
 /***/ },
-/* 483 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -56037,7 +57202,7 @@
 	);
 
 /***/ },
-/* 484 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -56065,7 +57230,7 @@
 	exports.default = TitleBarLeft;
 
 /***/ },
-/* 485 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -56093,7 +57258,7 @@
 	exports.default = TitleBarRight;
 
 /***/ },
-/* 486 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56114,11 +57279,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Tab = __webpack_require__(390);
+	var _Tab = __webpack_require__(393);
 
 	var _Tab2 = _interopRequireDefault(_Tab);
 
-	var _TabActions = __webpack_require__(392);
+	var _TabActions = __webpack_require__(395);
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
@@ -56162,7 +57327,7 @@
 	};
 
 /***/ },
-/* 487 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -56194,7 +57359,7 @@
 	exports.default = TitleBarWrapper;
 
 /***/ },
-/* 488 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -56225,7 +57390,7 @@
 	};
 
 /***/ },
-/* 489 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56238,7 +57403,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _Store = __webpack_require__(267);
+	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
 
@@ -56303,14 +57468,14 @@
 	exports.default = WaitStore;
 
 /***/ },
-/* 490 */
+/* 497 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
-/* 491 */,
-/* 492 */
+/* 498 */,
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56319,316 +57484,63 @@
 		value: true
 	});
 
-	exports.default = function (title, content, buttons) {
-		(0, _createOverlay2.default)(_react2.default.createElement(
-			_Dialog2.default,
-			{
-				title: title,
-				buttons: buttons
-			},
-			content
-		));
-	};
+	var _isInteger = __webpack_require__(296);
 
-	var _createOverlay = __webpack_require__(323);
+	var _isInteger2 = _interopRequireDefault(_isInteger);
 
-	var _createOverlay2 = _interopRequireDefault(_createOverlay);
-
-	var _Dialog = __webpack_require__(324);
+	var _Dialog = __webpack_require__(267);
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
+
+	var _ProfileActions = __webpack_require__(434);
+
+	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _TextField = __webpack_require__(273);
 
-/***/ },
-/* 493 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _HistoryStore = __webpack_require__(494);
-
-	var _HistoryStore2 = _interopRequireDefault(_HistoryStore);
+	var _TextField2 = _interopRequireDefault(_TextField);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = {
-		undoLastAction: function () {
-			const lastAction = _HistoryStore2.default.getUndo();
-			lastAction.undoAction = true;
-			_AppDispatcher2.default.dispatch(lastAction);
+	class OverviewAddAP extends _react.Component {
+		constructor() {
+			var _temp;
+
+			return _temp = super(...arguments), this.state = {
+				value: ''
+			}, this.onChange = e => this.setState({ value: e.target.value }), this.addAP = () => _ProfileActions2.default.addAP(parseInt(this.state.value)), _temp;
 		}
+
+		render() {
+			const value = this.state.value;
+
+
+			return _react2.default.createElement(
+				_Dialog2.default,
+				{ id: 'overview-add-ap', title: 'AP hinzuf\xFCgen', node: this.props.node, buttons: [{
+						label: 'Hinzufügen',
+						onClick: this.addAP,
+						disabled: value === '' || !(0, _isInteger2.default)(parseInt(value))
+					}, {
+						label: 'Abbrechen'
+					}] },
+				_react2.default.createElement(_TextField2.default, {
+					hint: 'Abenteuerpunkte',
+					value: value,
+					onChange: this.onChange,
+					fullWidth: true
+				})
+			);
+		}
+	}
+	exports.default = OverviewAddAP;
+	OverviewAddAP.propTypes = {
+		node: _react.PropTypes.any
 	};
-
-/***/ },
-/* 494 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _from = __webpack_require__(289);
-
-	var _from2 = _interopRequireDefault(_from);
-
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _CultureStore = __webpack_require__(311);
-
-	var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-	var _ELStore = __webpack_require__(321);
-
-	var _ELStore2 = _interopRequireDefault(_ELStore);
-
-	var _Store = __webpack_require__(267);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _ListStore = __webpack_require__(288);
-
-	var _RaceStore = __webpack_require__(316);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
-
-	var _RequirementsStore = __webpack_require__(317);
-
-	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
-
-	var _ProfessionStore = __webpack_require__(314);
-
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _ProfessionVariantStore = __webpack_require__(315);
-
-	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _iccalc = __webpack_require__(319);
-
-	var _alert = __webpack_require__(492);
-
-	var _alert2 = _interopRequireDefault(_alert);
-
-	var _reqPurchase = __webpack_require__(329);
-
-	var _reqPurchase2 = _interopRequireDefault(_reqPurchase);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var _history = [];
-	var _lastSaveIndex = -1;
-
-	function _add(actionType) {
-		let cost = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-		let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-		let previousState = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-		_history.push({
-			actionType,
-			cost,
-			options,
-			previousState
-		});
-	}
-
-	function _clear() {
-		_history = [];
-	}
-
-	function _resetSaveIndex() {
-		_lastSaveIndex = _history.length - 1;
-	}
-
-	function _updateAll(array) {
-		_history = array;
-		_lastSaveIndex = _history.length - 1;
-	}
-
-	function _assignRCP(selections) {
-		let el = _ELStore2.default.getStart();
-		_add(_ActionTypes2.default.SELECT_EXPERIENCE_LEVEL, -el.ap, { id: el.id });
-		let race = _RaceStore2.default.getCurrent();
-		_add(_ActionTypes2.default.SELECT_RACE, race.ap, { id: race.id });
-		let culture = _CultureStore2.default.getCurrent();
-		_add(_ActionTypes2.default.SELECT_CULTURE, culture.ap, { id: culture.id });
-		let profession = _ProfessionStore2.default.getCurrent();
-		_add(_ActionTypes2.default.SELECT_PROFESSION, profession.ap, { id: profession.id });
-		let professionVariant = _ProfessionVariantStore2.default.getCurrent();
-		if (professionVariant) {
-			_add(_ActionTypes2.default.SELECT_PROFESSION_VARIANT, professionVariant.ap, { id: professionVariant.id });
-		}
-
-		let attrSel = selections.attrSel,
-		    useCulturePackage = selections.useCulturePackage,
-		    lang = selections.lang,
-		    buyLiteracy = selections.buyLiteracy,
-		    litc = selections.litc,
-		    cantrips = selections.cantrips,
-		    combattech = selections.combattech,
-		    curses = selections.curses,
-		    langLitc = selections.langLitc,
-		    spec = selections.spec;
-
-
-		_add('SELECT_ATTRIBUTE_MOD', 0, { id: attrSel });
-		_add('PURCHASE_CULTURE_PACKAGE', 0, { buy: useCulturePackage });
-		if (lang !== 0) {
-			_add('SELECT_MOTHER_TONGUE', 0, { id: lang });
-		}
-		_add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
-		if (spec[0] !== null || spec[1] !== '') {
-			_add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
-		}
-		if (litc !== 0) {
-			_add('SELECT_MAIN_LITERACY', 0, { id: litc });
-		}
-		if (cantrips.size > 0) {
-			_add('SELECT_CANTRIPS', 0, { list: (0, _from2.default)(cantrips) });
-		}
-		if (combattech.size > 0) {
-			_add('SELECT_COMBAT_TECHNIQUES', 0, { list: (0, _from2.default)(combattech) });
-		}
-		if (curses.size > 0) {
-			_add('SELECT_CURSES', 0, { list: (0, _from2.default)(curses) });
-		}
-		if (langLitc.size > 0) {
-			_add('SELECT_LANGUAGES_AND_LITERACIES', 0, { list: (0, _from2.default)(langLitc) });
-		}
-	}
-
-	class _HistoryStore extends _Store2.default {
-
-		get(index) {
-			return _history[index];
-		}
-
-		getAll() {
-			return _history;
-		}
-
-		isUndoAvailable() {
-			return _lastSaveIndex < _history.length - 1;
-		}
-
-		getUndo() {
-			let lastIndex = _history.length - 1;
-			if (_lastSaveIndex < lastIndex) {
-				return _history[_history.length - 1];
-			}
-			return false;
-		}
-
-	}
-
-	const HistoryStore = new _HistoryStore();
-
-	HistoryStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
-
-		if (payload.undoAction && HistoryStore.isUndoAvailable()) {
-			_history.splice(_history.length - 1, 1);
-			HistoryStore.emitChange();
-			return true;
-		}
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.UNDO:
-				break;
-
-			case _ActionTypes2.default.CLEAR_HERO:
-				_clear();
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_clear();
-				_updateAll(payload.history);
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.FINALIZE_CHARACTER_CREATION:
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.CREATE_NEW_HERO:
-				_clear();
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.SAVE_HERO_SUCCESS:
-				_resetSaveIndex();
-				break;
-
-			case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.ADD_TALENT_POINT:
-			case _ActionTypes2.default.ADD_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.ADD_SPELL_POINT:
-			case _ActionTypes2.default.ADD_LITURGY_POINT:
-				if (_RequirementsStore2.default.isValid()) {
-					const id = payload.id;
-					const oldValue = (0, _ListStore.get)(id).value;
-					const newValue = oldValue + 1;
-					const cost = _RequirementsStore2.default.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
-				}
-				break;
-
-			case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.REMOVE_TALENT_POINT:
-			case _ActionTypes2.default.REMOVE_COMBATTECHNIQUE_POINT:
-			case _ActionTypes2.default.REMOVE_SPELL_POINT:
-			case _ActionTypes2.default.REMOVE_LITURGY_POINT:
-				if (_RequirementsStore2.default.isValid()) {
-					const id = payload.id;
-					const oldValue = (0, _ListStore.get)(id).value;
-					const newValue = oldValue - 1;
-					const cost = _RequirementsStore2.default.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
-				}
-				break;
-
-			default:
-				return true;
-		}
-
-		HistoryStore.emitChange();
-
-		return true;
-	});
-
-	exports.default = HistoryStore;
 
 /***/ }
 /******/ ]);

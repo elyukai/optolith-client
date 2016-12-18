@@ -21,7 +21,8 @@ import calcEL from '../../utils/calcEL';
 
 export default class Overview extends Component {
 	
-	state = { 
+	state = {
+		ap: APStore.getTotal(),
 		advActive: DisAdvStore.getActiveForView(true),
 		disadvActive: DisAdvStore.getActiveForView(false),
 		...(ProfileStore.getAll()),
@@ -29,17 +30,20 @@ export default class Overview extends Component {
 		editName: false
 	};
 	
+	_updateAPStore = () => this.setState({ ap: APStore.getTotal() });
 	_updateProfileStore = () => this.setState(ProfileStore.getAll());
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()
 	});
 	
 	componentDidMount() {
+		APStore.addChangeListener(this._updateAPStore );
 		PhaseStore.addChangeListener(this._updatePhaseStore );
 		ProfileStore.addChangeListener(this._updateProfileStore );
 	}
 	
 	componentWillUnmount() {
+		APStore.removeChangeListener(this._updateAPStore );
 		PhaseStore.removeChangeListener(this._updatePhaseStore );
 		ProfileStore.removeChangeListener(this._updateProfileStore );
 	}
@@ -54,14 +58,14 @@ export default class Overview extends Component {
 
 	endCharacterCreation = () => ProfileActions.endCharacterCreation();
 	deleteHero = () => ProfileActions.deleteHero();
+	addAP = () => ProfileActions.showAddAP();
 
 	render() {
 
-		const { avatar, editName, name, phase, ...personal } = this.state;
+		const { ap, avatar, editName, name, phase, ...personal } = this.state;
 
 		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
-		const ap = APStore.getTotal();
 		const currentEL = calcEL(ap);
 
 		const nameElement = editName ? (
@@ -118,6 +122,15 @@ export default class Overview extends Component {
 							</VerticalList>
 						</div>
 					</div>
+					{
+						phase === 3 ? (
+							<BorderButton
+								className="add-ap"
+								label="AP hinzufügen"
+								onClick={this.addAP}
+								/>
+						) : null
+					}
 					<h3>Persönliche Daten</h3>
 					<OverviewPersonalData
 						{...personal}

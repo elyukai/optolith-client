@@ -1,3 +1,4 @@
+import Label from './Label';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 // import TextareaAutosize from 'react-textarea-autosize';
@@ -13,7 +14,7 @@ export default class TextField extends Component {
 		disabled: PropTypes.bool,
 		fullWidth: PropTypes.bool,
 		hint: PropTypes.string,
-		labelText: PropTypes.any,
+		label: PropTypes.string,
 		multiLine: PropTypes.bool,
 		onChange: PropTypes.func,
 		onKeyDown: PropTypes.func,
@@ -32,16 +33,12 @@ export default class TextField extends Component {
 
 	render() {
 
-		let { className, countCurrent, countMax, disabled, fullWidth, hint, labelText, onChange, onKeyDown, type, value } = this.props;
+		let { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type, value } = this.props;
 
 		className = classNames('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
 
 		const hintElement = hint ? (
 			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>
-		) : null;
-
-		const labelTextElement = labelText ? (
-			<label>{labelText}</label>
 		) : null;
 
 		// const inputElement = this.props.multiLine ? (
@@ -68,7 +65,7 @@ export default class TextField extends Component {
 		return (
 			<div className={className}>
 				{hintElement}
-				{labelTextElement}
+				<Label text={label} />
 				{inputElement}
 				{counterTextElement}
 			</div>

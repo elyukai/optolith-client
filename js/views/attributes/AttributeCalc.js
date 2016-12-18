@@ -1,6 +1,6 @@
 import AttributeCalcItem from './AttributeCalcItem';
-import { get, getPrimaryAttrID } from '../../stores/ListStore';
 import React, { Component, PropTypes } from 'react';
+import secondaryAttributes from '../../utils/secondaryAttributes';
 
 export default class AttributeCalc extends Component {
 
@@ -12,117 +12,16 @@ export default class AttributeCalc extends Component {
 
 	render() {
 
-		const { attributes, baseValues, phase } = this.props;
+		const { phase } = this.props;
 
-		const calculated = [
-			{
-				label: 'LE',
-				value: do {
-					let a = baseValues.le + attributes[6].value * 2 + baseValues.leAdd;
-					if (get('ADV_25').active)
-						a += get('ADV_25').tier;
-					else if (get('DISADV_28').active)
-						a -= get('DISADV_28').tier;
-					a;
-				},
-				disabledIncrease: baseValues.leAdd >= get('ATTR_7').value
-			},
-			{
-				label: 'AE',
-				value: do {
-					let primary = getPrimaryAttrID(1);
-					if (primary === 'ATTR_0')
-						'-';
-					else {
-						let a = 20 + get(primary).value + baseValues.aeAdd;
-						if (get('ADV_23').active)
-							a += get('ADV_23').tier;
-						else if (get('DISADV_26').active)
-							a -= get('DISADV_26').tier;
-						a;
-					}
-				},
-				disabledIncrease: do {
-					let primary = getPrimaryAttrID(1);
-					if (primary === 'ATTR_0')
-						false;
-					else {
-						baseValues.aeAdd >= get(primary).value;
-					}
-				},
-				permanent: 0,
-				permanentRe: 0,
-				disabledPermanent: true
-			},
-			{
-				label: 'KE',
-				value: do {
-					let primary = getPrimaryAttrID(2);
-					if (primary === 'ATTR_0')
-						'-';
-					else {
-						let a = 20 + get(primary).value + baseValues.keAdd;
-						if (get('ADV_24').active)
-							a += get('ADV_24').tier;
-						else if (get('DISADV_27').active)
-							a -= get('DISADV_27').tier;
-						a;
-					}
-				},
-				disabledIncrease: do {
-					let primary = getPrimaryAttrID(2);
-					if (primary === 'ATTR_0')
-						false;
-					else {
-						baseValues.keAdd >= get(primary).value;
-					}
-				},
-				permanent: 0,
-				permanentRe: 0,
-				disabledPermanent: true
-			},
-			{
-				label: 'SK',
-				value: do {
-					let a = baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6);
-					if (get('ADV_26').active)
-						a++;
-					else if (get('DISADV_29').active)
-						a--;
-					a;
-				}
-			},
-			{
-				label: 'ZK',
-				value: do {
-					let a = baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6);
-					if (get('ADV_27').active)
-						a++;
-					else if (get('DISADV_30').active)
-						a--;
-					a;
-				}
-			},
-			{
-				label: 'AW',
-				value: Math.round(attributes[5].value / 2)
-			},
-			{
-				label: 'INI',
-				value: Math.round((attributes[0].value + attributes[5].value) / 2)
-			},
-			{
-				label: 'GS',
-				value: baseValues.gs
-			}
-		];
+		const calculated = secondaryAttributes();
 
 		return (
 			<div className="calculated">
 				{
 					calculated.map(attribute => (
 						<AttributeCalcItem
-							key={attribute.label}
+							key={attribute.id}
 							attribute={attribute}
 							phase={phase}
 							/>

@@ -1,0 +1,81 @@
+#item-editor {
+	.modal-container {
+		width: 820px;
+		height: 250px;
+		// height: 740px;
+
+		.modal-content-inner {
+			> div {
+				display: flex;
+				align-items: flex-end;
+
+				&.main > div.container {
+					flex-grow: 2.3;
+				}	
+
+				&.armor > div.container {
+					flex: none;
+				}	
+
+				> div.container {
+					position: relative;
+					height: 50px;
+					display: flex;
+					align-items: flex-end;
+
+					> label {
+						position: absolute;
+
+						+ div:nth-child(2) {
+							margin-left: 0;
+						}
+					}
+
+					> div:not(:first-child)  {
+						margin-left: 10px;
+					}
+				}
+
+				> div:not(:first-child) {
+					margin-left: 20px;
+				}
+
+				> div, > div.container > div {
+					flex: 1 1 0;
+					margin: 0;
+				}
+
+				div {
+					&.textfield, &.dropdown {
+						width: auto;
+					}
+				}
+
+				> div {
+					&.ct {
+						flex: none;
+						width: 165px;
+					}
+				}
+
+				> div.container > div {
+					&.dpdn, &.dpds, &.dpf, &.at, &.pa, &.rb1, &.rb2, &.rb3, &.pro, &.enc {
+						flex: none;
+					}
+
+					&.dpds {
+						width: 65px;
+					}
+
+					&.dpdn, &.dpf, &.at, &.pa, &.rb1, &.rb2, &.rb3, &.pro, &.enc {
+						width: 40px;
+
+						input {
+							text-align: center;
+						}
+					}
+				}
+			}
+		}
+	}
+}

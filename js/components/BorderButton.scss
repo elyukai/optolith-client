@@ -1,4 +1,4 @@
-.btn, input[type="submit"] {
+.btn:not(.btn-round), input[type="submit"] {
 	text-align: center;
 	background-color: #1a1a1a;
 	padding: 3px 14px 6px;
@@ -29,7 +29,7 @@
 	}
 }
 
-.btn {
+.btn:not(.btn-round) {
 	margin-top: 0;
 	text-decoration: none;
 

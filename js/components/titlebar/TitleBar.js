@@ -140,7 +140,7 @@ export default class TitleBar extends Component {
 						tabs.push(
 							{ label: 'Eigenschaften', tag: 'attributes' },
 							{ label: 'Fertigkeiten', tag: 'skills' },
-							{ label: 'Gegenstände', tag: 'items', disabled: true }
+							{ label: 'Gegenstände', tag: 'items' }
 						);
 						break;
 				}

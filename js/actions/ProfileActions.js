@@ -3,6 +3,7 @@ import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 import createOverlay from '../utils/createOverlay';
 import ProfileAvatarChange from '../views/profile/ProfileAvatarChange';
+import OverviewAddAP from '../views/profile/OverviewAddAP';
 import React from 'react';
 
 export default {
@@ -14,6 +15,15 @@ export default {
 	},
 	showImageUpload: function() {
 		createOverlay(<ProfileAvatarChange />);
+	},
+	showAddAP: function() {
+		createOverlay(<OverviewAddAP />);
+	},
+	addAP: function(value) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ADD_ADVENTURE_POINTS,
+			value
+		});
 	},
 	changeAvatar: function({ source, extern, file }) {
 		if (source === 'ext') {

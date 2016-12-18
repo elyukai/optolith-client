@@ -34,7 +34,8 @@ export default class Items extends Component {
 						},
 						{
 							label: 'Ausrüstung',
-							tag: 'equipment'
+							tag: 'equipment',
+							disabled: true
 						}
 					]}
 					active={this.state.tab}

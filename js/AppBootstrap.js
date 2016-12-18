@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Router from './views/Router';
 import WebAPIUtils from './utils/WebAPIUtils';
-require('./Main.scss');
+import './Main.scss';
 
 // if (localStorage['lastUrl'] !== '') {
 // 	setTimeout(function() {

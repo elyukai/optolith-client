@@ -1,5 +1,4 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import APStore from '../stores/APStore';
 import ActionTypes from '../constants/ActionTypes';
 
 export default {
@@ -22,25 +21,17 @@ export default {
 		});
 	},
 	addToList: function(args) {
-		var costs = APStore.validate(args.costs);
-		if (costs !== false) {
-			AppDispatcher.dispatch(Object.assign({
-				actionType: ActionTypes.ACTIVATE_SPECIALABILITY
-			}, args));
-		}
+		args.actionType = ActionTypes.ACTIVATE_SPECIALABILITY;
+		AppDispatcher.dispatch(args);
 	},
 	removeFromList: function(args) {
-		AppDispatcher.dispatch(Object.assign({
-			actionType: ActionTypes.DEACTIVATE_SPECIALABILITY
-		}, args));
+		args.actionType = ActionTypes.DEACTIVATE_SPECIALABILITY;
+		AppDispatcher.dispatch(args);
 	},
-	updateTier: function(id, tier, ap_difference, sid) {
-		var costs = APStore.validate(ap_difference, true, true, true);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.UPDATE_SPECIALABILITY_TIER,
-				id, tier, costs: ap_difference, sid
-			});
-		}
+	updateTier: function(id, tier, costs, sid) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.UPDATE_SPECIALABILITY_TIER,
+			id, tier, costs, sid
+		});
 	}
 };

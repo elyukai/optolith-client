@@ -15,18 +15,26 @@
 		background: #1e282d;
 	}
 
+	&:hover, &:active {
+		> div {
+			background-image: linear-gradient(to bottom, transparentize(#c89b3c, 1) 50%, transparentize(#c89b3c, .75) 100%);
+		}
+	}
+
 	&:hover {
 		background: linear-gradient(to bottom, #f0e6d2 0%, #c89b3c 100%);
 
 		> div {
-			background-image: linear-gradient(to bottom, transparentize(#c89b3c, 1) 50%, transparentize(#c89b3c, .75) 100%);
 			color: #f0e6d2;
 		}
 	}
 
 	&:active {
 		background: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
-		color: #5c5b57;
+
+		> div {
+			color: #5c5b57;
+		}
 	}
 
 	&.btn-primary {

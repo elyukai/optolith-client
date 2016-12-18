@@ -63,28 +63,28 @@ export default class OverviewPersonalData extends Component {
 			<div className="personal-data">
 				<div>
 					<TextField
-						labelText="Familie"
+						label="Familie"
 						value={family}
 						onChange={this.changeFamily}
 						/>
 				</div>
 				<div>
 					<TextField
-						labelText="Geburtsort"
+						label="Geburtsort"
 						value={placeofbirth}
 						onChange={this.changePlaceOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						labelText="Geburtsdatum"
+						label="Geburtsdatum"
 						value={dateofbirth}
 						onChange={this.changeDateOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						labelText="Alter"
+						label="Alter"
 						value={age}
 						onChange={this.changeAge}
 						/>
@@ -109,7 +109,7 @@ export default class OverviewPersonalData extends Component {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						labelText="Körpergröße"
+						label="Körpergröße"
 						value={size}
 						onChange={this.changeSize}
 						/>
@@ -117,7 +117,7 @@ export default class OverviewPersonalData extends Component {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						labelText="Gewicht"
+						label="Gewicht"
 						value={weight}
 						onChange={this.changeWeight}
 						/>
@@ -125,7 +125,7 @@ export default class OverviewPersonalData extends Component {
 				</InputButtonGroup>
 				<div>
 					<TextField
-						labelText="Titel"
+						label="Titel"
 						value={title}
 						onChange={this.changeTitle}
 						/>
@@ -140,14 +140,14 @@ export default class OverviewPersonalData extends Component {
 				</div>
 				<div>
 					<TextField
-						labelText="Charakteristika"
+						label="Charakteristika"
 						value={characteristics}
 						onChange={this.changeCharacteristics}
 						/>
 				</div>
 				<div>
 					<TextField
-						labelText="Sonstiges"
+						label="Sonstiges"
 						value={otherinfo}
 						onChange={this.changeOtherInfo}
 						/>

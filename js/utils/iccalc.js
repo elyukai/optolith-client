@@ -36,3 +36,12 @@ export function check(cost) {
 export const validate = (ic, sr) => check(final(ic, sr));
 
 export default validate;
+
+export const checkDisAdvantages = (id, cost, index, target, spent, total, add) => {
+	const absCost = add ? cost : -cost;
+	const subValid = index > 0 ? target[index] + absCost <= 50 : true;
+	const mainValid = target[0] + absCost <= 80;
+	const totalValid = spent + cost <= total;
+
+	return [ totalValid, mainValid, subValid ];
+};

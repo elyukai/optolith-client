@@ -13,7 +13,7 @@ export default class NumberBox extends Component {
 
 		return (
 			<div className="number-box">
-				{ current ? <span className="current">{current}</span> : null }
+				{ current || current === 0 ? <span className="current">{current}</span> : null }
 				{ max ? <span className="max">{max}</span> : null }
 			</div>
 		);
