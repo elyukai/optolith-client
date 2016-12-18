@@ -176,8 +176,8 @@ function _assignRCP(selections) {
 	profession.specialabilities.forEach(addSA);
 	if (professionVariant) {
 		addSRList.push(...professionVariant.talents);
-		addSRList.push(...professionVariant.combattech);
-		professionVariant.sa.forEach(addSA);
+		addSRList.push(...professionVariant.combattechniques);
+		professionVariant.specialabilities.forEach(addSA);
 	}
 
 	Array.from(selections.combattech).forEach(e => {

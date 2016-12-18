@@ -28412,8 +28412,8 @@
 		profession.specialabilities.forEach(addSA);
 		if (professionVariant) {
 			addSRList.push(...professionVariant.talents);
-			addSRList.push(...professionVariant.combattech);
-			professionVariant.sa.forEach(addSA);
+			addSRList.push(...professionVariant.combattechniques);
+			professionVariant.specialabilities.forEach(addSA);
 		}
 
 		(0, _from2.default)(selections.combattech).forEach(e => {
