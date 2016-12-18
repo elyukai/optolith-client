@@ -46266,7 +46266,7 @@
 								value: 'ap'
 							}]
 						}),
-						_react2.default.createElement(_BorderButton2.default, { label: 'Aktualisieren', onClick: this.refresh }),
+						_react2.default.createElement(_BorderButton2.default, { label: 'Aktualisieren', onClick: this.refresh, disabled: true }),
 						_react2.default.createElement(_BorderButton2.default, { label: 'Erstellen', onClick: this.showHeroCreation, primary: true })
 					),
 					_react2.default.createElement(
@@ -47645,7 +47645,8 @@
 					node: node,
 					buttons: [{
 						label: 'Speichern',
-						onClick: null
+						onClick: null,
+						disabled: true
 					}] },
 				_react2.default.createElement(
 					'div',
@@ -49847,7 +49848,8 @@
 					{
 						label: 'Heldenbogen',
 						tag: 'sheets',
-						disabled: phase < 3
+						disabled: true
+						// disabled: phase < 3
 					}],
 					active: this.state.tab,
 					onClick: this.handleClick }),
@@ -50000,6 +50002,8 @@
 
 			const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
+			const isProfessionUndefined = _ProfessionStore2.default.getCurrentID() === null;
+
 			const currentEL = (0, _calcEL2.default)(ap);
 
 			const nameElement = editName ? _react2.default.createElement(_OverviewNameChange2.default, {
@@ -50026,7 +50030,7 @@
 							'div',
 							{ className: 'text-wrapper' },
 							nameElement,
-							_react2.default.createElement(
+							isProfessionUndefined ? null : _react2.default.createElement(
 								_VerticalList2.default,
 								{ className: 'rcp' },
 								_react2.default.createElement(
@@ -50114,12 +50118,12 @@
 						label: 'AP hinzuf\xFCgen',
 						onClick: this.addAP
 					}) : null,
-					_react2.default.createElement(
+					isProfessionUndefined ? null : _react2.default.createElement(
 						'h3',
 						null,
 						'Pers\xF6nliche Daten'
 					),
-					_react2.default.createElement(_OverviewPersonalData2.default, (0, _extends3.default)({}, personal, {
+					isProfessionUndefined ? null : _react2.default.createElement(_OverviewPersonalData2.default, (0, _extends3.default)({}, personal, {
 						race: _RaceStore2.default.getCurrent(),
 						culture: _CultureStore2.default.getCurrent(),
 						haircolorTags: _ProfileStore2.default.getHaircolorTags(),
@@ -50154,7 +50158,8 @@
 						_react2.default.createElement(_BorderButton2.default, {
 							className: 'delete-char',
 							label: 'Held l\xF6schen',
-							onClick: this.deleteHero
+							onClick: this.deleteHero,
+							disabled: true
 						})
 					) : null
 				)
@@ -57159,7 +57164,8 @@
 									_react2.default.createElement(_BorderButton2.default, {
 										label: 'Anmelden',
 										onClick: this.login,
-										primary: true
+										primary: true,
+										disabled: true
 									})
 								)
 							);
@@ -57215,8 +57221,16 @@
 									total - spent,
 									' AP'
 								),
-								_react2.default.createElement(_IconButton2.default, { icon: '\uE166', onClick: this.undo, disabled: !isUndoAvailable }),
-								_react2.default.createElement(_BorderButton2.default, { label: 'Speichern', onClick: this.saveHero })
+								_react2.default.createElement(_IconButton2.default, {
+									icon: '\uE166',
+									onClick: this.undo,
+									disabled: !isUndoAvailable
+								}),
+								_react2.default.createElement(_BorderButton2.default, {
+									label: 'Speichern',
+									onClick: this.saveHero,
+									disabled: true
+								})
 							)
 						);
 					}
@@ -57238,7 +57252,10 @@
 							_react2.default.createElement(
 								_TitleBarRight2.default,
 								null,
-								_react2.default.createElement(_BorderButton2.default, { label: 'Speichern', onClick: this.saveGroup })
+								_react2.default.createElement(_BorderButton2.default, {
+									label: 'Speichern',
+									onClick: this.saveGroup
+								})
 							)
 						);
 					}

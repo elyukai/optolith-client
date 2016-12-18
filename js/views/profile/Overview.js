@@ -66,6 +66,8 @@ export default class Overview extends Component {
 
 		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
+		const isProfessionUndefined = ProfessionStore.getCurrentID() === null;
+
 		const currentEL = calcEL(ap);
 
 		const nameElement = editName ? (
@@ -87,41 +89,45 @@ export default class Overview extends Component {
 						<AvatarWrapper src={avatar} onClick={this.showImageUpload} />
 						<div className="text-wrapper">
 							{nameElement}
-							<VerticalList className="rcp">
-								<span>{sex}</span>
-								<span className="race">
-									{(() => {
-										const { name } = RaceStore.getCurrent();
-										return name;
-									})()}
-								</span>
-								<span className="culture">
-									{(() => {
-										const { name } = CultureStore.getCurrent();
-										return name;
-									})()}
-								</span>
-								<span className="profession">
-									{(() => {
-										let { name, subname } = ProfessionStore.getCurrent();
-										
-										if (typeof name === 'object') {
-											name = name[this.state.sex];
-										}
-										if (typeof subname === 'object') {
-											subname = subname[this.state.sex];
-										}
+							{
+								isProfessionUndefined ? null : (
+									<VerticalList className="rcp">
+										<span>{sex}</span>
+										<span className="race">
+											{(() => {
+												const { name } = RaceStore.getCurrent();
+												return name;
+											})()}
+										</span>
+										<span className="culture">
+											{(() => {
+												const { name } = CultureStore.getCurrent();
+												return name;
+											})()}
+										</span>
+										<span className="profession">
+											{(() => {
+												let { name, subname } = ProfessionStore.getCurrent();
+												
+												if (typeof name === 'object') {
+													name = name[this.state.sex];
+												}
+												if (typeof subname === 'object') {
+													subname = subname[this.state.sex];
+												}
 
-										let { name: vname } = ProfessionVariantStore.getCurrent() || {};
+												let { name: vname } = ProfessionVariantStore.getCurrent() || {};
 
-										if (typeof vname === 'object') {
-											vname = vname[this.state.sex];
-										}
+												if (typeof vname === 'object') {
+													vname = vname[this.state.sex];
+												}
 
-										return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
-									})()}
-								</span>
-							</VerticalList>
+												return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
+											})()}
+										</span>
+									</VerticalList>
+								)
+							}
 							<VerticalList className="el">
 								<span>
 									{(() => {
@@ -144,15 +150,23 @@ export default class Overview extends Component {
 								/>
 						) : null
 					}
-					<h3>Persönliche Daten</h3>
-					<OverviewPersonalData
-						{...personal}
-						race={RaceStore.getCurrent()}
-						culture={CultureStore.getCurrent()}
-						haircolorTags={ProfileStore.getHaircolorTags()}
-						eyecolorTags={ProfileStore.getEyecolorTags()}
-						socialstatusTags={ProfileStore.getSocialstatusTags()}
-						/>
+					{
+						isProfessionUndefined ? null : (
+							<h3>Persönliche Daten</h3>
+						)
+					}
+					{
+						isProfessionUndefined ? null : (
+							<OverviewPersonalData
+								{...personal}
+								race={RaceStore.getCurrent()}
+								culture={CultureStore.getCurrent()}
+								haircolorTags={ProfileStore.getHaircolorTags()}
+								eyecolorTags={ProfileStore.getEyecolorTags()}
+								socialstatusTags={ProfileStore.getSocialstatusTags()}
+								/>
+						)
+					}
 					{
 						phase === 2 ? (
 							<div>
@@ -176,6 +190,7 @@ export default class Overview extends Component {
 									className="delete-char"
 									label="Held löschen"
 									onClick={this.deleteHero}
+									disabled
 									/>
 							</div>
 						) : null

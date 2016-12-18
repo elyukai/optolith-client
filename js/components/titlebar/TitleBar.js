@@ -95,6 +95,7 @@ export default class TitleBar extends Component {
 									label="Anmelden"
 									onClick={this.login}
 									primary
+									disabled
 									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
@@ -153,8 +154,16 @@ export default class TitleBar extends Component {
 						</TitleBarLeft>
 						<TitleBarRight>
 							<Text className="collected-ap">{total - spent} AP</Text>
-							<IconButton icon="&#xE166;" onClick={this.undo} disabled={!isUndoAvailable} />
-							<BorderButton label="Speichern" onClick={this.saveHero} />
+							<IconButton
+								icon="&#xE166;"
+								onClick={this.undo}
+								disabled={!isUndoAvailable}
+								/>
+							<BorderButton
+								label="Speichern"
+								onClick={this.saveHero}
+								disabled
+								/>
 						</TitleBarRight>
 					</TitleBarWrapper>
 				);
@@ -167,7 +176,10 @@ export default class TitleBar extends Component {
 							<Text>Gruppenname</Text>
 						</TitleBarLeft>
 						<TitleBarRight>
-							<BorderButton label="Speichern" onClick={this.saveGroup} />
+							<BorderButton
+								label="Speichern"
+								onClick={this.saveGroup}
+								/>
 						</TitleBarRight>
 					</TitleBarWrapper>
 				);

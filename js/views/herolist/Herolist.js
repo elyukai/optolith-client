@@ -75,7 +75,7 @@ export default class Herolist extends Component {
 								}
 							]}
 							/>
-						<BorderButton label="Aktualisieren" onClick={this.refresh} />
+						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
 					</div>
 					<Scroll className="list">

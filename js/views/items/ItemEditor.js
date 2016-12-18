@@ -60,7 +60,8 @@ export default class ItemEditor extends Component {
 				buttons={[
 					{
 						label: 'Speichern',
-						onClick: null
+						onClick: null,
+						disabled: true
 					}
 				]}>
 				<div className="main">

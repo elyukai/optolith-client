@@ -13,6 +13,10 @@
 			tbody {
 				tr {
 					@extend %large-tr;
+
+					td.ap:last-child {
+						padding-right: 11px;
+					}
 				}
 			}
 		}
