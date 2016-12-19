@@ -29548,9 +29548,15 @@
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
+	var _secondaryAttributes = __webpack_require__(336);
+
+	var secondaryAttributes = _interopRequireWildcard(_secondaryAttributes);
+
 	var _Store = __webpack_require__(281);
 
 	var _Store2 = _interopRequireDefault(_Store);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29717,6 +29723,16 @@
 					if (_RequirementsStore2.default.isValid()) {
 						const id = payload.id;
 						const oldValue = (0, _ListStore.get)(id).value;
+						const newValue = oldValue + 1;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					}
+					break;
+
+				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const oldValue = secondaryAttributes.get(id);
 						const newValue = oldValue + 1;
 						const cost = _RequirementsStore2.default.getCurrentCost();
 						_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
@@ -31130,6 +31146,10 @@
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
+	var _HistoryStore = __webpack_require__(327);
+
+	var _HistoryStore2 = _interopRequireDefault(_HistoryStore);
+
 	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
@@ -31164,6 +31184,20 @@
 				break;
 			case 'KP':
 				_ke_add++;
+				break;
+		}
+	}
+
+	function _removeMaxEnergyPoint(id) {
+		switch (id) {
+			case 'LP':
+				_le_add--;
+				break;
+			case 'AE':
+				_ae_add--;
+				break;
+			case 'KP':
+				_ke_add--;
 				break;
 		}
 	}
@@ -31243,35 +31277,49 @@
 
 	AttributeStore.dispatchToken = _AppDispatcher2.default.register(payload => {
 
-		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
+		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken, _HistoryStore2.default.dispatchToken]);
 
-		switch (payload.actionType) {
+		if (payload.undoAction) {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+					break;
 
-			case _ActionTypes2.default.CLEAR_HERO:
-			case _ActionTypes2.default.CREATE_NEW_HERO:
-				_clear();
-				break;
+				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+					_removeMaxEnergyPoint(payload.options.id);
+					break;
 
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_updateAll(payload.attr);
-				break;
+				default:
+					return true;
+			}
+		} else {
+			switch (payload.actionType) {
+				case _ActionTypes2.default.CLEAR_HERO:
+				case _ActionTypes2.default.CREATE_NEW_HERO:
+					_clear();
+					break;
 
-			case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
-			case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-				break;
+				case _ActionTypes2.default.RECEIVE_HERO:
+					_updateAll(payload.attr);
+					break;
 
-			case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
-				if (_RequirementsStore2.default.isValid()) {
-					_addMaxEnergyPoint(payload.id);
-				}
-				break;
+				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
+				case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
+					break;
 
-			case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
-				break;
+				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
+					if (_RequirementsStore2.default.isValid()) {
+						_addMaxEnergyPoint(payload.id);
+					}
+					break;
 
-			default:
-				return true;
+				case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
+					_assignRCP(payload.selections);
+					break;
+
+				default:
+					return true;
+			}
 		}
 
 		AttributeStore.emitChange();

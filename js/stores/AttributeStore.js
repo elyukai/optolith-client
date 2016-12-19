@@ -2,6 +2,7 @@ import { getAllByCategory } from './ListStore';
 import ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Categories from '../constants/Categories';
+import HistoryStore from './HistoryStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
@@ -26,6 +27,20 @@ function _addMaxEnergyPoint(id) {
 			break;
 		case 'KP':
 			_ke_add++;
+			break;
+	}
+}
+
+function _removeMaxEnergyPoint(id) {
+	switch (id) {
+		case 'LP':
+			_le_add--;
+			break;
+		case 'AE':
+			_ae_add--;
+			break;
+		case 'KP':
+			_ke_add--;
 			break;
 	}
 }
@@ -105,35 +120,50 @@ const AttributeStore = new _AttributeStore();
 
 AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);	
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
 
-	switch( payload.actionType ) {
+	if (payload.undoAction) {
+		switch(payload.actionType) {
+			case ActionTypes.ADD_ATTRIBUTE_POINT:
+			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+				break;
 
-		case ActionTypes.CLEAR_HERO:
-		case ActionTypes.CREATE_NEW_HERO:
-			_clear();
-			break;
+			case ActionTypes.ADD_MAX_ENERGY_POINT:
+				_removeMaxEnergyPoint(payload.options.id);
+				break;
 
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.attr);
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(payload.actionType) {
+			case ActionTypes.CLEAR_HERO:
+			case ActionTypes.CREATE_NEW_HERO:
+				_clear();
+				break;
 
-		case ActionTypes.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-			break;
+			case ActionTypes.RECEIVE_HERO:
+				_updateAll(payload.attr);
+				break;
 
-		case ActionTypes.ADD_MAX_ENERGY_POINT:
-			if (RequirementsStore.isValid()) {
-				_addMaxEnergyPoint(payload.id);
-			}
-			break;
+			case ActionTypes.ADD_ATTRIBUTE_POINT:
+			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+				break;
 
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
-			_assignRCP(payload.selections);
-			break;
-		
-		default:
-			return true;
+			case ActionTypes.ADD_MAX_ENERGY_POINT:
+				if (RequirementsStore.isValid()) {
+					_addMaxEnergyPoint(payload.id);
+				}
+				break;
+
+			case ActionTypes.ASSIGN_RCP_ENTRIES:
+				_assignRCP(payload.selections);
+				break;
+			
+			default:
+				return true;
+		}
 	}
 	
 	AttributeStore.emitChange();

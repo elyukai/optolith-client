@@ -27,7 +27,7 @@
 
 			> .short {
 				font: bold 14px/28px Alegreya;
-				color: #f1e6d4;
+				color: $font-color1;
 				letter-spacing: 0.05em;
 				text-transform: uppercase;
 				text-align: center;
@@ -36,20 +36,20 @@
 			> .value {
 				border: 2px solid transparent;
 				padding: 2px;
-				background: #0d141c;
+				background: $background4;
 
 				> div {
-					border: 1px solid #3c3c41;
+					border: 1px solid $font-color3;
 					padding: 1px;
 
 					> div {
 						@include size(45px);
 						text-align: center;
 						font: bold 28px/45px Alegreya Sans;
-						color: #f1e6d4;
+						color: $font-color1;
 						letter-spacing: 0.05em;
 						text-transform: uppercase;
-						background: $pane-background-color;
+						background: $background2;
 						overflow: hidden;
 					}
 				}
@@ -106,6 +106,10 @@
 				top: 70px;
 				right: -6px;
 				width: 24px;
+
+				+ .btn-round {
+					margin-top: 8px;
+				}
 			}
 		}
 
@@ -123,7 +127,8 @@
 
 		> .calculated {
 			.value {
-				border-color: $pane-background-color;
+				border-color: transparent;
+				background: transparent;
 			}
 
 			.number-box {

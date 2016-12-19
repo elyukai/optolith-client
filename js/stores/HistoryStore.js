@@ -7,6 +7,7 @@ import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
+import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Store from './Store';
 
 var _history = [];
@@ -159,6 +160,16 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 				if (RequirementsStore.isValid()) {
 					const id = payload.id;
 					const oldValue = get(id).value;
+					const newValue = oldValue + 1;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+				}
+				break;
+				
+			case ActionTypes.ADD_MAX_ENERGY_POINT:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const oldValue = secondaryAttributes.get(id);
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
 					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
