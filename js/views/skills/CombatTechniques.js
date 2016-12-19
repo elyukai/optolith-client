@@ -1,7 +1,7 @@
+import { filterAndSort } from '../../utils/ListUtils';
+import { get } from '../../stores/ListStore';
 import CombatTechniquesActions from '../../actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
-import { get } from '../../stores/ListStore';
-import * as ListUtils from '../../utils/ListUtils';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component } from 'react';
@@ -9,20 +9,18 @@ import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import TextField from '../../components/TextField';
 
-const GROUPS = ['Nahkampf', 'Fernkampf'];
-
 export default class CombatTechniques extends Component {
 	
 	state = { 
-		list: CombatTechniquesStore.getAll(),
-		filter: CombatTechniquesStore.getFilter(),
+		combattechniques: CombatTechniquesStore.getAll(),
+		filterText: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 		phase: PhaseStore.get()
 	};
 	
 	_updateCombatTechniquesStore = () => this.setState({ 
-		list: CombatTechniquesStore.getAll(),
-		filter: CombatTechniquesStore.getFilter(),
+		combattechniques: CombatTechniquesStore.getAll(),
+		filterText: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder()
 	});
 
@@ -41,24 +39,20 @@ export default class CombatTechniques extends Component {
 
 	render() {
 
-		let { filter, list, sortOrder } = this.state;
+		const GROUPS = ['Nahkampf', 'Fernkampf'];
 
-		list = ListUtils.filter(list, filter);
-		list = ListUtils.sort(list, sortOrder);
+		const { combattechniques, filterText, phase, sortOrder } = this.state;
+
+		const list = filterAndSort(combattechniques, filterText, sortOrder);
 
 		return (
 			<div className="page" id="combattechniques">
 				<div className="options">
-					<TextField hint="Suchen" value={filter} onChange={this.filter} fullWidth />
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name'
-						},
-						{
-							name: 'Gruppen',
-							value: 'group'
-						}
+						{ name: 'Alphabetisch', value: 'name' },
+						{ name: 'Nach Gruppe', value: 'group' },
+						{ name: 'Nach Steigerungsfaktor', value: 'ic' }
 					]} />
 				</div>
 				<Scroll>
@@ -89,7 +83,7 @@ export default class CombatTechniques extends Component {
 											checkDisabled
 											addPoint={this.addPoint.bind(null, obj.id)}
 											addDisabled={!obj.isIncreasable}
-											removePoint={this.state.phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
+											removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!obj.isDecreasable}
 											>
 											<td className="leit">{primary}</td>

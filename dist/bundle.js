@@ -27649,6 +27649,10 @@
 			return Array.isArray(this.active);
 		}
 
+		get isActive() {
+			return Array.isArray(this.active) ? this.active.length > 0 : this.active;
+		}
+
 		get isActivatable() {
 			return (0, _validate2.default)(this.reqs);
 		}
@@ -29510,6 +29514,12 @@
 
 	var _from2 = _interopRequireDefault(_from);
 
+	var _ListStore = __webpack_require__(302);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
 	var _AppDispatcher = __webpack_require__(1);
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
@@ -29522,11 +29532,13 @@
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _Store = __webpack_require__(281);
+	var _ProfessionStore = __webpack_require__(333);
 
-	var _Store2 = _interopRequireDefault(_Store);
+	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ListStore = __webpack_require__(302);
+	var _ProfessionVariantStore = __webpack_require__(334);
+
+	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
 	var _RaceStore = __webpack_require__(329);
 
@@ -29536,17 +29548,9 @@
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _Store = __webpack_require__(281);
 
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _ProfessionVariantStore = __webpack_require__(334);
-
-	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+	var _Store2 = _interopRequireDefault(_Store);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29692,6 +29696,17 @@
 
 				case _ActionTypes2.default.SAVE_HERO_SUCCESS:
 					_resetSaveIndex();
+					break;
+
+				case _ActionTypes2.default.ACTIVATE_SPELL:
+				case _ActionTypes2.default.ACTIVATE_LITURGY:
+				case _ActionTypes2.default.DEACTIVATE_SPELL:
+				case _ActionTypes2.default.DEACTIVATE_LITURGY:
+					if (_RequirementsStore2.default.isValid()) {
+						const id = payload.id;
+						const cost = _RequirementsStore2.default.getCurrentCost();
+						_add(payload.actionType, cost, { id });
+					}
 					break;
 
 				case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
@@ -30123,11 +30138,7 @@
 				_disadv = [add, index];
 			}
 
-			console.log(_validCost);
-
 			_validCost = _validCost.every(e => e);
-
-			console.log(_validCost);
 		}
 	}
 
@@ -30162,13 +30173,29 @@
 			switch (payload.actionType) {
 				case _ActionTypes2.default.ACTIVATE_SPELL:
 				case _ActionTypes2.default.ACTIVATE_LITURGY:
-					_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0));
-					break;
+					{
+						const obj = (0, _ListStore.get)(payload.id);
+						_updateOwnRequirements(true);
+						if (obj.category === _Categories2.default.SPELLS && obj.gr === 5 || obj.category === _Categories2.default.CHANTS && obj.gr === 3) {
+							_updateCost(1);
+						} else {
+							_updateCost((0, _iccalc.final)(obj.ic, 0));
+						}
+						break;
+					}
 
 				case _ActionTypes2.default.DEACTIVATE_SPELL:
 				case _ActionTypes2.default.DEACTIVATE_LITURGY:
-					_updateCost((0, _iccalc.final)((0, _ListStore.get)(payload.id).ic, 0) * -1);
-					break;
+					{
+						const obj = (0, _ListStore.get)(payload.id);
+						_updateOwnRequirements(true);
+						if (obj.category === _Categories2.default.SPELLS && obj.gr === 5 || obj.category === _Categories2.default.CHANTS && obj.gr === 3) {
+							_updateCost(-1);
+						} else {
+							_updateCost((0, _iccalc.final)(obj.ic, 0) * -1);
+						}
+						break;
+					}
 
 				case _ActionTypes2.default.ACTIVATE_DISADV:
 					_updateOwnRequirements((0, _ListStore.get)(payload.id).isActivatable);
@@ -31049,7 +31076,7 @@
 		value: baseValues().gs
 	});
 
-	const get = exports.get = id => {
+	const _get = id => {
 		switch (id) {
 			case 'LP':
 				return getLP();
@@ -31070,6 +31097,7 @@
 		}
 	};
 
+	exports.get = _get;
 	const getAll = exports.getAll = () => [getLP(), getAE(), getKP(), getSPI(), getTOU(), getDO(), getINI(), getMOV()];
 
 	exports.default = getAll;
@@ -32194,50 +32222,15 @@
 
 	const CATEGORY = _Categories2.default.CHANTS;
 
-	var _filter = '';
+	var _filterText = '';
 	var _sortOrder = 'name';
 
 	function _updateFilterText(text) {
-		_filter = text;
+		_filterText = text;
 	}
 
 	function _updateSortOrder(option) {
 		_sortOrder = option;
-	}
-
-	function _filterAndSort(array) {
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			array = array.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		if (_sortOrder == 'name') {
-			array.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		} else if (_sortOrder == 'groups') {
-			array.sort((a, b) => {
-				if (a.gr < b.gr) {
-					return -1;
-				} else if (a.gr > b.gr) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
-		return array;
 	}
 
 	class _LiturgiesStore extends _Store2.default {
@@ -32273,22 +32266,8 @@
 			}, new _map2.default());
 		}
 
-		getActiveForView() {
-			var liturgies = (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => e.active);
-			return _filterAndSort(liturgies);
-		}
-
-		getDeactiveForView() {
-			var liturgies = (0, _ListStore.getObjByCategory)(CATEGORY).filter(e => {
-				if (!e.active) {
-					if (!e.isOwnTradition) {
-						return false;
-					}
-					return true;
-				}
-				return false;
-			});
-			return _filterAndSort(liturgies);
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
 		}
 
 		isActivationDisabled() {
@@ -32296,8 +32275,20 @@
 			return _PhaseStore2.default.get() < 3 && (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 		}
 
-		getFilter() {
-			return _filter;
+		getGroupNames() {
+			return ['Liturgie', 'Zeremonie', 'Segnung'];
+		}
+
+		getAspectNames() {
+			return ['Allgemein', 'Antimagie', 'Ordnung', 'Schild', 'Sturm', 'Tod', 'Traum', 'Magie', 'Wissen', 'Handel', 'Schatten', 'Heilung', 'Landwirtschaft'];
+		}
+
+		getTraditionNames() {
+			return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
+		}
+
+		getFilterText() {
+			return _filterText;
 		}
 
 		getSortOrder() {
@@ -32726,6 +32717,7 @@
 
 				return !(counter.get(this.property) <= 3 && this.value <= 10 && this.gr !== 5);
 			}
+			return true;
 		}
 
 		reset() {
@@ -32784,69 +32776,15 @@
 
 	const CATEGORY = _Categories2.default.SPELLS;
 
-	const TRADITIONS = ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
-
-	var _filter = '';
+	var _filterText = '';
 	var _sortOrder = 'name';
 
 	function _updateFilterText(text) {
-		_filter = text;
+		_filterText = text;
 	}
 
 	function _updateSortOrder(option) {
 		_sortOrder = option;
-	}
-
-	function _filterAndSort(array) {
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			array = array.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		if (_sortOrder === 'name') {
-			array.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		} else if (_sortOrder === 'groups') {
-			array.sort((a, b) => {
-				if (a.gr < b.gr) {
-					return -1;
-				} else if (a.gr > b.gr) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		} else if (_sortOrder === 'merk') {
-			let merk = ['Antimagie', 'Dämonisch', 'Einfluss', 'Elementar', 'Heilung', 'Hellsicht', 'Illusion', 'Sphären', 'Objekt', 'Telekinese', 'Verwandlung', 'Rituale'];
-			array.sort((a, b) => {
-				if (merk[a.merk - 1] < merk[b.merk - 1]) {
-					return -1;
-				} else if (merk[a.merk - 1] > merk[b.merk - 1]) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
-		return array;
 	}
 
 	class _SpellsStore extends _Store2.default {
@@ -32882,29 +32820,16 @@
 			}, new _map2.default());
 		}
 
-		getActiveForView() {
-			var spells = (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => e.active);
-			return _filterAndSort(spells);
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
 		}
 
-		getDeactiveForView() {
-			const maxUnfamiliar = _PhaseStore2.default.get() < 3 && (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => !e.tradition.some(e => e === 1 || e === (0, _ListStore.get)('SA_86').sid + 1) && e.gr < 3 && e.active).length >= _ELStore2.default.getStart().max_unfamiliar_spells;
+		areMaxUnfamiliar() {
+			const phase = _PhaseStore2.default.get() < 3;
+			const max = _ELStore2.default.getStart().max_unfamiliar_spells;
+			const SA_86 = (0, _ListStore.get)('SA_86');
 
-			var spells = (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => {
-				if (!e.active) {
-					if (!e.isOwnTradition) {
-						if (e.gr > 2 || maxUnfamiliar) {
-							return false;
-						} else {
-							e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).join(', ');
-							return true;
-						}
-					}
-					return true;
-				}
-				return false;
-			});
-			return _filterAndSort(spells);
+			return phase && this.getAll().filter(e => !e.tradition.some(e => e === 1 || e === SA_86.sid + 1) && e.gr < 3 && e.active).length >= max;
 		}
 
 		isActivationDisabled() {
@@ -32912,8 +32837,20 @@
 			return _PhaseStore2.default.get() < 3 && (0, _ListStore.getAllByCategory)(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 		}
 
-		getFilter() {
-			return _filter;
+		getGroupNames() {
+			return ['Spruch', 'Ritual', 'Fluch', 'Lied', 'Trick'];
+		}
+
+		getPropertyNames() {
+			return ['Antimagie', 'Dämonisch', 'Einfluss', 'Elementar', 'Heilung', 'Hellsicht', 'Illusion', 'Sphären', 'Objekt', 'Telekinese', 'Verwandlung'];
+		}
+
+		getTraditionNames() {
+			return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
+		}
+
+		getFilterText() {
+			return _filterText;
 		}
 
 		getSortOrder() {
@@ -43193,7 +43130,7 @@
 			date: new Date('2016-10-18T16:18:28.420Z'),
 			player: ['U_1', 'schuchi'],
 			id: 'H_1',
-			phase: 3,
+			phase: 2,
 			name: 'Shimo ibn Rashdul',
 			avatar: 'images/portrait.png',
 			ap: {
@@ -47365,117 +47302,118 @@
 
 /***/ },
 /* 410 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	const filter = exports.filter = (list, filterText) => {
+	exports.filterAndSort = exports.sortSex = exports.sort = exports.sortByWeight = exports.sortByPrice = exports.sortByAspect = exports.sortByProperty = exports.sortByIC = exports.sortByGroup = exports.sortByCostSex = exports.sortByCost = exports.sortByNameSex = exports.sortByName = exports.filter = undefined;
+
+	var _SpellsStore = __webpack_require__(358);
+
+	var _SpellsStore2 = _interopRequireDefault(_SpellsStore);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const filter = exports.filter = (list, filterText, addProperty) => {
 		if (filterText !== '') {
 			filterText = filterText.toLowerCase();
-			return list.filter(obj => obj.name.toLowerCase().match(filterText));
+			return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
 		}
 		return list;
 	};
 
-	const sortByName = exports.sortByName = (list, sex) => {
-		if (sex) {
-			return list.sort((a, b) => {
-				let an = a.name[sex] || a.name;
-				let bn = b.name[sex] || b.name;
-				if (an < bn) {
-					return -1;
-				} else if (an > bn) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		}
-		return list.sort((a, b) => {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
+	const sortByName = exports.sortByName = (a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+
+	var SEX;
+
+	const sortByNameSex = exports.sortByNameSex = (a, b) => {
+		let an = a.name[SEX] || a.name;
+		let bn = b.name[SEX] || b.name;
+		return an < bn ? -1 : an > bn ? 1 : 0;
 	};
 
-	const sortByGroup = exports.sortByGroup = list => {
-		return list.sort((a, b) => {
-			if (a.gr < b.gr) {
-				return -1;
-			} else if (a.gr > b.gr) {
-				return 1;
-			} else {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
+	const sortByCost = exports.sortByCost = (a, b) => a.ap < b.ap ? -1 : a.ap > b.ap ? 1 : sortByName(a, b);
+
+	const sortByCostSex = exports.sortByCostSex = (a, b) => a.ap < b.ap ? -1 : a.ap > b.ap ? 1 : sortByNameSex(a, b);
+
+	const sortByGroup = exports.sortByGroup = (a, b) => a.gr < b.gr ? -1 : a.gr > b.gr ? 1 : sortByName(a, b);
+
+	const sortByIC = exports.sortByIC = (a, b) => a.ic < b.ic ? -1 : a.ic > b.ic ? 1 : sortByName(a, b);
+
+	const sortByProperty = exports.sortByProperty = (a, b) => {
+		const PROPERTIES = _SpellsStore2.default.getPropertyNames();
+		let ap = PROPERTIES[a.property - 1];
+		let bp = PROPERTIES[b.property - 1];
+		return ap < bp ? -1 : ap > bp ? 1 : sortByName(a, b);
 	};
 
-	const sortByCost = exports.sortByCost = (list, sex) => {
-		if (sex) {
-			return list.sort((a, b) => {
-				let an = a.name[sex] || a.name;
-				let bn = b.name[sex] || b.name;
-				if (a.ap < b.ap) {
-					return -1;
-				} else if (a.ap > b.ap) {
-					return 1;
-				} else {
-					if (an < bn) {
-						return -1;
-					} else if (an > bn) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
-		return list.sort((a, b) => {
-			if (a.ap < b.ap) {
-				return -1;
-			} else if (a.ap > b.ap) {
-				return 1;
-			} else {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
+	const sortByAspect = exports.sortByAspect = (a, b) => {
+		return a.aspect < b.aspect ? -1 : a.aspect > b.aspect ? 1 : sortByName(a, b);
 	};
 
-	const sort = exports.sort = (list, sortOrder, sex) => {
+	const sortByPrice = exports.sortByPrice = (a, b) => a.price < b.price ? -1 : a.price > b.price ? 1 : sortByName(a, b);
+
+	const sortByWeight = exports.sortByWeight = (a, b) => a.weight < b.weight ? -1 : a.weight > b.weight ? 1 : sortByName(a, b);
+
+	const sort = exports.sort = (list, sortOrder) => {
+		let sort;
 		switch (sortOrder) {
 			case 'name':
-				return sortByName(list, sex);
-			case 'group':
-				return sortByGroup(list, sex);
+				sort = sortByName;
+				break;
 			case 'cost':
-				return sortByCost(list, sex);
+				sort = sortByCost;
+				break;
+			case 'group':
+				sort = sortByGroup;
+				break;
+			case 'ic':
+				sort = sortByIC;
+				break;
+			case 'property':
+				sort = sortByProperty;
+				break;
+			case 'aspect':
+				sort = sortByAspect;
+				break;
+			case 'price':
+				sort = sortByPrice;
+				break;
+			case 'weight':
+				sort = sortByWeight;
+				break;
 
 			default:
 				return list;
 		}
+		return list.sort(sort);
+	};
+
+	const sortSex = exports.sortSex = (list, sortOrder, sex) => {
+		let sort;
+		switch (sortOrder) {
+			case 'name':
+				sort = sortByNameSex;
+				break;
+			case 'cost':
+				sort = sortByCostSex;
+				break;
+
+			default:
+				return list;
+		}
+		SEX = sex;
+		return list.sort(sort);
 	};
 
 	const filterAndSort = exports.filterAndSort = (list, filterText, sortOrder, sex) => {
-		return sort(filter(list, filterText), sortOrder, sex);
+		if (sex) {
+			return sortSex(filter(list, filterText), sortOrder, sex);
+		}
+		return sort(filter(list, filterText), sortOrder);
 	};
 
 /***/ },
@@ -52098,7 +52036,7 @@
 	// const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
 	var _filter = '';
-	var _sortOrder = 'groups';
+	var _sortOrder = 'group';
 
 	function _updateFilterText(text) {
 		_filter = text;
@@ -52137,6 +52075,10 @@
 
 		get(id) {
 			return (0, _ListStore.get)(id);
+		}
+
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
 		}
 
 		getActiveForView() {
@@ -52886,7 +52828,7 @@
 					_react2.default.createElement(_RadioButtonGroup2.default, {
 						active: sortOrder,
 						onClick: this.sort,
-						array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Kosten', value: 'cost' }]
+						array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Kosten', value: 'cost' }]
 					}),
 					_react2.default.createElement(
 						_Checkbox2.default,
@@ -53196,7 +53138,7 @@
 							name: 'Alphabetisch',
 							value: 'name'
 						}, {
-							name: 'Kosten',
+							name: 'Nach Kosten',
 							value: 'cost'
 						}] })
 				),
@@ -54326,7 +54268,7 @@
 					_react2.default.createElement(_RadioButtonGroup2.default, {
 						active: sortOrder,
 						onClick: this.sort,
-						array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Kosten', value: 'cost' }]
+						array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Kosten', value: 'cost' }]
 					}),
 					_react2.default.createElement(
 						_Checkbox2.default,
@@ -54661,6 +54603,10 @@
 		value: true
 	});
 
+	var _ListUtils = __webpack_require__(410);
+
+	var _ListStore = __webpack_require__(302);
+
 	var _CombatTechniquesActions = __webpack_require__(474);
 
 	var _CombatTechniquesActions2 = _interopRequireDefault(_CombatTechniquesActions);
@@ -54668,12 +54614,6 @@
 	var _CombatTechniquesStore = __webpack_require__(345);
 
 	var _CombatTechniquesStore2 = _interopRequireDefault(_CombatTechniquesStore);
-
-	var _ListStore = __webpack_require__(302);
-
-	var _ListUtils = __webpack_require__(410);
-
-	var ListUtils = _interopRequireWildcard(_ListUtils);
 
 	var _PhaseStore = __webpack_require__(343);
 
@@ -54699,24 +54639,20 @@
 
 	var _TextField2 = _interopRequireDefault(_TextField);
 
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	const GROUPS = ['Nahkampf', 'Fernkampf'];
 
 	class CombatTechniques extends _react.Component {
 		constructor() {
 			var _temp;
 
 			return _temp = super(...arguments), this.state = {
-				list: _CombatTechniquesStore2.default.getAll(),
-				filter: _CombatTechniquesStore2.default.getFilter(),
+				combattechniques: _CombatTechniquesStore2.default.getAll(),
+				filterText: _CombatTechniquesStore2.default.getFilter(),
 				sortOrder: _CombatTechniquesStore2.default.getSortOrder(),
 				phase: _PhaseStore2.default.get()
 			}, this._updateCombatTechniquesStore = () => this.setState({
-				list: _CombatTechniquesStore2.default.getAll(),
-				filter: _CombatTechniquesStore2.default.getFilter(),
+				combattechniques: _CombatTechniquesStore2.default.getAll(),
+				filterText: _CombatTechniquesStore2.default.getFilter(),
 				sortOrder: _CombatTechniquesStore2.default.getSortOrder()
 			}), this.filter = event => this.setState({ filterBy: event.target.value }), this.sort = option => _CombatTechniquesActions2.default.sort(option), this.addPoint = id => _CombatTechniquesActions2.default.addPoint(id), this.removePoint = id => _CombatTechniquesActions2.default.removePoint(id), _temp;
 		}
@@ -54730,14 +54666,17 @@
 		}
 
 		render() {
+
+			const GROUPS = ['Nahkampf', 'Fernkampf'];
+
 			var _state = this.state;
-			let filter = _state.filter,
-			    list = _state.list,
-			    sortOrder = _state.sortOrder;
+			const combattechniques = _state.combattechniques,
+			      filterText = _state.filterText,
+			      phase = _state.phase,
+			      sortOrder = _state.sortOrder;
 
 
-			list = ListUtils.filter(list, filter);
-			list = ListUtils.sort(list, sortOrder);
+			const list = (0, _ListUtils.filterAndSort)(combattechniques, filterText, sortOrder);
 
 			return _react2.default.createElement(
 				'div',
@@ -54745,14 +54684,8 @@
 				_react2.default.createElement(
 					'div',
 					{ className: 'options' },
-					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filter, onChange: this.filter, fullWidth: true }),
-					_react2.default.createElement(_RadioButtonGroup2.default, { active: sortOrder, onClick: this.sort, array: [{
-							name: 'Alphabetisch',
-							value: 'name'
-						}, {
-							name: 'Gruppen',
-							value: 'group'
-						}] })
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, { active: sortOrder, onClick: this.sort, array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Gruppe', value: 'group' }, { name: 'Nach Steigerungsfaktor', value: 'ic' }] })
 				),
 				_react2.default.createElement(
 					_Scroll2.default,
@@ -54820,7 +54753,7 @@
 										checkDisabled: true,
 										addPoint: this.addPoint.bind(null, obj.id),
 										addDisabled: !obj.isIncreasable,
-										removePoint: this.state.phase < 3 ? this.removePoint.bind(null, obj.id) : undefined,
+										removePoint: phase < 3 ? this.removePoint.bind(null, obj.id) : undefined,
 										removeDisabled: !obj.isDecreasable
 									},
 									_react2.default.createElement(
@@ -54967,7 +54900,7 @@
 				if (check) {
 					content = check.map(attr => (0, _ListStore.get)(attr).short).join('/');
 					if (checkmod) {
-						content += `(+${ checkmod })`;
+						content += ` (+${ checkmod })`;
 					}
 				}
 				checkElement = _react2.default.createElement(
@@ -55059,6 +54992,8 @@
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
+	var _ListUtils = __webpack_require__(410);
+
 	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
@@ -55106,26 +55041,18 @@
 			var _temp;
 
 			return _temp = super(...arguments), this.state = {
-				liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
-				liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
+				liturgies: _LiturgiesStore2.default.getAll(),
 				addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
-				filter: _LiturgiesStore2.default.getFilter(),
+				filterText: _LiturgiesStore2.default.getFilterText(),
 				sortOrder: _LiturgiesStore2.default.getSortOrder(),
 				phase: _PhaseStore2.default.get(),
 				showAddSlidein: false
 			}, this._updateLiturgiesStore = () => this.setState({
-				liturgiesActive: _LiturgiesStore2.default.getActiveForView(),
-				liturgiesDeactive: _LiturgiesStore2.default.getDeactiveForView(),
+				liturgies: _LiturgiesStore2.default.getAll(),
 				addChantsDisabled: _LiturgiesStore2.default.isActivationDisabled(),
-				filter: _LiturgiesStore2.default.getFilter(),
+				filterText: _LiturgiesStore2.default.getFilterText(),
 				sortOrder: _LiturgiesStore2.default.getSortOrder()
-			}), this.filter = event => _LiturgiesActions2.default.filter(event.target.value), this.sort = option => _LiturgiesActions2.default.sort(option), this.addToList = id => _LiturgiesActions2.default.addToList(id), this.addPoint = id => _LiturgiesActions2.default.addPoint(id), this.removePoint = (id, fw) => {
-				if (fw === 0) {
-					_LiturgiesActions2.default.removeFromList(id);
-				} else {
-					_LiturgiesActions2.default.removePoint(id);
-				}
-			}, this.showAddSlidein = () => this.setState({ showAddSlidein: true }), this.hideAddSlidein = () => this.setState({ showAddSlidein: false }), _temp;
+			}), this.filter = event => _LiturgiesActions2.default.filter(event.target.value), this.sort = option => _LiturgiesActions2.default.sort(option), this.addToList = id => _LiturgiesActions2.default.addToList(id), this.addPoint = id => _LiturgiesActions2.default.addPoint(id), this.removeFromList = id => _LiturgiesActions2.default.removeFromList(id), this.removePoint = id => _LiturgiesActions2.default.removePoint(id), this.showAddSlidein = () => this.setState({ showAddSlidein: true }), this.hideAddSlidein = () => this.setState({ showAddSlidein: false }), _temp;
 		}
 
 		componentDidMount() {
@@ -55138,26 +55065,50 @@
 
 		render() {
 
-			const GR = ['Liturgie', 'Zeremonie', 'Segnung'];
-			const ASPC = ['Allgemein', 'Antimagie', 'Ordnung', 'Schild', 'Sturm', 'Tod', 'Traum', 'Magie', 'Wissen', 'Handel', 'Schatten', 'Heilung', 'Landwirtschaft'];
+			const GROUPS = _LiturgiesStore2.default.getGroupNames();
+			const ASPECTS = _LiturgiesStore2.default.getAspectNames();
+
+			var _state = this.state;
+			const addChantsDisabled = _state.addChantsDisabled,
+			      filterText = _state.filterText,
+			      phase = _state.phase,
+			      showAddSlidein = _state.showAddSlidein,
+			      sortOrder = _state.sortOrder,
+			      liturgies = _state.liturgies;
+
+
+			const sortArray = [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Aspekt', value: 'aspect' }, { name: 'Nach Gruppe', value: 'group' }, { name: 'Nach Steigerungsfaktor', value: 'ic' }];
+
+			const list = (0, _ListUtils.filterAndSort)(liturgies, filterText, sortOrder);
+
+			const listActive = [];
+			const listDeactive = [];
+
+			list.forEach(e => {
+				if (e.active) {
+					listActive.push(e);
+				} else {
+					if (e.isOwnTradition) {
+						listDeactive.push(e);
+					}
+				}
+			});
 
 			return _react2.default.createElement(
 				'div',
 				{ className: 'page', id: 'liturgies' },
 				_react2.default.createElement(
 					_Slidein2.default,
-					{ isOpen: this.state.showAddSlidein, close: this.hideAddSlidein },
+					{ isOpen: showAddSlidein, close: this.hideAddSlidein },
 					_react2.default.createElement(
 						'div',
 						{ className: 'options' },
-						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-						_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-								name: 'Alphabetisch',
-								value: 'name'
-							}, {
-								name: 'Gruppen',
-								value: 'groups'
-							}] })
+						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+						_react2.default.createElement(_RadioButtonGroup2.default, {
+							active: sortOrder,
+							onClick: this.sort,
+							array: sortArray
+						})
 					),
 					_react2.default.createElement(
 						_Scroll2.default,
@@ -55202,7 +55153,7 @@
 							_react2.default.createElement(
 								'tbody',
 								null,
-								this.state.liturgiesDeactive.map(liturgy => {
+								listDeactive.map(liturgy => {
 									var _liturgy$check = (0, _slicedToArray3.default)(liturgy.check, 4);
 
 									const a = _liturgy$check[0],
@@ -55214,23 +55165,23 @@
 
 									let name = liturgy.name;
 
-									const aspc = liturgy.aspc.map(asp => ASPC[asp - 1]).sort().join(', ');
+									const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
 
 									const obj = liturgy.gr === 3 ? {} : {
 										check,
 										checkmod,
-										ic: liturgy.skt
+										ic: liturgy.ic
 									};
 
 									return _react2.default.createElement(
 										_SkillListItem2.default,
 										(0, _extends3.default)({
 											key: liturgy.id,
-											group: GR[liturgy.gr - 1],
+											group: GROUPS[liturgy.gr - 1],
 											name: name,
 											isNotActive: true,
 											activate: this.addToList.bind(null, liturgy.id),
-											activateDisabled: this.state.addChantsDisabled && liturgy.gr < 3
+											activateDisabled: addChantsDisabled && liturgy.gr < 3
 										}, obj),
 										_react2.default.createElement(
 											'td',
@@ -55246,14 +55197,12 @@
 				_react2.default.createElement(
 					'div',
 					{ className: 'options' },
-					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-					_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-							name: 'Alphabetisch',
-							value: 'name'
-						}, {
-							name: 'Gruppen',
-							value: 'groups'
-						}] }),
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, {
+						active: sortOrder,
+						onClick: this.sort,
+						array: sortArray
+					}),
 					_react2.default.createElement(_BorderButton2.default, {
 						label: 'Hinzuf\xFCgen',
 						onClick: this.showAddSlidein
@@ -55307,38 +55256,38 @@
 						_react2.default.createElement(
 							'tbody',
 							null,
-							this.state.liturgiesActive.map(liturgy => {
-								var _liturgy$check2 = (0, _slicedToArray3.default)(liturgy.check, 4);
+							listActive.map(obj => {
+								var _obj$check = (0, _slicedToArray3.default)(obj.check, 4);
 
-								const a1 = _liturgy$check2[0],
-								      a2 = _liturgy$check2[1],
-								      a3 = _liturgy$check2[2],
-								      checkmod = _liturgy$check2[3];
+								const a1 = _obj$check[0],
+								      a2 = _obj$check[1],
+								      a3 = _obj$check[2],
+								      checkmod = _obj$check[3];
 
 								const check = [a1, a2, a3];
 
-								let name = liturgy.name;
+								let name = obj.name;
 
-								const aspc = liturgy.aspc.map(asp => ASPC[asp - 1]).sort().join(', ');
+								const aspc = obj.aspc.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-								const obj = liturgy.gr === 3 ? {} : {
-									sr: liturgy.value,
+								const other = obj.gr === 3 ? {} : {
+									sr: obj.value,
 									check,
 									checkmod,
-									ic: liturgy.skt,
-									addPoint: this.addPoint.bind(null, liturgy.id),
-									addDisabled: liturgy.disabledIncrease
+									ic: obj.ic,
+									addPoint: this.addPoint.bind(null, obj.id),
+									addDisabled: obj.disabledIncrease
 								};
 
 								return _react2.default.createElement(
 									_SkillListItem2.default,
 									(0, _extends3.default)({
-										key: liturgy.id,
-										group: GR[liturgy.gr - 1],
+										key: obj.id,
+										group: GROUPS[obj.gr - 1],
 										name: name,
-										removePoint: this.state.phase < 3 ? this.removePoint.bind(null, liturgy.id) : undefined,
-										removeDisabled: liturgy.disabledDecrease
-									}, obj),
+										removePoint: phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined,
+										removeDisabled: obj.disabledDecrease
+									}, other),
 									_react2.default.createElement(
 										'td',
 										{ className: 'aspc' },
@@ -55402,48 +55351,28 @@
 			});
 		},
 		addToList: function (id) {
-			var liturgy = _LiturgiesStore2.default.get(id);
-			var costs = liturgy.gr === 3 ? [1] : ['aktv', liturgy.skt];
-			costs = _APStore2.default.validate(...costs);
-			if (costs) {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.ACTIVATE_LITURGY,
-					id, costs
-				});
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.ACTIVATE_LITURGY,
+				id
+			});
 		},
 		removeFromList: function (id) {
-			var liturgy = _LiturgiesStore2.default.get(id);
-			var costs = liturgy.gr === 3 ? [1, undefined, false] : ['aktv', liturgy.skt, false];
-			costs = _APStore2.default.validate(...costs);
 			_AppDispatcher2.default.dispatch({
 				actionType: _ActionTypes2.default.DEACTIVATE_LITURGY,
-				id, costs
+				id
 			});
 		},
 		addPoint: function (id) {
-			var liturgy = _LiturgiesStore2.default.get(id);
-			var costs = _APStore2.default.validate(liturgy.fw + 1, liturgy.skt);
-			if (costs) {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.ADD_LITURGY_POINT,
-					id, costs
-				});
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.ADD_LITURGY_POINT,
+				id
+			});
 		},
 		removePoint: function (id) {
-			var liturgy = _LiturgiesStore2.default.get(id);
-			if (liturgy.fw === 0) {
-				this.removeFromList(id);
-			} else {
-				var costs = _APStore2.default.getCosts(liturgy.fw, liturgy.skt, false);
-				if (costs) {
-					_AppDispatcher2.default.dispatch({
-						actionType: _ActionTypes2.default.REMOVE_LITURGY_POINT,
-						id, costs
-					});
-				}
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.REMOVE_LITURGY_POINT,
+				id
+			});
 		}
 	};
 
@@ -55456,6 +55385,8 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+
+	var _ListUtils = __webpack_require__(410);
 
 	var _BorderButton = __webpack_require__(269);
 
@@ -55510,14 +55441,14 @@
 			return _temp = super(...arguments), this.state = {
 				saActive: _SpecialAbilitiesStore2.default.getActiveForView(),
 				saDeactive: _SpecialAbilitiesStore2.default.getDeactiveForView(),
-				filter: _SpecialAbilitiesStore2.default.getFilter(),
+				filterText: _SpecialAbilitiesStore2.default.getFilter(),
 				sortOrder: _SpecialAbilitiesStore2.default.getSortOrder(),
 				phase: _PhaseStore2.default.get(),
 				showAddSlidein: false
 			}, this._updateSpecialAbilitiesStore = () => this.setState({
 				saActive: _SpecialAbilitiesStore2.default.getActiveForView(),
 				saDeactive: _SpecialAbilitiesStore2.default.getDeactiveForView(),
-				filter: _SpecialAbilitiesStore2.default.getFilter(),
+				filterText: _SpecialAbilitiesStore2.default.getFilter(),
 				sortOrder: _SpecialAbilitiesStore2.default.getSortOrder()
 			}), this.filter = event => _SpecialAbilitiesActions2.default.filter(event.target.value), this.sort = option => _SpecialAbilitiesActions2.default.sort(option), this.changeView = option => _SpecialAbilitiesActions2.default.changeView(option), this.addToList = id => _SpecialAbilitiesActions2.default.addToList(id), this.removeFromList = id => _SpecialAbilitiesActions2.default.removeFromList(id), this.showAddSlidein = () => this.setState({ showAddSlidein: true }), this.hideAddSlidein = () => this.setState({ showAddSlidein: false }), _temp;
 		}
@@ -55531,23 +55462,35 @@
 		}
 
 		render() {
+			var _state = this.state;
+			const filterText = _state.filterText,
+			      phase = _state.phase,
+			      saActive = _state.saActive,
+			      saDeactive = _state.saDeactive,
+			      showAddSlidein = _state.showAddSlidein,
+			      sortOrder = _state.sortOrder;
+
+
+			const sortArray = [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Gruppe', value: 'group' }];
+
+			const listActive = (0, _ListUtils.filterAndSort)(saActive, filterText, sortOrder);
+			const listDeactive = (0, _ListUtils.filterAndSort)(saDeactive, filterText, sortOrder);
+
 			return _react2.default.createElement(
 				'div',
 				{ className: 'page', id: 'specialabilities' },
 				_react2.default.createElement(
 					_Slidein2.default,
-					{ isOpen: this.state.showAddSlidein, close: this.hideAddSlidein },
+					{ isOpen: showAddSlidein, close: this.hideAddSlidein },
 					_react2.default.createElement(
 						'div',
 						{ className: 'options' },
-						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-						_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-								name: 'Alphabetisch',
-								value: 'name'
-							}, {
-								name: 'Gruppen',
-								value: 'groups'
-							}] })
+						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+						_react2.default.createElement(_RadioButtonGroup2.default, {
+							active: sortOrder,
+							onClick: this.sort,
+							array: sortArray
+						})
 					),
 					_react2.default.createElement(
 						_Scroll2.default,
@@ -55582,7 +55525,7 @@
 							_react2.default.createElement(
 								'tbody',
 								null,
-								this.state.saDeactive.map((sa, index) => _react2.default.createElement(_SpecialAbilitiesListAddItem2.default, { key: `SA_DEACTIVE_${ index }`, item: sa }))
+								listDeactive.map((sa, index) => _react2.default.createElement(_SpecialAbilitiesListAddItem2.default, { key: `SA_DEACTIVE_${ index }`, item: sa }))
 							)
 						)
 					)
@@ -55590,14 +55533,12 @@
 				_react2.default.createElement(
 					'div',
 					{ className: 'options' },
-					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-					_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-							name: 'Alphabetisch',
-							value: 'name'
-						}, {
-							name: 'Gruppen',
-							value: 'groups'
-						}] }),
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, {
+						active: sortOrder,
+						onClick: this.sort,
+						array: sortArray
+					}),
 					_react2.default.createElement(_BorderButton2.default, { label: 'Hinzuf\xFCgen', onClick: this.showAddSlidein })
 				),
 				_react2.default.createElement(
@@ -55627,13 +55568,13 @@
 									{ className: 'ap' },
 									'AP'
 								),
-								this.state.phase < 3 ? _react2.default.createElement('td', { className: 'inc' }) : null
+								phase < 3 ? _react2.default.createElement('td', { className: 'inc' }) : null
 							)
 						),
 						_react2.default.createElement(
 							'tbody',
 							null,
-							this.state.saActive.map((sa, index) => _react2.default.createElement(_SpecialAbilitiesListRemoveItem2.default, { key: `SA_ACTIVE_${ index }`, item: sa, phase: this.state.phase }))
+							listActive.map((sa, index) => _react2.default.createElement(_SpecialAbilitiesListRemoveItem2.default, { key: `SA_ACTIVE_${ index }`, item: sa, phase: phase }))
 						)
 					)
 				)
@@ -56059,6 +56000,8 @@
 
 	var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
 
+	var _ListUtils = __webpack_require__(410);
+
 	var _BorderButton = __webpack_require__(269);
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
@@ -56106,26 +56049,20 @@
 			var _temp;
 
 			return _temp = super(...arguments), this.state = {
-				spellsActive: _SpellsStore2.default.getActiveForView(),
-				spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
+				spells: _SpellsStore2.default.getAll(),
 				addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
-				filter: _SpellsStore2.default.getFilter(),
+				areMaxUnfamiliar: _SpellsStore2.default.areMaxUnfamiliar(),
+				filterText: _SpellsStore2.default.getFilterText(),
 				sortOrder: _SpellsStore2.default.getSortOrder(),
 				phase: _PhaseStore2.default.get(),
 				showAddSlidein: false
 			}, this._updateSpellsStore = () => this.setState({
-				spellsActive: _SpellsStore2.default.getActiveForView(),
-				spellsDeactive: _SpellsStore2.default.getDeactiveForView(),
+				spells: _SpellsStore2.default.getAll(),
 				addSpellsDisabled: _SpellsStore2.default.isActivationDisabled(),
-				filter: _SpellsStore2.default.getFilter(),
+				areMaxUnfamiliar: _SpellsStore2.default.areMaxUnfamiliar(),
+				filterText: _SpellsStore2.default.getFilterText(),
 				sortOrder: _SpellsStore2.default.getSortOrder()
-			}), this.filter = event => _SpellsActions2.default.filter(event.target.value), this.sort = option => _SpellsActions2.default.sort(option), this.addToList = id => _SpellsActions2.default.addToList(id), this.addPoint = id => _SpellsActions2.default.addPoint(id), this.removePoint = (id, fw) => {
-				if (fw === 0) {
-					_SpellsActions2.default.removeFromList(id);
-				} else {
-					_SpellsActions2.default.removePoint(id);
-				}
-			}, this.showAddSlidein = () => this.setState({ showAddSlidein: true }), this.hideAddSlidein = () => this.setState({ showAddSlidein: false }), _temp;
+			}), this.filter = event => _SpellsActions2.default.filter(event.target.value), this.sort = option => _SpellsActions2.default.sort(option), this.addToList = id => _SpellsActions2.default.addToList(id), this.addPoint = id => _SpellsActions2.default.addPoint(id), this.removeFromList = id => _SpellsActions2.default.removeFromList(id), this.removePoint = id => _SpellsActions2.default.removePoint(id), this.showAddSlidein = () => this.setState({ showAddSlidein: true }), this.hideAddSlidein = () => this.setState({ showAddSlidein: false }), _temp;
 		}
 
 		componentDidMount() {
@@ -56138,29 +56075,57 @@
 
 		render() {
 
-			const GR = ['Spruch', 'Ritual', 'Fluch', 'Lied', 'Trick'];
-			const MERK = ['Antimagie', 'Dämonisch', 'Einfluss', 'Elementar', 'Heilung', 'Hellsicht', 'Illusion', 'Sphären', 'Objekt', 'Telekinese', 'Verwandlung', 'Rituale'];
+			const GROUPS = _SpellsStore2.default.getGroupNames();
+			const PROPERTIES = _SpellsStore2.default.getPropertyNames();
+			const TRADITIONS = _SpellsStore2.default.getTraditionNames();
+
+			var _state = this.state;
+			const addSpellsDisabled = _state.addSpellsDisabled,
+			      areMaxUnfamiliar = _state.areMaxUnfamiliar,
+			      filterText = _state.filterText,
+			      phase = _state.phase,
+			      showAddSlidein = _state.showAddSlidein,
+			      sortOrder = _state.sortOrder,
+			      spells = _state.spells;
+
+
+			const sortArray = [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Gruppe', value: 'group' }, { name: 'Nach Merkmal', value: 'property' }, { name: 'Nach Steigerungsfaktor', value: 'ic' }];
+
+			const list = (0, _ListUtils.filterAndSort)(spells, filterText, sortOrder);
+
+			const listActive = [];
+			const listDeactive = [];
+
+			list.forEach(e => {
+				if (e.active) {
+					listActive.push(e);
+				} else {
+					if (!e.isOwnTradition) {
+						if (e.gr < 2 && !areMaxUnfamiliar) {
+							e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ');
+							listDeactive.push(e);
+						}
+					} else {
+						listDeactive.push(e);
+					}
+				}
+			});
 
 			return _react2.default.createElement(
 				'div',
 				{ className: 'page', id: 'spells' },
 				_react2.default.createElement(
 					_Slidein2.default,
-					{ isOpen: this.state.showAddSlidein, close: this.hideAddSlidein },
+					{ isOpen: showAddSlidein, close: this.hideAddSlidein },
 					_react2.default.createElement(
 						'div',
 						{ className: 'options' },
-						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-						_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-								name: 'Alphabetisch',
-								value: 'name'
-							}, {
-								name: 'Gruppen',
-								value: 'groups'
-							}, {
-								name: 'Merkmal',
-								value: 'merk'
-							}] })
+						_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+						_react2.default.createElement(_RadioButtonGroup2.default, {
+							active: sortOrder,
+							onClick: this.sort,
+							array: sortArray
+						})
 					),
 					_react2.default.createElement(
 						_Scroll2.default,
@@ -56205,7 +56170,7 @@
 							_react2.default.createElement(
 								'tbody',
 								null,
-								this.state.spellsDeactive.map(spell => {
+								listDeactive.map(spell => {
 									var _spell$check = (0, _slicedToArray3.default)(spell.check, 4);
 
 									const a = _spell$check[0],
@@ -56216,28 +56181,30 @@
 									const check = [a, b, c];
 
 									let name = spell.name;
-									if (!spell.isOwnTradition) name += ` (${ spell.name_add })`;
+									if (!spell.isOwnTradition) {
+										name += ` (${ spell.name_add })`;
+									}
 
 									const obj = spell.gr === 5 ? {} : {
 										check,
 										checkmod,
-										ic: spell.skt
+										ic: spell.ic
 									};
 
 									return _react2.default.createElement(
 										_SkillListItem2.default,
 										(0, _extends3.default)({
 											key: spell.id,
-											group: GR[spell.gr - 1],
+											group: GROUPS[spell.gr - 1],
 											name: name,
 											isNotActive: true,
 											activate: this.addToList.bind(null, spell.id),
-											activateDisabled: this.state.addSpellsDisabled && spell.gr < 3
+											activateDisabled: addSpellsDisabled && spell.gr < 3
 										}, obj),
 										_react2.default.createElement(
 											'td',
 											{ className: 'merk' },
-											MERK[spell.merk - 1]
+											PROPERTIES[spell.property - 1]
 										)
 									);
 								})
@@ -56248,17 +56215,12 @@
 				_react2.default.createElement(
 					'div',
 					{ className: 'options' },
-					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-					_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-							name: 'Alphabetisch',
-							value: 'name'
-						}, {
-							name: 'Gruppen',
-							value: 'groups'
-						}, {
-							name: 'Merkmal',
-							value: 'merk'
-						}] }),
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, {
+						active: sortOrder,
+						onClick: this.sort,
+						array: sortArray
+					}),
 					_react2.default.createElement(_BorderButton2.default, {
 						label: 'Hinzuf\xFCgen',
 						onClick: this.showAddSlidein
@@ -56312,41 +56274,41 @@
 						_react2.default.createElement(
 							'tbody',
 							null,
-							this.state.spellsActive.map(spell => {
-								var _spell$check2 = (0, _slicedToArray3.default)(spell.check, 4);
+							listActive.map(obj => {
+								var _obj$check = (0, _slicedToArray3.default)(obj.check, 4);
 
-								const a1 = _spell$check2[0],
-								      a2 = _spell$check2[1],
-								      a3 = _spell$check2[2],
-								      checkmod = _spell$check2[3];
+								const a1 = _obj$check[0],
+								      a2 = _obj$check[1],
+								      a3 = _obj$check[2],
+								      checkmod = _obj$check[3];
 
 								const check = [a1, a2, a3];
 
-								let name = spell.name;
-								if (!spell.isOwnTradition) name += ` (${ spell.name_add })`;
+								let name = obj.name;
+								if (!obj.isOwnTradition) name += ` (${ obj.name_add })`;
 
-								const obj = spell.gr === 5 ? {} : {
-									sr: spell.value,
+								const other = obj.gr === 5 ? {} : {
+									sr: obj.value,
 									check,
 									checkmod,
-									ic: spell.skt,
-									addPoint: this.addPoint.bind(null, spell.id),
-									addDisabled: spell.disabledIncrease
+									ic: obj.ic,
+									addPoint: this.addPoint.bind(null, obj.id),
+									addDisabled: obj.disabledIncrease
 								};
 
 								return _react2.default.createElement(
 									_SkillListItem2.default,
 									(0, _extends3.default)({
-										key: spell.id,
-										group: GR[spell.gr - 1],
+										key: obj.id,
+										group: GROUPS[obj.gr - 1],
 										name: name,
-										removePoint: this.state.phase < 3 ? this.removePoint.bind(null, spell.id) : undefined,
-										removeDisabled: spell.disabledDecrease
-									}, obj),
+										removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined,
+										removeDisabled: obj.disabledDecrease
+									}, other),
 									_react2.default.createElement(
 										'td',
 										{ className: 'merk' },
-										MERK[spell.merk - 1]
+										PROPERTIES[obj.property - 1]
 									)
 								);
 							})
@@ -56368,21 +56330,15 @@
 		value: true
 	});
 
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _APStore = __webpack_require__(332);
-
-	var _APStore2 = _interopRequireDefault(_APStore);
-
-	var _SpellsStore = __webpack_require__(358);
-
-	var _SpellsStore2 = _interopRequireDefault(_SpellsStore);
+	var _ListStore = __webpack_require__(302);
 
 	var _ActionTypes = __webpack_require__(263);
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -56406,48 +56362,28 @@
 			});
 		},
 		addToList: function (id) {
-			var spell = _SpellsStore2.default.get(id);
-			var costs = spell.gr === 5 ? [1] : ['aktv', spell.skt];
-			costs = _APStore2.default.validate(...costs);
-			if (costs) {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.ACTIVATE_SPELL,
-					id, costs
-				});
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.ACTIVATE_SPELL,
+				id
+			});
 		},
 		removeFromList: function (id) {
-			var spell = _SpellsStore2.default.get(id);
-			var costs = spell.gr === 5 ? [1, undefined, false] : ['aktv', spell.skt, false];
-			costs = _APStore2.default.validate(...costs);
 			_AppDispatcher2.default.dispatch({
 				actionType: _ActionTypes2.default.DEACTIVATE_SPELL,
-				id, costs
+				id
 			});
 		},
 		addPoint: function (id) {
-			var spell = _SpellsStore2.default.get(id);
-			var costs = _APStore2.default.validate(spell.fw + 1, spell.skt);
-			if (costs) {
-				_AppDispatcher2.default.dispatch({
-					actionType: _ActionTypes2.default.ADD_SPELL_POINT,
-					id, costs
-				});
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.ADD_SPELL_POINT,
+				id
+			});
 		},
 		removePoint: function (id) {
-			var spell = _SpellsStore2.default.get(id);
-			if (spell.fw === 0) {
-				this.removeFromList(id);
-			} else {
-				var costs = _APStore2.default.getCosts(spell.fw, spell.skt, false);
-				if (costs) {
-					_AppDispatcher2.default.dispatch({
-						actionType: _ActionTypes2.default.REMOVE_SPELL_POINT,
-						id, costs
-					});
-				}
-			}
+			_AppDispatcher2.default.dispatch({
+				actionType: _ActionTypes2.default.REMOVE_SPELL_POINT,
+				id
+			});
 		}
 	};
 
@@ -56460,6 +56396,8 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+
+	var _ListUtils = __webpack_require__(410);
 
 	var _Checkbox = __webpack_require__(382);
 
@@ -56508,15 +56446,15 @@
 			var _temp;
 
 			return _temp = super(...arguments), this.state = {
-				list: _TalentsStore2.default.getAllForView(),
-				filter: _TalentsStore2.default.getFilter(),
+				talents: _TalentsStore2.default.getAll(),
+				filterText: _TalentsStore2.default.getFilter(),
 				sortOrder: _TalentsStore2.default.getSortOrder(),
 				talentRating: _TalentsStore2.default.getTalentRating(),
 				currentCulture: _CultureStore2.default.getCurrent(),
 				phase: _PhaseStore2.default.get()
 			}, this._updateTalentsStore = () => this.setState({
-				list: _TalentsStore2.default.getAllForView(),
-				filter: _TalentsStore2.default.getFilter(),
+				talents: _TalentsStore2.default.getAll(),
+				filterText: _TalentsStore2.default.getFilter(),
 				sortOrder: _TalentsStore2.default.getSortOrder(),
 				talentRating: _TalentsStore2.default.getTalentRating()
 			}), this.filter = event => _TalentsActions2.default.filter(event.target.value), this.sort = option => _TalentsActions2.default.sort(option), this.changeTalentRating = () => _TalentsActions2.default.changeTalentRating(), this.addPoint = id => _TalentsActions2.default.addPoint(id), this.removePoint = id => _TalentsActions2.default.removePoint(id), _temp;
@@ -56532,7 +56470,17 @@
 
 		render() {
 
-			const GR = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
+			const GROUPS = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
+
+			var _state = this.state;
+			const filterText = _state.filterText,
+			      phase = _state.phase,
+			      sortOrder = _state.sortOrder,
+			      talentRating = _state.talentRating,
+			      talents = _state.talents;
+
+
+			const list = (0, _ListUtils.filterAndSort)(talents, filterText, sortOrder);
 
 			return _react2.default.createElement(
 				'div',
@@ -56540,17 +56488,11 @@
 				_react2.default.createElement(
 					'div',
 					{ className: 'options' },
-					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: this.state.filter, onChange: this.filter, fullWidth: true }),
-					_react2.default.createElement(_RadioButtonGroup2.default, { active: this.state.sortOrder, onClick: this.sort, array: [{
-							name: 'Alphabetisch',
-							value: 'name'
-						}, {
-							name: 'Gruppen',
-							value: 'groups'
-						}] }),
+					_react2.default.createElement(_TextField2.default, { hint: 'Suchen', value: filterText, onChange: this.filter, fullWidth: true }),
+					_react2.default.createElement(_RadioButtonGroup2.default, { active: sortOrder, onClick: this.sort, array: [{ name: 'Alphabetisch', value: 'name' }, { name: 'Nach Gruppe', value: 'group' }, { name: 'Nach Steigerungsfaktor', value: 'ic' }] }),
 					_react2.default.createElement(
 						_Checkbox2.default,
-						{ checked: this.state.talentRating, onClick: this.changeTalentRating },
+						{ checked: talentRating, onClick: this.changeTalentRating },
 						'Wertung durch Kultur anzeigen'
 					)
 				),
@@ -56597,19 +56539,19 @@
 						_react2.default.createElement(
 							'tbody',
 							null,
-							this.state.list.map(talent => _react2.default.createElement(_SkillListItem2.default, {
-								key: talent.id,
-								typ: this.state.talentRating && talent.isTyp,
-								untyp: this.state.talentRating && talent.isUntyp,
-								group: GR[talent.gr - 1],
-								name: talent.name,
-								sr: talent.value,
-								check: talent.check,
-								ic: talent.ic,
-								addPoint: this.addPoint.bind(null, talent.id),
-								addDisabled: !talent.isIncreasable,
-								removePoint: this.state.phase < 3 ? this.removePoint.bind(null, talent.id) : undefined,
-								removeDisabled: !talent.isDecreasable }))
+							list.map(obj => _react2.default.createElement(_SkillListItem2.default, {
+								key: obj.id,
+								typ: talentRating && obj.isTyp,
+								untyp: talentRating && obj.isUntyp,
+								group: GROUPS[obj.gr - 1],
+								name: obj.name,
+								sr: obj.value,
+								check: obj.check,
+								ic: obj.ic,
+								addPoint: this.addPoint.bind(null, obj.id),
+								addDisabled: !obj.isIncreasable,
+								removePoint: phase < 3 ? this.removePoint.bind(null, obj.id) : undefined,
+								removeDisabled: !obj.isDecreasable }))
 						)
 					)
 				)
@@ -56719,7 +56661,7 @@
 	const CATEGORY = _Categories2.default.TALENTS;
 
 	var _filter = '';
-	var _sortOrder = 'groups';
+	var _sortOrder = 'group';
 	var _talentRating = true;
 
 	function _updateFilterText(text) {
@@ -56759,6 +56701,10 @@
 
 		getNameByID(id) {
 			return (0, _ListStore.get)(id).name;
+		}
+
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
 		}
 
 		getAllForView() {

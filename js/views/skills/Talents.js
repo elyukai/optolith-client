@@ -1,3 +1,4 @@
+import { filterAndSort } from '../../utils/ListUtils';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
 import PhaseStore from '../../stores/PhaseStore';
@@ -12,8 +13,8 @@ import TextField from '../../components/TextField';
 export default class Talents extends Component {
 	
 	state = { 
-		list: TalentsStore.getAllForView(),
-		filter: TalentsStore.getFilter(),
+		talents: TalentsStore.getAll(),
+		filterText: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.getTalentRating(),
 		currentCulture: CultureStore.getCurrent(),
@@ -21,8 +22,8 @@ export default class Talents extends Component {
 	};
 	
 	_updateTalentsStore = () => this.setState({
-		list: TalentsStore.getAllForView(),
-		filter: TalentsStore.getFilter(),
+		talents: TalentsStore.getAll(),
+		filterText: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.getTalentRating()
 	});
@@ -43,23 +44,22 @@ export default class Talents extends Component {
 
 	render() {
 
-		const GR = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
+		const GROUPS = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
+
+		const { filterText, phase, sortOrder, talentRating, talents } = this.state;
+
+		const list = filterAndSort(talents, filterText, sortOrder);
 
 		return (
 			<div className="page" id="talents">
 				<div className="options">
-					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-					<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name'
-						},
-						{
-							name: 'Gruppen',
-							value: 'groups'
-						}
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
+						{ name: 'Alphabetisch', value: 'name' },
+						{ name: 'Nach Gruppe', value: 'group' },
+						{ name: 'Nach Steigerungsfaktor', value: 'ic' }
 					]} />
-					<Checkbox checked={this.state.talentRating} onClick={this.changeTalentRating}>Wertung durch Kultur anzeigen</Checkbox>
+					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Wertung durch Kultur anzeigen</Checkbox>
 				</div>
 				<Scroll className="list">
 					<table>
@@ -75,20 +75,20 @@ export default class Talents extends Component {
 						</thead>
 						<tbody>
 							{
-								this.state.list.map(talent => (
+								list.map(obj => (
 									<SkillListItem
-										key={talent.id}
-										typ={this.state.talentRating && talent.isTyp}
-										untyp={this.state.talentRating && talent.isUntyp}
-										group={GR[talent.gr - 1]}
-										name={talent.name}
-										sr={talent.value}
-										check={talent.check}
-										ic={talent.ic}
-										addPoint={this.addPoint.bind(null, talent.id)}
-										addDisabled={!talent.isIncreasable}
-										removePoint={this.state.phase < 3 ? this.removePoint.bind(null, talent.id) : undefined}
-										removeDisabled={!talent.isDecreasable} />
+										key={obj.id}
+										typ={talentRating && obj.isTyp}
+										untyp={talentRating && obj.isUntyp}
+										group={GROUPS[obj.gr - 1]}
+										name={obj.name}
+										sr={obj.value}
+										check={obj.check}
+										ic={obj.ic}
+										addPoint={this.addPoint.bind(null, obj.id)}
+										addDisabled={!obj.isIncreasable}
+										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!obj.isDecreasable} />
 								))
 							}
 						</tbody>

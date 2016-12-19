@@ -1,105 +1,100 @@
-export const filter = (list, filterText) => {
+import SpellsStore from '../stores/SpellsStore';
+
+export const filter = (list, filterText, addProperty) => {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
-		return list.filter(obj => obj.name.toLowerCase().match(filterText));
+		return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
 	}
 	return list;
 };
 
-export const sortByName = (list, sex) => {
-	if (sex) {
-		return list.sort((a,b) => {
-			let an = a.name[sex] || a.name;
-			let bn = b.name[sex] || b.name;
-			if (an < bn) {
-				return -1;
-			} else if (an > bn) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-	}
-	return list.sort((a,b) => {
-		if (a.name < b.name) {
-			return -1;
-		} else if (a.name > b.name) {
-			return 1;
-		} else {
-			return 0;
-		}
-	});
+export const sortByName = (a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+
+var SEX;
+
+export const sortByNameSex = (a,b) => {
+	let an = a.name[SEX] || a.name;
+	let bn = b.name[SEX] || b.name;
+	return an < bn ? -1 : an > bn ? 1 : 0;
 };
 
-export const sortByGroup = list => {
-	return list.sort((a, b) => {
-		if (a.gr < b.gr) {
-			return -1;
-		} else if (a.gr > b.gr) {
-			return 1;
-		} else {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-	});
+export const sortByCost = (a,b) => a.ap < b.ap ? -1 : a.ap > b.ap ? 1 : sortByName(a,b);
+
+export const sortByCostSex = (a,b) => a.ap < b.ap ? -1 : a.ap > b.ap ? 1 : sortByNameSex(a,b);
+
+export const sortByGroup = (a,b) => a.gr < b.gr ? -1 : a.gr > b.gr ? 1 : sortByName(a,b);
+
+export const sortByIC = (a,b) => a.ic < b.ic ? -1 : a.ic > b.ic ? 1 : sortByName(a,b);
+
+export const sortByProperty = (a,b) => {
+	const PROPERTIES = SpellsStore.getPropertyNames();
+	let ap = PROPERTIES[a.property - 1];
+	let bp = PROPERTIES[b.property - 1];
+	return ap < bp ? -1 : ap > bp ? 1 : sortByName(a,b);
 };
 
-export const sortByCost = (list, sex) => {
-	if (sex) {
-		return list.sort((a, b) => {
-			let an = a.name[sex] || a.name;
-			let bn = b.name[sex] || b.name;
-			if (a.ap < b.ap) {
-				return -1;
-			} else if (a.ap > b.ap) {
-				return 1;
-			} else {
-				if (an < bn) {
-					return -1;
-				} else if (an > bn) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
-	}
-	return list.sort((a, b) => {
-		if (a.ap < b.ap) {
-			return -1;
-		} else if (a.ap > b.ap) {
-			return 1;
-		} else {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-	});
+export const sortByAspect = (a,b) => {
+	return a.aspect < b.aspect ? -1 : a.aspect > b.aspect ? 1 : sortByName(a,b);
 };
 
-export const sort = (list, sortOrder, sex) => {
+export const sortByPrice = (a,b) => a.price < b.price ? -1 : a.price > b.price ? 1 : sortByName(a,b);
+
+export const sortByWeight = (a,b) => a.weight < b.weight ? -1 : a.weight > b.weight ? 1 : sortByName(a,b);
+
+export const sort = (list, sortOrder) => {
+	let sort;
 	switch (sortOrder) {
 		case 'name':
-			return sortByName(list, sex);
-		case 'group':
-			return sortByGroup(list, sex);
+			sort = sortByName;
+			break;
 		case 'cost':
-			return sortByCost(list, sex);
+			sort = sortByCost;
+			break;
+		case 'group':
+			sort = sortByGroup;
+			break;
+		case 'ic':
+			sort = sortByIC;
+			break;
+		case 'property':
+			sort = sortByProperty;
+			break;
+		case 'aspect':
+			sort = sortByAspect;
+			break;
+		case 'price':
+			sort = sortByPrice;
+			break;
+		case 'weight':
+			sort = sortByWeight;
+			break;
 		
 		default:
 			return list;
 	}
+	return list.sort(sort);
+};
+
+export const sortSex = (list, sortOrder, sex) => {
+	let sort;
+	switch (sortOrder) {
+		case 'name':
+			sort = sortByNameSex;				
+			break;
+		case 'cost':
+			sort = sortByCostSex;				
+			break;
+		
+		default:
+			return list;
+	}
+	SEX = sex;
+	return list.sort(sort);
 };
 
 export const filterAndSort = (list, filterText, sortOrder, sex) => {
-	return sort(filter(list, filterText), sortOrder, sex);
+	if (sex) {
+		return sortSex(filter(list, filterText), sortOrder, sex);		
+	}
+	return sort(filter(list, filterText), sortOrder);
 };

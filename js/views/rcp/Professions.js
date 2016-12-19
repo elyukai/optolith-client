@@ -86,7 +86,7 @@ export default class Professions extends Component {
 							value: 'name'
 						},
 						{
-							name: 'Kosten',
+							name: 'Nach Kosten',
 							value: 'cost'
 						}
 					]} />

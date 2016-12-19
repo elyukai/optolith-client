@@ -23,47 +23,27 @@ export default {
 		});
 	},
 	addToList: function(id) {
-		var liturgy = LiturgiesStore.get(id);
-		var costs = liturgy.gr === 3 ? [1] : ['aktv', liturgy.skt];
-		costs = APStore.validate(...costs);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.ACTIVATE_LITURGY,
-				id, costs
-			});
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ACTIVATE_LITURGY,
+			id
+		});
 	},
 	removeFromList: function(id) {
-		var liturgy = LiturgiesStore.get(id);
-		var costs = liturgy.gr === 3 ? [1, undefined, false] : ['aktv', liturgy.skt, false];
-		costs = APStore.validate(...costs);
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.DEACTIVATE_LITURGY,
-			id, costs
+			id
 		});
 	},
 	addPoint: function(id) {
-		var liturgy = LiturgiesStore.get(id);
-		var costs = APStore.validate(liturgy.fw + 1, liturgy.skt);
-		if (costs) {
-			AppDispatcher.dispatch({
-				actionType: ActionTypes.ADD_LITURGY_POINT,
-				id, costs
-			});
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ADD_LITURGY_POINT,
+			id
+		});
 	},
 	removePoint: function(id) {
-		var liturgy = LiturgiesStore.get(id);
-		if (liturgy.fw === 0) {
-			this.removeFromList(id);
-		} else {
-			var costs = APStore.getCosts(liturgy.fw, liturgy.skt, false);
-			if (costs) {
-				AppDispatcher.dispatch({
-					actionType: ActionTypes.REMOVE_LITURGY_POINT,
-					id, costs
-				});
-			}
-		}
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.REMOVE_LITURGY_POINT,
+			id
+		});
 	}
 };

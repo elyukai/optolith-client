@@ -46,6 +46,7 @@ export default class Spell extends Skill {
 
 			return !(counter.get(this.property) <= 3 && this.value <= 10 && this.gr !== 5);
 		}
+		return true;
 	}
 
 	reset() {

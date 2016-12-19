@@ -1,3 +1,4 @@
+import { filterAndSort } from '../../utils/ListUtils';
 import BorderButton from '../../components/BorderButton';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -15,7 +16,7 @@ export default class SpecialAbilities extends Component {
 	state = { 
 		saActive: SpecialAbilitiesStore.getActiveForView(),
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
-		filter: SpecialAbilitiesStore.getFilter(),
+		filterText: SpecialAbilitiesStore.getFilter(),
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false
@@ -24,7 +25,7 @@ export default class SpecialAbilities extends Component {
 	_updateSpecialAbilitiesStore = () => this.setState({ 
 		saActive: SpecialAbilitiesStore.getActiveForView(),
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
-		filter: SpecialAbilitiesStore.getFilter(),
+		filterText: SpecialAbilitiesStore.getFilter(),
 		sortOrder: SpecialAbilitiesStore.getSortOrder()
 	});
 
@@ -45,21 +46,27 @@ export default class SpecialAbilities extends Component {
 	}
 
 	render() {
+
+		const { filterText, phase, saActive, saDeactive, showAddSlidein, sortOrder } = this.state;
+
+		const sortArray = [
+			{ name: 'Alphabetisch', value: 'name' },
+			{ name: 'Nach Gruppe', value: 'group' }
+		];
+
+		const listActive = filterAndSort(saActive, filterText, sortOrder);
+		const listDeactive = filterAndSort(saDeactive, filterText, sortOrder);
+
 		return (
 			<div className="page" id="specialabilities">
-				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<div className="options">
-						<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-						<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-							{
-								name: 'Alphabetisch',
-								value: 'name'
-							},
-							{
-								name: 'Gruppen',
-								value: 'groups'
-							}
-						]} />
+						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+						<RadioButtonGroup
+							active={sortOrder}
+							onClick={this.sort}
+							array={sortArray}
+							/>
 					</div>
 					<Scroll className="list">
 						<table>
@@ -73,24 +80,19 @@ export default class SpecialAbilities extends Component {
 							</thead>
 							<tbody>
 								{
-									this.state.saDeactive.map((sa, index) => <SpecialAbilitiesListAddItem key={`SA_DEACTIVE_${index}`} item={sa} />)
+									listDeactive.map((sa, index) => <SpecialAbilitiesListAddItem key={`SA_DEACTIVE_${index}`} item={sa} />)
 								}
 							</tbody>
 						</table>
 					</Scroll>
 				</Slidein>
 				<div className="options">
-					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-					<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name'
-						},
-						{
-							name: 'Gruppen',
-							value: 'groups'
-						}
-					]} />
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={sortArray}
+						/>
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 				</div>
 				<Scroll className="list">
@@ -100,14 +102,14 @@ export default class SpecialAbilities extends Component {
 								<td className="type">Gruppe</td>
 								<td className="name">Sonderfertigkeit</td>
 								<td className="ap">AP</td>
-								{ this.state.phase < 3 ? (
+								{ phase < 3 ? (
 									<td className="inc"></td>
 								) : null }
 							</tr>
 						</thead>
 						<tbody>
 							{
-								this.state.saActive.map((sa, index) => <SpecialAbilitiesListRemoveItem key={`SA_ACTIVE_${index}`} item={sa} phase={this.state.phase} />)
+								listActive.map((sa, index) => <SpecialAbilitiesListRemoveItem key={`SA_ACTIVE_${index}`} item={sa} phase={phase} />)
 							}
 						</tbody>
 					</table>

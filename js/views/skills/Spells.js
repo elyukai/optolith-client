@@ -1,3 +1,4 @@
+import { filterAndSort } from '../../utils/ListUtils';
 import BorderButton from '../../components/BorderButton';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -12,20 +13,20 @@ import TextField from '../../components/TextField';
 export default class Spells extends Component {
 	
 	state = { 
-		spellsActive: SpellsStore.getActiveForView(),
-		spellsDeactive: SpellsStore.getDeactiveForView(),
+		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		filter: SpellsStore.getFilter(),
+		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
+		filterText: SpellsStore.getFilterText(),
 		sortOrder: SpellsStore.getSortOrder(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
 	
 	_updateSpellsStore = () => this.setState({ 
-		spellsActive: SpellsStore.getActiveForView(),
-		spellsDeactive: SpellsStore.getDeactiveForView(),
+		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		filter: SpellsStore.getFilter(),
+		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
+		filterText: SpellsStore.getFilterText(),
 		sortOrder: SpellsStore.getSortOrder()
 	});
 
@@ -33,13 +34,8 @@ export default class Spells extends Component {
 	sort = option => SpellsActions.sort(option);
 	addToList = id => SpellsActions.addToList(id);
 	addPoint = id => SpellsActions.addPoint(id);
-	removePoint = (id, fw) => {
-		if (fw === 0) {
-			SpellsActions.removeFromList(id);
-		} else {
-			SpellsActions.removePoint(id);
-		}
-	};
+	removeFromList = id => SpellsActions.removeFromList(id);
+	removePoint = id => SpellsActions.removePoint(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true });
 	hideAddSlidein = () => this.setState({ showAddSlidein: false });
 	
@@ -53,28 +49,51 @@ export default class Spells extends Component {
 
 	render() {
 
-		const GR = ['Spruch', 'Ritual', 'Fluch', 'Lied', 'Trick'];
-		const MERK = ['Antimagie', 'Dämonisch', 'Einfluss', 'Elementar', 'Heilung', 'Hellsicht', 'Illusion', 'Sphären', 'Objekt', 'Telekinese', 'Verwandlung', 'Rituale'];
+		const GROUPS = SpellsStore.getGroupNames();
+		const PROPERTIES = SpellsStore.getPropertyNames();
+		const TRADITIONS = SpellsStore.getTraditionNames();
+
+		const { addSpellsDisabled, areMaxUnfamiliar, filterText, phase, showAddSlidein, sortOrder, spells } = this.state;
+
+		const sortArray = [
+			{ name: 'Alphabetisch', value: 'name' },
+			{ name: 'Nach Gruppe', value: 'group' },
+			{ name: 'Nach Merkmal', value: 'property' },
+			{ name: 'Nach Steigerungsfaktor', value: 'ic' }
+		];
+
+		const list = filterAndSort(spells, filterText, sortOrder);
+
+		const listActive = [];
+		const listDeactive = [];
+
+		list.forEach(e => {
+			if (e.active) {
+				listActive.push(e);
+			}
+			else {
+				if (!e.isOwnTradition) {
+					if (e.gr < 2 && !areMaxUnfamiliar) {
+						e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ');
+						listDeactive.push(e);
+					}
+				}
+				else {
+					listDeactive.push(e);
+				}			
+			}
+		});
 
 		return (
 			<div className="page" id="spells">
-				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<div className="options">
-						<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-						<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-							{
-								name: 'Alphabetisch',
-								value: 'name'
-							},
-							{
-								name: 'Gruppen',
-								value: 'groups'
-							},
-							{
-								name: 'Merkmal',
-								value: 'merk'
-							}
-						]} />
+						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+						<RadioButtonGroup
+							active={sortOrder}
+							onClick={this.sort}
+							array={sortArray}
+							/>
 					</div>
 					<Scroll className="list">
 						<table>
@@ -90,30 +109,32 @@ export default class Spells extends Component {
 							</thead>
 							<tbody>
 								{
-									this.state.spellsDeactive.map(spell => {
+									listDeactive.map(spell => {
 										const [ a, b, c, checkmod ] = spell.check;
 										const check = [ a, b, c ];
 
 										let name = spell.name;
-										if (!spell.isOwnTradition) name += ` (${spell.name_add})`;
+										if (!spell.isOwnTradition) {
+											name += ` (${spell.name_add})`;
+										}
 
 										const obj = spell.gr === 5 ? {} : {
 											check,
 											checkmod,
-											ic: spell.skt
+											ic: spell.ic
 										};
 
 										return (
 											<SkillListItem
 												key={spell.id}
-												group={GR[spell.gr - 1]}
+												group={GROUPS[spell.gr - 1]}
 												name={name}
 												isNotActive
 												activate={this.addToList.bind(null, spell.id)}
-												activateDisabled={this.state.addSpellsDisabled && spell.gr < 3}
+												activateDisabled={addSpellsDisabled && spell.gr < 3}
 												{...obj}
 												>
-												<td className="merk">{MERK[spell.merk - 1]}</td>
+												<td className="merk">{PROPERTIES[spell.property - 1]}</td>
 											</SkillListItem>
 										);
 									})
@@ -123,21 +144,12 @@ export default class Spells extends Component {
 					</Scroll>
 				</Slidein>
 				<div className="options">
-					<TextField hint="Suchen" value={this.state.filter} onChange={this.filter} fullWidth />
-					<RadioButtonGroup active={this.state.sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name'
-						},
-						{
-							name: 'Gruppen',
-							value: 'groups'
-						},
-						{
-							name: 'Merkmal',
-							value: 'merk'
-						}
-					]} />
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={sortArray}
+						/>
 					<BorderButton
 						label="Hinzufügen"
 						onClick={this.showAddSlidein}
@@ -158,31 +170,31 @@ export default class Spells extends Component {
 						</thead>
 						<tbody>
 							{
-								this.state.spellsActive.map(spell => {
-									const [ a1, a2, a3, checkmod ] = spell.check;
+								listActive.map(obj => {
+									const [ a1, a2, a3, checkmod ] = obj.check;
 									const check = [ a1, a2, a3 ];
 
-									let name = spell.name;
-									if (!spell.isOwnTradition) name += ` (${spell.name_add})`;
+									let name = obj.name;
+									if (!obj.isOwnTradition) name += ` (${obj.name_add})`;
 
-									const obj = spell.gr === 5 ? {} : {
-										sr: spell.value,
+									const other = obj.gr === 5 ? {} : {
+										sr: obj.value,
 										check,
 										checkmod,
-										ic: spell.skt,
-										addPoint: this.addPoint.bind(null, spell.id),
-										addDisabled: spell.disabledIncrease
+										ic: obj.ic,
+										addPoint: this.addPoint.bind(null, obj.id),
+										addDisabled: obj.disabledIncrease
 									};
 
 									return (
 										<SkillListItem
-											key={spell.id}
-											group={GR[spell.gr - 1]}
+											key={obj.id}
+											group={GROUPS[obj.gr - 1]}
 											name={name}
-											removePoint={this.state.phase < 3 ? this.removePoint.bind(null, spell.id) : undefined}
-											removeDisabled={spell.disabledDecrease}
-											{...obj} >
-											<td className="merk">{MERK[spell.merk - 1]}</td>
+											removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
+											removeDisabled={obj.disabledDecrease}
+											{...other} >
+											<td className="merk">{PROPERTIES[obj.property - 1]}</td>
 										</SkillListItem>
 									);
 								})

@@ -11,7 +11,7 @@ const CATEGORY = Categories.SPECIAL_ABILITIES;
 // const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
 var _filter = '';
-var _sortOrder = 'groups';
+var _sortOrder = 'group';
 
 function _updateFilterText(text) {
 	_filter = text;
@@ -46,6 +46,10 @@ class _SpecialAbilitiesStore extends Store {
 
 	get(id) {
 		return get(id);
+	}
+
+	getAll() {
+		return getAllByCategory(CATEGORY);
 	}
 
 	getActiveForView(...cgr) {

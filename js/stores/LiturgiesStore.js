@@ -8,50 +8,15 @@ import Categories from '../constants/Categories';
 
 const CATEGORY = Categories.CHANTS;
 
-var _filter = '';
+var _filterText = '';
 var _sortOrder = 'name';
 
 function _updateFilterText(text) {
-	_filter = text;
+	_filterText = text;
 }
 
 function _updateSortOrder(option) {
 	_sortOrder = option;
-}
-
-function _filterAndSort(array) {
-	if (_filter !== '') {
-		let filter = _filter.toLowerCase();
-		array = array.filter(obj => obj.name.toLowerCase().match(filter));
-	}
-	if (_sortOrder == 'name') {
-		array.sort((a, b) => {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
-	} else if (_sortOrder == 'groups') {
-		array.sort((a, b) => {
-			if (a.gr < b.gr) {
-				return -1;
-			} else if (a.gr > b.gr) {
-				return 1;
-			} else {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
-	}
-	return array;
 }
 	
 class _LiturgiesStore extends Store {
@@ -84,22 +49,8 @@ class _LiturgiesStore extends Store {
 		}, new Map());
 	}
 
-	getActiveForView() {
-		var liturgies = getAllByCategory(CATEGORY).filter(e => e.active);
-		return _filterAndSort(liturgies);
-	}
-
-	getDeactiveForView() {
-		var liturgies = getObjByCategory(CATEGORY).filter(e => {
-			if (!e.active) {
-				if (!e.isOwnTradition) {
-					return false;
-				}
-				return true;
-			}
-			return false;
-		});
-		return _filterAndSort(liturgies);
+	getAll() {
+		return getAllByCategory(CATEGORY);
 	}
 
 	isActivationDisabled() {
@@ -107,8 +58,20 @@ class _LiturgiesStore extends Store {
 		return PhaseStore.get() < 3 && getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 	}
 
-	getFilter() {
-		return _filter;
+	getGroupNames() {
+		return ['Liturgie', 'Zeremonie', 'Segnung'];
+	}
+
+	getAspectNames() {
+		return ['Allgemein', 'Antimagie', 'Ordnung', 'Schild', 'Sturm', 'Tod', 'Traum', 'Magie', 'Wissen', 'Handel', 'Schatten', 'Heilung', 'Landwirtschaft'];
+	}
+
+	getTraditionNames() {
+		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
+	}
+
+	getFilterText() {
+		return _filterText;
 	}
 
 	getSortOrder() {

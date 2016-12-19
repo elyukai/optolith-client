@@ -1,13 +1,13 @@
+import { get } from '../stores/ListStore';
+import ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
-import Store from './Store';
-import { get } from '../stores/ListStore';
-import RaceStore from './RaceStore';
-import RequirementsStore from './RequirementsStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
-import ActionTypes from '../constants/ActionTypes';
+import RaceStore from './RaceStore';
+import RequirementsStore from './RequirementsStore';
+import Store from './Store';
 
 var _history = [];
 var _lastSaveIndex = -1;
@@ -138,6 +138,17 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 				
 			case ActionTypes.SAVE_HERO_SUCCESS:
 				_resetSaveIndex();
+				break;
+
+			case ActionTypes.ACTIVATE_SPELL:
+			case ActionTypes.ACTIVATE_LITURGY:
+			case ActionTypes.DEACTIVATE_SPELL:
+			case ActionTypes.DEACTIVATE_LITURGY:
+				if (RequirementsStore.isValid()) {
+					const id = payload.id;
+					const cost = RequirementsStore.getCurrentCost();
+					_add(payload.actionType, cost, { id });
+				}
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:

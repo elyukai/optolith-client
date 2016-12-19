@@ -23,6 +23,10 @@ export default class Activatable extends Dependent {
 		return Array.isArray(this.active);
 	}
 
+	get isActive() {
+		return Array.isArray(this.active) ? this.active.length > 0 : this.active;
+	}
+
 	get isActivatable() {
 		return validate(this.reqs);
 	}

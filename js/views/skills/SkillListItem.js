@@ -49,7 +49,7 @@ export default class SkillListItem extends Component {
 			if (check) {
 				content = check.map(attr => get(attr).short).join('/');
 				if (checkmod) {
-					content += `(+${checkmod})`;
+					content += ` (+${checkmod})`;
 				}
 			}
 			checkElement = <td className="check">{content}</td>;

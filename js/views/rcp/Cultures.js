@@ -65,7 +65,7 @@ export default class Cultures extends Component {
 						onClick={this.sort}
 						array={[
 							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Kosten', value: 'cost' }
+							{ name: 'Nach Kosten', value: 'cost' }
 						]}
 						/>
 					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>

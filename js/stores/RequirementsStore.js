@@ -64,11 +64,7 @@ function _updateDisAdvCost(id, cost, valid) {
 			_disadv = [ add, index ];
 		}
 
-		console.log(_validCost);
-
 		_validCost = _validCost.every(e => e);
-
-		console.log(_validCost);
 	}
 }
 
@@ -103,14 +99,30 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 	else {
 		switch( payload.actionType ) {
 			case ActionTypes.ACTIVATE_SPELL:
-			case ActionTypes.ACTIVATE_LITURGY:
-				_updateCost(final(get(payload.id).ic, 0));
+			case ActionTypes.ACTIVATE_LITURGY: {
+				const obj = get(payload.id);
+				_updateOwnRequirements(true);
+				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+					_updateCost(1);
+				}
+				else {		
+					_updateCost(final(obj.ic, 0));
+				}
 				break;
-			
+			}
+
 			case ActionTypes.DEACTIVATE_SPELL:
-			case ActionTypes.DEACTIVATE_LITURGY:
-				_updateCost(final(get(payload.id).ic, 0) * -1);
+			case ActionTypes.DEACTIVATE_LITURGY: {
+				const obj = get(payload.id);
+				_updateOwnRequirements(true);
+				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+					_updateCost(-1);
+				}
+				else {		
+					_updateCost(final(obj.ic, 0) * -1);
+				}
 				break;
+			}
 
 			case ActionTypes.ACTIVATE_DISADV:
 				_updateOwnRequirements(get(payload.id).isActivatable);

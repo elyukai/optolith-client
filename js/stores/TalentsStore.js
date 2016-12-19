@@ -9,7 +9,7 @@ import Categories from '../constants/Categories';
 const CATEGORY = Categories.TALENTS;
 
 var _filter = '';
-var _sortOrder = 'groups';
+var _sortOrder = 'group';
 var _talentRating = true;
 
 function _updateFilterText(text) {
@@ -47,6 +47,10 @@ class _TalentsStore extends Store {
 
 	getNameByID(id) {
 		return get(id).name;
+	}
+
+	getAll() {
+		return getAllByCategory(CATEGORY);
 	}
 
 	getAllForView() {
