@@ -1,9 +1,10 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import ListStore, { getAllByCategory } from './ListStore';
-import RaceStore from './RaceStore';
+import { getAllByCategory } from './ListStore';
 import ActionTypes from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import Categories from '../constants/Categories';
+import RaceStore from './RaceStore';
+import RequirementsStore from './RequirementsStore';
+import Store from './Store';
 
 const CATEGORY = Categories.ATTRIBUTES;
 
@@ -17,13 +18,13 @@ var _gs = 0;
 
 function _addMaxEnergyPoint(id) {
 	switch (id) {
-		case 'LE':
+		case 'LP':
 			_le_add++;
 			break;
 		case 'AE':
 			_ae_add++;
 			break;
-		case 'KE':
+		case 'KP':
 			_ke_add++;
 			break;
 	}
@@ -65,11 +66,11 @@ class _AttributeStore extends Store {
 
 	getAdd(id) {
 		switch (id) {
-			case 'LE':
+			case 'LP':
 				return _le_add;
 			case 'AE':
 				return _ae_add;
-			case 'KE':
+			case 'KP':
 				return _ke_add;
 			default:
 				return 0;
@@ -104,6 +105,8 @@ const AttributeStore = new _AttributeStore();
 
 AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);	
+
 	switch( payload.actionType ) {
 
 		case ActionTypes.CLEAR_HERO:
@@ -117,11 +120,12 @@ AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			break;
 
 		case ActionTypes.ADD_MAX_ENERGY_POINT:
-			_addMaxEnergyPoint(payload.id);
+			if (RequirementsStore.isValid()) {
+				_addMaxEnergyPoint(payload.id);
+			}
 			break;
 
 		case ActionTypes.ASSIGN_RCP_ENTRIES:

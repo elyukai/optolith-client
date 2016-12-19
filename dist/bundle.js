@@ -27086,7 +27086,7 @@
 
 	var _DataUtils = __webpack_require__(284);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -28188,19 +28188,19 @@
 
 	var _init3 = _interopRequireDefault(_init2);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _RequirementsStore = __webpack_require__(330);
+	var _RequirementsStore = __webpack_require__(332);
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
@@ -29532,19 +29532,19 @@
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
-	var _RequirementsStore = __webpack_require__(330);
+	var _RequirementsStore = __webpack_require__(332);
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
@@ -29928,6 +29928,238 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	const CATEGORY = _Categories2.default.PROFESSIONS;
+
+	var _currentID = null;
+	var _filterText = '';
+	var _sortOrder = 'name';
+	var _showAll = false;
+
+	function _updateCurrentID(id) {
+		_currentID = id;
+	}
+
+	function _updateFilterText(text) {
+		_filterText = text;
+	}
+
+	function _updateSortOrder(option) {
+		_sortOrder = option;
+	}
+
+	function _updateView(view) {
+		_showAll = view;
+	}
+
+	class _ProfessionStore extends _Store2.default {
+
+		get(id) {
+			return (0, _ListStore.get)(id);
+		}
+
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
+		}
+
+		getCurrentID() {
+			return _currentID;
+		}
+
+		getCurrent() {
+			return (0, _ListStore.get)(this.getCurrentID());
+		}
+
+		getCurrentName() {
+			return this.getCurrent() ? this.getCurrent().name : null;
+		}
+
+		getNameByID(id) {
+			return (0, _ListStore.get)(id) ? (0, _ListStore.get)(id).name : null;
+		}
+
+		getFilter() {
+			return _filterText;
+		}
+
+		getSortOrder() {
+			return _sortOrder;
+		}
+
+		areAllVisible() {
+			return _showAll;
+		}
+
+	}
+
+	const ProfessionStore = new _ProfessionStore();
+
+	ProfessionStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		switch (payload.actionType) {
+
+			case _ActionTypes2.default.RECEIVE_HERO:
+				_updateCurrentID(payload.p);
+				break;
+
+			case _ActionTypes2.default.SELECT_RACE:
+			case _ActionTypes2.default.SELECT_CULTURE:
+				_updateCurrentID(null);
+				break;
+
+			case _ActionTypes2.default.SELECT_PROFESSION:
+				_updateCurrentID(payload.professionID);
+				break;
+
+			case _ActionTypes2.default.FILTER_PROFESSIONS:
+				_updateFilterText(payload.text);
+				break;
+
+			case _ActionTypes2.default.SORT_PROFESSIONS:
+				_updateSortOrder(payload.option);
+				break;
+
+			case _ActionTypes2.default.CHANGE_PROFESSION_VIEW:
+				_updateView(payload.view);
+				break;
+
+			default:
+				return true;
+		}
+
+		ProfessionStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = ProfessionStore;
+
+/***/ },
+/* 330 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _Categories = __webpack_require__(326);
+
+	var _Categories2 = _interopRequireDefault(_Categories);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	const CATEGORY = _Categories2.default.PROFESSION_VARIANTS;
+
+	var _currentID = null;
+
+	function _updateCurrentID(id) {
+		_currentID = id;
+	}
+
+	class _ProfessionVariantStore extends _Store2.default {
+
+		get(id) {
+			return (0, _ListStore.get)(id);
+		}
+
+		getAll() {
+			return (0, _ListStore.getAllByCategory)(CATEGORY);
+		}
+
+		getCurrentID() {
+			return _currentID;
+		}
+
+		getCurrent() {
+			return this.get(this.getCurrentID());
+		}
+
+		getCurrentName() {
+			return this.getCurrent() !== undefined ? this.getCurrent().name : null;
+		}
+
+		getNameByID(id) {
+			return this.get(id) !== undefined ? this.get(id).name : null;
+		}
+
+	}
+
+	const ProfessionVariantStore = new _ProfessionVariantStore();
+
+	ProfessionVariantStore.dispatchToken = _AppDispatcher2.default.register(payload => {
+
+		switch (payload.actionType) {
+
+			case _ActionTypes2.default.RECEIVE_HERO:
+				_updateCurrentID(payload.pv);
+				break;
+
+			case _ActionTypes2.default.SELECT_RACE:
+			case _ActionTypes2.default.SELECT_CULTURE:
+			case _ActionTypes2.default.SELECT_PROFESSION:
+				_updateCurrentID(null);
+				break;
+
+			case _ActionTypes2.default.SELECT_PROFESSION_VARIANT:
+				_updateCurrentID(payload.professionVariantID);
+				break;
+
+			default:
+				return true;
+		}
+
+		ProfessionVariantStore.emitChange();
+
+		return true;
+	});
+
+	exports.default = ProfessionVariantStore;
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
+	var _ListStore = __webpack_require__(302);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
+
+	var _ActionTypes = __webpack_require__(263);
+
+	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
+
+	var _Categories = __webpack_require__(326);
+
+	var _Categories2 = _interopRequireDefault(_Categories);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	const CATEGORY = _Categories2.default.RACES;
 
 	var _currentID = null;
@@ -30029,7 +30261,7 @@
 	exports.default = RaceStore;
 
 /***/ },
-/* 330 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30038,7 +30270,7 @@
 		value: true
 	});
 
-	var _iccalc = __webpack_require__(331);
+	var _iccalc = __webpack_require__(333);
 
 	var _ListStore = __webpack_require__(302);
 
@@ -30046,7 +30278,7 @@
 
 	var _alert2 = _interopRequireDefault(_alert);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -30242,7 +30474,7 @@
 				case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
 					{
 						const obj = secondaryAttributes.get(payload.id);
-						_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
+						_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd.value);
 						_updateCost((0, _iccalc.final)(4, _AttributeStore2.default.getAdd(payload.id) + 1));
 						break;
 					}
@@ -30272,7 +30504,7 @@
 	exports.default = RequirementsStore;
 
 /***/ },
-/* 331 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30285,7 +30517,7 @@
 	exports.final = final;
 	exports.check = check;
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -30337,7 +30569,7 @@
 	};
 
 /***/ },
-/* 332 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30368,15 +30600,15 @@
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -30384,7 +30616,7 @@
 
 	var _reqPurchase2 = _interopRequireDefault(_reqPurchase);
 
-	var _RequirementsStore = __webpack_require__(330);
+	var _RequirementsStore = __webpack_require__(332);
 
 	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
 
@@ -30628,238 +30860,6 @@
 	exports.default = APStore;
 
 /***/ },
-/* 333 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _ListStore = __webpack_require__(302);
-
-	var _Store = __webpack_require__(281);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _Categories = __webpack_require__(326);
-
-	var _Categories2 = _interopRequireDefault(_Categories);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	const CATEGORY = _Categories2.default.PROFESSIONS;
-
-	var _currentID = null;
-	var _filterText = '';
-	var _sortOrder = 'name';
-	var _showAll = false;
-
-	function _updateCurrentID(id) {
-		_currentID = id;
-	}
-
-	function _updateFilterText(text) {
-		_filterText = text;
-	}
-
-	function _updateSortOrder(option) {
-		_sortOrder = option;
-	}
-
-	function _updateView(view) {
-		_showAll = view;
-	}
-
-	class _ProfessionStore extends _Store2.default {
-
-		get(id) {
-			return (0, _ListStore.get)(id);
-		}
-
-		getAll() {
-			return (0, _ListStore.getAllByCategory)(CATEGORY);
-		}
-
-		getCurrentID() {
-			return _currentID;
-		}
-
-		getCurrent() {
-			return (0, _ListStore.get)(this.getCurrentID());
-		}
-
-		getCurrentName() {
-			return this.getCurrent() ? this.getCurrent().name : null;
-		}
-
-		getNameByID(id) {
-			return (0, _ListStore.get)(id) ? (0, _ListStore.get)(id).name : null;
-		}
-
-		getFilter() {
-			return _filterText;
-		}
-
-		getSortOrder() {
-			return _sortOrder;
-		}
-
-		areAllVisible() {
-			return _showAll;
-		}
-
-	}
-
-	const ProfessionStore = new _ProfessionStore();
-
-	ProfessionStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_updateCurrentID(payload.p);
-				break;
-
-			case _ActionTypes2.default.SELECT_RACE:
-			case _ActionTypes2.default.SELECT_CULTURE:
-				_updateCurrentID(null);
-				break;
-
-			case _ActionTypes2.default.SELECT_PROFESSION:
-				_updateCurrentID(payload.professionID);
-				break;
-
-			case _ActionTypes2.default.FILTER_PROFESSIONS:
-				_updateFilterText(payload.text);
-				break;
-
-			case _ActionTypes2.default.SORT_PROFESSIONS:
-				_updateSortOrder(payload.option);
-				break;
-
-			case _ActionTypes2.default.CHANGE_PROFESSION_VIEW:
-				_updateView(payload.view);
-				break;
-
-			default:
-				return true;
-		}
-
-		ProfessionStore.emitChange();
-
-		return true;
-	});
-
-	exports.default = ProfessionStore;
-
-/***/ },
-/* 334 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _ListStore = __webpack_require__(302);
-
-	var _Store = __webpack_require__(281);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
-	var _ActionTypes = __webpack_require__(263);
-
-	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
-
-	var _Categories = __webpack_require__(326);
-
-	var _Categories2 = _interopRequireDefault(_Categories);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	const CATEGORY = _Categories2.default.PROFESSION_VARIANTS;
-
-	var _currentID = null;
-
-	function _updateCurrentID(id) {
-		_currentID = id;
-	}
-
-	class _ProfessionVariantStore extends _Store2.default {
-
-		get(id) {
-			return (0, _ListStore.get)(id);
-		}
-
-		getAll() {
-			return (0, _ListStore.getAllByCategory)(CATEGORY);
-		}
-
-		getCurrentID() {
-			return _currentID;
-		}
-
-		getCurrent() {
-			return this.get(this.getCurrentID());
-		}
-
-		getCurrentName() {
-			return this.getCurrent() !== undefined ? this.getCurrent().name : null;
-		}
-
-		getNameByID(id) {
-			return this.get(id) !== undefined ? this.get(id).name : null;
-		}
-
-	}
-
-	const ProfessionVariantStore = new _ProfessionVariantStore();
-
-	ProfessionVariantStore.dispatchToken = _AppDispatcher2.default.register(payload => {
-
-		switch (payload.actionType) {
-
-			case _ActionTypes2.default.RECEIVE_HERO:
-				_updateCurrentID(payload.pv);
-				break;
-
-			case _ActionTypes2.default.SELECT_RACE:
-			case _ActionTypes2.default.SELECT_CULTURE:
-			case _ActionTypes2.default.SELECT_PROFESSION:
-				_updateCurrentID(null);
-				break;
-
-			case _ActionTypes2.default.SELECT_PROFESSION_VARIANT:
-				_updateCurrentID(payload.professionVariantID);
-				break;
-
-			default:
-				return true;
-		}
-
-		ProfessionVariantStore.emitChange();
-
-		return true;
-	});
-
-	exports.default = ProfessionVariantStore;
-
-/***/ },
 /* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -30878,11 +30878,11 @@
 
 	var _toArray3 = _interopRequireDefault(_toArray2);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
-	var _iccalc = __webpack_require__(331);
+	var _iccalc = __webpack_require__(333);
 
 	var _iccalc2 = _interopRequireDefault(_iccalc);
 
@@ -31116,29 +31116,31 @@
 
 	var _assign2 = _interopRequireDefault(_assign);
 
-	var _AppDispatcher = __webpack_require__(1);
-
-	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
-
-	var _Store = __webpack_require__(281);
-
-	var _Store2 = _interopRequireDefault(_Store);
-
 	var _ListStore = __webpack_require__(302);
-
-	var _ListStore2 = _interopRequireDefault(_ListStore);
-
-	var _RaceStore = __webpack_require__(329);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
 	var _ActionTypes = __webpack_require__(263);
 
 	var _ActionTypes2 = _interopRequireDefault(_ActionTypes);
 
+	var _AppDispatcher = __webpack_require__(1);
+
+	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
+
 	var _Categories = __webpack_require__(326);
 
 	var _Categories2 = _interopRequireDefault(_Categories);
+
+	var _RaceStore = __webpack_require__(331);
+
+	var _RaceStore2 = _interopRequireDefault(_RaceStore);
+
+	var _RequirementsStore = __webpack_require__(332);
+
+	var _RequirementsStore2 = _interopRequireDefault(_RequirementsStore);
+
+	var _Store = __webpack_require__(281);
+
+	var _Store2 = _interopRequireDefault(_Store);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31154,13 +31156,13 @@
 
 	function _addMaxEnergyPoint(id) {
 		switch (id) {
-			case 'LE':
+			case 'LP':
 				_le_add++;
 				break;
 			case 'AE':
 				_ae_add++;
 				break;
-			case 'KE':
+			case 'KP':
 				_ke_add++;
 				break;
 		}
@@ -31202,11 +31204,11 @@
 
 		getAdd(id) {
 			switch (id) {
-				case 'LE':
+				case 'LP':
 					return _le_add;
 				case 'AE':
 					return _ae_add;
-				case 'KE':
+				case 'KP':
 					return _ke_add;
 				default:
 					return 0;
@@ -31241,6 +31243,8 @@
 
 	AttributeStore.dispatchToken = _AppDispatcher2.default.register(payload => {
 
+		_AppDispatcher2.default.waitFor([_RequirementsStore2.default.dispatchToken]);
+
 		switch (payload.actionType) {
 
 			case _ActionTypes2.default.CLEAR_HERO:
@@ -31254,11 +31258,12 @@
 
 			case _ActionTypes2.default.ADD_ATTRIBUTE_POINT:
 			case _ActionTypes2.default.REMOVE_ATTRIBUTE_POINT:
-				_AppDispatcher2.default.waitFor([_ListStore2.default.dispatchToken]);
 				break;
 
 			case _ActionTypes2.default.ADD_MAX_ENERGY_POINT:
-				_addMaxEnergyPoint(payload.id);
+				if (_RequirementsStore2.default.isValid()) {
+					_addMaxEnergyPoint(payload.id);
+				}
 				break;
 
 			case _ActionTypes2.default.ASSIGN_RCP_ENTRIES:
@@ -31437,11 +31442,11 @@
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -44296,11 +44301,11 @@
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -45742,11 +45747,11 @@
 
 	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -46088,7 +46093,7 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -46425,11 +46430,11 @@
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
@@ -46441,7 +46446,7 @@
 
 	var _reactProgressArc2 = _interopRequireDefault(_reactProgressArc);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -49819,7 +49824,7 @@
 
 	var _AvatarWrapper2 = _interopRequireDefault(_AvatarWrapper);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -49855,15 +49860,15 @@
 
 	var _OverviewPersonalData2 = _interopRequireDefault(_OverviewPersonalData);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -51201,7 +51206,7 @@
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -51217,15 +51222,15 @@
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -51341,7 +51346,7 @@
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -51375,15 +51380,15 @@
 
 	var _ProfileStore2 = _interopRequireDefault(_ProfileStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -52530,7 +52535,7 @@
 
 	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -52546,15 +52551,15 @@
 
 	var _ELStore2 = _interopRequireDefault(_ELStore);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -52640,7 +52645,7 @@
 
 	var _Races2 = _interopRequireDefault(_Races);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -52752,7 +52757,7 @@
 
 	var _ListUtils = __webpack_require__(410);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -53041,7 +53046,7 @@
 
 	var _ProfessionsListItem2 = _interopRequireDefault(_ProfessionsListItem);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
@@ -53049,7 +53054,7 @@
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
@@ -53247,7 +53252,7 @@
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
@@ -53472,15 +53477,15 @@
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionStore = __webpack_require__(333);
+	var _ProfessionStore = __webpack_require__(329);
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantStore = __webpack_require__(334);
+	var _ProfessionVariantStore = __webpack_require__(330);
 
 	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -54210,7 +54215,7 @@
 
 	var _RacesListItem2 = _interopRequireDefault(_RacesListItem);
 
-	var _RaceStore = __webpack_require__(329);
+	var _RaceStore = __webpack_require__(331);
 
 	var _RaceStore2 = _interopRequireDefault(_RaceStore);
 
@@ -55317,7 +55322,7 @@
 
 	var _AppDispatcher2 = _interopRequireDefault(_AppDispatcher);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
@@ -56960,7 +56965,7 @@
 
 	var _AccountActions2 = _interopRequireDefault(_AccountActions);
 
-	var _APStore = __webpack_require__(332);
+	var _APStore = __webpack_require__(334);
 
 	var _APStore2 = _interopRequireDefault(_APStore);
 
