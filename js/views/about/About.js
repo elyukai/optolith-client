@@ -62,7 +62,7 @@ export default class About extends Component {
 							Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
 						</p>
 
-						<h2>Cha5App Browser Client v{version}</h2>
+						<h2>DSA5 Heldentool Browser Client v{version}</h2>
 						<h2>Drittanbietersoftware</h2>
 						<div className="third-party-software">
 							Alegreya font<br/>

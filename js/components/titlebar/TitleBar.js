@@ -114,7 +114,7 @@ export default class TitleBar extends Component {
 								<TitleBarTabs active={currentTab} tabs={[
 									{ label: account.name, tag: 'account' }									
 								]} />
-								<BorderButton label="Abmelden" onClick={this.logout} />
+								<BorderButton label="Abmelden" onClick={this.logout} disabled />
 							</TitleBarRight>
 						</TitleBarWrapper>
 					);
