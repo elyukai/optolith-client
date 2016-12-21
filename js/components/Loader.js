@@ -1,12 +1,18 @@
+import Icon from './Icon';
 import React, { Component, PropTypes } from 'react';
+import Text from './Text';
 
 export default class Loader extends Component {
 	
 	static propTypes = {
-		isLoading: PropTypes.bool.isRequired
+		isLoading: PropTypes.bool.isRequired,
+		text: PropTypes.string
 	};
 
 	render() {
-		return this.props.isLoading ? <div id="loader"><div></div></div> : null;
+
+		const { isLoading, text } = this.props;
+
+		return isLoading ? <div id="loader"><Icon/><Text>{text}</Text></div> : null;
 	}
 }

@@ -15,7 +15,8 @@ export default class Overlay extends Component {
 	};
 
 	state = {
-		style: {}
+		style: {},
+		position: ''
 	};
 
 	alignToElement = () => {
@@ -62,35 +63,42 @@ export default class Overlay extends Component {
 			setVertically();
 		};
 
+		let finalPosition = position;
+
 		switch (position) {
 			case 'top':
 				setForTop();
 				if (top < 0) {
 					setForBottom();
+					finalPosition = 'bottom';
 				}
 				break;
 			case 'bottom':
 				setForBottom();
 				if (top + overlayCoordinates.height + margin > window.innerHeight) {
 					setForTop();
+					finalPosition = 'top';
 				}
 				break;
 			case 'left':
 				setForLeft();
 				if (left < 0) {
 					setForRight();
+					finalPosition = 'right';
 				}
 				break;
 			case 'right':
 				setForRight();
 				if (left + overlayCoordinates.width + margin > window.innerWidth) {
 					setForLeft();
+					finalPosition = 'left';
 				}
 				break;
 		}
 
 		this.setState({
-			style: { top, left }
+			style: { top, left },
+			position: finalPosition
 		});
 	};
 
@@ -100,14 +108,19 @@ export default class Overlay extends Component {
 	
 	render() {
 
-		let { children, className, position, ...other } = this.props;
+		let { children, className, ...other } = this.props;
+		let { position, style } = this.state;
 
 		className = classNames(this.props.className, {
 			'overlay': true,
 			['overlay-' + position]: true
 		});
 
-		let newOther = Object.assign({}, other, { margin: undefined, trigger: undefined });
+		delete other.margin;
+		delete other.position;
+		delete other.trigger;
+
+		let newOther = { ...other, style };
 
 		return (
 			<div {...newOther} className={className} ref="overlay">

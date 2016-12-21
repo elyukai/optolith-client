@@ -1,0 +1,7 @@
+.tooltip-wrapper {
+	z-index: 1;
+
+	> .overlay {
+		z-index: 2000;
+	}
+}

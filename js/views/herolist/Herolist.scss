@@ -42,7 +42,7 @@
 							border-radius: 50%;
 						}
 
-						> div.overlay {
+						> div.el-value {
 							position: absolute;
 							visibility: hidden;
 							background: rgba(0, 0, 0, .75);
@@ -62,7 +62,7 @@
 						h2 .player {
 							padding-left: 20px;
 							font-size: 16px;
-							color: $font-color3;
+							color: $color4;
 						}
 
 						.rcp {
@@ -92,7 +92,7 @@
 					&:hover {
 						@extend %yellow-border;
 
-						> svg, > .el > div.overlay {
+						> svg, > .el > div.el-value {
 							visibility: visible;
 						}
 					}

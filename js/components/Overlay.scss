@@ -1,0 +1,51 @@
+.overlay {
+	position: fixed;
+	border: 2px solid $color8;
+	background: $background2;
+	padding: 21px 14px 18px;
+
+	h4 {
+		font: bold 14px/14px Alegreya SC;
+		text-transform: uppercase;
+		color: $color1;
+		display: flex;
+		justify-content: space-between;
+		letter-spacing: 0.07em;
+
+		span:last-child {
+			color: $color2;
+		}
+
+		&:last-child {
+			margin-bottom: 3px;
+		}
+	}
+
+	p {
+		font: 500 12px/18px Alegreya Sans;
+		letter-spacing: 0.05em;
+
+		&:not(:nth-child(2)) {
+			margin-top: 0;
+		}
+	}
+
+	p.calc-text {
+		font-style: italic;
+	}
+
+	&.overlay-top {
+		&:after {
+			content: "";
+			position: absolute;
+			@include size(12px);
+			border-width: 2px;
+			border-style: solid;
+			border-color: transparent $color8 $color8 transparent;
+			background: $background2;
+			transform: rotate(45deg);
+			@include calc(left, "50% - 8px");
+			bottom: -8px;
+		}
+	}
+}

@@ -167,7 +167,7 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 
 			case ActionTypes.ADD_MAX_ENERGY_POINT: {
 				const obj = secondaryAttributes.get(payload.id);
-				_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd.value);
+				_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
 				_updateCost(final(4, AttributeStore.getAdd(payload.id) + 1));
 				break;
 			}

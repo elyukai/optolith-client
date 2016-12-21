@@ -10,14 +10,12 @@ export default class AttributesController extends Component {
 		attributes: AttributeStore.getAll(),
 		baseValues: AttributeStore.getBaseValues(),
 		el: ELStore.getStart(),
-		phase: PhaseStore.get(),
-		sum: AttributeStore.getSum()
+		phase: PhaseStore.get()
 	};
 	
 	_updateAttributeStore = () => this.setState({
 		attributes: AttributeStore.getAll(),
-		baseValues: AttributeStore.getBaseValues(),
-		sum: AttributeStore.getSum()
+		baseValues: AttributeStore.getBaseValues()
 	});
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()
@@ -34,8 +32,11 @@ export default class AttributesController extends Component {
 	}
 
 	render() {
+
+		const sum = this.state.attributes.reduce((a,b) => a + b.value, 0);
+
 		return (
-			<Attributes {...this.state} />
+			<Attributes {...this.state} sum={sum} />
 		);
 	}
 }

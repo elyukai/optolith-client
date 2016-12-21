@@ -16,10 +16,14 @@ export default class AttributeListItem extends Component {
 
 	render() {
 
-		const { attribute: { id, short, value, isIncreasable, isDecreasable, mod }, phase } = this.props;
+		const { attribute: { id, short, name, value, isIncreasable, isDecreasable, mod }, phase } = this.props;
+
+		const valueHeader = phase === 2 ? `${value} / ${14 + mod}` : value;
 
 		return (
-			<AttributeBorder className={id} label={short} value={value}>
+			<AttributeBorder className={id} label={short} value={value} tooltip={<div className="calc-attr-overlay">
+					<h4><span>{name}</span><span>{valueHeader}</span></h4>
+				</div>} tooltipMargin={11}>
 				{ phase === 2 ? <NumberBox max={14 + mod} /> : null }
 				<IconButton className="add" icon="&#xE145;" onClick={this.addPoint} disabled={!isIncreasable} />
 				{ phase === 2 ? (

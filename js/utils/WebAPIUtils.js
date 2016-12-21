@@ -3,24 +3,23 @@ import ProfileStore from '../stores/ProfileStore';
 import { get, post } from './request';
 import ServerActions from '../actions/ServerActions';
 
-var WebAPIUtils = {
+export default {
 	connectionError: function(e) {
 		ServerActions.connectionError(e);		
 	},
 	
 	getAllData: async function() {
 		try {
-			let result = await get('DSA5.json', 'json');
+			let result = await get('data/DSA5.json', 'json');
 			ServerActions.receiveLists(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}
 	},
-	register: async function(email, username, password) {
+	register: async function(email, username, displayname, password) {
 		try {
 			ServerActions.startLoading();
-			let url = 'php/register.php?e=' + email + '&u=' + username + '&p=' + password;
-			let result = await get(url);
+			let result = await get('data/register.php?email=' + email + '&name=' + username + '&display=' + displayname + '&password=' + password);
 			ServerActions.registrationSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -28,7 +27,7 @@ var WebAPIUtils = {
 	},
 	checkEmail: async function(email) {
 		try {
-			let result = await get('php/checkemail.php?e=' + email);
+			let result = await get('data/checkemail.php?e=' + email);
 			return result;
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -36,7 +35,7 @@ var WebAPIUtils = {
 	},
 	checkUsername: async function(username) {
 		try {
-			let result = await get('php/checkuser.php?e=' + username);
+			let result = await get('data/checkuser.php?e=' + username);
 			return result;
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -54,8 +53,7 @@ var WebAPIUtils = {
 	sendUsername: async function(email) {
 		try {
 			ServerActions.startLoading();
-			let url = 'php/forgetusername.php?e=' + email;
-			let result = await get(url);
+			let result = await get('php/forgetusername.php?e=' + email);
 			ServerActions.forgotUsernameSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -249,5 +247,3 @@ var WebAPIUtils = {
 		}
 	}
 };
-
-export default WebAPIUtils;

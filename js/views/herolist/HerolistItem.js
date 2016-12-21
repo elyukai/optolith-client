@@ -93,7 +93,7 @@ export default class HerolistItem extends Component {
 			<li className="hero-list-item">
 				<ProgressArc completed={elProgress} diameter={63} strokeWidth={4} />
 				<div className={classNames( 'el avatar-wrapper', !avatar && 'no-avatar' )}>
-					<div className="overlay">
+					<div className="el-value">
 						<h2>{elRoman[currentEL]}</h2>
 					</div>
 					<Avatar src={avatar} />
