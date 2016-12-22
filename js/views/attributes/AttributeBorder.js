@@ -17,8 +17,8 @@ export default class AttributeBorder extends Component {
 		const className = classNames( 'attr', this.props.className );
 
 		const valueElement = this.props.tooltip ? (
-			<TooltipToggle className="value" content={this.props.tooltip} margin={this.props.tooltipMargin}>
-				<div className="value-inner"><div>{this.props.value}</div></div>
+			<TooltipToggle content={this.props.tooltip} margin={this.props.tooltipMargin}>
+				<div className="value"><div className="value-inner"><div>{this.props.value}</div></div></div>
 			</TooltipToggle>
 		) : (
 			<div className="value"><div className="value-inner"><div>{this.props.value}</div></div></div>

@@ -117,6 +117,7 @@ export default class Overlay extends Component {
 		});
 
 		delete other.margin;
+		delete other.node;
 		delete other.position;
 		delete other.trigger;
 

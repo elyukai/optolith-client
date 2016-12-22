@@ -2,7 +2,11 @@
 	position: fixed;
 	border: 2px solid $color8;
 	background: $background2;
-	padding: 21px 14px 18px;
+	color: $color2;
+
+	> div {
+		padding: 21px 14px 18px;
+	}
 
 	h4 {
 		font: bold 14px/14px Alegreya SC;
@@ -30,10 +34,6 @@
 		}
 	}
 
-	p.calc-text {
-		font-style: italic;
-	}
-
 	&.overlay-top {
 		&:after {
 			content: "";
@@ -46,6 +46,14 @@
 			transform: rotate(45deg);
 			@include calc(left, "50% - 8px");
 			bottom: -8px;
+		}
+	}
+
+	> .calc-attr-overlay {
+		width: 280px;
+
+		p.calc-text {
+			font-style: italic;
 		}
 	}
 }

@@ -26722,7 +26722,7 @@
 	exports.default = function (element) {
 		let node = createDialogNode();
 		_reactDom2.default.render(_react2.default.cloneElement(element, { node }), node);
-		return true;
+		return node;
 	};
 
 	var _react = __webpack_require__(6);
@@ -44342,14 +44342,18 @@
 
 			const valueElement = this.props.tooltip ? _react2.default.createElement(
 				_TooltipToggle2.default,
-				{ className: 'value', content: this.props.tooltip, margin: this.props.tooltipMargin },
+				{ content: this.props.tooltip, margin: this.props.tooltipMargin },
 				_react2.default.createElement(
 					'div',
-					{ className: 'value-inner' },
+					{ className: 'value' },
 					_react2.default.createElement(
 						'div',
-						null,
-						this.props.value
+						{ className: 'value-inner' },
+						_react2.default.createElement(
+							'div',
+							null,
+							this.props.value
+						)
 					)
 				)
 			) : _react2.default.createElement(
@@ -44398,17 +44402,13 @@
 		value: true
 	});
 
-	var _extends2 = __webpack_require__(300);
-
-	var _extends3 = _interopRequireDefault(_extends2);
-
-	var _objectWithoutProperties2 = __webpack_require__(180);
-
-	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
-
 	var _classnames = __webpack_require__(303);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _createOverlay = __webpack_require__(297);
+
+	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
 	var _Overlay = __webpack_require__(380);
 
@@ -44426,7 +44426,17 @@
 
 			return _temp = super(...arguments), this.state = {
 				isDisplayed: false
-			}, this.open = () => this.setState({ isDisplayed: true }), this.close = () => this.setState({ isDisplayed: false }), _temp;
+			}, this.open = () => {
+				var _props = this.props;
+				const content = _props.content,
+				      margin = _props.margin;
+
+				this.node = (0, _createOverlay2.default)(_react2.default.createElement(
+					_Overlay2.default,
+					{ className: 'tooltip', position: 'top', trigger: this.triggerRef, margin: margin },
+					content
+				));
+			}, this.close = () => (0, _createOverlay.close)(this.node), _temp;
 		}
 
 		componentDidMount() {
@@ -44434,26 +44444,16 @@
 		}
 
 		render() {
-			var _props = this.props;
-			const children = _props.children,
-			      content = _props.content,
-			      margin = _props.margin,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['children', 'content', 'margin']);
-			const isDisplayed = this.state.isDisplayed;
+			const children = this.props.children;
 
 
-			other.className = (0, _classnames2.default)('tooltip-wrapper', other.className);
+			const only = _react2.default.cloneElement(_react2.default.Children.only(children), {
+				onMouseEnter: this.open,
+				onMouseLeave: this.close,
+				ref: 'trigger'
+			});
 
-			return _react2.default.createElement(
-				'div',
-				(0, _extends3.default)({}, other, { ref: 'trigger', onMouseEnter: this.open, onMouseLeave: this.close }),
-				isDisplayed ? _react2.default.createElement(
-					_Overlay2.default,
-					{ className: 'tooltip', position: 'top', trigger: this.triggerRef, margin: margin },
-					content
-				) : null,
-				children
-			);
+			return only;
 		}
 	}
 	exports.default = Tooltip;
@@ -44604,6 +44604,7 @@
 			});
 
 			delete other.margin;
+			delete other.node;
 			delete other.position;
 			delete other.trigger;
 
@@ -47907,9 +47908,52 @@
 					_Scroll2.default,
 					{ className: 'list' },
 					_react2.default.createElement(
-						'ul',
+						'table',
 						null,
-						list
+						_react2.default.createElement(
+							'thead',
+							null,
+							_react2.default.createElement(
+								'tr',
+								null,
+								_react2.default.createElement(
+									'td',
+									{ className: 'type' },
+									'Gruppe'
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'number' },
+									'#'
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'name' },
+									'Gegenstand'
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'price' },
+									'Wert'
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'weight' },
+									'Gewicht'
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'where' },
+									'Wo getragen'
+								),
+								_react2.default.createElement('td', { className: 'inc' })
+							)
+						),
+						_react2.default.createElement(
+							'tbody',
+							null,
+							list
+						)
 					)
 				)
 			);
@@ -48552,7 +48596,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var _items = {};
+	var _itemsById = {};
+	var _items = [];
 	var _filterText = '';
 	var _sortOrder = 'name';
 
@@ -48567,15 +48612,11 @@
 	class _InventoryStore extends _Store2.default {
 
 		get(id) {
-			return _items[id];
+			return _itemsById[id];
 		}
 
 		getAll() {
-			let arr = [];
-			for (const id in _items) {
-				arr.push(_items[id]);
-			}
-			return arr;
+			return _items.map(e => _itemsById[e]);
 		}
 
 		getFilterText() {

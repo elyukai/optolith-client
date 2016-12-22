@@ -2,7 +2,8 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import ActionTypes from '../constants/ActionTypes';
 
-var _items = {};
+var _itemsById = {};
+var _items = [];
 var _filterText = '';
 var _sortOrder = 'name';
 
@@ -17,15 +18,11 @@ function _updateSortOrder(option) {
 class _InventoryStore extends Store {
 
 	get(id) {
-		return _items[id];
+		return _itemsById[id];
 	}
 
 	getAll() {
-		let arr = [];
-		for (const id in _items) {
-			arr.push(_items[id]);
-		}
-		return arr;
+		return _items.map(e => _itemsById[e]);
 	}
 
 	getFilterText() {

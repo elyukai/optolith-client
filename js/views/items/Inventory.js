@@ -54,11 +54,24 @@ export default class Inventory extends Component {
 						<BorderButton label="Erstellen" onClick={this.showItemCreation} />
 				</div>
 				<Scroll className="list">
-					<ul>
-						{
-							list
-						}
-					</ul>
+					<table>
+						<thead>
+							<tr>
+								<td className="type">Gruppe</td>
+								<td className="number">#</td>
+								<td className="name">Gegenstand</td>
+								<td className="price">Wert</td>
+								<td className="weight">Gewicht</td>
+								<td className="where">Wo getragen</td>
+								<td className="inc"></td>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								list
+							}
+						</tbody>
+					</table>
 				</Scroll>
 			</div>
 		);

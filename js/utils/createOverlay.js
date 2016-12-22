@@ -16,5 +16,5 @@ export function createDialogNode() {
 export default function(element) {
 	let node = createDialogNode();
 	ReactDOM.render( React.cloneElement(element, { node }), node );
-	return true;
+	return node;
 }

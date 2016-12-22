@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import createOverlay, { close } from '../utils/createOverlay';
 import Overlay from './Overlay';
 import React, { Component, PropTypes } from 'react';
 
@@ -10,32 +11,34 @@ export default class Tooltip extends Component {
 	};
 
 	state = {
-		isDisplayed: false,
+		isDisplayed: false
 	};
 
 	triggerRef;
+	node;
 
 	componentDidMount() {
 		this.triggerRef = this.refs.trigger;
 	}
 
-	open = () => this.setState({ isDisplayed: true });
-	close = () => this.setState({ isDisplayed: false });
+	open = () => {
+		const { content, margin } = this.props;
+		this.node = createOverlay(<Overlay className="tooltip" position="top" trigger={this.triggerRef} margin={margin}>
+			{content}
+		</Overlay>);
+	};
+	close = () => close(this.node);
 
 	render() {
 
-		const { children, content, margin, ...other } = this.props;
-		const { isDisplayed } = this.state;
+		const { children } = this.props;
 
-		other.className = classNames('tooltip-wrapper', other.className);
+		const only = React.cloneElement(React.Children.only(children), {
+			onMouseEnter: this.open,
+			onMouseLeave: this.close,
+			ref: 'trigger'
+		});
 
-		return (
-			<div {...other} ref="trigger" onMouseEnter={this.open} onMouseLeave={this.close}>
-				{ isDisplayed ? <Overlay className="tooltip" position="top" trigger={this.triggerRef} margin={margin}>
-					{content}
-				</Overlay> : null }
-				{children}
-			</div>
-		);
+		return only;
 	}
 }
