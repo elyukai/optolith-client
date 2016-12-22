@@ -2,6 +2,8 @@ import Checkbox from '../../components/Checkbox';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
+import Hr from '../../components/Hr';
+import IconButton from '../../components/IconButton';
 import Label from '../../components/Label';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
@@ -61,17 +63,26 @@ export default class ItemEditor extends Component {
 					{
 						label: 'Speichern',
 						onClick: null,
+						autoWidth: true,
 						disabled: true
 					}
 				]}>
 				<div className="main">
-					<TextField
-						className="name"
-						label="Name"
-						value={name}
-						onChange={this.onEvent.bind(null, 'name')}
-						/>
-					<div className="container">
+					<div className="row">
+						<TextField
+							className="number"
+							label="Menge"
+							value={amount}
+							onChange={this.onEvent.bind(null, 'amount')}
+							/>
+						<TextField
+							className="name"
+							label="Name"
+							value={name}
+							onChange={this.onEvent.bind(null, 'name')}
+							/>
+					</div>
+					<div className="row">
 						<TextField
 							className="price"
 							label="Preis in S"
@@ -85,219 +96,231 @@ export default class ItemEditor extends Component {
 							onChange={this.onEvent.bind(null, 'weight')}
 							/>
 						<TextField
-							className="amount"
-							label="Menge"
-							value={amount}
-							onChange={this.onEvent.bind(null, 'amount')}
-							/>
-						<TextField
 							className="where"
 							label="Wo getragen"
 							value={where}
 							onChange={this.onEvent.bind(null, 'where')}
 							/>
 					</div>
-					<Dropdown
-						className="gr"
-						label="Art"
-						value={gr}
-						options={[
-							['Allgemein',5],
-							['Nahkampfwaffe',1],
-							['Fernkampfwaffe',2],
-							['Rüstung',3],
-							['Munition',4]
-						]}
-						onChange={this.onValue.bind(null, 'gr')}
-						/>
-					<Dropdown
-						className="tpl"
-						label="Vorlage"
-						hint="Keine"
-						value={tpl}
-						options={[]}
-						onChange={this.onValue.bind(null, 'tpl')}
-						/>
+					<div className="row">
+						<Dropdown
+							className="gr"
+							label="Art"
+							value={gr}
+							options={[
+								['Allgemein',5],
+								['Nahkampfwaffe',1],
+								['Fernkampfwaffe',2],
+								['Rüstung',3],
+								['Munition',4]
+							]}
+							onChange={this.onValue.bind(null, 'gr')}
+							/>
+					</div>
+					<Hr />
+					<div className="row">
+						<Dropdown
+							className="tpl"
+							label="Vorlage"
+							hint="Keine"
+							value={tpl}
+							options={[]}
+							onChange={this.onValue.bind(null, 'tpl')}
+							/>
+						<IconButton
+							icon="&#xE876;"
+							disabled
+							/>
+						<IconButton
+							icon="&#xE876;"
+							disabled
+							/>
+					</div>
 				</div>
-				{
-					gr === 1 ? (
-						<div className="melee">
+				{ gr === 1 ? ( <div className="melee">
+					<Hr />
+					<div className="row">
+						<Dropdown
+							className="ct"
+							label="Kampftechnik"
+							hint="Keine"
+							value={ct}
+							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id])}
+							onChange={this.onValue.bind(null, 'ct')}
+							/>
+					</div>
+					<div className="row">
+						<TextField
+							className="db"
+							label="Schadensb."
+							value={dpb}
+							onChange={this.onEvent.bind(null, 'dpb')}
+							/>
+						<div className="container">
+							<Label text="Schaden" />
+							<TextField
+								className="ddn"
+								value={dpdn}
+								onChange={this.onEvent.bind(null, 'dpdn')}
+								/>
 							<Dropdown
-								className="ct"
-								label="Kampftechnik"
-								hint="Keine"
-								value={ct}
-								options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id])}
-								onChange={this.onValue.bind(null, 'ct')}
+								className="dds"
+								hint="W"
+								value={dpds}
+								options={[['W3',3],['W6',6],['W20',20]]}
+								onChange={this.onValue.bind(null, 'dpds')}
 								/>
 							<TextField
-								className="dpb"
-								label="Schadensb."
-								value={dpb}
-								onChange={this.onEvent.bind(null, 'dpb')}
+								className="df"
+								value={dpf}
+								onChange={this.onEvent.bind(null, 'dpf')}
 								/>
-							<div className="container">
-								<Label text="Schaden" />
-								<TextField
-									className="dpdn"
-									value={dpdn}
-									onChange={this.onEvent.bind(null, 'dpdn')}
-									/>
-								<Dropdown
-									className="dpds"
-									hint="W"
-									value={dpds}
-									options={[['W3',3],['W6',6],['W20',20]]}
-									onChange={this.onValue.bind(null, 'dpds')}
-									/>
-								<TextField
-									className="dpf"
-									value={dpf}
-									onChange={this.onEvent.bind(null, 'dpf')}
-									/>
-							</div>
-							<div className="container">
-								<Label text="AT/PA-Mod" />
-								<TextField
-									className="at"
-									value={at}
-									onChange={this.onEvent.bind(null, 'at')}
-									/>
-								<TextField
-									className="pa"
-									value={pa}
-									onChange={this.onEvent.bind(null, 'pa')}
-									/>
-							</div>
-							<Dropdown
-								className="re"
-								label="Reichweite"
-								hint="Auswählen"
-								value={re}
-								options={[['Kurz',1],['Mittel',2],['Lang',3]]}
-								onChange={this.onValue.bind(null, 're')}
-								/>
-							{
-								ct === 'CT_10' ? (
-									<TextField
-										className="stp"
-										label="Strukturp."
-										value={stp}
-										onChange={this.onEvent.bind(null, 'length')}
-										/>
-								) : (
-									<TextField
-										className="length"
-										label="Länge in Hf."
-										value={length}
-										onChange={this.onEvent.bind(null, 'length')}
-										/>
-								)
-							}
 						</div>
-					) : null
-				}
-				{
-					gr === 2 ? (
-						<div className="ranged">
-							<Dropdown
-								className="ct"
-								label="Kampftechnik"
-								hint="Keine"
-								value={ct}
-								options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id])}
-								onChange={this.onValue.bind(null, 'ct')}
+					</div>
+					<div className="row">
+						<Dropdown
+							className="re"
+							label="Reichweite"
+							hint="Auswählen"
+							value={re}
+							options={[['Kurz',1],['Mittel',2],['Lang',3]]}
+							onChange={this.onValue.bind(null, 're')}
+							/>
+						<div className="container">
+							<Label text="AT/PA-Mod" />
+							<TextField
+								className="at"
+								value={at}
+								onChange={this.onEvent.bind(null, 'at')}
 								/>
 							<TextField
-								className="rt"
-								label="Ladezeiten"
-								value={rt}
-								onChange={this.onEvent.bind(null, 'rt')}
+								className="pa"
+								value={pa}
+								onChange={this.onEvent.bind(null, 'pa')}
+								disabled={ct === 'CT_6'}
 								/>
-							<div className="container">
-								<Label text="Schaden" />
-								<TextField
-									className="dpdn"
-									value={dpdn}
-									onChange={this.onEvent.bind(null, 'dpdn')}
-									/>
-								<Dropdown
-									className="dpds"
-									value={dpds}
-									options={[['W3',3],['W6',6],['W20',20]]}
-									onChange={this.onValue.bind(null, 'dpds')}
-									/>
-								<TextField
-									className="dpf"
-									value={dpf}
-									onChange={this.onEvent.bind(null, 'dpf')}
-									/>
-							</div>
-							<div className="container">
-								<TextField
-									className="rb1"
-									label="Nah"
-									value={rb1}
-									onChange={this.onValue.bind(null, 'rb1')}
-									/>
-								<TextField
-									className="rb2"
-									label="Mittel"
-									value={rb2}
-									onChange={this.onValue.bind(null, 'rb2')}
-									/>
-								<TextField
-									className="rb3"
-									label="Weit"
-									value={rb3}
-									onChange={this.onValue.bind(null, 'rb3')}
-									/>
-							</div>
-							<Dropdown
-								className="am"
-								label="Munition"
-								hint="Keine"
-								value={am}
-								options={[
-									['Keine',null]
-								]}
-								onChange={this.onValue.bind(null, 'am')}
+						</div>
+						{ ct === 'CT_10' ? (
+							<TextField
+								className="stp"
+								label="Strukturp."
+								value={stp}
+								onChange={this.onEvent.bind(null, 'length')}
 								/>
+						) : (
 							<TextField
 								className="length"
 								label="Länge in Hf."
 								value={length}
 								onChange={this.onEvent.bind(null, 'length')}
 								/>
-						</div>
-					) : null
-				}
-				{
-					gr === 3 ? (
-						<div className="armor">
-							<div className="container">
-								<TextField
-									className="pro"
-									label="RS"
-									value={pro}
-									onChange={this.onEvent.bind(null, 'pro')}
-									/>
-								<TextField
-									className="enc"
-									label="BE"
-									value={enc}
-									onChange={this.onEvent.bind(null, 'enc')}
-									/>
-							</div>
-							<Checkbox
-								className="addp"
-								label="Zusätzliche Abzüge"
-								checked={addp}
-								onClick={this.onSwitch.bind(null, 'addp')}
+						) }
+					</div>
+				</div> ) : null }
+				{ gr === 2 ? ( <div className="ranged">
+					<Hr />
+					<div className="row">
+						<Dropdown
+							className="ct"
+							label="Kampftechnik"
+							hint="Keine"
+							value={ct}
+							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id])}
+							onChange={this.onValue.bind(null, 'ct')}
+							/>
+					</div>
+					<div className="row">
+						<TextField
+							className="rt"
+							label="Ladezeiten"
+							value={rt}
+							onChange={this.onEvent.bind(null, 'rt')}
+							/>
+						<div className="container">
+							<Label text="Schaden" />
+							<TextField
+								className="ddn"
+								value={dpdn}
+								onChange={this.onEvent.bind(null, 'dpdn')}
+								/>
+							<Dropdown
+								className="dds"
+								hint="W"
+								value={dpds}
+								options={[['W3',3],['W6',6],['W20',20]]}
+								onChange={this.onValue.bind(null, 'dpds')}
+								/>
+							<TextField
+								className="df"
+								value={dpf}
+								onChange={this.onEvent.bind(null, 'dpf')}
 								/>
 						</div>
-					) : null
-				}
+					</div>
+					<div className="row">
+						<div className="container">
+							<TextField
+								className="rb1"
+								label="Nah"
+								value={rb1}
+								onChange={this.onValue.bind(null, 'rb1')}
+								/>
+							<TextField
+								className="rb2"
+								label="Mittel"
+								value={rb2}
+								onChange={this.onValue.bind(null, 'rb2')}
+								/>
+							<TextField
+								className="rb3"
+								label="Weit"
+								value={rb3}
+								onChange={this.onValue.bind(null, 'rb3')}
+								/>
+						</div>
+						<Dropdown
+							className="am"
+							label="Munition"
+							hint="Keine"
+							value={am}
+							options={[
+								['Keine',null]
+							]}
+							onChange={this.onValue.bind(null, 'am')}
+							/>
+						<TextField
+							className="length"
+							label="Länge in Hf."
+							value={length}
+							onChange={this.onEvent.bind(null, 'length')}
+							/>
+					</div>
+				</div> ) : null }
+				{ gr === 3 ? ( <div className="armor">
+					<Hr />
+					<div className="row">
+						<div className="container">
+							<TextField
+								className="pro"
+								label="RS"
+								value={pro}
+								onChange={this.onEvent.bind(null, 'pro')}
+								/>
+							<TextField
+								className="enc"
+								label="BE"
+								value={enc}
+								onChange={this.onEvent.bind(null, 'enc')}
+								/>
+						</div>
+						<Checkbox
+							className="addp"
+							label="Zusätzliche Abzüge"
+							checked={addp}
+							onClick={this.onSwitch.bind(null, 'addp')}
+							/>
+					</div>
+				</div> ) : null }
 			</Dialog>
 		);
 	}

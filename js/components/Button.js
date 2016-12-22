@@ -4,6 +4,7 @@ import classNames from 'classnames';
 export default class Button extends Component {
 
 	static propTypes = {
+		autoWidth: PropTypes.bool,
 		className: PropTypes.any,
 		disabled: PropTypes.bool,
 		fullWidth: PropTypes.bool,
@@ -14,13 +15,14 @@ export default class Button extends Component {
 	
 	render() {
 		
-		const { className, primary, fullWidth, disabled, round, children, onClick, ...other } = this.props;
+		const { autoWidth, className, primary, fullWidth, disabled, round, children, onClick, ...other } = this.props;
 
 		const allClassNames = classNames({
 			'btn': true,
 			'btn-round': round,
 			'btn-text': !round,
 			'btn-primary': primary,
+			'autoWidth': autoWidth,
 			'fullWidth': fullWidth,
 			'disabled': disabled,
 			[className]: className

@@ -35,7 +35,11 @@ export default class TextField extends Component {
 
 		let { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type, value } = this.props;
 
-		className = classNames('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
+		className = classNames(className, {
+			'textfield': true,
+			'fullWidth': fullWidth,
+			'disabled': disabled
+		});
 
 		const hintElement = hint ? (
 			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>

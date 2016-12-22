@@ -66,7 +66,7 @@
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
-	__webpack_require__(500);
+	__webpack_require__(501);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21782,11 +21782,11 @@
 
 	var _Route2 = _interopRequireDefault(_Route);
 
-	var _TabStore = __webpack_require__(491);
+	var _TabStore = __webpack_require__(492);
 
 	var _TabStore2 = _interopRequireDefault(_TabStore);
 
-	var _TitleBar = __webpack_require__(492);
+	var _TitleBar = __webpack_require__(493);
 
 	var _TitleBar2 = _interopRequireDefault(_TitleBar);
 
@@ -27016,14 +27016,15 @@
 
 		render() {
 			var _props = this.props;
-			const className = _props.className,
+			const autoWidth = _props.autoWidth,
+			      className = _props.className,
 			      primary = _props.primary,
 			      fullWidth = _props.fullWidth,
 			      disabled = _props.disabled,
 			      round = _props.round,
 			      children = _props.children,
 			      onClick = _props.onClick,
-			      other = (0, _objectWithoutProperties3.default)(_props, ['className', 'primary', 'fullWidth', 'disabled', 'round', 'children', 'onClick']);
+			      other = (0, _objectWithoutProperties3.default)(_props, ['autoWidth', 'className', 'primary', 'fullWidth', 'disabled', 'round', 'children', 'onClick']);
 
 
 			const allClassNames = (0, _classnames2.default)({
@@ -27031,6 +27032,7 @@
 				'btn-round': round,
 				'btn-text': !round,
 				'btn-primary': primary,
+				'autoWidth': autoWidth,
 				'fullWidth': fullWidth,
 				'disabled': disabled,
 				[className]: className
@@ -27045,6 +27047,7 @@
 	}
 	exports.default = Button;
 	Button.propTypes = {
+		autoWidth: _react.PropTypes.bool,
 		className: _react.PropTypes.any,
 		disabled: _react.PropTypes.bool,
 		fullWidth: _react.PropTypes.bool,
@@ -28871,10 +28874,50 @@
 		constructor(args) {
 			super(args);
 			let price = args.price,
-			    weight = args.weight;
+			    weight = args.weight,
+			    gr = args.gr,
+			    ct = args.ct,
+			    ddn = args.ddn,
+			    dds = args.dds,
+			    df = args.df,
+			    db = args.db,
+			    at = args.at,
+			    pa = args.pa,
+			    re = args.re,
+			    length = args.length,
+			    stp = args.stp,
+			    range = args.range,
+			    rt = args.rt,
+			    am = args.am,
+			    pro = args.pro,
+			    enc = args.enc,
+			    addp = args.addp;
+
 
 			this.price = price;
 			this.weight = weight;
+			this.gr = gr;
+
+			this.combattechnique = ct;
+			this.damageDiceNumber = ddn;
+			this.damageDiceSides = dds;
+			this.damageFlat = df;
+			this.damageBonus = db;
+			this.at = at;
+			this.pa = pa;
+			this.reach = re;
+			this.length = length;
+			this.stp = stp;
+			this.range = range;
+			this.reloadtime = rt;
+			this.ammunition = am;
+			this.pro = pro;
+			this.enc = enc;
+			this.addpenalties = addp;
+
+			this.number = 1;
+			this.where = '';
+			this.template = 'ITEMTPL_0';
 		}
 	}
 	exports.default = Item;
@@ -29843,11 +29886,11 @@
 
 	var _Items2 = _interopRequireDefault(_Items);
 
-	var _Master = __webpack_require__(418);
+	var _Master = __webpack_require__(419);
 
 	var _Master2 = _interopRequireDefault(_Master);
 
-	var _Profile = __webpack_require__(432);
+	var _Profile = __webpack_require__(433);
 
 	var _Profile2 = _interopRequireDefault(_Profile);
 
@@ -29855,11 +29898,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RCP = __webpack_require__(459);
+	var _RCP = __webpack_require__(460);
 
 	var _RCP2 = _interopRequireDefault(_RCP);
 
-	var _Skills = __webpack_require__(476);
+	var _Skills = __webpack_require__(477);
 
 	var _Skills2 = _interopRequireDefault(_Skills);
 
@@ -31940,7 +31983,11 @@
 			    value = _props.value;
 
 
-			className = (0, _classnames2.default)('textfield', fullWidth && 'fullWidth', disabled && 'disabled', className);
+			className = (0, _classnames2.default)(className, {
+				'textfield': true,
+				'fullWidth': fullWidth,
+				'disabled': disabled
+			});
 
 			const hintElement = hint ? _react2.default.createElement(
 				'div',
@@ -47789,7 +47836,7 @@
 
 	var _InventoryActions2 = _interopRequireDefault(_InventoryActions);
 
-	var _InventoryStore = __webpack_require__(417);
+	var _InventoryStore = __webpack_require__(418);
 
 	var _InventoryStore2 = _interopRequireDefault(_InventoryStore);
 
@@ -48065,6 +48112,14 @@
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
+	var _Hr = __webpack_require__(417);
+
+	var _Hr2 = _interopRequireDefault(_Hr);
+
+	var _IconButton = __webpack_require__(370);
+
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+
 	var _Label = __webpack_require__(355);
 
 	var _Label2 = _interopRequireDefault(_Label);
@@ -48154,20 +48209,31 @@
 					buttons: [{
 						label: 'Speichern',
 						onClick: null,
+						autoWidth: true,
 						disabled: true
 					}] },
 				_react2.default.createElement(
 					'div',
 					{ className: 'main' },
-					_react2.default.createElement(_TextField2.default, {
-						className: 'name',
-						label: 'Name',
-						value: name,
-						onChange: this.onEvent.bind(null, 'name')
-					}),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
+						{ className: 'row' },
+						_react2.default.createElement(_TextField2.default, {
+							className: 'number',
+							label: 'Menge',
+							value: amount,
+							onChange: this.onEvent.bind(null, 'amount')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'name',
+							label: 'Name',
+							value: name,
+							onChange: this.onEvent.bind(null, 'name')
+						})
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
 						_react2.default.createElement(_TextField2.default, {
 							className: 'price',
 							label: 'Preis in S',
@@ -48181,208 +48247,252 @@
 							onChange: this.onEvent.bind(null, 'weight')
 						}),
 						_react2.default.createElement(_TextField2.default, {
-							className: 'amount',
-							label: 'Menge',
-							value: amount,
-							onChange: this.onEvent.bind(null, 'amount')
-						}),
-						_react2.default.createElement(_TextField2.default, {
 							className: 'where',
 							label: 'Wo getragen',
 							value: where,
 							onChange: this.onEvent.bind(null, 'where')
 						})
 					),
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 'gr',
-						label: 'Art',
-						value: gr,
-						options: [['Allgemein', 5], ['Nahkampfwaffe', 1], ['Fernkampfwaffe', 2], ['Rüstung', 3], ['Munition', 4]],
-						onChange: this.onValue.bind(null, 'gr')
-					}),
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 'tpl',
-						label: 'Vorlage',
-						hint: 'Keine',
-						value: tpl,
-						options: [],
-						onChange: this.onValue.bind(null, 'tpl')
-					})
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 'gr',
+							label: 'Art',
+							value: gr,
+							options: [['Allgemein', 5], ['Nahkampfwaffe', 1], ['Fernkampfwaffe', 2], ['Rüstung', 3], ['Munition', 4]],
+							onChange: this.onValue.bind(null, 'gr')
+						})
+					),
+					_react2.default.createElement(_Hr2.default, null),
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 'tpl',
+							label: 'Vorlage',
+							hint: 'Keine',
+							value: tpl,
+							options: [],
+							onChange: this.onValue.bind(null, 'tpl')
+						}),
+						_react2.default.createElement(_IconButton2.default, {
+							icon: '\uE876',
+							disabled: true
+						}),
+						_react2.default.createElement(_IconButton2.default, {
+							icon: '\uE876',
+							disabled: true
+						})
+					)
 				),
 				gr === 1 ? _react2.default.createElement(
 					'div',
 					{ className: 'melee' },
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 'ct',
-						label: 'Kampftechnik',
-						hint: 'Keine',
-						value: ct,
-						options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id]),
-						onChange: this.onValue.bind(null, 'ct')
-					}),
-					_react2.default.createElement(_TextField2.default, {
-						className: 'dpb',
-						label: 'Schadensb.',
-						value: dpb,
-						onChange: this.onEvent.bind(null, 'dpb')
-					}),
+					_react2.default.createElement(_Hr2.default, null),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
-						_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'dpdn',
-							value: dpdn,
-							onChange: this.onEvent.bind(null, 'dpdn')
-						}),
+						{ className: 'row' },
 						_react2.default.createElement(_Dropdown2.default, {
-							className: 'dpds',
-							hint: 'W',
-							value: dpds,
-							options: [['W3', 3], ['W6', 6], ['W20', 20]],
-							onChange: this.onValue.bind(null, 'dpds')
-						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'dpf',
-							value: dpf,
-							onChange: this.onEvent.bind(null, 'dpf')
+							className: 'ct',
+							label: 'Kampftechnik',
+							hint: 'Keine',
+							value: ct,
+							options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id]),
+							onChange: this.onValue.bind(null, 'ct')
 						})
 					),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
-						_react2.default.createElement(_Label2.default, { text: 'AT/PA-Mod' }),
+						{ className: 'row' },
 						_react2.default.createElement(_TextField2.default, {
-							className: 'at',
-							value: at,
-							onChange: this.onEvent.bind(null, 'at')
+							className: 'db',
+							label: 'Schadensb.',
+							value: dpb,
+							onChange: this.onEvent.bind(null, 'dpb')
 						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'pa',
-							value: pa,
-							onChange: this.onEvent.bind(null, 'pa')
-						})
+						_react2.default.createElement(
+							'div',
+							{ className: 'container' },
+							_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'ddn',
+								value: dpdn,
+								onChange: this.onEvent.bind(null, 'dpdn')
+							}),
+							_react2.default.createElement(_Dropdown2.default, {
+								className: 'dds',
+								hint: 'W',
+								value: dpds,
+								options: [['W3', 3], ['W6', 6], ['W20', 20]],
+								onChange: this.onValue.bind(null, 'dpds')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'df',
+								value: dpf,
+								onChange: this.onEvent.bind(null, 'dpf')
+							})
+						)
 					),
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 're',
-						label: 'Reichweite',
-						hint: 'Ausw\xE4hlen',
-						value: re,
-						options: [['Kurz', 1], ['Mittel', 2], ['Lang', 3]],
-						onChange: this.onValue.bind(null, 're')
-					}),
-					ct === 'CT_10' ? _react2.default.createElement(_TextField2.default, {
-						className: 'stp',
-						label: 'Strukturp.',
-						value: stp,
-						onChange: this.onEvent.bind(null, 'length')
-					}) : _react2.default.createElement(_TextField2.default, {
-						className: 'length',
-						label: 'L\xE4nge in Hf.',
-						value: length,
-						onChange: this.onEvent.bind(null, 'length')
-					})
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 're',
+							label: 'Reichweite',
+							hint: 'Ausw\xE4hlen',
+							value: re,
+							options: [['Kurz', 1], ['Mittel', 2], ['Lang', 3]],
+							onChange: this.onValue.bind(null, 're')
+						}),
+						_react2.default.createElement(
+							'div',
+							{ className: 'container' },
+							_react2.default.createElement(_Label2.default, { text: 'AT/PA-Mod' }),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'at',
+								value: at,
+								onChange: this.onEvent.bind(null, 'at')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'pa',
+								value: pa,
+								onChange: this.onEvent.bind(null, 'pa'),
+								disabled: ct === 'CT_6'
+							})
+						),
+						ct === 'CT_10' ? _react2.default.createElement(_TextField2.default, {
+							className: 'stp',
+							label: 'Strukturp.',
+							value: stp,
+							onChange: this.onEvent.bind(null, 'length')
+						}) : _react2.default.createElement(_TextField2.default, {
+							className: 'length',
+							label: 'L\xE4nge in Hf.',
+							value: length,
+							onChange: this.onEvent.bind(null, 'length')
+						})
+					)
 				) : null,
 				gr === 2 ? _react2.default.createElement(
 					'div',
 					{ className: 'ranged' },
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 'ct',
-						label: 'Kampftechnik',
-						hint: 'Keine',
-						value: ct,
-						options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id]),
-						onChange: this.onValue.bind(null, 'ct')
-					}),
-					_react2.default.createElement(_TextField2.default, {
-						className: 'rt',
-						label: 'Ladezeiten',
-						value: rt,
-						onChange: this.onEvent.bind(null, 'rt')
-					}),
+					_react2.default.createElement(_Hr2.default, null),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
-						_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'dpdn',
-							value: dpdn,
-							onChange: this.onEvent.bind(null, 'dpdn')
-						}),
+						{ className: 'row' },
 						_react2.default.createElement(_Dropdown2.default, {
-							className: 'dpds',
-							value: dpds,
-							options: [['W3', 3], ['W6', 6], ['W20', 20]],
-							onChange: this.onValue.bind(null, 'dpds')
-						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'dpf',
-							value: dpf,
-							onChange: this.onEvent.bind(null, 'dpf')
+							className: 'ct',
+							label: 'Kampftechnik',
+							hint: 'Keine',
+							value: ct,
+							options: _CombatTechniquesStore2.default.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id]),
+							onChange: this.onValue.bind(null, 'ct')
 						})
 					),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
+						{ className: 'row' },
 						_react2.default.createElement(_TextField2.default, {
-							className: 'rb1',
-							label: 'Nah',
-							value: rb1,
-							onChange: this.onValue.bind(null, 'rb1')
+							className: 'rt',
+							label: 'Ladezeiten',
+							value: rt,
+							onChange: this.onEvent.bind(null, 'rt')
 						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'rb2',
-							label: 'Mittel',
-							value: rb2,
-							onChange: this.onValue.bind(null, 'rb2')
-						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'rb3',
-							label: 'Weit',
-							value: rb3,
-							onChange: this.onValue.bind(null, 'rb3')
-						})
+						_react2.default.createElement(
+							'div',
+							{ className: 'container' },
+							_react2.default.createElement(_Label2.default, { text: 'Schaden' }),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'ddn',
+								value: dpdn,
+								onChange: this.onEvent.bind(null, 'dpdn')
+							}),
+							_react2.default.createElement(_Dropdown2.default, {
+								className: 'dds',
+								hint: 'W',
+								value: dpds,
+								options: [['W3', 3], ['W6', 6], ['W20', 20]],
+								onChange: this.onValue.bind(null, 'dpds')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'df',
+								value: dpf,
+								onChange: this.onEvent.bind(null, 'dpf')
+							})
+						)
 					),
-					_react2.default.createElement(_Dropdown2.default, {
-						className: 'am',
-						label: 'Munition',
-						hint: 'Keine',
-						value: am,
-						options: [['Keine', null]],
-						onChange: this.onValue.bind(null, 'am')
-					}),
-					_react2.default.createElement(_TextField2.default, {
-						className: 'length',
-						label: 'L\xE4nge in Hf.',
-						value: length,
-						onChange: this.onEvent.bind(null, 'length')
-					})
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'container' },
+							_react2.default.createElement(_TextField2.default, {
+								className: 'rb1',
+								label: 'Nah',
+								value: rb1,
+								onChange: this.onValue.bind(null, 'rb1')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'rb2',
+								label: 'Mittel',
+								value: rb2,
+								onChange: this.onValue.bind(null, 'rb2')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'rb3',
+								label: 'Weit',
+								value: rb3,
+								onChange: this.onValue.bind(null, 'rb3')
+							})
+						),
+						_react2.default.createElement(_Dropdown2.default, {
+							className: 'am',
+							label: 'Munition',
+							hint: 'Keine',
+							value: am,
+							options: [['Keine', null]],
+							onChange: this.onValue.bind(null, 'am')
+						}),
+						_react2.default.createElement(_TextField2.default, {
+							className: 'length',
+							label: 'L\xE4nge in Hf.',
+							value: length,
+							onChange: this.onEvent.bind(null, 'length')
+						})
+					)
 				) : null,
 				gr === 3 ? _react2.default.createElement(
 					'div',
 					{ className: 'armor' },
+					_react2.default.createElement(_Hr2.default, null),
 					_react2.default.createElement(
 						'div',
-						{ className: 'container' },
-						_react2.default.createElement(_TextField2.default, {
-							className: 'pro',
-							label: 'RS',
-							value: pro,
-							onChange: this.onEvent.bind(null, 'pro')
-						}),
-						_react2.default.createElement(_TextField2.default, {
-							className: 'enc',
-							label: 'BE',
-							value: enc,
-							onChange: this.onEvent.bind(null, 'enc')
+						{ className: 'row' },
+						_react2.default.createElement(
+							'div',
+							{ className: 'container' },
+							_react2.default.createElement(_TextField2.default, {
+								className: 'pro',
+								label: 'RS',
+								value: pro,
+								onChange: this.onEvent.bind(null, 'pro')
+							}),
+							_react2.default.createElement(_TextField2.default, {
+								className: 'enc',
+								label: 'BE',
+								value: enc,
+								onChange: this.onEvent.bind(null, 'enc')
+							})
+						),
+						_react2.default.createElement(_Checkbox2.default, {
+							className: 'addp',
+							label: 'Zus\xE4tzliche Abz\xFCge',
+							checked: addp,
+							onClick: this.onSwitch.bind(null, 'addp')
 						})
-					),
-					_react2.default.createElement(_Checkbox2.default, {
-						className: 'addp',
-						label: 'Zus\xE4tzliche Abz\xFCge',
-						checked: addp,
-						onClick: this.onSwitch.bind(null, 'addp')
-					})
+					)
 				) : null
 			);
 		}
@@ -48396,6 +48506,30 @@
 
 /***/ },
 /* 417 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class Hr extends _react.Component {
+
+		render() {
+			return _react2.default.createElement('hr', this.props);
+		}
+	}
+	exports.default = Hr;
+
+/***/ },
+/* 418 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48480,7 +48614,7 @@
 	exports.default = InventoryStore;
 
 /***/ },
-/* 418 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48489,11 +48623,11 @@
 		value: true
 	});
 
-	var _Groups = __webpack_require__(419);
+	var _Groups = __webpack_require__(420);
 
 	var _Groups2 = _interopRequireDefault(_Groups);
 
-	var _InGame = __webpack_require__(422);
+	var _InGame = __webpack_require__(423);
 
 	var _InGame2 = _interopRequireDefault(_InGame);
 
@@ -48550,7 +48684,7 @@
 	exports.default = Master;
 
 /***/ },
-/* 419 */
+/* 420 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48563,11 +48697,11 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _GroupsActions = __webpack_require__(420);
+	var _GroupsActions = __webpack_require__(421);
 
 	var _GroupsActions2 = _interopRequireDefault(_GroupsActions);
 
-	var _GroupsStore = __webpack_require__(421);
+	var _GroupsStore = __webpack_require__(422);
 
 	var _GroupsStore2 = _interopRequireDefault(_GroupsStore);
 
@@ -48624,7 +48758,7 @@
 	exports.default = Groups;
 
 /***/ },
-/* 420 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48657,7 +48791,7 @@
 	};
 
 /***/ },
-/* 421 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48715,7 +48849,7 @@
 	exports.default = GroupsStore;
 
 /***/ },
-/* 422 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48732,35 +48866,35 @@
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(423);
+	var _InGameActions = __webpack_require__(424);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
-	var _InGameControls = __webpack_require__(424);
+	var _InGameControls = __webpack_require__(425);
 
 	var _InGameControls2 = _interopRequireDefault(_InGameControls);
 
-	var _InGameEdit = __webpack_require__(425);
+	var _InGameEdit = __webpack_require__(426);
 
 	var _InGameEdit2 = _interopRequireDefault(_InGameEdit);
 
-	var _InGameStore = __webpack_require__(426);
+	var _InGameStore = __webpack_require__(427);
 
 	var _InGameStore2 = _interopRequireDefault(_InGameStore);
 
-	var _InGameTableHealth = __webpack_require__(427);
+	var _InGameTableHealth = __webpack_require__(428);
 
 	var _InGameTableHealth2 = _interopRequireDefault(_InGameTableHealth);
 
-	var _InGameTableIni = __webpack_require__(429);
+	var _InGameTableIni = __webpack_require__(430);
 
 	var _InGameTableIni2 = _interopRequireDefault(_InGameTableIni);
 
-	var _InGameTableLeft = __webpack_require__(430);
+	var _InGameTableLeft = __webpack_require__(431);
 
 	var _InGameTableLeft2 = _interopRequireDefault(_InGameTableLeft);
 
-	var _InGameTableRight = __webpack_require__(431);
+	var _InGameTableRight = __webpack_require__(432);
 
 	var _InGameTableRight2 = _interopRequireDefault(_InGameTableRight);
 
@@ -48890,7 +49024,7 @@
 	exports.default = InGame;
 
 /***/ },
-/* 423 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49060,7 +49194,7 @@
 	};
 
 /***/ },
-/* 424 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49077,7 +49211,7 @@
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(423);
+	var _InGameActions = __webpack_require__(424);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -49169,7 +49303,7 @@
 	};
 
 /***/ },
-/* 425 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49182,7 +49316,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _InGameActions = __webpack_require__(423);
+	var _InGameActions = __webpack_require__(424);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -49334,7 +49468,7 @@
 	};
 
 /***/ },
-/* 426 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49839,7 +49973,7 @@
 	exports.default = InGameStore;
 
 /***/ },
-/* 427 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49848,7 +49982,7 @@
 		value: true
 	});
 
-	var _InGameTableHealthBar = __webpack_require__(428);
+	var _InGameTableHealthBar = __webpack_require__(429);
 
 	var _InGameTableHealthBar2 = _interopRequireDefault(_InGameTableHealthBar);
 
@@ -49918,7 +50052,7 @@
 	};
 
 /***/ },
-/* 428 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49963,7 +50097,7 @@
 	};
 
 /***/ },
-/* 429 */
+/* 430 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50038,7 +50172,7 @@
 	};
 
 /***/ },
-/* 430 */
+/* 431 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50137,7 +50271,7 @@
 	};
 
 /***/ },
-/* 431 */
+/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50146,7 +50280,7 @@
 		value: true
 	});
 
-	var _InGameActions = __webpack_require__(423);
+	var _InGameActions = __webpack_require__(424);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -50272,7 +50406,7 @@
 	};
 
 /***/ },
-/* 432 */
+/* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50281,7 +50415,7 @@
 		value: true
 	});
 
-	var _Overview = __webpack_require__(433);
+	var _Overview = __webpack_require__(434);
 
 	var _Overview2 = _interopRequireDefault(_Overview);
 
@@ -50293,7 +50427,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Sheets = __webpack_require__(442);
+	var _Sheets = __webpack_require__(443);
 
 	var _Sheets2 = _interopRequireDefault(_Sheets);
 
@@ -50368,7 +50502,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 433 */
+/* 434 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50385,7 +50519,7 @@
 
 	var _extends3 = _interopRequireDefault(_extends2);
 
-	var _AvatarWrapper = __webpack_require__(434);
+	var _AvatarWrapper = __webpack_require__(435);
 
 	var _AvatarWrapper2 = _interopRequireDefault(_AvatarWrapper);
 
@@ -50413,15 +50547,15 @@
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _OverviewConstSkills = __webpack_require__(435);
+	var _OverviewConstSkills = __webpack_require__(436);
 
 	var _OverviewConstSkills2 = _interopRequireDefault(_OverviewConstSkills);
 
-	var _OverviewNameChange = __webpack_require__(436);
+	var _OverviewNameChange = __webpack_require__(437);
 
 	var _OverviewNameChange2 = _interopRequireDefault(_OverviewNameChange);
 
-	var _OverviewPersonalData = __webpack_require__(437);
+	var _OverviewPersonalData = __webpack_require__(438);
 
 	var _OverviewPersonalData2 = _interopRequireDefault(_OverviewPersonalData);
 
@@ -50441,7 +50575,7 @@
 
 	var _PhaseStore2 = _interopRequireDefault(_PhaseStore);
 
-	var _ProfileActions = __webpack_require__(438);
+	var _ProfileActions = __webpack_require__(439);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -50461,7 +50595,7 @@
 
 	var _VerticalList2 = _interopRequireDefault(_VerticalList);
 
-	var _calcEL = __webpack_require__(441);
+	var _calcEL = __webpack_require__(442);
 
 	var _calcEL2 = _interopRequireDefault(_calcEL);
 
@@ -50677,7 +50811,7 @@
 	exports.default = Overview;
 
 /***/ },
-/* 434 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50734,7 +50868,7 @@
 	};
 
 /***/ },
-/* 435 */
+/* 436 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50796,7 +50930,7 @@
 	};
 
 /***/ },
-/* 436 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50854,7 +50988,7 @@
 	};
 
 /***/ },
-/* 437 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50875,7 +51009,7 @@
 
 	var _InputButtonGroup2 = _interopRequireDefault(_InputButtonGroup);
 
-	var _ProfileActions = __webpack_require__(438);
+	var _ProfileActions = __webpack_require__(439);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -51064,7 +51198,7 @@
 	};
 
 /***/ },
-/* 438 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51089,11 +51223,11 @@
 
 	var _createOverlay2 = _interopRequireDefault(_createOverlay);
 
-	var _ProfileAvatarChange = __webpack_require__(439);
+	var _ProfileAvatarChange = __webpack_require__(440);
 
 	var _ProfileAvatarChange2 = _interopRequireDefault(_ProfileAvatarChange);
 
-	var _OverviewAddAP = __webpack_require__(440);
+	var _OverviewAddAP = __webpack_require__(441);
 
 	var _OverviewAddAP2 = _interopRequireDefault(_OverviewAddAP);
 
@@ -51236,7 +51370,7 @@
 	};
 
 /***/ },
-/* 439 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51269,7 +51403,7 @@
 
 	var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-	var _ProfileActions = __webpack_require__(438);
+	var _ProfileActions = __webpack_require__(439);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -51417,7 +51551,7 @@
 	};
 
 /***/ },
-/* 440 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51434,7 +51568,7 @@
 
 	var _Dialog2 = _interopRequireDefault(_Dialog);
 
-	var _ProfileActions = __webpack_require__(438);
+	var _ProfileActions = __webpack_require__(439);
 
 	var _ProfileActions2 = _interopRequireDefault(_ProfileActions);
 
@@ -51485,7 +51619,7 @@
 	};
 
 /***/ },
-/* 441 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51523,7 +51657,7 @@
 	};
 
 /***/ },
-/* 442 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51532,19 +51666,19 @@
 		value: true
 	});
 
-	var _ChantSheet = __webpack_require__(443);
+	var _ChantSheet = __webpack_require__(444);
 
 	var _ChantSheet2 = _interopRequireDefault(_ChantSheet);
 
-	var _CombatSheet = __webpack_require__(446);
+	var _CombatSheet = __webpack_require__(447);
 
 	var _CombatSheet2 = _interopRequireDefault(_CombatSheet);
 
-	var _InventorySheet = __webpack_require__(447);
+	var _InventorySheet = __webpack_require__(448);
 
 	var _InventorySheet2 = _interopRequireDefault(_InventorySheet);
 
-	var _MainSheet = __webpack_require__(448);
+	var _MainSheet = __webpack_require__(449);
 
 	var _MainSheet2 = _interopRequireDefault(_MainSheet);
 
@@ -51556,11 +51690,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SpellsSheet = __webpack_require__(457);
+	var _SpellsSheet = __webpack_require__(458);
 
 	var _SpellsSheet2 = _interopRequireDefault(_SpellsSheet);
 
-	var _TalentsSheet = __webpack_require__(458);
+	var _TalentsSheet = __webpack_require__(459);
 
 	var _TalentsSheet2 = _interopRequireDefault(_TalentsSheet);
 
@@ -51595,7 +51729,7 @@
 	// </div>
 
 /***/ },
-/* 443 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51608,11 +51742,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -51638,7 +51772,7 @@
 	exports.default = ChantSheet;
 
 /***/ },
-/* 444 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51704,7 +51838,7 @@
 	};
 
 /***/ },
-/* 445 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51758,7 +51892,7 @@
 	};
 
 /***/ },
-/* 446 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51803,11 +51937,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -51858,7 +51992,7 @@
 	exports.default = CombatSheet;
 
 /***/ },
-/* 447 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51871,11 +52005,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -51898,7 +52032,7 @@
 	exports.default = InventorySheet;
 
 /***/ },
-/* 448 */
+/* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51929,15 +52063,15 @@
 
 	var _ListStore = __webpack_require__(185);
 
-	var _MainSheetCalc = __webpack_require__(449);
+	var _MainSheetCalc = __webpack_require__(450);
 
 	var _MainSheetCalc2 = _interopRequireDefault(_MainSheetCalc);
 
-	var _MainSheetPersonalData = __webpack_require__(451);
+	var _MainSheetPersonalData = __webpack_require__(452);
 
 	var _MainSheetPersonalData2 = _interopRequireDefault(_MainSheetPersonalData);
 
-	var _OverviewConstSkills = __webpack_require__(435);
+	var _OverviewConstSkills = __webpack_require__(436);
 
 	var _OverviewConstSkills2 = _interopRequireDefault(_OverviewConstSkills);
 
@@ -51961,15 +52095,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _SpecialAbilitiesStore = __webpack_require__(455);
+	var _SpecialAbilitiesStore = __webpack_require__(456);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -52045,7 +52179,7 @@
 	exports.default = MainSheet;
 
 /***/ },
-/* 449 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52056,7 +52190,7 @@
 
 	var _ListStore = __webpack_require__(185);
 
-	var _MainSheetCalcItem = __webpack_require__(450);
+	var _MainSheetCalcItem = __webpack_require__(451);
 
 	var _MainSheetCalcItem2 = _interopRequireDefault(_MainSheetCalcItem);
 
@@ -52186,7 +52320,7 @@
 	};
 
 /***/ },
-/* 450 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52284,7 +52418,7 @@
 	};
 
 /***/ },
-/* 451 */
+/* 452 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52297,11 +52431,11 @@
 
 	var _Avatar2 = _interopRequireDefault(_Avatar);
 
-	var _LabelBox = __webpack_require__(452);
+	var _LabelBox = __webpack_require__(453);
 
 	var _LabelBox2 = _interopRequireDefault(_LabelBox);
 
-	var _Plain = __webpack_require__(454);
+	var _Plain = __webpack_require__(455);
 
 	var _Plain2 = _interopRequireDefault(_Plain);
 
@@ -52395,7 +52529,7 @@
 	};
 
 /***/ },
-/* 452 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52404,7 +52538,7 @@
 		value: true
 	});
 
-	var _Box = __webpack_require__(453);
+	var _Box = __webpack_require__(454);
 
 	var _Box2 = _interopRequireDefault(_Box);
 
@@ -52453,7 +52587,7 @@
 	};
 
 /***/ },
-/* 453 */
+/* 454 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52504,7 +52638,7 @@
 	};
 
 /***/ },
-/* 454 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52553,7 +52687,7 @@
 	};
 
 /***/ },
-/* 455 */
+/* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52592,7 +52726,7 @@
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
-	var _count = __webpack_require__(456);
+	var _count = __webpack_require__(457);
 
 	var _count2 = _interopRequireDefault(_count);
 
@@ -53004,7 +53138,7 @@
 	exports.default = SpecialAbilitiesStore;
 
 /***/ },
-/* 456 */
+/* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -53044,7 +53178,7 @@
 	};
 
 /***/ },
-/* 457 */
+/* 458 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53057,11 +53191,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -53087,7 +53221,7 @@
 	exports.default = SpellsSheet;
 
 /***/ },
-/* 458 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53132,11 +53266,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SheetHeader = __webpack_require__(444);
+	var _SheetHeader = __webpack_require__(445);
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _TextBox = __webpack_require__(445);
+	var _TextBox = __webpack_require__(446);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
@@ -53185,7 +53319,7 @@
 	exports.default = TalentsSheet;
 
 /***/ },
-/* 459 */
+/* 460 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53194,7 +53328,7 @@
 		value: true
 	});
 
-	var _Cultures = __webpack_require__(460);
+	var _Cultures = __webpack_require__(461);
 
 	var _Cultures2 = _interopRequireDefault(_Cultures);
 
@@ -53202,11 +53336,11 @@
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Professions = __webpack_require__(463);
+	var _Professions = __webpack_require__(464);
 
 	var _Professions2 = _interopRequireDefault(_Professions);
 
-	var _Races = __webpack_require__(473);
+	var _Races = __webpack_require__(474);
 
 	var _Races2 = _interopRequireDefault(_Races);
 
@@ -53291,7 +53425,7 @@
 	exports.default = RCP;
 
 /***/ },
-/* 460 */
+/* 461 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53304,11 +53438,11 @@
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureActions = __webpack_require__(461);
+	var _CultureActions = __webpack_require__(462);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
-	var _CulturesListItem = __webpack_require__(462);
+	var _CulturesListItem = __webpack_require__(463);
 
 	var _CulturesListItem2 = _interopRequireDefault(_CulturesListItem);
 
@@ -53430,7 +53564,7 @@
 	};
 
 /***/ },
-/* 461 */
+/* 462 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53482,7 +53616,7 @@
 	};
 
 /***/ },
-/* 462 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53495,7 +53629,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureActions = __webpack_require__(461);
+	var _CultureActions = __webpack_require__(462);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
@@ -53576,7 +53710,7 @@
 	};
 
 /***/ },
-/* 463 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53603,11 +53737,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(464);
+	var _ProfessionActions = __webpack_require__(465);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionsListItem = __webpack_require__(465);
+	var _ProfessionsListItem = __webpack_require__(466);
 
 	var _ProfessionsListItem2 = _interopRequireDefault(_ProfessionsListItem);
 
@@ -53615,7 +53749,7 @@
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantActions = __webpack_require__(466);
+	var _ProfessionVariantActions = __webpack_require__(467);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
@@ -53631,7 +53765,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _Selections = __webpack_require__(467);
+	var _Selections = __webpack_require__(468);
 
 	var _Selections2 = _interopRequireDefault(_Selections);
 
@@ -53737,7 +53871,7 @@
 	};
 
 /***/ },
-/* 464 */
+/* 465 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53790,7 +53924,7 @@
 	};
 
 /***/ },
-/* 465 */
+/* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53809,11 +53943,11 @@
 
 	var _DataUtils = __webpack_require__(307);
 
-	var _ProfessionActions = __webpack_require__(464);
+	var _ProfessionActions = __webpack_require__(465);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionVariantActions = __webpack_require__(466);
+	var _ProfessionVariantActions = __webpack_require__(467);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
@@ -53958,7 +54092,7 @@
 	};
 
 /***/ },
-/* 466 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -53987,7 +54121,7 @@
 	};
 
 /***/ },
-/* 467 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54038,7 +54172,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(464);
+	var _ProfessionActions = __webpack_require__(465);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
@@ -54058,23 +54192,23 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SelectionsCantrips = __webpack_require__(468);
+	var _SelectionsCantrips = __webpack_require__(469);
 
 	var _SelectionsCantrips2 = _interopRequireDefault(_SelectionsCantrips);
 
-	var _SelectionsCt = __webpack_require__(469);
+	var _SelectionsCt = __webpack_require__(470);
 
 	var _SelectionsCt2 = _interopRequireDefault(_SelectionsCt);
 
-	var _SelectionsCurses = __webpack_require__(470);
+	var _SelectionsCurses = __webpack_require__(471);
 
 	var _SelectionsCurses2 = _interopRequireDefault(_SelectionsCurses);
 
-	var _SelectionsLangLitc = __webpack_require__(471);
+	var _SelectionsLangLitc = __webpack_require__(472);
 
 	var _SelectionsLangLitc2 = _interopRequireDefault(_SelectionsLangLitc);
 
-	var _SelectionsTalentSpec = __webpack_require__(472);
+	var _SelectionsTalentSpec = __webpack_require__(473);
 
 	var _SelectionsTalentSpec2 = _interopRequireDefault(_SelectionsTalentSpec);
 
@@ -54371,7 +54505,7 @@
 	};
 
 /***/ },
-/* 468 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54435,7 +54569,7 @@
 	};
 
 /***/ },
-/* 469 */
+/* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54502,7 +54636,7 @@
 	};
 
 /***/ },
-/* 470 */
+/* 471 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54591,7 +54725,7 @@
 	};
 
 /***/ },
-/* 471 */
+/* 472 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54675,7 +54809,7 @@
 	};
 
 /***/ },
-/* 472 */
+/* 473 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54749,7 +54883,7 @@
 	};
 
 /***/ },
-/* 473 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54772,11 +54906,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(474);
+	var _RaceActions = __webpack_require__(475);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
-	var _RacesListItem = __webpack_require__(475);
+	var _RacesListItem = __webpack_require__(476);
 
 	var _RacesListItem2 = _interopRequireDefault(_RacesListItem);
 
@@ -54870,7 +55004,7 @@
 	};
 
 /***/ },
-/* 474 */
+/* 475 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54916,7 +55050,7 @@
 	};
 
 /***/ },
-/* 475 */
+/* 476 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54935,7 +55069,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(474);
+	var _RaceActions = __webpack_require__(475);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
@@ -55035,7 +55169,7 @@
 	};
 
 /***/ },
-/* 476 */
+/* 477 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55044,11 +55178,11 @@
 		value: true
 	});
 
-	var _CombatTechniques = __webpack_require__(477);
+	var _CombatTechniques = __webpack_require__(478);
 
 	var _CombatTechniques2 = _interopRequireDefault(_CombatTechniques);
 
-	var _Liturgies = __webpack_require__(480);
+	var _Liturgies = __webpack_require__(481);
 
 	var _Liturgies2 = _interopRequireDefault(_Liturgies);
 
@@ -55056,17 +55190,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SpecialAbilities = __webpack_require__(482);
+	var _SpecialAbilities = __webpack_require__(483);
 
 	var _SpecialAbilities2 = _interopRequireDefault(_SpecialAbilities);
 
-	var _SpecialAbilitiesStore = __webpack_require__(455);
+	var _SpecialAbilitiesStore = __webpack_require__(456);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
 	var _ListStore = __webpack_require__(185);
 
-	var _Spells = __webpack_require__(486);
+	var _Spells = __webpack_require__(487);
 
 	var _Spells2 = _interopRequireDefault(_Spells);
 
@@ -55074,7 +55208,7 @@
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
-	var _Talents = __webpack_require__(488);
+	var _Talents = __webpack_require__(489);
 
 	var _Talents2 = _interopRequireDefault(_Talents);
 
@@ -55164,7 +55298,7 @@
 	exports.default = Skills;
 
 /***/ },
-/* 477 */
+/* 478 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55177,7 +55311,7 @@
 
 	var _ListStore = __webpack_require__(185);
 
-	var _CombatTechniquesActions = __webpack_require__(478);
+	var _CombatTechniquesActions = __webpack_require__(479);
 
 	var _CombatTechniquesActions2 = _interopRequireDefault(_CombatTechniquesActions);
 
@@ -55201,7 +55335,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(479);
+	var _SkillListItem = __webpack_require__(480);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -55352,7 +55486,7 @@
 	exports.default = CombatTechniques;
 
 /***/ },
-/* 478 */
+/* 479 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55399,7 +55533,7 @@
 	};
 
 /***/ },
-/* 479 */
+/* 480 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55545,7 +55679,7 @@
 	};
 
 /***/ },
-/* 480 */
+/* 481 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55568,7 +55702,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _LiturgiesActions = __webpack_require__(481);
+	var _LiturgiesActions = __webpack_require__(482);
 
 	var _LiturgiesActions2 = _interopRequireDefault(_LiturgiesActions);
 
@@ -55592,7 +55726,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(479);
+	var _SkillListItem = __webpack_require__(480);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -55874,7 +56008,7 @@
 	exports.default = Liturgies;
 
 /***/ },
-/* 481 */
+/* 482 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55947,7 +56081,7 @@
 	};
 
 /***/ },
-/* 482 */
+/* 483 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55982,19 +56116,19 @@
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpecialAbilitiesActions = __webpack_require__(483);
+	var _SpecialAbilitiesActions = __webpack_require__(484);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
-	var _SpecialAbilitiesListAddItem = __webpack_require__(484);
+	var _SpecialAbilitiesListAddItem = __webpack_require__(485);
 
 	var _SpecialAbilitiesListAddItem2 = _interopRequireDefault(_SpecialAbilitiesListAddItem);
 
-	var _SpecialAbilitiesListRemoveItem = __webpack_require__(485);
+	var _SpecialAbilitiesListRemoveItem = __webpack_require__(486);
 
 	var _SpecialAbilitiesListRemoveItem2 = _interopRequireDefault(_SpecialAbilitiesListRemoveItem);
 
-	var _SpecialAbilitiesStore = __webpack_require__(455);
+	var _SpecialAbilitiesStore = __webpack_require__(456);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
@@ -56154,7 +56288,7 @@
 	exports.default = SpecialAbilities;
 
 /***/ },
-/* 483 */
+/* 484 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56209,7 +56343,7 @@
 	};
 
 /***/ },
-/* 484 */
+/* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56222,7 +56356,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(483);
+	var _SpecialAbilitiesActions = __webpack_require__(484);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
@@ -56420,7 +56554,7 @@
 	};
 
 /***/ },
-/* 485 */
+/* 486 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56433,7 +56567,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(483);
+	var _SpecialAbilitiesActions = __webpack_require__(484);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
@@ -56553,7 +56687,7 @@
 	};
 
 /***/ },
-/* 486 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56592,7 +56726,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(479);
+	var _SkillListItem = __webpack_require__(480);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -56600,7 +56734,7 @@
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpellsActions = __webpack_require__(487);
+	var _SpellsActions = __webpack_require__(488);
 
 	var _SpellsActions2 = _interopRequireDefault(_SpellsActions);
 
@@ -56891,7 +57025,7 @@
 	exports.default = Spells;
 
 /***/ },
-/* 487 */
+/* 488 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56958,7 +57092,7 @@
 	};
 
 /***/ },
-/* 488 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56993,15 +57127,15 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(479);
+	var _SkillListItem = __webpack_require__(480);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _TalentsActions = __webpack_require__(489);
+	var _TalentsActions = __webpack_require__(490);
 
 	var _TalentsActions2 = _interopRequireDefault(_TalentsActions);
 
-	var _TalentsStore = __webpack_require__(490);
+	var _TalentsStore = __webpack_require__(491);
 
 	var _TalentsStore2 = _interopRequireDefault(_TalentsStore);
 
@@ -57131,7 +57265,7 @@
 	exports.default = Talents;
 
 /***/ },
-/* 489 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57183,7 +57317,7 @@
 	};
 
 /***/ },
-/* 490 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57387,7 +57521,7 @@
 	exports.default = TalentsStore;
 
 /***/ },
-/* 491 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57517,7 +57651,7 @@
 	exports.default = TabStore;
 
 /***/ },
-/* 492 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57538,7 +57672,7 @@
 
 	var _AuthStore2 = _interopRequireDefault(_AuthStore);
 
-	var _AvatarWrapper = __webpack_require__(434);
+	var _AvatarWrapper = __webpack_require__(435);
 
 	var _AvatarWrapper2 = _interopRequireDefault(_AvatarWrapper);
 
@@ -57550,7 +57684,7 @@
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _HistoryActions = __webpack_require__(493);
+	var _HistoryActions = __webpack_require__(494);
 
 	var _HistoryActions2 = _interopRequireDefault(_HistoryActions);
 
@@ -57562,7 +57696,7 @@
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _InGameActions = __webpack_require__(423);
+	var _InGameActions = __webpack_require__(424);
 
 	var _InGameActions2 = _interopRequireDefault(_InGameActions);
 
@@ -57586,23 +57720,23 @@
 
 	var _Text2 = _interopRequireDefault(_Text);
 
-	var _TitleBarBack = __webpack_require__(494);
+	var _TitleBarBack = __webpack_require__(495);
 
 	var _TitleBarBack2 = _interopRequireDefault(_TitleBarBack);
 
-	var _TitleBarLeft = __webpack_require__(496);
+	var _TitleBarLeft = __webpack_require__(497);
 
 	var _TitleBarLeft2 = _interopRequireDefault(_TitleBarLeft);
 
-	var _TitleBarRight = __webpack_require__(497);
+	var _TitleBarRight = __webpack_require__(498);
 
 	var _TitleBarRight2 = _interopRequireDefault(_TitleBarRight);
 
-	var _TitleBarTabs = __webpack_require__(498);
+	var _TitleBarTabs = __webpack_require__(499);
 
 	var _TitleBarTabs2 = _interopRequireDefault(_TitleBarTabs);
 
-	var _TitleBarWrapper = __webpack_require__(499);
+	var _TitleBarWrapper = __webpack_require__(500);
 
 	var _TitleBarWrapper2 = _interopRequireDefault(_TitleBarWrapper);
 
@@ -57800,7 +57934,7 @@
 	};
 
 /***/ },
-/* 493 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57832,7 +57966,7 @@
 	};
 
 /***/ },
-/* 494 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57849,7 +57983,7 @@
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _TitleBarBackArrow = __webpack_require__(495);
+	var _TitleBarBackArrow = __webpack_require__(496);
 
 	var _TitleBarBackArrow2 = _interopRequireDefault(_TitleBarBackArrow);
 
@@ -57877,7 +58011,7 @@
 	exports.default = TitleBarBack;
 
 /***/ },
-/* 495 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -57899,7 +58033,7 @@
 	);
 
 /***/ },
-/* 496 */
+/* 497 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -57927,7 +58061,7 @@
 	exports.default = TitleBarLeft;
 
 /***/ },
-/* 497 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -57955,7 +58089,7 @@
 	exports.default = TitleBarRight;
 
 /***/ },
-/* 498 */
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58024,7 +58158,7 @@
 	};
 
 /***/ },
-/* 499 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -58056,7 +58190,7 @@
 	exports.default = TitleBarWrapper;
 
 /***/ },
-/* 500 */
+/* 501 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

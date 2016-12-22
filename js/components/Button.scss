@@ -14,4 +14,9 @@
 		color: #31353a;
 		pointer-events: none;
 	}
+
+	&.autoWidth {
+		width: auto;
+		min-width: auto;
+	}
 }
