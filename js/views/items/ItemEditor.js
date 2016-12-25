@@ -10,7 +10,7 @@ import Label from '../../components/Label';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
+const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
 const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]);
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
@@ -70,6 +70,7 @@ export default class ItemEditor extends Component {
 		const { addpenalties, ammunition, number, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
 
 		const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(InventoryStore.getAllTemplates().map(e => [e.name, e.id]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+		const AMMUNITION = [['Keine', null]].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(e => [e.name, e.id]));
 
 		return (
 			<Dialog
@@ -327,10 +328,8 @@ export default class ItemEditor extends Component {
 							label="Munition"
 							hint="Keine"
 							value={ammunition}
-							options={[
-								['Keine',null]
-							]}
-							onChange={this.onValue.bind(null, 'am')}
+							options={AMMUNITION}
+							onChange={this.onValue.bind(null, 'ammunition')}
 							disabled={locked}
 							/>
 						<TextField
