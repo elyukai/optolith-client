@@ -76,15 +76,15 @@
 					}
 
 					> div.container > div {
-						&.ddn, &.dds, &.df, &.at, &.pa, &.rb1, &.rb2, &.rb3, &.pro, &.enc {
+						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
 							flex: none;
 						}
 
-						&.dds {
+						&.damage-dice-sides {
 							width: 65px;
 						}
 
-						&.ddn, &.df, &.at, &.pa, &.rb1, &.rb2, &.rb3, &.pro, &.enc {
+						&.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
 							width: 40px;
 
 							input {
@@ -95,15 +95,8 @@
 				}
 			}
 
-			hr {
-				margin: 15px 0 5px;
-				border: none;
-				height: 1px;
-				background: $color9;
-
-				&:first-child {
-					margin-top: 5px;
-				}
+			hr:first-child {
+				margin-top: 5px;
 			}
 		}
 	}

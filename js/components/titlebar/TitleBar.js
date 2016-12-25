@@ -18,6 +18,7 @@ import TitleBarLeft from './TitleBarLeft';
 import TitleBarRight from './TitleBarRight';
 import TitleBarTabs from './TitleBarTabs';
 import TitleBarWrapper from './TitleBarWrapper';
+import TooltipToggle from '../TooltipToggle';
 
 export default class TitleBar extends Component {
 
@@ -72,7 +73,7 @@ export default class TitleBar extends Component {
 	render() {
 
 		const { currentSection, currentTab } = this.props;
-		const { account, ap: { total, spent }, avatar, isUndoAvailable, phase } = this.state;
+		const { account, ap: { total, spent, adv, disadv }, avatar, isUndoAvailable, phase } = this.state;
 
 		switch (currentSection) {
 			case 'main': {
@@ -97,6 +98,10 @@ export default class TitleBar extends Component {
 									primary
 									disabled
 									/>
+								<IconButton
+									icon="&#xE868;"
+									disabled
+									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
 					);
@@ -115,6 +120,10 @@ export default class TitleBar extends Component {
 									{ label: account.name, tag: 'account' }									
 								]} />
 								<BorderButton label="Abmelden" onClick={this.logout} disabled />
+								<IconButton
+									icon="&#xE868;"
+									disabled
+									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
 					);
@@ -153,7 +162,30 @@ export default class TitleBar extends Component {
 							<TitleBarTabs active={currentTab} tabs={tabs} />
 						</TitleBarLeft>
 						<TitleBarRight>
-							<Text className="collected-ap">{total - spent} AP</Text>
+							<TooltipToggle
+								position="bottom"
+								margin={12}
+								content={
+									<div className="ap-details">
+										<h4>Abenteuerpunkte</h4>
+										<p className="general">
+											{total} AP gesamt<br/>
+											{spent} AP verwendet
+										</p>
+										<hr />
+										<p>
+											{adv[0]} / 80 AP für Vorteile<br/>
+											{adv[1] > 0 ? `${adv[1]} / 50 für magische Vorteile` : null}
+											{adv[2] > 0 ? `${adv[2]} / 50 für karmale Vorteile` : null}
+											{disadv[0]} / 80 AP für Nachteile<br/>
+											{disadv[1] > 0 ? `${disadv[1]} / 50 für magische Nachteile` : null}
+											{disadv[2] > 0 ? `${disadv[2]} / 50 für karmale Nachteile` : null}
+										</p>
+									</div>
+								}
+								>
+								<Text className="collected-ap">{total - spent} AP</Text>							
+							</TooltipToggle>
 							<IconButton
 								icon="&#xE166;"
 								onClick={this.undo}
@@ -187,18 +219,3 @@ export default class TitleBar extends Component {
 		}
 	}
 }
-						// <div className="details">
-						// 	<div className="all"><span>{this.state.ap}</span> AP gesamt</div>
-						// 	<div className="used"><span>{this.state.used}</span> AP verwendet</div>
-						// 	<hr />
-						// 	<div className="adv">
-						// 		<span>{this.state.disadv.adv[0]} / 80</span> AP für Vorteile
-						// 		{this.state.disadv.adv[1] > 0 ? ` (davon ${this.state.disadv.adv[1]} für magische)`:null}
-						// 		{this.state.disadv.adv[2] > 0 ? ` (davon ${this.state.disadv.adv[2]} für karmale)`:null}
-						// 	</div>
-						// 	<div className="disadv">
-						// 		<span>{this.state.disadv.disadv[0]} / 80</span> AP für Nachteile
-						// 		{this.state.disadv.disadv[1] > 0 ? `(davon ${this.state.disadv.disadv[1]} für magische)`:null}
-						// 		{this.state.disadv.disadv[2] > 0 ? `(davon ${this.state.disadv.disadv[2]} für karmale)`:null}
-						// 	</div>
-						// </div>

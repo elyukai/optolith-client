@@ -69,7 +69,7 @@ export default class SpecialAbilities extends Component {
 							/>
 					</div>
 					<Scroll className="list">
-						<table>
+						<table className="list large-list">
 							<thead>
 								<tr>
 									<td className="type">Gruppe</td>
@@ -96,7 +96,7 @@ export default class SpecialAbilities extends Component {
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 				</div>
 				<Scroll className="list">
-					<table>
+					<table className="list large-list">
 						<thead>
 							<tr>
 								<td className="type">Gruppe</td>

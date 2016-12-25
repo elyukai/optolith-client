@@ -1,6 +1,7 @@
-import GeminiScrollbar from 'react-gemini-scrollbar';
-import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import GeminiScrollbar from 'react-gemini-scrollbar';
+import Label from './Label';
+import React, { Component, PropTypes } from 'react';
 
 export default class Dropdown extends Component {
 
@@ -86,7 +87,7 @@ export default class Dropdown extends Component {
 								const classNameInner = classNames( option[1] === this.props.value && 'active' );
 
 								return (
-									<div className={classNameInner} key={option[1]} onClick={this.onChange.bind(null, option[1])}>
+									<div className={classNameInner} key={option[1]} onClick={this.props.disabled ? null : this.onChange.bind(null, option[1])}>
 										{option[0]}
 									</div>
 								);
@@ -99,7 +100,7 @@ export default class Dropdown extends Component {
 
 		return (
 			<div className={className} ref="container">
-				{labelTextELement}
+				<Label text={this.props.label} disabled={this.props.disabled}></Label>
 				<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
 					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
 					<div onClick={this.switch} className="value">{valueText}</div>

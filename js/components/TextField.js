@@ -56,8 +56,9 @@ export default class TextField extends Component {
 			<input
 				type={type}
 				value={value}
-				onChange={onChange}
-				onKeyPress={onKeyDown}
+				onChange={disabled ? null : onChange}
+				onKeyPress={disabled ? null : onKeyDown}
+				readOnly={disabled}
 				ref='inputElement'
 			/>
 		);

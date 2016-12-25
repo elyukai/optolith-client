@@ -33,8 +33,10 @@ export default class AttributeCalcItem extends Component {
 			<AttributeBorder label={short} value={value} tooltip={<div className="calc-attr-overlay">
 					<h4><span>{label}</span><span>{value}</span></h4>
 					<p className="calc-text">{calc} = {value || '-'}</p>
-					{ mod || mod === 0 ? <p className="mod">Modifikator: {mod}</p> : null}
-					{ (currentAdd || currentAdd === 0) && phase > 2 ? <p className="add">Gekauft: {currentAdd} / {maxAdd || '-'}</p> : null}
+					{ mod || mod === 0 || ((currentAdd || currentAdd === 0) && phase > 2) ? <p>
+						{ mod || mod === 0 ? <span className="mod">Modifikator: {mod}<br/></span> : null}
+						{ (currentAdd || currentAdd === 0) && phase > 2 ? <span className="add">Gekauft: {currentAdd} / {maxAdd || '-'}</span> : null}
+					</p> : null}
 				</div>} tooltipMargin={7}>
 				{ phase > 2 && maxAdd ? <NumberBox current={currentAdd} max={maxAdd} /> : null }
 				{increaseElement}

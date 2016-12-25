@@ -3,13 +3,15 @@
 	border: 2px solid $color8;
 	background: $background2;
 	color: $color2;
+	box-shadow: 0 0 0 1px transparentiz(black, .6);
+	z-index: 2000;
 
 	> div {
-		padding: 21px 14px 18px;
+		padding: 18px;
 	}
 
 	h4 {
-		font: bold 14px/14px Alegreya SC;
+		font: bold 14px/18px Alegreya SC;
 		text-transform: uppercase;
 		color: $color1;
 		display: flex;
@@ -19,18 +21,15 @@
 		span:last-child {
 			color: $color2;
 		}
-
-		&:last-child {
-			margin-bottom: 3px;
-		}
 	}
 
 	p {
-		font: 500 12px/18px Alegreya Sans;
+		font: 500 12px/16px Alegreya Sans;
 		letter-spacing: 0.05em;
+		margin-top: 16px;
 
-		&:not(:nth-child(2)) {
-			margin-top: 0;
+		&:last-child {
+			margin-bottom: 1px;
 		}
 	}
 
@@ -46,14 +45,23 @@
 			transform: rotate(45deg);
 			@include calc(left, "50% - 8px");
 			bottom: -8px;
+			pointer-events: none;
 		}
 	}
 
-	> .calc-attr-overlay {
-		width: 280px;
-
-		p.calc-text {
-			font-style: italic;
+	&.overlay-bottom {
+		&:before {
+			content: "";
+			position: absolute;
+			@include size(12px);
+			border-width: 2px;
+			border-style: solid;
+			border-color: transparent $color8 $color8 transparent;
+			background: $background2;
+			transform: rotate(-135deg);
+			@include calc(left, "50% - 8px");
+			top: -8px;
+			pointer-events: none;
 		}
 	}
 }

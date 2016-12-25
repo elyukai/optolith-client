@@ -2,12 +2,18 @@ import classNames from 'classnames';
 import createOverlay, { close } from '../utils/createOverlay';
 import Overlay from './Overlay';
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 
 export default class Tooltip extends Component {
 
 	static propTypes = {
 		content: PropTypes.node,
-		margin: PropTypes.number
+		margin: PropTypes.number,
+		position: PropTypes.string
+	};
+
+	static defaultProps = {
+		position: 'top'
 	};
 
 	state = {
@@ -17,26 +23,38 @@ export default class Tooltip extends Component {
 	triggerRef;
 	node;
 
-	componentDidMount() {
-		this.triggerRef = this.refs.trigger;
+	componentWillUnmount() {
+		if (this.node) {
+			close(this.node);			
+		}
 	}
-
+	
 	open = () => {
-		const { content, margin } = this.props;
-		this.node = createOverlay(<Overlay className="tooltip" position="top" trigger={this.triggerRef} margin={margin}>
+		const { content, margin, position } = this.props;
+		this.node = createOverlay(<Overlay className="tooltip" position={position} trigger={this.triggerRef} margin={margin}>
 			{content}
 		</Overlay>);
 	};
-	close = () => close(this.node);
+	close = () => {
+		close(this.node);
+		this.node = undefined;
+	};
 
 	render() {
 
 		const { children } = this.props;
 
 		const only = React.cloneElement(React.Children.only(children), {
-			onMouseEnter: this.open,
-			onMouseLeave: this.close,
-			ref: 'trigger'
+			onMouseOver: this.open,
+			onMouseOut: this.close,
+			ref: (node) => {
+				if (node !== null && node.nodeType !== 1) {
+					this.triggerRef = ReactDOM.findDOMNode(node);
+				}
+				else {
+					this.triggerRef = node;
+				}
+			}
 		});
 
 		return only;

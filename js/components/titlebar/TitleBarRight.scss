@@ -22,81 +22,17 @@
 
 	.btn {
 		margin-left: 11px;
+		flex: none;
 	}
 
 	.collected-ap {
+		color: #a19b8f;
 		flex: 1 0 auto;
-		font: bold 15px/#{$titlebar-height} Alegreya SC;
+		font: bold 15px/32px Alegreya SC;
+		height: 32px;
 		letter-spacing: 0.1em;
 		margin: 0 11px 0 35px;
-		text-transform: uppercase;
-		color: #a19b8f;
 		position: relative;
-	}
-
-	// .ap:hover + .details {
-	// 	visibility: visible;
-	// }
-
-	// .details {
-	// 	background: #010a13;
-	// 	border: 1px solid #785a28;
-	// 	position: absolute;
-	// 	font: 500 12px/18px Alegreya Sans;
-	// 	letter-spacing: 0.05em;
-	// 	color: #878683;
-	// 	padding: 13px 0;
-	// 	top: $titlebar-height - 12px;
-	// 	// right: 112px;
-	// 	white-space: nowrap;
-	// 	// width: 2px;
-	// 	visibility: hidden;
-	// 	// transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
-	// 	// min-width: 150px;
-	// 	right: 16px;
-	// 	padding: 13px 18px;
-	// 	box-shadow: 0 0 18px 4px black;
-		
-	// 	&:before, &:after {
-	// 		position: absolute;
-	// 		display: block;
-	// 		content: "";
-	// 		@include calc(width, '100% - 10px');
-	// 		height: 2px;
-	// 		left: 4px;
-	// 		background: #785a28;
-	// 	}
-		
-	// 	&:before {
-	// 		top: -5px;
-	// 	}
-		
-	// 	&:after {
-	// 		bottom: -5px;
-	// 	}
-
-	// 	div {
-	// 		overflow: hidden;
-	// 	}
-
-	// 	hr {
-	// 		margin: 10px 0;
-	// 		padding: 0;
-	// 		background: #1f282d;
-	// 		height: 1px;
-	// 	}
-
-	// 	span {
-	// 		color: #f1e6d4;
-	// 	}
-	// }
-	
-	.menu-button {
-		flex: 1 0 auto;
-		font: 24px/#{$titlebar-height} Material;
-		width: $titlebar-height;
-		text-align: center;
-		display: none;
-		color: #f1e6d4;
+		text-transform: uppercase;
 	}
 }

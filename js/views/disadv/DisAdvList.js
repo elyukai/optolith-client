@@ -20,7 +20,7 @@ export default class DisAdvList extends Component {
 
 		return (
 			<Scroll className="list">
-				<table>
+				<table className="list large-list">
 					<thead>
 						<tr>
 							<td className="name">{type === 'ADV' ? 'Vorteil' : 'Nachteil'}</td>

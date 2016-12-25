@@ -8,7 +8,7 @@ var _heroes = {
 		date: new Date('2016-10-18T16:18:28.420Z'),
 		player: ['U_1', 'schuchi'],
 		id: 'H_1',
-		phase: 2,
+		phase: 3,
 		name: 'Shimo ibn Rashdul',
 		avatar: 'images/portrait.png',
 		ap: {

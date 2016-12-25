@@ -22,5 +22,23 @@ export default {
 	},
 	showItemEditor: function(item) {
 		createOverlay(<ItemEditor item={item} />);
+	},
+	addToList: function(item) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.ADD_ITEM,
+			item
+		});
+	},
+	saveItem: function(item) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.SAVE_ITEM,
+			item
+		});
+	},
+	removeFromList: function(id) {
+		AppDispatcher.dispatch({
+			actionType: ActionTypes.REMOVE_ITEM,
+			id
+		});
 	}
 };

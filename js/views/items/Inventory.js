@@ -1,11 +1,15 @@
 import { filterAndSort } from '../../utils/ListUtils';
 import BorderButton from '../../components/BorderButton';
 import InventoryActions from '../../actions/InventoryActions';
+import InventoryListItem from './InventoryListItem';
 import InventoryStore from '../../stores/InventoryStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
+import SortOptions from '../../components/SortOptions';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
+import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
+
+const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
 const getInventoryStore = () => ({
 	items: InventoryStore.getAll(),
@@ -15,7 +19,10 @@ const getInventoryStore = () => ({
 
 export default class Inventory extends Component {
 
-	state = getInventoryStore();
+	state = {
+		...getInventoryStore(),
+		templates: InventoryStore.getAllTemplates()
+	};
 	
 	_updateInventoryStore = () => this.setState(getInventoryStore());
 
@@ -31,30 +38,50 @@ export default class Inventory extends Component {
 	}
 
 	showItemCreation = () => InventoryActions.showItemCreation();
+	showAddSlidein = () => this.setState({ showAddSlidein: true });
+	hideAddSlidein = () => this.setState({ showAddSlidein: false });
 
 	render() {
 
-		const { filterText, items, sortOrder } = this.state;
+		const { filterText, items, showAddSlidein, sortOrder, templates } = this.state;
 
-		const list = filterAndSort(items, filterText, sortOrder);
+		const list = filterAndSort(items, filterText, sortOrder, GROUPS);
+		const templateList = filterAndSort(templates, filterText, 'name');
 
 		return (
 			<div className="page" id="inventory">
+				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
+					<div className="options">
+						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					</div>
+					<Scroll className="list">
+						<table className="list large-list">
+							<thead>
+								<tr>
+									<td className="name">Gegenstand</td>
+									<td className="inc"></td>
+								</tr>
+							</thead>
+							<tbody>
+								{
+									templateList.map(obj => <InventoryListItem key={obj.id} data={obj} add />)
+								}
+							</tbody>
+						</table>
+					</Scroll>
+				</Slidein>
 				<div className="options">
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={this.sort}
-						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Gruppen', value: 'group' }
-						]}
+					<SortOptions
+						options={[ 'name', 'groupname', 'where' ]}
+						sortOrder={sortOrder}
+						sort={this.sort}
 						/>
-						<BorderButton label="Hinzufügen" disabled />
-						<BorderButton label="Erstellen" onClick={this.showItemCreation} />
+					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
+					<BorderButton label="Erstellen" onClick={this.showItemCreation} />
 				</div>
 				<Scroll className="list">
-					<table>
+					<table className="list large-list">
 						<thead>
 							<tr>
 								<td className="type">Gruppe</td>
@@ -68,7 +95,7 @@ export default class Inventory extends Component {
 						</thead>
 						<tbody>
 							{
-								list
+								list.map(obj => <InventoryListItem key={obj.id} data={obj} />)
 							}
 						</tbody>
 					</table>

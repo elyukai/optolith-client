@@ -115,79 +115,79 @@
 				}
 			}
 
-			.scroll-list {
-				table {
-					width: 100%;
-					border-collapse: collapse;
-					white-space: nowrap;
+			// .scroll-list {
+			// 	table {
+			// 		width: 100%;
+			// 		border-collapse: collapse;
+			// 		white-space: nowrap;
 
-					td {
-						padding: 5px 5px 5px 11px;
+			// 		td {
+			// 			padding: 5px 5px 5px 11px;
 
-						&.name {
-							width: 100%;
-						}
+			// 			&.name {
+			// 				width: 100%;
+			// 			}
 
-						&.name, &.fw {
-							color: #f0e6d2;
-						}
-					}
+			// 			&.name, &.fw {
+			// 				color: #f0e6d2;
+			// 			}
+			// 		}
 
-					thead {
-						font: bold 13px/22px Alegreya SC;
+			// 		thead {
+			// 			font: bold 13px/22px Alegreya SC;
 
-						tr td {
-							border-bottom: 1px solid transparentize(white, .925);
-						}
-					}
+			// 			tr td {
+			// 				border-bottom: 1px solid transparentize(white, .925);
+			// 			}
+			// 		}
 
-					tbody {
-						tr {
-							&:not(:last-child) td {
-								height: 36px;
-								border-bottom: 1px solid transparentize(white, .925);
-							}
+			// 		tbody {
+			// 			tr {
+			// 				&:not(:last-child) td {
+			// 					height: 36px;
+			// 					border-bottom: 1px solid transparentize(white, .925);
+			// 				}
 
-							&:hover {
-								background: transparentize(white, .975);
-							}
+			// 				&:hover {
+			// 					background: transparentize(white, .975);
+			// 				}
 
-							td {
-								height: 36px;
+			// 				td {
+			// 					height: 36px;
 								
-								&.name {
-									vertical-align: middle;
+			// 					&.name {
+			// 						vertical-align: middle;
 
-									h2 {
-										font: 500 15px/15px Alegreya Sans;
-										text-transform: none;
-										color: #f0e6d2;
-										display: inline-block;
-									}
-								}
+			// 						h2 {
+			// 							font: 500 15px/15px Alegreya Sans;
+			// 							text-transform: none;
+			// 							color: #f0e6d2;
+			// 							display: inline-block;
+			// 						}
+			// 					}
 
-								&.check, &.skt {
-									font: 13px/13px Alegreya SC;
-								}
+			// 					&.check, &.skt {
+			// 						font: 13px/13px Alegreya SC;
+			// 					}
 
-								&.inc {
-									font-weight: 500;
+			// 					&.inc {
+			// 						font-weight: 500;
 
-									.btn {
-										padding: 0 14px 3px;
-										min-width: auto;
-										font-size: 16px;
-									}
-								}
+			// 						.btn {
+			// 							padding: 0 14px 3px;
+			// 							min-width: auto;
+			// 							font-size: 16px;
+			// 						}
+			// 					}
 
-								.textfield, .dropdown {
-									width: 200px;
-								}
-							}
-						}
-					}
-				}
-			}
+			// 					.textfield, .dropdown {
+			// 						width: 200px;
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// }
 
 			h4 {
 				font-size: 13px;

@@ -56,7 +56,7 @@ export default class CombatTechniques extends Component {
 					]} />
 				</div>
 				<Scroll>
-					<table>
+					<table className="list">
 						<thead>
 							<tr>
 								<td className="type">Gruppe</td>

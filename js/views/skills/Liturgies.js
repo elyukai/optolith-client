@@ -87,7 +87,7 @@ export default class Liturgies extends Component {
 							/>
 					</div>
 					<Scroll className="list">
-						<table>
+						<table className="list">
 							<thead>
 								<tr>
 									<td className="type">Gruppe</td>
@@ -146,7 +146,7 @@ export default class Liturgies extends Component {
 						/>
 				</div>
 				<Scroll className="list">
-					<table>
+					<table className="list">
 						<thead>
 							<tr>
 								<td className="type">Gruppe</td>

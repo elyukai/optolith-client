@@ -24,6 +24,14 @@ export const sortByCostSex = (a,b) => a.ap < b.ap ? -1 : a.ap > b.ap ? 1 : sortB
 
 export const sortByGroup = (a,b) => a.gr < b.gr ? -1 : a.gr > b.gr ? 1 : sortByName(a,b);
 
+var GROUPS;
+
+export const sortByGroupName = (a,b) => {
+	let agr = GROUPS[a.gr - 1];
+	let bgr = GROUPS[b.gr - 1];
+	return agr < bgr ? -1 : agr > bgr ? 1 : sortByName(a,b);
+};
+
 export const sortByIC = (a,b) => a.ic < b.ic ? -1 : a.ic > b.ic ? 1 : sortByName(a,b);
 
 export const sortByProperty = (a,b) => {
@@ -41,6 +49,8 @@ export const sortByPrice = (a,b) => a.price < b.price ? -1 : a.price > b.price ?
 
 export const sortByWeight = (a,b) => a.weight < b.weight ? -1 : a.weight > b.weight ? 1 : sortByName(a,b);
 
+export const sortByWhere = (a,b) => a.where < b.where ? -1 : a.where > b.where ? 1 : sortByName(a,b);
+
 export const sort = (list, sortOrder) => {
 	let sort;
 	switch (sortOrder) {
@@ -52,6 +62,9 @@ export const sort = (list, sortOrder) => {
 			break;
 		case 'group':
 			sort = sortByGroup;
+			break;
+		case 'groupname':
+			sort = sortByGroupName;
 			break;
 		case 'ic':
 			sort = sortByIC;
@@ -67,6 +80,9 @@ export const sort = (list, sortOrder) => {
 			break;
 		case 'weight':
 			sort = sortByWeight;
+			break;
+		case 'where':
+			sort = sortByWhere;
 			break;
 		
 		default:
@@ -92,9 +108,12 @@ export const sortSex = (list, sortOrder, sex) => {
 	return list.sort(sort);
 };
 
-export const filterAndSort = (list, filterText, sortOrder, sex) => {
-	if (sex) {
-		return sortSex(filter(list, filterText), sortOrder, sex);		
+export const filterAndSort = (list, filterText, sortOrder, option) => {
+	if (Array.isArray(option)) {
+		GROUPS = option;
+	}
+	else if (option) {
+		return sortSex(filter(list, filterText), sortOrder, option);		
 	}
 	return sort(filter(list, filterText), sortOrder);
 };

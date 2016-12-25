@@ -62,7 +62,7 @@ export default class Talents extends Component {
 					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Wertung durch Kultur anzeigen</Checkbox>
 				</div>
 				<Scroll className="list">
-					<table>
+					<table className="list">
 						<thead>
 							<tr>
 								<td className="type">Gruppe</td>

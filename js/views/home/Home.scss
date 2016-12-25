@@ -4,7 +4,7 @@
 		@include calc(width, "100% - 70px");
 		height: 1px;
 		content: "";
-		background: #3c3732;
+		background: $color10;
 		// background: #3a322b;
 		// background: #1f282d;
 		top: $titlebar-height;

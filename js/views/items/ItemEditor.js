@@ -4,9 +4,16 @@ import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
+import InventoryActions from '../../actions/InventoryActions';
+import InventoryStore from '../../stores/InventoryStore';
 import Label from '../../components/Label';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
+
+const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
+
+const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]);
+// const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
 export default class ItemEditor extends Component {
 
@@ -16,43 +23,53 @@ export default class ItemEditor extends Component {
 		node: PropTypes.any
 	};
 
-	state = {
+	state = this.props.item || {
+		id: '',
 		name: '',
 		price: '',
 		weight: '',
-		amount: '1',
+		number: '',
 		where: '',
-		gr: 5,
-		tpl: 'ITEMTPL_0',
-
-		ct: 'CT_0', // Combat Technique
-		dpdn: '', // Number of dices
-		dpds: null, // Amount of sides per dice
-		dpf: '', // Flat damage
-		dpb: '', // Damage bonus with primary attribute
-		at: '', // AT mod
-		pa: '', // PA mod
-		re: 0,
+		gr: 0,
+		template: 'ITEMTPL_0',
+		isTemplateLocked: false,
+		combattechnique: 'CT_0',
+		damageDiceNumber: '',
+		damageDiceSides: null,
+		damageFlat: '',
+		damageBonus: '',
+		at: '',
+		pa: '',
+		reach: '',
 		length: '',
 		stp: '',
-		rb1: '', // Range brackets
-		rb2: '', // Range brackets
-		rb3: '', // Range brackets
-		rt: '', // Reload time
-		am: null, // Ammunition type
-		pro: '', // Protection
+		range1: '',
+		range2: '',
+		range3: '',
+		reloadtime: '',
+		ammunition: null,
+		pro: '',
 		enc: '',
-		addp: false // Add. penalties
+		addpenalties: false
 	};
 
 	onEvent = (prop, e) => this.setState({ [prop]: e.target.value });
 	onSwitch = prop => this.setState({ [prop]: !this.state[prop] });
 	onValue = (prop, value) => this.setState({ [prop]: value });
+
+	applyTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState({ ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false });
+	lockTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState({ ...InventoryStore.getTemplate(this.state.template), id: this.state.id });
+	unlockTemplate = () => this.setState({ isTemplateLocked: false });
+
+	addItem = () => InventoryActions.addToList(this.state);
+	saveItem = () => InventoryActions.saveItem(this.state);
 	
 	render() {
 
 		const { create, node } = this.props;
-		const { addp, am, amount, at, ct, dpb, dpdn, dpds, dpf, enc, gr, length, name, pa, price, pro, rb1, rb2, rb3, re, rt, stp, tpl, weight, where } = this.state;
+		const { addpenalties, ammunition, number, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
+
+		const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(InventoryStore.getAllTemplates().map(e => [e.name, e.id]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
 
 		return (
 			<Dialog
@@ -62,9 +79,9 @@ export default class ItemEditor extends Component {
 				buttons={[
 					{
 						label: 'Speichern',
-						onClick: null,
+						onClick: create ? this.addItem : this.saveItem,
 						autoWidth: true,
-						disabled: true
+						disabled: name === '' || gr === 0
 					}
 				]}>
 				<div className="main">
@@ -72,14 +89,16 @@ export default class ItemEditor extends Component {
 						<TextField
 							className="number"
 							label="Menge"
-							value={amount}
-							onChange={this.onEvent.bind(null, 'amount')}
+							value={number}
+							onChange={this.onEvent.bind(null, 'number')}
 							/>
 						<TextField
 							className="name"
 							label="Name"
 							value={name}
 							onChange={this.onEvent.bind(null, 'name')}
+							autoFocus={create}
+							disabled={locked}
 							/>
 					</div>
 					<div className="row">
@@ -88,12 +107,14 @@ export default class ItemEditor extends Component {
 							label="Preis in S"
 							value={price}
 							onChange={this.onEvent.bind(null, 'price')}
+							disabled={locked}
 							/>
 						<TextField
 							className="weight"
 							label="Gewicht in St"
 							value={weight}
 							onChange={this.onEvent.bind(null, 'weight')}
+							disabled={locked}
 							/>
 						<TextField
 							className="where"
@@ -106,106 +127,120 @@ export default class ItemEditor extends Component {
 						<Dropdown
 							className="gr"
 							label="Art"
+							hint="Wähle den Typ des Gegenstands aus"
 							value={gr}
-							options={[
-								['Allgemein',5],
-								['Nahkampfwaffe',1],
-								['Fernkampfwaffe',2],
-								['Rüstung',3],
-								['Munition',4]
-							]}
+							options={GROUPS_SELECTION}
 							onChange={this.onValue.bind(null, 'gr')}
+							disabled={locked}
 							/>
 					</div>
 					<Hr />
 					<div className="row">
 						<Dropdown
-							className="tpl"
+							className="template"
 							label="Vorlage"
 							hint="Keine"
-							value={tpl}
-							options={[]}
-							onChange={this.onValue.bind(null, 'tpl')}
+							value={template}
+							options={TEMPLATES}
+							onChange={this.onValue.bind(null, 'template')}
+							disabled={locked}
 							/>
 						<IconButton
 							icon="&#xE876;"
-							disabled
+							onClick={this.applyTemplate}
+							disabled={template === 'ITEMTPL_0' || locked}
 							/>
-						<IconButton
-							icon="&#xE876;"
-							disabled
-							/>
+						{locked ? (
+							<IconButton
+								icon="&#xE898;"
+								onClick={this.unlockTemplate}
+								/>
+						) : (
+							<IconButton
+								icon="&#xE899;"
+								onClick={this.lockTemplate}
+								disabled={template === 'ITEMTPL_0'}
+								/>
+						)}
 					</div>
 				</div>
 				{ gr === 1 ? ( <div className="melee">
 					<Hr />
 					<div className="row">
 						<Dropdown
-							className="ct"
+							className="combattechnique"
 							label="Kampftechnik"
 							hint="Keine"
-							value={ct}
+							value={combattechnique}
 							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id])}
 							onChange={this.onValue.bind(null, 'ct')}
+							disabled={locked}
 							/>
 					</div>
 					<div className="row">
 						<TextField
-							className="db"
+							className="damage-bonus"
 							label="Schadensb."
-							value={dpb}
-							onChange={this.onEvent.bind(null, 'dpb')}
+							value={damageBonus}
+							onChange={this.onEvent.bind(null, 'db')}
+							disabled={locked}
 							/>
 						<div className="container">
-							<Label text="Schaden" />
+							<Label text="Schaden" disabled={locked} />
 							<TextField
-								className="ddn"
-								value={dpdn}
-								onChange={this.onEvent.bind(null, 'dpdn')}
+								className="damage-dice-number"
+								value={damageDiceNumber}
+								onChange={this.onEvent.bind(null, 'ddn')}
+								disabled={locked}
 								/>
 							<Dropdown
-								className="dds"
+								className="damage-dice-sides"
 								hint="W"
-								value={dpds}
+								value={damageDiceSides}
 								options={[['W3',3],['W6',6],['W20',20]]}
-								onChange={this.onValue.bind(null, 'dpds')}
+								onChange={this.onValue.bind(null, 'dds')}
+								disabled={locked}
 								/>
 							<TextField
-								className="df"
-								value={dpf}
-								onChange={this.onEvent.bind(null, 'dpf')}
+								className="damage-flat"
+								value={damageFlat}
+								onChange={this.onEvent.bind(null, 'df')}
+								disabled={locked}
 								/>
 						</div>
 					</div>
 					<div className="row">
 						<Dropdown
-							className="re"
+							className="reach"
 							label="Reichweite"
 							hint="Auswählen"
-							value={re}
+							value={reach}
 							options={[['Kurz',1],['Mittel',2],['Lang',3]]}
 							onChange={this.onValue.bind(null, 're')}
+							disabled={locked}
 							/>
 						<div className="container">
-							<Label text="AT/PA-Mod" />
+							<Label text="AT/PA-Mod" disabled={locked} />
 							<TextField
 								className="at"
 								value={at}
 								onChange={this.onEvent.bind(null, 'at')}
+								disabled={locked}
 								/>
 							<TextField
 								className="pa"
 								value={pa}
 								onChange={this.onEvent.bind(null, 'pa')}
-								disabled={ct === 'CT_6'}
+								disabled={locked || combattechnique === 'CT_6'}
 								/>
 						</div>
-						{ ct === 'CT_10' ? (
+						{ combattechnique === 'CT_10' ? (
 							<TextField
 								className="stp"
 								label="Strukturp."
 								value={stp}
 								onChange={this.onEvent.bind(null, 'length')}
+								disabled={locked}
 								/>
 						) : (
 							<TextField
@@ -213,6 +248,7 @@ export default class ItemEditor extends Component {
 								label="Länge in Hf."
 								value={length}
 								onChange={this.onEvent.bind(null, 'length')}
+								disabled={locked}
 								/>
 						) }
 					</div>
@@ -221,78 +257,88 @@ export default class ItemEditor extends Component {
 					<Hr />
 					<div className="row">
 						<Dropdown
-							className="ct"
+							className="combattechnique"
 							label="Kampftechnik"
 							hint="Keine"
-							value={ct}
+							value={combattechnique}
 							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id])}
 							onChange={this.onValue.bind(null, 'ct')}
+							disabled={locked}
 							/>
 					</div>
 					<div className="row">
 						<TextField
-							className="rt"
+							className="reloadtime"
 							label="Ladezeiten"
-							value={rt}
+							value={reloadtime}
 							onChange={this.onEvent.bind(null, 'rt')}
+							disabled={locked}
 							/>
 						<div className="container">
-							<Label text="Schaden" />
+							<Label text="Schaden" disabled={locked} />
 							<TextField
-								className="ddn"
-								value={dpdn}
-								onChange={this.onEvent.bind(null, 'dpdn')}
+								className="damage-dice-number"
+								value={damageDiceNumber}
+								onChange={this.onEvent.bind(null, 'ddn')}
+								disabled={locked}
 								/>
 							<Dropdown
-								className="dds"
+								className="damage-dice-sides"
 								hint="W"
-								value={dpds}
+								value={damageDiceSides}
 								options={[['W3',3],['W6',6],['W20',20]]}
-								onChange={this.onValue.bind(null, 'dpds')}
+								onChange={this.onValue.bind(null, 'dds')}
+								disabled={locked}
 								/>
 							<TextField
-								className="df"
-								value={dpf}
-								onChange={this.onEvent.bind(null, 'dpf')}
+								className="damage-flat"
+								value={damageFlat}
+								onChange={this.onEvent.bind(null, 'df')}
+								disabled={locked}
 								/>
 						</div>
 					</div>
 					<div className="row">
 						<div className="container">
 							<TextField
-								className="rb1"
+								className="range1"
 								label="Nah"
-								value={rb1}
+								value={range1}
 								onChange={this.onValue.bind(null, 'rb1')}
+								disabled={locked}
 								/>
 							<TextField
-								className="rb2"
+								className="range2"
 								label="Mittel"
-								value={rb2}
+								value={range2}
 								onChange={this.onValue.bind(null, 'rb2')}
+								disabled={locked}
 								/>
 							<TextField
-								className="rb3"
+								className="range3"
 								label="Weit"
-								value={rb3}
+								value={range3}
 								onChange={this.onValue.bind(null, 'rb3')}
+								disabled={locked}
 								/>
 						</div>
 						<Dropdown
-							className="am"
+							className="ammunition"
 							label="Munition"
 							hint="Keine"
-							value={am}
+							value={ammunition}
 							options={[
 								['Keine',null]
 							]}
 							onChange={this.onValue.bind(null, 'am')}
+							disabled={locked}
 							/>
 						<TextField
 							className="length"
 							label="Länge in Hf."
 							value={length}
 							onChange={this.onEvent.bind(null, 'length')}
+							disabled={locked}
 							/>
 					</div>
 				</div> ) : null }
@@ -305,19 +351,22 @@ export default class ItemEditor extends Component {
 								label="RS"
 								value={pro}
 								onChange={this.onEvent.bind(null, 'pro')}
+								disabled={locked}
 								/>
 							<TextField
 								className="enc"
 								label="BE"
 								value={enc}
 								onChange={this.onEvent.bind(null, 'enc')}
+								disabled={locked}
 								/>
 						</div>
 						<Checkbox
-							className="addp"
+							className="addpenalties"
 							label="Zusätzliche Abzüge"
-							checked={addp}
-							onClick={this.onSwitch.bind(null, 'addp')}
+							checked={addpenalties}
+							onClick={this.onSwitch.bind(null, 'addpenalties')}
+							disabled={locked}
 							/>
 					</div>
 				</div> ) : null }

@@ -1,6 +1,5 @@
 import AuthStore from '../stores/AuthStore';
 import ProfileStore from '../stores/ProfileStore';
-import { get, post } from './request';
 import ServerActions from '../actions/ServerActions';
 
 export default {
@@ -10,7 +9,8 @@ export default {
 	
 	getAllData: async function() {
 		try {
-			let result = await get('data/DSA5.json', 'json');
+			let response = await fetch('data/DSA5.json');
+			let result = await response.json();
 			ServerActions.receiveLists(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -19,7 +19,8 @@ export default {
 	register: async function(email, username, displayname, password) {
 		try {
 			ServerActions.startLoading();
-			let result = await get('data/register.php?email=' + email + '&name=' + username + '&display=' + displayname + '&password=' + password);
+			let response = await fetch('data/register.php?email=' + email + '&name=' + username + '&display=' + displayname + '&password=' + password);
+			let result = await response.text();
 			ServerActions.registrationSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -27,7 +28,8 @@ export default {
 	},
 	checkEmail: async function(email) {
 		try {
-			let result = await get('data/checkemail.php?e=' + email);
+			let response = await fetch('data/checkemail.php?e=' + email);
+			let result = await response.text();
 			return result;
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -35,7 +37,8 @@ export default {
 	},
 	checkUsername: async function(username) {
 		try {
-			let result = await get('data/checkuser.php?e=' + username);
+			let response = await fetch('data/checkuser.php?e=' + username);
+			let result = await response.text();
 			return result;
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -44,7 +47,8 @@ export default {
 	sendPasswordCode: async function(email) {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/forgetpw.php?e=' + email);
+			let response = await fetch('php/forgetpw.php?e=' + email);
+			let result = await response.text();
 			ServerActions.forgotPasswordSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -53,7 +57,8 @@ export default {
 	sendUsername: async function(email) {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/forgetusername.php?e=' + email);
+			let response = await fetch('php/forgetusername.php?e=' + email);
+			let result = await response.text();
 			ServerActions.forgotUsernameSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -62,7 +67,8 @@ export default {
 	resendActivation: async function(email) {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/regmailagain.php?e=' + email);
+			let response = await fetch('php/regmailagain.php?e=' + email);
+			let result = await response.text();
 			ServerActions.resendActivationSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -71,7 +77,8 @@ export default {
 	login: async function(username, password) {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/login.php?u=' + username + '&p=' + password);
+			let response = await fetch('php/login.php?u=' + username + '&p=' + password);
+			let result = await response.text();
 			ServerActions.receiveAccount(result, username);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -83,7 +90,8 @@ export default {
 	// logout: async function() {
 	// 	try {
 	// 		ServerActions.startLoading();
-	// 		let result = await get('php/logout.php?uid=' + AuthStore.getID());
+	// 		let response = await fetch('php/logout.php?uid=' + AuthStore.getID());
+	//		let result = await response.text();
 	// 		ServerActions.logoutSuccess(result);
 	// 	} catch(e) {
 	// 		ServerActions.connectionError(e);
@@ -92,9 +100,8 @@ export default {
 	setNewUsername: async function(name) {
 		try {
 			ServerActions.startLoading();
-			let userID = AuthStore.getID();
-			let url = 'php/changeaccount.php?uid=' + userID + '&src=username&v=' + name;
-			let result = await get(url);
+			let response = await fetch('php/changeaccount.php?uid=' + AuthStore.getID() + '&src=username&v=' + name);
+			let result = await response.text();
 			ServerActions.changeUsernameSuccess(result, name);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -103,9 +110,8 @@ export default {
 	setNewPassword: async function(password) {
 		try {
 			ServerActions.startLoading();
-			let userID = AuthStore.getID();
-			let url = 'php/changeaccount.php?uid=' + userID + '&src=password&v=' + password;
-			let result = await get(url);
+			let response = await fetch('php/changeaccount.php?uid=' + AuthStore.getID() + '&src=password&v=' + password);
+			let result = await response.text();
 			ServerActions.changePasswordSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -114,7 +120,8 @@ export default {
 	deleteAccount: async function() {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/deleteaccount.php?uid=' + AuthStore.getID());
+			let response = await fetch('php/deleteaccount.php?uid=' + AuthStore.getID());
+			let result = await response.text();
 			ServerActions.deleteAccountSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -123,7 +130,8 @@ export default {
 	getHeroes: async function() {
 		try {
 			ServerActions.startLoading();
-			let result = await get('php/getherolist.php?uid=' + AuthStore.getID());
+			let response = await fetch('php/getherolist.php?uid=' + AuthStore.getID());
+			let result = await response.text();
 			ServerActions.herolistRefreshSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -193,7 +201,8 @@ export default {
 	// loadHero: async function(id) {
 	// 	try {
 	// 		ServerActions.startLoading();
-	// 		let result = await get('php/gethero.php?hid=' + id);
+	// 		let response = await fetch('php/gethero.php?hid=' + id);
+	//		let result = await response.text();
 	// 		ServerActions.loadHeroSuccess(id, result);
 	// 	} catch(e) {
 	// 		ServerActions.connectionError(e);
@@ -202,35 +211,40 @@ export default {
 	createNewHero: async function(heroname) {
 		try {
 			ServerActions.startLoading();
-			let url = 'php/newhero.php?uid=' + AuthStore.getID() + '&n=' + heroname;
-			let result = await get(url);
+			let response = await fetch('php/newhero.php?uid=' + AuthStore.getID() + '&n=' + heroname);
+			let result = await response.text();
 			ServerActions.createNewHeroSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}
 	},
-	saveHero: function(data) {
-		ServerActions.startLoading();
-		var blob = new Blob([data], { type: "application/json" });
-		var url  = window.URL.createObjectURL(blob);
-		window.open(url);
-	},
-	// saveHero: async function(data) {
-	// 	try {
-	// 		ServerActions.startLoading();
-	// 		let url = 'php/save.php?short=' + data[0] + '&full=' + data[1];
-	// 		let result = await get(url);
-	// 		ServerActions.saveHeroSuccess(result);
-	// 	} catch(e) {
-	// 		ServerActions.connectionError(e);
-	// 	}
+	// saveHero: function(data) {
+	// 	ServerActions.startLoading();
+	// 	var blob = new Blob([data], { type: "application/json" });
+	// 	var url  = window.URL.createObjectURL(blob);
+	// 	window.open(url);
 	// },
+	saveHero: async function(data) {
+		try {
+			ServerActions.startLoading();
+			let response = await fetch('php/save.php?short=' + data[0] + '&full=' + data[1], {
+				method: 'post',
+				body: JSON.stringify(data)
+			});
+			let result = await response.text();
+			ServerActions.saveHeroSuccess(result);
+		} catch(e) {
+			ServerActions.connectionError(e);
+		}
+	},
 	changeHeroAvatar: async function(type, data) {
 		try {
 			ServerActions.startLoading();
-			var finalData = new FormData(data);
-			let url = 'php/uploadheropic.php?hid=' + ProfileStore.getID();
-			let result = await post(url, finalData);
+			let response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
+				method: 'post',
+				body: new FormData(data)
+			});
+			let result = await response.text();
 			ServerActions.changeHeroAvatarSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
@@ -239,8 +253,8 @@ export default {
 	deleteHero: async function(heroid) {
 		try {
 			ServerActions.startLoading();
-			let url = 'php/deletehero.php?uid=' + AuthStore.getID() + '&hid=' + heroid;
-			let result = await get(url);
+			let response = await fetch('php/deletehero.php?uid=' + AuthStore.getID() + '&hid=' + heroid);
+			let result = await response.text();
 			ServerActions.deleteHeroSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);

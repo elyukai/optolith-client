@@ -4,4 +4,8 @@ label {
 	display: block;
 	font: 500 12px/1 Alegreya Sans;
 	padding-bottom: 6px;
+
+	&.disabled {
+		color: $color11;
+	}
 }

@@ -143,6 +143,9 @@ export default keyMirror({
 	// InventoryStore
 	FILTER_ITEMS: null,
 	SORT_ITEMS: null,
+	ADD_ITEM: null,
+	SAVE_ITEM: null,
+	REMOVE_ITEM: null,
 	
 	// GroupsStore
 	SHOW_MASTER_REQUESTED_LIST: null,
