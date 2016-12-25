@@ -28978,6 +28978,7 @@
 			target.range1 = target.range[0];
 			target.range2 = target.range[1];
 			target.range3 = target.range[2];
+			delete target.range;
 			return target;
 		}
 	}
@@ -38581,7 +38582,25 @@
 				pro: '',
 				enc: '',
 				addpenalties: false
-			}, this.onEvent = (prop, e) => this.setState({ [prop]: e.target.value }), this.onSwitch = prop => this.setState({ [prop]: !this.state[prop] }), this.onValue = (prop, value) => this.setState({ [prop]: value }), this.applyTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState((0, _extends3.default)({}, _InventoryStore2.default.getTemplate(this.state.template), { id: this.state.id, isTemplateLocked: false })), this.lockTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState((0, _extends3.default)({}, _InventoryStore2.default.getTemplate(this.state.template), { id: this.state.id })), this.unlockTemplate = () => this.setState({ isTemplateLocked: false }), this.addItem = () => _InventoryActions2.default.addToList(this.state), this.saveItem = () => _InventoryActions2.default.saveItem(this.state), _temp;
+			}, this.onEvent = (prop, e) => this.setState({ [prop]: e.target.value }), this.onSwitch = prop => this.setState({ [prop]: !this.state[prop] }), this.onValue = (prop, value) => this.setState({ [prop]: value }), this.applyTemplate = () => {
+				if (this.state.template !== 'ITEMTPL_0') {
+					let template = (0, _extends3.default)({}, _InventoryStore2.default.getTemplate(this.state.template), { id: this.state.id, isTemplateLocked: false });
+					template.range1 = template.range[0];
+					template.range2 = template.range[1];
+					template.range3 = template.range[2];
+					delete template.range;
+					this.setState(template);
+				}
+			}, this.lockTemplate = () => {
+				if (this.state.template !== 'ITEMTPL_0') {
+					let template = (0, _extends3.default)({}, _InventoryStore2.default.getTemplate(this.state.template), { id: this.state.id });
+					template.range1 = template.range[0];
+					template.range2 = template.range[1];
+					template.range3 = template.range[2];
+					delete template.range;
+					this.setState(template);
+				}
+			}, this.unlockTemplate = () => this.setState({ isTemplateLocked: false }), this.addItem = () => _InventoryActions2.default.addToList(this.state), this.saveItem = () => _InventoryActions2.default.saveItem(this.state), _temp;
 		}
 
 		render() {
@@ -39328,7 +39347,7 @@
 									_react2.default.createElement(
 										'td',
 										null,
-										(_InventoryStore2.default.get(ammunition) || {}).name
+										(_InventoryStore2.default.getTemplate(ammunition) || {}).name
 									)
 								),
 								_react2.default.createElement(

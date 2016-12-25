@@ -98,7 +98,7 @@ export default class InventoryListItem extends Component {
 							</tr>
 							<tr>
 								<td>Munitionstyp</td>						
-								<td>{(InventoryStore.get(ammunition) || {}).name}</td>
+								<td>{(InventoryStore.getTemplate(ammunition) || {}).name}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>						

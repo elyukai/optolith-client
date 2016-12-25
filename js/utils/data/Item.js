@@ -107,6 +107,7 @@ export default class Item extends Core {
 		target.range1 = target.range[0];
 		target.range2 = target.range[1];
 		target.range3 = target.range[2];
+		delete target.range;
 		return target;
 	}
 }

@@ -57,8 +57,26 @@ export default class ItemEditor extends Component {
 	onSwitch = prop => this.setState({ [prop]: !this.state[prop] });
 	onValue = (prop, value) => this.setState({ [prop]: value });
 
-	applyTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState({ ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false });
-	lockTemplate = () => this.state.template !== 'ITEMTPL_0' && this.setState({ ...InventoryStore.getTemplate(this.state.template), id: this.state.id });
+	applyTemplate = () => {
+		if (this.state.template !== 'ITEMTPL_0') {
+			let template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
+			template.range1 = template.range[0];
+			template.range2 = template.range[1];
+			template.range3 = template.range[2];
+			delete template.range;
+			this.setState(template);
+		}
+	};
+	lockTemplate = () => {
+		if (this.state.template !== 'ITEMTPL_0') {
+			let template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id };
+			template.range1 = template.range[0];
+			template.range2 = template.range[1];
+			template.range3 = template.range[2];
+			delete template.range;
+			this.setState(template);
+		}
+	};
 	unlockTemplate = () => this.setState({ isTemplateLocked: false });
 
 	addItem = () => InventoryActions.addToList(this.state);
