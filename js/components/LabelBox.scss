@@ -1,17 +1,19 @@
-#sheets .labelbox {
+.labelbox {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 
-	> .box {
+	.box {
 		flex: none;
 		height: 1cm;
 		line-height: 1cm;
 	}
 
-	> label {
+	label {
 		flex: 1 1 100%;
 		font: bold 11px Alegreya;
-		display: block;
+		color: black;
+		letter-spacing: 0;
+		padding-bottom: 0;
 	}
 }

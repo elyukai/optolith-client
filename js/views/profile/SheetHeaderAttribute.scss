@@ -4,7 +4,7 @@
 	outline-width: 0.55mm;
 	outline-style: solid;
 	outline-color: transparent;
-	border: $print-border;
+	border: 0.3mm solid black;
 	@include size(12mm);
 
 	&.ATTR_1 {

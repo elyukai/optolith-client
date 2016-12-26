@@ -37,6 +37,10 @@ export default class MainSheetPersonalData extends Component {
 			}
 			return name + (subname ? ` (${subname})` : professionVariant ? ` (${vname})` : '');
 		})();
+		
+		const haircolorName = haircolorTags[haircolor - 1];
+		const eyecolorName = eyecolorTags[eyecolor - 1];
+		const socialstatusName = socialstatusTags[socialstatus - 1];
 
 		return (
 			<div className="upper">
@@ -50,12 +54,12 @@ export default class MainSheetPersonalData extends Component {
 					<Plain className="race" label="Spezies" value={raceName} />
 					<Plain className="size" label="Größe" value={size} />
 					<Plain className="weight" label="Gewicht" value={weight} />
-					<Plain className="haircolor" label="Haarfarbe" value={haircolorTags[haircolor - 1]} />
-					<Plain className="eyecolor" label="Augenfarbe" value={eyecolorTags[eyecolor - 1]} />
+					<Plain className="haircolor" label="Haarfarbe" value={haircolorName} />
+					<Plain className="eyecolor" label="Augenfarbe" value={eyecolorName} />
 					<Plain className="culture" label="Kultur" value={cultureName} />
 					<Plain className="profession" label="Profession" value={professionName} />
 					<Plain className="title" label="Titel" value={title} />
-					<Plain className="socialstatus" label="Sozialstatus" value={socialstatusTags[socialstatus - 1]} />
+					<Plain className="socialstatus" label="Sozialstatus" value={socialstatusName} />
 					<Plain className="characteristics" label="Charakteristika" value={characteristics} />
 					<Plain className="otherinfo" label="Sonstiges" value={otherinfo} />
 				</div>

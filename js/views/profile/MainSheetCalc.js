@@ -1,5 +1,5 @@
-import { get } from '../../stores/ListStore';
 import MainSheetCalcItem from './MainSheetCalcItem';
+import MainSheetFatePoints from './MainSheetFatePoints';
 import React, { Component, PropTypes } from 'react';
 
 export default class MainSheetCalc extends Component {
@@ -30,90 +30,60 @@ export default class MainSheetCalc extends Component {
 					subLabel="Grundwert"
 					subArray={[baseValues.le]} />
 				<MainSheetCalcItem
-					label="Astralenergie"
-					calc="(20 durch Zauberer + Leiteigenschaft)"
+					label={attributes[1].name}
+					calc={attributes[1].calc}
 					value={attributes[1].value}
-					add={do {
-						if (get('ADV_23') && get('ADV_23').active)
-							get('ADV_23').tier;
-						else if (get('DISADV_26') && get('DISADV_26').active)
-							-get('DISADV_26').tier;
-						else
-							0;
-					}}
+					add={attributes[1].mod}
 					purchased={baseValues.aeAdd}
 					subLabel="perm. eingesetzt/davon zurückgekauft"
 					subArray={[0,0]}
 					empty={attributes[1].value === '-'} />
 				<MainSheetCalcItem
-					label="Karmaenergie"
-					calc="(20 durch Geweihter + Leiteigenschaft)"
+					label={attributes[2].name}
+					calc={attributes[2].calc}
 					value={attributes[2].value}
-					add={do {
-						if (get('ADV_24') && get('ADV_24').active)
-							get('ADV_24').tier;
-						else if (get('DISADV_27') && get('DISADV_27').active)
-							-get('DISADV_27').tier;
-						else
-							0;
-					}}
+					add={attributes[2].mod}
 					purchased={baseValues.keAdd}
 					subLabel="perm. eingesetzt/davon zurückgekauft"
 					subArray={[0,0]}
-					empty={attributes[2] === '-'} />
+					empty={attributes[2].value === '-'} />
 				<MainSheetCalcItem
-					label="Seelenkraft"
-					calc="(GW der Spezies + (MU + KL + IN)/6)"
-					value={baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6)}
-					add={do {
-						if (get('ADV_26') && get('ADV_26').active)
-							1;
-						else if (get('DISADV_29') && get('DISADV_29').active)
-							-1;
-						else
-							0;
-					}}
+					label={attributes[3].name}
+					calc={attributes[3].calc}
+					value={attributes[3].value}
+					add={attributes[3].mod}
 					purchased={null}
 					subLabel="Grundwert"
 					subArray={[baseValues.sk]} />
 				<MainSheetCalcItem
-					label="Zähigkeit"
-					calc="(GW der Spezies + (KO + KO + KK)/6)"
-					value={baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6)}
-					add={do {
-						if (get('ADV_27') && get('ADV_27').active)
-							1;
-						else if (get('DISADV_30') && get('DISADV_30').active)
-							-1;
-						else
-							0;
-					}}
+					label={attributes[4].name}
+					calc={attributes[4].calc}
+					value={attributes[4].value}
+					add={attributes[4].mod}
 					purchased={null}
 					subLabel="Grundwert"
 					subArray={[baseValues.zk]} />
 				<MainSheetCalcItem
-					label="Ausweichen"
-					calc="(GE/2)"
-					value={Math.round(attributes[5].value / 2)}
+					label={attributes[5].name}
+					calc={attributes[5].calc}
+					value={attributes[5].value}
 					add={0}
 					purchased={null} />
 				<MainSheetCalcItem
-					label="Initiative"
-					calc="(MU + GE)/2"
-					value={Math.round((attributes[0].value + attributes[5].value) / 2)}
+					label={attributes[6].name}
+					calc={attributes[6].calc}
+					value={attributes[6].value}
 					add={0}
 					purchased={null} />
 				<MainSheetCalcItem
-					label="Geschwindigkeit"
-					calc="(GW der Spezies, mögl. Einbeinig)"
-					value={baseValues.gs}
+					label={attributes[7].name}
+					calc={attributes[7].calc}
+					value={attributes[7].value}
 					add={0}
 					purchased={null}
 					subLabel="Grundwert"
 					subArray={[baseValues.gs]} />
-				<div className="fate">
-					<h3>Schicksalspunkte</h3>
-				</div>
+				<MainSheetFatePoints />
 			</div>
 		) : null;
 	}

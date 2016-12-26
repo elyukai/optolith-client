@@ -55,9 +55,9 @@ export default class Profile extends Component {
 						// },
 						{
 							label: 'Heldenbogen',
-							tag: 'sheets',
+							tag: 'sheets'
 							// disabled: true
-							disabled: phase < 3
+							// disabled: phase < 3
 						}
 					]}
 					active={this.state.tab}

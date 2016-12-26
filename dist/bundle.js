@@ -66,7 +66,7 @@
 
 	var _WebAPIUtils2 = _interopRequireDefault(_WebAPIUtils);
 
-	__webpack_require__(511);
+	__webpack_require__(512);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22045,11 +22045,11 @@
 
 	var _Route2 = _interopRequireDefault(_Route);
 
-	var _TabStore = __webpack_require__(502);
+	var _TabStore = __webpack_require__(503);
 
 	var _TabStore2 = _interopRequireDefault(_TabStore);
 
-	var _TitleBar = __webpack_require__(503);
+	var _TitleBar = __webpack_require__(504);
 
 	var _TitleBar2 = _interopRequireDefault(_TitleBar);
 
@@ -30227,11 +30227,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RCP = __webpack_require__(470);
+	var _RCP = __webpack_require__(471);
 
 	var _RCP2 = _interopRequireDefault(_RCP);
 
-	var _Skills = __webpack_require__(487);
+	var _Skills = __webpack_require__(488);
 
 	var _Skills2 = _interopRequireDefault(_Skills);
 
@@ -33966,7 +33966,7 @@
 			date: new Date('2016-10-18T16:18:28.420Z'),
 			player: ['U_1', 'schuchi'],
 			id: 'H_1',
-			phase: 3,
+			phase: 2,
 			name: 'Shimo ibn Rashdul',
 			avatar: 'images/portrait.png',
 			ap: {
@@ -41989,9 +41989,9 @@
 					// },
 					{
 						label: 'Heldenbogen',
-						tag: 'sheets',
+						tag: 'sheets'
 						// disabled: true
-						disabled: phase < 3
+						// disabled: phase < 3
 					}],
 					active: this.state.tab,
 					onClick: this.handleClick }),
@@ -43186,11 +43186,11 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SpellsSheet = __webpack_require__(468);
+	var _SpellsSheet = __webpack_require__(469);
 
 	var _SpellsSheet2 = _interopRequireDefault(_SpellsSheet);
 
-	var _TalentsSheet = __webpack_require__(469);
+	var _TalentsSheet = __webpack_require__(470);
 
 	var _TalentsSheet2 = _interopRequireDefault(_TalentsSheet);
 
@@ -43621,7 +43621,7 @@
 
 	var _MainSheetCalc2 = _interopRequireDefault(_MainSheetCalc);
 
-	var _MainSheetPersonalData = __webpack_require__(462);
+	var _MainSheetPersonalData = __webpack_require__(465);
 
 	var _MainSheetPersonalData2 = _interopRequireDefault(_MainSheetPersonalData);
 
@@ -43653,7 +43653,7 @@
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
-	var _SpecialAbilitiesStore = __webpack_require__(466);
+	var _SpecialAbilitiesStore = __webpack_require__(467);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
@@ -43742,11 +43742,13 @@
 		value: true
 	});
 
-	var _ListStore = __webpack_require__(194);
-
 	var _MainSheetCalcItem = __webpack_require__(461);
 
 	var _MainSheetCalcItem2 = _interopRequireDefault(_MainSheetCalcItem);
+
+	var _MainSheetFatePoints = __webpack_require__(462);
+
+	var _MainSheetFatePoints2 = _interopRequireDefault(_MainSheetFatePoints);
 
 	var _react = __webpack_require__(6);
 
@@ -43800,68 +43802,60 @@
 					subLabel: 'Grundwert',
 					subArray: [baseValues.le] }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Astralenergie',
-					calc: '(20 durch Zauberer + Leiteigenschaft)',
+					label: attributes[1].name,
+					calc: attributes[1].calc,
 					value: attributes[1].value,
-					add: (0, _ListStore.get)('ADV_23') && (0, _ListStore.get)('ADV_23').active ? (0, _ListStore.get)('ADV_23').tier : (0, _ListStore.get)('DISADV_26') && (0, _ListStore.get)('DISADV_26').active ? -(0, _ListStore.get)('DISADV_26').tier : 0,
+					add: attributes[1].mod,
 					purchased: baseValues.aeAdd,
 					subLabel: 'perm. eingesetzt/davon zur\xFCckgekauft',
 					subArray: [0, 0],
 					empty: attributes[1].value === '-' }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Karmaenergie',
-					calc: '(20 durch Geweihter + Leiteigenschaft)',
+					label: attributes[2].name,
+					calc: attributes[2].calc,
 					value: attributes[2].value,
-					add: (0, _ListStore.get)('ADV_24') && (0, _ListStore.get)('ADV_24').active ? (0, _ListStore.get)('ADV_24').tier : (0, _ListStore.get)('DISADV_27') && (0, _ListStore.get)('DISADV_27').active ? -(0, _ListStore.get)('DISADV_27').tier : 0,
+					add: attributes[2].mod,
 					purchased: baseValues.keAdd,
 					subLabel: 'perm. eingesetzt/davon zur\xFCckgekauft',
 					subArray: [0, 0],
-					empty: attributes[2] === '-' }),
+					empty: attributes[2].value === '-' }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Seelenkraft',
-					calc: '(GW der Spezies + (MU + KL + IN)/6)',
-					value: baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6),
-					add: (0, _ListStore.get)('ADV_26') && (0, _ListStore.get)('ADV_26').active ? 1 : (0, _ListStore.get)('DISADV_29') && (0, _ListStore.get)('DISADV_29').active ? -1 : 0,
+					label: attributes[3].name,
+					calc: attributes[3].calc,
+					value: attributes[3].value,
+					add: attributes[3].mod,
 					purchased: null,
 					subLabel: 'Grundwert',
 					subArray: [baseValues.sk] }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Z\xE4higkeit',
-					calc: '(GW der Spezies + (KO + KO + KK)/6)',
-					value: baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6),
-					add: (0, _ListStore.get)('ADV_27') && (0, _ListStore.get)('ADV_27').active ? 1 : (0, _ListStore.get)('DISADV_30') && (0, _ListStore.get)('DISADV_30').active ? -1 : 0,
+					label: attributes[4].name,
+					calc: attributes[4].calc,
+					value: attributes[4].value,
+					add: attributes[4].mod,
 					purchased: null,
 					subLabel: 'Grundwert',
 					subArray: [baseValues.zk] }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Ausweichen',
-					calc: '(GE/2)',
-					value: Math.round(attributes[5].value / 2),
+					label: attributes[5].name,
+					calc: attributes[5].calc,
+					value: attributes[5].value,
 					add: 0,
 					purchased: null }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Initiative',
-					calc: '(MU + GE)/2',
-					value: Math.round((attributes[0].value + attributes[5].value) / 2),
+					label: attributes[6].name,
+					calc: attributes[6].calc,
+					value: attributes[6].value,
 					add: 0,
 					purchased: null }),
 				_react2.default.createElement(_MainSheetCalcItem2.default, {
-					label: 'Geschwindigkeit',
-					calc: '(GW der Spezies, m\xF6gl. Einbeinig)',
-					value: baseValues.gs,
+					label: attributes[7].name,
+					calc: attributes[7].calc,
+					value: attributes[7].value,
 					add: 0,
 					purchased: null,
 					subLabel: 'Grundwert',
 					subArray: [baseValues.gs] }),
-				_react2.default.createElement(
-					'div',
-					{ className: 'fate' },
-					_react2.default.createElement(
-						'h3',
-						null,
-						'Schicksalspunkte'
-					)
-				)
+				_react2.default.createElement(_MainSheetFatePoints2.default, null)
 			) : null;
 		}
 	}
@@ -43979,133 +43973,45 @@
 		value: true
 	});
 
-	var _Avatar = __webpack_require__(411);
-
-	var _Avatar2 = _interopRequireDefault(_Avatar);
-
 	var _LabelBox = __webpack_require__(463);
 
 	var _LabelBox2 = _interopRequireDefault(_LabelBox);
 
-	var _Plain = __webpack_require__(465);
+	var _TextBox = __webpack_require__(456);
 
-	var _Plain2 = _interopRequireDefault(_Plain);
+	var _TextBox2 = _interopRequireDefault(_TextBox);
 
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _ListStore = __webpack_require__(194);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	class MainSheetPersonalData extends _react.Component {
+	class MainSheetFatePoints extends _react.Component {
 
 		render() {
-			var _props = this.props;
-			const ap = _props.ap,
-			      culture = _props.culture,
-			      el = _props.el,
-			      eyecolorTags = _props.eyecolorTags,
-			      haircolorTags = _props.haircolorTags,
-			      profession = _props.profession,
-			      professionVariant = _props.professionVariant;
-			var _props$profile = _props.profile;
-			const name = _props$profile.name,
-			      family = _props$profile.family,
-			      placeofbirth = _props$profile.placeofbirth,
-			      dateofbirth = _props$profile.dateofbirth,
-			      age = _props$profile.age,
-			      sex = _props$profile.sex,
-			      size = _props$profile.size,
-			      weight = _props$profile.weight,
-			      haircolor = _props$profile.haircolor,
-			      eyecolor = _props$profile.eyecolor,
-			      title = _props$profile.title,
-			      socialstatus = _props$profile.socialstatus,
-			      characteristics = _props$profile.characteristics,
-			      otherinfo = _props$profile.otherinfo,
-			      avatar = _props$profile.avatar,
-			      race = _props.race,
-			      socialstatusTags = _props.socialstatusTags;
 
+			let bonus = 0;
 
-			const raceName = race.name;
-			const cultureName = culture.name;
-			const professionName = (() => {
-				var _ref = profession || { name: 'Loading...' };
-
-				let name = _ref.name,
-				    subname = _ref.subname;
-
-				if (typeof name === 'object') {
-					name = name[sex];
-				}
-				if (typeof subname === 'object') {
-					subname = subname[sex];
-				}
-
-				var _ref2 = professionVariant || { name: 'Loading...' };
-
-				let vname = _ref2.name;
-
-				if (typeof vname === 'object') {
-					vname = vname[sex];
-				}
-				return name + (subname ? ` (${ subname })` : professionVariant ? ` (${ vname })` : '');
-			})();
+			if ((0, _ListStore.get)('ADV_14').active) {
+				bonus += (0, _ListStore.get)('ADV_14').tier;
+			} else if ((0, _ListStore.get)('DISADV_31').active) {
+				bonus -= (0, _ListStore.get)('ADV_14').tier;
+			}
 
 			return _react2.default.createElement(
-				'div',
-				{ className: 'upper' },
-				_react2.default.createElement(
-					'div',
-					{ className: 'info' },
-					_react2.default.createElement(_Plain2.default, { className: 'name', label: 'Name', value: name }),
-					_react2.default.createElement(_Plain2.default, { className: 'family', label: 'Familie', value: family }),
-					_react2.default.createElement(_Plain2.default, { className: 'placeofbirth', label: 'Geburtsort', value: placeofbirth }),
-					_react2.default.createElement(_Plain2.default, { className: 'dateofbirth', label: 'Geburtsdatum', value: dateofbirth }),
-					_react2.default.createElement(_Plain2.default, { className: 'age', label: 'Alter', value: age }),
-					_react2.default.createElement(_Plain2.default, { className: 'sex', label: 'Geschlecht', value: sex }),
-					_react2.default.createElement(_Plain2.default, { className: 'race', label: 'Spezies', value: raceName }),
-					_react2.default.createElement(_Plain2.default, { className: 'size', label: 'Gr\xF6\xDFe', value: size }),
-					_react2.default.createElement(_Plain2.default, { className: 'weight', label: 'Gewicht', value: weight }),
-					_react2.default.createElement(_Plain2.default, { className: 'haircolor', label: 'Haarfarbe', value: haircolorTags[haircolor - 1] }),
-					_react2.default.createElement(_Plain2.default, { className: 'eyecolor', label: 'Augenfarbe', value: eyecolorTags[eyecolor - 1] }),
-					_react2.default.createElement(_Plain2.default, { className: 'culture', label: 'Kultur', value: cultureName }),
-					_react2.default.createElement(_Plain2.default, { className: 'profession', label: 'Profession', value: professionName }),
-					_react2.default.createElement(_Plain2.default, { className: 'title', label: 'Titel', value: title }),
-					_react2.default.createElement(_Plain2.default, { className: 'socialstatus', label: 'Sozialstatus', value: socialstatusTags[socialstatus - 1] }),
-					_react2.default.createElement(_Plain2.default, { className: 'characteristics', label: 'Charakteristika', value: characteristics }),
-					_react2.default.createElement(_Plain2.default, { className: 'otherinfo', label: 'Sonstiges', value: otherinfo })
-				),
-				_react2.default.createElement(
-					'div',
-					{ className: 'ap-portrait' },
-					_react2.default.createElement(_LabelBox2.default, { className: 'el', label: 'Erfahrungsgrad', value: el }),
-					_react2.default.createElement(_LabelBox2.default, { className: 'ap-total', label: 'AP gesamt', value: ap.total }),
-					_react2.default.createElement(
-						_LabelBox2.default,
-						{ className: 'portrait', label: 'Portr\xE4t/Wappen' },
-						_react2.default.createElement(_Avatar2.default, { src: avatar, img: true })
-					),
-					_react2.default.createElement(_LabelBox2.default, { className: 'ap-available', label: 'AP verf\xFCgbar', value: ap.total - ap.spent }),
-					_react2.default.createElement(_LabelBox2.default, { className: 'ap-used', label: 'AP ausgegeben', value: ap.spent })
-				)
+				_TextBox2.default,
+				{ className: 'fate-points', label: 'Schicksalspunkte' },
+				_react2.default.createElement(_LabelBox2.default, { label: 'Wert', value: '3' }),
+				_react2.default.createElement(_LabelBox2.default, { label: 'Bonus', value: bonus.toString() }),
+				_react2.default.createElement(_LabelBox2.default, { label: 'Max', value: 3 + bonus }),
+				_react2.default.createElement(_LabelBox2.default, { label: 'Aktuell', value: '' })
 			);
 		}
 	}
-	exports.default = MainSheetPersonalData;
-	MainSheetPersonalData.propTypes = {
-		ap: _react.PropTypes.object.isRequired,
-		culture: _react.PropTypes.object.isRequired,
-		el: _react.PropTypes.string.isRequired,
-		eyecolorTags: _react.PropTypes.array.isRequired,
-		haircolorTags: _react.PropTypes.array.isRequired,
-		profession: _react.PropTypes.object.isRequired,
-		professionVariant: _react.PropTypes.object,
-		profile: _react.PropTypes.object.isRequired,
-		race: _react.PropTypes.object.isRequired,
-		socialstatusTags: _react.PropTypes.array.isRequired
-	};
+	exports.default = MainSheetFatePoints;
 
 /***/ },
 /* 463 */
@@ -44226,6 +44132,148 @@
 		value: true
 	});
 
+	var _Avatar = __webpack_require__(411);
+
+	var _Avatar2 = _interopRequireDefault(_Avatar);
+
+	var _LabelBox = __webpack_require__(463);
+
+	var _LabelBox2 = _interopRequireDefault(_LabelBox);
+
+	var _Plain = __webpack_require__(466);
+
+	var _Plain2 = _interopRequireDefault(_Plain);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class MainSheetPersonalData extends _react.Component {
+
+		render() {
+			var _props = this.props;
+			const ap = _props.ap,
+			      culture = _props.culture,
+			      el = _props.el,
+			      eyecolorTags = _props.eyecolorTags,
+			      haircolorTags = _props.haircolorTags,
+			      profession = _props.profession,
+			      professionVariant = _props.professionVariant;
+			var _props$profile = _props.profile;
+			const name = _props$profile.name,
+			      family = _props$profile.family,
+			      placeofbirth = _props$profile.placeofbirth,
+			      dateofbirth = _props$profile.dateofbirth,
+			      age = _props$profile.age,
+			      sex = _props$profile.sex,
+			      size = _props$profile.size,
+			      weight = _props$profile.weight,
+			      haircolor = _props$profile.haircolor,
+			      eyecolor = _props$profile.eyecolor,
+			      title = _props$profile.title,
+			      socialstatus = _props$profile.socialstatus,
+			      characteristics = _props$profile.characteristics,
+			      otherinfo = _props$profile.otherinfo,
+			      avatar = _props$profile.avatar,
+			      race = _props.race,
+			      socialstatusTags = _props.socialstatusTags;
+
+
+			const raceName = race.name;
+			const cultureName = culture.name;
+			const professionName = (() => {
+				var _ref = profession || { name: 'Loading...' };
+
+				let name = _ref.name,
+				    subname = _ref.subname;
+
+				if (typeof name === 'object') {
+					name = name[sex];
+				}
+				if (typeof subname === 'object') {
+					subname = subname[sex];
+				}
+
+				var _ref2 = professionVariant || { name: 'Loading...' };
+
+				let vname = _ref2.name;
+
+				if (typeof vname === 'object') {
+					vname = vname[sex];
+				}
+				return name + (subname ? ` (${ subname })` : professionVariant ? ` (${ vname })` : '');
+			})();
+
+			const haircolorName = haircolorTags[haircolor - 1];
+			const eyecolorName = eyecolorTags[eyecolor - 1];
+			const socialstatusName = socialstatusTags[socialstatus - 1];
+
+			return _react2.default.createElement(
+				'div',
+				{ className: 'upper' },
+				_react2.default.createElement(
+					'div',
+					{ className: 'info' },
+					_react2.default.createElement(_Plain2.default, { className: 'name', label: 'Name', value: name }),
+					_react2.default.createElement(_Plain2.default, { className: 'family', label: 'Familie', value: family }),
+					_react2.default.createElement(_Plain2.default, { className: 'placeofbirth', label: 'Geburtsort', value: placeofbirth }),
+					_react2.default.createElement(_Plain2.default, { className: 'dateofbirth', label: 'Geburtsdatum', value: dateofbirth }),
+					_react2.default.createElement(_Plain2.default, { className: 'age', label: 'Alter', value: age }),
+					_react2.default.createElement(_Plain2.default, { className: 'sex', label: 'Geschlecht', value: sex }),
+					_react2.default.createElement(_Plain2.default, { className: 'race', label: 'Spezies', value: raceName }),
+					_react2.default.createElement(_Plain2.default, { className: 'size', label: 'Gr\xF6\xDFe', value: size }),
+					_react2.default.createElement(_Plain2.default, { className: 'weight', label: 'Gewicht', value: weight }),
+					_react2.default.createElement(_Plain2.default, { className: 'haircolor', label: 'Haarfarbe', value: haircolorName }),
+					_react2.default.createElement(_Plain2.default, { className: 'eyecolor', label: 'Augenfarbe', value: eyecolorName }),
+					_react2.default.createElement(_Plain2.default, { className: 'culture', label: 'Kultur', value: cultureName }),
+					_react2.default.createElement(_Plain2.default, { className: 'profession', label: 'Profession', value: professionName }),
+					_react2.default.createElement(_Plain2.default, { className: 'title', label: 'Titel', value: title }),
+					_react2.default.createElement(_Plain2.default, { className: 'socialstatus', label: 'Sozialstatus', value: socialstatusName }),
+					_react2.default.createElement(_Plain2.default, { className: 'characteristics', label: 'Charakteristika', value: characteristics }),
+					_react2.default.createElement(_Plain2.default, { className: 'otherinfo', label: 'Sonstiges', value: otherinfo })
+				),
+				_react2.default.createElement(
+					'div',
+					{ className: 'ap-portrait' },
+					_react2.default.createElement(_LabelBox2.default, { className: 'el', label: 'Erfahrungsgrad', value: el }),
+					_react2.default.createElement(_LabelBox2.default, { className: 'ap-total', label: 'AP gesamt', value: ap.total }),
+					_react2.default.createElement(
+						_LabelBox2.default,
+						{ className: 'portrait', label: 'Portr\xE4t/Wappen' },
+						_react2.default.createElement(_Avatar2.default, { src: avatar, img: true })
+					),
+					_react2.default.createElement(_LabelBox2.default, { className: 'ap-available', label: 'AP verf\xFCgbar', value: ap.total - ap.spent }),
+					_react2.default.createElement(_LabelBox2.default, { className: 'ap-used', label: 'AP ausgegeben', value: ap.spent })
+				)
+			);
+		}
+	}
+	exports.default = MainSheetPersonalData;
+	MainSheetPersonalData.propTypes = {
+		ap: _react.PropTypes.object.isRequired,
+		culture: _react.PropTypes.object.isRequired,
+		el: _react.PropTypes.string.isRequired,
+		eyecolorTags: _react.PropTypes.array.isRequired,
+		haircolorTags: _react.PropTypes.array.isRequired,
+		profession: _react.PropTypes.object.isRequired,
+		professionVariant: _react.PropTypes.object,
+		profile: _react.PropTypes.object.isRequired,
+		race: _react.PropTypes.object.isRequired,
+		socialstatusTags: _react.PropTypes.array.isRequired
+	};
+
+/***/ },
+/* 466 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -44266,7 +44314,7 @@
 	};
 
 /***/ },
-/* 466 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44305,7 +44353,7 @@
 
 	var _Categories2 = _interopRequireDefault(_Categories);
 
-	var _count = __webpack_require__(467);
+	var _count = __webpack_require__(468);
 
 	var _count2 = _interopRequireDefault(_count);
 
@@ -44717,7 +44765,7 @@
 	exports.default = SpecialAbilitiesStore;
 
 /***/ },
-/* 467 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -44757,7 +44805,7 @@
 	};
 
 /***/ },
-/* 468 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44800,7 +44848,7 @@
 	exports.default = SpellsSheet;
 
 /***/ },
-/* 469 */
+/* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44898,7 +44946,7 @@
 	exports.default = TalentsSheet;
 
 /***/ },
-/* 470 */
+/* 471 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44907,7 +44955,7 @@
 		value: true
 	});
 
-	var _Cultures = __webpack_require__(471);
+	var _Cultures = __webpack_require__(472);
 
 	var _Cultures2 = _interopRequireDefault(_Cultures);
 
@@ -44915,11 +44963,11 @@
 
 	var _CultureStore2 = _interopRequireDefault(_CultureStore);
 
-	var _Professions = __webpack_require__(474);
+	var _Professions = __webpack_require__(475);
 
 	var _Professions2 = _interopRequireDefault(_Professions);
 
-	var _Races = __webpack_require__(484);
+	var _Races = __webpack_require__(485);
 
 	var _Races2 = _interopRequireDefault(_Races);
 
@@ -45004,7 +45052,7 @@
 	exports.default = RCP;
 
 /***/ },
-/* 471 */
+/* 472 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45017,11 +45065,11 @@
 
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-	var _CultureActions = __webpack_require__(472);
+	var _CultureActions = __webpack_require__(473);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
-	var _CulturesListItem = __webpack_require__(473);
+	var _CulturesListItem = __webpack_require__(474);
 
 	var _CulturesListItem2 = _interopRequireDefault(_CulturesListItem);
 
@@ -45143,7 +45191,7 @@
 	};
 
 /***/ },
-/* 472 */
+/* 473 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45195,7 +45243,7 @@
 	};
 
 /***/ },
-/* 473 */
+/* 474 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45208,7 +45256,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _CultureActions = __webpack_require__(472);
+	var _CultureActions = __webpack_require__(473);
 
 	var _CultureActions2 = _interopRequireDefault(_CultureActions);
 
@@ -45289,7 +45337,7 @@
 	};
 
 /***/ },
-/* 474 */
+/* 475 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45316,11 +45364,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(475);
+	var _ProfessionActions = __webpack_require__(476);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionsListItem = __webpack_require__(476);
+	var _ProfessionsListItem = __webpack_require__(477);
 
 	var _ProfessionsListItem2 = _interopRequireDefault(_ProfessionsListItem);
 
@@ -45328,7 +45376,7 @@
 
 	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
 
-	var _ProfessionVariantActions = __webpack_require__(477);
+	var _ProfessionVariantActions = __webpack_require__(478);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
@@ -45344,7 +45392,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _Selections = __webpack_require__(478);
+	var _Selections = __webpack_require__(479);
 
 	var _Selections2 = _interopRequireDefault(_Selections);
 
@@ -45450,7 +45498,7 @@
 	};
 
 /***/ },
-/* 475 */
+/* 476 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45503,7 +45551,7 @@
 	};
 
 /***/ },
-/* 476 */
+/* 477 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45522,11 +45570,11 @@
 
 	var _DataUtils = __webpack_require__(316);
 
-	var _ProfessionActions = __webpack_require__(475);
+	var _ProfessionActions = __webpack_require__(476);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
-	var _ProfessionVariantActions = __webpack_require__(477);
+	var _ProfessionVariantActions = __webpack_require__(478);
 
 	var _ProfessionVariantActions2 = _interopRequireDefault(_ProfessionVariantActions);
 
@@ -45671,7 +45719,7 @@
 	};
 
 /***/ },
-/* 477 */
+/* 478 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45700,7 +45748,7 @@
 	};
 
 /***/ },
-/* 478 */
+/* 479 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45751,7 +45799,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ProfessionActions = __webpack_require__(475);
+	var _ProfessionActions = __webpack_require__(476);
 
 	var _ProfessionActions2 = _interopRequireDefault(_ProfessionActions);
 
@@ -45771,23 +45819,23 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SelectionsCantrips = __webpack_require__(479);
+	var _SelectionsCantrips = __webpack_require__(480);
 
 	var _SelectionsCantrips2 = _interopRequireDefault(_SelectionsCantrips);
 
-	var _SelectionsCt = __webpack_require__(480);
+	var _SelectionsCt = __webpack_require__(481);
 
 	var _SelectionsCt2 = _interopRequireDefault(_SelectionsCt);
 
-	var _SelectionsCurses = __webpack_require__(481);
+	var _SelectionsCurses = __webpack_require__(482);
 
 	var _SelectionsCurses2 = _interopRequireDefault(_SelectionsCurses);
 
-	var _SelectionsLangLitc = __webpack_require__(482);
+	var _SelectionsLangLitc = __webpack_require__(483);
 
 	var _SelectionsLangLitc2 = _interopRequireDefault(_SelectionsLangLitc);
 
-	var _SelectionsTalentSpec = __webpack_require__(483);
+	var _SelectionsTalentSpec = __webpack_require__(484);
 
 	var _SelectionsTalentSpec2 = _interopRequireDefault(_SelectionsTalentSpec);
 
@@ -46084,7 +46132,7 @@
 	};
 
 /***/ },
-/* 479 */
+/* 480 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46148,7 +46196,7 @@
 	};
 
 /***/ },
-/* 480 */
+/* 481 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46215,7 +46263,7 @@
 	};
 
 /***/ },
-/* 481 */
+/* 482 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46304,7 +46352,7 @@
 	};
 
 /***/ },
-/* 482 */
+/* 483 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46388,7 +46436,7 @@
 	};
 
 /***/ },
-/* 483 */
+/* 484 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46462,7 +46510,7 @@
 	};
 
 /***/ },
-/* 484 */
+/* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46485,11 +46533,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(485);
+	var _RaceActions = __webpack_require__(486);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
-	var _RacesListItem = __webpack_require__(486);
+	var _RacesListItem = __webpack_require__(487);
 
 	var _RacesListItem2 = _interopRequireDefault(_RacesListItem);
 
@@ -46583,7 +46631,7 @@
 	};
 
 /***/ },
-/* 485 */
+/* 486 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46629,7 +46677,7 @@
 	};
 
 /***/ },
-/* 486 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46648,7 +46696,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _RaceActions = __webpack_require__(485);
+	var _RaceActions = __webpack_require__(486);
 
 	var _RaceActions2 = _interopRequireDefault(_RaceActions);
 
@@ -46748,7 +46796,7 @@
 	};
 
 /***/ },
-/* 487 */
+/* 488 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46757,11 +46805,11 @@
 		value: true
 	});
 
-	var _CombatTechniques = __webpack_require__(488);
+	var _CombatTechniques = __webpack_require__(489);
 
 	var _CombatTechniques2 = _interopRequireDefault(_CombatTechniques);
 
-	var _Liturgies = __webpack_require__(491);
+	var _Liturgies = __webpack_require__(492);
 
 	var _Liturgies2 = _interopRequireDefault(_Liturgies);
 
@@ -46769,17 +46817,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SpecialAbilities = __webpack_require__(493);
+	var _SpecialAbilities = __webpack_require__(494);
 
 	var _SpecialAbilities2 = _interopRequireDefault(_SpecialAbilities);
 
-	var _SpecialAbilitiesStore = __webpack_require__(466);
+	var _SpecialAbilitiesStore = __webpack_require__(467);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
 	var _ListStore = __webpack_require__(194);
 
-	var _Spells = __webpack_require__(497);
+	var _Spells = __webpack_require__(498);
 
 	var _Spells2 = _interopRequireDefault(_Spells);
 
@@ -46787,7 +46835,7 @@
 
 	var _SubTabs2 = _interopRequireDefault(_SubTabs);
 
-	var _Talents = __webpack_require__(499);
+	var _Talents = __webpack_require__(500);
 
 	var _Talents2 = _interopRequireDefault(_Talents);
 
@@ -46877,7 +46925,7 @@
 	exports.default = Skills;
 
 /***/ },
-/* 488 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46890,7 +46938,7 @@
 
 	var _ListStore = __webpack_require__(194);
 
-	var _CombatTechniquesActions = __webpack_require__(489);
+	var _CombatTechniquesActions = __webpack_require__(490);
 
 	var _CombatTechniquesActions2 = _interopRequireDefault(_CombatTechniquesActions);
 
@@ -46914,7 +46962,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(490);
+	var _SkillListItem = __webpack_require__(491);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -47065,7 +47113,7 @@
 	exports.default = CombatTechniques;
 
 /***/ },
-/* 489 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47112,7 +47160,7 @@
 	};
 
 /***/ },
-/* 490 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47258,7 +47306,7 @@
 	};
 
 /***/ },
-/* 491 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47281,7 +47329,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _LiturgiesActions = __webpack_require__(492);
+	var _LiturgiesActions = __webpack_require__(493);
 
 	var _LiturgiesActions2 = _interopRequireDefault(_LiturgiesActions);
 
@@ -47305,7 +47353,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(490);
+	var _SkillListItem = __webpack_require__(491);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -47587,7 +47635,7 @@
 	exports.default = Liturgies;
 
 /***/ },
-/* 492 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47660,7 +47708,7 @@
 	};
 
 /***/ },
-/* 493 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47695,19 +47743,19 @@
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpecialAbilitiesActions = __webpack_require__(494);
+	var _SpecialAbilitiesActions = __webpack_require__(495);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
-	var _SpecialAbilitiesListAddItem = __webpack_require__(495);
+	var _SpecialAbilitiesListAddItem = __webpack_require__(496);
 
 	var _SpecialAbilitiesListAddItem2 = _interopRequireDefault(_SpecialAbilitiesListAddItem);
 
-	var _SpecialAbilitiesListRemoveItem = __webpack_require__(496);
+	var _SpecialAbilitiesListRemoveItem = __webpack_require__(497);
 
 	var _SpecialAbilitiesListRemoveItem2 = _interopRequireDefault(_SpecialAbilitiesListRemoveItem);
 
-	var _SpecialAbilitiesStore = __webpack_require__(466);
+	var _SpecialAbilitiesStore = __webpack_require__(467);
 
 	var _SpecialAbilitiesStore2 = _interopRequireDefault(_SpecialAbilitiesStore);
 
@@ -47867,7 +47915,7 @@
 	exports.default = SpecialAbilities;
 
 /***/ },
-/* 494 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47922,7 +47970,7 @@
 	};
 
 /***/ },
-/* 495 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47935,7 +47983,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(494);
+	var _SpecialAbilitiesActions = __webpack_require__(495);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
@@ -48133,7 +48181,7 @@
 	};
 
 /***/ },
-/* 496 */
+/* 497 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48146,7 +48194,7 @@
 
 	var _BorderButton2 = _interopRequireDefault(_BorderButton);
 
-	var _SpecialAbilitiesActions = __webpack_require__(494);
+	var _SpecialAbilitiesActions = __webpack_require__(495);
 
 	var _SpecialAbilitiesActions2 = _interopRequireDefault(_SpecialAbilitiesActions);
 
@@ -48266,7 +48314,7 @@
 	};
 
 /***/ },
-/* 497 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48305,7 +48353,7 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(490);
+	var _SkillListItem = __webpack_require__(491);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
@@ -48313,7 +48361,7 @@
 
 	var _Slidein2 = _interopRequireDefault(_Slidein);
 
-	var _SpellsActions = __webpack_require__(498);
+	var _SpellsActions = __webpack_require__(499);
 
 	var _SpellsActions2 = _interopRequireDefault(_SpellsActions);
 
@@ -48604,7 +48652,7 @@
 	exports.default = Spells;
 
 /***/ },
-/* 498 */
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48671,7 +48719,7 @@
 	};
 
 /***/ },
-/* 499 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48706,15 +48754,15 @@
 
 	var _Scroll2 = _interopRequireDefault(_Scroll);
 
-	var _SkillListItem = __webpack_require__(490);
+	var _SkillListItem = __webpack_require__(491);
 
 	var _SkillListItem2 = _interopRequireDefault(_SkillListItem);
 
-	var _TalentsActions = __webpack_require__(500);
+	var _TalentsActions = __webpack_require__(501);
 
 	var _TalentsActions2 = _interopRequireDefault(_TalentsActions);
 
-	var _TalentsStore = __webpack_require__(501);
+	var _TalentsStore = __webpack_require__(502);
 
 	var _TalentsStore2 = _interopRequireDefault(_TalentsStore);
 
@@ -48844,7 +48892,7 @@
 	exports.default = Talents;
 
 /***/ },
-/* 500 */
+/* 501 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48896,7 +48944,7 @@
 	};
 
 /***/ },
-/* 501 */
+/* 502 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49100,7 +49148,7 @@
 	exports.default = TalentsStore;
 
 /***/ },
-/* 502 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49230,7 +49278,7 @@
 	exports.default = TabStore;
 
 /***/ },
-/* 503 */
+/* 504 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49263,7 +49311,7 @@
 
 	var _HerolistActions2 = _interopRequireDefault(_HerolistActions);
 
-	var _HistoryActions = __webpack_require__(504);
+	var _HistoryActions = __webpack_require__(505);
 
 	var _HistoryActions2 = _interopRequireDefault(_HistoryActions);
 
@@ -49299,23 +49347,23 @@
 
 	var _Text2 = _interopRequireDefault(_Text);
 
-	var _TitleBarBack = __webpack_require__(505);
+	var _TitleBarBack = __webpack_require__(506);
 
 	var _TitleBarBack2 = _interopRequireDefault(_TitleBarBack);
 
-	var _TitleBarLeft = __webpack_require__(507);
+	var _TitleBarLeft = __webpack_require__(508);
 
 	var _TitleBarLeft2 = _interopRequireDefault(_TitleBarLeft);
 
-	var _TitleBarRight = __webpack_require__(508);
+	var _TitleBarRight = __webpack_require__(509);
 
 	var _TitleBarRight2 = _interopRequireDefault(_TitleBarRight);
 
-	var _TitleBarTabs = __webpack_require__(509);
+	var _TitleBarTabs = __webpack_require__(510);
 
 	var _TitleBarTabs2 = _interopRequireDefault(_TitleBarTabs);
 
-	var _TitleBarWrapper = __webpack_require__(510);
+	var _TitleBarWrapper = __webpack_require__(511);
 
 	var _TitleBarWrapper2 = _interopRequireDefault(_TitleBarWrapper);
 
@@ -49552,7 +49600,7 @@
 	};
 
 /***/ },
-/* 504 */
+/* 505 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49584,7 +49632,7 @@
 	};
 
 /***/ },
-/* 505 */
+/* 506 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49601,7 +49649,7 @@
 
 	var _TabActions2 = _interopRequireDefault(_TabActions);
 
-	var _TitleBarBackArrow = __webpack_require__(506);
+	var _TitleBarBackArrow = __webpack_require__(507);
 
 	var _TitleBarBackArrow2 = _interopRequireDefault(_TitleBarBackArrow);
 
@@ -49629,7 +49677,7 @@
 	exports.default = TitleBarBack;
 
 /***/ },
-/* 506 */
+/* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -49651,7 +49699,7 @@
 	);
 
 /***/ },
-/* 507 */
+/* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -49679,7 +49727,7 @@
 	exports.default = TitleBarLeft;
 
 /***/ },
-/* 508 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -49707,7 +49755,7 @@
 	exports.default = TitleBarRight;
 
 /***/ },
-/* 509 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49776,7 +49824,7 @@
 	};
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -49808,7 +49856,7 @@
 	exports.default = TitleBarWrapper;
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
