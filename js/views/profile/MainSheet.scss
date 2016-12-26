@@ -9,11 +9,11 @@
 			align-content: flex-start;
 			overflow: hidden;
 
-			.name, .characteristics, .other {
+			.name, .profession, .title, .characteristics, .other {
 				width: 100%;
 			}
 
-			.family, .placeofbirth, .dateofbirth, .race, .haircolor, .eyecolor, .culture, .profession, .title, .socialstatus {
+			.family, .placeofbirth, .dateofbirth, .race, .haircolor, .eyecolor, .culture, .socialstatus {
 				width: 50%;
 			}
 
@@ -21,13 +21,13 @@
 				width: 25%;
 			}
 
-			.name, .family, .dateofbirth, .race, .haircolor, .culture, .title, .characteristics, .otherinfo {
+			.name, .family, .dateofbirth, .race, .haircolor, .culture, .profession, .title, .characteristics, .otherinfo {
 				.label {
 					width: 80px;
 				}
 			}
 
-			.placeofbirth, .age, .size, .eyecolor, .profession, .socialstatus {
+			.placeofbirth, .age, .size, .eyecolor, .socialstatus {
 				.label {
 					width: 63px;
 				}

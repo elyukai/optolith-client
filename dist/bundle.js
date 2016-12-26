@@ -43674,7 +43674,7 @@
 			const profile = _ProfileStore2.default.getAll();
 			const race = _RaceStore2.default.getCurrent();
 			const culture = _CultureStore2.default.getCurrent();
-			const profession = _ProfessionStore2.default.getCurrent().name;
+			const profession = _ProfessionStore2.default.getCurrent();
 			const professionVariant = _ProfessionVariantStore2.default.getCurrent();
 			const haircolorTags = _ProfileStore2.default.getHaircolorTags();
 			const eyecolorTags = _ProfileStore2.default.getEyecolorTags();
@@ -44228,9 +44228,9 @@
 					_react2.default.createElement(_Plain2.default, { className: 'haircolor', label: 'Haarfarbe', value: haircolorName }),
 					_react2.default.createElement(_Plain2.default, { className: 'eyecolor', label: 'Augenfarbe', value: eyecolorName }),
 					_react2.default.createElement(_Plain2.default, { className: 'culture', label: 'Kultur', value: cultureName }),
+					_react2.default.createElement(_Plain2.default, { className: 'socialstatus', label: 'Sozialstatus', value: socialstatusName }),
 					_react2.default.createElement(_Plain2.default, { className: 'profession', label: 'Profession', value: professionName }),
 					_react2.default.createElement(_Plain2.default, { className: 'title', label: 'Titel', value: title }),
-					_react2.default.createElement(_Plain2.default, { className: 'socialstatus', label: 'Sozialstatus', value: socialstatusName }),
 					_react2.default.createElement(_Plain2.default, { className: 'characteristics', label: 'Charakteristika', value: characteristics }),
 					_react2.default.createElement(_Plain2.default, { className: 'otherinfo', label: 'Sonstiges', value: otherinfo })
 				),

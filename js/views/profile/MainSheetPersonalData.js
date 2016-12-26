@@ -57,9 +57,9 @@ export default class MainSheetPersonalData extends Component {
 					<Plain className="haircolor" label="Haarfarbe" value={haircolorName} />
 					<Plain className="eyecolor" label="Augenfarbe" value={eyecolorName} />
 					<Plain className="culture" label="Kultur" value={cultureName} />
+					<Plain className="socialstatus" label="Sozialstatus" value={socialstatusName} />
 					<Plain className="profession" label="Profession" value={professionName} />
 					<Plain className="title" label="Titel" value={title} />
-					<Plain className="socialstatus" label="Sozialstatus" value={socialstatusName} />
 					<Plain className="characteristics" label="Charakteristika" value={characteristics} />
 					<Plain className="otherinfo" label="Sonstiges" value={otherinfo} />
 				</div>

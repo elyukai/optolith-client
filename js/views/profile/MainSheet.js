@@ -25,7 +25,7 @@ export default class MainSheet extends Component {
 		const profile = ProfileStore.getAll();
 		const race = RaceStore.getCurrent();
 		const culture = CultureStore.getCurrent();
-		const profession = ProfessionStore.getCurrent().name;
+		const profession = ProfessionStore.getCurrent();
 		const professionVariant = ProfessionVariantStore.getCurrent();
 		const haircolorTags = ProfileStore.getHaircolorTags();
 		const eyecolorTags = ProfileStore.getEyecolorTags();
