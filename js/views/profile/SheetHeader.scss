@@ -1,0 +1,29 @@
+.sheet-header {
+	margin-bottom: 5mm;
+	align-items: flex-end;
+	flex: none;
+	height: 32mm;
+}
+
+.sheet-title {
+	flex: 1 1 100%;
+	height: 50px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	h1, p {
+		text-align: center;
+	}
+
+	p {
+		font: 17px/13px Alegreya SC;
+		margin-top: 5px;
+	}
+}
+
+.sheet-attributes {
+	flex: none;
+	display: flex;
+	flex-wrap: wrap-reverse;
+}

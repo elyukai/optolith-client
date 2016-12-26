@@ -7,18 +7,36 @@ export default class MainSheetPersonalData extends Component {
 
 	static propTypes = {
 		ap: PropTypes.object.isRequired,
-		culture: PropTypes.string.isRequired,
+		culture: PropTypes.object.isRequired,
 		el: PropTypes.string.isRequired,
 		eyecolorTags: PropTypes.array.isRequired,
 		haircolorTags: PropTypes.array.isRequired,
-		profession: PropTypes.string.isRequired,
+		profession: PropTypes.object.isRequired,
+		professionVariant: PropTypes.object,
 		profile: PropTypes.object.isRequired,
-		race: PropTypes.string.isRequired,
+		race: PropTypes.object.isRequired,
 		socialstatusTags: PropTypes.array.isRequired
 	};
 
 	render() {
-		const { ap, culture, el, eyecolorTags, haircolorTags, profession, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar }, race, socialstatusTags } = this.props;
+		const { ap, culture, el, eyecolorTags, haircolorTags, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar }, race, socialstatusTags } = this.props;
+
+		const raceName = race.name;
+		const cultureName = culture.name;
+		const professionName = (() => {
+			let { name, subname } = profession || { name: 'Loading...' };
+			if (typeof name === 'object') {
+				name = name[sex];
+			}
+			if (typeof subname === 'object') {
+				subname = subname[sex];
+			}
+			let { name: vname } = professionVariant || { name: 'Loading...' };
+			if (typeof vname === 'object') {
+				vname = vname[sex];
+			}
+			return name + (subname ? ` (${subname})` : professionVariant ? ` (${vname})` : '');
+		})();
 
 		return (
 			<div className="upper">
@@ -29,13 +47,13 @@ export default class MainSheetPersonalData extends Component {
 					<Plain className="dateofbirth" label="Geburtsdatum" value={dateofbirth} />
 					<Plain className="age" label="Alter" value={age} />
 					<Plain className="sex" label="Geschlecht" value={sex} />
-					<Plain className="race" label="Spezies" value={race} />
+					<Plain className="race" label="Spezies" value={raceName} />
 					<Plain className="size" label="Größe" value={size} />
 					<Plain className="weight" label="Gewicht" value={weight} />
 					<Plain className="haircolor" label="Haarfarbe" value={haircolorTags[haircolor - 1]} />
 					<Plain className="eyecolor" label="Augenfarbe" value={eyecolorTags[eyecolor - 1]} />
-					<Plain className="culture" label="Kultur" value={culture} />
-					<Plain className="profession" label="Profession" value={profession} />
+					<Plain className="culture" label="Kultur" value={cultureName} />
+					<Plain className="profession" label="Profession" value={professionName} />
 					<Plain className="title" label="Titel" value={title} />
 					<Plain className="socialstatus" label="Sozialstatus" value={socialstatusTags[socialstatus - 1]} />
 					<Plain className="characteristics" label="Charakteristika" value={characteristics} />

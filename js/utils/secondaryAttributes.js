@@ -18,7 +18,7 @@ export const getLP = () => {
 	return {
 		id: 'LP',
 		short: 'LE',
-		label: 'Lebensenergie',
+		name: 'Lebensenergie',
 		calc: '(GW der Spezies + KO + KO)',
 		base,
 		mod,
@@ -47,7 +47,7 @@ export const getAE = () => {
 	return {
 		id: 'AE',
 		short: 'AE',
-		label: 'Astralenergie',
+		name: 'Astralenergie',
 		calc: '(20 durch Zauberer + Leiteigenschaft)',
 		base,
 		mod,
@@ -77,7 +77,7 @@ export const getKP = () => {
 	return {
 		id: 'KP',
 		short: 'KE',
-		label: 'Karmaenergie',
+		name: 'Karmaenergie',
 		calc: '(20 durch Geweiht + Leiteigenschaft)',
 		base,
 		mod,
@@ -102,7 +102,7 @@ export const getSPI = () => {
 	return {
 		id: 'SPI',
 		short: 'SK',
-		label: 'Seelenkraft',
+		name: 'Seelenkraft',
 		calc: '(GW der Spezies + (MU + KL + IN)/6)',
 		base,
 		mod,
@@ -124,7 +124,7 @@ export const getTOU = () => {
 	return {
 		id: 'TOU',
 		short: 'ZK',
-		label: 'Zähigkeit',
+		name: 'Zähigkeit',
 		calc: '(GW der Spezies + (KO + KO + KK)/6)',
 		base,
 		mod,
@@ -135,7 +135,7 @@ export const getTOU = () => {
 export const getDO = () => ({
 	id: 'DO',
 	short: 'AW',
-	label: 'Ausweichen',
+	name: 'Ausweichen',
 	calc: '(GE/2)',
 	value: Math.round(get('AGI').value / 2)
 });
@@ -143,7 +143,7 @@ export const getDO = () => ({
 export const getINI = () => ({
 	id: 'INI',
 	short: 'INI',
-	label: 'Initiative',
+	name: 'Initiative',
 	calc: '(MU + GE)/2',
 	value: Math.round((get('COU').value + get('AGI').value) / 2)
 });
@@ -156,7 +156,7 @@ export const getMOV = () => {
 	return {
 		id: 'MOV',
 		short: 'GS',
-		label: 'Geschwindigkeit',
+		name: 'Geschwindigkeit',
 		calc: '(GW der Spezies, mögl. Einbeinig)',
 		value
 	};

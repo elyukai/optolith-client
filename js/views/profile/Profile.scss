@@ -1,109 +1,112 @@
-#body > main section#profile {
-	.page#overview {
-		.title-wrapper {
-			margin-top: 11px;
-			display: flex;
-			align-items: center;
+#overview {
+	.title-wrapper {
+		margin-top: 11px;
+		display: flex;
+		align-items: center;
 
-			.avatar-wrapper {
-				flex: 1 0 auto;
-				@include size(150px);
+		.avatar-wrapper {
+			flex: 1 0 auto;
+			@include size(150px);
 
-				&:hover {
-					cursor: pointer;
+			&:hover {
+				cursor: pointer;
 
-					> div.avatar {
-						box-shadow: 0 0 0 71px transparentize(black, .15) inset;
+				.avatar {
+					box-shadow: 0 0 0 71px transparentize(black, .15) inset;
 
-						&::after {
-							position: absolute;
-							top: 39px;
-							left: 39px;
-							content: "\E2C6";
-							width: 64px;
-							font: 64px/64px Material;
-							color: #f1e6d4;
-							text-align: center;
-						}
+					&::after {
+						display: block;
 					}
-				}
-
-				&:not(.no-avatar) {
-					padding: 4px;
-					background: #785a28;
-
-					> div.avatar::after {
-						top: 43px;
-						left: 43px;
-					}
-				}
-				
-				&.no-avatar {
-					border-width: 4px;
 				}
 			}
 
-			.text-wrapper {
-				flex: 1 1 100%;
-				margin-left: 26px;
+			&:not(.no-avatar) {
+				padding: 4px;
+				background: #785a28;
 
-				$size: 38px;
+				.avatar::after {
+					top: 43px;
+					left: 43px;
+				}
+			}
+			
+			&.no-avatar {
+				border-width: 4px;
+			}
+		}
+		
+		.avatar::after {
+			position: absolute;
+			top: 39px;
+			left: 39px;
+			display: none;
+			content: "\E2C6";
+			@include size(64px);
+			font: 64px/64px Material;
+			color: $color1;
+			text-align: center;
+		}
 
-				> h1 {
+		.text-wrapper {
+			flex: 1 1 100%;
+			margin-left: 26px;
+
+			$size: 38px;
+
+			> h1 {
+				margin: 0;
+				font: 400 #{$size}/#{$size} Alegreya Sans;
+				letter-spacing: 0.025em;
+				color: #f1e6d4;
+			}
+
+			> h1, > div.change-name {
+				display: flex;
+				height: $size;
+				align-items: center;
+
+				> div.textfield {
 					margin: 0;
-					font: 400 #{$size}/#{$size} Alegreya Sans;
-					letter-spacing: 0.025em;
-					color: #f1e6d4;
 				}
 
-				> h1, > div.change-name {
-					display: flex;
-					height: $size;
-					align-items: center;
-
-					> div.textfield {
-						margin: 0;
-					}
-
-					> div.btn {
-						margin-left: 11px;
-						letter-spacing: 0;
-					}
+				> div.btn {
+					margin-left: 11px;
+					letter-spacing: 0;
 				}
+			}
 
-				> div:not(.change-name) {
-					margin: 4px 0 0;
-					
-					span:last-child {
-						font-weight: 500;
-					}
+			> div:not(.change-name) {
+				margin: 4px 0 0;
+				
+				span:last-child {
+					font-weight: 500;
 				}
 			}
 		}
+	}
 
-		.add-ap {
-			margin-top: 20px;
-		}
+	.add-ap {
+		margin-top: 20px;
+	}
 
-		.personal-data {
+	.personal-data {
+		display: flex;
+		flex-wrap: wrap;
+		margin-top: 10px;
+
+		> div {
+			flex: none;
 			display: flex;
 			flex-wrap: wrap;
-			margin-top: 10px;
-
-			> div {
-				flex: none;
-				display: flex;
-				flex-wrap: wrap;
-				width: 323px;
-				margin-right: 22px;
-				margin-bottom: 10px;
-				align-items: flex-end;
-			}
+			width: 323px;
+			margin-right: 22px;
+			margin-bottom: 10px;
+			align-items: flex-end;
 		}
+	}
 
-		.end-char-creation, .delete-char {
-			margin-top: 20px;
-		}
+	.end-char-creation, .delete-char {
+		margin-top: 20px;
 	}
 }
 

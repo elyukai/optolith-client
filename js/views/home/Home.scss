@@ -1,4 +1,4 @@
-#body > main section#home {
+#home {
 	&::before {
 		position: absolute;
 		@include calc(width, "100% - 70px");
@@ -10,16 +10,14 @@
 		top: $titlebar-height;
 		left: 35px;
 	}
+}
 
-	.page {
-		&#home-overview .scroll-inner {
-			padding-top: 20px;
+#home-overview .scroll-inner {
+	padding-top: 20px;
 
-			h2 {
-				font-size: 32px;
-				line-height: normal;
-				letter-spacing: 0.075em;
-			}
-		}
+	h2 {
+		font-size: 32px;
+		line-height: normal;
+		letter-spacing: 0.075em;
 	}
 }

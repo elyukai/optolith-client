@@ -76,8 +76,8 @@ export default class ProfileAvatarChange extends Component {
 		let reader = new FileReader();
 		let file = event.target.files[0];
 		let filetype = file.type;
-		let mime = new Set(['image/jpeg','image/png','image/jpg']);
-		if (!file || !mime.has(filetype)) {
+		let mime = ['image/jpeg','image/png','image/jpg'];
+		if (!file || !mime.includes(filetype)) {
 			this.setState({ file, fileValid: !file, filePreview: '' });
 		} else {
 			reader.onload = e => {

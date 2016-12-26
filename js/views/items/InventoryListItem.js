@@ -15,7 +15,7 @@ export default class InventoryListItem extends Component {
 		data: PropTypes.instanceOf(Item).isRequired,
 	};
 
-	edit = () => InventoryActions.showItemEditor(InventoryStore.get(this.props.data.id));
+	edit = () => InventoryActions.showItemEditor(Item.prepareDataForEditor(InventoryStore.get(this.props.data.id)));
 	delete = () => InventoryActions.removeFromList(this.props.data.id);
 	add = () => InventoryActions.addToList(this.props.data);
 

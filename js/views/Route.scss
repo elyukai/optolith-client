@@ -1,3 +1,8 @@
+main {
+	@extend %max-size-relative;
+	flex: 1 1 100%;
+}
+
 section {
 	@extend %max-size-relative;
 	padding-top: $titlebar-height;
@@ -7,10 +12,6 @@ section {
 	display: flex;
 	flex-direction: column;
 
-	> .subtabs {
-		flex: none;
-	}
-
 	.scroll {
 		flex: 1 1 100%;
 
@@ -18,31 +19,35 @@ section {
 			padding: 0 35px 22px;
 		}
 	}
+}
 
-	> .page {
-		flex: 1 1 auto;
-		padding: 8px 0 0;
-		font: 14px/22px Alegreya Sans;
-		letter-spacing: 0.025em;
-		color: $color2;
-		display: flex;
-		flex-wrap: nowrap;
-		position: relative;
-		overflow: hidden;
-		height: 100%;
+.subtabs {
+	flex: none;
+}
 
-		> .options {
-			flex: 1 0 auto;
-			width: 200px;
-			margin-left: 35px;
+.page {
+	flex: 1 1 auto;
+	padding: 8px 0 0;
+	font: 14px/22px Alegreya Sans;
+	letter-spacing: 0.025em;
+	color: $color2;
+	display: flex;
+	flex-wrap: nowrap;
+	position: relative;
+	overflow: hidden;
+	height: 100%;
 
-			.radiobutton-group, .btn {
-				width: 100%;
-			}
+	> .options {
+		flex: 1 0 auto;
+		width: 200px;
+		margin-left: 35px;
 
-			.btn {
-				margin-top: 10px;
-			}
+		.radiobutton-group, .btn {
+			width: 100%;
+		}
+
+		.btn {
+			margin-top: 10px;
 		}
 	}
 }

@@ -1,15 +1,9 @@
-#body > main section#account {
-	.page {
-		.scroll-inner {
-			padding-bottom: 22px;
+#account {
+	.change {
+		height: 74px;
+	}
 
-			> .change {
-				height: 74px;
-			}
-
-			> .btn {
-				margin-top: 20px;
-			}
-		}
+	.btn {
+		margin-top: 20px;
 	}
 }

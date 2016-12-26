@@ -1,16 +1,14 @@
 @import "ItemEditor";
 
-.page {
-	&#inventory {
-		tbody {
-			td:last-child {
-				padding-right: 11px;
-			}
+#inventory {
+	tbody {
+		td:last-child {
+			padding-right: 11px;
+		}
 
-			td.inc > .btn {
-				height: 32px;
-				padding: 2px;
-			}
+		td.inc > .btn {
+			height: 32px;
+			padding: 2px;
 		}
 	}
 }

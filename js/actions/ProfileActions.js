@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 import createOverlay from '../utils/createOverlay';
-import ProfileAvatarChange from '../views/profile/ProfileAvatarChange';
+import OverviewAvatarChange from '../views/profile/OverviewAvatarChange';
 import OverviewAddAP from '../views/profile/OverviewAddAP';
 import React from 'react';
 
@@ -14,7 +14,7 @@ export default {
 		});
 	},
 	showImageUpload: function() {
-		createOverlay(<ProfileAvatarChange />);
+		createOverlay(<OverviewAvatarChange />);
 	},
 	showAddAP: function() {
 		createOverlay(<OverviewAddAP />);

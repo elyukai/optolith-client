@@ -91,7 +91,6 @@ function _init(raw) {
 		_itemTemplatesById[id] = new Item({ ...raw[id], isTemplateLocked: true });
 		_itemTemplates.push(id);
 	}
-	console.log(_itemTemplatesById[_itemTemplates[0]]);
 }
 
 function _updateFilterText(text) {

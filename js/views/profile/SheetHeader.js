@@ -1,6 +1,6 @@
-import AttributeBorder from '../attributes/AttributeBorder';
 import AttributeStore from '../../stores/AttributeStore';
 import React, { Component, PropTypes } from 'react';
+import SheetHeaderAttribute from './SheetHeaderAttribute';
 
 export default class SheetHeader extends Component {
 
@@ -15,19 +15,19 @@ export default class SheetHeader extends Component {
 
 	render() {
 
-		const array = AttributeStore.getAllForView();
+		const { add, title } = this.props;
 
-		array.push(...this.props.add);
+		const array = AttributeStore.getAll().concat(add);
 
 		return (
-			<div className="header">
-				<div className="title">
+			<div className="sheet-header">
+				<div className="sheet-title">
 					<h1>Heldendokument</h1>
-					<h2>{this.props.title}</h2>
+					<p>{title}</p>
 				</div>
-				<div className="attributes">
+				<div className="sheet-attributes">
 					{
-						array.map((attr,i) => <AttributeBorder key={`ATTR_${i}`} className={attr.id} label={attr.short} value={attr.value} />)
+						array.map(attr => <SheetHeaderAttribute key={attr.id} id={attr.id} label={attr.short} value={attr.value} />)
 					}
 				</div>
 			</div>

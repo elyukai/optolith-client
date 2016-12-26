@@ -1,4 +1,4 @@
-#body > main section#attribute {
+#attribute {
 	.page::before {
 		position: absolute;
 		@include calc(width, "100% - 70px");
@@ -15,110 +15,109 @@
 		flex-wrap: wrap;
 		flex-direction: column;
 		align-items: center;
+	}
 
-		.attr {
-			margin: 10px;
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-start;
-			align-items: center;
-			flex: none;
-			position: relative;
+	.counter {
+		margin-top: 10px;
+		text-align: center;
+	}
 
-			> .short {
-				font: bold 14px/28px Alegreya;
-				color: $color1;
-				letter-spacing: 0.05em;
-				text-transform: uppercase;
-				text-align: center;
-			}
+	.main, .calculated {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 
-			> .value {
-				border: 2px solid transparent;
-				padding: 2px;
-				background: $background4;
+		.number-box {
+			top: 70px;
+			right: -6px;
+			width: 24px;
+			z-index: 2;
 
-				> .value-inner {
-					border: 1px solid $color4;
-					padding: 1px;
-
-					> div {
-						@include size(45px);
-						text-align: center;
-						font: bold 28px/45px Alegreya Sans;
-						color: $color1;
-						letter-spacing: 0.05em;
-						text-transform: uppercase;
-						background: $background2;
-						overflow: hidden;
-					}
-				}
-			}
-
-			@at-root .overlay > .calc-attr-overlay {
-				width: 280px;
-
-				p.calc-text {
-					font-style: italic;
-				}
-			}
-
-			> .btn-round {
-				margin-top: 5px;
-			}
-
-			$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
-
-			@for $i from 1 through 8 {
-				&.ATTR_#{$i} > .value {
-					border-color: map-get($map: $colors, $key: $i);
-				}
+			+ .btn-round {
+				margin-top: 8px;
 			}
 		}
+	}
 
-		> .counter {
-			margin-top: 10px;
+	.main {
+		padding-bottom: 16px;
+		// border-bottom: 1px solid transparentize(white, .925);
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+
+		.number-box {
+			width: 24px;
+		}
+	}
+
+	.calculated {
+		.value {
+			background: transparent;
+		}
+
+		.number-box {
+			width: 40px;
+		}
+	}
+
+	.short {
+		font: bold 14px/28px Alegreya;
+		color: $color1;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		text-align: center;
+	}
+
+	.value {
+		border: 2px solid transparent;
+		padding: 2px;
+		background: $background4;
+	}
+	
+	.value-inner {
+		border: 1px solid $color4;
+		padding: 1px;
+
+		> div {
+			@include size(45px);
 			text-align: center;
+			font: bold 28px/45px Alegreya Sans;
+			color: $color1;
+			letter-spacing: 0.05em;
+			text-transform: uppercase;
+			background: $background2;
+			overflow: hidden;
 		}
+	}
 
-		> .main, > .calculated {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
+	.btn-round {
+		margin-top: 5px;
+	}
 
-			.number-box {
-				top: 70px;
-				right: -6px;
-				width: 24px;
-				z-index: 2;
+	.attr {
+		margin: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		flex: none;
+		position: relative;
 
-				+ .btn-round {
-					margin-top: 8px;
-				}
+		$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+
+		@for $i from 1 through 8 {
+			&.ATTR_#{$i} > .value {
+				border-color: map-get($map: $colors, $key: $i);
 			}
 		}
+	}
+}
 
-		> .main {
-			padding-bottom: 16px;
-			// border-bottom: 1px solid transparentize(white, .925);
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
+.overlay > .calc-attr-overlay {
+	width: 280px;
 
-			.number-box {
-				width: 24px;
-			}
-		}
-
-		> .calculated {
-			.value {
-				border-color: transparent;
-				background: transparent;
-			}
-
-			.number-box {
-				width: 40px;
-			}
-		}
+	p.calc-text {
+		font-style: italic;
 	}
 }

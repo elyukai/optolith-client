@@ -36,10 +36,8 @@ export default class Router extends Component {
 		return (
 			<div id="body">
 				<Loader isLoading={isLoading} text={loadingText} />
-				<main>
-					<TitleBar currentSection={section} currentTab={tab} />
-					<Route id={tab} />
-				</main>
+				<TitleBar currentSection={section} currentTab={tab} />
+				<Route id={tab} />
 			</div>
 		);
 	}

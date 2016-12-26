@@ -52,117 +52,12 @@
 				font: bold 16px Alegreya;
 				letter-spacing: 0;
 			}
-
-			> .header {
-				margin-bottom: 11px;
-				align-items: flex-end;
-				flex: none;
-				height: 110px;
-
-				> .title {
-					flex: 1 1 100%;
-					height: 50px;
-					display: flex;
-					flex-direction: column;
-					justify-content: center;
-
-					h1, h2 {
-						text-align: center;
-					}
-
-					h2 {
-						margin-top: 5px;
-					}
-				}
-
-				.attributes {
-					flex: none;
-					display: flex;
-					flex-wrap: wrap-reverse;
-					width: 12.65cm;
-
-					.attr {
-						flex: none;
-						margin: 1.5mm 1.5mm 0; // change
-						position: relative; // change
-						@include size(13mm);
-
-						> .short {
-							font: bold 10px/14px Alegreya; // change
-							color: black; // change
-							letter-spacing: 0.05em;
-							text-transform: uppercase;
-							text-align: center;
-							position: absolute; // change
-							top: 0; // change
-							padding: 4px 8px 0; // change
-						}
-
-						> .value {
-							border-width: calc(0.5mm - 0.57pt/2);
-							border-style: solid;
-							border-color: transparent;
-							padding: 0; // change
-
-							> div {
-								border: $print-border; // change
-								padding: 0; // change
-
-								> div {
-									@include size(44px);
-									text-align: center;
-									font: bold 21px/30px Alegreya Sans; // change
-									color: black; // change
-									letter-spacing: 0.05em;
-									text-transform: uppercase;
-									background: transparent; // change
-									overflow: hidden;
-									padding-top: 14px; // change
-								}
-							}
-						}
-
-						&.ATTR_1 > .value {
-							border-color: red;
-						}
-
-						&.ATTR_2 > .value {
-							border-color: #90c;
-						}
-
-						&.ATTR_3 > .value {
-							border-color: #3c3;
-						}
-
-						&.ATTR_4 > .value {
-							border-color: black;
-						}
-
-						&.ATTR_5 > .value {
-							border-color: yellow;
-						}
-
-						&.ATTR_6 > .value {
-							border-color: blue;
-						}
-
-						&.ATTR_7 > .value {
-							border-color: white;
-						}
-
-						&.ATTR_8 {
-							margin-right: 0;
-		
-							> .value {
-								border-color: #f60;
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 }
+
+@import "SheetHeader";
+@import "SheetHeaderAttribute";
 
 // #sheets {
 // 	flex-flow: column nowrap;

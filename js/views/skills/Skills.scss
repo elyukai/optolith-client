@@ -1,23 +1,17 @@
-#body > main section#skills {
-	.page {
-		&#talents table {
-			tbody {
-				tr {
-					@extend %tr-typ;
-					@extend %tr-untyp;
-				}
-			}
-		}
+#talents {
+	tr {
+		@extend %tr-typ;
+		@extend %tr-untyp;
+	}
+}
 
-		&#specialabilities table {
-			tbody {
-				tr {
-					@extend %large-tr;
+#specialabilities {
+	tbody {
+		tr {
+			@extend %large-tr;
 
-					td.ap:last-child {
-						padding-right: 11px;
-					}
-				}
+			td.ap:last-child {
+				padding-right: 11px;
 			}
 		}
 	}

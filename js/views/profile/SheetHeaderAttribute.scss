@@ -1,0 +1,60 @@
+.sheet-attribute {
+	flex: none;
+	margin: 2mm 2mm 0;
+	outline-width: 0.55mm;
+	outline-style: solid;
+	outline-color: transparent;
+	border: $print-border;
+	@include size(12mm);
+
+	&.ATTR_1 {
+		outline-color: red;
+	}
+
+	&.ATTR_2 {
+		outline-color: #90c;
+	}
+
+	&.ATTR_3 {
+		outline-color: #3c3;
+	}
+
+	&.ATTR_4 {
+		outline-color: black;
+	}
+
+	&.ATTR_5 {
+		outline-color: yellow;
+	}
+
+	&.ATTR_6 {
+		outline-color: blue;
+	}
+
+	&.ATTR_7 {
+		outline-color: white;
+	}
+
+	&.ATTR_8 {
+		margin-right: 0;
+		outline-color: #f60;
+	}
+
+	.label {
+		font: bold 10px/14px Alegreya; // change
+		color: black; // change
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		display: block;
+		top: 0; // change
+		padding: 2px 6px 0; // change
+	}
+
+	.value {
+		text-align: center;
+		font: bold 21px/24px Alegreya Sans; // change
+		color: black; // change
+		letter-spacing: 0.05em;
+		display: block;
+	}
+}

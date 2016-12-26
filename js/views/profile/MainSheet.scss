@@ -1,4 +1,4 @@
-#sheets .sheet-wrapper .sheet.main {
+#main-sheet {
 	> .upper {
 		flex: none;
 
@@ -84,16 +84,13 @@
 				flex-direction: column;
 
 				.box {
-					width: 3.2cm;
+					width: 30mm;
 					height: 148px;
 
-					.avatar {
+					img.avatar {
 						@include size(100%);
-
-						> img {
-							object-fit: cover;
-							@include size(100%);
-						}
+						border-radius: 0;
+						object-fit: cover;
 					}
 				}
 

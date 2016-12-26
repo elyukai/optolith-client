@@ -15,7 +15,7 @@ export default class AttributeCalcItem extends Component {
 
 	render() {
 
-		const { attribute : { base, calc, currentAdd, maxAdd, mod, label, short, value }, phase } = this.props;
+		const { attribute : { base, calc, currentAdd, maxAdd, mod, name, short, value }, phase } = this.props;
 
 		const increaseElement = maxAdd && value !== '-' && phase > 2 ? (
 			<IconButton className="add" icon="&#xE145;" onClick={this.addMaxEnergyPoint} disabled={!maxAdd || currentAdd >= maxAdd} />
@@ -31,8 +31,8 @@ export default class AttributeCalcItem extends Component {
 
 		return (
 			<AttributeBorder label={short} value={value} tooltip={<div className="calc-attr-overlay">
-					<h4><span>{label}</span><span>{value}</span></h4>
-					<p className="calc-text">{calc} = {value || '-'}</p>
+					<h4><span>{name}</span><span>{value}</span></h4>
+					<p className="calc-text">{calc} = {base || '-'}</p>
 					{ mod || mod === 0 || ((currentAdd || currentAdd === 0) && phase > 2) ? <p>
 						{ mod || mod === 0 ? <span className="mod">Modifikator: {mod}<br/></span> : null}
 						{ (currentAdd || currentAdd === 0) && phase > 2 ? <span className="add">Gekauft: {currentAdd} / {maxAdd || '-'}</span> : null}

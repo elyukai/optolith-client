@@ -5,14 +5,13 @@ import React, { Component, PropTypes } from 'react';
 export default class MainSheetCalc extends Component {
 
 	static propTypes = {
-		attrPrimary: PropTypes.array.isRequired,
 		attributes: PropTypes.array.isRequired,
 		baseValues: PropTypes.object.isRequired
 	};
 
 	render() {
 
-		const { attributes, attrPrimary, baseValues } = this.props;
+		const { attributes, baseValues } = this.props;
 
 		return attributes.length > 0 ? (
 			<div className="calculated">
@@ -23,24 +22,17 @@ export default class MainSheetCalc extends Component {
 					<div>Max</div>
 				</div>
 				<MainSheetCalcItem
-					label="Lebensenergie"
-					calc="(GW der Spezies + KO + KO)"
-					value={baseValues.le + attributes[6].value * 2}
-					add={do {
-						if (get('ADV_25') && get('ADV_25').active)
-							get('ADV_25').tier;
-						else if (get('DISADV_28') && get('DISADV_28').active)
-							-get('DISADV_28').tier;
-						else
-							0;
-					}}
-					purchased={baseValues.leAdd}
+					label={attributes[0].name}
+					calc={attributes[0].calc}
+					value={attributes[0].value}
+					add={attributes[0].mod}
+					purchased={attributes[0].currentAdd}
 					subLabel="Grundwert"
 					subArray={[baseValues.le]} />
 				<MainSheetCalcItem
 					label="Astralenergie"
 					calc="(20 durch Zauberer + Leiteigenschaft)"
-					value={attrPrimary[0] === 'ATTR_0' || !get(attrPrimary[0]) ? 0 : 20 + get(attrPrimary[0]).value}
+					value={attributes[1].value}
 					add={do {
 						if (get('ADV_23') && get('ADV_23').active)
 							get('ADV_23').tier;
@@ -52,11 +44,11 @@ export default class MainSheetCalc extends Component {
 					purchased={baseValues.aeAdd}
 					subLabel="perm. eingesetzt/davon zurückgekauft"
 					subArray={[0,0]}
-					empty={attrPrimary[0] === 'ATTR_0'} />
+					empty={attributes[1].value === '-'} />
 				<MainSheetCalcItem
 					label="Karmaenergie"
 					calc="(20 durch Geweihter + Leiteigenschaft)"
-					value={attrPrimary[1] === 'ATTR_0' || !get(attrPrimary[1]) ? 0 : 20 + get(attrPrimary[1]).value}
+					value={attributes[2].value}
 					add={do {
 						if (get('ADV_24') && get('ADV_24').active)
 							get('ADV_24').tier;
@@ -68,7 +60,7 @@ export default class MainSheetCalc extends Component {
 					purchased={baseValues.keAdd}
 					subLabel="perm. eingesetzt/davon zurückgekauft"
 					subArray={[0,0]}
-					empty={attrPrimary[1] === 'ATTR_0'} />
+					empty={attributes[2] === '-'} />
 				<MainSheetCalcItem
 					label="Seelenkraft"
 					calc="(GW der Spezies + (MU + KL + IN)/6)"

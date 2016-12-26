@@ -12,7 +12,10 @@ export default class MainSheetCalcItem extends Component {
 		purchased: PropTypes.number,
 		subArray: PropTypes.array,
 		subLabel: PropTypes.string,
-		value: PropTypes.number
+		value: PropTypes.oneOfType([
+			PropTypes.number,
+			PropTypes.string
+		])
 	};
 
 	render() {

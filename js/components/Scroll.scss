@@ -96,12 +96,12 @@
 
 	&-scrollbar-container {
 		position: relative;
-		overflow: hidden !important;
+		overflow: hidden;
 		width: 100%;
 		height: 100%;
 
 		.gm-scroll-view {
-			width: calc(100% + 17px) !important;
+			width: calc(100% + 17px);
 			height: 100%;
 			overflow: scroll;
 			-webkit-overflow-scrolling: touch;

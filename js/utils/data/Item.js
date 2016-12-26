@@ -100,14 +100,18 @@ export default class Item extends Core {
 					target[name] = value;
 			}
 		}
+		delete target.range1;
+		delete target.range2;
+		delete target.range3;
 		return target;
 	}
 
 	static prepareDataForEditor(target) {
-		target.range1 = target.range[0];
-		target.range2 = target.range[1];
-		target.range3 = target.range[2];
-		delete target.range;
-		return target;
+		let newTarget = { ...target };
+		newTarget.range1 = newTarget.range[0];
+		newTarget.range2 = newTarget.range[1];
+		newTarget.range3 = newTarget.range[2];
+		delete newTarget.range;
+		return newTarget;
 	}
 }
