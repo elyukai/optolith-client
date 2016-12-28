@@ -12,7 +12,7 @@ export default class ChantSheet extends Component {
 
 		return (
 			<div className="sheet chants">
-				<SheetHeader title="Liturgien & Zeremonien" add={addHeader} />
+				<SheetHeader title="Liturgien & Zeremonien" add={[]} />
 				<div className="upper">
 					<TextBox label="Liturgien & Zeremonien">
 					</TextBox>

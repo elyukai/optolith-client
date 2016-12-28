@@ -11,6 +11,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	position: relative;
 
 	h1, p {
 		text-align: center;
@@ -20,10 +21,19 @@
 		font: 17px/13px Alegreya SC;
 		margin-top: 5px;
 	}
+
+	img {
+		position: absolute;
+		width: 4cm;
+		opacity: .2;
+		left: calc(50% - 2cm);
+		top: -2.2cm
+	}
 }
 
 .sheet-attributes {
 	flex: none;
 	display: flex;
 	flex-wrap: wrap-reverse;
+	width: 126.1mm;
 }

@@ -9,8 +9,8 @@ export default class Talent extends Skill {
 	
 	constructor(args) {
 		super(args);
-		let { enc, spec, spec_input } = args;
-		this.enc = enc;
+		let { be, spec, spec_input } = args;
+		this.enc = be;
 		this.spec = spec;
 		this.spec_input = spec_input;
 

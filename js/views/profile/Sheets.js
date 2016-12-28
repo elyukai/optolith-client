@@ -5,7 +5,7 @@ import MainSheet from './MainSheet';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import SpellsSheet from './SpellsSheet';
-import TalentsSheet from './TalentsSheet';
+import SkillsSheet from './SkillsSheet';
 
 export default class Sheets extends Component {
 
@@ -16,7 +16,7 @@ export default class Sheets extends Component {
 			<div className="page" id="sheets">
 				<Scroll className="sheet-wrapper">
 					<MainSheet />
-					<TalentsSheet />
+					<SkillsSheet />
 					<CombatSheet />
 					<InventorySheet />
 					<SpellsSheet />

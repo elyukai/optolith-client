@@ -30125,11 +30125,11 @@
 
 		constructor(args) {
 			super(args);
-			let enc = args.enc,
+			let be = args.be,
 			    spec = args.spec,
 			    spec_input = args.spec_input;
 
-			this.enc = enc;
+			this.enc = be;
 			this.spec = spec;
 			this.spec_input = spec_input;
 
@@ -43190,9 +43190,9 @@
 
 	var _SpellsSheet2 = _interopRequireDefault(_SpellsSheet);
 
-	var _TalentsSheet = __webpack_require__(470);
+	var _SkillsSheet = __webpack_require__(470);
 
-	var _TalentsSheet2 = _interopRequireDefault(_TalentsSheet);
+	var _SkillsSheet2 = _interopRequireDefault(_SkillsSheet);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43211,7 +43211,7 @@
 					_Scroll2.default,
 					{ className: 'sheet-wrapper' },
 					_react2.default.createElement(_MainSheet2.default, null),
-					_react2.default.createElement(_TalentsSheet2.default, null),
+					_react2.default.createElement(_SkillsSheet2.default, null),
 					_react2.default.createElement(_CombatSheet2.default, null),
 					_react2.default.createElement(_InventorySheet2.default, null),
 					_react2.default.createElement(_SpellsSheet2.default, null),
@@ -43256,7 +43256,7 @@
 			return _react2.default.createElement(
 				'div',
 				{ className: 'sheet chants' },
-				_react2.default.createElement(_SheetHeader2.default, { title: 'Liturgien & Zeremonien', add: addHeader }),
+				_react2.default.createElement(_SheetHeader2.default, { title: 'Liturgien & Zeremonien', add: [] }),
 				_react2.default.createElement(
 					'div',
 					{ className: 'upper' },
@@ -43316,7 +43316,8 @@
 						'p',
 						null,
 						title
-					)
+					),
+					_react2.default.createElement('img', { src: 'images/logo.svg', alt: '' })
 				),
 				_react2.default.createElement(
 					'div',
@@ -43453,38 +43454,6 @@
 		value: true
 	});
 
-	var _AttributeStore = __webpack_require__(314);
-
-	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
-
-	var _APStore = __webpack_require__(303);
-
-	var _APStore2 = _interopRequireDefault(_APStore);
-
-	var _CultureStore = __webpack_require__(288);
-
-	var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-	var _DisAdvStore = __webpack_require__(400);
-
-	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
-
-	var _ELStore = __webpack_require__(297);
-
-	var _ELStore2 = _interopRequireDefault(_ELStore);
-
-	var _ProfessionStore = __webpack_require__(298);
-
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _ProfessionVariantStore = __webpack_require__(299);
-
-	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-	var _RaceStore = __webpack_require__(300);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
-
 	var _react = __webpack_require__(6);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -43493,41 +43462,25 @@
 
 	var _SheetHeader2 = _interopRequireDefault(_SheetHeader);
 
+	var _secondaryAttributes = __webpack_require__(313);
+
+	var secondaryAttributes = _interopRequireWildcard(_secondaryAttributes);
+
 	var _TextBox = __webpack_require__(456);
 
 	var _TextBox2 = _interopRequireDefault(_TextBox);
 
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	class CombatSheet extends _react.Component {
+
 		render() {
 
-			const source = {
-				attributes: _AttributeStore2.default.getAll(),
-				baseValues: _AttributeStore2.default.getBaseValues(),
-				race: _RaceStore2.default.getCurrentName(),
-				culture: _CultureStore2.default.getCurrentName(),
-				profession: _ProfessionVariantStore2.default.getCurrentName() !== null ? `${ _ProfessionStore2.default.getCurrentName() } (${ _ProfessionVariantStore2.default.getCurrentName() })` : _ProfessionStore2.default.getCurrentName(),
-				el: _ELStore2.default.getStart().name,
-				apTotal: _APStore2.default.getTotal(),
-				apUsed: _APStore2.default.getSpent(),
-				advActive: _DisAdvStore2.default.getActiveForView(true),
-				disadvActive: _DisAdvStore2.default.getActiveForView(false)
-			};
+			const addHeader = secondaryAttributes.getAll();
 
-			const attributes = source.attributes,
-			      baseValues = source.baseValues,
-			      race = source.race,
-			      culture = source.culture,
-			      profession = source.profession,
-			      el = source.el,
-			      apTotal = source.apTotal,
-			      apUsed = source.apUsed,
-			      advActive = source.advActive,
-			      disadvActive = source.disadvActive;
-
-
-			const addHeader = attributes.length > 0 ? [{ short: 'LE', value: baseValues.le + attributes[6].value * 2 }, { short: 'AW', value: Math.round(attributes[5].value / 2) }, { short: 'INI', value: Math.round((attributes[0].value + attributes[5].value) / 2) }, { short: 'SK', value: baseValues.sk + Math.round((attributes[0].value + attributes[1].value + attributes[2].value) / 6) }, { short: 'ZK', value: baseValues.zk + Math.round((attributes[6].value * 2 + attributes[7].value) / 6) }, { short: 'WS', value: Math.round(attributes[6].value / 2) }] : [];
+			addHeader.splice(1, 2);
 
 			return _react2.default.createElement(
 				'div',
@@ -44836,7 +44789,7 @@
 			return _react2.default.createElement(
 				'div',
 				{ className: 'sheet spells' },
-				_react2.default.createElement(_SheetHeader2.default, { title: 'Zauber & Rituale', add: addHeader }),
+				_react2.default.createElement(_SheetHeader2.default, { title: 'Zauber & Rituale', add: [] }),
 				_react2.default.createElement(
 					'div',
 					{ className: 'upper' },
@@ -44857,37 +44810,15 @@
 		value: true
 	});
 
-	var _AttributeStore = __webpack_require__(314);
+	var _AttributeCheckMods = __webpack_require__(514);
 
-	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
+	var _AttributeCheckMods2 = _interopRequireDefault(_AttributeCheckMods);
 
-	var _APStore = __webpack_require__(303);
+	var _Categories = __webpack_require__(289);
 
-	var _APStore2 = _interopRequireDefault(_APStore);
+	var _Categories2 = _interopRequireDefault(_Categories);
 
-	var _CultureStore = __webpack_require__(288);
-
-	var _CultureStore2 = _interopRequireDefault(_CultureStore);
-
-	var _DisAdvStore = __webpack_require__(400);
-
-	var _DisAdvStore2 = _interopRequireDefault(_DisAdvStore);
-
-	var _ELStore = __webpack_require__(297);
-
-	var _ELStore2 = _interopRequireDefault(_ELStore);
-
-	var _ProfessionStore = __webpack_require__(298);
-
-	var _ProfessionStore2 = _interopRequireDefault(_ProfessionStore);
-
-	var _ProfessionVariantStore = __webpack_require__(299);
-
-	var _ProfessionVariantStore2 = _interopRequireDefault(_ProfessionVariantStore);
-
-	var _RaceStore = __webpack_require__(300);
-
-	var _RaceStore2 = _interopRequireDefault(_RaceStore);
+	var _ListStore = __webpack_require__(194);
 
 	var _react = __webpack_require__(6);
 
@@ -44903,47 +44834,697 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	class TalentsSheet extends _react.Component {
+	const getRoutineValue = (sr, attributes) => {
+		if (sr > 0) {
+			const lessAttrPoints = attributes.map(e => e < 13 ? 13 - e : 0).reduce((a, b) => a + b, 0);
+			const flatRoutineLevel = Math.floor((sr - 1) / 3);
+			const checkMod = flatRoutineLevel * -1 + 3;
+			const dependentCheckMod = checkMod + lessAttrPoints;
+			return dependentCheckMod < 4 ? [dependentCheckMod, lessAttrPoints > 0] : false;
+		}
+		return false;
+	};
+
+	const iterateList = arr => arr.map(obj => {
+		const id = obj.id,
+		      name = obj.name,
+		      check = obj.check,
+		      enc = obj.enc,
+		      ic = obj.ic,
+		      value = obj.value;
+
+		const checkValues = check.map(e => (0, _ListStore.get)(e).value);
+		const checkString = check.map(e => (0, _ListStore.get)(e).short).join('/');
+		const encString = enc === 'true' ? 'Ja' : enc === 'false' ? 'Nein' : 'Evtl';
+		const ics = ['A', 'B', 'C', 'D'];
+		const routine = getRoutineValue(value, checkValues);
+		const routineSign = routine[0] > 0 ? '+' : '';
+		return _react2.default.createElement(
+			'tr',
+			{ key: id },
+			_react2.default.createElement(
+				'td',
+				{ className: 'name' },
+				name
+			),
+			_react2.default.createElement(
+				'td',
+				{ className: 'check' },
+				checkString
+			),
+			_react2.default.createElement(
+				'td',
+				{ className: 'enc' },
+				encString
+			),
+			_react2.default.createElement(
+				'td',
+				{ className: 'ic' },
+				ics[ic - 1]
+			),
+			_react2.default.createElement(
+				'td',
+				{ className: 'sr' },
+				value
+			),
+			_react2.default.createElement(
+				'td',
+				{ className: 'routine' },
+				routineSign,
+				Array.isArray(routine) ? routine[0] : '-',
+				routine[1] ? '!' : ''
+			),
+			_react2.default.createElement('td', { className: 'comment' })
+		);
+	});
+
+	class SkillsSheet extends _react.Component {
+
 		render() {
 
-			const source = {
-				attributes: _AttributeStore2.default.getAll(),
-				baseValues: _AttributeStore2.default.getBaseValues(),
-				race: _RaceStore2.default.getCurrentName(),
-				culture: _CultureStore2.default.getCurrentName(),
-				profession: _ProfessionVariantStore2.default.getCurrentName() !== null ? `${ _ProfessionStore2.default.getCurrentName() } (${ _ProfessionVariantStore2.default.getCurrentName() })` : _ProfessionStore2.default.getCurrentName(),
-				el: _ELStore2.default.getStart().name,
-				apTotal: _APStore2.default.getTotal(),
-				apUsed: _APStore2.default.getSpent(),
-				advActive: _DisAdvStore2.default.getActiveForView(true),
-				disadvActive: _DisAdvStore2.default.getActiveForView(false)
-			};
+			const talents = (0, _ListStore.getAllByCategory)(_Categories2.default.TALENTS);
 
-			const attributes = source.attributes,
-			      baseValues = source.baseValues,
-			      race = source.race,
-			      culture = source.culture,
-			      profession = source.profession,
-			      el = source.el,
-			      apTotal = source.apTotal,
-			      apUsed = source.apUsed,
-			      advActive = source.advActive,
-			      disadvActive = source.disadvActive;
+			const talentGroups = [[], [], [], [], []];
 
+			talents.forEach(obj => talentGroups[obj.gr - 1].push(obj));
+
+			const groupChecksIds = [['COU', 'AGI', 'STR'], ['INT', 'CHA', 'CHA'], ['COU', 'AGI', 'CON'], ['SGC', 'SGC', 'INT'], ['DEX', 'DEX', 'CON']];
+
+			const groupChecks = groupChecksIds.map(arr => arr.map(e => (0, _ListStore.get)(e).short).join('/'));
 
 			return _react2.default.createElement(
 				'div',
-				{ className: 'sheet talents' },
+				{ className: 'sheet', id: 'skills-sheet' },
 				_react2.default.createElement(_SheetHeader2.default, { title: 'Spielwerte' }),
 				_react2.default.createElement(
+					_TextBox2.default,
+					{ label: 'Fertigkeiten' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'upper' },
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Talent'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										'Probe'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'enc' },
+										'BE'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'ic' },
+										'Sf.'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'sr' },
+										'Fw'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'routine' },
+										'R'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'Anmerkung'
+									)
+								)
+							),
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									{ className: 'group' },
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'K\xF6rpertalente'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										groupChecks[0]
+									),
+									_react2.default.createElement('td', { className: 'enc' }),
+									_react2.default.createElement('td', { className: 'ic' }),
+									_react2.default.createElement('td', { className: 'sr' }),
+									_react2.default.createElement('td', { className: 'routine' }),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'S. 188-194'
+									)
+								),
+								iterateList(talentGroups[0]),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null)
+								),
+								_react2.default.createElement(
+									'tr',
+									{ className: 'group' },
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Gesellschaftstalente'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										groupChecks[1]
+									),
+									_react2.default.createElement('td', { className: 'enc' }),
+									_react2.default.createElement('td', { className: 'ic' }),
+									_react2.default.createElement('td', { className: 'sr' }),
+									_react2.default.createElement('td', { className: 'routine' }),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'S. 194-198'
+									)
+								),
+								iterateList(talentGroups[1]),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null)
+								),
+								_react2.default.createElement(
+									'tr',
+									{ className: 'group' },
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Naturtalente'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										groupChecks[2]
+									),
+									_react2.default.createElement('td', { className: 'enc' }),
+									_react2.default.createElement('td', { className: 'ic' }),
+									_react2.default.createElement('td', { className: 'sr' }),
+									_react2.default.createElement('td', { className: 'routine' }),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'S. 198-201'
+									)
+								),
+								iterateList(talentGroups[2])
+							)
+						),
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Talent'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										'Probe'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'enc' },
+										'BE'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'ic' },
+										'Sf.'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'sr' },
+										'Fw'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'routine' },
+										'R'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'Anmerkung'
+									)
+								)
+							),
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									{ className: 'group' },
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Wissenstalente'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										groupChecks[3]
+									),
+									_react2.default.createElement('td', { className: 'enc' }),
+									_react2.default.createElement('td', { className: 'ic' }),
+									_react2.default.createElement('td', { className: 'sr' }),
+									_react2.default.createElement('td', { className: 'routine' }),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'S. 201-206'
+									)
+								),
+								iterateList(talentGroups[3]),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null)
+								),
+								_react2.default.createElement(
+									'tr',
+									{ className: 'group' },
+									_react2.default.createElement(
+										'td',
+										{ className: 'name' },
+										'Handwerkstalente'
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'check' },
+										groupChecks[4]
+									),
+									_react2.default.createElement('td', { className: 'enc' }),
+									_react2.default.createElement('td', { className: 'ic' }),
+									_react2.default.createElement('td', { className: 'sr' }),
+									_react2.default.createElement('td', { className: 'routine' }),
+									_react2.default.createElement(
+										'td',
+										{ className: 'comment' },
+										'S. 206-213'
+									)
+								),
+								iterateList(talentGroups[4])
+							)
+						)
+					)
+				),
+				_react2.default.createElement(
 					'div',
-					{ className: 'upper' },
-					_react2.default.createElement(_TextBox2.default, { label: 'Fertigkeiten' })
+					{ className: 'lower' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'abilites' },
+						_react2.default.createElement(
+							_TextBox2.default,
+							{ label: 'Sprachen' },
+							_react2.default.createElement(
+								'table',
+								{ className: 'languages-list' },
+								_react2.default.createElement(
+									'tbody',
+									null,
+									(0, _ListStore.get)('SA_30').active.map(e => [(0, _ListStore.get)('SA_30').sel[e[0] - 1][0], e[1], (0, _ListStore.get)('SA_30').sel[e[0] - 1][1]]).sort((a, b) => a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(e => _react2.default.createElement(
+										'tr',
+										{ key: `lang-${ e[2] }` },
+										_react2.default.createElement(
+											'td',
+											null,
+											e[0]
+										),
+										_react2.default.createElement(
+											'td',
+											null,
+											e[1] === 4 ? 'MS' : e[1]
+										)
+									))
+								)
+							)
+						),
+						_react2.default.createElement(
+							_TextBox2.default,
+							{ label: 'Schriften' },
+							_react2.default.createElement(
+								'div',
+								{ className: 'scripts-list' },
+								(0, _ListStore.get)('SA_28').active.map(e => (0, _ListStore.get)('SA_28').sel[e - 1][0]).sort().join(', ')
+							)
+						)
+					),
+					_react2.default.createElement(_AttributeCheckMods2.default, null),
+					_react2.default.createElement(
+						_TextBox2.default,
+						{ className: 'routine-checks', label: 'Routineproben' },
+						_react2.default.createElement(
+							'p',
+							null,
+							'Alle Proben-Eigenschaften auf 13+'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Optional:'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Je fehlendem Eigenschaftspunkt'
+						),
+						_react2.default.createElement(
+							'p',
+							null,
+							'Fw um drei h\xF6her als angegeben'
+						),
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'Proben-',
+											_react2.default.createElement('br', null),
+											'Mod.'
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'N\xF6tiger',
+											_react2.default.createElement('br', null),
+											'Fw'
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'Proben-',
+											_react2.default.createElement('br', null),
+											'Mod.'
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'N\xF6tiger',
+											_react2.default.createElement('br', null),
+											'Fw'
+										)
+									)
+								)
+							),
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'ab +3'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'1'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'-1'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'13'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'+2'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'4'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'-2'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'16'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'+1'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'7'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'-3'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'19'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'+/-0'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'10'
+									),
+									_react2.default.createElement('td', null),
+									_react2.default.createElement('td', null)
+								)
+							)
+						)
+					),
+					_react2.default.createElement(
+						_TextBox2.default,
+						{ className: 'quality-levels', label: 'Qualit\xE4tsstufen' },
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'thead',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'Fertigkeits-',
+											_react2.default.createElement('br', null),
+											'punkte'
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											null,
+											'Qualit\xE4ts-',
+											_react2.default.createElement('br', null),
+											'stufe'
+										)
+									)
+								)
+							),
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'0-3'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'1'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'4-6'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'2'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'7-9'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'3'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'10-12'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'4'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'13-15'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'5'
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										null,
+										'16+'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										'6'
+									)
+								)
+							)
+						)
+					)
 				)
 			);
 		}
 	}
-	exports.default = TalentsSheet;
+	exports.default = SkillsSheet;
 
 /***/ },
 /* 471 */
@@ -49860,6 +50441,151 @@
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 513 */,
+/* 514 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _AttributeStore = __webpack_require__(314);
+
+	var _AttributeStore2 = _interopRequireDefault(_AttributeStore);
+
+	var _classnames = __webpack_require__(312);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _react = __webpack_require__(6);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TextBox = __webpack_require__(456);
+
+	var _TextBox2 = _interopRequireDefault(_TextBox);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	class AttributeCheckMods extends _react.Component {
+
+		render() {
+
+			const attributes = _AttributeStore2.default.getAll();
+
+			return _react2.default.createElement(
+				_TextBox2.default,
+				{ className: 'attribute-check-mods', label: 'Eigenschaftsmodifikationen' },
+				_react2.default.createElement(
+					'table',
+					null,
+					_react2.default.createElement(
+						'thead',
+						null,
+						_react2.default.createElement(
+							'tr',
+							null,
+							_react2.default.createElement('td', { className: 'name' }),
+							_react2.default.createElement(
+								'td',
+								null,
+								'-3'
+							),
+							_react2.default.createElement(
+								'td',
+								null,
+								'-2'
+							),
+							_react2.default.createElement(
+								'td',
+								null,
+								'-1'
+							),
+							_react2.default.createElement(
+								'td',
+								{ className: 'null' },
+								'0'
+							),
+							_react2.default.createElement(
+								'td',
+								null,
+								'+1'
+							),
+							_react2.default.createElement(
+								'td',
+								null,
+								'+2'
+							),
+							_react2.default.createElement(
+								'td',
+								null,
+								'+3'
+							)
+						)
+					),
+					_react2.default.createElement(
+						'tbody',
+						null,
+						attributes.map(obj => {
+							const id = obj.id,
+							      short = obj.short,
+							      value = obj.value;
+
+							return _react2.default.createElement(
+								'tr',
+								{ key: id, className: id },
+								_react2.default.createElement(
+									'td',
+									{ className: 'name' },
+									short
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value - 3
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value - 2
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value - 1
+								),
+								_react2.default.createElement(
+									'td',
+									{ className: 'null' },
+									value
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value + 1
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value + 2
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									value + 3
+								)
+							);
+						})
+					)
+				)
+			);
+		}
+	}
+	exports.default = AttributeCheckMods;
 
 /***/ }
 /******/ ]);

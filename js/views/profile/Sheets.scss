@@ -53,11 +53,13 @@
 	h3 {
 		font: bold 16px Alegreya;
 		letter-spacing: 0;
+		width: 100%;
 	}
 }
 
 @import "SheetHeader";
 @import "SheetHeaderAttribute";
+@import "AttributeCheckMods";
 
 // #sheets {
 // 	flex-flow: column nowrap;

@@ -1,0 +1,73 @@
+.attribute-check-mods {
+	h3 {
+		margin-bottom: 4mm;
+	}
+	
+	.ATTR_1 .null {
+		background-color: transparentize(red, .75);
+	}
+
+	.ATTR_2 .null {
+		background-color: transparentize(#90c, .75);
+	}
+
+	.ATTR_3 .null {
+		background-color: transparentize(#3c3, .75);
+	}
+
+	.ATTR_4 .null {
+		background-color: transparentize(black, .75);
+	}
+
+	.ATTR_5 .null {
+		background-color: transparentize(yellow, .75);
+	}
+
+	.ATTR_6 .null {
+		background-color: transparentize(blue, .75);
+	}
+
+	.ATTR_7 .null {
+		background-color: transparentize(white, .75);
+	}
+
+	.ATTR_8 .null {
+		background-color: transparentize(#f60, .75);
+	}
+	
+	td {
+		width: 9mm;
+		border-style: solid;
+		border-color: #c8c8c8;
+
+		&.null {
+			border-left-width: 0.3mm;
+			border-right-width: 0.3mm;
+			border-left-color: grey;
+			border-right-color: grey;
+		}
+	}
+
+	td:nth-child(2n) {
+		background: rgba(0, 0, 0, 0.1);
+	}
+
+	thead td {
+		height: 5mm;
+		border-width: 0.3mm 0;
+		font: bold 10px/1 Alegreya SC;
+		text-align: center;
+		border-color: grey;
+	}
+
+	tbody td {
+		height: 4.5mm;
+		border-width: 0.15mm 0;
+		font: 500 11px/1 Alegreya Sans;
+		padding: 0 1mm;
+		
+		&:not(.name) {
+			text-align: center;
+		}
+	}
+}

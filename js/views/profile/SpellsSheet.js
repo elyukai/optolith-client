@@ -12,7 +12,7 @@ export default class SpellsSheet extends Component {
 
 		return (
 			<div className="sheet spells">
-				<SheetHeader title="Zauber & Rituale" add={addHeader} />
+				<SheetHeader title="Zauber & Rituale" add={[]} />
 				<div className="upper">
 					<TextBox label="Zauber & Rituale">
 					</TextBox>
