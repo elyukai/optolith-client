@@ -2,7 +2,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
 	entry: {
-		main: './js/AppBootstrap.js'
+		main: './src/AppBootstrap.js'
 	},
 	// devtool: 'source-map',
 	output: {
