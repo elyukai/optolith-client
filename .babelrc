@@ -8,7 +8,7 @@
 		"transform-do-expressions",
 		"transform-object-rest-spread",
 		"transform-es2015-destructuring",
-		"transform-es2015-modules-commonjs",
+		// "transform-es2015-modules-commonjs",
 		"transform-es2015-parameters",
 		"transform-runtime"
 	// ],

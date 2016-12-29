@@ -1,0 +1,78 @@
+import Increasable, { IncreasableArguments, IncreasableInstance } from './Increasable';
+import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
+import ELStore from '../../stores/ELStore';
+import { get, getAllByCategoryGroup } from '../../stores/ListStore';
+import PhaseStore from '../../stores/PhaseStore';
+import Categories from '../../constants/Categories';
+
+export interface CombatTechniqueInstance extends IncreasableInstance {
+	readonly ic: number;
+	readonly gr: number;
+	readonly primary: string[];
+	value: number;
+	readonly category: string;
+	dependencies: number[];
+	at: number;
+	pa: number | string;
+	isIncreasable: boolean;
+	isDecreasable: boolean;
+	reset();
+}
+
+export interface CombatTechniqueArguments extends IncreasableArguments {
+	skt: number;
+	gr: number;
+	leit: string[];
+}
+
+export default class CombatTechnique extends Increasable implements CombatTechniqueInstance {
+
+	readonly ic: number;
+	readonly gr: number;
+	readonly primary: string[];
+	value: number = 6;
+	readonly category: string = Categories.COMBAT_TECHNIQUES;
+	dependencies: number[];
+
+	constructor({ skt, gr, leit, ...args }: CombatTechniqueArguments) {
+		super(args);
+		this.ic = skt;
+		this.gr = gr;
+		this.primary = leit;
+	}
+
+	get at(): number {
+		let array = this.gr === 2 ? this.primary : ['ATTR_1'];
+		let mod = CombatTechniquesStore.getPrimaryAttributeMod(array);
+		return this.value + mod;
+	}
+
+	get pa(): number | string {
+		let mod = CombatTechniquesStore.getPrimaryAttributeMod(this.primary);
+		return this.gr === 2 ? '--' : Math.round(this.value / 2) + mod;
+	}
+
+	get isIncreasable(): boolean {
+		let max = 0;
+		let bonus = get('ADV_17').active.includes(this.id) ? 1 : 0;
+		
+		if (PhaseStore.get() < 3) {
+			max = ELStore.getStart().max_combattech;
+		} else {
+			max = CombatTechniquesStore.getMaxPrimaryAttributeValueByID(this.primary) + 2;
+		}
+
+		return this.value < max + bonus;
+	}
+
+	get isDecreasable(): boolean {
+		var SA_19_REQ = get('SA_19').active && getAllByCategoryGroup(this.category, 2).filter(e => e.value >= 10).length === 1;
+
+		return (SA_19_REQ && this.value > 10 && this.gr === 2) || this.value > Math.max(6, ...(this.dependencies));
+	}
+
+	reset() {
+		this.dependencies = [];
+		this.value = 6;
+	}
+}

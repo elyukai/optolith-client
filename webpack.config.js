@@ -1,31 +1,37 @@
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
-	entry: {
-		main: './src/AppBootstrap.js'
-	},
-	// devtool: 'source-map',
+	entry: './src/index.tsx',
 	output: {
-		filename: 'dist/bundle.js'
+		filename: 'bundle.js',
+		path: __dirname + '/dist'
+	},
+	devtool: 'source-map',
+	resolve: {
+		extensions: ['.ts', '.tsx', '.js', '.jsx']
 	},
 	module: {
-		loaders: [
+		rules: [
+			{
+                test: /\.tsx?$/,
+				use: ['babel-loader', 'awesome-typescript-loader']
+			},
 			{
                 test: /\.js$/,
-                exclude: /node_modules/,
-				loader: 'babel',
+				exclude: /node_modules/,
+				use: 'babel-loader'
 			},
 			{
                 test: /\.scss$/,
-                exclude: /node_modules/,
-				loader: ExtractTextPlugin.extract('css?-url!sass'),
+				use: ExtractTextPlugin.extract({ loader: 'css-loader?-url!sass-loader' }),
 			}
 		]
 	},
-	sassLoader: {
-		outputStyle: 'compressed'
-	},
     plugins: [
-        new ExtractTextPlugin('dist/bundle.min.css')
+		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
+			outputStyle: 'compressed'
+		}}}),
+        new ExtractTextPlugin({ filename: 'dist/bundle.min.css' })
 	]
 };

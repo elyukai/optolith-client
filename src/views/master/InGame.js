@@ -1,4 +1,6 @@
 import BorderButton from '../../components/BorderButton';
+import createOverlay from '../../utils/createOverlay';
+import Dialog from '../../components/Dialog';
 import IconButton from '../../components/IconButton';
 import InGameActions from '../../actions/InGameActions';
 import InGameControls from './InGameControls';
@@ -50,7 +52,16 @@ export default class InGame extends Component {
 	}
 	
 	load = () => InGameActions.load();
-	resetAll = () => InGameActions.resetAll();
+	resetAll = () => createOverlay(
+		<Dialog
+			title='Liste zurücksetzen'
+			buttons={[
+				{ label: 'Ja', onClick: InGameActions.resetAll },
+				{ label: 'Nein' }
+			]}>
+			Bist du dir sicher, dass du die gesamte Liste zurücksetzen möchtest? Der Vorgang kann nicht rückgängig gemacht werden!
+		</Dialog>
+	);
 	addFighter = () => InGameActions.addFighter();
 	
 	setOnline = event => InGameActions.setOnline(event.target.value);

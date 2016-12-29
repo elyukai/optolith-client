@@ -1,12 +1,14 @@
 import { filterAndSort } from '../../utils/ListUtils';
 import BorderButton from '../../components/BorderButton';
+import createOverlay from '../../utils/createOverlay';
 import InventoryActions from '../../actions/InventoryActions';
 import InventoryListItem from './InventoryListItem';
 import InventoryStore from '../../stores/InventoryStore';
-import SortOptions from '../../components/SortOptions';
+import ItemEditor from './ItemEditor';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
+import SortOptions from '../../components/SortOptions';
 import TextField from '../../components/TextField';
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
@@ -37,7 +39,7 @@ export default class Inventory extends Component {
 		InventoryStore.removeChangeListener(this._updateInventoryStore);
 	}
 
-	showItemCreation = () => InventoryActions.showItemCreation();
+	showItemCreation = () => createOverlay(<ItemEditor create />);
 	showAddSlidein = () => this.setState({ showAddSlidein: true });
 	hideAddSlidein = () => this.setState({ showAddSlidein: false });
 

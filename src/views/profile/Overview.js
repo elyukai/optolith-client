@@ -48,7 +48,7 @@ export default class Overview extends Component {
 		ProfileStore.removeChangeListener(this._updateProfileStore );
 	}
 
-	showImageUpload = () => ProfileActions.showImageUpload();
+	showImageUpload = () => createOverlay(<OverviewAvatarChange />);
 	changeName = name => {
 		ProfileActions.changeName(name);
 		this.setState({ editName: false });
@@ -58,7 +58,7 @@ export default class Overview extends Component {
 
 	endCharacterCreation = () => ProfileActions.endCharacterCreation();
 	deleteHero = () => ProfileActions.deleteHero();
-	addAP = () => ProfileActions.showAddAP();
+	addAP = () => createOverlay(<OverviewAddAP />);
 
 	render() {
 

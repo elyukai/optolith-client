@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "module": "es6",
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016",
+            "es2017",
+            "esnext"
+        ],
+        "noImplicitAny": false,
+        "outDir": "./dist/",
+		"removeComments": true,
+        "target": "es5"
+    },
+    "include": [
+        "./src/**/*"
+    ],
+	"exclude": [
+		"node_modules"
+	]
+}

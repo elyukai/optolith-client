@@ -1,8 +1,10 @@
-import IconButton from '../../components/IconButton';
-import { Item } from '../../utils/DataUtils';
 import { get } from '../../stores/ListStore';
+import { Item } from '../../utils/DataUtils';
+import createOverlay from '../../utils/createOverlay';
+import IconButton from '../../components/IconButton';
 import InventoryActions from '../../actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
+import ItemEditor from './ItemEditor';
 import React, { Component, PropTypes } from 'react';
 import TooltipToggle from '../../components/TooltipToggle';
 
@@ -15,7 +17,10 @@ export default class InventoryListItem extends Component {
 		data: PropTypes.instanceOf(Item).isRequired,
 	};
 
-	edit = () => InventoryActions.showItemEditor(Item.prepareDataForEditor(InventoryStore.get(this.props.data.id)));
+	edit = () => {
+		const item = Item.prepareDataForEditor(InventoryStore.get(this.props.data.id));
+		createOverlay(<ItemEditor item={item} />);
+	}
 	delete = () => InventoryActions.removeFromList(this.props.data.id);
 	add = () => InventoryActions.addToList(this.props.data);
 
