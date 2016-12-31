@@ -11,7 +11,7 @@ const SORT_NAMES = {
 
 interface Props {
 	options: string[];
-	sort: () => void;
+	sort: (option: string) => void;
 	sortOrder: string;
 }
 

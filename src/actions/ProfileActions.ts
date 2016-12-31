@@ -9,7 +9,7 @@ export default {
 			name
 		});
 	},
-	addAP(value: string): void {
+	addAP(value: number): void {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.ADD_ADVENTURE_POINTS,
 			value

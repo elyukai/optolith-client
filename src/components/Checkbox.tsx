@@ -8,6 +8,7 @@ import Text from './Text';
 interface Props {
 	checked: boolean;
 	className?: string;
+	disabled?: boolean;
 	label?: string;
 	onClick: (event: React.MouseEvent<any>) => void;
 }

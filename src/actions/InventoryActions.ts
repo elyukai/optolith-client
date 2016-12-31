@@ -1,6 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
-import { ItemArguments } from '../utils/data/Item';
+import { ItemEditorInstance } from '../utils/data/Item';
 
 export default {
 	filter(text: string): void {
@@ -15,13 +15,13 @@ export default {
 			option
 		});
 	},
-	addToList(item: ItemArguments): void {
+	addToList(item: ItemEditorInstance): void {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.ADD_ITEM,
 			item
 		});
 	},
-	saveItem(item: ItemArguments): void {
+	saveItem(item: ItemEditorInstance): void {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.SAVE_ITEM,
 			item

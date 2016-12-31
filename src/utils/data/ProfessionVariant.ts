@@ -3,49 +3,40 @@ import { fixIDs } from '../DataUtils';
 import Categories from '../../constants/Categories';
 
 export interface ProfessionVariantInstance extends CoreInstance {
+	readonly name: string | { m: string, f: string };
 	readonly ap: number;
-	readonly languages: number[];
-	readonly scripts: number[];
-	readonly social: number[];
-	readonly typ_prof: string[];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly typ_talents: string[];
-	readonly untyp_talents: string[];
-	readonly talents: string[];
-	readonly category: string;
+	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqs: (string | number | boolean)[][];
+	readonly sel: (string | string[] | number[])[][];
+	readonly specialabilities: (string | number | boolean)[][];
+	readonly combattechniques: (string | number)[][];
+	readonly talents: (string | number)[][];
 }
 
 export interface ProfessionVariantArguments extends CoreArguments {
 	ap: number;
-	lang: number[];
-	literacy: number[];
-	social: number[];
-	typ_prof: string[];
-	typ_adv: string[];
-	typ_dadv: string[];
-	untyp_adv: string[];
-	untyp_dadv: string[];
-	typ_talents: string[];
-	untyp_talents: string[];
-	talents: string[];
+	pre_req: (string | number | boolean)[][];
+	req: (string | number | boolean)[][];
+	sel: (string | string[] | number[])[][];
+	sa: (string | number | boolean)[][];
+	combattech: (string | number)[][];
+	talents: (string | number)[][];
 }
 
 export default class ProfessionVariant extends Core implements ProfessionVariantInstance {
+
+	readonly name: string | { m: string, f: string };
+	readonly ap: number;
+	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqs: (string | number | boolean)[][];
+	readonly sel: (string | string[] | number[])[][];
+	readonly specialabilities: (string | number | boolean)[][];
+	readonly combattechniques: (string | number)[][];
+	readonly talents: (string | number)[][];
+	readonly category: string = Categories.PROFESSION_VARIANTS;
 	
-	constructor(args: ProfessionVariantArguments) {
+	constructor({ ap, pre_req, req, sel, sa, combattech, talents, ...args }: ProfessionVariantArguments) {
 		super(args);
-		let {
-			ap,
-			pre_req,
-			req,
-			sel,
-			sa,
-			combattech,
-			talents
-		} = args;
 
 		this.ap = ap;
 
@@ -53,10 +44,8 @@ export default class ProfessionVariant extends Core implements ProfessionVariant
 		this.reqs = req;
 		this.sel = sel;
 
-		this.specialabilities = fixIDs(sa, 'SA');
-		this.combattechniques = fixIDs(combattech, 'CT');
-		this.talents = fixIDs(talents, 'TAL');
-
-		this.category = Categories.PROFESSION_VARIANTS;
+		this.specialabilities = fixIDs<number | boolean>(sa, 'SA');
+		this.combattechniques = fixIDs<number>(combattech, 'CT');
+		this.talents = fixIDs<number>(talents, 'TAL');
 	}
 }

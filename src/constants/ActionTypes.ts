@@ -8,6 +8,7 @@ interface ActionTypes {
 	SHOW_TAB_SECTION: string;
 	RECEIVE_ACCOUNT: string;
 	UPDATE_USERNAME: string;
+	ACCOUNTNAME_CHANGE_SUCCESS: string;
 	PASSWORD_CHANGE_SUCCESS: string;
 	LOGOUT_SUCCESS: string;
 	CLEAR_ACCOUNT: string;
@@ -147,6 +148,7 @@ export default keyMirror({
 	UPDATE_USERNAME: null,
 	LOGOUT_SUCCESS: null,
 	CLEAR_ACCOUNT: null,
+	ACCOUNTNAME_CHANGE_SUCCESS: null,
 	PASSWORD_CHANGE_SUCCESS: null,
 	
 	// Registration

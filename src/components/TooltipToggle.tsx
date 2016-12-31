@@ -30,7 +30,7 @@ export default class Tooltip extends Component<Props, State> {
 		isDisplayed: false
 	};
 
-	triggerRef;
+	triggerRef: Element;
 	node;
 
 	componentWillUnmount() {

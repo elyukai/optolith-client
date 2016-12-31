@@ -13,7 +13,7 @@ interface Props {
 	active: number | string | boolean;
 	array: Option[],
 	disabled?: boolean;
-	onClick: (event: React.MouseEvent<any>) => void;
+	onClick: (option: string | number | boolean) => void;
 }
 
 export default class RadioButtonGroup extends Component<Props, any> {

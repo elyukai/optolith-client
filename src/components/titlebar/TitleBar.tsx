@@ -6,7 +6,7 @@ import AuthStore from '../../stores/AuthStore';
 import AvatarWrapper from '../AvatarWrapper';
 import BorderButton from '../BorderButton';
 import createOverlay from '../../utils/createOverlay';
-import ELStore from '../../stores/ELStore.js';
+import ELStore from '../../stores/ELStore';
 import HeroCreation from '../../views/herolist/HeroCreation';
 import HerolistActions from '../../actions/HerolistActions';
 import HistoryActions from '../../actions/HistoryActions';

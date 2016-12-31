@@ -60,7 +60,7 @@ export default class Talents extends Component<any, State> {
 
 		const { filterText, phase, sortOrder, talentRating, talents } = this.state;
 
-		const list = filterAndSort(talents, filterText, sortOrder);
+		const list = filterAndSort<TalentInstance>(talents, filterText, sortOrder);
 
 		return (
 			<div className="page" id="talents">

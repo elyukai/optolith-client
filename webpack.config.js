@@ -7,7 +7,6 @@ module.exports = {
 		filename: 'bundle.js',
 		path: __dirname + '/dist'
 	},
-	devtool: 'source-map',
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.jsx']
 	},
@@ -15,23 +14,23 @@ module.exports = {
 		rules: [
 			{
                 test: /\.tsx?$/,
-				use: ['babel-loader', 'awesome-typescript-loader']
-			},
-			{
-                test: /\.js$/,
-				exclude: /node_modules/,
-				use: 'babel-loader'
+				use: ['awesome-typescript-loader']
 			},
 			{
                 test: /\.scss$/,
-				use: ExtractTextPlugin.extract({ loader: 'css-loader?-url!sass-loader' }),
+				loader: ExtractTextPlugin.extract({
+					loader: [
+						'css-loader?-url',
+						'sass-loader'
+					]
+				}),
 			}
 		]
 	},
     plugins: [
+        new ExtractTextPlugin('bundle.min.css'),
 		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
 			outputStyle: 'compressed'
-		}}}),
-        new ExtractTextPlugin({ filename: 'dist/bundle.min.css' })
+		}}})
 	]
 };

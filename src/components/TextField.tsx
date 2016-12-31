@@ -48,7 +48,7 @@ export default class TextField extends Component<Props, any> {
 
 	componentDidMount() {
 		if (this.props.autoFocus) {
-			ReactDOM.findDOMNode(this.inputRef).focus();
+			ReactDOM.findDOMNode<HTMLInputElement>(this.inputRef).focus();
 		}
 	}
 

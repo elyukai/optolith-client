@@ -21,7 +21,7 @@ export default {
 			ServerActions.startLoading();
 			let response = await fetch('data/register.php?email=' + email + '&name=' + name + '&display=' + displayname + '&password=' + password);
 			let result = await response.text();
-			ServerActions.registrationSuccess(result);
+			ServerActions.registrationSuccess();
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}
@@ -213,7 +213,7 @@ export default {
 			ServerActions.startLoading();
 			let response = await fetch('php/newhero.php?uid=' + AuthStore.getID() + '&n=' + name);
 			let result = await response.text();
-			ServerActions.createNewHeroSuccess(result);
+			// ServerActions.createNewHeroSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}
@@ -232,7 +232,7 @@ export default {
 				body: JSON.stringify(data)
 			});
 			let result = await response.text();
-			ServerActions.saveHeroSuccess(result);
+			// ServerActions.saveHeroSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}
@@ -255,7 +255,7 @@ export default {
 			ServerActions.startLoading();
 			let response = await fetch('php/deletehero.php?uid=' + AuthStore.getID() + '&hid=' + heroid);
 			let result = await response.text();
-			ServerActions.deleteHeroSuccess(result);
+			// ServerActions.deleteHeroSuccess(result);
 		} catch(e) {
 			ServerActions.connectionError(e);
 		}

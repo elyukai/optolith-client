@@ -1,4 +1,5 @@
 import { Component, PropTypes } from 'react';
+import { findDOMNode } from 'react-dom';
 import * as React from 'react';
 import classNames from 'classnames';
 
@@ -7,7 +8,7 @@ interface Props {
 	margin?: number;
 	node?: React.ReactNode;
 	position?: string;
-	trigger: any;
+	trigger: Element;
 }
 
 interface State {
@@ -28,18 +29,17 @@ export default class Overlay extends Component<Props, State> {
 		margin: 0
 	};
 
-	overlayRef;
-
 	state = {
 		style: {},
 		position: ''
 	};
 
+	overlayRef: Element;
+
 	alignToElement = () => {
 		const { margin, position, trigger } = this.props;
-		const overlay = this.overlayRef;
 		const triggerCoordinates = trigger.getBoundingClientRect();
-		const overlayCoordinates = overlay.getBoundingClientRect();
+		const overlayCoordinates = this.overlayRef.getBoundingClientRect();
 		var top,
 			left;
 
@@ -140,7 +140,7 @@ export default class Overlay extends Component<Props, State> {
 		let newOther = { ...other, style };
 
 		return (
-			<div {...newOther} className={className} ref={node => this.overlayRef}>
+			<div {...newOther} className={className} ref={node => this.overlayRef = findDOMNode(node)}>
 				{children}
 			</div>
 		);

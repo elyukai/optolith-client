@@ -21,10 +21,10 @@ export default {
 		args.actionType = ActionTypes.DEACTIVATE_DISADV;
 		AppDispatcher.dispatch(args);
 	},
-	updateTier(id: string, tier: number, costs: number, sid: number | string): void {
+	updateTier(id: string, tier: number, cost: number, sid: number | string): void {
 		AppDispatcher.dispatch({
 			actionType: ActionTypes.UPDATE_DISADV_TIER,
-			id, tier, costs, sid
+			id, tier, cost, sid
 		});
 	}
 };

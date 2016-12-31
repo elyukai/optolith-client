@@ -1,4 +1,4 @@
-export default (arr: string[] | number[], keepValues: boolean = false) => {
+export default (arr: (string | number)[], keepValues: boolean = false) => {
 	const counter = new Map();
 	if (keepValues) {
 		arr.forEach(e => {

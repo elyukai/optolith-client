@@ -1,9 +1,9 @@
 import SpellsStore from '../stores/SpellsStore';
 
-export const filter = (list: Object[], filterText: string, addProperty?: string): Object[] => {
+export const filter = <T>(list: T[], filterText: string, addProperty?: string): T[] => {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
-		return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
+		return list.filter(obj => obj['name'] && obj['name'].toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
 	}
 	return list;
 };
@@ -51,7 +51,7 @@ export const sortByWeight = (a, b) => a.weight < b.weight ? -1 : a.weight > b.we
 
 export const sortByWhere = (a, b) => a.where < b.where ? -1 : a.where > b.where ? 1 : sortByName(a,b);
 
-export const sort = (list: Object[], sortOrder: string): Object[] => {
+export const sort = <T>(list: T[], sortOrder: string): T[] => {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -91,7 +91,7 @@ export const sort = (list: Object[], sortOrder: string): Object[] => {
 	return list.sort(sort);
 };
 
-export const sortSex = (list: Object[], sortOrder: string, sex: string): Object[] => {
+export const sortSex = <T>(list: T[], sortOrder: string, sex: string): T[] => {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -108,12 +108,12 @@ export const sortSex = (list: Object[], sortOrder: string, sex: string): Object[
 	return list.sort(sort);
 };
 
-export const filterAndSort = (list: Object[], filterText: string, sortOrder: string, option: Object): Object[] => {
+export const filterAndSort = <T>(list: T[], filterText: string, sortOrder: string, option?: any[] | string): T[] => {
 	if (Array.isArray(option)) {
 		GROUPS = option;
 	}
-	else if (option) {
-		return sortSex(filter(list, filterText), sortOrder, option);
+	else if (typeof option === 'string') {
+		return sortSex<T>(filter(list, filterText), sortOrder, option);
 	}
-	return sort(filter(list, filterText), sortOrder);
+	return sort<T>(filter(list, filterText), sortOrder);
 };

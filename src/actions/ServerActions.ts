@@ -118,7 +118,7 @@ export default {
 			actionType: ActionTypes.LOGOUT_SUCCESS
 		});
 	},
-	changeUsernameSuccess(callback: string): void {
+	changeUsernameSuccess(callback: string, name: string): void {
 		switch (callback) {
 			case 'false':
 				this.runtimeError();
@@ -127,7 +127,8 @@ export default {
 			default:
 				alert('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
 				AppDispatcher.dispatch({
-					actionType: ActionTypes.PASSWORD_CHANGE_SUCCESS
+					actionType: ActionTypes.ACCOUNTNAME_CHANGE_SUCCESS,
+					name
 				});
 				break;
 		}

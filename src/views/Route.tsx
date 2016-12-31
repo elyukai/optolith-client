@@ -8,7 +8,7 @@ import Grouplist from './grouplist/Grouplist';
 import Herolist from './herolist/Herolist';
 import Home from './home/Home';
 import Items from './items/Items';
-import Master from './master/Master';
+// import Master from './master/Master';
 import Profile from './profile/Profile';
 import RCP  from './rcp/RCP';
 import Skills from './skills/Skills';
@@ -37,9 +37,9 @@ export default class Route extends Component<Props, any> {
 			attributes: <Attribute />,
 			disadv: <DisAdv />,
 			skills: <Skills />,
-			items: <Items />,
+			items: <Items />
 
-			master: <Master />
+			// master: <Master />
 		};
 
 		return VIEWS[this.props.id] || null;

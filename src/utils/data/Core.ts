@@ -1,6 +1,6 @@
 export interface CoreInstance {
-	id: string;
-	name: string;
+	readonly id: string;
+	readonly name: string;
 }
 
 export interface CoreArguments {
@@ -10,8 +10,8 @@ export interface CoreArguments {
 
 export default class Core implements CoreInstance {
 
-	id: string;
-	name: string;
+	readonly id: string;
+	readonly name: string;
 
 	constructor(args: CoreArguments) {
 		const { id, name } = args;

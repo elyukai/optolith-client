@@ -10,7 +10,7 @@ interface TabProps {
 
 interface Props {
 	active: string;
-	onClick: () => void;
+	onClick: (tab: string) => void;
 	tabs: TabProps[];
 }
 

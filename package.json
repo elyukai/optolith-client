@@ -61,7 +61,6 @@
   },
   "scripts": {
     "watch": "webpack --watch",
-    "watchSass": "webpack --watch",
     "build": "webpack",
     "buildpro": "SET NODE_ENV=production && webpack -p",
     "test": "jest"

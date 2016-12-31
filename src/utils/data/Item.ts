@@ -1,7 +1,7 @@
 import Core, { CoreArguments, CoreInstance } from './Core';
 
-export interface ItemInstance extends CoreInstance {
-	addpenalties: string;
+interface ItemInstanceCore extends CoreInstance {
+	addpenalties: boolean;
 	ammunition: string;
 	at: string;
 	combattechnique: string;
@@ -10,14 +10,14 @@ export interface ItemInstance extends CoreInstance {
 	damageDiceSides: string;
 	damageFlat: string;
 	enc: string;
-	gr: string;
+	gr: number;
 	isTemplateLocked: boolean;
 	length: string;
+	name: string;
 	number: string;
 	pa: string;
 	price: string;
 	pro: string;
-	range: string[];
 	reach: string;
 	reloadtime: string;
 	stp: string;
@@ -26,18 +26,23 @@ export interface ItemInstance extends CoreInstance {
 	where: string;
 }
 
-export interface ItemEditorInstance extends ItemInstance {
+export interface ItemInstance extends ItemInstanceCore {
+	range: string[];
+}
+
+export interface ItemEditorInstance extends ItemInstanceCore {
 	range1?: string;
 	range2?: string;
 	range3?: string;
 }
 
 export interface ItemArguments extends CoreArguments {
+	name: string;
 	price: string;
 	weight: string;
 	number: string;
 	where: string;
-	gr: string;
+	gr: number;
 	combattechnique: string;
 	damageDiceNumber: string;
 	damageDiceSides: string;
@@ -53,7 +58,7 @@ export interface ItemArguments extends CoreArguments {
 	ammunition: string;
 	pro: string;
 	enc: string;
-	addpenalties: string;
+	addpenalties: boolean;
 	template: string;
 	isTemplateLocked: boolean;
 }
@@ -66,7 +71,7 @@ export interface ItemEditorArguments extends ItemArguments {
 
 export default class Item extends Core implements ItemInstance {
 
-	addpenalties: string;
+	addpenalties: boolean;
 	ammunition: string;
 	at: string;
 	combattechnique: string;
@@ -75,10 +80,11 @@ export default class Item extends Core implements ItemInstance {
 	damageDiceSides: string;
 	damageFlat: string;
 	enc: string;
-	gr: string;
+	gr: number;
 	isTemplateLocked: boolean;
 	length: string;
 	number: string;
+	name: string;
 	pa: string;
 	price: string;
 	pro: string;
@@ -145,19 +151,18 @@ export default class Item extends Core implements ItemInstance {
 		this.isTemplateLocked = isTemplateLocked || false;
 	}
 
-	static prepareDataForStore(target: ItemEditorArguments): ItemArguments {
-		const newTarget = { ...target };
-		newTarget.range = [];
-		for (const name in newTarget) {
-			const value = newTarget[name];
+	static prepareDataForStore(target: ItemEditorInstance): ItemArguments {
+		const range = [];
+		for (const name in target) {
+			const value = target[name];
 			switch (name) {
 				case 'price':
 				case 'weight':
-					newTarget[name] = value ? (typeof value === 'number' ? value : parseInt(value.replace(',','.'))) : value;
+					target[name] = value ? (typeof value === 'number' ? value : parseInt(value.replace(',','.'))) : value;
 					break;
 
 				case 'number':
-					newTarget[name] = value ? (typeof value === 'number' ? value : parseInt(value)) : value;
+					target[name] = value ? (typeof value === 'number' ? value : parseInt(value)) : value;
 					break;
 
 				case 'damageDiceNumber':
@@ -170,37 +175,39 @@ export default class Item extends Core implements ItemInstance {
 				case 'reloadtime':
 				case 'pro':
 				case 'enc':
-					newTarget[name] = value ? parseInt(value) : value;
+					target[name] = value ? parseInt(value) : value;
 					break;
 
 				case 'range1':
-					newTarget.range[0] = value;
+					range[0] = value;
 					break;
 
 				case 'range2':
-					newTarget.range[1] = value;
+					range[1] = value;
 					break;
 
 				case 'range3':
-					newTarget.range[2] = value;
+					range[2] = value;
 					break;
 
 				default:
-					newTarget[name] = value;
+					target[name] = value;
 			}
 		}
-		delete newTarget.range1;
-		delete newTarget.range2;
-		delete newTarget.range3;
-		return newTarget;
+		delete target.range1;
+		delete target.range2;
+		delete target.range3;
+		return { ...target, range };
 	}
 
 	static prepareDataForEditor(target: ItemInstance): ItemEditorInstance {
-		let newTarget: ItemEditorInstance = { ...target };
-		newTarget.range1 = newTarget.range[0];
-		newTarget.range2 = newTarget.range[1];
-		newTarget.range3 = newTarget.range[2];
+		const newTarget: ItemInstance = { ...target };
+		const addTarget = {
+			range1: newTarget.range[0],
+			range2: newTarget.range[1],
+			range3: newTarget.range[2]
+		}
 		delete newTarget.range;
-		return newTarget;
+		return { ...newTarget, ...addTarget };
 	}
 }
