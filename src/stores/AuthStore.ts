@@ -22,7 +22,7 @@ function _reset() {
 }
 
 class _AuthStore extends Store {
-	
+
 	getAll() {
 		return {
 			id: _id,
@@ -30,15 +30,15 @@ class _AuthStore extends Store {
 			name: _name
 		};
 	}
-	
+
 	getID() {
 		return _id;
 	}
-	
+
 	getName() {
 		return _name;
 	}
-	
+
 	getSessionID() {
 		return _session;
 	}
@@ -50,12 +50,12 @@ AuthStore.dispatchToken = AppDispatcher.register(payload => {
 
 	const { id, session, name } = payload;
 
-	switch( payload.actionType ) {
-			
+	switch( payload.type ) {
+
 		case ActionTypes.RECEIVE_ACCOUNT:
 			_update(id, name, session);
 			break;
-			
+
 		case ActionTypes.UPDATE_USERNAME:
 			_updateName(name);
 			break;
@@ -63,16 +63,16 @@ AuthStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.LOGOUT_SUCCESS:
 			_reset();
 			break;
-		
+
 		// Testing purpose:
 		case ActionTypes.RECEIVE_RAW_LISTS:
 			_update(4, 'Elytherion');
 			break;
-			
+
 		default:
 			return true;
 	}
-	
+
 	AuthStore.emitChange();
 
 	return true;

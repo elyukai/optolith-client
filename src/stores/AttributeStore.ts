@@ -123,7 +123,7 @@ AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
 
 	if (payload.undoAction) {
-		switch(payload.actionType) {
+		switch(payload.type) {
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 				break;
@@ -137,7 +137,7 @@ AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 		}
 	}
 	else {
-		switch(payload.actionType) {
+		switch(payload.type) {
 			case ActionTypes.CLEAR_HERO:
 			case ActionTypes.CREATE_NEW_HERO:
 				_clear();
@@ -160,12 +160,12 @@ AttributeStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.ASSIGN_RCP_ENTRIES:
 				_assignRCP(payload.selections);
 				break;
-			
+
 			default:
 				return true;
 		}
 	}
-	
+
 	AttributeStore.emitChange();
 
 	return true;

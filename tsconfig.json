@@ -3,17 +3,18 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "jsx": "react",
-        "module": "es6",
+        "module": "es2015",
+        "moduleResolution": "node",
         "lib": [
             "dom",
             "es2015",
             "es2016",
-            "es2017",
-            "esnext"
+            "es2017"
         ],
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "outDir": "./dist/",
 		"removeComments": true,
+        "strictNullChecks": true,
         "target": "es5"
     },
     "include": [

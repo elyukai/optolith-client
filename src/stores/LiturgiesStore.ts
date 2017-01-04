@@ -18,7 +18,7 @@ function _updateFilterText(text) {
 function _updateSortOrder(option) {
 	_sortOrder = option;
 }
-	
+
 class _LiturgiesStore extends Store {
 
 	getForSave() {
@@ -84,7 +84,7 @@ const LiturgiesStore = new _LiturgiesStore();
 
 LiturgiesStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.ACTIVATE_LITURGY:
 		case ActionTypes.DEACTIVATE_LITURGY:
@@ -99,11 +99,11 @@ LiturgiesStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.SORT_LITURGIES:
 			_updateSortOrder(payload.option);
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	LiturgiesStore.emitChange();
 
 	return true;

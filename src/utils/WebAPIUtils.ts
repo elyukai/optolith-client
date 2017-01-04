@@ -1,20 +1,31 @@
 import AuthStore from '../stores/AuthStore';
+import { readFile } from 'fs';
 import ProfileStore from '../stores/ProfileStore';
 import ServerActions from '../actions/ServerActions';
 
 export default {
 	connectionError: function(e: Error): void {
-		ServerActions.connectionError(e);	
+		ServerActions.connectionError(e);
 	},
-	
-	getAllData: async function(): Promise<void> {
-		try {
-			let response = await fetch('data/DSA5.json');
-			let result = await response.json();
-			ServerActions.receiveLists(result);
-		} catch(e) {
-			ServerActions.connectionError(e);
-		}
+
+	getAllData: function(): void {
+		readFile('dist/data/DSA5.json', 'utf8', (e, data) => {
+			if (e) {
+				ServerActions.connectionError(e);
+			}
+			else {
+				const result = JSON.parse(data);
+				console.log(result);
+				ServerActions.receiveLists(result);
+			}
+		});
+		// try {
+		// 	let response = await fetch('data/DSA5.json');
+		// 	let result = await response.json();
+		// 	ServerActions.receiveLists(result);
+		// } catch(e) {
+		// 	ServerActions.connectionError(e);
+		// }
 	},
 	register: async function(email: string, name: string, displayname: string, password: string): Promise<void> {
 		try {

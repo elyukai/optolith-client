@@ -23,7 +23,7 @@ function _updateRating() {
 function _updateAll(disadv) {
 	_showRating = disadv.showRating;
 }
-	
+
 class _DisAdvStore extends Store {
 
 	getForSave() {
@@ -326,7 +326,7 @@ const DisAdvStore = new _DisAdvStore();
 
 DisAdvStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateAll(payload.disadv);
@@ -344,11 +344,11 @@ DisAdvStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.DEACTIVATE_DISADV:
 		case ActionTypes.UPDATE_DISADV_TIER:
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	DisAdvStore.emitChange();
 
 	return true;

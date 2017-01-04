@@ -180,7 +180,7 @@ const InventoryStore = new _InventoryStore();
 
 InventoryStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.FILTER_ITEMS:
 			_updateFilterText(payload.text);
@@ -205,7 +205,7 @@ InventoryStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.RECEIVE_RAW_LISTS:
 			_init(payload.items);
 			break;
-			
+
 		default:
 			return true;
 	}

@@ -142,7 +142,7 @@ function _assignRCP(selections) {
 			sas.add([ id, ...options ]);
 		}
 	};
-	
+
 	if (selections.useCulturePackage) {
 		addSRList.push(...culture.talents);
 	}
@@ -189,7 +189,7 @@ function _assignRCP(selections) {
 	Array.from(selections.curses).forEach(e => {
 		addSRList.push(e);
 	});
-	
+
 	_list[selections.attrSel].mod = race.attr_sel[0] || 0;
 	addSRList.forEach(e => _addSR(...e));
 	addSRActivateList.forEach(e => {
@@ -245,19 +245,19 @@ function _clear() {
 		}
 	}
 }
-	
+
 const ListStore = new Store();
 
 ListStore.dispatchToken = AppDispatcher.register(payload => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
 
 	if (payload.undoAction) {
-		switch( payload.actionType ) {
+		switch( payload.type ) {
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY:
 				_deactivate(payload.options.id);
 				break;
-			
+
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY:
 				_activate(payload.options.id);
@@ -267,7 +267,7 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				console.debug('UNDO for ' + payload.actionType + ' not yet implemented.\nFind a solution how to implement this feature. It has to be implemented for the first release.');
+				console.debug('UNDO for ' + payload.type + ' not yet implemented.\nFind a solution how to implement this feature. It has to be implemented for the first release.');
 				break;
 
 			case ActionTypes.UPDATE_DISADV_TIER:
@@ -290,13 +290,13 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.REMOVE_LITURGY_POINT:
 				_addPoint(payload.options.id);
 				break;
-			
+
 			default:
 				return true;
 		}
 	}
 	else {
-		switch( payload.actionType ) {
+		switch( payload.type ) {
 			case ActionTypes.RECEIVE_RAW_LISTS:
 				_init(payload);
 				break;
@@ -320,7 +320,7 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 					_activate(payload.id);
 				}
 				break;
-			
+
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY:
 				if (RequirementsStore.isValid()) {
@@ -368,12 +368,12 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 					_removePoint(payload.id);
 				}
 				break;
-			
+
 			default:
 				return true;
 		}
 	}
-	
+
 	ListStore.emitChange();
 
 	return true;
@@ -401,7 +401,7 @@ export const get = id => {
 		case 'STR':
 			return _list['ATTR_8'];
 
-		default: 
+		default:
 			return _list[id];
 	}
 };

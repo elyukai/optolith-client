@@ -220,7 +220,7 @@ const HerolistStore = new _HerolistStore();
 
 HerolistStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.FILTER_HEROLIST:
 			_updateFilterText(payload.text);

@@ -1,148 +1,38 @@
 import keyMirror from 'keymirror';
 
-interface ActionTypes {
-	RECEIVE_RAW_LISTS: string;
-	WAIT_START: string;
-	WAIT_END: string;
-	SHOW_TAB: string;
-	SHOW_TAB_SECTION: string;
-	RECEIVE_ACCOUNT: string;
-	UPDATE_USERNAME: string;
-	ACCOUNTNAME_CHANGE_SUCCESS: string;
-	PASSWORD_CHANGE_SUCCESS: string;
-	LOGOUT_SUCCESS: string;
-	CLEAR_ACCOUNT: string;
-	REGISTRATION_SUCCESS: string;
-	HEROES_SHOW: string;
-	HEROES_HIDE: string;
-	COLLAPSE_HEROES: string;
-	RECEIVE_RAW_HEROLIST: string;
-	FILTER_HEROLIST: string;
-	SORT_HEROLIST: string;
-	CHANGE_HEROLIST_VIEW: string;
-	CREATE_NEW_HERO: string;
-	RECEIVE_HERO: string;
-	UPDATE_HERO_NAME: string;
-	UPDATE_HERO_AVATAR: string;
-	UPDATE_FAMILY: string;
-	UPDATE_PLACEOFBIRTH: string;
-	UPDATE_DATEOFBIRTH: string;
-	UPDATE_AGE: string;
-	UPDATE_HAIRCOLOR: string;
-	UPDATE_EYECOLOR: string;
-	UPDATE_SIZE: string;
-	UPDATE_WEIGHT: string;
-	UPDATE_TITLE: string;
-	UPDATE_SOCIALSTATUS: string;
-	UPDATE_CHARACTERISTICS: string;
-	UPDATE_OTHERINFO: string;
-	REROLL_HAIRCOLOR: string;
-	REROLL_EYECOLOR: string;
-	REROLL_SIZE: string;
-	REROLL_WEIGHT: string;
-	SAVE_HERO_SUCCESS: string;
-	UNLOAD_HERO: string;
-	CLEAR_HERO: string;
-	FINALIZE_CHARACTER_CREATION: string;
-	ADD_ADVENTURE_POINTS: string;
-	SELECT_RACE: string;
-	FILTER_RACES: string;
-	SORT_RACES: string;
-	CHANGE_RACE_VALUE_VISIBILITY: string;
-	SELECT_CULTURE: string;
-	FILTER_CULTURES: string;
-	SORT_CULTURES: string;
-	CHANGE_CULTURE_VALUE_VISIBILITY: string;
-	CHANGE_CULTURE_VIEW: string;
-	SELECT_PROFESSION: string;
-	FILTER_PROFESSIONS: string;
-	SORT_PROFESSIONS: string;
-	CHANGE_PROFESSION_VIEW: string;
-	ASSIGN_RCP_ENTRIES: string;
-	SELECT_PROFESSION_VARIANT: string;
-	ADD_ATTRIBUTE_POINT: string;
-	REMOVE_ATTRIBUTE_POINT: string;
-	ADD_MAX_ENERGY_POINT: string;
-	FILTER_DISADV: string;
-	CHANGE_DISADV_RATING: string;
-	ACTIVATE_DISADV: string;
-	DEACTIVATE_DISADV: string;
-	UPDATE_DISADV_TIER: string;
-	FILTER_TALENTS: string;
-	SORT_TALENTS: string;
-	CHANGE_TALENT_RATING: string;
-	ADD_TALENT_POINT: string;
-	REMOVE_TALENT_POINT: string;
-	FILTER_COMBATTECHNIQUES: string;
-	SORT_COMBATTECHNIQUES: string;
-	ADD_COMBATTECHNIQUE_POINT: string;
-	REMOVE_COMBATTECHNIQUE_POINT: string;
-	FILTER_SPELLS: string;
-	SORT_SPELLS: string;
-	UPDATE_SPELL_VIEW: string;
-	ACTIVATE_SPELL: string;
-	DEACTIVATE_SPELL: string;
-	ADD_SPELL_POINT: string;
-	REMOVE_SPELL_POINT: string;
-	FILTER_LITURGIES: string;
-	SORT_LITURGIES: string;
-	UPDATE_LITURGY_VIEW: string;
-	ACTIVATE_LITURGY: string;
-	DEACTIVATE_LITURGY: string;
-	ADD_LITURGY_POINT: string;
-	REMOVE_LITURGY_POINT: string;
-	FILTER_SPECIALABILITIES: string;
-	SORT_SPECIALABILITIES: string;
-	UPDATE_SPECIALABILITY_VIEW: string;
-	ACTIVATE_SPECIALABILITY: string;
-	DEACTIVATE_SPECIALABILITY: string;
-	UPDATE_SPECIALABILITY_TIER: string;
-	FILTER_ITEMS: string;
-	SORT_ITEMS: string;
-	ADD_ITEM: string;
-	SAVE_ITEM: string;
-	REMOVE_ITEM: string;
-	SHOW_MASTER_REQUESTED_LIST: string;
-	HIDE_MASTER_REQUESTED_LIST: string;
-	LOAD_RAW_INGAME_DATA: string;
-	INGAME_PREVIOUS_PHASE: string;
-	INGAME_NEXT_PHASE: string;
-	UPDATE_INGAME_CAST: string;
-	CANCEL_INGAME_CAST: string;
-	INGAME_USE_ENDURANCE: string;
-	INGAME_USE_ACTION: string;
-	INGAME_USE_FREE_ACTION: string;
-	INGAME_ACTIVATE_FIGHTER: string;
-	INGAME_DEACTIVATE_FIGHTER: string;
-	INGAME_EDIT_START: string;
-	INGAME_EDIT_UPDATE_VALUE: string;
-	INGAME_EDIT_UPDATE_CAST_VALUE: string;
-	INGAME_EDIT_UPDATE_DUPLICATE_VALUE: string;
-	INGAME_EDIT_END: string;
-	INGAME_ADD_FIGHTER: string;
-	INGAME_DUPLICATE_FIGHTER: string;
-	INGAME_REMOVE_FIGHTER: string;
-	INGAME_RESET_PHASES: string;
-	INGAME_RESET_HEALTH: string;
-	INGAME_RESET_ALL: string;
-	INGAME_UPDATE_ONLINE_LINK: string;
-	INGAME_SAVE: string;
-	INGAME_SWITCH_OPTION: string;
-}
+export type FETCH_DATA = 'FETCH_DATA';
+export const FETCH_DATA = 'FETCH_DATA';
 
-export default keyMirror({
-	
+export type SHOW_SECTION = 'SHOW_SECTION';
+export const SHOW_SECTION = 'SHOW_SECTION';
+export type SHOW_TAB = 'SHOW_TAB';
+export const SHOW_TAB = 'SHOW_TAB';
+
+export type FILTER_HEROLIST = 'FILTER_HEROLIST';
+export const FILTER_HEROLIST = 'FILTER_HEROLIST';
+export type SORT_HEROLIST = 'SORT_HEROLIST';
+export const SORT_HEROLIST = 'SORT_HEROLIST';
+
+export type LOGIN = 'LOGIN';
+export const LOGIN = 'LOGIN';
+export type LOGOUT = 'LOGOUT';
+export const LOGOUT = 'LOGOUT';
+export type REGISTER = 'REGISTER';
+export const REGISTER = 'REGISTER';
+
+export const ATS = keyMirror({
+
 	// ServerActions
 	RECEIVE_RAW_LISTS: null,
-	
+
 	// WaitStore
 	WAIT_START: null,
 	WAIT_END: null,
-	
+
 	// TabStore
-	SHOW_TAB: null,
 	SHOW_TAB_SECTION: null,
-	
+	SHOW_TAB: null,
+
 	// AuthStore
 	RECEIVE_ACCOUNT: null,
 	UPDATE_USERNAME: null,
@@ -150,23 +40,24 @@ export default keyMirror({
 	CLEAR_ACCOUNT: null,
 	ACCOUNTNAME_CHANGE_SUCCESS: null,
 	PASSWORD_CHANGE_SUCCESS: null,
-	
+
 	// Registration
 	REGISTRATION_SUCCESS: null,
-	
+
 	// PaneStore
 	HEROES_SHOW: null,
 	HEROES_HIDE: null,
 	COLLAPSE_HEROES: null,
-	
+
 	// HerolistStore
 	RECEIVE_RAW_HEROLIST: null,
+	SEARCH_HEROLIST: null,
 	FILTER_HEROLIST: null,
 	SORT_HEROLIST: null,
 	CHANGE_HEROLIST_VIEW: null,
 	CREATE_NEW_HERO: null,
 	RECEIVE_HERO: null,
-	
+
 	// ProfileStore
 	UPDATE_HERO_NAME: null,
 	UPDATE_HERO_AVATAR: null,
@@ -193,16 +84,16 @@ export default keyMirror({
 
 	// PhaseStore
 	FINALIZE_CHARACTER_CREATION: null,
-	
+
 	// APStore
 	ADD_ADVENTURE_POINTS: null,
-	
+
 	// RaceStore
 	SELECT_RACE: null,
 	FILTER_RACES: null,
 	SORT_RACES: null,
 	CHANGE_RACE_VALUE_VISIBILITY: null,
-	
+
 	// CultureStore
 	SELECT_CULTURE: null,
 	FILTER_CULTURES: null,
@@ -218,10 +109,10 @@ export default keyMirror({
 	SORT_PROFESSIONS: null,
 	CHANGE_PROFESSION_VIEW: null,
 	ASSIGN_RCP_ENTRIES: null,
-	
+
 	// ProfessionVariantStore
 	SELECT_PROFESSION_VARIANT: null,
-	
+
 	// AttributeStore
 	ADD_ATTRIBUTE_POINT: null,
 	REMOVE_ATTRIBUTE_POINT: null,
@@ -246,7 +137,7 @@ export default keyMirror({
 	SORT_COMBATTECHNIQUES: null,
 	ADD_COMBATTECHNIQUE_POINT: null,
 	REMOVE_COMBATTECHNIQUE_POINT: null,
-	
+
 	// SpellsStore
 	FILTER_SPELLS: null,
 	SORT_SPELLS: null,
@@ -255,7 +146,7 @@ export default keyMirror({
 	DEACTIVATE_SPELL: null,
 	ADD_SPELL_POINT: null,
 	REMOVE_SPELL_POINT: null,
-	
+
 	// LiturgiesStore
 	FILTER_LITURGIES: null,
 	SORT_LITURGIES: null,
@@ -279,11 +170,11 @@ export default keyMirror({
 	ADD_ITEM: null,
 	SAVE_ITEM: null,
 	REMOVE_ITEM: null,
-	
+
 	// GroupsStore
 	SHOW_MASTER_REQUESTED_LIST: null,
 	HIDE_MASTER_REQUESTED_LIST: null,
-	
+
 	// InGameStore
 	LOAD_RAW_INGAME_DATA: null,
 	INGAME_PREVIOUS_PHASE: null,
@@ -309,4 +200,6 @@ export default keyMirror({
 	INGAME_UPDATE_ONLINE_LINK: null,
 	INGAME_SAVE: null,
 	INGAME_SWITCH_OPTION: null
-}) as ActionTypes;
+});
+
+export default ATS;

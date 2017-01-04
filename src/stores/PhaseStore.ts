@@ -20,7 +20,7 @@ const PhaseStore = new _PhaseStore();
 
 PhaseStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.RECEIVE_HERO:
 			_update(payload.phase);

@@ -71,7 +71,7 @@ const ProfessionStore = new _ProfessionStore();
 
 ProfessionStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateCurrentID(payload.p);

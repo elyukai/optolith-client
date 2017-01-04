@@ -16,7 +16,7 @@ const GroupsStore = new _GroupsStore();
 
 GroupsStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 		case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
 			_requestsOpen = true;
 			break;

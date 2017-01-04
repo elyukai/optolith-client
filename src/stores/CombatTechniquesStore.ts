@@ -16,7 +16,7 @@ function _updateFilterText(text) {
 function _updateSortOrder(option) {
 	_sortOrder = option;
 }
-	
+
 class _CombatTechniquesStore extends Store {
 
 	getAllForSave() {
@@ -63,7 +63,7 @@ const CombatTechniquesStore = new _CombatTechniquesStore();
 
 CombatTechniquesStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
@@ -76,11 +76,11 @@ CombatTechniquesStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.SORT_COMBATTECHNIQUES:
 			_updateSortOrder(payload.option);
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	CombatTechniquesStore.emitChange();
 
 	return true;

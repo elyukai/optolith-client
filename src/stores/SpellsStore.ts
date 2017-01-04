@@ -18,7 +18,7 @@ function _updateFilterText(text) {
 function _updateSortOrder(option) {
 	_sortOrder = option;
 }
-	
+
 class _SpellsStore extends Store {
 
 	getForSave() {
@@ -92,7 +92,7 @@ const SpellsStore = new _SpellsStore();
 
 SpellsStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_SPELL:
@@ -107,11 +107,11 @@ SpellsStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.SORT_SPELLS:
 			_updateSortOrder(payload.option);
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	SpellsStore.emitChange();
 
 	return true;

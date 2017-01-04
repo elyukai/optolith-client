@@ -392,7 +392,7 @@ const InGameStore = new _InGameStore();
 
 InGameStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.LOAD_RAW_INGAME_DATA:
 			loadData();

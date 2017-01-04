@@ -17,25 +17,24 @@ function _stopLoading() {
 }
 
 class _LoaderStore extends Store {
-	
+
 	isLoading() {
 		return _loading;
 	}
-	
+
 	getLoadingText() {
 		return _loadingText;
 	}
-	
+
 }
 
 const LoaderStore = new _LoaderStore();
 
-LoaderStore.dispatchToken = AppDispatcher.register(payload => {
+LoaderStore.dispatchToken = AppDispatcher.register(action => {
 
-	switch( payload.actionType ) {
-		
+	switch(action.type) {
 		case ActionTypes.WAIT_START:
-			_startLoading(payload.text);
+			_startLoading(action.text);
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:
@@ -56,11 +55,11 @@ LoaderStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.UPDATE_HERO_AVATAR:
 			_stopLoading();
 			break;
-			
+
 		default:
 			return true;
 	}
-	
+
 	LoaderStore.emitChange();
 
 	return true;

@@ -9,12 +9,12 @@ import AttributeStore from './AttributeStore';
 import Categories from '../constants/Categories';
 import Store from './Store';
 
-var _cost = 0;
-var _validCost = false;
-var _disadv = [];
-var _validOwnRequirements = false;
+let _cost = 0;
+let _validCost = false;
+let _disadv: [boolean, 0 | 1 | 2] = [true, 0];
+let _validOwnRequirements = false;
 
-function _updateCost(cost, valid) {
+const updateCost = (cost: number, valid: boolean) => {
 	_cost = cost;
 	_validCost = valid || check(_cost);
 	if (valid !== undefined) {
@@ -24,16 +24,16 @@ function _updateCost(cost, valid) {
 		_validCost = check(cost);
 	}
 	if (!_validCost) {
-		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');		
+		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
 	}
 }
 
-function _updateDisAdvCost(id, cost, valid) {
+function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 	_cost = cost;
 	if (valid !== undefined) {
 		_validCost = valid;
 		if (!_validCost) {
-			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');		
+			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
 		}
 	}
 	else {
@@ -42,8 +42,8 @@ function _updateDisAdvCost(id, cost, valid) {
 		const add = category === Categories.ADVANTAGES;
 		const target = () => add ? adv : disadv;
 
-		const isKar = reqs.some(e => e[0] === 'ADV_12' && e[1]);
-		const isMag = reqs.some(e => e[0] === 'ADV_50' && e[1]);
+		const isKar = reqs.some((e: [string, number]) => e[0] === 'ADV_12' && e[1]);
+		const isMag = reqs.some((e: [string, number]) => e[0] === 'ADV_50' && e[1]);
 		const index = isKar ? 2 : isMag ? 1 : 0;
 
 		_validCost = checkDisAdvantages(id, cost, index, target(), spent, total, add);
@@ -58,7 +58,7 @@ function _updateDisAdvCost(id, cost, valid) {
 			alert(`Obergrenze für ${text} erreicht`, `Du kannst nicht mehr als 80 AP für ${text} ausgeben!`);
 		}
 		else if (!_validCost[0]) {
-			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');		
+			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
 		}
 		else {
 			_disadv = [ add, index ];
@@ -93,11 +93,11 @@ const RequirementsStore = new _RequirementsStore();
 RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 
 	if (payload.undoAction) {
-		_updateOwnRequirements(true);		
+		_updateOwnRequirements(true);
 		_updateCost(-payload.cost, true);
 	}
 	else {
-		switch( payload.actionType ) {
+		switch( payload.type ) {
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY: {
 				const obj = get(payload.id);
@@ -105,7 +105,7 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
 					_updateCost(1);
 				}
-				else {		
+				else {
 					_updateCost(final(obj.ic, 0));
 				}
 				break;
@@ -118,7 +118,7 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
 					_updateCost(-1);
 				}
-				else {		
+				else {
 					_updateCost(final(obj.ic, 0) * -1);
 				}
 				break;
@@ -182,12 +182,12 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 				_updateCost(final(obj.ic, obj.value) * -1);
 				break;
 			}
-			
+
 			default:
 				return true;
 		}
 	}
-	
+
 	RequirementsStore.emitChange();
 
 	return true;

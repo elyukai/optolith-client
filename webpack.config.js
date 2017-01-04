@@ -2,7 +2,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var webpack = require('webpack');
 
 module.exports = {
-	entry: './src/index.tsx',
+	entry: './src/main.tsx',
 	output: {
 		filename: 'bundle.js',
 		path: __dirname + '/dist'
@@ -32,5 +32,6 @@ module.exports = {
 		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
 			outputStyle: 'compressed'
 		}}})
-	]
+	],
+	target: 'electron-renderer'
 };

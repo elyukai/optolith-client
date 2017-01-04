@@ -1,3 +1,19 @@
+import {
+	RawAdvantage,
+	RawAttribute,
+	RawCombatTechnique,
+	RawCore,
+	RawCulture,
+	RawData,
+	RawDisadvantage,
+	RawLiturgy,
+	RawProfession,
+	RawProfessionVariant,
+	RawRace,
+	RawSpecialAbility,
+	RawSpell,
+	RawTalent
+} from '../actions/ServerActions';
 import Categories from '../constants/Categories';
 import {
 	Advantage,
@@ -14,10 +30,16 @@ import {
 	Talent
 } from '../utils/DataUtils';
 
-export default ({ attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities }) => {
-	const _list = {};
+interface List {
+	[id: string]: any;
+}
 
-	const iterate = (source, DataClass) => {
+type Source = (RawAdvantage | RawAttribute | RawCombatTechnique | RawCore | RawCulture | RawData | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent) & List;
+
+export default ({ attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities }: RawData) => {
+	const _list: List = {};
+
+	const iterate = (source: Source, DataClass) => {
 		for (const id in source) {
 			_list[id] = new DataClass(source[id]);
 		}

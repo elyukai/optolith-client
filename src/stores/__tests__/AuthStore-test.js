@@ -14,7 +14,7 @@ describe('AuthStore', () => {
 
 	it('receives new account', () => {
 		callback({
-			actionType: ActionTypes.RECEIVE_ACCOUNT,
+			type: ActionTypes.RECEIVE_ACCOUNT,
 			id: 4,
 			name: 'Elytherion'
 		});

@@ -71,7 +71,7 @@ const RaceStore = new _RaceStore();
 
 RaceStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateCurrentID(payload.r);

@@ -12,7 +12,7 @@ function _updateTab(tab) {
 
 function _updateSection(section, tab) {
 	const before = _currentSection;
-	
+
 	_currentSection = section;
 
 	if (tab)
@@ -46,11 +46,11 @@ class _TabStore extends Store {
 			tab: _currentTab
 		};
 	}
-	
+
 	getCurrentID() {
 		return _currentTab;
 	}
-	
+
 	getCurrentSID() {
 		return _currentSection;
 	}
@@ -61,12 +61,12 @@ const TabStore = new _TabStore();
 
 TabStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
-		
+	switch( payload.type ) {
+
 		case ActionTypes.SHOW_TAB:
 			_updateTab(payload.tab);
 			break;
-		
+
 		case ActionTypes.SHOW_TAB_SECTION:
 			_updateSection(payload.section);
 			break;
@@ -79,11 +79,11 @@ TabStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.CLEAR_HERO:
 			_updateTab('home');
 			break;
-			
+
 		case ActionTypes.CREATE_NEW_HERO:
 			_updateSection('hero', 'rcp');
 			break;
-			
+
 		case ActionTypes.RECEIVE_HERO:
 			_updateSection('hero', 'profile');
 			break;
@@ -91,15 +91,15 @@ TabStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.ASSIGN_RCP_ENTRIES:
 			_updateTab('attributes');
 			break;
-			
+
 		case ActionTypes.CLEAR_ACCOUNT:
 			_updateTab('login');
 			break;
-			
+
 		default:
 			return true;
 	}
-	
+
 	TabStore.emitChange();
 
 	return true;

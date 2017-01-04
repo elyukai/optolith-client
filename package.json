@@ -2,17 +2,22 @@
   "name": "cha5app",
   "version": "1.0.0",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
-  "main": "js/AppBootstrap.js",
+  "main": "dist/main.js",
   "directories": {
     "test": "test"
   },
   "dependencies": {
     "@types/classnames": "0.0.32",
+    "@types/flux": "0.0.34",
+    "@types/node": "^6.0.55",
     "@types/react": "^0.14.55",
     "@types/react-dom": "^0.14.19",
+    "@types/react-redux": "^4.4.35",
+    "@types/redux-immutable": "^3.0.31",
     "@types/whatwg-fetch": "0.0.33",
     "babel-runtime": "^6.18.0",
     "classnames": "^2.2.5",
+    "electron": "^1.4.13",
     "flux": "^2.1.1",
     "immutable": "^3.8.1",
     "jquery": "^2.2.4",
@@ -61,6 +66,7 @@
   },
   "scripts": {
     "watch": "webpack --watch",
+    "start": "electron .",
     "build": "webpack",
     "buildpro": "SET NODE_ENV=production && webpack -p",
     "test": "jest"

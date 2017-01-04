@@ -23,7 +23,7 @@ function _updateSortOrder(option) {
 function _updateTalentRating() {
 	_talentRating = !_talentRating;
 }
-	
+
 class _TalentsStore extends Store {
 
 	getForSave() {
@@ -132,7 +132,7 @@ const TalentsStore = new _TalentsStore();
 
 TalentsStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.ADD_TALENT_POINT:
 		case ActionTypes.REMOVE_TALENT_POINT:
@@ -149,11 +149,11 @@ TalentsStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.CHANGE_TALENT_RATING:
 			_updateTalentRating();
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	TalentsStore.emitChange();
 
 	return true;

@@ -80,7 +80,7 @@ const CultureStore = new _CultureStore();
 
 CultureStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.RECEIVE_HERO:
 			_updateCurrentID(payload.c);

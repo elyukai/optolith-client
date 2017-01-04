@@ -13,9 +13,9 @@ import Store from './Store';
 var _history = [];
 var _lastSaveIndex = -1;
 
-function _add(actionType, cost = 0, options = {}, prevState = {}) {
+function _add(type, cost = 0, options = {}, prevState = {}) {
 	_history.push({
-		actionType,
+		type,
 		cost,
 		options,
 		prevState
@@ -111,7 +111,7 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 		_history.splice(_history.length - 1, 1);
 	}
 	else {
-		switch( payload.actionType ) {
+		switch( payload.type ) {
 			case ActionTypes.CLEAR_HERO:
 				_clear();
 				_resetSaveIndex();
@@ -131,12 +131,12 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.FINALIZE_CHARACTER_CREATION:
 				_resetSaveIndex();
 				break;
-				
+
 			case ActionTypes.CREATE_NEW_HERO:
 				_clear();
 				_resetSaveIndex();
 				break;
-				
+
 			case ActionTypes.SAVE_HERO_SUCCESS:
 				_resetSaveIndex();
 				break;
@@ -148,7 +148,7 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 				if (RequirementsStore.isValid()) {
 					const id = payload.id;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id });
+					_add(payload.type, cost, { id });
 				}
 				break;
 
@@ -162,17 +162,17 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					const oldValue = get(id).value;
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
-				
+
 			case ActionTypes.ADD_MAX_ENERGY_POINT:
 				if (RequirementsStore.isValid()) {
 					const id = payload.id;
 					const oldValue = secondaryAttributes.get(id);
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
@@ -186,7 +186,7 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
@@ -197,7 +197,7 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
@@ -208,7 +208,7 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, value: newValue }, { value: oldValue });
+					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
@@ -234,12 +234,12 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					}
 					const newValue = tier;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.actionType, cost, { id, tier: newValue, sid }, { tier: oldValue });
+					_add(payload.type, cost, { id, tier: newValue, sid }, { tier: oldValue });
 				}
 				break;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_add(payload.actionType, 0, { value: payload.value });
+				_add(payload.type, 0, { value: payload.value });
 				break;
 
 			default:

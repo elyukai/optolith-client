@@ -43,7 +43,7 @@ const ELStore = new _ELStore();
 
 ELStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.CREATE_NEW_HERO:
 			_update(payload.el);

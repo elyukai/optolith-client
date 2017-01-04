@@ -1,3 +1,4 @@
+import { AdventurePoints } from '../index.d';
 import { get } from '../stores/ListStore';
 import ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
@@ -12,17 +13,17 @@ import Store from './Store';
 
 // AP = Adventure Points
 
-var _total = 0;
-var _spent = 0;
-var _rcp = [0, 0, 0, 0];
-var _adv = [0, 0, 0];
-var _disadv = [0, 0, 0];
+let _total = 0;
+let _spent = 0;
+let _rcp = [0, 0, 0, 0];
+let _adv = [0, 0, 0];
+let _disadv = [0, 0, 0];
 
-function _spend(cost) {
+function _spend(cost: number) {
 	_spent += cost;
 }
 
-function _spendDisadv(cost, [ add, index ]) {
+function _spendDisadv(cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
 	const target = () => add ? _adv : _disadv;
 	_spent += cost;
 	const absCost = add ? cost : -cost;
@@ -32,9 +33,8 @@ function _spendDisadv(cost, [ add, index ]) {
 	}
 }
 
-function _calculateRCPDiff(index, next) {
-	var current = _rcp[index] || 0;
-	next = next || 0;
+function _calculateRCPDiff(index: number, next: number = 0) {
+	let current = _rcp[index] || 0;
 	let diff = next - current;
 	_spend(diff);
 	_rcp[index] = next;
@@ -48,7 +48,7 @@ function _clear() {
 	_disadv = [ 0, 0, 0 ];
 }
 
-function _updateAll(obj) {
+function _updateAll(obj: AdventurePoints) {
 	_total = obj.total;
 	_spent = obj.spent;
 	_rcp = obj.rcp;
@@ -107,14 +107,11 @@ class _APStore extends Store {
 
 }
 
-const APStore = new _APStore();
-
-APStore.dispatchToken = AppDispatcher.register(payload => {
-
+const APStore = new _APStore(payload => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 
 	if (payload.undoAction) {
-		switch (payload.actionType) {
+		switch (payload.type) {
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
@@ -125,13 +122,13 @@ APStore.dispatchToken = AppDispatcher.register(payload => {
 				_total -= payload.options.value;
 				break;
 
-			default: 
+			default:
 				_spend(RequirementsStore.getCurrentCost());
 				break;
 		}
 	}
 	else {
-		switch( payload.actionType ) {
+		switch( payload.type ) {
 			case ActionTypes.CLEAR_HERO:
 				_clear();
 				break;

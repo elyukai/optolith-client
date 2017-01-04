@@ -69,7 +69,7 @@ class _SpecialAbilitiesStore extends Store {
 					if (id === 'SA_86' && getAllByCategory('spells').some(e => e.active)) {
 						disabled = true;
 					}
-					if (id === 'SA_102' && getAllByCategory('liturgies').some(e => e.active)) disabled = true; 
+					if (id === 'SA_102' && getAllByCategory('liturgies').some(e => e.active)) disabled = true;
 					sas.push({ id, name, add: sel[sid - 1][0], cost: sel[sid - 1][2], gr, disabled });
 				} else {
 					let phase = PhaseStore.get();
@@ -362,7 +362,7 @@ const SpecialAbilitiesStore = new _SpecialAbilitiesStore();
 
 SpecialAbilitiesStore.dispatchToken = AppDispatcher.register(payload => {
 
-	switch( payload.actionType ) {
+	switch( payload.type ) {
 
 		case ActionTypes.FILTER_SPECIALABILITIES:
 			_updateFilterText(payload.text);
@@ -371,16 +371,16 @@ SpecialAbilitiesStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.SORT_SPECIALABILITIES:
 			_updateSortOrder(payload.option);
 			break;
-			
+
 		case ActionTypes.ACTIVATE_SPECIALABILITY:
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
 			break;
-		
+
 		default:
 			return true;
 	}
-	
+
 	SpecialAbilitiesStore.emitChange();
 
 	return true;

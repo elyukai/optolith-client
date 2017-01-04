@@ -1,5 +1,7 @@
 import keyMirror from 'keymirror';
 
+export type Category = 'ADVANTAGES' | 'ATTRIBUTES' | 'COMBAT_TECHNIQUES' | 'CULTURES' | 'DISADVANTAGES' | 'LITURGIES' | 'PROFESSION_VARIANTS' | 'PROFESSIONS' | 'RACES' | 'SPECIAL_ABILITIES' | 'SPELLS' | 'TALENTS';
+
 interface Categories {
 	ADVANTAGES: string;
 	ATTRIBUTES: string;

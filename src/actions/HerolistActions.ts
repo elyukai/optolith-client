@@ -1,5 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import createOverlay from '../utils/createOverlay';
 import ELStore from '../stores/ELStore';
 import HeroCreation from '../views/herolist/HeroCreation';
@@ -7,25 +7,55 @@ import React from 'react';
 import alert from '../utils/alert';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
+export const refresh = () => WebAPIUtils.getHeroes();
+
+export interface SortHerolistAction {
+	type: ActionTypes.SORT_HEROLIST;
+	payload: {
+		sortOrder: string;
+	};
+}
+
+export const sort = (sortOrder: string): SortHerolistAction => ({
+	type: ActionTypes.SORT_HEROLIST,
+	payload: {
+		sortOrder
+	}
+});
+
+export interface FilterHerolistAction {
+	type: ActionTypes.FILTER_HEROLIST;
+	payload: {
+		filterOption: string;
+	};
+}
+
+export const filter = (filterOption: string): FilterHerolistAction => ({
+	type: ActionTypes.FILTER_HEROLIST,
+	payload: {
+		filterOption
+	}
+});
+
 export default {
 	refresh(): void {
 		WebAPIUtils.getHeroes();
 	},
 	filter(text: string): void {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.FILTER_HEROLIST,
+			type: ActionTypes.FILTER_HEROLIST,
 			text
 		});
 	},
 	sort(option: string): void {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.SORT_HEROLIST,
+			type: ActionTypes.SORT_HEROLIST,
 			option
 		});
 	},
 	changeView(view: string): void {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.CHANGE_HEROLIST_VIEW,
+			type: 'CHANGE_HEROLIST_VIEW',
 			view
 		});
 	},
@@ -50,13 +80,13 @@ export default {
 	},
 	loadFx(id: string): void {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.CLEAR_HERO
+			type: 'CLEAR_HERO'
 		});
 		WebAPIUtils.loadHero(id);
 	},
 	createNewHero(options: Object): void {
 		AppDispatcher.dispatch({
-			actionType: ActionTypes.CREATE_NEW_HERO,
+			type: 'CREATE_NEW_HERO',
 			...options
 		});
 	},
