@@ -14,7 +14,7 @@ let _validCost = false;
 let _disadv: [boolean, 0 | 1 | 2] = [true, 0];
 let _validOwnRequirements = false;
 
-const updateCost = (cost: number, valid: boolean) => {
+const _updateCost = (cost: number, valid: boolean) => {
 	_cost = cost;
 	_validCost = valid || check(_cost);
 	if (valid !== undefined) {

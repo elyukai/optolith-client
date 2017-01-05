@@ -2,6 +2,8 @@ import * as ActionTypes from '../constants/ActionTypes';
 import alert from '../utils/alert';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import HerolistStore from '../stores/HerolistStore';
+import { RawRace } from '../reducers/RacesReducer';
+import { Hero } from '../reducers/HerolistReducer';
 
 export interface RawCore {
 	id: string;
@@ -86,29 +88,6 @@ export interface RawProfessionVariant extends RawCore {
 	talents: [string, number][];
 }
 
-export interface RawRace extends RawCore {
-	name: string;
-	ap: number;
-	le: number;
-	sk: number;
-	zk: number;
-	gs: number;
-	attr: [number, number][];
-	attr_sel: [number, number[]];
-	typ_cultures: string[];
-	auto_adv: string[][];
-	imp_adv: string[][];
-	imp_dadv: string[][];
-	typ_adv: string[];
-	typ_dadv: string[];
-	untyp_adv: string[];
-	untyp_dadv: string[];
-	hair: number[];
-	eyes: number[];
-	size: (number | [number, number])[];
-	weight: (number | [number, number])[];
-}
-
 export interface RawSpecialAbility extends RawCore {
 	name: string;
 	ap: number | number[] | string;
@@ -139,29 +118,46 @@ export interface RawTalent extends RawCore {
 }
 
 export interface RawData {
-	adv: RawAdvantage[];
-	attributes: RawAttribute[];
-	combattech: RawCombatTechnique[];
-	cultures: RawCulture[];
-	disadv: RawDisadvantage[];
-	liturgies: RawLiturgy[];
-	professions: RawProfession[];
-	professionVariants: RawProfessionVariant[];
-	races: RawRace[];
-	specialabilities: RawSpecialAbility[];
-	spells: RawSpell[];
-	talents: RawTalent[];
+	adv: { [id: string]: RawAdvantage };
+	attributes: { [id: string]: RawAttribute };
+	combattech: { [id: string]: RawCombatTechnique };
+	cultures: { [id: string]: RawCulture };
+	disadv: { [id: string]: RawDisadvantage };
+	liturgies: { [id: string]: RawLiturgy };
+	professions: { [id: string]: RawProfession };
+	professionVariants: { [id: string]: RawProfessionVariant };
+	races: { [id: string]: RawRace };
+	specialabilities: { [id: string]: RawSpecialAbility };
+	spells: { [id: string]: RawSpell };
+	talents: { [id: string]: RawTalent };
 }
 
-export interface FetchDataAction {
-	type: ActionTypes.FETCH_DATA;
+export interface FetchDataTablesAction {
+	type: ActionTypes.FETCH_DATA_TABLES;
 	payload: {
 		data: RawData;
+		pending?: boolean
 	};
 }
 
-export const fetchData = (data: any) => ({
-	type: ActionTypes.FETCH_DATA,
+export const fetchDataTables = (data: any) => ({
+	type: ActionTypes.FETCH_DATA_TABLES,
+	payload: {
+		data,
+		pending: false
+	}
+});
+
+export interface FetchCharacterDataAction {
+	type: ActionTypes.FETCH_CHARACTER_DATA;
+	payload: {
+		data: Hero;
+		pending?: boolean
+	};
+}
+
+export const fetchCharacterData = (data: Hero) => ({
+	type: ActionTypes.FETCH_CHARACTER_DATA,
 	payload: {
 		data,
 		pending: false

@@ -8,24 +8,14 @@ export default {
 		ServerActions.connectionError(e);
 	},
 
-	getAllData: function(): void {
-		readFile('dist/data/DSA5.json', 'utf8', (e, data) => {
-			if (e) {
-				ServerActions.connectionError(e);
-			}
-			else {
-				const result = JSON.parse(data);
-				console.log(result);
-				ServerActions.receiveLists(result);
-			}
-		});
-		// try {
-		// 	let response = await fetch('data/DSA5.json');
-		// 	let result = await response.json();
-		// 	ServerActions.receiveLists(result);
-		// } catch(e) {
-		// 	ServerActions.connectionError(e);
-		// }
+	getAllData: async function(): Promise<void> {
+		try {
+			let response = await fetch('data/DSA5.json');
+			let result = await response.json();
+			ServerActions.receiveLists(result);
+		} catch(e) {
+			ServerActions.connectionError(e);
+		}
 	},
 	register: async function(email: string, name: string, displayname: string, password: string): Promise<void> {
 		try {
@@ -37,7 +27,7 @@ export default {
 			ServerActions.connectionError(e);
 		}
 	},
-	checkEmail: async function(email: string): Promise<string> {
+	checkEmail: async function(email: string): Promise<string | void> {
 		try {
 			let response = await fetch('data/checkemail.php?e=' + email);
 			let result = await response.text();
@@ -46,7 +36,7 @@ export default {
 			ServerActions.connectionError(e);
 		}
 	},
-	checkUsername: async function(name: string): Promise<string> {
+	checkUsername: async function(name: string): Promise<string | void> {
 		try {
 			let response = await fetch('data/checkuser.php?e=' + name);
 			let result = await response.text();

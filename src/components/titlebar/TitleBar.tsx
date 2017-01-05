@@ -144,7 +144,8 @@ export default class TitleBar extends Component<Props, State> {
 				} else {
 					tabs.splice(1, 0,
 						{ label: 'Helden', tag: 'herolist' },
-						{ label: 'Gruppen', tag: 'grouplist', disabled: true }
+						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
+						{ label: 'Hausregeln', tag: 'own-rules', disabled: true }
 					);
 					return (
 						<TitleBarWrapper>

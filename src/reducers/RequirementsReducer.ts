@@ -1,4 +1,4 @@
-import { FetchDataAction } from '../actions/ServerActions';
+import { FetchDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Category } from '../constants/Categories';
@@ -9,9 +9,9 @@ import alert from '../utils/alert';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Categories from '../constants/Categories';
 
-type Action = FetchDataAction | LoginAction | LogoutAction;
+type Action = FetchDataTablesAction | LoginAction | LogoutAction;
 
-type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined];
+type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined] | never[];
 
 let cost = 0;
 let validCost = false;
@@ -163,7 +163,7 @@ export default (state: HeroState, action: Action): ValidationResult => {
 		// UPDATE_USERNAME
 
 		default:
-			return state;
+			return [];
 	}
 	return [validCost && validOwnRequirements, cost, disadvArgs];
 };

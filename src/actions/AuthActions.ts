@@ -1,4 +1,9 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { RawHero } from '../reducers/HerolistReducer';
+
+interface Heroes {
+	[id: string]: RawHero;
+}
 
 export interface LoginAction {
 	type: ActionTypes.LOGIN;
@@ -7,16 +12,18 @@ export interface LoginAction {
 		displayName: string;
 		email: string;
 		sessionToken: string;
+		heroes: Heroes
 	};
 }
 
-export const login = (name: string, displayName: string, email: string, sessionToken: string) => ({
+export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: Heroes) => ({
 	type: ActionTypes.LOGIN,
 	payload: {
 		name,
 		displayName,
 		email,
-		sessionToken
+		sessionToken,
+		heroes
 	}
 });
 

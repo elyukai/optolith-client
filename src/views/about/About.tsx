@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 
 export default class About extends Component<any, any> {
-	
+
 	render() {
 
 		const version = VersionStore.get();
@@ -14,21 +14,15 @@ export default class About extends Component<any, any> {
 					<Scroll className="text">
 						<h2>Impressum</h2>
 
-						<h3>Thore Schuchardt</h3>
-						<p>
-							Backend-Dev<br/>
-							Lehmberg 7b<br/>
-							24361 Groß Wittensee<br/>
-							<a href="mailto:schuchi@dsa-sh.de">schuchi@dsa-sh.de</a>
-						</p>
-
 						<h3>Lukas Obermann</h3>
 						<p>
 							Frontend-Dev<br/>
 							Eekholl 11<br/>
 							24361 Groß Wittensee<br/>
-							<a href="mailto:lukas@dsa-sh.de">lukas@dsa-sh.de</a>
+							<a href="mailto:lukas.obermann@live.de">lukas.obermann@live.de</a>
 						</p>
+
+						<h3>TBD...</h3>
 
 						<h2>Haftungsausschluss</h2>
 
@@ -346,3 +340,10 @@ export default class About extends Component<any, any> {
 		);
 	}
 }
+						// <h3>Thore Schuchardt</h3>
+						// <p>
+						// 	Backend-Dev<br/>
+						// 	Lehmberg 7b<br/>
+						// 	24361 Groß Wittensee<br/>
+						// 	<a href="mailto:schuchi@dsa-sh.de">schuchi@dsa-sh.de</a>
+						// </p>

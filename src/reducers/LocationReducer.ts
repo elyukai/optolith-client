@@ -16,14 +16,8 @@ const initialState = <LocationState>{
 	tab: 'herolist'
 };
 
-export default (state = initialState, action: Action) => {
+export default (state = initialState, action: Action, loggedIn: boolean) => {
 	switch (action.type) {
-		case ActionTypes.LOGIN:
-			return { ...state, loggedIn: true, tab: 'herolist' }
-
-		case ActionTypes.LOGOUT:
-			return { ...state, loggedIn: false, tab: 'home' }
-
 		case ActionTypes.SHOW_TAB:
 			return { ...state, tab: action.payload.tab }
 

@@ -1,7 +1,7 @@
 import keyMirror from 'keymirror';
 
-export type FETCH_DATA = 'FETCH_DATA';
-export const FETCH_DATA = 'FETCH_DATA';
+export type FETCH_DATA_TABLES = 'FETCH_DATA_TABLES';
+export const FETCH_DATA_TABLES = 'FETCH_DATA_TABLES';
 
 export type SHOW_SECTION = 'SHOW_SECTION';
 export const SHOW_SECTION = 'SHOW_SECTION';
@@ -19,6 +19,14 @@ export type LOGOUT = 'LOGOUT';
 export const LOGOUT = 'LOGOUT';
 export type REGISTER = 'REGISTER';
 export const REGISTER = 'REGISTER';
+
+export type FETCH_CHARACTER_DATA = 'FETCH_CHARACTER_DATA';
+export const FETCH_CHARACTER_DATA = 'FETCH_CHARACTER_DATA';
+
+export type SELECT_RACE = 'SELECT_RACE';
+export const SELECT_RACE = 'SELECT_RACE';
+export type SORT_RACES = 'SORT_RACES';
+export const SORT_RACES = 'SORT_RACES';
 
 export const ATS = keyMirror({
 

@@ -1,10 +1,10 @@
 import { fromJS, Map } from 'immutable';
 import * as ActionTypes from '../constants/ActionTypes';
-import { FetchDataAction } from '../actions/ServerActions';
+import { FetchDataTablesAction } from '../actions/ServerActions';
 import init from '../utils/init';
 import RequirementsReducer from './RequirementsReducer';
 
-type Action = FetchDataAction;
+type Action = FetchDataTablesAction;
 
 export interface AdventurePoints {
 	total: number;
@@ -412,76 +412,75 @@ const initialState = <HeroState>{
 	}
 };
 
-export default (state = initialState, a: Action) => {
-	if (a.type === ActionTypes.FETCH_DATA) {
-		return { ...state, ...init(a.payload.data) as HeroState };
+export default (state = initialState, action: Action) => {
+	if (action.type === ActionTypes.FETCH_DATA_TABLES) {
+		return { ...state, ...init(action.payload.data) as HeroState };
+	}
+	else if (action.type === ActionTypes.FETCH_CHARACTER_DATA) {
+		_updateAll(payload);
+	}
+	else if (action.type === ActionTypes.ASSIGN_RCP_ENTRIES) {
+		_assignRCP(payload.selections);
+	}
+	else if (action.type === ActionTypes.CLEAR_HERO || action.type === ActionTypes.CREATE_NEW_HERO) {
+		_assignRCP(payload.selections);
 	}
 	else {
-		const [ valid, cost, disadv ] = RequirementsReducer(state, a);
-		switch (a.type) {
-			case ActionTypes.ATS.RECEIVE_HERO:
-				_updateAll(payload);
-				break;
-
-			case ActionTypes.ATS.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
-				break;
-
-			case ActionTypes.ATS.CLEAR_HERO:
-			case ActionTypes.ATS.CREATE_NEW_HERO:
-				_clear();
-				break;
-
-			case ActionTypes.ATS.ACTIVATE_SPELL:
-			case ActionTypes.ATS.ACTIVATE_LITURGY:
+		const [ valid, cost, disadv ] = RequirementsReducer(state, action);
+		switch (action.type) {
+			case ActionTypes.ACTIVATE_SPELL:
+			case ActionTypes.ACTIVATE_LITURGY:
 				if (valid) {
 					_activate(payload.id);
 				}
 				break;
 
-			case ActionTypes.ATS.DEACTIVATE_SPELL:
-			case ActionTypes.ATS.DEACTIVATE_LITURGY:
+			case ActionTypes.DEACTIVATE_SPELL:
+			case ActionTypes.DEACTIVATE_LITURGY:
 				if (valid) {
 					_deactivate(payload.id);
 				}
 				break;
 
-			case ActionTypes.ATS.ACTIVATE_DISADV:
-			case ActionTypes.ATS.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
 				if (valid) {
 					_activateDASA(payload);
 				}
 				break;
 
-			case ActionTypes.ATS.DEACTIVATE_DISADV:
-			case ActionTypes.ATS.DEACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (valid) {
 					_deactivateDASA(payload);
 				}
 				break;
 
-			case ActionTypes.ATS.UPDATE_DISADV_TIER:
-			case ActionTypes.ATS.UPDATE_SPECIALABILITY_TIER:
+			case ActionTypes.UPDATE_DISADV_TIER:
+			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
 				if (valid) {
 					_updateTier(payload.id, payload.tier, payload.sid);
 				}
 				break;
 
-			case ActionTypes.ATS.ADD_ATTRIBUTE_POINT:
-			case ActionTypes.ATS.ADD_TALENT_POINT:
-			case ActionTypes.ATS.ADD_COMBATTECHNIQUE_POINT:
-			case ActionTypes.ATS.ADD_SPELL_POINT:
-			case ActionTypes.ATS.ADD_LITURGY_POINT:
+			case ActionTypes.ADD_ATTRIBUTE_POINT:
+			case ActionTypes.ADD_TALENT_POINT:
+			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+			case ActionTypes.ADD_SPELL_POINT:
+			case ActionTypes.ADD_LITURGY_POINT:
 				if (valid) {
 					_addPoint(payload.id);
 				}
 				break;
 
-			case ActionTypes.ATS.REMOVE_ATTRIBUTE_POINT:
-			case ActionTypes.ATS.REMOVE_TALENT_POINT:
-			case ActionTypes.ATS.REMOVE_COMBATTECHNIQUE_POINT:
-			case ActionTypes.ATS.REMOVE_SPELL_POINT:
-			case ActionTypes.ATS.REMOVE_LITURGY_POINT:
+			case ActionTypes.ADD_MAX_ENERGY_POINT:
+				break;
+
+			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+			case ActionTypes.REMOVE_TALENT_POINT:
+			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+			case ActionTypes.REMOVE_SPELL_POINT:
+			case ActionTypes.REMOVE_LITURGY_POINT:
 				if (valid) {
 					_removePoint(payload.id);
 				}

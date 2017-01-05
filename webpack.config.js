@@ -32,6 +32,5 @@ module.exports = {
 		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
 			outputStyle: 'compressed'
 		}}})
-	],
-	target: 'electron-renderer'
+	]
 };

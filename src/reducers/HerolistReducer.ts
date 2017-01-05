@@ -1,8 +1,8 @@
-import { FetchDataAction } from '../actions/ServerActions';
+import { FetchDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = FetchDataAction | LoginAction | LogoutAction;
+type Action = FetchDataTablesAction | LoginAction | LogoutAction;
 
 interface AdventurePoints {
 	readonly total: number;
@@ -11,7 +11,25 @@ interface AdventurePoints {
 	readonly disadv: [number, number, number];
 }
 
-interface Hero {
+export interface RawHero {
+	readonly clientVersion: string;
+	readonly dateCreated: Date;
+	readonly dateModified: Date;
+	readonly player?: User;
+	readonly id: string;
+	readonly phase: number;
+	readonly name: string;
+	readonly avatar: string;
+	readonly ap: AdventurePoints;
+	readonly el: string;
+	readonly r: string;
+	readonly c: string;
+	readonly p: string;
+	readonly pv: string | null;
+	readonly sex: string;
+}
+
+export interface Hero {
 	readonly clientVersion: string;
 	readonly dateCreated: Date;
 	readonly dateModified: Date;
@@ -52,10 +70,10 @@ const initialState = <HerolistState>{
 	users: []
 };
 
-export default (state = initialState, a: Action): HerolistState => {
-	switch (a.type) {
+export default (state = initialState, action: Action): HerolistState => {
+	switch (action.type) {
 		// Only for test purpose:
-		case ActionTypes.FETCH_DATA:
+		case ActionTypes.FETCH_DATA_TABLES:
 			return {
 				heroesById: {
 					H_1: {
@@ -264,8 +282,23 @@ export default (state = initialState, a: Action): HerolistState => {
 				users: ['U_1', 'U_3']
 			};
 
-		// case ActionTypes.LOGIN:
-		// 	return state.merge(a.payload);
+		case ActionTypes.LOGIN: {
+			const usersById: { [id: string]: User } = {};
+			const users: string[] = [];
+			const heroesById: { [id: string]: Hero } = {};
+			const heroes: string[] = [];
+			for (const id in action.payload.heroes) {
+				const hero = action.payload.heroes[id];
+				const user = hero.player;
+				if (user && !users.includes(user.id)) {
+					usersById[user.id] = user;
+					users.push(user.id);
+				}
+				heroesById[id] = { ...(hero as Hero), player: user && user.id};
+				heroes.push(id);
+			}
+			return { heroes, heroesById, users, usersById };
+		}
 
 		case ActionTypes.LOGOUT:
 			return {
