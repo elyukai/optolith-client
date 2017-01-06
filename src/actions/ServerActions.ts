@@ -132,32 +132,32 @@ export interface RawData {
 	talents: { [id: string]: RawTalent };
 }
 
-export interface FetchDataTablesAction {
-	type: ActionTypes.FETCH_DATA_TABLES;
+export interface ReceiveDataTablesAction {
+	type: ActionTypes.RECEIVE_DATA_TABLES;
 	payload: {
 		data: RawData;
 		pending?: boolean
 	};
 }
 
-export const fetchDataTables = (data: any) => ({
-	type: ActionTypes.FETCH_DATA_TABLES,
+export const receiveDataTables = (data: RawData) => ({
+	type: ActionTypes.RECEIVE_DATA_TABLES,
 	payload: {
 		data,
 		pending: false
 	}
 });
 
-export interface FetchCharacterDataAction {
-	type: ActionTypes.FETCH_CHARACTER_DATA;
+export interface ReceiveHeroDataAction {
+	type: ActionTypes.RECEIVE_HERO_DATA;
 	payload: {
 		data: Hero;
 		pending?: boolean
 	};
 }
 
-export const fetchCharacterData = (data: Hero) => ({
-	type: ActionTypes.FETCH_CHARACTER_DATA,
+export const receiveHeroData = (data: Hero) => ({
+	type: ActionTypes.RECEIVE_HERO_DATA,
 	payload: {
 		data,
 		pending: false

@@ -1,8 +1,8 @@
-import { FetchDataTablesAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = FetchDataTablesAction | LoginAction | LogoutAction;
+type Action = ReceiveDataTablesAction | LoginAction | LogoutAction;
 
 export interface AuthState {
 	readonly loggedIn: boolean;
@@ -23,7 +23,7 @@ const initialState = <AuthState>{
 export default (state = initialState, action: Action): AuthState => {
 	switch (action.type) {
 		// Only for test purpose:
-		case ActionTypes.FETCH_DATA_TABLES:
+		case ActionTypes.RECEIVE_DATA_TABLES:
 			return {
 				loggedIn: true,
 				name: 'Elytherion',
@@ -32,12 +32,12 @@ export default (state = initialState, action: Action): AuthState => {
 				sessionToken: '0123456789ABCDEF'
 			};
 
-		case ActionTypes.LOGIN: {
+		case ActionTypes.RECEIVE_LOGIN: {
 			const { name, displayName, email, sessionToken } = action.payload;
 			return { name, displayName, email, sessionToken, loggedIn: true };
 		}
 
-		case ActionTypes.LOGOUT:
+		case ActionTypes.RECEIVE_LOGOUT:
 			return {
 				loggedIn: false,
 				name: '',

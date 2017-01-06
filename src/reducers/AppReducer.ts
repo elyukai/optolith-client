@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import AuthReducer, { AuthState } from './AuthReducer';
 import HeroReducer, { HeroState } from './HeroReducer';
 import HerolistReducer, { HerolistState } from './HerolistReducer';
@@ -6,13 +5,6 @@ import LoadingReducer, { LoadingState } from './LoadingReducer';
 import LocationReducer, { LocationState } from './LocationReducer';
 
 export const version = [ 0, 14, 59 ];
-
-export interface Action {
-	type: string;
-	payload?: any;
-	error?: boolean;
-	meta?: any;
-}
 
 export interface AppState {
 	auth: AuthState;
@@ -22,7 +14,9 @@ export interface AppState {
 	location: LocationState;
 }
 
-export default (state: AppState | {} = {}, action: Action): AppState => {
+export type InitialAppState = { [slice in keyof AppState]: undefined };
+
+export default (state: AppState | InitialAppState = {} as InitialAppState, action: any): AppState => {
 	return {
 		auth: AuthReducer(state.auth, action),
 		hero: HeroReducer(state.hero, action),

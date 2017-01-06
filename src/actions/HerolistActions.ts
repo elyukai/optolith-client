@@ -7,7 +7,37 @@ import React from 'react';
 import alert from '../utils/alert';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
-export const refresh = () => WebAPIUtils.getHeroes();
+interface RawHero {
+	readonly clientVersion: string;
+	readonly dateCreated: Date;
+	readonly dateModified: Date;
+	readonly player?: {
+		readonly id: string;
+		readonly displayName: string;
+	};
+	readonly id: string;
+	readonly phase: number;
+	readonly name: string;
+	readonly avatar: string;
+	readonly ap: {
+		readonly total: number;
+		readonly spent: number;
+		readonly adv: [number, number, number];
+		readonly disadv: [number, number, number];
+	};
+	readonly el: string;
+	readonly r: string;
+	readonly c: string;
+	readonly p: string;
+	readonly pv: string | null;
+	readonly sex: string;
+}
+
+export interface RawHerolist {
+	[id: string]: RawHero;
+}
+
+export const request = () => WebAPIUtils.getHeroes();
 
 export interface SortHerolistAction {
 	type: ActionTypes.SORT_HEROLIST;
@@ -34,6 +64,20 @@ export const filter = (filterOption: string): FilterHerolistAction => ({
 	type: ActionTypes.FILTER_HEROLIST,
 	payload: {
 		filterOption
+	}
+});
+
+export interface ReceiveHerolistAction {
+	type: ActionTypes.RECEIVE_HEROLIST;
+	payload: {
+		heroes: RawHerolist;
+	};
+}
+
+export const receive = (heroes: RawHerolist): ReceiveHerolistAction => ({
+	type: ActionTypes.RECEIVE_HEROLIST,
+	payload: {
+		heroes
 	}
 });
 

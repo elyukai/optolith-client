@@ -1,32 +1,15 @@
-import { FetchDataTablesAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
+import { ReceiveHerolistAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = FetchDataTablesAction | LoginAction | LogoutAction;
+type Action = ReceiveDataTablesAction | LoginAction | LogoutAction | ReceiveHerolistAction;
 
 interface AdventurePoints {
 	readonly total: number;
 	readonly spent: number;
 	readonly adv: [number, number, number];
 	readonly disadv: [number, number, number];
-}
-
-export interface RawHero {
-	readonly clientVersion: string;
-	readonly dateCreated: Date;
-	readonly dateModified: Date;
-	readonly player?: User;
-	readonly id: string;
-	readonly phase: number;
-	readonly name: string;
-	readonly avatar: string;
-	readonly ap: AdventurePoints;
-	readonly el: string;
-	readonly r: string;
-	readonly c: string;
-	readonly p: string;
-	readonly pv: string | null;
-	readonly sex: string;
 }
 
 export interface Hero {
@@ -73,7 +56,7 @@ const initialState = <HerolistState>{
 export default (state = initialState, action: Action): HerolistState => {
 	switch (action.type) {
 		// Only for test purpose:
-		case ActionTypes.FETCH_DATA_TABLES:
+		case ActionTypes.RECEIVE_DATA_TABLES:
 			return {
 				heroesById: {
 					H_1: {
@@ -282,7 +265,8 @@ export default (state = initialState, action: Action): HerolistState => {
 				users: ['U_1', 'U_3']
 			};
 
-		case ActionTypes.LOGIN: {
+		case ActionTypes.RECEIVE_LOGIN:
+		case ActionTypes.RECEIVE_HEROLIST: {
 			const usersById: { [id: string]: User } = {};
 			const users: string[] = [];
 			const heroesById: { [id: string]: Hero } = {};
@@ -294,13 +278,13 @@ export default (state = initialState, action: Action): HerolistState => {
 					usersById[user.id] = user;
 					users.push(user.id);
 				}
-				heroesById[id] = { ...(hero as Hero), player: user && user.id};
+				heroesById[id] = { ...(<Hero>hero), player: user && user.id};
 				heroes.push(id);
 			}
 			return { heroes, heroesById, users, usersById };
 		}
 
-		case ActionTypes.LOGOUT:
+		case ActionTypes.RECEIVE_LOGOUT:
 			return {
 				heroesById: {},
 				heroes: [],

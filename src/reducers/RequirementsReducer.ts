@@ -1,4 +1,4 @@
-import { FetchDataTablesAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Category } from '../constants/Categories';
@@ -9,7 +9,7 @@ import alert from '../utils/alert';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Categories from '../constants/Categories';
 
-type Action = FetchDataTablesAction | LoginAction | LogoutAction;
+type Action = ReceiveDataTablesAction | LoginAction | LogoutAction;
 
 type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined] | never[];
 

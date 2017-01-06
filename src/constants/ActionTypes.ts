@@ -1,27 +1,47 @@
-import keyMirror from 'keymirror';
+function keyMirror<T>(data: T): { [K in keyof T]: K; } {
+	const newData = {} as { [K in keyof T]: K; };
+	for (const constant in data) {
+		if (data.hasOwnProperty(constant)) {
+			newData[constant] = constant;
+		}
+	}
+	return newData;
+}
 
-export type FETCH_DATA_TABLES = 'FETCH_DATA_TABLES';
-export const FETCH_DATA_TABLES = 'FETCH_DATA_TABLES';
+// import keyMirror from 'keymirror';
+
+export type RECEIVE_DATA_TABLES = 'RECEIVE_DATA_TABLES';
+export const RECEIVE_DATA_TABLES = 'RECEIVE_DATA_TABLES';
 
 export type SHOW_SECTION = 'SHOW_SECTION';
 export const SHOW_SECTION = 'SHOW_SECTION';
 export type SHOW_TAB = 'SHOW_TAB';
 export const SHOW_TAB = 'SHOW_TAB';
 
+export type REQUEST_LOGIN = 'REQUEST_LOGIN';
+export const REQUEST_LOGIN = 'REQUEST_LOGIN';
+export type RECEIVE_LOGIN = 'RECEIVE_LOGIN';
+export const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
+export type REQUEST_LOGOUT = 'REQUEST_LOGOUT';
+export const REQUEST_LOGOUT = 'REQUEST_LOGOUT';
+export type RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
+export const RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
+export type REGISTER = 'REGISTER';
+export const REGISTER = 'REGISTER';
+
 export type FILTER_HEROLIST = 'FILTER_HEROLIST';
 export const FILTER_HEROLIST = 'FILTER_HEROLIST';
 export type SORT_HEROLIST = 'SORT_HEROLIST';
 export const SORT_HEROLIST = 'SORT_HEROLIST';
+export type REQUEST_HEROLIST = 'REQUEST_HEROLIST';
+export const REQUEST_HEROLIST = 'REQUEST_HEROLIST';
+export type RECEIVE_HEROLIST = 'RECEIVE_HEROLIST';
+export const RECEIVE_HEROLIST = 'RECEIVE_HEROLIST';
 
-export type LOGIN = 'LOGIN';
-export const LOGIN = 'LOGIN';
-export type LOGOUT = 'LOGOUT';
-export const LOGOUT = 'LOGOUT';
-export type REGISTER = 'REGISTER';
-export const REGISTER = 'REGISTER';
-
-export type FETCH_CHARACTER_DATA = 'FETCH_CHARACTER_DATA';
-export const FETCH_CHARACTER_DATA = 'FETCH_CHARACTER_DATA';
+export type REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
+export const REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
+export type RECEIVE_HERO_DATA = 'RECEIVE_HERO_DATA';
+export const RECEIVE_HERO_DATA = 'RECEIVE_HERO_DATA';
 
 export type SELECT_RACE = 'SELECT_RACE';
 export const SELECT_RACE = 'SELECT_RACE';

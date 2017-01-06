@@ -19477,13 +19477,14 @@ class TitleBarWrapper extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 const version = [0, 14, 59];
 /* unused harmony export version */
 
-/* harmony default export */ exports["a"] = (state, action) => {
+/* harmony default export */ exports["a"] = (state = {}, action) => {
+    console.log(state);
     return {
         auth: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__AuthReducer__["a" /* default */])(state.auth, action),
         hero: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__HeroReducer__["a" /* default */])(state.hero, action),
         herolist: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__HerolistReducer__["a" /* default */])(state.herolist, action),
         loading: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__LoadingReducer__["a" /* default */])(state.loading, action),
-        location: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__LocationReducer__["a" /* default */])(state.location, action, state.auth.loggedIn)
+        location: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__LocationReducer__["a" /* default */])(state.location, action, state.auth ? state.auth.loggedIn : false)
     };
 };
 

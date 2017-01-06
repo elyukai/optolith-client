@@ -1,23 +1,19 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { RawHero } from '../reducers/HerolistReducer';
-
-interface Heroes {
-	[id: string]: RawHero;
-}
+import { RawHerolist } from './HerolistActions';
 
 export interface LoginAction {
-	type: ActionTypes.LOGIN;
+	type: ActionTypes.RECEIVE_LOGIN;
 	payload: {
 		name: string;
 		displayName: string;
 		email: string;
 		sessionToken: string;
-		heroes: Heroes
+		heroes: RawHerolist
 	};
 }
 
-export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: Heroes) => ({
-	type: ActionTypes.LOGIN,
+export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist) => ({
+	type: ActionTypes.RECEIVE_LOGIN,
 	payload: {
 		name,
 		displayName,
@@ -28,9 +24,9 @@ export const login = (name: string, displayName: string, email: string, sessionT
 });
 
 export interface LogoutAction {
-	type: ActionTypes.LOGOUT;
+	type: ActionTypes.RECEIVE_LOGOUT;
 }
 
 export const logout = () => ({
-	type: ActionTypes.LOGOUT
+	type: ActionTypes.RECEIVE_LOGOUT
 });

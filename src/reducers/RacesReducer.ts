@@ -1,11 +1,11 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { SelectRaceAction } from '../actions/RaceActions';
-import { FetchDataTablesAction, FetchCharacterDataAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { fixIDs } from '../utils/DataUtils';
 import dice from '../utils/dice';
 
-type Action = FetchDataTablesAction | FetchCharacterDataAction | SelectRaceAction;
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | SelectRaceAction;
 
 export interface Race {
 	readonly id: string;
@@ -150,7 +150,7 @@ function init({ id, name, ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto
 
 export default (state = initialState, action: Action) => {
 	switch (action.type) {
-		case ActionTypes.FETCH_DATA_TABLES: {
+		case ActionTypes.RECEIVE_DATA_TABLES: {
 			const byId: { [id: string]: Race } = {};
 			const allIds: string[] = [];
 			for (const id in action.payload.data.races) {
@@ -160,7 +160,7 @@ export default (state = initialState, action: Action) => {
 			return { ...state, byId, allIds };
 		}
 
-		case ActionTypes.FETCH_CHARACTER_DATA:
+		case ActionTypes.RECEIVE_HERO_DATA:
 			return { ...state, current: action.payload.data.r };
 
 		case ActionTypes.SELECT_RACE:
