@@ -1,5 +1,5 @@
 import createOverlay, { close } from '../../utils/createOverlay';
-import AccountActions from '../../actions/AccountActions';
+import AccountActions from '../../_actions/AccountActions';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
 import React, { Component, PropTypes } from 'react';
@@ -15,17 +15,17 @@ interface State {
 
 export default class ResendActivation extends Component<Props, State> {
 
-	static propTypes = { 
+	static propTypes = {
 		node: PropTypes.any
 	};
 
 	state = {
 		email: ''
 	};
-	
+
 	resendActivation = () => AccountActions.resendActivation(this.state.email);
 	back = () => createOverlay(<Login />);
-	
+
 	_onChange = event => this.setState({ email: event.target.value });
 	_onEnter = event => {
 		if (event.charCode === 13 && this.state.email !== '') {
@@ -61,6 +61,6 @@ export default class ResendActivation extends Component<Props, State> {
 				/>
 			</Dialog>
 		);
-		
+
 	}
 }

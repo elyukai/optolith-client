@@ -2,7 +2,7 @@ import BorderButton from '../../components/BorderButton';
 import createOverlay from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import IconButton from '../../components/IconButton';
-import InGameActions from '../../actions/InGameActions';
+import InGameActions from '../../_actions/InGameActions';
 import InGameControls from './InGameControls';
 import InGameEdit from './InGameEdit';
 import InGameStore from '../../stores/InGameStore';
@@ -16,8 +16,8 @@ import TextField from '../../components/TextField';
 import classNames from 'classnames';
 
 export default class InGame extends Component {
-	
-	state = { 
+
+	state = {
 		options: InGameStore.getOptions(),
 		fighters: InGameStore.getFighters(),
 		status: InGameStore.getStatus(),
@@ -29,8 +29,8 @@ export default class InGame extends Component {
 		editCast: InGameStore.getEditCast(),
 		editDuplicate: InGameStore.getEditDuplicate()
 	};
-	
-	_updateInGameStore = () => this.setState({ 
+
+	_updateInGameStore = () => this.setState({
 		options: InGameStore.getOptions(),
 		fighters: InGameStore.getFighters(),
 		status: InGameStore.getStatus(),
@@ -42,15 +42,15 @@ export default class InGame extends Component {
 		editCast: InGameStore.getEditCast(),
 		editDuplicate: InGameStore.getEditDuplicate()
 	});
-	
+
 	componentDidMount() {
 		InGameStore.addChangeListener(this._updateInGameStore );
 	}
-	
+
 	componentWillUnmount() {
 		InGameStore.removeChangeListener(this._updateInGameStore );
 	}
-	
+
 	load = () => InGameActions.load();
 	resetAll = () => createOverlay(
 		<Dialog
@@ -63,9 +63,9 @@ export default class InGame extends Component {
 		</Dialog>
 	);
 	addFighter = () => InGameActions.addFighter();
-	
+
 	setOnline = event => InGameActions.setOnline(event.target.value);
-	
+
 	render() {
 
 		var className = classNames('ingame-table', {

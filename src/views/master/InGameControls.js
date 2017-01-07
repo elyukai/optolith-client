@@ -1,18 +1,18 @@
 import Checkbox from '../../components/Checkbox';
 import IconButton from '../../components/IconButton';
-import InGameActions from '../../actions/InGameActions';
+import InGameActions from '../../_actions/InGameActions';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
 export default class InGameControls extends Component {
-	
+
 	static propTypes = {
 		maxIni: PropTypes.number.isRequired,
 		options: PropTypes.object.isRequired,
 		status: PropTypes.array.isRequired,
 		usedPhases: PropTypes.array.isRequired
 	};
-	
+
 	resetAll = () => InGameActions.resetAll();
 	resetPhases = () => InGameActions.resetPhases();
 	resetHealth = () => InGameActions.resetHealth();
@@ -21,13 +21,13 @@ export default class InGameControls extends Component {
 	previousPhase = () => InGameActions.previousPhase();
 	nextPhase = () => InGameActions.nextPhase();
 	switchOption = option => InGameActions.switchOption(option);
-	
+
 	render() {
-		
+
 		const previousPhaseClassName = classNames( 'previous-phase', this.props.status[0] === 1 && this.props.status[1] === this.props.maxIni && 'disabled' );
-		
+
 		const nextPhaseIcon = (this.props.status[1] == 1 || this.props.status[1] == this.props.usedPhases[this.props.usedPhases.length - 1]) ? '\uE5C8' : '\uE409';
-		
+
 		return (
 			<div className="ingame-controls options">
 				<div className="rounds">

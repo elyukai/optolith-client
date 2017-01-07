@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import DisAdvActions from '../../actions/DisAdvActions';
+import DisAdvActions from '../../_actions/DisAdvActions';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';
 
@@ -35,7 +35,7 @@ export default class DisAdvRemoveListItem extends Component<Props, State> {
 	static propTypes = {
 		item: PropTypes.object
 	};
-	
+
 	handleSelectTier = selected_tier => {
 		var disadv = this.props.item;
 		DisAdvActions.updateTier( disadv.id, selected_tier, (selected_tier - disadv.tier) * disadv.cost * (disadv.id.match('DIS') ? -1 : 1), disadv.sid );

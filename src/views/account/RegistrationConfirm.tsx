@@ -1,8 +1,8 @@
-import TabActions from '../../actions/TabActions';
+import TabActions from '../../_actions/TabActions';
 import React, { Component } from 'react';
 
 export default class RegistrationConfirm extends Component<any, any> {
-	
+
 	render() {
 		return (
 			<div id="confirmregistration">

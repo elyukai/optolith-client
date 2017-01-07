@@ -1,7 +1,7 @@
 import createOverlay, { close } from '../../utils/createOverlay';
 import { Component, PropTypes } from 'react';
 import * as React from 'react';
-import AccountActions from '../../actions/AccountActions';
+import AccountActions from '../../_actions/AccountActions';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
 import TextField from '../../components/TextField';

@@ -4,7 +4,7 @@ import createOverlay from '../../utils/createOverlay';
 import Dropdown from '../../components/Dropdown';
 import ELStore from '../../stores/ELStore';
 import HeroCreation from './HeroCreation';
-import HerolistActions from '../../actions/HerolistActions';
+import HerolistActions from '../../_actions/HerolistActions';
 import HerolistItem from './HerolistItem';
 import HerolistStore from '../../stores/HerolistStore';
 import ProfileStore from '../../stores/ProfileStore';
@@ -28,8 +28,8 @@ export default class Herolist extends Component<any, State> {
 		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
 	};
-	
-	_updateHerolistStore = () => this.setState({ 
+
+	_updateHerolistStore = () => this.setState({
 		list: HerolistStore.getAllForView(),
 		filter: HerolistStore.getFilter(),
 		view: HerolistStore.getView(),
@@ -41,11 +41,11 @@ export default class Herolist extends Component<any, State> {
 	changeView = option => HerolistActions.changeView(option);
 	showHeroCreation = () => createOverlay(<HeroCreation />);
 	refresh = () => HerolistActions.refresh();
-	
+
 	componentDidMount() {
 		HerolistStore.addChangeListener(this._updateHerolistStore );
 	}
-	
+
 	componentWillUnmount() {
 		HerolistStore.removeChangeListener(this._updateHerolistStore );
 	}
@@ -91,7 +91,7 @@ export default class Herolist extends Component<any, State> {
 						<ul>
 							{
 								ProfileStore.getID() === null && ELStore.getStartID() !== 'EL_0' ? (
-									<HerolistItem 
+									<HerolistItem
 										id={null}
 										avatar={ProfileStore.getAvatar()}
 										name="Ungespeicherter Held"

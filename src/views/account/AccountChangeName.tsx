@@ -1,4 +1,4 @@
-import AccountActions from '../../actions/AccountActions';
+import AccountActions from '../../_actions/AccountActions';
 import IconButton from '../../components/IconButton';
 import * as React from 'react';
 import { Component } from 'react';

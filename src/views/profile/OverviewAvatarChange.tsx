@@ -1,7 +1,7 @@
 import AvatarWrapper from '../../components/Avatar';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
-import ProfileActions from '../../actions/ProfileActions';
+import ProfileActions from '../../_actions/ProfileActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
@@ -58,7 +58,7 @@ function Source({ extern, file, fileValid, filePreview, source, changeExtern, ch
 
 export default class ProfileAvatarChange extends Component {
 
-	static props = { 
+	static props = {
 		node: PropTypes.node
 	};
 
@@ -69,7 +69,7 @@ export default class ProfileAvatarChange extends Component {
 		filePreview: '',
 		fileValid: false
 	};
-	
+
 	changeSource = source => this.setState({ source });
 	changeExtern = event => this.setState({ extern: event.target.value });
 	changeFile = event => {
@@ -87,7 +87,7 @@ export default class ProfileAvatarChange extends Component {
 		}
 	};
 	load = () => ProfileActions.changeAvatar(this.state);
-	
+
 	render() {
 
 		const { source, extern, fileValid } = this.state;

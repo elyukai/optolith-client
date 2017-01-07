@@ -1,8 +1,8 @@
 import BorderButton from '../../components/BorderButton';
 import CultureStore from '../../stores/CultureStore';
 import Profession, { ProfessionInstance } from '../../utils/data/Profession';
-import ProfessionActions from '../../actions/ProfessionActions';
-import ProfessionVariantActions from '../../actions/ProfessionVariantActions';
+import ProfessionActions from '../../_actions/ProfessionActions';
+import ProfessionVariantActions from '../../_actions/ProfessionVariantActions';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';

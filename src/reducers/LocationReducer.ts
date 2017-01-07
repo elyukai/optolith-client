@@ -1,8 +1,8 @@
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
-import { ShowSectionAction, ShowTabAction } from '../actions/TabActions';
+import { SetSectionAction, SetTabAction } from '../actions/LocationActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = LoginAction | LogoutAction | ShowSectionAction | ShowTabAction;
+type Action = LoginAction | LogoutAction | SetSectionAction | SetTabAction;
 
 export interface LocationState {
 	readonly loggedIn: boolean;
@@ -18,10 +18,10 @@ const initialState = <LocationState>{
 
 export default (state = initialState, action: Action, loggedIn: boolean) => {
 	switch (action.type) {
-		case ActionTypes.SHOW_TAB:
+		case ActionTypes.SET_TAB:
 			return { ...state, tab: action.payload.tab }
 
-		case ActionTypes.SHOW_SECTION: {
+		case ActionTypes.SET_SECTION: {
 			const section = action.payload.section;
 			let tab = action.payload.tab;
 			if (!tab) {

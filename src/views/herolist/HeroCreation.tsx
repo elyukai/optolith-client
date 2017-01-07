@@ -1,6 +1,6 @@
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
-import HerolistActions from '../../actions/HerolistActions';
+import HerolistActions from '../../_actions/HerolistActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
@@ -16,21 +16,21 @@ interface State {
 
 export default class HeroCreation extends Component<Props, State> {
 
-	static propTypes = { 
+	static propTypes = {
 		node: PropTypes.any
 	};
 
-	state = { 
+	state = {
 		name: '',
 		gender: '',
 		el: 'EL_0'
 	};
-	
+
 	changeName = event => this.setState({ name: event.target.value } as State);
 	changeGender = gender => this.setState({ gender } as State);
 	changeEL = el => this.setState({ el } as State);
 	create = () => HerolistActions.createNewHero(this.state);
-	
+
 	render() {
 
 		return (

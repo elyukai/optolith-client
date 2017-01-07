@@ -9,7 +9,7 @@ import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
-import TalentsActions from '../../actions/TalentsActions';
+import TalentsActions from '../../_actions/TalentsActions';
 import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
 
@@ -23,8 +23,8 @@ interface State {
 }
 
 export default class Talents extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		talents: TalentsStore.getAll(),
 		filterText: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
@@ -32,7 +32,7 @@ export default class Talents extends Component<any, State> {
 		currentCulture: CultureStore.getCurrent(),
 		phase: PhaseStore.get()
 	};
-	
+
 	_updateTalentsStore = () => this.setState({
 		talents: TalentsStore.getAll(),
 		filterText: TalentsStore.getFilter(),
@@ -45,11 +45,11 @@ export default class Talents extends Component<any, State> {
 	changeTalentRating = () => TalentsActions.changeTalentRating();
 	addPoint = id => TalentsActions.addPoint(id);
 	removePoint = id => TalentsActions.removePoint(id);
-	
+
 	componentDidMount() {
 		TalentsStore.addChangeListener(this._updateTalentsStore );
 	}
-	
+
 	componentWillUnmount() {
 		TalentsStore.removeChangeListener(this._updateTalentsStore );
 	}

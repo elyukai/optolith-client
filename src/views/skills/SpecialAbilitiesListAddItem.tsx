@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
+import SpecialAbilitiesActions from '../../_actions/SpecialAbilitiesActions';
 import { get } from '../../stores/ListStore';
 import Dropdown from '../../components/Dropdown';
 import React, { Component, PropTypes } from 'react';

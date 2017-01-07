@@ -1,7 +1,7 @@
 import { filterAndSort } from '../../utils/ListUtils';
 import { LiturgyInstance } from '../../utils/data/Liturgy';
 import BorderButton from '../../components/BorderButton';
-import LiturgiesActions from '../../actions/LiturgiesActions';
+import LiturgiesActions from '../../_actions/LiturgiesActions';
 import LiturgiesStore from '../../stores/LiturgiesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -21,8 +21,8 @@ interface State {
 }
 
 export default class Liturgies extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: LiturgiesStore.getFilterText(),
@@ -30,8 +30,8 @@ export default class Liturgies extends Component<any, State> {
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
-	
-	_updateLiturgiesStore = () => this.setState({ 
+
+	_updateLiturgiesStore = () => this.setState({
 		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: LiturgiesStore.getFilterText(),
@@ -46,11 +46,11 @@ export default class Liturgies extends Component<any, State> {
 	removePoint = id => LiturgiesActions.removePoint(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-	
+
 	componentDidMount() {
 		LiturgiesStore.addChangeListener(this._updateLiturgiesStore );
 	}
-	
+
 	componentWillUnmount() {
 		LiturgiesStore.removeChangeListener(this._updateLiturgiesStore );
 	}

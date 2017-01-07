@@ -1,7 +1,7 @@
 import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import TabProps from '../../components/Tab';
-import TabActions from '../../actions/TabActions';
+import TabActions from '../../_actions/TabActions';
 
 interface Props {
 	active: string;

@@ -1,11 +1,11 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 import alert from '../utils/alert';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 export async function register(email: string, name: string, displayName: string, password: string) {
 	AppDispatcher.dispatch({
-		type: ActionTypes.REGISTER,
+		type: ActionTypes.WAIT_START,
 		status: 'pending',
 		statusMessage: 'Registrierung wird durchgeführt'
 	});
@@ -31,7 +31,7 @@ export async function register(email: string, name: string, displayName: string,
 				alert('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername werden bereits verwendet.');
 			}
 			AppDispatcher.dispatch({
-				type: ActionTypes.REGISTER,
+				type: ActionTypes.REGISTRATION_SUCCESS,
 				status: 'success'
 			});
 		}
@@ -39,7 +39,7 @@ export async function register(email: string, name: string, displayName: string,
 	catch (e) {
 		WebAPIUtils.connectionError(e);
 		AppDispatcher.dispatch({
-			type: ActionTypes.REGISTER,
+			type: ActionTypes.REGISTRATION_SUCCESS,
 			error: e,
 			status: 'error'
 		});

@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import DisAdvActions from '../../actions/DisAdvActions';
+import DisAdvActions from '../../_actions/DisAdvActions';
 import { get } from '../../stores/ListStore';
 import Dropdown from '../../components/Dropdown';
 import * as React from 'react';
@@ -119,7 +119,7 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 			ap = typeof this.state.selected === 'number' ? get(disadv.id).sel[this.state.selected - 1][2] : '';
 			if (this.state.selected === '') disabled = true;
 			// ap = this.state.input2 !== '' && !Number.isNaN(parseInt(this.state.input2)) ? Math.round(parseInt(this.state.input2) / 2) : this.state.selected !== '' ? get(disadv.id).sel[this.state.selected - 1][2] : '';
-			// if (!((this.state.selected !== '' && this.state.input === '' && this.state.input2 === '') || 
+			// if (!((this.state.selected !== '' && this.state.input === '' && this.state.input2 === '') ||
 			// 	(this.state.input !== '' && this.state.input2 !== '' && !Number.isNaN(parseInt(this.state.input2)))
 			// )) disabled = true;
 			// args.input = [this.state.input, this.state.input2];

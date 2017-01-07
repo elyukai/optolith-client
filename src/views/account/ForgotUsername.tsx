@@ -1,4 +1,4 @@
-import AccountActions from '../../actions/AccountActions';
+import AccountActions from '../../_actions/AccountActions';
 import createOverlay, { close } from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
@@ -15,17 +15,17 @@ interface State {
 
 export default class ForgotUsername extends Component<Props, State> {
 
-	static propTypes = { 
+	static propTypes = {
 		node: PropTypes.any
 	};
 
 	state = {
 		email: ''
 	};
-	
+
 	forgotUsername = () => AccountActions.forgotUsername(this.state.email);
 	back = () => createOverlay(<Login />);
-	
+
 	_onChange = event => this.setState({ email: event.target.value });
 	_onEnter = event => {
 		if (event.charCode === 13 && this.state.email !== '') {
@@ -61,6 +61,6 @@ export default class ForgotUsername extends Component<Props, State> {
 				/>
 			</Dialog>
 		);
-		
+
 	}
 }

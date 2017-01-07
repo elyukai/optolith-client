@@ -1,7 +1,7 @@
 import AuthStore from '../stores/AuthStore';
 import { readFile } from 'fs';
 import ProfileStore from '../stores/ProfileStore';
-import ServerActions from '../actions/ServerActions';
+import ServerActions from '../_actions/ServerActions';
 
 export default {
 	connectionError: function(e: Error): void {

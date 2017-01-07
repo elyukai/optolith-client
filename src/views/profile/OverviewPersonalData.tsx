@@ -1,12 +1,12 @@
 import Dropdown from '../../components/Dropdown';
 import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';
-import ProfileActions from '../../actions/ProfileActions';
+import ProfileActions from '../../_actions/ProfileActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 export default class OverviewPersonalData extends Component {
-	
+
 	static propTypes = {
 		age: PropTypes.string.isRequired,
 		characteristics: PropTypes.string.isRequired,

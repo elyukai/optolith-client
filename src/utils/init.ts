@@ -13,7 +13,7 @@ import {
 	RawSpecialAbility,
 	RawSpell,
 	RawTalent
-} from '../actions/ServerActions';
+} from '../_actions/ServerActions';
 import Categories from '../constants/Categories';
 import {
 	Advantage,

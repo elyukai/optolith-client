@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import CultureActions from '../../actions/CultureActions';
+import CultureActions from '../../_actions/CultureActions';
 import Culture, { CultureInstance } from '../../utils/data/Culture';
 import { get } from '../../stores/ListStore';
 import React, { Component, PropTypes } from 'react';

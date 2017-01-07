@@ -6,7 +6,7 @@ import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
-import SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
+import SpecialAbilitiesActions from '../../_actions/SpecialAbilitiesActions';
 import SpecialAbilitiesListAddItem, { Deactive } from './SpecialAbilitiesListAddItem';
 import SpecialAbilitiesListRemoveItem, { Active } from './SpecialAbilitiesListRemoveItem';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
@@ -22,8 +22,8 @@ interface State {
 }
 
 export default class SpecialAbilities extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		saActive: SpecialAbilitiesStore.getActiveForView(),
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
 		filterText: SpecialAbilitiesStore.getFilter(),
@@ -31,8 +31,8 @@ export default class SpecialAbilities extends Component<any, State> {
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
-	
-	_updateSpecialAbilitiesStore = () => this.setState({ 
+
+	_updateSpecialAbilitiesStore = () => this.setState({
 		saActive: SpecialAbilitiesStore.getActiveForView(),
 		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
 		filterText: SpecialAbilitiesStore.getFilter(),
@@ -46,11 +46,11 @@ export default class SpecialAbilities extends Component<any, State> {
 	removeFromList = id => SpecialAbilitiesActions.removeFromList(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-	
+
 	componentDidMount() {
 		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
 	}
-	
+
 	componentWillUnmount() {
 		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
 	}

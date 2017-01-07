@@ -4,10 +4,10 @@ import Dropdown from '../../components/Dropdown';
 import { filterAndSort } from '../../utils/ListUtils';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
-import ProfessionActions from '../../actions/ProfessionActions';
+import ProfessionActions from '../../_actions/ProfessionActions';
 import ProfessionsListItem from './ProfessionsListItem';
 import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantActions from '../../actions/ProfessionVariantActions';
+import ProfessionVariantActions from '../../_actions/ProfessionVariantActions';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import Scroll from '../../components/Scroll';
@@ -39,7 +39,7 @@ export default class Professions extends Component<any, State> {
 		currentVID: ProfessionVariantStore.getCurrentID(),
 		showAddSlidein: false
 	};
-	
+
 	_updateProfessionStore = () => this.setState({
 		professions: ProfessionStore.getAll(),
 		currentID: ProfessionStore.getCurrentID(),
@@ -58,12 +58,12 @@ export default class Professions extends Component<any, State> {
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
 	selectProfessionVariant = id => ProfessionVariantActions.selectProfessionVariant(id);
-	
+
 	componentDidMount() {
 		ProfessionStore.addChangeListener(this._updateProfessionStore);
 		ProfessionVariantStore.addChangeListener(this._updateProfessionVariantStore);
 	}
-	
+
 	componentWillUnmount() {
 		ProfessionStore.removeChangeListener(this._updateProfessionStore);
 		ProfessionVariantStore.removeChangeListener(this._updateProfessionVariantStore);
@@ -72,7 +72,7 @@ export default class Professions extends Component<any, State> {
 	render() {
 
 		const { currentID, currentVID, filterText, professions, showAddSlidein, showAllProfessions, sortOrder } = this.state;
-		
+
 		const currentCulture = CultureStore.getCurrent();
 
 		const sex = ProfileStore.getSex();

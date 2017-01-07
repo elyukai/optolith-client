@@ -1,6 +1,6 @@
 import Checkbox from '../../components/Checkbox';
 import { CultureInstance } from '../../utils/data/Culture';
-import CultureActions from '../../actions/CultureActions';
+import CultureActions from '../../_actions/CultureActions';
 import CulturesListItem from './CulturesListItem';
 import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
@@ -40,18 +40,18 @@ export default class Cultures extends Component<Props, State> {
 	};
 
 	state = getCultureStore();
-	
+
 	_updateCultureStore = () => this.setState(getCultureStore());
 
 	filter = event => CultureActions.filter(event.target.value);
 	sort = option => CultureActions.sort(option);
 	changeValueVisibility = () => CultureActions.changeValueVisibility();
 	changeView = view => CultureActions.changeView(view);
-	
+
 	componentDidMount() {
 		CultureStore.addChangeListener(this._updateCultureStore);
 	}
-	
+
 	componentWillUnmount() {
 		CultureStore.removeChangeListener(this._updateCultureStore);
 	}

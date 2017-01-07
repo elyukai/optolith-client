@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import GroupsActions from '../../actions/GroupsActions';
+import GroupsActions from '../../_actions/GroupsActions';
 import GroupsStore from '../../stores/GroupsStore';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
@@ -7,21 +7,21 @@ import Slidein from '../../components/Slidein';
 
 export default class Groups extends Component {
 
-	state = { 
+	state = {
 		requestsOpen: GroupsStore.getRequestsSlideinState()
 	};
-	
-	_updateGroupsStore = () => this.setState({ 
+
+	_updateGroupsStore = () => this.setState({
 		requestsOpen: GroupsStore.getRequestsSlideinState()
 	});
 
 	openRequests = () => GroupsActions.checkRequests();
 	closeRequests = () => GroupsActions.closeRequests();
-	
+
 	componentDidMount() {
 		GroupsStore.addChangeListener(this._updateGroupsStore);
 	}
-	
+
 	componentWillUnmount() {
 		GroupsStore.removeChangeListener(this._updateGroupsStore);
 	}

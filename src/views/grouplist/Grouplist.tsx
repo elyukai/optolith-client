@@ -1,7 +1,7 @@
 import BorderButton from '../../components/BorderButton';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
-import TabActions from '../../actions/TabActions';
+import TabActions from '../../_actions/TabActions';
 import TextField from '../../components/TextField';
 
 export default class Grouplist extends Component<any, any> {

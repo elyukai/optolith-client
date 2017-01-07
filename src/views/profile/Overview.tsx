@@ -16,7 +16,7 @@ import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
 import PhaseStore from '../../stores/PhaseStore';
-import ProfileActions from '../../actions/ProfileActions';
+import ProfileActions from '../../_actions/ProfileActions';
 import ProfileStore from '../../stores/ProfileStore';
 import * as React from 'react';
 import Scroll from '../../components/Scroll';
@@ -47,7 +47,7 @@ interface ProfileOverviewState {
 }
 
 export default class ProfileOverview extends React.Component<undefined, ProfileOverviewState> {
-	
+
 	state = {
 		ap: APStore.getTotal(),
 		advActive: DisAdvStore.getActiveForView(true),
@@ -56,19 +56,19 @@ export default class ProfileOverview extends React.Component<undefined, ProfileO
 		phase: PhaseStore.get(),
 		editName: false
 	};
-	
+
 	_updateAPStore = () => this.setState({ ap: APStore.getTotal() } as ProfileOverviewState);
 	_updateProfileStore = () => this.setState(ProfileStore.getAll() as ProfileOverviewState);
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()
 	} as ProfileOverviewState);
-	
+
 	componentDidMount() {
 		APStore.addChangeListener(this._updateAPStore );
 		PhaseStore.addChangeListener(this._updatePhaseStore );
 		ProfileStore.addChangeListener(this._updateProfileStore );
 	}
-	
+
 	componentWillUnmount() {
 		APStore.removeChangeListener(this._updateAPStore );
 		PhaseStore.removeChangeListener(this._updatePhaseStore );
@@ -135,7 +135,7 @@ export default class ProfileOverview extends React.Component<undefined, ProfileO
 										<span className="profession">
 											{(() => {
 												let { name, subname } = ProfessionStore.getCurrent();
-												
+
 												if (typeof name === 'object') {
 													name = name[this.state.sex];
 												}

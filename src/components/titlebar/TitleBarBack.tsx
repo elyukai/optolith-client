@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import * as React from 'react';
-import TabActions from '../../actions/TabActions';
+import TabActions from '../../_actions/TabActions';
 import TitleBarBackArrow from './TitleBarBackArrow';
 
 export default class TitleBarBack extends Component<any, any> {

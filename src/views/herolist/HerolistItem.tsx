@@ -1,14 +1,14 @@
 import Avatar from '../../components/Avatar';
 import BorderButton from '../../components/BorderButton';
 import CultureStore from '../../stores/CultureStore';
-import HerolistActions from '../../actions/HerolistActions';
+import HerolistActions from '../../_actions/HerolistActions';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import ProgressArc from 'react-progress-arc';
 import RaceStore from '../../stores/RaceStore';
 import React, { PropTypes, Component } from 'react';
-import TabActions from '../../actions/TabActions';
+import TabActions from '../../_actions/TabActions';
 import VerticalList from '../../components/VerticalList';
 import classNames from 'classnames';
 

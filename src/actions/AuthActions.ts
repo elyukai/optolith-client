@@ -12,7 +12,7 @@ export interface LoginAction {
 	};
 }
 
-export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist) => ({
+export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist): LoginAction => ({
 	type: ActionTypes.RECEIVE_LOGIN,
 	payload: {
 		name,
@@ -27,6 +27,6 @@ export interface LogoutAction {
 	type: ActionTypes.RECEIVE_LOGOUT;
 }
 
-export const logout = () => ({
+export const logout = (): LogoutAction => ({
 	type: ActionTypes.RECEIVE_LOGOUT
 });

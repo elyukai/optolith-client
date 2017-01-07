@@ -3,7 +3,7 @@ import { filterAndSort } from '../../utils/ListUtils';
 import { RaceInstance } from '../../utils/data/Race';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import React, { Component, PropTypes } from 'react';
-import RaceActions from '../../actions/RaceActions';
+import RaceActions from '../../_actions/RaceActions';
 import RacesListItem from './RacesListItem';
 import RaceStore from '../../stores/RaceStore';
 import Scroll from '../../components/Scroll';
@@ -36,17 +36,17 @@ export default class Races extends Component<Props, State> {
 	};
 
 	state = getRaceStore();
-	
+
 	_updateRaceStore = () => this.setState(getRaceStore());
 
 	filter = event => RaceActions.filter(event.target.value);
 	sort = option => RaceActions.sort(option);
 	changeValueVisibility = () => RaceActions.changeValueVisibility();
-	
+
 	componentDidMount() {
 		RaceStore.addChangeListener(this._updateRaceStore);
 	}
-	
+
 	componentWillUnmount() {
 		RaceStore.removeChangeListener(this._updateRaceStore);
 	}

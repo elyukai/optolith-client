@@ -4,7 +4,7 @@ import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
 import React, { Component, PropTypes } from 'react';
-import ProfessionActions from '../../actions/ProfessionActions';
+import ProfessionActions from '../../_actions/ProfessionActions';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
@@ -143,7 +143,7 @@ export default class Selections extends Component<Props, State> {
 
 		var langLitcElement = null;
 		var langLitcApLeft = 0;
-		
+
 		if (professionSel.has('lang_lit')) {
 			let active = langLitc;
 			let params = professionSel.get('lang_lit');

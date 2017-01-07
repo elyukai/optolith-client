@@ -1,5 +1,5 @@
 import { AttributeInstance } from '../../utils/data/Attribute';
-import AttributeActions from '../../actions/AttributeActions';
+import AttributeActions from '../../_actions/AttributeActions';
 import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';

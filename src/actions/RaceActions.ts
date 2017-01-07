@@ -1,4 +1,3 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import * as ActionTypes from '../constants/ActionTypes';
 
 export interface SelectRaceAction {
@@ -8,7 +7,7 @@ export interface SelectRaceAction {
 	};
 }
 
-export const selectRace = (id: string) => ({
+export const selectRace = (id: string): SelectRaceAction => ({
 	type: ActionTypes.SELECT_RACE,
 	payload: {
 		id
@@ -16,41 +15,23 @@ export const selectRace = (id: string) => ({
 });
 
 export interface SortRacesAction {
-	type: ActionTypes.SORT_RACES;
+	type: ActionTypes.SET_RACES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-export const sortRaces = (sortOrder: string) => ({
-	type: ActionTypes.SORT_RACES,
+export const sortRaces = (sortOrder: string): SortRacesAction => ({
+	type: ActionTypes.SET_RACES_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
-export default {
-	selectRace(raceID: string): void {
-		AppDispatcher.dispatch({
-			type: ActionTypes.ATS.SELECT_RACE,
-			raceID
-		});
-	},
-	filter(text: string): void {
-		AppDispatcher.dispatch({
-			type: ActionTypes.ATS.FILTER_RACES,
-			text
-		});
-	},
-	sort(option: string): void {
-		AppDispatcher.dispatch({
-			type: ActionTypes.ATS.SORT_RACES,
-			option
-		});
-	},
-	changeValueVisibility(): void {
-		AppDispatcher.dispatch({
-			type: ActionTypes.ATS.CHANGE_RACE_VALUE_VISIBILITY
-		});
-	}
-};
+export interface SwitchRaceValueVisibilityAction {
+	type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY;
+}
+
+export const switchRaceValueVisibilityFilter = (sortOrder: string): SwitchRaceValueVisibilityAction => ({
+	type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY
+});

@@ -6,7 +6,7 @@ import { Active } from './DisAdvRemoveListItem';
 import { RaceInstance } from '../../utils/data/Race';
 import { CultureInstance } from '../../utils/data/Culture';
 import { ProfessionInstance } from '../../utils/data/Profession';
-import DisAdvActions from '../../actions/DisAdvActions';
+import DisAdvActions from '../../_actions/DisAdvActions';
 import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
@@ -27,8 +27,8 @@ interface State {
 }
 
 export default class Disadvantages extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		filterText: DisAdvStore.getFilter(),
 		showRating: DisAdvStore.getRating(),
 		disadvActive: DisAdvStore.getActiveForView(false),
@@ -38,7 +38,7 @@ export default class Disadvantages extends Component<any, State> {
 		culture: CultureStore.getCurrent(),
 		profession: ProfessionStore.getCurrent()
 	};
-	
+
 	_updateDisAdvStore = () => this.setState({
 		filterText: DisAdvStore.getFilter(),
 		showRating: DisAdvStore.getRating(),
@@ -50,11 +50,11 @@ export default class Disadvantages extends Component<any, State> {
 	changeRating = () => DisAdvActions.changeRating();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-	
+
 	componentDidMount() {
 		DisAdvStore.addChangeListener(this._updateDisAdvStore );
 	}
-	
+
 	componentWillUnmount() {
 		DisAdvStore.removeChangeListener(this._updateDisAdvStore );
 	}
@@ -79,7 +79,7 @@ export default class Disadvantages extends Component<any, State> {
 		if (profession.hasOwnProperty('untyp_dadv'))
 			profession.untyp_dadv.forEach(e => { rating[e] = UNTYP; });
 		race.imp_dadv.forEach(e => { rating[e[0]] = IMP; });
-		
+
 		return (
 			<div className="page" id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>

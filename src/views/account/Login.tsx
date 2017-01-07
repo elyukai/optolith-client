@@ -1,4 +1,4 @@
-import AccountActions from '../../actions/AccountActions';
+import AccountActions from '../../_actions/AccountActions';
 import Dialog from '../../components/Dialog';
 import ForgotPassword from './ForgotPassword';
 import ForgotUsername from './ForgotUsername';
@@ -19,7 +19,7 @@ interface State {
 
 export default class Login extends Component<Props, State> {
 
-	static propTypes = { 
+	static propTypes = {
 		node: PropTypes.any
 	};
 
@@ -27,13 +27,13 @@ export default class Login extends Component<Props, State> {
 		username: '',
 		password: ''
 	};
-	
+
 	login = () => AccountActions.login(this.state.username, this.state.password);
 	forgotUsername = () => { createOverlay(<ForgotUsername />); close(this.props.node); };
 	forgotPassword = () => { createOverlay(<ForgotPassword />); close(this.props.node); };
 	register = () => createOverlay(<Register />);
 	resendActivation = () => { createOverlay(<ResendActivation />); close(this.props.node); };
-	
+
 	_onChange = (option, event) => this.setState({ [option]: event.target.value } as State);
 	_onEnter = event => {
 		if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {

@@ -5,7 +5,7 @@ import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../actions/InventoryActions';
+import InventoryActions from '../../_actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import Label from '../../components/Label';
 import React, { Component, PropTypes } from 'react';
@@ -26,7 +26,7 @@ const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]);
 
 export default class ItemEditor extends Component<Props, State> {
 
-	static propTypes = { 
+	static propTypes = {
 		create: PropTypes.bool,
 		item: PropTypes.object,
 		node: PropTypes.any
@@ -90,7 +90,7 @@ export default class ItemEditor extends Component<Props, State> {
 
 	addItem = () => InventoryActions.addToList(this.state);
 	saveItem = () => InventoryActions.saveItem(this.state);
-	
+
 	render() {
 
 		const { create, node } = this.props;

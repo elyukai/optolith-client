@@ -1,5 +1,5 @@
 import Dialog from '../../components/Dialog';
-import ProfileActions from '../../actions/ProfileActions';
+import ProfileActions from '../../_actions/ProfileActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
@@ -13,17 +13,17 @@ interface OverviewAddAPState {
 
 export default class OverviewAddAP extends Component<OverviewAddAPProps, OverviewAddAPState> {
 
-	static propTypes = { 
+	static propTypes = {
 		node: PropTypes.any
 	};
 
 	state = {
 		value: ''
 	};
-	
+
 	onChange = e => this.setState({ value: e.target.value });
 	addAP = () => ProfileActions.addAP(parseInt(this.state.value));
-	
+
 	render() {
 
 		const { value } = this.state;

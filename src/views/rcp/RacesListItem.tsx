@@ -1,7 +1,7 @@
 import BorderButton from '../../components/BorderButton';
 import Race, { RaceInstance } from '../../utils/data/Race';
 import React, { Component, PropTypes } from 'react';
-import RaceActions from '../../actions/RaceActions';
+import RaceActions from '../../_actions/RaceActions';
 import VerticalList from '../../components/VerticalList';
 import classNames from 'classnames';
 

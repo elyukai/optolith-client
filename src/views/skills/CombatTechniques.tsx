@@ -1,7 +1,7 @@
 import { CombatTechniqueInstance } from '../../utils/data/CombatTechnique';
 import { filterAndSort } from '../../utils/ListUtils';
 import { get } from '../../stores/ListStore';
-import CombatTechniquesActions from '../../actions/CombatTechniquesActions';
+import CombatTechniquesActions from '../../_actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -18,15 +18,15 @@ interface State {
 }
 
 export default class CombatTechniques extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 		phase: PhaseStore.get()
 	};
-	
-	_updateCombatTechniquesStore = () => this.setState({ 
+
+	_updateCombatTechniquesStore = () => this.setState({
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder()
@@ -36,11 +36,11 @@ export default class CombatTechniques extends Component<any, State> {
 	sort = option => CombatTechniquesActions.sort(option);
 	addPoint = id => CombatTechniquesActions.addPoint(id);
 	removePoint = id => CombatTechniquesActions.removePoint(id);
-	
+
 	componentDidMount() {
 		CombatTechniquesStore.addChangeListener(this._updateCombatTechniquesStore );
 	}
-	
+
 	componentWillUnmount() {
 		CombatTechniquesStore.removeChangeListener(this._updateCombatTechniquesStore );
 	}

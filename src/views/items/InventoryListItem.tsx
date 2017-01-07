@@ -2,7 +2,7 @@ import { get } from '../../stores/ListStore';
 import { Item } from '../../utils/DataUtils';
 import createOverlay from '../../utils/createOverlay';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../actions/InventoryActions';
+import InventoryActions from '../../_actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import ItemEditor from './ItemEditor';
 import React, { Component, PropTypes } from 'react';
@@ -38,104 +38,104 @@ export default class InventoryListItem extends Component {
 					{ [4,5].includes(gr) ? <table className="melee">
 						<tbody>
 							<tr>
-								<td>Gewicht</td>						
-								<td>{weight} Stn</td>			
+								<td>Gewicht</td>
+								<td>{weight} Stn</td>
 							</tr>
 							<tr>
-								<td>Preis</td>						
-								<td>{price} S</td>			
+								<td>Preis</td>
+								<td>{price} S</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 1 ? <table className="melee">
 						<tbody>
 							<tr>
-								<td>Kampftechnik</td>						
-								<td>{get(combattechnique).name}</td>			
+								<td>Kampftechnik</td>
+								<td>{get(combattechnique).name}</td>
 							</tr>
 							<tr>
-								<td>TP</td>						
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>			
+								<td>TP</td>
+								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
 							</tr>
 							<tr>
-								<td>L+S</td>						
+								<td>L+S</td>
 								<td>{get(combattechnique).primary.map(attr => get(attr).short).join('/')} {damageBonus}</td>
 							</tr>
 							<tr>
-								<td>AT/PA-Mod</td>						
+								<td>AT/PA-Mod</td>
 								<td>{at > 0 ? '+' : null}{at}/{pa > 0 ? '+' : null}{pa}</td>
 							</tr>
 							<tr>
-								<td>RW</td>						
+								<td>RW</td>
 								<td>{['Kurz','Mittel','Lang'][reach - 1]}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>						
-								<td>{weight} Stn</td>			
+								<td>Gewicht</td>
+								<td>{weight} Stn</td>
 							</tr>
 							<tr>
-								<td>Länge</td>						
+								<td>Länge</td>
 								<td>{length} HF</td>
 							</tr>
 							<tr>
-								<td>Preis</td>						
-								<td>{price} S</td>			
+								<td>Preis</td>
+								<td>{price} S</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 2 ? <table className="ranged">
 						<tbody>
 							<tr>
-								<td>Kampftechnik</td>						
-								<td>{get(combattechnique).name}</td>			
+								<td>Kampftechnik</td>
+								<td>{get(combattechnique).name}</td>
 							</tr>
 							<tr>
-								<td>TP</td>						
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>			
+								<td>TP</td>
+								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
 							</tr>
 							<tr>
-								<td>LZ</td>						
+								<td>LZ</td>
 								<td>{reloadtime}</td>
 							</tr>
 							<tr>
-								<td>RW</td>						
+								<td>RW</td>
 								<td>{range.join('/')}</td>
 							</tr>
 							<tr>
-								<td>Munitionstyp</td>						
+								<td>Munitionstyp</td>
 								<td>{(InventoryStore.getTemplate(ammunition) || {}).name}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>						
-								<td>{weight} Stn</td>			
+								<td>Gewicht</td>
+								<td>{weight} Stn</td>
 							</tr>
 							<tr>
-								<td>Länge</td>						
+								<td>Länge</td>
 								<td>{length} HF</td>
 							</tr>
 							<tr>
-								<td>Preis</td>						
-								<td>{price} S</td>			
+								<td>Preis</td>
+								<td>{price} S</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 3 ? <table className="armor">
 						<tbody>
 							<tr>
-								<td>RS</td>						
-								<td>{pro}</td>			
+								<td>RS</td>
+								<td>{pro}</td>
 							</tr>
 							<tr>
-								<td>BE</td>						
-								<td>{enc}</td>			
+								<td>BE</td>
+								<td>{enc}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>						
-								<td>{weight} Stn</td>			
+								<td>Gewicht</td>
+								<td>{weight} Stn</td>
 							</tr>
 							<tr>
-								<td>Preis</td>						
-								<td>{price} S</td>			
+								<td>Preis</td>
+								<td>{price} S</td>
 							</tr>
 						</tbody>
 					</table> : null}

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
-import SpellsActions from '../../actions/SpellsActions';
+import SpellsActions from '../../_actions/SpellsActions';
 import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
 
@@ -22,8 +22,8 @@ interface State {
 }
 
 export default class Spells extends Component<any, State> {
-	
-	state = { 
+
+	state = {
 		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
@@ -32,8 +32,8 @@ export default class Spells extends Component<any, State> {
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
-	
-	_updateSpellsStore = () => this.setState({ 
+
+	_updateSpellsStore = () => this.setState({
 		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
@@ -49,11 +49,11 @@ export default class Spells extends Component<any, State> {
 	removePoint = id => SpellsActions.removePoint(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-	
+
 	componentDidMount() {
 		SpellsStore.addChangeListener(this._updateSpellsStore );
 	}
-	
+
 	componentWillUnmount() {
 		SpellsStore.removeChangeListener(this._updateSpellsStore );
 	}
@@ -91,7 +91,7 @@ export default class Spells extends Component<any, State> {
 				}
 				else {
 					listDeactive.push(e);
-				}			
+				}
 			}
 		});
 
