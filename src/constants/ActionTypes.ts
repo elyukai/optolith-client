@@ -70,7 +70,7 @@ export const SELECT_PROFESSION_VARIANT = 'SELECT_PROFESSION_VARIANT';
 export type SET_TALENTS_SORT_ORDER = 'SET_TALENTS_SORT_ORDER';
 export const SET_TALENTS_SORT_ORDER = 'SET_TALENTS_SORT_ORDER';
 
-export const ATS = keyMirror({
+export default keyMirror({
 
 	// ServerActions
 	RECEIVE_RAW_LISTS: null,
@@ -251,5 +251,3 @@ export const ATS = keyMirror({
 	INGAME_SAVE: null,
 	INGAME_SWITCH_OPTION: null
 });
-
-export default ATS;

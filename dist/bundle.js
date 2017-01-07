@@ -279,50 +279,80 @@ function keyMirror(data) {
 const RECEIVE_DATA_TABLES = 'RECEIVE_DATA_TABLES';
 /* harmony export (immutable) */ exports["b"] = RECEIVE_DATA_TABLES;
 
-const SHOW_SECTION = 'SHOW_SECTION';
-/* harmony export (immutable) */ exports["f"] = SHOW_SECTION;
+const SET_SECTION = 'SET_SECTION';
+/* harmony export (immutable) */ exports["l"] = SET_SECTION;
 
-const SHOW_TAB = 'SHOW_TAB';
-/* harmony export (immutable) */ exports["g"] = SHOW_TAB;
+const SET_TAB = 'SET_TAB';
+/* harmony export (immutable) */ exports["k"] = SET_TAB;
 
 const REQUEST_LOGIN = 'REQUEST_LOGIN';
-/* unused harmony export REQUEST_LOGIN */
+/* harmony export (immutable) */ exports["h"] = REQUEST_LOGIN;
 
 const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
-/* harmony export (immutable) */ exports["n"] = RECEIVE_LOGIN;
+/* harmony export (immutable) */ exports["c"] = RECEIVE_LOGIN;
 
 const REQUEST_LOGOUT = 'REQUEST_LOGOUT';
-/* unused harmony export REQUEST_LOGOUT */
+/* harmony export (immutable) */ exports["i"] = REQUEST_LOGOUT;
 
 const RECEIVE_LOGOUT = 'RECEIVE_LOGOUT';
-/* harmony export (immutable) */ exports["o"] = RECEIVE_LOGOUT;
+/* harmony export (immutable) */ exports["d"] = RECEIVE_LOGOUT;
 
-const REGISTER = 'REGISTER';
-/* harmony export (immutable) */ exports["e"] = REGISTER;
+const REQUEST_REGISTRATION = 'REQUEST_REGISTRATION';
+/* unused harmony export REQUEST_REGISTRATION */
 
-const FILTER_HEROLIST = 'FILTER_HEROLIST';
-/* harmony export (immutable) */ exports["i"] = FILTER_HEROLIST;
+const SET_HEROLIST_VISIBILITY_FILTER = 'SET_HEROLIST_VISIBILITY_FILTER';
+/* unused harmony export SET_HEROLIST_VISIBILITY_FILTER */
 
-const SORT_HEROLIST = 'SORT_HEROLIST';
-/* harmony export (immutable) */ exports["h"] = SORT_HEROLIST;
+const SET_HEROLIST_SORT_ORDER = 'SET_HEROLIST_SORT_ORDER';
+/* unused harmony export SET_HEROLIST_SORT_ORDER */
 
 const REQUEST_HEROLIST = 'REQUEST_HEROLIST';
-/* unused harmony export REQUEST_HEROLIST */
+/* harmony export (immutable) */ exports["g"] = REQUEST_HEROLIST;
 
 const RECEIVE_HEROLIST = 'RECEIVE_HEROLIST';
-/* harmony export (immutable) */ exports["j"] = RECEIVE_HEROLIST;
+/* harmony export (immutable) */ exports["e"] = RECEIVE_HEROLIST;
 
 const REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
-/* unused harmony export REQUEST_HERO_DATA */
+/* harmony export (immutable) */ exports["f"] = REQUEST_HERO_DATA;
 
 const RECEIVE_HERO_DATA = 'RECEIVE_HERO_DATA';
-/* harmony export (immutable) */ exports["c"] = RECEIVE_HERO_DATA;
+/* harmony export (immutable) */ exports["j"] = RECEIVE_HERO_DATA;
 
 const SELECT_RACE = 'SELECT_RACE';
-/* harmony export (immutable) */ exports["k"] = SELECT_RACE;
+/* unused harmony export SELECT_RACE */
 
-const SORT_RACES = 'SORT_RACES';
-/* harmony export (immutable) */ exports["l"] = SORT_RACES;
+const SET_RACES_SORT_ORDER = 'SET_RACES_SORT_ORDER';
+/* unused harmony export SET_RACES_SORT_ORDER */
+
+const SWITCH_RACE_VALUE_VISIBILITY = 'SWITCH_RACE_VALUE_VISIBILITY';
+/* unused harmony export SWITCH_RACE_VALUE_VISIBILITY */
+
+const SELECT_CULTURE = 'SELECT_CULTURE';
+/* unused harmony export SELECT_CULTURE */
+
+const SET_CULTURES_SORT_ORDER = 'SET_CULTURES_SORT_ORDER';
+/* unused harmony export SET_CULTURES_SORT_ORDER */
+
+const SET_CULTURES_VISIBILITY_FILTER = 'SET_CULTURES_VISIBILITY_FILTER';
+/* unused harmony export SET_CULTURES_VISIBILITY_FILTER */
+
+const SWITCH_CULTURE_VALUE_VISIBILITY = 'SWITCH_CULTURE_VALUE_VISIBILITY';
+/* unused harmony export SWITCH_CULTURE_VALUE_VISIBILITY */
+
+const SELECT_PROFESSION = 'SELECT_PROFESSION';
+/* unused harmony export SELECT_PROFESSION */
+
+const SET_PROFESSIONS_SORT_ORDER = 'SET_PROFESSIONS_SORT_ORDER';
+/* unused harmony export SET_PROFESSIONS_SORT_ORDER */
+
+const SET_PROFESSIONS_VISIBILITY_FILTER = 'SET_PROFESSIONS_VISIBILITY_FILTER';
+/* unused harmony export SET_PROFESSIONS_VISIBILITY_FILTER */
+
+const SELECT_PROFESSION_VARIANT = 'SELECT_PROFESSION_VARIANT';
+/* unused harmony export SELECT_PROFESSION_VARIANT */
+
+const SET_TALENTS_SORT_ORDER = 'SET_TALENTS_SORT_ORDER';
+/* unused harmony export SET_TALENTS_SORT_ORDER */
 
 const ATS = keyMirror({
     RECEIVE_RAW_LISTS: null,
@@ -456,7 +486,7 @@ const ATS = keyMirror({
     INGAME_SAVE: null,
     INGAME_SWITCH_OPTION: null
 });
-/* harmony export (immutable) */ exports["d"] = ATS;
+/* unused harmony export ATS */
 
 /* harmony default export */ exports["a"] = ATS;
 
@@ -3242,7 +3272,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 function register(email, name, displayName, password) {
     return __awaiter(this, void 0, void 0, function* () {
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* REGISTER */],
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_START,
             status: 'pending',
             statusMessage: 'Registrierung wird durchgeführt'
         });
@@ -3265,7 +3295,7 @@ function register(email, name, displayName, password) {
                     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Benutzername und Email-Adresse bereits vorhanden', 'Sowohl die E-Mail-Adresse als auch der Benutzername werden bereits verwendet.');
                 }
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* REGISTER */],
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].REGISTRATION_SUCCESS,
                     status: 'success'
                 });
             }
@@ -3273,7 +3303,7 @@ function register(email, name, displayName, password) {
         catch (e) {
             __WEBPACK_IMPORTED_MODULE_3__utils_WebAPIUtils__["a" /* default */].connectionError(e);
             __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* REGISTER */],
+                type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].REGISTRATION_SUCCESS,
                 error: e,
                 status: 'error'
             });
@@ -5938,33 +5968,16 @@ module.exports = React;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(2);
 
 
-const showSection = (section, tab) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["f" /* SHOW_SECTION */],
-    payload: {
-        section,
-        tab
-    }
-});
-/* unused harmony export showSection */
-
-const showTab = (tab) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["g" /* SHOW_TAB */],
-    payload: {
-        tab
-    }
-});
-/* unused harmony export showTab */
-
 /* harmony default export */ exports["a"] = {
     showTab(tab) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["g" /* SHOW_TAB */],
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SHOW_TAB,
             tab
         });
     },
     showSection(section) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: 'SHOW_TAB_SECTION',
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SHOW_TAB_SECTION,
             section
         });
     }
@@ -7158,52 +7171,25 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 
 
 
-const request = () => __WEBPACK_IMPORTED_MODULE_4__utils_WebAPIUtils__["a" /* default */].getHeroes();
-/* unused harmony export request */
-
-const sort = (sortOrder) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["h" /* SORT_HEROLIST */],
-    payload: {
-        sortOrder
-    }
-});
-/* unused harmony export sort */
-
-const filter = (filterOption) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["i" /* FILTER_HEROLIST */],
-    payload: {
-        filterOption
-    }
-});
-/* unused harmony export filter */
-
-const receive = (heroes) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["j" /* RECEIVE_HEROLIST */],
-    payload: {
-        heroes
-    }
-});
-/* unused harmony export receive */
-
 /* harmony default export */ exports["a"] = {
     refresh() {
         __WEBPACK_IMPORTED_MODULE_4__utils_WebAPIUtils__["a" /* default */].getHeroes();
     },
     filter(text) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["i" /* FILTER_HEROLIST */],
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].FILTER_HEROLIST,
             text
         });
     },
     sort(option) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["h" /* SORT_HEROLIST */],
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SORT_HEROLIST,
             option
         });
     },
     changeView(view) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: 'CHANGE_HEROLIST_VIEW',
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].CHANGE_HEROLIST_VIEW,
             view
         });
     },
@@ -7225,12 +7211,12 @@ const receive = (heroes) => ({
     },
     loadFx(id) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: 'CLEAR_HERO'
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].CLEAR_HERO
         });
         __WEBPACK_IMPORTED_MODULE_4__utils_WebAPIUtils__["a" /* default */].loadHero(id);
     },
     createNewHero(options) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: 'CREATE_NEW_HERO' }, options));
+        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].CREATE_NEW_HERO }, options));
     },
     save() {
     }
@@ -13412,44 +13398,28 @@ module.exports = emptyObject;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(2);
 
 
-const selectRace = (id) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["k" /* SELECT_RACE */],
-    payload: {
-        id
-    }
-});
-/* unused harmony export selectRace */
-
-const sortRaces = (sortOrder) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["l" /* SORT_RACES */],
-    payload: {
-        sortOrder
-    }
-});
-/* unused harmony export sortRaces */
-
 /* harmony default export */ exports["a"] = {
     selectRace(raceID) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].SELECT_RACE,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SELECT_RACE,
             raceID
         });
     },
     filter(text) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].FILTER_RACES,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].FILTER_RACES,
             text
         });
     },
     sort(option) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].SORT_RACES,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SORT_RACES,
             option
         });
     },
     changeValueVisibility() {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].CHANGE_RACE_VALUE_VISIBILITY
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].CHANGE_RACE_VALUE_VISIBILITY
         });
     }
 };
@@ -18364,49 +18334,31 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 
 
 
-const receiveDataTables = (data) => ({
-    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["b" /* RECEIVE_DATA_TABLES */],
-    payload: {
-        data,
-        pending: false
-    }
-});
-/* unused harmony export receiveDataTables */
-
-const receiveHeroData = (data) => ({
-    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["c" /* RECEIVE_HERO_DATA */],
-    payload: {
-        data,
-        pending: false
-    }
-});
-/* unused harmony export receiveHeroData */
-
 /* harmony default export */ exports["a"] = {
     startLoading() {
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_START
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_START
         });
     },
     runtimeError() {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
         });
     },
     connectionError(error) {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Verbindung nicht möglich', 'Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ' + JSON.stringify(error) + ' Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!');
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
         });
     },
     receiveLists(raw) {
-        __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].RECEIVE_RAW_LISTS }, raw));
+        __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].RECEIVE_RAW_LISTS }, raw));
     },
     registrationSuccess() {
         __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Konto bestätigen', 'Wir haben dir eine E-Mail an die angegebene Adresse geschickt. Dort wirst du einen Bestätigungslink finden, dem du einfach nur zu folgen brauchst, um dein Konto zu aktivieren.');
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].REGISTRATION_SUCCESS
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].REGISTRATION_SUCCESS
         });
     },
     forgotPasswordSuccess(callback) {
@@ -18414,13 +18366,13 @@ const receiveHeroData = (data) => ({
             case 'false':
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit dem Link zum Zurücksetzen deines Passworts geschickt!');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
         }
@@ -18430,13 +18382,13 @@ const receiveHeroData = (data) => ({
             case 'false':
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die E-Mail mit deinem Benutzernamen geschickt!');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
         }
@@ -18449,7 +18401,7 @@ const receiveHeroData = (data) => ({
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('E-Mail erfolgreich verschickt', 'Du kannst jetzt in dein Postfach schauen; wir haben dir die Aktivierungsemail erneut geschickt!');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
         }
@@ -18459,26 +18411,26 @@ const receiveHeroData = (data) => ({
             case 'false':
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Anmeldeversuch fehlgeschlagen', 'Die eigegebene Kombination aus Benutzername und Passwort wurde nicht erkannt. Stelle sicher, dass du dich nicht vertippt hast und versuche es nochmal.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
             case 'notactive':
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Benutzerkonto nicht aktiviert', 'Das hinterlegte Benutzerkonto wurde noch nicht aktivert. Bitte aktiviere das Konto über den Aktivierungslink in der Aktivierungsemail.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
             case 'logged':
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Benutzer bereits angemeldet', 'Das Konto ist momentan an einem anderen Ort (Gerät oder Browser) angemeldet. Es kann nicht mehrere Male auf ein Konto zugegriffen werden.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].WAIT_END
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].WAIT_END
                 });
                 break;
             default: {
                 let id = parseInt(callback);
                 let heroes = [];
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].RECEIVE_ACCOUNT,
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].RECEIVE_ACCOUNT,
                     id, name, heroes
                 });
             }
@@ -18486,7 +18438,7 @@ const receiveHeroData = (data) => ({
     },
     logoutSuccess() {
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].LOGOUT_SUCCESS
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].LOGOUT_SUCCESS
         });
     },
     changeUsernameSuccess(callback, name) {
@@ -18497,7 +18449,7 @@ const receiveHeroData = (data) => ({
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].ACCOUNTNAME_CHANGE_SUCCESS,
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].ACCOUNTNAME_CHANGE_SUCCESS,
                     name
                 });
                 break;
@@ -18511,7 +18463,7 @@ const receiveHeroData = (data) => ({
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Passwort erfolgreich geändert', 'Dein Passwort wurde erfolgreich geändert.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].PASSWORD_CHANGE_SUCCESS
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].PASSWORD_CHANGE_SUCCESS
                 });
                 break;
         }
@@ -18524,7 +18476,7 @@ const receiveHeroData = (data) => ({
             default:
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_alert__["a" /* default */])('Konto gelöscht', 'Dein Konto wurde mitsamt aller Helden und Gruppen erfolgreich gelöscht.');
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].CLEAR_ACCOUNT
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].CLEAR_ACCOUNT
                 });
                 break;
         }
@@ -18536,7 +18488,7 @@ const receiveHeroData = (data) => ({
                 break;
             default:
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].RECEIVE_RAW_HEROLIST,
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].RECEIVE_RAW_HEROLIST,
                     rawHeroes
                 });
                 break;
@@ -18545,11 +18497,11 @@ const receiveHeroData = (data) => ({
     loadHeroSuccess(id, data) {
         var short = __WEBPACK_IMPORTED_MODULE_3__stores_HerolistStore__["a" /* default */].get(id);
         data = JSON.parse(data);
-        __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].RECEIVE_HERO }, (Object.assign({}, short, data))));
+        __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch(__assign({ type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].RECEIVE_HERO }, (Object.assign({}, short, data))));
     },
     saveHeroSuccess() {
         __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].SAVE_HERO_SUCCESS
+            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].SAVE_HERO_SUCCESS
         });
     },
     changeHeroAvatarSuccess(url) {
@@ -18559,7 +18511,7 @@ const receiveHeroData = (data) => ({
                 break;
             default:
                 __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* ATS */].UPDATE_HERO_AVATAR,
+                    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["a" /* default */].UPDATE_HERO_AVATAR,
                     url
                 });
                 break;
@@ -18632,41 +18584,33 @@ const receiveHeroData = (data) => ({
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(2);
 
 
-const sortTalents = (sortOrder) => ({
-    type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["SORT_TALENTS"],
-    payload: {
-        sortOrder
-    }
-});
-/* unused harmony export sortTalents */
-
 /* harmony default export */ exports["a"] = {
     filter(text) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].FILTER_TALENTS,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].FILTER_TALENTS,
             text
         });
     },
     sort(option) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].SORT_TALENTS,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].SORT_TALENTS,
             option
         });
     },
     changeTalentRating() {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].CHANGE_TALENT_RATING
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].CHANGE_TALENT_RATING
         });
     },
     addPoint(id) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].ADD_TALENT_POINT,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].ADD_TALENT_POINT,
             id
         });
     },
     removePoint(id) {
         __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["d" /* ATS */].REMOVE_TALENT_POINT,
+            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["a" /* default */].REMOVE_TALENT_POINT,
             id
         });
     }
@@ -19482,11 +19426,11 @@ const initialState = {
                 email: 'lukas.obermann@live.de',
                 sessionToken: '0123456789ABCDEF'
             };
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["n" /* RECEIVE_LOGIN */]: {
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["c" /* RECEIVE_LOGIN */]: {
             const { name, displayName, email, sessionToken } = action.payload;
             return { name, displayName, email, sessionToken, loggedIn: true };
         }
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["o" /* RECEIVE_LOGOUT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* RECEIVE_LOGOUT */]:
             return {
                 loggedIn: false,
                 name: '',
@@ -19813,8 +19757,8 @@ const initialState = {
                 },
                 users: ['U_1', 'U_3']
             };
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["n" /* RECEIVE_LOGIN */]:
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["j" /* RECEIVE_HEROLIST */]: {
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["c" /* RECEIVE_LOGIN */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* RECEIVE_HEROLIST */]: {
             const usersById = {};
             const users = [];
             const heroesById = {};
@@ -19831,7 +19775,7 @@ const initialState = {
             }
             return { heroes, heroesById, users, usersById };
         }
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["o" /* RECEIVE_LOGOUT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* RECEIVE_LOGOUT */]:
             return {
                 heroesById: {},
                 heroes: [],
@@ -19849,11 +19793,21 @@ const initialState = {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(2);
+
 const initialState = true;
 /* harmony default export */ exports["a"] = (state = initialState, a) => {
     switch (a.type) {
-        case 'TEST':
-            return a.meta.pending;
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["f" /* REQUEST_HERO_DATA */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["g" /* REQUEST_HEROLIST */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["h" /* REQUEST_LOGIN */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["i" /* REQUEST_LOGOUT */]:
+            return true;
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["j" /* RECEIVE_HERO_DATA */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* RECEIVE_HEROLIST */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["c" /* RECEIVE_LOGIN */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["d" /* RECEIVE_LOGOUT */]:
+            return false;
         default:
             return state;
     }
@@ -19882,9 +19836,9 @@ const initialState = {
 };
 /* harmony default export */ exports["a"] = (state = initialState, action, loggedIn) => {
     switch (action.type) {
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["g" /* SHOW_TAB */]:
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["k" /* SET_TAB */]:
             return __assign({}, state, { tab: action.payload.tab });
-        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["f" /* SHOW_SECTION */]: {
+        case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["l" /* SET_SECTION */]: {
             const section = action.payload.section;
             let tab = action.payload.tab;
             if (!tab) {
