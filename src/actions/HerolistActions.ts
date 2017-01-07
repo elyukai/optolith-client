@@ -1,8 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import createOverlay from '../utils/createOverlay';
-import HeroCreation from '../views/herolist/HeroCreation';
-import React from 'react';
-import alert from '../utils/alert';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 interface RawHero {

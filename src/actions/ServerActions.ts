@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import alert from '../utils/alert';
 import { RawRace } from '../reducers/RacesReducer';
 import { Hero } from '../reducers/HerolistReducer';
 

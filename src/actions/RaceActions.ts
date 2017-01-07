@@ -14,14 +14,14 @@ export const selectRace = (id: string): SelectRaceAction => ({
 	}
 });
 
-export interface SortRacesAction {
+export interface SetRacesSortOrderAction {
 	type: ActionTypes.SET_RACES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-export const sortRaces = (sortOrder: string): SortRacesAction => ({
+export const setRacesSortOrder = (sortOrder: string): SetRacesSortOrderAction => ({
 	type: ActionTypes.SET_RACES_SORT_ORDER,
 	payload: {
 		sortOrder
