@@ -11,7 +11,6 @@ export interface LocationState {
 }
 
 const initialState = <LocationState>{
-	loggedIn: true,
 	section: 'main',
 	tab: 'herolist'
 };

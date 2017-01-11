@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { RECEIVE_HEROLIST, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER } from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 interface RawHero {
@@ -34,42 +34,42 @@ export interface RawHerolist {
 export const request = () => WebAPIUtils.getHeroes();
 
 export interface SetHerolistSortOrderAction {
-	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
+	type: SET_HEROLIST_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
 export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
-	type: ActionTypes.SET_HEROLIST_SORT_ORDER,
+	type: SET_HEROLIST_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
 export interface SetHerolistVisibilityFilterAction {
-	type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER;
+	type: SET_HEROLIST_VISIBILITY_FILTER;
 	payload: {
 		filterOption: string;
 	};
 }
 
 export const setHerolistVisibilityFilter = (filterOption: string): SetHerolistVisibilityFilterAction => ({
-	type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
+	type: SET_HEROLIST_VISIBILITY_FILTER,
 	payload: {
 		filterOption
 	}
 });
 
 export interface ReceiveHerolistAction {
-	type: ActionTypes.RECEIVE_HEROLIST;
+	type: RECEIVE_HEROLIST;
 	payload: {
 		heroes: RawHerolist;
 	};
 }
 
 export const receiveHerolist = (heroes: RawHerolist): ReceiveHerolistAction => ({
-	type: ActionTypes.RECEIVE_HEROLIST,
+	type: RECEIVE_HEROLIST,
 	payload: {
 		heroes
 	}

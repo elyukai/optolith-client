@@ -1,4 +1,12 @@
-import keyMirror from 'keymirror';
+function keyMirror<T>(data: T): { [K in keyof T]: K; } {
+	const newData = {} as { [K in keyof T]: K; };
+	for (const constant in data) {
+		if (data.hasOwnProperty(constant)) {
+			newData[constant] = constant;
+		}
+	}
+	return newData;
+}
 
 export type Category = ADVANTAGES | ATTRIBUTES | COMBAT_TECHNIQUES | CULTURES | DISADVANTAGES | LITURGIES | PROFESSION_VARIANTS | PROFESSIONS | RACES | SPECIAL_ABILITIES | SPELLS | TALENTS;
 
@@ -6,8 +14,6 @@ export type ADVANTAGES = 'ADVANTAGES';
 export const ADVANTAGES = 'ADVANTAGES';
 export type ATTRIBUTES = 'ATTRIBUTES';
 export const ATTRIBUTES = 'ATTRIBUTES';
-export type CHANTS = 'CHANTS';
-export const CHANTS = 'CHANTS';
 export type COMBAT_TECHNIQUES = 'COMBAT_TECHNIQUES';
 export const COMBAT_TECHNIQUES = 'COMBAT_TECHNIQUES';
 export type CULTURES = 'CULTURES';

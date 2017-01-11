@@ -1,30 +1,35 @@
 import AuthStore from '../stores/AuthStore';
 import { readFile } from 'fs';
 import ProfileStore from '../stores/ProfileStore';
-import ServerActions from '../_actions/ServerActions';
+import _ServerActions from '../_actions/ServerActions';
+import { receiveDataTables } from '../actions/ServerActions';
+import RStore from '../stores/RStore';
 
 export default {
 	connectionError: function(e: Error): void {
-		ServerActions.connectionError(e);
+		_ServerActions.connectionError(e);
 	},
 
 	getAllData: async function(): Promise<void> {
 		try {
 			let response = await fetch('data/DSA5.json');
 			let result = await response.json();
-			ServerActions.receiveLists(result);
+			_ServerActions.receiveLists(result);
+			const action = receiveDataTables(result);
+			RStore.dispatch(action);
+			console.log(RStore.getState());
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(Error(e));
 		}
 	},
 	register: async function(email: string, name: string, displayname: string, password: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('data/register.php?email=' + email + '&name=' + name + '&display=' + displayname + '&password=' + password);
 			let result = await response.text();
-			ServerActions.registrationSuccess();
+			_ServerActions.registrationSuccess();
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	checkEmail: async function(email: string): Promise<string | void> {
@@ -33,7 +38,7 @@ export default {
 			let result = await response.text();
 			return result;
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	checkUsername: async function(name: string): Promise<string | void> {
@@ -42,105 +47,105 @@ export default {
 			let result = await response.text();
 			return result;
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	sendPasswordCode: async function(email: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/forgetpw.php?e=' + email);
 			let result = await response.text();
-			ServerActions.forgotPasswordSuccess(result);
+			_ServerActions.forgotPasswordSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	sendUsername: async function(email: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/forgetusername.php?e=' + email);
 			let result = await response.text();
-			ServerActions.forgotUsernameSuccess(result);
+			_ServerActions.forgotUsernameSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	resendActivation: async function(email: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/regmailagain.php?e=' + email);
 			let result = await response.text();
-			ServerActions.resendActivationSuccess(result);
+			_ServerActions.resendActivationSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	login: async function(name: string, password: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/login.php?u=' + name + '&p=' + password);
 			let result = await response.text();
-			ServerActions.receiveAccount(result, name);
+			_ServerActions.receiveAccount(result, name);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	logout: function(): void {
-		ServerActions.logoutSuccess();
+		_ServerActions.logoutSuccess();
 	},
 	// logout: async function(): Promise<void> {
 	// 	try {
-	// 		ServerActions.startLoading();
+	// 		_ServerActions.startLoading();
 	// 		let response = await fetch('php/logout.php?uid=' + AuthStore.getID());
 	//		let result = await response.text();
-	// 		ServerActions.logoutSuccess(result);
+	// 		_ServerActions.logoutSuccess(result);
 	// 	} catch(e) {
-	// 		ServerActions.connectionError(e);
+	// 		_ServerActions.connectionError(e);
 	// 	}
 	// },
 	setNewUsername: async function(name: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/changeaccount.php?uid=' + AuthStore.getID() + '&src=username&v=' + name);
 			let result = await response.text();
-			ServerActions.changeUsernameSuccess(result, name);
+			_ServerActions.changeUsernameSuccess(result, name);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	setNewPassword: async function(password: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/changeaccount.php?uid=' + AuthStore.getID() + '&src=password&v=' + password);
 			let result = await response.text();
-			ServerActions.changePasswordSuccess(result);
+			_ServerActions.changePasswordSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	deleteAccount: async function(): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/deleteaccount.php?uid=' + AuthStore.getID());
 			let result = await response.text();
-			ServerActions.deleteAccountSuccess(result);
+			_ServerActions.deleteAccountSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	getHeroes: async function(): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/getherolist.php?uid=' + AuthStore.getID());
 			let result = await response.text();
-			ServerActions.herolistRefreshSuccess(result);
+			_ServerActions.herolistRefreshSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	loadHero: function(id: string): void {
-		ServerActions.startLoading();
-		ServerActions.loadHeroSuccess(id, `{
+		_ServerActions.startLoading();
+		_ServerActions.loadHeroSuccess(id, `{
 			"pers":{
 				"family": "ibn Rashtul",
 				"placeofbirth": "Rashdul",
@@ -201,64 +206,64 @@ export default {
 	},
 	// loadHero: async function(id): Promise<void> {
 	// 	try {
-	// 		ServerActions.startLoading();
+	// 		_ServerActions.startLoading();
 	// 		let response = await fetch('php/gethero.php?hid=' + id);
 	//		let result = await response.text();
-	// 		ServerActions.loadHeroSuccess(id, result);
+	// 		_ServerActions.loadHeroSuccess(id, result);
 	// 	} catch(e) {
-	// 		ServerActions.connectionError(e);
+	// 		_ServerActions.connectionError(e);
 	// 	}
 	// },
 	createNewHero: async function(name: string): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/newhero.php?uid=' + AuthStore.getID() + '&n=' + name);
 			let result = await response.text();
-			// ServerActions.createNewHeroSuccess(result);
+			// _ServerActions.createNewHeroSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	// saveHero: function(data) {
-	// 	ServerActions.startLoading();
+	// 	_ServerActions.startLoading();
 	// 	var blob = new Blob([data], { type: "application/json" });
 	// 	var url  = window.URL.createObjectURL(blob);
 	// 	window.open(url);
 	// },
 	saveHero: async function(data): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/save.php?short=' + data[0] + '&full=' + data[1], {
 				method: 'post',
 				body: JSON.stringify(data)
 			});
 			let result = await response.text();
-			// ServerActions.saveHeroSuccess(result);
+			// _ServerActions.saveHeroSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	changeHeroAvatar: async function(type, data): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
 				method: 'post',
 				body: new FormData(data)
 			});
 			let result = await response.text();
-			ServerActions.changeHeroAvatarSuccess(result);
+			_ServerActions.changeHeroAvatarSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	},
 	deleteHero: async function(heroid): Promise<void> {
 		try {
-			ServerActions.startLoading();
+			_ServerActions.startLoading();
 			let response = await fetch('php/deletehero.php?uid=' + AuthStore.getID() + '&hid=' + heroid);
 			let result = await response.text();
-			// ServerActions.deleteHeroSuccess(result);
+			// _ServerActions.deleteHeroSuccess(result);
 		} catch(e) {
-			ServerActions.connectionError(e);
+			_ServerActions.connectionError(e);
 		}
 	}
 };

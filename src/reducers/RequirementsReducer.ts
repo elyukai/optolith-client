@@ -1,6 +1,6 @@
 import { ReceiveDataTablesAction } from '../actions/ServerActions';
 import { LoginAction, LogoutAction } from '../actions/AuthActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import ActionTypes from '../constants/ActionTypes';
 import { Category } from '../constants/Categories';
 import { AdventurePoints, HeroState } from './HeroReducer';
 
@@ -11,7 +11,7 @@ import Categories from '../constants/Categories';
 
 type Action = ReceiveDataTablesAction | LoginAction | LogoutAction;
 
-type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined] | never[];
+export type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined] | never[];
 
 let cost = 0;
 let validCost = false;
@@ -75,8 +75,8 @@ export default (state: HeroState, action: Action): ValidationResult => {
 		updateCost(payload.cost * -1, true);
 	}
 	switch (action.type) {
-		case ActionTypes.ATS.ACTIVATE_SPELL:
-		case ActionTypes.ATS.ACTIVATE_LITURGY: {
+		case ActionTypes.ACTIVATE_SPELL:
+		case ActionTypes.ACTIVATE_LITURGY: {
 			const obj = get(payload.id);
 			updateOwnRequirements(true);
 			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
@@ -88,8 +88,8 @@ export default (state: HeroState, action: Action): ValidationResult => {
 			break;
 		}
 
-		case ActionTypes.ATS.DEACTIVATE_SPELL:
-		case ActionTypes.ATS.DEACTIVATE_LITURGY: {
+		case ActionTypes.DEACTIVATE_SPELL:
+		case ActionTypes.DEACTIVATE_LITURGY: {
 			const obj = get(payload.id);
 			updateOwnRequirements(true);
 			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
@@ -101,59 +101,59 @@ export default (state: HeroState, action: Action): ValidationResult => {
 			break;
 		}
 
-		case ActionTypes.ATS.ACTIVATE_DISADV:
+		case ActionTypes.ACTIVATE_DISADV:
 			updateOwnRequirements(get(payload.id).isActivatable);
 			updateDisAdvCost(payload.id, payload.cost);
 			break;
 
-		case ActionTypes.ATS.ACTIVATE_SPECIALABILITY:
+		case ActionTypes.ACTIVATE_SPECIALABILITY:
 			updateOwnRequirements(get(payload.id).isActivatable);
 			updateCost(payload.cost);
 			break;
 
-		case ActionTypes.ATS.DEACTIVATE_DISADV:
+		case ActionTypes.DEACTIVATE_DISADV:
 			updateOwnRequirements(get(payload.id).isDeactivatable);
 			updateDisAdvCost(payload.id, payload.cost);
 			break;
 
-		case ActionTypes.ATS.DEACTIVATE_SPECIALABILITY:
+		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			updateOwnRequirements(get(payload.id).isDeactivatable);
 			updateCost(-payload.cost);
 			break;
 
-		case ActionTypes.ATS.UPDATE_DISADV_TIER:
+		case ActionTypes.UPDATE_DISADV_TIER:
 			updateOwnRequirements(true);
 			updateDisAdvCost(payload.id, payload.cost);
 			break;
 
-		case ActionTypes.ATS.UPDATE_SPECIALABILITY_TIER:
+		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
 			updateOwnRequirements(true);
 			updateCost(payload.cost);
 			break;
 
-		case ActionTypes.ATS.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.ATS.ADD_TALENT_POINT:
-		case ActionTypes.ATS.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.ATS.ADD_SPELL_POINT:
-		case ActionTypes.ATS.ADD_LITURGY_POINT: {
+		case ActionTypes.ADD_ATTRIBUTE_POINT:
+		case ActionTypes.ADD_TALENT_POINT:
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.ADD_LITURGY_POINT: {
 			const obj = get(payload.id);
 			updateOwnRequirements(obj.isIncreasable);
 			updateCost(final(obj.ic, obj.value + 1));
 			break;
 		}
 
-		case ActionTypes.ATS.ADD_MAX_ENERGY_POINT: {
+		case ActionTypes.ADD_MAX_ENERGY_POINT: {
 			const obj = secondaryAttributes.get(payload.id);
 			updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
 			updateCost(final(4, AttributeStore.getAdd(payload.id) + 1));
 			break;
 		}
 
-		case ActionTypes.ATS.REMOVE_ATTRIBUTE_POINT:
-		case ActionTypes.ATS.REMOVE_TALENT_POINT:
-		case ActionTypes.ATS.REMOVE_COMBATTECHNIQUE_POINT:
-		case ActionTypes.ATS.REMOVE_SPELL_POINT:
-		case ActionTypes.ATS.REMOVE_LITURGY_POINT: {
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+		case ActionTypes.REMOVE_TALENT_POINT:
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_LITURGY_POINT: {
 			const obj = get(payload.id);
 			updateOwnRequirements(obj.isDecreasable);
 			updateCost(final(obj.ic, obj.value) * -1);

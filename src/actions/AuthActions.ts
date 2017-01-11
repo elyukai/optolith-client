@@ -1,8 +1,8 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { RECEIVE_LOGIN, RECEIVE_LOGOUT } from '../constants/ActionTypes';
 import { RawHerolist } from './HerolistActions';
 
 export interface LoginAction {
-	type: ActionTypes.RECEIVE_LOGIN;
+	type: RECEIVE_LOGIN;
 	payload: {
 		name: string;
 		displayName: string;
@@ -13,7 +13,7 @@ export interface LoginAction {
 }
 
 export const login = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist): LoginAction => ({
-	type: ActionTypes.RECEIVE_LOGIN,
+	type: RECEIVE_LOGIN,
 	payload: {
 		name,
 		displayName,
@@ -24,9 +24,9 @@ export const login = (name: string, displayName: string, email: string, sessionT
 });
 
 export interface LogoutAction {
-	type: ActionTypes.RECEIVE_LOGOUT;
+	type: RECEIVE_LOGOUT;
 }
 
 export const logout = (): LogoutAction => ({
-	type: ActionTypes.RECEIVE_LOGOUT
+	type: RECEIVE_LOGOUT
 });

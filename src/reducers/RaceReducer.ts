@@ -1,35 +1,11 @@
-import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
-import { SelectRaceAction } from '../actions/RaceActions';
-import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { fixIDs } from '../utils/DataUtils';
+import { RACES } from '../constants/Categories';
+import { RawRace, ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA, SELECT_RACE } from '../constants/ActionTypes';
+import { SelectRaceAction } from '../actions/RaceActions';
 import dice from '../utils/dice';
 
 type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | SelectRaceAction;
-
-export interface RawRace {
-	readonly id: string;
-	readonly name: string;
-	readonly ap: number;
-	readonly le: number;
-	readonly sk: number;
-	readonly zk: number;
-	readonly gs: number;
-	readonly attr: number[][];
-	readonly attr_sel: [number, number[]];
-	readonly typ_cultures: string[];
-	readonly auto_adv: string[][];
-	readonly imp_adv: (string | number)[][];
-	readonly imp_dadv: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly hair: number[];
-	readonly eyes: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
-}
 
 export interface Race {
 	readonly id: string;
@@ -53,7 +29,7 @@ export interface Race {
 	readonly eyecolors: number[];
 	readonly size: (number | number[])[];
 	readonly weight: (number | number[])[];
-	readonly category: string;
+	readonly category: RACES;
 }
 
 export const haircolors = [ 'blauschwarz', 'blond', 'braun', 'dunkelblond', 'dunkelbraun', 'goldblond', 'grau', 'hellblond', 'hellbraun', 'kupferrot', 'mittelblond', 'mittelbraun', 'rot', 'rotblond', 'schneeweiß', 'schwarz', 'silbern', 'weißblond', 'dunkelgrau', 'hellgrau', 'salzweiß', 'silberweiß', 'feuerrot' ];
@@ -120,7 +96,7 @@ function init({ id, name, ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto
 		id,
 		name,
 		ap,
-		category: Categories.RACES,
+		category: RACES,
 
 		lp: le,
 		spi: sk,
@@ -150,7 +126,7 @@ function init({ id, name, ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto
 
 export default (state = initialState, action: Action): RaceState => {
 	switch (action.type) {
-		case ActionTypes.RECEIVE_DATA_TABLES: {
+		case RECEIVE_DATA_TABLES: {
 			const byId: { [id: string]: Race } = {};
 			const allIds: string[] = [];
 			for (const id in action.payload.data.races) {
@@ -160,11 +136,11 @@ export default (state = initialState, action: Action): RaceState => {
 			return { ...state, byId, allIds };
 		}
 
-		case ActionTypes.RECEIVE_HERO_DATA:
+		case RECEIVE_HERO_DATA:
 			return { ...state, currentId: action.payload.data.r };
 
-		case ActionTypes.SELECT_RACE:
-			return { ...state, currentId: action.payload.id};
+		case SELECT_RACE:
+			return { ...state, currentId: action.payload.id };
 
 		default:
 			return state;

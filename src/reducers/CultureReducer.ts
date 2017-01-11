@@ -1,170 +1,89 @@
-import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
-import { SelectCultureAction } from '../actions/CultureActions';
-import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { CULTURES } from '../constants/Categories';
 import { fixIDs } from '../utils/DataUtils';
+import { RawCulture, ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA, SELECT_CULTURE, SELECT_RACE } from '../constants/ActionTypes';
+import { SelectCultureAction } from '../actions/CultureActions';
+import { SelectRaceAction } from '../actions/RaceActions';
 import dice from '../utils/dice';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | SelectCultureAction;
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | SelectCultureAction | SelectRaceAction;
 
-export interface Race {
+export interface Culture {
 	readonly id: string;
 	readonly name: string;
 	readonly ap: number;
-	readonly lp: number;
-	readonly spi: number;
-	readonly tou: number;
-	readonly mov: number;
-	readonly attr: (string | number)[][];
-	readonly attr_sel: [number, string[]];
-	readonly typ_cultures: string[];
-	readonly auto_adv: (string | number)[][];
-	readonly imp_adv: (string | number)[][];
-	readonly imp_dadv: (string | number)[][];
+	readonly languages: number[];
+	readonly scripts: number[];
+	readonly social: number[];
+	readonly typ_prof: string[];
 	readonly typ_adv: string[];
 	readonly typ_dadv: string[];
 	readonly untyp_adv: string[];
 	readonly untyp_dadv: string[];
-	readonly haircolors: number[];
-	readonly eyecolors: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
-	readonly category: string;
+	readonly typ_talents: string[];
+	readonly untyp_talents: string[];
+	readonly talents: (string | number)[][];
+	readonly category: CULTURES;
 }
 
-export interface RawRace {
-	readonly id: string;
-	readonly name: string;
-	readonly ap: number;
-	readonly le: number;
-	readonly sk: number;
-	readonly zk: number;
-	readonly gs: number;
-	readonly attr: number[][];
-	readonly attr_sel: [number, number[]];
-	readonly typ_cultures: string[];
-	readonly auto_adv: string[][];
-	readonly imp_adv: (string | number)[][];
-	readonly imp_dadv: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly hair: number[];
-	readonly eyes: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
-}
-
-export const haircolors = [ 'blauschwarz', 'blond', 'braun', 'dunkelblond', 'dunkelbraun', 'goldblond', 'grau', 'hellblond', 'hellbraun', 'kupferrot', 'mittelblond', 'mittelbraun', 'rot', 'rotblond', 'schneeweiß', 'schwarz', 'silbern', 'weißblond', 'dunkelgrau', 'hellgrau', 'salzweiß', 'silberweiß', 'feuerrot' ];
-
-export const eyecolors = [ 'amethystviolett', 'bernsteinfarben', 'blau', 'braun', 'dunkelbraun', 'dunkelviolett', 'eisgrau', 'goldgesprenkelt', 'grau', 'graublau', 'grün', 'hellbraun', 'rubinrot', 'saphirblau', 'schwarz', 'schwarzbraun', 'silbergrau', 'smaragdgrün' ];
-
-export const rerollHaircolor = (current: Race) => {
-	const result = dice(20);
-	return current.haircolors[result - 1];
-}
-
-export const rerollEyecolor = (current: Race) => {
-	const result = dice(20);
-	return current.eyecolors[result - 1];
-}
-
-export const rerollSize = (current: Race) => {
-	const [ base, ...dices ] = current.size;
-	let arr: number[] = [];
-	dices.forEach((e: number[]) => {
-		let elements = Array.from({ length: e[0] }, () => e[1]);
-		arr.push(...elements);
-	});
-	return (base as number) + arr.map(e => dice(e)).reduce((a,b) => a + b, 0);
-}
-
-export const rerollWeight = (current: Race, size: number) => {
-	const { id, weight } = current;
-	const [ base, ...dices ] = weight;
-	let arr: number[] = [];
-	dices.forEach((e: number[]) => {
-		let elements = Array.from({ length: e[0] }, () => e[1]);
-		arr.push(...elements);
-	});
-	size = size || this.rerollSize(current);
-	let add = ['R_1','R_2','R_3','R_4','R_5','R_6','R_7'].includes(id) ?
-		arr.map(e => {
-			let result = dice(Math.abs(e));
-			return result % 2 > 0 ? -result : result;
-		}) :
-		arr.map(e => {
-			let result = dice(Math.abs(e));
-			return e < 0 ? -result : result;
-		});
-	return size + (base as number) + add.reduce((a,b) => a + b, 0);
-}
-
-export interface RaceState {
+export interface CultureState {
 	readonly byId: {
-		[id: string]: Race;
+		[id: string]: Culture;
 	};
 	readonly allIds: string[];
-	readonly current: string | null;
+	readonly currentId: string | null;
 }
 
-const initialState = <RaceState>{
+const initialState = <CultureState>{
 	byId: {},
 	allIds: [],
-	current: null
+	currentId: null
 };
 
-function init({ id, name, ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight }: RawRace): Race {
+function init({ id, name, ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents }: RawCulture): Culture {
 	return {
 		id,
 		name,
 		ap,
-		category: Categories.RACES,
+		category: CULTURES,
 
-		lp: le,
-		spi: sk,
-		tou: zk,
-		mov: gs,
+		languages: lang,
+		scripts: literacy,
+		social: social,
 
-		attr: fixIDs<number>(attr, 'ATTR', 1),
-		attr_sel: [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)],
-
-		typ_cultures: typ_cultures.map(e => `C_${e}`),
-
-		auto_adv: fixIDs<number>(auto_adv, 'ADV'),
-		imp_adv: fixIDs<number>(imp_adv, 'ADV'),
-		imp_dadv: fixIDs<number>(imp_dadv, 'DISADV'),
+		typ_prof: typ_prof.map(e => `P_${e}`),
 
 		typ_adv: typ_adv.map(e => `ADV_${e}`),
 		typ_dadv: typ_dadv.map(e => `DISADV_${e}`),
 		untyp_adv: untyp_adv.map(e => `ADV_${e}`),
 		untyp_dadv: untyp_dadv.map(e => `DISADV_${e}`),
 
-		haircolors: hair,
-		eyecolors: eyes,
-		size,
-		weight
+		typ_talents: typ_talents.map(e => `TAL_${e}`),
+		untyp_talents: untyp_talents.map(e => `TAL_${e}`),
+		talents: fixIDs<number>(talents, 'TAL'),
 	}
 }
 
 export default (state = initialState, action: Action) => {
 	switch (action.type) {
-		case ActionTypes.RECEIVE_DATA_TABLES: {
-			const byId: { [id: string]: Race } = {};
+		case RECEIVE_DATA_TABLES: {
+			const byId: { [id: string]: Culture } = {};
 			const allIds: string[] = [];
-			for (const id in action.payload.data.races) {
-				byId[id] = init(action.payload.data.races[id]);
+			for (const id in action.payload.data.cultures) {
+				byId[id] = init(action.payload.data.cultures[id]);
 				allIds.push(id);
 			}
 			return { ...state, byId, allIds };
 		}
 
-		case ActionTypes.RECEIVE_HERO_DATA:
-			return { ...state, current: action.payload.data.r };
+		case RECEIVE_HERO_DATA:
+			return { ...state, currentId: action.payload.data.r };
 
-		case ActionTypes.SELECT_CULTURE:
-			return { ...state, current: action.payload.id};
+		case SELECT_RACE:
+			return { ...state, currentId: null };
+
+		case SELECT_CULTURE:
+			return { ...state, currentId: action.payload.id };
 
 		default:
 			return state;

@@ -1,7 +1,7 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { SET_SECTION, SET_TAB } from '../constants/ActionTypes';
 
 export interface SetSectionAction {
-	type: ActionTypes.SET_SECTION;
+	type: SET_SECTION;
 	payload: {
 		section: 'main' | 'hero' | 'group';
 		tab?: string;
@@ -9,7 +9,7 @@ export interface SetSectionAction {
 }
 
 export const setSection = (section: 'main' | 'hero' | 'group', tab?: string): SetSectionAction => ({
-	type: ActionTypes.SET_SECTION,
+	type: SET_SECTION,
 	payload: {
 		section,
 		tab
@@ -17,14 +17,14 @@ export const setSection = (section: 'main' | 'hero' | 'group', tab?: string): Se
 });
 
 export interface SetTabAction {
-	type: ActionTypes.SET_TAB;
+	type: SET_TAB;
 	payload: {
 		tab: string;
 	};
 }
 
 export const setTab = (tab: string): SetTabAction => ({
-	type: ActionTypes.SET_TAB,
+	type: SET_TAB,
 	payload: {
 		tab
 	}

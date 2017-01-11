@@ -1,10 +1,14 @@
-import { fromJS, Map } from 'immutable';
 import * as ActionTypes from '../constants/ActionTypes';
 import { ReceiveDataTablesAction } from '../actions/ServerActions';
+import PhaseReducer, { PhaseState } from './PhaseReducer';
+import RaceReducer, { RaceState } from './RaceReducer';
+import CultureReducer, { CultureState } from './CultureReducer';
+import ProfessionReducer, { ProfessionState } from './ProfessionReducer';
+import ProfessionVariantReducer, { ProfessionVariantState } from './ProfessionVariantReducer';
+import AbilitiesReducer, { AbilitiesState } from './AbilitiesReducer';
+import APReducer, { APState } from './APReducer';
 import init from '../utils/init';
 import RequirementsReducer from './RequirementsReducer';
-
-type Action = ReceiveDataTablesAction;
 
 export interface AdventurePoints {
 	total: number;
@@ -25,214 +29,9 @@ interface ExperienceLevel {
 	maxUnfamiliarSpells: number;
 }
 
-interface CoreInstance {
-	readonly id: string;
-	readonly name: string | { m: string, f: string };
-}
-
-interface DependentInstance extends CoreInstance {
-	readonly name: string;
-	dependencies: (string | number | boolean)[];
-	addDependency(dependency: string | number | boolean): void;
-	removeDependency(dependency: string | number | boolean): boolean;
-}
-
-interface IncreasableInstance extends DependentInstance {
-	value: number;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-}
-
-interface SetTierObject {
-	sid: string | number | boolean,
-	tier: number
-}
-
-interface ActivatableInstance extends DependentInstance {
-	readonly cost: number;
-	readonly input: string | null;
-	readonly max: number | null;
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | number | boolean)[][];
-	readonly tiers: number;
-	readonly gr: number;
-	active: boolean | (string | number | boolean | (string | number | boolean)[])[];
-	readonly isMultiselect: boolean;
-	readonly isActive: boolean;
-	readonly isActivatable: boolean;
-	readonly isDeactivatable: boolean;
-	activate(options: {
-		sel: string | number;
-		sel2: string | number;
-		input: string;
-		tier: number;
-	}): void;
-	deactivate(options: {
-		sid: string | number | boolean | undefined;
-		tier: number;
-	}): void;
-	sid: string | number | boolean | undefined;
-	tier: number | SetTierObject | undefined;
-	addDependencies(addReqs?: (string | number | boolean)[], selected?: string | number | boolean): void;
-	removeDependencies(addReqs?: (string | number | boolean)[], selected?: string | number | boolean): void;
-	reset(): void;
-}
-
-interface AdvantageInstance extends ActivatableInstance {
-	readonly category: string;
-}
-
-interface DisadvantageInstance extends ActivatableInstance {
-	readonly category: string;
-}
-
-interface SpecialAbilityInstance extends ActivatableInstance {
-	readonly category: string;
-}
-
-interface AttributeInstance extends IncreasableInstance {
-	short: string;
-	value: number;
-	mod: number;
-	readonly ic: number;
-	readonly category: string;
-	dependencies: number[];
-	isIncreasable: boolean;
-	isDecreasable: boolean;
-	reset(): void;
-}
-
-interface CombatTechniqueInstance extends IncreasableInstance {
-	readonly ic: number;
-	readonly gr: number;
-	readonly primary: string[];
-	value: number;
-	readonly category: string;
-	dependencies: number[];
-	at: number;
-	pa: number | string;
-	isIncreasable: boolean;
-	isDecreasable: boolean;
-	reset(): void;
-}
-
-interface SkillInstance extends IncreasableInstance {
-	ic: number;
-	readonly gr: number;
-}
-
-interface LiturgyInstance extends SkillInstance {
-	readonly check: string[];
-	readonly tradition: number[];
-	readonly aspect: number[];
-	active: boolean;
-	readonly category: string;
-	readonly isOwnTradition: boolean;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	reset(): void;
-}
-
-interface SpellInstance extends SkillInstance {
-	readonly check: string[];
-	readonly tradition: number[];
-	readonly property: number[];
-	active: boolean;
-	readonly category: string;
-	readonly isOwnTradition: boolean;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	reset(): void;
-}
-
-interface TalentInstance extends SkillInstance {
-	check: string[];
-	enc: string;
-	spec: string[];
-	spec_input: string | null;
-	readonly category: string;
-	dependencies: number[];
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	readonly isTyp: boolean;
-	readonly isUntyp: boolean;
-	reset(): void;
-}
-
-interface CultureInstance extends CoreInstance {
-	readonly name: string;
-	readonly ap: number;
-	readonly languages: number[];
-	readonly scripts: number[];
-	readonly social: number[];
-	readonly typ_prof: string[];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly typ_talents: string[];
-	readonly untyp_talents: string[];
-	readonly talents: (string | number)[][];
-	readonly category: string;
-}
-
-interface ProfessionInstance extends CoreInstance {
-	readonly subname: string | { m: string, f: string };
-	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-	readonly spells: (string | number)[][];
-	readonly liturgies: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly variants: string[];
-	readonly category: string;
-}
-
-interface ProfessionVariantInstance extends CoreInstance {
-	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-}
-
-interface RaceInstance extends CoreInstance {
-	readonly name: string;
-	readonly ap: number;
-	readonly lp: number;
-	readonly spi: number;
-	readonly tou: number;
-	readonly mov: number;
-	readonly attr: (string | number)[][];
-	readonly attr_sel: [number, string[]];
-	readonly typ_cultures: string[];
-	readonly auto_adv: (string | number)[][];
-	readonly imp_adv: (string | number)[][];
-	readonly imp_dadv: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly haircolors: number[];
-	readonly eyecolors: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
-	readonly category: string;
-}
-
-interface ItemInstance extends CoreInstance {
+interface Item {
+	id: string;
+	name: string;
 	addpenalties: boolean;
 	ammunition: string;
 	at: string;
@@ -245,7 +44,6 @@ interface ItemInstance extends CoreInstance {
 	gr: number;
 	isTemplateLocked: boolean;
 	length: string;
-	name: string;
 	number: string;
 	pa: string;
 	price: string;
@@ -265,7 +63,7 @@ export interface HeroState {
 
 	readonly phase: number;
 
-	readonly ap: AdventurePoints;
+	readonly ap: APState;
 
 	readonly avatar: string;
 
@@ -290,34 +88,12 @@ export interface HeroState {
 	readonly experienceLevels: string[];
 	readonly startExperienceLevel: string;
 
-	readonly racesById: {
-		[id: string]: RaceInstance;
-	};
-	readonly races: string[];
-	readonly currentRace: string | null;
+	readonly races: RaceState;
+	readonly cultures: CultureState;
+	readonly professions: ProfessionState;
+	readonly professionVariants: ProfessionVariantState;
 
-	readonly culturesById: {
-		[id: string]: CultureInstance;
-	};
-	readonly cultures: string[];
-	readonly currentCulture: string | null;
-
-	readonly professionsById: {
-		[id: string]: ProfessionInstance;
-	};
-	readonly professions: string[];
-	readonly currentProfession: string | null;
-
-	readonly professionVariantsById: {
-		[id: string]: ProfessionVariantInstance;
-	};
-	readonly professionVariants: string[];
-	readonly currentProfessionVariants: string | null;
-
-	readonly abilitiesById: {
-		[id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
-	};
-	readonly abilities: string[];
+	readonly abilities: AbilitiesState;
 
 	readonly addEnergies: {
 		lp: number;
@@ -326,12 +102,12 @@ export interface HeroState {
 	};
 
 	readonly itemTemplatesById: {
-		[id: string]: ItemInstance;
+		[id: string]: Item;
 	};
 	readonly itemTemplates: string[];
 
 	readonly itemsById: {
-		[id: string]: ItemInstance;
+		[id: string]: Item;
 	};
 	readonly items: string[];
 
@@ -342,80 +118,97 @@ export interface HeroState {
 }
 
 const initialState = <HeroState>{
-	id: null,
-	name: '',
+	// id: null,
+	// name: '',
 
-	phase: 0,
+	// ap: {
+	// 	spent: 0,
+	// 	total: 0,
+	// 	adv: [0, 0, 0],
+	// 	disadv: [0, 0, 0]
+	// },
 
-	ap: {
-		spent: 0,
-		total: 0,
-		adv: [0, 0, 0],
-		disadv: [0, 0, 0]
-	},
+	// avatar: '',
 
-	avatar: '',
+	// sex: '',
 
-	sex: '',
+	// family: '',
+	// placeofbirth: '',
+	// dateofbirth: '',
+	// age: '',
+	// haircolor: 0,
+	// eyecolor: 0,
+	// size: '',
+	// weight: '',
+	// title: '',
+	// socialstatus: 0,
+	// characteristics: '',
+	// otherinfo: '',
 
-	family: '',
-	placeofbirth: '',
-	dateofbirth: '',
-	age: '',
-	haircolor: 0,
-	eyecolor: 0,
-	size: '',
-	weight: '',
-	title: '',
-	socialstatus: 0,
-	characteristics: '',
-	otherinfo: '',
+	// experienceLevelsById: {},
+	// experienceLevels: [],
+	// startExperienceLevel: 'EL_0',
 
-	experienceLevelsById: {},
-	experienceLevels: [],
-	startExperienceLevel: 'EL_0',
+	// abilitiesById: {},
+	// abilities: [],
 
-	racesById: {},
-	races: [],
-	currentRace: null,
+	// addEnergies: {
+	// 	lp: 0,
+	// 	ae: 0,
+	// 	kp: 0
+	// },
 
-	culturesById: {},
-	cultures: [],
-	currentCulture: null,
+	// itemTemplatesById: {},
+	// itemTemplates: [],
 
-	professionsById: {},
-	professions: [],
-	currentProfession: null,
+	// itemsById: {},
+	// items: [],
 
-	professionVariantsById: {},
-	professionVariants: [],
-	currentProfessionVariants: null,
-
-	abilitiesById: {},
-	abilities: [],
-
-	addEnergies: {
-		lp: 0,
-		ae: 0,
-		kp: 0
-	},
-
-	itemTemplatesById: {},
-	itemTemplates: [],
-
-	itemsById: {},
-	items: [],
-
-	history: {
-		past: [],
-		future: []
-	}
+	// history: {
+	// 	past: [],
+	// 	future: []
+	// }
 };
 
-export default (state = initialState, action: Action) => {
-	if (action.type === ActionTypes.RECEIVE_DATA_TABLES) {
-		return { ...state, ...init(action.payload.data) as HeroState };
-	}
+export default (state: HeroState = initialState, action: any): HeroState => {
+	const validationResult = RequirementsReducer(state, action);
+	return {
+		id: state.id,
+		name: state.name,
+		phase: PhaseReducer(state.phase, action),
+		ap: APReducer(state.ap, action, state, validationResult),
+		avatar: state.avatar,
+		sex: state.sex,
+		family: state.family,
+		placeofbirth: state.placeofbirth,
+		dateofbirth: state.dateofbirth,
+		age: state.age,
+		haircolor: state.haircolor,
+		eyecolor: state.eyecolor,
+		size: state.size,
+		weight: state.weight,
+		title: state.title,
+		socialstatus: state.socialstatus,
+		characteristics: state.characteristics,
+		otherinfo: state.otherinfo,
+		experienceLevelsById: state.experienceLevelsById,
+		experienceLevels: state.experienceLevels,
+		startExperienceLevel: state.startExperienceLevel,
+		races: RaceReducer(state.races, action),
+		cultures: CultureReducer(state.cultures, action),
+		professions: ProfessionReducer(state.professions, action),
+		professionVariants: ProfessionVariantReducer(state.professionVariants, action),
+		abilities: AbilitiesReducer(state.abilities, action, validationResult),
+		addEnergies: state.addEnergies,
+		itemTemplatesById: state.itemTemplatesById,
+		itemTemplates: state.itemTemplates,
+		itemsById: state.itemsById,
+		items: state.items,
+		history: state.history
+	};
+	// if (action.type === ActionTypes.RECEIVE_DATA_TABLES) {
+	// 	return { ...state, ...init(action.payload.data) as HeroState };
+	// }
 	// else if (action.type === ActionTypes.FETCH_CHARACTER_DATA) {
 	// 	_updateAll(payload);
 	// }
@@ -425,69 +218,69 @@ export default (state = initialState, action: Action) => {
 	// else if (action.type === ActionTypes.CLEAR_HERO || action.type === ActionTypes.CREATE_NEW_HERO) {
 	// 	_assignRCP(payload.selections);
 	// }
-	else {
-		// const [ valid, cost, disadv ] = RequirementsReducer(state, action);
-		// switch (action.type) {
-		// 	case ActionTypes.ACTIVATE_SPELL:
-		// 	case ActionTypes.ACTIVATE_LITURGY:
-		// 		if (valid) {
-		// 			_activate(payload.id);
-		// 		}
-		// 		break;
+	// else {
+	// 	const [ valid, cost, disadv ] = RequirementsReducer(state, action);
+	// 	switch (action.type) {
+	// 		case ActionTypes.ACTIVATE_SPELL:
+	// 		case ActionTypes.ACTIVATE_LITURGY:
+	// 			if (valid) {
+	// 				_activate(payload.id);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.DEACTIVATE_SPELL:
-		// 	case ActionTypes.DEACTIVATE_LITURGY:
-		// 		if (valid) {
-		// 			_deactivate(payload.id);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.DEACTIVATE_SPELL:
+	// 		case ActionTypes.DEACTIVATE_LITURGY:
+	// 			if (valid) {
+	// 				_deactivate(payload.id);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.ACTIVATE_DISADV:
-		// 	case ActionTypes.ACTIVATE_SPECIALABILITY:
-		// 		if (valid) {
-		// 			_activateDASA(payload);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.ACTIVATE_DISADV:
+	// 		case ActionTypes.ACTIVATE_SPECIALABILITY:
+	// 			if (valid) {
+	// 				_activateDASA(payload);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.DEACTIVATE_DISADV:
-		// 	case ActionTypes.DEACTIVATE_SPECIALABILITY:
-		// 		if (valid) {
-		// 			_deactivateDASA(payload);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.DEACTIVATE_DISADV:
+	// 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
+	// 			if (valid) {
+	// 				_deactivateDASA(payload);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.UPDATE_DISADV_TIER:
-		// 	case ActionTypes.UPDATE_SPECIALABILITY_TIER:
-		// 		if (valid) {
-		// 			_updateTier(payload.id, payload.tier, payload.sid);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.UPDATE_DISADV_TIER:
+	// 		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+	// 			if (valid) {
+	// 				_updateTier(payload.id, payload.tier, payload.sid);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.ADD_ATTRIBUTE_POINT:
-		// 	case ActionTypes.ADD_TALENT_POINT:
-		// 	case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		// 	case ActionTypes.ADD_SPELL_POINT:
-		// 	case ActionTypes.ADD_LITURGY_POINT:
-		// 		if (valid) {
-		// 			_addPoint(payload.id);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.ADD_ATTRIBUTE_POINT:
+	// 		case ActionTypes.ADD_TALENT_POINT:
+	// 		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+	// 		case ActionTypes.ADD_SPELL_POINT:
+	// 		case ActionTypes.ADD_LITURGY_POINT:
+	// 			if (valid) {
+	// 				_addPoint(payload.id);
+	// 			}
+	// 			break;
 
-		// 	case ActionTypes.ADD_MAX_ENERGY_POINT:
-		// 		break;
+	// 		case ActionTypes.ADD_MAX_ENERGY_POINT:
+	// 			break;
 
-		// 	case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-		// 	case ActionTypes.REMOVE_TALENT_POINT:
-		// 	case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-		// 	case ActionTypes.REMOVE_SPELL_POINT:
-		// 	case ActionTypes.REMOVE_LITURGY_POINT:
-		// 		if (valid) {
-		// 			_removePoint(payload.id);
-		// 		}
-		// 		break;
+	// 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+	// 		case ActionTypes.REMOVE_TALENT_POINT:
+	// 		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+	// 		case ActionTypes.REMOVE_SPELL_POINT:
+	// 		case ActionTypes.REMOVE_LITURGY_POINT:
+	// 			if (valid) {
+	// 				_removePoint(payload.id);
+	// 			}
+	// 			break;
 
-		// 	default:
-				return state;
+	// 		default:
+	// 			return state;
 	// 	}
-	}
+	// }
 }

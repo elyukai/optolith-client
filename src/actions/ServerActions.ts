@@ -1,39 +1,36 @@
-import * as ActionTypes from '../constants/ActionTypes';
-import { RawRace } from '../reducers/RacesReducer';
+import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA } from '../constants/ActionTypes';
 import { Hero } from '../reducers/HerolistReducer';
 
-export interface RawCore {
+export interface RawRace {
 	id: string;
-	name: string | { m: string, f: string };
-}
-
-export interface RawAdvantage extends RawCore {
-	name: string;
-	ap: number | number[] | string;
-	tiers: number | null;
-	max: false | number | null;
-	sel: string[] | [string, number][];
-	input: string;
-	req: any[][];
-}
-
-export interface RawAttribute extends RawCore {
-	name: string;
-	short: string;
-}
-
-export interface RawCombatTechnique extends RawCore {
-	name: string;
-	skt: number;
-	leit: string[];
-	gr: number;
-}
-
-export interface RawCulture extends RawCore {
 	name: string;
 	ap: number;
-	lang: string[];
-	literacy: string[];
+	le: number;
+	sk: number;
+	zk: number;
+	gs: number;
+	attr: number[][];
+	attr_sel: [number, number[]];
+	typ_cultures: string[];
+	auto_adv: string[][];
+	imp_adv: (string | number)[][];
+	imp_dadv: (string | number)[][];
+	typ_adv: string[];
+	typ_dadv: string[];
+	untyp_adv: string[];
+	untyp_dadv: string[];
+	hair: number[];
+	eyes: number[];
+	size: (number | number[])[];
+	weight: (number | number[])[];
+}
+
+export interface RawCulture {
+	id: string;
+	name: string;
+	ap: number;
+	lang: number[];
+	literacy: number[];
 	social: number[];
 	typ_prof: string[];
 	typ_adv: string[];
@@ -45,23 +42,14 @@ export interface RawCulture extends RawCore {
 	talents: [string, number][];
 }
 
-export interface RawDisadvantage extends RawAdvantage {}
-
-export interface RawLiturgy extends RawCore {
-	name: string;
-	check: [string, string, string];
-	skt: number;
-	trad: number[];
-	aspc: number[];
-	gr: number;
-}
-
-export interface RawProfession extends RawCore {
+export interface RawProfession {
+	id: string;
+	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
 	ap: number;
 	pre_req: [string, any][];
 	req: any[][];
-	sel: any[][];
+	sel: (string | string[] | number[])[][];
 	sa: (string | number | boolean)[][];
 	combattech: [string, number][];
 	talents: [string, number][];
@@ -74,7 +62,9 @@ export interface RawProfession extends RawCore {
 	vars: string[];
 }
 
-export interface RawProfessionVariant extends RawCore {
+export interface RawProfessionVariant {
+	id: string;
+	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
 	ap: number;
 	pre_req: [string, any][];
@@ -85,7 +75,45 @@ export interface RawProfessionVariant extends RawCore {
 	talents: [string, number][];
 }
 
-export interface RawSpecialAbility extends RawCore {
+export interface RawAdvantage {
+	id: string;
+	name: string;
+	ap: number | number[] | string;
+	tiers: number | null;
+	max: false | number | null;
+	sel: string[] | [string, number][];
+	input: string;
+	req: any[][];
+}
+
+export interface RawAttribute {
+	id: string;
+	name: string;
+	short: string;
+}
+
+export interface RawCombatTechnique {
+	id: string;
+	name: string;
+	skt: number;
+	leit: string[];
+	gr: number;
+}
+
+export interface RawDisadvantage extends RawAdvantage {}
+
+export interface RawLiturgy {
+	id: string;
+	name: string;
+	check: [number, number, number];
+	skt: number;
+	trad: number[];
+	aspc: number[];
+	gr: number;
+}
+
+export interface RawSpecialAbility {
+	id: string;
 	name: string;
 	ap: number | number[] | string;
 	max: false | number | null;
@@ -95,16 +123,18 @@ export interface RawSpecialAbility extends RawCore {
 	gr: number;
 }
 
-export interface RawSpell extends RawCore {
+export interface RawSpell {
+	id: string;
 	name: string;
-	check: [string, string, string];
+	check: [number, number, number];
 	skt: number;
 	trad: number[];
-	merk: number;
+	merk: number[];
 	gr: number;
 }
 
-export interface RawTalent extends RawCore {
+export interface RawTalent {
+	id: string;
 	name: string;
 	check: [string, string, string];
 	skt: number;
@@ -130,7 +160,7 @@ export interface RawData {
 }
 
 export interface ReceiveDataTablesAction {
-	type: ActionTypes.RECEIVE_DATA_TABLES;
+	type: RECEIVE_DATA_TABLES;
 	payload: {
 		data: RawData;
 		pending?: boolean
@@ -138,7 +168,7 @@ export interface ReceiveDataTablesAction {
 }
 
 export const receiveDataTables = (data: RawData): ReceiveDataTablesAction => ({
-	type: ActionTypes.RECEIVE_DATA_TABLES,
+	type: RECEIVE_DATA_TABLES,
 	payload: {
 		data,
 		pending: false
@@ -146,7 +176,7 @@ export const receiveDataTables = (data: RawData): ReceiveDataTablesAction => ({
 });
 
 export interface ReceiveHeroDataAction {
-	type: ActionTypes.RECEIVE_HERO_DATA;
+	type: RECEIVE_HERO_DATA;
 	payload: {
 		data: Hero;
 		pending?: boolean
@@ -154,7 +184,7 @@ export interface ReceiveHeroDataAction {
 }
 
 export const receiveHeroData = (data: Hero): ReceiveHeroDataAction => ({
-	type: ActionTypes.RECEIVE_HERO_DATA,
+	type: RECEIVE_HERO_DATA,
 	payload: {
 		data,
 		pending: false

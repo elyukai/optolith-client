@@ -59,7 +59,7 @@ export default class Profession extends Core implements ProfessionInstance {
 	readonly untyp_dadv: string[];
 	readonly variants: string[];
 	readonly category: string = Categories.PROFESSIONS;
-	
+
 	constructor({ subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, ...args }: ProfessionArguments) {
 		super(args);
 		this.subname = subname;
@@ -82,7 +82,7 @@ export default class Profession extends Core implements ProfessionInstance {
 		this.talents = fixIDs<number>(talents, 'TAL');
 		this.spells = fixIDs<number>(spells, 'SPELL');
 		this.liturgies = fixIDs<number>(chants, 'LITURGY');
-		
+
 		this.typ_adv = typ_adv.map(e => `ADV_${e}`);
 		this.typ_dadv = typ_dadv.map(e => `DISADV_${e}`);
 		this.untyp_adv = untyp_adv.map(e => `ADV_${e}`);

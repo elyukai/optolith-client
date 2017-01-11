@@ -46,7 +46,8 @@ export default (state = initialState, action: Action): AuthState => {
 				sessionToken: ''
 			};
 
-		// UPDATE_USERNAME
+		case ActionTypes.RECEIVE_NEW_USERNAME:
+			return { ...state, name: action.payload.name};
 
 		default:
 			return state;
