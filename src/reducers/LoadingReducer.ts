@@ -14,18 +14,20 @@ export default (state = initialState, a: Action) => {
 		case ActionTypes.REQUEST_HEROLIST:
 		case ActionTypes.REQUEST_LOGIN:
 		case ActionTypes.REQUEST_LOGOUT:
+		case ActionTypes.REQUEST_NEW_USERNAME:
+		case ActionTypes.REQUEST_HERO_AVATAR:
 		// case ActionTypes.REGISTRATION_SUCCESS:
 		// case ActionTypes.CLEAR_ACCOUNT:
-		// case ActionTypes.UPDATE_USERNAME:
-		// case ActionTypes.CREATE_HERO:
 		// case ActionTypes.SAVE_HERO_SUCCESS:
-		// case ActionTypes.UPDATE_HERO_AVATAR:
 			return true;
 
+		case ActionTypes.RECEIVE_DATA_TABLES:
 		case ActionTypes.RECEIVE_HERO_DATA:
 		case ActionTypes.RECEIVE_HEROLIST:
 		case ActionTypes.RECEIVE_LOGIN:
 		case ActionTypes.RECEIVE_LOGOUT:
+		case ActionTypes.RECEIVE_NEW_USERNAME:
+		case ActionTypes.RECEIVE_HERO_AVATAR:
 			return false;
 
 		default:

@@ -1,15 +1,31 @@
+/// <reference path="../data.d.ts" />
+
 import { ReceiveDataTablesAction } from '../actions/ServerActions';
-import { LoginAction, LogoutAction } from '../actions/AuthActions';
-import ActionTypes from '../constants/ActionTypes';
+import { ReceiveLoginAction, ReceiveLogoutAction } from '../actions/AuthActions';
+import { AddAttributePointAction, RemoveAttributePointAction, AddArcaneEnergyPointAction, AddKarmaPointAction, AddLifePointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
+import * as ActionTypes from '../constants/ActionTypes';
 import { Category } from '../constants/Categories';
-import { AdventurePoints, HeroState } from './HeroReducer';
+import { HeroState } from './HeroReducer';
 
 import { check, checkDisAdvantages, final } from '../utils/iccalc';
 import alert from '../utils/alert';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
-import Categories from '../constants/Categories';
+import * as Categories from '../constants/Categories';
 
-type Action = ReceiveDataTablesAction | LoginAction | LogoutAction;
+type Action = ReceiveDataTablesAction | ReceiveLoginAction | ReceiveLogoutAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction;
+
+interface AdventurePoints {
+	total: number;
+	spent: number;
+	adv: number[];
+	disadv: number[];
+}
 
 export type ValidationResult = [boolean, number, [boolean, 0 | 1 | 2] | undefined] | never[];
 
@@ -77,9 +93,9 @@ export default (state: HeroState, action: Action): ValidationResult => {
 	switch (action.type) {
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.ACTIVATE_LITURGY: {
-			const obj = get(payload.id);
+			const obj = state.abilities.byId[action.payload.id] as Spell | Liturgy;
 			updateOwnRequirements(true);
-			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 				updateCost(1);
 			}
 			else {
@@ -90,9 +106,9 @@ export default (state: HeroState, action: Action): ValidationResult => {
 
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY: {
-			const obj = get(payload.id);
+			const obj = state.abilities.byId[action.payload.id] as Spell | Liturgy;
 			updateOwnRequirements(true);
-			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 				updateCost(-1);
 			}
 			else {
@@ -121,12 +137,12 @@ export default (state: HeroState, action: Action): ValidationResult => {
 			updateCost(-payload.cost);
 			break;
 
-		case ActionTypes.UPDATE_DISADV_TIER:
+		case ActionTypes.SET_DISADV_TIER:
 			updateOwnRequirements(true);
 			updateDisAdvCost(payload.id, payload.cost);
 			break;
 
-		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+		case ActionTypes.SET_SPECIALABILITY_TIER:
 			updateOwnRequirements(true);
 			updateCost(payload.cost);
 			break;
@@ -136,13 +152,15 @@ export default (state: HeroState, action: Action): ValidationResult => {
 		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 		case ActionTypes.ADD_SPELL_POINT:
 		case ActionTypes.ADD_LITURGY_POINT: {
-			const obj = get(payload.id);
+			const obj = state.abilities.byId[action.payload.id];
 			updateOwnRequirements(obj.isIncreasable);
 			updateCost(final(obj.ic, obj.value + 1));
 			break;
 		}
 
-		case ActionTypes.ADD_MAX_ENERGY_POINT: {
+		case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+		case ActionTypes.ADD_KARMA_POINT:
+		case ActionTypes.ADD_LIFE_POINT: {
 			const obj = secondaryAttributes.get(payload.id);
 			updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
 			updateCost(final(4, AttributeStore.getAdd(payload.id) + 1));

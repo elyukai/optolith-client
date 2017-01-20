@@ -1,9 +1,11 @@
+/// <reference path="../raw.d.ts" />
+
 import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA, SELECT_CULTURE, SELECT_PROFESSION, SELECT_RACE } from '../constants/ActionTypes';
 import { PROFESSIONS } from '../constants/Categories';
 import { SelectCultureAction } from '../actions/CultureActions';
 import { SelectProfessionAction } from '../actions/ProfessionActions';
 import { SelectRaceAction } from '../actions/RaceActions';
-import { RawProfession, ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { fixIDs } from '../utils/DataUtils';
 import dice from '../utils/dice';
 

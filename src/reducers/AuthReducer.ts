@@ -1,11 +1,10 @@
 import { ReceiveDataTablesAction } from '../actions/ServerActions';
-import { LoginAction, LogoutAction } from '../actions/AuthActions';
+import { ReceiveLoginAction, ReceiveLogoutAction, ReceiveNewUsernameAction, ReceiveUserDeletionAction } from '../actions/AuthActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = ReceiveDataTablesAction | LoginAction | LogoutAction;
+type Action = ReceiveDataTablesAction | ReceiveNewUsernameAction | ReceiveLoginAction | ReceiveLogoutAction | ReceiveUserDeletionAction;
 
 export interface AuthState {
-	readonly loggedIn: boolean;
 	readonly name: string;
 	readonly displayName: string;
 	readonly email: string;
@@ -13,7 +12,6 @@ export interface AuthState {
 }
 
 const initialState = <AuthState>{
-	loggedIn: false,
 	name: '',
 	displayName: '',
 	email: '',
@@ -25,7 +23,6 @@ export default (state = initialState, action: Action): AuthState => {
 		// Only for test purpose:
 		case ActionTypes.RECEIVE_DATA_TABLES:
 			return {
-				loggedIn: true,
 				name: 'Elytherion',
 				displayName: 'Obi',
 				email: 'lukas.obermann@live.de',
@@ -34,12 +31,12 @@ export default (state = initialState, action: Action): AuthState => {
 
 		case ActionTypes.RECEIVE_LOGIN: {
 			const { name, displayName, email, sessionToken } = action.payload;
-			return { name, displayName, email, sessionToken, loggedIn: true };
+			return { name, displayName, email, sessionToken };
 		}
 
 		case ActionTypes.RECEIVE_LOGOUT:
+		case ActionTypes.RECEIVE_USER_DELETION:
 			return {
-				loggedIn: false,
 				name: '',
 				displayName: '',
 				email: '',
@@ -47,7 +44,7 @@ export default (state = initialState, action: Action): AuthState => {
 			};
 
 		case ActionTypes.RECEIVE_NEW_USERNAME:
-			return { ...state, name: action.payload.name};
+			return { ...state, name: action.payload.name };
 
 		default:
 			return state;

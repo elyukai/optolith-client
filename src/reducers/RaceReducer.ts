@@ -1,6 +1,8 @@
+/// <reference path="../raw.d.ts" />
+
 import { fixIDs } from '../utils/DataUtils';
 import { RACES } from '../constants/Categories';
-import { RawRace, ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA, SELECT_RACE } from '../constants/ActionTypes';
 import { SelectRaceAction } from '../actions/RaceActions';
 import dice from '../utils/dice';
@@ -56,7 +58,7 @@ export const rerollSize = (current: Race) => {
 	return (base as number) + arr.map(e => dice(e)).reduce((a,b) => a + b, 0);
 }
 
-export const rerollWeight = (current: Race, size: number) => {
+export const rerollWeight = (current: Race, size: number = rerollSize(current)) => {
 	const { id, weight } = current;
 	const [ base, ...dices ] = weight;
 	let arr: number[] = [];
@@ -64,7 +66,6 @@ export const rerollWeight = (current: Race, size: number) => {
 		let elements = Array.from({ length: e[0] }, () => e[1]);
 		arr.push(...elements);
 	});
-	size = size || rerollSize(current);
 	let add = ['R_1','R_2','R_3','R_4','R_5','R_6','R_7'].includes(id) ?
 		arr.map(e => {
 			let result = dice(Math.abs(e));

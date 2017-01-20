@@ -1,6 +1,8 @@
+/// <reference path="../raw.d.ts" />
+
 import { CULTURES } from '../constants/Categories';
 import { fixIDs } from '../utils/DataUtils';
-import { RawCulture, ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { RECEIVE_DATA_TABLES, RECEIVE_HERO_DATA, SELECT_CULTURE, SELECT_RACE } from '../constants/ActionTypes';
 import { SelectCultureAction } from '../actions/CultureActions';
 import { SelectRaceAction } from '../actions/RaceActions';

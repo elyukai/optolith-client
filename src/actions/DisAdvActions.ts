@@ -1,11 +1,19 @@
 import { ACTIVATE_DISADV, DEACTIVATE_DISADV, SET_DISADV_TIER, SWITCH_DISADV_RATING_VISIBILITY } from '../constants/ActionTypes';
 
-export interface ActivateDisAdvAction {
-    type: ACTIVATE_DISADV;
-    payload: {};
+interface ActivateArgs {
+    id: string;
+    sel?: string | number;
+    sel2?: string | number;
+    input?: string;
+    tier?: number
 }
 
-export const addToList = (args: {}): ActivateDisAdvAction => ({
+export interface ActivateDisAdvAction {
+    type: ACTIVATE_DISADV;
+    payload: ActivateArgs;
+}
+
+export const addToList = (args: ActivateArgs): ActivateDisAdvAction => ({
     type: ACTIVATE_DISADV,
     payload: args
 });

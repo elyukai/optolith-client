@@ -1,13 +1,24 @@
+/// <reference path="../data.d.ts" />
+
 import * as ActionTypes from '../constants/ActionTypes';
+import { CreateHeroAction } from '../actions/HerolistActions';
 import { HeroState } from './HeroReducer';
 import { ReceiveHeroDataAction } from '../actions/ServerActions';
 import { SelectCultureAction } from '../actions/CultureActions';
-import { SelectProfessionAction } from '../actions/ProfessionActions';
+import { SelectProfessionAction, SetSelectionsAction } from '../actions/ProfessionActions';
 import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActions';
 import { SelectRaceAction } from '../actions/RaceActions';
+import { AddAttributePointAction, RemoveAttributePointAction, AddArcaneEnergyPointAction, AddKarmaPointAction, AddLifePointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
+import { AddAdventurePointsAction } from '../actions/ProfileActions';
 import { ValidationResult } from './RequirementsReducer';
 
-type Action = ReceiveHeroDataAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SelectRaceAction;
+type Action = ReceiveHeroDataAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SelectRaceAction | CreateHeroAction | SetSelectionsAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | AddAdventurePointsAction;
 
 export type APState = {
 	total: number;
@@ -72,7 +83,7 @@ export default (state: APState = initialState, action: Action, hero: HeroState, 
 
 			if (action.payload.selections.buyLiteracy) {
 				let id = culture.scripts.length > 1 ? action.payload.selections.litc : culture.scripts[0];
-				spent += hero.abilities.byId['SA_28'].sel[id - 1][2];
+				spent += (hero.abilities.byId['SA_28'] as SpecialAbility).sel[id - 1][2] as number;
 			}
 
 			if (hero.professions.currentId !== null && hero.professions.currentId !== 'P_0') {
@@ -137,7 +148,7 @@ export default (state: APState = initialState, action: Action, hero: HeroState, 
 			return state;
 
 		case ActionTypes.ADD_ADVENTURE_POINTS:
-			return { ...state, total: state.total + action.payload.value };
+			return { ...state, total: state.total + action.payload.amount };
 
 		default:
 			return state;

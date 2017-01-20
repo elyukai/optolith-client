@@ -1,11 +1,14 @@
 import { RECEIVE_HERO_DATA, CREATE_HERO, ASSIGN_RCP_OPTIONS, END_HERO_CREATION } from '../constants/ActionTypes';
+import { CreateHeroAction } from '../actions/HerolistActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { EndHeroCreationAction } from '../actions/ProfileActions';
 import { ReceiveHeroDataAction } from '../actions/ServerActions';
 
-type Action = ReceiveHeroDataAction;
+type Action = ReceiveHeroDataAction | CreateHeroAction | EndHeroCreationAction | SetSelectionsAction;
 
 export type PhaseState = number;
 
-const initialState: number = 0;
+const initialState: PhaseState = 0;
 
 export default (state: PhaseState = initialState, action: Action): PhaseState => {
 	switch (action.type) {

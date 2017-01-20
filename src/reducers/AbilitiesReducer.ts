@@ -1,7 +1,17 @@
+/// <reference path="../data.d.ts" />
+
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
+import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import { ValidationResult } from './RequirementsReducer';
+import { getPrimaryAttrID } from '../utils/AbilityUtils';
 import RaceReducer, { RaceState } from './RaceReducer';
 import CultureReducer, { CultureState } from './CultureReducer';
 import ProfessionReducer, { ProfessionState } from './ProfessionReducer';
@@ -9,146 +19,7 @@ import ProfessionVariantReducer, { ProfessionVariantState } from './ProfessionVa
 import rinit from '../utils/rinit';
 import RequirementsReducer from './RequirementsReducer';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction;
-
-interface Core {
-	readonly id: string;
-	readonly name: string | { m: string, f: string };
-}
-
-interface Dependent extends Core {
-	readonly name: string;
-	dependencies: (string | number | boolean)[];
-	// addDependency(dependency: string | number | boolean): void;
-	// removeDependency(dependency: string | number | boolean): boolean;
-}
-
-interface Increasable extends Dependent {
-	value: number;
-	// set(value: number): void;
-	// add(value: number): void;
-	// remove(value: number): void;
-	// addPoint(): void;
-	// removePoint(): void;
-}
-
-interface SetTierObject {
-	sid: string | number | boolean,
-	tier: number
-}
-
-interface Activatable extends Dependent {
-	readonly cost: string | number | number[];
-	readonly input: string | null;
-	readonly max: number | false | null;
-	readonly reqs: (string | number | boolean)[][];
-	readonly tiers?: number | null;
-	active: boolean | (string | number | boolean | (string | number | boolean)[])[];
-	// readonly isMultiselect: boolean;
-	// readonly isActive: boolean;
-	// readonly isActivatable: boolean;
-	// readonly isDeactivatable: boolean;
-	// activate(options: {
-	// 	sel: string | number;
-	// 	sel2: string | number;
-	// 	input: string;
-	// 	tier: number;
-	// }): void;
-	// deactivate(options: {
-	// 	sid: string | number | boolean | undefined;
-	// 	tier: number;
-	// }): void;
-	// sid: string | number | boolean | undefined;
-	// tier: number | SetTierObject | undefined;
-	// addDependencies(addReqs?: (string | number | boolean)[], selected?: string | number | boolean): void;
-	// removeDependencies(addReqs?: (string | number | boolean)[], selected?: string | number | boolean): void;
-	// reset(): void;
-}
-
-export interface Advantage extends Activatable {
-	sel: (string | number | boolean)[][];
-	readonly category: Categories.ADVANTAGES;
-}
-
-export interface Disadvantage extends Activatable {
-	sel: (string | number | boolean)[][];
-	readonly category: Categories.DISADVANTAGES;
-}
-
-export interface SpecialAbility extends Activatable {
-	sel: (string | number | boolean | [string, number][] | null)[][];
-	readonly gr: number;
-	readonly category: Categories.SPECIAL_ABILITIES;
-}
-
-export interface Attribute extends Increasable {
-	short: string;
-	value: number;
-	mod: number;
-	readonly ic: number;
-	readonly category: Categories.ATTRIBUTES;
-	dependencies: number[];
-	// isIncreasable: boolean;
-	// isDecreasable: boolean;
-	// reset(): void;
-}
-
-export interface CombatTechnique extends Increasable {
-	readonly ic: number;
-	readonly gr: number;
-	readonly primary: string[];
-	value: number;
-	readonly category: Categories.COMBAT_TECHNIQUES;
-	dependencies: number[];
-	// at: number;
-	// pa: number | string;
-	// isIncreasable: boolean;
-	// isDecreasable: boolean;
-	// reset(): void;
-}
-
-interface Skill extends Increasable {
-	ic: number;
-	readonly gr: number;
-}
-
-export interface Liturgy extends Skill {
-	readonly check: string[];
-	readonly tradition: number[];
-	readonly aspect: number[];
-	active: boolean;
-	readonly category: Categories.LITURGIES;
-	// readonly isOwnTradition: boolean;
-	// readonly isIncreasable: boolean;
-	// readonly isDecreasable: boolean;
-	// reset(): void;
-}
-
-export interface Spell extends Skill {
-	readonly check: string[];
-	readonly tradition: number[];
-	readonly property: number[];
-	active: boolean;
-	readonly category: Categories.SPELLS;
-	// readonly isOwnTradition: boolean;
-	// readonly isIncreasable: boolean;
-	// readonly isDecreasable: boolean;
-	// reset(): void;
-}
-
-export interface Talent extends Skill {
-	check: string[];
-	enc: string;
-	spec: string[];
-	spec_input: string | null;
-	readonly category: Categories.TALENTS;
-	dependencies: number[];
-	// readonly isIncreasable: boolean;
-	// readonly isDecreasable: boolean;
-	// readonly isTyp: boolean;
-	// readonly isUntyp: boolean;
-	// reset(): void;
-}
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
 
 export interface AbilitiesState {
 	readonly byId: {
@@ -164,6 +35,8 @@ export interface AbilitiesState {
 	readonly talents: string[];
 }
 
+type IncreasableType = Attribute | CombatTechnique | Liturgy | Spell | Talent;
+
 const initialState = <AbilitiesState>{};
 
 export default (state: AbilitiesState = initialState, action: Action, valid: ValidationResult): AbilitiesState => {
@@ -174,42 +47,295 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 		}
 
 		case ActionTypes.RECEIVE_HERO_DATA:
-			return { ...state };
+			return state;
 
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.ACTIVATE_LITURGY:
 			if (valid) {
-				_activate(payload.id);
+				const id = action.payload.id;
+				return { ...state, byId: { ...state.byId, [id]: { ...state.byId[id], active: true }}};
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY:
 			if (valid) {
-				_deactivate(payload.id);
+				const id = action.payload.id;
+				return { ...state, byId: { ...state.byId, [id]: { ...state.byId[id], active: false }}};
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.ACTIVATE_DISADV:
 		case ActionTypes.ACTIVATE_SPECIALABILITY:
 			if (valid) {
-				_activateDASA(payload);
+				const { id, sel, sel2, input, tier } = action.payload;
+				const obj = { ...state.byId[id] } as Advantage | Disadvantage | SpecialAbility;
+				const adds = [];
+				const newState: { [id: string]: Advantage | Disadvantage | SpecialAbility } = {};
+				let new_sid: string | number;
+				if (Array.isArray(obj.active)) {
+					switch (id) {
+						case 'ADV_4':
+						case 'ADV_16':
+						case 'DISADV_48':
+							(obj.active as string[]).push(sel as string);
+							new_sid = sel as string;
+							break;
+						case 'DISADV_1':
+						case 'DISADV_34':
+						case 'DISADV_50':
+							if (input === '') {
+								obj.active.push([sel as number, tier as number]);
+							}
+							else if (!obj.active.includes(input as string)) {
+								obj.active.push([input as string, tier as number]);
+							}
+							break;
+						case 'DISADV_33':
+							if ([7,8].includes(sel as number) && input !== '') {
+								if (!obj.active.includes(input as string)) {
+									obj.active.push([sel as number, input as string]);
+								}
+							} else {
+								obj.active.push(sel as number);
+							}
+							break;
+						case 'DISADV_36':
+							if (input === '') {
+								obj.active.push(sel as number);
+							}
+							else if (obj.active.filter(e => e === input).length === 0) {
+								obj.active.push(input as string);
+							}
+							break;
+						case 'SA_10':
+							if (!input) {
+								obj.active.push([sel as string, sel2 as number]);
+								adds.push([sel, obj.active.filter((e: (string | number | boolean)[]) => e[0] === sel).length * 6] as [string, number, undefined]);
+							} else if (obj.active.filter((e: (string | number | boolean)[]) => e[0] === input).length === 0) {
+								obj.active.push([sel as string, input]);
+								adds.push([sel, obj.active.filter((e: (string | number | boolean)[]) => e[0] === sel).length * 6] as [string, number, undefined]);
+							}
+							break;
+						case 'SA_30':
+							obj.active.push([sel as number, tier as number]);
+							break;
+						default:
+							if (sel)
+								obj.active.push(sel);
+							else if (input && obj.active.filter(e => e === input).length === 0)
+								obj.active.push(input);
+							break;
+					}
+				} else {
+					if (tier) {
+						newState[id] = { ...obj, active: true, tier };
+					}
+					if (sel) {
+						if (obj.input && input) {
+							newState[id] = { ...obj, active: true, sid: input };
+						} else {
+							newState[id] = { ...obj, active: true, sid: sel };
+						}
+					}
+				}
+				const reqObjects = obj.reqs.concat(adds).map((req: [string, string | number | boolean, string | number | boolean | undefined]) => {
+					let id = req[0];
+					const value = req[1];
+					const option = req[2];
+					if (id === 'auto_req' || option === 'TAL_GR_2') {
+						return;
+					}
+					if (id === 'ATTR_PRIMARY') {
+						id = getPrimaryAttrID(option as 1 | 2);
+						return { ...state.byId[id], dependencies: [ ...state.byId[id].dependencies, value ] };
+					}
+					else {
+						let sid;
+						if (typeof option !== 'undefined') {
+							if (typeof option !== 'number' && (typeof option === 'boolean' || Number.isNaN(parseInt(option)))) {
+								if (option === 'sel') {
+									sid = new_sid;
+								} else {
+									sid = option;
+								}
+							} else {
+								sid = typeof option === 'number' ? option : parseInt(option);
+							}
+						} else {
+							sid = value;
+						}
+						return { ...state.byId[id], sid, dependencies: [ ...state.byId[id].dependencies, value ] };
+					}
+				});
+
+				// addDependencies(adds = [], sel) {
+				// 	[].concat(this.reqs, adds).forEach(req => {
+				// 		let [ id, value, option ] = req;
+				// 		if (id === 'auto_req' || option === 'TAL_GR_2') {
+				// 			return;
+				// 		}
+				// 		if (id === 'ATTR_PRIMARY') {
+				// 			id = getPrimaryAttrID(option);
+				// 			get(id).addDependency(value);
+				// 		}
+				// 		else {
+				// 			let sid;
+				// 			if (typeof option !== 'undefined') {
+				// 				if (Number.isNaN(parseInt(option))) {
+				// 					if (option === 'sel') {
+				// 						sid = sel;
+				// 					} else {
+				// 						sid = option;
+				// 					}
+				// 				} else {
+				// 					sid = parseInt(option);
+				// 				}
+				// 			} else {
+				// 				sid = value;
+				// 			}
+				// 			get(id).addDependency(sid);
+				// 		}
+				// 	});
+				// }
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.DEACTIVATE_DISADV:
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			if (valid) {
-				_deactivateDASA(payload);
+
+				deactivate({ sid, tier }) {
+					const adds = [];
+					let old_sid;
+					if (Array.isArray(this.active)) {
+						switch (this.id) {
+							case 'ADV_4':
+							case 'ADV_16':
+							case 'DISADV_48':
+								this.active.splice(this.active.indexOf(sid), 1);
+								old_sid = sid;
+								break;
+							case 'ADV_28':
+							case 'ADV_29':
+								if (typeof sid === 'number')
+									this.active.splice(this.active.indexOf(sid), 1);
+								else
+									this.active = this.active.filter(e => e[0] !== sid);
+								break;
+							case 'DISADV_1':
+							case 'DISADV_34':
+							case 'DISADV_50':
+								this.active = this.active.filter(e => e[0] !== sid);
+								break;
+							case 'DISADV_33':
+								if (typeof sid === 'string') {
+									const rawArr: string[] = sid.split('&');
+									const arr: [number | string] = [parseInt(rawArr.shift()), rawArr.join('&')];
+									for (let i = 0; i < this.active.length; i++) {
+										if (this.active[i][0] === arr[0] && this.active[i][1] === arr[1]) {
+											this.active.splice(i, 1);
+											break;
+										}
+									}
+								} else {
+									this.active.splice(this.active.indexOf(sid), 1);
+								}
+								break;
+							case 'SA_10': {
+								let arr = sid.split('&');
+								arr = [arr.shift(), arr.join('&')];
+								for (let i = 0; i < this.active.length; i++) {
+									if (this.active[i][0] === arr[0] && (this.active[i][1] === arr[1] || this.active[i][1] === parseInt(arr[1]))) {
+										adds.push([arr[0], this.active.filter(e => e[0] === arr[0]).length * 6]);
+										this.active.splice(i, 1);
+										break;
+									}
+								}
+								break;
+							}
+							case 'SA_30':
+								this.active = this.active.filter(e => e[0] !== sid);
+								break;
+							default:
+								if (sid)
+									this.active.splice(this.active.indexOf(sid), 1);
+								break;
+						}
+					} else {
+						this.active = false;
+						if (tier) {
+							delete this.tier;
+						}
+						if (this.sid) {
+							delete this.sid;
+						}
+					}
+					this.removeDependencies(adds, old_sid);
+				}
+
+
+				removeDependencies(adds = [], sel) {
+					[].concat(this.reqs, adds).forEach(req => {
+						let [ id, value, option ] = req;
+						if (id === 'auto_req' || option === 'TAL_GR_2') {
+							return;
+						}
+						if (id === 'ATTR_PRIMARY') {
+							id = getPrimaryAttrID(option);
+							get(id).removeDependency(value);
+						}
+						else {
+							let sid;
+							if (typeof option !== 'undefined') {
+								if (Number.isNaN(parseInt(option))) {
+									if (option === 'sel') {
+										sid = sel;
+									} else {
+										sid = option;
+									}
+								} else {
+									sid = parseInt(option);
+								}
+							} else {
+								sid = value;
+							}
+							get(id).removeDependency(sid);
+						}
+					});
+				}
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.SET_DISADV_TIER:
 		case ActionTypes.SET_SPECIALABILITY_TIER:
 			if (valid) {
-				_updateTier(payload.id, payload.tier, payload.sid);
+				const id = action.payload.id;
+				const sid = action.payload.sid;
+				const tier = action.payload.tier;
+				const ability = state.byId[id] as Disadvantage | SpecialAbility;
+				if (sid) {
+					switch (id) {
+						case 'DISADV_1':
+						case 'SA_30':
+							return { ...state, byId: { ...state.byId, [id]: { ...ability, active: [
+								...(ability.active as (string | number | boolean)[][]).map(e => {
+									if (e[0] === sid) {
+										return e.splice(1, 1, tier);
+									}
+									return e;
+								})
+							]}}};
+
+						default:
+							return { ...state, byId: { ...state.byId, [id]: { ...ability, tier }}};
+					}
+				}
+				else {
+					return { ...state, byId: { ...state.byId, [id]: { ...ability, tier }}};
+				}
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 		case ActionTypes.ADD_TALENT_POINT:
@@ -217,9 +343,10 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 		case ActionTypes.ADD_SPELL_POINT:
 		case ActionTypes.ADD_LITURGY_POINT:
 			if (valid) {
-				_addPoint(payload.id);
+				const id = action.payload.id;
+				return { ...state, byId: { ...state.byId, [id]: { ...state.byId[id], value: (state.byId[id] as IncreasableType).value + 1 }}};
 			}
-			return { ...state };
+			return state;
 
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 		case ActionTypes.REMOVE_TALENT_POINT:
@@ -227,9 +354,10 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 		case ActionTypes.REMOVE_SPELL_POINT:
 		case ActionTypes.REMOVE_LITURGY_POINT:
 			if (valid) {
-				_removePoint(payload.id);
+				const id = action.payload.id;
+				return { ...state, byId: { ...state.byId, [id]: { ...state.byId[id], value: (state.byId[id] as IncreasableType).value - 1 }}};
 			}
-			return { ...state };
+			return state;
 
 		default:
 			return state;
@@ -245,13 +373,5 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 	// }
 	// else if (action.type === ActionTypes.CLEAR_HERO || action.type === ActionTypes.CREATE_NEW_HERO) {
 	// 	_assignRCP(payload.selections);
-	// }
-	// else {
-	// 	const [ valid, cost, disadv ] = RequirementsReducer(state, action);
-	// 	switch (action.type) {
-
-	// 		default:
-	// 			return state;
-	// 	}
 	// }
 }

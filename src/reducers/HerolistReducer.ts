@@ -1,9 +1,9 @@
 import { ReceiveDataTablesAction } from '../actions/ServerActions';
-import { LoginAction, LogoutAction } from '../actions/AuthActions';
+import { ReceiveLoginAction, ReceiveLogoutAction } from '../actions/AuthActions';
 import { ReceiveHerolistAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = ReceiveDataTablesAction | LoginAction | LogoutAction | ReceiveHerolistAction;
+type Action = ReceiveDataTablesAction | ReceiveLoginAction | ReceiveLogoutAction | ReceiveHerolistAction;
 
 interface AdventurePoints {
 	readonly total: number;
@@ -27,7 +27,7 @@ export interface Hero {
 	readonly c: string;
 	readonly p: string;
 	readonly pv: string | null;
-	readonly sex: string;
+	readonly sex: 'm' | 'f';
 }
 
 interface User {

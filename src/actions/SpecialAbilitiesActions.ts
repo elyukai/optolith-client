@@ -1,26 +1,34 @@
 import { ACTIVATE_SPECIALABILITY, DEACTIVATE_SPECIALABILITY, SET_SPECIALABILITY_TIER, SET_SPECIALABILITIES_SORT_ORDER } from '../constants/ActionTypes';
 
-export interface ActivateDisAdvAction {
-    type: ACTIVATE_SPECIALABILITY;
-    payload: {};
+interface ActivateArgs {
+    id: string;
+    sel?: string | number;
+    sel2?: string | number;
+    input?: string;
+    tier?: number
 }
 
-export const addToList = (args: {}): ActivateDisAdvAction => ({
+export interface ActivateSpecialAbilityAction {
+    type: ACTIVATE_SPECIALABILITY;
+    payload: ActivateArgs;
+}
+
+export const addToList = (args: ActivateArgs): ActivateSpecialAbilityAction => ({
     type: ACTIVATE_SPECIALABILITY,
     payload: args
 });
 
-export interface DeactivateDisAdvPointAction {
+export interface DeactivateSpecialAbilityPointAction {
     type: DEACTIVATE_SPECIALABILITY;
     payload: {};
 }
 
-export const removeFromList = (args: {}): DeactivateDisAdvPointAction => ({
+export const removeFromList = (args: {}): DeactivateSpecialAbilityPointAction => ({
     type: DEACTIVATE_SPECIALABILITY,
     payload: args
 });
 
-export interface SetDisAdvTierAction {
+export interface SetSpecialAbilityTierAction {
     type: SET_SPECIALABILITY_TIER;
     payload: {
         id: string;
@@ -30,7 +38,7 @@ export interface SetDisAdvTierAction {
     };
 }
 
-export const setTier = (id: string, tier: number, cost: number, sid: number | string): SetDisAdvTierAction => ({
+export const setTier = (id: string, tier: number, cost: number, sid: number | string): SetSpecialAbilityTierAction => ({
     type: SET_SPECIALABILITY_TIER,
     payload: {
         id,

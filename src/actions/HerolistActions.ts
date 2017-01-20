@@ -1,4 +1,4 @@
-import { RECEIVE_HEROLIST, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER } from '../constants/ActionTypes';
+import { CREATE_HERO, RECEIVE_HEROLIST, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER } from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 interface RawHero {
@@ -72,5 +72,23 @@ export const receiveHerolist = (heroes: RawHerolist): ReceiveHerolistAction => (
 	type: RECEIVE_HEROLIST,
 	payload: {
 		heroes
+	}
+});
+
+export interface CreateHeroAction {
+	type: CREATE_HERO;
+	payload: {
+		name: string;
+		sex: 'm' | 'f';
+		el: string;
+	};
+}
+
+export const createHero = (name: string, sex: 'm' | 'f', el: string): CreateHeroAction => ({
+	type: CREATE_HERO,
+	payload: {
+		name,
+		sex,
+		el
 	}
 });
