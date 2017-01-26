@@ -1,4 +1,5 @@
 import AttributeStore from '../stores/AttributeStore';
+import RaceStore from '../stores/RaceStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 
 export interface SecondaryAttribute {
@@ -14,12 +15,14 @@ export interface SecondaryAttribute {
 	currentAdd?: number;
 }
 
-const baseValues = () => AttributeStore.getBaseValues();
+type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
+
+const addEnergies = () => AttributeStore.getAddEnergies();
 
 export const getLP = (): SecondaryAttribute => {
-	let base = baseValues().le + get('CON').value * 2;
+	let base = RaceStore.getCurrent().le + get('CON').value * 2;
 	let mod = 0;
-	let add = baseValues().leAdd;
+	let add = addEnergies().le;
 	let value;
 	if (get('ADV_25').active) {
 		mod += get('ADV_25').tier;
@@ -45,7 +48,7 @@ export const getAE = (): SecondaryAttribute => {
 	let primary = getPrimaryAttrID(1);
 	let base = 0;
 	let mod = 0;
-	let add = baseValues().aeAdd;
+	let add = addEnergies().ae;
 	let value: string | number = '-';
 	if (primary !== 'ATTR_0') {
 		base = 20 + get(primary).value;
@@ -75,7 +78,7 @@ export const getKP = (): SecondaryAttribute => {
 	let primary = getPrimaryAttrID(2);
 	let base = 0;
 	let mod = 0;
-	let add = baseValues().keAdd;
+	let add = addEnergies().ke;
 	let value: string | number = '-';
 	if (primary !== 'ATTR_0') {
 		base = 20 + get(primary).value;
@@ -102,7 +105,7 @@ export const getKP = (): SecondaryAttribute => {
 };
 
 export const getSPI = (): SecondaryAttribute => {
-	let base = baseValues().sk + Math.round((get('COU').value + get('SGC').value + get('INT').value) / 6);
+	let base = RaceStore.getCurrent().sk + Math.round((get('COU').value + get('SGC').value + get('INT').value) / 6);
 	let mod = 0;
 	let value;
 	if (get('ADV_26').active) {
@@ -124,7 +127,7 @@ export const getSPI = (): SecondaryAttribute => {
 };
 
 export const getTOU = (): SecondaryAttribute => {
-	let base = baseValues().zk + Math.round((get('CON').value * 2 + get('STR').value) / 6);
+	let base = RaceStore.getCurrent().zk + Math.round((get('CON').value * 2 + get('STR').value) / 6);
 	let mod = 0;
 	let value;
 	if (get('ADV_27').active) {
@@ -162,7 +165,7 @@ export const getINI = (): SecondaryAttribute => ({
 });
 
 export const getMOV = (): SecondaryAttribute => {
-	let value = baseValues().gs;
+	let value = RaceStore.getCurrent().gs;
 	if (get('DISADV_51').active.includes(3)) {
 		value = Math.round(value / 2);
 	}
@@ -175,7 +178,7 @@ export const getMOV = (): SecondaryAttribute => {
 	};
 };
 
-const _get = (id: string): SecondaryAttribute => {
+const _get = (id: ids): SecondaryAttribute => {
 	switch (id) {
 		case 'LP':
 			return getLP();

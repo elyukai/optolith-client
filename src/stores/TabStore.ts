@@ -1,22 +1,23 @@
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import ActionTypes from '../constants/ActionTypes';
 import AuthStore from './AuthStore';
+import Store from './Store';
 
-var _currentTab = 'herolist';
-var _currentSection = 'main';
+let _currentTab = 'herolist';
+let _currentSection = 'main';
 
-function _updateTab(tab) {
+function _updateTab(tab: string) {
 	_currentTab = tab;
 }
 
-function _updateSection(section, tab) {
+function _updateSection(section: 'main' | 'hero' | 'group', tab?: string) {
 	const before = _currentSection;
 
 	_currentSection = section;
 
-	if (tab)
+	if (tab) {
 		_updateTab(tab);
+	}
 	else switch (section) {
 		case 'main':
 			if (before === 'hero') {
@@ -38,7 +39,7 @@ function _updateSection(section, tab) {
 	}
 }
 
-class _TabStore extends Store {
+class TabStoreStatic extends Store {
 
 	getAll() {
 		return {
@@ -57,42 +58,37 @@ class _TabStore extends Store {
 
 }
 
-const TabStore = new _TabStore();
-
-TabStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.SHOW_TAB:
-			_updateTab(payload.tab);
+const TabStore = new TabStoreStatic(action => {
+	switch( action.type ) {
+		case ActionTypes.SET_TAB:
+			_updateTab(action.tab);
 			break;
 
-		case ActionTypes.SHOW_TAB_SECTION:
-			_updateSection(payload.section);
+		case ActionTypes.SET_SECTION:
+			_updateSection(action.section);
 			break;
 
-		case ActionTypes.REGISTRATION_SUCCESS:
+		case ActionTypes.RECEIVE_REGISTRATION:
 			_updateTab('confirmRegistration');
 			break;
 
-		case ActionTypes.LOGOUT_SUCCESS:
-		case ActionTypes.CLEAR_HERO:
+		case ActionTypes.RECEIVE_LOGOUT:
 			_updateTab('home');
 			break;
 
-		case ActionTypes.CREATE_NEW_HERO:
+		case ActionTypes.CREATE_HERO:
 			_updateSection('hero', 'rcp');
 			break;
 
-		case ActionTypes.RECEIVE_HERO:
+		case ActionTypes.RECEIVE_HERO_DATA:
 			_updateSection('hero', 'profile');
 			break;
 
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
+		case ActionTypes.ASSIGN_RCP_OPTIONS:
 			_updateTab('attributes');
 			break;
 
-		case ActionTypes.CLEAR_ACCOUNT:
+		case ActionTypes.RECEIVE_USER_DELETION:
 			_updateTab('login');
 			break;
 
@@ -101,9 +97,7 @@ TabStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	TabStore.emitChange();
-
 	return true;
-
 });
 
 export default TabStore;

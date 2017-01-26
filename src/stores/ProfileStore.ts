@@ -1,6 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import { Race } from '../utils/DataUtils';
 import RaceStore from './RaceStore';
 

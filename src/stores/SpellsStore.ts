@@ -1,33 +1,31 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import ELStore from './ELStore';
 import { get, getAllByCategory } from './ListStore';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import ELStore from './ELStore';
 import PhaseStore from './PhaseStore';
-import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
+import Store from './Store';
 
 const CATEGORY = Categories.SPELLS;
 
-var _filterText = '';
-var _sortOrder = 'name';
+let _sortOrder = 'name';
 
-function _updateFilterText(text) {
-	_filterText = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-class _SpellsStore extends Store {
+class SpellsStoreStatic extends Store {
+
+	getAll() {
+		return getAllByCategory(CATEGORY) as Spell[];
+	}
 
 	getForSave() {
-		var all = getAllByCategory(CATEGORY);
-		var result = new Map();
-		all.forEach(e => {
-			let { active, id, fw } = e;
+		const result = new Map();
+		this.getAll().forEach(e => {
+			let { active, id, value } = e;
 			if (active) {
-				result.set(id, fw);
+				result.set(id, value);
 			}
 		});
 		return {
@@ -35,35 +33,28 @@ class _SpellsStore extends Store {
 		};
 	}
 
-	get(id) {
-		return get(id);
-	}
-
 	getPropertyCounter() {
-		return getAllByCategory(CATEGORY).filter(e => e.value >= 10).reduce((a,b) => {
+		return this.getAll().filter(e => e.value >= 10).reduce((a,b) => {
 			if (!a.has(b.property)) {
 				a.set(b.property, 1);
 			} else {
 				a.set(b.property, a.get(b.property) + 1);
 			}
+			return a;
 		}, new Map());
-	}
-
-	getAll() {
-		return getAllByCategory(CATEGORY);
 	}
 
 	areMaxUnfamiliar() {
 		const phase = PhaseStore.get() < 3;
-		const max = ELStore.getStart().max_unfamiliar_spells;
-		const SA_86 = get('SA_86');
+		const max = ELStore.getStart().maxUnfamiliarSpells;
+		const SA_86 = get('SA_86') as SpecialAbility;
 
-		return phase && this.getAll().filter(e => !e.tradition.some(e => e === 1 || e === SA_86.sid + 1) && e.gr < 3 && e.active).length >= max;
+		return phase && this.getAll().filter(e => !e.tradition.some(e => e === 1 || e === (SA_86.sid as number) + 1) && e.gr < 3 && e.active).length >= max;
 	}
 
 	isActivationDisabled() {
-		let maxSpellsLiturgies = ELStore.getStart().max_spells_liturgies;
-		return PhaseStore.get() < 3 && getAllByCategory(CATEGORY).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
+		const maxSpellsLiturgies = ELStore.getStart().maxSpellsLiturgies;
+		return PhaseStore.get() < 3 && this.getAll().filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 	}
 
 	getGroupNames() {
@@ -78,21 +69,15 @@ class _SpellsStore extends Store {
 		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
 	}
 
-	getFilterText() {
-		return _filterText;
-	}
-
 	getSortOrder() {
 		return _sortOrder;
 	}
 
 }
 
-const SpellsStore = new _SpellsStore();
+const SpellsStore = new SpellsStoreStatic(action => {
 
-SpellsStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
+	switch( action.type ) {
 
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_SPELL:
@@ -100,12 +85,8 @@ SpellsStore.dispatchToken = AppDispatcher.register(payload => {
 		case ActionTypes.REMOVE_SPELL_POINT:
 			break;
 
-		case ActionTypes.FILTER_SPELLS:
-			_updateFilterText(payload.text);
-			break;
-
-		case ActionTypes.SORT_SPELLS:
-			_updateSortOrder(payload.option);
+		case ActionTypes.SET_SPELLS_SORT_ORDER:
+			_updateSortOrder(action.option);
 			break;
 
 		default:

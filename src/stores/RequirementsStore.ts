@@ -3,10 +3,10 @@ import { get } from './ListStore';
 import alert from '../utils/alert';
 import APStore from './APStore';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import AttributeStore from './AttributeStore';
-import Categories from '../constants/Categories';
+import * as Categories from '../constants/Categories';
 import Store from './Store';
 
 let _cost = 0;
@@ -88,7 +88,7 @@ class _RequirementsStore extends Store {
 
 }
 
-const RequirementsStore = new _RequirementsStore();
+const RequirementsStore: _RequirementsStore = new _RequirementsStore();
 
 RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 

@@ -1,7 +1,7 @@
-export interface AdventurePoints {
+declare interface AdventurePoints {
 	total: number;
 	spent: number;
-	rcp: number[];
-	adv: number[];
-	disadv: number[];
+	rcp: [number, number, number, number];
+	adv: [number, number, number];
+	disadv: [number, number, number];
 }

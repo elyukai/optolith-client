@@ -1,6 +1,7 @@
-import { AdventurePoints } from '../index.d';
+/// <reference path="../index.d.ts" />
+
 import { get } from '../stores/ListStore';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
@@ -15,9 +16,9 @@ import Store from './Store';
 
 let _total = 0;
 let _spent = 0;
-let _rcp = [0, 0, 0, 0];
-let _adv = [0, 0, 0];
-let _disadv = [0, 0, 0];
+let _rcp: [number, number, number, number] = [0, 0, 0, 0];
+let _adv: [number, number, number] = [0, 0, 0];
+let _disadv: [number, number, number] = [0, 0, 0];
 
 function _spend(cost: number) {
 	_spent += cost;
@@ -74,7 +75,7 @@ function _assignRCP(selections) {
 	}
 }
 
-class _APStore extends Store {
+class APStoreStatic extends Store {
 
 	getAll() {
 		return {
@@ -107,11 +108,11 @@ class _APStore extends Store {
 
 }
 
-const APStore = new _APStore(payload => {
+const APStore: APStoreStatic = new APStoreStatic(action => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 
-	if (payload.undoAction) {
-		switch (payload.type) {
+	if (action.undoAction) {
+		switch (action.type) {
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
@@ -119,7 +120,7 @@ const APStore = new _APStore(payload => {
 				return true;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_total -= payload.options.value;
+				_total -= action.options.value;
 				break;
 
 			default:
@@ -128,13 +129,13 @@ const APStore = new _APStore(payload => {
 		}
 	}
 	else {
-		switch( payload.type ) {
+		switch( action.type ) {
 			case ActionTypes.CLEAR_HERO:
 				_clear();
 				break;
 
 			case ActionTypes.RECEIVE_HERO:
-				_updateAll(payload.ap);
+				_updateAll(action.ap);
 				break;
 
 			case ActionTypes.ACTIVATE_SPELL:
@@ -168,18 +169,18 @@ const APStore = new _APStore(payload => {
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
 			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
 				if (RequirementsStore.isValid()) {
-					_spend(payload.costs);
+					_spend(action.costs);
 				}
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					_spend(-(payload.costs));
+					_spend(-(action.costs));
 				}
 				break;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_total += payload.value;
+				_total += action.value;
 				break;
 
 			case ActionTypes.SELECT_RACE:
@@ -213,7 +214,7 @@ const APStore = new _APStore(payload => {
 				break;
 
 			case ActionTypes.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
+				_assignRCP(action.selections);
 				break;
 
 			case ActionTypes.CREATE_NEW_HERO: {

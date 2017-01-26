@@ -2,36 +2,29 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory, getObjByCategoryGroup } from './ListStore';
 import PhaseStore from './PhaseStore';
-import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
 import count from '../utils/count';
 import validate from '../utils/validate';
 
 const CATEGORY = Categories.SPECIAL_ABILITIES;
 // const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
 
-var _filter = '';
-var _sortOrder = 'group';
+let _sortOrder = 'group';
 
-function _updateFilterText(text) {
-	_filter = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-class _SpecialAbilitiesStore extends Store {
+class SpecialAbilitiesStoreStatic extends Store {
 
-	validate(id) {
-		let obj = this.get(id);
-		return validate(obj.req);
+	getAll() {
+		return getAllByCategory(CATEGORY) as SpecialAbility[];
 	}
 
 	getForSave() {
-		var all = getAllByCategory(CATEGORY);
-		var result = new Map();
-		all.forEach(e => {
+		const result = new Map<string, any>();
+		this.getAll().forEach(e => {
 			let { active, id, sid, tier } = e;
 			if (typeof active === 'boolean' && active) {
 				result.set(id, { sid, tier });
@@ -44,36 +37,30 @@ class _SpecialAbilitiesStore extends Store {
 		};
 	}
 
-	get(id) {
-		return get(id);
-	}
-
-	getAll() {
-		return getAllByCategory(CATEGORY);
-	}
-
-	getActiveForView(...cgr) {
-		var sasObj;
+	getActiveForView(...cgr: number[]) {
+		let sasObj;
 		if (cgr.length > 0) {
-			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr);
+			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr) as SpecialAbility[];
 		} else {
-			sasObj = getObjByCategory(CATEGORY);
+			sasObj = this.getAll();
 		}
-		var sas = [];
+		let sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
 			let { name, active, cost, sid, sel, gr, dependencies } = sa;
 			if (active === true) {
 				let disabled = dependencies.length > 0;
-				if (sel.length > 0 && cost === 'sel') {
-					if (id === 'SA_86' && getAllByCategory('spells').some(e => e.active)) {
+				if (sel.length > 0 && cost === 'sel' && typeof sid === 'number') {
+					if (id === 'SA_86' && (getAllByCategory(Categories.SPELLS) as Spell[]).some(e => e.active)) {
 						disabled = true;
 					}
-					if (id === 'SA_102' && getAllByCategory('liturgies').some(e => e.active)) disabled = true;
+					if (id === 'SA_102' && (getAllByCategory(Categories.LITURGIES) as Liturgy[]).some(e => e.active)) {
+						disabled = true;
+					}
 					sas.push({ id, name, add: sel[sid - 1][0], cost: sel[sid - 1][2], gr, disabled });
 				} else {
 					let phase = PhaseStore.get();
-					if (id === 'SA_92' && phase < 3) {
+					if (id === 'SA_92' && phase < 3 && typeof cost === 'number') {
 						cost += 4;
 					}
 					sas.push({ id, name, cost, gr, disabled });
@@ -82,8 +69,8 @@ class _SpecialAbilitiesStore extends Store {
 				let disabled = dependencies.length > 0;
 				let ap_default = cost;
 				if (id === 'SA_10') {
-					let counter = count(active);
-					active.forEach(n => {
+					let counter = count(active as [string, number][], true);
+					(active as [string, number][]).forEach(n => {
 						let sid = n.join('&');
 						let tal = get(n[0]);
 						let cost = tal.ic * counter.get(n[0]);
@@ -120,58 +107,11 @@ class _SpecialAbilitiesStore extends Store {
 				}
 			}
 		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			sas = sas.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		if (_sortOrder == 'name') {
-			sas.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					if (a.add < b.add) {
-						return -1;
-					} else if (a.add > b.add) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		} else if (_sortOrder == 'groups') {
-			sas.sort((a, b) => {
-				// if (GROUPS[a.gr - 1] < GROUPS[b.gr - 1]) {
-				// 	return -1;
-				// } else if (GROUPS[a.gr - 1] > GROUPS[b.gr - 1]) {
-				// 	return 1;
-				if (a.gr < b.gr) {
-					return -1;
-				} else if (a.gr > b.gr) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						if (a.add < b.add) {
-							return -1;
-						} else if (a.add > b.add) {
-							return 1;
-						} else {
-							return 0;
-						}
-					}
-				}
-			});
-		}
 		return sas;
 	}
 
 	getDeactiveForView() {
-		var sasObj = getObjByCategory(CATEGORY), sas = [];
+		let sasObj = getObjByCategory(CATEGORY), sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
 			let { name, active, cost, max, sel, input, gr, dependencies, reqs } = sa;
@@ -310,46 +250,7 @@ class _SpecialAbilitiesStore extends Store {
 				}
 			}
 		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			sas = sas.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		if (_sortOrder == 'name') {
-			sas.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		} else if (_sortOrder == 'groups') {
-			sas.sort((a, b) => {
-				// if (GROUPS[a.gr - 1] < GROUPS[b.gr - 1]) {
-				// 	return -1;
-				// } else if (GROUPS[a.gr - 1] > GROUPS[b.gr - 1]) {
-				// 	return 1;
-				if (a.gr < b.gr) {
-					return -1;
-				} else if (a.gr > b.gr) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
 		return sas;
-	}
-
-	getFilter() {
-		return _filter;
 	}
 
 	getSortOrder() {
@@ -358,23 +259,15 @@ class _SpecialAbilitiesStore extends Store {
 
 }
 
-const SpecialAbilitiesStore = new _SpecialAbilitiesStore();
-
-SpecialAbilitiesStore.dispatchToken = AppDispatcher.register(payload => {
-
+const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic(payload => {
 	switch( payload.type ) {
-
-		case ActionTypes.FILTER_SPECIALABILITIES:
-			_updateFilterText(payload.text);
-			break;
-
-		case ActionTypes.SORT_SPECIALABILITIES:
+		case ActionTypes.SET_SPECIALABILITIES_SORT_ORDER:
 			_updateSortOrder(payload.option);
 			break;
 
 		case ActionTypes.ACTIVATE_SPECIALABILITY:
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
-		case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+		case ActionTypes.SET_SPECIALABILITY_TIER:
 			break;
 
 		default:
@@ -382,9 +275,7 @@ SpecialAbilitiesStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	SpecialAbilitiesStore.emitChange();
-
 	return true;
-
 });
 
 export default SpecialAbilitiesStore;

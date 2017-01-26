@@ -1,23 +1,18 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import { get, getAllByCategory } from './ListStore';
-import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
 
 const CATEGORY = Categories.COMBAT_TECHNIQUES;
 
-var _filter = '';
-var _sortOrder = 'name';
+let _sortOrder = 'name';
 
-function _updateFilterText(text) {
-	_filter = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-class _CombatTechniquesStore extends Store {
+class CombatTechniquesStoreStatic extends Store {
 
 	getAllForSave() {
 		var all = getAllByCategory(CATEGORY);
@@ -33,7 +28,7 @@ class _CombatTechniquesStore extends Store {
 		};
 	}
 
-	get(id) {
+	get(id: string) {
 		return get(id);
 	}
 
@@ -59,7 +54,7 @@ class _CombatTechniquesStore extends Store {
 
 }
 
-const CombatTechniquesStore = new _CombatTechniquesStore();
+const CombatTechniquesStore = new CombatTechniquesStoreStatic();
 
 CombatTechniquesStore.dispatchToken = AppDispatcher.register(payload => {
 

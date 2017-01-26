@@ -27,24 +27,24 @@ export default class AttributesController extends Component<any, State> {
 
 	state = {
 		attributes: AttributeStore.getAll(),
-		baseValues: AttributeStore.getBaseValues(),
+		baseValues: AttributeStore.getAddEnergies(),
 		el: ELStore.getStart(),
 		phase: PhaseStore.get()
 	};
-	
+
 	_updateAttributeStore = () => this.setState({
 		attributes: AttributeStore.getAll(),
-		baseValues: AttributeStore.getBaseValues()
+		baseValues: AttributeStore.getAddEnergies()
 	} as State);
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()
 	} as State);
-	
+
 	componentDidMount() {
 		AttributeStore.addChangeListener(this._updateAttributeStore);
 		PhaseStore.addChangeListener(this._updatePhaseStore );
 	}
-	
+
 	componentWillUnmount() {
 		AttributeStore.removeChangeListener(this._updateAttributeStore);
 		PhaseStore.removeChangeListener(this._updatePhaseStore );

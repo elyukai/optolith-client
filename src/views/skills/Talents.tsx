@@ -28,7 +28,7 @@ export default class Talents extends Component<any, State> {
 		talents: TalentsStore.getAll(),
 		filterText: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
-		talentRating: TalentsStore.getTalentRating(),
+		talentRating: TalentsStore.isRatingVisible(),
 		currentCulture: CultureStore.getCurrent(),
 		phase: PhaseStore.get()
 	};
@@ -37,7 +37,7 @@ export default class Talents extends Component<any, State> {
 		talents: TalentsStore.getAll(),
 		filterText: TalentsStore.getFilter(),
 		sortOrder: TalentsStore.getSortOrder(),
-		talentRating: TalentsStore.getTalentRating()
+		talentRating: TalentsStore.isRatingVisible()
 	} as State);
 
 	filter = event => TalentsActions.filter(event.target.value);

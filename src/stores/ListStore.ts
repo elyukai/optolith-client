@@ -1,3 +1,5 @@
+/// <reference path="../data.d.ts" />
+
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import CultureStore from './CultureStore';
@@ -7,65 +9,60 @@ import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 
-var _list = {};
-
-// function* __activate(id) {
-// 	let validAP = yield;
-// 	if (validAP) {
-// 		_list[id].active = true;
-// 	}
-// 	return validAP;
-// }
+let _byId: {
+	[id: string]: Advantage | Disadvantage | SpecialAbility | Attribute | CombatTechnique | Liturgy | Spell | Talent;
+} = {};
+let _allIds: string[] = [];
 
 function _activate(id) {
-	_list[id].active = true;
+	_byId[id].active = true;
 }
 
 function _deactivate(id) {
-	_list[id].active = false;
+	_byId[id].active = false;
 }
 
 function _addPoint(id) {
-	_list[id].addPoint();
+	_byId[id].addPoint();
 }
 
 function _removePoint(id) {
-	_list[id].removePoint();
+	_byId[id].removePoint();
 }
 
 function _setValue(id, value) {
-	_list[id].set(value);
+	_byId[id].set(value);
 }
 
 function _addSR(id, amount) {
-	_list[id].add(amount);
+	_byId[id].add(amount);
 }
 
 function _activateDASA(payload) {
 	const { id, ...other } = payload;
-	_list[id].activate(other);
+	_byId[id].activate(other);
 }
 
 function _deactivateDASA(payload) {
 	var { id, ...other } = payload;
-	_list[id].deactivate(other);
+	_byId[id].deactivate(other);
 }
 
 function _updateTier(id, tier, sid) {
-	_list[id].tier = { sid, tier };
+	_byId[id].tier = { sid, tier };
 }
 
 function _init(payload) {
-	_list = init(payload);
+	_byId = init(payload);
 }
 
 function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }) {
 	attr.values.forEach(e => {
 		let [ id, value, mod ] = e;
 		_setValue(id, value);
-		_list[id].mod = mod;
+		_byId[id].mod = mod;
 	});
 	talents.active.forEach(e => {
 		_setValue(...e);
@@ -75,19 +72,19 @@ function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }) {
 	});
 	spells.active.forEach(e => {
 		_activate(e[0]);
-		if (_list[e[0]].gr !== 5) {
+		if (_byId[e[0]].gr !== 5) {
 			_setValue(...e);
 		}
 	});
 	chants.active.forEach(e => {
 		_activate(e[0]);
-		if (_list[e[0]].gr !== 3) {
+		if (_byId[e[0]].gr !== 3) {
 			_setValue(...e);
 		}
 	});
 	[].concat(disadv.active, sa.active).forEach(e => {
 		let [ id, options ] = e;
-		var obj = _list[id];
+		var obj = _byId[id];
 		if (obj.max !== null) {
 			obj.active = options;
 			switch (id) {
@@ -163,7 +160,7 @@ function _assignRCP(selections) {
 	});
 	race.attr.forEach(e => {
 		let [ mod, id ] = e;
-		_list[id].mod += mod;
+		_byId[id].mod += mod;
 	});
 	race.auto_adv.forEach(e => {
 		let [ id ] = e;
@@ -190,7 +187,7 @@ function _assignRCP(selections) {
 		addSRList.push(e);
 	});
 
-	_list[selections.attrSel].mod = race.attr_sel[0] || 0;
+	_byId[selections.attrSel].mod = race.attr_sel[0] || 0;
 	addSRList.forEach(e => _addSR(...e));
 	addSRActivateList.forEach(e => {
 		_activate(e[0]);
@@ -200,11 +197,11 @@ function _assignRCP(selections) {
 	});
 	disadvs.forEach(id => {
 		_activate(id);
-		_list[id].addDependencies();
+		_byId[id].addDependencies();
 	});
 	sas.forEach(e => {
 		let [ id, ...options ] = e;
-		let obj = _list[id];
+		let obj = _byId[id];
 		let addreq = [];
 
 		if (options.length === 0) {
@@ -233,13 +230,13 @@ function _assignRCP(selections) {
 		}
 		obj.addDependencies(addreq);
 	});
-	_list['SA_28'].active.push(...litcs);
-	_list['SA_30'].active.push(...langs);
+	_byId['SA_28'].active.push(...litcs);
+	_byId['SA_30'].active.push(...langs);
 }
 
 function _clear() {
-	for (let id in _list) {
-		let e = _list[id];
+	for (let id in _byId) {
+		let e = _byId[id];
 		if (e.reset) {
 			e.reset();
 		}
@@ -382,36 +379,34 @@ ListStore.dispatchToken = AppDispatcher.register(payload => {
 
 export default ListStore;
 
-export const get = id => {
+export const get = (id: string) => {
 	switch (id) {
 		case 'COU':
-			return _list['ATTR_1'];
+			return <Attribute>_byId['ATTR_1'];
 		case 'SGC':
-			return _list['ATTR_2'];
+			return <Attribute>_byId['ATTR_2'];
 		case 'INT':
-			return _list['ATTR_3'];
+			return <Attribute>_byId['ATTR_3'];
 		case 'CHA':
-			return _list['ATTR_4'];
+			return <Attribute>_byId['ATTR_4'];
 		case 'DEX':
-			return _list['ATTR_5'];
+			return <Attribute>_byId['ATTR_5'];
 		case 'AGI':
-			return _list['ATTR_6'];
+			return <Attribute>_byId['ATTR_6'];
 		case 'CON':
-			return _list['ATTR_7'];
+			return <Attribute>_byId['ATTR_7'];
 		case 'STR':
-			return _list['ATTR_8'];
+			return <Attribute>_byId['ATTR_8'];
 
 		default:
-			return _list[id];
+			return _byId[id];
 	}
 };
 
-export const getValue = id => get(id).value;
-
 export const getObjByCategory = (...categories) => {
 	let list = {};
-	for (const id in _list) {
-		const obj = _list[id];
+	for (const id in _byId) {
+		const obj = _byId[id];
 		if (categories.includes(obj.category)) {
 			list[id] = obj;
 		}
@@ -421,8 +416,8 @@ export const getObjByCategory = (...categories) => {
 
 export const getObjByCategoryGroup = (category, ...gr) => {
 	let list = {};
-	for (const id in _list) {
-		const obj = _list[id];
+	for (const id in _byId) {
+		const obj = _byId[id];
 		if (obj.category === category && gr.includes(obj.gr)) {
 			list[id] = obj;
 		}
@@ -432,8 +427,8 @@ export const getObjByCategoryGroup = (category, ...gr) => {
 
 export const getAllByCategory = (...categories) => {
 	let list = [];
-	for (const id in _list) {
-		const obj = _list[id];
+	for (const id in _byId) {
+		const obj = _byId[id];
 		if (categories.includes(obj.category)) {
 			list.push(obj);
 		}
@@ -443,8 +438,8 @@ export const getAllByCategory = (...categories) => {
 
 export const getAllByCategoryGroup = (category, ...gr) => {
 	let list = [];
-	for (const id in _list) {
-		const obj = _list[id];
+	for (const id in _byId) {
+		const obj = _byId[id];
 		if (obj.category === category && gr.includes(obj.gr)) {
 			list.push(obj);
 		}

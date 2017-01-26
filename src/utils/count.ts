@@ -1,21 +1,23 @@
-export default (arr: (string | number)[], keepValues: boolean = false) => {
-	const counter = new Map();
+export default (arr: (string | number)[] | [string, string | number][], keepValues: boolean = false) => {
 	if (keepValues) {
-		arr.forEach(e => {
+		const counter = new Map<string, (string | number)[]>();
+		(arr as [string, string | number][]).forEach(e => {
 			if (!counter.has(e[0])) {
 				counter.set(e[0], [e[1]]);
 			} else {
-				counter.set(e[0], counter.get(e[0]).push(e[1]));
+				counter.set(e[0], [ ...counter.get(e[0]), e[1]]);
 			}
 		});
+		return counter;
 	} else {
-		arr.forEach(e => {
-			if (!counter.has(e[0])) {
-				counter.set(e[0], 1);
+		const counter = new Map<string | number, number>();
+		(arr as (string | number)[]).forEach(e => {
+			if (!counter.has(e)) {
+				counter.set(e, 1);
 			} else {
-				counter.set(e[0], counter.get(e[0]) + 1);
+				counter.set(e, counter.get(e) + 1);
 			}
 		});
+		return counter;
 	}
-	return counter;
 };

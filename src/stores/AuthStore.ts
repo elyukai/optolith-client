@@ -1,32 +1,40 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 
-var _id = null;
-var _session = null;
-var _name = '';
+let _id: string | null = null;
+let _session: string | null = null;
+let _displayName = '';
+let _name = '';
 
-function _update(id, name, session = null) {
+function _update(id: string, name: string, session: string | null = null) {
 	_id = id;
 	_session = session;
 	_name = name;
 }
 
-function _updateName(name) {
+function _updateDisplayName(displayName: string) {
+	_displayName = displayName;
+}
+
+function _updateName(name: string) {
 	_name = name;
 }
 
 function _reset() {
 	_id = null;
+	_session = null;
+	_displayName = '';
 	_name = '';
 }
 
-class _AuthStore extends Store {
+class AuthStoreStatic extends Store {
 
 	getAll() {
 		return {
 			id: _id,
 			session: _session,
+			displayName: _displayName,
 			name: _name
 		};
 	}
@@ -44,9 +52,7 @@ class _AuthStore extends Store {
 	}
 }
 
-const AuthStore = new _AuthStore();
-
-AuthStore.dispatchToken = AppDispatcher.register(payload => {
+const AuthStore = new AuthStoreStatic(payload => {
 
 	const { id, session, name } = payload;
 
@@ -66,7 +72,7 @@ AuthStore.dispatchToken = AppDispatcher.register(payload => {
 
 		// Testing purpose:
 		case ActionTypes.RECEIVE_RAW_LISTS:
-			_update(4, 'Elytherion');
+			_update('USER_4', 'Elytherion');
 			break;
 
 		default:

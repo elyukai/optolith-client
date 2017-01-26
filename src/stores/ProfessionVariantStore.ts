@@ -1,8 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get, getAllByCategory } from './ListStore';
 import Store from './Store';
-import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
 
 const CATEGORY = Categories.PROFESSION_VARIANTS;
 

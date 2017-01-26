@@ -1,17 +1,20 @@
+/// <reference path="../data.d.ts" />
+
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 
 // EL = Experience Level
 
-var _el = {};
-var _start = 'EL_0';
+let _byId: { [id: string]: ExperienceLevel } = {};
+let _allIds: string[];
+let _start = 'EL_0';
 
-function _init(el) {
-	_el = el;
+function _init(el: { [id: string]: ExperienceLevel }) {
+	_byId = el;
 }
 
-function _update(el) {
+function _update(el: string) {
 	_start = el;
 }
 
@@ -19,14 +22,14 @@ function _clear() {
 	_start = 'EL_0';
 }
 
-class _ELStore extends Store {
+class ELStoreStatic extends Store {
 
-	get(id) {
-		return _el[id];
+	get(id: string) {
+		return _byId[id];
 	}
 
 	getAll() {
-		return _el;
+		return _byId;
 	}
 
 	getStartID() {
@@ -39,14 +42,12 @@ class _ELStore extends Store {
 
 }
 
-const ELStore = new _ELStore();
+const ELStore = new ELStoreStatic(action => {
 
-ELStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
+	switch( action.type ) {
 
 		case ActionTypes.CREATE_NEW_HERO:
-			_update(payload.el);
+			_update(action.el);
 			break;
 
 		case ActionTypes.CLEAR_HERO:
@@ -54,11 +55,11 @@ ELStore.dispatchToken = AppDispatcher.register(payload => {
 			break;
 
 		case ActionTypes.RECEIVE_HERO:
-			_update(payload.el);
+			_update(action.el);
 			break;
 
 		case ActionTypes.RECEIVE_RAW_LISTS:
-			_init(payload.el);
+			_init(action.el);
 			break;
 
 		default:

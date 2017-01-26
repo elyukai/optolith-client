@@ -1,7 +1,7 @@
 jest.mock('../../dispatcher/AppDispatcher');
 
 import AuthStore from '../AuthStore';
-import ActionTypes from '../../constants/ActionTypes';
+import * as ActionTypes from '../../constants/ActionTypes';
 import AppDispatcher from '../../dispatcher/AppDispatcher';
 
 describe('AuthStore', () => {

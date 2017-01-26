@@ -13,6 +13,27 @@ declare namespace Categories {
 	export type TALENTS = 'TALENTS';
 }
 
+declare interface Profession {
+	readonly id: string;
+	readonly name: string | { m: string, f: string };
+	readonly subname: string | { m: string, f: string };
+	readonly ap: number;
+	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqs: (string | number | boolean)[][];
+	readonly sel: (string | string[] | number[])[][];
+	readonly specialabilities: (string | number | boolean)[][];
+	readonly combattechniques: (string | number)[][];
+	readonly talents: (string | number)[][];
+	readonly spells: (string | number)[][];
+	readonly liturgies: (string | number)[][];
+	readonly typ_adv: string[];
+	readonly typ_dadv: string[];
+	readonly untyp_adv: string[];
+	readonly untyp_dadv: string[];
+	readonly variants: string[];
+	readonly category: string;
+}
+
 declare interface Advantage {
 	readonly id: string;
 	readonly name: string;

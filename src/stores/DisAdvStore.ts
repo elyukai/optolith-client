@@ -2,9 +2,9 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import ELStore from './ELStore';
 import { get, getAllByCategory, getObjByCategory } from './ListStore';
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import validate from '../utils/validate';
-import Categories from '../constants/Categories';
+import * as Categories from '../constants/Categories';
 
 const CATEGORY_1 = Categories.ADVANTAGES;
 const CATEGORY_2 = Categories.DISADVANTAGES;

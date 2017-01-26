@@ -1,4 +1,4 @@
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ListStore from './ListStore';
 import Store from './Store';

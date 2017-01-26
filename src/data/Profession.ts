@@ -1,33 +1,15 @@
-import Core, { CoreArguments, CoreInstance } from './Core';
-import { fixIDs } from '../DataUtils';
-import Categories from '../../constants/Categories';
+/// <reference path="../data.d.ts" />
 
-export interface ProfessionInstance extends CoreInstance {
-	readonly name: string | { m: string, f: string };
-	readonly subname: string | { m: string, f: string };
-	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-	readonly spells: (string | number)[][];
-	readonly liturgies: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly variants: string[];
-	readonly category: string;
-}
+import Core, { CoreArguments, CoreInstance } from './Core';
+import { fixIDs } from '../utils/DataUtils';
+import * as Categories from '../constants/Categories';
 
 export interface ProfessionArguments extends CoreArguments {
 	subname: string | { m: string, f: string };
 	ap: number;
 	pre_req: (string | number | boolean)[][];
 	req: (string | number | boolean)[][];
-	sel: (string | string[] | number[])[][];
+	sel: [string, number | string, string | number, string][];
 	sa: (string | number | boolean)[][];
 	combattech: (string | number)[][];
 	talents: (string | number)[][];
@@ -40,8 +22,9 @@ export interface ProfessionArguments extends CoreArguments {
 	vars: string[];
 }
 
-export default class Profession extends Core implements ProfessionInstance {
+export default class Profession implements Profession {
 
+	readonly id: string;
 	readonly name: string | { m: string, f: string };
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
@@ -58,10 +41,11 @@ export default class Profession extends Core implements ProfessionInstance {
 	readonly untyp_adv: string[];
 	readonly untyp_dadv: string[];
 	readonly variants: string[];
-	readonly category: string = Categories.PROFESSIONS;
+	readonly category = Categories.PROFESSIONS;
 
-	constructor({ subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, ...args }: ProfessionArguments) {
-		super(args);
+	constructor({ id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, ...args }: ProfessionArguments) {
+		this.id = id;
+		this.name = name;
 		this.subname = subname;
 		this.ap = ap;
 		this.reqs_p = pre_req;

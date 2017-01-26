@@ -33,7 +33,7 @@ export default () => {
 	const generalsaActive = SpecialAbilitiesStore.getActiveForView(1,2);
 
 	const attributes = secondaryAttributes.getAll();
-	const baseValues = AttributeStore.getBaseValues();
+	const baseValues = AttributeStore.getAddEnergies();
 
 	return (
 		<div className="sheet" id="main-sheet">

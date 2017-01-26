@@ -1,153 +1,66 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import ELStore from './ELStore';
 import { get, getAllByCategory, getObjByCategory } from './ListStore';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import ELStore from './ELStore';
 import PhaseStore from './PhaseStore';
-import ActionTypes from '../constants/ActionTypes';
-import Categories from '../constants/Categories';
+import Store from './Store';
 
 const CATEGORY = Categories.TALENTS;
 
-var _filter = '';
-var _sortOrder = 'group';
-var _talentRating = true;
+let _sortOrder = 'group';
+let _ratingVisible = true;
 
-function _updateFilterText(text) {
-	_filter = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-function _updateTalentRating() {
-	_talentRating = !_talentRating;
+function _updateRatingVisibility() {
+	_ratingVisible = !_ratingVisible;
 }
 
-class _TalentsStore extends Store {
+class TalentsStoreStatic extends Store {
+
+	getAll() {
+		return getAllByCategory(CATEGORY) as Talent[];
+	}
 
 	getForSave() {
-		var all = getAllByCategory(CATEGORY);
-		var result = new Map();
-		all.forEach(e => {
-			let { id, fw } = e;
-			if (fw > 0) {
-				result.set(id, fw);
+		const result = new Map<string, number>();
+		this.getAll().forEach(e => {
+			let { id, value } = e;
+			if (value > 0) {
+				result.set(id, value);
 			}
 		});
 		return {
 			active: Array.from(result),
-			_talentRating
+			ratingVisible: _ratingVisible
 		};
-	}
-
-	get(id) {
-		return get(id);
-	}
-
-	getNameByID(id) {
-		return get(id).name;
-	}
-
-	getAll() {
-		return getAllByCategory(CATEGORY);
-	}
-
-	getAllForView() {
-		var phase = PhaseStore.get();
-
-		var talentsObj = getObjByCategory(CATEGORY);
-		var talents = [];
-
-		var SA_18 = this.get('SA_18').active;
-		var SA_18_REQ = SA_18 && (talentsObj['TAL_51'].value + talentsObj['TAL_55'].value) < 12;
-
-		for (let id in talentsObj) {
-			let talent = talentsObj[id];
-			let { fw, check, dependencies } = talent;
-
-			var _max = 25;
-			let _max_bonus = get('ADV_16').active.filter(e => e === id).length;
-			if (phase < 3)
-				_max = ELStore.getStart().max_skill + _max_bonus;
-			else {
-				let checkValues = check.map(attr => get(attr).value);
-				_max = Math.max(...checkValues) + 2 + _max_bonus;
-			}
-			talent.disabledIncrease = fw >= _max;
-
-			talent.disabledDecrease = (['TAL_51','TAL_55'].indexOf(id) > -1 && SA_18_REQ) || fw <= Math.max(0, ...dependencies);
-
-			talents.push(talent);
-		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			talents = talents.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		if (_sortOrder == 'name') {
-			talents.sort((a, b) => {
-				if (a.name < b.name) {
-					return -1;
-				} else if (a.name > b.name) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		} else if (_sortOrder == 'groups') {
-			talents.sort((a, b) => {
-				if (a.gr < b.gr) {
-					return -1;
-				} else if (a.gr > b.gr) {
-					return 1;
-				} else {
-					if (a.name < b.name) {
-						return -1;
-					} else if (a.name > b.name) {
-						return 1;
-					} else {
-						return 0;
-					}
-				}
-			});
-		}
-		return talents;
-	}
-
-	getFilter() {
-		return _filter;
 	}
 
 	getSortOrder() {
 		return _sortOrder;
 	}
 
-	getTalentRating() {
-		return _talentRating;
+	isRatingVisible() {
+		return _ratingVisible;
 	}
 
 }
 
-const TalentsStore = new _TalentsStore();
-
-TalentsStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
+const TalentsStore = new TalentsStoreStatic(action => {
+	switch( action.type ) {
 		case ActionTypes.ADD_TALENT_POINT:
 		case ActionTypes.REMOVE_TALENT_POINT:
 			break;
 
-		case ActionTypes.FILTER_TALENTS:
-			_updateFilterText(payload.text);
+		case ActionTypes.SET_TALENTS_SORT_ORDER:
+			_updateSortOrder(action.option);
 			break;
 
-		case ActionTypes.SORT_TALENTS:
-			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.CHANGE_TALENT_RATING:
-			_updateTalentRating();
+		case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:
+			_updateRatingVisibility();
 			break;
 
 		default:
@@ -155,9 +68,7 @@ TalentsStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	TalentsStore.emitChange();
-
 	return true;
-
 });
 
 export default TalentsStore;
