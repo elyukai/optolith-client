@@ -5,9 +5,9 @@ import * as Categories from '../constants/Categories';
 import { ReceiveDataTablesAction, ReceiveHeroDataAction } from '../actions/ServerActions';
 import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
-import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
-import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import { ValidationResult } from './RequirementsReducer';
@@ -19,7 +19,7 @@ import ProfessionVariantReducer, { ProfessionVariantState } from './ProfessionVa
 import rinit from '../utils/rinit';
 import RequirementsReducer from './RequirementsReducer';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
 
 export interface AbilitiesState {
 	readonly byId: {
@@ -72,7 +72,7 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 				const obj = { ...state.byId[id] } as Advantage | Disadvantage | SpecialAbility;
 				const adds = [];
 				const newState: { [id: string]: Advantage | Disadvantage | SpecialAbility } = {};
-				let new_sid: string | number;
+				let new_sid: string;
 				if (Array.isArray(obj.active)) {
 					switch (id) {
 						case 'ADV_4':
@@ -139,16 +139,16 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 						}
 					}
 				}
-				const reqObjects = obj.reqs.concat(adds).map((req: [string, string | number | boolean, string | number | boolean | undefined]) => {
+				const reqObjects = obj.reqs.concat(adds).forEach((req: [string, string | number | boolean, string | number | boolean | undefined]) => {
 					let id = req[0];
 					const value = req[1];
 					const option = req[2];
 					if (id === 'auto_req' || option === 'TAL_GR_2') {
 						return;
 					}
-					if (id === 'ATTR_PRIMARY') {
+					else if (id === 'ATTR_PRIMARY') {
 						id = getPrimaryAttrID(option as 1 | 2);
-						return { ...state.byId[id], dependencies: [ ...state.byId[id].dependencies, value ] };
+						newState[id] = { ...(newState[id] || state.byId[id]), dependencies: [ ...(newState[id] || state.byId[id]).dependencies, value ] };
 					}
 					else {
 						let sid;
@@ -165,145 +165,113 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 						} else {
 							sid = value;
 						}
-						return { ...state.byId[id], sid, dependencies: [ ...state.byId[id].dependencies, value ] };
+						newState[id] = { ...(newState[id] || state.byId[id]), sid, dependencies: [ ...(newState[id] || state.byId[id]).dependencies, value ] };
 					}
 				});
-
-				// addDependencies(adds = [], sel) {
-				// 	[].concat(this.reqs, adds).forEach(req => {
-				// 		let [ id, value, option ] = req;
-				// 		if (id === 'auto_req' || option === 'TAL_GR_2') {
-				// 			return;
-				// 		}
-				// 		if (id === 'ATTR_PRIMARY') {
-				// 			id = getPrimaryAttrID(option);
-				// 			get(id).addDependency(value);
-				// 		}
-				// 		else {
-				// 			let sid;
-				// 			if (typeof option !== 'undefined') {
-				// 				if (Number.isNaN(parseInt(option))) {
-				// 					if (option === 'sel') {
-				// 						sid = sel;
-				// 					} else {
-				// 						sid = option;
-				// 					}
-				// 				} else {
-				// 					sid = parseInt(option);
-				// 				}
-				// 			} else {
-				// 				sid = value;
-				// 			}
-				// 			get(id).addDependency(sid);
-				// 		}
-				// 	});
-				// }
+				return { ...state, byId: { ...state.byId, ...newState }};
 			}
 			return state;
 
 		case ActionTypes.DEACTIVATE_DISADV:
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			if (valid) {
-
-				deactivate({ sid, tier }) {
-					const adds = [];
-					let old_sid;
-					if (Array.isArray(this.active)) {
-						switch (this.id) {
-							case 'ADV_4':
-							case 'ADV_16':
-							case 'DISADV_48':
-								this.active.splice(this.active.indexOf(sid), 1);
-								old_sid = sid;
-								break;
-							case 'ADV_28':
-							case 'ADV_29':
-								if (typeof sid === 'number')
-									this.active.splice(this.active.indexOf(sid), 1);
-								else
-									this.active = this.active.filter(e => e[0] !== sid);
-								break;
-							case 'DISADV_1':
-							case 'DISADV_34':
-							case 'DISADV_50':
-								this.active = this.active.filter(e => e[0] !== sid);
-								break;
-							case 'DISADV_33':
-								if (typeof sid === 'string') {
-									const rawArr: string[] = sid.split('&');
-									const arr: [number | string] = [parseInt(rawArr.shift()), rawArr.join('&')];
-									for (let i = 0; i < this.active.length; i++) {
-										if (this.active[i][0] === arr[0] && this.active[i][1] === arr[1]) {
-											this.active.splice(i, 1);
-											break;
-										}
-									}
-								} else {
-									this.active.splice(this.active.indexOf(sid), 1);
-								}
-								break;
-							case 'SA_10': {
-								let arr = sid.split('&');
-								arr = [arr.shift(), arr.join('&')];
-								for (let i = 0; i < this.active.length; i++) {
-									if (this.active[i][0] === arr[0] && (this.active[i][1] === arr[1] || this.active[i][1] === parseInt(arr[1]))) {
-										adds.push([arr[0], this.active.filter(e => e[0] === arr[0]).length * 6]);
-										this.active.splice(i, 1);
+				const { id, sid, tier } = action.payload;
+				const obj = { ...state.byId[id] } as Advantage | Disadvantage | SpecialAbility;
+				const adds = [];
+				let old_sid: string;
+				if (Array.isArray(obj.active)) {
+					switch (obj.id) {
+						case 'ADV_4':
+						case 'ADV_16':
+						case 'DISADV_48':
+							obj.active.splice(obj.active.indexOf(sid as string), 1);
+							old_sid = sid as string;
+							break;
+						case 'ADV_28':
+						case 'ADV_29':
+							if (typeof sid === 'number') {
+								obj.active.splice(obj.active.indexOf(sid), 1);
+							}
+							else {
+								obj.active = obj.active.filter(e => e[0] !== sid);
+							}
+							break;
+						case 'DISADV_1':
+						case 'DISADV_34':
+						case 'DISADV_50':
+							obj.active = obj.active.filter(e => e[0] !== sid);
+							break;
+						case 'DISADV_33':
+							if (typeof sid === 'string') {
+								const rawArr: string[] = sid.split('&');
+								const arr: [number | string] = [parseInt(rawArr.shift()), rawArr.join('&')];
+								for (let i = 0; i < obj.active.length; i++) {
+									if (obj.active[i][0] === arr[0] && obj.active[i][1] === arr[1]) {
+										obj.active.splice(i, 1);
 										break;
 									}
 								}
-								break;
+							} else {
+								obj.active.splice(obj.active.indexOf(sid), 1);
 							}
-							case 'SA_30':
-								this.active = this.active.filter(e => e[0] !== sid);
-								break;
-							default:
-								if (sid)
-									this.active.splice(this.active.indexOf(sid), 1);
-								break;
+							break;
+						case 'SA_10': {
+							let arr = sid.split('&');
+							arr = [arr.shift(), arr.join('&')];
+							for (let i = 0; i < obj.active.length; i++) {
+								if (obj.active[i][0] === arr[0] && (obj.active[i][1] === arr[1] || obj.active[i][1] === parseInt(arr[1]))) {
+									adds.push([arr[0], obj.active.filter(e => e[0] === arr[0]).length * 6]);
+									obj.active.splice(i, 1);
+									break;
+								}
+							}
+							break;
 						}
-					} else {
-						this.active = false;
-						if (tier) {
-							delete this.tier;
-						}
-						if (this.sid) {
-							delete this.sid;
-						}
+						case 'SA_30':
+							obj.active = obj.active.filter(e => e[0] !== sid);
+							break;
+						default:
+							if (sid)
+								obj.active.splice(obj.active.indexOf(sid), 1);
+							break;
 					}
-					this.removeDependencies(adds, old_sid);
+				} else {
+					obj.active = false;
+					if (tier) {
+						delete obj.tier;
+					}
+					if (obj.sid) {
+						delete obj.sid;
+					}
 				}
 
-
-				removeDependencies(adds = [], sel) {
-					[].concat(this.reqs, adds).forEach(req => {
-						let [ id, value, option ] = req;
-						if (id === 'auto_req' || option === 'TAL_GR_2') {
-							return;
-						}
-						if (id === 'ATTR_PRIMARY') {
-							id = getPrimaryAttrID(option);
-							get(id).removeDependency(value);
-						}
-						else {
-							let sid;
-							if (typeof option !== 'undefined') {
-								if (Number.isNaN(parseInt(option))) {
-									if (option === 'sel') {
-										sid = sel;
-									} else {
-										sid = option;
-									}
+				[].concat(obj.reqs, adds).forEach(req => {
+					let [ id, value, option ] = req;
+					if (id === 'auto_req' || option === 'TAL_GR_2') {
+						return;
+					}
+					if (id === 'ATTR_PRIMARY') {
+						id = getPrimaryAttrID(option);
+						get(id).removeDependency(value);
+					}
+					else {
+						let sid;
+						if (typeof option !== 'undefined') {
+							if (Number.isNaN(parseInt(option))) {
+								if (option === 'sel') {
+									sid = old_sid;
 								} else {
-									sid = parseInt(option);
+									sid = option;
 								}
 							} else {
-								sid = value;
+								sid = parseInt(option);
 							}
-							get(id).removeDependency(sid);
+						} else {
+							sid = value;
 						}
-					});
-				}
+						get(id).removeDependency(sid);
+					}
+				});
 			}
 			return state;
 

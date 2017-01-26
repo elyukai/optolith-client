@@ -18,12 +18,19 @@ export const addToList = (args: ActivateArgs): ActivateDisAdvAction => ({
     payload: args
 });
 
-export interface DeactivateDisAdvPointAction {
-    type: DEACTIVATE_DISADV;
-    payload: {};
+interface DeactivateArgs {
+    id: string;
+    tier?: number;
+    cost: number;
+    sid?: number | string;
 }
 
-export const removeFromList = (args: {}): DeactivateDisAdvPointAction => ({
+export interface DeactivateDisAdvAction {
+    type: DEACTIVATE_DISADV;
+    payload: DeactivateArgs;
+}
+
+export const removeFromList = (args: DeactivateArgs): DeactivateDisAdvAction => ({
     type: DEACTIVATE_DISADV,
     payload: args
 });

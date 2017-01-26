@@ -12,7 +12,7 @@ interface Props {
 }
 
 interface State {
-	position: string;
+	position?: string;
 	style: any;
 }
 
@@ -40,8 +40,8 @@ export default class Overlay extends Component<Props, State> {
 		const { margin, position, trigger } = this.props;
 		const triggerCoordinates = trigger.getBoundingClientRect();
 		const overlayCoordinates = this.overlayRef.getBoundingClientRect();
-		var top,
-			left;
+		let top: number = 0;
+		let left: number = 0;
 
 		const setHorizonally = () => {
 			left = Math.max(0, triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2);
@@ -121,7 +121,7 @@ export default class Overlay extends Component<Props, State> {
 	componentDidMount() {
 		this.alignToElement();
 	}
-	
+
 	render() {
 
 		let { children, className, ...other } = this.props;

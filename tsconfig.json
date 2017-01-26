@@ -2,9 +2,11 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
         "jsx": "react",
         "module": "es2015",
         "moduleResolution": "node",
+        "noEmitHelpers": true,
         "lib": [
             "dom",
             "es2015",

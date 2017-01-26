@@ -18,12 +18,19 @@ export const addToList = (args: ActivateArgs): ActivateSpecialAbilityAction => (
     payload: args
 });
 
-export interface DeactivateSpecialAbilityPointAction {
-    type: DEACTIVATE_SPECIALABILITY;
-    payload: {};
+interface DeactivateArgs {
+    id: string;
+    tier?: number;
+    cost: number;
+    sid?: number | string;
 }
 
-export const removeFromList = (args: {}): DeactivateSpecialAbilityPointAction => ({
+export interface DeactivateSpecialAbilityAction {
+    type: DEACTIVATE_SPECIALABILITY;
+    payload: DeactivateArgs;
+}
+
+export const removeFromList = (args: DeactivateArgs): DeactivateSpecialAbilityAction => ({
     type: DEACTIVATE_SPECIALABILITY,
     payload: args
 });

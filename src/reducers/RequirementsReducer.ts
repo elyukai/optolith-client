@@ -4,9 +4,9 @@ import { ReceiveDataTablesAction } from '../actions/ServerActions';
 import { ReceiveLoginAction, ReceiveLogoutAction } from '../actions/AuthActions';
 import { AddAttributePointAction, RemoveAttributePointAction, AddArcaneEnergyPointAction, AddKarmaPointAction, AddLifePointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
-import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
-import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
@@ -18,7 +18,7 @@ import alert from '../utils/alert';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import * as Categories from '../constants/Categories';
 
-type Action = ReceiveDataTablesAction | ReceiveLoginAction | ReceiveLogoutAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction;
+type Action = ReceiveDataTablesAction | ReceiveLoginAction | ReceiveLogoutAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction;
 
 interface AdventurePoints {
 	total: number;

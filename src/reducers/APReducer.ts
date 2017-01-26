@@ -10,15 +10,15 @@ import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActio
 import { SelectRaceAction } from '../actions/RaceActions';
 import { AddAttributePointAction, RemoveAttributePointAction, AddArcaneEnergyPointAction, AddKarmaPointAction, AddLifePointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
-import { ActivateDisAdvAction, DeactivateDisAdvPointAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyPointAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
-import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityPointAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellPointAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import { AddAdventurePointsAction } from '../actions/ProfileActions';
 import { ValidationResult } from './RequirementsReducer';
 
-type Action = ReceiveHeroDataAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SelectRaceAction | CreateHeroAction | SetSelectionsAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvPointAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityPointAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | AddAdventurePointsAction;
+type Action = ReceiveHeroDataAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SelectRaceAction | CreateHeroAction | SetSelectionsAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyPointAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellPointAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | AddAdventurePointsAction;
 
 export type APState = {
 	total: number;

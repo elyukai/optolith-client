@@ -18,11 +18,14 @@ export interface AppState {
 
 export type InitialAppState = { [slice in keyof AppState]: undefined };
 
-export default (state: AppState | InitialAppState = {} as InitialAppState, action: any): AppState => ({
-	auth: AuthReducer(state.auth, action),
-	hero: HeroReducer(state.hero, action),
-	herolist: HerolistReducer(state.herolist, action),
-	loading: LoadingReducer(state.loading, action),
-	location: LocationReducer(state.location, action, state.auth ? !!state.auth.name : false),
-	ui: UIReducer(state.ui, action)
-});
+export default (state: AppState | InitialAppState = {} as InitialAppState, action: any): AppState => {
+	console.log(state);
+	return {
+		auth: AuthReducer(state.auth, action),
+		hero: HeroReducer(state.hero, action),
+		herolist: HerolistReducer(state.herolist, action),
+		loading: LoadingReducer(state.loading, action),
+		location: LocationReducer(state.location, action, state.auth ? !!state.auth.name : false),
+		ui: UIReducer(state.ui, action)
+	};
+};
