@@ -29,7 +29,7 @@ export const generateArray = () => [
 		el: ELStore.getStartID(),
 		r: RaceStore.getCurrentID(),
 		c: CultureStore.getCurrentID(),
-		p: ProfessionStore.getCurrentID(),
+		p: ProfessionStore.getCurrentId(),
 		pv: ProfessionVariantStore.getCurrentID(),
 		sex: ProfileStore.getSex()
 	},

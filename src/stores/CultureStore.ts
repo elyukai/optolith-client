@@ -1,65 +1,51 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get, getAllByCategory } from './ListStore';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import APStore from '../stores/APStore';
+import Store from './Store';
+
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction;
 
 const CATEGORY = Categories.CULTURES;
 
-var _currentID = null;
-var _filterText = '';
-var _sortOrder = 'name';
-var _showDetails = true;
-var _showAll = false;
+let _currentId: string | null = null;
+let _sortOrder = 'name';
+let _areValuesVisible = true;
+let _visibilityFilter = 'common';
 
-function _updateCurrentID(id) {
-	_currentID = id;
+function _updateCurrentID(id: string | null = null) {
+	_currentId = id;
 }
 
-function _updateFilterText(text) {
-	_filterText = text;
+function _updateSortOrder(sortOrder: string) {
+	_sortOrder = sortOrder;
 }
 
-function _updateSortOrder(option) {
-	_sortOrder = option;
+function _updateValuevisibility() {
+	_areValuesVisible = !_areValuesVisible;
 }
 
-function _updateDetails() {
-	_showDetails = !_showDetails;
+function _updateVisibilityFilter(filter: string) {
+	_visibilityFilter = filter;
 }
 
-function _updateView(view) {
-	_showAll = view;
-}
-
-class _CultureStore extends Store {
-
-	get(id) {
-		return get(id);
-	}
+class CultureStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY);
+		return getAllByCategory(CATEGORY) as Culture[];
 	}
 
 	getCurrentID() {
-		return _currentID;
+		return _currentId;
 	}
 
 	getCurrent() {
-		return get(this.getCurrentID());
+		return _currentId !== null ? get(_currentId) as Culture : {} as Culture;
 	}
 
 	getCurrentName() {
 		return this.getCurrent() ? this.getCurrent().name : null;
-	}
-
-	getNameByID(id) {
-		return get(id) ? get(id).name : null;
-	}
-
-	getFilter() {
-		return _filterText;
 	}
 
 	getSortOrder() {
@@ -67,23 +53,19 @@ class _CultureStore extends Store {
 	}
 
 	areValuesVisible() {
-		return _showDetails;
+		return _areValuesVisible;
 	}
 
 	areAllVisible() {
-		return _showAll;
+		return _visibilityFilter;
 	}
 
 }
 
-const CultureStore = new _CultureStore();
-
-CultureStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateCurrentID(payload.c);
+const CultureStore = new CultureStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateCurrentID(action.payload.data.c);
 			break;
 
 		case ActionTypes.SELECT_RACE:
@@ -91,23 +73,20 @@ CultureStore.dispatchToken = AppDispatcher.register(payload => {
 			break;
 
 		case ActionTypes.SELECT_CULTURE:
-			_updateCurrentID(payload.cultureID);
+			AppDispatcher.waitFor([APStore.dispatchToken]);
+			_updateCurrentID(action.payload.id);
 			break;
 
-		case ActionTypes.FILTER_CULTURES:
-			_updateFilterText(payload.text);
+		case ActionTypes.SET_CULTURES_SORT_ORDER:
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
-		case ActionTypes.SORT_CULTURES:
-			_updateSortOrder(payload.option);
+		case ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY:
+			_updateValuevisibility();
 			break;
 
-		case ActionTypes.CHANGE_CULTURE_VALUE_VISIBILITY:
-			_updateDetails();
-			break;
-
-		case ActionTypes.CHANGE_CULTURE_VIEW:
-			_updateView(payload.view);
+		case ActionTypes.SET_CULTURES_VISIBILITY_FILTER:
+			_updateVisibilityFilter(action.payload.filter);
 			break;
 
 		default:
@@ -115,9 +94,7 @@ CultureStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	CultureStore.emitChange();
-
 	return true;
-
 });
 
 export default CultureStore;

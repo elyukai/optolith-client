@@ -1,30 +1,16 @@
 /// <reference path="../data.d.ts" />
 
 import { ADD_ITEM, SET_ITEMS_SORT_ORDER, REMOVE_ITEM, SET_ITEM } from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export interface AddItemAction {
-	type: ADD_ITEM;
-	payload: {
-		data: Item;
-	};
-}
-
-export const addToList = (data: Item): AddItemAction => ({
+export const addToList = (data: Item): void => AppDispatcher.dispatch(<AddItemAction>{
 	type: ADD_ITEM,
 	payload: {
 		data
 	}
 });
 
-export interface SetItemAction {
-	type: SET_ITEM;
-	payload: {
-		id: string;
-		data: Item;
-	};
-}
-
-export const set = (id: string, data: Item): SetItemAction => ({
+export const set = (id: string, data: Item): void => AppDispatcher.dispatch(<SetItemAction>{
 	type: SET_ITEM,
 	payload: {
 		id,
@@ -32,28 +18,14 @@ export const set = (id: string, data: Item): SetItemAction => ({
 	}
 });
 
-export interface RemoveItemAction {
-	type: REMOVE_ITEM;
-	payload: {
-		id: string;
-	};
-}
-
-export const removeFromList = (id: string): RemoveItemAction => ({
+export const removeFromList = (id: string): void => AppDispatcher.dispatch(<RemoveItemAction>{
 	type: REMOVE_ITEM,
 	payload: {
 		id
 	}
 });
 
-export interface SetItemsSortOrderAction {
-	type: SET_ITEMS_SORT_ORDER;
-	payload: {
-		sortOrder: string;
-	};
-}
-
-export const setSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
+export const setSortOrder = (sortOrder: string): void => AppDispatcher.dispatch(<SetItemsSortOrderAction>{
 	type: SET_ITEMS_SORT_ORDER,
 	payload: {
 		sortOrder

@@ -10,8 +10,10 @@ import RequirementsStore from './RequirementsStore';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Store from './Store';
 
-var _history = [];
-var _lastSaveIndex = -1;
+type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | EndHeroCreationAction;
+
+let _history = [];
+let _lastSaveIndex = -1;
 
 function _add(type, cost = 0, options = {}, prevState = {}) {
 	_history.push({
@@ -77,7 +79,7 @@ function _assignRCP(selections) {
 	}
 }
 
-class _HistoryStore extends Store {
+class HistoryStoreStatic extends Store {
 
 	get(index) {
 		return _history[index];
@@ -101,54 +103,48 @@ class _HistoryStore extends Store {
 
 }
 
-const HistoryStore = new _HistoryStore();
-
-HistoryStore.dispatchToken = AppDispatcher.register(payload => {
+const HistoryStore = new HistoryStoreStatic((action: Action) => {
+	console.log(HistoryStore.constructor.name, HistoryStore.dispatchToken, action);
 
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 
-	if (payload.undoAction && HistoryStore.isUndoAvailable()) {
+	if (action.undoAction && HistoryStore.isUndoAvailable()) {
 		_history.splice(_history.length - 1, 1);
 	}
 	else {
-		switch( payload.type ) {
-			case ActionTypes.CLEAR_HERO:
+		switch( action.type ) {
+			case ActionTypes.RECEIVE_HERO_DATA:
+				_clear();
+				_updateAll(action.history);
+				_resetSaveIndex();
+				break;
+
+			case ActionTypes.ASSIGN_RCP_OPTIONS:
+				_assignRCP(action.selections);
+				_resetSaveIndex();
+				break;
+
+			case ActionTypes.END_HERO_CREATION:
+				_resetSaveIndex();
+				break;
+
+			case ActionTypes.CREATE_HERO:
 				_clear();
 				_resetSaveIndex();
 				break;
 
-			case ActionTypes.RECEIVE_HERO:
-				_clear();
-				_updateAll(payload.history);
-				_resetSaveIndex();
-				break;
-
-			case ActionTypes.ASSIGN_RCP_ENTRIES:
-				_assignRCP(payload.selections);
-				_resetSaveIndex();
-				break;
-
-			case ActionTypes.FINALIZE_CHARACTER_CREATION:
-				_resetSaveIndex();
-				break;
-
-			case ActionTypes.CREATE_NEW_HERO:
-				_clear();
-				_resetSaveIndex();
-				break;
-
-			case ActionTypes.SAVE_HERO_SUCCESS:
-				_resetSaveIndex();
-				break;
+			// case ActionTypes.RECEIVE_HERO_SAVE:
+			// 	_resetSaveIndex();
+			// 	break;
 
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY:
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id });
+					_add(action.type, cost, { id });
 				}
 				break;
 
@@ -158,21 +154,23 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.ADD_SPELL_POINT:
 			case ActionTypes.ADD_LITURGY_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
+					_add(action.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
-			case ActionTypes.ADD_MAX_ENERGY_POINT:
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+			case ActionTypes.ADD_KARMA_POINT:
+			case ActionTypes.ADD_LIFE_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const oldValue = secondaryAttributes.get(id);
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
+					_add(action.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
@@ -182,40 +180,40 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.REMOVE_SPELL_POINT:
 			case ActionTypes.REMOVE_LITURGY_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
+					_add(action.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
+					_add(action.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					const id = payload.id;
+					const id = action.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, value: newValue }, { value: oldValue });
+					_add(action.type, cost, { id, value: newValue }, { value: oldValue });
 				}
 				break;
 
-			case ActionTypes.UPDATE_DISADV_TIER:
-			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+			case ActionTypes.SET_DISADV_TIER:
+			case ActionTypes.SET_SPECIALABILITY_TIER:
 				if (RequirementsStore.isValid()) {
-					const { id, sid, tier } = payload;
+					const { id, sid, tier } = action;
 					let oldValue;
 					switch (id) {
 						case 'DISADV_1':
@@ -234,12 +232,12 @@ HistoryStore.dispatchToken = AppDispatcher.register(payload => {
 					}
 					const newValue = tier;
 					const cost = RequirementsStore.getCurrentCost();
-					_add(payload.type, cost, { id, tier: newValue, sid }, { tier: oldValue });
+					_add(action.type, cost, { id, tier: newValue, sid }, { tier: oldValue });
 				}
 				break;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_add(payload.type, 0, { value: payload.value });
+				_add(action.type, 0, { value: action.value });
 				break;
 
 			default:

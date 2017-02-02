@@ -32,7 +32,7 @@ export default class Professions extends Component<any, State> {
 
 	state = {
 		professions: ProfessionStore.getAll(),
-		currentID: ProfessionStore.getCurrentID(),
+		currentID: ProfessionStore.getCurrentId(),
 		filterText: ProfessionStore.getFilter(),
 		sortOrder: ProfessionStore.getSortOrder(),
 		showAllProfessions: ProfessionStore.areAllVisible(),
@@ -42,7 +42,7 @@ export default class Professions extends Component<any, State> {
 
 	_updateProfessionStore = () => this.setState({
 		professions: ProfessionStore.getAll(),
-		currentID: ProfessionStore.getCurrentID(),
+		currentID: ProfessionStore.getCurrentId(),
 		filterText: ProfessionStore.getFilter(),
 		sortOrder: ProfessionStore.getSortOrder(),
 		showAllProfessions: ProfessionStore.areAllVisible()

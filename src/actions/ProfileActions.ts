@@ -1,203 +1,102 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export interface SetHeroAvatarAction {
-	type: ActionTypes.SET_HERO_AVATAR;
-	payload: {
-		url: string;
-	};
-}
-
-export const setHeroAvatar = (url: string): SetHeroAvatarAction => ({
+export const setHeroAvatar = (url: string): void => AppDispatcher.dispatch(<SetHeroAvatarAction>{
 	type: ActionTypes.SET_HERO_AVATAR,
 	payload: {
 		url
 	}
 });
 
-export interface SetFamilyAction {
-	type: ActionTypes.SET_FAMILY;
-	payload: {
-		family: string;
-	};
-}
-
-export const setFamily = (family: string): SetFamilyAction => ({
+export const setFamily = (family: string): void => AppDispatcher.dispatch(<SetFamilyAction>{
 	type: ActionTypes.SET_FAMILY,
 	payload: {
 		family
 	}
 });
 
-export interface SetPlaceOfBirthAction {
-	type: ActionTypes.SET_PLACEOFBIRTH;
-	payload: {
-		placeofbirth: string;
-	};
-}
-
-export const setPlaceOfBirth = (placeofbirth: string): SetPlaceOfBirthAction => ({
+export const setPlaceOfBirth = (placeofbirth: string): void => AppDispatcher.dispatch(<SetPlaceOfBirthAction>{
 	type: ActionTypes.SET_PLACEOFBIRTH,
 	payload: {
 		placeofbirth
 	}
 });
 
-export interface SetDateOfBirthAction {
-	type: ActionTypes.SET_DATEOFBIRTH;
-	payload: {
-		dateofbirth: string;
-	};
-}
-
-export const setDateOfBirth = (dateofbirth: string): SetDateOfBirthAction => ({
+export const setDateOfBirth = (dateofbirth: string): void => AppDispatcher.dispatch(<SetDateOfBirthAction>{
 	type: ActionTypes.SET_DATEOFBIRTH,
 	payload: {
 		dateofbirth
 	}
 });
 
-export interface SetAgeAction {
-	type: ActionTypes.SET_AGE;
-	payload: {
-		age: string;
-	};
-}
-
-export const setAge = (age: string): SetAgeAction => ({
+export const setAge = (age: string): void => AppDispatcher.dispatch(<SetAgeAction>{
 	type: ActionTypes.SET_AGE,
 	payload: {
 		age
 	}
 });
 
-export interface SetHairColorAction {
-	type: ActionTypes.SET_HAIRCOLOR;
-	payload: {
-		haircolor: number;
-	};
-}
-
-export const setHairColor = (haircolor: number): SetHairColorAction => ({
+export const setHairColor = (haircolor: number): void => AppDispatcher.dispatch(<SetHairColorAction>{
 	type: ActionTypes.SET_HAIRCOLOR,
 	payload: {
 		haircolor
 	}
 });
 
-export interface SetEyeColorAction {
-	type: ActionTypes.SET_EYECOLOR;
-	payload: {
-		eyecolor: number;
-	};
-}
-
-export const setEyeColor = (eyecolor: number): SetEyeColorAction => ({
+export const setEyeColor = (eyecolor: number): void => AppDispatcher.dispatch(<SetEyeColorAction>{
 	type: ActionTypes.SET_EYECOLOR,
 	payload: {
 		eyecolor
 	}
 });
 
-export interface SetSizeAction {
-	type: ActionTypes.SET_SIZE;
-	payload: {
-		size: string;
-	};
-}
-
-export const setSize = (size: string): SetSizeAction => ({
+export const setSize = (size: string): void => AppDispatcher.dispatch(<SetSizeAction>{
 	type: ActionTypes.SET_SIZE,
 	payload: {
 		size
 	}
 });
 
-export interface SetWeightAction {
-	type: ActionTypes.SET_WEIGHT;
-	payload: {
-		weight: string;
-	};
-}
-
-export const setWeight = (weight: string): SetWeightAction => ({
+export const setWeight = (weight: string): void => AppDispatcher.dispatch(<SetWeightAction>{
 	type: ActionTypes.SET_WEIGHT,
 	payload: {
 		weight
 	}
 });
 
-export interface SetTitleAction {
-	type: ActionTypes.SET_TITLE;
-	payload: {
-		title: string;
-	};
-}
-
-export const setTitle = (title: string): SetTitleAction => ({
+export const setTitle = (title: string): void => AppDispatcher.dispatch(<SetTitleAction>{
 	type: ActionTypes.SET_TITLE,
 	payload: {
 		title
 	}
 });
 
-export interface SetSocialStatusAction {
-	type: ActionTypes.SET_SOCIALSTATUS;
-	payload: {
-		socialstatus: number;
-	};
-}
-
-export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
+export const setSocialStatus = (socialstatus: number): void => AppDispatcher.dispatch(<SetSocialStatusAction>{
 	type: ActionTypes.SET_SOCIALSTATUS,
 	payload: {
 		socialstatus
 	}
 });
 
-export interface SetCharacteristicsAction {
-	type: ActionTypes.SET_CHARACTERISTICS;
-	payload: {
-		characteristics: string;
-	};
-}
-
-export const setCharacteristics = (characteristics: string): SetCharacteristicsAction => ({
+export const setCharacteristics = (characteristics: string): void => AppDispatcher.dispatch(<SetCharacteristicsAction>{
 	type: ActionTypes.SET_CHARACTERISTICS,
 	payload: {
 		characteristics
 	}
 });
 
-export interface SetOtherInfoAction {
-	type: ActionTypes.SET_OTHERINFO;
-	payload: {
-		otherinfo: string;
-	};
-}
-
-export const setOtherInfo = (otherinfo: string): SetOtherInfoAction => ({
+export const setOtherInfo = (otherinfo: string): void => AppDispatcher.dispatch(<SetOtherInfoAction>{
 	type: ActionTypes.SET_OTHERINFO,
 	payload: {
 		otherinfo
 	}
 });
 
-export interface EndHeroCreationAction {
-	type: ActionTypes.END_HERO_CREATION;
-}
-
-export const endHeroCreation = (): EndHeroCreationAction => ({
+export const endHeroCreation = (): void => AppDispatcher.dispatch(<EndHeroCreationAction>{
 	type: ActionTypes.END_HERO_CREATION
 });
 
-export interface AddAdventurePointsAction {
-	type: ActionTypes.ADD_ADVENTURE_POINTS;
-	payload: {
-		amount: number;
-	};
-}
-
-export const addAdventurePoints = (amount: number): AddAdventurePointsAction => ({
+export const addAdventurePoints = (amount: number): void => AppDispatcher.dispatch(<AddAdventurePointsAction>{
 	type: ActionTypes.ADD_ADVENTURE_POINTS,
 	payload: {
 		amount

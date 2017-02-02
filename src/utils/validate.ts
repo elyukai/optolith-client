@@ -3,32 +3,40 @@ import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
 import { get, getPrimaryAttr, getAllByCategoryGroup } from '../stores/ListStore';
 
-export const fn = (req: (number | string | boolean)[], id?: string) => {
-	if (req[0] === 'auto_req') {
+export const fn = (req: 'RCP' | [string, string | number | boolean, string | number | boolean | undefined], id?: string) => {
+	if (req === 'RCP') {
 		let currentRace = RaceStore.getCurrent() || {};
 		let currentCulture = CultureStore.getCurrent() || {};
 		let currentProfession = ProfessionStore.getCurrent() || {};
 		let array = [];
 
-		if (currentRace.hasOwnProperty('imp_adv'))
-			array.push(...currentRace.imp_adv.map(e => e[0]));
-		if (currentRace.hasOwnProperty('imp_dadv'))
-			array.push(...currentRace.imp_dadv.map(e => e[0]));
-		if (currentRace.hasOwnProperty('typ_adv'))
+		if (currentRace.hasOwnProperty('imp_adv')) {
+			array.push(...currentRace.imp_adv.map(e => e[0] as string));
+		}
+		if (currentRace.hasOwnProperty('imp_dadv')) {
+			array.push(...currentRace.imp_dadv.map(e => e[0] as string));
+		}
+		if (currentRace.hasOwnProperty('typ_adv')) {
 			array.push(...currentRace.typ_adv);
-		if (currentRace.hasOwnProperty('typ_dadv'))
+		}
+		if (currentRace.hasOwnProperty('typ_dadv')) {
 			array.push(...currentRace.typ_dadv);
+		}
 
-		if (currentCulture.hasOwnProperty('typ_adv'))
+		if (currentCulture.hasOwnProperty('typ_adv')) {
 			array.push(...currentCulture.typ_adv);
-		if (currentCulture.hasOwnProperty('typ_dadv'))
+		}
+		if (currentCulture.hasOwnProperty('typ_dadv')) {
 			array.push(...currentCulture.typ_dadv);
+		}
 
-		if (currentProfession.hasOwnProperty('typ_adv'))
+		if (currentProfession.hasOwnProperty('typ_adv')) {
 			array.push(...currentProfession.typ_adv);
-		if (currentProfession.hasOwnProperty('typ_dadv'))
+		}
+		if (currentProfession.hasOwnProperty('typ_dadv')) {
 			array.push(...currentProfession.typ_dadv);
-		
+		}
+
 		return array.some(e => e === id);
 	} else if (req.length === 2) {
 		if (req[0] === 'r')
@@ -69,4 +77,4 @@ export const fn = (req: (number | string | boolean)[], id?: string) => {
 	}
 };
 
-export default (reqs: (number | string | boolean)[][], id?: string): boolean => reqs.every(req => fn(req, id));
+export default (reqs: Array<[string, string | number | boolean, string | number | boolean | undefined]>, id?: string): boolean => reqs.every(req => fn(req, id));

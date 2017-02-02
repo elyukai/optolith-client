@@ -1,14 +1,7 @@
 import { SET_SECTION, SET_TAB } from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export interface SetSectionAction {
-	type: SET_SECTION;
-	payload: {
-		section: 'main' | 'hero' | 'group';
-		tab?: string;
-	};
-}
-
-export const setSection = (section: 'main' | 'hero' | 'group', tab?: string): SetSectionAction => ({
+export const setSection = (section: 'main' | 'hero' | 'group', tab?: string): void => AppDispatcher.dispatch(<SetSectionAction>{
 	type: SET_SECTION,
 	payload: {
 		section,
@@ -16,14 +9,7 @@ export const setSection = (section: 'main' | 'hero' | 'group', tab?: string): Se
 	}
 });
 
-export interface SetTabAction {
-	type: SET_TAB;
-	payload: {
-		tab: string;
-	};
-}
-
-export const setTab = (tab: string): SetTabAction => ({
+export const setTab = (tab: string): void => AppDispatcher.dispatch(<SetTabAction>{
 	type: SET_TAB,
 	payload: {
 		tab

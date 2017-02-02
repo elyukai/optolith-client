@@ -1,59 +1,41 @@
-import Skill, { SkillArguments, SkillInstance } from './Skill';
-import ELStore from '../../stores/ELStore';
-import { get } from '../../stores/ListStore';
-import LiturgiesStore from '../../stores/LiturgiesStore';
-import PhaseStore from '../../stores/PhaseStore';
-import Categories from '../../constants/Categories';
+import Skill from './Skill';
+import ELStore from '../stores/ELStore';
+import { get } from '../stores/ListStore';
+import LiturgiesStore from '../stores/LiturgiesStore';
+import PhaseStore from '../stores/PhaseStore';
+import * as Categories from '../constants/Categories';
 
-export interface LiturgyInstance extends SkillInstance {
-	readonly check: string[];
-	readonly tradition: number[];
-	readonly aspect: number[];
-	active: boolean;
-	readonly category: string;
-	readonly isOwnTradition: boolean;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	reset();
-}
-
-export interface LiturgyArguments extends SkillArguments {
-	check: (string | number)[];
-	trad: number[];
-	aspc: number[];
-}
-
-export default class Liturgy extends Skill implements LiturgyInstance {
+export default class Liturgy extends Skill {
 
 	readonly check: string[];
 	readonly tradition: number[];
 	readonly aspect: number[];
 	active: boolean = false;
-	readonly category: string = Categories.CHANTS;
-	
-	constructor({ check, trad, aspc, ...args }: LiturgyArguments) {
+	readonly category: string = Categories.LITURGIES;
+
+	constructor({ check, trad, aspc, ...args }: RawLiturgy) {
 		super(args);
-		this.check = check.map((e,i) => typeof e === 'number' ? `ATTR_${e}` : e);
+		this.check = check.map(e => typeof e === 'number' ? `ATTR_${e}` : e);
 		this.tradition = trad;
 		this.aspect = aspc;
 	}
 
 	get isOwnTradition(): boolean {
-		return this.tradition.some(e => e === 1 || e === get('SA_86').sid + 1);
+		return this.tradition.some(e => e === 1 || e === (get('SA_86') as SpecialAbility).sid + 1);
 	}
 
 	get isIncreasable(): boolean {
 		let max = 0;
-		let bonus = get('ADV_16').active.filter(e => e === this.id).length;
-		
+		const bonus = (get('ADV_16') as Advantage).active.filter(e => e === this.id).length;
+
 		if (PhaseStore.get() < 3) {
-			max = ELStore.getStart().max_skill;
+			max = ELStore.getStart().maxSkillRating;
 		} else {
-			let checkValues = this.check.map(attr => get(attr).value);
+			const checkValues = this.check.map(attr => (get(attr) as Attribute).value);
 			max = Math.max(...checkValues) + 2;
 		}
 
-		if (!get('SA_103').active.includes(this.aspect)) {
+		if (!(get('SA_103') as SpecialAbility).active.includes(this.aspect)) {
 			max = Math.min(14, max);
 		}
 
@@ -61,7 +43,7 @@ export default class Liturgy extends Skill implements LiturgyInstance {
 	}
 
 	get isDecreasable(): boolean {
-		if (get('SA_103').active.includes(this.aspect)) {
+		if ((get('SA_103') as SpecialAbility).active.includes(this.aspect)) {
 			const counter = LiturgiesStore.getAspectCounter();
 
 			return !(counter.get(this.aspect) <= 3 && this.value <= 10 && this.gr !== 5);

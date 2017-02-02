@@ -2,6 +2,7 @@ import Avatar from '../../components/Avatar';
 import BorderButton from '../../components/BorderButton';
 import CultureStore from '../../stores/CultureStore';
 import HerolistActions from '../../_actions/HerolistActions';
+import { get } from '../../stores/ListStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
@@ -15,34 +16,20 @@ import classNames from 'classnames';
 interface Props {
 	ap: {
 		total: number;
-	},
-	avatar: string,
-	c?: string,
-	el?: string,
-	id: string,
-	name: string,
-	p?: string,
-	player?: string[],
-	pv?: string,
-	r?: string,
-	sex?: string
+	};
+	avatar: string;
+	c: string;
+	el: string;
+	id: string | null;
+	name: string;
+	p: string;
+	player?: User;
+	pv: string | null;
+	r: string;
+	sex: string;
 }
 
-export default class HerolistItem extends Component<Props, any> {
-
-	static propTypes = {
-		ap: PropTypes.object,
-		avatar: PropTypes.string,
-		c: PropTypes.string,
-		el: PropTypes.string,
-		id: PropTypes.string,
-		name: PropTypes.string,
-		p: PropTypes.string,
-		player: PropTypes.array,
-		pv: PropTypes.string,
-		r: PropTypes.string,
-		sex: PropTypes.string
-	};
+export default class HerolistItem extends Component<Props, undefined> {
 
 	load = () => HerolistActions.load(this.props.id);
 	show = () => TabActions.showSection('hero');
@@ -69,33 +56,33 @@ export default class HerolistItem extends Component<Props, any> {
 		var elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
 
 		const playerElement = player ? (
-			<span className="player">{player[1]}</span>
+			<span className="player">{player.displayName}</span>
 		) : null;
 
 		const rcpElement = id !== null ? (
 			<VerticalList className="rcp">
 				<span className="race">
 					{(() => {
-						const { name } = RaceStore.get(r) || { name: 'Loading...' };
+						const { name } = get(r) || { name: 'Loading...' };
 						return name;
 					})()}
 				</span>
 				<span className="culture">
 					{(() => {
-						const { name } = CultureStore.get(c) || { name: 'Loading...' };
+						const { name } = get(c) || { name: 'Loading...' };
 						return name;
 					})()}
 				</span>
 				<span className="profession">
 					{(() => {
-						let { name, subname } = ProfessionStore.get(p) || { name: 'Loading...', subname: undefined };
+						let { name, subname } = get(p) || { name: 'Loading...', subname: undefined };
 						if (typeof name === 'object') {
 							name = name[sex];
 						}
 						if (typeof subname === 'object') {
 							subname = subname[sex];
 						}
-						let { name: vname } = ProfessionVariantStore.get(pv) || { name: 'Loading...' };
+						let { name: vname } = get(pv) || { name: 'Loading...' };
 						if (typeof vname === 'object') {
 							vname = vname[sex];
 						}

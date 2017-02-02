@@ -1,26 +1,11 @@
 import { RECEIVE_LOGIN, RECEIVE_LOGOUT, RECEIVE_NEW_USERNAME, RECEIVE_USER_DELETION, REQUEST_LOGIN, REQUEST_LOGOUT, REQUEST_NEW_USERNAME, REQUEST_USER_DELETION } from '../constants/ActionTypes';
-import { RawHerolist } from './HerolistActions';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export interface RequestLoginAction {
-	type: REQUEST_LOGIN;
-}
-
-export const requestLogin = (): RequestLoginAction => ({
+export const requestLogin = (): void => AppDispatcher.dispatch(<RequestLoginAction>{
 	type: REQUEST_LOGIN
 });
 
-export interface ReceiveLoginAction {
-	type: RECEIVE_LOGIN;
-	payload: {
-		name: string;
-		displayName: string;
-		email: string;
-		sessionToken: string;
-		heroes: RawHerolist
-	};
-}
-
-export const receiveLogin = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist): ReceiveLoginAction => ({
+export const receiveLogin = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist): void => AppDispatcher.dispatch(<ReceiveLoginAction>{
 	type: RECEIVE_LOGIN,
 	payload: {
 		name,
@@ -31,56 +16,29 @@ export const receiveLogin = (name: string, displayName: string, email: string, s
 	}
 });
 
-export interface RequestLogoutAction {
-	type: REQUEST_LOGOUT;
-}
-
-export const requestLogout = (): RequestLogoutAction => ({
+export const requestLogout = (): void => AppDispatcher.dispatch(<RequestLogoutAction>{
 	type: REQUEST_LOGOUT
 });
 
-export interface ReceiveLogoutAction {
-	type: RECEIVE_LOGOUT;
-}
-
-export const receiveLogout = (): ReceiveLogoutAction => ({
+export const receiveLogout = (): void => AppDispatcher.dispatch(<ReceiveLogoutAction>{
 	type: RECEIVE_LOGOUT
 });
 
-export interface RequestNewUsernameAction {
-	type: REQUEST_LOGOUT;
-}
-
-export const requestNewUsername = (): RequestNewUsernameAction => ({
+export const requestNewUsername = (): void => AppDispatcher.dispatch(<RequestNewUsernameAction>{
 	type: REQUEST_LOGOUT
 });
 
-export interface ReceiveNewUsernameAction {
-	type: RECEIVE_NEW_USERNAME;
-	payload: {
-		name: string;
-	}
-}
-
-export const receiveNewUsername = (name: string): ReceiveNewUsernameAction => ({
+export const receiveNewUsername = (name: string): void => AppDispatcher.dispatch(<ReceiveNewUsernameAction>{
 	type: RECEIVE_NEW_USERNAME,
 	payload: {
 		name
 	}
 });
 
-export interface RequestUserDeletionAction {
-	type: REQUEST_USER_DELETION;
-}
-
-export const requestUserDeletion = (): RequestUserDeletionAction => ({
+export const requestUserDeletion = (): void => AppDispatcher.dispatch(<RequestUserDeletionAction>{
 	type: REQUEST_USER_DELETION
 });
 
-export interface ReceiveUserDeletionAction {
-	type: RECEIVE_USER_DELETION;
-}
-
-export const receiveUserDeletion = (): ReceiveUserDeletionAction => ({
+export const receiveUserDeletion = (): void => AppDispatcher.dispatch(<ReceiveUserDeletionAction>{
 	type: RECEIVE_USER_DELETION
 });

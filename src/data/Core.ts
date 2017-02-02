@@ -1,19 +1,8 @@
-export interface CoreInstance {
-	readonly id: string;
-	readonly name: string;
-}
-
-export interface CoreArguments {
-	id: string;
-	name: string;
-}
-
-export default class Core implements CoreInstance {
-
+export default class Core {
 	readonly id: string;
 	readonly name: string;
 
-	constructor(args: CoreArguments) {
+	constructor(args: { id: string; name: string; }) {
 		const { id, name } = args;
 		this.id = id;
 		this.name = name;

@@ -1,51 +1,39 @@
-import {
-	RawAdvantage,
-	RawAttribute,
-	RawCombatTechnique,
-	RawCore,
-	RawCulture,
-	RawData,
-	RawDisadvantage,
-	RawLiturgy,
-	RawProfession,
-	RawProfessionVariant,
-	RawRace,
-	RawSpecialAbility,
-	RawSpell,
-	RawTalent
-} from '../_actions/ServerActions';
-import Categories from '../constants/Categories';
-import {
-	Advantage,
-	Attribute,
-	CombatTechnique,
-	Culture,
-	Disadvantage,
-	Liturgy,
-	Profession,
-	ProfessionVariant,
-	Race,
-	SpecialAbility,
-	Spell,
-	Talent
-} from '../utils/DataUtils';
+import * as Categories from '../constants/Categories';
+import Advantage from '../data/Advantage';
+import Attribute from '../data/Attribute';
+import CombatTechnique from '../data/CombatTechnique';
+import Culture from '../data/Culture';
+import Disadvantage from '../data/Disadvantage';
+import Liturgy from '../data/Liturgy';
+import Profession from '../data/Profession';
+import ProfessionVariant from '../data/ProfessionVariant';
+import Race from '../data/Race';
+import SpecialAbility from '../data/SpecialAbility';
+import Spell from '../data/Spell';
+import Talent from '../data/Talent';
 
 interface List {
 	[id: string]: any;
 }
 
-type Source = (RawAdvantage | RawAttribute | RawCombatTechnique | RawCore | RawCulture | RawData | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent) & List;
+type RawDataClass = RawAdvantage | RawAttribute | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
+
+type DataClass = typeof Advantage | typeof Attribute | typeof CombatTechnique | typeof Culture | typeof Disadvantage | typeof Liturgy | typeof Profession | typeof ProfessionVariant | typeof Race | typeof SpecialAbility | typeof Spell | typeof Talent;
+
+type Source = {
+	[id: string]: RawDataClass;
+};
 
 export default ({ attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities }: RawData) => {
 	const _list: List = {};
 
-	const iterate = (source: Source, DataClass) => {
+	const iterate = (source: Source, DataClass: DataClass) => {
 		for (const id in source) {
 			_list[id] = new DataClass(source[id]);
 		}
 	};
 
-	const getAllByCategory = (...categories) => {
+	const getAllByCategory = (...categories: Category[]) => {
 		const list = [];
 		for (const id in _list) {
 			const obj = _list[id];
@@ -94,7 +82,7 @@ export default ({ attributes, adv, cultures, disadv, talents, combattech, profes
 			_list[id].sel = (() => {
 				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
 					return getAllByCategory(...sel.map(e => e[0]))
-					.filter(({ category: cg, gr }) => !((cg === 'spells' && gr === 5) || (cg === 'liturgies' && gr === 3)))
+					.filter(({ category: cg, gr }) => !((cg === Categories.SPELLS && gr === 5) || (cg === Categories.LITURGIES && gr === 3)))
 					.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
 					.map(e => [ e.name, e.id ]);
 				}
@@ -104,7 +92,7 @@ export default ({ attributes, adv, cultures, disadv, talents, combattech, profes
 				}
 
 				if (id === 'SA_10') {
-					return getAllByCategory('talents')
+					return getAllByCategory(Categories.TALENTS)
 					.map(({ id, name, ic, spec, spec_input }) => {
 						spec = spec === null ? [] : spec.map((n, i) => [n, i + 1]);
 						return [ name, id, ic, spec, spec_input ];

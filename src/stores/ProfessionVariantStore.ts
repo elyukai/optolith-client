@@ -1,53 +1,48 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get, getAllByCategory } from './ListStore';
+import APStore from '../stores/APStore';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction;
+
 const CATEGORY = Categories.PROFESSION_VARIANTS;
 
-var _currentID = null;
+let _currentId: string | null = null;
 
-function _updateCurrentID(id) {
-	_currentID = id;
+function _updateCurrentID(id: string | null) {
+	_currentId = id;
 }
 
-class _ProfessionVariantStore extends Store {
-
-	get(id) {
-		return get(id);
-	}
+class ProfessionVariantStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY);
+		return getAllByCategory(CATEGORY) as ProfessionVariant[];
 	}
 
 	getCurrentID() {
-		return _currentID;
+		return _currentId;
 	}
 
 	getCurrent() {
-		return this.get(this.getCurrentID());
+		return _currentId !== null ? get(_currentId) as ProfessionVariant : {} as ProfessionVariant;
 	}
 
 	getCurrentName() {
 		return this.getCurrent() !== undefined ? this.getCurrent().name : null;
 	}
 
-	getNameByID(id) {
-		return this.get(id) !== undefined ? this.get(id).name : null;
+	getNameByID(id: string) {
+		return get(id) !== undefined ? get(id).name : null;
 	}
 
 }
 
-const ProfessionVariantStore = new _ProfessionVariantStore();
-
-ProfessionVariantStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateCurrentID(payload.pv);
+const ProfessionVariantStore = new ProfessionVariantStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateCurrentID(action.payload.data.pv);
 			break;
 
 		case ActionTypes.SELECT_RACE:
@@ -57,7 +52,8 @@ ProfessionVariantStore.dispatchToken = AppDispatcher.register(payload => {
 			break;
 
 		case ActionTypes.SELECT_PROFESSION_VARIANT:
-			_updateCurrentID(payload.professionVariantID);
+			AppDispatcher.waitFor([APStore.dispatchToken]);
+			_updateCurrentID(action.payload.id);
 			break;
 
 		default:
@@ -65,9 +61,7 @@ ProfessionVariantStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	ProfessionVariantStore.emitChange();
-
 	return true;
-
 });
 
 export default ProfessionVariantStore;

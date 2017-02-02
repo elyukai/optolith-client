@@ -1,23 +1,9 @@
-import Dependent, { DependentArguments, DependentInstance } from './Dependent';
+import Dependent from './Dependent';
 
-export interface IncreasableInstance extends DependentInstance {
+export default class Increasable extends Dependent {
 	value: number;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-}
 
-export interface IncreasableArguments extends DependentArguments {
-	value: number;
-}
-
-export default class Increasable extends Dependent implements IncreasableInstance {
-
-	value: number;
-	
-	constructor({ value = 0, ...args }: IncreasableArguments) {
+	constructor({ value = 0, ...args }: { value?: number; id: string; name: string; }) {
 		super(args);
 		this.value = value;
 	}

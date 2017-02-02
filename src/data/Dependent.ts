@@ -1,18 +1,9 @@
-import Core, { CoreArguments, CoreInstance } from './Core';
+import Core from './Core';
 
-export interface DependentInstance extends CoreInstance {
-	dependencies: (string | number | boolean)[];
-	addDependency(dependency: string | number | boolean): void;
-	removeDependency(dependency: string | number | boolean): boolean;
-}
-
-export interface DependentArguments extends CoreArguments {}
-
-export default class Dependent extends Core implements DependentInstance {
-
+export default class Dependent extends Core {
 	dependencies: (string | number | boolean)[] = [];
-	
-	constructor(args: DependentArguments) {
+
+	constructor(args: { id: string; name: string; }) {
 		super(args);
 	}
 

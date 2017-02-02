@@ -2,20 +2,22 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 
-var _fighters = [];
-var _fightersIdIndex = [];
-var _status = [1, 12];
-var _online = '';
-var _edit = -1;
-var _editCast = '';
-var _editDuplicate = '';
-var _options = {
+type Action = never;
+
+let _fighters = [];
+let _fightersIdIndex = [];
+let _status = [1, 12];
+let _online = '';
+let _edit = -1;
+let _editCast = '';
+let _editDuplicate = '';
+let _options = {
 	hideDeac: true,
 	hideEnemies: false
 };
 
 function getUsedPhases() {
-	var iniArray = [];
+	let iniArray = [];
 	for (let i = 0; i < _fighters.length; i++) {
 		if (!_fighters[i].deac) {
 			if (iniArray.indexOf(_fighters[i].init) == -1 && _fighters[i].init > 0) {
@@ -33,7 +35,7 @@ function getUsedPhases() {
 }
 
 function getMaxIni() {
-	var maxIni = 0;
+	let maxIni = 0;
 	for (let i = 0; i < _fighters.length; i++) {
 		if (!_fighters[i].deac && _fighters[i].init > maxIni) {
 			maxIni = _fighters[i].init;
@@ -43,20 +45,20 @@ function getMaxIni() {
 }
 
 function loadData() {
-	var data = _online;
+	let data = _online;
 	if (data === '' || data === undefined) {
 		if (localStorage['lastUrl'] !== '') data = localStorage['lastUrl'];
 		else return;
 	}
 	data = unescape(decodeURI(data)).split('?')[1];
-	var params = data.split('&');
-	var fighters = params[0].split('=')[1].split('$');
-	var status = params[1].split('=')[1].split(',');
+	let params = data.split('&');
+	let fighters = params[0].split('=')[1].split('$');
+	let status = params[1].split('=')[1].split(',');
 	_fighters = [];
 	_status = [];
 	for (let i = 0; i < fighters.length; i++) {
-		var fighterString = fighters[i].split(",");
-		var fighter = {
+		let fighterString = fighters[i].split(",");
+		let fighter = {
 			id: i,
 			name: fighterString[0],
 			type: fighterString[1],
@@ -127,15 +129,15 @@ function removeCast() {
 }
 
 function decreaseEndurance(id) {
-	var index = _fightersIdIndex[id];
+	let index = _fightersIdIndex[id];
 	if (_fighters[index].auc > 0) {
 		_fighters[index].auc--;
 	}
 }
 
 function decreaseActions(id) {
-	var index = _fightersIdIndex[id];
-	var fighter = _fighters[index];
+	let index = _fightersIdIndex[id];
+	let fighter = _fighters[index];
 	if ((2 + fighter.aktm - fighter.aktv) > 0) {
 		if (fighter.cast > 0) {
 			_fighters[index].cast--;
@@ -145,8 +147,8 @@ function decreaseActions(id) {
 }
 
 function decreaseFreeActions(id) {
-	var index = _fightersIdIndex[id];
-	var fighter = _fighters[index];
+	let index = _fightersIdIndex[id];
+	let fighter = _fighters[index];
 	if ((2 + fighter.faktm - fighter.faktv) > 0) {
 		_fighters[index].faktv++;
 	}
@@ -231,16 +233,16 @@ function addFighter() {
 function duplicateFighter() {
 	if (typeof _editDuplicate === 'number' && _editDuplicate !== 0) {
 		let index = _fighters.length;
-		var fighter = _fighters[index];
-		var times = _editDuplicate;
+		let fighter = _fighters[index];
+		let times = _editDuplicate;
 		if (fighter.init >= 20) {
 			_fighters[index].faktm = Math.floor(fighter.init / 10) - 1;
 		} else {
 			_fighters[index].faktm = 0;
 		}
 		if (times > 0) {
-			for (var i=0; i < times; i++) {
-				var duplicate = JSON.parse(JSON.stringify(_fighters[index]));
+			for (let i=0; i < times; i++) {
+				let duplicate = JSON.parse(JSON.stringify(_fighters[index]));
 				duplicate.name += ' ' + (i + 2);
 				duplicate.id = _fighters.length;
 				_fightersIdIndex.push(_fighters.length);
@@ -269,7 +271,7 @@ function updateOnline(value) {
 
 function resetPhases() {
 	_status = [1, getMaxIni()];
-	for (var i=0; i < _fighters.length; i++) {
+	for (let i=0; i < _fighters.length; i++) {
 		_fighters[i].aktv = 0;
 		_fighters[i].faktv = 0;
 		_fighters[i].cast = 0;
@@ -277,7 +279,7 @@ function resetPhases() {
 }
 
 function resetHealth() {
-	for (var i=0; i < _fighters.length; i++) {
+	for (let i=0; i < _fighters.length; i++) {
 		_fighters[i].lec = _fighters[i].le;
 		_fighters[i].auc = _fighters[i].au;
 		_fighters[i].aec = _fighters[i].ae;
@@ -292,9 +294,9 @@ function reset() {
 }
 
 function save() {
-	var stringArray = '';
-	for (var i=0; i < _fighters.length; i++) {
-		var fighter = [
+	let stringArray = '';
+	for (let i=0; i < _fighters.length; i++) {
+		let fighter = [
 			_fighters[i].name,
 			_fighters[i].type,
 			_fighters[i].ib,
@@ -326,7 +328,7 @@ function updateOption(option) {
 	_options[option] = !_options[option];
 }
 
-class _InGameStore extends Store {
+class InGameStoreStatic extends Store {
 
 	getIni() {
 		return getMaxIni();
@@ -334,7 +336,7 @@ class _InGameStore extends Store {
 
 	getIniArray() {
 		const maxIni = getMaxIni();
-		var iniArray = [];
+		let iniArray = [];
 		for (let i = maxIni; i > 0; i--) {
 			iniArray.push(i);
 		}
@@ -388,110 +390,108 @@ class _InGameStore extends Store {
 
 }
 
-const InGameStore = new _InGameStore();
+const InGameStore = new InGameStoreStatic((action: Action) => {
 
-InGameStore.dispatchToken = AppDispatcher.register(payload => {
+	// switch( payload.type ) {
 
-	switch( payload.type ) {
+	// 	case ActionTypes.LOAD_RAW_INGAME_DATA:
+	// 		loadData();
+	// 		break;
 
-		case ActionTypes.LOAD_RAW_INGAME_DATA:
-			loadData();
-			break;
+	// 	case ActionTypes.INGAME_PREVIOUS_PHASE:
+	// 		previousPhase();
+	// 		break;
 
-		case ActionTypes.INGAME_PREVIOUS_PHASE:
-			previousPhase();
-			break;
+	// 	case ActionTypes.INGAME_NEXT_PHASE:
+	// 		nextPhase();
+	// 		break;
 
-		case ActionTypes.INGAME_NEXT_PHASE:
-			nextPhase();
-			break;
+	// 	case ActionTypes.UPDATE_INGAME_CAST:
+	// 		addCast();
+	// 		break;
 
-		case ActionTypes.UPDATE_INGAME_CAST:
-			addCast();
-			break;
+	// 	case ActionTypes.CANCEL_INGAME_CAST:
+	// 		removeCast();
+	// 		break;
 
-		case ActionTypes.CANCEL_INGAME_CAST:
-			removeCast();
-			break;
+	// 	case ActionTypes.INGAME_USE_ENDURANCE:
+	// 		decreaseEndurance(payload.id);
+	// 		break;
 
-		case ActionTypes.INGAME_USE_ENDURANCE:
-			decreaseEndurance(payload.id);
-			break;
+	// 	case ActionTypes.INGAME_USE_ACTION:
+	// 		decreaseActions(payload.id);
+	// 		break;
 
-		case ActionTypes.INGAME_USE_ACTION:
-			decreaseActions(payload.id);
-			break;
+	// 	case ActionTypes.INGAME_USE_FREE_ACTION:
+	// 		decreaseFreeActions(payload.id);
+	// 		break;
 
-		case ActionTypes.INGAME_USE_FREE_ACTION:
-			decreaseFreeActions(payload.id);
-			break;
+	// 	case ActionTypes.INGAME_ACTIVATE_FIGHTER:
+	// 	case ActionTypes.INGAME_DEACTIVATE_FIGHTER:
+	// 		updateState();
+	// 		break;
 
-		case ActionTypes.INGAME_ACTIVATE_FIGHTER:
-		case ActionTypes.INGAME_DEACTIVATE_FIGHTER:
-			updateState();
-			break;
+	// 	case ActionTypes.INGAME_EDIT_START:
+	// 		startEdit(payload.id);
+	// 		break;
 
-		case ActionTypes.INGAME_EDIT_START:
-			startEdit(payload.id);
-			break;
+	// 	case ActionTypes.INGAME_EDIT_UPDATE_VALUE:
+	// 		updateEditValue(payload.tag, payload.value);
+	// 		break;
 
-		case ActionTypes.INGAME_EDIT_UPDATE_VALUE:
-			updateEditValue(payload.tag, payload.value);
-			break;
+	// 	case ActionTypes.INGAME_EDIT_UPDATE_CAST_VALUE:
+	// 		updateEditCastValue(payload.value);
+	// 		break;
 
-		case ActionTypes.INGAME_EDIT_UPDATE_CAST_VALUE:
-			updateEditCastValue(payload.value);
-			break;
+	// 	case ActionTypes.INGAME_EDIT_UPDATE_DUPLICATE_VALUE:
+	// 		updateEditDuplicateValue(payload.value);
+	// 		break;
 
-		case ActionTypes.INGAME_EDIT_UPDATE_DUPLICATE_VALUE:
-			updateEditDuplicateValue(payload.value);
-			break;
+	// 	case ActionTypes.INGAME_EDIT_END:
+	// 		endEdit();
+	// 		break;
 
-		case ActionTypes.INGAME_EDIT_END:
-			endEdit();
-			break;
+	// 	case ActionTypes.INGAME_ADD_FIGHTER:
+	// 		addFighter();
+	// 		break;
 
-		case ActionTypes.INGAME_ADD_FIGHTER:
-			addFighter();
-			break;
+	// 	case ActionTypes.INGAME_DUPLICATE_FIGHTER:
+	// 		duplicateFighter();
+	// 		break;
 
-		case ActionTypes.INGAME_DUPLICATE_FIGHTER:
-			duplicateFighter();
-			break;
+	// 	case ActionTypes.INGAME_REMOVE_FIGHTER:
+	// 		destroyFighter();
+	// 		break;
 
-		case ActionTypes.INGAME_REMOVE_FIGHTER:
-			destroyFighter();
-			break;
+	// 	case ActionTypes.INGAME_UPDATE_ONLINE_LINK:
+	// 		updateOnline(payload.value);
+	// 		break;
 
-		case ActionTypes.INGAME_UPDATE_ONLINE_LINK:
-			updateOnline(payload.value);
-			break;
+	// 	case ActionTypes.INGAME_RESET_PHASES:
+	// 		resetPhases();
+	// 		break;
 
-		case ActionTypes.INGAME_RESET_PHASES:
-			resetPhases();
-			break;
+	// 	case ActionTypes.INGAME_RESET_HEALTH:
+	// 		resetHealth();
+	// 		break;
 
-		case ActionTypes.INGAME_RESET_HEALTH:
-			resetHealth();
-			break;
+	// 	case ActionTypes.INGAME_RESET_ALL:
+	// 		reset();
+	// 		break;
 
-		case ActionTypes.INGAME_RESET_ALL:
-			reset();
-			break;
+	// 	case ActionTypes.INGAME_SAVE:
+	// 		save();
+	// 		break;
 
-		case ActionTypes.INGAME_SAVE:
-			save();
-			break;
+	// 	case ActionTypes.INGAME_SWITCH_OPTION:
+	// 		updateOption(payload.option);
+	// 		break;
 
-		case ActionTypes.INGAME_SWITCH_OPTION:
-			updateOption(payload.option);
-			break;
+	// 	default:
+	// 		return true;
+	// }
 
-		default:
-			return true;
-	}
-
-	InGameStore.emitChange();
+	// InGameStore.emitChange();
 
 	return true;
 

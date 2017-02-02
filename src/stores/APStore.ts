@@ -12,11 +12,10 @@ import reqPurchase from '../utils/reqPurchase';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-// AP = Adventure Points
+type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction;
 
 let _total = 0;
 let _spent = 0;
-let _rcp: [number, number, number, number] = [0, 0, 0, 0];
 let _adv: [number, number, number] = [0, 0, 0];
 let _disadv: [number, number, number] = [0, 0, 0];
 
@@ -34,17 +33,13 @@ function _spendDisadv(cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
 	}
 }
 
-function _calculateRCPDiff(index: number, next: number = 0) {
-	let current = _rcp[index] || 0;
-	let diff = next - current;
-	_spend(diff);
-	_rcp[index] = next;
+function _calculateRCPDiff(current: number = 0, next: number = 0) {
+	_spend(next - current);
 }
 
 function _clear() {
 	_total = 0;
 	_spent = 0;
-	_rcp = [ 0, 0, 0, 0 ];
 	_adv = [ 0, 0, 0 ];
 	_disadv = [ 0, 0, 0 ];
 }
@@ -52,25 +47,24 @@ function _clear() {
 function _updateAll(obj: AdventurePoints) {
 	_total = obj.total;
 	_spent = obj.spent;
-	_rcp = obj.rcp;
 	_adv = obj.adv;
 	_disadv = obj.disadv;
 }
 
-function _assignRCP(selections) {
+function _assignRCP(selections: Selections) {
 	if (!selections.useCulturePackage) {
-		_spent -= _rcp[1];
+		_spent -= CultureStore.getCurrent().ap;
 	}
 
 	if (selections.buyLiteracy) {
 		const culture = CultureStore.getCurrent();
-		let id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-		_spent += get('SA_28').sel[id - 1][2];
+		const id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
+		_spent += (get('SA_28') as SpecialAbility).sel[id - 1][2] as number;
 	}
 
-	let p = ProfessionStore.getCurrent();
+	const p = ProfessionStore.getCurrent();
 	if (p && p.id !== 'P_0') {
-		let apCosts = reqPurchase(p.reqs);
+		const apCosts = reqPurchase(p.reqs);
 		_spent += apCosts;
 	}
 }
@@ -81,7 +75,6 @@ class APStoreStatic extends Store {
 		return {
 			total: _total,
 			spent: _spent,
-			rcp: _rcp,
 			adv: _adv,
 			disadv: _disadv,
 		};
@@ -108,9 +101,8 @@ class APStoreStatic extends Store {
 
 }
 
-const APStore: APStoreStatic = new APStoreStatic(action => {
+const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-
 	if (action.undoAction) {
 		switch (action.type) {
 			case ActionTypes.ACTIVATE_DISADV:
@@ -120,7 +112,7 @@ const APStore: APStoreStatic = new APStoreStatic(action => {
 				return true;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_total -= action.options.value;
+				_total -= action.payload.amount;
 				break;
 
 			default:
@@ -129,13 +121,9 @@ const APStore: APStoreStatic = new APStoreStatic(action => {
 		}
 	}
 	else {
-		switch( action.type ) {
-			case ActionTypes.CLEAR_HERO:
-				_clear();
-				break;
-
-			case ActionTypes.RECEIVE_HERO:
-				_updateAll(action.ap);
+		switch(action.type) {
+			case ActionTypes.RECEIVE_HERO_DATA:
+				_updateAll(action.payload.data.ap);
 				break;
 
 			case ActionTypes.ACTIVATE_SPELL:
@@ -147,7 +135,9 @@ const APStore: APStoreStatic = new APStoreStatic(action => {
 			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 			case ActionTypes.ADD_SPELL_POINT:
 			case ActionTypes.ADD_LITURGY_POINT:
-			case ActionTypes.ADD_MAX_ENERGY_POINT:
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+			case ActionTypes.ADD_KARMA_POINT:
+			case ActionTypes.ADD_LIFE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_TALENT_POINT:
 			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
@@ -159,7 +149,7 @@ const APStore: APStoreStatic = new APStoreStatic(action => {
 				break;
 
 			case ActionTypes.ACTIVATE_DISADV:
-			case ActionTypes.UPDATE_DISADV_TIER:
+			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.DEACTIVATE_DISADV:
 				if (RequirementsStore.isValid()) {
 					_spendDisadv(RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
@@ -167,62 +157,53 @@ const APStore: APStoreStatic = new APStoreStatic(action => {
 				break;
 
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
-			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+			case ActionTypes.SET_SPECIALABILITY_TIER:
 				if (RequirementsStore.isValid()) {
-					_spend(action.costs);
+					_spend(RequirementsStore.getCurrentCost());
 				}
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					_spend(-(action.costs));
+					_spend(RequirementsStore.getCurrentCost());
 				}
 				break;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_total += action.value;
+				_total += action.payload.amount;
 				break;
 
 			case ActionTypes.SELECT_RACE:
-				AppDispatcher.waitFor([RaceStore.dispatchToken]);
-				_calculateRCPDiff(0, RaceStore.getCurrent().ap);
-				_calculateRCPDiff(1, 0);
-				_calculateRCPDiff(2, 0);
-				_calculateRCPDiff(3, 0);
+				_calculateRCPDiff(RaceStore.getCurrent().ap, (get(action.payload.id) as Race).ap);
+				_calculateRCPDiff(CultureStore.getCurrent().ap, 0);
+				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_CULTURE:
-				AppDispatcher.waitFor([CultureStore.dispatchToken]);
-				_calculateRCPDiff(1, CultureStore.getCurrent().ap);
-				_calculateRCPDiff(2, 0);
-				_calculateRCPDiff(3, 0);
+				_calculateRCPDiff(CultureStore.getCurrent().ap, (get(action.payload.id) as Culture).ap);
+				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_PROFESSION:
-				AppDispatcher.waitFor([ProfessionStore.dispatchToken]);
-				_calculateRCPDiff(2, ProfessionStore.getCurrentID() === 'P_0' ? 0 : ProfessionStore.getCurrent().ap);
-				_calculateRCPDiff(3, 0);
+				_calculateRCPDiff(ProfessionStore.getCurrent().ap, (get(action.payload.id) as Profession).ap);
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_PROFESSION_VARIANT:
-				AppDispatcher.waitFor([ProfessionVariantStore.dispatchToken]);
-				if (ProfessionVariantStore.getCurrentID() === null) {
-					_calculateRCPDiff(3, 0);
-				} else {
-					_calculateRCPDiff(3, ProfessionVariantStore.getCurrent().ap);
-				}
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, (get(action.payload.id) as ProfessionVariant).ap);
 				break;
 
-			case ActionTypes.ASSIGN_RCP_ENTRIES:
-				_assignRCP(action.selections);
+			case ActionTypes.ASSIGN_RCP_OPTIONS:
+				_assignRCP(action.payload);
 				break;
 
-			case ActionTypes.CREATE_NEW_HERO: {
+			case ActionTypes.CREATE_HERO:
 				_clear();
 				AppDispatcher.waitFor([ELStore.dispatchToken]);
 				_total = ELStore.getStart().ap;
 				break;
-			}
 
 			default:
 				return true;

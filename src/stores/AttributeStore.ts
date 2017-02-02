@@ -1,82 +1,79 @@
 import { getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import HistoryStore from './HistoryStore';
-import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
+
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction;
 
 const CATEGORY = Categories.ATTRIBUTES;
 
 type ids = 'LP' | 'AE' | 'KP';
 
-let _le = 0;
+let _lp = 0;
 let _ae = 0;
-let _ke = 0;
+let _kp = 0;
 
-function _addPoint(id: ids) {
-	switch (id) {
-		case 'LP':
-			_le++;
-			break;
-		case 'AE':
-			_ae++;
-			break;
-		case 'KP':
-			_ke++;
-			break;
-	}
+function _addLifePoint() {
+	_lp++;
 }
 
-function _removePoint(id: ids) {
-	switch (id) {
-		case 'LP':
-			_le--;
-			break;
-		case 'AE':
-			_ae--;
-			break;
-		case 'KP':
-			_ke--;
-			break;
-	}
+function _addArcaneEnergyPoint() {
+	_ae++;
+}
+
+function _addKarmaPoint() {
+	_kp++;
+}
+
+function _removeLifePoint() {
+	_lp--;
+}
+
+function _removeArcaneEnergyPoint() {
+	_ae--;
+}
+
+function _removeKarmaPoint() {
+	_kp--;
 }
 
 function _clear() {
-	_le = 0;
+	_lp = 0;
 	_ae = 0;
-	_ke = 0;
+	_kp = 0;
 }
 
-function _updateAll(obj) {
-	_le = obj.le;
+function _updateAll(obj: { lp: number; ae: number; kp: number; }) {
+	_lp = obj.lp;
 	_ae = obj.ae;
-	_ke = obj.ke;
+	_kp = obj.kp;
 }
 
 class AttributeStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY);
+		return getAllByCategory(CATEGORY) as Attribute[];
 	}
 
 	getAdd(id: ids) {
 		switch (id) {
 			case 'LP':
-				return _le;
+				return _lp;
 			case 'AE':
 				return _ae;
 			case 'KP':
-				return _ke;
+				return _kp;
 		}
 	}
 
 	getAddEnergies() {
 		return {
-			le: _le,
+			lp: _lp,
 			ae: _ae,
-			ke: _ke
+			kp: _kp
 		};
 	}
 
@@ -92,18 +89,24 @@ class AttributeStoreStatic extends Store {
 
 }
 
-const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic(action => {
-
+const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: Action) => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
-
 	if (action.undoAction) {
 		switch(action.type) {
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 				break;
 
-			case ActionTypes.ADD_MAX_ENERGY_POINT:
-				_removePoint(action.options.id);
+			case ActionTypes.ADD_LIFE_POINT:
+				_removeLifePoint();
+				break;
+
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+				_removeArcaneEnergyPoint();
+				break;
+
+			case ActionTypes.ADD_KARMA_POINT:
+				_removeKarmaPoint();
 				break;
 
 			default:
@@ -112,22 +115,33 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic(action => 
 	}
 	else {
 		switch(action.type) {
-			case ActionTypes.CLEAR_HERO:
-			case ActionTypes.CREATE_NEW_HERO:
+			case ActionTypes.CREATE_HERO:
 				_clear();
 				break;
 
-			case ActionTypes.RECEIVE_HERO:
-				_updateAll(action.attr);
+			case ActionTypes.RECEIVE_HERO_DATA:
+				_updateAll(action.payload.data.addEnergies);
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 				break;
 
-			case ActionTypes.ADD_MAX_ENERGY_POINT:
+			case ActionTypes.ADD_LIFE_POINT:
 				if (RequirementsStore.isValid()) {
-					_addPoint(action.id);
+					_addLifePoint();
+				}
+				break;
+
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+				if (RequirementsStore.isValid()) {
+					_addArcaneEnergyPoint();
+				}
+				break;
+
+			case ActionTypes.ADD_KARMA_POINT:
+				if (RequirementsStore.isValid()) {
+					_addKarmaPoint();
 				}
 				break;
 
@@ -137,9 +151,7 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic(action => 
 	}
 
 	AttributeStore.emitChange();
-
 	return true;
-
 });
 
 export default AttributeStore;

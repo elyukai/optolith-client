@@ -20,7 +20,15 @@
         "target": "es6"
     },
     "include": [
-        "./src/**/*"
+        "./src/actions/**/*",
+        "./src/components/**/*",
+        "./src/constants/**/*",
+        "./src/data/**/*",
+        "./src/dispatcher/**/*",
+        "./src/stores/**/*",
+        "./src/utils/**/*",
+        "./src/views/**/*",
+        "./src/*"
     ],
 	"exclude": [
 		"node_modules"

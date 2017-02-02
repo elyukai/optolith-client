@@ -1,91 +1,90 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import Race from '../data/Race';
 import * as ActionTypes from '../constants/ActionTypes';
-import { Race } from '../utils/DataUtils';
 import RaceStore from './RaceStore';
+import Store from './Store';
 
 const HAIRCOLORS = Race.haircolors;
 const EYECOLORS = Race.eyecolors;
 const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
-var _id = null;
-var _name = '';
-var _sex = '';
-var _avatar = '';
-var _family = '';
-var _placeofbirth = '';
-var _dateofbirth = '';
-var _age = '';
-var _haircolor = 0;
-var _eyecolor = 0;
-var _size = '';
-var _weight = '';
-var _title = '';
-var _socialstatus = 0;
-var _characteristics = '';
-var _otherinfo = '';
+let _id: string | null = null;
+let _name = '';
+let _sex = '';
+let _avatar = '';
+let _family = '';
+let _placeofbirth = '';
+let _dateofbirth = '';
+let _age = '';
+let _haircolor = 0;
+let _eyecolor = 0;
+let _size = '';
+let _weight = '';
+let _title = '';
+let _socialstatus = 0;
+let _characteristics = '';
+let _otherinfo = '';
 
-function _updateID(id) {
+function _updateID(id: string | null) {
 	_id = id;
 }
 
-function _updateName(text) {
+function _updateName(text: string) {
 	_name = text;
 }
 
-function _updateSex(id) {
+function _updateSex(id: string) {
 	_sex = id;
 }
 
-function _updateAvatar(url) {
+function _updateAvatar(url: string) {
 	_avatar = url;
 }
 
-function _updateFamily(text) {
+function _updateFamily(text: string) {
 	_family = text;
 }
 
-function _updatePlaceOfBirth(text) {
+function _updatePlaceOfBirth(text: string) {
 	_placeofbirth = text;
 }
 
-function _updateDateOfBirth(text) {
+function _updateDateOfBirth(text: string) {
 	_dateofbirth = text;
 }
 
-function _updateAge(text) {
+function _updateAge(text: string) {
 	_age = text;
 }
 
-function _updateHaircolor(id) {
+function _updateHaircolor(id: number) {
 	_haircolor = id;
 }
 
-function _updateEyecolor(id) {
+function _updateEyecolor(id: number) {
 	_eyecolor = id;
 }
 
-function _updateSize(text) {
+function _updateSize(text: string) {
 	_size = text;
 }
 
-function _updateWeight(text) {
+function _updateWeight(text: string) {
 	_weight = text;
 }
 
-function _updateTitle(text) {
+function _updateTitle(text: string) {
 	_title = text;
 }
 
-function _updateSocialStatus(id) {
+function _updateSocialStatus(id: number) {
 	_socialstatus = id;
 }
 
-function _updateCharacteristics(text) {
+function _updateCharacteristics(text: string) {
 	_characteristics = text;
 }
 
-function _updateOtherInfo(text) {
+function _updateOtherInfo(text: string) {
 	_otherinfo = text;
 }
 
@@ -124,7 +123,7 @@ function _clear() {
 	_otherinfo = '';
 }
 
-class _ProfileStore extends Store {
+class ProfileStoreStatic extends Store {
 
 	getAll() {
 		return {
@@ -198,121 +197,111 @@ class _ProfileStore extends Store {
 
 }
 
-const ProfileStore = new _ProfileStore();
-
-ProfileStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.CREATE_NEW_HERO:
+const ProfileStore = new ProfileStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.CREATE_HERO:
 			_clear();
-			_updateName(payload.name);
-			_updateSex(payload.gender);
+			_updateName(action.name);
+			_updateSex(action.gender);
 			break;
 
-		case ActionTypes.CLEAR_HERO:
-			_clear();
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateID(action.id);
+			_updateName(action.name);
+			_updateSex(action.sex);
+			_updateAvatar(action.avatar);
+			_updateFamily(action.pers.family);
+			_updatePlaceOfBirth(action.pers.placeofbirth);
+			_updateDateOfBirth(action.pers.dateofbirth);
+			_updateAge(action.pers.age);
+			_updateHaircolor(action.pers.haircolor);
+			_updateEyecolor(action.pers.eyecolor);
+			_updateSize(action.pers.size);
+			_updateWeight(action.pers.weight);
+			_updateTitle(action.pers.title);
+			_updateSocialStatus(action.pers.socialstatus);
+			_updateCharacteristics(action.pers.characteristics);
+			_updateOtherInfo(action.pers.otherinfo);
 			break;
 
-		case ActionTypes.RECEIVE_HERO:
-			_updateID(payload.id);
-			_updateName(payload.name);
-			_updateSex(payload.sex);
-			_updateAvatar(payload.avatar);
-			_updateFamily(payload.pers.family);
-			_updatePlaceOfBirth(payload.pers.placeofbirth);
-			_updateDateOfBirth(payload.pers.dateofbirth);
-			_updateAge(payload.pers.age);
-			_updateHaircolor(payload.pers.haircolor);
-			_updateEyecolor(payload.pers.eyecolor);
-			_updateSize(payload.pers.size);
-			_updateWeight(payload.pers.weight);
-			_updateTitle(payload.pers.title);
-			_updateSocialStatus(payload.pers.socialstatus);
-			_updateCharacteristics(payload.pers.characteristics);
-			_updateOtherInfo(payload.pers.otherinfo);
+		case ActionTypes.SET_HERO_NAME:
+			_updateName(action.name);
 			break;
 
-		case ActionTypes.UPDATE_HERO_NAME:
-			_updateName(payload.name);
+		case ActionTypes.SET_HERO_AVATAR:
+			_updateAvatar(action.url);
 			break;
 
-		case ActionTypes.UPDATE_HERO_AVATAR:
-			_updateAvatar(payload.url);
+		case ActionTypes.SET_FAMILY:
+			_updateFamily(action.value);
 			break;
 
-		case ActionTypes.UPDATE_FAMILY:
-			_updateFamily(payload.value);
+		case ActionTypes.SET_PLACEOFBIRTH:
+			_updatePlaceOfBirth(action.value);
 			break;
 
-		case ActionTypes.UPDATE_PLACEOFBIRTH:
-			_updatePlaceOfBirth(payload.value);
+		case ActionTypes.SET_DATEOFBIRTH:
+			_updateDateOfBirth(action.value);
 			break;
 
-		case ActionTypes.UPDATE_DATEOFBIRTH:
-			_updateDateOfBirth(payload.value);
+		case ActionTypes.SET_AGE:
+			_updateAge(action.value);
 			break;
 
-		case ActionTypes.UPDATE_AGE:
-			_updateAge(payload.value);
+		case ActionTypes.SET_HAIRCOLOR:
+			_updateHaircolor(action.option);
 			break;
 
-		case ActionTypes.UPDATE_HAIRCOLOR:
-			_updateHaircolor(payload.option);
+		case ActionTypes.SET_EYECOLOR:
+			_updateEyecolor(action.option);
 			break;
 
-		case ActionTypes.UPDATE_EYECOLOR:
-			_updateEyecolor(payload.option);
+		case ActionTypes.SET_SIZE:
+			_updateSize(action.value);
 			break;
 
-		case ActionTypes.UPDATE_SIZE:
-			_updateSize(payload.value);
+		case ActionTypes.SET_WEIGHT:
+			_updateWeight(action.value);
 			break;
 
-		case ActionTypes.UPDATE_WEIGHT:
-			_updateWeight(payload.value);
+		case ActionTypes.SET_TITLE:
+			_updateTitle(action.value);
 			break;
 
-		case ActionTypes.UPDATE_TITLE:
-			_updateTitle(payload.value);
+		case ActionTypes.SET_SOCIALSTATUS:
+			_updateSocialStatus(action.option);
 			break;
 
-		case ActionTypes.UPDATE_SOCIALSTATUS:
-			_updateSocialStatus(payload.option);
+		case ActionTypes.SET_CHARACTERISTICS:
+			_updateCharacteristics(action.value);
 			break;
 
-		case ActionTypes.UPDATE_CHARACTERISTICS:
-			_updateCharacteristics(payload.value);
+		case ActionTypes.SET_OTHERINFO:
+			_updateOtherInfo(action.value);
 			break;
 
-		case ActionTypes.UPDATE_OTHERINFO:
-			_updateOtherInfo(payload.value);
-			break;
+		// case ActionTypes.REROLL_HAIRCOLOR:
+		// 	_rerollHair();
+		// 	break;
 
-		case ActionTypes.REROLL_HAIRCOLOR:
-			_rerollHair();
-			break;
+		// case ActionTypes.REROLL_EYECOLOR:
+		// 	_rerollEyes();
+		// 	break;
 
-		case ActionTypes.REROLL_EYECOLOR:
-			_rerollEyes();
-			break;
+		// case ActionTypes.REROLL_SIZE:
+		// 	_rerollSize();
+		// 	break;
 
-		case ActionTypes.REROLL_SIZE:
-			_rerollSize();
-			break;
-
-		case ActionTypes.REROLL_WEIGHT:
-			_rerollWeight();
-			break;
+		// case ActionTypes.REROLL_WEIGHT:
+		// 	_rerollWeight();
+		// 	break;
 
 		default:
 			return true;
 	}
 
 	ProfileStore.emitChange();
-
 	return true;
-
 });
 
 export default ProfileStore;

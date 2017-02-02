@@ -1,10 +1,9 @@
-import { get, getAllByCategory, getObjByCategory } from './ListStore';
+import { getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import ELStore from './ELStore';
-import PhaseStore from './PhaseStore';
 import Store from './Store';
+
+type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
 
 const CATEGORY = Categories.TALENTS;
 
@@ -28,7 +27,7 @@ class TalentsStoreStatic extends Store {
 	getForSave() {
 		const result = new Map<string, number>();
 		this.getAll().forEach(e => {
-			let { id, value } = e;
+			const { id, value } = e;
 			if (value > 0) {
 				result.set(id, value);
 			}
@@ -49,14 +48,14 @@ class TalentsStoreStatic extends Store {
 
 }
 
-const TalentsStore = new TalentsStoreStatic(action => {
-	switch( action.type ) {
+const TalentsStore = new TalentsStoreStatic((action: Action) => {
+	switch(action.type) {
 		case ActionTypes.ADD_TALENT_POINT:
 		case ActionTypes.REMOVE_TALENT_POINT:
 			break;
 
 		case ActionTypes.SET_TALENTS_SORT_ORDER:
-			_updateSortOrder(action.option);
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
 		case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:

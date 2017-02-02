@@ -2,9 +2,8 @@ import { render } from 'react-dom';
 import * as React from 'react';
 import AppDispatcher from './dispatcher/AppDispatcher';
 import Router from './views/Router';
-import WebAPIUtils from './utils/WebAPIUtils';
+import { getAllData } from './utils/WebAPIUtils';
 import './main.scss';
-import RStore from './stores/RStore';
 
 window.onunload = function() {
 	// WebAPIUtils.logoutSync();
@@ -15,6 +14,4 @@ window.onunload = function() {
 
 render( <Router />, document.querySelector('#bodywrapper') );
 
-console.log(RStore.getState());
-
-WebAPIUtils.getAllData();
+getAllData();

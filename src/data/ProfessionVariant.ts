@@ -1,46 +1,24 @@
-import Core, { CoreArguments, CoreInstance } from './Core';
-import { fixIDs } from '../DataUtils';
-import Categories from '../../constants/Categories';
+import { fixIDs } from '../utils/DataUtils';
+import * as Categories from '../constants/Categories';
 
-export interface ProfessionVariantInstance extends CoreInstance {
+export default class ProfessionVariant {
+	readonly id: string;
 	readonly name: string | { m: string, f: string };
 	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-}
-
-export interface ProfessionVariantArguments extends CoreArguments {
-	ap: number;
-	pre_req: (string | number | boolean)[][];
-	req: (string | number | boolean)[][];
-	sel: (string | string[] | number[])[][];
-	sa: (string | number | boolean)[][];
-	combattech: (string | number)[][];
-	talents: (string | number)[][];
-}
-
-export default class ProfessionVariant extends Core implements ProfessionVariantInstance {
-
-	readonly name: string | { m: string, f: string };
-	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqsPre: (string | number | boolean)[][];
 	readonly reqs: (string | number | boolean)[][];
 	readonly sel: (string | string[] | number[])[][];
 	readonly specialabilities: (string | number | boolean)[][];
 	readonly combattechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
 	readonly category: string = Categories.PROFESSION_VARIANTS;
-	
-	constructor({ ap, pre_req, req, sel, sa, combattech, talents, ...args }: ProfessionVariantArguments) {
-		super(args);
 
+	constructor({ id, name, ap, pre_req, req, sel, sa, combattech, talents }: RawProfessionVariant) {
+		this.id = id;
+		this.name = name;
 		this.ap = ap;
 
-		this.reqs_p = pre_req;
+		this.reqsPre = pre_req;
 		this.reqs = req;
 		this.sel = sel;
 

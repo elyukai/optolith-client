@@ -1,18 +1,21 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get, getAllByCategory } from './ListStore';
+import APStore from '../stores/APStore';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 
+type Action = SelectRaceAction | ReceiveHeroDataAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction;
+
 const CATEGORY = Categories.RACES;
 
-var _currentID = null;
-var _filterText = '';
-var _sortOrder = 'name';
-var _showDetails = true;
+let _currentId: string | null = null;
+let _filterText = '';
+let _sortOrder = 'name';
+let _showDetails = true;
 
 function _updateCurrentID(id) {
-	_currentID = id;
+	_currentId = id;
 }
 
 function _updateFilterText(text) {
@@ -27,22 +30,18 @@ function _updateDetails() {
 	_showDetails = !_showDetails;
 }
 
-class _RaceStore extends Store {
-
-	get(id) {
-		return get(id);
-	}
+class RaceStoreStatic extends Store {
 
 	getAll() {
 		return getAllByCategory(CATEGORY);
 	}
 
 	getCurrentID() {
-		return _currentID;
+		return _currentId;
 	}
 
 	getCurrent() {
-		return get(this.getCurrentID());
+		return _currentId !== null ? get(_currentId) as Race : {} as Race;
 	}
 
 	getCurrentName() {
@@ -67,29 +66,22 @@ class _RaceStore extends Store {
 
 }
 
-const RaceStore: _RaceStore = new _RaceStore();
-
-RaceStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateCurrentID(payload.r);
+const RaceStore = new RaceStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateCurrentID(action.payload.data.r);
 			break;
 
 		case ActionTypes.SELECT_RACE:
-			_updateCurrentID(payload.raceID);
+			AppDispatcher.waitFor([APStore.dispatchToken]);
+			_updateCurrentID(action.payload.id);
 			break;
 
-		case ActionTypes.FILTER_RACES:
-			_updateFilterText(payload.text);
+		case ActionTypes.SET_RACES_SORT_ORDER:
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
-		case ActionTypes.SORT_RACES:
-			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.CHANGE_RACE_VALUE_VISIBILITY:
+		case ActionTypes.SWITCH_RACE_VALUE_VISIBILITY:
 			_updateDetails();
 			break;
 
@@ -98,9 +90,7 @@ RaceStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	RaceStore.emitChange();
-
 	return true;
-
 });
 
 export default RaceStore;

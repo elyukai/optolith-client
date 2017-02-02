@@ -1,17 +1,10 @@
-import Activatable, { ActivatableArguments, ActivatableInstance } from './Activatable';
-import Categories from '../../constants/Categories';
+import Activatable from './Activatable';
+import * as Categories from '../constants/Categories';
 
-export interface DisadvantageInstance extends ActivatableInstance {
-	readonly category: string;
-}
-
-export interface DisadvantageArguments extends ActivatableArguments {}
-
-export default class Disadvantage extends Activatable implements DisadvantageInstance {
-
+export default class Disadvantage extends Activatable {
 	readonly category: string = Categories.DISADVANTAGES;
-	
-	constructor(args: DisadvantageArguments) {
+
+	constructor(args: RawDisadvantage) {
 		super(args);
 	}
 }

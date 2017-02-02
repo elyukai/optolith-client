@@ -4,7 +4,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 const CHANGE_EVENT = 'change';
 
 export default class Store extends EventEmitter {
-	dispatchToken: string;
+	readonly dispatchToken: string;
 
 	constructor(callback?: (action: any) => true) {
 		super();

@@ -1,21 +1,10 @@
-import Increasable, { IncreasableArguments, IncreasableInstance } from './Increasable';
+import Increasable from './Increasable';
 
-export interface SkillInstance extends IncreasableInstance {
+export default class Skill extends Increasable {
 	ic: number;
 	readonly gr: number;
-}
 
-export interface SkillArguments extends IncreasableArguments {
-	skt: number;
-	gr: number;
-}
-
-export default class Skill extends Increasable implements SkillInstance {
-
-	ic: number;
-	readonly gr: number;
-	
-	constructor({ skt, gr, ...args }: SkillArguments) {
+	constructor({ skt, gr, ...args }: RawLiturgy | RawSpell | RawTalent) {
 		super(args);
 		this.ic = skt;
 		this.gr = gr;

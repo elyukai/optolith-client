@@ -1,69 +1,35 @@
 import { ACTIVATE_SPELL, DEACTIVATE_SPELL, ADD_SPELL_POINT, REMOVE_SPELL_POINT, SET_SPELLS_SORT_ORDER } from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export interface ActivateSpellAction {
-	type: ACTIVATE_SPELL;
-	payload: {
-		id: string;
-	};
-}
-
-export const addToList = (id: string): ActivateSpellAction => ({
+export const addToList = (id: string): void => AppDispatcher.dispatch(<ActivateSpellAction>{
 	type: ACTIVATE_SPELL,
 	payload: {
 		id
 	}
 });
 
-export interface DeactivateSpellPointAction {
-	type: DEACTIVATE_SPELL;
-	payload: {
-		id: string;
-	};
-}
-
-export const removeFromList = (id: string): DeactivateSpellPointAction => ({
+export const removeFromList = (id: string): void => AppDispatcher.dispatch(<DeactivateSpellAction>{
 	type: DEACTIVATE_SPELL,
 	payload: {
 		id
 	}
 });
 
-export interface AddSpellPointAction {
-	type: ADD_SPELL_POINT;
-	payload: {
-		id: string;
-	};
-}
-
-export const addPoint = (id: string): AddSpellPointAction => ({
+export const addPoint = (id: string): void => AppDispatcher.dispatch(<AddSpellPointAction>{
 	type: ADD_SPELL_POINT,
 	payload: {
 		id
 	}
 });
 
-export interface RemoveSpellPointAction {
-	type: REMOVE_SPELL_POINT;
-	payload: {
-		id: string;
-	};
-}
-
-export const removePoint = (id: string): RemoveSpellPointAction => ({
+export const removePoint = (id: string): void => AppDispatcher.dispatch(<RemoveSpellPointAction>{
 	type: REMOVE_SPELL_POINT,
 	payload: {
 		id
 	}
 });
 
-export interface SetSpellsSortOrderAction {
-	type: SET_SPELLS_SORT_ORDER;
-	payload: {
-		sortOrder: string;
-	};
-}
-
-export const setSortOrder = (sortOrder: string): SetSpellsSortOrderAction => ({
+export const setSortOrder = (sortOrder: string): void => AppDispatcher.dispatch(<SetSpellsSortOrderAction>{
 	type: SET_SPELLS_SORT_ORDER,
 	payload: {
 		sortOrder

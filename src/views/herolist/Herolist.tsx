@@ -14,31 +14,30 @@ import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 
 interface State {
-	list: Object[];
+	list: Hero[];
 	filter: string;
 	view: string;
 	sortOrder: string;
 }
 
-export default class Herolist extends Component<any, State> {
+export default class Herolist extends Component<undefined, State> {
 
 	state = {
-		list: HerolistStore.getAllForView(),
-		filter: HerolistStore.getFilter(),
+		filter: '',
+		list: HerolistStore.getAll(),
 		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
 	};
 
 	_updateHerolistStore = () => this.setState({
-		list: HerolistStore.getAllForView(),
-		filter: HerolistStore.getFilter(),
+		list: HerolistStore.getAll(),
 		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
 	});
 
-	filter = event => HerolistActions.filter(event.target.value);
-	sort = option => HerolistActions.sort(option);
-	changeView = option => HerolistActions.changeView(option);
+	filter = (event: any) => HerolistActions.filter(event.target.value);
+	sort = (option: string) => HerolistActions.sort(option);
+	changeView = (option: string) => HerolistActions.changeView(option);
 	showHeroCreation = () => createOverlay(<HeroCreation />);
 	refresh = () => HerolistActions.refresh();
 
@@ -53,6 +52,8 @@ export default class Herolist extends Component<any, State> {
 	render() {
 
 		const { filter, list, sortOrder, view } = this.state;
+
+		console.log(list);
 
 		return (
 			<section id="herolist">
@@ -100,7 +101,12 @@ export default class Herolist extends Component<any, State> {
 								) : null
 							}
 							{
-								list.map(hero => <HerolistItem key={hero.id} {...hero} />)
+								list.map(e => {
+									if (typeof e.player === 'string') {
+										return { ...e, player: HerolistStore.getUser(e.player) };
+									}
+									return e as Hero & { player: undefined; };
+								}).map(hero => <HerolistItem key={hero.id} {...hero} />)
 							}
 						</ul>
 					</Scroll>

@@ -1,25 +1,42 @@
-/// <reference path="../data.d.ts" />
-
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
+import Store from './Store';
 
-// EL = Experience Level
+type Action = CreateHeroAction | ReceiveHeroDataAction | ReceiveDataTablesAction;
 
-let _byId: { [id: string]: ExperienceLevel } = {};
+const _byId: { [id: string]: ExperienceLevel } = {};
 let _allIds: string[];
 let _start = 'EL_0';
 
-function _init(el: { [id: string]: ExperienceLevel }) {
-	_byId = el;
+function _init(el: { [id: string]: RawExperienceLevel }) {
+	_allIds = Object.keys(el);
+	_allIds.forEach(e => {
+		const {
+			id,
+			name,
+			ap,
+			max_attr,
+			max_skill,
+			max_combattech,
+			max_attrsum,
+			max_spells_liturgies,
+			max_unfamiliar_spells
+		} = el[e];
+		_byId[e] = {
+			id,
+			name,
+			ap,
+			maxAttributeValue: max_attr,
+			maxSkillRating: max_skill,
+			maxCombatTechniqueRating: max_combattech,
+			maxTotalAttributeValues: max_attrsum,
+			maxSpellsLiturgies: max_spells_liturgies,
+			maxUnfamiliarSpells: max_unfamiliar_spells,
+		};
+	});
 }
 
 function _update(el: string) {
 	_start = el;
-}
-
-function _clear() {
-	_start = 'EL_0';
 }
 
 class ELStoreStatic extends Store {
@@ -42,24 +59,18 @@ class ELStoreStatic extends Store {
 
 }
 
-const ELStore = new ELStoreStatic(action => {
-
-	switch( action.type ) {
-
-		case ActionTypes.CREATE_NEW_HERO:
-			_update(action.el);
+const ELStore = new ELStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.CREATE_HERO:
+			_update(action.payload.el);
 			break;
 
-		case ActionTypes.CLEAR_HERO:
-			_clear();
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_update(action.payload.data.el);
 			break;
 
-		case ActionTypes.RECEIVE_HERO:
-			_update(action.el);
-			break;
-
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			_init(action.el);
+		case ActionTypes.RECEIVE_DATA_TABLES:
+			_init(action.payload.data.el);
 			break;
 
 		default:
@@ -67,9 +78,7 @@ const ELStore = new ELStoreStatic(action => {
 	}
 
 	ELStore.emitChange();
-
 	return true;
-
 });
 
 export default ELStore;

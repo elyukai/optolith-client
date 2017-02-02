@@ -1,7 +1,8 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import AuthStore from './AuthStore';
 import Store from './Store';
+
+type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | ReceiveUserDeletionAction;
 
 let _currentTab = 'herolist';
 let _currentSection = 'main';
@@ -18,25 +19,27 @@ function _updateSection(section: 'main' | 'hero' | 'group', tab?: string) {
 	if (tab) {
 		_updateTab(tab);
 	}
-	else switch (section) {
-		case 'main':
-			if (before === 'hero') {
-				if (AuthStore.getID() === null) {
-					_currentTab = 'home';
-				} else {
-					_currentTab = 'herolist';
+	else {
+		switch (section) {
+			case 'main':
+				if (before === 'hero') {
+					if (AuthStore.getName() === '') {
+						_currentTab = 'home';
+					} else {
+						_currentTab = 'herolist';
+					}
+				} else if (before === 'group') {
+					_currentTab = 'grouplist';
 				}
-			} else if (before === 'group') {
-				_currentTab = 'grouplist';
-			}
-			break;
-		case 'hero':
-			_currentTab = 'profile';
-			break;
-		case 'group':
-			_currentTab = 'master';
-			break;
-	}
+				break;
+			case 'hero':
+				_currentTab = 'profile';
+				break;
+			case 'group':
+				_currentTab = 'master';
+				break;
+		}
+}
 }
 
 class TabStoreStatic extends Store {
@@ -58,14 +61,14 @@ class TabStoreStatic extends Store {
 
 }
 
-const TabStore = new TabStoreStatic(action => {
-	switch( action.type ) {
+const TabStore = new TabStoreStatic((action: Action) => {
+	switch(action.type) {
 		case ActionTypes.SET_TAB:
-			_updateTab(action.tab);
+			_updateTab(action.payload.tab);
 			break;
 
 		case ActionTypes.SET_SECTION:
-			_updateSection(action.section);
+			_updateSection(action.payload.section);
 			break;
 
 		case ActionTypes.RECEIVE_REGISTRATION:

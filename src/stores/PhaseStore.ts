@@ -1,14 +1,15 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
+import Store from './Store';
 
-var _phase = 1;
+type Action = ReceiveHeroDataAction | CreateHeroAction | SetSelectionsAction | EndHeroCreationAction;
 
-function _update(phase) {
+let _phase = 1;
+
+function _update(phase: number) {
 	_phase = phase;
 }
 
-class _PhaseStore extends Store {
+class PhaseStoreStatic extends Store {
 
 	get() {
 		return _phase;
@@ -16,25 +17,21 @@ class _PhaseStore extends Store {
 
 }
 
-const PhaseStore = new _PhaseStore();
-
-PhaseStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_update(payload.phase);
+const PhaseStore = new PhaseStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_update(action.payload.data.phase);
 			break;
 
-		case ActionTypes.CREATE_NEW_HERO:
+		case ActionTypes.CREATE_HERO:
 			_update(1);
 			break;
 
-		case ActionTypes.ASSIGN_RCP_ENTRIES:
+		case ActionTypes.ASSIGN_RCP_OPTIONS:
 			_update(2);
 			break;
 
-		case ActionTypes.FINALIZE_CHARACTER_CREATION:
+		case ActionTypes.END_HERO_CREATION:
 			_update(3);
 			break;
 
@@ -43,9 +40,7 @@ PhaseStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	PhaseStore.emitChange();
-
 	return true;
-
 });
 
 export default PhaseStore;

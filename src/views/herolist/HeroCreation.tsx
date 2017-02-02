@@ -1,7 +1,8 @@
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import HerolistActions from '../../_actions/HerolistActions';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
+import { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 interface Props {

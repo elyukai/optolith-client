@@ -1,70 +1,29 @@
 import { ACTIVATE_SPECIALABILITY, DEACTIVATE_SPECIALABILITY, SET_SPECIALABILITY_TIER, SET_SPECIALABILITIES_SORT_ORDER } from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-interface ActivateArgs {
-    id: string;
-    sel?: string | number;
-    sel2?: string | number;
-    input?: string;
-    tier?: number
-}
-
-export interface ActivateSpecialAbilityAction {
-    type: ACTIVATE_SPECIALABILITY;
-    payload: ActivateArgs;
-}
-
-export const addToList = (args: ActivateArgs): ActivateSpecialAbilityAction => ({
-    type: ACTIVATE_SPECIALABILITY,
-    payload: args
+export const addToList = (args: ActivateArgs): void => AppDispatcher.dispatch(<ActivateSpecialAbilityAction>{
+	type: ACTIVATE_SPECIALABILITY,
+	payload: args
 });
 
-interface DeactivateArgs {
-    id: string;
-    tier?: number;
-    cost: number;
-    sid?: number | string;
-}
-
-export interface DeactivateSpecialAbilityAction {
-    type: DEACTIVATE_SPECIALABILITY;
-    payload: DeactivateArgs;
-}
-
-export const removeFromList = (args: DeactivateArgs): DeactivateSpecialAbilityAction => ({
-    type: DEACTIVATE_SPECIALABILITY,
-    payload: args
+export const removeFromList = (args: DeactivateArgs): void => AppDispatcher.dispatch(<DeactivateSpecialAbilityAction>{
+	type: DEACTIVATE_SPECIALABILITY,
+	payload: args
 });
 
-export interface SetSpecialAbilityTierAction {
-    type: SET_SPECIALABILITY_TIER;
-    payload: {
-        id: string;
-        tier: number;
-        cost: number;
-        sid: number | string;
-    };
-}
-
-export const setTier = (id: string, tier: number, cost: number, sid: number | string): SetSpecialAbilityTierAction => ({
-    type: SET_SPECIALABILITY_TIER,
-    payload: {
-        id,
-        tier,
-        cost,
-        sid
-    }
+export const setTier = (id: string, tier: number, cost: number, sid: number | string): void => AppDispatcher.dispatch(<SetSpecialAbilityTierAction>{
+	type: SET_SPECIALABILITY_TIER,
+	payload: {
+		id,
+		tier,
+		cost,
+		sid
+	}
 });
 
-export interface SetSpecialabilitiesSortOrderAction {
-    type: SET_SPECIALABILITIES_SORT_ORDER;
-    payload: {
-        sortOrder: string;
-    };
-}
-
-export const setSortOrder = (sortOrder: string): SetSpecialabilitiesSortOrderAction => ({
-    type: SET_SPECIALABILITIES_SORT_ORDER,
-    payload: {
-        sortOrder
-    }
+export const setSortOrder = (sortOrder: string): void => AppDispatcher.dispatch(<SetSpecialAbilitiesSortOrderAction>{
+	type: SET_SPECIALABILITIES_SORT_ORDER,
+	payload: {
+		sortOrder
+	}
 });

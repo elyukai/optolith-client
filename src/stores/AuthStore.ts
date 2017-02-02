@@ -1,20 +1,18 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
+import Store from './Store';
 
-let _id: string | null = null;
-let _session: string | null = null;
-let _displayName = '';
+type Action = ReceiveLoginAction | ReceiveNewUsernameAction | ReceiveLogoutAction | ReceiveDataTablesAction;
+
 let _name = '';
+let _displayName = '';
+let _email = '';
+let _sessionToken: string | null = null;
 
-function _update(id: string, name: string, session: string | null = null) {
-	_id = id;
-	_session = session;
+function _update(name: string, displayName: string, email: string, sessionToken: string | null = null) {
 	_name = name;
-}
-
-function _updateDisplayName(displayName: string) {
 	_displayName = displayName;
+	_email = email;
+	_sessionToken = sessionToken;
 }
 
 function _updateName(name: string) {
@@ -22,57 +20,53 @@ function _updateName(name: string) {
 }
 
 function _reset() {
-	_id = null;
-	_session = null;
-	_displayName = '';
 	_name = '';
+	_displayName = '';
+	_email = '';
+	_sessionToken = null;
 }
 
 class AuthStoreStatic extends Store {
 
 	getAll() {
 		return {
-			id: _id,
-			session: _session,
+			name: _name,
 			displayName: _displayName,
-			name: _name
+			sessionToken: _sessionToken,
+			email: _email,
 		};
-	}
-
-	getID() {
-		return _id;
 	}
 
 	getName() {
 		return _name;
 	}
 
-	getSessionID() {
-		return _session;
+	getDisplayName() {
+		return _displayName;
+	}
+
+	getToken() {
+		return _sessionToken;
 	}
 }
 
-const AuthStore = new AuthStoreStatic(payload => {
-
-	const { id, session, name } = payload;
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_ACCOUNT:
-			_update(id, name, session);
+const AuthStore = new AuthStoreStatic((action: Action) => {
+	switch(action.type) {
+		// Testing purpose:
+		case ActionTypes.RECEIVE_DATA_TABLES:
+			_update('Elytherion', 'Elytherion', 'lukas.obermann@live.de');
 			break;
 
-		case ActionTypes.UPDATE_USERNAME:
+		case ActionTypes.RECEIVE_LOGIN:
+			_update(action.payload.name, action.payload.displayName, action.payload.email, action.payload.sessionToken);
+			break;
+
+		case ActionTypes.RECEIVE_NEW_USERNAME:
 			_updateName(name);
 			break;
 
-		case ActionTypes.LOGOUT_SUCCESS:
+		case ActionTypes.RECEIVE_LOGOUT:
 			_reset();
-			break;
-
-		// Testing purpose:
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			_update('USER_4', 'Elytherion');
 			break;
 
 		default:
@@ -80,9 +74,7 @@ const AuthStore = new AuthStoreStatic(payload => {
 	}
 
 	AuthStore.emitChange();
-
 	return true;
-
 });
 
 export default AuthStore;

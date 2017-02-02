@@ -1,11 +1,12 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory, getObjByCategoryGroup } from './ListStore';
-import PhaseStore from './PhaseStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import count from '../utils/count';
+import PhaseStore from './PhaseStore';
+import Store from './Store';
 import validate from '../utils/validate';
+
+type Action = ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction;
 
 const CATEGORY = Categories.SPECIAL_ABILITIES;
 // const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];
@@ -25,7 +26,7 @@ class SpecialAbilitiesStoreStatic extends Store {
 	getForSave() {
 		const result = new Map<string, any>();
 		this.getAll().forEach(e => {
-			let { active, id, sid, tier } = e;
+			const { active, id, sid, tier } = e;
 			if (typeof active === 'boolean' && active) {
 				result.set(id, { sid, tier });
 			} else if (Array.isArray(active) && active.length > 0) {
@@ -259,10 +260,10 @@ class SpecialAbilitiesStoreStatic extends Store {
 
 }
 
-const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic(payload => {
-	switch( payload.type ) {
+const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic((action: Action) => {
+	switch(action.type) {
 		case ActionTypes.SET_SPECIALABILITIES_SORT_ORDER:
-			_updateSortOrder(payload.option);
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
 		case ActionTypes.ACTIVATE_SPECIALABILITY:

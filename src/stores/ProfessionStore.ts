@@ -1,60 +1,46 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get, getAllByCategory } from './ListStore';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import APStore from '../stores/APStore';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction;
+
 const CATEGORY = Categories.PROFESSIONS;
 
-var _currentID = null;
-var _filterText = '';
-var _sortOrder = 'name';
-var _showAll = false;
+let _currentId: string | null = null;
+let _sortOrder = 'name';
+let _showAll = 'common';
 
-function _updateCurrentID(id) {
-	_currentID = id;
+function _updateCurrentID(id: string | null) {
+	_currentId = id;
 }
 
-function _updateFilterText(text) {
-	_filterText = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-function _updateView(view) {
+function _updateView(view: string) {
 	_showAll = view;
 }
 
-class _ProfessionStore extends Store {
-
-	get(id) {
-		return get(id);
-	}
+class ProfessionStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY);
+		return getAllByCategory(CATEGORY) as Profession[];
 	}
 
-	getCurrentID() {
-		return _currentID;
+	getCurrentId() {
+		return _currentId;
 	}
 
 	getCurrent() {
-		return get(this.getCurrentID());
+		return _currentId !== null ? get(_currentId) as Profession : {} as Profession;
 	}
 
 	getCurrentName() {
 		return this.getCurrent() ? this.getCurrent().name : null;
-	}
-
-	getNameByID(id) {
-		return get(id) ? get(id).name : null;
-	}
-
-	getFilter() {
-		return _filterText;
 	}
 
 	getSortOrder() {
@@ -67,14 +53,10 @@ class _ProfessionStore extends Store {
 
 }
 
-const ProfessionStore = new _ProfessionStore();
-
-ProfessionStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateCurrentID(payload.p);
+const ProfessionStore = new ProfessionStoreStatic((action: Action) => {
+	switch(action.type) {
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateCurrentID(action.payload.data.p);
 			break;
 
 		case ActionTypes.SELECT_RACE:
@@ -83,19 +65,16 @@ ProfessionStore.dispatchToken = AppDispatcher.register(payload => {
 			break;
 
 		case ActionTypes.SELECT_PROFESSION:
-			_updateCurrentID(payload.professionID);
+			AppDispatcher.waitFor([APStore.dispatchToken]);
+			_updateCurrentID(action.payload.id);
 			break;
 
-		case ActionTypes.FILTER_PROFESSIONS:
-			_updateFilterText(payload.text);
+		case ActionTypes.SET_PROFESSIONS_SORT_ORDER:
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
-		case ActionTypes.SORT_PROFESSIONS:
-			_updateSortOrder(payload.option);
-			break;
-
-		case ActionTypes.CHANGE_PROFESSION_VIEW:
-			_updateView(payload.view);
+		case ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER:
+			_updateView(action.payload.filter);
 			break;
 
 		default:

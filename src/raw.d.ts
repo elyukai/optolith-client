@@ -1,6 +1,32 @@
 /// <reference path="./data.d.ts" />
 
-declare interface RawRace {
+interface RawHero {
+	readonly clientVersion: string;
+	readonly dateCreated: Date;
+	readonly dateModified: Date;
+	readonly player?: {
+		readonly id: string;
+		readonly displayName: string;
+	};
+	readonly id: string;
+	readonly phase: number;
+	readonly name: string;
+	readonly avatar: string;
+	readonly ap: {
+		readonly total: number;
+		readonly spent: number;
+		readonly adv: [number, number, number];
+		readonly disadv: [number, number, number];
+	};
+	readonly el: string;
+	readonly r: string;
+	readonly c: string;
+	readonly p: string;
+	readonly pv: string | null;
+	readonly sex: 'm' | 'f';
+}
+
+interface RawRace {
 	id: string;
 	name: string;
 	ap: number;
@@ -24,7 +50,7 @@ declare interface RawRace {
 	weight: (number | number[])[];
 }
 
-declare interface RawCulture {
+interface RawCulture {
 	id: string;
 	name: string;
 	ap: number;
@@ -41,7 +67,7 @@ declare interface RawCulture {
 	talents: [string, number][];
 }
 
-declare interface RawProfession {
+interface RawProfession {
 	id: string;
 	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
@@ -61,7 +87,7 @@ declare interface RawProfession {
 	vars: string[];
 }
 
-declare interface RawProfessionVariant {
+interface RawProfessionVariant {
 	id: string;
 	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
@@ -74,24 +100,24 @@ declare interface RawProfessionVariant {
 	talents: [string, number][];
 }
 
-declare interface RawAdvantage {
+interface RawAdvantage {
 	id: string;
 	name: string;
 	ap: number | number[] | string;
 	tiers: number | null;
-	max: false | number | null;
+	max: number | null;
 	sel: string[] | [string, number][];
 	input: string;
 	req: any[][];
 }
 
-declare interface RawAttribute {
+interface RawAttribute {
 	id: string;
 	name: string;
 	short: string;
 }
 
-declare interface RawCombatTechnique {
+interface RawCombatTechnique {
 	id: string;
 	name: string;
 	skt: number;
@@ -99,9 +125,9 @@ declare interface RawCombatTechnique {
 	gr: number;
 }
 
-declare interface RawDisadvantage extends RawAdvantage {}
+interface RawDisadvantage extends RawAdvantage {}
 
-declare interface RawLiturgy {
+interface RawLiturgy {
 	id: string;
 	name: string;
 	check: [number, number, number];
@@ -111,18 +137,18 @@ declare interface RawLiturgy {
 	gr: number;
 }
 
-declare interface RawSpecialAbility {
+interface RawSpecialAbility {
 	id: string;
 	name: string;
 	ap: number | number[] | string;
-	max: false | number | null;
+	max: number | null;
 	sel: string[] | [string, number][];
 	input: string;
 	req: any[][];
 	gr: number;
 }
 
-declare interface RawSpell {
+interface RawSpell {
 	id: string;
 	name: string;
 	check: [number, number, number];
@@ -132,7 +158,7 @@ declare interface RawSpell {
 	gr: number;
 }
 
-declare interface RawTalent {
+interface RawTalent {
 	id: string;
 	name: string;
 	check: [string, string, string];
@@ -143,7 +169,7 @@ declare interface RawTalent {
 	spec_input: string | null;
 }
 
-declare interface RawItem {
+interface RawItem {
 	id: string;
 	name: string;
 	price: string;
@@ -163,14 +189,14 @@ declare interface RawItem {
 	stp: string;
 	range: string[];
 	reloadTime: string;
-	ammunition: string;
+	ammunition: string | null;
 	pro: string;
 	enc: string;
 	addPenalties: boolean;
 	template: string;
 }
 
-declare interface RawExperienceLevel {
+interface RawExperienceLevel {
 	id: string;
 	name: string;
 	ap: number;
@@ -182,7 +208,7 @@ declare interface RawExperienceLevel {
 	max_unfamiliar_spells: number;
 }
 
-declare interface RawData {
+interface RawData {
 	adv: { [id: string]: RawAdvantage };
 	attributes: { [id: string]: RawAttribute };
 	combattech: { [id: string]: RawCombatTechnique };
@@ -197,24 +223,4 @@ declare interface RawData {
 	specialabilities: { [id: string]: RawSpecialAbility };
 	spells: { [id: string]: RawSpell };
 	talents: { [id: string]: RawTalent };
-}
-
-declare interface HeroDataRest {
-	pers: {
-		family: string;
-		placeofbirth: string;
-		dateofbirth: string;
-		age: string;
-		haircolor: number;
-		eyecolor: number;
-		size: string;
-		weight: string;
-		title: string;
-		socialstatus: number;
-		characteristics: string;
-		otherinfo: string;
-	};
-	items: {
-		[id: string]: Item
-	}
 }

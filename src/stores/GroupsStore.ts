@@ -2,9 +2,9 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 
-var _requestsOpen = false;
+let _requestsOpen = false;
 
-class _GroupsStore extends Store {
+class GroupsStoreStatic extends Store {
 
 	getRequestsSlideinState() {
 		return _requestsOpen;
@@ -12,24 +12,21 @@ class _GroupsStore extends Store {
 
 }
 
-const GroupsStore = new _GroupsStore();
+const GroupsStore = new GroupsStoreStatic(action => {
+	// switch( action.type ) {
+	// 	case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
+	// 		_requestsOpen = true;
+	// 		break;
 
-GroupsStore.dispatchToken = AppDispatcher.register(payload => {
+	// 	case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
+	// 		_requestsOpen = false;
+	// 		break;
 
-	switch( payload.type ) {
-		case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
-			_requestsOpen = true;
-			break;
+	// 	default:
+	// 		return true;
+	// }
 
-		case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
-			_requestsOpen = false;
-			break;
-
-		default:
-			return true;
-	}
-
-	GroupsStore.emitChange();
+	// GroupsStore.emitChange();
 
 	return true;
 

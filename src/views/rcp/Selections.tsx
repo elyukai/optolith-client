@@ -124,7 +124,7 @@ export default class Selections extends Component<Props, State> {
 
 		const professionSel = new Map();
 
-		if (ProfessionStore.getCurrentID() !== 'P_0') {
+		if (ProfessionStore.getCurrentId() !== 'P_0') {
 			currentProfession.sel.forEach(e => {
 				let [ id, ...other ] = e;
 				professionSel.set(id, other);
@@ -284,7 +284,7 @@ export default class Selections extends Component<Props, State> {
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					{ProfessionStore.getCurrentID() !== 'P_0' ? <h3>Profession</h3> : null}
+					{ProfessionStore.getCurrentId() !== 'P_0' ? <h3>Profession</h3> : null}
 					{specElement}
 					{langLitcElement}
 					{ctElement}

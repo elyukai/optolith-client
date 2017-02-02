@@ -1,90 +1,31 @@
 import { CREATE_HERO, RECEIVE_HEROLIST, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER } from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import WebAPIUtils from '../utils/WebAPIUtils';
-
-interface RawHero {
-	readonly clientVersion: string;
-	readonly dateCreated: Date;
-	readonly dateModified: Date;
-	readonly player?: {
-		readonly id: string;
-		readonly displayName: string;
-	};
-	readonly id: string;
-	readonly phase: number;
-	readonly name: string;
-	readonly avatar: string;
-	readonly ap: {
-		readonly total: number;
-		readonly spent: number;
-		readonly adv: [number, number, number];
-		readonly disadv: [number, number, number];
-	};
-	readonly el: string;
-	readonly r: string;
-	readonly c: string;
-	readonly p: string;
-	readonly pv: string | null;
-	readonly sex: string;
-}
-
-export interface RawHerolist {
-	[id: string]: RawHero;
-}
 
 export const request = () => WebAPIUtils.getHeroes();
 
-export interface SetHerolistSortOrderAction {
-	type: SET_HEROLIST_SORT_ORDER;
-	payload: {
-		sortOrder: string;
-	};
-}
-
-export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
+export const setHerolistSortOrder = (sortOrder: string): void => AppDispatcher.dispatch(<SetHerolistSortOrderAction>{
 	type: SET_HEROLIST_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
-export interface SetHerolistVisibilityFilterAction {
-	type: SET_HEROLIST_VISIBILITY_FILTER;
-	payload: {
-		filterOption: string;
-	};
-}
-
-export const setHerolistVisibilityFilter = (filterOption: string): SetHerolistVisibilityFilterAction => ({
+export const setHerolistVisibilityFilter = (filterOption: string): void => AppDispatcher.dispatch(<SetHerolistVisibilityFilterAction>{
 	type: SET_HEROLIST_VISIBILITY_FILTER,
 	payload: {
 		filterOption
 	}
 });
 
-export interface ReceiveHerolistAction {
-	type: RECEIVE_HEROLIST;
-	payload: {
-		heroes: RawHerolist;
-	};
-}
-
-export const receiveHerolist = (heroes: RawHerolist): ReceiveHerolistAction => ({
+export const receiveHerolist = (heroes: RawHerolist): void => AppDispatcher.dispatch(<ReceiveHerolistAction>{
 	type: RECEIVE_HEROLIST,
 	payload: {
 		heroes
 	}
 });
 
-export interface CreateHeroAction {
-	type: CREATE_HERO;
-	payload: {
-		name: string;
-		sex: 'm' | 'f';
-		el: string;
-	};
-}
-
-export const createHero = (name: string, sex: 'm' | 'f', el: string): CreateHeroAction => ({
+export const createHero = (name: string, sex: 'm' | 'f', el: string): void => AppDispatcher.dispatch(<CreateHeroAction>{
 	type: CREATE_HERO,
 	payload: {
 		name,

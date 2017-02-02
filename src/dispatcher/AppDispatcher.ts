@@ -5,6 +5,4 @@ export interface Action {
 	type: string;
 }
 
-const dispatcher = new Dispatcher<Action>();
-
-export default dispatcher;
+export default new Dispatcher<Action>();

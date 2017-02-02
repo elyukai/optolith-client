@@ -1,107 +1,108 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
-import { Item } from '../utils/DataUtils';
+import Item from '../data/Item';
 
-var _itemsById = {
+type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction;
+
+let _itemsById: { [id: string]: Item } = {
 	ITEM_1: new Item({
 		id: 'ITEM_1',
 		name: 'Mörderstorchsäbel',
-		price: 100,
-		weight: 1.2,
-		number: 1,
+		price: '100',
+		weight: '1.2',
+		number: '1',
 		where: 'Gürtel',
 		gr: 1,
-		combattechnique: 'CT_12',
-		damageDiceNumber: 1,
-		damageDiceSides: 6,
-		damageFlat: 6,
-		damageBonus: 14,
-		at: -1,
-		pa: 0,
-		reach: 2,
-		length: 76,
-		stp: 0,
-		range: [0, 0, 0],
-		reloadtime: 0,
+		combatTechnique: 'CT_12',
+		damageDiceNumber: '1',
+		damageDiceSides: '6',
+		damageFlat: '6',
+		damageBonus: '14',
+		at: '-1',
+		pa: '0',
+		reach: '2',
+		length: '76',
+		stp: '0',
+		range: ['0', '0', '0'],
+		reloadTime: '0',
 		ammunition: null,
-		pro: 0,
-		enc: 0,
-		addpenalties: false
+		pro: '0',
+		enc: '0',
+		addPenalties: false,
+		template: 'ITEMTPL_0'
 	}),
 	ITEM_2: new Item({
 		id: 'ITEM_2',
 		name: 'Bogen des Rakorium Muntagonus',
-		price: 1234,
-		weight: 0.9,
-		number: 1,
+		price: '1234',
+		weight: '0.9',
+		number: '1',
 		where: 'Fliegt',
 		gr: 2,
-		combattechnique: 'CT_2',
-		damageDiceNumber: 2,
-		damageDiceSides: 6,
-		damageFlat: 0,
-		damageBonus: 0,
-		at: 0,
-		pa: 0,
-		reach: 0,
-		length: 123,
-		stp: 0,
-		range: [90, 60, 90],
-		reloadtime: 1,
+		combatTechnique: 'CT_2',
+		damageDiceNumber: '2',
+		damageDiceSides: '6',
+		damageFlat: '0',
+		damageBonus: '0',
+		at: '0',
+		pa: '0',
+		reach: '0',
+		length: '123',
+		stp: '0',
+		range: ['90', '60', '90'],
+		reloadTime: '1',
 		ammunition: null,
-		pro: 0,
-		enc: 0,
-		addpenalties: false
+		pro: '0',
+		enc: '0',
+		addPenalties: false,
+		template: 'ITEMTPL_0'
 	}),
 	ITEM_3: new Item({
 		id: 'ITEM_3',
 		name: 'Rüstung des Widderhorns',
-		price: 30,
-		weight: 4,
-		number: 1,
+		price: '30',
+		weight: '4',
+		number: '1',
 		where: '',
 		gr: 3,
-		combattechnique: '',
-		damageDiceNumber: 0,
-		damageDiceSides: 6,
-		damageFlat: 0,
-		damageBonus: 0,
-		at: 0,
-		pa: 0,
-		reach: 0,
-		length: 123,
-		stp: 0,
-		range: [90, 60, 90],
-		reloadtime: 1,
+		combatTechnique: '',
+		damageDiceNumber: '0',
+		damageDiceSides: '6',
+		damageFlat: '0',
+		damageBonus: '0',
+		at: '0',
+		pa: '0',
+		reach: '0',
+		length: '123',
+		stp: '0',
+		range: ['90', '60', '90'],
+		reloadTime: '1',
 		ammunition: null,
-		pro: 4,
-		enc: 2,
-		addpenalties: true
+		pro: '4',
+		enc: '2',
+		addPenalties: true,
+		template: 'ITEMTPL_0'
 	})
 };
-var _items = ['ITEM_1','ITEM_2','ITEM_3'];
-var _itemTemplatesById = {};
-var _itemTemplates = [];
-var _filterText = '';
-var _sortOrder = 'name';
+let _items = ['ITEM_1','ITEM_2','ITEM_3'];
+let _itemTemplatesById: { [id: string]: Item } = {};
+let _itemTemplates: string[] = [];
+let _filterText = '';
+let _sortOrder = 'name';
 
-function _init(raw) {
+function _init(raw: { [id: string]: RawItem }) {
 	for (const id in raw) {
 		_itemTemplatesById[id] = new Item({ ...raw[id], isTemplateLocked: true });
 		_itemTemplates.push(id);
 	}
 }
 
-function _updateFilterText(text) {
-	_filterText = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-function _addItem(raw, id) {
+function _addItem(raw: RawItem, id: string) {
 	// if ([1,2].includes(data.gr)) {
 	// 	data.ddn = parseInt(data.ddn) || 0;
 	// 	data.df = parseInt(data.df) || 0;
@@ -125,15 +126,15 @@ function _addItem(raw, id) {
 	// 	data.pro = parseInt(data.pro) || 0;
 	// 	data.enc = parseInt(data.enc) || 0;
 	// }
-	_itemsById[id] = new Item({ ...Item.prepareDataForStore(raw), id });
+	_itemsById[id] = new Item({ ...raw, id });
 	_items.push(id);
 }
 
-function _saveItem(raw) {
-	_itemsById[raw.id] = new Item(Item.prepareDataForStore(raw));
+function _saveItem(id: string, item: Item) {
+	_itemsById[id] = new Item(item);
 }
 
-function _removeItem(id) {
+function _removeItem(id: string) {
 	delete _itemsById[id];
 	_items.some((e,i) => {
 		if (e === id) {
@@ -144,9 +145,9 @@ function _removeItem(id) {
 	});
 }
 
-class _InventoryStore extends Store {
+class InventoryStoreStatic extends Store {
 
-	get(id) {
+	get(id: string) {
 		return _itemsById[id];
 	}
 
@@ -154,7 +155,7 @@ class _InventoryStore extends Store {
 		return _items.map(e => _itemsById[e]);
 	}
 
-	getTemplate(id) {
+	getTemplate(id: string) {
 		return _itemTemplatesById[id];
 	}
 
@@ -170,40 +171,31 @@ class _InventoryStore extends Store {
 		return _sortOrder;
 	}
 
-	getForEditor(id) {
-		return Item.prepareDataForEditor(_itemsById[id]);
-	}
-
 }
 
-const InventoryStore = new _InventoryStore();
+const InventoryStore = new InventoryStoreStatic((action: Action) => {
+	console.log(InventoryStore.constructor.name, InventoryStore.dispatchToken, action);
 
-InventoryStore.dispatchToken = AppDispatcher.register(payload => {
+	switch( action.type ) {
 
-	switch( payload.type ) {
-
-		case ActionTypes.FILTER_ITEMS:
-			_updateFilterText(payload.text);
-			break;
-
-		case ActionTypes.SORT_ITEMS:
-			_updateSortOrder(payload.option);
+		case ActionTypes.SET_ITEMS_SORT_ORDER:
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
 		case ActionTypes.ADD_ITEM:
-			_addItem(payload.item, 'ITEM_' + (_items[_items.length - 1] ? _items[_items.length - 1].split('_')[1] + 1 : 1));
+			_addItem(action.payload.data, 'ITEM_' + (_items[_items.length - 1] ? _items[_items.length - 1].split('_')[1] + 1 : 1));
 			break;
 
-		case ActionTypes.SAVE_ITEM:
-			_saveItem(payload.item);
+		case ActionTypes.SET_ITEM:
+			_saveItem(action.payload.id, action.payload.data);
 			break;
 
 		case ActionTypes.REMOVE_ITEM:
-			_removeItem(payload.id);
+			_removeItem(action.payload.id);
 			break;
 
-		case ActionTypes.RECEIVE_RAW_LISTS:
-			_init(payload.items);
+		case ActionTypes.RECEIVE_DATA_TABLES:
+			_init(action.payload.data.items);
 			break;
 
 		default:

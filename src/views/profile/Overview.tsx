@@ -93,7 +93,7 @@ export default class ProfileOverview extends React.Component<undefined, ProfileO
 
 		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
-		const isProfessionUndefined = ProfessionStore.getCurrentID() === null;
+		const isProfessionUndefined = ProfessionStore.getCurrentId() === null;
 
 		const currentEL = calcEL(ap);
 

@@ -4,7 +4,6 @@ import alert from '../utils/alert';
 import APStore from './APStore';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
 import AttributeStore from './AttributeStore';
 import * as Categories from '../constants/Categories';
 import Store from './Store';
@@ -37,7 +36,7 @@ function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 		}
 	}
 	else {
-		const { category, reqs } = get(id);
+		const { category, reqs } = get(id) as Advantage | Disadvantage;
 		const { adv, disadv, spent, total } = APStore.getAll();
 		const add = category === Categories.ADVANTAGES;
 		const target = () => add ? adv : disadv;
@@ -72,7 +71,7 @@ function _updateOwnRequirements(isValid) {
 	_validOwnRequirements = isValid;
 }
 
-class _RequirementsStore extends Store {
+class RequirementsStoreStatic extends Store {
 
 	getCurrentCost() {
 		return _cost;
@@ -88,21 +87,18 @@ class _RequirementsStore extends Store {
 
 }
 
-const RequirementsStore: _RequirementsStore = new _RequirementsStore();
-
-RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
-
-	if (payload.undoAction) {
+const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
+	if (action.undoAction) {
 		_updateOwnRequirements(true);
-		_updateCost(-payload.cost, true);
+		_updateCost(-action.cost, true);
 	}
 	else {
-		switch( payload.type ) {
+		switch(action.type) {
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY: {
-				const obj = get(payload.id);
+				const obj = get(action.payload.id);
 				_updateOwnRequirements(true);
-				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 					_updateCost(1);
 				}
 				else {
@@ -113,9 +109,9 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY: {
-				const obj = get(payload.id);
+				const obj = get(action.id);
 				_updateOwnRequirements(true);
-				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.CHANTS && obj.gr === 3)) {
+				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 					_updateCost(-1);
 				}
 				else {
@@ -125,33 +121,33 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 			}
 
 			case ActionTypes.ACTIVATE_DISADV:
-				_updateOwnRequirements(get(payload.id).isActivatable);
-				_updateDisAdvCost(payload.id, payload.cost);
+				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
+				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
-				_updateOwnRequirements(get(payload.id).isActivatable);
-				_updateCost(payload.cost);
+				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
+				_updateCost(action.payload.cost);
 				break;
 
 			case ActionTypes.DEACTIVATE_DISADV:
-				_updateOwnRequirements(get(payload.id).isDeactivatable);
-				_updateDisAdvCost(payload.id, payload.cost);
+				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
+				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				_updateOwnRequirements(get(payload.id).isDeactivatable);
-				_updateCost(-payload.cost);
+				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
+				_updateCost(-action.payload.cost);
 				break;
 
-			case ActionTypes.UPDATE_DISADV_TIER:
+			case ActionTypes.SET_DISADV_TIER:
 				_updateOwnRequirements(true);
-				_updateDisAdvCost(payload.id, payload.cost);
+				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
-			case ActionTypes.UPDATE_SPECIALABILITY_TIER:
+			case ActionTypes.SET_SPECIALABILITY_TIER:
 				_updateOwnRequirements(true);
-				_updateCost(payload.cost);
+				_updateCost(action.payload.cost);
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
@@ -159,16 +155,18 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 			case ActionTypes.ADD_SPELL_POINT:
 			case ActionTypes.ADD_LITURGY_POINT: {
-				const obj = get(payload.id);
+				const obj = get(action.payload.id) as Attribute | Talent | CombatTechnique | Spell | Liturgy;
 				_updateOwnRequirements(obj.isIncreasable);
 				_updateCost(final(obj.ic, obj.value + 1));
 				break;
 			}
 
-			case ActionTypes.ADD_MAX_ENERGY_POINT: {
-				const obj = secondaryAttributes.get(payload.id);
+			case ActionTypes.ADD_LIFE_POINT:
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+			case ActionTypes.ADD_KARMA_POINT: {
+				const obj = secondaryAttributes.get(action.id);
 				_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
-				_updateCost(final(4, AttributeStore.getAdd(payload.id) + 1));
+				_updateCost(final(4, AttributeStore.getAdd(action.id) + 1));
 				break;
 			}
 
@@ -177,7 +175,7 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 			case ActionTypes.REMOVE_SPELL_POINT:
 			case ActionTypes.REMOVE_LITURGY_POINT: {
-				const obj = get(payload.id);
+				const obj = get(action.payload.id);
 				_updateOwnRequirements(obj.isDecreasable);
 				_updateCost(final(obj.ic, obj.value) * -1);
 				break;
@@ -189,9 +187,7 @@ RequirementsStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	RequirementsStore.emitChange();
-
 	return true;
-
 });
 
 export default RequirementsStore;

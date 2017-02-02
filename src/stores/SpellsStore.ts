@@ -6,6 +6,8 @@ import ELStore from './ELStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
+type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction;
+
 const CATEGORY = Categories.SPELLS;
 
 let _sortOrder = 'name';
@@ -23,7 +25,7 @@ class SpellsStoreStatic extends Store {
 	getForSave() {
 		const result = new Map();
 		this.getAll().forEach(e => {
-			let { active, id, value } = e;
+			const { active, id, value } = e;
 			if (active) {
 				result.set(id, value);
 			}
@@ -75,10 +77,8 @@ class SpellsStoreStatic extends Store {
 
 }
 
-const SpellsStore = new SpellsStoreStatic(action => {
-
-	switch( action.type ) {
-
+const SpellsStore = new SpellsStoreStatic((action: Action) => {
+	switch(action.type) {
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.ADD_SPELL_POINT:
@@ -86,7 +86,7 @@ const SpellsStore = new SpellsStoreStatic(action => {
 			break;
 
 		case ActionTypes.SET_SPELLS_SORT_ORDER:
-			_updateSortOrder(action.option);
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
 		default:
@@ -94,9 +94,7 @@ const SpellsStore = new SpellsStoreStatic(action => {
 	}
 
 	SpellsStore.emitChange();
-
 	return true;
-
 });
 
 export default SpellsStore;

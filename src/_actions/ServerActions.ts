@@ -1,4 +1,4 @@
-import ActionTypes from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import alert from '../utils/alert';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import HerolistStore from '../stores/HerolistStore';
@@ -24,7 +24,7 @@ export default {
 
 	receiveLists(raw: Object): void {
 		AppDispatcher.dispatch({
-			type: ActionTypes.RECEIVE_RAW_LISTS,
+			type: ActionTypes.RECEIVE_DATA_TABLES,
 			...raw
 		});
 	},

@@ -1,35 +1,30 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import ELStore from './ELStore';
 import { get, getAllByCategory, getObjByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
-import validate from '../utils/validate';
 import * as Categories from '../constants/Categories';
+import ELStore from './ELStore';
+import Store from './Store';
+import validate from '../utils/validate';
+
+type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction;
 
 const CATEGORY_1 = Categories.ADVANTAGES;
 const CATEGORY_2 = Categories.DISADVANTAGES;
 
-var _filter = '';
-var _showRating = true;
-
-function _updateFilterText(text) {
-	_filter = text;
-}
+let _showRating = true;
 
 function _updateRating() {
 	_showRating = !_showRating;
 }
 
-function _updateAll(disadv) {
+function _updateAll(disadv: { showRating: boolean; }) {
 	_showRating = disadv.showRating;
 }
 
-class _DisAdvStore extends Store {
+class DisAdvStoreStatic extends Store {
 
 	getForSave() {
-		var all = [].concat(getAllByCategory(CATEGORY_1), getAllByCategory(CATEGORY_2));
-		var result = new Map();
-		all.forEach(e => {
+		const result = new Map();
+		[ ...getAllByCategory(CATEGORY_1) as Advantage[], ...getAllByCategory(CATEGORY_2) as Disadvantage[] ].forEach(e => {
 			let { active, id, sid, tier } = e;
 			if (typeof active === 'boolean' && active) {
 				result.set(id, { sid, tier });
@@ -49,7 +44,7 @@ class _DisAdvStore extends Store {
 
 	getActiveForView(category) {
 		category = category ? CATEGORY_1 : CATEGORY_2;
-		var advsObj = getObjByCategory(category), advs = [];
+		let advsObj = getObjByCategory(category), advs = [];
 		for (let id in advsObj) {
 			let adv = advsObj[id];
 			let { active, name, sid, sel, tier, tiers, cost, dependencies } = adv;
@@ -173,31 +168,12 @@ class _DisAdvStore extends Store {
 				}
 			}
 		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			advs = advs.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		advs.sort((a, b) => {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				if (a.add < b.add) {
-					return -1;
-				} else if (a.add > b.add) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		});
 		return advs;
 	}
 
 	getDeactiveForView(category) {
 		category = category ? CATEGORY_1 : CATEGORY_2;
-		var advsObj = getObjByCategory(category), advs = [];
+		let advsObj = getObjByCategory(category), advs = [];
 		for (let id in advsObj) {
 			let adv = advsObj[id];
 			let { name, sel, input, tiers, cost, dependencies, reqs } = adv;
@@ -296,24 +272,7 @@ class _DisAdvStore extends Store {
 				}
 			}
 		}
-		if (_filter !== '') {
-			let filter = _filter.toLowerCase();
-			advs = advs.filter(obj => obj.name.toLowerCase().match(filter));
-		}
-		advs.sort((a, b) => {
-			if (a.name < b.name) {
-				return -1;
-			} else if (a.name > b.name) {
-				return 1;
-			} else {
-				return 0;
-			}
-		});
 		return advs;
-	}
-
-	getFilter() {
-		return _filter;
 	}
 
 	getRating() {
@@ -322,27 +281,22 @@ class _DisAdvStore extends Store {
 
 }
 
-const DisAdvStore = new _DisAdvStore();
+const DisAdvStore = new DisAdvStoreStatic((action: Action) => {
+	console.log(DisAdvStore.constructor.name, DisAdvStore.dispatchToken, action);
 
-DisAdvStore.dispatchToken = AppDispatcher.register(payload => {
+	switch( action.type ) {
 
-	switch( payload.type ) {
-
-		case ActionTypes.RECEIVE_HERO:
-			_updateAll(payload.disadv);
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateAll(action.payload.data.disadv);
 			break;
 
-		case ActionTypes.FILTER_DISADV:
-			_updateFilterText(payload.text);
-			break;
-
-		case ActionTypes.CHANGE_DISADV_RATING:
+		case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
 			_updateRating();
 			break;
 
 		case ActionTypes.ACTIVATE_DISADV:
 		case ActionTypes.DEACTIVATE_DISADV:
-		case ActionTypes.UPDATE_DISADV_TIER:
+		case ActionTypes.SET_DISADV_TIER:
 			break;
 
 		default:

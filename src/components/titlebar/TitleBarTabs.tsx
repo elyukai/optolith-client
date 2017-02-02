@@ -1,7 +1,7 @@
 import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import TabProps from '../../components/Tab';
-import TabActions from '../../_actions/TabActions';
+import { setTab } from '../../actions/LocationActions';
 
 interface Props {
 	active: string;
@@ -15,7 +15,7 @@ export default class TitleBarTabs extends Component<Props, any> {
 		tabs: PropTypes.array.isRequired
 	};
 
-	handleClick = tab => TabActions.showTab(tab);
+	handleClick = (tab: string) => setTab(tab);
 
 	render() {
 

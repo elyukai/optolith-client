@@ -1,8 +1,9 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import { get, getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+import Store from './Store';
+
+type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction;
 
 const CATEGORY = Categories.COMBAT_TECHNIQUES;
 
@@ -14,13 +15,16 @@ function _updateSortOrder(option: string) {
 
 class CombatTechniquesStoreStatic extends Store {
 
+	getAll() {
+		return getAllByCategory(CATEGORY) as CombatTechnique[];
+	}
+
 	getAllForSave() {
-		var all = getAllByCategory(CATEGORY);
-		var result = new Map();
-		all.forEach(e => {
-			let { id, fw } = e;
-			if (fw > 6) {
-				result.set(id, fw);
+		const result = new Map();
+		this.getAll().forEach(e => {
+			const { id, value } = e;
+			if (value > 6) {
+				result.set(id, value);
 			}
 		});
 		return {
@@ -28,24 +32,12 @@ class CombatTechniquesStoreStatic extends Store {
 		};
 	}
 
-	get(id: string) {
-		return get(id);
+	getMaxPrimaryAttributeValueByID(array: string[]) {
+		return array.map(attr => (get(attr) as Attribute).value).reduce((a, b) => Math.max(a, b), 0);
 	}
 
-	getMaxPrimaryAttributeValueByID(array) {
-		return array.map(attr => this.get(attr).value).reduce((a, b) => Math.max(a, b), 0);
-	}
-
-	getPrimaryAttributeMod(array) {
+	getPrimaryAttributeMod(array: string[]) {
 		return Math.max(Math.floor((this.getMaxPrimaryAttributeValueByID(array) - 8) / 3), 0);
-	}
-
-	getAll() {
-		return getAllByCategory(CATEGORY);
-	}
-
-	getFilter() {
-		return _filter;
 	}
 
 	getSortOrder() {
@@ -54,22 +46,14 @@ class CombatTechniquesStoreStatic extends Store {
 
 }
 
-const CombatTechniquesStore = new CombatTechniquesStoreStatic();
-
-CombatTechniquesStore.dispatchToken = AppDispatcher.register(payload => {
-
-	switch( payload.type ) {
-
+const CombatTechniquesStore = new CombatTechniquesStoreStatic((action: Action) => {
+	switch(action.type) {
 		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 			break;
 
-		case ActionTypes.FILTER_COMBATTECHNIQUES:
-			_updateFilterText(payload.text);
-			break;
-
-		case ActionTypes.SORT_COMBATTECHNIQUES:
-			_updateSortOrder(payload.option);
+		case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
+			_updateSortOrder(action.payload.sortOrder);
 			break;
 
 		default:
@@ -77,9 +61,7 @@ CombatTechniquesStore.dispatchToken = AppDispatcher.register(payload => {
 	}
 
 	CombatTechniquesStore.emitChange();
-
 	return true;
-
 });
 
 export default CombatTechniquesStore;
