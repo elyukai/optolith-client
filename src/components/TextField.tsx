@@ -15,7 +15,7 @@ interface Props {
 	hint?: string;
 	label?: string;
 	multiLine?: boolean;
-	onChange: (event: React.KeyboardEvent<any>) => void;
+	onChange: (event: Event) => void;
 	onKeyDown?: (event: React.KeyboardEvent<any>) => void;
 	type?: string;
 	value: string | number;

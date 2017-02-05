@@ -8,28 +8,28 @@ import alert from '../utils/alert';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 export default {
-	refresh(): void {
+	refresh() {
 		WebAPIUtils.getHeroes();
 	},
-	filter(text: string): void {
+	filter(text: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.FILTER_HEROLIST,
 			text
 		});
 	},
-	sort(option: string): void {
+	sort(option: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.SORT_HEROLIST,
 			option
 		});
 	},
-	changeView(view: string): void {
+	changeView(view: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.CHANGE_HEROLIST_VIEW,
 			view
 		});
 	},
-	load(id: string): void {
+	load(id: string) {
 		if (ELStore.getStartID() !== 'EL_0') {
 			alert(
 				'Nicht gespeicherter Held',
@@ -48,19 +48,19 @@ export default {
 			this.loadFx(id);
 		}
 	},
-	loadFx(id: string): void {
+	loadFx(id: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.CLEAR_HERO
 		});
-		WebAPIUtils.loadHero(id);
+		WebAPIUtils.requestHero(id);
 	},
-	createNewHero(options: Object): void {
+	createNewHero(options: Object) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.CREATE_NEW_HERO,
 			...options
 		});
 	},
-	save(): void {
+	save() {
 
 	}
 };

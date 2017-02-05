@@ -3,13 +3,15 @@ import * as ActionTypes from '../constants/ActionTypes';
 import RaceStore from './RaceStore';
 import Store from './Store';
 
+type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction;
+
 const HAIRCOLORS = Race.haircolors;
 const EYECOLORS = Race.eyecolors;
 const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 let _id: string | null = null;
 let _name = '';
-let _sex = '';
+let _sex: 'm' | 'f' = '' as 'm' | 'f';
 let _avatar = '';
 let _family = '';
 let _placeofbirth = '';
@@ -32,7 +34,7 @@ function _updateName(text: string) {
 	_name = text;
 }
 
-function _updateSex(id: string) {
+function _updateSex(id: 'm' | 'f') {
 	_sex = id;
 }
 
@@ -107,7 +109,7 @@ function _rerollWeight() {
 function _clear() {
 	_id = null;
 	_name = '';
-	_sex = '';
+	_sex = '' as 'm' | 'f';
 	_avatar = '';
 	_family = '';
 	_placeofbirth = '';
@@ -201,83 +203,83 @@ const ProfileStore = new ProfileStoreStatic((action: Action) => {
 	switch(action.type) {
 		case ActionTypes.CREATE_HERO:
 			_clear();
-			_updateName(action.name);
-			_updateSex(action.gender);
+			_updateName(action.payload.name);
+			_updateSex(action.payload.sex);
 			break;
 
 		case ActionTypes.RECEIVE_HERO_DATA:
-			_updateID(action.id);
-			_updateName(action.name);
-			_updateSex(action.sex);
-			_updateAvatar(action.avatar);
-			_updateFamily(action.pers.family);
-			_updatePlaceOfBirth(action.pers.placeofbirth);
-			_updateDateOfBirth(action.pers.dateofbirth);
-			_updateAge(action.pers.age);
-			_updateHaircolor(action.pers.haircolor);
-			_updateEyecolor(action.pers.eyecolor);
-			_updateSize(action.pers.size);
-			_updateWeight(action.pers.weight);
-			_updateTitle(action.pers.title);
-			_updateSocialStatus(action.pers.socialstatus);
-			_updateCharacteristics(action.pers.characteristics);
-			_updateOtherInfo(action.pers.otherinfo);
+			_updateID(action.payload.data.id);
+			_updateName(action.payload.data.name);
+			_updateSex(action.payload.data.sex);
+			_updateAvatar(action.payload.data.avatar);
+			_updateFamily(action.payload.data.pers.family);
+			_updatePlaceOfBirth(action.payload.data.pers.placeofbirth);
+			_updateDateOfBirth(action.payload.data.pers.dateofbirth);
+			_updateAge(action.payload.data.pers.age);
+			_updateHaircolor(action.payload.data.pers.haircolor);
+			_updateEyecolor(action.payload.data.pers.eyecolor);
+			_updateSize(action.payload.data.pers.size);
+			_updateWeight(action.payload.data.pers.weight);
+			_updateTitle(action.payload.data.pers.title);
+			_updateSocialStatus(action.payload.data.pers.socialstatus);
+			_updateCharacteristics(action.payload.data.pers.characteristics);
+			_updateOtherInfo(action.payload.data.pers.otherinfo);
 			break;
 
 		case ActionTypes.SET_HERO_NAME:
-			_updateName(action.name);
+			_updateName(action.payload.name);
 			break;
 
 		case ActionTypes.SET_HERO_AVATAR:
-			_updateAvatar(action.url);
+			_updateAvatar(action.payload.url);
 			break;
 
 		case ActionTypes.SET_FAMILY:
-			_updateFamily(action.value);
+			_updateFamily(action.payload.family);
 			break;
 
 		case ActionTypes.SET_PLACEOFBIRTH:
-			_updatePlaceOfBirth(action.value);
+			_updatePlaceOfBirth(action.payload.placeofbirth);
 			break;
 
 		case ActionTypes.SET_DATEOFBIRTH:
-			_updateDateOfBirth(action.value);
+			_updateDateOfBirth(action.payload.dateofbirth);
 			break;
 
 		case ActionTypes.SET_AGE:
-			_updateAge(action.value);
+			_updateAge(action.payload.age);
 			break;
 
 		case ActionTypes.SET_HAIRCOLOR:
-			_updateHaircolor(action.option);
+			_updateHaircolor(action.payload.haircolor);
 			break;
 
 		case ActionTypes.SET_EYECOLOR:
-			_updateEyecolor(action.option);
+			_updateEyecolor(action.payload.eyecolor);
 			break;
 
 		case ActionTypes.SET_SIZE:
-			_updateSize(action.value);
+			_updateSize(action.payload.size);
 			break;
 
 		case ActionTypes.SET_WEIGHT:
-			_updateWeight(action.value);
+			_updateWeight(action.payload.weight);
 			break;
 
 		case ActionTypes.SET_TITLE:
-			_updateTitle(action.value);
+			_updateTitle(action.payload.title);
 			break;
 
 		case ActionTypes.SET_SOCIALSTATUS:
-			_updateSocialStatus(action.option);
+			_updateSocialStatus(action.payload.socialstatus);
 			break;
 
 		case ActionTypes.SET_CHARACTERISTICS:
-			_updateCharacteristics(action.value);
+			_updateCharacteristics(action.payload.characteristics);
 			break;
 
 		case ActionTypes.SET_OTHERINFO:
-			_updateOtherInfo(action.value);
+			_updateOtherInfo(action.payload.otherinfo);
 			break;
 
 		// case ActionTypes.REROLL_HAIRCOLOR:

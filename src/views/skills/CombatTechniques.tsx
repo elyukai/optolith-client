@@ -1,41 +1,39 @@
-import { CombatTechniqueInstance } from '../../utils/data/CombatTechnique';
 import { filterAndSort } from '../../utils/ListUtils';
 import { get } from '../../stores/ListStore';
 import CombatTechniquesActions from '../../_actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component } from 'react';
+import * as React from 'react';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import TextField from '../../components/TextField';
 
 interface State {
-	combattechniques: CombatTechniqueInstance[];
+	combattechniques: CombatTechnique[];
 	filterText: string;
 	sortOrder: string;
 	phase: number;
 }
 
-export default class CombatTechniques extends Component<any, State> {
+export default class CombatTechniques extends React.Component<undefined, State> {
 
 	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
-		filterText: CombatTechniquesStore.getFilter(),
+		filterText: '',
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 		phase: PhaseStore.get()
 	};
 
 	_updateCombatTechniquesStore = () => this.setState({
 		combattechniques: CombatTechniquesStore.getAll(),
-		filterText: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder()
 	} as State);
 
-	filter = event => this.setState({ filterText: event.target.value } as State);
-	sort = option => CombatTechniquesActions.sort(option);
-	addPoint = id => CombatTechniquesActions.addPoint(id);
-	removePoint = id => CombatTechniquesActions.removePoint(id);
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => CombatTechniquesActions.sort(option);
+	addPoint = (id: string) => CombatTechniquesActions.addPoint(id);
+	removePoint = (id: string) => CombatTechniquesActions.removePoint(id);
 
 	componentDidMount() {
 		CombatTechniquesStore.addChangeListener(this._updateCombatTechniquesStore );
@@ -64,45 +62,31 @@ export default class CombatTechniques extends Component<any, State> {
 					]} />
 				</div>
 				<Scroll>
-					<table className="list">
-						<thead>
-							<tr>
-								<td className="type">Gruppe</td>
-								<td className="name">Kampftechnik</td>
-								<td className="value">Ktw.</td>
-								<td className="primary">Leiteig.</td>
-								<td className="at">AT/FK</td>
-								<td className="pa">PA</td>
-								<td className="ic">Sf.</td>
-								<td></td>
-							</tr>
-						</thead>
-						<tbody>
-							{
-								list.map(obj => {
-									const primary = obj.primary.map(attr => get(attr).short).join('/');
-									return (
-										<SkillListItem
-											key={obj.id}
-											group={GROUPS[obj.gr - 1]}
-											name={obj.name}
-											sr={obj.value}
-											ic={obj.ic}
-											checkDisabled
-											addPoint={this.addPoint.bind(null, obj.id)}
-											addDisabled={!obj.isIncreasable}
-											removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-											removeDisabled={!obj.isDecreasable}
-											>
-											<td className="leit">{primary}</td>
-											<td className="at">{obj.at}</td>
-											<td className="pa">{obj.pa}</td>
-										</SkillListItem>
-									);
-								})
-							}
-						</tbody>
-					</table>
+					<div className="list-wrapper">
+						{
+							list.map(obj => {
+								const primary = obj.primary.map(attr => (get(attr) as Attribute).short).join('/');
+								return (
+									<SkillListItem
+										key={obj.id}
+										group={GROUPS[obj.gr - 1]}
+										name={obj.name}
+										sr={obj.value}
+										ic={obj.ic}
+										checkDisabled
+										addPoint={this.addPoint.bind(null, obj.id)}
+										addDisabled={!obj.isIncreasable}
+										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!obj.isDecreasable}
+										>
+										<div className="primary">{primary}</div>
+										<div className="at">{obj.at}</div>
+										<div className="pa">{obj.pa}</div>
+									</SkillListItem>
+								);
+							})
+						}
+					</div>
 				</Scroll>
 			</div>
 		);

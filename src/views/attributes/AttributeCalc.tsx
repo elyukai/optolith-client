@@ -1,26 +1,17 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
 import AttributeCalcItem from './AttributeCalcItem';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 import secondaryAttributes from '../../utils/secondaryAttributes';
 
 interface Props {
-	attributes: AttributeInstance[];
+	attributes: Attribute[];
 	baseValues: {
 		[id: string]: number
 	};
 	phase: number;
 }
 
-export default class AttributeCalc extends Component<Props, any> {
-
-	static propTypes = {
-		attributes: PropTypes.array.isRequired,
-		baseValues: PropTypes.object.isRequired,
-		phase: PropTypes.number.isRequired
-	};
-
+export default class AttributeCalc extends React.Component<Props, undefined> {
 	render() {
-
 		const { phase } = this.props;
 
 		const calculated = secondaryAttributes();

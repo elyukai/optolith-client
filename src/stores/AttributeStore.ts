@@ -120,7 +120,7 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 				break;
 
 			case ActionTypes.RECEIVE_HERO_DATA:
-				_updateAll(action.payload.data.addEnergies);
+				_updateAll(action.payload.data.attr);
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:

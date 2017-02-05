@@ -196,6 +196,10 @@ function _updateHeroes(heroes: { [id: string]: RawHero }) {
 
 class HerolistStoreStatic extends Store {
 
+	get(id: string) {
+		return _byHeroId[id];
+	}
+
 	getUser(id: string) {
 		return _byUserId[id];
 	}
@@ -215,8 +219,7 @@ class HerolistStoreStatic extends Store {
 }
 
 const HerolistStore = new HerolistStoreStatic((action: Action) => {
-	switch( action.type ) {
-
+	switch(action.type) {
 		case ActionTypes.SET_HEROLIST_SORT_ORDER:
 			_updateSortOrder(action.payload.sortOrder);
 			break;
@@ -235,9 +238,7 @@ const HerolistStore = new HerolistStoreStatic((action: Action) => {
 	}
 
 	HerolistStore.emitChange();
-
 	return true;
-
 });
 
 export default HerolistStore;

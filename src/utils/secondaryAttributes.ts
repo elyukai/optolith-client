@@ -15,22 +15,29 @@ export interface SecondaryAttribute {
 	currentAdd?: number;
 }
 
+const PRIMARY = (id: string) => get(id) as Attribute;
+const COU = () => get('COU') as Attribute;
+const SGC = () => get('SGC') as Attribute;
+const INT = () => get('INT') as Attribute;
+const AGI = () => get('AGI') as Attribute;
+const CON = () => get('CON') as Attribute;
+const STR = () => get('STR') as Attribute;
+
 type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 
 const addEnergies = () => AttributeStore.getAddEnergies();
 
 export const getLP = (): SecondaryAttribute => {
-	let base = RaceStore.getCurrent().le + get('CON').value * 2;
+	const base = RaceStore.getCurrent().lp + CON().value * 2;
 	let mod = 0;
-	let add = addEnergies().le;
-	let value;
+	const add = addEnergies().lp;
 	if (get('ADV_25').active) {
 		mod += get('ADV_25').tier;
 	}
 	else if (get('DISADV_28').active) {
 		mod -= get('DISADV_28').tier;
 	}
-	value = base + mod + add;
+	const value = base + mod + add;
 	return {
 		id: 'LP',
 		short: 'LE',
@@ -39,19 +46,18 @@ export const getLP = (): SecondaryAttribute => {
 		base,
 		mod,
 		value,
-		maxAdd: get('CON').value,
+		maxAdd: CON().value,
 		currentAdd: add
 	};
 };
 
 export const getAE = (): SecondaryAttribute => {
-	let primary = getPrimaryAttrID(1);
+	const primary = getPrimaryAttrID(1);
 	let base = 0;
 	let mod = 0;
-	let add = addEnergies().ae;
-	let value: string | number = '-';
+	const add = addEnergies().ae;
 	if (primary !== 'ATTR_0') {
-		base = 20 + get(primary).value;
+		base = 20 + PRIMARY(primary).value;
 	}
 	if (get('ADV_23').active) {
 		mod += get('ADV_23').tier;
@@ -59,7 +65,7 @@ export const getAE = (): SecondaryAttribute => {
 	else if (get('DISADV_26').active) {
 		mod -= get('DISADV_26').tier;
 	}
-	value = primary !== 'ATTR_0' ? base + mod + add : value;
+	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {
 		id: 'AE',
 		short: 'AE',
@@ -69,19 +75,18 @@ export const getAE = (): SecondaryAttribute => {
 		mod,
 		add,
 		value,
-		maxAdd: (get(primary) || {}).value,
+		maxAdd: (PRIMARY(primary) || {}).value,
 		currentAdd: add
 	};
 };
 
 export const getKP = (): SecondaryAttribute => {
-	let primary = getPrimaryAttrID(2);
+	const primary = getPrimaryAttrID(2);
 	let base = 0;
 	let mod = 0;
-	let add = addEnergies().ke;
-	let value: string | number = '-';
+	const add = addEnergies().kp;
 	if (primary !== 'ATTR_0') {
-		base = 20 + get(primary).value;
+		base = 20 + PRIMARY(primary).value;
 	}
 	if (get('ADV_24').active) {
 		mod += get('ADV_24').tier;
@@ -89,7 +94,7 @@ export const getKP = (): SecondaryAttribute => {
 	else if (get('DISADV_27').active) {
 		mod -= get('DISADV_27').tier;
 	}
-	value = primary !== 'ATTR_0' ? base + mod + add : value;
+	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {
 		id: 'KP',
 		short: 'KE',
@@ -99,22 +104,21 @@ export const getKP = (): SecondaryAttribute => {
 		mod,
 		add,
 		value,
-		maxAdd: (get(primary) || {}).value,
+		maxAdd: (PRIMARY(primary) || {}).value,
 		currentAdd: add
 	};
 };
 
 export const getSPI = (): SecondaryAttribute => {
-	let base = RaceStore.getCurrent().sk + Math.round((get('COU').value + get('SGC').value + get('INT').value) / 6);
+	const base = RaceStore.getCurrent().spi + Math.round((COU().value + SGC().value + INT().value) / 6);
 	let mod = 0;
-	let value;
 	if (get('ADV_26').active) {
 		mod++;
 	}
 	else if (get('DISADV_29').active) {
 		mod--;
 	}
-	value = base + mod;
+	const value = base + mod;
 	return {
 		id: 'SPI',
 		short: 'SK',
@@ -127,16 +131,15 @@ export const getSPI = (): SecondaryAttribute => {
 };
 
 export const getTOU = (): SecondaryAttribute => {
-	let base = RaceStore.getCurrent().zk + Math.round((get('CON').value * 2 + get('STR').value) / 6);
+	const base = RaceStore.getCurrent().tou + Math.round((CON().value * 2 + STR().value) / 6);
 	let mod = 0;
-	let value;
 	if (get('ADV_27').active) {
 		mod++;
 	}
 	else if (get('DISADV_30').active) {
 		mod--;
 	}
-	value = base + mod;
+	const value = base + mod;
 	return {
 		id: 'TOU',
 		short: 'ZK',
@@ -153,7 +156,7 @@ export const getDO = (): SecondaryAttribute => ({
 	short: 'AW',
 	name: 'Ausweichen',
 	calc: '(GE/2)',
-	value: Math.round(get('AGI').value / 2)
+	value: Math.round(AGI().value / 2)
 });
 
 export const getINI = (): SecondaryAttribute => ({
@@ -161,12 +164,12 @@ export const getINI = (): SecondaryAttribute => ({
 	short: 'INI',
 	name: 'Initiative',
 	calc: '(MU + GE)/2',
-	value: Math.round((get('COU').value + get('AGI').value) / 2)
+	value: Math.round((COU().value + AGI().value) / 2)
 });
 
 export const getMOV = (): SecondaryAttribute => {
-	let value = RaceStore.getCurrent().gs;
-	if (get('DISADV_51').active.includes(3)) {
+	let value = RaceStore.getCurrent().mov;
+	if ((get('DISADV_51') as Disadvantage).active.includes(3)) {
 		value = Math.round(value / 2);
 	}
 	return {

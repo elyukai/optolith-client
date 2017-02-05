@@ -1,7 +1,7 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 import Item from '../data/Item';
+import Store from './Store';
 
 type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction;
 
@@ -174,10 +174,7 @@ class InventoryStoreStatic extends Store {
 }
 
 const InventoryStore = new InventoryStoreStatic((action: Action) => {
-	console.log(InventoryStore.constructor.name, InventoryStore.dispatchToken, action);
-
 	switch( action.type ) {
-
 		case ActionTypes.SET_ITEMS_SORT_ORDER:
 			_updateSortOrder(action.payload.sortOrder);
 			break;
@@ -203,9 +200,7 @@ const InventoryStore = new InventoryStoreStatic((action: Action) => {
 	}
 
 	InventoryStore.emitChange();
-
 	return true;
-
 });
 
 export default InventoryStore;

@@ -1,29 +1,21 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
 import Attributes from './Attributes';
 import AttributeStore from '../../stores/AttributeStore';
 import ELStore from '../../stores/ELStore';
 import PhaseStore from '../../stores/PhaseStore';
-import React, { Component } from 'react';
+import * as React from 'react';
 
 interface State {
-	attributes: AttributeInstance[];
+	attributes: Attribute[];
 	baseValues: {
-		le: number;
-		leAdd: number;
-		aeAdd: number;
-		keAdd: number;
-		sk: number;
-		zk: number;
-		gs: number;
+		lp: number;
+		ae: number;
+		kp: number;
 	};
-	el: {
-		max_attr: number;
-		max_attrsum: number;
-	};
+	el: ExperienceLevel;
 	phase: number;
 }
 
-export default class AttributesController extends Component<any, State> {
+export default class AttributesController extends React.Component<undefined, State> {
 
 	state = {
 		attributes: AttributeStore.getAll(),

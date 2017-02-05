@@ -1,19 +1,14 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Button from './Button';
 import Icon from './Icon';
 
 interface Props {
 	icon: string;
-	[propName: string]: any;
+	flat?: boolean;
+	[id: string]: any;
 }
 
-export default class IconButton extends Component<Props, any> {
-
-	static propTypes = {
-		icon: PropTypes.string
-	};
-
+export default class IconButton extends React.Component<Props, undefined> {
 	render() {
 
 		const { icon, ...other } = this.props;

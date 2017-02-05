@@ -1,11 +1,11 @@
 import { Component } from 'react';
 import * as React from 'react';
-import TabActions from '../../_actions/TabActions';
+import * as LocationActions from '../../actions/LocationActions';
 import TitleBarBackArrow from './TitleBarBackArrow';
 
 export default class TitleBarBack extends Component<any, any> {
 
-	back = () => TabActions.showSection('main');
+	back = () => LocationActions.setSection('main');
 
 	render() {
 		return (

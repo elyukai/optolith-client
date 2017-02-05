@@ -1,24 +1,17 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
-import AttributeActions from '../../_actions/AttributeActions';
+import * as AttributesActions from '../../actions/AttributesActions';
 import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 
 interface Props {
-	attribute: AttributeInstance;
+	attribute: Attribute;
 	phase: number;
 }
 
-export default class AttributeListItem extends Component<Props, any> {
-
-	static propTypes = {
-		attribute: PropTypes.object.isRequired,
-		phase: PropTypes.number.isRequired
-	};
-
-	addPoint = () => AttributeActions.addPoint(this.props.attribute.id);
-	removePoint = () => AttributeActions.removePoint(this.props.attribute.id);
+export default class AttributeListItem extends React.Component<Props, any> {
+	addPoint = () => AttributesActions.addPoint(this.props.attribute.id);
+	removePoint = () => AttributesActions.removePoint(this.props.attribute.id);
 
 	render() {
 

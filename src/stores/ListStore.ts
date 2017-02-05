@@ -67,58 +67,52 @@ function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }: Hero & He
 		_setValue(id, value);
 		(_byId[id] as Attribute).mod = mod;
 	});
-	talents.active.forEach(([id, value]) => {
-		_setValue(id, value);
+	const flatSkills = { ...talents.active, ...ct.active };
+	Object.keys(flatSkills).forEach(id => {
+		_setValue(id, flatSkills[id]);
 	});
-	ct.active.forEach(([id, value]) => {
-		_setValue(id, value);
-	});
-	spells.active.forEach(e => {
-		_activate(e[0]);
-		if (_byId[e[0]].gr !== 5 && typeof e[1] === '') {
-			_setValue(e[0], e[1]);
-		}
-	});
-	chants.active.forEach(([id, value]) => {
-		_activate(e[0]);
-		if (_byId[e[0]].gr !== 3) {
+	const activateSkills = { ...spells.active, ...chants.active };
+	Object.keys(activateSkills).forEach(id => {
+		const value = activateSkills[id];
+		_activate(id);
+		if (value !== null) {
 			_setValue(id, value);
 		}
 	});
-	[].concat(disadv.active, sa.active).forEach(e => {
-		let [ id, options ] = e;
-		let obj = _byId[id];
-		if (obj.max !== null) {
-			obj.active = options;
-			switch (id) {
-				case 'ADV_4':
-				case 'ADV_16':
-				case 'DISADV_48':
-					options.forEach(p => obj.addDependencies([], p));
-					break;
-				case 'SA_10': {
-					let counter = new Map();
-					options.forEach(p => {
-						if (counter.has(p[0])) {
-							counter.set(p[0], counter.get(p[0]) + 1);
-						} else {
-							counter.set(p[0], 1);
-						}
-						obj.addDependencies([[p[0], counter.get(p[0]) * 6]]);
-					});
-					break;
-				}
-				default:
-					options.forEach(() => obj.addDependencies());
-			}
-		} else {
-			_activate(id);
-			obj.addDependencies();
-			for (let property in options) {
-				obj[property] = options[property];
-			}
-		}
-	});
+	// [].concat(disadv.active, sa.active).forEach(e => {
+	// 	let [ id, options ] = e;
+	// 	let obj = _byId[id];
+	// 	if (obj.max !== null) {
+	// 		obj.active = options;
+	// 		switch (id) {
+	// 			case 'ADV_4':
+	// 			case 'ADV_16':
+	// 			case 'DISADV_48':
+	// 				options.forEach(p => obj.addDependencies([], p));
+	// 				break;
+	// 			case 'SA_10': {
+	// 				let counter = new Map();
+	// 				options.forEach(p => {
+	// 					if (counter.has(p[0])) {
+	// 						counter.set(p[0], counter.get(p[0]) + 1);
+	// 					} else {
+	// 						counter.set(p[0], 1);
+	// 					}
+	// 					obj.addDependencies([[p[0], counter.get(p[0]) * 6]]);
+	// 				});
+	// 				break;
+	// 			}
+	// 			default:
+	// 				options.forEach(() => obj.addDependencies());
+	// 		}
+	// 	} else {
+	// 		_activate(id);
+	// 		obj.addDependencies();
+	// 		for (let property in options) {
+	// 			obj[property] = options[property];
+	// 		}
+	// 	}
+	// });
 }
 
 function _assignRCP(selections: Selections) {
@@ -247,7 +241,6 @@ function _clear() {
 }
 
 const ListStore = new Store((action: Action) => {
-	console.log(ListStore.constructor.name, ListStore.dispatchToken, action);
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
 	if (action.undoAction) {
 		switch( action.type ) {
@@ -294,7 +287,7 @@ const ListStore = new Store((action: Action) => {
 		}
 	}
 	else {
-		switch( action.type ) {
+		switch(action.type) {
 			case ActionTypes.RECEIVE_DATA_TABLES:
 				_init(action.payload.data);
 				break;

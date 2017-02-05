@@ -1,31 +1,36 @@
-import { CREATE_HERO, RECEIVE_HEROLIST, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER } from '../constants/ActionTypes';
+import { REQUEST_HEROLIST, CREATE_HERO, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER, REQUEST_HERO_DATA } from '../constants/ActionTypes';
+import * as WebAPIUtils from '../utils/WebAPIUtils';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import WebAPIUtils from '../utils/WebAPIUtils';
 
-export const request = () => WebAPIUtils.getHeroes();
+export const requestList = () => {
+	WebAPIUtils.getHeroes();
+	AppDispatcher.dispatch<RequestHerolistAction>({
+		type: REQUEST_HEROLIST
+	});
+};
 
-export const setHerolistSortOrder = (sortOrder: string): void => AppDispatcher.dispatch(<SetHerolistSortOrderAction>{
+export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetHerolistSortOrderAction>({
 	type: SET_HEROLIST_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
-export const setHerolistVisibilityFilter = (filterOption: string): void => AppDispatcher.dispatch(<SetHerolistVisibilityFilterAction>{
+export const setVisibilityFilter = (filterOption: string) => AppDispatcher.dispatch<SetHerolistVisibilityFilterAction>({
 	type: SET_HEROLIST_VISIBILITY_FILTER,
 	payload: {
 		filterOption
 	}
 });
 
-export const receiveHerolist = (heroes: RawHerolist): void => AppDispatcher.dispatch(<ReceiveHerolistAction>{
-	type: RECEIVE_HEROLIST,
-	payload: {
-		heroes
-	}
-});
+export const requestHero = (id: string) => {
+	AppDispatcher.dispatch<RequestHeroDataAction>({
+		type: REQUEST_HERO_DATA
+	});
+	WebAPIUtils.requestHero(id);
+};
 
-export const createHero = (name: string, sex: 'm' | 'f', el: string): void => AppDispatcher.dispatch(<CreateHeroAction>{
+export const createHero = (name: string, sex: 'm' | 'f', el: string) => AppDispatcher.dispatch<CreateHeroAction>({
 	type: CREATE_HERO,
 	payload: {
 		name,

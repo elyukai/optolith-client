@@ -3,19 +3,19 @@ import ActionTypes from '../constants/ActionTypes';
 import WebAPIUtils from '../utils/WebAPIUtils';
 
 export default {
-	changeName(name: string): void {
+	changeName(name: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_HERO_NAME,
 			name
 		});
 	},
-	addAP(value: number): void {
+	addAP(value: number) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.ADD_ADVENTURE_POINTS,
 			value
 		});
 	},
-	changeAvatar({ source, extern, file }): void {
+	changeAvatar({ source, extern, file }) {
 		if (source === 'ext') {
 			AppDispatcher.dispatch({
 				type: ActionTypes.UPDATE_HERO_AVATAR,
@@ -25,99 +25,99 @@ export default {
 			WebAPIUtils.changeHeroAvatar(source, file);
 		}
 	},
-	changeFamily(value: string): void {
+	changeFamily(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_FAMILY,
 			value
 		});
 	},
-	changePlaceOfBirth(value: string): void {
+	changePlaceOfBirth(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_PLACEOFBIRTH,
 			value
 		});
 	},
-	changeDateOfBirth(value: string): void {
+	changeDateOfBirth(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_DATEOFBIRTH,
 			value
 		});
 	},
-	changeAge(value: string): void {
+	changeAge(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_AGE,
 			value
 		});
 	},
-	changeHaircolor(option): void {
+	changeHaircolor(option) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_HAIRCOLOR,
 			option
 		});
 	},
-	changeEyecolor(option): void {
+	changeEyecolor(option) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_EYECOLOR,
 			option
 		});
 	},
-	changeSize(value: string): void {
+	changeSize(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_SIZE,
 			value
 		});
 	},
-	changeWeight(value: string): void {
+	changeWeight(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_WEIGHT,
 			value
 		});
 	},
-	changeTitle(value: string): void {
+	changeTitle(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_TITLE,
 			value
 		});
 	},
-	changeSocialStatus(option): void {
+	changeSocialStatus(option) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_SOCIALSTATUS,
 			option
 		});
 	},
-	changeCharacteristics(value: string): void {
+	changeCharacteristics(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_CHARACTERISTICS,
 			value
 		});
 	},
-	changeOtherInfo(value: string): void {
+	changeOtherInfo(value: string) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.UPDATE_OTHERINFO,
 			value
 		});
 	},
-	rerollHair(): void {
+	rerollHair() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.REROLL_HAIRCOLOR
 		});
 	},
-	rerollEyes(): void {
+	rerollEyes() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.REROLL_EYECOLOR
 		});
 	},
-	rerollSize(): void {
+	rerollSize() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.REROLL_SIZE
 		});
 	},
-	rerollWeight(): void {
+	rerollWeight() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.REROLL_WEIGHT
 		});
 	},
-	endCharacterCreation(): void {
+	endCharacterCreation() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.FINALIZE_CHARACTER_CREATION
 		});

@@ -35,7 +35,7 @@ export default class Dialog extends Component<Props, any> {
 
 		const { buttons = [], title, ...other } = this.props;
 
-		other.className = classNames('modal-backdrop', other.className);
+		other.className = classNames('modal modal-backdrop', other.className);
 		delete other.node;
 
 		const contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
@@ -44,7 +44,7 @@ export default class Dialog extends Component<Props, any> {
 			<div {...other}>
 				<div className="modal-container">
 					<div className="modal-close" onClick={this.close}><div>&#xe900;</div></div>
-					<div className="modal-header"><div className="modal-header-inner">{title}</div></div>
+					{title?<div className="modal-header"><div className="modal-header-inner">{title}</div></div>:null}
 					<div className="modal-content">
 						<div className="modal-content-inner" style={contentStyle}>
 							{this.props.children}

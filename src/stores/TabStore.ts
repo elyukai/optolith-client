@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import AuthStore from './AuthStore';
 import Store from './Store';
 
-type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | ReceiveUserDeletionAction;
+type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | ReceiveUserDeletionAction | ReceiveRegistrationAction;
 
 let _currentTab = 'herolist';
 let _currentSection = 'main';
@@ -43,13 +43,6 @@ function _updateSection(section: 'main' | 'hero' | 'group', tab?: string) {
 }
 
 class TabStoreStatic extends Store {
-
-	getAll() {
-		return {
-			section: _currentSection,
-			tab: _currentTab
-		};
-	}
 
 	getCurrentID() {
 		return _currentTab;

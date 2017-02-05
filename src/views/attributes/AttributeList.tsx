@@ -1,25 +1,15 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
 import AttributeListItem from './AttributeListItem';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 
 interface Props {
-	attributes: AttributeInstance[];
+	attributes: Attribute[];
 	max: number;
 	phase: number;
 	sumMax: boolean;
 }
 
-export default class AttributeList extends Component<Props, any> {
-
-	static propTypes = {
-		attributes: PropTypes.array.isRequired,
-		max: PropTypes.number.isRequired,
-		phase: PropTypes.number.isRequired,
-		sumMax: PropTypes.bool.isRequired
-	};
-
+export default class AttributeList extends React.Component<Props, undefined> {
 	render() {
-
 		const { attributes, ...other } = this.props;
 
 		return (

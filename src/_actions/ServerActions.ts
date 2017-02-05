@@ -4,37 +4,37 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import HerolistStore from '../stores/HerolistStore';
 
 export default {
-	startLoading(): void {
+	startLoading() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.WAIT_START
 		});
 	},
-	runtimeError(): void {
+	runtimeError() {
 		alert('Da hat etwas nicht geklappt', 'Dies darf nicht passieren! Melde dies bitte als Fehler! Wir versuchen, das Problem schnellstmöglich zu beheben!');
 		AppDispatcher.dispatch({
 			type: ActionTypes.WAIT_END
 		});
 	},
-	connectionError(error: Error): void {
+	connectionError(error: Error) {
 		alert('Verbindung nicht möglich', 'Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ' + JSON.stringify(error) + ' Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!');
 		AppDispatcher.dispatch({
 			type: ActionTypes.WAIT_END
 		});
 	},
 
-	receiveLists(raw: Object): void {
+	receiveLists(raw: Object) {
 		AppDispatcher.dispatch({
 			type: ActionTypes.RECEIVE_DATA_TABLES,
 			...raw
 		});
 	},
-	registrationSuccess(): void {
+	registrationSuccess() {
 		alert('Konto bestätigen', 'Wir haben dir eine E-Mail an die angegebene Adresse geschickt. Dort wirst du einen Bestätigungslink finden, dem du einfach nur zu folgen brauchst, um dein Konto zu aktivieren.');
 		AppDispatcher.dispatch({
 			type: ActionTypes.REGISTRATION_SUCCESS
 		});
 	},
-	forgotPasswordSuccess(callback: string): void {
+	forgotPasswordSuccess(callback: string) {
 		switch (callback) {
 			case 'false':
 				alert('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
@@ -51,7 +51,7 @@ export default {
 				break;
 		}
 	},
-	forgotUsernameSuccess(callback: string): void {
+	forgotUsernameSuccess(callback: string) {
 		switch (callback) {
 			case 'false':
 				alert('E-Mail nicht vorhanden', 'Die eingegebene E-Mail-Adresse ist nicht registriert.');
@@ -68,7 +68,7 @@ export default {
 				break;
 		}
 	},
-	resendActivationSuccess(callback: string): void {
+	resendActivationSuccess(callback: string) {
 		switch (callback) {
 			case 'false':
 				this.runtimeError();
@@ -82,7 +82,7 @@ export default {
 				break;
 		}
 	},
-	receiveAccount(callback: string, name: string): void {
+	receiveAccount(callback: string, name: string) {
 		switch (callback) {
 			case 'false':
 				alert('Anmeldeversuch fehlgeschlagen', 'Die eigegebene Kombination aus Benutzername und Passwort wurde nicht erkannt. Stelle sicher, dass du dich nicht vertippt hast und versuche es nochmal.');
@@ -113,12 +113,12 @@ export default {
 			}
 		}
 	},
-	logoutSuccess(): void {
+	logoutSuccess() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.LOGOUT_SUCCESS
 		});
 	},
-	changeUsernameSuccess(callback: string, name: string): void {
+	changeUsernameSuccess(callback: string, name: string) {
 		switch (callback) {
 			case 'false':
 				this.runtimeError();
@@ -133,7 +133,7 @@ export default {
 				break;
 		}
 	},
-	changePasswordSuccess(callback: string): void {
+	changePasswordSuccess(callback: string) {
 		switch (callback) {
 			case 'false':
 				this.runtimeError();
@@ -147,7 +147,7 @@ export default {
 				break;
 		}
 	},
-	deleteAccountSuccess(callback: string): void {
+	deleteAccountSuccess(callback: string) {
 		switch (callback) {
 			case 'false':
 				this.runtimeError();
@@ -161,7 +161,7 @@ export default {
 				break;
 		}
 	},
-	herolistRefreshSuccess(rawHeroes: string): void {
+	herolistRefreshSuccess(rawHeroes: string) {
 		switch (rawHeroes) {
 			case 'false':
 				this.runtimeError();
@@ -175,7 +175,7 @@ export default {
 				break;
 		}
 	},
-	loadHeroSuccess(id: string, data: string): void {
+	loadHeroSuccess(id: string, data: string) {
 		var short = HerolistStore.get(id);
 		data = JSON.parse(data);
 		AppDispatcher.dispatch({
@@ -183,12 +183,12 @@ export default {
 			...(Object.assign({}, short, data))
 		});
 	},
-	saveHeroSuccess(): void {
+	saveHeroSuccess() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.SAVE_HERO_SUCCESS
 		});
 	},
-	changeHeroAvatarSuccess(url: string): void {
+	changeHeroAvatarSuccess(url: string) {
 		switch (url) {
 			case 'false':
 				this.runtimeError();

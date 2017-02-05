@@ -1,7 +1,7 @@
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
-	-webkit-border-horizontal-spacing: 0px; 
+	-webkit-border-horizontal-spacing: 0px;
 	-webkit-border-vertical-spacing: 0px;
 	table-layout: auto;
 	width: 100%;
@@ -10,7 +10,7 @@ table {
 
 table.list {
 	td {
-		padding: 5px 5px 5px 11px;
+		padding: 0 8px;
 
 		&.name {
 			width: 100%;
@@ -42,11 +42,26 @@ table.list {
 
 		td {
 			height: 36px;
-			
+
 			&.name h2, &.fw {
 				font: 500 15px/15px Alegreya Sans;
 				text-transform: none;
 				color: #f0e6d2;
+			}
+
+			&.fw, &.check, &.skt {
+				display: flex;
+				padding: 0;
+
+				div {
+					height: 32px;
+					width: 32px;
+					margin-right: 8px;
+					border-width: 2px;
+					border-style: solid;
+					font: 500 12px/28px Alegreya Sans SC;
+					text-align: center;
+				}
 			}
 
 			&.check, &.skt {
@@ -60,13 +75,16 @@ table.list {
 				align-items: center;
 
 				.btn {
-					height: 26px;
-					padding: 0 14px 3px;
-					min-width: auto;
-					font-size: 16px;
 					flex: none;
+					background: transparent;
 
-					&:nth-child(2) {
+					&:hover {
+						background: transparent;
+					}
+
+					border: none;
+
+					&:not(:first-child) {
 						margin-left: 4px;
 					}
 				}

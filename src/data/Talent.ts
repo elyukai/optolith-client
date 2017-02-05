@@ -43,12 +43,12 @@ export default class Talent extends Skill {
 
 	get isTyp(): boolean {
 		const culture = CultureStore.getCurrent();
-		return culture.typ_talents.includes(this.id);
+		return culture.typTalents.includes(this.id);
 	}
 
 	get isUntyp(): boolean {
 		const culture = CultureStore.getCurrent();
-		return culture.untyp_talents.includes(this.id);
+		return culture.untypTalents.includes(this.id);
 	}
 
 	reset() {

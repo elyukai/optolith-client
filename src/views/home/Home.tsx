@@ -1,24 +1,24 @@
+import * as React from 'react';
 import Overview from './Overview';
-import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
 interface State {
 	tab: string;
 }
 
-export default class Home extends Component<any, State> {
+export default class Home extends React.Component<undefined, State> {
 
 	state = {
 		tab: 'overview'
 	};
 
-	handleClick = tab => this.setState({ tab });
-	
+	handleClick = (tab: string) => this.setState({ tab });
+
 	render() {
 
 		const { tab } = this.state;
 
-		var element;
+		let element;
 
 		switch (tab) {
 			case 'overview':

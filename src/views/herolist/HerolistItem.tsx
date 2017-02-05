@@ -1,38 +1,33 @@
-import Avatar from '../../components/Avatar';
-import BorderButton from '../../components/BorderButton';
-import CultureStore from '../../stores/CultureStore';
-import HerolistActions from '../../_actions/HerolistActions';
 import { get } from '../../stores/ListStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
+import * as HerolistActions from '../../actions/HerolistActions';
+import * as React from 'react';
+import Avatar from '../../components/Avatar';
+import classNames from 'classnames';
+import IconButton from '../../components/IconButton';
+import LocationActions from '../../actions/LocationActions';
 import ProfileStore from '../../stores/ProfileStore';
 import ProgressArc from 'react-progress-arc';
-import RaceStore from '../../stores/RaceStore';
-import React, { PropTypes, Component } from 'react';
-import TabActions from '../../_actions/TabActions';
 import VerticalList from '../../components/VerticalList';
-import classNames from 'classnames';
 
 interface Props {
+	id: string | null;
+	name: string;
 	ap: {
 		total: number;
 	};
 	avatar: string;
-	c: string;
-	el: string;
-	id: string | null;
-	name: string;
-	p: string;
+	c: string | null;
+	p: string | null;
 	player?: User;
 	pv: string | null;
-	r: string;
-	sex: string;
+	r: string | null;
+	sex: 'm' | 'f';
 }
 
-export default class HerolistItem extends Component<Props, undefined> {
+export default class HerolistItem extends React.Component<Props, undefined> {
 
-	load = () => HerolistActions.load(this.props.id);
-	show = () => TabActions.showSection('hero');
+	load = () => this.props.id && HerolistActions.requestHero(this.props.id);
+	show = () => LocationActions.setSection('hero');
 
 	render() {
 
@@ -41,7 +36,7 @@ export default class HerolistItem extends Component<Props, undefined> {
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
 
-		var currentEL = 6;
+		let currentEL = 6;
 
 		for (let i = 0; i < elAp.length; i++) {
 			if (elAp[i] === apTotal) {
@@ -53,7 +48,7 @@ export default class HerolistItem extends Component<Props, undefined> {
 			}
 		}
 
-		var elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
+		const elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
 
 		const playerElement = player ? (
 			<span className="player">{player.displayName}</span>
@@ -63,27 +58,27 @@ export default class HerolistItem extends Component<Props, undefined> {
 			<VerticalList className="rcp">
 				<span className="race">
 					{(() => {
-						const { name } = get(r) || { name: 'Loading...' };
+						const { name } = r && get(r) || { name: '' };
 						return name;
 					})()}
 				</span>
 				<span className="culture">
 					{(() => {
-						const { name } = get(c) || { name: 'Loading...' };
+						const { name } = c && get(c) || { name: '' };
 						return name;
 					})()}
 				</span>
 				<span className="profession">
 					{(() => {
-						let { name, subname } = get(p) || { name: 'Loading...', subname: undefined };
-						if (typeof name === 'object') {
+						let { name, subname } = p && get(p) as Profession || { name: '', subname: undefined };
+						if (typeof name === 'object' && sex) {
 							name = name[sex];
 						}
-						if (typeof subname === 'object') {
+						if (typeof subname === 'object' && sex) {
 							subname = subname[sex];
 						}
-						let { name: vname } = get(pv) || { name: 'Loading...' };
-						if (typeof vname === 'object') {
+						let { name: vname } = pv && get(pv) || { name: '' };
+						if (typeof vname === 'object' && sex) {
 							vname = vname[sex];
 						}
 						return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
@@ -102,13 +97,13 @@ export default class HerolistItem extends Component<Props, undefined> {
 					<Avatar src={avatar} />
 				</div>
 				<div className="main">
-					<h2>{name}{playerElement}</h2>
+					<h2><span className="name">{name}</span>{playerElement}</h2>
 					{rcpElement}
 				</div>
 				{(() => id === ProfileStore.getID() ? (
-					<BorderButton label="Anzeigen" onClick={this.show} primary />
+					<IconButton icon="&#xE89E;" onClick={this.show} />
 				) : (
-					<BorderButton label="Öffnen" onClick={this.load} />
+					<IconButton icon="&#xE5DD;" onClick={this.load} />
 				))()}
 			</li>
 		);

@@ -1,110 +1,102 @@
-import BorderButton from '../../components/BorderButton';
+import IconButton from '../../components/IconButton';
 import { get } from '../../stores/ListStore';
-import React, { PropTypes, Component } from 'react';
+import * as React from 'react';
 import classNames from 'classnames';
+import createOverlay from '../../utils/createOverlay';
+import SkillInfo from './SkillInfo';
 
 interface Props {
-	activate?: (id: string) => void,
-	activateDisabled?: boolean,
-	addDisabled?: boolean,
-	addPoint?: (id: string) => void,
-	check?: (string | number)[],
-	checkDisabled?: boolean,
-	checkmod?: string,
-	group: string,
-	ic?: number,
-	isNotActive?: boolean,
-	name: string,
-	removeDisabled?: boolean,
-	removePoint?: (id: string) => void,
-	sr?: number,
-	typ?: boolean,
-	untyp?: boolean
+	activate?: (id: string) => void;
+	activateDisabled?: boolean;
+	addDisabled?: boolean;
+	addPoint?: (id: string) => void;
+	check?: string[];
+	checkDisabled?: boolean;
+	checkmod?: string;
+	ic?: number;
+	id: string;
+	isNotActive?: boolean;
+	name: string;
+	removeDisabled?: boolean;
+	removePoint?: (id: string) => void;
+	sr?: number;
+	typ?: boolean;
+	untyp?: boolean;
 }
 
-export default class SkillListItem extends Component<Props, any> {
-
-	static propTypes = {
-		activate: PropTypes.func,
-		activateDisabled: PropTypes.bool,
-		addDisabled: PropTypes.bool,
-		addPoint: PropTypes.func,
-		check: PropTypes.array,
-		checkDisabled: PropTypes.bool,
-		checkmod: PropTypes.string,
-		group: PropTypes.string,
-		ic: PropTypes.number,
-		isNotActive: PropTypes.bool,
-		name: PropTypes.string,
-		removeDisabled: PropTypes.bool,
-		removePoint: PropTypes.func,
-		sr: PropTypes.number,
-		typ: PropTypes.bool,
-		untyp: PropTypes.bool
-	};
+export default class SkillListItem extends React.Component<Props, undefined> {
+	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
 
 	render() {
-
-		const { typ, untyp, group, name, sr, children, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+		const { typ, untyp, name, sr, children, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
 
 		const className = classNames({
+			'list-item': true,
 			'typ': typ,
 			'untyp': untyp
 		});
-		
-		const groupElement = group ? (
-			<td className="type">{group}</td>
-		) : null;
 
-		const fwElement = sr || sr === 0 ? (
-			<td className="fw">{sr}</td>
-		) : !addPoint && !isNotActive ? (
-			<td className="fw"></td>
-		) : null;
+		// const groupElement = group ? (
+		// 	<p className="group">{group}</p>
+		// ) : null;
 
-		let checkElement = null;
+		const values: JSX.Element[] = [];
+
+		if (sr || sr === 0) {
+			values.push(<div key="sr" className="sr">{sr}</div>)
+		}
+		else if (!addPoint && !isNotActive) {
+			values.push(<div key="sr"  className="sr empty"></div>)
+		}
+
 		if (!checkDisabled) {
-			let content = '';
 			if (check) {
-				content = check.map(attr => get(attr).short).join('/');
+				check.forEach((attr, index) => values.push(
+					<div key={attr + index} className={'check ' + attr}>{(get(attr) as Attribute).short}</div>
+				));
 				if (checkmod) {
-					content += ` (+${checkmod})`;
+					values.push(<div key="mod" className="check mod">+{checkmod}</div>);
 				}
 			}
-			checkElement = <td className="check">{content}</td>;
 		}
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
-		
-		const sktElement = (
-			<td className="skt">{ic ? COMP[ic - 1] : ''}</td>
-		);
-		
+
+		if (ic) {
+			values.push(<div key="ic" className="ic">{COMP[ic - 1]}</div>);
+		}
+
 		const btnElement = isNotActive ? (
-			<td className="inc">
-				<BorderButton
-					label="Aktivieren"
-					onClick={activate}
-					disabled={activateDisabled}
-					/>
-			</td>
+			<div className="btns">
+				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} />
+			</div>
 		) : (
-			<td className="inc">
-				{ addPoint ? <BorderButton label="+" onClick={addPoint} disabled={addDisabled} /> : null }
-				{ removePoint ? <BorderButton label="-" onClick={removePoint} disabled={removeDisabled} /> : null }
-			</td>
+			<div className="btns">
+				{ addPoint ? <IconButton icon="&#xE145;" onClick={addPoint} disabled={addDisabled} flat /> : null }
+				{ removePoint ? (
+					<IconButton
+						icon={ic && sr === 0 && !removeDisabled || !ic ? '\uE872' : '\uE15B'}
+						onClick={removePoint}
+						disabled={removeDisabled}
+						flat
+						/>
+				) : null }
+				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} />
+			</div>
 		);
 
 		return (
-			<tr className={className}>
-				{groupElement}
-				<td className="name"><h2>{name}</h2></td>
-				{fwElement}
-				{children}
-				{checkElement}
-				{sktElement}
+			<div className={className}>
+				<div className="name">
+					<h4>{name}</h4>
+				</div>
+				<div className="hr"></div>
+				<div className="values">
+					{values}
+					{children}
+				</div>
 				{btnElement}
-			</tr>
+			</div>
 		);
 	}
 }

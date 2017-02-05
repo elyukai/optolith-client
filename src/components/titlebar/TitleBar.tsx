@@ -1,6 +1,7 @@
 import { Component, PropTypes } from 'react';
+import * as AuthActions from '../../actions/AuthActions';
+import * as LocationActions from '../../actions/LocationActions';
 import * as React from 'react';
-import AccountActions from '../../_actions/AccountActions';
 import APStore from '../../stores/APStore';
 import AuthStore from '../../stores/AuthStore';
 import AvatarWrapper from '../AvatarWrapper';
@@ -16,7 +17,6 @@ import InGameActions from '../../_actions/InGameActions';
 import Login from '../../views/account/Login';
 import PhaseStore from '../../stores/PhaseStore';
 import ProfileStore from '../../stores/ProfileStore';
-import TabActions from '../../_actions/TabActions';
 import Text from '../Text';
 import TitleBarBack from './TitleBarBack';
 import TitleBarLeft from './TitleBarLeft';
@@ -97,11 +97,11 @@ export default class TitleBar extends Component<Props, State> {
 		if (this.state.el === 'EL_0') {
 			createOverlay(<HeroCreation />);
 		} else {
-			TabActions.showSection('hero');
+			LocationActions.setSection('hero');
 		}
 	}
 	login = () => createOverlay(<Login />);
-	logout = () => AccountActions.logout();
+	logout = () => AuthActions.requestLogout();
 	saveHero = () => HerolistActions.save();
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();

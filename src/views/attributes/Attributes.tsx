@@ -1,38 +1,24 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
 import AttributeCalc from './AttributeCalc';
 import AttributeList from './AttributeList';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 import Scroll from '../../components/Scroll';
 
 interface Props {
-	attributes: AttributeInstance[];
+	attributes: Attribute[];
 	baseValues: {
 		[id: string]: number
 	};
-	el: {
-		max_attr: number;
-		max_attrsum: number;
-	};
+	el: ExperienceLevel;
 	phase: number;
 	sum: number;
 }
 
-export default class Attribute extends Component<Props, any> {
-
-	static propTypes = {
-		attributes: PropTypes.array.isRequired,
-		baseValues: PropTypes.object.isRequired,
-		el: PropTypes.object.isRequired,
-		phase: PropTypes.number.isRequired,
-		sum: PropTypes.number.isRequired
-	};
-
+export default class Attribute extends React.Component<Props, undefined> {
 	render() {
-
 		const { baseValues, el, sum, ...other } = this.props;
 
-		const sumMax = sum >= el.max_attrsum;
-		const max = el.max_attr;
+		const sumMax = sum >= el.maxTotalAttributeValues;
+		const max = el.maxAttributeValue;
 
 		return (
 			<section id="attribute">

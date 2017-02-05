@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import Scroll from '../../components/Scroll';
 
-export default class Overview extends Component<any, any> {
+export default class Overview extends React.Component<undefined, undefined> {
 	render() {
 		return (
 			<div className="page" id="home-overview">

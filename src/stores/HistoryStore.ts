@@ -10,9 +10,9 @@ import RequirementsStore from './RequirementsStore';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | EndHeroCreationAction;
+type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | EndHeroCreationAction | SetSelectionsAction;
 
-let _history = [];
+let _history: (Action & { undo: boolean; cost: number; })[] = [];
 let _lastSaveIndex = -1;
 
 function _add(type, cost = 0, options = {}, prevState = {}) {
@@ -81,7 +81,7 @@ function _assignRCP(selections) {
 
 class HistoryStoreStatic extends Store {
 
-	get(index) {
+	get(index: number) {
 		return _history[index];
 	}
 
@@ -94,7 +94,7 @@ class HistoryStoreStatic extends Store {
 	}
 
 	getUndo() {
-		let lastIndex = _history.length - 1;
+		const lastIndex = _history.length - 1;
 		if (_lastSaveIndex < lastIndex) {
 			return _history[_history.length - 1];
 		}
@@ -104,10 +104,7 @@ class HistoryStoreStatic extends Store {
 }
 
 const HistoryStore = new HistoryStoreStatic((action: Action) => {
-	console.log(HistoryStore.constructor.name, HistoryStore.dispatchToken, action);
-
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-
 	if (action.undoAction && HistoryStore.isUndoAvailable()) {
 		_history.splice(_history.length - 1, 1);
 	}
@@ -115,12 +112,12 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 		switch( action.type ) {
 			case ActionTypes.RECEIVE_HERO_DATA:
 				_clear();
-				_updateAll(action.history);
+				_updateAll(action.payload.data.history);
 				_resetSaveIndex();
 				break;
 
 			case ActionTypes.ASSIGN_RCP_OPTIONS:
-				_assignRCP(action.selections);
+				_assignRCP(action.payload);
 				_resetSaveIndex();
 				break;
 
@@ -142,7 +139,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const cost = RequirementsStore.getCurrentCost();
 					_add(action.type, cost, { id });
 				}
@@ -154,7 +151,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.ADD_SPELL_POINT:
 			case ActionTypes.ADD_LITURGY_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
@@ -166,7 +163,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.ADD_KARMA_POINT:
 			case ActionTypes.ADD_LIFE_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const oldValue = secondaryAttributes.get(id);
 					const newValue = oldValue + 1;
 					const cost = RequirementsStore.getCurrentCost();
@@ -180,7 +177,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.REMOVE_SPELL_POINT:
 			case ActionTypes.REMOVE_LITURGY_POINT:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
@@ -191,7 +188,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
@@ -202,7 +199,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					const id = action.id;
+					const id = action.payload.id;
 					const oldValue = get(id).value;
 					const newValue = oldValue - 1;
 					const cost = RequirementsStore.getCurrentCost();
@@ -213,7 +210,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.SET_SPECIALABILITY_TIER:
 				if (RequirementsStore.isValid()) {
-					const { id, sid, tier } = action;
+					const { id, sid, tier } = action.payload;
 					let oldValue;
 					switch (id) {
 						case 'DISADV_1':
@@ -237,7 +234,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.ADD_ADVENTURE_POINTS:
-				_add(action.type, 0, { value: action.value });
+				_add(action.type, 0, { value: action.payload.amount });
 				break;
 
 			default:
@@ -246,9 +243,7 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 	}
 
 	HistoryStore.emitChange();
-
 	return true;
-
 });
 
 export default HistoryStore;

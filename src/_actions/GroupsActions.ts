@@ -2,12 +2,12 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ActionTypes from '../constants/ActionTypes';
 
 export default {
-	checkRequests(): void {
+	checkRequests() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.SHOW_MASTER_REQUESTED_LIST
 		});
 	},
-	closeRequests(): void {
+	closeRequests() {
 		AppDispatcher.dispatch({
 			type: ActionTypes.HIDE_MASTER_REQUESTED_LIST
 		});

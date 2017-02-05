@@ -7,7 +7,7 @@ export default class Dependent extends Core {
 		super(args);
 	}
 
-	addDependency(obj: string | number | boolean): void {
+	addDependency(obj: string | number | boolean) {
 		this.dependencies.push(obj);
 	}
 

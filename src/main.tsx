@@ -1,3 +1,9 @@
+declare global {
+	interface EventTarget {
+		readonly value: string;
+	}
+}
+
 import { render } from 'react-dom';
 import * as React from 'react';
 import AppDispatcher from './dispatcher/AppDispatcher';

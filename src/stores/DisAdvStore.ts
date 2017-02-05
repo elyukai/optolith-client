@@ -38,22 +38,19 @@ class DisAdvStoreStatic extends Store {
 		};
 	}
 
-	get(id) {
-		return get(id);
-	}
-
-	getActiveForView(category) {
+	getActiveForView(category: ADVANTAGES | DISADVANTAGES) {
 		category = category ? CATEGORY_1 : CATEGORY_2;
-		let advsObj = getObjByCategory(category), advs = [];
-		for (let id in advsObj) {
-			let adv = advsObj[id];
-			let { active, name, sid, sel, tier, tiers, cost, dependencies } = adv;
-			if (active === true) {
-				let disabled = dependencies.length > 0;
+		const advsObj = getObjByCategory(category) as { [id: string]: Advantage } | { [id: string]: Disadvantage };
+		const advs = [];
+		for (const id in advsObj) {
+			const adv = advsObj[id];
+			const { active, name, sel, tiers, cost, dependencies } = adv;
+			if (active.length > 0) {
+				const disabled = dependencies.length > 0;
 				switch (id) {
 					case 'ADV_47': {
-						let skill = get(adv.sid);
-						advs.push({ id, name, sid, add: skill.name, cost: cost[skill.ic - 1], disabled });
+						const skill = get(active[0].sid as string) as CombatTechnique;
+						advs.push({ id, name, sid, add: skill.name, cost: (cost as number[])[skill.ic - 1], disabled });
 						break;
 					}
 					case 'ADV_32':
@@ -282,10 +279,7 @@ class DisAdvStoreStatic extends Store {
 }
 
 const DisAdvStore = new DisAdvStoreStatic((action: Action) => {
-	console.log(DisAdvStore.constructor.name, DisAdvStore.dispatchToken, action);
-
-	switch( action.type ) {
-
+	switch(action.type) {
 		case ActionTypes.RECEIVE_HERO_DATA:
 			_updateAll(action.payload.data.disadv);
 			break;
@@ -304,9 +298,7 @@ const DisAdvStore = new DisAdvStoreStatic((action: Action) => {
 	}
 
 	DisAdvStore.emitChange();
-
 	return true;
-
 });
 
 export default DisAdvStore;
