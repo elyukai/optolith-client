@@ -1,23 +1,23 @@
+import * as React from 'react';
 import Advantages from './Advantages';
 import Disadvantages from './Disadvantages';
-import * as React from 'react';
 import SubTabs from '../../components/SubTabs';
 
 interface State {
 	tab: string;
 }
 
-export default class DisAdv extends React.Component<any, State> {
+export default class DisAdv extends React.Component<undefined, State> {
 
 	state = {
 		tab: 'adv'
 	};
 
-	handleClick = tab => this.setState({ tab });
+	handleClick = (tab: string) => this.setState({ tab });
 
 	render() {
 
-		var element;
+		let element;
 
 		switch (this.state.tab) {
 			case 'adv':

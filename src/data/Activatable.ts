@@ -39,6 +39,10 @@ export default class Activatable extends Dependent {
 		return this.dependencies.length === 0;
 	}
 
+	get sid() {
+		return this.active.map(e => e.sid);
+	}
+
 	activate({ sel, sel2, input, tier }: ActivateObject) {
 		const adds: [string, number][] = [];
 		let active: ActiveObject | undefined;

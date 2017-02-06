@@ -1,38 +1,38 @@
+import * as Categories from '../../constants/Categories';
+import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
-import { Deactive } from './DisAdvAddListItem';
-import { Active } from './DisAdvRemoveListItem';
-import { RaceInstance } from '../../utils/data/Race';
-import { CultureInstance } from '../../utils/data/Culture';
-import { ProfessionInstance } from '../../utils/data/Profession';
 import DisAdvActions from '../../_actions/DisAdvActions';
 import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import RaceStore from '../../stores/RaceStore';
-import * as React from 'react';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
 interface State {
 	filterText: string;
 	showRating: boolean;
-	advActive: Active[];
-	advDeactive: Deactive[];
+	advActive: {
+		id: string;
+		active: ActiveObject;
+		index: number;
+	}[];
+	advDeactive: (Advantage | Disadvantage)[];
 	showAddSlidein: boolean;
-	race: RaceInstance;
-	culture: CultureInstance;
-	profession: ProfessionInstance;
+	race: Race;
+	culture: Culture;
+	profession: Profession;
 }
 
 export default class Advantages extends React.Component<any, State> {
 
 	state = {
-		filterText: DisAdvStore.getFilter(),
+		filterText: '',
 		showRating: DisAdvStore.getRating(),
-		advActive: DisAdvStore.getActiveForView(true),
-		advDeactive: DisAdvStore.getDeactiveForView(true),
+		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
+		advDeactive: DisAdvStore.getDeactiveForView(Categories.ADVANTAGES),
 		showAddSlidein: false,
 		race: RaceStore.getCurrent(),
 		culture: CultureStore.getCurrent(),
@@ -40,13 +40,12 @@ export default class Advantages extends React.Component<any, State> {
 	};
 
 	_updateDisAdvStore = () => this.setState({
-		filterText: DisAdvStore.getFilter(),
 		showRating: DisAdvStore.getRating(),
-		advActive: DisAdvStore.getActiveForView(true),
-		advDeactive: DisAdvStore.getDeactiveForView(true)
+		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
+		advDeactive: DisAdvStore.getDeactiveForView(Categories.ADVANTAGES)
 	} as State);
 
-	filter = event => DisAdvActions.filter(event.target.value);
+	filter = (event: Event) => DisAdvActions.filter(event.target.value);
 	changeRating = () => DisAdvActions.changeRating();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
@@ -61,24 +60,22 @@ export default class Advantages extends React.Component<any, State> {
 
 	render() {
 
-		const rating = {};
+		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP'} = {};
 		let { culture, profession, race, showRating } = this.state;
 
 		profession = profession || {};
 
-		const IMP = 'imp';
-		const TYP = 'typ';
-		const UNTYP = 'untyp';
+		const IMP = 'IMP';
+		const TYP = 'TYP';
+		const UNTYP = 'UNTYP';
 
 		if (showRating) {
 			race.typ_adv.forEach(e => { rating[e] = TYP; });
 			race.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-			culture.typ_adv.forEach(e => { rating[e] = TYP; });
-			culture.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-			if (profession.hasOwnProperty('typ_adv'))
-				profession.typ_adv.forEach(e => { rating[e] = TYP; });
-			if (profession.hasOwnProperty('untyp_adv'))
-				profession.untyp_adv.forEach(e => { rating[e] = UNTYP; });
+			culture.typAdv.forEach(e => { rating[e] = TYP; });
+			culture.untypAdv.forEach(e => { rating[e] = UNTYP; });
+			profession.typ_adv.forEach(e => { rating[e] = TYP; });
+			profession.untyp_adv.forEach(e => { rating[e] = UNTYP; });
 			race.imp_adv.forEach(e => { rating[e[0]] = IMP; });
 		}
 
