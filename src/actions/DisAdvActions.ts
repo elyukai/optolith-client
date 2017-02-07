@@ -21,9 +21,6 @@ export const setTier = (id: string, tier: number, cost: number, sid: number | st
 	}
 });
 
-export const switchRatingVisibility = (id: string) => AppDispatcher.dispatch<SwitchDisAdvRatingVisibilityAction>({
-	type: SWITCH_DISADV_RATING_VISIBILITY,
-	payload: {
-		id
-	}
+export const switchRatingVisibility = () => AppDispatcher.dispatch<SwitchDisAdvRatingVisibilityAction>({
+	type: SWITCH_DISADV_RATING_VISIBILITY
 });

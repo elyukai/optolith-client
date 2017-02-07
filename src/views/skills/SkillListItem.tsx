@@ -88,7 +88,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		return (
 			<div className={className}>
 				<div className="name">
-					<h4>{name}</h4>
+					<p className="title">{name}</p>
 				</div>
 				<div className="hr"></div>
 				<div className="values">

@@ -50,33 +50,16 @@ class DisAdvStoreStatic extends Store {
 	}
 
 	getDeactiveForView(category: ADVANTAGES | DISADVANTAGES) {
-		category = category ? CATEGORY_1 : CATEGORY_2;
 		const advsObj = getObjByCategory(category) as { [id: string]: Advantage } | { [id: string]: Disadvantage };
 		const advs: any[] = [];
 		for (const id in advsObj) {
 			const adv = advsObj[id];
 			const { max, active, name, sel, input, tiers, cost, dependencies, reqs } = adv;
-			if (!validate(reqs, id) || dependencies.includes(false)) {
-				continue;
-			}
-			else if (max === null || active.length < max) {
+			// if (!validate(reqs, id) || dependencies.includes(false)) {
+			// 	continue;
+			// }
+			if (max === null || active.length < max) {
 				switch (id) {
-					case 'ADV_47':
-						advs.push({ id, name, sel, cost });
-						break;
-					case 'ADV_32': {
-						const sel = adv.sel.filter(e => !(get('DISADV_24') as Disadvantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
-						advs.push({ id, name, sel, input, cost });
-						break;
-					}
-					case 'DISADV_24': {
-						const sel = adv.sel.filter(e => !(get('ADV_32') as Advantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
-						advs.push({ id, name, sel, input, cost });
-						break;
-					}
-					case 'DISADV_45':
-						advs.push({ id, name, sel, input, cost });
-						break;
 					case 'ADV_4':
 					case 'ADV_17': {
 						const sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
@@ -95,6 +78,11 @@ class DisAdvStoreStatic extends Store {
 						// advs.push({ id, name, sel, input });
 						break;
 					}
+					case 'ADV_32': {
+						const sel = adv.sel.filter(e => !(get('DISADV_24') as Disadvantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						advs.push({ id, name, sel, input, cost });
+						break;
+					}
 					case 'ADV_47': {
 						const sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
 						advs.push({ id, name, sel, cost });
@@ -103,6 +91,11 @@ class DisAdvStoreStatic extends Store {
 					case 'DISADV_1': {
 						const sel = adv.sel.map((e, index) => [e[0], index + 1]).filter(e => !dependencies.includes(e[1]));
 						advs.push({ id, name, tiers, sel, input, cost });
+						break;
+					}
+					case 'DISADV_24': {
+						const sel = adv.sel.filter(e => !(get('ADV_32') as Advantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						advs.push({ id, name, sel, input, cost });
 						break;
 					}
 					case 'DISADV_33':
@@ -141,17 +134,15 @@ class DisAdvStoreStatic extends Store {
 						advs.push({ id, name, sel, cost });
 						break;
 					}
-					default:
-						if (adv.tiers !== null) {
-							advs.push({ id, name, tiers, cost });
-						}
-						else {
-							advs.push({ id, name, cost });
-						}
-						if (adv.input !== null) {
-							advs.push({ id, name, input, cost });
-						}
+					case 'DISADV_45':
+						advs.push({ id, name, sel, input, cost });
 						break;
+					default: {
+						const tiers = adv.tiers !== null ? adv.tiers : undefined;
+						const input = adv.input !== null ? adv.input : undefined;
+						const sel = adv.sel.length > 0 ? adv.sel : undefined;
+						advs.push({ id, name, cost, tiers, input, sel });
+						break;}
 				}
 			}
 		}

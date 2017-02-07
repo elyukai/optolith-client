@@ -1,38 +1,37 @@
+import * as Categories from '../../constants/Categories';
+import * as DisAdvActions from '../../actions/DisAdvActions';
+import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
-import { Deactive } from './DisAdvAddListItem';
-import { Active } from './DisAdvRemoveListItem';
-import { RaceInstance } from '../../utils/data/Race';
-import { CultureInstance } from '../../utils/data/Culture';
-import { ProfessionInstance } from '../../utils/data/Profession';
-import DisAdvActions from '../../_actions/DisAdvActions';
 import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import RaceStore from '../../stores/RaceStore';
-import React, { Component } from 'react';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
 interface State {
 	filterText: string;
 	showRating: boolean;
-	disadvActive: Active[];
-	disadvDeactive: Deactive[];
+	disadvActive: {
+		id: string;
+		active: ActiveObject;
+		index: number;
+	}[];
+	disadvDeactive: Disadvantage[];
 	showAddSlidein: boolean;
-	race: RaceInstance;
-	culture: CultureInstance;
-	profession: ProfessionInstance;
+	race: Race;
+	culture: Culture;
+	profession: Profession;
 }
 
-export default class Disadvantages extends Component<any, State> {
-
+export default class Disadvantages extends React.Component<undefined, State> {
 	state = {
-		filterText: DisAdvStore.getFilter(),
+		filterText: '',
 		showRating: DisAdvStore.getRating(),
-		disadvActive: DisAdvStore.getActiveForView(false),
-		disadvDeactive: DisAdvStore.getDeactiveForView(false),
+		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
+		disadvDeactive: DisAdvStore.getDeactiveForView(Categories.DISADVANTAGES),
 		showAddSlidein: false,
 		race: RaceStore.getCurrent(),
 		culture: CultureStore.getCurrent(),
@@ -40,14 +39,13 @@ export default class Disadvantages extends Component<any, State> {
 	};
 
 	_updateDisAdvStore = () => this.setState({
-		filterText: DisAdvStore.getFilter(),
 		showRating: DisAdvStore.getRating(),
-		disadvActive: DisAdvStore.getActiveForView(false),
-		disadvDeactive: DisAdvStore.getDeactiveForView(false)
+		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
+		disadvDeactive: DisAdvStore.getDeactiveForView(Categories.DISADVANTAGES)
 	} as State);
 
-	filter = event => DisAdvActions.filter(event.target.value);
-	changeRating = () => DisAdvActions.changeRating();
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	changeRating = () => DisAdvActions.switchRatingVisibility();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -61,23 +59,21 @@ export default class Disadvantages extends Component<any, State> {
 
 	render() {
 
-		const rating = {};
+		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP' } = {};
 		let { race, culture, profession } = this.state;
 
 		profession = profession || {};
 
-		const IMP = 'imp';
-		const TYP = 'typ';
-		const UNTYP = 'untyp';
+		const IMP = 'IMP';
+		const TYP = 'TYP';
+		const UNTYP = 'UNTYP';
 
 		race.typ_dadv.forEach(e => { rating[e] = TYP; });
 		race.untyp_dadv.forEach(e => { rating[e] = UNTYP; });
-		culture.typ_dadv.forEach(e => { rating[e] = TYP; });
-		culture.untyp_dadv.forEach(e => { rating[e] = UNTYP; });
-		if (profession.hasOwnProperty('typ_dadv'))
-			profession.typ_dadv.forEach(e => { rating[e] = TYP; });
-		if (profession.hasOwnProperty('untyp_dadv'))
-			profession.untyp_dadv.forEach(e => { rating[e] = UNTYP; });
+		culture.typDadv.forEach(e => { rating[e] = TYP; });
+		culture.untypDadv.forEach(e => { rating[e] = UNTYP; });
+		profession.typDadv.forEach(e => { rating[e] = TYP; });
+		profession.untypDadv.forEach(e => { rating[e] = UNTYP; });
 		race.imp_dadv.forEach(e => { rating[e[0]] = IMP; });
 
 		return (

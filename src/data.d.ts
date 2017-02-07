@@ -134,7 +134,7 @@ interface Profession {
 	readonly name: string | { m: string, f: string };
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqsPre: (string | number | boolean)[][];
 	readonly reqs: (string | number | boolean)[][];
 	readonly sel: (string | string[] | number[])[][];
 	readonly specialabilities: (string | number | boolean)[][];
@@ -142,10 +142,10 @@ interface Profession {
 	readonly talents: (string | number)[][];
 	readonly spells: (string | number)[][];
 	readonly liturgies: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
+	readonly typAdv: string[];
+	readonly typDadv: string[];
+	readonly untypAdv: string[];
+	readonly untypDadv: string[];
 	readonly variants: string[];
 	readonly category: PROFESSIONS;
 }
@@ -155,7 +155,7 @@ interface ProfessionVariant {
 	readonly name: string | { m: string, f: string };
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
-	readonly reqs_p: (string | number | boolean)[][];
+	readonly reqsPre: (string | number | boolean)[][];
 	readonly reqs: (string | number | boolean)[][];
 	readonly sel: (string | string[] | number[])[][];
 	readonly specialabilities: (string | number | boolean)[][];

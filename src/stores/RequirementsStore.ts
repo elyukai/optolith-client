@@ -41,33 +41,35 @@ function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 		const add = category === Categories.ADVANTAGES;
 		const target = () => add ? adv : disadv;
 
-		const isKar = reqs.some((e: [string, number]) => e[0] === 'ADV_12' && e[1]);
-		const isMag = reqs.some((e: [string, number]) => e[0] === 'ADV_50' && e[1]);
-		const index = isKar ? 2 : isMag ? 1 : 0;
+		// const isKar = reqs.some((e: [string, number]) => e[0] === 'ADV_12' && e[1]);
+		// const isMag = reqs.some((e: [string, number]) => e[0] === 'ADV_50' && e[1]);
+		// const index = isKar ? 2 : isMag ? 1 : 0;
+		const index = 0;
 
-		_validCost = checkDisAdvantages(id, cost, index, target(), spent, total, add);
+		const validDisAdv = checkDisAdvantages(cost, index, target(), spent, total, add);
 
-		const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
+		// const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
+		const sub = '';
 		const text = add ? 'Vorteile' : 'Nachteile';
 
-		if (!_validCost[2]) {
+		if (!validDisAdv[2]) {
 			alert(`Obergrenze für ${sub} ${text} erreicht`, `Du kannst nicht mehr als 50 AP für ${sub} ${text} ausgeben!`);
 		}
-		else if (!_validCost[1]) {
+		else if (!validDisAdv[1]) {
 			alert(`Obergrenze für ${text} erreicht`, `Du kannst nicht mehr als 80 AP für ${text} ausgeben!`);
 		}
-		else if (!_validCost[0]) {
+		else if (!validDisAdv[0]) {
 			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
 		}
 		else {
 			_disadv = [ add, index ];
 		}
 
-		_validCost = _validCost.every(e => e);
+		_validCost = validDisAdv.every(e => e);
 	}
 }
 
-function _updateOwnRequirements(isValid) {
+function _updateOwnRequirements(isValid: boolean) {
 	_validOwnRequirements = isValid;
 }
 
@@ -121,7 +123,8 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 			}
 
 			case ActionTypes.ACTIVATE_DISADV:
-				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
+				// _updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
+				_updateOwnRequirements(true);
 				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
@@ -131,7 +134,8 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.DEACTIVATE_DISADV:
-				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
+				// _updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
+				_updateOwnRequirements(true);
 				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 

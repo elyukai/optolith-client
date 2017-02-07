@@ -88,6 +88,7 @@ interface ActivateArgs {
     sel2?: string | number;
     input?: string;
     tier?: number
+	cost: number;
 }
 
 interface ActivateDisAdvAction {
@@ -119,9 +120,6 @@ interface SetDisAdvTierAction {
 
 interface SwitchDisAdvRatingVisibilityAction {
     type: SWITCH_DISADV_RATING_VISIBILITY;
-    payload: {
-        id: string;
-    };
 }
 
 // HerolistActions

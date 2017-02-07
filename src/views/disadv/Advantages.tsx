@@ -1,9 +1,9 @@
 import * as Categories from '../../constants/Categories';
+import * as DisAdvActions from '../../actions/DisAdvActions';
 import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
-import DisAdvActions from '../../_actions/DisAdvActions';
 import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
@@ -19,15 +19,14 @@ interface State {
 		active: ActiveObject;
 		index: number;
 	}[];
-	advDeactive: (Advantage | Disadvantage)[];
+	advDeactive: Advantage[];
 	showAddSlidein: boolean;
 	race: Race;
 	culture: Culture;
 	profession: Profession;
 }
 
-export default class Advantages extends React.Component<any, State> {
-
+export default class Advantages extends React.Component<undefined, State> {
 	state = {
 		filterText: '',
 		showRating: DisAdvStore.getRating(),
@@ -45,8 +44,8 @@ export default class Advantages extends React.Component<any, State> {
 		advDeactive: DisAdvStore.getDeactiveForView(Categories.ADVANTAGES)
 	} as State);
 
-	filter = (event: Event) => DisAdvActions.filter(event.target.value);
-	changeRating = () => DisAdvActions.changeRating();
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	changeRating = () => DisAdvActions.switchRatingVisibility();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -74,8 +73,8 @@ export default class Advantages extends React.Component<any, State> {
 			race.untyp_adv.forEach(e => { rating[e] = UNTYP; });
 			culture.typAdv.forEach(e => { rating[e] = TYP; });
 			culture.untypAdv.forEach(e => { rating[e] = UNTYP; });
-			profession.typ_adv.forEach(e => { rating[e] = TYP; });
-			profession.untyp_adv.forEach(e => { rating[e] = UNTYP; });
+			profession.typAdv.forEach(e => { rating[e] = TYP; });
+			profession.untypAdv.forEach(e => { rating[e] = UNTYP; });
 			race.imp_adv.forEach(e => { rating[e[0]] = IMP; });
 		}
 

@@ -2,7 +2,7 @@ import { get } from '../../stores/ListStore';
 import * as Categories from '../../constants/Categories';
 import * as DisAdvActions from '../../actions/DisAdvActions';
 import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
+import IconButton from '../../components/IconButton';
 import Dropdown from '../../components/Dropdown';
 import ELStore from '../../stores/ELStore';
 
@@ -37,7 +37,6 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		const { sid, sid2, tier } = activeObject;
 		const a = get(id) as Advantage | Disadvantage;
 		const { tiers, cost, category, sel, dependencies, active, input } = a;
-		let { name } = a;
 		let disabled = false;
 		let add = '';
 		let currentCost: number | undefined = undefined;
@@ -116,9 +115,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		}
 
 		let tierElement;
-
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
 		if (tiers && !['DISADV_34','DISADV_50'].includes(id)) {
 			const array = Array.from(Array(tiers).keys()).map(e => [roman[e], e + 1] as [string, number]);
 			tierElement = (
@@ -131,6 +128,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 			currentCost = (cost as number) * tier;
 		}
 
+		let { name } = a;
 		if (['ADV_28','ADV_29'].includes(id)) {
 			name = `Immunität gegen ${add}`;
 		}
@@ -147,11 +145,9 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		if (!currentCost) {
 			currentCost = cost as number;
 		}
-
 		if (category === Categories.DISADVANTAGES) {
 			currentCost = -currentCost;
 		}
-
 		args.cost = -currentCost;
 
 		if (active.some(e => Object.keys(activeObject).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length) || dependencies.includes(true) && active.length === 1) {
@@ -159,18 +155,22 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		}
 
 		return (
-			<tr>
-				<td className="name">
-					<div>
-						<h2>{name}</h2>
-						{tierElement}
-					</div>
-				</td>
-				<td className="cost">{currentCost}</td>
-				<td className="inc">
-					<BorderButton label="-" onClick={this.removeFromList.bind(null, args)} disabled={disabled} />
-				</td>
-			</tr>
+			<div className="list-item">
+				<div className="name">
+					<p className="title">{name}</p>
+				</div>
+				<div className="selections">
+					{tierElement}
+				</div>
+				<div className="hr"></div>
+				<div className="values">
+					<div className="cost">{currentCost}</div>
+				</div>
+				<div className="btns">
+					<IconButton icon="&#xE15B;" onClick={this.removeFromList.bind(null, args)} disabled={disabled} flat />
+					<IconButton icon="&#xE88F;" flat disabled />
+				</div>
+			</div>
 		);
 	}
 }

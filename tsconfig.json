@@ -17,8 +17,13 @@
         "outDir": "./dist/",
 		"removeComments": true,
         "strictNullChecks": true,
-        "target": "es6"
-    },
+        "target": "es6",
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true
+   },
     "include": [
         "./src/actions/**/*",
         "./src/components/**/*",
