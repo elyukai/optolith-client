@@ -1,18 +1,17 @@
 import { filterAndSort } from '../../utils/ListUtils';
-import { LiturgyInstance } from '../../utils/data/Liturgy';
 import BorderButton from '../../components/BorderButton';
-import LiturgiesActions from '../../_actions/LiturgiesActions';
+import * as LiturgiesActions from '../../actions/LiturgiesActions';
 import LiturgiesStore from '../../stores/LiturgiesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component } from 'react';
+import * as React from 'react';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
 interface State {
-	liturgies: LiturgyInstance[];
+	liturgies: Liturgy[];
 	addChantsDisabled: boolean;
 	filterText: string;
 	sortOrder: string;
@@ -20,12 +19,12 @@ interface State {
 	showAddSlidein: boolean;
 }
 
-export default class Liturgies extends Component<any, State> {
+export default class Liturgies extends React.Component<undefined, State> {
 
 	state = {
 		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
-		filterText: LiturgiesStore.getFilterText(),
+		filterText: '',
 		sortOrder: LiturgiesStore.getSortOrder(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false
@@ -34,16 +33,15 @@ export default class Liturgies extends Component<any, State> {
 	_updateLiturgiesStore = () => this.setState({
 		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
-		filterText: LiturgiesStore.getFilterText(),
 		sortOrder: LiturgiesStore.getSortOrder()
 	} as State);
 
-	filter = event => LiturgiesActions.filter(event.target.value);
-	sort = option => LiturgiesActions.sort(option);
-	addToList = id => LiturgiesActions.addToList(id);
-	addPoint = id => LiturgiesActions.addPoint(id);
-	removeFromList = id => LiturgiesActions.removeFromList(id);
-	removePoint = id => LiturgiesActions.removePoint(id);
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => LiturgiesActions.setSortOrder(option);
+	addToList = (id: string) => LiturgiesActions.addToList(id);
+	addPoint = (id: string) => LiturgiesActions.addPoint(id);
+	removeFromList = (id: string) => LiturgiesActions.removeFromList(id);
+	removePoint = (id: string) => LiturgiesActions.removePoint(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -71,8 +69,8 @@ export default class Liturgies extends Component<any, State> {
 
 		const list = filterAndSort(liturgies, filterText, sortOrder);
 
-		const listActive = [];
-		const listDeactive = [];
+		const listActive: Liturgy[] = [];
+		const listDeactive: Liturgy[] = [];
 
 		list.forEach(e => {
 			if (e.active) {
@@ -97,50 +95,39 @@ export default class Liturgies extends Component<any, State> {
 							/>
 					</div>
 					<Scroll className="list">
-						<table className="list">
-							<thead>
-								<tr>
-									<td className="type">Gruppe</td>
-									<td className="name">Liturgie</td>
-									<td className="merk">Aspekte</td>
-									<td className="check">Probe</td>
-									<td className="skt">Sf.</td>
-									<td className="inc"></td>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									listDeactive.map(liturgy => {
-										const [ a, b, c, checkmod ] = liturgy.check;
-										const check = [ a, b, c ];
+						<div className="list-wrapper">
+							{
+								listDeactive.map(liturgy => {
+									const [ a, b, c, checkmod ] = liturgy.check;
+									const check = [ a, b, c ];
 
-										let name = liturgy.name;
+									const name = liturgy.name;
 
-										const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
+									const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-										const obj = liturgy.gr === 3 ? {} : {
-											check,
-											checkmod,
-											ic: liturgy.ic
-										};
+									const obj = liturgy.gr === 3 ? {} : {
+										check,
+										checkmod,
+										ic: liturgy.ic
+									};
 
-										return (
-											<SkillListItem
-												key={liturgy.id}
-												group={GROUPS[liturgy.gr - 1]}
-												name={name}
-												isNotActive
-												activate={this.addToList.bind(null, liturgy.id)}
-												activateDisabled={addChantsDisabled && liturgy.gr < 3}
-												{...obj}
-												>
-												<td className="aspc">{aspc}</td>
-											</SkillListItem>
-										);
-									})
-								}
-							</tbody>
-						</table>
+									return (
+										<SkillListItem
+											key={liturgy.id}
+											id={liturgy.id}
+											name={name}
+											isNotActive
+											activate={this.addToList.bind(null, liturgy.id)}
+											activateDisabled={addChantsDisabled && liturgy.gr < 3}
+											addFillElement
+											{...obj}
+											>
+											<td className="aspect">{aspc}</td>
+										</SkillListItem>
+									);
+								})
+							}
+						</div>
 					</Scroll>
 				</Slidein>
 				<div className="options">
@@ -156,52 +143,40 @@ export default class Liturgies extends Component<any, State> {
 						/>
 				</div>
 				<Scroll className="list">
-					<table className="list">
-						<thead>
-							<tr>
-								<td className="type">Gruppe</td>
-								<td className="name">Liturgie</td>
-								<td className="fw">Fw</td>
-								<td className="merk">Aspekte</td>
-								<td className="check">Probe</td>
-								<td className="skt">Sf.</td>
-								<td className="inc"></td>
-							</tr>
-						</thead>
-						<tbody>
-							{
-								listActive.map(obj => {
-									const [ a1, a2, a3, checkmod ] = obj.check;
-									const check = [ a1, a2, a3 ];
+					<div className="list-wrapper">
+						{
+							listActive.map(obj => {
+								const [ a1, a2, a3, checkmod ] = obj.check;
+								const check = [ a1, a2, a3 ];
 
-									let name = obj.name;
+								const name = obj.name;
 
-									const aspc = obj.aspc.map(e => ASPECTS[e - 1]).sort().join(', ');
+								const aspc = obj.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-									const other = obj.gr === 3 ? {} : {
-										sr: obj.value,
-										check,
-										checkmod,
-										ic: obj.ic,
-										addPoint: this.addPoint.bind(null, obj.id),
-										addDisabled: obj.disabledIncrease
-									};
+								const other = obj.gr === 3 ? {} : {
+									sr: obj.value,
+									check,
+									checkmod,
+									ic: obj.ic,
+									addPoint: this.addPoint.bind(null, obj.id),
+									addDisabled: !obj.isIncreasable
+								};
 
-									return (
-										<SkillListItem
-											key={obj.id}
-											group={GROUPS[obj.gr - 1]}
-											name={name}
-											removePoint={phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
-											removeDisabled={obj.disabledDecrease}
-											{...other} >
-											<td className="aspc">{aspc}</td>
-										</SkillListItem>
-									);
-								})
-							}
-						</tbody>
-					</table>
+								return (
+									<SkillListItem
+										key={obj.id}
+										id={obj.id}
+										name={name}
+										removePoint={phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!obj.isDecreasable}
+										addFillElement
+										{...other} >
+										<div className="aspect">{aspc}</div>
+									</SkillListItem>
+								);
+							})
+						}
+					</div>
 				</Scroll>
 			</div>
 		);

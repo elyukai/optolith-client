@@ -9,7 +9,9 @@ interface Props {
 	activate?: (id: string) => void;
 	activateDisabled?: boolean;
 	addDisabled?: boolean;
+	addFillElement?: boolean;
 	addPoint?: (id: string) => void;
+	addValues?: { className: string; value?: string | number }[];
 	check?: string[];
 	checkDisabled?: boolean;
 	checkmod?: string;
@@ -28,7 +30,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
 
 	render() {
-		const { typ, untyp, name, sr, children, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement } = this.props;
 
 		const className = classNames({
 			'list-item': true,
@@ -62,13 +64,20 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
 
+
+		if (addFillElement) {
+			values.push(<div key="fill" className="fill"></div>);
+		}
+
 		if (ic) {
 			values.push(<div key="ic" className="ic">{COMP[ic - 1]}</div>);
 		}
 
+		values.push(...addValues.map(e => <div key={e.className} className={e.className}>{e.value}</div>));
+
 		const btnElement = isNotActive ? (
 			<div className="btns">
-				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} />
+				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} flat />
 			</div>
 		) : (
 			<div className="btns">
@@ -91,9 +100,9 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 					<p className="title">{name}</p>
 				</div>
 				<div className="hr"></div>
+				{children}
 				<div className="values">
 					{values}
-					{children}
 				</div>
 				{btnElement}
 			</div>

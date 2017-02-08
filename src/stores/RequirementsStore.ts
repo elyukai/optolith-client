@@ -25,7 +25,7 @@ const _updateCost = (cost: number, valid: boolean) => {
 	if (!_validCost) {
 		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
 	}
-}
+};
 
 function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 	_cost = cost;

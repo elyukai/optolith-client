@@ -197,7 +197,7 @@ interface Advantage {
 	readonly category: ADVANTAGES;
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
-	sid: (string | number)[];
+	readonly sid: (string | number)[];
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -205,7 +205,7 @@ interface Advantage {
 	readonly isActivatable: boolean;
 	readonly isDeactivatable: boolean;
 	activate(args: ActivateArgs): void;
-	deactivate(args: DeactivateArgs): void;
+	deactivate(index: number): void;
 	setTier(args: SetTierObject): void;
 	reset(): void;
 }
@@ -223,7 +223,7 @@ interface Disadvantage {
 	readonly category: DISADVANTAGES;
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
-	sid: (string | number)[];
+	readonly sid: (string | number)[];
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -231,7 +231,7 @@ interface Disadvantage {
 	readonly isActivatable: boolean;
 	readonly isDeactivatable: boolean;
 	activate(args: ActivateArgs): void;
-	deactivate(args: DeactivateArgs): void;
+	deactivate(index: number): void;
 	setTier(args: SetTierObject): void;
 	reset(): void;
 }
@@ -249,16 +249,17 @@ interface SpecialAbility {
 	readonly category: SPECIAL_ABILITIES;
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
-	addDependency(dependency: boolean | ActiveObject);
+	readonly sid: (string | number)[];
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
 	readonly isActive: boolean;
 	readonly isActivatable: boolean;
 	readonly isDeactivatable: boolean;
-	activate(args: ActivateArgs);
-	deactivate(args: DeactivateArgs);
-	setTier(args: SetTierObject);
-	reset();
+	activate(args: ActivateArgs): void;
+	deactivate(index: number): void;
+	setTier(args: SetTierObject): void;
+	reset(): void;
 }
 
 interface Attribute {
@@ -270,14 +271,14 @@ interface Attribute {
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
 	mod: number;
-	addDependency(dependency: boolean | ActiveObject);
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-	reset();
+	set(value: number): void;
+	add(value: number): void;
+	remove(value: number): void;
+	addPoint(): void;
+	removePoint(): void;
+	reset(): void;
 }
 
 interface CombatTechnique {
@@ -289,14 +290,18 @@ interface CombatTechnique {
 	readonly category: COMBAT_TECHNIQUES;
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
-	addDependency(dependency: boolean | ActiveObject);
+	readonly at: number;
+	readonly pa: number | string;
+	readonly isIncreasable: boolean;
+	readonly isDecreasable: boolean;
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-	reset();
+	set(value: number): void;
+	add(value: number): void;
+	remove(value: number): void;
+	addPoint(): void;
+	removePoint(): void;
+	reset(): void;
 }
 
 interface Liturgy {
@@ -311,14 +316,17 @@ interface Liturgy {
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
 	active: boolean;
-	addDependency(dependency: boolean | ActiveObject);
+	readonly isOwnTradition: boolean;
+	readonly isIncreasable: boolean;
+	readonly isDecreasable: boolean;
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-	reset();
+	set(value: number): void;
+	add(value: number): void;
+	remove(value: number): void;
+	addPoint(): void;
+	removePoint(): void;
+	reset(): void;
 }
 
 interface Spell {
@@ -327,20 +335,23 @@ interface Spell {
 	readonly gr: number;
 	readonly check: string[];
 	readonly tradition: number[];
-	readonly property: number[];
+	readonly property: number;
 	readonly category: SPELLS;
 	readonly ic: number;
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
 	active: boolean;
-	addDependency(dependency: boolean | ActiveObject);
+	readonly isOwnTradition: boolean;
+	readonly isIncreasable: boolean;
+	readonly isDecreasable: boolean;
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-	reset();
+	set(value: number): void;
+	add(value: number): void;
+	remove(value: number): void;
+	addPoint(): void;
+	removePoint(): void;
+	reset(): void;
 }
 
 interface Talent {
@@ -352,17 +363,21 @@ interface Talent {
 	readonly check: string[];
 	readonly enc: string;
 	readonly spec: string[];
-	readonly spec_input: string | null;
+	readonly specInput: string | null;
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
-	addDependency(dependency: boolean | ActiveObject);
+	readonly isIncreasable: boolean;
+	readonly isDecreasable: boolean;
+	readonly isTyp: boolean;
+	readonly isUntyp: boolean;
+	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
-	set(value: number);
-	add(value: number);
-	remove(value: number);
-	addPoint();
-	removePoint();
-	reset();
+	set(value: number): void;
+	add(value: number): void;
+	remove(value: number): void;
+	addPoint(): void;
+	removePoint(): void;
+	reset(): void;
 }
 
 interface Item {

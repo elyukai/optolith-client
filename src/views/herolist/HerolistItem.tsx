@@ -1,10 +1,10 @@
 import { get } from '../../stores/ListStore';
 import * as HerolistActions from '../../actions/HerolistActions';
+import * as LocationActions from '../../actions/LocationActions';
 import * as React from 'react';
 import Avatar from '../../components/Avatar';
 import classNames from 'classnames';
 import IconButton from '../../components/IconButton';
-import LocationActions from '../../actions/LocationActions';
 import ProfileStore from '../../stores/ProfileStore';
 import ProgressArc from 'react-progress-arc';
 import VerticalList from '../../components/VerticalList';

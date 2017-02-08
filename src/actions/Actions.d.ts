@@ -98,9 +98,8 @@ interface ActivateDisAdvAction {
 
 interface DeactivateArgs {
     id: string;
-    tier?: number;
+	index: number;
     cost: number;
-    sid?: number | string;
 }
 
 interface DeactivateDisAdvAction {

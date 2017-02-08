@@ -115,29 +115,22 @@ export default class Activatable extends Dependent {
 		return { active, dependencies: this.addDependencies(adds, new_sid) };
 	}
 
-	deactivate(active: ActiveObject) {
-		const { sid, sid2, tier } = active;
+	deactivate(index: number) {
 		const adds: [string, number][] = [];
-		let old_sid;
+		const sid = this.active[index].sid;
+		let sidOld;
 		switch (this.id) {
 			case 'ADV_4':
 			case 'ADV_16':
 			case 'DISADV_48':
-				old_sid = sid as string;
+				sidOld = sid as string;
 				break;
 			case 'SA_10':
 				adds.push([sid as string, this.active.filter(e => e.sid === sid).length * 6]);
 				break;
 		}
-		this.active.some((e, index) => {
-			const isEqual = Object.keys(active).every((key: keyof ActiveObject) => active[key] === e[key]) && Object.keys(active).length === Object.keys(e).length;
-			if (isEqual) {
-				this.active.splice(index, 1);
-				return true;
-			}
-			return false;
-		});
-		this.removeDependencies(adds, old_sid);
+		this.active.splice(index, 1);
+		this.removeDependencies(adds, sidOld);
 	}
 
 	setTier(active: SetTierObject) {

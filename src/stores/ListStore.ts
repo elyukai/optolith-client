@@ -48,8 +48,8 @@ function _activateDASA(id: string, args: ActivateArgs) {
 	(_byId[id] as Advantage | Disadvantage | SpecialAbility).activate(args);
 }
 
-function _deactivateDASA(id: string, args: DeactivateArgs) {
-	(_byId[id] as Advantage | Disadvantage | SpecialAbility).deactivate(args);
+function _deactivateDASA(id: string, index: number) {
+	(_byId[id] as Advantage | Disadvantage | SpecialAbility).deactivate(index);
 }
 
 function _updateTier(id: string, sid: string | number, tier: number) {
@@ -328,7 +328,7 @@ const ListStore = new Store((action: Action) => {
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
-					_deactivateDASA(action.payload.id, action.payload);
+					_deactivateDASA(action.payload.id, action.payload.index);
 				}
 				break;
 
@@ -443,7 +443,7 @@ export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => {
 export const getPrimaryAttrID = (type: 1 | 2) => {
 	let attr;
 	if (type === 1) {
-		switch ((get('SA_86') as SpecialAbility).active[0].sid) {
+		switch ((get('SA_86') as SpecialAbility).sid[0]) {
 			case 1:
 				attr = 'SGC';
 				break;
@@ -455,7 +455,7 @@ export const getPrimaryAttrID = (type: 1 | 2) => {
 				break;
 		}
 	} else if (type === 2) {
-		switch ((get('SA_102') as SpecialAbility).active[0].sid) {
+		switch ((get('SA_102') as SpecialAbility).sid[0]) {
 			case 1:
 				attr = 'SGC';
 				break;

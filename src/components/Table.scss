@@ -139,6 +139,10 @@ table.list {
 					border-color: map-get($map: $colors, $key: $i);
 				}
 			}
+
+			.ATTR_6_8 {
+				border-color: $attr6 $attr8 $attr8 $attr6;
+			}
 		}
 
 		&::after {
@@ -202,11 +206,7 @@ table.list {
 
 		> div {
 			flex: none;
-			margin: 0 10px 0 0;
-
-			&:first-child {
-				margin-left: 10px;
-			}
+			margin: 0 0 0 10px;
 
 			&.dropdown, &.textfield {
 				width: 200px;
@@ -221,6 +221,7 @@ table.list {
 	.values {
 		flex: none;
 		display: flex;
+		align-items: center;
 
 		> div {
 			height: 32px;
@@ -249,8 +250,29 @@ table.list {
 			line-height: 30px;
 		}
 
-		.check {
+		.check, .primary, .at, .pa {
 			border-color: $color12;
+		}
+
+		.ATTR_6_8 {
+			font-size: 8px;
+		}
+
+		.atpa {
+			width: 8px;
+			height: 2px;
+			background-color: $color12;
+			flex: none;
+			margin: 0 0 0 -8px;
+			border: none;
+		}
+
+		.fill {
+			width: auto;
+			height: 1px;
+			margin: 0;
+			border: none;
+			flex: 1 1 auto;
 		}
 	}
 

@@ -31,11 +31,13 @@ export const getLP = (): SecondaryAttribute => {
 	const base = RaceStore.getCurrent().lp + CON().value * 2;
 	let mod = 0;
 	const add = addEnergies().lp;
-	if (get('ADV_25').active) {
-		mod += get('ADV_25').tier;
+	const increaseObject = (get('ADV_25') as Advantage).active[0];
+	const decreaseObject = (get('DISADV_28') as Disadvantage).active[0];
+	if (increaseObject) {
+		mod += increaseObject.tier;
 	}
-	else if (get('DISADV_28').active) {
-		mod -= get('DISADV_28').tier;
+	else if (decreaseObject) {
+		mod -= decreaseObject.tier;
 	}
 	const value = base + mod + add;
 	return {
@@ -59,11 +61,13 @@ export const getAE = (): SecondaryAttribute => {
 	if (primary !== 'ATTR_0') {
 		base = 20 + PRIMARY(primary).value;
 	}
-	if (get('ADV_23').active) {
-		mod += get('ADV_23').tier;
+	const increaseObject = (get('ADV_23') as Advantage).active[0];
+	const decreaseObject = (get('DISADV_26') as Disadvantage).active[0];
+	if (increaseObject) {
+		mod += increaseObject.tier;
 	}
-	else if (get('DISADV_26').active) {
-		mod -= get('DISADV_26').tier;
+	else if (decreaseObject) {
+		mod -= decreaseObject.tier;
 	}
 	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {
@@ -88,11 +92,13 @@ export const getKP = (): SecondaryAttribute => {
 	if (primary !== 'ATTR_0') {
 		base = 20 + PRIMARY(primary).value;
 	}
-	if (get('ADV_24').active) {
-		mod += get('ADV_24').tier;
+	const increaseObject = (get('ADV_24') as Advantage).active[0];
+	const decreaseObject = (get('DISADV_27') as Disadvantage).active[0];
+	if (increaseObject) {
+		mod += increaseObject.tier;
 	}
-	else if (get('DISADV_27').active) {
-		mod -= get('DISADV_27').tier;
+	else if (decreaseObject) {
+		mod -= decreaseObject.tier;
 	}
 	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {
@@ -112,10 +118,12 @@ export const getKP = (): SecondaryAttribute => {
 export const getSPI = (): SecondaryAttribute => {
 	const base = RaceStore.getCurrent().spi + Math.round((COU().value + SGC().value + INT().value) / 6);
 	let mod = 0;
-	if (get('ADV_26').active) {
+	const increaseObject = (get('ADV_26') as Advantage).active[0];
+	const decreaseObject = (get('DISADV_29') as Disadvantage).active[0];
+	if (increaseObject) {
 		mod++;
 	}
-	else if (get('DISADV_29').active) {
+	else if (decreaseObject) {
 		mod--;
 	}
 	const value = base + mod;
@@ -133,10 +141,12 @@ export const getSPI = (): SecondaryAttribute => {
 export const getTOU = (): SecondaryAttribute => {
 	const base = RaceStore.getCurrent().tou + Math.round((CON().value * 2 + STR().value) / 6);
 	let mod = 0;
-	if (get('ADV_27').active) {
+	const increaseObject = (get('ADV_27') as Advantage).active[0];
+	const decreaseObject = (get('DISADV_30') as Disadvantage).active[0];
+	if (increaseObject) {
 		mod++;
 	}
-	else if (get('DISADV_30').active) {
+	else if (decreaseObject) {
 		mod--;
 	}
 	const value = base + mod;

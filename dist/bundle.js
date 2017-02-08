@@ -864,8 +864,8 @@ function _addSR(id, value) {
 function _activateDASA(id, args) {
     _byId[id].activate(args);
 }
-function _deactivateDASA(id, args) {
-    _byId[id].deactivate(args);
+function _deactivateDASA(id, index) {
+    _byId[id].deactivate(index);
 }
 function _updateTier(id, sid, tier) {
     _byId[id].setTier({ sid, tier });
@@ -1093,7 +1093,7 @@ const ListStore = new __WEBPACK_IMPORTED_MODULE_2__Store__["a" /* default */]((a
             case __WEBPACK_IMPORTED_MODULE_10__constants_ActionTypes__["k" /* DEACTIVATE_DISADV */]:
             case __WEBPACK_IMPORTED_MODULE_10__constants_ActionTypes__["l" /* DEACTIVATE_SPECIALABILITY */]:
                 if (__WEBPACK_IMPORTED_MODULE_9__RequirementsStore__["a" /* default */].isValid()) {
-                    _deactivateDASA(action.payload.id, action.payload);
+                    _deactivateDASA(action.payload.id, action.payload.index);
                 }
                 break;
             case __WEBPACK_IMPORTED_MODULE_10__constants_ActionTypes__["m" /* SET_DISADV_TIER */]:
@@ -1203,7 +1203,7 @@ const getAllByCategoryGroup = (category, ...gr) => {
 const getPrimaryAttrID = (type) => {
     let attr;
     if (type === 1) {
-        switch (get('SA_86').active[0].sid) {
+        switch (get('SA_86').sid[0]) {
             case 1:
                 attr = 'SGC';
                 break;
@@ -1216,7 +1216,7 @@ const getPrimaryAttrID = (type) => {
         }
     }
     else if (type === 2) {
-        switch (get('SA_102').active[0].sid) {
+        switch (get('SA_102').sid[0]) {
             case 1:
                 attr = 'SGC';
                 break;
@@ -5487,8 +5487,8 @@ module.exports = invariant;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_AuthStore__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_HerolistStore__ = __webpack_require__(98);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ProfileStore__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__actions_ServerActions__ = __webpack_require__(186);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__actions_ServerActions__ = __webpack_require__(191);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__actions_ServerActions__ = __webpack_require__(184);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__actions_ServerActions__ = __webpack_require__(190);
 /* unused harmony export connectionError */
 /* harmony export (immutable) */ exports["h"] = getAllData;
 /* unused harmony export register */
@@ -6280,11 +6280,13 @@ const getLP = () => {
     const base = __WEBPACK_IMPORTED_MODULE_1__stores_RaceStore__["a" /* default */].getCurrent().lp + CON().value * 2;
     let mod = 0;
     const add = addEnergies().lp;
-    if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_25').active) {
-        mod += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_25').tier;
+    const increaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_25').active[0];
+    const decreaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_28').active[0];
+    if (increaseObject) {
+        mod += increaseObject.tier;
     }
-    else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_28').active) {
-        mod -= __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_28').tier;
+    else if (decreaseObject) {
+        mod -= decreaseObject.tier;
     }
     const value = base + mod + add;
     return {
@@ -6309,11 +6311,13 @@ const getAE = () => {
     if (primary !== 'ATTR_0') {
         base = 20 + PRIMARY(primary).value;
     }
-    if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_23').active) {
-        mod += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_23').tier;
+    const increaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_23').active[0];
+    const decreaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_26').active[0];
+    if (increaseObject) {
+        mod += increaseObject.tier;
     }
-    else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_26').active) {
-        mod -= __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_26').tier;
+    else if (decreaseObject) {
+        mod -= decreaseObject.tier;
     }
     const value = primary !== 'ATTR_0' ? base + mod + add : '-';
     return {
@@ -6339,11 +6343,13 @@ const getKP = () => {
     if (primary !== 'ATTR_0') {
         base = 20 + PRIMARY(primary).value;
     }
-    if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_24').active) {
-        mod += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_24').tier;
+    const increaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_24').active[0];
+    const decreaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_27').active[0];
+    if (increaseObject) {
+        mod += increaseObject.tier;
     }
-    else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_27').active) {
-        mod -= __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_27').tier;
+    else if (decreaseObject) {
+        mod -= decreaseObject.tier;
     }
     const value = primary !== 'ATTR_0' ? base + mod + add : '-';
     return {
@@ -6364,10 +6370,12 @@ const getKP = () => {
 const getSPI = () => {
     const base = __WEBPACK_IMPORTED_MODULE_1__stores_RaceStore__["a" /* default */].getCurrent().spi + Math.round((COU().value + SGC().value + INT().value) / 6);
     let mod = 0;
-    if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_26').active) {
+    const increaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_26').active[0];
+    const decreaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_29').active[0];
+    if (increaseObject) {
         mod++;
     }
-    else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_29').active) {
+    else if (decreaseObject) {
         mod--;
     }
     const value = base + mod;
@@ -6386,10 +6394,12 @@ const getSPI = () => {
 const getTOU = () => {
     const base = __WEBPACK_IMPORTED_MODULE_1__stores_RaceStore__["a" /* default */].getCurrent().tou + Math.round((CON().value * 2 + STR().value) / 6);
     let mod = 0;
-    if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_27').active) {
+    const increaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('ADV_27').active[0];
+    const decreaseObject = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_30').active[0];
+    if (increaseObject) {
         mod++;
     }
-    else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])('DISADV_30').active) {
+    else if (decreaseObject) {
         mod--;
     }
     const value = base + mod;
@@ -7278,7 +7288,7 @@ const setSection = (section, tab) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_App
         tab
     }
 });
-/* harmony export (immutable) */ exports["b"] = setSection;
+/* harmony export (immutable) */ exports["a"] = setSection;
 
 const setTab = (tab) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
     type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_38" /* SET_TAB */],
@@ -7286,7 +7296,7 @@ const setTab = (tab) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__[
         tab
     }
 });
-/* harmony export (immutable) */ exports["c"] = setTab;
+/* harmony export (immutable) */ exports["b"] = setTab;
 
 
 
@@ -7463,7 +7473,6 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
         };
     }
     getActiveForView(category) {
-        category = category ? CATEGORY_1 : CATEGORY_2;
         const advsObj = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__ListStore__["g" /* getObjByCategory */])(category);
         const advs = [];
         for (const id in advsObj) {
@@ -7483,12 +7492,12 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
                 switch (id) {
                     case 'ADV_4':
                     case 'ADV_17': {
-                        const sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
+                        const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
                         advs.push({ id, name, sel, cost });
                         break;
                     }
                     case 'ADV_16': {
-                        const sel = adv.sel.filter(e => adv.active.filter(c => c === e[1]).length < 2 && !dependencies.includes(e[1]));
+                        const sel = adv.sel.filter(e => adv.sid.filter(d => d === e[1]).length < 2 && !dependencies.includes(e[1]));
                         advs.push({ id, name, sel, cost });
                         break;
                     }
@@ -7504,7 +7513,7 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
                         break;
                     }
                     case 'ADV_47': {
-                        const sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
+                        const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
                         advs.push({ id, name, sel, cost });
                         break;
                     }
@@ -7523,10 +7532,10 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
                     case 'DISADV_51': {
                         let sel;
                         if (adv.id === 'DISADV_33') {
-                            sel = adv.sel.filter(e => ([7, 8].includes(e[1]) || !adv.active.includes(e[1])) && !dependencies.includes(e[1]));
+                            sel = adv.sel.filter(e => ([7, 8].includes(e[1]) || !adv.sid.includes(e[1])) && !dependencies.includes(e[1]));
                         }
                         else {
-                            sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
+                            sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
                         }
                         advs.push({ id, name, sel, cost });
                         break;
@@ -7538,7 +7547,7 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
                         break;
                     }
                     case 'DISADV_36': {
-                        const sel = adv.sel.filter(e => !adv.active.includes(e[1]) && !dependencies.includes(e[1]));
+                        const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
                         advs.push({ id, name, sel, input, cost });
                         break;
                     }
@@ -7549,7 +7558,7 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* defa
                                     return false;
                                 }
                             }
-                            return !adv.active.includes(e[1]) && !dependencies.includes(e[1]);
+                            return !adv.sid.includes(e[1]) && !dependencies.includes(e[1]);
                         });
                         advs.push({ id, name, sel, cost });
                         break;
@@ -8473,7 +8482,7 @@ class SkillListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         this.showInfo = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__["b" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__SkillInfo__["a" /* default */], { id: this.props.id }));
     }
     render() {
-        const { typ, untyp, name, sr, children, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled } = this.props;
+        const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement } = this.props;
         const className = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({
             'list-item': true,
             'typ': typ,
@@ -8497,11 +8506,15 @@ class SkillListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
             }
         }
         const COMP = ['A', 'B', 'C', 'D', 'E'];
+        if (addFillElement) {
+            values.push(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { key: "fill", className: "fill" }));
+        }
         if (ic) {
             values.push(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { key: "ic", className: "ic" }, COMP[ic - 1]));
         }
+        values.push(...addValues.map(e => __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { key: e.className, className: e.className }, e.value)));
         const btnElement = isNotActive ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "btns" },
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_0__components_IconButton__["a" /* default */], { icon: "\uE03B", onClick: activate, disabled: activateDisabled }))) : (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "btns" },
+            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_0__components_IconButton__["a" /* default */], { icon: "\uE03B", onClick: activate, disabled: activateDisabled, flat: true }))) : (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "btns" },
             addPoint ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_0__components_IconButton__["a" /* default */], { icon: "\uE145", onClick: addPoint, disabled: addDisabled, flat: true }) : null,
             removePoint ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_0__components_IconButton__["a" /* default */], { icon: ic && sr === 0 && !removeDisabled || !ic ? '\uE872' : '\uE15B', onClick: removePoint, disabled: removeDisabled, flat: true })) : null,
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_0__components_IconButton__["a" /* default */], { icon: "\uE88F", flat: true, onClick: this.showInfo })));
@@ -8509,9 +8522,8 @@ class SkillListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "name" },
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "title" }, name)),
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "hr" }),
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "values" },
-                values,
-                children),
+            children,
+            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "values" }, values),
             btnElement));
     }
 }
@@ -10045,29 +10057,22 @@ class Activatable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
         }
         return { active, dependencies: this.addDependencies(adds, new_sid) };
     }
-    deactivate(active) {
-        const { sid, sid2, tier } = active;
+    deactivate(index) {
         const adds = [];
-        let old_sid;
+        const sid = this.active[index].sid;
+        let sidOld;
         switch (this.id) {
             case 'ADV_4':
             case 'ADV_16':
             case 'DISADV_48':
-                old_sid = sid;
+                sidOld = sid;
                 break;
             case 'SA_10':
                 adds.push([sid, this.active.filter(e => e.sid === sid).length * 6]);
                 break;
         }
-        this.active.some((e, index) => {
-            const isEqual = Object.keys(active).every((key) => active[key] === e[key]) && Object.keys(active).length === Object.keys(e).length;
-            if (isEqual) {
-                this.active.splice(index, 1);
-                return true;
-            }
-            return false;
-        });
-        this.removeDependencies(adds, old_sid);
+        this.active.splice(index, 1);
+        this.removeDependencies(adds, sidOld);
     }
     setTier(active) {
         this.active.some((e, index) => {
@@ -10305,9 +10310,9 @@ let _byHeroId = {
         avatar: 'images/portrait.png',
         ap: {
             total: 1784,
-            spent: 1775,
-            adv: [63, 0, 0],
-            disadv: [39, 0, 0]
+            spent: 1500,
+            adv: [0, 0, 0],
+            disadv: [0, 0, 0]
         },
         el: 'EL_3',
         r: 'R_5',
@@ -14229,9 +14234,9 @@ class DisAdvList extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
     render() {
         const { active, list, rating, showRating, type } = this.props;
         return (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_Scroll__["a" /* default */], { className: "list" },
-            __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement("div", { className: "list-wrapper" }, active ? (list.map((item, index) => (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__DisAdvRemoveListItem__["a" /* default */], { key: `${type}_ACTIVE_${index}`, item: item })))) : (list.map((item, index) => {
+            __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement("div", { className: "list-wrapper" }, active ? (list.map((item, index) => (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__DisAdvRemoveListItem__["a" /* default */], { key: `${type}_ACTIVE_${index}`, item: item })))) : (list.map(item => {
                 const className = __WEBPACK_IMPORTED_MODULE_4_classnames___default()(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
-                return (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__DisAdvAddListItem__["a" /* default */], { key: `${type}_DEACTIVE_${index}`, item: item, className: className }));
+                return (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__DisAdvAddListItem__["a" /* default */], { key: item.id, item: item, className: className }));
             })))));
     }
 }
@@ -17433,43 +17438,6 @@ class Router extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(3);
-
-
-/* harmony default export */ exports["a"] = {
-    filter(text) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].FILTER_TALENTS,
-            text
-        });
-    },
-    sort(option) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].SORT_COMBATTECHNIQUES,
-            option
-        });
-    },
-    addPoint(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].ADD_COMBATTECHNIQUE_POINT,
-            id
-        });
-    },
-    removePoint(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].REMOVE_COMBATTECHNIQUE_POINT,
-            id
-        });
-    }
-};
-
-
-/***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_HistoryStore__ = __webpack_require__(73);
 
 
@@ -17483,7 +17451,7 @@ class Router extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ },
-/* 184 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17626,62 +17594,7 @@ class Router extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(3);
-
-
-/* harmony default export */ exports["a"] = {
-    filter(text) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].FILTER_LITURGIES,
-            text
-        });
-    },
-    sort(option) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].SORT_LITURGIES,
-            option
-        });
-    },
-    changeView(option) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].UPDATE_LITURGY_VIEW,
-            option
-        });
-    },
-    addToList(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].ACTIVATE_LITURGY,
-            id
-        });
-    },
-    removeFromList(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].DEACTIVATE_LITURGY,
-            id
-        });
-    },
-    addPoint(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].ADD_LITURGY_POINT,
-            id
-        });
-    },
-    removePoint(id) {
-        __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["_35" /* default */].REMOVE_LITURGY_POINT,
-            id
-        });
-    }
-};
-
-
-/***/ },
-/* 186 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17882,62 +17795,7 @@ class Router extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(6);
-
-
-/* harmony default export */ exports["a"] = {
-    filter(text) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].FILTER_SPELLS,
-            text
-        });
-    },
-    sort(option) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].SORT_SPELLS,
-            option
-        });
-    },
-    changeView(option) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].UPDATE_SPELL_VIEW,
-            option
-        });
-    },
-    addToList(id) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].ACTIVATE_SPELL,
-            id
-        });
-    },
-    removeFromList(id) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].DEACTIVATE_SPELL,
-            id
-        });
-    },
-    addPoint(id) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].ADD_SPELL_POINT,
-            id
-        });
-    },
-    removePoint(id) {
-        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_35" /* default */].REMOVE_SPELL_POINT,
-            id
-        });
-    }
-};
-
-
-/***/ },
-/* 188 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17962,7 +17820,7 @@ class Router extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ },
-/* 189 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18004,7 +17862,7 @@ const addKarmaPoint = () => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatche
 
 
 /***/ },
-/* 190 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18049,7 +17907,93 @@ const requestUserDeletion = () => {
 
 
 /***/ },
-/* 191 */
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(6);
+
+
+const addPoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["q" /* ADD_COMBATTECHNIQUE_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["b"] = addPoint;
+
+const removePoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["L" /* REMOVE_COMBATTECHNIQUE_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["c"] = removePoint;
+
+const setSortOrder = (sortOrder) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["P" /* SET_COMBATTECHNIQUES_SORT_ORDER */],
+    payload: {
+        sortOrder
+    }
+});
+/* harmony export (immutable) */ exports["a"] = setSortOrder;
+
+
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(6);
+
+
+const addToList = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["f" /* ACTIVATE_LITURGY */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["b"] = addToList;
+
+const removeFromList = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["h" /* DEACTIVATE_LITURGY */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["d"] = removeFromList;
+
+const addPoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["s" /* ADD_LITURGY_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["c"] = addPoint;
+
+const removePoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["N" /* REMOVE_LITURGY_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["e"] = removePoint;
+
+const setSortOrder = (sortOrder) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["Q" /* SET_LITURGIES_SORT_ORDER */],
+    payload: {
+        sortOrder
+    }
+});
+/* harmony export (immutable) */ exports["a"] = setSortOrder;
+
+
+
+/***/ },
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18123,6 +18067,57 @@ const receiveUserDeletion = () => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDis
     type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_6" /* RECEIVE_USER_DELETION */]
 });
 /* unused harmony export receiveUserDeletion */
+
+
+
+/***/ },
+/* 191 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(6);
+
+
+const addToList = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* ACTIVATE_SPELL */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["b"] = addToList;
+
+const removeFromList = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["g" /* DEACTIVATE_SPELL */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["d"] = removeFromList;
+
+const addPoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["r" /* ADD_SPELL_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["c"] = addPoint;
+
+const removePoint = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["M" /* REMOVE_SPELL_POINT */],
+    payload: {
+        id
+    }
+});
+/* harmony export (immutable) */ exports["e"] = removePoint;
+
+const setSortOrder = (sortOrder) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+    type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["R" /* SET_SPELLS_SORT_ORDER */],
+    payload: {
+        sortOrder
+    }
+});
+/* harmony export (immutable) */ exports["a"] = setSortOrder;
 
 
 
@@ -18531,7 +18526,7 @@ SortOptions.propTypes = {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_AuthActions__ = __webpack_require__(190);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_AuthActions__ = __webpack_require__(187);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__ = __webpack_require__(67);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_APStore__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_AuthStore__ = __webpack_require__(97);
@@ -18541,10 +18536,10 @@ SortOptions.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ELStore__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__views_herolist_HeroCreation__ = __webpack_require__(147);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__actions_HerolistActions__ = __webpack_require__(128);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__actions_HistoryActions__ = __webpack_require__(183);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__actions_HistoryActions__ = __webpack_require__(182);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_HistoryStore__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__IconButton__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__actions_InGameActions__ = __webpack_require__(184);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__actions_InGameActions__ = __webpack_require__(183);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__views_account_Login__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_PhaseStore__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_ProfileStore__ = __webpack_require__(43);
@@ -18602,7 +18597,7 @@ class TitleBar extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__utils_createOverlay__["b" /* default */])(__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__views_herolist_HeroCreation__["a" /* default */], null));
             }
             else {
-                __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__["b" /* setSection */]('hero');
+                __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__["a" /* setSection */]('hero');
             }
         };
         this.login = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__utils_createOverlay__["b" /* default */])(__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_15__views_account_Login__["a" /* default */], null));
@@ -18740,7 +18735,7 @@ TitleBar.propTypes = {
 class TitleBarBack extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super(...arguments);
-        this.back = () => __WEBPACK_IMPORTED_MODULE_1__actions_LocationActions__["b" /* setSection */]('main');
+        this.back = () => __WEBPACK_IMPORTED_MODULE_1__actions_LocationActions__["a" /* setSection */]('main');
     }
     render() {
         return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "titlebar-back" },
@@ -18818,7 +18813,7 @@ class TitleBarRight extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 class TitleBarTabs extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
     constructor() {
         super(...arguments);
-        this.handleClick = (tab) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__["c" /* setTab */])(tab);
+        this.handleClick = (tab) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__["b" /* setTab */])(tab);
     }
     render() {
         const { active, tabs } = this.props;
@@ -21394,7 +21389,7 @@ class AttributeList extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(189);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(186);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeBorder__ = __webpack_require__(145);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_IconButton__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_NumberBox__ = __webpack_require__(136);
@@ -21708,7 +21703,8 @@ class DisAdvAddListItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"]
         };
     }
     render() {
-        const { className, item: { id, name, cost, sel, input, tiers, category } } = this.props;
+        const { className, item: { id, name, cost, sel, input, tiers } } = this.props;
+        const { category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["b" /* get */])(id);
         const args = { id, cost: 0 };
         let currentCost;
         let disabled = false;
@@ -22010,7 +22006,7 @@ class DisAdvRemoveListItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Componen
             currentCost = -currentCost;
         }
         args.cost = -currentCost;
-        if (active.some(e => Object.keys(activeObject).every((key) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length) || dependencies.includes(true) && active.length === 1) {
+        if (dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(activeObject).every((key) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
             disabled = true;
         }
         return (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "list-item" },
@@ -22020,7 +22016,7 @@ class DisAdvRemoveListItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Componen
             __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "hr" }),
             __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "values" },
                 __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "cost" }, currentCost)),
-            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "inc" },
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "btns" },
                 __WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_IconButton__["a" /* default */], { icon: "\uE15B", onClick: this.removeFromList.bind(null, args), disabled: disabled, flat: true }),
                 __WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_IconButton__["a" /* default */], { icon: "\uE88F", flat: true, disabled: true }))));
     }
@@ -22127,7 +22123,7 @@ class Disadvantages extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Scroll__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_TabActions__ = __webpack_require__(188);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_TabActions__ = __webpack_require__(185);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextField__ = __webpack_require__(10);
 
 
@@ -22280,13 +22276,13 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ListStore__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__ = __webpack_require__(131);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Avatar__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_classnames__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_IconButton__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__actions_LocationActions__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__ = __webpack_require__(67);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Avatar__ = __webpack_require__(68);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_IconButton__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_progress_arc__ = __webpack_require__(400);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_progress_arc___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_react_progress_arc__);
@@ -22301,11 +22297,11 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 
-class HerolistItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
+class HerolistItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
     constructor() {
         super(...arguments);
         this.load = () => this.props.id && __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__["a" /* requestHero */](this.props.id);
-        this.show = () => __WEBPACK_IMPORTED_MODULE_6__actions_LocationActions__["default"].setSection('hero');
+        this.show = () => __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__["a" /* setSection */]('hero');
     }
     render() {
         const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
@@ -22323,17 +22319,17 @@ class HerolistItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
             }
         }
         const elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
-        const playerElement = player ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", { className: "player" }, player.displayName)) : null;
-        const rcpElement = id !== null ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__components_VerticalList__["a" /* default */], { className: "rcp" },
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", { className: "race" }, (() => {
+        const playerElement = player ? (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "player" }, player.displayName)) : null;
+        const rcpElement = id !== null ? (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__components_VerticalList__["a" /* default */], { className: "rcp" },
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "race" }, (() => {
                 const { name } = r && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["b" /* get */])(r) || { name: '' };
                 return name;
             })()),
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", { className: "culture" }, (() => {
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "culture" }, (() => {
                 const { name } = c && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["b" /* get */])(c) || { name: '' };
                 return name;
             })()),
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", { className: "profession" }, (() => {
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "profession" }, (() => {
                 let { name, subname } = p && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["b" /* get */])(p) || { name: '', subname: undefined };
                 if (typeof name === 'object' && sex) {
                     name = name[sex];
@@ -22347,18 +22343,18 @@ class HerolistItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
                 }
                 return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
             })()))) : null;
-        return (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("li", { className: "hero-list-item" },
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8_react_progress_arc___default.a, { completed: elProgress, diameter: 63, strokeWidth: 4 }),
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: __WEBPACK_IMPORTED_MODULE_4_classnames___default()('el avatar-wrapper', !avatar && 'no-avatar') },
-                __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "el-value" },
-                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("h2", null, elRoman[currentEL])),
-                __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_Avatar__["a" /* default */], { src: avatar })),
-            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "main" },
-                __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("h2", null,
-                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", { className: "name" }, name),
+        return (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("li", { className: "hero-list-item" },
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8_react_progress_arc___default.a, { completed: elProgress, diameter: 63, strokeWidth: 4 }),
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: __WEBPACK_IMPORTED_MODULE_5_classnames___default()('el avatar-wrapper', !avatar && 'no-avatar') },
+                __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "el-value" },
+                    __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("h2", null, elRoman[currentEL])),
+                __WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Avatar__["a" /* default */], { src: avatar })),
+            __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("div", { className: "main" },
+                __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("h2", null,
+                    __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "name" }, name),
                     playerElement),
                 rcpElement),
-            (() => id === __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getID() ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_IconButton__["a" /* default */], { icon: "\uE89E", onClick: this.show })) : (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_IconButton__["a" /* default */], { icon: "\uE5DD", onClick: this.load })))()));
+            (() => id === __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getID() ? (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE89E", onClick: this.show })) : (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE5DD", onClick: this.load })))()));
     }
 }
 /* harmony export (immutable) */ exports["a"] = HerolistItem;
@@ -24970,7 +24966,7 @@ SelectionsTalentSpec.propTypes = {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_ListUtils__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_ListStore__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__ = __webpack_require__(182);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__ = __webpack_require__(188);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__ = __webpack_require__(71);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_PhaseStore__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RadioButtonGroup__ = __webpack_require__(29);
@@ -25003,9 +24999,9 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] 
             sortOrder: __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__["a" /* default */].getSortOrder()
         });
         this.filter = (event) => this.setState({ filterText: event.target.value });
-        this.sort = (option) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["a" /* default */].sort(option);
-        this.addPoint = (id) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["a" /* default */].addPoint(id);
-        this.removePoint = (id) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["a" /* default */].removePoint(id);
+        this.sort = (option) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["a" /* setSortOrder */](option);
+        this.addPoint = (id) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["b" /* addPoint */](id);
+        this.removePoint = (id) => __WEBPACK_IMPORTED_MODULE_2__actions_CombatTechniquesActions__["c" /* removePoint */](id);
     }
     componentDidMount() {
         __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__["a" /* default */].addChangeListener(this._updateCombatTechniquesStore);
@@ -25028,10 +25024,13 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] 
             __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Scroll__["a" /* default */], null,
                 __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]("div", { className: "list-wrapper" }, list.map(obj => {
                     const primary = obj.primary.map(attr => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__stores_ListStore__["b" /* get */])(attr).short).join('/');
-                    return (__WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], { key: obj.id, group: GROUPS[obj.gr - 1], name: obj.name, sr: obj.value, ic: obj.ic, checkDisabled: true, addPoint: this.addPoint.bind(null, obj.id), addDisabled: !obj.isIncreasable, removePoint: phase < 3 ? this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable },
-                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]("div", { className: "primary" }, primary),
-                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]("div", { className: "at" }, obj.at),
-                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]("div", { className: "pa" }, obj.pa)));
+                    const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
+                    return (__WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], { key: obj.id, id: obj.id, name: obj.name, sr: obj.value, ic: obj.ic, checkDisabled: true, addPoint: this.addPoint.bind(null, obj.id), addDisabled: !obj.isIncreasable, removePoint: phase < 3 ? this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addValues: [
+                            { className: primaryClassName, value: primary },
+                            { className: 'at', value: obj.at },
+                            { className: 'atpa' },
+                            { className: 'pa', value: obj.pa }
+                        ] }));
                 })))));
     }
 }
@@ -25047,7 +25046,7 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_ListUtils__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__ = __webpack_require__(185);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__ = __webpack_require__(189);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__ = __webpack_require__(100);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_PhaseStore__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__ = __webpack_require__(29);
@@ -25075,7 +25074,7 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_7_react__["Component"] {
         this.state = {
             liturgies: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getAll(),
             addChantsDisabled: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].isActivationDisabled(),
-            filterText: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getFilterText(),
+            filterText: '',
             sortOrder: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getSortOrder(),
             phase: __WEBPACK_IMPORTED_MODULE_5__stores_PhaseStore__["a" /* default */].get(),
             showAddSlidein: false
@@ -25083,15 +25082,14 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_7_react__["Component"] {
         this._updateLiturgiesStore = () => this.setState({
             liturgies: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getAll(),
             addChantsDisabled: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].isActivationDisabled(),
-            filterText: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getFilterText(),
             sortOrder: __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getSortOrder()
         });
-        this.filter = event => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].filter(event.target.value);
-        this.sort = option => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].sort(option);
-        this.addToList = id => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].addToList(id);
-        this.addPoint = id => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].addPoint(id);
-        this.removeFromList = id => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].removeFromList(id);
-        this.removePoint = id => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* default */].removePoint(id);
+        this.filter = (event) => this.setState({ filterText: event.target.value });
+        this.sort = (option) => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["a" /* setSortOrder */](option);
+        this.addToList = (id) => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["b" /* addToList */](id);
+        this.addPoint = (id) => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["c" /* addPoint */](id);
+        this.removeFromList = (id) => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["d" /* removeFromList */](id);
+        this.removePoint = (id) => __WEBPACK_IMPORTED_MODULE_3__actions_LiturgiesActions__["e" /* removePoint */](id);
         this.showAddSlidein = () => this.setState({ showAddSlidein: true });
         this.hideAddSlidein = () => this.setState({ showAddSlidein: false });
     }
@@ -25124,65 +25122,46 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_7_react__["Component"] {
                 }
             }
         });
-        return (__WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("div", { className: "page", id: "liturgies" },
-            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_10__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("div", { className: "options" },
-                    __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
-                    __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray })),
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__components_Scroll__["a" /* default */], { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("table", { className: "list" },
-                        __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("thead", null,
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("tr", null,
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "type" }, "Gruppe"),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "name" }, "Liturgie"),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "merk" }, "Aspekte"),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "check" }, "Probe"),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "skt" }, "Sf."),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "inc" }))),
-                        __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("tbody", null, listDeactive.map(liturgy => {
-                            const [a, b, c, checkmod] = liturgy.check;
-                            const check = [a, b, c];
-                            let name = liturgy.name;
-                            const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
-                            const obj = liturgy.gr === 3 ? {} : {
-                                check,
-                                checkmod,
-                                ic: liturgy.ic
-                            };
-                            return (__WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: liturgy.id, group: GROUPS[liturgy.gr - 1], name: name, isNotActive: true, activate: this.addToList.bind(null, liturgy.id), activateDisabled: addChantsDisabled && liturgy.gr < 3 }, obj),
-                                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "aspc" }, aspc)));
-                        }))))),
-            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("div", { className: "options" },
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray }),
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Hinzufügen", onClick: this.showAddSlidein })),
-            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__components_Scroll__["a" /* default */], { className: "list" },
-                __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("table", { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("thead", null,
-                        __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("tr", null,
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "type" }, "Gruppe"),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "name" }, "Liturgie"),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "fw" }, "Fw"),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "merk" }, "Aspekte"),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "check" }, "Probe"),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "skt" }, "Sf."),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "inc" }))),
-                    __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("tbody", null, listActive.map(obj => {
-                        const [a1, a2, a3, checkmod] = obj.check;
-                        const check = [a1, a2, a3];
-                        let name = obj.name;
-                        const aspc = obj.aspc.map(e => ASPECTS[e - 1]).sort().join(', ');
-                        const other = obj.gr === 3 ? {} : {
-                            sr: obj.value,
+        return (__WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "page", id: "liturgies" },
+            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "options" },
+                    __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
+                    __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray })),
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_Scroll__["a" /* default */], { className: "list" },
+                    __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "list-wrapper" }, listDeactive.map(liturgy => {
+                        const [a, b, c, checkmod] = liturgy.check;
+                        const check = [a, b, c];
+                        const name = liturgy.name;
+                        const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
+                        const obj = liturgy.gr === 3 ? {} : {
                             check,
                             checkmod,
-                            ic: obj.ic,
-                            addPoint: this.addPoint.bind(null, obj.id),
-                            addDisabled: obj.disabledIncrease
+                            ic: liturgy.ic
                         };
-                        return (__WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_9__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: obj.id, group: GROUPS[obj.gr - 1], name: name, removePoint: phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: obj.disabledDecrease }, other),
-                            __WEBPACK_IMPORTED_MODULE_7_react___default.a.createElement("td", { className: "aspc" }, aspc)));
-                    }))))));
+                        return (__WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: liturgy.id, id: liturgy.id, name: name, isNotActive: true, activate: this.addToList.bind(null, liturgy.id), activateDisabled: addChantsDisabled && liturgy.gr < 3, addFillElement: true }, obj),
+                            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("td", { className: "aspect" }, aspc)));
+                    })))),
+            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "options" },
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray }),
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Hinzufügen", onClick: this.showAddSlidein })),
+            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_Scroll__["a" /* default */], { className: "list" },
+                __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "list-wrapper" }, listActive.map(obj => {
+                    const [a1, a2, a3, checkmod] = obj.check;
+                    const check = [a1, a2, a3];
+                    const name = obj.name;
+                    const aspc = obj.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
+                    const other = obj.gr === 3 ? {} : {
+                        sr: obj.value,
+                        check,
+                        checkmod,
+                        ic: obj.ic,
+                        addPoint: this.addPoint.bind(null, obj.id),
+                        addDisabled: !obj.isIncreasable
+                    };
+                    return (__WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true }, other),
+                        __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "aspect" }, aspc)));
+                })))));
     }
 }
 /* harmony export (immutable) */ exports["a"] = Liturgies;
@@ -25709,7 +25688,7 @@ SpecialAbilitiesListRemoveItem.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Scroll__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__SkillListItem__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Slidein__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__ = __webpack_require__(187);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__ = __webpack_require__(191);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_TextField__ = __webpack_require__(10);
 
@@ -25731,7 +25710,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
             spells: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getAll(),
             addSpellsDisabled: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].isActivationDisabled(),
             areMaxUnfamiliar: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].areMaxUnfamiliar(),
-            filterText: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getFilterText(),
+            filterText: '',
             sortOrder: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getSortOrder(),
             phase: __WEBPACK_IMPORTED_MODULE_3__stores_PhaseStore__["a" /* default */].get(),
             showAddSlidein: false
@@ -25740,15 +25719,14 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
             spells: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getAll(),
             addSpellsDisabled: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].isActivationDisabled(),
             areMaxUnfamiliar: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].areMaxUnfamiliar(),
-            filterText: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getFilterText(),
             sortOrder: __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__["a" /* default */].getSortOrder()
         });
-        this.filter = event => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].filter(event.target.value);
-        this.sort = option => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].sort(option);
-        this.addToList = id => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].addToList(id);
-        this.addPoint = id => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].addPoint(id);
-        this.removeFromList = id => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].removeFromList(id);
-        this.removePoint = id => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* default */].removePoint(id);
+        this.filter = (event) => this.setState({ filterText: event.target.value });
+        this.sort = (option) => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["a" /* setSortOrder */](option);
+        this.addToList = (id) => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["b" /* addToList */](id);
+        this.addPoint = (id) => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["c" /* addPoint */](id);
+        this.removeFromList = (id) => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["d" /* removeFromList */](id);
+        this.removePoint = (id) => __WEBPACK_IMPORTED_MODULE_9__actions_SpellsActions__["e" /* removePoint */](id);
         this.showAddSlidein = () => this.setState({ showAddSlidein: true });
         this.hideAddSlidein = () => this.setState({ showAddSlidein: false });
     }
@@ -25779,7 +25757,6 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
             else {
                 if (!e.isOwnTradition) {
                     if (e.gr < 2 && !areMaxUnfamiliar) {
-                        e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ');
                         listDeactive.push(e);
                     }
                 }
@@ -25788,68 +25765,50 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
                 }
             }
         });
-        return (__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "page", id: "spells" },
-            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "options" },
-                    __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
-                    __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray })),
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_Scroll__["a" /* default */], { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("table", { className: "list" },
-                        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("thead", null,
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("tr", null,
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "type" }, "Gruppe"),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "name" }, "Zauber"),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "merk" }, "Merkmal"),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "check" }, "Probe"),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "skt" }, "Sf."),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "inc" }))),
-                        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("tbody", null, listDeactive.map(spell => {
-                            const [a, b, c, checkmod] = spell.check;
-                            const check = [a, b, c];
-                            let name = spell.name;
-                            if (!spell.isOwnTradition) {
-                                name += ` (${spell.name_add})`;
-                            }
-                            const obj = spell.gr === 5 ? {} : {
-                                check,
-                                checkmod,
-                                ic: spell.ic
-                            };
-                            return (__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: spell.id, group: GROUPS[spell.gr - 1], name: name, isNotActive: true, activate: this.addToList.bind(null, spell.id), activateDisabled: addSpellsDisabled && spell.gr < 3 }, obj),
-                                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "merk" }, PROPERTIES[spell.property - 1])));
-                        }))))),
-            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "options" },
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray }),
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Hinzufügen", onClick: this.showAddSlidein })),
-            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_Scroll__["a" /* default */], { className: "list" },
-                __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("table", { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("thead", null,
-                        __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("tr", null,
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "type" }, "Gruppe"),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "name" }, "Zauber"),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "fw" }, "Fw"),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "merk" }, "Merkmal"),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "check" }, "Probe"),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "skt" }, "Sf."),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "inc" }))),
-                    __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("tbody", null, listActive.map(obj => {
-                        const [a1, a2, a3, checkmod] = obj.check;
-                        const check = [a1, a2, a3];
-                        let name = obj.name;
-                        if (!obj.isOwnTradition)
-                            name += ` (${obj.name_add})`;
-                        const other = obj.gr === 5 ? {} : {
-                            sr: obj.value,
+        return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "page", id: "spells" },
+            __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "options" },
+                    __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
+                    __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray })),
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Scroll__["a" /* default */], { className: "list" },
+                    __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "list-wrapper" }, listDeactive.map(spell => {
+                        const [a, b, c, checkmod] = spell.check;
+                        const check = [a, b, c];
+                        let name = spell.name;
+                        if (!spell.isOwnTradition) {
+                            name += ` (${spell.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+                        }
+                        const obj = spell.gr === 5 ? {} : {
                             check,
                             checkmod,
-                            ic: obj.ic,
-                            addPoint: this.addPoint.bind(null, obj.id),
-                            addDisabled: obj.disabledIncrease
+                            ic: spell.ic
                         };
-                        return (__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: obj.id, group: GROUPS[obj.gr - 1], name: name, removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: obj.disabledDecrease }, other),
-                            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("td", { className: "merk" }, PROPERTIES[obj.property - 1])));
-                    }))))));
+                        return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: spell.id, id: spell.id, name: name, isNotActive: true, activate: this.addToList.bind(null, spell.id), activateDisabled: addSpellsDisabled && spell.gr < 3, addFillElement: true }, obj),
+                            __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "property" }, PROPERTIES[spell.property - 1])));
+                    })))),
+            __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "options" },
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__["a" /* default */], { active: sortOrder, onClick: this.sort, array: sortArray }),
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Hinzufügen", onClick: this.showAddSlidein })),
+            __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Scroll__["a" /* default */], { className: "list" },
+                __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "list-wrapper" }, listActive.map(obj => {
+                    const [a1, a2, a3, checkmod] = obj.check;
+                    const check = [a1, a2, a3];
+                    let name = obj.name;
+                    if (!obj.isOwnTradition) {
+                        name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})})`;
+                    }
+                    const other = obj.gr === 5 ? {} : {
+                        sr: obj.value,
+                        check,
+                        checkmod,
+                        ic: obj.ic,
+                        addPoint: this.addPoint.bind(null, obj.id),
+                        addDisabled: !obj.isIncreasable
+                    };
+                    return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true }, other),
+                        __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("td", { className: "property" }, PROPERTIES[obj.property - 1])));
+                })))));
     }
 }
 /* harmony export (immutable) */ exports["a"] = Spells;

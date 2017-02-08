@@ -35,11 +35,11 @@ export default class DisAdvList extends Component<Props, any> {
 								<DisAdvRemoveListItem key={`${type}_ACTIVE_${index}`} item={item} />
 							))
 						) : (
-							list.map((item, index) => {
+							list.map(item => {
 								const className = classNames(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
 
 								return (
-									<DisAdvAddListItem key={`${type}_DEACTIVE_${index}`} item={item} className={className} />
+									<DisAdvAddListItem key={item.id} item={item} className={className} />
 								);
 							})
 						)

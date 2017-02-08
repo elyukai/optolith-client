@@ -1,18 +1,17 @@
 import { filterAndSort } from '../../utils/ListUtils';
-import { SpellInstance } from '../../utils/data/Spell';
 import BorderButton from '../../components/BorderButton';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component } from 'react';
+import * as React from 'react';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
-import SpellsActions from '../../_actions/SpellsActions';
+import * as SpellsActions from '../../actions/SpellsActions';
 import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
 
 interface State {
-	spells: SpellInstance[];
+	spells: Spell[];
 	addSpellsDisabled: boolean;
 	areMaxUnfamiliar: boolean;
 	filterText: string;
@@ -21,13 +20,13 @@ interface State {
 	showAddSlidein: boolean;
 }
 
-export default class Spells extends Component<any, State> {
+export default class Spells extends React.Component<undefined, State> {
 
 	state = {
 		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
-		filterText: SpellsStore.getFilterText(),
+		filterText: '',
 		sortOrder: SpellsStore.getSortOrder(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false
@@ -37,16 +36,15 @@ export default class Spells extends Component<any, State> {
 		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
-		filterText: SpellsStore.getFilterText(),
 		sortOrder: SpellsStore.getSortOrder()
 	} as State);
 
-	filter = event => SpellsActions.filter(event.target.value);
-	sort = option => SpellsActions.sort(option);
-	addToList = id => SpellsActions.addToList(id);
-	addPoint = id => SpellsActions.addPoint(id);
-	removeFromList = id => SpellsActions.removeFromList(id);
-	removePoint = id => SpellsActions.removePoint(id);
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => SpellsActions.setSortOrder(option);
+	addToList = (id: string) => SpellsActions.addToList(id);
+	addPoint = (id: string) => SpellsActions.addPoint(id);
+	removeFromList = (id: string) => SpellsActions.removeFromList(id);
+	removePoint = (id: string) => SpellsActions.removePoint(id);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -75,8 +73,8 @@ export default class Spells extends Component<any, State> {
 
 		const list = filterAndSort(spells, filterText, sortOrder);
 
-		const listActive = [];
-		const listDeactive = [];
+		const listActive: Spell[] = [];
+		const listDeactive: Spell[] = [];
 
 		list.forEach(e => {
 			if (e.active) {
@@ -85,7 +83,6 @@ export default class Spells extends Component<any, State> {
 			else {
 				if (!e.isOwnTradition) {
 					if (e.gr < 2 && !areMaxUnfamiliar) {
-						e.name_add = e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ');
 						listDeactive.push(e);
 					}
 				}
@@ -107,51 +104,40 @@ export default class Spells extends Component<any, State> {
 							/>
 					</div>
 					<Scroll className="list">
-						<table className="list">
-							<thead>
-								<tr>
-									<td className="type">Gruppe</td>
-									<td className="name">Zauber</td>
-									<td className="merk">Merkmal</td>
-									<td className="check">Probe</td>
-									<td className="skt">Sf.</td>
-									<td className="inc"></td>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									listDeactive.map(spell => {
-										const [ a, b, c, checkmod ] = spell.check;
-										const check = [ a, b, c ];
+						<div className="list-wrapper">
+							{
+								listDeactive.map(spell => {
+									const [ a, b, c, checkmod ] = spell.check;
+									const check = [ a, b, c ];
 
-										let name = spell.name;
-										if (!spell.isOwnTradition) {
-											name += ` (${spell.name_add})`;
-										}
+									let name = spell.name;
+									if (!spell.isOwnTradition) {
+										name += ` (${spell.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+									}
 
-										const obj = spell.gr === 5 ? {} : {
-											check,
-											checkmod,
-											ic: spell.ic
-										};
+									const obj = spell.gr === 5 ? {} : {
+										check,
+										checkmod,
+										ic: spell.ic
+									};
 
-										return (
-											<SkillListItem
-												key={spell.id}
-												group={GROUPS[spell.gr - 1]}
-												name={name}
-												isNotActive
-												activate={this.addToList.bind(null, spell.id)}
-												activateDisabled={addSpellsDisabled && spell.gr < 3}
-												{...obj}
-												>
-												<td className="merk">{PROPERTIES[spell.property - 1]}</td>
-											</SkillListItem>
-										);
-									})
-								}
-							</tbody>
-						</table>
+									return (
+										<SkillListItem
+											key={spell.id}
+											id={spell.id}
+											name={name}
+											isNotActive
+											activate={this.addToList.bind(null, spell.id)}
+											activateDisabled={addSpellsDisabled && spell.gr < 3}
+											addFillElement
+											{...obj}
+											>
+											<div className="property">{PROPERTIES[spell.property - 1]}</div>
+										</SkillListItem>
+									);
+								})
+							}
+						</div>
 					</Scroll>
 				</Slidein>
 				<div className="options">
@@ -167,51 +153,41 @@ export default class Spells extends Component<any, State> {
 						/>
 				</div>
 				<Scroll className="list">
-					<table className="list">
-						<thead>
-							<tr>
-								<td className="type">Gruppe</td>
-								<td className="name">Zauber</td>
-								<td className="fw">Fw</td>
-								<td className="merk">Merkmal</td>
-								<td className="check">Probe</td>
-								<td className="skt">Sf.</td>
-								<td className="inc"></td>
-							</tr>
-						</thead>
-						<tbody>
-							{
-								listActive.map(obj => {
-									const [ a1, a2, a3, checkmod ] = obj.check;
-									const check = [ a1, a2, a3 ];
+					<div className="list-wrapper">
+						{
+							listActive.map(obj => {
+								const [ a1, a2, a3, checkmod ] = obj.check;
+								const check = [ a1, a2, a3 ];
 
-									let name = obj.name;
-									if (!obj.isOwnTradition) name += ` (${obj.name_add})`;
+								let name = obj.name;
+								if (!obj.isOwnTradition) {
+									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})})`;
+								}
 
-									const other = obj.gr === 5 ? {} : {
-										sr: obj.value,
-										check,
-										checkmod,
-										ic: obj.ic,
-										addPoint: this.addPoint.bind(null, obj.id),
-										addDisabled: obj.disabledIncrease
-									};
+								const other = obj.gr === 5 ? {} : {
+									sr: obj.value,
+									check,
+									checkmod,
+									ic: obj.ic,
+									addPoint: this.addPoint.bind(null, obj.id),
+									addDisabled: !obj.isIncreasable
+								};
 
-									return (
-										<SkillListItem
-											key={obj.id}
-											group={GROUPS[obj.gr - 1]}
-											name={name}
-											removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
-											removeDisabled={obj.disabledDecrease}
-											{...other} >
-											<td className="merk">{PROPERTIES[obj.property - 1]}</td>
-										</SkillListItem>
-									);
-								})
-							}
-						</tbody>
-					</table>
+								return (
+									<SkillListItem
+										key={obj.id}
+										id={obj.id}
+										name={name}
+										removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!obj.isDecreasable}
+										addFillElement
+										{...other} >
+										<td className="property">{PROPERTIES[obj.property - 1]}</td>
+									</SkillListItem>
+								);
+							})
+						}
+					</div>
 				</Scroll>
 			</div>
 		);

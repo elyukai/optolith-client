@@ -1,6 +1,6 @@
 import { filterAndSort } from '../../utils/ListUtils';
 import { get } from '../../stores/ListStore';
-import CombatTechniquesActions from '../../_actions/CombatTechniquesActions';
+import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -31,7 +31,7 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 	} as State);
 
 	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => CombatTechniquesActions.sort(option);
+	sort = (option: string) => CombatTechniquesActions.setSortOrder(option);
 	addPoint = (id: string) => CombatTechniquesActions.addPoint(id);
 	removePoint = (id: string) => CombatTechniquesActions.removePoint(id);
 
@@ -66,10 +66,11 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 						{
 							list.map(obj => {
 								const primary = obj.primary.map(attr => (get(attr) as Attribute).short).join('/');
+								const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
 								return (
 									<SkillListItem
 										key={obj.id}
-										group={GROUPS[obj.gr - 1]}
+										id={obj.id}
 										name={obj.name}
 										sr={obj.value}
 										ic={obj.ic}
@@ -78,10 +79,13 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 										addDisabled={!obj.isIncreasable}
 										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!obj.isDecreasable}
+										addValues={[
+											{ className: primaryClassName, value: primary },
+											{ className: 'at', value: obj.at },
+											{ className: 'atpa' },
+											{ className: 'pa', value: obj.pa }
+										]}
 										>
-										<div className="primary">{primary}</div>
-										<div className="at">{obj.at}</div>
-										<div className="pa">{obj.pa}</div>
 									</SkillListItem>
 								);
 							})

@@ -58,7 +58,8 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 	};
 
 	render() {
-		const { className, item: { id, name, cost, sel, input, tiers, category } } = this.props;
+		const { className, item: { id, name, cost, sel, input, tiers } } = this.props;
+		const { category } = get(id) as Advantage | Disadvantage;
 
 		const args: ActivateArgs = { id, cost: 0 };
 		let currentCost: number | string | undefined;
@@ -252,7 +253,7 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 					<div className="cost">{currentCost}</div>
 				</div>
 				<div className="btns">
-					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args)} flat />
+					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
 					<IconButton icon="&#xE88F;" flat disabled />
 				</div>
 			</div>
