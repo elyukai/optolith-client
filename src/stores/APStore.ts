@@ -59,7 +59,7 @@ function _assignRCP(selections: Selections) {
 	if (selections.buyLiteracy) {
 		const culture = CultureStore.getCurrent();
 		const id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-		_spent += (get('SA_28') as SpecialAbility).sel[id - 1][2] as number;
+		_spent += (get('SA_28') as SpecialAbilityInstance).sel[id - 1][2] as number;
 	}
 
 	const p = ProfessionStore.getCurrent();
@@ -174,25 +174,25 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.SELECT_RACE:
-				_calculateRCPDiff(RaceStore.getCurrent().ap, (get(action.payload.id) as Race).ap);
+				_calculateRCPDiff(RaceStore.getCurrent().ap, (get(action.payload.id) as RaceInstance).ap);
 				_calculateRCPDiff(CultureStore.getCurrent().ap, 0);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
 				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_CULTURE:
-				_calculateRCPDiff(CultureStore.getCurrent().ap, (get(action.payload.id) as Culture).ap);
+				_calculateRCPDiff(CultureStore.getCurrent().ap, (get(action.payload.id) as CultureInstance).ap);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
 				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_PROFESSION:
-				_calculateRCPDiff(ProfessionStore.getCurrent().ap, (get(action.payload.id) as Profession).ap);
+				_calculateRCPDiff(ProfessionStore.getCurrent().ap, (get(action.payload.id) as ProfessionInstance).ap);
 				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
 				break;
 
 			case ActionTypes.SELECT_PROFESSION_VARIANT:
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, (get(action.payload.id) as ProfessionVariant).ap);
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, (get(action.payload.id) as ProfessionVariantInstance).ap);
 				break;
 
 			case ActionTypes.ASSIGN_RCP_OPTIONS:

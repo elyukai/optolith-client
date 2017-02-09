@@ -70,7 +70,7 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 				</span>
 				<span className="profession">
 					{(() => {
-						let { name, subname } = p && get(p) as Profession || { name: '', subname: undefined };
+						let { name, subname } = p && get(p) as ProfessionInstance || { name: '', subname: undefined };
 						if (typeof name === 'object' && sex) {
 							name = name[sex];
 						}

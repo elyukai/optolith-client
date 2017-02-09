@@ -19,11 +19,11 @@ interface State {
 		active: ActiveObject;
 		index: number;
 	}[];
-	advDeactive: Advantage[];
+	advDeactive: AdvantageInstance[];
 	showAddSlidein: boolean;
-	race: Race;
-	culture: Culture;
-	profession: Profession;
+	race: RaceInstance;
+	culture: CultureInstance;
+	profession: ProfessionInstance;
 }
 
 export default class Advantages extends React.Component<undefined, State> {
@@ -69,13 +69,13 @@ export default class Advantages extends React.Component<undefined, State> {
 		const UNTYP = 'UNTYP';
 
 		if (showRating) {
-			race.typ_adv.forEach(e => { rating[e] = TYP; });
-			race.untyp_adv.forEach(e => { rating[e] = UNTYP; });
-			culture.typAdv.forEach(e => { rating[e] = TYP; });
-			culture.untypAdv.forEach(e => { rating[e] = UNTYP; });
+			race.typicalAdvantages.forEach(e => { rating[e] = TYP; });
+			race.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
+			culture.typicalAdvantages.forEach(e => { rating[e] = TYP; });
+			culture.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
 			profession.typAdv.forEach(e => { rating[e] = TYP; });
 			profession.untypAdv.forEach(e => { rating[e] = UNTYP; });
-			race.imp_adv.forEach(e => { rating[e[0]] = IMP; });
+			race.importantAdvantages.forEach(e => { rating[e[0]] = IMP; });
 		}
 
 		return (

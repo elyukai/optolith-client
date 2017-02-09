@@ -23,7 +23,7 @@ class DisAdvStoreStatic extends Store {
 
 	getForSave() {
 		const result = new Map();
-		[ ...getAllByCategory(CATEGORY_1) as Advantage[], ...getAllByCategory(CATEGORY_2) as Disadvantage[] ].forEach(e => {
+		[ ...getAllByCategory(CATEGORY_1) as AdvantageInstance[], ...getAllByCategory(CATEGORY_2) as DisadvantageInstance[] ].forEach(e => {
 			const { active, id } = e;
 			result.set(id, active);
 		});
@@ -34,7 +34,7 @@ class DisAdvStoreStatic extends Store {
 	}
 
 	getActiveForView(category: ADVANTAGES | DISADVANTAGES) {
-		const advsObj = getObjByCategory(category) as { [id: string]: Advantage } | { [id: string]: Disadvantage };
+		const advsObj = getObjByCategory(category) as { [id: string]: AdvantageInstance } | { [id: string]: DisadvantageInstance };
 		const advs: {
 			id: string;
 			active: ActiveObject;
@@ -49,7 +49,7 @@ class DisAdvStoreStatic extends Store {
 	}
 
 	getDeactiveForView(category: ADVANTAGES | DISADVANTAGES) {
-		const advsObj = getObjByCategory(category) as { [id: string]: Advantage } | { [id: string]: Disadvantage };
+		const advsObj = getObjByCategory(category) as { [id: string]: AdvantageInstance } | { [id: string]: DisadvantageInstance };
 		const advs: any[] = [];
 		for (const id in advsObj) {
 			const adv = advsObj[id];
@@ -78,7 +78,7 @@ class DisAdvStoreStatic extends Store {
 						break;
 					}
 					case 'ADV_32': {
-						const sel = adv.sel.filter(e => !(get('DISADV_24') as Disadvantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !(get('DISADV_24') as DisadvantageInstance).sid.includes(e[1]) && !dependencies.includes(e[1]));
 						advs.push({ id, name, sel, input, cost });
 						break;
 					}
@@ -93,7 +93,7 @@ class DisAdvStoreStatic extends Store {
 						break;
 					}
 					case 'DISADV_24': {
-						const sel = adv.sel.filter(e => !(get('ADV_32') as Advantage).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !(get('ADV_32') as AdvantageInstance).sid.includes(e[1]) && !dependencies.includes(e[1]));
 						advs.push({ id, name, sel, input, cost });
 						break;
 					}
@@ -123,8 +123,8 @@ class DisAdvStoreStatic extends Store {
 					}
 					case 'DISADV_48': {
 						const sel = adv.sel.filter(e => {
-							if ((get('ADV_40') as Advantage).active.length > 0 || (get('ADV_46') as Advantage).active.length > 0) {
-								if ((get(e[1] as string) as Liturgy | Spell | Talent).gr === 2) {
+							if ((get('ADV_40') as AdvantageInstance).active.length > 0 || (get('ADV_46') as AdvantageInstance).active.length > 0) {
+								if ((get(e[1] as string) as LiturgyInstance | SpellInstance | TalentInstance).gr === 2) {
 									return false;
 								}
 							}

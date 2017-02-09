@@ -11,7 +11,7 @@ import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
 
 interface State {
-	spells: Spell[];
+	spells: SpellInstance[];
 	addSpellsDisabled: boolean;
 	areMaxUnfamiliar: boolean;
 	filterText: string;
@@ -73,8 +73,8 @@ export default class Spells extends React.Component<undefined, State> {
 
 		const list = filterAndSort(spells, filterText, sortOrder);
 
-		const listActive: Spell[] = [];
-		const listDeactive: Spell[] = [];
+		const listActive: SpellInstance[] = [];
+		const listDeactive: SpellInstance[] = [];
 
 		list.forEach(e => {
 			if (e.active) {
@@ -161,7 +161,7 @@ export default class Spells extends React.Component<undefined, State> {
 
 								let name = obj.name;
 								if (!obj.isOwnTradition) {
-									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})})`;
+									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
 								}
 
 								const other = obj.gr === 5 ? {} : {
@@ -182,7 +182,7 @@ export default class Spells extends React.Component<undefined, State> {
 										removeDisabled={!obj.isDecreasable}
 										addFillElement
 										{...other} >
-										<td className="property">{PROPERTIES[obj.property - 1]}</td>
+										<div className="property">{PROPERTIES[obj.property - 1]}</div>
 									</SkillListItem>
 								);
 							})

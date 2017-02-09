@@ -1,6 +1,6 @@
 import Core from './Core';
 
-export default class Item extends Core {
+export default class Item extends Core implements ItemInstance {
 
 	addPenalties: boolean;
 	ammunition: string | null;

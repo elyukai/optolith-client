@@ -5,7 +5,7 @@ import NumberBox from '../../components/NumberBox';
 import * as React from 'react';
 
 interface Props {
-	attribute: Attribute;
+	attribute: AttributeInstance;
 	phase: number;
 }
 

@@ -1,14 +1,14 @@
 import { ADD_ITEM, SET_ITEMS_SORT_ORDER, REMOVE_ITEM, SET_ITEM } from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export const addToList = (data: Item) => AppDispatcher.dispatch<AddItemAction>({
+export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemAction>({
 	type: ADD_ITEM,
 	payload: {
 		data
 	}
 });
 
-export const set = (id: string, data: Item) => AppDispatcher.dispatch<SetItemAction>({
+export const set = (id: string, data: ItemInstance) => AppDispatcher.dispatch<SetItemAction>({
 	type: SET_ITEM,
 	payload: {
 		id,

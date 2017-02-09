@@ -26,7 +26,7 @@ interface Props {
 export default class DisAdvRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, active: { sid, tier } } = this.props.item;
-		const { cost, category } = get(id) as Advantage | Disadvantage;
+		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
 		const finalCost = (selectedTier - tier) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
 		DisAdvActions.setTier(id, selectedTier, finalCost, sid as string | number);
 	};
@@ -35,7 +35,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 	render() {
 		const { id, active: activeObject, index } = this.props.item;
 		const { sid, sid2, tier } = activeObject;
-		const a = get(id) as Advantage | Disadvantage;
+		const a = get(id) as AdvantageInstance | DisadvantageInstance;
 		const { tiers, cost, category, sel, dependencies, active, input } = a;
 		let disabled = false;
 		let add = '';
@@ -46,13 +46,13 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 			case 'ADV_4':
 			case 'ADV_47':
 			case 'DISADV_48': {
-				const { name, ic } = (get(sid as string)) as CombatTechnique | Liturgy | Spell | Talent;
+				const { name, ic } = (get(sid as string)) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
 				add = name;
 				currentCost = (cost as number[])[ic - 1];
 				break;
 			}
 			case 'ADV_16': {
-				const { name, ic, value } = (get(sid as string)) as Liturgy | Spell | Talent;
+				const { name, ic, value } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
 				const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
 				add = name;
 				currentCost = (cost as number[])[ic - 1];
@@ -60,7 +60,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 				break;
 			}
 			case 'ADV_17': {
-				const { name, ic, value } = (get(sid as string)) as CombatTechnique;
+				const { name, ic, value } = (get(sid as string)) as CombatTechniqueInstance;
 				add = name;
 				currentCost = (cost as number[])[ic - 1];
 				disabled = disabled || ELStore.getStart().maxCombatTechniqueRating + 1 === value;

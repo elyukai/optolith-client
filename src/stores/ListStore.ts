@@ -16,44 +16,44 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 
 let _byId: {
-	[id: string]: Advantage | Disadvantage | SpecialAbility | Attribute | CombatTechnique | Liturgy | Spell | Talent | Race | Culture | Profession | ProfessionVariant;
+	[id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
 } = {};
 let _allIds: string[] = [];
 
 function _activate(id: string) {
-	(_byId[id] as Liturgy | Spell).active = true;
+	(_byId[id] as LiturgyInstance | SpellInstance).active = true;
 }
 
 function _deactivate(id: string) {
-	(_byId[id] as Liturgy | Spell).active = false;
+	(_byId[id] as LiturgyInstance | SpellInstance).active = false;
 }
 
 function _addPoint(id: string) {
-	(_byId[id] as Attribute | CombatTechnique | Liturgy | Spell | Talent).addPoint();
+	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).addPoint();
 }
 
 function _removePoint(id: string) {
-	(_byId[id] as Attribute | CombatTechnique | Liturgy | Spell | Talent).removePoint();
+	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).removePoint();
 }
 
 function _setValue(id: string, value: number) {
-	(_byId[id] as Attribute | CombatTechnique | Liturgy | Spell | Talent).set(value);
+	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).set(value);
 }
 
 function _addSR(id: string, value: number) {
-	(_byId[id] as Attribute | CombatTechnique | Liturgy | Spell | Talent).add(value);
+	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).add(value);
 }
 
 function _activateDASA(id: string, args: ActivateArgs) {
-	(_byId[id] as Advantage | Disadvantage | SpecialAbility).activate(args);
+	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).activate(args);
 }
 
 function _deactivateDASA(id: string, index: number) {
-	(_byId[id] as Advantage | Disadvantage | SpecialAbility).deactivate(index);
+	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).deactivate(index);
 }
 
 function _updateTier(id: string, sid: string | number, tier: number) {
-	(_byId[id] as Advantage | Disadvantage | SpecialAbility).setTier({ sid, tier });
+	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).setTier({ sid, tier });
 }
 
 function _init(data: RawData) {
@@ -65,7 +65,7 @@ function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }: Hero & He
 	attr.values.forEach(e => {
 		const [ id, value, mod ] = e;
 		_setValue(id, value);
-		(_byId[id] as Attribute).mod = mod;
+		(_byId[id] as AttributeInstance).mod = mod;
 	});
 	const flatSkills = { ...talents.active, ...ct.active };
 	Object.keys(flatSkills).forEach(id => {
@@ -155,11 +155,11 @@ function _assignRCP(selections: Selections) {
 			litcs.add(parseInt(id));
 		}
 	});
-	race.attr.forEach(e => {
+	race.attributes.forEach(e => {
 		let [ mod, id ] = e;
 		_byId[id].mod += mod;
 	});
-	race.auto_adv.forEach(e => {
+	race.autoAdvantages.forEach(e => {
 		let [ id ] = e;
 		disadvs.add(id);
 	});
@@ -170,8 +170,8 @@ function _assignRCP(selections: Selections) {
 	profession.specialabilities.forEach(addSA);
 	if (professionVariant) {
 		addSRList.push(...professionVariant.talents);
-		addSRList.push(...professionVariant.combattechniques);
-		professionVariant.specialabilities.forEach(addSA);
+		addSRList.push(...professionVariant.combatTechniques);
+		professionVariant.specialAbilities.forEach(addSA);
 	}
 
 	Array.from(selections.combattech).forEach(e => {
@@ -184,7 +184,7 @@ function _assignRCP(selections: Selections) {
 		addSRList.push(e);
 	});
 
-	_byId[selections.attrSel].mod = race.attr_sel[0] || 0;
+	_byId[selections.attrSel].mod = race.attributeSelection[0] || 0;
 	addSRList.forEach(e => _addSR(...e));
 	addSRActivateList.forEach(e => {
 		_activate(e[0]);
@@ -227,13 +227,13 @@ function _assignRCP(selections: Selections) {
 		}
 		obj.addDependencies(addreq);
 	});
-	(_byId['SA_28'] as SpecialAbility).active.push(...litcs);
-	(_byId['SA_30'] as SpecialAbility).active.push(...langs);
+	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...litcs);
+	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...langs);
 }
 
 function _clear() {
 	for (const id in _byId) {
-		const e = _byId[id] as Advantage | Disadvantage | SpecialAbility | Attribute | CombatTechnique | Liturgy | Spell | Talent;
+		const e = _byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
 		if (e.reset) {
 			e.reset();
 		}
@@ -397,7 +397,7 @@ export const get = (id: string) => {
 };
 
 export const getObjByCategory = (...categories: Category[]) => {
-	const list: { [id: string]: Advantage | Disadvantage | SpecialAbility | Attribute | CombatTechnique | Liturgy | Spell | Talent | Race | Culture | Profession | ProfessionVariant } = {};
+	const list: { [id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance } = {};
 	for (const id in _byId) {
 		const obj = _byId[id];
 		if (categories.includes(obj.category)) {
@@ -408,9 +408,9 @@ export const getObjByCategory = (...categories: Category[]) => {
 };
 
 export const getObjByCategoryGroup = (category: Category, ...gr: number[]) => {
-	const list: { [id: string]: Talent | CombatTechnique | Spell | Liturgy | SpecialAbility } = {};
+	const list: { [id: string]: TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance } = {};
 	for (const id in _byId) {
-		const obj = _byId[id] as Talent | CombatTechnique | Spell | Liturgy | SpecialAbility;
+		const obj = _byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
 		if (obj.category === category && gr.includes(obj.gr)) {
 			list[id] = obj;
 		}
@@ -432,7 +432,7 @@ export const getAllByCategory = (...categories: Category[]) => {
 export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => {
 	const list = [];
 	for (const id in _byId) {
-		const obj = _byId[id] as Talent | CombatTechnique | Spell | Liturgy | SpecialAbility;
+		const obj = _byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
 		if (obj.category === category && gr.includes(obj.gr)) {
 			list.push(obj);
 		}
@@ -443,7 +443,7 @@ export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => {
 export const getPrimaryAttrID = (type: 1 | 2) => {
 	let attr;
 	if (type === 1) {
-		switch ((get('SA_86') as SpecialAbility).sid[0]) {
+		switch ((get('SA_86') as SpecialAbilityInstance).sid[0]) {
 			case 1:
 				attr = 'SGC';
 				break;
@@ -455,7 +455,7 @@ export const getPrimaryAttrID = (type: 1 | 2) => {
 				break;
 		}
 	} else if (type === 2) {
-		switch ((get('SA_102') as SpecialAbility).sid[0]) {
+		switch ((get('SA_102') as SpecialAbilityInstance).sid[0]) {
 			case 1:
 				attr = 'SGC';
 				break;

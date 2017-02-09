@@ -13,7 +13,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		return (
 			<div className="check">
 				{check.map((attr, index) => (
-					<div key={attr + index} className={attr}>{(get(attr) as Attribute).short}</div>
+					<div key={attr + index} className={attr}>{(get(attr) as AttributeInstance).short}</div>
 				))}
 				{mod ? <div key="mod" className="check mod">+{mod}</div> : null}
 			</div>

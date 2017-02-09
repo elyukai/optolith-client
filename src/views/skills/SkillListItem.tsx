@@ -54,7 +54,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		if (!checkDisabled) {
 			if (check) {
 				check.forEach((attr, index) => values.push(
-					<div key={attr + index} className={'check ' + attr}>{(get(attr) as Attribute).short}</div>
+					<div key={attr + index} className={'check ' + attr}>{(get(attr) as AttributeInstance).short}</div>
 				));
 				if (checkmod) {
 					values.push(<div key="mod" className="check mod">+{checkmod}</div>);

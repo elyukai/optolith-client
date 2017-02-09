@@ -35,10 +35,10 @@ export const get = (id: string) => {
 };
 
 type AbilitiesObject = {
-	[id: string]: Attribute | Advantage | CombatTechnique | Disadvantage | Liturgy | SpecialAbility | Spell | Talent
+	[id: string]: AttributeInstance | AdvantageInstance | CombatTechniqueInstance | DisadvantageInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance
 };
 
-type AbilitiesList = (Attribute | Advantage | CombatTechnique | Disadvantage | Liturgy | SpecialAbility | Spell | Talent)[];
+type AbilitiesList = (AttributeInstance | AdvantageInstance | CombatTechniqueInstance | DisadvantageInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance)[];
 
 type CategoryWithGroups = COMBAT_TECHNIQUES | LITURGIES | SPECIAL_ABILITIES | SPELLS | TALENTS;
 type Category = ADVANTAGES | ATTRIBUTES | DISADVANTAGES | CategoryWithGroups;
@@ -95,8 +95,8 @@ export const getAllByCategoryGroup = (category: CategoryWithGroups, ...gr: numbe
 
 export const getPrimaryAttrID = (type: 1 | 2) => {
 	let attr;
-	const arcane = <SpecialAbility>get('SA_86');
-	const karma = <SpecialAbility>get('SA_102');
+	const arcane = <SpecialAbilityInstance>get('SA_86');
+	const karma = <SpecialAbilityInstance>get('SA_102');
 	if (type === 1 && arcane) {
 		switch (arcane.sid) {
 			case 1:

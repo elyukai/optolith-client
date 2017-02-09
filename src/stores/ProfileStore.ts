@@ -5,8 +5,8 @@ import Store from './Store';
 
 type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction;
 
-const HAIRCOLORS = Race.haircolors;
-const EYECOLORS = Race.eyecolors;
+const HAIRCOLORS = Race.hairColors;
+const EYECOLORS = Race.eyeColors;
 const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 let _id: string | null = null;

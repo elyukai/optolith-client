@@ -18,7 +18,7 @@ function _updateSortOrder(option: string) {
 class LiturgiesStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as Liturgy[];
+		return getAllByCategory(CATEGORY) as LiturgyInstance[];
 	}
 
 	getForSave() {

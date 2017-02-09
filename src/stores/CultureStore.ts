@@ -33,7 +33,7 @@ function _updateVisibilityFilter(filter: string) {
 class CultureStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as Culture[];
+		return getAllByCategory(CATEGORY) as CultureInstance[];
 	}
 
 	getCurrentID() {
@@ -41,7 +41,7 @@ class CultureStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return _currentId !== null ? get(_currentId) as Culture : {} as Culture;
+		return _currentId !== null ? get(_currentId) as CultureInstance : {} as CultureInstance;
 	}
 
 	getCurrentName() {

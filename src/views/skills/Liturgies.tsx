@@ -11,7 +11,7 @@ import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 
 interface State {
-	liturgies: Liturgy[];
+	liturgies: LiturgyInstance[];
 	addChantsDisabled: boolean;
 	filterText: string;
 	sortOrder: string;
@@ -69,8 +69,8 @@ export default class Liturgies extends React.Component<undefined, State> {
 
 		const list = filterAndSort(liturgies, filterText, sortOrder);
 
-		const listActive: Liturgy[] = [];
-		const listDeactive: Liturgy[] = [];
+		const listActive: LiturgyInstance[] = [];
+		const listDeactive: LiturgyInstance[] = [];
 
 		list.forEach(e => {
 			if (e.active) {
@@ -122,7 +122,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 											addFillElement
 											{...obj}
 											>
-											<td className="aspect">{aspc}</td>
+											<div className="aspect">{aspc}</div>
 										</SkillListItem>
 									);
 								})

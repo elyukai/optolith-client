@@ -47,7 +47,7 @@ interface HeroRest {
 		};
 	};
 	readonly items: {
-		readonly [id: string]: Item;
+		readonly [id: string]: ItemInstance;
 	};
 	readonly attr: {
 		readonly values: [string, number, number][];
@@ -86,7 +86,7 @@ interface HeroRest {
 	readonly history: never[];
 }
 
-interface Race {
+interface RaceInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly ap: number;
@@ -94,42 +94,42 @@ interface Race {
 	readonly spi: number;
 	readonly tou: number;
 	readonly mov: number;
-	readonly attr: (string | number)[][];
-	readonly attr_sel: [number, string[]];
-	readonly typ_cultures: string[];
-	readonly auto_adv: (string | number)[][];
-	readonly imp_adv: (string | number)[][];
-	readonly imp_dadv: (string | number)[][];
-	readonly typ_adv: string[];
-	readonly typ_dadv: string[];
-	readonly untyp_adv: string[];
-	readonly untyp_dadv: string[];
-	readonly haircolors: number[];
-	readonly eyecolors: number[];
+	readonly attributes: (string | number)[][];
+	readonly attributeSelection: [number, string[]];
+	readonly typicalCultures: string[];
+	readonly autoAdvantages: (string | number)[][];
+	readonly importantAdvantages: (string | number)[][];
+	readonly importantDisadvantages: (string | number)[][];
+	readonly typicalAdvantages: string[];
+	readonly typicalDisadvantages: string[];
+	readonly untypicalAdvantages: string[];
+	readonly untypicalDisadvantages: string[];
+	readonly hairColors: number[];
+	readonly eyeColors: number[];
 	readonly size: (number | number[])[];
 	readonly weight: (number | number[])[];
 	readonly category: RACES;
 }
 
-interface Culture {
+interface CultureInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly ap: number;
 	readonly languages: number[];
 	readonly scripts: number[];
-	readonly social: number[];
-	readonly typProf: string[];
-	readonly typAdv: string[];
-	readonly typDadv: string[];
-	readonly untypAdv: string[];
-	readonly untypDadv: string[];
-	readonly typTalents: string[];
-	readonly untypTalents: string[];
+	readonly socialTiers: number[];
+	readonly typicalProfessions: string[];
+	readonly typicalAdvantages: string[];
+	readonly typicalDisadvantages: string[];
+	readonly untypicalAdvantages: string[];
+	readonly untypicalDisadvantages: string[];
+	readonly typicalTalents: string[];
+	readonly untypicalTalents: string[];
 	readonly talents: (string | number)[][];
 	readonly category: CULTURES;
 }
 
-interface Profession {
+interface ProfessionInstance {
 	readonly id: string;
 	readonly name: string | { m: string, f: string };
 	readonly subname: string | { m: string, f: string };
@@ -150,16 +150,15 @@ interface Profession {
 	readonly category: PROFESSIONS;
 }
 
-interface ProfessionVariant {
+interface ProfessionVariantInstance {
 	readonly id: string;
 	readonly name: string | { m: string, f: string };
-	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
-	readonly reqsPre: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
+	readonly dependencies: (string | number | boolean)[][];
+	readonly requires: (string | number | boolean)[][];
+	readonly selections: (string | string[] | number[])[][];
+	readonly specialAbilities: (string | number | boolean)[][];
+	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
 	readonly category: PROFESSION_VARIANTS;
 }
@@ -184,7 +183,7 @@ interface ValidationObject extends ActiveObject {
 	active: boolean | number;
 }
 
-interface Advantage {
+interface AdvantageInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
@@ -210,7 +209,7 @@ interface Advantage {
 	reset(): void;
 }
 
-interface Disadvantage {
+interface DisadvantageInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
@@ -236,7 +235,7 @@ interface Disadvantage {
 	reset(): void;
 }
 
-interface SpecialAbility {
+interface SpecialAbilityInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
@@ -262,7 +261,7 @@ interface SpecialAbility {
 	reset(): void;
 }
 
-interface Attribute {
+interface AttributeInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly ic: number;
@@ -281,7 +280,7 @@ interface Attribute {
 	reset(): void;
 }
 
-interface CombatTechnique {
+interface CombatTechniqueInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly ic: number;
@@ -304,7 +303,7 @@ interface CombatTechnique {
 	reset(): void;
 }
 
-interface Liturgy {
+interface LiturgyInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly gr: number;
@@ -329,7 +328,7 @@ interface Liturgy {
 	reset(): void;
 }
 
-interface Spell {
+interface SpellInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly gr: number;
@@ -354,16 +353,16 @@ interface Spell {
 	reset(): void;
 }
 
-interface Talent {
+interface TalentInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly gr: number;
 	readonly category: TALENTS;
 	readonly ic: number;
 	readonly check: string[];
-	readonly enc: string;
-	readonly spec: string[];
-	readonly specInput: string | null;
+	readonly encumbrance: string;
+	readonly specialisation: string[];
+	readonly specialisationInput: string | null;
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
 	readonly isIncreasable: boolean;
@@ -380,7 +379,7 @@ interface Talent {
 	reset(): void;
 }
 
-interface Item {
+interface ItemInstance {
 	id: string;
 	name: string;
 	addPenalties: boolean;

@@ -157,7 +157,7 @@ interface CreateHeroAction {
 interface AddItemAction {
 	type: ADD_ITEM;
 	payload: {
-		data: Item;
+		data: ItemInstance;
 	};
 }
 
@@ -165,7 +165,7 @@ interface SetItemAction {
 	type: SET_ITEM;
 	payload: {
 		id: string;
-		data: Item;
+		data: ItemInstance;
 	};
 }
 

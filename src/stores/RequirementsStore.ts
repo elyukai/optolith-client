@@ -36,7 +36,7 @@ function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 		}
 	}
 	else {
-		const { category, reqs } = get(id) as Advantage | Disadvantage;
+		const { category, reqs } = get(id) as AdvantageInstance | DisadvantageInstance;
 		const { adv, disadv, spent, total } = APStore.getAll();
 		const add = category === Categories.ADVANTAGES;
 		const target = () => add ? adv : disadv;
@@ -129,7 +129,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
-				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
+				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isActivatable);
 				_updateCost(action.payload.cost);
 				break;
 
@@ -140,7 +140,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				_updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
+				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isDeactivatable);
 				_updateCost(-action.payload.cost);
 				break;
 
@@ -159,7 +159,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 			case ActionTypes.ADD_SPELL_POINT:
 			case ActionTypes.ADD_LITURGY_POINT: {
-				const obj = get(action.payload.id) as Attribute | Talent | CombatTechnique | Spell | Liturgy;
+				const obj = get(action.payload.id) as AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
 				_updateOwnRequirements(obj.isIncreasable);
 				_updateCost(final(obj.ic, obj.value + 1));
 				break;

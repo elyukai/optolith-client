@@ -10,7 +10,7 @@ import SkillListItem from './SkillListItem';
 import TextField from '../../components/TextField';
 
 interface State {
-	combattechniques: CombatTechnique[];
+	combattechniques: CombatTechniqueInstance[];
 	filterText: string;
 	sortOrder: string;
 	phase: number;
@@ -65,7 +65,7 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 					<div className="list-wrapper">
 						{
 							list.map(obj => {
-								const primary = obj.primary.map(attr => (get(attr) as Attribute).short).join('/');
+								const primary = obj.primary.map(attr => (get(attr) as AttributeInstance).short).join('/');
 								const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
 								return (
 									<SkillListItem

@@ -16,7 +16,7 @@ function _updateSortOrder(option: string) {
 class CombatTechniquesStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as CombatTechnique[];
+		return getAllByCategory(CATEGORY) as CombatTechniqueInstance[];
 	}
 
 	getAllForSave() {
@@ -33,7 +33,7 @@ class CombatTechniquesStoreStatic extends Store {
 	}
 
 	getMaxPrimaryAttributeValueByID(array: string[]) {
-		return array.map(attr => (get(attr) as Attribute).value).reduce((a, b) => Math.max(a, b), 0);
+		return array.map(attr => (get(attr) as AttributeInstance).value).reduce((a, b) => Math.max(a, b), 0);
 	}
 
 	getPrimaryAttributeMod(array: string[]) {

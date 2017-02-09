@@ -12,7 +12,7 @@
 #spells, #liturgies {
 	.list-item {
 		.values {
-			width: 208px;
+			width: 252px;
 		}
 
 		.property, .aspect {
@@ -31,6 +31,10 @@
 				margin-right: 8px;
 			}
 		}
+	}
+
+	.slidein .list-item .values {
+		width: 208px;
 	}
 }
 

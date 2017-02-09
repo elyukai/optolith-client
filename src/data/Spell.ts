@@ -5,13 +5,13 @@ import PhaseStore from '../stores/PhaseStore';
 import SpellsStore from '../stores/SpellsStore';
 import * as Categories from '../constants/Categories';
 
-export default class Spell extends Skill {
+export default class Spell extends Skill implements SpellInstance {
 
 	readonly check: string[];
 	readonly tradition: number[];
-	readonly property: number[];
+	readonly property: number;
 	active: boolean = false;
-	readonly category: string = Categories.SPELLS;
+	readonly category = Categories.SPELLS;
 
 	constructor({ check, trad, merk, ...args }: RawSpell) {
 		super(args);
@@ -21,21 +21,21 @@ export default class Spell extends Skill {
 	}
 
 	get isOwnTradition(): boolean {
-		return this.tradition.some(e => e === 1 || e === (get('SA_86') as SpecialAbility).sid + 1);
+		return this.tradition.some(e => e === 1 || e === (get('SA_86') as SpecialAbilityInstance).sid[0] as number + 1);
 	}
 
 	get isIncreasable(): boolean {
 		let max = 0;
-		const bonus = (get('ADV_16') as Advantage).active.filter(e => e === this.id).length;
+		const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === this.id).length;
 
 		if (PhaseStore.get() < 3) {
 			max = ELStore.getStart().maxSkillRating;
 		} else {
-			const checkValues = this.check.map(attr => (get(attr) as Attribute).value);
+			const checkValues = this.check.map(attr => (get(attr) as AttributeInstance).value);
 			max = Math.max(...checkValues) + 2;
 		}
 
-		if (!(get('SA_88') as SpecialAbility).active.includes(this.property)) {
+		if (!(get('SA_88') as SpecialAbilityInstance).active.includes(this.property)) {
 			max = Math.min(14, max);
 		}
 
@@ -43,7 +43,7 @@ export default class Spell extends Skill {
 	}
 
 	get isDecreasable(): boolean {
-		if ((get('SA_88') as SpecialAbility).active.includes(this.property)) {
+		if ((get('SA_88') as SpecialAbilityInstance).active.includes(this.property)) {
 			const counter = SpellsStore.getPropertyCounter();
 
 			return !(counter.get(this.property) <= 3 && this.value <= 10 && this.gr !== 5);

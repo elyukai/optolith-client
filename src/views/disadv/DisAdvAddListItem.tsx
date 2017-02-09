@@ -17,7 +17,7 @@ interface AddObject {
 
 interface Props {
 	className?: string;
-	item: Advantage | Disadvantage;
+	item: AdvantageInstance | DisadvantageInstance;
 }
 
 interface State {
@@ -59,7 +59,7 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 
 	render() {
 		const { className, item: { id, name, cost, sel, input, tiers } } = this.props;
-		const { category } = get(id) as Advantage | Disadvantage;
+		const { category } = get(id) as AdvantageInstance | DisadvantageInstance;
 
 		const args: ActivateArgs = { id, cost: 0 };
 		let currentCost: number | string | undefined;
@@ -80,13 +80,13 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 			case 'ADV_47':
 			case 'DISADV_48':
 				if (this.state.selected !== '') {
-					currentCost = (cost as number[])[(get(this.state.selected as string) as CombatTechnique | Liturgy | Spell | Talent).ic - 1];
+					currentCost = (cost as number[])[(get(this.state.selected as string) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).ic - 1];
 				}
 				args.sel = this.state.selected;
 				break;
 			case 'ADV_28':
 			case 'ADV_29':
-				currentCost = typeof this.state.selected === 'number' ? (get(id) as Advantage).sel[this.state.selected as number - 1][2] : '';
+				currentCost = typeof this.state.selected === 'number' ? (get(id) as AdvantageInstance).sel[this.state.selected as number - 1][2] : '';
 				break;
 			case 'DISADV_1':
 				if (this.state.selectedTier > 0) {
@@ -102,10 +102,10 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 			case 'DISADV_34':
 			case 'DISADV_50': {
 				if (this.state.selectedTier > 0) {
-					const maxCurrentTier = (get(id) as Disadvantage).active.reduce((a,b) => b.tier > a ? b.tier as number : a, 0);
+					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a,b) => b.tier > a ? b.tier as number : a, 0);
 					currentCost = maxCurrentTier >= this.state.selectedTier ? 0 : (cost as number) * (this.state.selectedTier - maxCurrentTier);
 				}
-				const currentSelIDs = new Set((get(id) as Disadvantage).active.map(e => e.sid));
+				const currentSelIDs = new Set((get(id) as DisadvantageInstance).active.map(e => e.sid));
 				const newSel = sel.filter(e => this.state.selectedTier === e[2] && !currentSelIDs.has(e[1])) as [string, number][];
 				selectElement = (
 					<Dropdown
@@ -138,7 +138,7 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 					let disab = true;
 					if ([7,8].includes(this.state.selected as number)) {
 						args.input = this.state.input;
-						currentCost = (get(id) as Disadvantage).sel[this.state.selected as number - 1][2];
+						currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1][2];
 						disab = false;
 					}
 					inputElement = (
@@ -148,10 +148,10 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 							disabled={disab} />
 					);
 				}
-				if (this.state.selected === 7 && (get(id) as Disadvantage).active.filter(e => e.sid === 7).length > 0) {
+				if (this.state.selected === 7 && (get(id) as DisadvantageInstance).active.filter(e => e.sid === 7).length > 0) {
 					currentCost = 0;
 				} else if (this.state.selected !== '') {
-					currentCost = (get(id) as Disadvantage).sel[this.state.selected as number - 1][2];
+					currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1][2];
 				}
 				args.sel = this.state.selected;
 				break;
@@ -160,7 +160,7 @@ export default class DisAdvAddListItem extends React.Component<Props, State> {
 				if (this.state.selected === '' && this.state.input === '') {
 					disabled = true;
 				}
-				currentCost = id === 'DISADV_36' && (get(id) as Disadvantage).active.length > 2 ? 0 : cost as number;
+				currentCost = id === 'DISADV_36' && (get(id) as DisadvantageInstance).active.length > 2 ? 0 : cost as number;
 				args.sel = this.state.selected;
 				args.input = this.state.input;
 				break;

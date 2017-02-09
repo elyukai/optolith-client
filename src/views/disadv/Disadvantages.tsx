@@ -19,11 +19,11 @@ interface State {
 		active: ActiveObject;
 		index: number;
 	}[];
-	disadvDeactive: Disadvantage[];
+	disadvDeactive: DisadvantageInstance[];
 	showAddSlidein: boolean;
-	race: Race;
-	culture: Culture;
-	profession: Profession;
+	race: RaceInstance;
+	culture: CultureInstance;
+	profession: ProfessionInstance;
 }
 
 export default class Disadvantages extends React.Component<undefined, State> {
@@ -68,13 +68,13 @@ export default class Disadvantages extends React.Component<undefined, State> {
 		const TYP = 'TYP';
 		const UNTYP = 'UNTYP';
 
-		race.typ_dadv.forEach(e => { rating[e] = TYP; });
-		race.untyp_dadv.forEach(e => { rating[e] = UNTYP; });
-		culture.typDadv.forEach(e => { rating[e] = TYP; });
-		culture.untypDadv.forEach(e => { rating[e] = UNTYP; });
+		race.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+		race.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
+		culture.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+		culture.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
 		profession.typDadv.forEach(e => { rating[e] = TYP; });
 		profession.untypDadv.forEach(e => { rating[e] = UNTYP; });
-		race.imp_dadv.forEach(e => { rating[e[0]] = IMP; });
+		race.importantDisadvantages.forEach(e => { rating[e[0]] = IMP; });
 
 		return (
 			<div className="page" id="advantages">

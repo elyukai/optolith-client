@@ -25139,7 +25139,7 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_7_react__["Component"] {
                             ic: liturgy.ic
                         };
                         return (__WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: liturgy.id, id: liturgy.id, name: name, isNotActive: true, activate: this.addToList.bind(null, liturgy.id), activateDisabled: addChantsDisabled && liturgy.gr < 3, addFillElement: true }, obj),
-                            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("td", { className: "aspect" }, aspc)));
+                            __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "aspect" }, aspc)));
                     })))),
             __WEBPACK_IMPORTED_MODULE_7_react__["createElement"]("div", { className: "options" },
                 __WEBPACK_IMPORTED_MODULE_7_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
@@ -25796,7 +25796,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
                     const check = [a1, a2, a3];
                     let name = obj.name;
                     if (!obj.isOwnTradition) {
-                        name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})})`;
+                        name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
                     }
                     const other = obj.gr === 5 ? {} : {
                         sr: obj.value,
@@ -25807,7 +25807,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
                         addDisabled: !obj.isIncreasable
                     };
                     return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__SkillListItem__["a" /* default */], __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __assign */]({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true }, other),
-                        __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("td", { className: "property" }, PROPERTIES[obj.property - 1])));
+                        __WEBPACK_IMPORTED_MODULE_5_react__["createElement"]("div", { className: "property" }, PROPERTIES[obj.property - 1])));
                 })))));
     }
 }

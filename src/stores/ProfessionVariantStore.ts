@@ -18,7 +18,7 @@ function _updateCurrentID(id: string | null) {
 class ProfessionVariantStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as ProfessionVariant[];
+		return getAllByCategory(CATEGORY) as ProfessionVariantInstance[];
 	}
 
 	getCurrentID() {
@@ -26,7 +26,7 @@ class ProfessionVariantStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return _currentId !== null ? get(_currentId) as ProfessionVariant : {} as ProfessionVariant;
+		return _currentId !== null ? get(_currentId) as ProfessionVariantInstance : {} as ProfessionVariantInstance;
 	}
 
 	getCurrentName() {

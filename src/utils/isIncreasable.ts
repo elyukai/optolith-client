@@ -3,12 +3,12 @@
 import { ATTRIBUTES, COMBAT_TECHNIQUES, LITURGIES, SPELLS, TALENTS } from '../constants/Categories';
 
 interface Abilities {
-	[id: string]: Attribute | Advantage | CombatTechnique | Disadvantage | Liturgy | SpecialAbility | Spell | Talent;
+	[id: string]: AttributeInstance | AdvantageInstance | CombatTechniqueInstance | DisadvantageInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance;
 }
 
 export const getAttributeValuesSum = (abilities: Abilities) => {
 	return Object.keys(abilities).reduce((a,key) => {
-		return abilities[key].category === ATTRIBUTES ? a + (abilities[key] as Attribute).value : a;
+		return abilities[key].category === ATTRIBUTES ? a + (abilities[key] as AttributeInstance).value : a;
 	}, 0);
 };
 
@@ -16,15 +16,15 @@ export const isIncreasable = (abilities: Abilities, id: string, phase: number, e
 	switch (abilities[id].category) {
 		case ATTRIBUTES:
 			if (phase < 3) {
-				let max = getAttributeValuesSum(abilities) >= el.maxTotalAttributeValues ? 0 : el.maxAttributeValue + (abilities[id] as Attribute).mod;
-				return (abilities[id] as Attribute).value < max;
+				let max = getAttributeValuesSum(abilities) >= el.maxTotalAttributeValues ? 0 : el.maxAttributeValue + (abilities[id] as AttributeInstance).mod;
+				return (abilities[id] as AttributeInstance).value < max;
 			} else {
 				return true;
 			}
 
 		case COMBAT_TECHNIQUES: {
 			let max = 0;
-			let bonus = (<string[]>(<Advantage>abilities['ADV_17']).active).includes(id) ? 1 : 0;
+			let bonus = (<string[]>(<AdvantageInstance>abilities['ADV_17']).active).includes(id) ? 1 : 0;
 
 			if (phase < 3) {
 				max = el.maxCombatTechniqueRating;

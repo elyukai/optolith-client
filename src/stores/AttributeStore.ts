@@ -55,7 +55,7 @@ function _updateAll(obj: { lp: number; ae: number; kp: number; }) {
 class AttributeStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as Attribute[];
+		return getAllByCategory(CATEGORY) as AttributeInstance[];
 	}
 
 	getAdd(id: ids) {

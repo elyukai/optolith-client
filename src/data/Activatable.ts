@@ -3,7 +3,7 @@ import { get, getPrimaryAttrID } from '../stores/ListStore';
 import validate from '../utils/validate';
 
 export default class Activatable extends Dependent {
-	readonly cost: number;
+	readonly cost: number | number[] | string;
 	readonly input: string | null;
 	readonly max: number | null;
 	readonly reqs: [string, string | number | boolean, string | number | boolean | undefined][];
@@ -153,7 +153,7 @@ export default class Activatable extends Dependent {
 			}
 			if (id === 'ATTR_PRIMARY') {
 				id = getPrimaryAttrID(option);
-				(get(id) as Attribute).addDependency(value);
+				(get(id) as AttributeInstance).addDependency(value);
 			}
 			else {
 				let sid: string | number | boolean;
@@ -170,7 +170,7 @@ export default class Activatable extends Dependent {
 				} else {
 					sid = value;
 				}
-				(get(id) as Advantage | Disadvantage | SpecialAbility).addDependency(sid);
+				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).addDependency(sid);
 			}
 		});
 		return allReqs;
@@ -185,7 +185,7 @@ export default class Activatable extends Dependent {
 			}
 			if (id === 'ATTR_PRIMARY') {
 				id = getPrimaryAttrID(option);
-				(get(id) as Advantage | Disadvantage | SpecialAbility).removeDependency(value);
+				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).removeDependency(value);
 			}
 			else {
 				let sid: string | number | boolean;
@@ -202,7 +202,7 @@ export default class Activatable extends Dependent {
 				} else {
 					sid = value;
 				}
-				(get(id) as Advantage | Disadvantage | SpecialAbility).removeDependency(sid);
+				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).removeDependency(sid);
 			}
 		});
 		return allReqs;

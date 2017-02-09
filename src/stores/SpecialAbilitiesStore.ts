@@ -20,7 +20,7 @@ function _updateSortOrder(option: string) {
 class SpecialAbilitiesStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as SpecialAbility[];
+		return getAllByCategory(CATEGORY) as SpecialAbilityInstance[];
 	}
 
 	getForSave() {
@@ -41,7 +41,7 @@ class SpecialAbilitiesStoreStatic extends Store {
 	getActiveForView(...cgr: number[]) {
 		let sasObj;
 		if (cgr.length > 0) {
-			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr) as SpecialAbility[];
+			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr) as SpecialAbilityInstance[];
 		} else {
 			sasObj = this.getAll();
 		}
@@ -52,10 +52,10 @@ class SpecialAbilitiesStoreStatic extends Store {
 			if (active === true) {
 				let disabled = dependencies.length > 0;
 				if (sel.length > 0 && cost === 'sel' && typeof sid === 'number') {
-					if (id === 'SA_86' && (getAllByCategory(Categories.SPELLS) as Spell[]).some(e => e.active)) {
+					if (id === 'SA_86' && (getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
 						disabled = true;
 					}
-					if (id === 'SA_102' && (getAllByCategory(Categories.LITURGIES) as Liturgy[]).some(e => e.active)) {
+					if (id === 'SA_102' && (getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
 						disabled = true;
 					}
 					sas.push({ id, name, add: sel[sid - 1][0], cost: sel[sid - 1][2], gr, disabled });

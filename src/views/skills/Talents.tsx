@@ -13,12 +13,12 @@ import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
 
 interface State {
-	currentCulture: Culture;
+	currentCulture: CultureInstance;
 	filterText: string;
 	phase: number;
 	sortOrder: string;
 	talentRating: boolean;
-	talents: Talent[];
+	talents: TalentInstance[];
 }
 
 export default class Talents extends Component<undefined, State> {
@@ -58,7 +58,7 @@ export default class Talents extends Component<undefined, State> {
 
 		const { filterText, phase, sortOrder, talentRating, talents } = this.state;
 
-		const list = filterAndSort<Talent>(talents, filterText, sortOrder);
+		const list = filterAndSort<TalentInstance>(talents, filterText, sortOrder);
 
 		return (
 			<div className="page" id="talents">

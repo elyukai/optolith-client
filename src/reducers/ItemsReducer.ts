@@ -10,17 +10,17 @@ type Action = ReceiveDataTablesAction | ReceiveHeroDataAction |AddItemAction | R
 
 export interface ItemsState {
 	readonly templatesById: {
-		[id: string]: Item;
+		[id: string]: ItemInstance;
 	};
 	readonly templates: string[];
 
 	readonly byId: {
-		[id: string]: Item;
+		[id: string]: ItemInstance;
 	};
 	readonly allIds: string[];
 }
 
-function init({ id, name, price, weight, number, where, gr, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, stp, range, reloadTime, ammunition, pro, enc, addPenalties, template }: RawItem): Item {
+function init({ id, name, price, weight, number, where, gr, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, stp, range, reloadTime, ammunition, pro, enc, addPenalties, template }: RawItem): ItemInstance {
 	return {
 		id,
 		name,
@@ -57,7 +57,7 @@ const initialState = <ItemsState>{};
 export default (state: ItemsState = initialState, action: Action): ItemsState => {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_DATA_TABLES: {
-			const templatesById: { [id: string]: Item } = {};
+			const templatesById: { [id: string]: ItemInstance } = {};
 			const templates: string[] = [];
 			for (const id in action.payload.data.races) {
 				templatesById[id] = init(action.payload.data.items[id]);
@@ -67,7 +67,7 @@ export default (state: ItemsState = initialState, action: Action): ItemsState =>
 		}
 
 		case ActionTypes.RECEIVE_HERO_DATA: {
-			const byId: { [id: string]: Item } = {};
+			const byId: { [id: string]: ItemInstance } = {};
 			const allIds: string[] = [];
 			for (const id in action.payload.data.items) {
 				byId[id] = action.payload.data.items[id];

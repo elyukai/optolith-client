@@ -11,16 +11,16 @@ export const fn = (req: 'RCP' | [string, string | number | boolean, string | num
 		let array = [];
 
 		if (currentRace.hasOwnProperty('imp_adv')) {
-			array.push(...currentRace.imp_adv.map(e => e[0] as string));
+			array.push(...currentRace.importantAdvantages.map(e => e[0] as string));
 		}
 		if (currentRace.hasOwnProperty('imp_dadv')) {
-			array.push(...currentRace.imp_dadv.map(e => e[0] as string));
+			array.push(...currentRace.importantDisadvantages.map(e => e[0] as string));
 		}
 		if (currentRace.hasOwnProperty('typ_adv')) {
-			array.push(...currentRace.typ_adv);
+			array.push(...currentRace.typicalAdvantages);
 		}
 		if (currentRace.hasOwnProperty('typ_dadv')) {
-			array.push(...currentRace.typ_dadv);
+			array.push(...currentRace.typicalDisadvantages);
 		}
 
 		if (currentCulture.hasOwnProperty('typ_adv')) {

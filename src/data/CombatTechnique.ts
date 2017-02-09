@@ -5,13 +5,13 @@ import { get, getAllByCategoryGroup } from '../stores/ListStore';
 import PhaseStore from '../stores/PhaseStore';
 import * as Categories from '../constants/Categories';
 
-export default class CombatTechnique extends Increasable {
+export default class CombatTechnique extends Increasable implements CombatTechniqueInstance {
 
 	readonly ic: number;
 	readonly gr: number;
 	readonly primary: string[];
 	value: number = 6;
-	readonly category: string = Categories.COMBAT_TECHNIQUES;
+	readonly category = Categories.COMBAT_TECHNIQUES;
 	dependencies: number[];
 
 	constructor({ skt, gr, leit, ...args }: RawCombatTechnique) {

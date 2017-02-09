@@ -62,7 +62,7 @@ export default class Cultures extends Component<Props, State> {
 
 		const currentRace = RaceStore.getCurrent();
 
-		const list = filterAndSort(cultures.filter(e => showAllCultures || currentRace.typ_cultures.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSort(cultures.filter(e => showAllCultures || currentRace.typicalCultures.includes(e.id)), filterText, sortOrder);
 
 		return (
 			<div className="page" id="cultures">

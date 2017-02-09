@@ -41,7 +41,7 @@ class RaceStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return _currentId !== null ? get(_currentId) as Race : {} as Race;
+		return _currentId !== null ? get(_currentId) as RaceInstance : {} as RaceInstance;
 	}
 
 	getCurrentName() {

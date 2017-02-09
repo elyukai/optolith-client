@@ -3,7 +3,7 @@ import * as React from 'react';
 import secondaryAttributes from '../../utils/secondaryAttributes';
 
 interface Props {
-	attributes: Attribute[];
+	attributes: AttributeInstance[];
 	baseValues: {
 		[id: string]: number
 	};

@@ -23,7 +23,7 @@ type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | AddAttributePoin
 
 export interface AbilitiesState {
 	readonly byId: {
-		[id: string]: Advantage | Disadvantage | SpecialAbility | Attribute | CombatTechnique | Liturgy | Spell | Talent;
+		[id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
 	};
 	readonly allIds: string[];
 	readonly attributes: string[];
@@ -35,7 +35,7 @@ export interface AbilitiesState {
 	readonly talents: string[];
 }
 
-type IncreasableType = Attribute | CombatTechnique | Liturgy | Spell | Talent;
+type IncreasableType = AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
 
 const initialState = <AbilitiesState>{};
 
@@ -69,9 +69,9 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 		case ActionTypes.ACTIVATE_SPECIALABILITY:
 			if (valid) {
 				const { id, sel, sel2, input, tier } = action.payload;
-				const obj = { ...state.byId[id] } as Advantage | Disadvantage | SpecialAbility;
+				const obj = { ...state.byId[id] } as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
 				const adds = [];
-				const newState: { [id: string]: Advantage | Disadvantage | SpecialAbility } = {};
+				const newState: { [id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance } = {};
 				let new_sid: string;
 				if (Array.isArray(obj.active)) {
 					switch (id) {
@@ -176,7 +176,7 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 		case ActionTypes.DEACTIVATE_SPECIALABILITY:
 			if (valid) {
 				const { id, sid, tier } = action.payload;
-				const obj = { ...state.byId[id] } as Advantage | Disadvantage | SpecialAbility;
+				const obj = { ...state.byId[id] } as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
 				const adds = [];
 				let old_sid: string;
 				if (Array.isArray(obj.active)) {
@@ -281,7 +281,7 @@ export default (state: AbilitiesState = initialState, action: Action, valid: Val
 				const id = action.payload.id;
 				const sid = action.payload.sid;
 				const tier = action.payload.tier;
-				const ability = state.byId[id] as Disadvantage | SpecialAbility;
+				const ability = state.byId[id] as DisadvantageInstance | SpecialAbilityInstance;
 				if (sid) {
 					switch (id) {
 						case 'DISADV_1':

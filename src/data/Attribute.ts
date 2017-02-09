@@ -4,12 +4,12 @@ import ELStore from '../stores/ELStore';
 import PhaseStore from '../stores/PhaseStore';
 import * as Categories from '../constants/Categories';
 
-export default class Attribute extends Increasable {
+export default class Attribute extends Increasable implements AttributeInstance {
 	short: string;
 	value: number = 8;
 	mod: number = 0;
 	readonly ic: number = 5;
-	readonly category: string = Categories.ATTRIBUTES;
+	readonly category = Categories.ATTRIBUTES;
 	dependencies: number[];
 
 	constructor({ short, ...args }: RawAttribute) {

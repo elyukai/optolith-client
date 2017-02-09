@@ -2,7 +2,7 @@ import AttributeListItem from './AttributeListItem';
 import * as React from 'react';
 
 interface Props {
-	attributes: Attribute[];
+	attributes: AttributeInstance[];
 	max: number;
 	phase: number;
 	sumMax: boolean;

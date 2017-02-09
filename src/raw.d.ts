@@ -108,7 +108,7 @@ interface RawAdvantage {
 	max: number | null;
 	sel: string[] | [string, number][];
 	input: string;
-	req: any[][];
+	req: [string, string | number | boolean, string | number | boolean | undefined][];
 }
 
 interface RawAttribute {
@@ -144,7 +144,7 @@ interface RawSpecialAbility {
 	max: number | null;
 	sel: string[] | [string, number][];
 	input: string;
-	req: any[][];
+	req: [string, string | number | boolean, string | number | boolean | undefined][];
 	gr: number;
 }
 
@@ -154,7 +154,7 @@ interface RawSpell {
 	check: [number, number, number];
 	skt: number;
 	trad: number[];
-	merk: number[];
+	merk: number;
 	gr: number;
 }
 

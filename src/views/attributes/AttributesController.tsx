@@ -5,7 +5,7 @@ import PhaseStore from '../../stores/PhaseStore';
 import * as React from 'react';
 
 interface State {
-	attributes: Attribute[];
+	attributes: AttributeInstance[];
 	baseValues: {
 		lp: number;
 		ae: number;

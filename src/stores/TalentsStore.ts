@@ -21,7 +21,7 @@ function _updateRatingVisibility() {
 class TalentsStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as Talent[];
+		return getAllByCategory(CATEGORY) as TalentInstance[];
 	}
 
 	getForSave() {

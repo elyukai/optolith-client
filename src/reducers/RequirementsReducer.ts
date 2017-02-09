@@ -93,7 +93,7 @@ export default (state: HeroState, action: Action): ValidationResult => {
 	switch (action.type) {
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.ACTIVATE_LITURGY: {
-			const obj = state.abilities.byId[action.payload.id] as Spell | Liturgy;
+			const obj = state.abilities.byId[action.payload.id] as SpellInstance | LiturgyInstance;
 			updateOwnRequirements(true);
 			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 				updateCost(1);
@@ -106,7 +106,7 @@ export default (state: HeroState, action: Action): ValidationResult => {
 
 		case ActionTypes.DEACTIVATE_SPELL:
 		case ActionTypes.DEACTIVATE_LITURGY: {
-			const obj = state.abilities.byId[action.payload.id] as Spell | Liturgy;
+			const obj = state.abilities.byId[action.payload.id] as SpellInstance | LiturgyInstance;
 			updateOwnRequirements(true);
 			if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 				updateCost(-1);

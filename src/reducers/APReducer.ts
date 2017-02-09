@@ -83,7 +83,7 @@ export default (state: APState = initialState, action: Action, hero: HeroState, 
 
 			if (action.payload.selections.buyLiteracy) {
 				let id = culture.scripts.length > 1 ? action.payload.selections.litc : culture.scripts[0];
-				spent += (hero.abilities.byId['SA_28'] as SpecialAbility).sel[id - 1][2] as number;
+				spent += (hero.abilities.byId['SA_28'] as SpecialAbilityInstance).sel[id - 1][2] as number;
 			}
 
 			if (hero.professions.currentId !== null && hero.professions.currentId !== 'P_0') {

@@ -3,8 +3,8 @@ import * as Categories from '../../constants/Categories';
 import * as React from 'react';
 import Dialog from '../../components/Dialog';
 
-const getTalent = (skill: Talent) => {
-	const attrPoints = skill.check.map(id => (get(id) as Attribute).value);
+const getTalent = (skill: TalentInstance) => {
+	const attrPoints = skill.check.map(id => (get(id) as AttributeInstance).value);
 	const lessAttrPoints = attrPoints.map(e => e < 13 ? 13 - e : 0).reduce((a,b) => a + b, 0);
 	const flatRoutineLevel = Math.floor((skill.value - 1) / 3);
 	const checkMod = flatRoutineLevel * -1 + 3;
@@ -22,9 +22,9 @@ const getTalent = (skill: Talent) => {
 				<p className="sr">{skill.value}</p>
 			</div>
 			<div className="test">
-				<div className={skill.check[0]}>{(get(skill.check[0]) as Attribute).short}</div>
-				<div className={skill.check[1]}>{(get(skill.check[1]) as Attribute).short}</div>
-				<div className={skill.check[2]}>{(get(skill.check[2]) as Attribute).short}</div>
+				<div className={skill.check[0]}>{(get(skill.check[0]) as AttributeInstance).short}</div>
+				<div className={skill.check[1]}>{(get(skill.check[1]) as AttributeInstance).short}</div>
+				<div className={skill.check[2]}>{(get(skill.check[2]) as AttributeInstance).short}</div>
 				<div className="hr"></div>
 				<div className="routine">{routineSign}{Array.isArray(routine) ? routine[0] : '-'}{routineOptional}</div>
 			</div>

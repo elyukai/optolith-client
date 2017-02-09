@@ -1,29 +1,27 @@
 import { fixIDs } from '../utils/DataUtils';
 import * as Categories from '../constants/Categories';
+import Core from './CoreGenderExtended';
 
-export default class ProfessionVariant {
-	readonly id: string;
-	readonly name: string | { m: string, f: string };
+export default class ProfessionVariant extends Core implements ProfessionVariantInstance {
 	readonly ap: number;
-	readonly reqsPre: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
+	readonly dependencies: (string | number | boolean)[][];
+	readonly requires: (string | number | boolean)[][];
+	readonly selections: (string | string[] | number[])[][];
+	readonly specialAbilities: (string | number | boolean)[][];
+	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
-	readonly category: string = Categories.PROFESSION_VARIANTS;
+	readonly category = Categories.PROFESSION_VARIANTS;
 
-	constructor({ id, name, ap, pre_req, req, sel, sa, combattech, talents }: RawProfessionVariant) {
-		this.id = id;
-		this.name = name;
+	constructor({ ap, pre_req, req, sel, sa, combattech, talents, ...other }: RawProfessionVariant) {
+		super(other);
 		this.ap = ap;
 
-		this.reqsPre = pre_req;
-		this.reqs = req;
-		this.sel = sel;
+		this.dependencies = pre_req;
+		this.requires = req;
+		this.selections = sel;
 
-		this.specialabilities = fixIDs<number | boolean>(sa, 'SA');
-		this.combattechniques = fixIDs<number>(combattech, 'CT');
+		this.specialAbilities = fixIDs<number | boolean>(sa, 'SA');
+		this.combatTechniques = fixIDs<number>(combattech, 'CT');
 		this.talents = fixIDs<number>(talents, 'TAL');
 	}
 }

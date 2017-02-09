@@ -131,7 +131,7 @@ export default class Selections extends Component<Props, State> {
 			});
 
 			if (ProfessionVariantStore.getCurrentID() !== null) {
-				currentProfessionVariant.sel.forEach(e => {
+				currentProfessionVariant.selections.forEach(e => {
 					let [ id, ...other ] = e;
 					if (other.length === 1 && other[0] === false)
 						professionSel.delete(id);
@@ -244,9 +244,9 @@ export default class Selections extends Component<Props, State> {
 						hint="Eigenschaftsmodifikation auswählen"
 						value={attrSel}
 						onChange={this.changeAttrSel}
-						options={currentRace.attr_sel[1].map(e => {
+						options={currentRace.attributeSelection[1].map(e => {
 							let attr = get(e);
-							let value = currentRace.attr_sel[0];
+							let value = currentRace.attributeSelection[0];
 							return [`${attr.name} ${value > 0 ? '+' : ''}${value}`, e];
 						})} />
 					<h3>Kultur</h3>

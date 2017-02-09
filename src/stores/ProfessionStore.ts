@@ -28,7 +28,7 @@ function _updateView(view: string) {
 class ProfessionStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as Profession[];
+		return getAllByCategory(CATEGORY) as ProfessionInstance[];
 	}
 
 	getCurrentId() {
@@ -36,7 +36,7 @@ class ProfessionStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return _currentId !== null ? get(_currentId) as Profession : {} as Profession;
+		return _currentId !== null ? get(_currentId) as ProfessionInstance : {} as ProfessionInstance;
 	}
 
 	getCurrentName() {
