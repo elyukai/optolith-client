@@ -1,8 +1,8 @@
+import * as React from 'react';
 import Dropdown from '../../components/Dropdown';
 import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';
 import ProfileActions from '../../_actions/ProfileActions';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -25,46 +25,19 @@ interface Props {
 	weight: number | string;
 };
 
-export default class OverviewPersonalData extends Component<Props, undefined> {
-
-	static propTypes = {
-		age: PropTypes.string.isRequired,
-		characteristics: PropTypes.string.isRequired,
-		culture: PropTypes.object.isRequired,
-		dateofbirth: PropTypes.string.isRequired,
-		eyecolor: PropTypes.number.isRequired,
-		eyecolorTags: PropTypes.array.isRequired,
-		family: PropTypes.string.isRequired,
-		haircolor: PropTypes.number.isRequired,
-		haircolorTags: PropTypes.array.isRequired,
-		otherinfo: PropTypes.string.isRequired,
-		placeofbirth: PropTypes.string.isRequired,
-		race: PropTypes.object.isRequired,
-		size: PropTypes.oneOfType([
-			PropTypes.number,
-			PropTypes.string
-		]).isRequired,
-		socialstatus: PropTypes.number.isRequired,
-		socialstatusTags: PropTypes.array.isRequired,
-		title: PropTypes.string.isRequired,
-		weight: PropTypes.oneOfType([
-			PropTypes.number,
-			PropTypes.string
-		]).isRequired
-	};
-
-	changeFamily = e => ProfileActions.changeFamily(e.target.value);
-	changePlaceOfBirth = e => ProfileActions.changePlaceOfBirth(e.target.value);
-	changeDateOfBirth = e => ProfileActions.changeDateOfBirth(e.target.value);
-	changeAge = e => ProfileActions.changeAge(e.target.value);
-	changeHaircolor = result => ProfileActions.changeHaircolor(result);
-	changeEyecolor = result => ProfileActions.changeEyecolor(result);
-	changeSize = e => ProfileActions.changeSize(e.target.value);
-	changeWeight = e => ProfileActions.changeWeight(e.target.value);
-	changeTitle = e => ProfileActions.changeTitle(e.target.value);
-	changeSocialStatus = result => ProfileActions.changeSocialStatus(result);
-	changeCharacteristics = e => ProfileActions.changeCharacteristics(e.target.value);
-	changeOtherInfo = e => ProfileActions.changeOtherInfo(e.target.value);
+export default class OverviewPersonalData extends React.Component<Props, undefined> {
+	changeFamily = (e: Event) => ProfileActions.changeFamily(e.target.value);
+	changePlaceOfBirth = (e: Event) => ProfileActions.changePlaceOfBirth(e.target.value);
+	changeDateOfBirth = (e: Event) => ProfileActions.changeDateOfBirth(e.target.value);
+	changeAge = (e: Event) => ProfileActions.changeAge(e.target.value);
+	changeHaircolor = (result: number) => ProfileActions.changeHaircolor(result);
+	changeEyecolor = (result: number) => ProfileActions.changeEyecolor(result);
+	changeSize = (e: Event) => ProfileActions.changeSize(e.target.value);
+	changeWeight = (e: Event) => ProfileActions.changeWeight(e.target.value);
+	changeTitle = (e: Event) => ProfileActions.changeTitle(e.target.value);
+	changeSocialStatus = (result: number) => ProfileActions.changeSocialStatus(result);
+	changeCharacteristics = (e: Event) => ProfileActions.changeCharacteristics(e.target.value);
+	changeOtherInfo = (e: Event) => ProfileActions.changeOtherInfo(e.target.value);
 
 	rerollHair = () => ProfileActions.rerollHair();
 	rerollEyes = () => ProfileActions.rerollEyes();
@@ -72,7 +45,6 @@ export default class OverviewPersonalData extends Component<Props, undefined> {
 	rerollWeight = () => ProfileActions.rerollWeight();
 
 	render() {
-
 		const { age, characteristics, culture, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
 
 		const hairArr = race ? haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)) : [];

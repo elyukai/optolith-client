@@ -178,6 +178,34 @@ interface ActivateObject {
 	tier?: number;
 }
 
+interface SelectionObject {
+	id: string | number;
+	name: string;
+	cost?: number;
+}
+
+interface ActivatableRequirementObject {
+	id: string;
+	active: boolean;
+	sid?: string | number;
+	sid2?: string | number;
+}
+
+interface IncreasableRequirementObject {
+	id: string;
+	value: number;
+	type?: 1 | 2;
+}
+
+interface RequirementObject {
+	id: string;
+	active?: boolean;
+	sid?: string | number;
+	sid2?: string | number;
+	value?: number;
+	type?: 1 | 2;
+}
+
 interface ValidationObject extends ActiveObject {
 	id: string;
 	active: boolean | number;
@@ -189,9 +217,9 @@ interface AdvantageInstance {
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | null;
-	readonly reqs: [string, string | number | boolean, string | number | boolean | undefined][];
+	readonly reqs: ('RCP' | RequirementObject)[];
 	readonly tiers?: number | null;
-	readonly sel: (string | number)[][];
+	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: ADVANTAGES;
 	dependencies: (boolean | ActiveObject)[];
@@ -215,9 +243,9 @@ interface DisadvantageInstance {
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | null;
-	readonly reqs: [string, string | number | boolean, string | number | boolean | undefined][];
+	readonly reqs: ('RCP' | RequirementObject)[];
 	readonly tiers?: number | null;
-	readonly sel: (string | number)[][];
+	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: DISADVANTAGES;
 	dependencies: (boolean | ActiveObject)[];
@@ -241,9 +269,9 @@ interface SpecialAbilityInstance {
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | false | null;
-	readonly reqs: [string, string | number | boolean, string | number | boolean | undefined][];
+	readonly reqs: RequirementObject[];
 	readonly tiers?: number | null;
-	readonly sel: (string | number | boolean | [string, number][] | null)[][];
+	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: SPECIAL_ABILITIES;
 	dependencies: (boolean | ActiveObject)[];

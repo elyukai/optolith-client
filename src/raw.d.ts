@@ -106,9 +106,9 @@ interface RawAdvantage {
 	ap: number | number[] | string;
 	tiers: number | null;
 	max: number | null;
-	sel: string[] | [string, number][];
+	sel: ('RCP' | RequirementObject)[];
 	input: string;
-	req: [string, string | number | boolean, string | number | boolean | undefined][];
+	req: RequirementObject[];
 }
 
 interface RawAttribute {
@@ -142,9 +142,9 @@ interface RawSpecialAbility {
 	name: string;
 	ap: number | number[] | string;
 	max: number | null;
-	sel: string[] | [string, number][];
+	sel: SelectionObject[];
 	input: string;
-	req: [string, string | number | boolean, string | number | boolean | undefined][];
+	req: RequirementObject[];
 	gr: number;
 }
 

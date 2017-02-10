@@ -29,7 +29,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
 		const finalCost = (selectedTier - tier) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
 		DisAdvActions.setTier(id, selectedTier, finalCost, sid as string | number);
-	};
+	}
 	removeFromList = (args: DeactivateArgs) => DisAdvActions.removeFromList(args);
 
 	render() {
@@ -68,20 +68,20 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 			}
 			case 'ADV_28':
 			case 'ADV_29':
-				add = sel[sid as number - 1][0] as string;
-				currentCost = sel[sid as number - 1][2] as number;
+				add = sel[sid as number - 1].name;
+				currentCost = sel[sid as number - 1].cost as number;
 				break;
 			case 'ADV_32':
 			case 'DISADV_1':
 			case 'DISADV_24':
 			case 'DISADV_45':
-				add = typeof sid === 'number' ? sel[sid - 1][0] as string : sid as string;
+				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
 				break;
 			case 'DISADV_34':
 			case 'DISADV_50': {
 				const maxCurrentTier = active.reduce((a,b) => b.tier > a ? b.tier as number : a, 0);
 				const subMaxCurrentTier = active.reduce((a,b) => b.tier > a && b.tier < maxCurrentTier ? b.tier as number : a, 0);
-				add = typeof sid === 'number' ? sel[sid - 1][0] as string : sid as string;
+				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
 				currentCost = maxCurrentTier > tier || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * (tier - subMaxCurrentTier);
 				break;
 			}
@@ -89,23 +89,23 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 				if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
 					currentCost = 0;
 				} else {
-					currentCost = sel[sid as number - 1][2] as number;
+					currentCost = sel[sid as number - 1].cost as number;
 				}
 				if ([7,8].includes(sid as number)) {
-					add = `${sel[sid as number - 1][0]}: ${sid2}`;
+					add = `${sel[sid as number - 1].name}: ${sid2}`;
 				} else {
-					add = sel[sid as number - 1][0] as string;
+					add = sel[sid as number - 1].name;
 				}
 				break;
 			}
 			case 'DISADV_36':
-				add = typeof sid === 'number' ? sel[sid - 1][0] as string : sid as string;
+				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
 				currentCost = active.length > 3 ? 0 : cost as number;
 				break;
 			case 'DISADV_37':
 			case 'DISADV_51':
-				add = sel[sid as number - 1][0] as string;
-				currentCost = sel[sid as number - 1][2] as number;
+				add = sel[sid as number - 1].name;
+				currentCost = sel[sid as number - 1].cost as number;
 				break;
 			default:
 				if (input) {
@@ -117,7 +117,7 @@ export default class DisAdvRemoveListItem extends React.Component<Props, undefin
 		let tierElement;
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 		if (tiers && !['DISADV_34','DISADV_50'].includes(id)) {
-			const array = Array.from(Array(tiers).keys()).map(e => [roman[e], e + 1] as [string, number]);
+			const array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
 			tierElement = (
 				<Dropdown
 					className="tiers"

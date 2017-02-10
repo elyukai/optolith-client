@@ -99,34 +99,5 @@ export default ({ attributes, adv, cultures, disadv, talents, combattech, profes
 			})();
 		}
 	}
-
-	_list['DISADV_34'].sel = [
-		['99 Gesetze', 1, 1],
-		['Moralkodex der Hesindekirche', 2, 1],
-		['Moralkodex der Phexkirche', 3, 1],
-		['Moralkodex der Perainekirche', 4, 1],
-		['99 Gesetze (streng)', 5, 2],
-		['Ehrenkodex der Krieger', 6, 2],
-		['Ehrenkodex der Ritter', 7, 2],
-		['Elfische Weltsicht', 8, 2],
-		['Moralkodex der Boronkirche', 9, 2],
-		['Moralkodex der Praioskirche', 10, 2],
-		['Moralkodex der Rondrakirche', 11, 2],
-		['Zwergischer Ehrenkodex', 12, 2],
-		['99 Gesetze (radikal)', 13, 3],
-		['Pazifismus', 14, 3]
-	];
-	_list['DISADV_50'].sel = [
-		['Sippenmitglied gegenüber der Sippe', 1, 1],
-		['Verschuldeter Held', 2, 1],
-		['Adliger gegenüber seinem Lehnsherrn', 3, 2],
-		['Geweihter gegenüber seinem Tempel', 5, 2],
-		['Geweihter gegenüber seiner Kirche', 4, 2],
-		['Magier gegenüber seinem Lehrmeister', 6, 2],
-		['Magier gegenüber seiner Akademie', 7, 2],
-		['Magier gegenüber seiner Gilde', 8, 2],
-		['Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe', 9, 3]
-	];
-
 	return _list;
 };

@@ -61,39 +61,39 @@ class DisAdvStoreStatic extends Store {
 				switch (id) {
 					case 'ADV_4':
 					case 'ADV_17': {
-						const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !adv.sid.includes(e.id) && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, cost });
 						break;
 					}
 					case 'ADV_16': {
-						const sel = adv.sel.filter(e => adv.sid.filter(d => d === e[1]).length < 2 && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => adv.sid.filter(d => d === e.id).length < 2 && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, cost });
 						break;
 					}
 					case 'ADV_28':
 					case 'ADV_29': {
-						const sel = adv.sel.filter(e => !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !dependencies.includes(e.id));
 						advs.push({ id, name, sel });
 						// advs.push({ id, name, sel, input });
 						break;
 					}
 					case 'ADV_32': {
-						const sel = adv.sel.filter(e => !(get('DISADV_24') as DisadvantageInstance).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !(get('DISADV_24') as DisadvantageInstance).sid.includes(e.id) && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, input, cost });
 						break;
 					}
 					case 'ADV_47': {
-						const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !adv.sid.includes(e.id) && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, cost });
 						break;
 					}
 					case 'DISADV_1': {
-						const sel = adv.sel.map((e, index) => [e[0], index + 1]).filter(e => !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !dependencies.includes(e.id));
 						advs.push({ id, name, tiers, sel, input, cost });
 						break;
 					}
 					case 'DISADV_24': {
-						const sel = adv.sel.filter(e => !(get('ADV_32') as AdvantageInstance).sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !(get('ADV_32') as AdvantageInstance).sid.includes(e.id) && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, input, cost });
 						break;
 					}
@@ -102,33 +102,33 @@ class DisAdvStoreStatic extends Store {
 					case 'DISADV_51': {
 						let sel;
 						if (adv.id === 'DISADV_33') {
-							sel = adv.sel.filter(e => ([7,8].includes(e[1] as number) || !adv.sid.includes(e[1])) && !dependencies.includes(e[1]));
+							sel = adv.sel.filter(e => ([7,8].includes(e.id as number) || !adv.sid.includes(e.id)) && !dependencies.includes(e.id));
 						}
 						else {
-							sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
+							sel = adv.sel.filter(e => !adv.sid.includes(e.id) && !dependencies.includes(e.id));
 						}
 						advs.push({ id, name, sel, cost });
 						break;
 					}
 					case 'DISADV_34':
 					case 'DISADV_50': {
-						const sel = adv.sel.filter(e => !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !dependencies.includes(e.id));
 						advs.push({ id, name, tiers, sel, input, cost });
 						break;
 					}
 					case 'DISADV_36': {
-						const sel = adv.sel.filter(e => !adv.sid.includes(e[1]) && !dependencies.includes(e[1]));
+						const sel = adv.sel.filter(e => !adv.sid.includes(e.id) && !dependencies.includes(e.id));
 						advs.push({ id, name, sel, input, cost });
 						break;
 					}
 					case 'DISADV_48': {
 						const sel = adv.sel.filter(e => {
 							if ((get('ADV_40') as AdvantageInstance).active.length > 0 || (get('ADV_46') as AdvantageInstance).active.length > 0) {
-								if ((get(e[1] as string) as LiturgyInstance | SpellInstance | TalentInstance).gr === 2) {
+								if ((get(e.id as string) as LiturgyInstance | SpellInstance | TalentInstance).gr === 2) {
 									return false;
 								}
 							}
-							return !adv.sid.includes(e[1]) && !dependencies.includes(e[1]);
+							return !adv.sid.includes(e.id) && !dependencies.includes(e.id);
 						});
 						advs.push({ id, name, sel, cost });
 						break;

@@ -1,9 +1,9 @@
+import { get } from '../../stores/ListStore';
+import * as React from 'react';
 import CombatTechniques from './CombatTechniques';
 import Liturgies from './Liturgies';
-import React, { Component } from 'react';
 import SpecialAbilities from './SpecialAbilities';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
-import { get } from '../../stores/ListStore';
 import Spells from './Spells';
 import SubTabs from '../../components/SubTabs';
 import Talents from './Talents';
@@ -14,25 +14,25 @@ interface State {
 	showSpells: boolean;
 }
 
-export default class Skills extends Component<any, State> {
+export default class Skills extends React.Component<undefined, State> {
 
 	state = {
 		tab: 'talents',
-		showSpells: get('SA_86').active,
-		showChants: get('SA_102').active
+		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
+		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
 	};
-	
-	_updateSpecialAbilitiesStore = () => this.setState({
-		showSpells: get('SA_86').active,
-		showChants: get('SA_102').active
-	} as State);
 
-	handleClick = tab => this.setState({ tab } as State);
-	
+	_updateSpecialAbilitiesStore = () => this.setState({
+		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
+		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
+	} as State)
+
+	handleClick = (tab: string) => this.setState({ tab } as State);
+
 	componentDidMount() {
 		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
 	}
-	
+
 	componentWillUnmount() {
 		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
 	}
@@ -61,7 +61,7 @@ export default class Skills extends Component<any, State> {
 				break;
 		}
 
-		let tabs = [
+		const tabs = [
 			{
 				label: 'Talente',
 				tag: 'talents'
@@ -76,15 +76,19 @@ export default class Skills extends Component<any, State> {
 			}
 		];
 
-		if (showSpells) tabs.push({
-			label: 'Zauber',
-			tag: 'spells'
-		});
-		
-		if (showChants) tabs.push({
-			label: 'Liturgien',
-			tag: 'liturgies'
-		});
+		if (showSpells) {
+			tabs.push({
+				label: 'Zauber',
+				tag: 'spells'
+			});
+		}
+
+		if (showChants) {
+			tabs.push({
+				label: 'Liturgien',
+				tag: 'liturgies'
+			});
+		}
 
 		return (
 			<section id="skills">

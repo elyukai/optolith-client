@@ -6,8 +6,8 @@ export default class Activatable extends Dependent {
 	readonly cost: number | number[] | string;
 	readonly input: string | null;
 	readonly max: number | null;
-	readonly reqs: [string, string | number | boolean, string | number | boolean | undefined][];
-	readonly sel: (string | number | boolean)[][];
+	readonly reqs: ('RCP' | RequirementObject)[];
+	readonly sel: SelectionObject[];
 	readonly tiers: number | null;
 	readonly gr: number;
 	active: ActiveObject[] = [];
@@ -44,15 +44,15 @@ export default class Activatable extends Dependent {
 	}
 
 	activate({ sel, sel2, input, tier }: ActivateObject) {
-		const adds: [string, number][] = [];
+		const adds: RequirementObject[] = [];
 		let active: ActiveObject | undefined;
-		let new_sid;
+		let sidNew;
 		switch (this.id) {
 			case 'ADV_4':
 			case 'ADV_16':
 			case 'DISADV_48':
 				active = { sid: sel };
-				new_sid = sel as string;
+				sidNew = sel as string;
 				break;
 			case 'DISADV_1':
 			case 'DISADV_34':
@@ -84,10 +84,10 @@ export default class Activatable extends Dependent {
 			case 'SA_10':
 				if (input === '') {
 					active = { sid: sel, sid2: sel2 };
-					adds.push([sel as string, (this.active.filter(e => e.sid === sel).length + 1) * 6]);
+					adds.push({ id: sel as string, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
 				} else if (this.active.filter(e => e.sid === input).length === 0) {
 					active = { sid: sel, sid2: input };
-					adds.push([sel as string, (this.active.filter(e => e.sid === sel).length + 1) * 6]);
+					adds.push({ id: sel as string, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
 				}
 				break;
 			case 'SA_30':
@@ -112,11 +112,11 @@ export default class Activatable extends Dependent {
 		if (active) {
 			this.active.push(active);
 		}
-		return { active, dependencies: this.addDependencies(adds, new_sid) };
+		return { active, dependencies: this.addDependencies(adds, sidNew) };
 	}
 
 	deactivate(index: number) {
-		const adds: [string, number][] = [];
+		const adds: RequirementObject[] = [];
 		const sid = this.active[index].sid;
 		let sidOld;
 		switch (this.id) {
@@ -126,7 +126,7 @@ export default class Activatable extends Dependent {
 				sidOld = sid as string;
 				break;
 			case 'SA_10':
-				adds.push([sid as string, this.active.filter(e => e.sid === sid).length * 6]);
+				adds.push({ id: sid as string, value: this.active.filter(e => e.sid === sid).length * 6, sid: 'test' });
 				break;
 		}
 		this.active.splice(index, 1);
@@ -144,65 +144,63 @@ export default class Activatable extends Dependent {
 		});
 	}
 
-	addDependencies(adds: [string, number][] = [], sel?: string) {
-		const allReqs = [ ...this.reqs, ...adds as [string, number, undefined][] ];
+	addDependencies(adds: RequirementObject[] = [], sel?: string) {
+		const allReqs = [ ...this.reqs, ...adds ];
 		allReqs.forEach(req => {
-			let [ id, value, option ] = req;
-			if (id === 'auto_req' || option === 'TAL_GR_2') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = getPrimaryAttrID(option);
-				(get(id) as AttributeInstance).addDependency(value);
-			}
-			else {
-				let sid: string | number | boolean;
-				if (typeof option !== 'undefined') {
-					if (typeof option === 'boolean' || typeof option === 'string' && Number.isNaN(parseInt(option))) {
-						if (option === 'sel' && sel) {
-							sid = sel;
-						} else {
-							sid = option;
-						}
-					} else {
-						sid = typeof option === 'number' ? option : parseInt(option);
-					}
-				} else {
-					sid = value;
+			if (req !== 'RCP') {
+				const { active, value, sid, sid2, type } = req;
+				let { id } = req;
+				if (id === 'auto_req' || sid === 'GR') {
+					return;
 				}
-				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).addDependency(sid);
+				if (id === 'ATTR_PRIMARY') {
+					id = getPrimaryAttrID(type as 1 | 2);
+					(get(id) as AttributeInstance).addDependency(value as number);
+				}
+				else {
+					let dependency;
+					if (Object.keys(req).length === 2) {
+						dependency = active as boolean;
+					}
+					else if (value) {
+						dependency = value;
+					}
+					else {
+						dependency = { sid: sid === 'sel' ? sel : sid, sid2 };
+					}
+					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).addDependency(dependency);
+				}
 			}
 		});
 		return allReqs;
 	}
 
-	removeDependencies(adds: [string, number][] = [], sel?: string) {
-		const allReqs = [ ...this.reqs, ...adds as [string, number, undefined][] ];
+	removeDependencies(adds: RequirementObject[] = [], sel?: string) {
+		const allReqs = [ ...this.reqs, ...adds ];
 		allReqs.forEach(req => {
-			let [ id, value, option ] = req;
-			if (id === 'auto_req' || option === 'TAL_GR_2') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = getPrimaryAttrID(option);
-				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).removeDependency(value);
-			}
-			else {
-				let sid: string | number | boolean;
-				if (typeof option !== 'undefined') {
-					if (typeof option === 'boolean' || typeof option === 'string' && Number.isNaN(parseInt(option))) {
-						if (option === 'sel' && sel) {
-							sid = sel;
-						} else {
-							sid = option;
-						}
-					} else {
-						sid = typeof option === 'number' ? option : parseInt(option);
-					}
-				} else {
-					sid = value;
+			if (req !== 'RCP') {
+				const { active, value, sid, sid2, type } = req;
+				let { id } = req;
+				if (id === 'auto_req' || sid === 'GR') {
+					return;
 				}
-				(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).removeDependency(sid);
+				if (id === 'ATTR_PRIMARY') {
+					id = getPrimaryAttrID(type as 1 | 2);
+					(get(id) as AttributeInstance).removeDependency(value as number);
+				}
+				else {
+					let dependency;
+					if (Object.keys(req).length === 2) {
+						dependency = active as boolean;
+					}
+					else if (value) {
+						dependency = value;
+					}
+					else {
+						dependency = { sid: sid === 'sel' ? sel : sid, sid2 };
+					}
+					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).removeDependency(dependency);
+				}
 			}
 		});
 		return allReqs;

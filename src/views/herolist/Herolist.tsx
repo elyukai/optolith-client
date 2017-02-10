@@ -71,7 +71,7 @@ export default class Herolist extends React.Component<undefined, State> {
 			if (typeof e.player === 'string') {
 				return { ...e, player: HerolistStore.getUser(e.player) };
 			}
-			return e as Hero & {player: undefined; };
+			return e as Hero & { player: undefined; };
 		}).map(hero => <HerolistItem key={hero.id} {...hero} />);
 
 		return (
@@ -87,7 +87,11 @@ export default class Herolist extends React.Component<undefined, State> {
 						<Dropdown
 							value={view}
 							onChange={this.changeView}
-							options={[['Alle Helden', 'all'], ['Eigene Helden', 'own'], ['Geteilte Helden', 'shared']]}
+							options={[
+								{ id: 'all', name: 'Alle Helden' },
+								{ id: 'own', name: 'Eigene Helden' },
+								{ id: 'shared', name: 'Geteilte Helden' }
+							]}
 							fullWidth
 							/>
 						<RadioButtonGroup
@@ -127,11 +131,6 @@ export default class Herolist extends React.Component<undefined, State> {
 							{list}
 						</ul>
 					</Scroll>
-					<Aside>
-						<div>
-							Cillum id culpa do ex aute velit mollit velit deserunt. Laborum exercitation nulla ullamco qui dolore nulla irure Lorem est est. Velit ad duis amet incididunt ipsum. Id ea aliquip ex ullamco et proident commodo ipsum culpa. Reprehenderit nostrud eiusmod magna ullamco magna eiusmod. Deserunt pariatur elit elit ea ad reprehenderit culpa commodo laborum velit. Aute non eiusmod adipisicing eu et minim aliqua veniam proident nulla.
-						</div>
-					</Aside>
 				</div>
 			</section>
 		);

@@ -72,8 +72,8 @@ export default class Dropdown extends React.Component<Props, State> {
 
 		const style = this.state.isOpen ? (this.props.options.length < 6 ? this.props.options.length * 33 + 1 : 166) : 0;
 
-		const current = this.props.options.filter(e => e.id === this.props.value).reduce((a, b) => a = b);
-		const valueText = !current ? (this.props.hint ? this.props.hint : '') : current.name;
+		const current = this.props.options.filter(e => e.id === this.props.value).reduce((a, b) => a = b, undefined);
+		const valueText = !current ? this.props.hint ? this.props.hint : '' : current.name;
 
 		const downElement = (
 			<div style={{ height: style }} className="down">
