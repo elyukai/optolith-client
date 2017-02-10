@@ -1,38 +1,27 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
 
 interface Props {
 	active: boolean;
+	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
-	onClick: (event: React.MouseEvent<any>) => void;
+	onClick: () => void;
 	value?: string | number;
 }
 
-export default class Activate extends Component<Props, any> {
+export default (props: Props) => {
+	const { active, disabled, children, onClick, value, ...other } = props;
+	let { className } = props;
 
-	static propTypes = {
-		active: PropTypes.bool.isRequired,
-		className: PropTypes.string,
-		disabled: PropTypes.bool,
-		onClick: PropTypes.func.isRequired,
-		value: PropTypes.any
-	};
-	
-	render() {
+	className = classNames(className, {
+		'active': active,
+		'disabled': disabled
+	});
 
-		let { active, className, disabled, children, onClick, value, ...other } = this.props;
-
-		className = classNames(className, {
-			'active': active,
-			'disabled': disabled
-		});
-
-		return (
-			<div {...other} className={className} onClick={disabled ? undefined : onClick.bind(null, value)}>
-				{children}
-			</div>
-		);
-	}
+	return (
+		<div {...other} className={className} onClick={disabled ? undefined : onClick.bind(null, value)}>
+			{children}
+		</div>
+	);
 }

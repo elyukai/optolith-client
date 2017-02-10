@@ -1,39 +1,28 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Avatar from './Avatar';
 import classNames from 'classnames';
 
 interface Props {
 	className?: string;
+	children?: React.ReactNode;
 	img?: boolean;
 	onClick?: (e: React.MouseEvent<any>) => void;
 	src: string;
 }
 
-export default class AvatarWrapper extends Component<Props, any> {
+export default (props: Props) => {
+	const { children, img, onClick, src } = props;
+	let { className } = props;
 
-	static propTypes = {
-		className: PropTypes.any,
-		img: PropTypes.bool,
-		onClick: PropTypes.func,
-		src: PropTypes.string
-	};
+	className = classNames(className, {
+		'avatar-wrapper': true,
+		'no-avatar': !src
+	});
 
-	render() {
-
-		const { children, className, img, onClick, src } = this.props;
-
-		const allClassNames = classNames({
-			'avatar-wrapper': true,
-			'no-avatar': !src,
-			[className]: className
-		});
-
-		return (
-			<div className={allClassNames} onClick={onClick}>
-				{children}
-				<Avatar img={img} src={src} hasWrapper />
-			</div>
-		);
-	}
-}
+	return (
+		<div className={className} onClick={onClick}>
+			{children}
+			<Avatar img={img} src={src} hasWrapper />
+		</div>
+	);
+};

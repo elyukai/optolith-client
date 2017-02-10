@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 interface Props {
 	autoWidth?: boolean;
+	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
 	flat?: boolean;
@@ -13,25 +14,24 @@ interface Props {
 	[id: string]: any;
 }
 
-export default class Button extends React.Component<Props, undefined> {
-	render() {
-		const { autoWidth, className, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = this.props;
+export default (props: Props) => {
+	const { autoWidth, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = props;
+	let { className } = props;
 
-		const allClassNames = classNames(className, {
-			'btn': true,
-			'btn-round': round,
-			'btn-text': !round,
-			'btn-primary': primary,
-			'btn-flat': flat,
-			'autoWidth': autoWidth,
-			'fullWidth': fullWidth,
-			'disabled': disabled
-		});
+	className = classNames(className, {
+		'btn': true,
+		'btn-round': round,
+		'btn-text': !round,
+		'btn-primary': primary,
+		'btn-flat': flat,
+		'autoWidth': autoWidth,
+		'fullWidth': fullWidth,
+		'disabled': disabled
+	});
 
-		return (
-			<div {...other} className={allClassNames} onClick={disabled ? undefined : onClick}>
-				{children}
-			</div>
-		);
-	}
-}
+	return (
+		<div {...other} className={className} onClick={disabled ? undefined : onClick}>
+			{children}
+		</div>
+	);
+};

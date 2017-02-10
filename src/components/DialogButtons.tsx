@@ -4,12 +4,12 @@ import BorderButton from './BorderButton';
 
 interface Button {
 	label: string;
-	onClick?: (event: React.MouseEvent<any>) => void;
+	onClick?: () => void;
 }
 
 interface Props {
 	list: Button[];
-	onClickDefault?: (event: React.MouseEvent<any>) => void;
+	onClickDefault?: () => void;
 }
 
 export default class DialogButtons extends Component<Props, any> {

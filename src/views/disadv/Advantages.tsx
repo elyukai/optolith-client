@@ -73,8 +73,8 @@ export default class Advantages extends React.Component<undefined, State> {
 			race.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
 			culture.typicalAdvantages.forEach(e => { rating[e] = TYP; });
 			culture.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
-			profession.typAdv.forEach(e => { rating[e] = TYP; });
-			profession.untypAdv.forEach(e => { rating[e] = UNTYP; });
+			profession.typicalAdvantages.forEach(e => { rating[e] = TYP; });
+			profession.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
 			race.importantAdvantages.forEach(e => { rating[e[0]] = IMP; });
 		}
 

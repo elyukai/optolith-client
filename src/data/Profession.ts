@@ -4,7 +4,7 @@ import { fixIDs } from '../utils/DataUtils';
 import * as Categories from '../constants/Categories';
 import Core from './CoreGenderExtended';
 
-export default class Profession extends Core implements Profession {
+export default class Profession extends Core implements ProfessionInstance {
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
 	readonly dependencies: (string | number | boolean)[][];
@@ -26,8 +26,8 @@ export default class Profession extends Core implements Profession {
 		super(other);
 		this.subname = subname;
 		this.ap = ap;
-		this.dependencies = pre_req;
-		this.requires = req;
+		this.requires = pre_req;
+		this.dependencies = req;
 		this.selections = sel.map(e => {
 			if (e[0] === 'ct') {
 				e[3] = e[3].split(',').map(e => `CT_${e}`);

@@ -5,34 +5,24 @@ import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
 
 interface Props {
-	buttons?: any[];
+	buttons?: { label: string; onClick?: () => void; }[];
 	className?: string;
 	id?: string;
 	node?: HTMLDivElement;
 	title?: string;
 }
 
-export default class Dialog extends Component<Props, any> {
+export default class Dialog extends Component<Props, undefined> {
+	close = () => close(this.props.node as HTMLDivElement);
 
-	static propTypes = {
-		buttons: PropTypes.array,
-		className: PropTypes.any,
-		id: PropTypes.string,
-		node: PropTypes.any,
-		title: PropTypes.any
-	};
-
-	close = () => close(this.props.node);
-
-	clickButton = (func) => {
+	clickButton = (func: () => void) => {
 		if (func) {
 			func();
 		}
-		close(this.props.node);
+		close(this.props.node as HTMLDivElement);
 	}
 
 	render() {
-
 		const { buttons = [], title, ...other } = this.props;
 
 		other.className = classNames('modal modal-backdrop', other.className);

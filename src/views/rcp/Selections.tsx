@@ -125,7 +125,7 @@ export default class Selections extends Component<Props, State> {
 		const professionSel = new Map();
 
 		if (ProfessionStore.getCurrentId() !== 'P_0') {
-			currentProfession.sel.forEach(e => {
+			currentProfession.selections.forEach(e => {
 				let [ id, ...other ] = e;
 				professionSel.set(id, other);
 			});

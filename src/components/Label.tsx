@@ -5,19 +5,11 @@ import classNames from 'classnames';
 interface Props {
 	className?: string;
 	disabled?: boolean;
-	text: string;
+	text?: string;
 }
 
-export default class Label extends Component<Props, any> {
-
-	static propTypes = {
-		className: PropTypes.string,
-		disabled: PropTypes.bool,
-		text: PropTypes.string
-	};
-
+export default class Label extends Component<Props, undefined> {
 	render() {
-
 		const { className, disabled, text, ...other } = this.props;
 
 		return text ? (

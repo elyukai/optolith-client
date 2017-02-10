@@ -5,10 +5,10 @@ import { get, getPrimaryAttr, getAllByCategoryGroup } from '../stores/ListStore'
 
 export const fn = (req: 'RCP' | [string, string | number | boolean, string | number | boolean | undefined], id?: string) => {
 	if (req === 'RCP') {
-		let currentRace = RaceStore.getCurrent() || {};
-		let currentCulture = CultureStore.getCurrent() || {};
-		let currentProfession = ProfessionStore.getCurrent() || {};
-		let array = [];
+		const currentRace = RaceStore.getCurrent() || {};
+		const currentCulture = CultureStore.getCurrent() || {};
+		const currentProfession = ProfessionStore.getCurrent() || {};
+		const array = [];
 
 		if (currentRace.hasOwnProperty('imp_adv')) {
 			array.push(...currentRace.importantAdvantages.map(e => e[0] as string));
@@ -24,10 +24,10 @@ export const fn = (req: 'RCP' | [string, string | number | boolean, string | num
 		}
 
 		if (currentCulture.hasOwnProperty('typ_adv')) {
-			array.push(...currentCulture.typ_adv);
+			array.push(...currentCulture.typicalAdvantages);
 		}
 		if (currentCulture.hasOwnProperty('typ_dadv')) {
-			array.push(...currentCulture.typ_dadv);
+			array.push(...currentCulture.typicalDisadvantages);
 		}
 
 		if (currentProfession.hasOwnProperty('typ_adv')) {
@@ -61,7 +61,7 @@ export const fn = (req: 'RCP' | [string, string | number | boolean, string | num
 			return true;
 		} else if (typeof req[2] !== 'number' && req[2].match('GR')) {
 			let gr = parseInt(req[2].split('_')[2]);
-			var arr = getAllByCategoryGroup('talents', gr).map(e => e.id);
+			var arr = getAllByCategoryGroup('TALENTS', gr).map(e => e.id);
 			for (let n = 0; n < obj.active.length; n++) {
 				if (arr.indexOf(obj.active[n]) > -1) return false;
 			}
@@ -75,6 +75,8 @@ export const fn = (req: 'RCP' | [string, string | number | boolean, string | num
 			}
 		}
 	}
+	console.error('Ability validation error');
+	return false;
 };
 
 export default (reqs: Array<[string, string | number | boolean, string | number | boolean | undefined]>, id?: string): boolean => reqs.every(req => fn(req, id));

@@ -77,40 +77,22 @@ export default ({ attributes, adv, cultures, disadv, talents, combattech, profes
 	iterate(specialabilities, SpecialAbility);
 
 	for (const id in _list) {
-		const { category, sel } = _list[id];
+		const { category, sel } = _list[id] as { category: Category; sel: (string | { id: string | number; name: string; cost?: number; })[] };
 		if ([Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(category)) {
 			_list[id].sel = (() => {
 				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
-					return getAllByCategory(...sel.map(e => e[0]))
+					return getAllByCategory(...(sel as { id: string | number; name: Category; cost?: number; }[]).map(e => e.name))
 					.filter(({ category: cg, gr }) => !((cg === Categories.SPELLS && gr === 5) || (cg === Categories.LITURGIES && gr === 3)))
 					.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
-					.map(e => [ e.name, e.id ]);
+					.map(({ id, name, skt }) => ({ id, name, cost: skt }));
 				}
 
 				if (id === 'SA_72') {
-					return sel.map((e,i) => [ _list[e[0]].name, i + 1, e[1] ]);
+					return (sel as { id: number; name: string; cost: number; }[]).map((e,i) => ({ ...e, name: _list[e.name].name }));
 				}
 
 				if (id === 'SA_10') {
-					return getAllByCategory(Categories.TALENTS)
-					.map(({ id, name, ic, spec, spec_input }) => {
-						spec = spec === null ? [] : spec.map((n, i) => [n, i + 1]);
-						return [ name, id, ic, spec, spec_input ];
-					});
-				}
-
-				const isAdv = ['ADV_28', 'ADV_29', 'ADV_32'].includes(id);
-				const isSA = !['SA_3', 'SA_28', 'SA_30'].includes(id) && category === Categories.SPECIAL_ABILITIES;
-				const isDisadv = category === Categories.DISADVANTAGES;
-
-				if (isAdv || isSA || isDisadv) {
-					return sel.map((e, i) => {
-						const arr = [e[0], i + 1];
-						if (e[1] !== null) {
-							arr[2] = e[1];
-						}
-						return arr;
-					});
+					return getAllByCategory(Categories.TALENTS).map(({ id, name }) => ({ id, name }));
 				}
 
 				return sel;

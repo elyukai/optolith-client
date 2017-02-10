@@ -72,8 +72,8 @@ export default class Disadvantages extends React.Component<undefined, State> {
 		race.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
 		culture.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
 		culture.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		profession.typDadv.forEach(e => { rating[e] = TYP; });
-		profession.untypDadv.forEach(e => { rating[e] = UNTYP; });
+		profession.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+		profession.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
 		race.importantDisadvantages.forEach(e => { rating[e[0]] = IMP; });
 
 		return (

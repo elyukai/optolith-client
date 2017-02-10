@@ -5,7 +5,27 @@ import ProfileActions from '../../_actions/ProfileActions';
 import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
-export default class OverviewPersonalData extends Component {
+interface Props {
+	age: string;
+	characteristics: string;
+	culture: CultureInstance;
+	dateofbirth: string;
+	eyecolor: number;
+	eyecolorTags: string[];
+	family: string;
+	haircolor: number;
+	haircolorTags: string[];
+	otherinfo: string;
+	placeofbirth: string;
+	race: RaceInstance;
+	size: number | string;
+	socialstatus: number;
+	socialstatusTags: string[];
+	title: string;
+	weight: number | string;
+};
+
+export default class OverviewPersonalData extends Component<Props, undefined> {
 
 	static propTypes = {
 		age: PropTypes.string.isRequired,
@@ -55,9 +75,9 @@ export default class OverviewPersonalData extends Component {
 
 		const { age, characteristics, culture, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
 
-		const hairArr = race ? haircolorTags.map((e,i) => [ e, i + 1 ]).filter(e => race.haircolors.includes(e[1])) : [];
-		const eyesArr = race ? eyecolorTags.map((e,i) => [ e, i + 1 ]).filter(e => race.eyecolors.includes(e[1])) : [];
-		const socialArr = culture ? socialstatusTags.map((e,i) => [ e, i + 1 ]).filter(e => culture.social.includes(e[1])) : [];
+		const hairArr = race ? haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)) : [];
+		const eyesArr = race ? eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id)) : [];
+		const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
 
 		return (
 			<div className="personal-data">

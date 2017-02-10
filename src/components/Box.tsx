@@ -1,27 +1,20 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
 
 interface Props {
+	children?: React.ReactNode;
 	className?: string;
 }
 
-export default class Box extends Component<Props, any> {
+export default (props: Props) => {
+	const { children, ...other } = props;
+	let { className } = props;
 
-	static propTypes = {
-		className: PropTypes.string
-	};
+	className = classNames( 'box', className );
 
-	render() {
-
-		let { children, className, ...other } = this.props;
-
-		className = classNames( 'box', className );
-
-		return (
-			<div {...other} className={className}>
-				{children}
-			</div>
-		);
-	}
-}
+	return (
+		<div {...other} className={className}>
+			{children}
+		</div>
+	);
+};

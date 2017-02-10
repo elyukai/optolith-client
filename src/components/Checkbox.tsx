@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Activate from './Activate';
 import classNames from 'classnames';
@@ -7,35 +6,25 @@ import Text from './Text';
 
 interface Props {
 	checked: boolean;
+	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
 	label?: string;
-	onClick: (event: React.MouseEvent<any>) => void;
+	onClick: () => void;
 }
 
-export default class Checkbox extends Component<Props, any> {
+export default (props: Props) => {
+	const { checked, children, className, label, onClick, ...other } = props;
 
-	static propTypes = {
-		checked: PropTypes.bool.isRequired,
-		className: PropTypes.string,
-		label: PropTypes.string,
-		onClick: PropTypes.func.isRequired
-	};
-
-	render() {
-
-		const { checked, children, className, label, onClick, ...other } = this.props;
-
-		return (
-			<Activate {...other} active={checked} className={classNames('checkbox', className)} onClick={onClick}>
-				<Icon>
-					<div className="border"></div>
-					<div className="hook"></div>
-				</Icon>
-				<Text>
-					{label || children}
-				</Text>
-			</Activate>
-		);
-	}
-}
+	return (
+		<Activate {...other} active={checked} className={classNames('checkbox', className)} onClick={onClick}>
+			<Icon>
+				<div className="border"></div>
+				<div className="hook"></div>
+			</Icon>
+			<Text>
+				{label || children}
+			</Text>
+		</Activate>
+	);
+};

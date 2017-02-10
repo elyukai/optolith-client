@@ -164,10 +164,10 @@ function _assignRCP(selections: Selections) {
 		disadvs.add(id);
 	});
 	addSRList.push(...profession.talents);
-	addSRList.push(...profession.combattechniques);
+	addSRList.push(...profession.combatTechniques);
 	addSRActivateList.push(...profession.spells);
 	addSRActivateList.push(...profession.liturgies);
-	profession.specialabilities.forEach(addSA);
+	profession.specialAbilities.forEach(addSA);
 	if (professionVariant) {
 		addSRList.push(...professionVariant.talents);
 		addSRList.push(...professionVariant.combatTechniques);

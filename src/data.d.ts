@@ -134,18 +134,18 @@ interface ProfessionInstance {
 	readonly name: string | { m: string, f: string };
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
-	readonly reqsPre: (string | number | boolean)[][];
-	readonly reqs: (string | number | boolean)[][];
-	readonly sel: (string | string[] | number[])[][];
-	readonly specialabilities: (string | number | boolean)[][];
-	readonly combattechniques: (string | number)[][];
+	readonly dependencies: (string | number | boolean)[][];
+	readonly requires: (string | number | boolean)[][];
+	readonly selections: (string | string[] | number[])[][];
+	readonly specialAbilities: (string | number | boolean)[][];
+	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
 	readonly spells: (string | number)[][];
 	readonly liturgies: (string | number)[][];
-	readonly typAdv: string[];
-	readonly typDadv: string[];
-	readonly untypAdv: string[];
-	readonly untypDadv: string[];
+	readonly typicalAdvantages: string[];
+	readonly typicalDisadvantages: string[];
+	readonly untypicalAdvantages: string[];
+	readonly untypicalDisadvantages: string[];
 	readonly variants: string[];
 	readonly category: PROFESSIONS;
 }
