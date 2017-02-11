@@ -47,6 +47,15 @@ export default class Activatable extends Dependent {
 		return this.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
 	}
 
+	getSelectionItem = (id: string | number) => {
+		for (const selectionItem of this.sel) {
+			if (selectionItem.id === id) {
+				return selectionItem;
+			}
+		}
+		return undefined;
+	}
+
 	activate({ sel, sel2, input, tier }: ActivateObject) {
 		const adds: RequirementObject[] = [];
 		let active: ActiveObject | undefined;

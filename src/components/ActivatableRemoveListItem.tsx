@@ -1,4 +1,4 @@
-import { get } from '../stores/ListStore';
+import { get, getAllByCategory } from '../stores/ListStore';
 import * as Categories from '../constants/Categories';
 import * as React from 'react';
 import Dropdown from './Dropdown';
@@ -37,9 +37,11 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		const { phase, item: { id, active: activeObject, index }} = this.props;
 		const { sid, sid2, tier } = activeObject;
 		const a = get(id) as AdvantageInstance | DisadvantageInstance;
-		const { tiers, cost, category, sel, dependencies, active, input } = a;
+		const { cost, category, sel, dependencies, active, input, getSelectionItem } = a;
+		let { tiers } = a;
 		let disabled = false;
 		let add = '';
+		let addSpecial = '';
 		let currentCost: number | undefined = undefined;
 		const args: RemoveObject = { id, index, cost: 0 };
 
@@ -69,8 +71,8 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			}
 			case 'ADV_28':
 			case 'ADV_29':
-				add = sel[sid as number - 1].name;
-				currentCost = sel[sid as number - 1].cost as number;
+				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
 				break;
 			case 'ADV_32':
 			case 'DISADV_1':
@@ -90,12 +92,12 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
 					currentCost = 0;
 				} else {
-					currentCost = sel[sid as number - 1].cost as number;
+					currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
 				}
 				if ([7,8].includes(sid as number)) {
-					add = `${sel[sid as number - 1].name}: ${sid2}`;
+					add = `${(getSelectionItem(sid as string | number) as SelectionObject).name}: ${sid2}`;
 				} else {
-					add = sel[sid as number - 1].name;
+					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
 				}
 				break;
 			}
@@ -105,12 +107,48 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				break;
 			case 'DISADV_37':
 			case 'DISADV_51':
-				add = sel[sid as number - 1].name;
-				currentCost = sel[sid as number - 1].cost as number;
+				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
 				break;
+			case 'SA_10': {
+				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
+				const skill = get(sid as string) as TalentInstance;
+				currentCost = (cost as number) * counter;
+				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
+				break;
+			}
+			case 'SA_30':
+				tiers = 3;
+				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				break;
+			case 'SA_86':
+				if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
+					disabled = true;
+				}
+				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				break;
+			case 'SA_102':
+				if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
+					disabled = true;
+				}
+				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				break;
+
 			default:
-				if (input) {
+				if (id === 'SA_92' && phase < 3 && typeof currentCost === 'number') {
+					currentCost = (currentCost as number) + 4;
+				}
+				else if (input) {
 					add = sid as string;
+				}
+				else if (sel.length > 0 && cost === 'sel') {
+					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				}
+				else if (sel.length > 0 && typeof cost === 'number') {
+					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
 				}
 				break;
 		}
@@ -119,14 +157,21 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 		if (tiers && !['DISADV_34','DISADV_50'].includes(id)) {
 			const array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
-			tierElement = (
-				<Dropdown
-					className="tiers"
-					value={tier as number}
-					onChange={this.handleSelectTier}
-					options={array} />
-			);
-			currentCost = (cost as number) * tier;
+			if (id === 'SA_30' && (tier === 4 || this.props.phase < 3)) {
+				array.push({ id: 4, name: 'MS' });
+			}
+			if (array.length > 1) {
+				tierElement = (
+					<Dropdown
+						className="tiers"
+						value={tier as number}
+						onChange={this.handleSelectTier}
+						options={array} />
+				);
+			} else {
+				addSpecial = ' ' + array[0].name;
+			}
+			currentCost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier;
 		}
 
 		let { name } = a;
@@ -142,6 +187,9 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		else if (add) {
 			name += ` (${add})`;
 		}
+		if (addSpecial) {
+			name += addSpecial;
+		}
 
 		if (!currentCost) {
 			currentCost = cost as number;
@@ -151,99 +199,9 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		}
 		args.cost = -currentCost;
 
-		if (dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(activeObject).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
+		if (dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
 			disabled = true;
 		}
-
-
-		/*
-		if (isActive === true) {
-			let disabled = dependencies.length > 0;
-			if (sel.length > 0 && cost === 'sel' && typeof sid === 'number') {
-				if (id === 'SA_86' && (getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
-					disabled = true;
-				}
-				if (id === 'SA_102' && (getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
-					disabled = true;
-				}
-				sas.push({ id, name, add: sel[sid - 1][0], cost: sel[sid - 1][2], gr, disabled });
-			} else {
-				let phase = PhaseStore.get();
-				if (id === 'SA_92' && phase < 3 && typeof cost === 'number') {
-					cost += 4;
-				}
-				sas.push({ id, name, cost, gr, disabled });
-			}
-		} else if (Array.isArray(active) && active.length > 0) {
-			let disabled = dependencies.length > 0;
-			let ap_default = cost;
-			if (id === 'SA_10') {
-				let counter = count(active as [string, number][], true);
-				(active as [string, number][]).forEach(n => {
-					let sid = n.join('&');
-					let tal = get(n[0]);
-					let cost = tal.ic * counter.get(n[0]);
-					let add = `${tal.name}: ${typeof n[1] === 'number' ? tal.spec[n[1] - 1] : n[1]}`;
-					sas.push({ id, name, sid, add, cost, gr, disabled });
-				});
-			} else for (let i = 0; i < active.length; i++) {
-				let sid;
-				let add;
-				let tier;
-				let tiers;
-				let cost;
-				if (id === 'SA_30') {
-					sid = sa.active[i][0];
-					cost = ap_default;
-					tier = sa.active[i][1];
-					tiers = 3;
-					add = sa.sel[sid - 1][0];
-				} else if (sel.length > 0 && ap_default === 'sel') {
-					sid = sa.active[i];
-					cost = sa.sel[sid - 1][2];
-					add = sa.sel[sid - 1][0];
-				} else if (sel.length > 0 && typeof ap_default === 'number') {
-					sid = sa.active[i];
-					cost = sa.cost;
-					add = sa.sel[sid - 1][0];
-				} else if (sa.input !== null) {
-					sid = sa.active[i];
-					add = sa.active[i];
-					cost = sa.cost;
-				}
-				if (dependencies.includes(sid)) disabled = true;
-				sas.push({ id, name, sid, add, cost, tier, tiers, gr, disabled });
-			}
-		}
-		if (item.tiers !== undefined && item.tiers !== null) {
-			var array = [];
-			if (item.id === 'SA_30' && (item.tier === 4 || this.props.phase < 3)) array.push(['MS', 4]);
-			for (let i = 0; i < item.tiers; i++ ) {
-				if (this.props.phase < 3 || i + 1 >= item.tier) {
-					array.push([roman[i], i + 1]);
-				}
-			}
-			if (array.length > 1) {
-				tierElement = (
-					<Dropdown
-						className="tiers"
-						value={item.tier}
-						onChange={this.handleSelectTier}
-						options={array} />
-				);
-			} else {
-				addSpecial = ' ' + array[0][0];
-			}
-			cost = item.tier === 4 && item.id === 'SA_30' ? 0 : item.cost * item.tier;
-		}
-
-		args.cost = cost;
-
-		if (item.hasOwnProperty('sid')) args.sid = item.sid;
-
-		if (item.hasOwnProperty('add')) name += ` (${item.add})`;
-		if (addSpecial) name += addSpecial;
-		*/
 
 		return (
 			<div className="list-item">

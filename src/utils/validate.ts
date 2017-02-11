@@ -1,7 +1,8 @@
+import * as Categories from '../constants/Categories';
 import CultureStore from '../stores/CultureStore';
 import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
-import { get, getPrimaryAttr, getAllByCategoryGroup } from '../stores/ListStore';
+import { get, getPrimaryAttrID, getAllByCategoryGroup } from '../stores/ListStore';
 
 export const fn = (req: 'RCP' | RequirementObject, id?: string) => {
 	if (req === 'RCP') {
@@ -20,44 +21,51 @@ export const fn = (req: 'RCP' | RequirementObject, id?: string) => {
 		array.push(...currentProfession.typicalDisadvantages);
 
 		return array.some(e => e === id);
-	} else if (req.length === 2) {
-		if (req[0] === 'r')
-			return req[1].map(e => `R_${e}`).indexOf(RaceStore.getCurrentID) > -1;
-		let obj = get(req[0]);
-		if (!obj.hasOwnProperty('active') && typeof req[1] === 'number') {
-			if (obj.hasOwnProperty('fw')) {
-				return obj.fw >= req[1];
-			} else if (obj.hasOwnProperty('value')) {
-				return obj.value >= req[1];
+	} else {
+		let id = req.id;
+		if (id === 'RACE') {
+			return (req.sid as number[]).map(e => `R_${e}`).includes(RaceStore.getCurrentID() as string);
+		}
+		else if (req.id === 'ATTR_PRIMARY') {
+			id = getPrimaryAttrID(req.type as 1 | 2);
+			if (id === 'ATTR_0') {
+				return true;
 			}
-		} else {
-			return (obj.max !== null && obj.active.length > 0 === req[1]) || obj.active === req[1];
 		}
-	} else if (req.length === 3) {
-		if (req[0] === 'ATTR_PRIMARY') {
-			let obj = getPrimaryAttr(req[2]);
-			return obj === undefined ? false : obj.value >= req[1];
-		}
-		let obj = get(req[0]);
-		if (req[2] === 'sel') {
+		else if (req.sid === 'sel') {
 			return true;
-		} else if (typeof req[2] !== 'number' && req[2].match('GR')) {
-			let gr = parseInt(req[2].split('_')[2]);
-			var arr = getAllByCategoryGroup('TALENTS', gr).map(e => e.id);
-			for (let n = 0; n < obj.active.length; n++) {
-				if (arr.indexOf(obj.active[n]) > -1) return false;
+		}
+		else if (req.sid === 'GR') {
+			const gr = req.sid2 as number;
+			const arr = getAllByCategoryGroup(Categories.TALENTS, gr).map(e => e.id);
+			for (const e of (get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).sid) {
+				if (arr.includes(e as string)) {
+					return false;
+				}
 			}
 			return true;
-		} else {
-			let req2 = Number.isNaN(parseInt(req[2])) ? req[2] : parseInt(req[2]);
-			if (obj.max === null) {
-				return (req2 === obj.sid) === req[1];
-			} else {
-				return !obj.active.every(e => Array.isArray(e) ? e[1] !== req2 : e !== req2) === req[1];
-			}
+		}
+		const a = get(id);
+		switch (a.category) {
+			case Categories.ATTRIBUTES:
+			case Categories.COMBAT_TECHNIQUES:
+			case Categories.LITURGIES:
+			case Categories.SPELLS:
+			case Categories.TALENTS:
+				if (typeof a.value === 'number') {
+					return a.value >= req.value;
+				}
+				break;
+
+			case Categories.ADVANTAGES:
+			case Categories.DISADVANTAGES:
+			case Categories.SPECIAL_ABILITIES:
+				if (req.sid) {
+					return req.active === a.sid.includes(req.sid as string | number);
+				}
+				return a.active.length > 0 === req.active;
 		}
 	}
-	console.error('Ability validation error');
 	return false;
 };
 

@@ -22,6 +22,7 @@ interface Props {
 
 interface State {
 	selected: string | number;
+	selected2: string | number;
 	selectedTier: number;
 	input: string;
 	input2: string;
@@ -30,12 +31,14 @@ interface State {
 export default class ActivatableAddListItem extends React.Component<Props, State> {
 	state: State = {
 		selected: '',
+		selected2: '',
 		selectedTier: 0,
 		input: '',
 		input2: ''
 	};
 
 	handleSelect = (selected: string | number) => this.setState({ selected } as State);
+	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
 	handleSelectTier = (selectedTier: number) => {
 		if (['DISADV_34','DISADV_50'].indexOf(this.props.item.id) > -1) {
 			this.setState({ selectedTier, selected: '' } as State);
@@ -50,16 +53,19 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		if (this.state.selected !== '' || this.state.selectedTier !== 0 || this.state.input !== '') {
 			this.setState({
 				selected: '',
+				selected2: '',
 				selectedTier: 0,
 				input: '',
 				input2: ''
-			});
+			} as State);
 		}
 	}
 
 	render() {
-		const { className, item: { id, name, cost, sel, input, tiers } } = this.props;
+		const { className, item: { id, name, cost, sel, tiers } } = this.props;
+		let { item: { input } } = this.props;
 		const { category } = get(id) as AdvantageInstance | DisadvantageInstance;
+		let sel2: SelectionObject[] | undefined;
 
 		const args: ActivateArgs = { id, cost: 0 };
 		let currentCost: number | string | undefined;
@@ -67,6 +73,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 
 		let tierElement;
 		let selectElement;
+		let selectElement2;
 		let selectElementDisabled = false;
 		if (['ADV_32','DISADV_1','DISADV_24','DISADV_34','DISADV_36','DISADV_45','DISADV_50'].includes(id) && this.state.input) {
 			selectElementDisabled = true;
@@ -164,8 +171,36 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				args.sel = this.state.selected;
 				args.input = this.state.input;
 				break;
+			case 'SA_10':
+				type Sel = (SelectionObject & { specialisation: string[] | null; specialisationInput: string | null })[];
+				if (this.state.selected !== '') {
+					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).filter(e => e.id === this.state.selected)[0];
+					currentCost = o.cost;
+					sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id, name: e })) : undefined;
+					input = o.specialisationInput;
+				}
+				args.sel = this.state.selected;
+				args.sel2 = this.state.selected2;
+				args.input = this.state.input;
+				break;
+			case 'SA_30':
+				args.sel = this.state.selected;
+				args.tier = this.state.selectedTier;
+				if (this.state.selected !== '' && this.state.selectedTier !== 0) {
+					currentCost = this.state.selectedTier === 4 ? 0 : (cost as number) * this.state.selectedTier;
+				}
+				break;
 			default:
-				if (tiers !== undefined && tiers !== null) {
+				if (cost === 'sel') {
+					if (this.state.selected !== '') {
+						const selected = typeof this.state.selected === 'string' ? Number.parseInt(this.state.selected) : this.state.selected;
+						currentCost = (get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).sel[selected - 1].cost;
+					}
+					args.sel = this.state.selected;
+				} else if (sel !== undefined && sel.length > 0) {
+					args.sel = this.state.selected;
+					currentCost = cost as number;
+				} else if (tiers !== undefined && tiers !== null) {
 					if (this.state.selectedTier > 0) {
 						currentCost = (cost as number) * this.state.selectedTier;
 					}
@@ -216,7 +251,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			disabled = true;
 		}
 
-		if (input !== undefined && input !== null && !['ADV_28','ADV_29'].includes(id)) {
+		if (input && !['ADV_28','ADV_29'].includes(id)) {
 			inputElement = (
 				<TextField
 					hint={input}
@@ -224,6 +259,26 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 					onChange={this.handleInput} />
 			);
 			if (!this.state.input && !['ADV_32','DISADV_1','DISADV_24','DISADV_34','DISADV_36','DISADV_45','DISADV_50'].includes(id)) {
+				disabled = true;
+			}
+		}
+
+		if (id === 'SA_10' && sel2) {
+			inputElement = (
+				<TextField
+					hint={input === null ? '' : input}
+					value={this.state.input}
+					onChange={this.handleInput}
+					disabled={input === null} />
+			);
+			selectElement2 = (
+				<Dropdown
+					value={this.state.selected2}
+					onChange={this.handleSelect2}
+					options={sel2}
+					disabled={sel2.length === 0 || this.state.input !== '' || this.state.selected === ''} />
+			);
+			if (this.state.selected2 === '' && this.state.input === '') {
 				disabled = true;
 			}
 		}
@@ -237,109 +292,6 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			tierElement2 = tierElement;
 		}
 
-
-		/*
-		if (item.id === 'SA_10') {
-			if (this.state.selected !== '') {
-				let option = get(item.id).sel.filter(e => e[1] === this.state.selected)[0];
-				cost = option[2];
-				_sel2 = option[3];
-				_input = option[4];
-			}
-			args.sel = this.state.selected;
-			args.sel2 = this.state.selected2;
-			args.input = this.state.input;
-		} else if (item.id === 'SA_30') {
-			args.sel = this.state.selected;
-			args.tier = this.state.selectedTier;
-			if (this.state.selected !== '' && this.state.selectedTier !== 0) {
-				cost = this.state.selectedTier === 4 ? 0 : item.cost * this.state.selectedTier;
-			}
-		} else if (typeof item.cost === 'string' && item.cost === 'sel') {
-			if (this.state.selected !== '') {
-				cost = get(item.id).sel[parseInt(this.state.selected) - 1][2];
-			}
-			args.sel = this.state.selected;
-		} else if (item.input !== undefined && item.input !== null) {
-			args.input = this.state.input;
-			cost = item.cost;
-		} else if (item.sel !== undefined && item.sel.length > 0) {
-			args.sel = this.state.selected;
-			cost = item.cost;
-		} else {
-			cost = item.cost;
-		}
-
-		args.cost = cost;
-
-		let roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
-		if (item.tiers !== undefined && item.tiers !== null) {
-			let array = [];
-			if (item.id === 'SA_30') {
-				array.push(['MS', 4]);
-			}
-			for (let i = 0; i < item.tiers; i++ ) {
-				array.push([roman[i], i + 1]);
-			}
-			tierElement = (
-				<Dropdown
-					className="tiers"
-					value={this.state.selectedTier}
-					onChange={this.handleSelectTier}
-					options={array} />
-			);
-			if (this.state.selectedTier === 0) {
-				disabled = true;
-			}
-		}
-
-		if (item.sel !== undefined && item.sel.length > 0) {
-			selectElement = (
-				<Dropdown
-					value={this.state.selected}
-					onChange={this.handleSelect}
-					options={item.sel}
-					disabled={selectElement_disabled} />
-			);
-			if (this.state.selected === '') {
-				disabled = true;
-			}
-		}
-
-		if (item.input !== undefined && item.input !== null) {
-			inputElement = (
-				<TextField
-					hint={item.input}
-					value={this.state.input}
-					onChange={this.handleInput} />
-			);
-			if (this.state.input === '') {
-				disabled = true;
-			}
-		}
-
-		if (item.id === 'SA_10') {
-			inputElement = (
-				<TextField
-					hint={_input === null ? '' : _input}
-					value={this.state.input}
-					onChange={this.handleInput}
-					disabled={_input === null} />
-			);
-			selectElement2 = (
-				<Dropdown
-					value={this.state.selected2}
-					onChange={this.handleSelect2}
-					options={_sel2}
-					disabled={_sel2.length === 0 || this.state.input !== '' || this.state.selected === ''} />
-			);
-			if (this.state.selected2 === '' && this.state.input === '') {
-				disabled = true;
-			}
-		}
-		*/
-
 		return (
 			<div className={className ? 'list-item ' + className : 'list-item'}>
 				<div className="name">
@@ -348,6 +300,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				<div className="selections">
 					{tierElement1}
 					{selectElement}
+					{selectElement2}
 					{inputElement}
 					{tierElement2}
 				</div>

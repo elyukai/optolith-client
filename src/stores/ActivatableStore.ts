@@ -17,8 +17,8 @@ export const getForSave = (): { [id: string]: ActiveObject[] } => {
 export const getActiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES) => {
 	const allEntries = getAllByCategory(category) as (AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance)[];
 	const filteredEntries = allEntries.filter(e => e.isActive);
-	const convert = (id: string, active: ActiveObject[]) => active.map((active, index) => ({ id, active, index }));
-	return filteredEntries.reduce((a, { id, active }) => a.concat(convert(id, active)), [] as ActiveViewObject[]);
+	const convert = (id: string, active: ActiveObject[], gr: number) => active.map((active, index) => ({ id, active, index, gr }));
+	return filteredEntries.reduce((a, { id, active, gr }) => a.concat(convert(id, active, gr)), [] as ActiveViewObject[]);
 };
 
 export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES) => {
@@ -242,7 +242,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 					if (id === 'SA_92' && phase < 3) {
 						cost = (cost as number) + 4;
 					}
-					finalEntries.push({ id, name, cost, tiers, input, sel });
+					finalEntries.push({ id, name, cost, tiers, input, sel, gr });
 					break;
 				}
 			}

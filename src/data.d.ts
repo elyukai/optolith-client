@@ -206,7 +206,7 @@ interface IncreasableRequirementObject {
 interface RequirementObject {
 	id: string;
 	active?: boolean;
-	sid?: string | number;
+	sid?: string | number | number[];
 	sid2?: string | number;
 	value?: number;
 	type?: 1 | 2;
@@ -237,6 +237,7 @@ interface AdvantageInstance {
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
+	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -264,6 +265,7 @@ interface DisadvantageInstance {
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
+	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -291,6 +293,7 @@ interface SpecialAbilityInstance {
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
+	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
