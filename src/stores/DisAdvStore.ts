@@ -20,7 +20,6 @@ function _updateAll(disadv: { showRating: boolean; }) {
 }
 
 class DisAdvStoreStatic extends Store {
-
 	getForSave() {
 		const result = new Map();
 		[ ...getAllByCategory(CATEGORY_1) as AdvantageInstance[], ...getAllByCategory(CATEGORY_2) as DisadvantageInstance[] ].forEach(e => {
@@ -54,9 +53,9 @@ class DisAdvStoreStatic extends Store {
 		for (const id in advsObj) {
 			const adv = advsObj[id];
 			const { max, active, name, sel, input, tiers, cost, dependencies, reqs } = adv;
-			// if (!validate(reqs, id) || dependencies.includes(false)) {
-			// 	continue;
-			// }
+			if (!validate(reqs, id) || dependencies.includes(false)) {
+				continue;
+			}
 			if (max === null || active.length < max) {
 				switch (id) {
 					case 'ADV_4':

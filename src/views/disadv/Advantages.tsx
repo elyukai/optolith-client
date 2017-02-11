@@ -1,3 +1,4 @@
+import * as ActivatableStore from '../../stores/ActivatableStore';
 import * as Categories from '../../constants/Categories';
 import * as DisAdvActions from '../../actions/DisAdvActions';
 import * as React from 'react';
@@ -14,11 +15,7 @@ import TextField from '../../components/TextField';
 interface State {
 	filterText: string;
 	showRating: boolean;
-	advActive: {
-		id: string;
-		active: ActiveObject;
-		index: number;
-	}[];
+	advActive: ActiveViewObject[];
 	advDeactive: AdvantageInstance[];
 	showAddSlidein: boolean;
 	race: RaceInstance;
@@ -30,8 +27,8 @@ export default class Advantages extends React.Component<undefined, State> {
 	state = {
 		filterText: '',
 		showRating: DisAdvStore.getRating(),
-		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
-		advDeactive: DisAdvStore.getDeactiveForView(Categories.ADVANTAGES),
+		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
+		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
 		showAddSlidein: false,
 		race: RaceStore.getCurrent(),
 		culture: CultureStore.getCurrent(),
@@ -40,8 +37,8 @@ export default class Advantages extends React.Component<undefined, State> {
 
 	_updateDisAdvStore = () => this.setState({
 		showRating: DisAdvStore.getRating(),
-		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
-		advDeactive: DisAdvStore.getDeactiveForView(Categories.ADVANTAGES)
+		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
+		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES)
 	} as State);
 
 	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
@@ -60,9 +57,7 @@ export default class Advantages extends React.Component<undefined, State> {
 	render() {
 
 		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP'} = {};
-		let { culture, profession, race, showRating } = this.state;
-
-		profession = profession || {};
+		const { culture, profession, race, showRating } = this.state;
 
 		const IMP = 'IMP';
 		const TYP = 'TYP';

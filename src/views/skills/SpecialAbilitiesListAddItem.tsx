@@ -1,20 +1,20 @@
-import BorderButton from '../../components/BorderButton';
-import SpecialAbilitiesActions from '../../_actions/SpecialAbilitiesActions';
 import { get } from '../../stores/ListStore';
+import * as React from 'react';
+import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
+import BorderButton from '../../components/BorderButton';
 import Dropdown from '../../components/Dropdown';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 export interface Deactive {
-    id: string;
-    name: string;
-    sel?: any;
-    sid?: any;
-    input?: string;
-    cost: number;
-    tier?: number;
-    tiers?: number;
-    gr: number;
+	id: string;
+	name: string;
+	sel?: any;
+	sid?: any;
+	input?: string;
+	cost: number;
+	tier?: number;
+	tiers?: number;
+	gr: number;
 }
 
 interface AddObject {
@@ -33,59 +33,55 @@ interface Props {
 interface State {
 	selected: string;
 	selected2: string;
-	selected_tier: number;
+	selectedTier: number;
 	input: string;
 }
 
-export default class SpecialAbilitiesListAddItem extends Component<Props, State> {
-
-	static propTypes = {
-		item: PropTypes.object
-	};
-
+export default class SpecialAbilitiesListAddItem extends React.Component<Props, State> {
 	state = {
 		selected: '',
 		selected2: '',
-		selected_tier: 0,
+		selectedTier: 0,
 		input: ''
 	};
 
-	handleSelect = selected => {
-		if (this.props.item.id === 'SA_10')
+	handleSelect = (selected: string | number) => {
+		if (this.props.item.id === 'SA_10') {
 			this.setState({ selected, selected2: '', input: '' } as State);
-		else
+		}
+		else {
 			this.setState({ selected } as State);
-	};
-	handleSelect2 = selected2 => this.setState({ selected2 } as State);
-	handleSelectTier = selected_tier => this.setState({ selected_tier } as State);
-	handleInput = event => this.setState({ input: event.target.value } as State);
-	addToList = args => {
+		}
+	}
+	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
+	handleSelectTier = (selectedTier: number) => this.setState({ selectedTier } as State);
+	handleInput = (event: Event) => this.setState({ input: event.target.value } as State);
+	addToList = (args: ActivateArgs) => {
 		SpecialAbilitiesActions.addToList(args);
-		if (this.state.selected !== '' || this.state.selected_tier !== 0 || this.state.input !== '') {
+		if (this.state.selected !== '' || this.state.selectedTier !== 0 || this.state.input !== '') {
 			this.setState({
 				selected: '',
 				selected2: '',
-				selected_tier: 0,
+				selectedTier: 0,
 				input: ''
 			});
 		}
-	};
+	}
 
 	render() {
-
 		const item = this.props.item;
 
-		var cost;
-		var disabled = false;
-		var args: AddObject = { id: item.id };
+		let cost;
+		let disabled = false;
+		let args: AddObject = { id: item.id };
 
-		var tierElement;
-		var selectElement;
-		var selectElement2;
-		var _sel2 = [];
-		var selectElement_disabled = false;
-		var inputElement;
-		var _input = null;
+		let tierElement;
+		let selectElement;
+		let selectElement2;
+		let _sel2 = [];
+		let selectElement_disabled = false;
+		let inputElement;
+		let _input = null;
 
 		if (item.id === 'SA_10') {
 			if (this.state.selected !== '') {
@@ -99,9 +95,10 @@ export default class SpecialAbilitiesListAddItem extends Component<Props, State>
 			args.input = this.state.input;
 		} else if (item.id === 'SA_30') {
 			args.sel = this.state.selected;
-			args.tier = this.state.selected_tier;
-			if (this.state.selected !== '' && this.state.selected_tier !== 0)
-				cost = this.state.selected_tier === 4 ? 0 : item.cost * this.state.selected_tier;
+			args.tier = this.state.selectedTier;
+			if (this.state.selected !== '' && this.state.selectedTier !== 0) {
+				cost = this.state.selectedTier === 4 ? 0 : item.cost * this.state.selectedTier;
+			}
 		} else if (typeof item.cost === 'string' && item.cost === 'sel') {
 			if (this.state.selected !== '') {
 				cost = get(item.id).sel[parseInt(this.state.selected) - 1][2];
@@ -119,22 +116,26 @@ export default class SpecialAbilitiesListAddItem extends Component<Props, State>
 
 		args.cost = cost;
 
-		var roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+		let roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
 		if (item.tiers !== undefined && item.tiers !== null) {
-			var array = [];
-			if (item.id === 'SA_30') array.push(['MS', 4]);
+			let array = [];
+			if (item.id === 'SA_30') {
+				array.push(['MS', 4]);
+			}
 			for (let i = 0; i < item.tiers; i++ ) {
 				array.push([roman[i], i + 1]);
 			}
 			tierElement = (
 				<Dropdown
 					className="tiers"
-					value={this.state.selected_tier}
+					value={this.state.selectedTier}
 					onChange={this.handleSelectTier}
 					options={array} />
 			);
-			if (this.state.selected_tier === 0) disabled = true;
+			if (this.state.selectedTier === 0) {
+				disabled = true;
+			}
 		}
 
 		if (item.sel !== undefined && item.sel.length > 0) {
@@ -145,7 +146,9 @@ export default class SpecialAbilitiesListAddItem extends Component<Props, State>
 					options={item.sel}
 					disabled={selectElement_disabled} />
 			);
-			if (this.state.selected === '') disabled = true;
+			if (this.state.selected === '') {
+				disabled = true;
+			}
 		}
 
 		if (item.input !== undefined && item.input !== null) {
@@ -155,7 +158,9 @@ export default class SpecialAbilitiesListAddItem extends Component<Props, State>
 					value={this.state.input}
 					onChange={this.handleInput} />
 			);
-			if (this.state.input === '') disabled = true;
+			if (this.state.input === '') {
+				disabled = true;
+			}
 		}
 
 		if (item.id === 'SA_10') {
@@ -173,7 +178,9 @@ export default class SpecialAbilitiesListAddItem extends Component<Props, State>
 					options={_sel2}
 					disabled={_sel2.length === 0 || this.state.input !== '' || this.state.selected === ''} />
 			);
-			if (this.state.selected2 === '' && this.state.input === '') disabled = true;
+			if (this.state.selected2 === '' && this.state.input === '') {
+				disabled = true;
+			}
 		}
 
 		const GROUPS = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht'];

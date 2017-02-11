@@ -1,7 +1,7 @@
 import Core from './Core';
 
 export default class Dependent extends Core {
-	dependencies: (string | number | boolean)[] = [];
+	dependencies: (number | boolean | DependencyObject)[] = [];
 
 	constructor(args: { id: string; name: string; }) {
 		super(args);

@@ -1,3 +1,4 @@
+import * as ActivatableStore from '../../stores/ActivatableStore';
 import * as Categories from '../../constants/Categories';
 import * as DisAdvActions from '../../actions/DisAdvActions';
 import * as React from 'react';
@@ -14,11 +15,7 @@ import TextField from '../../components/TextField';
 interface State {
 	filterText: string;
 	showRating: boolean;
-	disadvActive: {
-		id: string;
-		active: ActiveObject;
-		index: number;
-	}[];
+	disadvActive: ActiveViewObject[];
 	disadvDeactive: DisadvantageInstance[];
 	showAddSlidein: boolean;
 	race: RaceInstance;
@@ -30,8 +27,8 @@ export default class Disadvantages extends React.Component<undefined, State> {
 	state = {
 		filterText: '',
 		showRating: DisAdvStore.getRating(),
-		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: DisAdvStore.getDeactiveForView(Categories.DISADVANTAGES),
+		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
+		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
 		showAddSlidein: false,
 		race: RaceStore.getCurrent(),
 		culture: CultureStore.getCurrent(),
@@ -40,8 +37,8 @@ export default class Disadvantages extends React.Component<undefined, State> {
 
 	_updateDisAdvStore = () => this.setState({
 		showRating: DisAdvStore.getRating(),
-		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: DisAdvStore.getDeactiveForView(Categories.DISADVANTAGES)
+		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
+		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES)
 	} as State);
 
 	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
@@ -60,9 +57,7 @@ export default class Disadvantages extends React.Component<undefined, State> {
 	render() {
 
 		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP' } = {};
-		let { race, culture, profession } = this.state;
-
-		profession = profession || {};
+		const { race, culture, profession } = this.state;
 
 		const IMP = 'IMP';
 		const TYP = 'TYP';

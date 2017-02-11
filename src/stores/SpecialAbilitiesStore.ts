@@ -24,32 +24,31 @@ class SpecialAbilitiesStoreStatic extends Store {
 	}
 
 	getForSave() {
-		const result = new Map<string, any>();
-		this.getAll().forEach(e => {
-			const { active, id, sid, tier } = e;
-			if (typeof active === 'boolean' && active) {
-				result.set(id, { sid, tier });
-			} else if (Array.isArray(active) && active.length > 0) {
-				result.set(id, active);
+		const active = this.getAll().map(e => {
+			const { active, id, isActive } = e;
+			return isActive ? [id, active] : [];
+		}).reduce((a, b) => {
+			const [ id, active ] = b as [undefined, undefined] | [string, ActiveObject[]];
+			if (id) {
+				return { ...a, [id]: active as ActiveObject[] };
 			}
-		});
-		return {
-			active: Array.from(result)
-		};
+			return a;
+		}, {} as { [id: string]: ActiveObject[]});
+		return { active };
 	}
 
 	getActiveForView(...cgr: number[]) {
 		let sasObj;
 		if (cgr.length > 0) {
-			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr) as SpecialAbilityInstance[];
+			sasObj = getObjByCategoryGroup(CATEGORY, ...cgr) as { [id: string]: SpecialAbilityInstance };
 		} else {
-			sasObj = this.getAll();
+			sasObj = getObjByCategory(CATEGORY) as { [id: string]: SpecialAbilityInstance };
 		}
 		let sas = [];
 		for (let id in sasObj) {
 			let sa = sasObj[id];
-			let { name, active, cost, sid, sel, gr, dependencies } = sa;
-			if (active === true) {
+			let { name, active, cost, sid, sel, gr, dependencies, isActive } = sa;
+			if (isActive === true) {
 				let disabled = dependencies.length > 0;
 				if (sel.length > 0 && cost === 'sel' && typeof sid === 'number') {
 					if (id === 'SA_86' && (getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
@@ -120,13 +119,13 @@ class SpecialAbilitiesStoreStatic extends Store {
 			if (active === false) {
 				switch (id) {
 					case 'SA_18': {
-						let sum = getAllByCategory('talents').filter(e => ['TAL_51','TAL_55'].includes(e.id)).reduce((a,b) => a.value + b.value, 0);
+						let sum = getAllByCategory(Categories.TALENTS).filter(e => ['TAL_51','TAL_55'].includes(e.id)).reduce((a,b) => a.value + b.value, 0);
 						if (sum >= 12)
 							sas.push({ id, name, cost, gr });
 						break;
 					}
 					case 'SA_19':
-						if (getAllByCategoryGroup('combattech', 2).filter(e => e.value >= 10).length > 0)
+						if (getAllByCategoryGroup(Categories.COMBAT_TECHNIQUES, 2).filter(e => e.value >= 10).length > 0)
 							sas.push({ id, name, cost, gr });
 						break;
 					default:

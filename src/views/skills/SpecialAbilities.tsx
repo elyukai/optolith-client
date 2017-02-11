@@ -1,49 +1,45 @@
-import { ActivatableInstance } from '../../utils/data/Activatable';
 import { filterAndSort } from '../../utils/ListUtils';
+import * as ActivatableStore from '../../stores/ActivatableStore';
+import * as Categories from '../../constants/Categories';
+import * as React from 'react';
+import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
+import ActivatableAddListItem from '../../components/ActivatableAddListItem';
+import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
 import BorderButton from '../../components/BorderButton';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
-import SpecialAbilitiesActions from '../../_actions/SpecialAbilitiesActions';
-import SpecialAbilitiesListAddItem, { Deactive } from './SpecialAbilitiesListAddItem';
-import SpecialAbilitiesListRemoveItem, { Active } from './SpecialAbilitiesListRemoveItem';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import TextField from '../../components/TextField';
 
 interface State {
-	saActive: Active[];
-	saDeactive: Deactive[];
+	saActive: ActiveViewObject[];
+	saDeactive: SpecialAbilityInstance[];
 	filterText: string;
 	sortOrder: string;
 	phase: number;
 	showAddSlidein: boolean;
 }
 
-export default class SpecialAbilities extends Component<any, State> {
-
+export default class SpecialAbilities extends React.Component<any, State> {
 	state = {
-		saActive: SpecialAbilitiesStore.getActiveForView(),
-		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
-		filterText: SpecialAbilitiesStore.getFilter(),
+		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
+		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
+		filterText: '',
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false
 	};
 
 	_updateSpecialAbilitiesStore = () => this.setState({
-		saActive: SpecialAbilitiesStore.getActiveForView(),
-		saDeactive: SpecialAbilitiesStore.getDeactiveForView(),
-		filterText: SpecialAbilitiesStore.getFilter(),
+		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
+		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
 		sortOrder: SpecialAbilitiesStore.getSortOrder()
 	} as State);
 
-	filter = event => SpecialAbilitiesActions.filter(event.target.value);
-	sort = option => SpecialAbilitiesActions.sort(option);
-	changeView = option => SpecialAbilitiesActions.changeView(option);
-	addToList = id => SpecialAbilitiesActions.addToList(id);
-	removeFromList = id => SpecialAbilitiesActions.removeFromList(id);
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => SpecialAbilitiesActions.setSortOrder(option);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -56,7 +52,6 @@ export default class SpecialAbilities extends Component<any, State> {
 	}
 
 	render() {
-
 		const { filterText, phase, saActive, saDeactive, showAddSlidein, sortOrder } = this.state;
 
 		const sortArray = [
@@ -79,21 +74,17 @@ export default class SpecialAbilities extends Component<any, State> {
 							/>
 					</div>
 					<Scroll className="list">
-						<table className="list large-list">
-							<thead>
-								<tr>
-									<td className="type">Gruppe</td>
-									<td className="name">Sonderfertigkeit</td>
-									<td className="ap">AP</td>
-									<td className="inc"></td>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									listDeactive.map((sa, index) => <SpecialAbilitiesListAddItem key={`SA_DEACTIVE_${index}`} item={sa} />)
-								}
-							</tbody>
-						</table>
+						<div className="list-wrapper">
+							{
+								listDeactive.map((sa, index) => (
+									<ActivatableAddListItem
+										key={`SA_DEACTIVE_${index}`}
+										item={sa}
+										addToList={SpecialAbilitiesActions.addToList}
+										/>
+								))
+							}
+						</div>
 					</Scroll>
 				</Slidein>
 				<div className="options">
@@ -106,23 +97,19 @@ export default class SpecialAbilities extends Component<any, State> {
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 				</div>
 				<Scroll className="list">
-					<table className="list large-list">
-						<thead>
-							<tr>
-								<td className="type">Gruppe</td>
-								<td className="name">Sonderfertigkeit</td>
-								<td className="ap">AP</td>
-								{ phase < 3 ? (
-									<td className="inc"></td>
-								) : null }
-							</tr>
-						</thead>
-						<tbody>
-							{
-								listActive.map((sa, index) => <SpecialAbilitiesListRemoveItem key={`SA_ACTIVE_${index}`} item={sa} phase={phase} />)
-							}
-						</tbody>
-					</table>
+					<div className="list-wrapper">
+						{
+							listActive.map((sa, index) => (
+								<ActivatableRemoveListItem
+									key={`SA_ACTIVE_${index}`}
+									item={sa}
+									phase={phase}
+									removeFromList={SpecialAbilitiesActions.removeFromList}
+									setTier={SpecialAbilitiesActions.setTier}
+									/>
+							))
+						}
+					</div>
 				</Scroll>
 			</div>
 		);

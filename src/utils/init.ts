@@ -92,7 +92,7 @@ export default ({ attributes, adv, cultures, disadv, talents, combattech, profes
 				}
 
 				if (id === 'SA_10') {
-					return getAllByCategory(Categories.TALENTS).map(({ id, name }) => ({ id, name }));
+					return (getAllByCategory(Categories.TALENTS) as TalentInstance[]).map(({ id, name, ic, specialisation, specialisationInput }) => ({ id, name, cost: ic, specialisation, specialisationInput }));
 				}
 
 				return sel;

@@ -1,49 +1,52 @@
-import DisAdvAddListItem, { Deactive } from './DisAdvAddListItem';
-import DisAdvRemoveListItem, { Active } from './DisAdvRemoveListItem';
-import React, { Component, PropTypes } from 'react';
+import * as DisAdvActions from '../../actions/DisAdvActions';
+import * as React from 'react';
+import ActivatableAddListItem from '../../components/ActivatableAddListItem';
+import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
 import Scroll from '../../components/Scroll';
 import classNames from 'classnames';
 
 interface Props {
 	active?: boolean;
-	list: Object[];
+	list: (AdvantageInstance | DisadvantageInstance | ActiveViewObject)[];
+	phase: number;
 	rating: { [id: string]: string };
 	showRating: boolean;
 	type: string;
 }
 
-export default class DisAdvList extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.bool,
-		list: PropTypes.array,
-		rating: PropTypes.object,
-		showRating: PropTypes.bool,
-		type: PropTypes.string
-	};
-
+export default class DisAdvList extends React.Component<Props, undefined> {
 	render() {
+		const { active, list: rawList, rating, showRating, type } = this.props;
 
-		const { active, list, rating, showRating, type } = this.props;
+		const list = active ? (
+			rawList.map((item, index) => (
+				<ActivatableRemoveListItem
+					key={`${type}_ACTIVE_${index}`}
+					item={item as ActiveViewObject}
+					phase={this.props.phase}
+					setTier={DisAdvActions.setTier}
+					removeFromList={DisAdvActions.removeFromList}
+					/>
+			))
+		) : (
+			rawList.map(item => {
+				const className = classNames(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
+
+				return (
+					<ActivatableAddListItem
+						key={item.id}
+						item={item as AdvantageInstance | DisadvantageInstance}
+						className={className}
+						addToList={DisAdvActions.addToList}
+						/>
+				);
+			})
+		);
 
 		return (
 			<Scroll className="list">
 				<div className="list-wrapper">
-					{
-						active ? (
-							list.map((item, index) => (
-								<DisAdvRemoveListItem key={`${type}_ACTIVE_${index}`} item={item} />
-							))
-						) : (
-							list.map(item => {
-								const className = classNames(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
-
-								return (
-									<DisAdvAddListItem key={item.id} item={item} className={className} />
-								);
-							})
-						)
-					}
+					{list}
 				</div>
 			</Scroll>
 		);

@@ -169,6 +169,12 @@ interface ActiveObject {
 	tier?: number;
 }
 
+interface ActiveViewObject {
+	id: string;
+	active: ActiveObject;
+	index: number;
+}
+
 type SetTierObject = ActiveObject;
 
 interface ActivateObject {
@@ -206,6 +212,11 @@ interface RequirementObject {
 	type?: 1 | 2;
 }
 
+interface DependencyObject {
+	sid?: string | number;
+	sid2?: string | number;
+}
+
 interface ValidationObject extends ActiveObject {
 	id: string;
 	active: boolean | number;
@@ -225,6 +236,7 @@ interface AdvantageInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
+	readonly dsid: (string | number | undefined)[];
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -251,6 +263,7 @@ interface DisadvantageInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
+	readonly dsid: (string | number | undefined)[];
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -277,6 +290,7 @@ interface SpecialAbilityInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
+	readonly dsid: (string | number | undefined)[];
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;

@@ -43,6 +43,10 @@ export default class Activatable extends Dependent {
 		return this.active.map(e => e.sid);
 	}
 
+	get dsid() {
+		return this.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
+	}
+
 	activate({ sel, sel2, input, tier }: ActivateObject) {
 		const adds: RequirementObject[] = [];
 		let active: ActiveObject | undefined;
