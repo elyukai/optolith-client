@@ -1,7 +1,11 @@
-import { Active } from '../disadv/DisAdvRemoveListItem';
+import * as Categories from '../../constants/Categories';
+import * as ProfileActions from '../../actions/ProfileActions';
+import * as React from 'react';
+import AbilitiesTextList from './AbilitiesTextList';
 import AvatarWrapper from '../../components/AvatarWrapper';
 import APStore from '../../stores/APStore';
 import BorderButton from '../../components/BorderButton';
+import calcEL from '../../utils/calcEL';
 import createOverlay from '../../utils/createOverlay';
 import CultureStore from '../../stores/CultureStore';
 import DisAdvStore from '../../stores/DisAdvStore';
@@ -9,27 +13,23 @@ import ELStore from '../../stores/ELStore';
 import IconButton from '../../components/IconButton';
 import OverviewAddAP from './OverviewAddAP';
 import OverviewAvatarChange from './OverviewAvatarChange';
-import AbilitiesTextList from './AbilitiesTextList';
 import OverviewNameChange from './OverviewNameChange';
 import OverviewPersonalData from './OverviewPersonalData';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
 import PhaseStore from '../../stores/PhaseStore';
-import ProfileActions from '../../_actions/ProfileActions';
 import ProfileStore from '../../stores/ProfileStore';
-import * as React from 'react';
 import Scroll from '../../components/Scroll';
 import VerticalList from '../../components/VerticalList';
-import calcEL from '../../utils/calcEL';
 
-interface ProfileOverviewState {
+interface State {
 	ap: number;
-	advActive: Active[];
-	disadvActive: Active[];
+	advActive: ActiveViewObject[];
+	disadvActive: ActiveViewObject[];
 	phase: number;
 	name: string;
-	sex: string;
+	sex: 'm' | 'f';
 	avatar: string;
 	family: string;
 	placeofbirth: string;
@@ -46,22 +46,20 @@ interface ProfileOverviewState {
 	editName: boolean;
 }
 
-export default class ProfileOverview extends React.Component<undefined, ProfileOverviewState> {
+export default class ProfileOverview extends React.Component<undefined, State> {
 
 	state = {
 		ap: APStore.getTotal(),
-		advActive: DisAdvStore.getActiveForView(true),
-		disadvActive: DisAdvStore.getActiveForView(false),
+		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
+		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
 		...(ProfileStore.getAll()),
 		phase: PhaseStore.get(),
 		editName: false
 	};
 
-	_updateAPStore = () => this.setState({ ap: APStore.getTotal() } as ProfileOverviewState);
-	_updateProfileStore = () => this.setState(ProfileStore.getAll() as ProfileOverviewState);
-	_updatePhaseStore = () => this.setState({
-		phase: PhaseStore.get()
-	} as ProfileOverviewState);
+	_updateAPStore = () => this.setState({ ap: APStore.getTotal() } as State);
+	_updateProfileStore = () => this.setState(ProfileStore.getAll() as State);
+	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as State);
 
 	componentDidMount() {
 		APStore.addChangeListener(this._updateAPStore );
@@ -76,14 +74,14 @@ export default class ProfileOverview extends React.Component<undefined, ProfileO
 	}
 
 	showImageUpload = () => createOverlay(<OverviewAvatarChange />);
-	changeName = name => {
-		ProfileActions.changeName(name);
-		this.setState({ editName: false } as ProfileOverviewState);
+	changeName = (name: string) => {
+		ProfileActions.setHeroName(name);
+		this.setState({ editName: false } as State);
 	};
-	editName = () => this.setState({ editName: true } as ProfileOverviewState);
-	editNameCancel = () => this.setState({ editName: false } as ProfileOverviewState);
+	editName = () => this.setState({ editName: true } as State);
+	editNameCancel = () => this.setState({ editName: false } as State);
 
-	endCharacterCreation = () => ProfileActions.endCharacterCreation();
+	endCharacterCreation = () => ProfileActions.endHeroCreation();
 	deleteHero = () => ProfileActions.deleteHero();
 	addAP = () => createOverlay(<OverviewAddAP />);
 
@@ -143,7 +141,7 @@ export default class ProfileOverview extends React.Component<undefined, ProfileO
 													subname = subname[this.state.sex];
 												}
 
-												let { name: vname } = ProfessionVariantStore.getCurrent() || {};
+												let { name: vname = { m: '', f: '' } } = ProfessionVariantStore.getCurrent() || {};
 
 												if (typeof vname === 'object') {
 													vname = vname[this.state.sex];

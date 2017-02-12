@@ -113,7 +113,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			case 'SA_10': {
 				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 				const skill = get(sid as string) as TalentInstance;
-				currentCost = (cost as number) * counter;
+				currentCost = skill.ic * counter;
 				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
 				break;
 			}

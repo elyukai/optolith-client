@@ -16,12 +16,12 @@ let _byHeroId: { [id: string]: Hero} = {
 		avatar: 'images/portrait.png',
 		ap: {
 			total: 1784,
-			// spent: 1775,
-			// adv: [63, 0, 0],
-			// disadv: [39, 0, 0]
-			spent: 1500,
-			adv: [0, 0, 0],
-			disadv: [0, 0, 0]
+			spent: 1775,
+			adv: [63, 0, 0],
+			disadv: [39, 0, 0]
+			// spent: 1500,
+			// adv: [0, 0, 0],
+			// disadv: [0, 0, 0]
 		},
 		el: 'EL_3',
 		r: 'R_5',

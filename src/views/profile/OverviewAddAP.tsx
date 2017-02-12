@@ -1,22 +1,17 @@
 import Dialog from '../../components/Dialog';
 import ProfileActions from '../../_actions/ProfileActions';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 import TextField from '../../components/TextField';
 
-interface OverviewAddAPProps {
-	node: HTMLDivElement;
+interface Props {
+	node?: HTMLDivElement;
 }
 
-interface OverviewAddAPState {
+interface State {
 	value: string;
 }
 
-export default class OverviewAddAP extends Component<OverviewAddAPProps, OverviewAddAPState> {
-
-	static propTypes = {
-		node: PropTypes.any
-	};
-
+export default class OverviewAddAP extends React.Component<Props, State> {
 	state = {
 		value: ''
 	};

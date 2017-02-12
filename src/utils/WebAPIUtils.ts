@@ -187,7 +187,7 @@ export function requestHero(id: string) {
 		},
 		disadv:{
 			active:{
-				ADV_3:[{}],ADV_5:[{}],ADV_40:[{}],ADV_47:[{sid:'CT_2'}],ADV_49:[{}],ADV_50:[{}],DISADV_1:[[2,2]],DISADV_15:[{}],DISADV_25:[{}],DISADV_40:[{tier:1}]
+				ADV_3:[{}],ADV_5:[{}],ADV_40:[{}],ADV_47:[{sid:'CT_2'}],ADV_49:[{}],ADV_50:[{}],DISADV_1:[{sid:2,tier:2}],DISADV_15:[{}],DISADV_25:[{}],DISADV_40:[{tier:1}]
 			},
 			showRating:true
 		},
@@ -205,7 +205,7 @@ export function requestHero(id: string) {
 			active:{}
 		},
 		sa:{
-			active:{SA_10:[['TAL_48','Test']],SA_28:[9,14],SA_30:[[8,4],[23,2],[6,1]],SA_86:[{sid:1}]}
+			active:{SA_10:[{sid:'TAL_48',sid2:'Test'}],SA_28:[{sid:9},{sid:14}],SA_30:[{sid:8,tier:4},{sid:23,tier:2},{sid:6,tier:1}],SA_86:[{sid:1}]}
 		},
 		history: [],
 		items: {}

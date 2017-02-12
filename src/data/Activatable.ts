@@ -139,22 +139,15 @@ export default class Activatable extends Dependent {
 				sidOld = sid as string;
 				break;
 			case 'SA_10':
-				adds.push({ id: sid as string, value: this.active.filter(e => e.sid === sid).length * 6, sid: 'test' });
+				adds.push({ id: sid as string, value: this.active.filter(e => e.sid === sid).length * 6 });
 				break;
 		}
 		this.active.splice(index, 1);
 		this.removeDependencies(adds, sidOld);
 	}
 
-	setTier(active: SetTierObject) {
-		this.active.some((e, index) => {
-			const isEqual = Object.keys(active).every((key: keyof ActiveObject) => key === 'tier' || active[key] === e[key]) && Object.keys(active).length === Object.keys(e).length;
-			if (isEqual) {
-				this.active[index] = active;
-				return true;
-			}
-			return false;
-		});
+	setTier(index: number, tier: number) {
+		this.active[index].tier = tier;
 	}
 
 	addDependencies(adds: RequirementObject[] = [], sel?: string) {
@@ -185,7 +178,6 @@ export default class Activatable extends Dependent {
 				}
 			}
 		});
-		return allReqs;
 	}
 
 	removeDependencies(adds: RequirementObject[] = [], sel?: string) {
@@ -216,7 +208,6 @@ export default class Activatable extends Dependent {
 				}
 			}
 		});
-		return allReqs;
 	}
 
 	reset() {

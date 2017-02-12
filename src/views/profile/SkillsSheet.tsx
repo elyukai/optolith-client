@@ -2,7 +2,7 @@ import { get, getAllByCategory } from '../../stores/ListStore';
 import { TalentInstance } from '../../utils/data/Talent';
 import * as React from 'react';
 import AttributeMods from './AttributeMods';
-import Categories from '../../constants/Categories';
+import * as Categories from '../../constants/Categories';
 import SheetHeader from './SheetHeader';
 import TextBox from '../../components/TextBox';
 
@@ -168,10 +168,10 @@ export default () => {
 							<tr><td><div>Proben-<br/>Mod.</div></td><td><div>Nötiger<br/>Fw</div></td><td><div>Proben-<br/>Mod.</div></td><td><div>Nötiger<br/>Fw</div></td></tr>
 						</thead>
 						<tbody>
-							<tr><td>ab +3</td><td>1</td><td>-1</td><td>13</td></tr>							
-							<tr><td>+2</td><td>4</td><td>-2</td><td>16</td></tr>							
-							<tr><td>+1</td><td>7</td><td>-3</td><td>19</td></tr>							
-							<tr><td>+/-0</td><td>10</td><td></td><td></td></tr>							
+							<tr><td>ab +3</td><td>1</td><td>-1</td><td>13</td></tr>
+							<tr><td>+2</td><td>4</td><td>-2</td><td>16</td></tr>
+							<tr><td>+1</td><td>7</td><td>-3</td><td>19</td></tr>
+							<tr><td>+/-0</td><td>10</td><td></td><td></td></tr>
 						</tbody>
 					</table>
 				</TextBox>
@@ -181,12 +181,12 @@ export default () => {
 							<tr><td><div>Fertigkeits-<br/>punkte</div></td><td><div>Qualitäts-<br/>stufe</div></td></tr>
 						</thead>
 						<tbody>
-							<tr><td>0-3</td><td>1</td></tr>							
-							<tr><td>4-6</td><td>2</td></tr>							
-							<tr><td>7-9</td><td>3</td></tr>							
-							<tr><td>10-12</td><td>4</td></tr>							
-							<tr><td>13-15</td><td>5</td></tr>							
-							<tr><td>16+</td><td>6</td></tr>							
+							<tr><td>0-3</td><td>1</td></tr>
+							<tr><td>4-6</td><td>2</td></tr>
+							<tr><td>7-9</td><td>3</td></tr>
+							<tr><td>10-12</td><td>4</td></tr>
+							<tr><td>13-15</td><td>5</td></tr>
+							<tr><td>16+</td><td>6</td></tr>
 						</tbody>
 					</table>
 				</TextBox>

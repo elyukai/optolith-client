@@ -79,40 +79,33 @@ function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }: Hero & He
 			_setValue(id, value);
 		}
 	});
-	// [].concat(disadv.active, sa.active).forEach(e => {
-	// 	let [ id, options ] = e;
-	// 	let obj = _byId[id];
-	// 	if (obj.max !== null) {
-	// 		obj.active = options;
-	// 		switch (id) {
-	// 			case 'ADV_4':
-	// 			case 'ADV_16':
-	// 			case 'DISADV_48':
-	// 				options.forEach(p => obj.addDependencies([], p));
-	// 				break;
-	// 			case 'SA_10': {
-	// 				let counter = new Map();
-	// 				options.forEach(p => {
-	// 					if (counter.has(p[0])) {
-	// 						counter.set(p[0], counter.get(p[0]) + 1);
-	// 					} else {
-	// 						counter.set(p[0], 1);
-	// 					}
-	// 					obj.addDependencies([[p[0], counter.get(p[0]) * 6]]);
-	// 				});
-	// 				break;
-	// 			}
-	// 			default:
-	// 				options.forEach(() => obj.addDependencies());
-	// 		}
-	// 	} else {
-	// 		_activate(id);
-	// 		obj.addDependencies();
-	// 		for (let property in options) {
-	// 			obj[property] = options[property];
-	// 		}
-	// 	}
-	// });
+	const activatable = { ...disadv.active, ...sa.active };
+	Object.keys(activatable).forEach(id => {
+		const values = activatable[id];
+		type Activatable = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
+		(_byId[id] as Activatable).active = values;
+		switch (id) {
+			case 'ADV_4':
+			case 'ADV_16':
+			case 'DISADV_48':
+				values.forEach(p => (_byId[id] as Activatable).addDependencies([], p.sid as string));
+				break;
+			case 'SA_10': {
+				const counter = new Map();
+				values.forEach(p => {
+					if (counter.has(p.sid)) {
+						counter.set(p.sid, counter.get(p.sid) + 1);
+					} else {
+						counter.set(p.sid, 1);
+					}
+					(_byId[id] as Activatable).addDependencies([{ id: p.sid, sid: counter.get(p.sid) * 6 } as RequirementObject]);
+				});
+				break;
+			}
+			default:
+				values.forEach(() => (_byId[id] as Activatable).addDependencies());
+		}
+	});
 }
 
 function _assignRCP(selections: Selections) {

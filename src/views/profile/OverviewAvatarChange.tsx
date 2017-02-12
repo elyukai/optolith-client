@@ -1,8 +1,8 @@
+import * as React from 'react';
 import AvatarWrapper from '../../components/Avatar';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import ProfileActions from '../../_actions/ProfileActions';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 const Ext = ({ state, func }) => (
@@ -56,12 +56,19 @@ function Source({ extern, file, fileValid, filePreview, source, changeExtern, ch
 	return null;
 }
 
-export default class ProfileAvatarChange extends Component {
+interface Props {
+	node?: HTMLDivElement;
+}
 
-	static props = {
-		node: PropTypes.node
-	};
+interface State {
+	source: string;
+	extern: string;
+	file: boolean;
+	filePreview: string;
+	fileValid: boolean;
+}
 
+export default class ProfileAvatarChange extends React.Component<Props, State> {
 	state = {
 		source: '',
 		extern: '',

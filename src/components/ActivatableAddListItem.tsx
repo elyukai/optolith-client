@@ -37,10 +37,17 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		input2: ''
 	};
 
-	handleSelect = (selected: string | number) => this.setState({ selected } as State);
+	handleSelect = (selected: string | number) => {
+		if (this.state.selected2) {
+			this.setState({ selected, selected2: '' } as State);
+		}
+		else {
+			this.setState({ selected } as State);
+		}
+	}
 	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
 	handleSelectTier = (selectedTier: number) => {
-		if (['DISADV_34','DISADV_50'].indexOf(this.props.item.id) > -1) {
+		if (['DISADV_34','DISADV_50'].includes(this.props.item.id)) {
 			this.setState({ selectedTier, selected: '' } as State);
 		} else {
 			this.setState({ selectedTier } as State);

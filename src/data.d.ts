@@ -41,9 +41,7 @@ interface HeroRest {
 	readonly disadv: {
 		readonly showRating: boolean;
 		readonly active: {
-			readonly [id: string]: ({
-				sid?: string | number, tier?: number
-			} | (string | number)[])[];
+			readonly [id: string]: ActiveObject[];
 		};
 	};
 	readonly items: {
@@ -78,9 +76,7 @@ interface HeroRest {
 	};
 	readonly sa: {
 		readonly active: {
-			readonly [id: string]: ({
-				sid?: string | number, tier?: number
-			} | (string | number)[])[];
+			readonly [id: string]: ActiveObject[];
 		};
 	};
 	readonly history: never[];
@@ -238,6 +234,8 @@ interface AdvantageInstance {
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
+	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
+	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -246,7 +244,7 @@ interface AdvantageInstance {
 	readonly isDeactivatable: boolean;
 	activate(args: ActivateArgs): void;
 	deactivate(index: number): void;
-	setTier(args: SetTierObject): void;
+	setTier(index: number, tier: number): void;
 	reset(): void;
 }
 
@@ -266,6 +264,8 @@ interface DisadvantageInstance {
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
+	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
+	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -274,7 +274,7 @@ interface DisadvantageInstance {
 	readonly isDeactivatable: boolean;
 	activate(args: ActivateArgs): void;
 	deactivate(index: number): void;
-	setTier(args: SetTierObject): void;
+	setTier(index: number, tier: number): void;
 	reset(): void;
 }
 
@@ -294,6 +294,8 @@ interface SpecialAbilityInstance {
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
+	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
+	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	readonly isMultiselect: boolean;
@@ -302,7 +304,7 @@ interface SpecialAbilityInstance {
 	readonly isDeactivatable: boolean;
 	activate(args: ActivateArgs): void;
 	deactivate(index: number): void;
-	setTier(args: SetTierObject): void;
+	setTier(index: number, tier: number): void;
 	reset(): void;
 }
 

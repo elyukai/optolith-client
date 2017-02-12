@@ -1,15 +1,18 @@
 import IconButton from '../../components/IconButton';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 import TextField from '../../components/TextField';
 
-export default class OverviewNameChange extends Component {
+interface Props {
+	cancel: () => void;
+	change: (name: string) => void;
+	name: string;
+}
 
-	static propTypes = {
-		cancel: PropTypes.func,
-		change: PropTypes.func,
-		name: PropTypes.string
-	};
+interface State {
+	name: string;
+}
 
+export default class OverviewNameChange extends React.Component<Props, State> {
 	state = {
 		name: this.props.name
 	};
