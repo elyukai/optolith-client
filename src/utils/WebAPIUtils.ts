@@ -185,15 +185,15 @@ export function requestHero(id: string) {
 			ae:0,
 			kp:0
 		},
+		activatable:{
+			ADV_3:[{}],ADV_5:[{}],ADV_40:[{}],ADV_47:[{sid:'CT_2'}],ADV_49:[{}],ADV_50:[{}],DISADV_1:[{sid:2,tier:2}],DISADV_15:[{}],DISADV_25:[{}],DISADV_40:[{tier:1}];SA_10:[{sid:'TAL_48',sid2:'Test'}],SA_28:[{sid:9},{sid:14}],SA_30:[{sid:8,tier:4},{sid:23,tier:2},{sid:6,tier:1}],SA_86:[{sid:1}]
+		},
 		disadv:{
-			active:{
-				ADV_3:[{}],ADV_5:[{}],ADV_40:[{}],ADV_47:[{sid:'CT_2'}],ADV_49:[{}],ADV_50:[{}],DISADV_1:[{sid:2,tier:2}],DISADV_15:[{}],DISADV_25:[{}],DISADV_40:[{tier:1}]
-			},
-			showRating:true
+			ratingVisible:true
 		},
 		talents:{
 			active:{TAL_8:6,TAL_10:4,TAL_18:7,TAL_20:5,TAL_21:4,TAL_25:4,TAL_28:9,TAL_29:7,TAL_34:4,TAL_38:5,TAL_39:3,TAL_40:2,TAL_47:5,TAL_48:8,TAL_50:7,TAL_51:1,TAL_55:1,TAL_59:1},
-			talentRating:true
+			ratingVisible:true
 		},
 		ct:{
 			active:{CT_3:8,CT_5:8}
@@ -234,26 +234,28 @@ export async function createNewHero(name: string): Promise<void> {
 	}
 }
 
-// saveHero(data) {
-// 	_ServerActions.startLoading();
-// 	var blob = new Blob([data], { type: "application/json" });
-// 	var url  = window.URL.createObjectURL(blob);
-// 	window.open(url);
-// }
-
-export async function saveHero(data): Promise<void> {
-	try {
-		_ServerActions.startLoading();
-		const response = await fetch('php/save.php?short=' + data[0] + '&full=' + data[1], {
-			method: 'post',
-			body: JSON.stringify(data)
-		});
-		const result = await response.text();
-		// _ServerActions.saveHeroSuccess(result);
-	} catch(e) {
-		_ServerActions.connectionError(e);
-	}
+export function saveHero(data: SaveData) {
+	_ServerActions.startLoading();
+	const blob = new Blob([data], { type: "application/json" });
+	const a = document.createElement('a');
+	a.href = URL.createObjectURL(blob);
+	a.download = data.name;
+	a.click();
 }
+
+// export async function saveHero(data): Promise<void> {
+// 	try {
+// 		_ServerActions.startLoading();
+// 		const response = await fetch('php/save.php?short=' + data[0] + '&full=' + data[1], {
+// 			method: 'post',
+// 			body: JSON.stringify(data)
+// 		});
+// 		const result = await response.text();
+// 		// _ServerActions.saveHeroSuccess(result);
+// 	} catch(e) {
+// 		_ServerActions.connectionError(e);
+// 	}
+// }
 
 export async function changeHeroAvatar(type, data): Promise<void> {
 	try {

@@ -20,16 +20,16 @@ interface RemoveObject {
 interface Props {
 	item: Active;
 	phase: number;
-	setTier: (id: string, tier: number, cost: number, sid: string | number) => void;
+	setTier: (id: string, index: number, tier: number, cost: number) => void;
 	removeFromList: (args: DeactivateArgs) => void;
 }
 
 export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
-		const { id, active: { sid, tier } } = this.props.item;
+		const { id, active: { sid, tier }, index } = this.props.item;
 		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
 		const finalCost = (selectedTier - tier) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
-		this.props.setTier(id, selectedTier, finalCost, sid as string | number);
+		this.props.setTier(id, index, selectedTier, finalCost);
 	}
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 

@@ -52,8 +52,8 @@ function _deactivateDASA(id: string, index: number) {
 	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).deactivate(index);
 }
 
-function _updateTier(id: string, sid: string | number, tier: number) {
-	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).setTier({ sid, tier });
+function _updateTier(id: string, index: number, tier: number) {
+	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).setTier(index, tier);
 }
 
 function _init(data: RawData) {
@@ -61,7 +61,7 @@ function _init(data: RawData) {
 	_allIds = Object.keys(_byId);
 }
 
-function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }: Hero & HeroRest) {
+function _updateAll({ attr, talents, ct, spells, chants, disadv, activatable }: Hero & HeroRest) {
 	attr.values.forEach(e => {
 		const [ id, value, mod ] = e;
 		_setValue(id, value);
@@ -79,7 +79,6 @@ function _updateAll({ attr, talents, ct, spells, chants, disadv, sa }: Hero & He
 			_setValue(id, value);
 		}
 	});
-	const activatable = { ...disadv.active, ...sa.active };
 	Object.keys(activatable).forEach(id => {
 		const values = activatable[id];
 		type Activatable = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
@@ -328,7 +327,7 @@ const ListStore = new Store((action: Action) => {
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.SET_SPECIALABILITY_TIER:
 				if (RequirementsStore.isValid()) {
-					_updateTier(action.payload.id, action.payload.sid, action.payload.tier);
+					_updateTier(action.payload.id, action.payload.index, action.payload.tier);
 				}
 				break;
 

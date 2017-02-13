@@ -111,9 +111,9 @@ interface SetDisAdvTierAction {
     type: SET_DISADV_TIER;
     payload: {
         id: string;
+        index: number;
         tier: number;
         cost: number;
-        sid: number | string;
     };
 }
 
@@ -526,9 +526,9 @@ interface SetSpecialAbilityTierAction {
     type: SET_SPECIALABILITY_TIER;
     payload: {
         id: string;
+        index: number;
         tier: number;
         cost: number;
-        sid: number | string;
     };
 }
 

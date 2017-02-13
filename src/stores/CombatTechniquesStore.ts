@@ -20,16 +20,14 @@ class CombatTechniquesStoreStatic extends Store {
 	}
 
 	getAllForSave() {
-		const result = new Map();
+		const active: { [id: string]: number } = {};
 		this.getAll().forEach(e => {
 			const { id, value } = e;
 			if (value > 6) {
-				result.set(id, value);
+				active[id] = value;
 			}
 		});
-		return {
-			active: Array.from(result)
-		};
+		return { active };
 	}
 
 	getMaxPrimaryAttributeValueByID(array: string[]) {

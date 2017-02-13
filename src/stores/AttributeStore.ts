@@ -82,9 +82,10 @@ class AttributeStoreStatic extends Store {
 	}
 
 	getForSave() {
-		return Object.assign({}, {
-			values: this.getAll().map(e => [e.id, e.value, e.mod])
-		}, this.getAddEnergies());
+		return {
+			values: this.getAll().map(e => [e.id, e.value, e.mod] as [string, number, number]),
+			...this.getAddEnergies()
+		};
 	}
 
 }

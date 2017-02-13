@@ -23,16 +23,14 @@ class SpellsStoreStatic extends Store {
 	}
 
 	getForSave() {
-		const result = new Map();
+		const active: { [id: string]: number } = {};
 		this.getAll().forEach(e => {
-			const { active, id, value } = e;
-			if (active) {
-				result.set(id, value);
+			const { active: a, id, value } = e;
+			if (a) {
+				active[id] = value;
 			}
 		});
-		return {
-			active: Array.from(result)
-		};
+		return { active };
 	}
 
 	getPropertyCounter() {

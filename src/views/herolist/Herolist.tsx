@@ -46,6 +46,7 @@ export default class Herolist extends React.Component<undefined, State> {
 	changeView = (option: string) => setVisibilityFilter(option);
 	showHeroCreation = () => createOverlay(<HeroCreation />);
 	refresh = () => requestList();
+	loadJSON = () => console.log('Implement JSON loading');
 
 	componentDidMount() {
 		HerolistStore.addChangeListener(this._updateHerolistStore );
@@ -110,6 +111,7 @@ export default class Herolist extends React.Component<undefined, State> {
 							/>
 						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
+						<BorderButton label="JSON laden" onClick={this.loadJSON} primary />
 					</div>
 					<Scroll className="list">
 						<ul>

@@ -1,11 +1,8 @@
 /// <reference path="./constants/Categories.d.ts" />
 
-interface Hero {
+interface HeroBase {
 	readonly clientVersion: string;
-	readonly dateCreated: Date;
-	readonly dateModified: Date;
 	readonly player?: string;
-	readonly id: string;
 	readonly phase: number;
 	readonly name: string;
 	readonly avatar: string;
@@ -16,6 +13,12 @@ interface Hero {
 	readonly p: string;
 	readonly pv: string | null;
 	readonly sex: 'm' | 'f';
+}
+
+interface Hero extends HeroBase {
+	readonly id: string;
+	readonly dateCreated: Date;
+	readonly dateModified: Date;
 }
 
 interface User {
@@ -38,11 +41,11 @@ interface HeroRest {
 		readonly characteristics: string;
 		readonly otherinfo: string;
 	};
+	readonly activatable: {
+		readonly [id: string]: ActiveObject[];
+	};
 	readonly disadv: {
-		readonly showRating: boolean;
-		readonly active: {
-			readonly [id: string]: ActiveObject[];
-		};
+		readonly ratingVisible: boolean;
 	};
 	readonly items: {
 		readonly [id: string]: ItemInstance;
@@ -57,7 +60,7 @@ interface HeroRest {
 		readonly active: {
 			readonly [id: string]: number;
 		};
-		readonly talentRating: boolean;
+		readonly ratingVisible: boolean;
 	};
 	readonly ct: {
 		readonly active: {
@@ -74,12 +77,7 @@ interface HeroRest {
 			readonly [id: string]: number | null;
 		};
 	};
-	readonly sa: {
-		readonly active: {
-			readonly [id: string]: ActiveObject[];
-		};
-	};
-	readonly history: never[];
+	readonly history: (Action & { undo: boolean; cost: number; })[];
 }
 
 interface RaceInstance {
@@ -464,4 +462,15 @@ interface ExperienceLevel {
 	maxTotalAttributeValues: number;
 	maxSpellsLiturgies: number;
 	maxUnfamiliarSpells: number;
+}
+
+interface HeroSave extends HeroBase {
+	id: string | null;
+	dateCreated: string;
+	dateModified: string;
+}
+
+interface SaveData {
+	overview: HeroSave;
+	details: HeroRest;
 }

@@ -1,3 +1,6 @@
+import * as ActivatableStore from '../stores/ActivatableStore';
+import * as Categories from '../constants/Categories';
+import * as WebAPIUtils from './WebAPIUtils';
 import APStore from '../stores/APStore';
 import AttributeStore from '../stores/AttributeStore';
 import CombatTechniquesStore from '../stores/CombatTechniquesStore';
@@ -15,43 +18,38 @@ import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
 import VersionStore from '../stores/VersionStore';
-import WebAPIUtils from './WebAPIUtils';
 
-export const generateArray = () => [
-	{
-		client_version: VersionStore.get(),
-		date: (new Date()).toJSON(),
+export const generateArray = (): SaveData => ({
+	overview: {
+		clientVersion: VersionStore.get(),
+		dateCreated: (new Date()).toJSON(),
+		dateModified: (new Date()).toJSON(),
 		id: ProfileStore.getID(),
 		phase: PhaseStore.get(),
 		name: ProfileStore.getName(),
 		avatar: ProfileStore.getAvatar(),
 		ap: APStore.getAll(),
 		el: ELStore.getStartID(),
-		r: RaceStore.getCurrentID(),
-		c: CultureStore.getCurrentID(),
-		p: ProfessionStore.getCurrentId(),
+		r: RaceStore.getCurrentID() as string,
+		c: CultureStore.getCurrentID() as string,
+		p: ProfessionStore.getCurrentId() as string,
 		pv: ProfessionVariantStore.getCurrentID(),
 		sex: ProfileStore.getSex()
 	},
-	{
-		pers: ProfileStore.getAppearance(),
+	details: {
+		pers: ProfileStore.getAll(),
 		attr: AttributeStore.getForSave(),
-		disadv: DisAdvStore.getForSave(),
+		activatable: ActivatableStore.getForSave(),
+		disadv: {
+			ratingVisible: DisAdvStore.getRating()
+		},
 		talents: TalentsStore.getForSave(),
 		ct: CombatTechniquesStore.getAllForSave(),
 		spells: SpellsStore.getForSave(),
 		chants: LiturgiesStore.getForSave(),
-		sa: SpecialAbilitiesStore.getForSave(),
-		eq: {},
 		items: {},
 		history: HistoryStore.getAll()
 	}
-];
+});
 
-export default () => {
-	var json = JSON.stringify(generateArray());
-
-	WebAPIUtils.saveHero(json);
-
-	return true;
-};
+export default () => WebAPIUtils.saveHero(generateArray());

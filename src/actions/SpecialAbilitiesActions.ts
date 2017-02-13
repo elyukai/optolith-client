@@ -11,13 +11,13 @@ export const removeFromList = (args: DeactivateArgs) => AppDispatcher.dispatch<D
 	payload: args
 });
 
-export const setTier = (id: string, tier: number, cost: number, sid: number | string) => AppDispatcher.dispatch<SetSpecialAbilityTierAction>({
+export const setTier = (id: string, index: number, tier: number, cost: number) => AppDispatcher.dispatch<SetSpecialAbilityTierAction>({
 	type: SET_SPECIALABILITY_TIER,
 	payload: {
 		id,
 		tier,
 		cost,
-		sid
+		index
 	}
 });
 

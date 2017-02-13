@@ -5,7 +5,7 @@ import count from '../utils/count';
 import PhaseStore from '../stores/PhaseStore';
 import validate from '../utils/validate';
 
-export const getForSave = (): { [id: string]: ActiveObject[] } => {
+export const getForSave = (...categories: Category[]): { [id: string]: ActiveObject[] } => {
 	const allEntries = [
 		...getAllByCategory(Categories.ADVANTAGES) as AdvantageInstance[],
 		...getAllByCategory(Categories.DISADVANTAGES) as DisadvantageInstance[],

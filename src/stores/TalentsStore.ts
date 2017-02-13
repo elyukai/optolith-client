@@ -25,17 +25,14 @@ class TalentsStoreStatic extends Store {
 	}
 
 	getForSave() {
-		const result = new Map<string, number>();
+		const active: { [id: string]: number } = {};
 		this.getAll().forEach(e => {
 			const { id, value } = e;
 			if (value > 0) {
-				result.set(id, value);
+				active[id] = value;
 			}
 		});
-		return {
-			active: Array.from(result),
-			ratingVisible: _ratingVisible
-		};
+		return { active, ratingVisible: _ratingVisible };
 	}
 
 	getSortOrder() {
