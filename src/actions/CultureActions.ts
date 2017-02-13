@@ -1,7 +1,7 @@
 import { SELECT_CULTURE, SET_CULTURES_SORT_ORDER, SET_CULTURES_VISIBILITY_FILTER, SWITCH_CULTURE_VALUE_VISIBILITY } from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export const select = (id: string) => AppDispatcher.dispatch<SelectCultureAction>({
+export const selectCulture = (id: string) => AppDispatcher.dispatch<SelectCultureAction>({
 	type: SELECT_CULTURE,
 	payload: {
 		id

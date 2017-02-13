@@ -1,6 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import CultureActions from '../../_actions/CultureActions';
-import Culture, { CultureInstance } from '../../utils/data/Culture';
+import * as CultureActions from '../../actions/CultureActions';
 import { get } from '../../stores/ListStore';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
@@ -12,15 +11,7 @@ interface Props {
 	showDetails: boolean;
 }
 
-export default class CulturesListItem extends Component<Props, any> {
-
-	static propTypes = {
-		changeTab: PropTypes.func.isRequired,
-		culture: PropTypes.instanceOf(Culture).isRequired,
-		currentID: PropTypes.string,
-		showDetails: PropTypes.bool.isRequired
-	};
-
+export default class CulturesListItem extends Component<Props, undefined> {
 	selectCulture = () => CultureActions.selectCulture(this.props.culture.id);
 
 	render() {

@@ -283,7 +283,7 @@ interface SetProfessionsVisibilityFilterAction {
 interface SelectProfessionVariantAction {
 	type: SELECT_PROFESSION_VARIANT;
 	payload: {
-		id: string;
+		id: string | null;
 	};
 }
 

@@ -1,7 +1,6 @@
 import BorderButton from '../../components/BorderButton';
-import Race, { RaceInstance } from '../../utils/data/Race';
 import React, { Component, PropTypes } from 'react';
-import RaceActions from '../../_actions/RaceActions';
+import * as RaceActions from '../../actions/RaceActions';
 import VerticalList from '../../components/VerticalList';
 import classNames from 'classnames';
 
@@ -13,14 +12,6 @@ interface Props {
 }
 
 export default class RacesListItem extends Component<Props, any> {
-
-	static propTypes = {
-		changeTab: PropTypes.func.isRequired,
-		currentID: PropTypes.string,
-		race: PropTypes.instanceOf(Race).isRequired,
-		showDetails: PropTypes.bool.isRequired
-	};
-
 	selectRace = () => RaceActions.selectRace(this.props.race.id);
 
 	render() {

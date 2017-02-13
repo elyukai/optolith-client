@@ -1,8 +1,7 @@
 import BorderButton from '../../components/BorderButton';
 import CultureStore from '../../stores/CultureStore';
-import Profession, { ProfessionInstance } from '../../utils/data/Profession';
-import ProfessionActions from '../../_actions/ProfessionActions';
-import ProfessionVariantActions from '../../_actions/ProfessionVariantActions';
+import * as ProfessionActions from '../../actions/ProfessionActions';
+import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -18,17 +17,8 @@ interface Props {
 }
 
 export default class ProfessionsListItem extends Component<Props, any> {
-
-	static propTypes = {
-		currentID: PropTypes.string,
-		currentVID: PropTypes.string,
-		profession: PropTypes.instanceOf(Profession).isRequired,
-		sex: PropTypes.string.isRequired,
-		showAddSlidein: PropTypes.func.isRequired
-	};
-
 	selectProfession = () => ProfessionActions.selectProfession(this.props.profession.id);
-	selectProfessionVariant = id => ProfessionVariantActions.selectProfessionVariant(id);
+	selectProfessionVariant = (id: string | null) => ProfessionVariantActions.selectProfessionVariant(id);
 
 	render() {
 
