@@ -13,7 +13,7 @@ let _validCost = false;
 let _disadv: [boolean, 0 | 1 | 2] = [true, 0];
 let _validOwnRequirements = false;
 
-const _updateCost = (cost: number, valid: boolean) => {
+const _updateCost = (cost: number, valid?: boolean) => {
 	_cost = cost;
 	_validCost = valid || check(_cost);
 	if (valid !== undefined) {
@@ -98,7 +98,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 		switch(action.type) {
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY: {
-				const obj = get(action.payload.id);
+				const obj = get(action.payload.id) as LiturgyInstance | SpellInstance;
 				_updateOwnRequirements(true);
 				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 					_updateCost(1);
@@ -111,7 +111,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 
 			case ActionTypes.DEACTIVATE_SPELL:
 			case ActionTypes.DEACTIVATE_LITURGY: {
-				const obj = get(action.id);
+				const obj = get(action.payload.id) as LiturgyInstance | SpellInstance;
 				_updateOwnRequirements(true);
 				if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
 					_updateCost(-1);
@@ -123,8 +123,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 			}
 
 			case ActionTypes.ACTIVATE_DISADV:
-				// _updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isActivatable);
-				_updateOwnRequirements(true);
+				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isActivatable);
 				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
@@ -134,8 +133,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.DEACTIVATE_DISADV:
-				// _updateOwnRequirements((get(action.payload.id) as Advantage | Disadvantage).isDeactivatable);
-				_updateOwnRequirements(true);
+				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isDeactivatable);
 				_updateDisAdvCost(action.payload.id, action.payload.cost);
 				break;
 
@@ -165,12 +163,24 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				break;
 			}
 
-			case ActionTypes.ADD_LIFE_POINT:
-			case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+			case ActionTypes.ADD_LIFE_POINT: {
+				const obj = secondaryAttributes.get('LP') as Energy;
+				_updateOwnRequirements(obj.currentAdd < obj.maxAdd);
+				_updateCost(final(4, AttributeStore.getAdd('LP') + 1));
+				break;
+			}
+
+			case ActionTypes.ADD_ARCANE_ENERGY_POINT: {
+				const obj = secondaryAttributes.get('AE') as Energy;
+				_updateOwnRequirements(obj.currentAdd < obj.maxAdd);
+				_updateCost(final(4, AttributeStore.getAdd('AE') + 1));
+				break;
+			}
+
 			case ActionTypes.ADD_KARMA_POINT: {
-				const obj = secondaryAttributes.get(action.id);
-				_updateOwnRequirements(obj.maxAdd && obj.currentAdd < obj.maxAdd);
-				_updateCost(final(4, AttributeStore.getAdd(action.id) + 1));
+				const obj = secondaryAttributes.get('KP') as Energy;
+				_updateOwnRequirements(obj.currentAdd < obj.maxAdd);
+				_updateCost(final(4, AttributeStore.getAdd('KP') + 1));
 				break;
 			}
 
@@ -179,7 +189,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 			case ActionTypes.REMOVE_SPELL_POINT:
 			case ActionTypes.REMOVE_LITURGY_POINT: {
-				const obj = get(action.payload.id);
+				const obj = get(action.payload.id) as AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
 				_updateOwnRequirements(obj.isDecreasable);
 				_updateCost(final(obj.ic, obj.value) * -1);
 				break;

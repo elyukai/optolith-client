@@ -9,7 +9,7 @@ export default class Profession extends Core implements ProfessionInstance {
 	readonly ap: number;
 	readonly dependencies: (string | number | boolean)[][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[])[][];
+	readonly selections: (string | string[] | number[] | boolean)[][];
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];

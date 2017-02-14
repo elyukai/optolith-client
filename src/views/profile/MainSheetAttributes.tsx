@@ -1,23 +1,20 @@
-import { SecondaryAttribute } from '../../utils/secondaryAttributes';
 import * as React from 'react';
 import MainSheetAttributesItem from './MainSheetAttributesItem';
 import MainSheetFatePoints from './MainSheetFatePoints';
+import RaceStore from '../../stores/RaceStore';
 
 export interface MainSheetAttributesProps {
 	attributes: SecondaryAttribute[];
 	baseValues: {
-		le: number;
-		leAdd: number;
-		aeAdd: number;
-		keAdd: number;
-		sk: number;
-		zk: number;
-		gs: number;
+		lp: number;
+		ae: number;
+		kp: number;
 	};
 }
 
 export default (props: MainSheetAttributesProps ) => {
 	const { attributes, baseValues } = props;
+	const race = RaceStore.getCurrent();
 	return (
 		<div className="calculated">
 			<div className="calc-header">
@@ -33,13 +30,13 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[0].mod}
 				purchased={attributes[0].currentAdd}
 				subLabel="Grundwert"
-				subArray={[baseValues.le]} />
+				subArray={[baseValues.lp]} />
 			<MainSheetAttributesItem
 				label={attributes[1].name}
 				calc={attributes[1].calc}
 				value={attributes[1].value}
 				add={attributes[1].mod}
-				purchased={baseValues.aeAdd}
+				purchased={baseValues.ae}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
 				subArray={[0,0]}
 				empty={attributes[1].value === '-'} />
@@ -48,7 +45,7 @@ export default (props: MainSheetAttributesProps ) => {
 				calc={attributes[2].calc}
 				value={attributes[2].value}
 				add={attributes[2].mod}
-				purchased={baseValues.keAdd}
+				purchased={baseValues.kp}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
 				subArray={[0,0]}
 				empty={attributes[2].value === '-'} />
@@ -59,7 +56,7 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[3].mod}
 				purchased={null}
 				subLabel="Grundwert"
-				subArray={[baseValues.sk]} />
+				subArray={[race.spi]} />
 			<MainSheetAttributesItem
 				label={attributes[4].name}
 				calc={attributes[4].calc}
@@ -67,7 +64,7 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[4].mod}
 				purchased={null}
 				subLabel="Grundwert"
-				subArray={[baseValues.zk]} />
+				subArray={[race.tou]} />
 			<MainSheetAttributesItem
 				label={attributes[5].name}
 				calc={attributes[5].calc}
@@ -87,7 +84,7 @@ export default (props: MainSheetAttributesProps ) => {
 				add={0}
 				purchased={null}
 				subLabel="Grundwert"
-				subArray={[baseValues.gs]} />
+				subArray={[race.mov]} />
 			<MainSheetFatePoints />
 		</div>
 	);

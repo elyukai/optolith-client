@@ -5,12 +5,12 @@ import TextField from '../../components/TextField';
 interface Props {
 	active: [number | null, string];
 	change: (index: number, result: number | React.MouseEvent<string>) => void;
-	input: string;
-	list: [string, number][];
+	input: string | null;
+	list: { id: number; name: string; }[];
 	name: string;
 }
 
-export default class SelectionsTalentSpec extends Component<Props, any> {
+export default class SelectionsTalentSpec extends Component<Props, undefined> {
 
 	static propTypes = {
 		active: PropTypes.array,
@@ -27,14 +27,14 @@ export default class SelectionsTalentSpec extends Component<Props, any> {
 		return (
 			<div className="spec">
 				<h4>
-					Gebiet für Fertigkeitsspezialisierung ({name})
+					Anwendungsgebiet für Fertigkeitsspezialisierung ({name})
 				</h4>
 				<div>
 					{
 						list.length > 0 ? (
 							<Dropdown
 								className="tiers"
-								value={active[0]}
+								value={active[0] || 0}
 								onChange={change.bind(null, 0)}
 								options={list}
 								disabled={active[1] !== ''}

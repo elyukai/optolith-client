@@ -28,7 +28,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 	handleSelectTier = (selectedTier: number) => {
 		const { id, active: { sid, tier }, index } = this.props.item;
 		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
-		const finalCost = (selectedTier - tier) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
+		const finalCost = (selectedTier - (tier as number)) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
 		this.props.setTier(id, index, selectedTier, finalCost);
 	}
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
@@ -82,10 +82,10 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				break;
 			case 'DISADV_34':
 			case 'DISADV_50': {
-				const maxCurrentTier = active.reduce((a,b) => b.tier > a ? b.tier as number : a, 0);
-				const subMaxCurrentTier = active.reduce((a,b) => b.tier > a && b.tier < maxCurrentTier ? b.tier as number : a, 0);
+				const maxCurrentTier = active.reduce((a,b) => (b.tier as number) > a ? b.tier as number : a, 0);
+				const subMaxCurrentTier = active.reduce((a,b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
 				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
-				currentCost = maxCurrentTier > tier || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * (tier - subMaxCurrentTier);
+				currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
 				break;
 			}
 			case 'DISADV_33': {
@@ -171,7 +171,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			} else {
 				addSpecial = ' ' + array[0].name;
 			}
-			currentCost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier;
+			currentCost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * (tier as number);
 		}
 
 		let { name } = a;
@@ -182,7 +182,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			name = `Angst vor ${add}`;
 		}
 		else if (['DISADV_34','DISADV_50'].includes(id)) {
-			name  += ` ${roman[tier - 1]} (${add})`;
+			name  += ` ${roman[(tier as number) - 1]} (${add})`;
 		}
 		else if (add) {
 			name += ` (${add})`;

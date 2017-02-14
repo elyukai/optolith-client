@@ -1,7 +1,8 @@
+import * as ActivatableStore from '../../stores/ActivatableStore';
 import * as Categories from '../../constants/Categories';
 import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
-import AbilitiesTextList from './AbilitiesTextList';
+import ActivatableTextList from './ActivatableTextList';
 import AvatarWrapper from '../../components/AvatarWrapper';
 import APStore from '../../stores/APStore';
 import BorderButton from '../../components/BorderButton';
@@ -50,8 +51,8 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 
 	state = {
 		ap: APStore.getTotal(),
-		advActive: DisAdvStore.getActiveForView(Categories.ADVANTAGES),
-		disadvActive: DisAdvStore.getActiveForView(Categories.DISADVANTAGES),
+		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
+		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
 		...(ProfileStore.getAll()),
 		phase: PhaseStore.get(),
 		editName: false
@@ -208,9 +209,9 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 						phase === 3 ? (
 							<div>
 								<h3>Vorteile</h3>
-								<AbilitiesTextList list={this.state.advActive} />
+								<ActivatableTextList list={this.state.advActive} />
 								<h3>Nachteile</h3>
-								<AbilitiesTextList list={this.state.disadvActive} />
+								<ActivatableTextList list={this.state.disadvActive} />
 								<BorderButton
 									className="delete-char"
 									label="Held löschen"

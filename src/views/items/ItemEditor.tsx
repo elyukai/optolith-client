@@ -5,7 +5,7 @@ import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../_actions/InventoryActions';
+import InventoryActions from '../../actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import Label from '../../components/Label';
 import React, { Component, PropTypes } from 'react';

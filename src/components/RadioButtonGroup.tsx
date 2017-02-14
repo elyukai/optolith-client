@@ -6,14 +6,14 @@ interface Option {
 	className?: string;
 	disabled?: boolean;
 	name: string;
-	value: string | number;
+	value: string | number | null;
 }
 
 interface Props {
-	active: number | string | boolean;
+	active: number | string | null;
 	array: Option[],
 	disabled?: boolean;
-	onClick: (option: string | number | boolean) => void;
+	onClick: (option: string | number | null) => void;
 }
 
 export default class RadioButtonGroup extends Component<Props, any> {

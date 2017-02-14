@@ -4,9 +4,9 @@ import Core from './CoreGenderExtended';
 
 export default class ProfessionVariant extends Core implements ProfessionVariantInstance {
 	readonly ap: number;
-	readonly dependencies: (string | number | boolean)[][];
+	readonly dependencies: [string, string | string[]][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[])[][];
+	readonly selections: (string | string[] | number[] | boolean)[][];
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];

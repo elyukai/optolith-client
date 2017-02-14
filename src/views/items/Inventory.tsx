@@ -2,7 +2,7 @@ import { ItemInstance } from '../../utils/data/Item';
 import { filterAndSort } from '../../utils/ListUtils';
 import BorderButton from '../../components/BorderButton';
 import createOverlay from '../../utils/createOverlay';
-import InventoryActions from '../../_actions/InventoryActions';
+import InventoryActions from '../../actions/InventoryActions';
 import InventoryListItem from './InventoryListItem';
 import InventoryStore from '../../stores/InventoryStore';
 import ItemEditor from './ItemEditor';

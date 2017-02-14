@@ -2,7 +2,7 @@ import { get } from '../../stores/ListStore';
 import { Item } from '../../utils/DataUtils';
 import createOverlay from '../../utils/createOverlay';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../_actions/InventoryActions';
+import InventoryActions from '../../actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import ItemEditor from './ItemEditor';
 import React, { Component, PropTypes } from 'react';

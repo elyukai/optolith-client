@@ -1,6 +1,6 @@
 /// <reference path="../constants/ActionTypes.d.ts" />
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddLifePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | SwitchDisAdvRatingVisibilityAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | SetSectionAction | SetTabAction | SelectProfessionAction | SetSelectionsAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SelectProfessionVariantAction | SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | EndHeroCreationAction | AddAdventurePointsAction | SelectRaceAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddLifePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | SwitchDisAdvRatingVisibilityAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | SetSectionAction | SetTabAction | SelectProfessionAction | SetSelectionsAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SelectProfessionVariantAction | SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | EndHeroCreationAction | AddAdventurePointsAction | SelectRaceAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction | RequestNewPasswordAction | ReceiveNewPasswordAction | RequestNewDisplayNameAction | ReceiveNewDisplayNameAction | RequestPasswordResetAction | ReceivePasswordResetAction | RequestUsernameAction | ReceiveUsernameAction | RequestAccountActivationEmailAction | ReceiveAccountActivationEmailAction | RequestFailedAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
 
 // AttributesActions
 
@@ -508,6 +508,53 @@ interface RequestUserDeletionAction {
 
 interface ReceiveUserDeletionAction {
 	type: RECEIVE_USER_DELETION;
+}
+
+interface RequestNewPasswordAction {
+	type: REQUEST_NEW_PASSWORD;
+}
+
+interface ReceiveNewPasswordAction {
+	type: RECEIVE_NEW_PASSWORD;
+}
+
+interface RequestNewDisplayNameAction {
+	type: REQUEST_NEW_DISPLAY_NAME;
+}
+
+interface ReceiveNewDisplayNameAction {
+	type: RECEIVE_NEW_DISPLAY_NAME;
+	payload: {
+		name: string;
+	}
+}
+
+interface RequestPasswordResetAction {
+	type: REQUEST_PASSWORD_RESET;
+}
+
+interface ReceivePasswordResetAction {
+	type: RECEIVE_PASSWORD_RESET;
+}
+
+interface RequestUsernameAction {
+	type: REQUEST_USERNAME;
+}
+
+interface ReceiveUsernameAction {
+	type: RECEIVE_USERNAME;
+}
+
+interface RequestAccountActivationEmailAction {
+	type: REQUEST_ACCOUNT_ACTIVATION_EMAIL;
+}
+
+interface ReceiveAccountActivationEmailAction {
+	type: RECEIVE_ACCOUNT_ACTIVATION_EMAIL;
+}
+
+interface RequestFailedAction {
+	type: REQUEST_FAILED;
 }
 
 // SpecialAbilitiesActions

@@ -1,4 +1,4 @@
-import InGameActions from '../../_actions/InGameActions';
+import InGameActions from '../../actions/InGameActions';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 

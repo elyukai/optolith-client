@@ -119,7 +119,7 @@ interface CultureInstance {
 	readonly untypicalDisadvantages: string[];
 	readonly typicalTalents: string[];
 	readonly untypicalTalents: string[];
-	readonly talents: (string | number)[][];
+	readonly talents: [string, number][];
 	readonly category: CULTURES;
 }
 
@@ -130,7 +130,7 @@ interface ProfessionInstance {
 	readonly ap: number;
 	readonly dependencies: (string | number | boolean)[][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[])[][];
+	readonly selections: (string | string[] | number[] | boolean)[][];
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
@@ -148,9 +148,9 @@ interface ProfessionVariantInstance {
 	readonly id: string;
 	readonly name: string | { m: string, f: string };
 	readonly ap: number;
-	readonly dependencies: (string | number | boolean)[][];
+	readonly dependencies: [string, string | string[]][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[])[][];
+	readonly selections: (string | string[] | number[] | boolean)[][];
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
@@ -167,6 +167,7 @@ interface ActiveViewObject {
 	id: string;
 	active: ActiveObject;
 	index: number;
+	gr?: number;
 }
 
 type SetTierObject = ActiveObject;
@@ -202,6 +203,7 @@ interface RequirementObject {
 	active?: boolean;
 	sid?: string | number | number[];
 	sid2?: string | number;
+	tier?: number;
 	value?: number;
 	type?: 1 | 2;
 }
@@ -315,6 +317,8 @@ interface AttributeInstance {
 	dependencies: (boolean | ActiveObject)[];
 	value: number;
 	mod: number;
+	readonly isIncreasable: boolean;
+	readonly isDecreasable: boolean;
 	addDependency(dependency: boolean | ActiveObject): void;
 	removeDependency(dependency: boolean | ActiveObject): boolean;
 	set(value: number): void;
@@ -452,6 +456,27 @@ interface ItemInstance {
 	where: string;
 }
 
+interface SecondaryAttribute {
+	id: string;
+	short: string;
+	name: string;
+	calc: string;
+	base?: number;
+	add?: number;
+	mod?: number;
+	value: number | string;
+	maxAdd?: number;
+	currentAdd?: number;
+}
+
+interface Energy extends SecondaryAttribute {
+	base: number;
+	add: number;
+	mod: number;
+	maxAdd: number;
+	currentAdd: number;
+}
+
 interface ExperienceLevel {
 	id: string;
 	name: string;
@@ -462,6 +487,13 @@ interface ExperienceLevel {
 	maxTotalAttributeValues: number;
 	maxSpellsLiturgies: number;
 	maxUnfamiliarSpells: number;
+}
+
+interface LanguagesScriptsSelectionListItem {
+	id: string;
+	name: string;
+	cost?: number;
+	disabled: boolean;
 }
 
 interface HeroSave extends HeroBase {

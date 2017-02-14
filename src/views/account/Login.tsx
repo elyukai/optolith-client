@@ -1,4 +1,4 @@
-import AccountActions from '../../_actions/AccountActions';
+import AccountActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
 import ForgotPassword from './ForgotPassword';
 import ForgotUsername from './ForgotUsername';

@@ -3,17 +3,15 @@ import classNames from 'classnames';
 import GeminiScrollbar from 'react-gemini-scrollbar';
 import Label from './Label';
 
-type OptionID = number | string | null;
-
 interface Props {
 	className?: string;
 	disabled?: boolean;
 	fullWidth?: boolean;
 	hint?: string;
 	label?: string;
-	onChange: (option: OptionID) => void;
-	options: { id: OptionID; name: string; }[];
-	value: boolean | string | number;
+	onChange: (option: number | string | null) => void;
+	options: { id: number | string | null; name: string; }[];
+	value: boolean | string | number | null;
 }
 
 interface State {
@@ -43,7 +41,7 @@ export default class Dropdown extends React.Component<Props, State> {
 		this.setState({ isOpen: !this.state.isOpen } as State);
 	}
 
-	onChange = (option: OptionID) => {
+	onChange = (option: number | string | null) => {
 		this.props.onChange(option);
 		this.setState({ isOpen: false } as State);
 	}

@@ -1,6 +1,6 @@
 import Checkbox from '../../components/Checkbox';
 import IconButton from '../../components/IconButton';
-import InGameActions from '../../_actions/InGameActions';
+import InGameActions from '../../actions/InGameActions';
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 

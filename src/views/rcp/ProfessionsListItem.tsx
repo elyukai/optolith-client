@@ -1,22 +1,22 @@
-import BorderButton from '../../components/BorderButton';
-import CultureStore from '../../stores/CultureStore';
 import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
+import * as React from 'react';
+import BorderButton from '../../components/BorderButton';
+import classNames from 'classnames';
+import CultureStore from '../../stores/CultureStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
 
 interface Props {
-	currentID: string;
-	currentVID: string;
+	currentID: string | null;
+	currentVID: string | null;
 	profession: ProfessionInstance;
-	sex: string;
+	sex: 'm' | 'f';
 	showAddSlidein: () => void;
 }
 
-export default class ProfessionsListItem extends Component<Props, any> {
+export default class ProfessionsListItem extends React.Component<Props, undefined> {
 	selectProfession = () => ProfessionActions.selectProfession(this.props.profession.id);
 	selectProfessionVariant = (id: string | null) => ProfessionVariantActions.selectProfessionVariant(id);
 
@@ -28,15 +28,15 @@ export default class ProfessionsListItem extends Component<Props, any> {
 			'active': profession.id === currentID
 		});
 
-		var variants;
+		let variants;
 		if (profession.id === currentID && profession.variants.length > 0) {
-			var allVariants = ProfessionVariantStore.getAll().filter(e => {
+			let allVariants = ProfessionVariantStore.getAll().filter(e => {
 				if (profession.variants.includes(e.id)) {
-					if (e.reqs_p !== null) {
-						return e.reqs_p.every(req => {
+					if (e.dependencies !== null) {
+						return e.dependencies.every(req => {
 							if (req[0] === 'c') {
-								let cultureID = CultureStore.getCurrentID();
-								return req[1].includes(cultureID);
+								let cultureID = CultureStore.getCurrentID() as string;
+								return (req[1] as string[]).includes(cultureID);
 							} else if (req[0] === 'g') {
 								let gender = ProfileStore.getSex();
 								return gender === req[1];
@@ -49,7 +49,7 @@ export default class ProfessionsListItem extends Component<Props, any> {
 				return false;
 			});
 			if (allVariants.length > 0) {
-				allVariants = allVariants.map(e => {
+				let variantList: { name: string; value: string | null; }[] = allVariants.map(e => {
 					let { ap, id, name } = e;
 					if (typeof name === 'object') {
 						name = name[sex];
@@ -59,12 +59,16 @@ export default class ProfessionsListItem extends Component<Props, any> {
 						value: id
 					};
 				});
-				allVariants.splice(0, 0, {
+				variantList.splice(0, 0, {
 					name: 'Keine Variante',
 					value: null
 				});
 				variants = (
-					<RadioButtonGroup active={currentVID} onClick={this.selectProfessionVariant} array={allVariants} />
+					<RadioButtonGroup
+						active={currentVID}
+						onClick={this.selectProfessionVariant}
+						array={variantList}
+						/>
 				);
 			}
 		}

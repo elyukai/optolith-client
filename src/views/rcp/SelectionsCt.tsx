@@ -12,18 +12,8 @@ interface Props {
 	num: number;
 }
 
-export default class SelectionsCt extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.object,
-		amount: PropTypes.number,
-		change: PropTypes.func,
-		list: PropTypes.array,
-		num: PropTypes.number
-	};
-
+export default class SelectionsCt extends Component<Props, undefined> {
 	render() {
-		
 		const nums = ['Eine', 'Zwei'];
 
 		const { active, amount, change, list, num } = this.props;

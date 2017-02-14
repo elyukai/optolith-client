@@ -2,7 +2,7 @@ import BorderButton from '../../components/BorderButton';
 import createOverlay from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import IconButton from '../../components/IconButton';
-import InGameActions from '../../_actions/InGameActions';
+import InGameActions from '../../actions/InGameActions';
 import InGameControls from './InGameControls';
 import InGameEdit from './InGameEdit';
 import InGameStore from '../../stores/InGameStore';

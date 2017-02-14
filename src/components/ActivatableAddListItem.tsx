@@ -116,7 +116,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'DISADV_34':
 			case 'DISADV_50': {
 				if (this.state.selectedTier > 0) {
-					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a,b) => b.tier > a ? b.tier as number : a, 0);
+					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a,b) => b.tier as number > a ? b.tier as number : a, 0);
 					currentCost = maxCurrentTier >= this.state.selectedTier ? 0 : (cost as number) * (this.state.selectedTier - maxCurrentTier);
 				}
 				const currentSelIDs = new Set((get(id) as DisadvantageInstance).active.map(e => e.sid));

@@ -2,7 +2,7 @@ import * as React from 'react';
 import AvatarWrapper from '../../components/Avatar';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
-import ProfileActions from '../../_actions/ProfileActions';
+import ProfileActions from '../../actions/ProfileActions';
 import TextField from '../../components/TextField';
 
 const Ext = ({ state, func }) => (

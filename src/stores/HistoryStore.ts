@@ -1,5 +1,6 @@
 import { get } from '../stores/ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
+import * as secondaryAttributes from '../utils/secondaryAttributes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
@@ -7,7 +8,6 @@ import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
-import * as secondaryAttributes from '../utils/secondaryAttributes';
 import Store from './Store';
 
 type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | EndHeroCreationAction | SetSelectionsAction;
@@ -39,7 +39,7 @@ function _updateAll(array) {
 
 function _assignRCP(selections) {
 	let el = ELStore.getStart();
-	_add(ActionTypes.SELECT_EXPERIENCE_LEVEL, -el.ap, { id: el.id });
+	_add('SELECT_EXPERIENCE_LEVEL', -el.ap, { id: el.id });
 	let race = RaceStore.getCurrent();
 	_add(ActionTypes.SELECT_RACE, race.ap, { id: race.id });
 	let culture = CultureStore.getCurrent();

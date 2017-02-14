@@ -1,13 +1,12 @@
+import { filterAndSort } from '../../utils/ListUtils';
+import * as CultureActions from '../../actions/CultureActions';
+import * as React from 'react';
 import Checkbox from '../../components/Checkbox';
-import { CultureInstance } from '../../utils/data/Culture';
-import CultureActions from '../../_actions/CultureActions';
 import CulturesListItem from './CulturesListItem';
 import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
-import { filterAndSort } from '../../utils/ListUtils';
 import RaceStore from '../../stores/RaceStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component, PropTypes } from 'react';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 
@@ -17,36 +16,35 @@ interface Props {
 
 interface State {
 	cultures: CultureInstance[];
-	currentID: string;
+	currentID: string | null;
 	filterText: string;
 	sortOrder: string;
 	showDetails: boolean;
-	showAllCultures: boolean;
+	visibilityFilter: string;
 }
 
-const getCultureStore = () => ({
-	cultures: CultureStore.getAll(),
-	currentID: CultureStore.getCurrentID(),
-	filterText: CultureStore.getFilter(),
-	sortOrder: CultureStore.getSortOrder(),
-	showDetails: CultureStore.areValuesVisible(),
-	showAllCultures: CultureStore.areAllVisible()
-});
-
-export default class Cultures extends Component<Props, State> {
-
-	static propTypes = {
-		changeTab: PropTypes.func
+export default class Cultures extends React.Component<Props, State> {
+	state = {
+		cultures: CultureStore.getAll(),
+		currentID: CultureStore.getCurrentID(),
+		filterText: '',
+		sortOrder: CultureStore.getSortOrder(),
+		showDetails: CultureStore.areValuesVisible(),
+		visibilityFilter: CultureStore.areAllVisible()
 	};
 
-	state = getCultureStore();
+	_updateCultureStore = () => this.setState({
+		cultures: CultureStore.getAll(),
+		currentID: CultureStore.getCurrentID(),
+		sortOrder: CultureStore.getSortOrder(),
+		showDetails: CultureStore.areValuesVisible(),
+		visibilityFilter: CultureStore.areAllVisible()
+	} as State);
 
-	_updateCultureStore = () => this.setState(getCultureStore());
-
-	filter = event => CultureActions.filter(event.target.value);
-	sort = option => CultureActions.sort(option);
-	changeValueVisibility = () => CultureActions.changeValueVisibility();
-	changeView = view => CultureActions.changeView(view);
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => CultureActions.setSortOrder(option);
+	changeValueVisibility = () => CultureActions.switchValueVisibilityFilter();
+	changeView = (view: string) => CultureActions.setVisibilityFilter(view);
 
 	componentDidMount() {
 		CultureStore.addChangeListener(this._updateCultureStore);
@@ -57,21 +55,20 @@ export default class Cultures extends Component<Props, State> {
 	}
 
 	render() {
-
-		const { currentID, filterText, cultures, showAllCultures, showDetails, sortOrder } = this.state;
+		const { currentID, filterText, cultures, visibilityFilter, showDetails, sortOrder } = this.state;
 
 		const currentRace = RaceStore.getCurrent();
 
-		const list = filterAndSort(cultures.filter(e => showAllCultures || currentRace.typicalCultures.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace.typicalCultures.includes(e.id)), filterText, sortOrder);
 
 		return (
 			<div className="page" id="cultures">
 				<div className="options">
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
-						value={showAllCultures}
+						value={visibilityFilter}
 						onChange={this.changeView}
-						options={[['Alle Kulturen', true], ['Übliche Kulturen', false]]}
+						options={[{ id: 'all', name: 'Alle Kulturen' }, { id: 'common', name: 'Übliche Kulturen' }]}
 						fullWidth
 						/>
 					<RadioButtonGroup

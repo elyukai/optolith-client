@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import InGameActions from '../../_actions/InGameActions';
+import InGameActions from '../../actions/InGameActions';
 import BorderButton from '../../components/BorderButton';
 import Dropdown from '../../components/Dropdown';
 import Slidein from '../../components/Slidein';

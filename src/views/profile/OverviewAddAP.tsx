@@ -1,5 +1,5 @@
 import Dialog from '../../components/Dialog';
-import ProfileActions from '../../_actions/ProfileActions';
+import ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
 import TextField from '../../components/TextField';
 

@@ -1,9 +1,8 @@
-import Checkbox from '../../components/Checkbox';
 import { filterAndSort } from '../../utils/ListUtils';
-import { RaceInstance } from '../../utils/data/Race';
+import * as RaceActions from '../../actions/RaceActions';
+import * as React from 'react';
+import Checkbox from '../../components/Checkbox';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import React, { Component, PropTypes } from 'react';
-import RaceActions from '../../_actions/RaceActions';
 import RacesListItem from './RacesListItem';
 import RaceStore from '../../stores/RaceStore';
 import Scroll from '../../components/Scroll';
@@ -15,33 +14,31 @@ interface Props {
 
 interface State {
 	races: RaceInstance[];
-	currentID: string;
+	currentID: string | null;
 	filterText: string;
 	sortOrder: string;
-	showDetails: boolean;
+	areValuesVisible: boolean;
 }
 
-const getRaceStore = () => ({
-	races: RaceStore.getAll(),
-	currentID: RaceStore.getCurrentID(),
-	filterText: RaceStore.getFilter(),
-	sortOrder: RaceStore.getSortOrder(),
-	showDetails: RaceStore.areValuesVisible()
-} as State);
-
-export default class Races extends Component<Props, State> {
-
-	static propTypes = {
-		changeTab: PropTypes.func
+export default class Races extends React.Component<Props, State> {
+	state = {
+		races: RaceStore.getAll(),
+		currentID: RaceStore.getCurrentID(),
+		filterText: '',
+		sortOrder: RaceStore.getSortOrder(),
+		areValuesVisible: RaceStore.areValuesVisible()
 	};
 
-	state = getRaceStore();
+	_updateRaceStore = () => this.setState({
+		races: RaceStore.getAll(),
+		currentID: RaceStore.getCurrentID(),
+		sortOrder: RaceStore.getSortOrder(),
+		areValuesVisible: RaceStore.areValuesVisible()
+	} as State);
 
-	_updateRaceStore = () => this.setState(getRaceStore());
-
-	filter = event => RaceActions.filter(event.target.value);
-	sort = option => RaceActions.sort(option);
-	changeValueVisibility = () => RaceActions.changeValueVisibility();
+	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => RaceActions.setRacesSortOrder(option);
+	changeValueVisibility = () => RaceActions.switchRaceValueVisibilityFilter();
 
 	componentDidMount() {
 		RaceStore.addChangeListener(this._updateRaceStore);
@@ -53,7 +50,7 @@ export default class Races extends Component<Props, State> {
 
 	render() {
 
-		const { currentID, filterText, races, showDetails, sortOrder } = this.state;
+		const { currentID, filterText, races, areValuesVisible, sortOrder } = this.state;
 
 		const list = filterAndSort(races, filterText, sortOrder);
 
@@ -69,7 +66,7 @@ export default class Races extends Component<Props, State> {
 							{ name: 'Nach Kosten', value: 'cost' }
 						]}
 						/>
-					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
+					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>
@@ -79,7 +76,7 @@ export default class Races extends Component<Props, State> {
 								changeTab={this.props.changeTab.bind(null, 'culture')}
 								currentID={currentID}
 								race={race}
-								showDetails={showDetails}
+								showDetails={areValuesVisible}
 								/>
 							)
 						}

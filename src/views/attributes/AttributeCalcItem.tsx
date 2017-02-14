@@ -1,5 +1,5 @@
 import { SecondaryAttribute } from '../../utils/secondaryAttributes';
-import AttributeActions from '../../_actions/AttributeActions';
+import * as AttributeActions from '../../actions/AttributesActions';
 import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';

@@ -24,6 +24,23 @@ export const setVisibilityFilter = (filterOption: string) => AppDispatcher.dispa
 });
 
 export const requestHero = (id: string) => {
+	// if (ELStore.getStartID() !== 'EL_0') {
+	// 	alert(
+	// 		'Nicht gespeicherter Held',
+	// 		'Du hast offenbar bereits einen Helden geöffnet, der noch nicht vollständig gespeichert wurde. Möchtest du trotzdem fortfahren oder vorher den anderen Helden speichern, damit keine Änderungen verloren gehen?',
+	// 		[
+	// 			{
+	// 				label: 'Laden',
+	// 				onClick: this.loadFx.bind(null, id)
+	// 			},
+	// 			{
+	// 				label: 'Abbrechen'
+	// 			}
+	// 		]
+	// 	);
+	// } else {
+	// 	this.loadFx(id);
+	// }
 	AppDispatcher.dispatch<RequestHeroDataAction>({
 		type: REQUEST_HERO_DATA
 	});

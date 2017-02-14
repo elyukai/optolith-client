@@ -1,10 +1,11 @@
+import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
+import * as Categories from '../../constants/Categories';
+import * as ProfessionActions from '../../actions/ProfessionActions';
+import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
 import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
-import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
-import React, { Component, PropTypes } from 'react';
-import ProfessionActions from '../../_actions/ProfessionActions';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
@@ -33,12 +34,7 @@ interface State {
 	spec: [number | null, string];
 }
 
-export default class Selections extends Component<Props, State> {
-
-	static propTypes = {
-		close: PropTypes.func
-	};
-
+export default class Selections extends React.Component<Props, State> {
 	state = {
 		attrSel: 'ATTR_0',
 		useCulturePackage: true,
@@ -52,40 +48,41 @@ export default class Selections extends Component<Props, State> {
 		spec: [null, '']
 	} as State;
 
-	changeAttrSel = option => this.setState({ attrSel: option } as State);
+	changeAttrSel = (option: string) => this.setState({ attrSel: option } as State);
 	changeCulturePackage = () => this.setState({ useCulturePackage: !this.state.useCulturePackage } as State);
-	changeLang = option => this.setState({ lang: option } as State);
+	changeLang = (option: number) => this.setState({ lang: option } as State);
 	changeLiteracy = () => this.setState({ buyLiteracy: !this.state.buyLiteracy } as State);
-	changeLitc = option => this.setState({ litc: option } as State);
+	changeLitc = (option: number) => this.setState({ litc: option } as State);
 
-	changeCantrip = id => {
+	changeCantrip = (id: string) => {
 		var cantrips = this.state.cantrips;
 		if (!cantrips.delete(id))
 			cantrips.add(id);
 		this.setState({ cantrips } as State);
 	};
-	changeCombattech = id => {
+	changeCombattech = (id: string) => {
 		var combattech = this.state.combattech;
 		if (!combattech.delete(id))
 			combattech.add(id);
 		this.setState({ combattech } as State);
 	};
-	changeCurse = (id, option) => {
-		var curses = this.state.curses;
+	changeCurse = (id: string, option: 'add' | 'remove') => {
+		const { curses } = this.state;
 		switch (option) {
 			case 'add':
-				curses.set(id, curses.get(id) + 1);
+				curses.set(id, (curses.get(id) as number) + 1);
 				break;
 			case 'remove':
-				curses.set(id, curses.get(id) - 1);
+				curses.set(id, (curses.get(id) as number) - 1);
 				break;
 			default:
-				if (!curses.delete(id))
+				if (!curses.delete(id)) {
 					curses.set(id, 0);
+				}
 		}
 		this.setState({ curses } as State);
 	};
-	changeLangLitc = (id, ap) => {
+	changeLangLitc = (id: string, ap: number) => {
 		var langLitc = this.state.langLitc;
 		if (langLitc.has(id)) {
 			if (langLitc.get(id) !== ap)
@@ -96,76 +93,77 @@ export default class Selections extends Component<Props, State> {
 			langLitc.set(id, ap);
 		this.setState({ langLitc } as State);
 	};
-	changeSpec = (i, value) => {
+	changeSpec = (index: number, value: number) => {
 		var spec = this.state.spec;
-		spec[i] = i === 0 ? value : value.target.value;
+		spec[index] = index === 0 ? value : value.target.value;
 		this.setState({ spec } as State);
 	};
 
-	assignRCPEntries = selMap => {
-		ProfessionActions.assignRCPEntries(Object.assign({}, this.state, {
+	assignRCPEntries = (selMap: Map<any, any>) => {
+		ProfessionActions.setSelections(Object.assign({}, this.state, {
 			map: selMap,
 			spec: this.state.spec[1] !== '' ? this.state.spec[1] : this.state.spec[0]
 		}));
 	};
 
 	render() {
-
-		const currentRace = RaceStore.getCurrent();
-		const currentCulture = CultureStore.getCurrent();
-		const currentProfession = ProfessionStore.getCurrent();
-		const currentProfessionVariant = ProfessionVariantStore.getCurrent();
+		const race = RaceStore.getCurrent();
+		const culture = CultureStore.getCurrent();
+		const profession = ProfessionStore.getCurrent();
+		const professionVariant = ProfessionVariantStore.getCurrent();
 
 		const { close } = this.props;
 		const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = this.state;
 
-		const selectLang = currentCulture.languages.length > 1;
-		const selectLitc = currentCulture.scripts.length > 1;
+		const selectLang = culture.languages.length > 1;
+		const selectLitc = culture.scripts.length > 1;
 
-		const professionSel = new Map();
+		const professionSelections = new Map();
 
-		if (ProfessionStore.getCurrentId() !== 'P_0') {
-			currentProfession.selections.forEach(e => {
+		if (![null, 'P_0'].includes(ProfessionStore.getCurrentId())) {
+			profession.selections.forEach(e => {
 				let [ id, ...other ] = e;
-				professionSel.set(id, other);
+				professionSelections.set(id, other);
 			});
-
-			if (ProfessionVariantStore.getCurrentID() !== null) {
-				currentProfessionVariant.selections.forEach(e => {
-					let [ id, ...other ] = e;
-					if (other.length === 1 && other[0] === false)
-						professionSel.delete(id);
-					else
-						professionSel.set(id, other);
-				});
-			}
 		}
 
-		var langLitcElement = null;
-		var langLitcApLeft = 0;
+		if (ProfessionVariantStore.getCurrentID() !== null) {
+			professionVariant.selections.forEach(e => {
+				let [ id, ...other ] = e;
+				if (other.length === 1 && other[0] === false) {
+					professionSelections.delete(id);
+				}
+				else {
+					professionSelections.set(id, other);
+				}
+			});
+		}
 
-		if (professionSel.has('lang_lit')) {
-			let active = langLitc;
-			let params = professionSel.get('lang_lit');
-			let apTotal = params[0];
+		let langLitcElement = null;
+		let langLitcApLeft = 0;
 
-			let SA_28 = get('SA_28');
-			let SA_30 = get('SA_30');
+		if (professionSelections.has('lang_lit')) {
+			const active = langLitc;
+			const params = professionSelections.get('lang_lit');
+			const apTotal = params[0];
 
-			let list = [];
+			const SA_28 = get('SA_28') as SpecialAbilityInstance;
+			const SA_30 = get('SA_30') as SpecialAbilityInstance;
+
+			const list: LanguagesScriptsSelectionListItem[] = [];
 
 			SA_28.sel.forEach(e => {
-				let sid = e[1];
-				let ap = SA_28.sel[sid - 1][2];
-				let name = SA_28.sel[sid - 1][0];
-				let disabled = buyLiteracy && ((!selectLitc && sid === currentCulture.scripts[0]) || (selectLitc && sid === litc));
-				list.push({ id: `LITC_${sid}`, name, ap, disabled });
+				const sid = e.id as number;
+				const cost = SA_28.sel[sid - 1].cost;
+				const name = SA_28.sel[sid - 1].name;
+				const disabled = buyLiteracy && ((!selectLitc && sid === culture.scripts[0]) || (selectLitc && sid === litc));
+				list.push({ id: `LITC_${sid}`, name, cost, disabled });
 			});
 
 			SA_30.sel.forEach(e => {
-				let sid = e[1];
-				let name = SA_30.sel[sid - 1][0];
-				let disabled = (!selectLang && sid === currentCulture.languages[0]) || (selectLang && sid === lang);
+				const sid = e.id as number;
+				const name = SA_30.sel[sid - 1].name;
+				const disabled = (!selectLang && sid === culture.languages[0]) || (selectLang && sid === lang);
 				list.push({ id: `LANG_${sid}`, name, disabled });
 			});
 
@@ -179,12 +177,12 @@ export default class Selections extends Component<Props, State> {
 		var cursesElement = null;
 		var cursesApLeft = 0;
 
-		if (professionSel.has('curses')) {
-			let active = curses;
-			let params = professionSel.get('curses');
-			let apTotal = params[0];
+		if (professionSelections.has('curses')) {
+			const active = curses;
+			const params = professionSelections.get('curses');
+			const apTotal = params[0];
 
-			let list = getAllByCategoryGroup('spells', 3);
+			const list = getAllByCategoryGroup(Categories.SPELLS, 3);
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
@@ -195,43 +193,44 @@ export default class Selections extends Component<Props, State> {
 
 		var ctElement = null;
 
-		if (professionSel.has('ct')) {
-			let active = combattech;
-			let params = professionSel.get('ct');
-			let num = params[0];
-			let amount = params[1];
-			let options = new Set(params[2]);
+		if (professionSelections.has('ct')) {
+			const active = combattech;
+			const params = professionSelections.get('ct');
+			const num = params[0];
+			const amount = params[1];
+			const options = new Set(params[2]);
 
-			let list = getAllByCategory('combattech').filter(e => options.has(e.id));
+			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+			const list = rawList.filter(e => options.has(e.id));
 
 			ctElement = <SelectionsCt list={list} active={active} num={num} amount={amount} change={this.changeCombattech} />;
 		}
 
 		var cantripsElement = null;
 
-		if (professionSel.has('cantrips')) {
-			let active = cantrips;
-			let params = professionSel.get('cantrips');
-			let num = params[0];
-			let options = new Set(params[1].map(e => 'SPELL_' + e));
+		if (professionSelections.has('cantrips')) {
+			const active = cantrips;
+			const params = professionSelections.get('cantrips') as [number, string[]];
+			const num = params[0];
+			const options = new Set(params[1].map(e => 'SPELL_' + e));
 
-			let list = getAllByCategory('spells').filter(e => options.has(e.id));
+			const rawList = getAllByCategory(Categories.SPELLS) as SpellInstance[];
+			const list = rawList.filter(e => options.has(e.id));
 
 			cantripsElement = <SelectionsCantrips list={list} active={active} num={num} change={this.changeCantrip} />;
 		}
 
 		var specElement = null;
 
-		if (professionSel.has('spec')) {
-			let active = spec;
-			let params = professionSel.get('spec');
-			let id = params[0];
+		if (professionSelections.has('spec')) {
+			const active = spec;
+			const params = professionSelections.get('spec');
+			const id = params[0];
 
-			let talent = get(id);
-			let name = talent.name;
-			let list = talent.spec || [];
-			list = list.map((e, i) => [e, i]);
-			let input = talent.spec_input;
+			const talent = get(id) as TalentInstance;
+			const name = talent.name;
+			const list = talent.specialisation.map((e, id) => ({ id, name: e }));
+			const input = talent.specialisationInput;
 
 			specElement = <SelectionsTalentSpec list={list} active={active} name={name} input={input} change={this.changeSpec} />;
 		}
@@ -244,14 +243,14 @@ export default class Selections extends Component<Props, State> {
 						hint="Eigenschaftsmodifikation auswählen"
 						value={attrSel}
 						onChange={this.changeAttrSel}
-						options={currentRace.attributeSelection[1].map(e => {
-							let attr = get(e);
-							let value = currentRace.attributeSelection[0];
-							return [`${attr.name} ${value > 0 ? '+' : ''}${value}`, e];
+						options={race.attributeSelection[1].map(e => {
+							const attr = get(e);
+							const value = race.attributeSelection[0];
+							return { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` };
 						})} />
 					<h3>Kultur</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-						Kulturpaket kaufen ({currentCulture.ap} AP)
+						Kulturpaket kaufen ({culture.ap} AP)
 					</Checkbox>
 					{
 						selectLang ? (
@@ -259,16 +258,16 @@ export default class Selections extends Component<Props, State> {
 								hint="Muttersprache auswählen"
 								value={lang}
 								onChange={this.changeLang}
-								options={currentCulture.languages.map(e => {
-									let lang = get('SA_30').sel[e - 1];
-									return [lang[0], e];
+								options={culture.languages.map(e => {
+									const lang = (get('SA_30') as SpecialAbilityInstance).sel[e - 1];
+									return { id: e, name: lang.name };
 								})}
 								disabled={langLitc.size > 0} />
 						) : null
 					}
 					<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
 						Schrift kaufen{
-							!selectLitc ? ` (${get('SA_28').sel[currentCulture.scripts[0] - 1][0]}, ${get('SA_28').sel[currentCulture.scripts[0] - 1][2]} AP)` : ''
+							!selectLitc ? ` (${(get('SA_28') as SpecialAbilityInstance).sel[culture.scripts[0] - 1].name}, ${(get('SA_28') as SpecialAbilityInstance).sel[culture.scripts[0] - 1].cost} AP)` : ''
 						}
 					</Checkbox>
 					{
@@ -277,9 +276,9 @@ export default class Selections extends Component<Props, State> {
 								hint="Schrift auswählen"
 								value={litc}
 								onChange={this.changeLitc}
-								options={currentCulture.scripts.map(e => {
-									let lit = get('SA_28').sel[e - 1];
-									return [`${lit[0]} (${lit[2]} AP)`, e];
+								options={culture.scripts.map(e => {
+									const lit = (get('SA_28') as SpecialAbilityInstance).sel[e - 1];
+									return { id: e, name: `${lit.name} (${lit.cost} AP)` };
 								})}
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
@@ -297,13 +296,13 @@ export default class Selections extends Component<Props, State> {
 							attrSel === 'ATTR_0' ||
 							(selectLang && lang === 0) ||
 							(buyLiteracy && selectLitc && litc === 0) ||
-							(professionSel.has('spec') && (spec[1] === '' && spec[0] === null)) ||
-							(professionSel.has('lang_lit') && langLitcApLeft !== 0) ||
-							(professionSel.has('curses') && cursesApLeft !== 0) ||
-							(professionSel.has('ct') && combattech.size !== professionSel.get('ct')[0]) ||
-							(professionSel.has('cantrips') && cantrips.size !== professionSel.get('cantrips')[0])
+							(professionSelections.has('spec') && (spec[1] === '' && spec[0] === null)) ||
+							(professionSelections.has('lang_lit') && langLitcApLeft !== 0) ||
+							(professionSelections.has('curses') && cursesApLeft !== 0) ||
+							(professionSelections.has('ct') && combattech.size !== professionSelections.get('ct')[0]) ||
+							(professionSelections.has('cantrips') && cantrips.size !== professionSelections.get('cantrips')[0])
 						}
-						onClick={this.assignRCPEntries.bind(null, professionSel)}
+						onClick={this.assignRCPEntries.bind(null, professionSelections)}
 						/>
 				</Scroll>
 			</Slidein>

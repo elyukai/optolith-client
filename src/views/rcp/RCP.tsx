@@ -7,29 +7,28 @@ import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
 interface State {
-	cultureID: string;
-	raceID: string;
+	cultureID: string | null;
+	raceID: string | null;
 	tab: string;
 }
 
-export default class RCP extends Component<any, State> {
-
+export default class RCP extends Component<undefined, State> {
 	state = {
 		tab: 'race',
 		raceID: RaceStore.getCurrentID(),
 		cultureID: CultureStore.getCurrentID()
 	};
-	
+
 	_updateCultureStore = () => this.setState({ cultureID: CultureStore.getCurrentID() } as State);
 	_updateRaceStore = () => this.setState({ raceID: RaceStore.getCurrentID() } as State);
 
-	handleClick = tab => this.setState({ tab } as State);
-	
+	handleClick = (tab: string) => this.setState({ tab } as State);
+
 	componentDidMount() {
 		CultureStore.addChangeListener(this._updateCultureStore);
 		RaceStore.addChangeListener(this._updateRaceStore);
 	}
-	
+
 	componentWillUnmount() {
 		CultureStore.removeChangeListener(this._updateCultureStore);
 		RaceStore.removeChangeListener(this._updateRaceStore);
@@ -47,7 +46,7 @@ export default class RCP extends Component<any, State> {
 				element = <Cultures changeTab={this.handleClick} />;
 				break;
 			case 'profession':
-				element = <Professions changeTab={this.handleClick} />;
+				element = <Professions />;
 				break;
 		}
 

@@ -1,5 +1,5 @@
 import BorderButton from '../../components/BorderButton';
-import GroupsActions from '../../_actions/GroupsActions';
+import GroupsActions from '../../actions/GroupsActions';
 import GroupsStore from '../../stores/GroupsStore';
 import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';

@@ -1,5 +1,8 @@
+import * as ActivatableStore from '../../stores/ActivatableStore';
+import * as Categories from '../../constants/Categories';
 import * as React from 'react';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
+import ActivatableTextList from './ActivatableTextList';
 import APStore from '../../stores/APStore';
 import AttributeStore from '../../stores/AttributeStore';
 import CultureStore from '../../stores/CultureStore';
@@ -7,7 +10,6 @@ import DisAdvStore from '../../stores/DisAdvStore';
 import ELStore from '../../stores/ELStore';
 import MainSheetAttributes from './MainSheetAttributes';
 import MainSheetPersonalData from './MainSheetPersonalData';
-import AbilitiesTextList from './AbilitiesTextList';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
@@ -28,9 +30,9 @@ export default () => {
 	const eyecolorTags = ProfileStore.getEyecolorTags();
 	const socialstatusTags = ProfileStore.getSocialstatusTags();
 
-	const advActive = DisAdvStore.getActiveForView(true);
-	const disadvActive = DisAdvStore.getActiveForView(false);
-	const generalsaActive = SpecialAbilitiesStore.getActiveForView(1,2);
+	const advActive = ActivatableStore.getActiveForView(Categories.ADVANTAGES);
+	const disadvActive = ActivatableStore.getActiveForView(Categories.DISADVANTAGES);
+	const generalsaActive = ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES).filter(({ gr }) => [1,2].includes(gr as number));
 
 	const attributes = secondaryAttributes.getAll();
 	const baseValues = AttributeStore.getAddEnergies();
@@ -53,13 +55,13 @@ export default () => {
 			<div className="lower">
 				<div className="lists">
 					<TextBox className="advantages" label="Vorteile">
-						<AbilitiesTextList list={advActive} />
+						<ActivatableTextList list={advActive} />
 					</TextBox>
 					<TextBox className="disadvantages" label="Nachteile">
-						<AbilitiesTextList list={disadvActive} />
+						<ActivatableTextList list={disadvActive} />
 					</TextBox>
 					<TextBox className="general-special-abilities" label="Allgemeine Sonderfertigkeiten">
-						<AbilitiesTextList list={generalsaActive} />
+						<ActivatableTextList list={generalsaActive} />
 					</TextBox>
 				</div>
 				<MainSheetAttributes attributes={attributes} baseValues={baseValues} />

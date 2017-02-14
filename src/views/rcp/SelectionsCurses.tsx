@@ -13,18 +13,8 @@ interface Props {
 	}[];
 }
 
-export default class SelectionsCurses extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.object,
-		apLeft: PropTypes.number,
-		apTotal: PropTypes.number,
-		change: PropTypes.func,
-		list: PropTypes.array
-	};
-
+export default class SelectionsCurses extends Component<Props, undefined> {
 	render() {
-
 		const { active, apTotal, apLeft, change, list } = this.props;
 
 		return (
@@ -39,7 +29,7 @@ export default class SelectionsCurses extends Component<Props, any> {
 									checked={active.has(id)}
 									disabled={!active.has(id) && apLeft <= 0}
 									onClick={change.bind(null, id)}>
-									{name} 
+									{name}
 								</Checkbox>
 								{active.has(id) ? <span>{active.get(id)}</span> : null}
 								<BorderButton
@@ -48,7 +38,7 @@ export default class SelectionsCurses extends Component<Props, any> {
 									onClick={change.bind(null, id, 'add')}/>
 								<BorderButton
 									label="-"
-									disabled={!active.has(id) || active.get(id) <= 0}
+									disabled={!active.has(id) || (active.get(id) as number) <= 0}
 									onClick={change.bind(null, id, 'remove')}/>
 							</div>
 						);

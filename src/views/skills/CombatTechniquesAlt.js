@@ -1,4 +1,4 @@
-import CombatTechniquesActions from '../../_actions/CombatTechniquesActions';
+import CombatTechniquesActions from '../../actions/CombatTechniquesActions';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import { get } from '../../stores/ListStore';
 import * as ListUtils from '../../utils/ListUtils';

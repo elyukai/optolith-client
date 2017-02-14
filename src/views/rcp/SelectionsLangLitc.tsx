@@ -7,29 +7,13 @@ interface Props {
 	apLeft: number;
 	apTotal: number;
 	change: (id: string, ap: number) => void;
-	list: {
-		id: string;
-		name: string;
-		ap: number;
-		disabled: boolean;
-	}[];
+	list: LanguagesScriptsSelectionListItem[];
 }
 
-export default class SelectionsLangLitc extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.object,
-		apLeft: PropTypes.number,
-		apTotal: PropTypes.number,
-		change: PropTypes.func,
-		list: PropTypes.array
-	};
-
+export default class SelectionsLangLitc extends Component<Props, undefined> {
 	render() {
-
 		const { active, apTotal, apLeft, change, list } = this.props;
-
-		const tiers: [string, number][] = [['I',2],['II',4],['III',6]];
+		const tiers = [{id:2,name:'I'},{id:4,name:'II'},{id:6,name:'III'}];
 
 		return (
 			<div className="lang_lit list">
@@ -38,25 +22,25 @@ export default class SelectionsLangLitc extends Component<Props, any> {
 				</h4>
 				{
 					list.map(obj => {
-						let { id, name, ap, disabled } = obj;
+						const { id, name, cost, disabled } = obj;
 						return (
 							<div key={id}>
 								<Checkbox
 									checked={active.has(id)}
-									disabled={disabled || (!active.has(id) && (ap ? apLeft - ap < 0 : apLeft <= 0))}
-									onClick={ap ? change.bind(null, id, ap) : change.bind(null, id, active.has(id) ? active.get(id) : 2)}>
-									{name}{ap ? ` (Schrift, ${ap} AP)` : null}
+									disabled={disabled || (!active.has(id) && (cost ? apLeft - cost < 0 : apLeft <= 0))}
+									onClick={cost ? change.bind(null, id, cost) : change.bind(null, id, active.has(id) ? active.get(id) : 2)}>
+									{name}{cost ? ` (Schrift, ${cost} AP)` : null}
 								</Checkbox>
 								{
-									active.has(id) && !ap ? (
+									active.has(id) && !cost ? (
 										<Dropdown
 											className="tiers"
-											value={active.get(id)}
+											value={active.get(id) || 0}
 											onChange={change.bind(null, id)}
-											options={tiers.filter(e => (e[1] - active.get(id)) <= apLeft)} />
+											options={tiers.filter(e => (e.id - (active.get(id) as number)) <= apLeft)} />
 									) : null
 								}
-								
+
 							</div>
 						);
 					})

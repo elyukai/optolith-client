@@ -18,8 +18,8 @@ module.exports = {
 			},
 			{
                 test: /\.scss$/,
-				loader: ExtractTextPlugin.extract({
-					loader: [
+				use: ExtractTextPlugin.extract({
+					use: [
 						'css-loader?-url',
 						'sass-loader'
 					]

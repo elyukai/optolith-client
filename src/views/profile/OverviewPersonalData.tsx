@@ -2,7 +2,7 @@ import * as React from 'react';
 import Dropdown from '../../components/Dropdown';
 import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';
-import ProfileActions from '../../_actions/ProfileActions';
+import ProfileActions from '../../actions/ProfileActions';
 import TextField from '../../components/TextField';
 
 interface Props {

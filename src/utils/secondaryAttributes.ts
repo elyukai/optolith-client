@@ -2,19 +2,6 @@ import AttributeStore from '../stores/AttributeStore';
 import RaceStore from '../stores/RaceStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 
-export interface SecondaryAttribute {
-	id: string;
-	short: string;
-	name: string;
-	calc: string;
-	base?: number;
-	add?: number;
-	mod?: number;
-	value: number | string;
-	maxAdd?: number;
-	currentAdd?: number;
-}
-
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
 const SGC = () => get('SGC') as AttributeInstance;

@@ -14,6 +14,16 @@ export const setHeroAvatar = (url: string) => AppDispatcher.dispatch<SetHeroAvat
 		url
 	}
 });
+	// changeAvatar({ source, extern, file }) {
+	// 	if (source === 'ext') {
+	// 		AppDispatcher.dispatch({
+	// 			type: ActionTypes.UPDATE_HERO_AVATAR,
+	// 			url: extern
+	// 		});
+	// 	} else {
+	// 		WebAPIUtils.changeHeroAvatar(source, file);
+	// 	}
+	// },
 
 export const setFamily = (family: string) => AppDispatcher.dispatch<SetFamilyAction>({
 	type: ActionTypes.SET_FAMILY,
@@ -102,6 +112,8 @@ export const setOtherInfo = (otherinfo: string) => AppDispatcher.dispatch<SetOth
 export const endHeroCreation = () => AppDispatcher.dispatch<EndHeroCreationAction>({
 	type: ActionTypes.END_HERO_CREATION
 });
+
+export const deleteHero = () => console.error('REQUEST missing');
 
 export const addAdventurePoints = (amount: number) => AppDispatcher.dispatch<AddAdventurePointsAction>({
 	type: ActionTypes.ADD_ADVENTURE_POINTS,

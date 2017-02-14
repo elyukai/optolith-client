@@ -12,8 +12,8 @@ const getTalent = (skill: TalentInstance) => {
 	const routine = skill.value > 0 ? dependentCheckMod < 4 ? [ dependentCheckMod, lessAttrPoints > 0 ] : false : false;
 	const routineSign = routine && routine[0] > 0 ? '+' : '';
 	const routineOptional = routine && routine[1] ? '!' : '';
-	const finalUseAreas = [ ...skill.spec, skill.spec_input ].filter(e => typeof e === 'string');
-	const enc = skill.enc === 'true' ? 'Ja' : skill.enc === 'false' ? 'Nein' : 'Evtl';
+	const finalUseAreas = [ ...skill.specialisation, skill.specialisationInput ].filter(e => typeof e === 'string');
+	const enc = skill.encumbrance === 'true' ? 'Ja' : skill.encumbrance === 'false' ? 'Nein' : 'Evtl';
 
 	return (
 		<div className="talent">

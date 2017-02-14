@@ -1,40 +1,40 @@
-import { RECEIVE_DATA_TABLES, RECEIVE_REGISTRATION, RECEIVE_HERO_AVATAR, RECEIVE_HERO_DATA, RECEIVE_LOGIN, RECEIVE_LOGOUT, RECEIVE_NEW_USERNAME, RECEIVE_USER_DELETION, RECEIVE_HEROLIST } from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
 export const receiveDataTables = (data: RawData) => AppDispatcher.dispatch<ReceiveDataTablesAction>({
-	type: RECEIVE_DATA_TABLES,
+	type: ActionTypes.RECEIVE_DATA_TABLES,
 	payload: {
 		data
 	}
 });
 
 export const receiveHerolist = (heroes: RawHerolist) => AppDispatcher.dispatch<ReceiveHerolistAction>({
-	type: RECEIVE_HEROLIST,
+	type: ActionTypes.RECEIVE_HEROLIST,
 	payload: {
 		heroes
 	}
 });
 
 export const receiveRegistration = () => AppDispatcher.dispatch<ReceiveRegistrationAction>({
-	type: RECEIVE_REGISTRATION
+	type: ActionTypes.RECEIVE_REGISTRATION
 });
 
 export const receiveHeroData = (data: Hero & HeroRest) => AppDispatcher.dispatch<ReceiveHeroDataAction>({
-	type: RECEIVE_HERO_DATA,
+	type: ActionTypes.RECEIVE_HERO_DATA,
 	payload: {
 		data
 	}
 });
 
 export const receiveHeroAvatar = (url: string) => AppDispatcher.dispatch<ReceiveHeroAvatarAction>({
-	type: RECEIVE_HERO_AVATAR,
+	type: ActionTypes.RECEIVE_HERO_AVATAR,
 	payload: {
 		url
 	}
 });
 
 export const receiveLogin = (name: string, displayName: string, email: string, sessionToken: string, heroes: RawHerolist) => AppDispatcher.dispatch<ReceiveLoginAction>({
-	type: RECEIVE_LOGIN,
+	type: ActionTypes.RECEIVE_LOGIN,
 	payload: {
 		name,
 		displayName,
@@ -45,16 +45,39 @@ export const receiveLogin = (name: string, displayName: string, email: string, s
 });
 
 export const receiveLogout = () => AppDispatcher.dispatch<ReceiveLogoutAction>({
-	type: RECEIVE_LOGOUT
+	type: ActionTypes.RECEIVE_LOGOUT
 });
 
 export const receiveNewUsername = (name: string) => AppDispatcher.dispatch<ReceiveNewUsernameAction>({
-	type: RECEIVE_NEW_USERNAME,
+	type: ActionTypes.RECEIVE_NEW_USERNAME,
+	payload: {
+		name
+	}
+});
+
+export const receiveNewPassword = () => AppDispatcher.dispatch<ReceiveNewPasswordAction>({
+	type: ActionTypes.RECEIVE_NEW_PASSWORD
+});
+
+export const receiveNewDisplayName = (name: string) => AppDispatcher.dispatch<ReceiveNewDisplayNameAction>({
+	type: ActionTypes.RECEIVE_NEW_DISPLAY_NAME,
 	payload: {
 		name
 	}
 });
 
 export const receiveUserDeletion = () => AppDispatcher.dispatch<ReceiveUserDeletionAction>({
-	type: RECEIVE_USER_DELETION
+	type: ActionTypes.RECEIVE_USER_DELETION
+});
+
+export const receivePasswordReset = () => AppDispatcher.dispatch<ReceivePasswordResetAction>({
+	type: ActionTypes.RECEIVE_PASSWORD_RESET
+});
+
+export const receiveUsername = () => AppDispatcher.dispatch<ReceiveUsernameAction>({
+	type: ActionTypes.RECEIVE_USERNAME
+});
+
+export const receiveAccountActivationEmail = () => AppDispatcher.dispatch<ReceiveAccountActivationEmailAction>({
+	type: ActionTypes.RECEIVE_ACCOUNT_ACTIVATION_EMAIL
 });

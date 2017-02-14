@@ -1,4 +1,4 @@
-import AccountActions from '../../_actions/AccountActions';
+import AccountActions from '../../actions/AuthActions';
 import AccountChangeName from './AccountChangeName';
 import AccountChangePassword from './AccountChangePassword';
 import BorderButton from '../../components/BorderButton';

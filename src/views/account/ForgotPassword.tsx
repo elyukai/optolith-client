@@ -1,4 +1,4 @@
-import AccountActions from '../../_actions/AccountActions';
+import AccountActions from '../../actions/AuthActions';
 import createOverlay, { close } from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import Login from './Login';

@@ -1,5 +1,5 @@
 import createOverlay, { close } from '../../utils/createOverlay';
-import AccountActions from '../../_actions/AccountActions';
+import AccountActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
 import React, { Component, PropTypes } from 'react';

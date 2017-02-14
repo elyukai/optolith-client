@@ -1,4 +1,4 @@
-// import EquipmentActions from '../../_actions/EquipmentActions';
+// import EquipmentActions from '../../actions/EquipmentActions';
 import React, { Component } from 'react';
 
 export default class Equipment extends Component {

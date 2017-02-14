@@ -33,7 +33,7 @@ function _updateDetails() {
 class RaceStoreStatic extends Store {
 
 	getAll() {
-		return getAllByCategory(CATEGORY);
+		return getAllByCategory(CATEGORY) as RaceInstance[];
 	}
 
 	getCurrentID() {

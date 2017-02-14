@@ -1,21 +1,20 @@
-import BorderButton from '../../components/BorderButton';
-import * as CultureActions from '../../actions/CultureActions';
 import { get } from '../../stores/ListStore';
-import React, { Component, PropTypes } from 'react';
+import * as CultureActions from '../../actions/CultureActions';
+import * as React from 'react';
+import BorderButton from '../../components/BorderButton';
 import classNames from 'classnames';
 
 interface Props {
 	changeTab: (tab: string) => void;
-	currentID: string;
+	currentID: string | null;
 	culture: CultureInstance;
 	showDetails: boolean;
 }
 
-export default class CulturesListItem extends Component<Props, undefined> {
+export default class CulturesListItem extends React.Component<Props, undefined> {
 	selectCulture = () => CultureActions.selectCulture(this.props.culture.id);
 
 	render() {
-
 		const { changeTab, currentID, culture, showDetails } = this.props;
 
 		const className = classNames({

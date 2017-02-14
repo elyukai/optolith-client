@@ -5,7 +5,12 @@ import classNames from 'classnames';
 import DialogButtons from './DialogButtons';
 
 interface Props {
-	buttons?: { label: string; onClick?: () => void; }[];
+	buttons?: {
+		label: string;
+		onClick?: () => void;
+		primary?: boolean;
+		disabled?: boolean;
+	}[];
 	className?: string;
 	id?: string;
 	node?: HTMLDivElement;

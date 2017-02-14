@@ -11,17 +11,8 @@ interface Props {
 	num: number;
 }
 
-export default class SelectionsCantrips extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.object,
-		change: PropTypes.func,
-		list: PropTypes.array,
-		num: PropTypes.number
-	};
-
+export default class SelectionsCantrips extends Component<Props, undefined> {
 	render() {
-				
 		const nums = ['Ein Zaubertrick', 'Zwei Zaubertricks'];
 
 		const { active, change, list, num } = this.props;

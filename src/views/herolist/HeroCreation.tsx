@@ -1,8 +1,8 @@
+import * as HerolistActions from '../../actions/HerolistActions';
+import * as React from 'react';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
-import HerolistActions from '../../_actions/HerolistActions';
-import * as React from 'react';
-import { Component, PropTypes } from 'react';
+import ELStore from '../../stores/ELStore';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -15,24 +15,23 @@ interface State {
 	el: string;
 }
 
-export default class HeroCreation extends Component<Props, State> {
-
-	static propTypes = {
-		node: PropTypes.any
-	};
-
+export default class HeroCreation extends React.Component<Props, State> {
 	state = {
 		name: '',
 		gender: '',
 		el: 'EL_0'
 	};
 
-	changeName = event => this.setState({ name: event.target.value } as State);
-	changeGender = gender => this.setState({ gender } as State);
-	changeEL = el => this.setState({ el } as State);
-	create = () => HerolistActions.createNewHero(this.state);
+	changeName = (event: Event) => this.setState({ name: event.target.value } as State);
+	changeGender = (gender: string) => this.setState({ gender } as State);
+	changeEL = (el: string) => this.setState({ el } as State);
+	create = () => HerolistActions.createHero(this.state.name, this.state.gender as 'm' | 'f', this.state.el);
 
 	render() {
+		const experienceLevels = Object.keys(ELStore.getAll()).map(e => {
+			const { id, name, ap } = ELStore.get(e);
+			return { id, name: `${name} (${ap})` };
+		});
 
 		return (
 			<Dialog id="herocreation" title="Heldenerstellung" node={this.props.node} buttons={[
@@ -47,21 +46,13 @@ export default class HeroCreation extends Component<Props, State> {
 				<Dropdown
 					value={this.state.gender}
 					onChange={this.changeGender}
-					options={[['männlich', 'm'], ['weiblich', 'f']]}
+					options={[{id:'m',name:'männlich'},{id:'f',name:'weiblich'}]}
 					hint="Geschlecht auswählen"
 					fullWidth />
 				<Dropdown
 					value={this.state.el}
 					onChange={this.changeEL}
-					options={[
-						['Unerfahren (900 AP)', 'EL_1'],
-						['Durchschnittlich (1000 AP)', 'EL_2'],
-						['Erfahren (1100 AP)', 'EL_3'],
-						['Kompetent (1200 AP)', 'EL_4'],
-						['Meisterlich (1400 AP)', 'EL_5'],
-						['Brilliant (1700 AP)', 'EL_6'],
-						['Legendär (2100 AP)', 'EL_7']
-					]}
+					options={experienceLevels}
 					hint="Erfahrungsgrad auswählen"
 					fullWidth />
 			</Dialog>

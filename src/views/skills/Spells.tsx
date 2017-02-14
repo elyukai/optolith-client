@@ -1,12 +1,13 @@
 import { filterAndSort } from '../../utils/ListUtils';
+import * as React from 'react';
+import * as SpellsActions from '../../actions/SpellsActions';
 import BorderButton from '../../components/BorderButton';
+import Checkbox from '../../components/Checkbox';
 import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import * as React from 'react';
 import Scroll from '../../components/Scroll';
 import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
-import * as SpellsActions from '../../actions/SpellsActions';
 import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
 
@@ -101,6 +102,11 @@ export default class Spells extends React.Component<undefined, State> {
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
+							/>
+						<Checkbox
+							checked={true}
+							onClick={() => undefined}
+							disabled
 							/>
 					</div>
 					<Scroll className="list">
