@@ -1,7 +1,6 @@
-import { Component } from 'react';
 import * as React from 'react';
 
-export default class Icon extends Component<any, any> {
+export default class Icon extends React.Component<any, any> {
 
 	static defaultProps = {
 		className: 'icon'

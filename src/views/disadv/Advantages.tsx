@@ -41,7 +41,7 @@ export default class Advantages extends React.Component<undefined, State> {
 		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES)
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	changeRating = () => DisAdvActions.switchRatingVisibility();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
@@ -80,13 +80,13 @@ export default class Advantages extends React.Component<undefined, State> {
 						<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
 						<Checkbox checked={showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
 					</div>
-					<DisAdvList list={this.state.advDeactive} type="ADV" rating={rating} showRating={this.state.showRating} />
+					<DisAdvList list={this.state.advDeactive} type="ADV" rating={rating} showRating={this.state.showRating} phase={2} />
 				</Slidein>
 				<div className="options">
 					<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 				</div>
-				<DisAdvList list={this.state.advActive} type="ADV" rating={rating} showRating={showRating} active />
+				<DisAdvList list={this.state.advActive} type="ADV" rating={rating} showRating={showRating} active phase={2} />
 			</div>
 		);
 	}

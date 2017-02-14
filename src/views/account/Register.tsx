@@ -1,7 +1,6 @@
-import createOverlay, { close } from '../../utils/createOverlay';
-import { Component, PropTypes } from 'react';
+import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import AccountActions from '../../actions/AuthActions';
+import createOverlay, { close } from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
 import TextField from '../../components/TextField';
@@ -24,12 +23,7 @@ function _validateEmail(email: string): boolean {
 	return regex.test(email);
 }
 
-export default class Register extends Component<Props, State> {
-
-	static propTypes = {
-		node: PropTypes.any
-	};
-
+export default class Register extends React.Component<Props, State> {
 	state = {
 		displayName: '',
 		email: '',
@@ -39,11 +33,11 @@ export default class Register extends Component<Props, State> {
 		password2: ''
 	};
 
-	register = () => AccountActions.register(this.state.email, this.state.username, this.state.displayName, this.state.password);
+	register = () => AuthActions.requestRegistration(this.state.email, this.state.username, this.state.displayName, this.state.password);
 	back = () => createOverlay(<Login />);
 
-	_onChange = (option, event) => this.setState({ [option]: event.target.value } as State);
-	_onEnter = event => {
+	_onChange = (option: string, event: Event) => this.setState({ [option]: event.target.value } as State);
+	_onEnter = (event: Event) => {
 		const { email, email2, username, password, password2 } = this.state;
 		if (event.charCode === 13 &&
 			email !== '' &&
@@ -57,7 +51,7 @@ export default class Register extends Component<Props, State> {
 			password.length <= 20 &&
 			password === password2) {
 			this.register();
-			close(this.props.node);
+			close(this.props.node!);
 		}
 	}
 

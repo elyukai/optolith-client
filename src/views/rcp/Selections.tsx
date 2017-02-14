@@ -55,17 +55,19 @@ export default class Selections extends React.Component<Props, State> {
 	changeLitc = (option: number) => this.setState({ litc: option } as State);
 
 	changeCantrip = (id: string) => {
-		var cantrips = this.state.cantrips;
-		if (!cantrips.delete(id))
+		const cantrips = this.state.cantrips;
+		if (!cantrips.delete(id)) {
 			cantrips.add(id);
+		}
 		this.setState({ cantrips } as State);
-	};
+	}
 	changeCombattech = (id: string) => {
-		var combattech = this.state.combattech;
-		if (!combattech.delete(id))
+		const combattech = this.state.combattech;
+		if (!combattech.delete(id)) {
 			combattech.add(id);
+		}
 		this.setState({ combattech } as State);
-	};
+	}
 	changeCurse = (id: string, option: 'add' | 'remove') => {
 		const { curses } = this.state;
 		switch (option) {
@@ -81,29 +83,38 @@ export default class Selections extends React.Component<Props, State> {
 				}
 		}
 		this.setState({ curses } as State);
-	};
+	}
 	changeLangLitc = (id: string, ap: number) => {
-		var langLitc = this.state.langLitc;
+		const langLitc = this.state.langLitc;
 		if (langLitc.has(id)) {
-			if (langLitc.get(id) !== ap)
+			if (langLitc.get(id) !== ap) {
 				langLitc.set(id, ap);
-			else
+			}
+			else {
 				langLitc.delete(id);
-		} else
+			}
+		} else {
 			langLitc.set(id, ap);
+		}
 		this.setState({ langLitc } as State);
-	};
-	changeSpec = (index: number, value: number) => {
-		var spec = this.state.spec;
-		spec[index] = index === 0 ? value : value.target.value;
+	}
+	changeSpec = (value: number | string) => {
+		const spec = this.state.spec;
+		if (typeof value === 'number') {
+			spec[0] = value;
+		}
+		else {
+			spec[1] = value;
+		}
 		this.setState({ spec } as State);
 	};
 
-	assignRCPEntries = (selMap: Map<any, any>) => {
-		ProfessionActions.setSelections(Object.assign({}, this.state, {
+	assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
+		ProfessionActions.setSelections({
+			...this.state,
 			map: selMap,
-			spec: this.state.spec[1] !== '' ? this.state.spec[1] : this.state.spec[0]
-		}));
+			spec: this.state.spec[1] ? this.state.spec[1] : this.state.spec[0]!
+		});
 	};
 
 	render() {
@@ -118,23 +129,21 @@ export default class Selections extends React.Component<Props, State> {
 		const selectLang = culture.languages.length > 1;
 		const selectLitc = culture.scripts.length > 1;
 
-		const professionSelections = new Map();
+		const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection>();
 
 		if (![null, 'P_0'].includes(ProfessionStore.getCurrentId())) {
 			profession.selections.forEach(e => {
-				let [ id, ...other ] = e;
-				professionSelections.set(id, other);
+				professionSelections.set(e.id, e);
 			});
 		}
 
 		if (ProfessionVariantStore.getCurrentID() !== null) {
 			professionVariant.selections.forEach(e => {
-				let [ id, ...other ] = e;
-				if (other.length === 1 && other[0] === false) {
-					professionSelections.delete(id);
+				if (e.id === 'COMBAT_TECHNIQUES' && e.active === false) {
+					professionSelections.delete(e.id);
 				}
 				else {
-					professionSelections.set(id, other);
+					professionSelections.set(e.id, e);
 				}
 			});
 		}
@@ -142,10 +151,9 @@ export default class Selections extends React.Component<Props, State> {
 		let langLitcElement = null;
 		let langLitcApLeft = 0;
 
-		if (professionSelections.has('lang_lit')) {
+		if (professionSelections.has('LANGUAGES_SCRIPTS')) {
 			const active = langLitc;
-			const params = professionSelections.get('lang_lit');
-			const apTotal = params[0];
+			const { value } = professionSelections.get('LANGUAGES_SCRIPTS') as LanguagesScriptsSelection;
 
 			const SA_28 = get('SA_28') as SpecialAbilityInstance;
 			const SA_30 = get('SA_30') as SpecialAbilityInstance;
@@ -169,65 +177,58 @@ export default class Selections extends React.Component<Props, State> {
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
-			langLitcApLeft = apTotal - Array.from(active.values()).reduce((a,b) => a + b, 0);
+			langLitcApLeft = value - Array.from(active.values()).reduce((a,b) => a + b, 0);
 
-			langLitcElement = <SelectionsLangLitc list={list} active={active} apTotal={apTotal} apLeft={langLitcApLeft} change={this.changeLangLitc} />;
+			langLitcElement = <SelectionsLangLitc list={list} active={active} apTotal={value} apLeft={langLitcApLeft} change={this.changeLangLitc} />;
 		}
 
-		var cursesElement = null;
-		var cursesApLeft = 0;
+		let cursesElement = null;
+		let cursesApLeft = 0;
 
-		if (professionSelections.has('curses')) {
+		if (professionSelections.has('CURSES')) {
 			const active = curses;
-			const params = professionSelections.get('curses');
-			const apTotal = params[0];
+			const { value } = professionSelections.get('CURSES') as CursesSelection;
 
 			const list = getAllByCategoryGroup(Categories.SPELLS, 3);
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
-			cursesApLeft = apTotal - (active.size + Array.from(active.values()).reduce((a,b) => a + b, 0)) * 2;
+			cursesApLeft = value - (active.size + Array.from(active.values()).reduce((a,b) => a + b, 0)) * 2;
 
-			cursesElement = <SelectionsCurses list={list} active={active} apTotal={apTotal} apLeft={cursesApLeft} change={this.changeCurse} />;
+			cursesElement = <SelectionsCurses list={list} active={active} apTotal={value} apLeft={cursesApLeft} change={this.changeCurse} />;
 		}
 
-		var ctElement = null;
+		let ctElement = null;
 
-		if (professionSelections.has('ct')) {
+		if (professionSelections.has('COMBAT_TECHNIQUES')) {
 			const active = combattech;
-			const params = professionSelections.get('ct');
-			const num = params[0];
-			const amount = params[1];
-			const options = new Set(params[2]);
+			const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection;
 
 			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
-			const list = rawList.filter(e => options.has(e.id));
+			const list = rawList.filter(e => sid.includes(e.id));
 
-			ctElement = <SelectionsCt list={list} active={active} num={num} amount={amount} change={this.changeCombattech} />;
+			ctElement = <SelectionsCt list={list} active={active} num={value} amount={amount} change={this.changeCombattech} />;
 		}
 
-		var cantripsElement = null;
+		let cantripsElement = null;
 
-		if (professionSelections.has('cantrips')) {
+		if (professionSelections.has('CANTRIPS')) {
 			const active = cantrips;
-			const params = professionSelections.get('cantrips') as [number, string[]];
-			const num = params[0];
-			const options = new Set(params[1].map(e => 'SPELL_' + e));
+			const { amount, sid } = professionSelections.get('CANTRIPS') as CantripsSelection;
 
 			const rawList = getAllByCategory(Categories.SPELLS) as SpellInstance[];
-			const list = rawList.filter(e => options.has(e.id));
+			const list = rawList.filter(e => sid.includes(e.id));
 
-			cantripsElement = <SelectionsCantrips list={list} active={active} num={num} change={this.changeCantrip} />;
+			cantripsElement = <SelectionsCantrips list={list} active={active} num={amount} change={this.changeCantrip} />;
 		}
 
-		var specElement = null;
+		let specElement = null;
 
-		if (professionSelections.has('spec')) {
+		if (professionSelections.has('SPECIALISATION')) {
 			const active = spec;
-			const params = professionSelections.get('spec');
-			const id = params[0];
+			const { sid } = professionSelections.get('SPECIALISATION') as SpecialisationSelection;
 
-			const talent = get(id) as TalentInstance;
+			const talent = get(sid) as TalentInstance;
 			const name = talent.name;
 			const list = talent.specialisation.map((e, id) => ({ id, name: e }));
 			const input = talent.specialisationInput;
@@ -296,11 +297,11 @@ export default class Selections extends React.Component<Props, State> {
 							attrSel === 'ATTR_0' ||
 							(selectLang && lang === 0) ||
 							(buyLiteracy && selectLitc && litc === 0) ||
-							(professionSelections.has('spec') && (spec[1] === '' && spec[0] === null)) ||
-							(professionSelections.has('lang_lit') && langLitcApLeft !== 0) ||
-							(professionSelections.has('curses') && cursesApLeft !== 0) ||
-							(professionSelections.has('ct') && combattech.size !== professionSelections.get('ct')[0]) ||
-							(professionSelections.has('cantrips') && cantrips.size !== professionSelections.get('cantrips')[0])
+							(professionSelections.has('SPECIALISATION') && (spec[1] === '' && spec[0] === null)) ||
+							(professionSelections.has('LANGUAGES_SCRIPTS') && langLitcApLeft !== 0) ||
+							(professionSelections.has('CURSES') && cursesApLeft !== 0) ||
+							(professionSelections.has('COMBAT_TECHNIQUES') && combattech.size !== (professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).amount) ||
+							(professionSelections.has('CANTRIPS') && cantrips.size !== (professionSelections.get('CANTRIPS') as CantripsSelection).amount)
 						}
 						onClick={this.assignRCPEntries.bind(null, professionSelections)}
 						/>

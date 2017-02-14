@@ -1,8 +1,8 @@
+import * as AuthActions from '../../actions/AuthActions';
+import * as React from 'react';
 import createOverlay, { close } from '../../utils/createOverlay';
-import AccountActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
 import Login from './Login';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -13,24 +13,19 @@ interface State {
 	email: string;
 }
 
-export default class ResendActivation extends Component<Props, State> {
-
-	static propTypes = {
-		node: PropTypes.any
-	};
-
+export default class ResendActivation extends React.Component<Props, State> {
 	state = {
 		email: ''
 	};
 
-	resendActivation = () => AccountActions.resendActivation(this.state.email);
+	resendActivation = () => AuthActions.requestAccountActivationEmail(this.state.email);
 	back = () => createOverlay(<Login />);
 
-	_onChange = event => this.setState({ email: event.target.value });
-	_onEnter = event => {
+	_onChange = (event: Event) => this.setState({ email: event.target.value });
+	_onEnter = (event: Event) => {
 		if (event.charCode === 13 && this.state.email !== '') {
 			this.resendActivation();
-			close(this.props.node);
+			close(this.props.node!);
 		}
 	};
 

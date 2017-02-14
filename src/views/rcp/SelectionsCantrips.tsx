@@ -1,5 +1,5 @@
+import * as React from 'react';
 import Checkbox from '../../components/Checkbox';
-import React, { Component, PropTypes } from 'react';
 
 interface Props {
 	active: Set<string>;
@@ -11,7 +11,7 @@ interface Props {
 	num: number;
 }
 
-export default class SelectionsCantrips extends Component<Props, undefined> {
+export default class SelectionsCantrips extends React.Component<Props, undefined> {
 	render() {
 		const nums = ['Ein Zaubertrick', 'Zwei Zaubertricks'];
 
@@ -22,7 +22,7 @@ export default class SelectionsCantrips extends Component<Props, undefined> {
 				<h4>{nums[num - 1]} aus folgender Liste</h4>
 				{
 					list.map(obj => {
-						let { id, name } = obj;
+						const { id, name } = obj;
 						return (
 							<Checkbox
 								key={id}

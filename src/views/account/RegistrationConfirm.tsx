@@ -1,7 +1,6 @@
-import TabActions from '../../actions/TabActions';
-import React, { Component } from 'react';
+import * as React from 'react';
 
-export default class RegistrationConfirm extends Component<any, any> {
+export default class RegistrationConfirm extends React.Component<undefined, undefined> {
 
 	render() {
 		return (

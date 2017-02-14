@@ -53,8 +53,8 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			this.setState({ selectedTier } as State);
 		}
 	}
-	handleInput = (event: Event) => this.setState({ input: event.target.value } as State);
-	handleSecondInput = (event: Event) => this.setState({ input2: event.target.value } as State);
+	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value } as State);
+	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value } as State);
 	addToList = (args: ActivateArgs) => {
 		this.props.addToList(args);
 		if (this.state.selected !== '' || this.state.selectedTier !== 0 || this.state.input !== '') {

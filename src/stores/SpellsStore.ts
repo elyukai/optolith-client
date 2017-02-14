@@ -49,7 +49,7 @@ class SpellsStoreStatic extends Store {
 		const max = ELStore.getStart().maxUnfamiliarSpells;
 		const SA_86 = get('SA_86') as SpecialAbilityInstance;
 
-		return phase && this.getAll().filter(e => !e.tradition.some(e => e === 1 || e === (SA_86.sid as number) + 1) && e.gr < 3 && e.active).length >= max;
+		return phase && this.getAll().filter(e => !e.tradition.some(e => e === 1 || e === (SA_86.sid[0] as number) + 1) && e.gr < 3 && e.active).length >= max;
 	}
 
 	isActivationDisabled() {

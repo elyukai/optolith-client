@@ -153,7 +153,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						const id = e.id as string;
 						const arr = counter.get(id);
 						if (arr) {
-							e.cost *= arr.length + 1;
+							e.cost = e.cost! * arr.length + 1;
 						}
 						e.specialisation = e.specialisation && e.specialisation.filter(n => {
 							return !!counter.get(id) || (arr && !arr.includes(n[1]) || !arr);
@@ -193,14 +193,14 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 					const counter = spellsAbove10.reduce((map, obj) => {
 						const property = obj.property;
 						if (map.has(property)) {
-							map.set(property, map.get(property) + 1);
+							map.set(property, map.get(property)! + 1);
 						}
 						else {
 							map.set(property, 1);
 						}
 						return map;
 					}, new Map<number, number>());
-					const sel = a.sel.filter(e => counter.get(e.id as number) >= 3 && !sid.includes(e.id) && !dsid.includes(e.id)).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					const sel = a.sel.filter(e => counter.get(e.id as number)! >= 3 && !sid.includes(e.id) && !dsid.includes(e.id)).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 					if (sel.length > 0) {
 						const apArr = [10,20,40];
 						const cost = apArr[active.length];
@@ -214,7 +214,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						const aspect = obj.aspect;
 						aspect.forEach(e => {
 							if (map.has(e)) {
-								map.set(e, map.get(e) + 1);
+								map.set(e, map.get(e)! + 1);
 							}
 							else {
 								map.set(e, 1);
@@ -222,7 +222,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						});
 						return map;
 					}, new Map<number, number>());
-					const sel = a.sel.filter(e => counter.get(e.id as number) >= 3 && !sid.includes(e.id) && !dsid.includes(e.id)).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					const sel = a.sel.filter(e => counter.get(e.id as number)! >= 3 && !sid.includes(e.id) && !dsid.includes(e.id)).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 					if (sel.length > 0) {
 						const apArr = [15,25,45];
 						const cost = apArr[active.length];

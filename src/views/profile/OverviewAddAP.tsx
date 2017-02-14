@@ -1,6 +1,6 @@
-import Dialog from '../../components/Dialog';
-import ProfileActions from '../../actions/ProfileActions';
+import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
+import Dialog from '../../components/Dialog';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -16,8 +16,8 @@ export default class OverviewAddAP extends React.Component<Props, State> {
 		value: ''
 	};
 
-	onChange = e => this.setState({ value: e.target.value });
-	addAP = () => ProfileActions.addAP(parseInt(this.state.value));
+	onChange = (event: Event) => this.setState({ value: event.target.value });
+	addAP = () => ProfileActions.addAdventurePoints(parseInt(this.state.value));
 
 	render() {
 

@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import BorderButton from './BorderButton';
 
@@ -9,22 +8,16 @@ interface Button {
 
 interface Props {
 	list: Button[];
-	onClickDefault?: () => void;
+	onClickDefault?: (func?: () => void) => void;
 }
 
-export default class DialogButtons extends Component<Props, any> {
-
-	static propTypes = {
-		list: PropTypes.array.isRequired,
-		onClickDefault: PropTypes.func.isRequired
-	};
-
+export default class DialogButtons extends React.Component<Props, undefined> {
 	render() {
 
 		const { list, onClickDefault } = this.props;
 
 		const buttons = Array.isArray(list) && list.length > 0 ? list.map(e => {
-			e.onClick = onClickDefault.bind(null, e.onClick);
+			e.onClick = onClickDefault && onClickDefault.bind(null, e.onClick);
 			return <BorderButton {...e} key={e.label} />;
 		}) : [];
 

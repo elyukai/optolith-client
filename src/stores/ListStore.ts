@@ -1,8 +1,6 @@
 /// <reference path="../actions/Actions.d.ts" />
 /// <reference path="../data.d.ts" />
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
-
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import CultureStore from './CultureStore';
@@ -14,6 +12,8 @@ import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
 
 let _byId: {
 	[id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;

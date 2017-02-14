@@ -1,29 +1,19 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
-import Scroll from './Scroll';
 
 interface Props {
 	close: () => void;
 	isOpen: boolean;
 }
 
-export default class Slidein extends Component<Props, any> {
-
-	static propTypes = {
-		close: PropTypes.func.isRequired,
-		isOpen: PropTypes.bool
-	};
-
-	shouldComponentUpdate(nextProps) {
+export default class Slidein extends React.Component<Props, undefined> {
+	shouldComponentUpdate(nextProps: Props) {
 		return nextProps.isOpen !== this.props.isOpen || this.props.isOpen === true;
 	}
 
 	render() {
-
 		const { children, close, isOpen } = this.props;
 		const className = classNames('slidein-backdrop', { 'slidein-open': isOpen });
-
 		return (
 			<div className={className}>
 				<div className="slidein">

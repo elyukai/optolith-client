@@ -30,7 +30,7 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 		sortOrder: CombatTechniquesStore.getSortOrder()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => CombatTechniquesActions.setSortOrder(option);
 	addPoint = (id: string) => CombatTechniquesActions.addPoint(id);
 	removePoint = (id: string) => CombatTechniquesActions.removePoint(id);

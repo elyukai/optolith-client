@@ -38,7 +38,7 @@ export default class SpecialAbilities extends React.Component<any, State> {
 		sortOrder: SpecialAbilitiesStore.getSortOrder()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => SpecialAbilitiesActions.setSortOrder(option);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);

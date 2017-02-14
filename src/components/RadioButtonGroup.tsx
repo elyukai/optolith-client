@@ -33,7 +33,7 @@ export default class RadioButtonGroup extends Component<Props, any> {
 			<div className="radiobutton-group">
 				{array.map((option) => (
 					<RadioButton
-						key={option.value}
+						key={option.value || undefined}
 						value={option.value}
 						active={active === option.value}
 						onClick={onClick.bind(null, option.value)}

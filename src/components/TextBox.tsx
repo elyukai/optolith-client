@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
 
@@ -8,18 +7,9 @@ interface Props {
 	value?: string | number;
 }
 
-export default class TextBox extends Component<Props, {}> {
-
-	static propTypes = {
-		className: PropTypes.string,
-		label: PropTypes.string.isRequired,
-		value: PropTypes.any
-	};
-
+export default class TextBox extends React.Component<Props, undefined> {
 	render() {
-
 		const { children, label, value } = this.props;
-
 		const className = classNames( 'textbox', this.props.className );
 
 		return (

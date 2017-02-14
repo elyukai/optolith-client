@@ -100,8 +100,8 @@ interface RaceInstance {
 	readonly untypicalDisadvantages: string[];
 	readonly hairColors: number[];
 	readonly eyeColors: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
+	readonly size: (number | [number, number])[];
+	readonly weight: (number | [number, number])[];
 	readonly category: RACES;
 }
 
@@ -123,6 +123,40 @@ interface CultureInstance {
 	readonly category: CULTURES;
 }
 
+interface SpecialisationSelection {
+	id: 'SPECIALISATION';
+	sid: string;
+}
+
+interface LanguagesScriptsSelection {
+	id: 'LANGUAGES_SCRIPTS';
+	value: number;
+}
+
+interface CombatTechniquesSelection {
+	id: 'COMBAT_TECHNIQUES';
+	active?: boolean;
+	amount: number;
+	value: number;
+	sid: string[];
+}
+
+interface CantripsSelection {
+	id: 'CANTRIPS';
+	amount: number;
+	value: number;
+	sid: string[];
+}
+
+interface CursesSelection {
+	id: 'CURSES';
+	value: number;
+}
+
+type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'CANTRIPS' | 'CURSES';
+type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CantripsSelection | CursesSelection;
+type ProfessionSelections = ProfessionSelection[];
+
 interface ProfessionInstance {
 	readonly id: string;
 	readonly name: string | { m: string, f: string };
@@ -130,7 +164,7 @@ interface ProfessionInstance {
 	readonly ap: number;
 	readonly dependencies: (string | number | boolean)[][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[] | boolean)[][];
+	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
@@ -150,7 +184,7 @@ interface ProfessionVariantInstance {
 	readonly ap: number;
 	readonly dependencies: [string, string | string[]][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[] | boolean)[][];
+	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
@@ -232,7 +266,7 @@ interface AdvantageInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
-	readonly dsid: (string | number | undefined)[];
+	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
@@ -262,7 +296,7 @@ interface DisadvantageInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
-	readonly dsid: (string | number | undefined)[];
+	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
@@ -284,7 +318,7 @@ interface SpecialAbilityInstance {
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | false | null;
-	readonly reqs: RequirementObject[];
+	readonly reqs: ('RCP' | RequirementObject)[];
 	readonly tiers?: number | null;
 	readonly sel: SelectionObject[];
 	readonly gr: number;
@@ -292,7 +326,7 @@ interface SpecialAbilityInstance {
 	dependencies: (boolean | ActiveObject)[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
-	readonly dsid: (string | number | undefined)[];
+	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
@@ -506,3 +540,5 @@ interface SaveData {
 	overview: HeroSave;
 	details: HeroRest;
 }
+
+type InputTextEvent =  React.FormEvent<HTMLInputElement>;

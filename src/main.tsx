@@ -1,4 +1,8 @@
 declare global {
+	interface Event {
+		charCode: number;
+	}
+
 	interface EventTarget {
 		readonly value: string;
 	}

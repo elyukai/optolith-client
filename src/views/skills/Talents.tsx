@@ -38,7 +38,7 @@ export default class Talents extends Component<undefined, State> {
 		talentRating: TalentsStore.isRatingVisible()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => TalentsActions.setSortOrder(option);
 	changeTalentRating = () => TalentsActions.switchRatingVisibility();
 	addPoint = (id: string) => TalentsActions.addPoint(id);

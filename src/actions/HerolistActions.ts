@@ -1,6 +1,7 @@
-import { REQUEST_HEROLIST, CREATE_HERO, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER, REQUEST_HERO_DATA } from '../constants/ActionTypes';
+import { REQUEST_HEROLIST, CREATE_HERO, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER, REQUEST_HERO_DATA, REQUEST_HERO_SAVE } from '../constants/ActionTypes';
 import * as WebAPIUtils from '../utils/WebAPIUtils';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import saveHero from '../utils/saveHero';
 
 export const requestList = () => {
 	WebAPIUtils.getHeroes();
@@ -55,3 +56,10 @@ export const createHero = (name: string, sex: 'm' | 'f', el: string) => AppDispa
 		el
 	}
 });
+
+export const requestHeroSave = () => {
+	AppDispatcher.dispatch<RequestHeroSaveAction>({
+		type: REQUEST_HERO_SAVE
+	});
+	saveHero();
+};

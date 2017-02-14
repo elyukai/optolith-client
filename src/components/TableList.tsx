@@ -1,10 +1,9 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Scroll from './Scroll';
 
 interface Column {
 	key: string;
-	label: string
+	label: string;
 }
 
 interface Props {
@@ -13,18 +12,9 @@ interface Props {
 	list: any[];
 }
 
-export default class extends Component<Props, any> {
-
-	static propTypes = {
-		columns: PropTypes.array.isRequired,
-		iterator: PropTypes.func.isRequired,
-		list: PropTypes.array.isRequired
-	};
-
+export default class TableList extends React.Component<Props, undefined> {
 	render() {
-
 		const { columns, iterator, list } = this.props;
-
 		return (
 			<Scroll>
 				<table>

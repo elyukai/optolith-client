@@ -1,5 +1,5 @@
+import * as React from 'react';
 import Dropdown from '../../components/Dropdown';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -10,18 +10,8 @@ interface Props {
 	name: string;
 }
 
-export default class SelectionsTalentSpec extends Component<Props, undefined> {
-
-	static propTypes = {
-		active: PropTypes.array,
-		change: PropTypes.func,
-		input: PropTypes.string,
-		list: PropTypes.array,
-		name: PropTypes.string
-	};
-
+export default class SelectionsTalentSpec extends React.Component<Props, undefined> {
 	render() {
-
 		const { active, change, input, list, name } = this.props;
 
 		return (

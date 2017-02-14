@@ -24,8 +24,8 @@ export default class Race extends Core implements RaceInstance {
 	readonly untypicalDisadvantages: string[];
 	readonly hairColors: number[];
 	readonly eyeColors: number[];
-	readonly size: (number | number[])[];
-	readonly weight: (number | number[])[];
+	readonly size: (number | [number, number])[];
+	readonly weight: (number | [number, number])[];
 	readonly category = Categories.RACES;
 
 	constructor({ ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight, ...args }: RawRace) {
@@ -58,44 +58,45 @@ export default class Race extends Core implements RaceInstance {
 		this.weight = weight;
 	}
 
-	static rerollHaircolor(current) {
+	static rerollHairColor(current: RaceInstance) {
 		const result = dice(20);
-		return current.haircolors[result - 1];
+		return current.hairColors[result - 1];
 	}
 
-	static rerollEyecolor(current) {
+	static rerollEyeColor(current: RaceInstance) {
 		const result = dice(20);
-		return current.eyecolors[result - 1];
+		return current.eyeColors[result - 1];
 	}
 
-	static rerollSize(current) {
-		const [ base, ...dices ] = current.size;
-		let arr = [];
-		dices.forEach(e => {
-			let elements = Array.from({ length: e[0] }, () => e[1]);
+	static rerollSize(race: RaceInstance) {
+		const [ base, ...dices ] = race.size;
+		const arr: number[] = [];
+		dices.forEach((e: [number, number]) => {
+			const elements = Array.from({ length: e[0] }, () => e[1]);
 			arr.push(...elements);
 		});
-		return base + arr.map(e => dice(e)).reduce((a,b) => a + b, 0);
+		const result = (base as number) + arr.map(e => dice(e)).reduce((a,b) => a + b, 0);
+		return result.toString();
 	}
 
-	static rerollWeight(current, size) {
-		const { id, weight } = current;
+	static rerollWeight(race: RaceInstance, size: string = this.rerollSize(race)) {
+		const { id, weight } = race;
 		const [ base, ...dices ] = weight;
-		let arr = [];
-		dices.forEach(e => {
-			let elements = Array.from({ length: e[0] }, () => e[1]);
+		const arr: number[] = [];
+		dices.forEach((e: [number, number]) => {
+			const elements = Array.from({ length: e[0] }, () => e[1]);
 			arr.push(...elements);
 		});
-		size = size || this.rerollSize(current);
-		let add = ['R_1','R_2','R_3','R_4','R_5','R_6','R_7'].includes(id) ?
+		const add = ['R_1','R_2','R_3','R_4','R_5','R_6','R_7'].includes(id) ?
 			arr.map(e => {
-				let result = dice(Math.abs(e));
+				const result = dice(Math.abs(e));
 				return result % 2 > 0 ? -result : result;
 			}) :
 			arr.map(e => {
-				let result = dice(Math.abs(e));
+				const result = dice(Math.abs(e));
 				return e < 0 ? -result : result;
 			});
-		return size + base + add.reduce((a,b) => a + b, 0);
+		const result = Number.parseInt(size) + (base as number) + add.reduce((a,b) => a + b, 0);
+		return [result.toString(), size] as [string, string];
 	}
 }

@@ -1,37 +1,29 @@
-import { ItemEditorInstance } from '../../utils/data/Item';
+import * as InventoryActions from '../../actions/InventoryActions';
+import * as React from 'react';
 import Checkbox from '../../components/Checkbox';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import Label from '../../components/Label';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
 
 interface Props {
 	create?: boolean;
-	item: ItemEditorInstance;
+	item: ItemInstance;
 	node: HTMLDivElement;
 }
 
-interface State extends ItemEditorInstance {}
+interface State extends ItemInstance {}
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
 const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]);
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
-export default class ItemEditor extends Component<Props, State> {
-
-	static propTypes = {
-		create: PropTypes.bool,
-		item: PropTypes.object,
-		node: PropTypes.any
-	};
-
+export default class ItemEditor extends React.Component<Props, State> {
 	state = this.props.item || {
 		id: '',
 		name: '',
@@ -89,7 +81,7 @@ export default class ItemEditor extends Component<Props, State> {
 	unlockTemplate = () => this.setState({ isTemplateLocked: false } as State);
 
 	addItem = () => InventoryActions.addToList(this.state);
-	saveItem = () => InventoryActions.saveItem(this.state);
+	saveItem = () => InventoryActions.set(this.state);
 
 	render() {
 

@@ -1,9 +1,8 @@
-import AccountActions from '../../actions/AuthActions';
-import IconButton from '../../components/IconButton';
 import * as React from 'react';
-import { Component } from 'react';
-import TextField from '../../components/TextField';
+import * as AuthActions from '../../actions/AuthActions';
+import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';
+import TextField from '../../components/TextField';
 
 const ERROR_MESSAGE = 'Der Benutzername muss mindestens 3 und darf maximal 20 Zeichen umfassen.';
 
@@ -11,14 +10,13 @@ interface State {
 	newName: string;
 }
 
-export default class Account extends Component<any, State> {
-
+export default class Account extends React.Component<undefined, State> {
 	state = {
 		newName: ''
 	};
 
-	handleName = event => this.setState({ newName: event.target.value });
-	changeName = () => AccountActions.changeUsername(this.state.newName);
+	handleName = (event: Event) => this.setState({ newName: event.target.value });
+	changeName = () => AuthActions.requestNewUsername(this.state.newName);
 
 	render() {
 

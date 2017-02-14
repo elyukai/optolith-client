@@ -7,7 +7,7 @@ interface Props {
 	className?: string;
 	disabled?: boolean;
 	onClick: () => void;
-	value?: string | number;
+	value?: string | number | null;
 }
 
 export default (props: Props) => {

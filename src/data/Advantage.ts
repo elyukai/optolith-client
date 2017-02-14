@@ -4,7 +4,7 @@ import * as Categories from '../constants/Categories';
 export default class Advantage extends Activatable implements AdvantageInstance {
 	readonly category = Categories.ADVANTAGES;
 
-	constructor(args: RawAdvantage) {
+	constructor(args: RawAdvantage & { gr: number; }) {
 		super(args);
 	}
 }

@@ -36,7 +36,7 @@ export default class Races extends React.Component<Props, State> {
 		areValuesVisible: RaceStore.areValuesVisible()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => RaceActions.setRacesSortOrder(option);
 	changeValueVisibility = () => RaceActions.switchRaceValueVisibilityFilter();
 

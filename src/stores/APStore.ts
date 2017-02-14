@@ -59,7 +59,7 @@ function _assignRCP(selections: Selections) {
 	if (selections.buyLiteracy) {
 		const culture = CultureStore.getCurrent();
 		const id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-		_spent += (get('SA_28') as SpecialAbilityInstance).sel[id - 1][2] as number;
+		_spent += (get('SA_28') as SpecialAbilityInstance).sel[id - 1].cost!;
 	}
 
 	const p = ProfessionStore.getCurrent();

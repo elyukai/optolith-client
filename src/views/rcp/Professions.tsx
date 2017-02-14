@@ -44,7 +44,7 @@ export default class Professions extends React.Component<undefined, State> {
 		currentVID: ProfessionVariantStore.getCurrentID()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => ProfessionActions.setProfessionsSortOrder(option);
 	changeView = (view: string) => ProfessionActions.setProfessionsVisibilityFilter(view);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);

@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import RadioButtonGroup from './RadioButtonGroup';
 
@@ -9,24 +8,17 @@ const SORT_NAMES = {
 	where: 'Nach Trageort'
 };
 
+type SortNames = 'name' | 'group' | 'groupname' | 'where';
+
 interface Props {
-	options: string[];
+	options: SortNames[];
 	sort: (option: string) => void;
 	sortOrder: string;
 }
 
-export default class SortOptions extends Component<Props, any> {
-
-	static propTypes = {
-		options: PropTypes.array.isRequired,
-		sort: PropTypes.func.isRequired,
-		sortOrder: PropTypes.string.isRequired
-	}
-
+export default class SortOptions extends React.Component<Props, undefined> {
 	render() {
-
 		const { options, sort, sortOrder, ...other } = this.props;
-
 		return (
 			<RadioButtonGroup
 				{...other}

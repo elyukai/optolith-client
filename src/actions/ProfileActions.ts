@@ -1,5 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import Race from '../data/Race';
+import RaceStore from '../stores/RaceStore';
 
 export const setHeroName = (name: string) => AppDispatcher.dispatch<SetHeroNameAction>({
 	type: ActionTypes.SET_HERO_NAME,
@@ -74,12 +76,37 @@ export const setSize = (size: string) => AppDispatcher.dispatch<SetSizeAction>({
 	}
 });
 
-export const setWeight = (weight: string) => AppDispatcher.dispatch<SetWeightAction>({
+export const setWeight = (weight: string, size?: string) => AppDispatcher.dispatch<SetWeightAction>({
 	type: ActionTypes.SET_WEIGHT,
 	payload: {
+		size,
 		weight
 	}
 });
+
+export const rerollHairColor = () => {
+	const race = RaceStore.getCurrent();
+	const hairColor = Race.rerollHairColor(race);
+	setHairColor(hairColor);
+};
+
+export const rerollEyeColor = () => {
+	const race = RaceStore.getCurrent();
+	const eyeColor = Race.rerollEyeColor(race);
+	setEyeColor(eyeColor);
+};
+
+export const rerollSize = () => {
+	const race = RaceStore.getCurrent();
+	const size = Race.rerollSize(race);
+	setSize(size);
+};
+
+export const rerollWeight = () => {
+	const race = RaceStore.getCurrent();
+	const [ weight, size ] = Race.rerollWeight(race);
+	setWeight(weight, size);
+};
 
 export const setTitle = (title: string) => AppDispatcher.dispatch<SetTitleAction>({
 	type: ActionTypes.SET_TITLE,

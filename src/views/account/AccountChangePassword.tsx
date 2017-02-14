@@ -1,6 +1,6 @@
-import AccountActions from '../../actions/AuthActions';
+import * as AuthActions from '../../actions/AuthActions';
+import * as React from 'react';
 import IconButton from '../../components/IconButton';
-import React, { Component } from 'react';
 import TextField from '../../components/TextField';
 import InputButtonGroup from '../../components/InputButtonGroup';
 
@@ -10,14 +10,13 @@ interface State {
 	newPassword: string;
 }
 
-export default class Account extends Component<any, State> {
-
+export default class Account extends React.Component<undefined, State> {
 	state = {
 		newPassword: ''
 	};
 
-	handlePassword = event => this.setState({ newPassword: event.target.value });
-	changePassword = () => AccountActions.changePassword(this.state.newPassword);
+	handlePassword = (event: Event) => this.setState({ newPassword: event.target.value });
+	changePassword = () => AuthActions.requestNewPassword(this.state.newPassword);
 
 	render() {
 

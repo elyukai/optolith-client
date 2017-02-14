@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Activate from './Activate';
 import Icon from './Icon';
@@ -9,19 +8,11 @@ interface Props {
 	className?: string;
 	disabled?: boolean;
 	label?: string;
-	onClick: (event: React.MouseEvent<any>) => void;
-	value?: string | number;
+	onClick: () => void;
+	value?: string | number | null;
 };
 
-export default class RadioButton extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.bool.isRequired,
-		className: PropTypes.string,
-		label: PropTypes.string,
-		onClick: PropTypes.func.isRequired
-	};
-
+export default class RadioButton extends React.Component<Props, undefined> {
 	render() {
 
 		const { children, label, onClick, ...other } = this.props;

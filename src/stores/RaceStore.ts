@@ -10,19 +10,14 @@ type Action = SelectRaceAction | ReceiveHeroDataAction | SetRacesSortOrderAction
 const CATEGORY = Categories.RACES;
 
 let _currentId: string | null = null;
-let _filterText = '';
 let _sortOrder = 'name';
 let _showDetails = true;
 
-function _updateCurrentID(id) {
+function _updateCurrentID(id: string | null) {
 	_currentId = id;
 }
 
-function _updateFilterText(text) {
-	_filterText = text;
-}
-
-function _updateSortOrder(option) {
+function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
@@ -48,12 +43,8 @@ class RaceStoreStatic extends Store {
 		return this.getCurrent() ? this.getCurrent().name : null;
 	}
 
-	getNameByID(id) {
+	getNameByID(id: string) {
 		return get(id) ? get(id).name : null;
-	}
-
-	getFilter() {
-		return _filterText;
 	}
 
 	getSortOrder() {

@@ -1,6 +1,5 @@
-import Race from '../data/Race';
 import * as ActionTypes from '../constants/ActionTypes';
-import RaceStore from './RaceStore';
+import Race from '../data/Race';
 import Store from './Store';
 
 type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction;
@@ -88,22 +87,6 @@ function _updateCharacteristics(text: string) {
 
 function _updateOtherInfo(text: string) {
 	_otherinfo = text;
-}
-
-function _rerollHair() {
-	_haircolor = Race.rerollHaircolor(RaceStore.getCurrent());
-}
-
-function _rerollEyes() {
-	_eyecolor = Race.rerollEyecolor(RaceStore.getCurrent());
-}
-
-function _rerollSize() {
-	_size = Race.rerollSize(RaceStore.getCurrent());
-}
-
-function _rerollWeight() {
-	_weight = Race.rerollWeight(RaceStore.getCurrent(), _size);
 }
 
 function _clear() {
@@ -264,6 +247,9 @@ const ProfileStore = new ProfileStoreStatic((action: Action) => {
 
 		case ActionTypes.SET_WEIGHT:
 			_updateWeight(action.payload.weight);
+			if (action.payload.size && action.payload.size !== _size) {
+				_updateSize(action.payload.size);
+			}
 			break;
 
 		case ActionTypes.SET_TITLE:

@@ -9,7 +9,7 @@ export default class Profession extends Core implements ProfessionInstance {
 	readonly ap: number;
 	readonly dependencies: (string | number | boolean)[][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[] | boolean)[][];
+	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];
@@ -28,16 +28,7 @@ export default class Profession extends Core implements ProfessionInstance {
 		this.ap = ap;
 		this.requires = pre_req;
 		this.dependencies = req;
-		this.selections = sel.map(e => {
-			if (e[0] === 'ct') {
-				e[3] = e[3].split(',').map(e => `CT_${e}`);
-				return e;
-			}
-			else if (e[0] === 'cantrips' && typeof e[2] === 'string') {
-				e[2] = e[2].split(',').map(e => parseInt(e));
-				return e;
-			}
-		});
+		this.selections = sel;
 
 		this.specialAbilities = fixIDs<number | boolean>(sa, 'SA');
 		this.combatTechniques = fixIDs<number>(combattech, 'CT');

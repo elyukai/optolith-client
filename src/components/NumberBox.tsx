@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 
 interface Props {
@@ -6,17 +5,9 @@ interface Props {
 	max: number;
 }
 
-export default class NumberBox extends Component<Props, any> {
-
-	static propTypes = {
-		current: PropTypes.number,
-		max: PropTypes.number
-	};
-
+export default class NumberBox extends React.Component<Props, undefined> {
 	render() {
-
 		const { current, max } = this.props;
-
 		return (
 			<div className="number-box">
 				{ current || current === 0 ? <span className="current">{current}</span> : null }

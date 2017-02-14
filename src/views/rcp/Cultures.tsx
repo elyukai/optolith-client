@@ -41,7 +41,7 @@ export default class Cultures extends React.Component<Props, State> {
 		visibilityFilter: CultureStore.areAllVisible()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => CultureActions.setSortOrder(option);
 	changeValueVisibility = () => CultureActions.switchValueVisibilityFilter();
 	changeView = (view: string) => CultureActions.setVisibilityFilter(view);

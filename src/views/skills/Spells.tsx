@@ -40,7 +40,7 @@ export default class Spells extends React.Component<undefined, State> {
 		sortOrder: SpellsStore.getSortOrder()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => SpellsActions.setSortOrder(option);
 	addToList = (id: string) => SpellsActions.addToList(id);
 	addPoint = (id: string) => SpellsActions.addPoint(id);

@@ -6,7 +6,7 @@ export default class ProfessionVariant extends Core implements ProfessionVariant
 	readonly ap: number;
 	readonly dependencies: [string, string | string[]][];
 	readonly requires: (string | number | boolean)[][];
-	readonly selections: (string | string[] | number[] | boolean)[][];
+	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
 	readonly combatTechniques: (string | number)[][];
 	readonly talents: (string | number)[][];

@@ -1,7 +1,6 @@
-import { Component } from 'react';
 import * as React from 'react';
 
-export default class Hr extends Component<any, any> {
+export default class Hr extends React.Component<any, any> {
 
 	render() {
 		return (

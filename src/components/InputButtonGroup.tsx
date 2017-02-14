@@ -1,25 +1,15 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	className?: string;
 }
 
-export default class InputButtonGroup extends Component<Props, any> {
-
-	static propTypes = {
-		className: PropTypes.any
-	};
-
+export default class InputButtonGroup extends React.Component<Props, any> {
 	render() {
-
-		let { className, ...other } = this.props;
-
-		className = classNames(className, 'btn-group');
-
+		const { className, ...other } = this.props;
 		return (
-			<div className={className} {...other}>
+			<div className={classNames(className, 'btn-group')} {...other}>
 				{this.props.children}
 			</div>
 		);

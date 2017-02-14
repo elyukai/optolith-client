@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import Tab from './Tab';
 
@@ -14,14 +13,7 @@ interface Props {
 	tabs: TabProps[];
 }
 
-export default class Subtabs extends Component<Props, any> {
-
-	static propTypes = {
-		active: PropTypes.string,
-		onClick: PropTypes.func,
-		tabs: PropTypes.array
-	};
-
+export default class Subtabs extends React.Component<Props, undefined> {
 	render() {
 		return (
 			<div className="subtabs">

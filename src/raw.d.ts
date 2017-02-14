@@ -46,8 +46,8 @@ interface RawRace {
 	untyp_dadv: string[];
 	hair: number[];
 	eyes: number[];
-	size: (number | number[])[];
-	weight: (number | number[])[];
+	size: (number | [number, number])[];
+	weight: (number | [number, number])[];
 }
 
 interface RawCulture {
@@ -74,7 +74,7 @@ interface RawProfession {
 	ap: number;
 	pre_req: [string, any][];
 	req: any[][];
-	sel: (string | string[] | number[])[][];
+	sel: ProfessionSelections;
 	sa: (string | number | boolean)[][];
 	combattech: [string, number][];
 	talents: [string, number][];
@@ -94,7 +94,7 @@ interface RawProfessionVariant {
 	ap: number;
 	pre_req: [string, any][];
 	req: any[][];
-	sel: any[][];
+	sel: ProfessionSelections;
 	sa: (string | number | boolean)[][];
 	combattech: [string, number][];
 	talents: [string, number][];
@@ -144,7 +144,7 @@ interface RawSpecialAbility {
 	max: number | null;
 	sel: SelectionObject[];
 	input: string;
-	req: RequirementObject[];
+	req: ('RCP' | RequirementObject)[];
 	gr: number;
 }
 

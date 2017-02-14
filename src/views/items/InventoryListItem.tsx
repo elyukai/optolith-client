@@ -1,22 +1,20 @@
 import { get } from '../../stores/ListStore';
-import { Item } from '../../utils/DataUtils';
+import * as InventoryActions from '../../actions/InventoryActions';
+import * as React from 'react';
 import createOverlay from '../../utils/createOverlay';
 import IconButton from '../../components/IconButton';
-import InventoryActions from '../../actions/InventoryActions';
 import InventoryStore from '../../stores/InventoryStore';
 import ItemEditor from './ItemEditor';
-import React, { Component, PropTypes } from 'react';
 import TooltipToggle from '../../components/TooltipToggle';
+
+interface Props {
+	add: boolean;
+	data: ItemInstance;
+}
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
-export default class InventoryListItem extends Component {
-
-	static propTypes = {
-		add: PropTypes.bool,
-		data: PropTypes.instanceOf(Item).isRequired,
-	};
-
+export default class InventoryListItem extends React.Component<Props, undefined> {
 	edit = () => {
 		const item = Item.prepareDataForEditor(InventoryStore.get(this.props.data.id));
 		createOverlay(<ItemEditor item={item} />);

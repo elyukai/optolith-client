@@ -7,7 +7,7 @@ import Overlay from './Overlay';
 interface Props {
 	content: React.ReactNode;
 	margin?: number;
-	position?: string;
+	position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
 interface State {
@@ -31,7 +31,7 @@ export default class Tooltip extends Component<Props, State> {
 	};
 
 	triggerRef: Element;
-	node;
+	node: HTMLDivElement | undefined;
 
 	componentWillUnmount() {
 		if (this.node) {
@@ -40,13 +40,13 @@ export default class Tooltip extends Component<Props, State> {
 	}
 
 	open = () => {
-		const { content, margin, position } = this.props;
+		const { content, margin, position = 'top' } = this.props;
 		this.node = createOverlay(<Overlay className="tooltip" position={position} trigger={this.triggerRef} margin={margin}>
 			{content}
 		</Overlay>);
 	}
 	close = () => {
-		close(this.node);
+		close(this.node!);
 		this.node = undefined;
 	}
 
@@ -57,7 +57,7 @@ export default class Tooltip extends Component<Props, State> {
 		const only = React.cloneElement(React.Children.only(children), {
 			onMouseOver: this.open,
 			onMouseOut: this.close,
-			ref: (node) => {
+			ref: (node: HTMLDivElement) => {
 				if (node !== null && node.nodeType !== 1) {
 					this.triggerRef = findDOMNode(node);
 				}

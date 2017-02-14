@@ -1,8 +1,8 @@
+import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
 import Dropdown from '../../components/Dropdown';
 import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';
-import ProfileActions from '../../actions/ProfileActions';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -26,21 +26,21 @@ interface Props {
 };
 
 export default class OverviewPersonalData extends React.Component<Props, undefined> {
-	changeFamily = (e: Event) => ProfileActions.changeFamily(e.target.value);
-	changePlaceOfBirth = (e: Event) => ProfileActions.changePlaceOfBirth(e.target.value);
-	changeDateOfBirth = (e: Event) => ProfileActions.changeDateOfBirth(e.target.value);
-	changeAge = (e: Event) => ProfileActions.changeAge(e.target.value);
-	changeHaircolor = (result: number) => ProfileActions.changeHaircolor(result);
-	changeEyecolor = (result: number) => ProfileActions.changeEyecolor(result);
-	changeSize = (e: Event) => ProfileActions.changeSize(e.target.value);
-	changeWeight = (e: Event) => ProfileActions.changeWeight(e.target.value);
-	changeTitle = (e: Event) => ProfileActions.changeTitle(e.target.value);
-	changeSocialStatus = (result: number) => ProfileActions.changeSocialStatus(result);
-	changeCharacteristics = (e: Event) => ProfileActions.changeCharacteristics(e.target.value);
-	changeOtherInfo = (e: Event) => ProfileActions.changeOtherInfo(e.target.value);
+	changeFamily = (e: Event) => ProfileActions.setFamily(e.target.value);
+	changePlaceOfBirth = (e: Event) => ProfileActions.setPlaceOfBirth(e.target.value);
+	changeDateOfBirth = (e: Event) => ProfileActions.setDateOfBirth(e.target.value);
+	changeAge = (e: Event) => ProfileActions.setAge(e.target.value);
+	changeHaircolor = (result: number) => ProfileActions.setHairColor(result);
+	changeEyecolor = (result: number) => ProfileActions.setEyeColor(result);
+	changeSize = (e: Event) => ProfileActions.setSize(e.target.value);
+	changeWeight = (e: Event) => ProfileActions.setWeight(e.target.value);
+	changeTitle = (e: Event) => ProfileActions.setTitle(e.target.value);
+	changeSocialStatus = (result: number) => ProfileActions.setSocialStatus(result);
+	changeCharacteristics = (e: Event) => ProfileActions.setCharacteristics(e.target.value);
+	changeOtherInfo = (e: Event) => ProfileActions.setOtherInfo(e.target.value);
 
-	rerollHair = () => ProfileActions.rerollHair();
-	rerollEyes = () => ProfileActions.rerollEyes();
+	rerollHair = () => ProfileActions.rerollHairColor();
+	rerollEyes = () => ProfileActions.rerollEyeColor();
 	rerollSize = () => ProfileActions.rerollSize();
 	rerollWeight = () => ProfileActions.rerollWeight();
 

@@ -36,7 +36,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 		sortOrder: LiturgiesStore.getSortOrder()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => LiturgiesActions.setSortOrder(option);
 	addToList = (id: string) => LiturgiesActions.addToList(id);
 	addPoint = (id: string) => LiturgiesActions.addPoint(id);

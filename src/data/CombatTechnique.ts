@@ -34,10 +34,10 @@ export default class CombatTechnique extends Increasable implements CombatTechni
 
 	get isIncreasable(): boolean {
 		let max = 0;
-		let bonus = get('ADV_17').active.includes(this.id) ? 1 : 0;
+		const bonus = (get('ADV_17') as AdvantageInstance).sid.includes(this.id) ? 1 : 0;
 
 		if (PhaseStore.get() < 3) {
-			max = ELStore.getStart().max_combattech;
+			max = ELStore.getStart().maxCombatTechniqueRating;
 		} else {
 			max = CombatTechniquesStore.getMaxPrimaryAttributeValueByID(this.primary) + 2;
 		}
@@ -46,7 +46,7 @@ export default class CombatTechnique extends Increasable implements CombatTechni
 	}
 
 	get isDecreasable(): boolean {
-		const SA_19_REQ = get('SA_19').active && getAllByCategoryGroup(this.category, 2).filter(e => e.value >= 10).length === 1;
+		const SA_19_REQ = (get('SA_19') as SpecialAbilityInstance).active.length > 0 && (getAllByCategoryGroup(this.category, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length === 1;
 
 		return (SA_19_REQ && this.value > 10 && this.gr === 2) || this.value > Math.max(6, ...(this.dependencies));
 	}

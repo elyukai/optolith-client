@@ -1,23 +1,26 @@
-import { SecondaryAttribute } from '../../utils/secondaryAttributes';
 import * as AttributeActions from '../../actions/AttributesActions';
 import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';
-import React, { Component, PropTypes } from 'react';
+import * as React from 'react';
 
 interface Props {
 	attribute: SecondaryAttribute;
 	phase: number;
 }
 
-export default class AttributeCalcItem extends Component<Props, any> {
-
-	static propTypes = {
-		attribute: PropTypes.object.isRequired,
-		phase: PropTypes.number.isRequired
-	};
-
-	addMaxEnergyPoint = () => AttributeActions.addMaxEnergyPoint(this.props.attribute.id);
+export default class AttributeCalcItem extends React.Component<Props, undefined> {
+	addMaxEnergyPoint = () => {
+		if (this.props.attribute.id === 'LP') {
+			AttributeActions.addLifePoint();
+		}
+		else if (this.props.attribute.id === 'AE') {
+			AttributeActions.addArcaneEnergyPoint();
+		}
+		else if (this.props.attribute.id === 'KP') {
+			AttributeActions.addKarmaPoint();
+		}
+	}
 
 	render() {
 

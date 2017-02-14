@@ -1,12 +1,12 @@
-import AccountActions from '../../actions/AuthActions';
+import * as AuthActions from '../../actions/AuthActions';
+import * as React from 'react';
+import createOverlay, { close } from '../../utils/createOverlay';
 import Dialog from '../../components/Dialog';
 import ForgotPassword from './ForgotPassword';
 import ForgotUsername from './ForgotUsername';
 import Register from './Register';
 import ResendActivation from './ResendActivation';
-import React, { Component, PropTypes } from 'react';
 import TextField from '../../components/TextField';
-import createOverlay, { close } from '../../utils/createOverlay';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -17,28 +17,23 @@ interface State {
 	password: string;
 }
 
-export default class Login extends Component<Props, State> {
-
-	static propTypes = {
-		node: PropTypes.any
-	};
-
+export default class Login extends React.Component<Props, State> {
 	state = {
 		username: '',
 		password: ''
 	};
 
-	login = () => AccountActions.login(this.state.username, this.state.password);
-	forgotUsername = () => { createOverlay(<ForgotUsername />); close(this.props.node); };
-	forgotPassword = () => { createOverlay(<ForgotPassword />); close(this.props.node); };
+	login = () => AuthActions.requestLogin(this.state.username, this.state.password);
+	forgotUsername = () => { createOverlay(<ForgotUsername />); close(this.props.node!); };
+	forgotPassword = () => { createOverlay(<ForgotPassword />); close(this.props.node!); };
 	register = () => createOverlay(<Register />);
-	resendActivation = () => { createOverlay(<ResendActivation />); close(this.props.node); };
+	resendActivation = () => { createOverlay(<ResendActivation />); close(this.props.node!); };
 
-	_onChange = (option, event) => this.setState({ [option]: event.target.value } as State);
-	_onEnter = event => {
+	_onChange = (option: 'username' | 'password', event: Event) => this.setState({ [option]: event.target.value } as State);
+	_onEnter = (event: Event) => {
 		if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
 			this.login();
-			close(this.props.node);
+			close(this.props.node!);
 		}
 	};
 

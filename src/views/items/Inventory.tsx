@@ -1,12 +1,11 @@
-import { ItemInstance } from '../../utils/data/Item';
 import { filterAndSort } from '../../utils/ListUtils';
+import * as InventoryActions from '../../actions/InventoryActions';
+import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
 import createOverlay from '../../utils/createOverlay';
-import InventoryActions from '../../actions/InventoryActions';
 import InventoryListItem from './InventoryListItem';
 import InventoryStore from '../../stores/InventoryStore';
 import ItemEditor from './ItemEditor';
-import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import SortOptions from '../../components/SortOptions';
@@ -22,24 +21,22 @@ interface State {
 	showAddSlidein: boolean;
 }
 
-const getInventoryStore = () => ({
-	items: InventoryStore.getAll(),
-	filterText: InventoryStore.getFilterText(),
-	sortOrder: InventoryStore.getSortOrder(),
-} as State);
-
-export default class Inventory extends Component<any, State> {
-
+export default class Inventory extends React.Component<undefined, State> {
 	state = {
-		...getInventoryStore(),
+		items: InventoryStore.getAll(),
+		filterText: '',
+		sortOrder: InventoryStore.getSortOrder(),
 		templates: InventoryStore.getAllTemplates(),
 		showAddSlidein: false
 	};
 
-	_updateInventoryStore = () => this.setState(getInventoryStore());
+	_updateInventoryStore = () => this.setState({
+		items: InventoryStore.getAll(),
+		sortOrder: InventoryStore.getSortOrder()
+	} as State);
 
-	filter = event => InventoryActions.filter(event.target.value);
-	sort = option => InventoryActions.sort(option);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	sort = (option: string) => InventoryActions.setSortOrder(option);
 
 	componentDidMount() {
 		InventoryStore.addChangeListener(this._updateInventoryStore);

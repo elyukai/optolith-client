@@ -14,7 +14,6 @@ import ProfessionStore from '../stores/ProfessionStore';
 import ProfessionVariantStore from '../stores/ProfessionVariantStore';
 import ProfileStore from '../stores/ProfileStore';
 import RaceStore from '../stores/RaceStore';
-import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
 import VersionStore from '../stores/VersionStore';

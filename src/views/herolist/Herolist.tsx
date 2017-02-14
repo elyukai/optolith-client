@@ -41,7 +41,7 @@ export default class Herolist extends React.Component<undefined, State> {
 		sortOrder: HerolistStore.getSortOrder()
 	} as State);
 
-	filter = (event: Event) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => setSortOrder(option);
 	changeView = (option: string) => setVisibilityFilter(option);
 	showHeroCreation = () => createOverlay(<HeroCreation />);

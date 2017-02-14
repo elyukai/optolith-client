@@ -15,7 +15,7 @@ export default class Culture extends Core implements CultureInstance {
 	readonly untypicalDisadvantages: string[];
 	readonly typicalTalents: string[];
 	readonly untypicalTalents: string[];
-	readonly talents: (string | number)[][];
+	readonly talents: [string, number][];
 	readonly category = Categories.CULTURES;
 
 	constructor({ ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents, ...args }: RawCulture) {
@@ -36,6 +36,6 @@ export default class Culture extends Core implements CultureInstance {
 
 		this.typicalTalents = typ_talents.map(e => `TAL_${e}`);
 		this.untypicalTalents = untyp_talents.map(e => `TAL_${e}`);
-		this.talents = fixIDs<number>(talents, 'TAL');
+		this.talents = fixIDs<number>(talents, 'TAL') as [string, number][];
 	}
 }

@@ -1,5 +1,7 @@
-import { Component, PropTypes } from 'react';
 import * as AuthActions from '../../actions/AuthActions';
+import * as HerolistActions from '../../actions/HerolistActions';
+import * as HistoryActions from '../../actions/HistoryActions';
+import * as InGameActions from '../../actions/InGameActions';
 import * as LocationActions from '../../actions/LocationActions';
 import * as React from 'react';
 import APStore from '../../stores/APStore';
@@ -9,11 +11,8 @@ import BorderButton from '../BorderButton';
 import createOverlay from '../../utils/createOverlay';
 import ELStore from '../../stores/ELStore';
 import HeroCreation from '../../views/herolist/HeroCreation';
-import HerolistActions from '../../actions/HerolistActions';
-import HistoryActions from '../../actions/HistoryActions';
 import HistoryStore from '../../stores/HistoryStore';
 import IconButton from '../IconButton';
-import InGameActions from '../../actions/InGameActions';
 import Login from '../../views/account/Login';
 import PhaseStore from '../../stores/PhaseStore';
 import ProfileStore from '../../stores/ProfileStore';
@@ -27,16 +26,16 @@ import TooltipToggle from '../TooltipToggle';
 
 interface State {
 	account: {
-		id: string;
-		session: string;
 		name: string;
+		email: string;
+		sessionToken: string | null;
+		displayName: string;
 	};
 	ap: {
 		total: number;
 		spent: number;
-		rcp: number[];
-		adv: number[];
-		disadv: number[];
+		adv: [number, number, number];
+		disadv: [number, number, number];
 	};
 	avatar: string;
 	el: string;
@@ -55,18 +54,12 @@ interface Tab {
 	disabled?: boolean;
 }
 
-export default class TitleBar extends Component<Props, State> {
-
-	static propTypes = {
-		currentSection: PropTypes.string.isRequired,
-		currentTab: PropTypes.string.isRequired
-	};
-
+export default class TitleBar extends React.Component<Props, State> {
 	state = {
 		account: AuthStore.getAll(),
 		ap: APStore.getAll(),
 		avatar: ProfileStore.getAvatar(),
-		el: ELStore.getStart(),
+		el: ELStore.getStartID(),
 		isUndoAvailable: HistoryStore.isUndoAvailable(),
 		phase: PhaseStore.get()
 	};
@@ -102,7 +95,7 @@ export default class TitleBar extends Component<Props, State> {
 	}
 	login = () => createOverlay(<Login />);
 	logout = () => AuthActions.requestLogout();
-	saveHero = () => HerolistActions.save();
+	saveHero = () => HerolistActions.requestHeroSave();
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();
 
@@ -117,7 +110,7 @@ export default class TitleBar extends Component<Props, State> {
 					{ label: 'Start', tag: 'home' },
 					{ label: 'Über', tag: 'about' }
 				];
-				if (account.id === null) {
+				if (!account.name) {
 					return (
 						<TitleBarWrapper>
 							<TitleBarLeft>

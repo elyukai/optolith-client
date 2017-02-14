@@ -2,6 +2,12 @@ import Dependent from './Dependent';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 import validate from '../utils/validate';
 
+type ConstructorArgument = (RawAdvantage | RawDisadvantage | RawSpecialAbility) & {
+	tiers: number | null;
+	gr: number;
+	req: ('RCP' | RequirementObject)[];
+};
+
 export default class Activatable extends Dependent {
 	readonly cost: number | number[] | string;
 	readonly input: string | null;
@@ -12,7 +18,7 @@ export default class Activatable extends Dependent {
 	readonly gr: number;
 	active: ActiveObject[] = [];
 
-	constructor({ ap, input, max, req, sel, tiers, gr, ...args }: RawAdvantage | RawDisadvantage | RawSpecialAbility) {
+	constructor({ ap, input, max, req, sel, tiers, gr, ...args }: ConstructorArgument) {
 		super(args);
 		this.cost = ap;
 		this.input = input;
@@ -40,7 +46,7 @@ export default class Activatable extends Dependent {
 	}
 
 	get sid() {
-		return this.active.map(e => e.sid);
+		return this.active.map(e => e.sid!);
 	}
 
 	get dsid() {

@@ -1,5 +1,4 @@
 // import TextareaAutosize from 'react-textarea-autosize';
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import classNames from 'classnames';
 import Label from './Label';
@@ -15,36 +14,19 @@ interface Props {
 	hint?: string;
 	label?: string;
 	multiLine?: boolean;
-	onChange: (event: Event) => void;
-	onKeyDown?: (event: React.KeyboardEvent<any>) => void;
+	onChange: (event: React.FormEvent<HTMLInputElement>) => void;
+	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	type?: string;
 	value: string | number;
 }
 
-export default class TextField extends Component<Props, any> {
-
-	static propTypes = {
-		autoFocus: PropTypes.bool,
-		className: PropTypes.any,
-		countCurrent: PropTypes.any,
-		countMax: PropTypes.any,
-		disabled: PropTypes.bool,
-		fullWidth: PropTypes.bool,
-		hint: PropTypes.string,
-		label: PropTypes.string,
-		multiLine: PropTypes.bool,
-		onChange: PropTypes.func,
-		onKeyDown: PropTypes.func,
-		type: PropTypes.string,
-		value: PropTypes.any
-	};
-
+export default class TextField extends React.Component<Props, undefined> {
 	static defaultProps = {
 		multiLine: false,
 		type: 'text'
 	};
 
-	inputRef;
+	inputRef: HTMLInputElement;
 
 	componentDidMount() {
 		if (this.props.autoFocus) {
@@ -53,7 +35,6 @@ export default class TextField extends Component<Props, any> {
 	}
 
 	render() {
-
 		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type, value } = this.props;
 
 		const hintElement = hint ? (
@@ -71,8 +52,8 @@ export default class TextField extends Component<Props, any> {
 			<input
 				type={type}
 				value={value}
-				onChange={disabled ? null : onChange}
-				onKeyPress={disabled ? null : onKeyDown}
+				onChange={disabled ? undefined : (onChange as (event: React.FormEvent<HTMLInputElement>) => void)}
+				onKeyPress={disabled ? undefined : (onKeyDown as (event: React.KeyboardEvent<HTMLInputElement>) => void)}
 				readOnly={disabled}
 				ref={node => this.inputRef = node}
 			/>

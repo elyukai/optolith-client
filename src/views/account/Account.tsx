@@ -1,14 +1,12 @@
-import AccountActions from '../../actions/AuthActions';
+import * as AuthActions from '../../actions/AuthActions';
+import * as React from 'react';
 import AccountChangeName from './AccountChangeName';
 import AccountChangePassword from './AccountChangePassword';
 import BorderButton from '../../components/BorderButton';
-import * as React from 'react';
-import { Component } from 'react';
 import Scroll from '../../components/Scroll';
 
-export default class Account extends Component<any, any> {
-
-	delete = () => AccountActions.deleteConfirm();
+export default class Account extends React.Component<undefined, undefined> {
+	delete = () => AuthActions.requestUserDeletion();
 
 	render() {
 		return (

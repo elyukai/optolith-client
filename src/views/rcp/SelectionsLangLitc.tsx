@@ -1,6 +1,6 @@
+import * as React from 'react';
 import Checkbox from '../../components/Checkbox';
 import Dropdown from '../../components/Dropdown';
-import React, { Component, PropTypes } from 'react';
 
 interface Props {
 	active: Map<string, number>;
@@ -10,7 +10,7 @@ interface Props {
 	list: LanguagesScriptsSelectionListItem[];
 }
 
-export default class SelectionsLangLitc extends Component<Props, undefined> {
+export default class SelectionsLangLitc extends React.Component<Props, undefined> {
 	render() {
 		const { active, apTotal, apLeft, change, list } = this.props;
 		const tiers = [{id:2,name:'I'},{id:4,name:'II'},{id:6,name:'III'}];
@@ -37,7 +37,7 @@ export default class SelectionsLangLitc extends Component<Props, undefined> {
 											className="tiers"
 											value={active.get(id) || 0}
 											onChange={change.bind(null, id)}
-											options={tiers.filter(e => (e.id - (active.get(id) as number)) <= apLeft)} />
+											options={tiers.filter(e => (e.id - active.get(id)!) <= apLeft)} />
 									) : null
 								}
 
