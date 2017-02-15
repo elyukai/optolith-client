@@ -36,9 +36,14 @@ export default class Register extends React.Component<Props, State> {
 	register = () => AuthActions.requestRegistration(this.state.email, this.state.username, this.state.displayName, this.state.password);
 	back = () => createOverlay(<Login />);
 
-	_onChange = (option: string, event: Event) => this.setState({ [option]: event.target.value } as State);
-	_onEnter = (event: Event) => {
-		const { email, email2, username, password, password2 } = this.state;
+	changeDisplayName = (event: InputTextEvent) => this.setState({ displayName: event.target.value } as State);
+	changeEmail = (event: InputTextEvent) => this.setState({ email: event.target.value } as State);
+	changeEmailConfirm = (event: InputTextEvent) => this.setState({ email2: event.target.value } as State);
+	changeUsername = (event: InputTextEvent) => this.setState({ username: event.target.value } as State);
+	changePassword = (event: InputTextEvent) => this.setState({ password: event.target.value } as State);
+	changePasswordConfirm = (event: InputTextEvent) => this.setState({ password2: event.target.value } as State);
+	_onEnter = (event: InputKeyEvent) => {
+		const { email, email2, username, password, password2, displayName } = this.state;
 		if (event.charCode === 13 &&
 			email !== '' &&
 			_validateEmail(email) &&
@@ -46,6 +51,9 @@ export default class Register extends React.Component<Props, State> {
 			username !== '' &&
 			username.length >= 3 &&
 			username.length <= 20 &&
+			displayName !== '' &&
+			displayName.length >= 3 &&
+			displayName.length <= 20 &&
 			password !== '' &&
 			password.length >= 5 &&
 			password.length <= 20 &&
@@ -57,7 +65,7 @@ export default class Register extends React.Component<Props, State> {
 
 	render() {
 
-		const { email, email2, username, password, password2 } = this.state;
+		const { email, email2, username, password, password2, displayName } = this.state;
 
 		return (
 			<Dialog id="login" title="Registrieren" node={this.props.node} buttons={[
@@ -72,6 +80,9 @@ export default class Register extends React.Component<Props, State> {
 						username === '' ||
 						username.length < 3 ||
 						username.length > 20 ||
+						displayName === '' ||
+						displayName.length < 3 ||
+						displayName.length > 20 ||
 						password === '' ||
 						password.length < 5 ||
 						password.length > 20 ||
@@ -85,7 +96,7 @@ export default class Register extends React.Component<Props, State> {
 				<TextField
 					hint="E-Mail-Adresse"
 					value={email}
-					onChange={this._onChange.bind(null, 'email')}
+					onChange={this.changeEmail}
 					onKeyDown={this._onEnter}
 					fullWidth
 					type="email"
@@ -94,7 +105,7 @@ export default class Register extends React.Component<Props, State> {
 				<TextField
 					hint="E-Mail-Adresse bestätigen"
 					value={email2}
-					onChange={this._onChange.bind(null, 'email2')}
+					onChange={this.changeEmailConfirm}
 					onKeyDown={this._onEnter}
 					fullWidth
 					type="email"
@@ -103,15 +114,23 @@ export default class Register extends React.Component<Props, State> {
 				<TextField
 					hint="Benutzername"
 					value={username}
-					onChange={this._onChange.bind(null, 'username')}
+					onChange={this.changeUsername}
 					onKeyDown={this._onEnter}
 					fullWidth
 				/>
 				{(username.length > 0 && (username.length < 3 || username.length > 20)) ? <p>Der Benutzername muss zwischen 3 und 20 Zeichen lang sein!</p> : null}
 				<TextField
+					hint="Anzeigename"
+					value={displayName}
+					onChange={this.changeDisplayName}
+					onKeyDown={this._onEnter}
+					fullWidth
+				/>
+				{(displayName.length > 0 && (displayName.length < 3 || displayName.length > 20)) ? <p>Der Anzeigename muss zwischen 3 und 20 Zeichen lang sein!</p> : null}
+				<TextField
 					hint="Passwort"
 					value={password}
-					onChange={this._onChange.bind(null, 'password')}
+					onChange={this.changePassword}
 					onKeyDown={this._onEnter}
 					fullWidth
 					type="password"
@@ -120,7 +139,7 @@ export default class Register extends React.Component<Props, State> {
 				<TextField
 					hint="Passwort bestätigen"
 					value={password2}
-					onChange={this._onChange.bind(null, 'password2')}
+					onChange={this.changePasswordConfirm}
 					onKeyDown={this._onEnter}
 					fullWidth
 					type="password"

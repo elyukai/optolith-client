@@ -29,8 +29,8 @@ export default class Login extends React.Component<Props, State> {
 	register = () => createOverlay(<Register />);
 	resendActivation = () => { createOverlay(<ResendActivation />); close(this.props.node!); };
 
-	_onChange = (option: 'username' | 'password', event: Event) => this.setState({ [option]: event.target.value } as State);
-	_onEnter = (event: Event) => {
+	_onChange = (option: 'username' | 'password', event: InputTextEvent) => this.setState({ [option]: event.target.value } as State);
+	_onEnter = (event: InputKeyEvent) => {
 		if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
 			this.login();
 			close(this.props.node!);

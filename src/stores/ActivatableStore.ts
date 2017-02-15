@@ -1,7 +1,6 @@
 import { get, getAllByCategory, getObjByCategory, getAllByCategoryGroup } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import count from '../utils/count';
 import PhaseStore from '../stores/PhaseStore';
 import validate from '../utils/validate';
 

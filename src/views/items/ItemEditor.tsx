@@ -13,7 +13,7 @@ import TextField from '../../components/TextField';
 interface Props {
 	create?: boolean;
 	item: ItemInstance;
-	node: HTMLDivElement;
+	node?: HTMLDivElement;
 }
 
 interface State extends ItemInstance {}
@@ -29,7 +29,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 		name: '',
 		price: '',
 		weight: '',
-		number: '',
+		amount: '',
 		where: '',
 		gr: 0,
 		template: 'ITEMTPL_0',
@@ -86,7 +86,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 	render() {
 
 		const { create, node } = this.props;
-		const { addpenalties, ammunition, number, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
+		const { addpenalties, ammunition, amount, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
 
 		const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(InventoryStore.getAllTemplates().map(e => [e.name, e.id]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
 		const AMMUNITION = [['Keine', null]].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(e => [e.name, e.id]));
@@ -109,7 +109,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 						<TextField
 							className="number"
 							label="Menge"
-							value={number}
+							value={amount}
 							onChange={this.onEvent.bind(null, 'number')}
 							/>
 						<TextField

@@ -27,7 +27,7 @@ type Source = {
 export default ({ attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities }: RawData) => {
 	const _list: List = {};
 
-	const iterate = (source: Source, DataClass: DataClass) => {
+	const iterate = (source: Source, DataClass: DataClass & { new(data: RawDataClass): void; }) => {
 		for (const id in source) {
 			_list[id] = new DataClass(source[id]);
 		}

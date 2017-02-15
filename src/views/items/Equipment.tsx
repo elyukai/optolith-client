@@ -1,7 +1,7 @@
 // import EquipmentActions from '../../actions/EquipmentActions';
-import React, { Component } from 'react';
+import * as React from 'react';
 
-export default class Equipment extends Component {
+export default class Equipment extends React.Component<undefined, undefined> {
 
 	render() {
 		return (

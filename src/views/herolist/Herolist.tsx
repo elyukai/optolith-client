@@ -111,7 +111,7 @@ export default class Herolist extends React.Component<undefined, State> {
 							/>
 						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
-						<BorderButton label="JSON laden" onClick={this.loadJSON} />
+						<BorderButton label="Datei laden" onClick={this.loadJSON} />
 					</div>
 					<Scroll className="list">
 						<ul>

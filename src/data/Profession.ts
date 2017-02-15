@@ -11,10 +11,10 @@ export default class Profession extends Core implements ProfessionInstance {
 	readonly requires: (string | number | boolean)[][];
 	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
-	readonly combatTechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-	readonly spells: (string | number)[][];
-	readonly liturgies: (string | number)[][];
+	readonly combatTechniques: [string, number][];
+	readonly talents: [string, number][];
+	readonly spells: [string, number | null][];
+	readonly liturgies: [string, number | null][];
 	readonly typicalAdvantages: string[];
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];
@@ -31,10 +31,10 @@ export default class Profession extends Core implements ProfessionInstance {
 		this.selections = sel;
 
 		this.specialAbilities = fixIDs<number | boolean>(sa, 'SA');
-		this.combatTechniques = fixIDs<number>(combattech, 'CT');
-		this.talents = fixIDs<number>(talents, 'TAL');
-		this.spells = fixIDs<number>(spells, 'SPELL');
-		this.liturgies = fixIDs<number>(chants, 'LITURGY');
+		this.combatTechniques = fixIDs<number>(combattech, 'CT') as [string, number][];
+		this.talents = fixIDs<number>(talents, 'TAL') as [string, number][];
+		this.spells = fixIDs<number>(spells, 'SPELL') as [string, number | null][];
+		this.liturgies = fixIDs<number>(chants, 'LITURGY') as [string, number | null][];
 
 		this.typicalAdvantages = typ_adv.map(e => `ADV_${e}`);
 		this.typicalDisadvantages = typ_dadv.map(e => `DISADV_${e}`);

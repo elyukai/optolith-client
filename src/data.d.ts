@@ -88,7 +88,7 @@ interface RaceInstance {
 	readonly spi: number;
 	readonly tou: number;
 	readonly mov: number;
-	readonly attributes: (string | number)[][];
+	readonly attributes: [number, string][];
 	readonly attributeSelection: [number, string[]];
 	readonly typicalCultures: string[];
 	readonly autoAdvantages: (string | number)[][];
@@ -166,10 +166,10 @@ interface ProfessionInstance {
 	readonly requires: (string | number | boolean)[][];
 	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
-	readonly combatTechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
-	readonly spells: (string | number)[][];
-	readonly liturgies: (string | number)[][];
+	readonly combatTechniques: [string, number][];
+	readonly talents: [string, number][];
+	readonly spells: [string, number | null][];
+	readonly liturgies: [string, number | null][];
 	readonly typicalAdvantages: string[];
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];
@@ -186,8 +186,8 @@ interface ProfessionVariantInstance {
 	readonly requires: (string | number | boolean)[][];
 	readonly selections: ProfessionSelections;
 	readonly specialAbilities: (string | number | boolean)[][];
-	readonly combatTechniques: (string | number)[][];
-	readonly talents: (string | number)[][];
+	readonly combatTechniques: [string, number][];
+	readonly talents: [string, number][];
 	readonly category: PROFESSION_VARIANTS;
 }
 
@@ -467,26 +467,26 @@ interface ItemInstance {
 	name: string;
 	addPenalties: boolean;
 	ammunition: string | null;
-	at: string;
+	at: number;
 	combatTechnique: string;
-	damageBonus: string;
-	damageDiceNumber: string;
-	damageDiceSides: string;
-	damageFlat: string;
-	enc: string;
+	damageBonus: number;
+	damageDiceNumber: number;
+	damageDiceSides: number;
+	damageFlat: number;
+	enc: number;
 	gr: number;
 	isTemplateLocked: boolean;
-	length: string;
-	number: string;
-	pa: string;
-	price: string;
-	pro: string;
-	range: string[];
-	reach: string;
-	reloadTime: string;
-	stp: string;
+	length: number;
+	amount: number;
+	pa: number;
+	price: number;
+	pro: number;
+	range: [number, number, number];
+	reach: number;
+	reloadTime: number;
+	stp: number;
 	template: string;
-	weight: string;
+	weight: number;
 	where: string;
 }
 
@@ -542,3 +542,4 @@ interface SaveData {
 }
 
 type InputTextEvent =  React.FormEvent<HTMLInputElement>;
+type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;

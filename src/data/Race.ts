@@ -12,7 +12,7 @@ export default class Race extends Core implements RaceInstance {
 	readonly spi: number;
 	readonly tou: number;
 	readonly mov: number;
-	readonly attributes: (string | number)[][];
+	readonly attributes: [number, string][];
 	readonly attributeSelection: [number, string[]];
 	readonly typicalCultures: string[];
 	readonly autoAdvantages: (string | number)[][];
@@ -38,7 +38,7 @@ export default class Race extends Core implements RaceInstance {
 		this.tou = zk;
 		this.mov = gs;
 
-		this.attributes = fixIDs<number>(attr, 'ATTR', 1);
+		this.attributes = fixIDs<number>(attr, 'ATTR', 1) as [number, string][];
 		this.attributeSelection = [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)];
 
 		this.typicalCultures = typ_cultures.map(e => `C_${e}`);

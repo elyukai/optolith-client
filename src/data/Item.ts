@@ -4,27 +4,27 @@ export default class Item extends Core implements ItemInstance {
 
 	addPenalties: boolean;
 	ammunition: string | null;
-	at: string;
+	at: number;
 	combatTechnique: string;
-	damageBonus: string;
-	damageDiceNumber: string;
-	damageDiceSides: string;
-	damageFlat: string;
-	enc: string;
+	damageBonus: number;
+	damageDiceNumber: number;
+	damageDiceSides: number;
+	damageFlat: number;
+	enc: number;
 	gr: number;
 	isTemplateLocked: boolean;
-	length: string;
-	number: string;
+	length: number;
+	amount: number;
 	name: string;
-	pa: string;
-	price: string;
-	pro: string;
-	range: string[];
-	reach: string;
-	reloadTime: string;
-	stp: string;
+	pa: number;
+	price: number;
+	pro: number;
+	range: [number, number, number];
+	reach: number;
+	reloadTime: number;
+	stp: number;
 	template: string;
-	weight: string;
+	weight: number;
 	where: string;
 
 	constructor(args: RawItem & { isTemplateLocked?: boolean; }) {
@@ -57,7 +57,7 @@ export default class Item extends Core implements ItemInstance {
 
 		this.price = price;
 		this.weight = weight;
-		this.number = number;
+		this.amount = number;
 		this.gr = gr;
 
 		this.combatTechnique = combatTechnique;

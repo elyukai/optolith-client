@@ -21,10 +21,10 @@ export const getLP = (): SecondaryAttribute => {
 	const increaseObject = (get('ADV_25') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_28') as DisadvantageInstance).active[0];
 	if (increaseObject) {
-		mod += increaseObject.tier;
+		mod += increaseObject.tier!;
 	}
 	else if (decreaseObject) {
-		mod -= decreaseObject.tier;
+		mod -= decreaseObject.tier!;
 	}
 	const value = base + mod + add;
 	return {
@@ -51,10 +51,10 @@ export const getAE = (): SecondaryAttribute => {
 	const increaseObject = (get('ADV_23') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_26') as DisadvantageInstance).active[0];
 	if (increaseObject) {
-		mod += increaseObject.tier;
+		mod += increaseObject.tier!;
 	}
 	else if (decreaseObject) {
-		mod -= decreaseObject.tier;
+		mod -= decreaseObject.tier!;
 	}
 	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {
@@ -82,10 +82,10 @@ export const getKP = (): SecondaryAttribute => {
 	const increaseObject = (get('ADV_24') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_27') as DisadvantageInstance).active[0];
 	if (increaseObject) {
-		mod += increaseObject.tier;
+		mod += increaseObject.tier!;
 	}
 	else if (decreaseObject) {
-		mod -= decreaseObject.tier;
+		mod -= decreaseObject.tier!;
 	}
 	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
 	return {

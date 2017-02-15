@@ -53,7 +53,7 @@ export const fn = (req: 'RCP' | RequirementObject, id?: string) => {
 			case Categories.SPELLS:
 			case Categories.TALENTS:
 				if (typeof a.value === 'number') {
-					return a.value >= req.value;
+					return a.value >= req.value!;
 				}
 				break;
 

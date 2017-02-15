@@ -113,114 +113,105 @@ function _assignRCP(selections: Selections) {
 	const profession = ProfessionStore.getCurrent();
 	const professionVariant = ProfessionVariantStore.getCurrent();
 
-	let addSRList = [];
-	let addSRActivateList = [];
-	let disadvs = new Set();
-	let sas = new Set();
-	let langs = new Map();
-	let litcs = new Set();
+	const skillRatingList = new Map<string, number>();
+	const skillActivateList = new Set<string>();
+	const activatable = new Set<RequirementObject>();
+	const languages = new Map<number, number>();
+	const scripts = new Set<number>();
 
-	const addSA = e => {
-		let [ id, value, ...options ] = e;
-		if (!value) {
-			sas = new Set([...sas].filter(e => e[0] !== id));
-		} else {
-			sas.add([ id, ...options ]);
-		}
-	};
+	// Race selections:
+
+	race.attributes.forEach(e => {
+		const [ mod, id ] = e;
+		(_byId[id] as AttributeInstance).mod += mod;
+	});
+	race.autoAdvantages.forEach(e => activatable.add(e));
+	(_byId[selections.attrSel] as AttributeInstance).mod = race.attributeSelection[0];
+
+	// Culture selections:
 
 	if (selections.useCulturePackage) {
-		addSRList.push(...culture.talents);
+		culture.talents.forEach(([ key, value ]) => {
+			skillRatingList.set(key, value);
+		});
 	}
-	if (selections.spec !== null) {
-		sas.add([ 'SA_10', selections.map.get('spec')[0], selections.spec ]);
-	}
-	langs.set(culture.languages.length > 1 ? selections.lang : culture.languages[0], 4);
+
+	const motherTongueId = culture.languages.length > 1 ? selections.lang : culture.languages[0];
+	languages.set(motherTongueId, 4);
+
 	if (selections.buyLiteracy) {
-		litcs.add(culture.scripts.length > 1 ? selections.litc : culture.scripts[0]);
+		const motherTongueScriptId = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
+		scripts.add(motherTongueScriptId);
 	}
-	selections.langLitc.forEach((value, key) => {
-		let [ category, id ] = key.split('_');
-		if (category === 'LANG') {
-			langs.set(parseInt(id), value / 2);
-		} else {
-			litcs.add(parseInt(id));
+
+	// Profession selections:
+
+	[ ...profession.talents, ...profession.combatTechniques ].forEach(([ key, value ]) => {
+		skillRatingList.set(key, value);
+	});
+	[ ...profession.spells, ...profession.liturgies ].forEach(([ key, value ]) => {
+		skillActivateList.add(key);
+		if (typeof value === 'number') {
+			skillRatingList.set(key, value);
 		}
 	});
-	race.attributes.forEach(e => {
-		let [ mod, id ] = e;
-		_byId[id].mod += mod;
-	});
-	race.autoAdvantages.forEach(e => {
-		let [ id ] = e;
-		disadvs.add(id);
-	});
-	addSRList.push(...profession.talents);
-	addSRList.push(...profession.combatTechniques);
-	addSRActivateList.push(...profession.spells);
-	addSRActivateList.push(...profession.liturgies);
-	profession.specialAbilities.forEach(addSA);
+	profession.specialAbilities.forEach(e => activatable.add(e));
+
 	if (professionVariant) {
-		addSRList.push(...professionVariant.talents);
-		addSRList.push(...professionVariant.combatTechniques);
-		professionVariant.specialAbilities.forEach(addSA);
+		[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
+			skillRatingList.set(key, value);
+		});
+		professionVariant.specialAbilities.forEach(e => activatable.add(e));
 	}
 
-	Array.from(selections.combattech).forEach(e => {
-		addSRList.push([e, selections.map.get('ct')[1]]);
-	});
-	Array.from(selections.cantrips).forEach(e => {
-		addSRList.push([e, null]);
-	});
-	Array.from(selections.curses).forEach(e => {
-		addSRList.push(e);
-	});
+	if (selections.spec !== null) {
+		activatable.add({
+			id: 'SA_10',
+			sid: (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid,
+			sid2: selections.spec
+		});
+	}
 
-	_byId[selections.attrSel].mod = race.attributeSelection[0] || 0;
-	addSRList.forEach(e => _addSR(...e));
-	addSRActivateList.forEach(e => {
-		_activate(e[0]);
-		if (e[1] !== null) {
-			_setValue(e[0], e[1]);
-		}
-	});
-	disadvs.forEach(id => {
-		_activate(id);
-		_byId[id].addDependencies();
-	});
-	sas.forEach(e => {
-		let [ id, ...options ] = e;
-		let obj = _byId[id];
-		let addreq = [];
-
-		if (options.length === 0) {
-			_activate(id);
+	selections.langLitc.forEach((value, key) => {
+		const [ category, id ] = key.split('_');
+		if (category === 'LANG') {
+			languages.set(Number.parseInt(id), value / 2);
 		} else {
-			if (obj.tiers !== null && obj.tiers) {
-				if (obj.max === null) {
-					_activate(id);
-					obj.tier = options[0];
-				} else {
-					obj.active.push(options.reverse());
-				}
-			} else if (obj.sel.length > 0) {
-				if (obj.max === null) {
-					_activate(id);
-					obj.sid = options[0];
-				} else if (obj.id === 'SA_10') {
-					obj.active.push([options[0], Number.isInteger(options[1]) ? options[1] + 1 : options[1]]);
-					addreq.push([options[0], obj.active.filter(e => e[0] === options[0]).length * 6]);
-				} else if (options.length > 1) {
-					obj.active.push(options.reverse());
-				} else {
-					obj.active.push(options[0]);
-				}
-			}
+			scripts.add(Number.parseInt(id));
 		}
-		obj.addDependencies(addreq);
 	});
-	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...litcs);
-	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...langs);
+
+	selections.combattech.forEach(e => {
+		skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
+	});
+
+	selections.cantrips.forEach(e => {
+		skillActivateList.add(e);
+	});
+
+	selections.curses.forEach((value, key) => {
+		skillRatingList.set(key, value);
+	});
+
+	// Apply:
+
+	skillRatingList.forEach((value, key) => _addSR(key, value));
+	skillActivateList.forEach(e => _activate(e));
+
+	activatable.forEach(req => {
+		const { id, sid, sid2, tier, value } = req;
+		const obj = get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
+		const add: RequirementObject[] = [];
+		if (id === 'SA_10') {
+			obj.active.push({ sid: sid as string, sid2 });
+			add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
+		} else {
+			obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+		}
+		obj.addDependencies(add);
+	});
+	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...scripts);
+	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...languages);
 }
 
 function _clear() {
@@ -255,7 +246,7 @@ const ListStore = new Store((action: Action) => {
 
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.SET_SPECIALABILITY_TIER:
-				_updateTier(action.payload.id, action.payload.sid, action.payload.tier);
+				_updateTier(action.payload.id, action.payload.index, action.payload.tier);
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:

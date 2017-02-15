@@ -1,4 +1,3 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
 import About from './about/About';
 import Account from './account/Account';
@@ -17,12 +16,9 @@ interface Props {
 	id: string;
 }
 
-export default class Route extends Component<Props, any> {
+type TabId = 'home' | 'herolist' | 'grouplist' | 'account' | 'about' | 'rcp' | 'profile' | 'attributes' | 'disadv' | 'skills' | 'items';
 
-	static propTypes = {
-		id: PropTypes.string.isRequired
-	};
-
+export default class Route extends React.Component<Props, undefined> {
 	render() {
 
 		const VIEWS = {
@@ -31,7 +27,7 @@ export default class Route extends Component<Props, any> {
 			grouplist: <Grouplist />,
 			account: <Account />,
 			about: <About />,
-			
+
 			rcp: <RCP />,
 			profile: <Profile />,
 			attributes: <Attribute />,
@@ -42,6 +38,6 @@ export default class Route extends Component<Props, any> {
 			// master: <Master />
 		};
 
-		return VIEWS[this.props.id] || null;
+		return VIEWS[this.props.id as TabId] || null;
 	}
 }

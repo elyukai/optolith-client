@@ -46,7 +46,7 @@ export default class Inventory extends React.Component<undefined, State> {
 		InventoryStore.removeChangeListener(this._updateInventoryStore);
 	}
 
-	showItemCreation = () => createOverlay(<ItemEditor create />);
+	showItemCreation = () => createOverlay(<ItemEditor create item={{} as ItemInstance} />);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 

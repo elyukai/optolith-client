@@ -8,7 +8,7 @@ import ItemEditor from './ItemEditor';
 import TooltipToggle from '../../components/TooltipToggle';
 
 interface Props {
-	add: boolean;
+	add?: boolean;
 	data: ItemInstance;
 }
 
@@ -16,7 +16,7 @@ const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', '
 
 export default class InventoryListItem extends React.Component<Props, undefined> {
 	edit = () => {
-		const item = Item.prepareDataForEditor(InventoryStore.get(this.props.data.id));
+		const item = InventoryStore.get(this.props.data.id);
 		createOverlay(<ItemEditor item={item} />);
 	}
 	delete = () => InventoryActions.removeFromList(this.props.data.id);
@@ -24,9 +24,9 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 
 	render() {
 
-		const { add, data: { gr, name, number, price, weight, where, combattechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadtime, range, ammunition, pro, enc, addpenalties } } = this.props;
+		const { add, data: { gr, name, amount, price, weight, where, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } } = this.props;
 
-		const numberValue = number > 1 ? number : null;
+		const numberValue = amount > 1 ? amount : null;
 
 		return (
 			<TooltipToggle content={
@@ -49,7 +49,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 						<tbody>
 							<tr>
 								<td>Kampftechnik</td>
-								<td>{get(combattechnique).name}</td>
+								<td>{get(combatTechnique).name}</td>
 							</tr>
 							<tr>
 								<td>TP</td>
@@ -57,7 +57,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>L+S</td>
-								<td>{get(combattechnique).primary.map(attr => get(attr).short).join('/')} {damageBonus}</td>
+								<td>{(get(combatTechnique) as CombatTechniqueInstance).primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {damageBonus}</td>
 							</tr>
 							<tr>
 								<td>AT/PA-Mod</td>
@@ -85,7 +85,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 						<tbody>
 							<tr>
 								<td>Kampftechnik</td>
-								<td>{get(combattechnique).name}</td>
+								<td>{get(combatTechnique).name}</td>
 							</tr>
 							<tr>
 								<td>TP</td>
@@ -93,7 +93,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>LZ</td>
-								<td>{reloadtime}</td>
+								<td>{reloadTime}</td>
 							</tr>
 							<tr>
 								<td>RW</td>
@@ -101,7 +101,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>Munitionstyp</td>
-								<td>{(InventoryStore.getTemplate(ammunition) || {}).name}</td>
+								<td>{(ammunition ? InventoryStore.getTemplate(ammunition) : { name: 'Keine Munition ausgewählt' }).name}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>
@@ -138,7 +138,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 						</tbody>
 					</table> : null}
 					{ gr === 3 ? <p className="armor">
-						Zus. Abzüge: {addpenalties ? '-1 GS, -1 INI' : '-'}
+						Zus. Abzüge: {addPenalties ? '-1 GS, -1 INI' : '-'}
 					</p> : null}
 				</div>
 			} margin={11}>

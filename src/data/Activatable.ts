@@ -103,11 +103,10 @@ export default class Activatable extends Dependent {
 			case 'SA_10':
 				if (input === '') {
 					active = { sid: sel, sid2: sel2 };
-					adds.push({ id: sel as string, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
 				} else if (this.active.filter(e => e.sid === input).length === 0) {
 					active = { sid: sel, sid2: input };
-					adds.push({ id: sel as string, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
 				}
+				adds.push({ id: sel as string, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
 				break;
 			case 'SA_30':
 				active = { sid: sel, tier };

@@ -22,7 +22,7 @@ export default class HeroCreation extends React.Component<Props, State> {
 		el: 'EL_0'
 	};
 
-	changeName = (event: Event) => this.setState({ name: event.target.value } as State);
+	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
 	changeGender = (gender: string) => this.setState({ gender } as State);
 	changeEL = (el: string) => this.setState({ el } as State);
 	create = () => HerolistActions.createHero(this.state.name, this.state.gender as 'm' | 'f', this.state.el);

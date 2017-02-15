@@ -852,117 +852,86 @@ function _assignRCP(selections) {
     const culture = __WEBPACK_IMPORTED_MODULE_2__CultureStore__["a" /* default */].getCurrent();
     const profession = __WEBPACK_IMPORTED_MODULE_5__ProfessionStore__["a" /* default */].getCurrent();
     const professionVariant = __WEBPACK_IMPORTED_MODULE_6__ProfessionVariantStore__["a" /* default */].getCurrent();
-    let addSRList = [];
-    let addSRActivateList = [];
-    let disadvs = new Set();
-    let sas = new Set();
-    let langs = new Map();
-    let litcs = new Set();
-    const addSA = e => {
-        let [id, value, ...options] = e;
-        if (!value) {
-            sas = new Set([...sas].filter(e => e[0] !== id));
-        }
-        else {
-            sas.add([id, ...options]);
-        }
-    };
-    if (selections.useCulturePackage) {
-        addSRList.push(...culture.talents);
-    }
-    if (selections.spec !== null) {
-        sas.add(['SA_10', selections.map.get('spec')[0], selections.spec]);
-    }
-    langs.set(culture.languages.length > 1 ? selections.lang : culture.languages[0], 4);
-    if (selections.buyLiteracy) {
-        litcs.add(culture.scripts.length > 1 ? selections.litc : culture.scripts[0]);
-    }
-    selections.langLitc.forEach((value, key) => {
-        let [category, id] = key.split('_');
-        if (category === 'LANG') {
-            langs.set(parseInt(id), value / 2);
-        }
-        else {
-            litcs.add(parseInt(id));
-        }
-    });
+    const skillRatingList = new Map();
+    const skillActivateList = new Set();
+    const activatable = new Set();
+    const languages = new Map();
+    const scripts = new Set();
     race.attributes.forEach(e => {
-        let [mod, id] = e;
+        const [mod, id] = e;
         _byId[id].mod += mod;
     });
-    race.autoAdvantages.forEach(e => {
-        let [id] = e;
-        disadvs.add(id);
-    });
-    addSRList.push(...profession.talents);
-    addSRList.push(...profession.combatTechniques);
-    addSRActivateList.push(...profession.spells);
-    addSRActivateList.push(...profession.liturgies);
-    profession.specialAbilities.forEach(addSA);
-    if (professionVariant) {
-        addSRList.push(...professionVariant.talents);
-        addSRList.push(...professionVariant.combatTechniques);
-        professionVariant.specialAbilities.forEach(addSA);
+    race.autoAdvantages.forEach(e => activatable.add(e));
+    _byId[selections.attrSel].mod = race.attributeSelection[0];
+    if (selections.useCulturePackage) {
+        culture.talents.forEach(([key, value]) => {
+            skillRatingList.set(key, value);
+        });
     }
-    Array.from(selections.combattech).forEach(e => {
-        addSRList.push([e, selections.map.get('ct')[1]]);
+    const motherTongueId = culture.languages.length > 1 ? selections.lang : culture.languages[0];
+    languages.set(motherTongueId, 4);
+    if (selections.buyLiteracy) {
+        const motherTongueScriptId = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
+        scripts.add(motherTongueScriptId);
+    }
+    [...profession.talents, ...profession.combatTechniques].forEach(([key, value]) => {
+        skillRatingList.set(key, value);
     });
-    Array.from(selections.cantrips).forEach(e => {
-        addSRList.push([e, null]);
-    });
-    Array.from(selections.curses).forEach(e => {
-        addSRList.push(e);
-    });
-    _byId[selections.attrSel].mod = race.attributeSelection[0] || 0;
-    addSRList.forEach(e => _addSR(...e));
-    addSRActivateList.forEach(e => {
-        _activate(e[0]);
-        if (e[1] !== null) {
-            _setValue(e[0], e[1]);
+    [...profession.spells, ...profession.liturgies].forEach(([key, value]) => {
+        skillActivateList.add(key);
+        if (typeof value === 'number') {
+            skillRatingList.set(key, value);
         }
     });
-    disadvs.forEach(id => {
-        _activate(id);
-        _byId[id].addDependencies();
-    });
-    sas.forEach(e => {
-        let [id, ...options] = e;
-        let obj = _byId[id];
-        let addreq = [];
-        if (options.length === 0) {
-            _activate(id);
+    profession.specialAbilities.forEach(e => activatable.add(e));
+    if (professionVariant) {
+        [...professionVariant.talents, ...professionVariant.combatTechniques].forEach(([key, value]) => {
+            skillRatingList.set(key, value);
+        });
+        professionVariant.specialAbilities.forEach(e => activatable.add(e));
+    }
+    if (selections.spec !== null) {
+        activatable.add({
+            id: 'SA_10',
+            sid: selections.map.get('SPECIALISATION').sid,
+            sid2: selections.spec
+        });
+    }
+    selections.langLitc.forEach((value, key) => {
+        const [category, id] = key.split('_');
+        if (category === 'LANG') {
+            languages.set(Number.parseInt(id), value / 2);
         }
         else {
-            if (obj.tiers !== null && obj.tiers) {
-                if (obj.max === null) {
-                    _activate(id);
-                    obj.tier = options[0];
-                }
-                else {
-                    obj.active.push(options.reverse());
-                }
-            }
-            else if (obj.sel.length > 0) {
-                if (obj.max === null) {
-                    _activate(id);
-                    obj.sid = options[0];
-                }
-                else if (obj.id === 'SA_10') {
-                    obj.active.push([options[0], Number.isInteger(options[1]) ? options[1] + 1 : options[1]]);
-                    addreq.push([options[0], obj.active.filter(e => e[0] === options[0]).length * 6]);
-                }
-                else if (options.length > 1) {
-                    obj.active.push(options.reverse());
-                }
-                else {
-                    obj.active.push(options[0]);
-                }
-            }
+            scripts.add(Number.parseInt(id));
         }
-        obj.addDependencies(addreq);
     });
-    _byId['SA_28'].active.push(...litcs);
-    _byId['SA_30'].active.push(...langs);
+    selections.combattech.forEach(e => {
+        skillRatingList.set(e, selections.map.get('COMBAT_TECHNIQUES').value);
+    });
+    selections.cantrips.forEach(e => {
+        skillActivateList.add(e);
+    });
+    selections.curses.forEach((value, key) => {
+        skillRatingList.set(key, value);
+    });
+    skillRatingList.forEach((value, key) => _addSR(key, value));
+    skillActivateList.forEach(e => _activate(e));
+    activatable.forEach(req => {
+        const { id, sid, sid2, tier, value } = req;
+        const obj = get(id);
+        const add = [];
+        if (id === 'SA_10') {
+            obj.active.push({ sid: sid, sid2 });
+            add.push({ id: sid, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
+        }
+        else {
+            obj.active.push({ sid: sid, sid2, tier });
+        }
+        obj.addDependencies(add);
+    });
+    _byId['SA_28'].active.push(...scripts);
+    _byId['SA_30'].active.push(...languages);
 }
 function _clear() {
     for (const id in _byId) {
@@ -992,7 +961,7 @@ const ListStore = new __WEBPACK_IMPORTED_MODULE_1__Store__["a" /* default */]((a
                 break;
             case __WEBPACK_IMPORTED_MODULE_9__constants_ActionTypes__["O" /* SET_DISADV_TIER */]:
             case __WEBPACK_IMPORTED_MODULE_9__constants_ActionTypes__["P" /* SET_SPECIALABILITY_TIER */]:
-                _updateTier(action.payload.id, action.payload.sid, action.payload.tier);
+                _updateTier(action.payload.id, action.payload.index, action.payload.tier);
                 break;
             case __WEBPACK_IMPORTED_MODULE_9__constants_ActionTypes__["Q" /* ADD_ATTRIBUTE_POINT */]:
             case __WEBPACK_IMPORTED_MODULE_9__constants_ActionTypes__["R" /* ADD_TALENT_POINT */]:
@@ -3239,16 +3208,25 @@ const ProfessionVariantStore = new ProfessionVariantStoreStatic((action) => {
 const filter = (list, filterText, addProperty) => {
     if (filterText !== '') {
         filterText = filterText.toLowerCase();
-        return list.filter(obj => obj['name'] && obj['name'].toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
+        return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
     }
     return list;
 };
 /* unused harmony export filter */
 
+let SEX;
+const filterSex = (list, filterText, addProperty) => {
+    if (filterText !== '') {
+        filterText = filterText.toLowerCase();
+        return list.filter(obj => obj.name[SEX].toLowerCase().match(filterText) && (!addProperty || obj[addProperty].toLowerCase().match(filterText)));
+    }
+    return list;
+};
+/* unused harmony export filterSex */
+
 const sortByName = (a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 /* unused harmony export sortByName */
 
-let SEX;
 const sortByNameSex = (a, b) => {
     const an = a.name[SEX] || a.name;
     const bn = b.name[SEX] || b.name;
@@ -3338,7 +3316,7 @@ const sort = (list, sortOrder) => {
 };
 /* unused harmony export sort */
 
-const sortSex = (list, sortOrder, sex) => {
+const sortSex = (list, sortOrder) => {
     let sort;
     switch (sortOrder) {
         case 'name':
@@ -3350,7 +3328,6 @@ const sortSex = (list, sortOrder, sex) => {
         default:
             return list;
     }
-    SEX = sex;
     return list.sort(sort);
 };
 /* unused harmony export sortSex */
@@ -3360,7 +3337,8 @@ const filterAndSort = (list, filterText, sortOrder, option) => {
         GROUPS = option;
     }
     else if (typeof option === 'string') {
-        return sortSex(filter(list, filterText), sortOrder, option);
+        SEX = option;
+        return sortSex(filterSex(list, filterText), sortOrder);
     }
     return sort(filter(list, filterText), sortOrder);
 };
@@ -9730,12 +9708,11 @@ class Activatable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
             case 'SA_10':
                 if (input === '') {
                     active = { sid: sel, sid2: sel2 };
-                    adds.push({ id: sel, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
                 }
                 else if (this.active.filter(e => e.sid === input).length === 0) {
                     active = { sid: sel, sid2: input };
-                    adds.push({ id: sel, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
                 }
+                adds.push({ id: sel, value: (this.active.filter(e => e.sid === sel).length + 1) * 6 });
                 break;
             case 'SA_30':
                 active = { sid: sel, tier };
@@ -14052,7 +14029,7 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
             name: '',
             price: '',
             weight: '',
-            number: '',
+            amount: '',
             where: '',
             gr: 0,
             template: 'ITEMTPL_0',
@@ -14105,7 +14082,7 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
     }
     render() {
         const { create, node } = this.props;
-        const { addpenalties, ammunition, number, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
+        const { addpenalties, ammunition, amount, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
         const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(__WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getAllTemplates().map(e => [e.name, e.id]).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
         const AMMUNITION = [['Keine', null]].concat(__WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getAllTemplates().filter(e => e.gr === 3).map(e => [e.name, e.id]));
         return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Dialog__["a" /* default */], { id: "item-editor", title: 'Gegenstand ' + (create ? 'erstellen' : 'bearbeiten'), node: node, buttons: [
@@ -14118,7 +14095,7 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
             ] },
             __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "main" },
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "number", label: "Menge", value: number, onChange: this.onEvent.bind(null, 'number') }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "number", label: "Menge", value: amount, onChange: this.onEvent.bind(null, 'number') }),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "name", label: "Name", value: name, onChange: this.onEvent.bind(null, 'name'), autoFocus: create, disabled: locked })),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "price", label: "Preis in S", value: price, onChange: this.onEvent.bind(null, 'price'), disabled: locked }),
@@ -18520,7 +18497,7 @@ class Item extends __WEBPACK_IMPORTED_MODULE_0__Core__["a" /* default */] {
         const { price, weight, number, where, gr, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, stp, range, reloadTime, ammunition, pro, enc, addPenalties, template, isTemplateLocked } = args;
         this.price = price;
         this.weight = weight;
-        this.number = number;
+        this.amount = number;
         this.gr = gr;
         this.combatTechnique = combatTechnique;
         this.damageDiceNumber = damageDiceNumber;
@@ -19268,7 +19245,6 @@ const generateArray = () => ({
 
 
 
-
 class Route extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     render() {
         const VIEWS = {
@@ -19289,9 +19265,6 @@ class Route extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Route;
 
-Route.propTypes = {
-    id: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string.isRequired
-};
 
 
 /***/ }),
@@ -19996,9 +19969,14 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         };
         this.register = () => __WEBPACK_IMPORTED_MODULE_0__actions_AuthActions__["g" /* requestRegistration */](this.state.email, this.state.username, this.state.displayName, this.state.password);
         this.back = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Login__["a" /* default */], null));
-        this._onChange = (option, event) => this.setState({ [option]: event.target.value });
+        this.changeDisplayName = (event) => this.setState({ displayName: event.target.value });
+        this.changeEmail = (event) => this.setState({ email: event.target.value });
+        this.changeEmailConfirm = (event) => this.setState({ email2: event.target.value });
+        this.changeUsername = (event) => this.setState({ username: event.target.value });
+        this.changePassword = (event) => this.setState({ password: event.target.value });
+        this.changePasswordConfirm = (event) => this.setState({ password2: event.target.value });
         this._onEnter = (event) => {
-            const { email, email2, username, password, password2 } = this.state;
+            const { email, email2, username, password, password2, displayName } = this.state;
             if (event.charCode === 13 &&
                 email !== '' &&
                 _validateEmail(email) &&
@@ -20006,6 +19984,9 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                 username !== '' &&
                 username.length >= 3 &&
                 username.length <= 20 &&
+                displayName !== '' &&
+                displayName.length >= 3 &&
+                displayName.length <= 20 &&
                 password !== '' &&
                 password.length >= 5 &&
                 password.length <= 20 &&
@@ -20016,7 +19997,7 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         };
     }
     render() {
-        const { email, email2, username, password, password2 } = this.state;
+        const { email, email2, username, password, password2, displayName } = this.state;
         return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_Dialog__["a" /* default */], { id: "login", title: "Registrieren", node: this.props.node, buttons: [
                 {
                     label: 'Registrieren',
@@ -20028,6 +20009,9 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                         username === '' ||
                         username.length < 3 ||
                         username.length > 20 ||
+                        displayName === '' ||
+                        displayName.length < 3 ||
+                        displayName.length > 20 ||
                         password === '' ||
                         password.length < 5 ||
                         password.length > 20 ||
@@ -20038,15 +20022,17 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                     onClick: this.back
                 }
             ] },
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "E-Mail-Adresse", value: email, onChange: this._onChange.bind(null, 'email'), onKeyDown: this._onEnter, fullWidth: true, type: "email" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "E-Mail-Adresse", value: email, onChange: this.changeEmail, onKeyDown: this._onEnter, fullWidth: true, type: "email" }),
             email !== '' && !_validateEmail(email) ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Es wurde keine g\u00FCltige Email-Adresse eingegeben!") : null,
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "E-Mail-Adresse bestätigen", value: email2, onChange: this._onChange.bind(null, 'email2'), onKeyDown: this._onEnter, fullWidth: true, type: "email" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "E-Mail-Adresse bestätigen", value: email2, onChange: this.changeEmailConfirm, onKeyDown: this._onEnter, fullWidth: true, type: "email" }),
             (email !== email2 && email2 !== '') ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Die E-Mail-Adressen sind nicht identisch!") : null,
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Benutzername", value: username, onChange: this._onChange.bind(null, 'username'), onKeyDown: this._onEnter, fullWidth: true }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Benutzername", value: username, onChange: this.changeUsername, onKeyDown: this._onEnter, fullWidth: true }),
             (username.length > 0 && (username.length < 3 || username.length > 20)) ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Der Benutzername muss zwischen 3 und 20 Zeichen lang sein!") : null,
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Passwort", value: password, onChange: this._onChange.bind(null, 'password'), onKeyDown: this._onEnter, fullWidth: true, type: "password" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Anzeigename", value: displayName, onChange: this.changeDisplayName, onKeyDown: this._onEnter, fullWidth: true }),
+            (displayName.length > 0 && (displayName.length < 3 || displayName.length > 20)) ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Der Anzeigename muss zwischen 3 und 20 Zeichen lang sein!") : null,
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Passwort", value: password, onChange: this.changePassword, onKeyDown: this._onEnter, fullWidth: true, type: "password" }),
             (password.length > 0 && (password.length < 5 || password.length > 20)) ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Das Passwort muss zwischen 5 und 20 Zeichen lang sein!") : null,
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Passwort bestätigen", value: password2, onChange: this._onChange.bind(null, 'password2'), onKeyDown: this._onEnter, fullWidth: true, type: "password" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_TextField__["a" /* default */], { hint: "Passwort bestätigen", value: password2, onChange: this.changePasswordConfirm, onKeyDown: this._onEnter, fullWidth: true, type: "password" }),
             (password !== password2 && password2 !== '') ? __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null, "Die Passw\u00F6rter sind nicht identisch!") : null));
     }
 }
@@ -20165,7 +20151,7 @@ class AttributeCalcItem extends __WEBPACK_IMPORTED_MODULE_4_react__["Component"]
     }
     render() {
         const { attribute: { base, calc, currentAdd, maxAdd, mod, name, short, value }, phase } = this.props;
-        const increaseElement = maxAdd && value !== '-' && phase > 2 ? (__WEBPACK_IMPORTED_MODULE_4_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_IconButton__["a" /* default */], { className: "add", icon: "\uE145", onClick: this.addMaxEnergyPoint, disabled: !maxAdd || currentAdd >= maxAdd })) : null;
+        const increaseElement = maxAdd && value !== '-' && phase > 2 ? (__WEBPACK_IMPORTED_MODULE_4_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_IconButton__["a" /* default */], { className: "add", icon: "\uE145", onClick: this.addMaxEnergyPoint, disabled: !maxAdd || currentAdd && currentAdd >= maxAdd })) : null;
         return (__WEBPACK_IMPORTED_MODULE_4_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__AttributeBorder__["a" /* default */], { label: short, value: value, tooltip: __WEBPACK_IMPORTED_MODULE_4_react__["createElement"]("div", { className: "calc-attr-overlay" },
                 __WEBPACK_IMPORTED_MODULE_4_react__["createElement"]("h4", null,
                     __WEBPACK_IMPORTED_MODULE_4_react__["createElement"]("span", null, name),
@@ -20574,31 +20560,31 @@ class Disadvantages extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_BorderButton__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Scroll__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_LocationActions__ = __webpack_require__(57);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Scroll__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextField__ = __webpack_require__(10);
 
 
 
 
 
-class Grouplist extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
+class Grouplist extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super(...arguments);
-        this.filter = event => event.target.value;
-        this.openGroup = () => __WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__["a" /* setSection */]('group');
+        this.filter = (event) => event.target.value;
+        this.openGroup = () => __WEBPACK_IMPORTED_MODULE_1__actions_LocationActions__["a" /* setSection */]('group');
     }
     render() {
-        return (__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("section", { id: "about" },
-            __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "page" },
-                __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "options" },
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_TextField__["a" /* default */], { hint: "Suchen", value: '', onChange: this.filter, fullWidth: true, disabled: true }),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__components_BorderButton__["a" /* default */], { label: "Erstellen", disabled: true })),
-                __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_Scroll__["a" /* default */], { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__components_BorderButton__["a" /* default */], { label: "Gruppe laden", onClick: this.openGroup })))));
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("section", { id: "about" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page" },
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "options" },
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_TextField__["a" /* default */], { hint: "Suchen", value: '', onChange: this.filter, fullWidth: true, disabled: true }),
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Erstellen", disabled: true })),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_Scroll__["a" /* default */], { className: "list" },
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_BorderButton__["a" /* default */], { label: "Gruppe laden", onClick: this.openGroup })))));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Grouplist;
@@ -20713,7 +20699,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
                         ] }),
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Aktualisieren", onClick: this.refresh, disabled: true }),
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Erstellen", onClick: this.showHeroCreation, primary: true }),
-                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "JSON laden", onClick: this.loadJSON })),
+                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Datei laden", onClick: this.loadJSON })),
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_17__components_Scroll__["a" /* default */], { className: "list" },
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("ul", null,
                         __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getID() === null && __WEBPACK_IMPORTED_MODULE_8__stores_ELStore__["a" /* default */].getStartID() !== 'EL_0' ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__HerolistItem__["a" /* default */], { id: null, avatar: __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getAvatar(), name: "Ungespeicherter Held", ap: { total: __WEBPACK_IMPORTED_MODULE_3__stores_APStore__["a" /* default */].getTotal() }, r: __WEBPACK_IMPORTED_MODULE_15__stores_RaceStore__["a" /* default */].getCurrentID(), c: __WEBPACK_IMPORTED_MODULE_6__stores_CultureStore__["a" /* default */].getCurrentID(), p: __WEBPACK_IMPORTED_MODULE_12__stores_ProfessionStore__["a" /* default */].getCurrentId(), pv: __WEBPACK_IMPORTED_MODULE_13__stores_ProfessionVariantStore__["a" /* default */].getCurrentID(), sex: __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getSex() })) : null,
@@ -20912,8 +20898,8 @@ class Overview extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 class Equipment extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     render() {
-        return (__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("div", { className: "page" },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("div", { className: "options" }, "Ausr\u00FCstung")));
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "options" }, "Ausr\u00FCstung")));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Equipment;
@@ -20967,7 +20953,7 @@ class Inventory extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         });
         this.filter = (event) => this.setState({ filterText: event.target.value });
         this.sort = (option) => __WEBPACK_IMPORTED_MODULE_1__actions_InventoryActions__["a" /* setSortOrder */](option);
-        this.showItemCreation = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__ItemEditor__["a" /* default */], { create: true }));
+        this.showItemCreation = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__ItemEditor__["a" /* default */], { create: true, item: {} }));
         this.showAddSlidein = () => this.setState({ showAddSlidein: true });
         this.hideAddSlidein = () => this.setState({ showAddSlidein: false });
     }
@@ -21042,15 +21028,15 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
     constructor() {
         super(...arguments);
         this.edit = () => {
-            const item = Item.prepareDataForEditor(__WEBPACK_IMPORTED_MODULE_5__stores_InventoryStore__["a" /* default */].get(this.props.data.id));
+            const item = __WEBPACK_IMPORTED_MODULE_5__stores_InventoryStore__["a" /* default */].get(this.props.data.id);
             __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__ItemEditor__["a" /* default */], { item: item }));
         };
         this.delete = () => __WEBPACK_IMPORTED_MODULE_1__actions_InventoryActions__["b" /* removeFromList */](this.props.data.id);
         this.add = () => __WEBPACK_IMPORTED_MODULE_1__actions_InventoryActions__["c" /* addToList */](this.props.data);
     }
     render() {
-        const { add, data: { gr, name, number, price, weight, where, combattechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadtime, range, ammunition, pro, enc, addpenalties } } = this.props;
-        const numberValue = number > 1 ? number : null;
+        const { add, data: { gr, name, amount, price, weight, where, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } } = this.props;
+        const numberValue = amount > 1 ? amount : null;
         return (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TooltipToggle__["a" /* default */], { content: __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "inventory-item" },
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("h4", null,
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", null, name),
@@ -21072,7 +21058,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tbody", null,
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "Kampftechnik"),
-                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combattechnique).name)),
+                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combatTechnique).name)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "TP"),
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
@@ -21084,7 +21070,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "L+S"),
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
-                                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combattechnique).primary.map(attr => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(attr).short).join('/'),
+                                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combatTechnique).primary.map(attr => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(attr).short).join('/'),
                                 " ",
                                 damageBonus)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
@@ -21117,7 +21103,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tbody", null,
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "Kampftechnik"),
-                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combattechnique).name)),
+                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(combatTechnique).name)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "TP"),
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
@@ -21128,13 +21114,13 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                                 damageFlat !== 0 ? damageFlat : null)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "LZ"),
-                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, reloadtime)),
+                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, reloadTime)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "RW"),
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, range.join('/'))),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "Munitionstyp"),
-                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, (__WEBPACK_IMPORTED_MODULE_5__stores_InventoryStore__["a" /* default */].getTemplate(ammunition) || {}).name)),
+                            __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, (ammunition ? __WEBPACK_IMPORTED_MODULE_5__stores_InventoryStore__["a" /* default */].getTemplate(ammunition) : { name: 'Keine Munition ausgewählt' }).name)),
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "Gewicht"),
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
@@ -21170,7 +21156,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                                 " S")))) : null,
                 gr === 3 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "armor" },
                     "Zus. Abz\u00FCge: ",
-                    addpenalties ? '-1 GS, -1 INI' : '-') : null), margin: 11 }, add ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
+                    addPenalties ? '-1 GS, -1 INI' : '-') : null), margin: 11 }, add ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", { className: "name" }, name),
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", { className: "inc" },
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_IconButton__["a" /* default */], { icon: "\uE145", onClick: this.add })))) : (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,

@@ -15,7 +15,7 @@ export default class Account extends React.Component<undefined, State> {
 		newPassword: ''
 	};
 
-	handlePassword = (event: Event) => this.setState({ newPassword: event.target.value });
+	handlePassword = (event: InputTextEvent) => this.setState({ newPassword: event.target.value });
 	changePassword = () => AuthActions.requestNewPassword(this.state.newPassword);
 
 	render() {

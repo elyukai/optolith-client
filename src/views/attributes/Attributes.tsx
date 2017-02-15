@@ -4,7 +4,7 @@ import * as React from 'react';
 import Scroll from '../../components/Scroll';
 
 interface Props {
-	attributes: Attribute[];
+	attributes: AttributeInstance[];
 	baseValues: {
 		[id: string]: number
 	};

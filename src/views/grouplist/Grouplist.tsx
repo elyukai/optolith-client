@@ -1,13 +1,13 @@
+import * as React from 'react';
+import * as LocationActions from '../../actions/LocationActions';
 import BorderButton from '../../components/BorderButton';
-import React, { Component } from 'react';
 import Scroll from '../../components/Scroll';
-import * as TabActions from '../../actions/LocationActions';
 import TextField from '../../components/TextField';
 
-export default class Grouplist extends Component<any, any> {
+export default class Grouplist extends React.Component<undefined, undefined> {
 
-	filter = event => event.target.value;
-	openGroup = () => TabActions.setSection('group');
+	filter = (event: InputTextEvent) => event.target.value;
+	openGroup = () => LocationActions.setSection('group');
 
 	render() {
 		return (
