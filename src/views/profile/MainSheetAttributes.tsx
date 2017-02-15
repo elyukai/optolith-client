@@ -54,7 +54,6 @@ export default (props: MainSheetAttributesProps ) => {
 				calc={attributes[3].calc}
 				value={attributes[3].value}
 				add={attributes[3].mod}
-				purchased={null}
 				subLabel="Grundwert"
 				subArray={[race.spi]} />
 			<MainSheetAttributesItem
@@ -62,27 +61,20 @@ export default (props: MainSheetAttributesProps ) => {
 				calc={attributes[4].calc}
 				value={attributes[4].value}
 				add={attributes[4].mod}
-				purchased={null}
 				subLabel="Grundwert"
 				subArray={[race.tou]} />
 			<MainSheetAttributesItem
 				label={attributes[5].name}
 				calc={attributes[5].calc}
-				value={attributes[5].value}
-				add={0}
-				purchased={null} />
+				value={attributes[5].value} />
 			<MainSheetAttributesItem
 				label={attributes[6].name}
 				calc={attributes[6].calc}
-				value={attributes[6].value}
-				add={0}
-				purchased={null} />
+				value={attributes[6].value} />
 			<MainSheetAttributesItem
 				label={attributes[7].name}
 				calc={attributes[7].calc}
 				value={attributes[7].value}
-				add={0}
-				purchased={null}
 				subLabel="Grundwert"
 				subArray={[race.mov]} />
 			<MainSheetFatePoints />

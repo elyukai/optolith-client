@@ -8,6 +8,7 @@ interface Props {
 		label: string;
 		onClick?: () => void;
 		primary?: boolean;
+		autoWidth?: boolean;
 		disabled?: boolean;
 	}[];
 	className?: string;

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 388);
+/******/ 	return __webpack_require__(__webpack_require__.s = 392);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -753,7 +753,7 @@ const TALENTS = 'TALENTS';
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Store__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__HistoryStore__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_init__ = __webpack_require__(216);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_init__ = __webpack_require__(217);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__RaceStore__ = __webpack_require__(20);
@@ -1345,7 +1345,7 @@ module.exports = invariant;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_flux__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_flux__ = __webpack_require__(292);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_flux___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_flux__);
 
 /* harmony default export */ __webpack_exports__["a"] = new __WEBPACK_IMPORTED_MODULE_0_flux__["Dispatcher"]();
@@ -1478,7 +1478,7 @@ module.exports = warning;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Label__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_dom__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_dom__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_dom__);
 
 
@@ -1573,7 +1573,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events__ = __webpack_require__(290);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_events___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_events__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(7);
 
@@ -1692,6 +1692,33 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 /***/ }),
 /* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar__);
+
+
+
+
+class Scroll extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
+    render() {
+        const _a = this.props, { className } = _a, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](_a, ["className"]);
+        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar___default.a, { className: __WEBPACK_IMPORTED_MODULE_2_classnames___default()('scroll-' + className, 'scroll') },
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", Object.assign({}, other, { className: "scroll-inner" }), this.props.children)));
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Scroll;
+
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1892,33 +1919,6 @@ module.exports = ReactDOMComponentTree;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar__ = __webpack_require__(171);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar__);
-
-
-
-
-class Scroll extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
-    render() {
-        const _a = this.props, { className } = _a, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](_a, ["className"]);
-        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3_react_gemini_scrollbar___default.a, { className: __WEBPACK_IMPORTED_MODULE_2_classnames___default()('scroll-' + className, 'scroll') },
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", Object.assign({}, other, { className: "scroll-inner" }), this.props.children)));
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Scroll;
-
-
-
-/***/ }),
 /* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2033,7 +2033,7 @@ const PhaseStore = new PhaseStoreStatic((action) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Button__ = __webpack_require__(128);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Button__ = __webpack_require__(129);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Text__ = __webpack_require__(51);
 
 
@@ -2259,7 +2259,7 @@ module.exports = ExecutionEnvironment;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Button__ = __webpack_require__(128);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Button__ = __webpack_require__(129);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Icon__ = __webpack_require__(69);
 
 
@@ -2283,7 +2283,7 @@ class IconButton extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony export (immutable) */ __webpack_exports__["b"] = close;
 /* unused harmony export createDialogNode */
@@ -2324,11 +2324,11 @@ function createDialogNode() {
 
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
 var ReactCurrentOwner = __webpack_require__(35);
 
-var invariant = __webpack_require__(48);
+var invariant = __webpack_require__(49);
 var warning = __webpack_require__(36);
 
 function isNative(fn) {
@@ -2654,7 +2654,7 @@ module.exports = ReactComponentTreeHook;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(126);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(127);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Icon__ = __webpack_require__(69);
@@ -2856,7 +2856,7 @@ const ProfessionStore = new ProfessionStoreStatic((action) => {
 var debugTool = null;
 
 if (process.env.NODE_ENV !== 'production') {
-  var ReactDebugTool = __webpack_require__(319);
+  var ReactDebugTool = __webpack_require__(323);
   debugTool = ReactDebugTool;
 }
 
@@ -2951,7 +2951,7 @@ RadioButtonGroup.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__RaceStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils_reqPurchase__ = __webpack_require__(217);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils_reqPurchase__ = __webpack_require__(218);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__RequirementsStore__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Store__ = __webpack_require__(12);
 
@@ -3367,7 +3367,7 @@ var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
 var CallbackQueue = __webpack_require__(147);
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 var ReactFeatureFlags = __webpack_require__(152);
 var ReactReconciler = __webpack_require__(55);
 var Transaction = __webpack_require__(79);
@@ -3656,7 +3656,7 @@ module.exports = ReactCurrentOwner;
 
 
 
-var emptyFunction = __webpack_require__(118);
+var emptyFunction = __webpack_require__(119);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -4058,7 +4058,7 @@ const ProfileStore = new ProfileStoreStatic((action) => {
 
 var _assign = __webpack_require__(13);
 
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 
 var emptyFunction = __webpack_require__(40);
 var warning = __webpack_require__(9);
@@ -4763,6 +4763,30 @@ class Slidein extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 /***/ }),
 /* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Tab__ = __webpack_require__(132);
+
+
+
+class Subtabs extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
+    render() {
+        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "subtabs" }, this.props.tabs.map((tab, index) => {
+            const { tag } = tab, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](tab, ["tag"]);
+            return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__Tab__["a" /* default */], Object.assign({ key: 'subtab-' + index }, other, { active: this.props.active === tag, onClick: this.props.onClick.bind(null, tag) })));
+        })));
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Subtabs;
+
+
+
+/***/ }),
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4880,7 +4904,7 @@ module.exports = PooledClass;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4901,7 +4925,7 @@ var _assign = __webpack_require__(13);
 var ReactCurrentOwner = __webpack_require__(35);
 
 var warning = __webpack_require__(36);
-var canDefineProperty = __webpack_require__(116);
+var canDefineProperty = __webpack_require__(117);
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 var REACT_ELEMENT_TYPE = __webpack_require__(172);
@@ -5227,7 +5251,7 @@ module.exports = ReactElement;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5271,7 +5295,7 @@ function reactProdInvariant(code) {
 module.exports = reactProdInvariant;
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5333,37 +5357,13 @@ module.exports = invariant;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(304);
-
-
-/***/ }),
-/* 50 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Tab__ = __webpack_require__(131);
-
-
-
-class Subtabs extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
-    render() {
-        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "subtabs" }, this.props.tabs.map((tab, index) => {
-            const { tag } = tab, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](tab, ["tag"]);
-            return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__Tab__["a" /* default */], Object.assign({ key: 'subtab-' + index }, other, { active: this.props.active === tag, onClick: this.props.onClick.bind(null, tag) })));
-        })));
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Subtabs;
-
+module.exports = __webpack_require__(308);
 
 
 /***/ }),
@@ -5651,7 +5651,7 @@ const getDeactiveForView = (category) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_AttributeStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__SheetHeaderAttribute__ = __webpack_require__(262);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__SheetHeaderAttribute__ = __webpack_require__(266);
 
 
 
@@ -5684,10 +5684,10 @@ const getDeactiveForView = (category) => {
 
 
 
-var DOMNamespaces = __webpack_require__(98);
+var DOMNamespaces = __webpack_require__(99);
 var setInnerHTML = __webpack_require__(81);
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(105);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(106);
 var setTextContent = __webpack_require__(165);
 
 var ELEMENT_NODE_TYPE = 1;
@@ -5807,7 +5807,7 @@ module.exports = DOMLazyTree;
 
 
 
-var ReactRef = __webpack_require__(333);
+var ReactRef = __webpack_require__(337);
 var ReactInstrumentation = __webpack_require__(28);
 
 var warning = __webpack_require__(9);
@@ -5983,16 +5983,16 @@ module.exports = ReactReconciler;
 
 var _assign = __webpack_require__(13);
 
-var ReactChildren = __webpack_require__(379);
-var ReactComponent = __webpack_require__(113);
-var ReactPureComponent = __webpack_require__(383);
-var ReactClass = __webpack_require__(380);
-var ReactDOMFactories = __webpack_require__(381);
-var ReactElement = __webpack_require__(46);
-var ReactPropTypes = __webpack_require__(382);
-var ReactVersion = __webpack_require__(384);
+var ReactChildren = __webpack_require__(383);
+var ReactComponent = __webpack_require__(114);
+var ReactPureComponent = __webpack_require__(387);
+var ReactClass = __webpack_require__(384);
+var ReactDOMFactories = __webpack_require__(385);
+var ReactElement = __webpack_require__(47);
+var ReactPropTypes = __webpack_require__(386);
+var ReactVersion = __webpack_require__(388);
 
-var onlyChild = __webpack_require__(386);
+var onlyChild = __webpack_require__(390);
 var warning = __webpack_require__(36);
 
 var createElement = ReactElement.createElement;
@@ -6557,10 +6557,10 @@ const getAll = () => [
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dialog__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ForgotPassword__ = __webpack_require__(224);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ForgotUsername__ = __webpack_require__(225);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Register__ = __webpack_require__(226);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ResendActivation__ = __webpack_require__(227);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ForgotPassword__ = __webpack_require__(228);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ForgotUsername__ = __webpack_require__(229);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Register__ = __webpack_require__(230);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ResendActivation__ = __webpack_require__(231);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TextField__ = __webpack_require__(10);
 
 
@@ -6583,7 +6583,8 @@ class Login extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         this.forgotPassword = () => { __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__ForgotPassword__["a" /* default */], null)); __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["b" /* close */])(this.props.node); };
         this.register = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__Register__["a" /* default */], null));
         this.resendActivation = () => { __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__ResendActivation__["a" /* default */], null)); __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__["b" /* close */])(this.props.node); };
-        this._onChange = (option, event) => this.setState({ [option]: event.target.value });
+        this.changeUsername = (event) => this.setState({ username: event.target.value });
+        this.changePassword = (event) => this.setState({ password: event.target.value });
         this._onEnter = (event) => {
             if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
                 this.login();
@@ -6605,8 +6606,8 @@ class Login extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                     onClick: this.register
                 }
             ] },
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Benutzername", value: username, onChange: this._onChange.bind(null, 'username'), onKeyDown: this._onEnter, fullWidth: true }),
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Passwort", value: password, onChange: this._onChange.bind(null, 'password'), onKeyDown: this._onEnter, type: "password", fullWidth: true }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Benutzername", value: username, onChange: this.changeUsername, onKeyDown: this._onEnter, fullWidth: true }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Passwort", value: password, onChange: this.changePassword, onKeyDown: this._onEnter, type: "password", fullWidth: true }),
             __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", null,
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("span", { className: "link", onClick: this.forgotUsername }, "Benutzername vergessen"),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("span", { className: "link", onClick: this.forgotPassword }, "Passwort vergessen"),
@@ -6637,8 +6638,8 @@ class Login extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 var _prodInvariant = __webpack_require__(8);
 
 var EventPluginRegistry = __webpack_require__(76);
-var EventPluginUtils = __webpack_require__(99);
-var ReactErrorUtils = __webpack_require__(103);
+var EventPluginUtils = __webpack_require__(100);
+var ReactErrorUtils = __webpack_require__(104);
 
 var accumulateInto = __webpack_require__(159);
 var forEachAccumulated = __webpack_require__(160);
@@ -6919,7 +6920,7 @@ module.exports = EventPluginHub;
 
 
 var EventPluginHub = __webpack_require__(61);
-var EventPluginUtils = __webpack_require__(99);
+var EventPluginUtils = __webpack_require__(100);
 
 var accumulateInto = __webpack_require__(159);
 var forEachAccumulated = __webpack_require__(160);
@@ -7113,7 +7114,7 @@ module.exports = ReactInstanceMap;
 
 var SyntheticEvent = __webpack_require__(39);
 
-var getEventTarget = __webpack_require__(108);
+var getEventTarget = __webpack_require__(109);
 
 /**
  * @interface UIEvent
@@ -7165,11 +7166,11 @@ module.exports = SyntheticUIEvent;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ServerActions__ = __webpack_require__(181);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_alert__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_alert__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__constants_ActionTypes__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dispatcher_AppDispatcher__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_AuthStore__ = __webpack_require__(93);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_HerolistStore__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_HerolistStore__ = __webpack_require__(135);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__ = __webpack_require__(38);
 /* harmony export (immutable) */ __webpack_exports__["a"] = getAllData;
 /* unused harmony export checkEmail */
@@ -7503,7 +7504,7 @@ function deleteHero(id) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_WebAPIUtils__ = __webpack_require__(65);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_saveHero__ = __webpack_require__(218);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_saveHero__ = __webpack_require__(219);
 
 
 
@@ -7859,7 +7860,7 @@ const CombatTechniquesStore = new CombatTechniquesStoreStatic((action) => {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_iccalc__ = __webpack_require__(139);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ListStore__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_alert__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_alert__ = __webpack_require__(97);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__APStore__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_secondaryAttributes__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__constants_ActionTypes__ = __webpack_require__(2);
@@ -8157,7 +8158,7 @@ const fixIDs = (list, prefix, index = 0) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__SkillInfo__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__SkillInfo__ = __webpack_require__(285);
 
 
 
@@ -8500,11 +8501,11 @@ module.exports = EventPluginRegistry;
 var _assign = __webpack_require__(13);
 
 var EventPluginRegistry = __webpack_require__(76);
-var ReactEventEmitterMixin = __webpack_require__(323);
+var ReactEventEmitterMixin = __webpack_require__(327);
 var ViewportMetrics = __webpack_require__(158);
 
-var getVendorPrefixedEventName = __webpack_require__(359);
-var isEventSupported = __webpack_require__(109);
+var getVendorPrefixedEventName = __webpack_require__(363);
+var isEventSupported = __webpack_require__(110);
 
 /**
  * Summary of `ReactBrowserEventEmitter` event handling:
@@ -8833,7 +8834,7 @@ module.exports = ReactBrowserEventEmitter;
 var SyntheticUIEvent = __webpack_require__(64);
 var ViewportMetrics = __webpack_require__(158);
 
-var getEventModifierState = __webpack_require__(107);
+var getEventModifierState = __webpack_require__(108);
 
 /**
  * @interface MouseEvent
@@ -9267,12 +9268,12 @@ module.exports = escapeTextContentForBrowser;
 
 
 var ExecutionEnvironment = __webpack_require__(21);
-var DOMNamespaces = __webpack_require__(98);
+var DOMNamespaces = __webpack_require__(99);
 
 var WHITESPACE_TEST = /^[ \r\n\t\f]/;
 var NONVISIBLE_TEST = /<(!--|link|noscript|meta|script|style)[ \r\n\t\f\/>]/;
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(105);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(106);
 
 // SVG temp container for IE lacking innerHTML
 var reusableSVGContainer;
@@ -9529,7 +9530,7 @@ class Label extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_createOverlay__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Overlay__ = __webpack_require__(189);
@@ -9620,7 +9621,7 @@ VerticalList.propTypes = {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dependent__ = __webpack_require__(133);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dependent__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_validate__ = __webpack_require__(140);
 
@@ -9830,7 +9831,7 @@ class Activatable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dependent__ = __webpack_require__(133);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Dependent__ = __webpack_require__(134);
 
 
 class Increasable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* default */] {
@@ -9867,7 +9868,7 @@ class Increasable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Core__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_DataUtils__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_dice__ = __webpack_require__(215);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_dice__ = __webpack_require__(216);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__constants_Categories__ = __webpack_require__(3);
 
 
@@ -10330,6 +10331,23 @@ const LiturgiesStore = new LiturgiesStoreStatic((action) => {
 
 /***/ }),
 /* 97 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createOverlay__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Dialog__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = function (title, content, buttons) {
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Dialog__["a" /* default */], { title: title, buttons: buttons }, content));
+};
+
+
+/***/ }),
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10346,11 +10364,11 @@ const LiturgiesStore = new LiturgiesStoreStatic((action) => {
 
 
 var DOMLazyTree = __webpack_require__(54);
-var Danger = __webpack_require__(296);
-var ReactDOMComponentTree = __webpack_require__(14);
+var Danger = __webpack_require__(300);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactInstrumentation = __webpack_require__(28);
 
-var createMicrosoftUnsafeLocalFunction = __webpack_require__(105);
+var createMicrosoftUnsafeLocalFunction = __webpack_require__(106);
 var setInnerHTML = __webpack_require__(81);
 var setTextContent = __webpack_require__(165);
 
@@ -10560,7 +10578,7 @@ module.exports = DOMChildrenOperations;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10585,7 +10603,7 @@ var DOMNamespaces = {
 module.exports = DOMNamespaces;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10603,7 +10621,7 @@ module.exports = DOMNamespaces;
 
 var _prodInvariant = __webpack_require__(8);
 
-var ReactErrorUtils = __webpack_require__(103);
+var ReactErrorUtils = __webpack_require__(104);
 
 var invariant = __webpack_require__(6);
 var warning = __webpack_require__(9);
@@ -10817,7 +10835,7 @@ module.exports = EventPluginUtils;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10881,7 +10899,7 @@ var KeyEscapeUtils = {
 module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11022,7 +11040,7 @@ module.exports = LinkedValueUtils;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11074,7 +11092,7 @@ module.exports = ReactComponentEnvironment;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11157,7 +11175,7 @@ module.exports = ReactErrorUtils;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11389,7 +11407,7 @@ module.exports = ReactUpdateQueue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11426,7 +11444,7 @@ var createMicrosoftUnsafeLocalFunction = function (func) {
 module.exports = createMicrosoftUnsafeLocalFunction;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11481,7 +11499,7 @@ function getEventCharCode(nativeEvent) {
 module.exports = getEventCharCode;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11529,7 +11547,7 @@ function getEventModifierState(nativeEvent) {
 module.exports = getEventModifierState;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11569,7 +11587,7 @@ function getEventTarget(nativeEvent) {
 module.exports = getEventTarget;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11634,7 +11652,7 @@ function isEventSupported(eventNameSuffix, capture) {
 module.exports = isEventSupported;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11681,7 +11699,7 @@ function shouldUpdateReactComponent(prevElement, nextElement) {
 module.exports = shouldUpdateReactComponent;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12069,7 +12087,7 @@ module.exports = validateDOMNesting;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12142,7 +12160,7 @@ function shallowEqual(objA, objB) {
 module.exports = shallowEqual;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12158,13 +12176,13 @@ module.exports = shallowEqual;
 
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
-var ReactNoopUpdateQueue = __webpack_require__(114);
+var ReactNoopUpdateQueue = __webpack_require__(115);
 
-var canDefineProperty = __webpack_require__(116);
-var emptyObject = __webpack_require__(119);
-var invariant = __webpack_require__(48);
+var canDefineProperty = __webpack_require__(117);
+var emptyObject = __webpack_require__(120);
+var invariant = __webpack_require__(49);
 var warning = __webpack_require__(36);
 
 /**
@@ -12266,7 +12284,7 @@ module.exports = ReactComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12368,7 +12386,7 @@ module.exports = ReactNoopUpdateQueue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12399,7 +12417,7 @@ module.exports = ReactPropTypeLocationNames;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12431,7 +12449,7 @@ module.exports = canDefineProperty;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12477,7 +12495,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12521,7 +12539,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12547,7 +12565,7 @@ module.exports = emptyObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12589,7 +12607,7 @@ const addKarmaPoint = () => __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatche
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12629,7 +12647,7 @@ const switchValueVisibilityFilter = () => __WEBPACK_IMPORTED_MODULE_1__dispatche
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12648,7 +12666,7 @@ const selectProfessionVariant = (id) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12680,7 +12698,7 @@ const switchRaceValueVisibilityFilter = () => __WEBPACK_IMPORTED_MODULE_1__dispa
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12944,7 +12962,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Compon
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13149,7 +13167,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13173,7 +13191,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13199,7 +13217,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13229,7 +13247,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13254,7 +13272,7 @@ class LabelBox extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13274,7 +13292,7 @@ class NumberBox extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13303,7 +13321,7 @@ class TabProps extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13319,7 +13337,7 @@ class Core {
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13348,7 +13366,7 @@ class Dependent extends __WEBPACK_IMPORTED_MODULE_0__Core__["a" /* default */] {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13581,7 +13599,7 @@ const HerolistStore = new HerolistStoreStatic((action) => {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13617,7 +13635,7 @@ const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic((action) => {
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13680,7 +13698,7 @@ const TalentsStore = new TalentsStoreStatic((action) => {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13710,23 +13728,6 @@ class VersionStoreStatic {
 }
 const VersionStore = new VersionStoreStatic();
 /* harmony default export */ __webpack_exports__["a"] = VersionStore;
-
-
-/***/ }),
-/* 138 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__createOverlay__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Dialog__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = function (title, content, buttons) {
-    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Dialog__["a" /* default */], { title: title, buttons: buttons }, content));
-};
 
 
 /***/ }),
@@ -13912,9 +13913,9 @@ AttributeBorder.propTypes = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_DisAdvActions__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_ActivatableAddListItem__ = __webpack_require__(124);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ActivatableRemoveListItem__ = __webpack_require__(125);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_ActivatableAddListItem__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ActivatableRemoveListItem__ = __webpack_require__(126);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_classnames__);
 
@@ -13999,15 +14000,17 @@ class HeroCreation extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__ = __webpack_require__(71);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dialog__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Dropdown__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Hr__ = __webpack_require__(187);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_IconButton__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__ = __webpack_require__(95);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Label__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_TextField__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_alert__ = __webpack_require__(97);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CombatTechniquesStore__ = __webpack_require__(71);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Dialog__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Dropdown__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Hr__ = __webpack_require__(187);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_IconButton__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__ = __webpack_require__(214);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Label__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_TextField__ = __webpack_require__(10);
 
 
 
@@ -14019,73 +14022,136 @@ class HeroCreation extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 
+
+
+const FIELDS = {
+    price: 'Preis',
+    weight: 'Gewicht',
+    amount: 'Anzahl',
+    damageDiceNumber: 'Anzahl Schadenswürfel',
+    damageFlat: 'Zusätzlicher Schaden',
+    damageBonus: 'Schadensschwelle',
+    at: 'AT',
+    pa: 'PA',
+    length: 'Länge',
+    stp: 'Strukturpunkte',
+    range: 'Reichweite',
+    reloadTime: 'Ladezeit',
+    pro: 'RS',
+    enc: 'BE'
+};
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
-const GROUPS_SELECTION = GROUPS.map((e, i) => [e, i + 1]);
+const GROUPS_SELECTION = GROUPS.map((e, i) => ({ id: i + 1, name: e }));
 class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
-    constructor() {
-        super(...arguments);
-        this.state = this.props.item || {
-            id: '',
-            name: '',
-            price: '',
-            weight: '',
-            amount: '',
-            where: '',
-            gr: 0,
-            template: 'ITEMTPL_0',
-            isTemplateLocked: false,
-            combattechnique: 'CT_0',
-            damageDiceNumber: '',
-            damageDiceSides: null,
-            damageFlat: '',
-            damageBonus: '',
-            at: '',
-            pa: '',
-            reach: '',
-            length: '',
-            stp: '',
-            range1: '',
-            range2: '',
-            range3: '',
-            reloadtime: '',
-            ammunition: null,
-            pro: '',
-            enc: '',
-            addpenalties: false
+    constructor(props) {
+        super(props);
+        this.changeName = (event) => this.setState({ name: event.target.value });
+        this.changePrice = (event) => this.setState({ price: event.target.value });
+        this.changeWeight = (event) => this.setState({ weight: event.target.value });
+        this.changeAmount = (event) => this.setState({ amount: event.target.value });
+        this.changeWhere = (event) => this.setState({ where: event.target.value });
+        this.changeGroup = (id) => this.setState({ gr: id });
+        this.changeTemplate = (id) => this.setState({ template: id });
+        this.changeCombatTechnique = (id) => this.setState({ combatTechnique: id });
+        this.changeDamageDiceNumber = (event) => this.setState({ damageDiceNumber: event.target.value });
+        this.changeDamageDiceSides = (id) => this.setState({ damageDiceSides: id });
+        this.changeDamageFlat = (event) => this.setState({ damageFlat: event.target.value });
+        this.changeDamageBonus = (event) => this.setState({ damageBonus: event.target.value });
+        this.changeAT = (event) => this.setState({ at: event.target.value });
+        this.changePA = (event) => this.setState({ pa: event.target.value });
+        this.changeReach = (id) => this.setState({ reach: id });
+        this.changeLength = (event) => this.setState({ length: event.target.value });
+        this.changeStp = (event) => this.setState({ stp: event.target.value });
+        this.changeRange = (event, index) => {
+            const range = this.state.range;
+            range[index] = event.target.value;
+            this.setState({ range });
         };
-        this.onEvent = (prop, e) => this.setState({ [prop]: e.target.value });
-        this.onSwitch = (prop) => this.setState({ [prop]: !this.state[prop] });
-        this.onValue = (prop, value) => this.setState({ [prop]: value });
+        this.changeRange1 = (event) => this.changeRange(event, 1);
+        this.changeRange2 = (event) => this.changeRange(event, 2);
+        this.changeRange3 = (event) => this.changeRange(event, 3);
+        this.changeReloadTime = (event) => this.setState({ reloadTime: event.target.value });
+        this.changeAmmunition = (id) => this.setState({ ammunition: id });
+        this.changePRO = (event) => this.setState({ pro: event.target.value });
+        this.changeENC = (event) => this.setState({ enc: event.target.value });
+        this.changeAddPenalties = () => this.setState((prevState) => ({ addPenalties: !prevState.addPenalties }));
         this.applyTemplate = () => {
             if (this.state.template !== 'ITEMTPL_0') {
-                let template = Object.assign({}, __WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id: this.state.id, isTemplateLocked: false });
-                template.range1 = template.range[0];
-                template.range2 = template.range[1];
-                template.range3 = template.range[2];
-                delete template.range;
-                this.setState(template);
+                const template = Object.assign({}, __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id: this.state.id, isTemplateLocked: false });
+                this.setState(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["a" /* convertToEdit */])(template));
             }
         };
         this.lockTemplate = () => {
             if (this.state.template !== 'ITEMTPL_0') {
-                let template = Object.assign({}, __WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id: this.state.id });
-                template.range1 = template.range[0];
-                template.range2 = template.range[1];
-                template.range3 = template.range[2];
-                delete template.range;
-                this.setState(template);
+                const template = Object.assign({}, __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id: this.state.id });
+                this.setState(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["a" /* convertToEdit */])(template));
             }
         };
         this.unlockTemplate = () => this.setState({ isTemplateLocked: false });
-        this.addItem = () => __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__["c" /* addToList */](this.state);
-        this.saveItem = () => __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__["d" /* set */](this.state);
+        this.addItem = () => {
+            const itemToAdd = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["b" /* convertToSave */])(this.state);
+            const nanKeys = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["c" /* containsNaN */])(itemToAdd);
+            if (nanKeys) {
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_alert__["a" /* default */])('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e) => FIELDS[e])}`);
+            }
+            else {
+                __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__["c" /* addToList */](itemToAdd);
+            }
+        };
+        this.saveItem = () => {
+            const itemToAdd = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["b" /* convertToSave */])(this.state);
+            const nanKeys = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["c" /* containsNaN */])(itemToAdd);
+            if (nanKeys) {
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_alert__["a" /* default */])('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e) => FIELDS[e])}`);
+            }
+            else {
+                __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__["d" /* set */](this.state.id, itemToAdd);
+            }
+        };
+        let tempState = this.props.item;
+        if (tempState) {
+            if (tempState.isTemplateLocked) {
+                const { id } = tempState;
+                tempState = Object.assign({}, __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id });
+            }
+            this.state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["a" /* convertToEdit */])(tempState);
+        }
+        else {
+            this.state = {
+                id: '',
+                name: '',
+                price: '',
+                weight: '',
+                amount: '',
+                where: '',
+                gr: 0,
+                template: 'ITEMTPL_0',
+                isTemplateLocked: false,
+                combatTechnique: 'CT_0',
+                damageDiceNumber: '',
+                damageDiceSides: 0,
+                damageFlat: '',
+                damageBonus: '',
+                at: '',
+                pa: '',
+                reach: 0,
+                length: '',
+                stp: '',
+                range: ['', '', ''],
+                reloadTime: '',
+                ammunition: null,
+                pro: '',
+                enc: '',
+                addPenalties: false
+            };
+        }
     }
     render() {
         const { create, node } = this.props;
-        const { addpenalties, ammunition, amount, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
-        const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(__WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getAllTemplates().map(e => [e.name, e.id]).sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
-        const AMMUNITION = [['Keine', null]].concat(__WEBPACK_IMPORTED_MODULE_8__stores_InventoryStore__["a" /* default */].getAllTemplates().filter(e => e.gr === 3).map(e => [e.name, e.id]));
-        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Dialog__["a" /* default */], { id: "item-editor", title: 'Gegenstand ' + (create ? 'erstellen' : 'bearbeiten'), node: node, buttons: [
+        const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range: [range1, range2, range3], reach, reloadTime, stp, template, weight, where } = this.state;
+        const TEMPLATES = [{ id: 'ITEMTPL_0', name: 'Keine Vorlage' }].concat(__WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+        const AMMUNITION = [{ id: null, name: 'Keine' }].concat(__WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dialog__["a" /* default */], { id: "item-editor", title: 'Gegenstand ' + (create ? 'erstellen' : 'bearbeiten'), node: node, buttons: [
                 {
                     label: 'Speichern',
                     onClick: create ? this.addItem : this.saveItem,
@@ -14095,62 +14161,62 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
             ] },
             __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "main" },
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "number", label: "Menge", value: amount, onChange: this.onEvent.bind(null, 'number') }),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "name", label: "Name", value: name, onChange: this.onEvent.bind(null, 'name'), autoFocus: create, disabled: locked })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "number", label: "Menge", value: amount, onChange: this.changeAmount }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "name", label: "Name", value: name, onChange: this.changeName, autoFocus: create, disabled: locked })),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "price", label: "Preis in S", value: price, onChange: this.onEvent.bind(null, 'price'), disabled: locked }),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "weight", label: "Gewicht in St", value: weight, onChange: this.onEvent.bind(null, 'weight'), disabled: locked }),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "where", label: "Wo getragen", value: where, onChange: this.onEvent.bind(null, 'where') })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "price", label: "Preis in S", value: price, onChange: this.changePrice, disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "weight", label: "Gewicht in St", value: weight, onChange: this.changeWeight, disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "where", label: "Wo getragen", value: where, onChange: this.changeWhere })),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "gr", label: "Art", hint: "Wähle den Typ des Gegenstands aus", value: gr, options: GROUPS_SELECTION, onChange: this.onValue.bind(null, 'gr'), disabled: locked })),
-                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Hr__["a" /* default */], null),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "gr", label: "Art", hint: "Wähle den Typ des Gegenstands aus", value: gr, options: GROUPS_SELECTION, onChange: this.changeGroup, disabled: locked })),
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Hr__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "template", label: "Vorlage", hint: "Keine", value: template, options: TEMPLATES, onChange: this.onValue.bind(null, 'template'), disabled: locked }),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_IconButton__["a" /* default */], { icon: "\uE876", onClick: this.applyTemplate, disabled: template === 'ITEMTPL_0' || locked }),
-                    locked ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_IconButton__["a" /* default */], { icon: "\uE898", onClick: this.unlockTemplate })) : (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_IconButton__["a" /* default */], { icon: "\uE899", onClick: this.lockTemplate, disabled: template === 'ITEMTPL_0' })))),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "template", label: "Vorlage", hint: "Keine", value: template, options: TEMPLATES, onChange: this.changeTemplate, disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_IconButton__["a" /* default */], { icon: "\uE876", onClick: this.applyTemplate, disabled: template === 'ITEMTPL_0' || locked }),
+                    locked ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_IconButton__["a" /* default */], { icon: "\uE898", onClick: this.unlockTemplate })) : (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_IconButton__["a" /* default */], { icon: "\uE899", onClick: this.lockTemplate, disabled: template === 'ITEMTPL_0' })))),
             gr === 1 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "melee" },
-                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Hr__["a" /* default */], null),
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Hr__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "combattechnique", label: "Kampftechnik", hint: "Keine", value: combattechnique, options: __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__["a" /* default */].getAll().filter(e => e.gr === 1).map(e => [e.name, e.id]), onChange: this.onValue.bind(null, 'ct'), disabled: locked })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "combattechnique", label: "Kampftechnik", hint: "Keine", value: combatTechnique, options: __WEBPACK_IMPORTED_MODULE_4__stores_CombatTechniquesStore__["a" /* default */].getAll().filter(e => e.gr === 1).map(({ id, name }) => ({ id, name })), onChange: this.changeCombatTechnique, disabled: locked })),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "damage-bonus", label: "Schadensb.", value: damageBonus, onChange: this.onEvent.bind(null, 'db'), disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "damage-bonus", label: "Schadensb.", value: damageBonus, onChange: this.changeDamageBonus, disabled: locked }),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__components_Label__["a" /* default */], { text: "Schaden", disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "damage-dice-number", value: damageDiceNumber, onChange: this.onEvent.bind(null, 'ddn'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "damage-dice-sides", hint: "W", value: damageDiceSides, options: [['W3', 3], ['W6', 6], ['W20', 20]], onChange: this.onValue.bind(null, 'dds'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "damage-flat", value: damageFlat, onChange: this.onEvent.bind(null, 'df'), disabled: locked }))),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_Label__["a" /* default */], { text: "Schaden", disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "damage-dice-number", value: damageDiceNumber, onChange: this.changeDamageDiceNumber, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "damage-dice-sides", hint: "W", value: damageDiceSides, options: [{ id: 3, name: 'W3' }, { id: 6, name: 'W6' }, { id: 20, name: 'W20' }], onChange: this.changeDamageDiceSides, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "damage-flat", value: damageFlat, onChange: this.changeDamageFlat, disabled: locked }))),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "reach", label: "Reichweite", hint: "Auswählen", value: reach, options: [['Kurz', 1], ['Mittel', 2], ['Lang', 3]], onChange: this.onValue.bind(null, 're'), disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "reach", label: "Reichweite", hint: "Auswählen", value: reach, options: [{ id: 1, name: 'Kurz' }, { id: 2, name: 'Mittel' }, { id: 3, name: 'Lang' }], onChange: this.changeReach, disabled: locked }),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__components_Label__["a" /* default */], { text: "AT/PA-Mod", disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "at", value: at, onChange: this.onEvent.bind(null, 'at'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "pa", value: pa, onChange: this.onEvent.bind(null, 'pa'), disabled: locked || combattechnique === 'CT_6' })),
-                    combattechnique === 'CT_10' ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "stp", label: "Strukturp.", value: stp, onChange: this.onEvent.bind(null, 'length'), disabled: locked })) : (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "length", label: "Länge in Hf.", value: length, onChange: this.onEvent.bind(null, 'length'), disabled: locked }))))) : null,
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_Label__["a" /* default */], { text: "AT/PA-Mod", disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "at", value: at, onChange: this.changeAT, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "pa", value: pa, onChange: this.changePA, disabled: locked || combatTechnique === 'CT_6' })),
+                    combatTechnique === 'CT_10' ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "stp", label: "Strukturp.", value: stp, onChange: this.changeStp, disabled: locked })) : (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "length", label: "Länge in Hf.", value: length, onChange: this.changeLength, disabled: locked }))))) : null,
             gr === 2 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "ranged" },
-                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Hr__["a" /* default */], null),
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Hr__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "combattechnique", label: "Kampftechnik", hint: "Keine", value: combattechnique, options: __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__["a" /* default */].getAll().filter(e => e.gr === 2).map(e => [e.name, e.id]), onChange: this.onValue.bind(null, 'ct'), disabled: locked })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "combattechnique", label: "Kampftechnik", hint: "Keine", value: combatTechnique, options: __WEBPACK_IMPORTED_MODULE_4__stores_CombatTechniquesStore__["a" /* default */].getAll().filter(e => e.gr === 2).map(({ id, name }) => ({ id, name })), onChange: this.changeCombatTechnique, disabled: locked })),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "reloadtime", label: "Ladezeiten", value: reloadtime, onChange: this.onEvent.bind(null, 'rt'), disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "reloadtime", label: "Ladezeiten", value: reloadTime, onChange: this.changeReloadTime, disabled: locked }),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__components_Label__["a" /* default */], { text: "Schaden", disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "damage-dice-number", value: damageDiceNumber, onChange: this.onEvent.bind(null, 'ddn'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "damage-dice-sides", hint: "W", value: damageDiceSides, options: [['W3', 3], ['W6', 6], ['W20', 20]], onChange: this.onValue.bind(null, 'dds'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "damage-flat", value: damageFlat, onChange: this.onEvent.bind(null, 'df'), disabled: locked }))),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_11__components_Label__["a" /* default */], { text: "Schaden", disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "damage-dice-number", value: damageDiceNumber, onChange: this.changeDamageDiceNumber, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "damage-dice-sides", hint: "W", value: damageDiceSides, options: [{ id: 3, name: 'W3' }, { id: 6, name: 'W6' }, { id: 20, name: 'W20' }], onChange: this.changeDamageDiceSides, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "damage-flat", value: damageFlat, onChange: this.changeDamageFlat, disabled: locked }))),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "range1", label: "Nah", value: range1, onChange: this.onValue.bind(null, 'rb1'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "range2", label: "Mittel", value: range2, onChange: this.onValue.bind(null, 'rb2'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "range3", label: "Weit", value: range3, onChange: this.onValue.bind(null, 'rb3'), disabled: locked })),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Dropdown__["a" /* default */], { className: "ammunition", label: "Munition", hint: "Keine", value: ammunition, options: AMMUNITION, onChange: this.onValue.bind(null, 'ammunition'), disabled: locked }),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "length", label: "Länge in Hf.", value: length, onChange: this.onEvent.bind(null, 'length'), disabled: locked })))) : null,
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "range1", label: "Nah", value: range1, onChange: this.changeRange1, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "range2", label: "Mittel", value: range2, onChange: this.changeRange2, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "range3", label: "Weit", value: range3, onChange: this.changeRange3, disabled: locked })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "ammunition", label: "Munition", hint: "Keine", value: ammunition, options: AMMUNITION, onChange: this.changeAmmunition, disabled: locked }),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "length", label: "Länge in Hf.", value: length, onChange: this.changeLength, disabled: locked })))) : null,
             gr === 3 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "armor" },
-                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Hr__["a" /* default */], null),
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Hr__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "pro", label: "RS", value: pro, onChange: this.onEvent.bind(null, 'pro'), disabled: locked }),
-                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__components_TextField__["a" /* default */], { className: "enc", label: "BE", value: enc, onChange: this.onEvent.bind(null, 'enc'), disabled: locked })),
-                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_Checkbox__["a" /* default */], { className: "addpenalties", label: "Zusätzliche Abzüge", checked: addpenalties, onClick: this.onSwitch.bind(null, 'addpenalties'), disabled: locked })))) : null));
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "pro", label: "RS", value: pro, onChange: this.changePRO, disabled: locked }),
+                        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "enc", label: "BE", value: enc, onChange: this.changeENC, disabled: locked })),
+                    __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_Checkbox__["a" /* default */], { className: "addpenalties", label: "Zusätzliche Abzüge", checked: addPenalties, onClick: this.changeAddPenalties, disabled: locked })))) : null));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ItemEditor;
@@ -14463,7 +14529,7 @@ var _prodInvariant = __webpack_require__(8);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 
 var invariant = __webpack_require__(6);
 
@@ -14584,10 +14650,10 @@ module.exports = PooledClass.addPoolingTo(CallbackQueue);
 
 
 var DOMProperty = __webpack_require__(43);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactInstrumentation = __webpack_require__(28);
 
-var quoteAttributeValueForBrowser = __webpack_require__(360);
+var quoteAttributeValueForBrowser = __webpack_require__(364);
 var warning = __webpack_require__(9);
 
 var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + DOMProperty.ATTRIBUTE_NAME_START_CHAR + '][' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
@@ -14851,8 +14917,8 @@ module.exports = ReactDOMComponentFlags;
 
 var _assign = __webpack_require__(13);
 
-var LinkedValueUtils = __webpack_require__(101);
-var ReactDOMComponentTree = __webpack_require__(14);
+var LinkedValueUtils = __webpack_require__(102);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactUpdates = __webpack_require__(34);
 
 var warning = __webpack_require__(9);
@@ -15191,9 +15257,9 @@ module.exports = ReactHostComponent;
 
 
 
-var ReactDOMSelection = __webpack_require__(314);
+var ReactDOMSelection = __webpack_require__(318);
 
-var containsNode = __webpack_require__(364);
+var containsNode = __webpack_require__(368);
 var focusNode = __webpack_require__(169);
 var getActiveElement = __webpack_require__(170);
 
@@ -15327,22 +15393,22 @@ var DOMProperty = __webpack_require__(43);
 var React = __webpack_require__(56);
 var ReactBrowserEventEmitter = __webpack_require__(77);
 var ReactCurrentOwner = __webpack_require__(35);
-var ReactDOMComponentTree = __webpack_require__(14);
-var ReactDOMContainerInfo = __webpack_require__(306);
-var ReactDOMFeatureFlags = __webpack_require__(308);
+var ReactDOMComponentTree = __webpack_require__(15);
+var ReactDOMContainerInfo = __webpack_require__(310);
+var ReactDOMFeatureFlags = __webpack_require__(312);
 var ReactFeatureFlags = __webpack_require__(152);
 var ReactInstanceMap = __webpack_require__(63);
 var ReactInstrumentation = __webpack_require__(28);
-var ReactMarkupChecksum = __webpack_require__(328);
+var ReactMarkupChecksum = __webpack_require__(332);
 var ReactReconciler = __webpack_require__(55);
-var ReactUpdateQueue = __webpack_require__(104);
+var ReactUpdateQueue = __webpack_require__(105);
 var ReactUpdates = __webpack_require__(34);
 
 var emptyObject = __webpack_require__(168);
 var instantiateReactComponent = __webpack_require__(163);
 var invariant = __webpack_require__(6);
 var setInnerHTML = __webpack_require__(81);
-var shouldUpdateReactComponent = __webpack_require__(110);
+var shouldUpdateReactComponent = __webpack_require__(111);
 var warning = __webpack_require__(9);
 
 var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
@@ -16140,11 +16206,11 @@ module.exports = getTextContentAccessor;
 var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
-var ReactCompositeComponent = __webpack_require__(303);
+var ReactCompositeComponent = __webpack_require__(307);
 var ReactEmptyComponent = __webpack_require__(151);
 var ReactHostComponent = __webpack_require__(153);
 
-var getNextDebugID = __webpack_require__(357);
+var getNextDebugID = __webpack_require__(361);
 var invariant = __webpack_require__(6);
 var warning = __webpack_require__(9);
 
@@ -16387,11 +16453,11 @@ module.exports = setTextContent;
 var _prodInvariant = __webpack_require__(8);
 
 var ReactCurrentOwner = __webpack_require__(35);
-var REACT_ELEMENT_TYPE = __webpack_require__(322);
+var REACT_ELEMENT_TYPE = __webpack_require__(326);
 
-var getIteratorFn = __webpack_require__(356);
+var getIteratorFn = __webpack_require__(360);
 var invariant = __webpack_require__(6);
-var KeyEscapeUtils = __webpack_require__(100);
+var KeyEscapeUtils = __webpack_require__(101);
 var warning = __webpack_require__(9);
 
 var SEPARATOR = '.';
@@ -16749,8 +16815,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 var React = __webpack_require__(0);
-var ReactDOM = __webpack_require__(49);
-var GeminiScrollbar = __webpack_require__(290);
+var ReactDOM = __webpack_require__(50);
+var GeminiScrollbar = __webpack_require__(294);
 
 module.exports = React.createClass({
     displayName: 'GeminiScrollbar',
@@ -16878,12 +16944,12 @@ module.exports = REACT_ELEMENT_TYPE;
 
 var ReactCurrentOwner = __webpack_require__(35);
 var ReactComponentTreeHook = __webpack_require__(24);
-var ReactElement = __webpack_require__(46);
+var ReactElement = __webpack_require__(47);
 
-var checkReactTypeSpec = __webpack_require__(385);
+var checkReactTypeSpec = __webpack_require__(389);
 
-var canDefineProperty = __webpack_require__(116);
-var getIteratorFn = __webpack_require__(117);
+var canDefineProperty = __webpack_require__(117);
+var getIteratorFn = __webpack_require__(118);
 var warning = __webpack_require__(36);
 
 function getDeclarationErrorAddendum() {
@@ -17123,7 +17189,7 @@ module.exports = ReactPropTypesSecret;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Loader__ = __webpack_require__(188);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_LoaderStore__ = __webpack_require__(212);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Route__ = __webpack_require__(219);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Route__ = __webpack_require__(220);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_TabStore__ = __webpack_require__(213);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_titlebar_TitleBar__ = __webpack_require__(193);
 
@@ -17777,7 +17843,7 @@ class Loader extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
@@ -17920,7 +17986,7 @@ class Plain extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(126);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(127);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Icon__ = __webpack_require__(69);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Text__ = __webpack_require__(51);
 
@@ -17985,7 +18051,7 @@ class SortOptions extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_APStore__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_AuthStore__ = __webpack_require__(93);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__AvatarWrapper__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__AvatarWrapper__ = __webpack_require__(128);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__BorderButton__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_createOverlay__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_ELStore__ = __webpack_require__(16);
@@ -18250,7 +18316,7 @@ class TitleBarRight extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Tab__ = __webpack_require__(131);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Tab__ = __webpack_require__(132);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__ = __webpack_require__(57);
 
 
@@ -18596,7 +18662,7 @@ class Liturgy extends __WEBPACK_IMPORTED_MODULE_1__Skill__["a" /* default */] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__ = __webpack_require__(74);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants_Categories__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__ = __webpack_require__(132);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__ = __webpack_require__(133);
 
 
 
@@ -18635,7 +18701,7 @@ class Profession extends __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__["a" /
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__ = __webpack_require__(74);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants_Categories__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__ = __webpack_require__(132);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__ = __webpack_require__(133);
 
 
 
@@ -18963,6 +19029,38 @@ const TabStore = new TabStoreStatic((action) => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+const convertToEdit = (item) => (Object.assign({}, item, { at: item.at.toString(), damageBonus: item.damageBonus.toString(), damageDiceNumber: item.damageDiceNumber.toString(), damageFlat: item.damageFlat.toString(), enc: item.enc.toString(), length: item.length.toString(), amount: item.amount.toString(), pa: item.pa.toString(), price: item.price.toString(), pro: item.pro.toString(), range: item.range.map(e => e.toString()), reloadTime: item.reloadTime.toString(), stp: item.stp.toString(), weight: item.weight.toString() }));
+/* harmony export (immutable) */ __webpack_exports__["a"] = convertToEdit;
+
+const convertToSave = (item) => (Object.assign({}, item, { at: Number.parseInt(item.at.replace(/\,/, '.')), damageBonus: Number.parseInt(item.damageBonus.replace(/\,/, '.')), damageDiceNumber: Number.parseInt(item.damageDiceNumber.replace(/\,/, '.')), damageFlat: Number.parseInt(item.damageFlat.replace(/\,/, '.')), enc: Number.parseInt(item.enc.replace(/\,/, '.')), length: Number.parseInt(item.length.replace(/\,/, '.')), amount: Number.parseInt(item.amount.replace(/\,/, '.')), pa: Number.parseInt(item.pa.replace(/\,/, '.')), price: Number.parseInt(item.price.replace(/\,/, '.')), pro: Number.parseInt(item.pro.replace(/\,/, '.')), range: item.range.map(e => Number.parseInt(e.replace(/\,/, '.'))), reloadTime: Number.parseInt(item.reloadTime.replace(/\,/, '.')), stp: Number.parseInt(item.stp.replace(/\,/, '.')), weight: Number.parseInt(item.weight.replace(/\,/, '.')) }));
+/* harmony export (immutable) */ __webpack_exports__["b"] = convertToSave;
+
+const containsNaN = (item) => {
+    const keys = Object.keys(item);
+    const filtered = keys.filter((e) => {
+        const element = item[e];
+        if (Array.isArray(element)) {
+            return element.every(i => Number.isNaN(i));
+        }
+        else if (typeof element === 'number') {
+            return Number.isNaN(element);
+        }
+        return false;
+    });
+    if (filtered.length === 0) {
+        return false;
+    }
+    return filtered;
+};
+/* harmony export (immutable) */ __webpack_exports__["c"] = containsNaN;
+
+
+
+/***/ }),
+/* 215 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ELStore__ = __webpack_require__(16);
 
 /* harmony default export */ __webpack_exports__["a"] = (ap) => {
@@ -18986,7 +19084,7 @@ const TabStore = new TabStoreStatic((action) => {
 
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18994,7 +19092,7 @@ const TabStore = new TabStoreStatic((action) => {
 
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19097,7 +19195,7 @@ const TabStore = new TabStoreStatic((action) => {
 
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19138,7 +19236,7 @@ const fn = (req) => {
 
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19158,8 +19256,8 @@ const fn = (req) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_ProfileStore__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__stores_SpellsStore__ = __webpack_require__(73);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_TalentsStore__ = __webpack_require__(136);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_VersionStore__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_TalentsStore__ = __webpack_require__(137);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_VersionStore__ = __webpack_require__(138);
 
 
 
@@ -19216,23 +19314,23 @@ const generateArray = () => ({
 
 
 /***/ }),
-/* 219 */
+/* 220 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__about_About__ = __webpack_require__(220);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__account_Account__ = __webpack_require__(221);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__attributes_AttributesController__ = __webpack_require__(233);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__disadv_DisAdv__ = __webpack_require__(235);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__grouplist_Grouplist__ = __webpack_require__(237);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__herolist_Herolist__ = __webpack_require__(238);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__home_Home__ = __webpack_require__(240);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__items_Items__ = __webpack_require__(245);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__profile_Profile__ = __webpack_require__(261);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__rcp_RCP__ = __webpack_require__(270);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__skills_Skills__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__about_About__ = __webpack_require__(221);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__account_Account__ = __webpack_require__(225);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__attributes_AttributesController__ = __webpack_require__(237);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__disadv_DisAdv__ = __webpack_require__(239);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__grouplist_Grouplist__ = __webpack_require__(241);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__herolist_Herolist__ = __webpack_require__(242);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__home_Home__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__items_Items__ = __webpack_require__(249);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__profile_Profile__ = __webpack_require__(265);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__rcp_RCP__ = __webpack_require__(274);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__skills_Skills__ = __webpack_require__(286);
 
 
 
@@ -19268,442 +19366,59 @@ class Route extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 220 */
+/* 221 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_VersionStore__ = __webpack_require__(137);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Imprint__ = __webpack_require__(222);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ThirdPartyLicenses__ = __webpack_require__(224);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__TOU__ = __webpack_require__(223);
 
 
 
-class About extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
+
+
+class About extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
+    constructor() {
+        super(...arguments);
+        this.state = {
+            tab: 'imprint'
+        };
+        this.handleClick = (tab) => this.setState({ tab });
+    }
     render() {
-        const version = __WEBPACK_IMPORTED_MODULE_0__stores_VersionStore__["a" /* default */].get();
-        return (__WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("section", { id: "about" },
-            __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "page" },
-                __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__components_Scroll__["a" /* default */], { className: "text" },
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h2", null, "Impressum"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "Lukas Obermann"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null,
-                        "Frontend-Dev",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Eekholl 11",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "24361 Gro\u00DF Wittensee",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("a", { href: "mailto:lukas.obermann@live.de" }, "lukas.obermann@live.de")),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "TBD..."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h2", null, "Haftungsausschluss"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "Urheberrecht"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Die Betreiber der Seiten sind bem\u00FCht, stets die Urheberrechte anderer zu beachten bzw. auf selbst erstellte sowie lizenzfreie Werke zur\u00FCckzugreifen."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Beitr\u00E4ge Dritter sind als solche gekennzeichnet. Die Vervielf\u00E4ltigung, Bearbeitung, Verbreitung und jede Art der Verwertung au\u00DFerhalb der Grenzen des Urheberrechtes bed\u00FCrfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur f\u00FCr den privaten, nicht kommerziellen Gebrauch gestattet."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", { className: "featured" },
-                        "DAS SCHWARZE AUGE, AVENTURIEN, DERE, MYRANOR, THARUN, UTHURIA und RIESLAND sind eingetragene Marken der Significant Fantasy Medienrechte GbR.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Ohne vorherige schriftliche Genehmigung der Ulisses Medien und Spiel Distribution GmbH ist eine Verwendung der genannten Markenzeichen nicht gestattet."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "Datenschutz"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies soweit m\u00F6glich stets auf freiwilliger Basis. Die Nutzung der Angebote und Dienste ist, soweit m\u00F6glich, stets ohne Angabe personenbezogener Daten m\u00F6glich."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Der Nutzung von im Rahmen der Impressumspflicht ver\u00F6ffentlichten Kontaktdaten durch Dritte zur \u00DCbersendung von nicht ausdr\u00FCcklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdr\u00FCcklich widersprochen. Die Betreiber der Seiten behalten sich ausdr\u00FCcklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "Haftung f\u00FCr Links"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Unser Angebot enth\u00E4lt Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb k\u00F6nnen wir f\u00FCr diese fremden Inhalte auch keine Gew\u00E4hr \u00FCbernehmen. F\u00FCr die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf m\u00F6gliche Rechtsverst\u00F6\u00DFe \u00FCberpr\u00FCft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h3", null, "Haftung f\u00FCr Inhalte"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("p", null, "Die Inhalte unserer Seiten wurden mit gr\u00F6\u00DFter Sorgfalt erstellt. F\u00FCr die Richtigkeit, Vollst\u00E4ndigkeit und Aktualit\u00E4t der Inhalte k\u00F6nnen wir jedoch keine Gew\u00E4hr \u00FCbernehmen."),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h2", null,
-                        "DSA5 Heldentool Browser Client v",
-                        version),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("h2", null, "Drittanbietersoftware"),
-                    __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "third-party-software" },
-                        "Alegreya font",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2011, Juan Pablo del Peral (juan@huertatipografica.com.ar),",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "with Reserved Font Names \"Alegreya\" \"Alegreya SC\"",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "This Font Software is licensed under the SIL Open Font License, Version 1.1.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "--------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "--------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "PREAMBLE",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The goals of the Open Font License (OFL) are to stimulate worldwide development of collaborative font projects, to support the font creation efforts of academic and linguistic communities, and to provide a free and open framework in which fonts may be shared and improved in partnership with others.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The OFL allows the licensed fonts to be used, studied, modified and redistributed freely as long as they are not sold by themselves. The fonts, including any derivative works, can be bundled, embedded, redistributed and/or sold with any software provided that any reserved names are not used by derivative works. The fonts and derivatives, however, cannot be released under any other type of license. The requirement for fonts to remain under this license does not apply to any document created using the fonts or their derivatives.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "DEFINITIONS",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Font Software\" refers to the set of files released by the Copyright Holder(s) under this license and clearly marked as such. This may include source files, build scripts and documentation.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Reserved Font Name\" refers to any names specified as such after the copyright statement(s).",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Original Version\" refers to the collection of Font Software components as distributed by the Copyright Holder(s).",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Modified Version\" refers to any derivative made by adding to, deleting, or substituting -- in part or in whole -- any of the components of the Original Version, by changing formats or by porting the Font Software to a new environment.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Author\" refers to any designer, engineer, programmer, technical writer or other person who contributed to the Font Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "PERMISSION & CONDITIONS",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of the Font Software, to use, study, copy, merge, embed, modify, redistribute, and sell modified and unmodified copies of the Font Software, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "1) Neither the Font Software nor any of its individual components, in Original or Modified Versions, may be sold by itself.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "2) Original or Modified Versions of the Font Software may be bundled, redistributed and/or sold with any software, provided that each copy contains the above copyright notice and this license. These can be included either as stand-alone text files, human-readable headers or in the appropriate machine-readable metadata fields within text or binary files as long as those fields can be easily viewed by the user.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "3) No Modified Version of the Font Software may use the Reserved Font Name(s) unless explicit written permission is granted by the corresponding Copyright Holder. This restriction only applies to the primary font name as presented to the users.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font Software shall not be used to promote, endorse or advertise any Modified Version, except to acknowledge the contribution(s) of the Copyright Holder(s) and the Author(s) or with their explicit written permission.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "5) The Font Software, modified or unmodified, in part or in whole, must be distributed entirely under this license, and must not be distributed under any other license. The requirement for fonts to remain under this license does not apply to any document created using the Font Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "TERMINATION",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "This license becomes null and void if any of the above conditions are not met.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "DISCLAIMER",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "babel",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "MIT License",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2014-2016 Sebastian McKenzie (sebmck@gmail.com)",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "browserify",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Some pieces from builtins/ taken from node core under this license:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "----",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright Joyent, Inc. and other Node contributors.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "----",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "buffer_ieee754.js has this license in it:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "----",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2008-2015, Fair Oaks Labs, Inc.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "All rights reserved.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Neither the name of Fair Oaks Labs, Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Modifications to writeIEEE754 to support negative zeroes made by Brian White",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "classnames",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2016 Jed Watson",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "events",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "MIT",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright Joyent, Inc. and other Node contributors.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Flux",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "For Flux software",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2014-2015, Facebook, Inc. All rights reserved.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Neither the name Facebook nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Material icons",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Apache License",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Version 2.0, January 2004",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "http://www.apache.org/licenses/",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "1. Definitions.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"License\" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Licensor\" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Legal Entity\" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, \"control\" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"You\" (or \"Your\") shall mean an individual or Legal Entity exercising permissions granted by this License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Source\" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Object\" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Work\" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Derivative Works\" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Contribution\" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, \"submitted\" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as \"Not a Contribution.\"",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "\"Contributor\" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "(a) You must give any other recipients of the Work or Derivative Works a copy of this License; and",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "(b) You must cause any modified files to carry prominent notices stating that You changed the files; and",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "(c) You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "(d) If the Work includes a \"NOTICE\" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "END OF TERMS AND CONDITIONS",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "APPENDIX: How to apply the Apache License to your work.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets \"[]\" replaced with your own identifying information. (Don't include the brackets!)  The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same \"printed page\" as the copyright notice for easier identification within third-party archives.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright 2016 Google, Inc.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "http://www.apache.org/licenses/LICENSE-2.0",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "React",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "For React software",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2013-present, Facebook, Inc.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "All rights reserved.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "* Neither the name Facebook nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "react-gemini-scrollbar",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The MIT License (MIT)",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) Noel Delgado ",
-                        '<pixelia.me@gmail.com>',
-                        " (pixelia.me)",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "------------------------------------------------------------",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "react-progress-arc",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The MIT License (MIT)",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Copyright (c) 2015 Jake Pyne",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("br", null),
-                        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.")))));
+        const { tab } = this.state;
+        let element;
+        switch (tab) {
+            case 'imprint':
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Imprint__["a" /* default */], null);
+                break;
+            case 'thirdPartyLicenses':
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__ThirdPartyLicenses__["a" /* default */], null);
+                break;
+            case 'tou':
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__TOU__["a" /* default */], null);
+                break;
+        }
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("section", { id: "about" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_SubTabs__["a" /* default */], { tabs: [
+                    {
+                        label: 'Impressum',
+                        tag: 'imprint'
+                    },
+                    {
+                        label: 'Haftungsausschluss',
+                        tag: 'tou'
+                    },
+                    {
+                        label: 'Third-party licenses',
+                        tag: 'thirdPartyLicenses'
+                    }
+                ], active: this.state.tab, onClick: this.handleClick }),
+            element));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = About;
@@ -19711,17 +19426,482 @@ class About extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 221 */
+/* 222 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Scroll__ = __webpack_require__(14);
+
+
+/* harmony default export */ __webpack_exports__["a"] = () => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page", id: "imprint" },
+    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Scroll__["a" /* default */], { className: "text" },
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h2", null, "Impressum"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, "Lukas Obermann"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null,
+            "Frontend-Dev",
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+            "Eekholl 11",
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+            "24361 Gro\u00DF Wittensee",
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("a", { href: "mailto:lukas.obermann@live.de" }, "lukas.obermann@live.de")))));
+
+
+/***/ }),
+/* 223 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Scroll__ = __webpack_require__(14);
+
+
+/* harmony default export */ __webpack_exports__["a"] = () => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page", id: "tou" },
+    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Scroll__["a" /* default */], { className: "text" },
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h2", null, "Haftungsausschluss"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, "Urheberrecht"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Die Betreiber der Seiten sind bem\u00FCht, stets die Urheberrechte anderer zu beachten bzw. auf selbst erstellte sowie lizenzfreie Werke zur\u00FCckzugreifen."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Beitr\u00E4ge Dritter sind als solche gekennzeichnet. Die Vervielf\u00E4ltigung, Bearbeitung, Verbreitung und jede Art der Verwertung au\u00DFerhalb der Grenzen des Urheberrechtes bed\u00FCrfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur f\u00FCr den privaten, nicht kommerziellen Gebrauch gestattet."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", { className: "featured" },
+            "DAS SCHWARZE AUGE, AVENTURIEN, DERE, MYRANOR, THARUN, UTHURIA und RIESLAND sind eingetragene Marken der Significant Fantasy Medienrechte GbR.",
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+            "Ohne vorherige schriftliche Genehmigung der Ulisses Medien und Spiel Distribution GmbH ist eine Verwendung der genannten Markenzeichen nicht gestattet."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, "Datenschutz"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies soweit m\u00F6glich stets auf freiwilliger Basis. Die Nutzung der Angebote und Dienste ist, soweit m\u00F6glich, stets ohne Angabe personenbezogener Daten m\u00F6glich."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Der Nutzung von im Rahmen der Impressumspflicht ver\u00F6ffentlichten Kontaktdaten durch Dritte zur \u00DCbersendung von nicht ausdr\u00FCcklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdr\u00FCcklich widersprochen. Die Betreiber der Seiten behalten sich ausdr\u00FCcklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, "Haftung f\u00FCr Links"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Unser Angebot enth\u00E4lt Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb k\u00F6nnen wir f\u00FCr diese fremden Inhalte auch keine Gew\u00E4hr \u00FCbernehmen. F\u00FCr die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf m\u00F6gliche Rechtsverst\u00F6\u00DFe \u00FCberpr\u00FCft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen."),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, "Haftung f\u00FCr Inhalte"),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", null, "Die Inhalte unserer Seiten wurden mit gr\u00F6\u00DFter Sorgfalt erstellt. F\u00FCr die Richtigkeit, Vollst\u00E4ndigkeit und Aktualit\u00E4t der Inhalte k\u00F6nnen wir jedoch keine Gew\u00E4hr \u00FCbernehmen."))));
+
+
+/***/ }),
+/* 224 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_VersionStore__ = __webpack_require__(138);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Scroll__ = __webpack_require__(14);
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = () => {
+    const version = __WEBPACK_IMPORTED_MODULE_1__stores_VersionStore__["a" /* default */].get();
+    return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page", id: "third-party-software" },
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_Scroll__["a" /* default */], { className: "text" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h2", null,
+                "TDE5 Heroes Browser Client v",
+                version),
+            "Third Party Software",
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "third-party-software-body" },
+                "Alegreya font",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2011, Juan Pablo del Peral (juan@huertatipografica.com.ar),",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "with Reserved Font Names \"Alegreya\" \"Alegreya SC\"",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "This Font Software is licensed under the SIL Open Font License, Version 1.1.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "--------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "--------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "PREAMBLE",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The goals of the Open Font License (OFL) are to stimulate worldwide development of collaborative font projects, to support the font creation efforts of academic and linguistic communities, and to provide a free and open framework in which fonts may be shared and improved in partnership with others.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The OFL allows the licensed fonts to be used, studied, modified and redistributed freely as long as they are not sold by themselves. The fonts, including any derivative works, can be bundled, embedded, redistributed and/or sold with any software provided that any reserved names are not used by derivative works. The fonts and derivatives, however, cannot be released under any other type of license. The requirement for fonts to remain under this license does not apply to any document created using the fonts or their derivatives.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "DEFINITIONS",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Font Software\" refers to the set of files released by the Copyright Holder(s) under this license and clearly marked as such. This may include source files, build scripts and documentation.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Reserved Font Name\" refers to any names specified as such after the copyright statement(s).",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Original Version\" refers to the collection of Font Software components as distributed by the Copyright Holder(s).",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Modified Version\" refers to any derivative made by adding to, deleting, or substituting -- in part or in whole -- any of the components of the Original Version, by changing formats or by porting the Font Software to a new environment.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Author\" refers to any designer, engineer, programmer, technical writer or other person who contributed to the Font Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "PERMISSION & CONDITIONS",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of the Font Software, to use, study, copy, merge, embed, modify, redistribute, and sell modified and unmodified copies of the Font Software, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "1) Neither the Font Software nor any of its individual components, in Original or Modified Versions, may be sold by itself.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "2) Original or Modified Versions of the Font Software may be bundled, redistributed and/or sold with any software, provided that each copy contains the above copyright notice and this license. These can be included either as stand-alone text files, human-readable headers or in the appropriate machine-readable metadata fields within text or binary files as long as those fields can be easily viewed by the user.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "3) No Modified Version of the Font Software may use the Reserved Font Name(s) unless explicit written permission is granted by the corresponding Copyright Holder. This restriction only applies to the primary font name as presented to the users.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font Software shall not be used to promote, endorse or advertise any Modified Version, except to acknowledge the contribution(s) of the Copyright Holder(s) and the Author(s) or with their explicit written permission.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "5) The Font Software, modified or unmodified, in part or in whole, must be distributed entirely under this license, and must not be distributed under any other license. The requirement for fonts to remain under this license does not apply to any document created using the Font Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "TERMINATION",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "This license becomes null and void if any of the above conditions are not met.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "DISCLAIMER",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "babel",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "MIT License",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2014-2016 Sebastian McKenzie (sebmck@gmail.com)",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "browserify",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Some pieces from builtins/ taken from node core under this license:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "----",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright Joyent, Inc. and other Node contributors.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "----",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "buffer_ieee754.js has this license in it:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "----",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2008-2015, Fair Oaks Labs, Inc.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "All rights reserved.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Neither the name of Fair Oaks Labs, Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Modifications to writeIEEE754 to support negative zeroes made by Brian White",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "classnames",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2016 Jed Watson",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "events",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "MIT",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright Joyent, Inc. and other Node contributors.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Flux",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "For Flux software",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2014-2015, Facebook, Inc. All rights reserved.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Neither the name Facebook nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Material icons",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Apache License",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Version 2.0, January 2004",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "http://www.apache.org/licenses/",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "1. Definitions.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"License\" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Licensor\" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Legal Entity\" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, \"control\" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"You\" (or \"Your\") shall mean an individual or Legal Entity exercising permissions granted by this License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Source\" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Object\" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Work\" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Derivative Works\" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Contribution\" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, \"submitted\" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as \"Not a Contribution.\"",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "\"Contributor\" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "(a) You must give any other recipients of the Work or Derivative Works a copy of this License; and",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "(b) You must cause any modified files to carry prominent notices stating that You changed the files; and",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "(c) You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "(d) If the Work includes a \"NOTICE\" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "END OF TERMS AND CONDITIONS",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "APPENDIX: How to apply the Apache License to your work.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets \"[]\" replaced with your own identifying information. (Don't include the brackets!)  The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same \"printed page\" as the copyright notice for easier identification within third-party archives.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright 2016 Google, Inc.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "http://www.apache.org/licenses/LICENSE-2.0",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "React",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "For React software",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2013-present, Facebook, Inc.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "All rights reserved.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "* Neither the name Facebook nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "react-gemini-scrollbar",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The MIT License (MIT)",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) Noel Delgado ",
+                '<pixelia.me@gmail.com>',
+                " (pixelia.me)",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "------------------------------------------------------------",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "react-progress-arc",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The MIT License (MIT)",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Copyright (c) 2015 Jake Pyne",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("br", null),
+                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."))));
+};
+
+
+/***/ }),
+/* 225 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AuthActions__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AccountChangeName__ = __webpack_require__(222);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__AccountChangePassword__ = __webpack_require__(223);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AccountChangeName__ = __webpack_require__(226);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__AccountChangePassword__ = __webpack_require__(227);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_BorderButton__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(14);
 
 
 
@@ -19747,7 +19927,7 @@ class Account extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 222 */
+/* 226 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19786,7 +19966,7 @@ class Account extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 223 */
+/* 227 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19825,7 +20005,7 @@ class Account extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 224 */
+/* 228 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19880,7 +20060,7 @@ class ForgotPassword extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 225 */
+/* 229 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19935,7 +20115,7 @@ class ForgotUsername extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 226 */
+/* 230 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20041,7 +20221,7 @@ class Register extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 227 */
+/* 231 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20096,11 +20276,11 @@ class ResendActivation extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] 
 
 
 /***/ }),
-/* 228 */
+/* 232 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AttributeCalcItem__ = __webpack_require__(229);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__AttributeCalcItem__ = __webpack_require__(233);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_secondaryAttributes__ = __webpack_require__(59);
@@ -20119,14 +20299,14 @@ class AttributeCalc extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 229 */
+/* 233 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(120);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeBorder__ = __webpack_require__(141);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_IconButton__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_NumberBox__ = __webpack_require__(130);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_NumberBox__ = __webpack_require__(131);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react__);
 
@@ -20179,12 +20359,12 @@ class AttributeCalcItem extends __WEBPACK_IMPORTED_MODULE_4_react__["Component"]
 
 
 /***/ }),
-/* 230 */
+/* 234 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeListItem__ = __webpack_require__(231);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeListItem__ = __webpack_require__(235);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 
@@ -20201,14 +20381,14 @@ class AttributeList extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 231 */
+/* 235 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(120);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_AttributesActions__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeBorder__ = __webpack_require__(141);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_IconButton__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_NumberBox__ = __webpack_require__(130);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_NumberBox__ = __webpack_require__(131);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react__);
 
@@ -20239,16 +20419,16 @@ class AttributeListItem extends __WEBPACK_IMPORTED_MODULE_4_react__["Component"]
 
 
 /***/ }),
-/* 232 */
+/* 236 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeCalc__ = __webpack_require__(228);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AttributeList__ = __webpack_require__(230);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeCalc__ = __webpack_require__(232);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AttributeList__ = __webpack_require__(234);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(14);
 
 
 
@@ -20274,11 +20454,11 @@ class Attribute extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 233 */
+/* 237 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Attributes__ = __webpack_require__(232);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Attributes__ = __webpack_require__(236);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_AttributeStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ELStore__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_PhaseStore__ = __webpack_require__(17);
@@ -20324,7 +20504,7 @@ class AttributesController extends __WEBPACK_IMPORTED_MODULE_4_react__["Componen
 
 
 /***/ }),
-/* 234 */
+/* 238 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20416,15 +20596,15 @@ class Advantages extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 235 */
+/* 239 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Advantages__ = __webpack_require__(234);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Disadvantages__ = __webpack_require__(236);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SubTabs__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Advantages__ = __webpack_require__(238);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Disadvantages__ = __webpack_require__(240);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SubTabs__ = __webpack_require__(45);
 
 
 
@@ -20466,7 +20646,7 @@ class DisAdv extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 236 */
+/* 240 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20556,7 +20736,7 @@ class Disadvantages extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 237 */
+/* 241 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20564,7 +20744,7 @@ class Disadvantages extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_LocationActions__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextField__ = __webpack_require__(10);
 
 
@@ -20592,7 +20772,7 @@ class Grouplist extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 238 */
+/* 242 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20607,14 +20787,14 @@ class Grouplist extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ELStore__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__HeroCreation__ = __webpack_require__(143);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__HerolistItem__ = __webpack_require__(239);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__HerolistItem__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__ = __webpack_require__(135);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__components_TextField__ = __webpack_require__(10);
 
 
@@ -20711,7 +20891,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 239 */
+/* 243 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20725,7 +20905,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_IconButton__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_progress_arc__ = __webpack_require__(376);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_progress_arc__ = __webpack_require__(380);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_react_progress_arc___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_react_progress_arc__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_VerticalList__ = __webpack_require__(88);
 
@@ -20803,14 +20983,14 @@ class HerolistItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 240 */
+/* 244 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Overview__ = __webpack_require__(241);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_SubTabs__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Overview__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_SubTabs__ = __webpack_require__(45);
 
 
 
@@ -20855,13 +21035,13 @@ class Home extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 241 */
+/* 245 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Scroll__ = __webpack_require__(14);
 
 
 class Overview extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
@@ -20889,7 +21069,7 @@ class Overview extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 242 */
+/* 246 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20907,7 +21087,7 @@ class Equipment extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 243 */
+/* 247 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20917,10 +21097,10 @@ class Equipment extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_BorderButton__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__InventoryListItem__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__InventoryListItem__ = __webpack_require__(248);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_InventoryStore__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ItemEditor__ = __webpack_require__(144);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Slidein__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_SortOptions__ = __webpack_require__(192);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_TextField__ = __webpack_require__(10);
@@ -21002,7 +21182,7 @@ class Inventory extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 244 */
+/* 248 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21180,39 +21360,39 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
 
 
 /***/ }),
-/* 245 */
+/* 249 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Equipment__ = __webpack_require__(242);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Inventory__ = __webpack_require__(243);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SubTabs__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Equipment__ = __webpack_require__(246);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Inventory__ = __webpack_require__(247);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_SubTabs__ = __webpack_require__(45);
 
 
 
 
-class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
+class Items extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super(...arguments);
         this.state = {
             tab: 'inventory'
         };
-        this.handleClick = tab => this.setState({ tab });
+        this.handleClick = (tab) => this.setState({ tab });
     }
     render() {
-        var element;
+        let element;
         switch (this.state.tab) {
             case 'inventory':
-                element = __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__Inventory__["a" /* default */], null);
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__Inventory__["a" /* default */], null);
                 break;
             case 'equipment':
-                element = __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__Equipment__["a" /* default */], null);
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Equipment__["a" /* default */], null);
                 break;
         }
-        return (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement("section", { id: "items" },
-            __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_SubTabs__["a" /* default */], { tabs: [
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("section", { id: "items" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_SubTabs__["a" /* default */], { tabs: [
                     {
                         label: 'Inventar',
                         tag: 'inventory'
@@ -21231,13 +21411,13 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 246 */
+/* 250 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeModsListItem__ = __webpack_require__(247);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__AttributeModsListItem__ = __webpack_require__(251);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_AttributeStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextBox__ = __webpack_require__(41);
 
@@ -21263,7 +21443,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 247 */
+/* 251 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21285,7 +21465,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 248 */
+/* 252 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21309,7 +21489,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 249 */
+/* 253 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21333,7 +21513,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 250 */
+/* 254 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21353,7 +21533,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 251 */
+/* 255 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21367,8 +21547,8 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_AttributeStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ELStore__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__MainSheetAttributes__ = __webpack_require__(252);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__MainSheetPersonalData__ = __webpack_require__(255);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__MainSheetAttributes__ = __webpack_require__(256);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__MainSheetPersonalData__ = __webpack_require__(259);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_ProfileStore__ = __webpack_require__(38);
@@ -21424,14 +21604,14 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 252 */
+/* 256 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__ = __webpack_require__(253);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__MainSheetFatePoints__ = __webpack_require__(254);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__ = __webpack_require__(257);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__MainSheetFatePoints__ = __webpack_require__(258);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_RaceStore__ = __webpack_require__(20);
 
 
@@ -21452,17 +21632,17 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[0].name, calc: attributes[0].calc, value: attributes[0].value, add: attributes[0].mod, purchased: attributes[0].currentAdd, subLabel: "Grundwert", subArray: [baseValues.lp] }),
         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[1].name, calc: attributes[1].calc, value: attributes[1].value, add: attributes[1].mod, purchased: baseValues.ae, subLabel: "perm. eingesetzt/davon zurückgekauft", subArray: [0, 0], empty: attributes[1].value === '-' }),
         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[2].name, calc: attributes[2].calc, value: attributes[2].value, add: attributes[2].mod, purchased: baseValues.kp, subLabel: "perm. eingesetzt/davon zurückgekauft", subArray: [0, 0], empty: attributes[2].value === '-' }),
-        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[3].name, calc: attributes[3].calc, value: attributes[3].value, add: attributes[3].mod, purchased: null, subLabel: "Grundwert", subArray: [race.spi] }),
-        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[4].name, calc: attributes[4].calc, value: attributes[4].value, add: attributes[4].mod, purchased: null, subLabel: "Grundwert", subArray: [race.tou] }),
-        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[5].name, calc: attributes[5].calc, value: attributes[5].value, add: 0, purchased: null }),
-        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[6].name, calc: attributes[6].calc, value: attributes[6].value, add: 0, purchased: null }),
-        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[7].name, calc: attributes[7].calc, value: attributes[7].value, add: 0, purchased: null, subLabel: "Grundwert", subArray: [race.mov] }),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[3].name, calc: attributes[3].calc, value: attributes[3].value, add: attributes[3].mod, subLabel: "Grundwert", subArray: [race.spi] }),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[4].name, calc: attributes[4].calc, value: attributes[4].value, add: attributes[4].mod, subLabel: "Grundwert", subArray: [race.tou] }),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[5].name, calc: attributes[5].calc, value: attributes[5].value }),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[6].name, calc: attributes[6].calc, value: attributes[6].value }),
+        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__MainSheetAttributesItem__["a" /* default */], { label: attributes[7].name, calc: attributes[7].calc, value: attributes[7].value, subLabel: "Grundwert", subArray: [race.mov] }),
         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__MainSheetFatePoints__["a" /* default */], null)));
 };
 
 
 /***/ }),
-/* 253 */
+/* 257 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21473,12 +21653,19 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (props) => {
-    let max = props.empty ? '-' : props.value + props.add;
-    if (!props.empty) {
-        if (props.purchased !== null)
-            max += props.purchased;
-        if (props.max)
-            max += props.max;
+    const { add = 0, value, purchased, max } = props;
+    let final;
+    if (typeof value === 'string') {
+        final = '-';
+    }
+    else {
+        final = value + add;
+        if (purchased) {
+            final += purchased;
+        }
+        if (max) {
+            final += max;
+        }
     }
     return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null,
         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "label" },
@@ -21491,20 +21678,20 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "base" }, props.empty ? '-' : props.value),
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "add" }, props.empty ? '-' : props.add),
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()('purchased', props.purchased === null && 'blocked') }, props.purchased === null ? '\uE14B' : props.empty ? '-' : props.purchased),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "max" }, max),
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "max" }, final),
             props.subArray ? props.subArray.map((value, index) => __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { key: props.label + index, className: "sub" }, props.empty ? '-' : value)) : null)));
 };
 
 
 /***/ }),
-/* 254 */
+/* 258 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ListStore__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LabelBox__ = __webpack_require__(129);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LabelBox__ = __webpack_require__(130);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextBox__ = __webpack_require__(41);
 
 
@@ -21527,14 +21714,14 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 255 */
+/* 259 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Avatar__ = __webpack_require__(68);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LabelBox__ = __webpack_require__(129);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LabelBox__ = __webpack_require__(130);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Plain__ = __webpack_require__(190);
 
 
@@ -21591,7 +21778,7 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 256 */
+/* 260 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21602,24 +21789,24 @@ class Items extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ActivatableTextList__ = __webpack_require__(145);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_AvatarWrapper__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_AvatarWrapper__ = __webpack_require__(128);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_APStore__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_BorderButton__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils_calcEL__ = __webpack_require__(214);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils_calcEL__ = __webpack_require__(215);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_createOverlay__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_ELStore__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_IconButton__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__OverviewAddAP__ = __webpack_require__(257);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__OverviewAvatarChange__ = __webpack_require__(258);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__OverviewNameChange__ = __webpack_require__(259);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__OverviewPersonalData__ = __webpack_require__(260);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__OverviewAddAP__ = __webpack_require__(261);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__OverviewAvatarChange__ = __webpack_require__(262);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__OverviewNameChange__ = __webpack_require__(263);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__OverviewPersonalData__ = __webpack_require__(264);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__stores_ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__stores_ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__stores_PhaseStore__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__stores_ProfileStore__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__components_VerticalList__ = __webpack_require__(88);
 
 
@@ -21738,7 +21925,7 @@ class ProfileOverview extends __WEBPACK_IMPORTED_MODULE_4_react__["Component"] {
 
 
 /***/ }),
-/* 257 */
+/* 261 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21780,7 +21967,7 @@ class OverviewAddAP extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 258 */
+/* 262 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21873,7 +22060,7 @@ class ProfileAvatarChange extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
 
 
 /***/ }),
-/* 259 */
+/* 263 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21911,7 +22098,7 @@ class OverviewNameChange extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"
 
 
 /***/ }),
-/* 260 */
+/* 264 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21990,16 +22177,16 @@ class OverviewPersonalData extends __WEBPACK_IMPORTED_MODULE_1_react__["Componen
 
 
 /***/ }),
-/* 261 */
+/* 265 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Overview__ = __webpack_require__(256);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Overview__ = __webpack_require__(260);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_PhaseStore__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Sheets__ = __webpack_require__(263);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_SubTabs__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Sheets__ = __webpack_require__(267);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_SubTabs__ = __webpack_require__(45);
 
 
 
@@ -22051,7 +22238,7 @@ class Profile extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 262 */
+/* 266 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22071,19 +22258,19 @@ class Profile extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 263 */
+/* 267 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChantSheet__ = __webpack_require__(248);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CombatSheet__ = __webpack_require__(249);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__InventorySheet__ = __webpack_require__(250);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__MainSheet__ = __webpack_require__(251);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ChantSheet__ = __webpack_require__(252);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__CombatSheet__ = __webpack_require__(253);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__InventorySheet__ = __webpack_require__(254);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__MainSheet__ = __webpack_require__(255);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__SpellsSheet__ = __webpack_require__(265);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__SkillsSheet__ = __webpack_require__(264);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__SpellsSheet__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__SkillsSheet__ = __webpack_require__(268);
 
 
 
@@ -22103,14 +22290,14 @@ class Profile extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 264 */
+/* 268 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ListStore__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AttributeMods__ = __webpack_require__(246);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__AttributeMods__ = __webpack_require__(250);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__constants_Categories__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__SheetHeader__ = __webpack_require__(53);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextBox__ = __webpack_require__(41);
@@ -22352,7 +22539,7 @@ const iterateList = (arr) => arr.map(obj => {
 
 
 /***/ }),
-/* 265 */
+/* 269 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22376,21 +22563,21 @@ const iterateList = (arr) => arr.map(obj => {
 
 
 /***/ }),
-/* 266 */
+/* 270 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_ListUtils__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CultureActions__ = __webpack_require__(121);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CultureActions__ = __webpack_require__(122);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CulturesListItem__ = __webpack_require__(267);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__CulturesListItem__ = __webpack_require__(271);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_TextField__ = __webpack_require__(10);
 
 
@@ -22454,12 +22641,12 @@ class Cultures extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 267 */
+/* 271 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ListStore__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CultureActions__ = __webpack_require__(121);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CultureActions__ = __webpack_require__(122);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_BorderButton__ = __webpack_require__(18);
@@ -22496,24 +22683,24 @@ class CulturesListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] 
 
 
 /***/ }),
-/* 268 */
+/* 272 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_ListUtils__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfessionActions__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_ProfessionVariantActions__ = __webpack_require__(122);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_ProfessionVariantActions__ = __webpack_require__(123);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Dropdown__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ProfessionsListItem__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ProfessionsListItem__ = __webpack_require__(273);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_ProfileStore__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Scroll__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Selections__ = __webpack_require__(273);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Scroll__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Selections__ = __webpack_require__(277);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_TextField__ = __webpack_require__(10);
 
 
@@ -22594,12 +22781,12 @@ class Professions extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 269 */
+/* 273 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_ProfessionActions__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfessionVariantActions__ = __webpack_require__(122);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfessionVariantActions__ = __webpack_require__(123);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_BorderButton__ = __webpack_require__(18);
@@ -22692,18 +22879,18 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
 
 
 /***/ }),
-/* 270 */
+/* 274 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Cultures__ = __webpack_require__(266);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Cultures__ = __webpack_require__(270);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Professions__ = __webpack_require__(268);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Races__ = __webpack_require__(271);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Professions__ = __webpack_require__(272);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Races__ = __webpack_require__(275);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_SubTabs__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_SubTabs__ = __webpack_require__(45);
 
 
 
@@ -22770,19 +22957,19 @@ class RCP extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
 
 
 /***/ }),
-/* 271 */
+/* 275 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_ListUtils__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_RaceActions__ = __webpack_require__(123);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_RaceActions__ = __webpack_require__(124);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__RacesListItem__ = __webpack_require__(272);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__RacesListItem__ = __webpack_require__(276);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_RaceStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TextField__ = __webpack_require__(10);
 
 
@@ -22839,11 +23026,11 @@ class Races extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 272 */
+/* 276 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_RaceActions__ = __webpack_require__(123);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__actions_RaceActions__ = __webpack_require__(124);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(18);
@@ -22893,7 +23080,7 @@ class RacesListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 273 */
+/* 277 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22909,12 +23096,12 @@ class RacesListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ProfessionStore__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_ProfessionVariantStore__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_RaceStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Scroll__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__SelectionsCantrips__ = __webpack_require__(274);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__SelectionsCt__ = __webpack_require__(275);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__SelectionsCurses__ = __webpack_require__(276);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__SelectionsLangLitc__ = __webpack_require__(277);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__SelectionsTalentSpec__ = __webpack_require__(278);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Scroll__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__SelectionsCantrips__ = __webpack_require__(278);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__SelectionsCt__ = __webpack_require__(279);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__SelectionsCurses__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__SelectionsLangLitc__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__SelectionsTalentSpec__ = __webpack_require__(282);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__components_Slidein__ = __webpack_require__(44);
 
 
@@ -23144,7 +23331,7 @@ class Selections extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
 
 
 /***/ }),
-/* 274 */
+/* 278 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23172,7 +23359,7 @@ class SelectionsCantrips extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 
 
 /***/ }),
-/* 275 */
+/* 279 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23201,7 +23388,7 @@ class SelectionsCt extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 276 */
+/* 280 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23237,7 +23424,7 @@ class SelectionsCurses extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] 
 
 
 /***/ }),
-/* 277 */
+/* 281 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23274,7 +23461,7 @@ class SelectionsLangLitc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 
 
 /***/ }),
-/* 278 */
+/* 282 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23303,7 +23490,7 @@ class SelectionsTalentSpec extends __WEBPACK_IMPORTED_MODULE_0_react__["Componen
 
 
 /***/ }),
-/* 279 */
+/* 283 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23315,7 +23502,7 @@ class SelectionsTalentSpec extends __WEBPACK_IMPORTED_MODULE_0_react__["Componen
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RadioButtonGroup__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__SkillListItem__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_TextField__ = __webpack_require__(10);
 
@@ -23382,7 +23569,7 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] 
 
 
 /***/ }),
-/* 280 */
+/* 284 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23394,7 +23581,7 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_RadioButtonGroup__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__SkillListItem__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Slidein__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_TextField__ = __webpack_require__(10);
@@ -23510,7 +23697,7 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] {
 
 
 /***/ }),
-/* 281 */
+/* 285 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23592,20 +23779,20 @@ class SkillInfo extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 282 */
+/* 286 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ListStore__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CombatTechniques__ = __webpack_require__(279);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Liturgies__ = __webpack_require__(280);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__SpecialAbilities__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_SpecialAbilitiesStore__ = __webpack_require__(135);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Spells__ = __webpack_require__(284);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SubTabs__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Talents__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__CombatTechniques__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Liturgies__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__SpecialAbilities__ = __webpack_require__(287);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_SpecialAbilitiesStore__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Spells__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Talents__ = __webpack_require__(289);
 
 
 
@@ -23691,7 +23878,7 @@ class Skills extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 283 */
+/* 287 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23701,14 +23888,14 @@ class Skills extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__actions_SpecialAbilitiesActions__ = __webpack_require__(182);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ActivatableAddListItem__ = __webpack_require__(124);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ActivatableRemoveListItem__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ActivatableAddListItem__ = __webpack_require__(125);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ActivatableRemoveListItem__ = __webpack_require__(126);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_BorderButton__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_PhaseStore__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_Slidein__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_SpecialAbilitiesStore__ = __webpack_require__(135);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_SpecialAbilitiesStore__ = __webpack_require__(136);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_TextField__ = __webpack_require__(10);
 
 
@@ -23779,7 +23966,7 @@ class SpecialAbilities extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] 
 
 
 /***/ }),
-/* 284 */
+/* 288 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23791,7 +23978,7 @@ class SpecialAbilities extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Checkbox__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_PhaseStore__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__SkillListItem__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Slidein__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_SpellsStore__ = __webpack_require__(73);
@@ -23922,7 +24109,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 285 */
+/* 289 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23934,9 +24121,9 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CultureStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_PhaseStore__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__SkillListItem__ = __webpack_require__(75);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_TalentsStore__ = __webpack_require__(136);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_TalentsStore__ = __webpack_require__(137);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_TextField__ = __webpack_require__(10);
 
 
@@ -24000,7 +24187,7 @@ class Talents extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
-/* 286 */
+/* 290 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -24308,7 +24495,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 287 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24364,7 +24551,7 @@ module.exports = invariant;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 288 */
+/* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -24376,11 +24563,11 @@ module.exports = invariant;
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-module.exports.Dispatcher = __webpack_require__(289);
+module.exports.Dispatcher = __webpack_require__(293);
 
 
 /***/ }),
-/* 289 */
+/* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24403,7 +24590,7 @@ exports.__esModule = true;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var invariant = __webpack_require__(287);
+var invariant = __webpack_require__(291);
 
 var _prefix = 'ID_';
 
@@ -24618,7 +24805,7 @@ module.exports = Dispatcher;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 290 */
+/* 294 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -24943,7 +25130,7 @@ module.exports = Dispatcher;
 
 
 /***/ }),
-/* 291 */
+/* 295 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25022,7 +25209,7 @@ var ARIADOMPropertyConfig = {
 module.exports = ARIADOMPropertyConfig;
 
 /***/ }),
-/* 292 */
+/* 296 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25038,7 +25225,7 @@ module.exports = ARIADOMPropertyConfig;
 
 
 
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 
 var focusNode = __webpack_require__(169);
 
@@ -25051,7 +25238,7 @@ var AutoFocusUtils = {
 module.exports = AutoFocusUtils;
 
 /***/ }),
-/* 293 */
+/* 297 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25069,9 +25256,9 @@ module.exports = AutoFocusUtils;
 
 var EventPropagators = __webpack_require__(62);
 var ExecutionEnvironment = __webpack_require__(21);
-var FallbackCompositionState = __webpack_require__(299);
-var SyntheticCompositionEvent = __webpack_require__(342);
-var SyntheticInputEvent = __webpack_require__(345);
+var FallbackCompositionState = __webpack_require__(303);
+var SyntheticCompositionEvent = __webpack_require__(346);
+var SyntheticInputEvent = __webpack_require__(349);
 
 var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 var START_KEYCODE = 229;
@@ -25441,7 +25628,7 @@ var BeforeInputEventPlugin = {
 module.exports = BeforeInputEventPlugin;
 
 /***/ }),
-/* 294 */
+/* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25461,10 +25648,10 @@ var CSSProperty = __webpack_require__(146);
 var ExecutionEnvironment = __webpack_require__(21);
 var ReactInstrumentation = __webpack_require__(28);
 
-var camelizeStyleName = __webpack_require__(363);
-var dangerousStyleValue = __webpack_require__(352);
-var hyphenateStyleName = __webpack_require__(370);
-var memoizeStringOnly = __webpack_require__(373);
+var camelizeStyleName = __webpack_require__(367);
+var dangerousStyleValue = __webpack_require__(356);
+var hyphenateStyleName = __webpack_require__(374);
+var memoizeStringOnly = __webpack_require__(377);
 var warning = __webpack_require__(9);
 
 var processStyleName = memoizeStringOnly(function (styleName) {
@@ -25656,7 +25843,7 @@ module.exports = CSSPropertyOperations;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 295 */
+/* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25675,12 +25862,12 @@ module.exports = CSSPropertyOperations;
 var EventPluginHub = __webpack_require__(61);
 var EventPropagators = __webpack_require__(62);
 var ExecutionEnvironment = __webpack_require__(21);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactUpdates = __webpack_require__(34);
 var SyntheticEvent = __webpack_require__(39);
 
-var getEventTarget = __webpack_require__(108);
-var isEventSupported = __webpack_require__(109);
+var getEventTarget = __webpack_require__(109);
+var isEventSupported = __webpack_require__(110);
 var isTextInputElement = __webpack_require__(164);
 
 var eventTypes = {
@@ -25982,7 +26169,7 @@ var ChangeEventPlugin = {
 module.exports = ChangeEventPlugin;
 
 /***/ }),
-/* 296 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26003,7 +26190,7 @@ var _prodInvariant = __webpack_require__(8);
 var DOMLazyTree = __webpack_require__(54);
 var ExecutionEnvironment = __webpack_require__(21);
 
-var createNodesFromMarkup = __webpack_require__(366);
+var createNodesFromMarkup = __webpack_require__(370);
 var emptyFunction = __webpack_require__(40);
 var invariant = __webpack_require__(6);
 
@@ -26036,7 +26223,7 @@ module.exports = Danger;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 297 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26067,7 +26254,7 @@ var DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'Tap
 module.exports = DefaultEventPluginOrder;
 
 /***/ }),
-/* 298 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26084,7 +26271,7 @@ module.exports = DefaultEventPluginOrder;
 
 
 var EventPropagators = __webpack_require__(62);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var SyntheticMouseEvent = __webpack_require__(78);
 
 var eventTypes = {
@@ -26172,7 +26359,7 @@ var EnterLeaveEventPlugin = {
 module.exports = EnterLeaveEventPlugin;
 
 /***/ }),
-/* 299 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26190,7 +26377,7 @@ module.exports = EnterLeaveEventPlugin;
 
 var _assign = __webpack_require__(13);
 
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 
 var getTextContentAccessor = __webpack_require__(162);
 
@@ -26272,7 +26459,7 @@ PooledClass.addPoolingTo(FallbackCompositionState);
 module.exports = FallbackCompositionState;
 
 /***/ }),
-/* 300 */
+/* 304 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26489,7 +26676,7 @@ var HTMLDOMPropertyConfig = {
 module.exports = HTMLDOMPropertyConfig;
 
 /***/ }),
-/* 301 */
+/* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26508,8 +26695,8 @@ module.exports = HTMLDOMPropertyConfig;
 var ReactReconciler = __webpack_require__(55);
 
 var instantiateReactComponent = __webpack_require__(163);
-var KeyEscapeUtils = __webpack_require__(100);
-var shouldUpdateReactComponent = __webpack_require__(110);
+var KeyEscapeUtils = __webpack_require__(101);
+var shouldUpdateReactComponent = __webpack_require__(111);
 var traverseAllChildren = __webpack_require__(166);
 var warning = __webpack_require__(9);
 
@@ -26649,7 +26836,7 @@ module.exports = ReactChildReconciler;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 302 */
+/* 306 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26665,8 +26852,8 @@ module.exports = ReactChildReconciler;
 
 
 
-var DOMChildrenOperations = __webpack_require__(97);
-var ReactDOMIDOperations = __webpack_require__(309);
+var DOMChildrenOperations = __webpack_require__(98);
+var ReactDOMIDOperations = __webpack_require__(313);
 
 /**
  * Abstracts away all functionality of the reconciler that requires knowledge of
@@ -26684,7 +26871,7 @@ var ReactComponentBrowserEnvironment = {
 module.exports = ReactComponentBrowserEnvironment;
 
 /***/ }),
-/* 303 */
+/* 307 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26704,22 +26891,22 @@ var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
 var React = __webpack_require__(56);
-var ReactComponentEnvironment = __webpack_require__(102);
+var ReactComponentEnvironment = __webpack_require__(103);
 var ReactCurrentOwner = __webpack_require__(35);
-var ReactErrorUtils = __webpack_require__(103);
+var ReactErrorUtils = __webpack_require__(104);
 var ReactInstanceMap = __webpack_require__(63);
 var ReactInstrumentation = __webpack_require__(28);
 var ReactNodeTypes = __webpack_require__(156);
 var ReactReconciler = __webpack_require__(55);
 
 if (process.env.NODE_ENV !== 'production') {
-  var checkReactTypeSpec = __webpack_require__(351);
+  var checkReactTypeSpec = __webpack_require__(355);
 }
 
 var emptyObject = __webpack_require__(168);
 var invariant = __webpack_require__(6);
-var shallowEqual = __webpack_require__(112);
-var shouldUpdateReactComponent = __webpack_require__(110);
+var shallowEqual = __webpack_require__(113);
+var shouldUpdateReactComponent = __webpack_require__(111);
 var warning = __webpack_require__(9);
 
 var CompositeTypes = {
@@ -27592,7 +27779,7 @@ module.exports = ReactCompositeComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 304 */
+/* 308 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27610,16 +27797,16 @@ module.exports = ReactCompositeComponent;
 
 
 
-var ReactDOMComponentTree = __webpack_require__(14);
-var ReactDefaultInjection = __webpack_require__(321);
+var ReactDOMComponentTree = __webpack_require__(15);
+var ReactDefaultInjection = __webpack_require__(325);
 var ReactMount = __webpack_require__(155);
 var ReactReconciler = __webpack_require__(55);
 var ReactUpdates = __webpack_require__(34);
-var ReactVersion = __webpack_require__(336);
+var ReactVersion = __webpack_require__(340);
 
-var findDOMNode = __webpack_require__(353);
+var findDOMNode = __webpack_require__(357);
 var getHostComponentFromComposite = __webpack_require__(161);
-var renderSubtreeIntoContainer = __webpack_require__(361);
+var renderSubtreeIntoContainer = __webpack_require__(365);
 var warning = __webpack_require__(9);
 
 ReactDefaultInjection.inject();
@@ -27696,9 +27883,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 if (process.env.NODE_ENV !== 'production') {
   var ReactInstrumentation = __webpack_require__(28);
-  var ReactDOMUnknownPropertyHook = __webpack_require__(318);
-  var ReactDOMNullInputValuePropHook = __webpack_require__(312);
-  var ReactDOMInvalidARIAHook = __webpack_require__(311);
+  var ReactDOMUnknownPropertyHook = __webpack_require__(322);
+  var ReactDOMNullInputValuePropHook = __webpack_require__(316);
+  var ReactDOMInvalidARIAHook = __webpack_require__(315);
 
   ReactInstrumentation.debugTool.addHook(ReactDOMUnknownPropertyHook);
   ReactInstrumentation.debugTool.addHook(ReactDOMNullInputValuePropHook);
@@ -27709,7 +27896,7 @@ module.exports = ReactDOM;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 305 */
+/* 309 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27730,31 +27917,31 @@ module.exports = ReactDOM;
 var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
-var AutoFocusUtils = __webpack_require__(292);
-var CSSPropertyOperations = __webpack_require__(294);
+var AutoFocusUtils = __webpack_require__(296);
+var CSSPropertyOperations = __webpack_require__(298);
 var DOMLazyTree = __webpack_require__(54);
-var DOMNamespaces = __webpack_require__(98);
+var DOMNamespaces = __webpack_require__(99);
 var DOMProperty = __webpack_require__(43);
 var DOMPropertyOperations = __webpack_require__(148);
 var EventPluginHub = __webpack_require__(61);
 var EventPluginRegistry = __webpack_require__(76);
 var ReactBrowserEventEmitter = __webpack_require__(77);
 var ReactDOMComponentFlags = __webpack_require__(149);
-var ReactDOMComponentTree = __webpack_require__(14);
-var ReactDOMInput = __webpack_require__(310);
-var ReactDOMOption = __webpack_require__(313);
+var ReactDOMComponentTree = __webpack_require__(15);
+var ReactDOMInput = __webpack_require__(314);
+var ReactDOMOption = __webpack_require__(317);
 var ReactDOMSelect = __webpack_require__(150);
-var ReactDOMTextarea = __webpack_require__(316);
+var ReactDOMTextarea = __webpack_require__(320);
 var ReactInstrumentation = __webpack_require__(28);
-var ReactMultiChild = __webpack_require__(329);
-var ReactServerRenderingTransaction = __webpack_require__(334);
+var ReactMultiChild = __webpack_require__(333);
+var ReactServerRenderingTransaction = __webpack_require__(338);
 
 var emptyFunction = __webpack_require__(40);
 var escapeTextContentForBrowser = __webpack_require__(80);
 var invariant = __webpack_require__(6);
-var isEventSupported = __webpack_require__(109);
-var shallowEqual = __webpack_require__(112);
-var validateDOMNesting = __webpack_require__(111);
+var isEventSupported = __webpack_require__(110);
+var shallowEqual = __webpack_require__(113);
+var validateDOMNesting = __webpack_require__(112);
 var warning = __webpack_require__(9);
 
 var Flags = ReactDOMComponentFlags;
@@ -28716,7 +28903,7 @@ module.exports = ReactDOMComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 306 */
+/* 310 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28732,7 +28919,7 @@ module.exports = ReactDOMComponent;
 
 
 
-var validateDOMNesting = __webpack_require__(111);
+var validateDOMNesting = __webpack_require__(112);
 
 var DOC_NODE_TYPE = 9;
 
@@ -28755,7 +28942,7 @@ module.exports = ReactDOMContainerInfo;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 307 */
+/* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28774,7 +28961,7 @@ module.exports = ReactDOMContainerInfo;
 var _assign = __webpack_require__(13);
 
 var DOMLazyTree = __webpack_require__(54);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 
 var ReactDOMEmptyComponent = function (instantiate) {
   // ReactCompositeComponent uses this:
@@ -28820,7 +29007,7 @@ _assign(ReactDOMEmptyComponent.prototype, {
 module.exports = ReactDOMEmptyComponent;
 
 /***/ }),
-/* 308 */
+/* 312 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28844,7 +29031,7 @@ var ReactDOMFeatureFlags = {
 module.exports = ReactDOMFeatureFlags;
 
 /***/ }),
-/* 309 */
+/* 313 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28860,8 +29047,8 @@ module.exports = ReactDOMFeatureFlags;
 
 
 
-var DOMChildrenOperations = __webpack_require__(97);
-var ReactDOMComponentTree = __webpack_require__(14);
+var DOMChildrenOperations = __webpack_require__(98);
+var ReactDOMComponentTree = __webpack_require__(15);
 
 /**
  * Operations used to process updates to DOM nodes.
@@ -28883,7 +29070,7 @@ var ReactDOMIDOperations = {
 module.exports = ReactDOMIDOperations;
 
 /***/ }),
-/* 310 */
+/* 314 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28903,8 +29090,8 @@ var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
 var DOMPropertyOperations = __webpack_require__(148);
-var LinkedValueUtils = __webpack_require__(101);
-var ReactDOMComponentTree = __webpack_require__(14);
+var LinkedValueUtils = __webpack_require__(102);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactUpdates = __webpack_require__(34);
 
 var invariant = __webpack_require__(6);
@@ -29167,7 +29354,7 @@ module.exports = ReactDOMInput;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 311 */
+/* 315 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29266,7 +29453,7 @@ module.exports = ReactDOMInvalidARIAHook;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 312 */
+/* 316 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29315,7 +29502,7 @@ module.exports = ReactDOMNullInputValuePropHook;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 313 */
+/* 317 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29334,7 +29521,7 @@ module.exports = ReactDOMNullInputValuePropHook;
 var _assign = __webpack_require__(13);
 
 var React = __webpack_require__(56);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactDOMSelect = __webpack_require__(150);
 
 var warning = __webpack_require__(9);
@@ -29444,7 +29631,7 @@ module.exports = ReactDOMOption;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 314 */
+/* 318 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29462,7 +29649,7 @@ module.exports = ReactDOMOption;
 
 var ExecutionEnvironment = __webpack_require__(21);
 
-var getNodeForCharacterOffset = __webpack_require__(358);
+var getNodeForCharacterOffset = __webpack_require__(362);
 var getTextContentAccessor = __webpack_require__(162);
 
 /**
@@ -29661,7 +29848,7 @@ var ReactDOMSelection = {
 module.exports = ReactDOMSelection;
 
 /***/ }),
-/* 315 */
+/* 319 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29680,13 +29867,13 @@ module.exports = ReactDOMSelection;
 var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
-var DOMChildrenOperations = __webpack_require__(97);
+var DOMChildrenOperations = __webpack_require__(98);
 var DOMLazyTree = __webpack_require__(54);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 
 var escapeTextContentForBrowser = __webpack_require__(80);
 var invariant = __webpack_require__(6);
-var validateDOMNesting = __webpack_require__(111);
+var validateDOMNesting = __webpack_require__(112);
 
 /**
  * Text nodes violate a couple assumptions that React makes about components:
@@ -29831,7 +30018,7 @@ module.exports = ReactDOMTextComponent;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 316 */
+/* 320 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29850,8 +30037,8 @@ module.exports = ReactDOMTextComponent;
 var _prodInvariant = __webpack_require__(8),
     _assign = __webpack_require__(13);
 
-var LinkedValueUtils = __webpack_require__(101);
-var ReactDOMComponentTree = __webpack_require__(14);
+var LinkedValueUtils = __webpack_require__(102);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactUpdates = __webpack_require__(34);
 
 var invariant = __webpack_require__(6);
@@ -29997,7 +30184,7 @@ module.exports = ReactDOMTextarea;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 317 */
+/* 321 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30139,7 +30326,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 318 */
+/* 322 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30257,7 +30444,7 @@ module.exports = ReactDOMUnknownPropertyHook;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 319 */
+/* 323 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30274,12 +30461,12 @@ module.exports = ReactDOMUnknownPropertyHook;
 
 
 
-var ReactInvalidSetStateWarningHook = __webpack_require__(327);
-var ReactHostOperationHistoryHook = __webpack_require__(325);
+var ReactInvalidSetStateWarningHook = __webpack_require__(331);
+var ReactHostOperationHistoryHook = __webpack_require__(329);
 var ReactComponentTreeHook = __webpack_require__(24);
 var ExecutionEnvironment = __webpack_require__(21);
 
-var performanceNow = __webpack_require__(375);
+var performanceNow = __webpack_require__(379);
 var warning = __webpack_require__(9);
 
 var hooks = [];
@@ -30624,7 +30811,7 @@ module.exports = ReactDebugTool;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 320 */
+/* 324 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30697,7 +30884,7 @@ var ReactDefaultBatchingStrategy = {
 module.exports = ReactDefaultBatchingStrategy;
 
 /***/ }),
-/* 321 */
+/* 325 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30713,25 +30900,25 @@ module.exports = ReactDefaultBatchingStrategy;
 
 
 
-var ARIADOMPropertyConfig = __webpack_require__(291);
-var BeforeInputEventPlugin = __webpack_require__(293);
-var ChangeEventPlugin = __webpack_require__(295);
-var DefaultEventPluginOrder = __webpack_require__(297);
-var EnterLeaveEventPlugin = __webpack_require__(298);
-var HTMLDOMPropertyConfig = __webpack_require__(300);
-var ReactComponentBrowserEnvironment = __webpack_require__(302);
-var ReactDOMComponent = __webpack_require__(305);
-var ReactDOMComponentTree = __webpack_require__(14);
-var ReactDOMEmptyComponent = __webpack_require__(307);
-var ReactDOMTreeTraversal = __webpack_require__(317);
-var ReactDOMTextComponent = __webpack_require__(315);
-var ReactDefaultBatchingStrategy = __webpack_require__(320);
-var ReactEventListener = __webpack_require__(324);
-var ReactInjection = __webpack_require__(326);
-var ReactReconcileTransaction = __webpack_require__(332);
-var SVGDOMPropertyConfig = __webpack_require__(337);
-var SelectEventPlugin = __webpack_require__(338);
-var SimpleEventPlugin = __webpack_require__(339);
+var ARIADOMPropertyConfig = __webpack_require__(295);
+var BeforeInputEventPlugin = __webpack_require__(297);
+var ChangeEventPlugin = __webpack_require__(299);
+var DefaultEventPluginOrder = __webpack_require__(301);
+var EnterLeaveEventPlugin = __webpack_require__(302);
+var HTMLDOMPropertyConfig = __webpack_require__(304);
+var ReactComponentBrowserEnvironment = __webpack_require__(306);
+var ReactDOMComponent = __webpack_require__(309);
+var ReactDOMComponentTree = __webpack_require__(15);
+var ReactDOMEmptyComponent = __webpack_require__(311);
+var ReactDOMTreeTraversal = __webpack_require__(321);
+var ReactDOMTextComponent = __webpack_require__(319);
+var ReactDefaultBatchingStrategy = __webpack_require__(324);
+var ReactEventListener = __webpack_require__(328);
+var ReactInjection = __webpack_require__(330);
+var ReactReconcileTransaction = __webpack_require__(336);
+var SVGDOMPropertyConfig = __webpack_require__(341);
+var SelectEventPlugin = __webpack_require__(342);
+var SimpleEventPlugin = __webpack_require__(343);
 
 var alreadyInjected = false;
 
@@ -30788,7 +30975,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 322 */
+/* 326 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30813,7 +31000,7 @@ var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol
 module.exports = REACT_ELEMENT_TYPE;
 
 /***/ }),
-/* 323 */
+/* 327 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30851,7 +31038,7 @@ var ReactEventEmitterMixin = {
 module.exports = ReactEventEmitterMixin;
 
 /***/ }),
-/* 324 */
+/* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30871,12 +31058,12 @@ var _assign = __webpack_require__(13);
 
 var EventListener = __webpack_require__(167);
 var ExecutionEnvironment = __webpack_require__(21);
-var PooledClass = __webpack_require__(45);
-var ReactDOMComponentTree = __webpack_require__(14);
+var PooledClass = __webpack_require__(46);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactUpdates = __webpack_require__(34);
 
-var getEventTarget = __webpack_require__(108);
-var getUnboundedScrollPosition = __webpack_require__(368);
+var getEventTarget = __webpack_require__(109);
+var getUnboundedScrollPosition = __webpack_require__(372);
 
 /**
  * Find the deepest React component completely containing the root of the
@@ -31011,7 +31198,7 @@ var ReactEventListener = {
 module.exports = ReactEventListener;
 
 /***/ }),
-/* 325 */
+/* 329 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31050,7 +31237,7 @@ var ReactHostOperationHistoryHook = {
 module.exports = ReactHostOperationHistoryHook;
 
 /***/ }),
-/* 326 */
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31068,8 +31255,8 @@ module.exports = ReactHostOperationHistoryHook;
 
 var DOMProperty = __webpack_require__(43);
 var EventPluginHub = __webpack_require__(61);
-var EventPluginUtils = __webpack_require__(99);
-var ReactComponentEnvironment = __webpack_require__(102);
+var EventPluginUtils = __webpack_require__(100);
+var ReactComponentEnvironment = __webpack_require__(103);
 var ReactEmptyComponent = __webpack_require__(151);
 var ReactBrowserEventEmitter = __webpack_require__(77);
 var ReactHostComponent = __webpack_require__(153);
@@ -31089,7 +31276,7 @@ var ReactInjection = {
 module.exports = ReactInjection;
 
 /***/ }),
-/* 327 */
+/* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31132,7 +31319,7 @@ module.exports = ReactInvalidSetStateWarningHook;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 328 */
+/* 332 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31148,7 +31335,7 @@ module.exports = ReactInvalidSetStateWarningHook;
 
 
 
-var adler32 = __webpack_require__(350);
+var adler32 = __webpack_require__(354);
 
 var TAG_END = /\/?>/;
 var COMMENT_START = /^<\!\-\-/;
@@ -31187,7 +31374,7 @@ var ReactMarkupChecksum = {
 module.exports = ReactMarkupChecksum;
 
 /***/ }),
-/* 329 */
+/* 333 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31205,16 +31392,16 @@ module.exports = ReactMarkupChecksum;
 
 var _prodInvariant = __webpack_require__(8);
 
-var ReactComponentEnvironment = __webpack_require__(102);
+var ReactComponentEnvironment = __webpack_require__(103);
 var ReactInstanceMap = __webpack_require__(63);
 var ReactInstrumentation = __webpack_require__(28);
 
 var ReactCurrentOwner = __webpack_require__(35);
 var ReactReconciler = __webpack_require__(55);
-var ReactChildReconciler = __webpack_require__(301);
+var ReactChildReconciler = __webpack_require__(305);
 
 var emptyFunction = __webpack_require__(40);
-var flattenChildren = __webpack_require__(354);
+var flattenChildren = __webpack_require__(358);
 var invariant = __webpack_require__(6);
 
 /**
@@ -31643,7 +31830,7 @@ module.exports = ReactMultiChild;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 330 */
+/* 334 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31743,7 +31930,7 @@ module.exports = ReactOwner;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 331 */
+/* 335 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31774,7 +31961,7 @@ module.exports = ReactPropTypeLocationNames;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 332 */
+/* 336 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31793,12 +31980,12 @@ module.exports = ReactPropTypeLocationNames;
 var _assign = __webpack_require__(13);
 
 var CallbackQueue = __webpack_require__(147);
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 var ReactBrowserEventEmitter = __webpack_require__(77);
 var ReactInputSelection = __webpack_require__(154);
 var ReactInstrumentation = __webpack_require__(28);
 var Transaction = __webpack_require__(79);
-var ReactUpdateQueue = __webpack_require__(104);
+var ReactUpdateQueue = __webpack_require__(105);
 
 /**
  * Ensures that, when possible, the selection range (currently selected text
@@ -31958,7 +32145,7 @@ module.exports = ReactReconcileTransaction;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 333 */
+/* 337 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31975,7 +32162,7 @@ module.exports = ReactReconcileTransaction;
 
 
 
-var ReactOwner = __webpack_require__(330);
+var ReactOwner = __webpack_require__(334);
 
 var ReactRef = {};
 
@@ -32052,7 +32239,7 @@ ReactRef.detachRefs = function (instance, element) {
 module.exports = ReactRef;
 
 /***/ }),
-/* 334 */
+/* 338 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32070,10 +32257,10 @@ module.exports = ReactRef;
 
 var _assign = __webpack_require__(13);
 
-var PooledClass = __webpack_require__(45);
+var PooledClass = __webpack_require__(46);
 var Transaction = __webpack_require__(79);
 var ReactInstrumentation = __webpack_require__(28);
-var ReactServerUpdateQueue = __webpack_require__(335);
+var ReactServerUpdateQueue = __webpack_require__(339);
 
 /**
  * Executed within the scope of the `Transaction` instance. Consider these as
@@ -32148,7 +32335,7 @@ module.exports = ReactServerRenderingTransaction;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 335 */
+/* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32167,7 +32354,7 @@ module.exports = ReactServerRenderingTransaction;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ReactUpdateQueue = __webpack_require__(104);
+var ReactUpdateQueue = __webpack_require__(105);
 
 var warning = __webpack_require__(9);
 
@@ -32293,7 +32480,7 @@ module.exports = ReactServerUpdateQueue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 336 */
+/* 340 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32312,7 +32499,7 @@ module.exports = ReactServerUpdateQueue;
 module.exports = '15.4.2';
 
 /***/ }),
-/* 337 */
+/* 341 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32619,7 +32806,7 @@ Object.keys(ATTRS).forEach(function (key) {
 module.exports = SVGDOMPropertyConfig;
 
 /***/ }),
-/* 338 */
+/* 342 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32637,13 +32824,13 @@ module.exports = SVGDOMPropertyConfig;
 
 var EventPropagators = __webpack_require__(62);
 var ExecutionEnvironment = __webpack_require__(21);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactInputSelection = __webpack_require__(154);
 var SyntheticEvent = __webpack_require__(39);
 
 var getActiveElement = __webpack_require__(170);
 var isTextInputElement = __webpack_require__(164);
-var shallowEqual = __webpack_require__(112);
+var shallowEqual = __webpack_require__(113);
 
 var skipSelectionChangeEvent = ExecutionEnvironment.canUseDOM && 'documentMode' in document && document.documentMode <= 11;
 
@@ -32815,7 +33002,7 @@ var SelectEventPlugin = {
 module.exports = SelectEventPlugin;
 
 /***/ }),
-/* 339 */
+/* 343 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32836,21 +33023,21 @@ var _prodInvariant = __webpack_require__(8);
 
 var EventListener = __webpack_require__(167);
 var EventPropagators = __webpack_require__(62);
-var ReactDOMComponentTree = __webpack_require__(14);
-var SyntheticAnimationEvent = __webpack_require__(340);
-var SyntheticClipboardEvent = __webpack_require__(341);
+var ReactDOMComponentTree = __webpack_require__(15);
+var SyntheticAnimationEvent = __webpack_require__(344);
+var SyntheticClipboardEvent = __webpack_require__(345);
 var SyntheticEvent = __webpack_require__(39);
-var SyntheticFocusEvent = __webpack_require__(344);
-var SyntheticKeyboardEvent = __webpack_require__(346);
+var SyntheticFocusEvent = __webpack_require__(348);
+var SyntheticKeyboardEvent = __webpack_require__(350);
 var SyntheticMouseEvent = __webpack_require__(78);
-var SyntheticDragEvent = __webpack_require__(343);
-var SyntheticTouchEvent = __webpack_require__(347);
-var SyntheticTransitionEvent = __webpack_require__(348);
+var SyntheticDragEvent = __webpack_require__(347);
+var SyntheticTouchEvent = __webpack_require__(351);
+var SyntheticTransitionEvent = __webpack_require__(352);
 var SyntheticUIEvent = __webpack_require__(64);
-var SyntheticWheelEvent = __webpack_require__(349);
+var SyntheticWheelEvent = __webpack_require__(353);
 
 var emptyFunction = __webpack_require__(40);
-var getEventCharCode = __webpack_require__(106);
+var getEventCharCode = __webpack_require__(107);
 var invariant = __webpack_require__(6);
 
 /**
@@ -33049,7 +33236,7 @@ module.exports = SimpleEventPlugin;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 340 */
+/* 344 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33093,7 +33280,7 @@ SyntheticEvent.augmentClass(SyntheticAnimationEvent, AnimationEventInterface);
 module.exports = SyntheticAnimationEvent;
 
 /***/ }),
-/* 341 */
+/* 345 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33136,7 +33323,7 @@ SyntheticEvent.augmentClass(SyntheticClipboardEvent, ClipboardEventInterface);
 module.exports = SyntheticClipboardEvent;
 
 /***/ }),
-/* 342 */
+/* 346 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33177,7 +33364,7 @@ SyntheticEvent.augmentClass(SyntheticCompositionEvent, CompositionEventInterface
 module.exports = SyntheticCompositionEvent;
 
 /***/ }),
-/* 343 */
+/* 347 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33218,7 +33405,7 @@ SyntheticMouseEvent.augmentClass(SyntheticDragEvent, DragEventInterface);
 module.exports = SyntheticDragEvent;
 
 /***/ }),
-/* 344 */
+/* 348 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33259,7 +33446,7 @@ SyntheticUIEvent.augmentClass(SyntheticFocusEvent, FocusEventInterface);
 module.exports = SyntheticFocusEvent;
 
 /***/ }),
-/* 345 */
+/* 349 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33301,7 +33488,7 @@ SyntheticEvent.augmentClass(SyntheticInputEvent, InputEventInterface);
 module.exports = SyntheticInputEvent;
 
 /***/ }),
-/* 346 */
+/* 350 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33319,9 +33506,9 @@ module.exports = SyntheticInputEvent;
 
 var SyntheticUIEvent = __webpack_require__(64);
 
-var getEventCharCode = __webpack_require__(106);
-var getEventKey = __webpack_require__(355);
-var getEventModifierState = __webpack_require__(107);
+var getEventCharCode = __webpack_require__(107);
+var getEventKey = __webpack_require__(359);
+var getEventModifierState = __webpack_require__(108);
 
 /**
  * @interface KeyboardEvent
@@ -33390,7 +33577,7 @@ SyntheticUIEvent.augmentClass(SyntheticKeyboardEvent, KeyboardEventInterface);
 module.exports = SyntheticKeyboardEvent;
 
 /***/ }),
-/* 347 */
+/* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33408,7 +33595,7 @@ module.exports = SyntheticKeyboardEvent;
 
 var SyntheticUIEvent = __webpack_require__(64);
 
-var getEventModifierState = __webpack_require__(107);
+var getEventModifierState = __webpack_require__(108);
 
 /**
  * @interface TouchEvent
@@ -33440,7 +33627,7 @@ SyntheticUIEvent.augmentClass(SyntheticTouchEvent, TouchEventInterface);
 module.exports = SyntheticTouchEvent;
 
 /***/ }),
-/* 348 */
+/* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33484,7 +33671,7 @@ SyntheticEvent.augmentClass(SyntheticTransitionEvent, TransitionEventInterface);
 module.exports = SyntheticTransitionEvent;
 
 /***/ }),
-/* 349 */
+/* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33543,7 +33730,7 @@ SyntheticMouseEvent.augmentClass(SyntheticWheelEvent, WheelEventInterface);
 module.exports = SyntheticWheelEvent;
 
 /***/ }),
-/* 350 */
+/* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33592,7 +33779,7 @@ function adler32(data) {
 module.exports = adler32;
 
 /***/ }),
-/* 351 */
+/* 355 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33610,7 +33797,7 @@ module.exports = adler32;
 
 var _prodInvariant = __webpack_require__(8);
 
-var ReactPropTypeLocationNames = __webpack_require__(331);
+var ReactPropTypeLocationNames = __webpack_require__(335);
 var ReactPropTypesSecret = __webpack_require__(157);
 
 var invariant = __webpack_require__(6);
@@ -33685,7 +33872,7 @@ module.exports = checkReactTypeSpec;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 352 */
+/* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33770,7 +33957,7 @@ module.exports = dangerousStyleValue;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 353 */
+/* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33789,7 +33976,7 @@ module.exports = dangerousStyleValue;
 var _prodInvariant = __webpack_require__(8);
 
 var ReactCurrentOwner = __webpack_require__(35);
-var ReactDOMComponentTree = __webpack_require__(14);
+var ReactDOMComponentTree = __webpack_require__(15);
 var ReactInstanceMap = __webpack_require__(63);
 
 var getHostComponentFromComposite = __webpack_require__(161);
@@ -33836,7 +34023,7 @@ module.exports = findDOMNode;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 354 */
+/* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33853,7 +34040,7 @@ module.exports = findDOMNode;
 
 
 
-var KeyEscapeUtils = __webpack_require__(100);
+var KeyEscapeUtils = __webpack_require__(101);
 var traverseAllChildren = __webpack_require__(166);
 var warning = __webpack_require__(9);
 
@@ -33918,7 +34105,7 @@ module.exports = flattenChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 355 */
+/* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33934,7 +34121,7 @@ module.exports = flattenChildren;
 
 
 
-var getEventCharCode = __webpack_require__(106);
+var getEventCharCode = __webpack_require__(107);
 
 /**
  * Normalization of deprecated HTML5 `key` values
@@ -34025,7 +34212,7 @@ function getEventKey(nativeEvent) {
 module.exports = getEventKey;
 
 /***/ }),
-/* 356 */
+/* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34071,7 +34258,7 @@ function getIteratorFn(maybeIterable) {
 module.exports = getIteratorFn;
 
 /***/ }),
-/* 357 */
+/* 361 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34097,7 +34284,7 @@ function getNextDebugID() {
 module.exports = getNextDebugID;
 
 /***/ }),
-/* 358 */
+/* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34176,7 +34363,7 @@ function getNodeForCharacterOffset(root, offset) {
 module.exports = getNodeForCharacterOffset;
 
 /***/ }),
-/* 359 */
+/* 363 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34282,7 +34469,7 @@ function getVendorPrefixedEventName(eventName) {
 module.exports = getVendorPrefixedEventName;
 
 /***/ }),
-/* 360 */
+/* 364 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34313,7 +34500,7 @@ function quoteAttributeValueForBrowser(value) {
 module.exports = quoteAttributeValueForBrowser;
 
 /***/ }),
-/* 361 */
+/* 365 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34334,7 +34521,7 @@ var ReactMount = __webpack_require__(155);
 module.exports = ReactMount.renderSubtreeIntoContainer;
 
 /***/ }),
-/* 362 */
+/* 366 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34371,7 +34558,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 363 */
+/* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34388,7 +34575,7 @@ module.exports = camelize;
 
 
 
-var camelize = __webpack_require__(362);
+var camelize = __webpack_require__(366);
 
 var msPattern = /^-ms-/;
 
@@ -34416,7 +34603,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 364 */
+/* 368 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34433,7 +34620,7 @@ module.exports = camelizeStyleName;
  * 
  */
 
-var isTextNode = __webpack_require__(372);
+var isTextNode = __webpack_require__(376);
 
 /*eslint-disable no-bitwise */
 
@@ -34461,7 +34648,7 @@ function containsNode(outerNode, innerNode) {
 module.exports = containsNode;
 
 /***/ }),
-/* 365 */
+/* 369 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34594,7 +34781,7 @@ module.exports = createArrayFromMixed;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 366 */
+/* 370 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34615,8 +34802,8 @@ module.exports = createArrayFromMixed;
 
 var ExecutionEnvironment = __webpack_require__(21);
 
-var createArrayFromMixed = __webpack_require__(365);
-var getMarkupWrap = __webpack_require__(367);
+var createArrayFromMixed = __webpack_require__(369);
+var getMarkupWrap = __webpack_require__(371);
 var invariant = __webpack_require__(6);
 
 /**
@@ -34684,7 +34871,7 @@ module.exports = createNodesFromMarkup;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 367 */
+/* 371 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34785,7 +34972,7 @@ module.exports = getMarkupWrap;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 368 */
+/* 372 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34829,7 +35016,7 @@ function getUnboundedScrollPosition(scrollable) {
 module.exports = getUnboundedScrollPosition;
 
 /***/ }),
-/* 369 */
+/* 373 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34867,7 +35054,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 370 */
+/* 374 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34884,7 +35071,7 @@ module.exports = hyphenate;
 
 
 
-var hyphenate = __webpack_require__(369);
+var hyphenate = __webpack_require__(373);
 
 var msPattern = /^ms-/;
 
@@ -34911,7 +35098,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 371 */
+/* 375 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34939,7 +35126,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 372 */
+/* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34956,7 +35143,7 @@ module.exports = isNode;
  * @typechecks
  */
 
-var isNode = __webpack_require__(371);
+var isNode = __webpack_require__(375);
 
 /**
  * @param {*} object The object to check.
@@ -34969,7 +35156,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 373 */
+/* 377 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35004,7 +35191,7 @@ function memoizeStringOnly(callback) {
 module.exports = memoizeStringOnly;
 
 /***/ }),
-/* 374 */
+/* 378 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35032,7 +35219,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = performance || {};
 
 /***/ }),
-/* 375 */
+/* 379 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35049,7 +35236,7 @@ module.exports = performance || {};
  * @typechecks
  */
 
-var performance = __webpack_require__(374);
+var performance = __webpack_require__(378);
 
 var performanceNow;
 
@@ -35071,7 +35258,7 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 376 */
+/* 380 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35160,7 +35347,7 @@ exports.default = ProgressArc;
 module.exports = exports['default'];
 
 /***/ }),
-/* 377 */
+/* 381 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35224,7 +35411,7 @@ var KeyEscapeUtils = {
 module.exports = KeyEscapeUtils;
 
 /***/ }),
-/* 378 */
+/* 382 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35241,9 +35428,9 @@ module.exports = KeyEscapeUtils;
 
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
-var invariant = __webpack_require__(48);
+var invariant = __webpack_require__(49);
 
 /**
  * Static poolers. Several custom versions for each potential number of
@@ -35342,7 +35529,7 @@ module.exports = PooledClass;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 379 */
+/* 383 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35358,11 +35545,11 @@ module.exports = PooledClass;
 
 
 
-var PooledClass = __webpack_require__(378);
-var ReactElement = __webpack_require__(46);
+var PooledClass = __webpack_require__(382);
+var ReactElement = __webpack_require__(47);
 
-var emptyFunction = __webpack_require__(118);
-var traverseAllChildren = __webpack_require__(387);
+var emptyFunction = __webpack_require__(119);
+var traverseAllChildren = __webpack_require__(391);
 
 var twoArgumentPooler = PooledClass.twoArgumentPooler;
 var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -35538,7 +35725,7 @@ var ReactChildren = {
 module.exports = ReactChildren;
 
 /***/ }),
-/* 380 */
+/* 384 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35554,16 +35741,16 @@ module.exports = ReactChildren;
 
 
 
-var _prodInvariant = __webpack_require__(47),
+var _prodInvariant = __webpack_require__(48),
     _assign = __webpack_require__(13);
 
-var ReactComponent = __webpack_require__(113);
-var ReactElement = __webpack_require__(46);
-var ReactPropTypeLocationNames = __webpack_require__(115);
-var ReactNoopUpdateQueue = __webpack_require__(114);
+var ReactComponent = __webpack_require__(114);
+var ReactElement = __webpack_require__(47);
+var ReactPropTypeLocationNames = __webpack_require__(116);
+var ReactNoopUpdateQueue = __webpack_require__(115);
 
-var emptyObject = __webpack_require__(119);
-var invariant = __webpack_require__(48);
+var emptyObject = __webpack_require__(120);
+var invariant = __webpack_require__(49);
 var warning = __webpack_require__(36);
 
 var MIXINS_KEY = 'mixins';
@@ -36261,7 +36448,7 @@ module.exports = ReactClass;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 381 */
+/* 385 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36277,7 +36464,7 @@ module.exports = ReactClass;
 
 
 
-var ReactElement = __webpack_require__(46);
+var ReactElement = __webpack_require__(47);
 
 /**
  * Create a factory that creates HTML tag elements.
@@ -36437,7 +36624,7 @@ module.exports = ReactDOMFactories;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 382 */
+/* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36453,12 +36640,12 @@ module.exports = ReactDOMFactories;
 
 
 
-var ReactElement = __webpack_require__(46);
-var ReactPropTypeLocationNames = __webpack_require__(115);
+var ReactElement = __webpack_require__(47);
+var ReactPropTypeLocationNames = __webpack_require__(116);
 var ReactPropTypesSecret = __webpack_require__(174);
 
-var emptyFunction = __webpack_require__(118);
-var getIteratorFn = __webpack_require__(117);
+var emptyFunction = __webpack_require__(119);
+var getIteratorFn = __webpack_require__(118);
 var warning = __webpack_require__(36);
 
 /**
@@ -36877,7 +37064,7 @@ module.exports = ReactPropTypes;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 383 */
+/* 387 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36895,10 +37082,10 @@ module.exports = ReactPropTypes;
 
 var _assign = __webpack_require__(13);
 
-var ReactComponent = __webpack_require__(113);
-var ReactNoopUpdateQueue = __webpack_require__(114);
+var ReactComponent = __webpack_require__(114);
+var ReactNoopUpdateQueue = __webpack_require__(115);
 
-var emptyObject = __webpack_require__(119);
+var emptyObject = __webpack_require__(120);
 
 /**
  * Base class helpers for the updating state of a component.
@@ -36924,7 +37111,7 @@ ReactPureComponent.prototype.isPureReactComponent = true;
 module.exports = ReactPureComponent;
 
 /***/ }),
-/* 384 */
+/* 388 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36943,7 +37130,7 @@ module.exports = ReactPureComponent;
 module.exports = '15.4.2';
 
 /***/ }),
-/* 385 */
+/* 389 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36959,12 +37146,12 @@ module.exports = '15.4.2';
 
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
-var ReactPropTypeLocationNames = __webpack_require__(115);
+var ReactPropTypeLocationNames = __webpack_require__(116);
 var ReactPropTypesSecret = __webpack_require__(174);
 
-var invariant = __webpack_require__(48);
+var invariant = __webpack_require__(49);
 var warning = __webpack_require__(36);
 
 var ReactComponentTreeHook;
@@ -37036,7 +37223,7 @@ module.exports = checkReactTypeSpec;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 386 */
+/* 390 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37051,11 +37238,11 @@ module.exports = checkReactTypeSpec;
  */
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
-var ReactElement = __webpack_require__(46);
+var ReactElement = __webpack_require__(47);
 
-var invariant = __webpack_require__(48);
+var invariant = __webpack_require__(49);
 
 /**
  * Returns the first child in a collection of children and verifies that there
@@ -37080,7 +37267,7 @@ module.exports = onlyChild;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 387 */
+/* 391 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37096,14 +37283,14 @@ module.exports = onlyChild;
 
 
 
-var _prodInvariant = __webpack_require__(47);
+var _prodInvariant = __webpack_require__(48);
 
 var ReactCurrentOwner = __webpack_require__(35);
 var REACT_ELEMENT_TYPE = __webpack_require__(172);
 
-var getIteratorFn = __webpack_require__(117);
-var invariant = __webpack_require__(48);
-var KeyEscapeUtils = __webpack_require__(377);
+var getIteratorFn = __webpack_require__(118);
+var invariant = __webpack_require__(49);
+var KeyEscapeUtils = __webpack_require__(381);
 var warning = __webpack_require__(36);
 
 var SEPARATOR = '.';
@@ -37262,12 +37449,12 @@ module.exports = traverseAllChildren;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 388 */
+/* 392 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react_dom__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react_dom__ = __webpack_require__(50);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);

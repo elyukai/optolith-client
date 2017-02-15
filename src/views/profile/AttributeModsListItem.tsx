@@ -1,8 +1,4 @@
-import { AttributeInstance } from '../../utils/data/Attribute';
 import * as React from 'react';
-import AttributeStore from '../../stores/AttributeStore';
-import classNames from 'classnames';
-import TextBox from '../../components/TextBox';
 
 export default (props: AttributeInstance) => {
 	const { id, short, value } = props;

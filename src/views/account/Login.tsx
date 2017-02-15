@@ -29,7 +29,8 @@ export default class Login extends React.Component<Props, State> {
 	register = () => createOverlay(<Register />);
 	resendActivation = () => { createOverlay(<ResendActivation />); close(this.props.node!); };
 
-	_onChange = (option: 'username' | 'password', event: InputTextEvent) => this.setState({ [option]: event.target.value } as State);
+	changeUsername = (event: InputTextEvent) => this.setState({ username: event.target.value } as State);
+	changePassword = (event: InputTextEvent) => this.setState({ password: event.target.value } as State);
 	_onEnter = (event: InputKeyEvent) => {
 		if (event.charCode === 13 && this.state.username !== '' && this.state.password !== '') {
 			this.login();
@@ -57,14 +58,14 @@ export default class Login extends React.Component<Props, State> {
 				<TextField
 					hint="Benutzername"
 					value={username}
-					onChange={this._onChange.bind(null, 'username')}
+					onChange={this.changeUsername}
 					onKeyDown={this._onEnter}
 					fullWidth
 				/>
 				<TextField
 					hint="Passwort"
 					value={password}
-					onChange={this._onChange.bind(null, 'password')}
+					onChange={this.changePassword}
 					onKeyDown={this._onEnter}
 					type="password"
 					fullWidth

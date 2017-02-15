@@ -2,8 +2,6 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = never;
-
 let _fighters = [];
 let _fightersIdIndex = [];
 let _status = [1, 12];
@@ -390,7 +388,7 @@ class InGameStoreStatic extends Store {
 
 }
 
-const InGameStore = new InGameStoreStatic((action: Action) => {
+const InGameStore = new InGameStoreStatic((action) => {
 
 	// switch( payload.type ) {
 

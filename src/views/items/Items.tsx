@@ -1,23 +1,21 @@
+import * as React from 'react';
 import Equipment from './Equipment';
 import Inventory from './Inventory';
-import React, { Component } from 'react';
 import SubTabs from '../../components/SubTabs';
 
 interface State {
 	tab: string;
 }
 
-export default class Items extends Component<any, State> {
-
+export default class Items extends React.Component<undefined, State> {
 	state = {
 		tab: 'inventory'
 	};
 
-	handleClick = tab => this.setState({ tab });
+	handleClick = (tab: string) => this.setState({ tab });
 
 	render() {
-
-		var element;
+		let element;
 
 		switch (this.state.tab) {
 			case 'inventory':

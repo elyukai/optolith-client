@@ -462,32 +462,53 @@ interface TalentInstance {
 	reset(): void;
 }
 
-interface ItemInstance {
+interface ItemBaseInstance {
 	id: string;
 	name: string;
 	addPenalties: boolean;
 	ammunition: string | null;
-	at: number;
 	combatTechnique: string;
+	damageDiceSides: number;
+	gr: number;
+	isTemplateLocked: boolean;
+	reach: number;
+	template: string;
+	where: string;
+}
+
+interface ItemInstance extends ItemBaseInstance {
+	at: number;
 	damageBonus: number;
 	damageDiceNumber: number;
-	damageDiceSides: number;
 	damageFlat: number;
 	enc: number;
 	gr: number;
-	isTemplateLocked: boolean;
 	length: number;
 	amount: number;
 	pa: number;
 	price: number;
 	pro: number;
 	range: [number, number, number];
-	reach: number;
 	reloadTime: number;
 	stp: number;
-	template: string;
 	weight: number;
-	where: string;
+}
+
+interface ItemEditorInstance extends ItemBaseInstance {
+	at: string;
+	damageBonus: string;
+	damageDiceNumber: string;
+	damageFlat: string;
+	enc: string;
+	length: string;
+	amount: string;
+	pa: string;
+	price: string;
+	pro: string;
+	range: [string, string, string];
+	reloadTime: string;
+	stp: string;
+	weight: string;
 }
 
 interface SecondaryAttribute {

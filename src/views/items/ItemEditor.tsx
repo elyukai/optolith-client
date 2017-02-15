@@ -1,5 +1,6 @@
 import * as InventoryActions from '../../actions/InventoryActions';
 import * as React from 'react';
+import alert from '../../utils/alert';
 import Checkbox from '../../components/Checkbox';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import Dialog from '../../components/Dialog';
@@ -7,89 +8,156 @@ import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
 import InventoryStore from '../../stores/InventoryStore';
+import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 import Label from '../../components/Label';
 import TextField from '../../components/TextField';
 
 interface Props {
 	create?: boolean;
-	item: ItemInstance;
+	item?: ItemInstance;
 	node?: HTMLDivElement;
 }
 
-interface State extends ItemInstance {}
+interface State extends ItemEditorInstance {}
+
+const FIELDS = {
+	price: 'Preis',
+	weight: 'Gewicht',
+	amount: 'Anzahl',
+	damageDiceNumber: 'Anzahl Schadenswürfel',
+	damageFlat: 'Zusätzlicher Schaden',
+	damageBonus: 'Schadensschwelle',
+	at: 'AT',
+	pa: 'PA',
+	length: 'Länge',
+	stp: 'Strukturpunkte',
+	range: 'Reichweite',
+	reloadTime: 'Ladezeit',
+	pro: 'RS',
+	enc: 'BE'
+};
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
-const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]);
+const GROUPS_SELECTION = GROUPS.map((e,i) => ({ id: i + 1, name: e }));
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
 export default class ItemEditor extends React.Component<Props, State> {
-	state = this.props.item || {
-		id: '',
-		name: '',
-		price: '',
-		weight: '',
-		amount: '',
-		where: '',
-		gr: 0,
-		template: 'ITEMTPL_0',
-		isTemplateLocked: false,
-		combattechnique: 'CT_0',
-		damageDiceNumber: '',
-		damageDiceSides: null,
-		damageFlat: '',
-		damageBonus: '',
-		at: '',
-		pa: '',
-		reach: '',
-		length: '',
-		stp: '',
-		range1: '',
-		range2: '',
-		range3: '',
-		reloadtime: '',
-		ammunition: null,
-		pro: '',
-		enc: '',
-		addpenalties: false
-	};
+	state: State;
 
-	onEvent = (prop, e) => this.setState({ [prop]: e.target.value } as State);
-	onSwitch = (prop: string) => this.setState({ [prop]: !this.state[prop] });
-	onValue = (prop, value) => this.setState({ [prop]: value } as State);
+	constructor(props: Props) {
+		super(props);
+		let tempState = this.props.item;
+		if (tempState) {
+			if (tempState.isTemplateLocked) {
+				const { id } = tempState;
+				tempState = { ...InventoryStore.getTemplate(this.state.template), id };
+			}
+			this.state = convertToEdit(tempState);
+		}
+		else {
+			this.state = {
+				id: '',
+				name: '',
+				price: '',
+				weight: '',
+				amount: '',
+				where: '',
+				gr: 0,
+				template: 'ITEMTPL_0',
+				isTemplateLocked: false,
+				combatTechnique: 'CT_0',
+				damageDiceNumber: '',
+				damageDiceSides: 0,
+				damageFlat: '',
+				damageBonus: '',
+				at: '',
+				pa: '',
+				reach: 0,
+				length: '',
+				stp: '',
+				range: ['', '', ''],
+				reloadTime: '',
+				ammunition: null,
+				pro: '',
+				enc: '',
+				addPenalties: false
+			};
+		}
+	}
+
+	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
+	changePrice = (event: InputTextEvent) => this.setState({ price: event.target.value } as State);
+	changeWeight = (event: InputTextEvent) => this.setState({ weight: event.target.value } as State);
+	changeAmount = (event: InputTextEvent) => this.setState({ amount: event.target.value } as State);
+	changeWhere = (event: InputTextEvent) => this.setState({ where: event.target.value } as State);
+	changeGroup = (id: number) => this.setState({ gr: id } as State);
+	changeTemplate = (id: string) => this.setState({ template: id } as State);
+	changeCombatTechnique = (id: string) => this.setState({ combatTechnique: id } as State);
+	changeDamageDiceNumber = (event: InputTextEvent) => this.setState({ damageDiceNumber: event.target.value } as State);
+	changeDamageDiceSides = (id: number) => this.setState({ damageDiceSides: id } as State);
+	changeDamageFlat = (event: InputTextEvent) => this.setState({ damageFlat: event.target.value } as State);
+	changeDamageBonus = (event: InputTextEvent) => this.setState({ damageBonus: event.target.value } as State);
+	changeAT = (event: InputTextEvent) => this.setState({ at: event.target.value } as State);
+	changePA = (event: InputTextEvent) => this.setState({ pa: event.target.value } as State);
+	changeReach = (id: number) => this.setState({ reach: id } as State);
+	changeLength = (event: InputTextEvent) => this.setState({ length: event.target.value } as State);
+	changeStp = (event: InputTextEvent) => this.setState({ stp: event.target.value } as State);
+	changeRange = (event: InputTextEvent, index: 1 | 2 | 3) => {
+		const range = this.state.range;
+		range[index] = event.target.value;
+		this.setState({ range } as State)
+	};
+	changeRange1 = (event: InputTextEvent) => this.changeRange(event, 1);
+	changeRange2 = (event: InputTextEvent) => this.changeRange(event, 2);
+	changeRange3 = (event: InputTextEvent) => this.changeRange(event, 3);
+	changeReloadTime = (event: InputTextEvent) => this.setState({ reloadTime: event.target.value } as State);
+	changeAmmunition = (id: string) => this.setState({ ammunition: id } as State);
+	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as State);
+	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as State);
+	changeAddPenalties = () => this.setState((prevState) => ({ addPenalties: !prevState.addPenalties } as State));
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			let template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
-			template.range1 = template.range[0];
-			template.range2 = template.range[1];
-			template.range3 = template.range[2];
-			delete template.range;
-			this.setState(template);
+			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
+			this.setState(convertToEdit(template));
 		}
 	};
 	lockTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			let template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id };
-			template.range1 = template.range[0];
-			template.range2 = template.range[1];
-			template.range3 = template.range[2];
-			delete template.range;
-			this.setState(template);
+			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id };
+			this.setState(convertToEdit(template));
 		}
 	};
 	unlockTemplate = () => this.setState({ isTemplateLocked: false } as State);
 
-	addItem = () => InventoryActions.addToList(this.state);
-	saveItem = () => InventoryActions.set(this.state);
+	addItem = () => {
+		const itemToAdd = convertToSave(this.state);
+		const nanKeys = containsNaN(itemToAdd);
+		if (nanKeys) {
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
+		}
+		else {
+			InventoryActions.addToList(itemToAdd);
+		}
+	}
+	saveItem = () => {
+		const itemToAdd = convertToSave(this.state);
+		const nanKeys = containsNaN(itemToAdd);
+		if (nanKeys) {
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
+		}
+		else {
+			InventoryActions.set(this.state.id, itemToAdd);
+		}
+	}
 
 	render() {
-
 		const { create, node } = this.props;
-		const { addpenalties, ammunition, amount, at, combattechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range1, range2, range3, reach, reloadtime, stp, template, weight, where } = this.state;
+		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
-		const TEMPLATES = [['Keine Vorlage', 'ITEMTPL_0']].concat(InventoryStore.getAllTemplates().map(e => [e.name, e.id]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
-		const AMMUNITION = [['Keine', null]].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(e => [e.name, e.id]));
+		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(InventoryStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 
 		return (
 			<Dialog
@@ -110,13 +178,13 @@ export default class ItemEditor extends React.Component<Props, State> {
 							className="number"
 							label="Menge"
 							value={amount}
-							onChange={this.onEvent.bind(null, 'number')}
+							onChange={this.changeAmount}
 							/>
 						<TextField
 							className="name"
 							label="Name"
 							value={name}
-							onChange={this.onEvent.bind(null, 'name')}
+							onChange={this.changeName}
 							autoFocus={create}
 							disabled={locked}
 							/>
@@ -126,21 +194,21 @@ export default class ItemEditor extends React.Component<Props, State> {
 							className="price"
 							label="Preis in S"
 							value={price}
-							onChange={this.onEvent.bind(null, 'price')}
+							onChange={this.changePrice}
 							disabled={locked}
 							/>
 						<TextField
 							className="weight"
 							label="Gewicht in St"
 							value={weight}
-							onChange={this.onEvent.bind(null, 'weight')}
+							onChange={this.changeWeight}
 							disabled={locked}
 							/>
 						<TextField
 							className="where"
 							label="Wo getragen"
 							value={where}
-							onChange={this.onEvent.bind(null, 'where')}
+							onChange={this.changeWhere}
 							/>
 					</div>
 					<div className="row">
@@ -149,8 +217,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Art"
 							hint="Wähle den Typ des Gegenstands aus"
 							value={gr}
-							options={GROUPS_SELECTION as [string, number][]}
-							onChange={this.onValue.bind(null, 'gr')}
+							options={GROUPS_SELECTION}
+							onChange={this.changeGroup}
 							disabled={locked}
 							/>
 					</div>
@@ -161,8 +229,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Vorlage"
 							hint="Keine"
 							value={template}
-							options={TEMPLATES as [string, string][]}
-							onChange={this.onValue.bind(null, 'template')}
+							options={TEMPLATES}
+							onChange={this.changeTemplate}
 							disabled={locked}
 							/>
 						<IconButton
@@ -191,9 +259,9 @@ export default class ItemEditor extends React.Component<Props, State> {
 							className="combattechnique"
 							label="Kampftechnik"
 							hint="Keine"
-							value={combattechnique}
-							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(e => [e.name, e.id]) as [string, string][]}
-							onChange={this.onValue.bind(null, 'ct')}
+							value={combatTechnique}
+							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(({ id, name }) => ({ id, name }))}
+							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							/>
 					</div>
@@ -202,7 +270,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 							className="damage-bonus"
 							label="Schadensb."
 							value={damageBonus}
-							onChange={this.onEvent.bind(null, 'db')}
+							onChange={this.changeDamageBonus}
 							disabled={locked}
 							/>
 						<div className="container">
@@ -210,21 +278,21 @@ export default class ItemEditor extends React.Component<Props, State> {
 							<TextField
 								className="damage-dice-number"
 								value={damageDiceNumber}
-								onChange={this.onEvent.bind(null, 'ddn')}
+								onChange={this.changeDamageDiceNumber}
 								disabled={locked}
 								/>
 							<Dropdown
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[['W3',3],['W6',6],['W20',20]]}
-								onChange={this.onValue.bind(null, 'dds')}
+								options={[{id:3,name:'W3'},{id:6,name:'W6'},{id:20,name:'W20'}]}
+								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
 							<TextField
 								className="damage-flat"
 								value={damageFlat}
-								onChange={this.onEvent.bind(null, 'df')}
+								onChange={this.changeDamageFlat}
 								disabled={locked}
 								/>
 						</div>
@@ -235,8 +303,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Reichweite"
 							hint="Auswählen"
 							value={reach}
-							options={[['Kurz',1],['Mittel',2],['Lang',3]]}
-							onChange={this.onValue.bind(null, 're')}
+							options={[{id:1,name:'Kurz'},{id:2,name:'Mittel'},{id:3,name:'Lang'}]}
+							onChange={this.changeReach}
 							disabled={locked}
 							/>
 						<div className="container">
@@ -244,22 +312,22 @@ export default class ItemEditor extends React.Component<Props, State> {
 							<TextField
 								className="at"
 								value={at}
-								onChange={this.onEvent.bind(null, 'at')}
+								onChange={this.changeAT}
 								disabled={locked}
 								/>
 							<TextField
 								className="pa"
 								value={pa}
-								onChange={this.onEvent.bind(null, 'pa')}
-								disabled={locked || combattechnique === 'CT_6'}
+								onChange={this.changePA}
+								disabled={locked || combatTechnique === 'CT_6'}
 								/>
 						</div>
-						{ combattechnique === 'CT_10' ? (
+						{ combatTechnique === 'CT_10' ? (
 							<TextField
 								className="stp"
 								label="Strukturp."
 								value={stp}
-								onChange={this.onEvent.bind(null, 'length')}
+								onChange={this.changeStp}
 								disabled={locked}
 								/>
 						) : (
@@ -267,7 +335,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 								className="length"
 								label="Länge in Hf."
 								value={length}
-								onChange={this.onEvent.bind(null, 'length')}
+								onChange={this.changeLength}
 								disabled={locked}
 								/>
 						) }
@@ -280,9 +348,9 @@ export default class ItemEditor extends React.Component<Props, State> {
 							className="combattechnique"
 							label="Kampftechnik"
 							hint="Keine"
-							value={combattechnique}
-							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(e => [e.name, e.id]) as [string, string][]}
-							onChange={this.onValue.bind(null, 'ct')}
+							value={combatTechnique}
+							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(({ id, name }) => ({ id, name }))}
+							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							/>
 					</div>
@@ -290,8 +358,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 						<TextField
 							className="reloadtime"
 							label="Ladezeiten"
-							value={reloadtime}
-							onChange={this.onEvent.bind(null, 'rt')}
+							value={reloadTime}
+							onChange={this.changeReloadTime}
 							disabled={locked}
 							/>
 						<div className="container">
@@ -299,21 +367,21 @@ export default class ItemEditor extends React.Component<Props, State> {
 							<TextField
 								className="damage-dice-number"
 								value={damageDiceNumber}
-								onChange={this.onEvent.bind(null, 'ddn')}
+								onChange={this.changeDamageDiceNumber}
 								disabled={locked}
 								/>
 							<Dropdown
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[['W3',3],['W6',6],['W20',20]]}
-								onChange={this.onValue.bind(null, 'dds')}
+								options={[{id:3,name:'W3'},{id:6,name:'W6'},{id:20,name:'W20'}]}
+								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
 							<TextField
 								className="damage-flat"
 								value={damageFlat}
-								onChange={this.onEvent.bind(null, 'df')}
+								onChange={this.changeDamageFlat}
 								disabled={locked}
 								/>
 						</div>
@@ -324,21 +392,21 @@ export default class ItemEditor extends React.Component<Props, State> {
 								className="range1"
 								label="Nah"
 								value={range1}
-								onChange={this.onValue.bind(null, 'rb1')}
+								onChange={this.changeRange1}
 								disabled={locked}
 								/>
 							<TextField
 								className="range2"
 								label="Mittel"
 								value={range2}
-								onChange={this.onValue.bind(null, 'rb2')}
+								onChange={this.changeRange2}
 								disabled={locked}
 								/>
 							<TextField
 								className="range3"
 								label="Weit"
 								value={range3}
-								onChange={this.onValue.bind(null, 'rb3')}
+								onChange={this.changeRange3}
 								disabled={locked}
 								/>
 						</div>
@@ -347,15 +415,15 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Munition"
 							hint="Keine"
 							value={ammunition}
-							options={AMMUNITION as [string, string][]}
-							onChange={this.onValue.bind(null, 'ammunition')}
+							options={AMMUNITION}
+							onChange={this.changeAmmunition}
 							disabled={locked}
 							/>
 						<TextField
 							className="length"
 							label="Länge in Hf."
 							value={length}
-							onChange={this.onEvent.bind(null, 'length')}
+							onChange={this.changeLength}
 							disabled={locked}
 							/>
 					</div>
@@ -368,22 +436,22 @@ export default class ItemEditor extends React.Component<Props, State> {
 								className="pro"
 								label="RS"
 								value={pro}
-								onChange={this.onEvent.bind(null, 'pro')}
+								onChange={this.changePRO}
 								disabled={locked}
 								/>
 							<TextField
 								className="enc"
 								label="BE"
 								value={enc}
-								onChange={this.onEvent.bind(null, 'enc')}
+								onChange={this.changeENC}
 								disabled={locked}
 								/>
 						</div>
 						<Checkbox
 							className="addpenalties"
 							label="Zusätzliche Abzüge"
-							checked={addpenalties}
-							onClick={this.onSwitch.bind(null, 'addpenalties')}
+							checked={addPenalties}
+							onClick={this.changeAddPenalties}
 							disabled={locked}
 							/>
 					</div>

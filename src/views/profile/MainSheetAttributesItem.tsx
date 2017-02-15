@@ -2,22 +2,31 @@ import * as React from 'react';
 import classNames from 'classnames';
 
 export interface MainSheetAttributesItem {
-	add?: number,
-	calc: string,
-	empty?: boolean,
-	label: string,
-	max?: number,
-	purchased?: number,
-	subArray?: number[],
-	subLabel?: string,
+	add?: number;
+	calc: string;
+	empty?: boolean;
+	label: string;
+	max?: number;
+	purchased?: number;
+	subArray?: number[];
+	subLabel?: string;
 	value: number | string;
 }
 
 export default (props: MainSheetAttributesItem) => {
-	let max = props.empty ? '-' : props.value + props.add;
-	if (!props.empty) {
-		if (props.purchased !== null) max += props.purchased;
-		if (props.max) max += props.max;
+	const { add = 0, value, purchased, max } = props;
+	let final;
+	if (typeof value === 'string') {
+		final = '-';
+	}
+	else {
+		final = value + add;
+		if (purchased) {
+			final += purchased;
+		}
+		if (max) {
+			final += max;
+		}
 	}
 
 	return (
@@ -38,7 +47,7 @@ export default (props: MainSheetAttributesItem) => {
 					'purchased',
 					props.purchased === null && 'blocked'
 				)}>{ props.purchased === null ? '\uE14B' : props.empty ? '-' : props.purchased}</div>
-				<div className="max">{max}</div>
+				<div className="max">{final}</div>
 				{
 					props.subArray ? props.subArray.map(
 						(value, index) => <div key={props.label + index} className="sub">{props.empty ? '-' : value}</div>
