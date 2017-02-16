@@ -18,12 +18,12 @@ export default class Profile extends Component<undefined, ProfileState> {
 
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as ProfileState);
 
-	handleClick = tab => this.setState({ tab } as ProfileState);
-	
+	handleClick = (tab: string) => this.setState({ tab } as ProfileState);
+
 	componentDidMount() {
 		PhaseStore.addChangeListener(this._updatePhaseStore );
 	}
-	
+
 	componentWillUnmount() {
 		PhaseStore.removeChangeListener(this._updatePhaseStore );
 	}

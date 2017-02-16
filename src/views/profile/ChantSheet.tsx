@@ -10,11 +10,11 @@ export default () => {
 
 	return (
 		<div className="sheet chants">
-			<SheetHeader title="Liturgien & Zeremonien" add={[]} />
+			<SheetHeader title="Liturgien &amp; Zeremonien" add={[]} />
 			<div className="upper">
-				<TextBox label="Liturgien & Zeremonien">
+				<TextBox label="Liturgien &amp; Zeremonien">
 				</TextBox>
 			</div>
 		</div>
 	);
-}
+};

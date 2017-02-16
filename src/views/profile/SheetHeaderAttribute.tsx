@@ -4,7 +4,7 @@ import classNames from 'classnames';
 interface SheetHeaderAttributeProps {
 	id: string;
 	label: string;
-	value: number;
+	value: number | string;
 }
 
 export default (props: SheetHeaderAttributeProps) => {

@@ -1,7 +1,3 @@
-import { CultureInstance } from '../../utils/data/Culture';
-import { ProfessionInstance } from '../../utils/data/Profession';
-import { ProfessionVariantInstance } from '../../utils/data/ProfessionVariant';
-import { RaceInstance } from '../../utils/data/Race';
 import * as React from 'react';
 import Avatar from '../../components/Avatar';
 import LabelBox from '../../components/LabelBox';
@@ -20,7 +16,7 @@ export interface MainSheetPersonalDataProps {
 	professionVariant?: ProfessionVariantInstance;
 	profile: {
 		name: string;
-		sex: string;
+		sex: 'm' | 'f';
 		avatar: string;
 		family: string;
 		placeofbirth: string;
@@ -58,7 +54,7 @@ export default (props: MainSheetPersonalDataProps) => {
 		}
 		return name + (subname ? ` (${subname})` : professionVariant ? ` (${vname})` : '');
 	})();
-	
+
 	const haircolorName = haircolorTags[haircolor - 1];
 	const eyecolorName = eyecolorTags[eyecolor - 1];
 	const socialstatusName = socialstatusTags[socialstatus - 1];
@@ -93,4 +89,4 @@ export default (props: MainSheetPersonalDataProps) => {
 			</div>
 		</div>
 	);
-}
+};

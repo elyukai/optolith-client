@@ -6,7 +6,7 @@ import HistoryStore from './HistoryStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions;
 
 const CATEGORY = Categories.ATTRIBUTES;
 
@@ -92,10 +92,14 @@ class AttributeStoreStatic extends Store {
 
 const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: Action) => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
-	if (action.undoAction) {
+	if (action.undo) {
 		switch(action.type) {
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				break;
 
 			case ActionTypes.ADD_LIFE_POINT:

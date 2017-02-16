@@ -5,7 +5,7 @@ import PhaseStore from './PhaseStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 
-type Action = ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction;
+type Action = ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | UndoTriggerActions;
 
 const CATEGORY = Categories.LITURGIES;
 
@@ -67,19 +67,33 @@ class LiturgiesStoreStatic extends Store {
 }
 
 const LiturgiesStore = new LiturgiesStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.ACTIVATE_LITURGY:
-		case ActionTypes.DEACTIVATE_LITURGY:
-		case ActionTypes.ADD_LITURGY_POINT:
-		case ActionTypes.REMOVE_LITURGY_POINT:
-			break;
+	if (action.undo) {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				break;
 
-		case ActionTypes.SET_LITURGIES_SORT_ORDER:
-			_updateSortOrder(action.payload.sortOrder);
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_LITURGY:
+			case ActionTypes.DEACTIVATE_LITURGY:
+			case ActionTypes.ADD_LITURGY_POINT:
+			case ActionTypes.REMOVE_LITURGY_POINT:
+				break;
 
-		default:
-			return true;
+			case ActionTypes.SET_LITURGIES_SORT_ORDER:
+				_updateSortOrder(action.payload.sortOrder);
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	LiturgiesStore.emitChange();

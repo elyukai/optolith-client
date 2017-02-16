@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import * as WebAPIUtils from '../utils/WebAPIUtils';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Race from '../data/Race';
 import RaceStore from '../stores/RaceStore';
@@ -10,12 +11,19 @@ export const setHeroName = (name: string) => AppDispatcher.dispatch<SetHeroNameA
 	}
 });
 
-export const setHeroAvatar = (url: string) => AppDispatcher.dispatch<SetHeroAvatarAction>({
-	type: ActionTypes.SET_HERO_AVATAR,
-	payload: {
-		url
+export const setHeroAvatar = (source: string | File) => {
+	if (typeof source === 'string') {
+		AppDispatcher.dispatch<SetHeroAvatarAction>({
+			type: ActionTypes.SET_HERO_AVATAR,
+			payload: {
+				url: source
+			}
+		});
 	}
-});
+	else {
+		WebAPIUtils.changeHeroAvatar(source);
+	}
+};
 	// changeAvatar({ source, extern, file }) {
 	// 	if (source === 'ext') {
 	// 		AppDispatcher.dispatch({

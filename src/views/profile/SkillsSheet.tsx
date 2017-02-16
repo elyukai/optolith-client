@@ -1,44 +1,44 @@
-import { get, getAllByCategory } from '../../stores/ListStore';
-import { TalentInstance } from '../../utils/data/Talent';
+import { get } from '../../stores/ListStore';
 import * as React from 'react';
 import AttributeMods from './AttributeMods';
-import * as Categories from '../../constants/Categories';
 import SheetHeader from './SheetHeader';
+import TalentsStore from '../../stores/TalentsStore';
 import TextBox from '../../components/TextBox';
 
-const getRoutineValue = (sr, attributes) => {
+const getRoutineValue = (sr: number, attributes: number[]) => {
 	if (sr > 0 ) {
 		const lessAttrPoints = attributes.map(e => e < 13 ? 13 - e : 0).reduce((a,b) => a + b, 0);
 		const flatRoutineLevel = Math.floor((sr - 1) / 3);
 		const checkMod = flatRoutineLevel * -1 + 3;
 		const dependentCheckMod = checkMod + lessAttrPoints;
-		return dependentCheckMod < 4 ? [ dependentCheckMod, lessAttrPoints > 0 ] : false;
+		return dependentCheckMod < 4 ? [ dependentCheckMod, lessAttrPoints > 0 ] as [number, boolean] : false;
 	}
 	return false;
 };
 
 const iterateList = (arr: TalentInstance[]): JSX.Element[] => arr.map(obj => {
-	const { id, name, check, enc, ic, value } = obj;
-	const checkValues = check.map(e => get(e).value);
-	const checkString = check.map(e => get(e).short).join('/');
-	const encString = enc === 'true' ? 'Ja' : enc === 'false' ? 'Nein' : 'Evtl';
+	const { id, name, check, encumbrance, ic, value } = obj;
+	const checkValues = check.map(e => (get(e) as AttributeInstance).value);
+	const checkString = check.map(e => (get(e) as AttributeInstance).short).join('/');
+	const encString = encumbrance === 'true' ? 'Ja' : encumbrance === 'false' ? 'Nein' : 'Evtl';
 	const ics = ['A','B','C','D'];
 	const routine = getRoutineValue(value, checkValues);
-	const routineSign = routine[0] > 0 ? '+' : '';
+	const routineSign = routine && routine[0] > 0 ? '+' : '';
+	const routineMark = routine && routine[1] ? '!' : '';
 	return (<tr key={id}>
 		<td className="name">{name}</td>
 		<td className="check">{checkString}</td>
 		<td className="enc">{encString}</td>
 		<td className="ic">{ics[ic - 1]}</td>
 		<td className="sr">{value}</td>
-		<td className="routine">{routineSign}{Array.isArray(routine) ? routine[0] : '-'}{routine[1] ? '!' : ''}</td>
+		<td className="routine">{routineSign}{Array.isArray(routine) ? routine[0] : '-'}{routineMark}</td>
 		<td className="comment"></td>
 	</tr>);
 });
 
 export default () => {
 	const talentsByGroup: TalentInstance[][] = [[],[],[],[],[]];
-	getAllByCategory(Categories.TALENTS).forEach(obj => talentsByGroup[obj.gr - 1].push(obj));
+	TalentsStore.getAll().forEach(obj => talentsByGroup[obj.gr - 1].push(obj));
 
 	const groupChecksIds = [
 		['COU','AGI','STR'],
@@ -47,7 +47,16 @@ export default () => {
 		['SGC','SGC','INT'],
 		['DEX','DEX','CON']
 	];
-	const groupChecks = groupChecksIds.map(arr => arr.map(e => get(e).short).join('/'));
+	const groupChecks = groupChecksIds.map(arr => arr.map(e => (get(e) as AttributeInstance).short).join('/'));
+
+	const SA_30 = get('SA_30') as SpecialAbilityInstance;
+	const languages = SA_30.active.map(({ sid, tier }) => {
+		const { id, name } = SA_30.sel[(sid as number) - 1];
+		return ({ id, name, tier: tier! });
+	}).sort((a,b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+
+	const SA_28 = get('SA_28') as SpecialAbilityInstance;
+	const scripts = SA_28.active.map(({ sid }) => SA_30.sel[(sid as number) - 1].name).sort();
 
 	return (
 		<div className="sheet" id="skills-sheet">
@@ -144,16 +153,16 @@ export default () => {
 					<TextBox label="Sprachen">
 						<table className="languages-list">
 							<tbody>
-								{get('SA_30').active.map(e => [ get('SA_30').sel[e[0] - 1][0], e[1], get('SA_30').sel[e[0] - 1][1]]).sort((a,b) => a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).map(e => <tr key={`lang-${e[2]}`}>
-									<td>{e[0]}</td>
-									<td>{e[1] === 4 ? 'MS' : e[1]}</td>
+								{languages.map(e => <tr key={`lang-${e.id}`}>
+									<td>{e.name}</td>
+									<td>{e.tier === 4 ? 'MS' : e.tier}</td>
 								</tr>)}
 							</tbody>
 						</table>
 					</TextBox>
 					<TextBox label="Schriften">
 						<div className="scripts-list">
-							{get('SA_28').active.map(e => get('SA_28').sel[e - 1][0]).sort().join(', ')}
+							{scripts.join(', ')}
 						</div>
 					</TextBox>
 				</div>
@@ -193,4 +202,4 @@ export default () => {
 			</div>
 		</div>
 	);
-}
+};

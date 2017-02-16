@@ -1,5 +1,5 @@
-import IconButton from '../../components/IconButton';
 import * as React from 'react';
+import IconButton from '../../components/IconButton';
 import TextField from '../../components/TextField';
 
 interface Props {
@@ -19,14 +19,13 @@ export default class OverviewNameChange extends React.Component<Props, State> {
 
 	change = () => this.props.change(this.state.name);
 
-	handleEnter = event => {
-		if (event.charCode === 13 && this.state.name !== '')
+	handleEnter = (event: InputKeyEvent) => {
+		if (event.charCode === 13 && this.state.name !== '') {
 			this.change();
-	};
+		}
+	}
 
-	handleInput = event => {
-		this.setState({ name: event.target.value });
-	};
+	handleInput = (event: InputTextEvent) => this.setState({ name: event.target.value });
 
 	render() {
 		return (
@@ -34,7 +33,7 @@ export default class OverviewNameChange extends React.Component<Props, State> {
 				<TextField
 					value={this.state.name}
 					onChange={this.handleInput}
-					onKeyPress={this.handleEnter}
+					onKeyDown={this.handleEnter}
 					autoFocus />
 				<IconButton icon="&#xE876;" onClick={this.change} disabled={this.state.name === ''} />
 				<IconButton icon="&#xE5CD;" onClick={this.props.cancel} />

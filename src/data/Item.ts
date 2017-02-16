@@ -27,12 +27,12 @@ export default class Item extends Core implements ItemInstance {
 	weight: number;
 	where: string;
 
-	constructor(args: RawItem & { isTemplateLocked?: boolean; }) {
+	constructor(args: ItemInstance) {
 		super(args);
 		const {
 			price,
 			weight,
-			number,
+			amount,
 			where,
 			gr,
 			combatTechnique,
@@ -57,7 +57,7 @@ export default class Item extends Core implements ItemInstance {
 
 		this.price = price;
 		this.weight = weight;
-		this.amount = number;
+		this.amount = amount;
 		this.gr = gr;
 
 		this.combatTechnique = combatTechnique;

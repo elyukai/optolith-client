@@ -10,11 +10,11 @@ export default () => {
 
 	return (
 		<div className="sheet spells">
-			<SheetHeader title="Zauber & Rituale" add={[]} />
+			<SheetHeader title="Zauber &amp; Rituale" add={[]} />
 			<div className="upper">
-				<TextBox label="Zauber & Rituale">
+				<TextBox label="Zauber &amy; Rituale">
 				</TextBox>
 			</div>
 		</div>
 	);
-}
+};

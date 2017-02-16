@@ -1,6 +1,5 @@
-import { SecondaryAttribute } from '../../utils/secondaryAttributes';
+import * as React from 'react';
 import AttributeStore from '../../stores/AttributeStore';
-import React, { Component, PropTypes } from 'react';
 import SheetHeaderAttribute from './SheetHeaderAttribute';
 
 interface SheetHeaderProps {
@@ -8,9 +7,15 @@ interface SheetHeaderProps {
 	title: string;
 }
 
+interface HeaderValue {
+	id: string;
+	short: string;
+	value: number | string;
+}
+
 export default (props: SheetHeaderProps) => {
 	const { add = [], title } = props;
-	const array = AttributeStore.getAll().concat(add);
+	const array: HeaderValue[] = [ ...AttributeStore.getAll(), ...add ];
 
 	return (
 		<div className="sheet-header">
@@ -26,4 +31,4 @@ export default (props: SheetHeaderProps) => {
 			</div>
 		</div>
 	);
-}
+};

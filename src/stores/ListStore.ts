@@ -224,9 +224,9 @@ function _clear() {
 }
 
 const ListStore = new Store((action: Action) => {
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
-	if (action.undoAction) {
-		switch( action.type ) {
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+	if (action.undo) {
+		switch(action.type) {
 			case ActionTypes.ACTIVATE_SPELL:
 			case ActionTypes.ACTIVATE_LITURGY:
 				_deactivate(action.payload.id);
@@ -239,10 +239,46 @@ const ListStore = new Store((action: Action) => {
 
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
-			case ActionTypes.DEACTIVATE_DISADV:
-			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				console.debug('UNDO for ' + action.type + ' not yet implemented.\nFind a solution how to implement this feature. It has to be implemented for the first release.');
+				const id = action.payload.id;
+				const index = action.payload.index!;
+				const active = action.payload.activeObject!;
+				const adds = [];
+				let sid;
+				switch (id) {
+					case 'ADV_4':
+					case 'ADV_16':
+					case 'DISADV_48':
+						sid = active.sid as string;
+						break;
+					case 'SA_10':
+						adds.push({ id: active.sid as string, value: (_byId[id] as ActivatableInstances).active.filter(e => e.sid === active.sid).length * 6 });
+						break;
+				}
+				(_byId[id] as ActivatableInstances).removeDependencies(adds, sid);
+				(_byId[id] as ActivatableInstances).active.splice(index, 1);
 				break;
+
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY: {
+				const id = action.payload.id;
+				const index = action.payload.index;
+				const active = action.payload.activeObject!;
+				(_byId[id] as ActivatableInstances).active.splice(index, 0, active);
+				const adds = [];
+				let sid;
+				switch (id) {
+					case 'ADV_4':
+					case 'ADV_16':
+					case 'DISADV_48':
+						sid = active.sid as string;
+						break;
+					case 'SA_10':
+						adds.push({ id: active.sid as string, value: (_byId[id] as ActivatableInstances).active.filter(e => e.sid === active.sid).length * 6 });
+						break;
+				}
+				(_byId[id] as ActivatableInstances).addDependencies(adds, sid);
+				break;
+			}
 
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.SET_SPECIALABILITY_TIER:
@@ -311,6 +347,7 @@ const ListStore = new Store((action: Action) => {
 			case ActionTypes.DEACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				if (RequirementsStore.isValid()) {
+					AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 					_deactivateDASA(action.payload.id, action.payload.index);
 				}
 				break;

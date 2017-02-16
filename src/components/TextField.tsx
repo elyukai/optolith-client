@@ -17,7 +17,7 @@ interface Props {
 	onChange: (event: React.FormEvent<HTMLInputElement>) => void;
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	type?: string;
-	value: string | number;
+	value?: string | number;
 }
 
 export default class TextField extends React.Component<Props, undefined> {

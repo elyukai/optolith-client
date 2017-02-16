@@ -90,9 +90,9 @@ class RequirementsStoreStatic extends Store {
 }
 
 const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
-	if (action.undoAction) {
+	if (action.undo) {
 		_updateOwnRequirements(true);
-		_updateCost(-action.cost, true);
+		_updateCost(-action.cost!, true);
 	}
 	else {
 		switch(action.type) {
@@ -134,7 +134,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 
 			case ActionTypes.DEACTIVATE_DISADV:
 				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isDeactivatable);
-				_updateDisAdvCost(action.payload.id, action.payload.cost);
+				_updateDisAdvCost(action.payload.id, -action.payload.cost);
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:

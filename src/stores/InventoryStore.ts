@@ -9,91 +9,94 @@ let _itemsById: { [id: string]: Item } = {
 	ITEM_1: new Item({
 		id: 'ITEM_1',
 		name: 'Mörderstorchsäbel',
-		price: '100',
-		weight: '1.2',
-		number: '1',
+		price: 100,
+		weight: 1.2,
+		amount: 1,
 		where: 'Gürtel',
 		gr: 1,
 		combatTechnique: 'CT_12',
-		damageDiceNumber: '1',
-		damageDiceSides: '6',
-		damageFlat: '6',
-		damageBonus: '14',
-		at: '-1',
-		pa: '0',
-		reach: '2',
-		length: '76',
-		stp: '0',
-		range: ['0', '0', '0'],
-		reloadTime: '0',
+		damageDiceNumber: 1,
+		damageDiceSides: 6,
+		damageFlat: 6,
+		damageBonus: 14,
+		at: -1,
+		pa: 0,
+		reach: 2,
+		length: 76,
+		stp: 0,
+		range: [0, 0, 0],
+		reloadTime: 0,
 		ammunition: null,
-		pro: '0',
-		enc: '0',
+		pro: 0,
+		enc: 0,
 		addPenalties: false,
-		template: 'ITEMTPL_0'
+		template: 'ITEMTPL_0',
+		isTemplateLocked: false
 	}),
 	ITEM_2: new Item({
 		id: 'ITEM_2',
 		name: 'Bogen des Rakorium Muntagonus',
-		price: '1234',
-		weight: '0.9',
-		number: '1',
+		price: 1234,
+		weight: 0.9,
+		amount: 1,
 		where: 'Fliegt',
 		gr: 2,
 		combatTechnique: 'CT_2',
-		damageDiceNumber: '2',
-		damageDiceSides: '6',
-		damageFlat: '0',
-		damageBonus: '0',
-		at: '0',
-		pa: '0',
-		reach: '0',
-		length: '123',
-		stp: '0',
-		range: ['90', '60', '90'],
-		reloadTime: '1',
+		damageDiceNumber: 2,
+		damageDiceSides: 6,
+		damageFlat: 0,
+		damageBonus: 0,
+		at: 0,
+		pa: 0,
+		reach: 0,
+		length: 123,
+		stp: 0,
+		range: [90, 60, 90],
+		reloadTime: 1,
 		ammunition: null,
-		pro: '0',
-		enc: '0',
+		pro: 0,
+		enc: 0,
 		addPenalties: false,
-		template: 'ITEMTPL_0'
+		template: 'ITEMTPL_0',
+		isTemplateLocked: false
 	}),
 	ITEM_3: new Item({
 		id: 'ITEM_3',
 		name: 'Rüstung des Widderhorns',
-		price: '30',
-		weight: '4',
-		number: '1',
+		price: 30,
+		weight: 4,
+		amount: 1,
 		where: '',
 		gr: 3,
 		combatTechnique: '',
-		damageDiceNumber: '0',
-		damageDiceSides: '6',
-		damageFlat: '0',
-		damageBonus: '0',
-		at: '0',
-		pa: '0',
-		reach: '0',
-		length: '123',
-		stp: '0',
-		range: ['90', '60', '90'],
-		reloadTime: '1',
+		damageDiceNumber: 0,
+		damageDiceSides: 6,
+		damageFlat: 0,
+		damageBonus: 0,
+		at: 0,
+		pa: 0,
+		reach: 0,
+		length: 123,
+		stp: 0,
+		range: [90, 60, 90],
+		reloadTime: 1,
 		ammunition: null,
-		pro: '4',
-		enc: '2',
+		pro: 4,
+		enc: 2,
 		addPenalties: true,
-		template: 'ITEMTPL_0'
+		template: 'ITEMTPL_0',
+		isTemplateLocked: false
 	})
 };
 let _items = ['ITEM_1','ITEM_2','ITEM_3'];
-let _itemTemplatesById: { [id: string]: Item } = {};
+let _itemTemplatesById: { [id: string]: ItemInstance } = {};
 let _itemTemplates: string[] = [];
 let _filterText = '';
 let _sortOrder = 'name';
 
 function _init(raw: { [id: string]: RawItem }) {
 	for (const id in raw) {
-		_itemTemplatesById[id] = new Item({ ...raw[id], isTemplateLocked: true });
+		_itemTemplatesById[id] = new Item({ ...raw[id], amount: 1, isTemplateLocked: true });
 		_itemTemplates.push(id);
 	}
 }
@@ -102,7 +105,7 @@ function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
-function _addItem(raw: RawItem, id: string) {
+function _addItem(raw: ItemInstance, id: string) {
 	// if ([1,2].includes(data.gr)) {
 	// 	data.ddn = parseInt(data.ddn) || 0;
 	// 	data.df = parseInt(data.df) || 0;
@@ -130,7 +133,7 @@ function _addItem(raw: RawItem, id: string) {
 	_items.push(id);
 }
 
-function _saveItem(id: string, item: Item) {
+function _saveItem(id: string, item: ItemInstance) {
 	_itemsById[id] = new Item(item);
 }
 

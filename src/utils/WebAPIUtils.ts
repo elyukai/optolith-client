@@ -313,17 +313,21 @@ export function saveHero(data: SaveData) {
 // 	}
 // }
 
-export async function changeHeroAvatar(type: string, data): Promise<void> {
-	try {
-		const response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
-			method: 'post',
-			body: new FormData(data)
-		});
-		const result = await response.text();
-		ServerActions.receiveHeroAvatar(result);
-	} catch(e) {
-		connectionError(e);
-	}
+export function changeHeroAvatar(data: File) {
+	const reader = new FileReader();
+	reader.onload = async (event) => {
+		try {
+			const response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
+				method: 'post',
+				body: event.target.result
+			});
+			const result = await response.text();
+			ServerActions.receiveHeroAvatar(result);
+		} catch(e) {
+			connectionError(e);
+		}
+	};
+	reader.readAsText(data);
 }
 
 export async function deleteHero(id: string): Promise<void> {

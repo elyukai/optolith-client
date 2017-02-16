@@ -1,5 +1,12 @@
 /// <reference path="./constants/Categories.d.ts" />
 
+declare interface AdventurePoints {
+	total: number;
+	spent: number;
+	adv: [number, number, number];
+	disadv: [number, number, number];
+}
+
 interface HeroBase {
 	readonly clientVersion: string;
 	readonly player?: string;
@@ -77,7 +84,7 @@ interface HeroRest {
 			readonly [id: string]: number | null;
 		};
 	};
-	readonly history: (Action & { undo: boolean; cost: number; })[];
+	readonly history: HistoryObject[];
 }
 
 interface RaceInstance {
@@ -511,6 +518,9 @@ interface ItemEditorInstance extends ItemBaseInstance {
 	weight: string;
 }
 
+type IncreasableInstances = AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
+type ActivatableInstances = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
+
 interface SecondaryAttribute {
 	id: string;
 	short: string;
@@ -542,6 +552,25 @@ interface ExperienceLevel {
 	maxTotalAttributeValues: number;
 	maxSpellsLiturgies: number;
 	maxUnfamiliarSpells: number;
+}
+
+interface HistoryPayload {
+	id?: string | number;
+	activeObject?: ActiveObject;
+	index?: number;
+	list?: (string | [string, number])[];
+	buy?: boolean;
+}
+
+interface HistoryPrevState {
+
+}
+
+interface HistoryObject {
+	type: string;
+	cost: number;
+	payload: HistoryPayload;
+	prevState: HistoryPrevState;
 }
 
 interface LanguagesScriptsSelectionListItem {

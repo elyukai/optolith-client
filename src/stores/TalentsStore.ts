@@ -3,7 +3,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import Store from './Store';
 
-type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
+type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | UndoTriggerActions;
 
 const CATEGORY = Categories.TALENTS;
 
@@ -46,21 +46,35 @@ class TalentsStoreStatic extends Store {
 }
 
 const TalentsStore = new TalentsStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.ADD_TALENT_POINT:
-		case ActionTypes.REMOVE_TALENT_POINT:
-			break;
+	if (action.undo) {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				break;
 
-		case ActionTypes.SET_TALENTS_SORT_ORDER:
-			_updateSortOrder(action.payload.sortOrder);
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(action.type) {
+			case ActionTypes.ADD_TALENT_POINT:
+			case ActionTypes.REMOVE_TALENT_POINT:
+				break;
 
-		case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:
-			_updateRatingVisibility();
-			break;
+			case ActionTypes.SET_TALENTS_SORT_ORDER:
+				_updateSortOrder(action.payload.sortOrder);
+				break;
 
-		default:
-			return true;
+			case ActionTypes.SWITCH_TALENT_RATING_VISIBILITY:
+				_updateRatingVisibility();
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	TalentsStore.emitChange();

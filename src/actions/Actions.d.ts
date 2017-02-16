@@ -2,51 +2,59 @@
 
 type Action = AddAttributePointAction | RemoveAttributePointAction | AddLifePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | SwitchDisAdvRatingVisibilityAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | SetSectionAction | SetTabAction | SelectProfessionAction | SetSelectionsAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SelectProfessionVariantAction | SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | EndHeroCreationAction | AddAdventurePointsAction | SelectRaceAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction | RequestNewPasswordAction | ReceiveNewPasswordAction | RequestNewDisplayNameAction | ReceiveNewDisplayNameAction | RequestPasswordResetAction | ReceivePasswordResetAction | RequestUsernameAction | ReceiveUsernameAction | RequestAccountActivationEmailAction | ReceiveAccountActivationEmailAction | RequestHeroSaveAction | ReceiveHeroSaveAction | RequestFailedAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
 
+type UndoTriggerActions = ActivateDisAdvAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction;
+
+interface DefaultAction {
+	type: string;
+	undo?: boolean;
+	cost?: number;
+}
+
 // AttributesActions
 
-interface AddAttributePointAction {
+interface AddAttributePointAction extends DefaultAction {
 	type: ADD_ATTRIBUTE_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface RemoveAttributePointAction {
+interface RemoveAttributePointAction extends DefaultAction {
 	type: REMOVE_ATTRIBUTE_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface AddLifePointAction {
+interface AddLifePointAction extends DefaultAction {
 	type: ADD_LIFE_POINT;
 }
 
-interface AddArcaneEnergyPointAction {
+interface AddArcaneEnergyPointAction extends DefaultAction {
 	type: ADD_ARCANE_ENERGY_POINT;
 }
 
-interface AddKarmaPointAction {
+interface AddKarmaPointAction extends DefaultAction {
 	type: ADD_KARMA_POINT;
 }
 
 // CombatTechniquesActions
 
-interface AddCombatTechniquePointAction {
+interface AddCombatTechniquePointAction extends DefaultAction {
 	type: ADD_COMBATTECHNIQUE_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface RemoveCombatTechniquePointAction {
+interface RemoveCombatTechniquePointAction extends DefaultAction {
 	type: REMOVE_COMBATTECHNIQUE_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetCombatTechniquesSortOrderAction {
+interface SetCombatTechniquesSortOrderAction extends DefaultAction {
 	type: SET_COMBATTECHNIQUES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -55,28 +63,28 @@ interface SetCombatTechniquesSortOrderAction {
 
 // CultureActions
 
-interface SelectCultureAction {
+interface SelectCultureAction extends DefaultAction {
 	type: SELECT_CULTURE;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetCulturesSortOrderAction {
+interface SetCulturesSortOrderAction extends DefaultAction {
 	type: SET_CULTURES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-interface SetCulturesVisibilityFilterAction {
+interface SetCulturesVisibilityFilterAction extends DefaultAction {
 	type: SET_CULTURES_VISIBILITY_FILTER;
 	payload: {
 		filter: string;
 	};
 }
 
-interface SwitchCultureValueVisibilityAction {
+interface SwitchCultureValueVisibilityAction extends DefaultAction {
 	type: SWITCH_CULTURE_VALUE_VISIBILITY;
 }
 
@@ -91,9 +99,14 @@ interface ActivateArgs {
 	cost: number;
 }
 
-interface ActivateDisAdvAction {
+interface UndoExtendedActivateArgs extends ActivateArgs {
+	index?: number;
+	activeObject?: ActiveObject;
+}
+
+interface ActivateDisAdvAction extends DefaultAction {
     type: ACTIVATE_DISADV;
-    payload: ActivateArgs;
+    payload: UndoExtendedActivateArgs;
 }
 
 interface DeactivateArgs {
@@ -102,12 +115,16 @@ interface DeactivateArgs {
     cost: number;
 }
 
-interface DeactivateDisAdvAction {
-    type: DEACTIVATE_DISADV;
-    payload: DeactivateArgs;
+interface UndoExtendedDeactivateArgs extends DeactivateArgs {
+	activeObject?: ActiveObject;
 }
 
-interface SetDisAdvTierAction {
+interface DeactivateDisAdvAction extends DefaultAction {
+    type: DEACTIVATE_DISADV;
+    payload: UndoExtendedDeactivateArgs;
+}
+
+interface SetDisAdvTierAction extends DefaultAction {
     type: SET_DISADV_TIER;
     payload: {
         id: string;
@@ -117,31 +134,27 @@ interface SetDisAdvTierAction {
     };
 }
 
-interface SwitchDisAdvRatingVisibilityAction {
+interface SwitchDisAdvRatingVisibilityAction extends DefaultAction {
     type: SWITCH_DISADV_RATING_VISIBILITY;
 }
 
 // HerolistActions
 
-interface RawHerolist {
-	[id: string]: RawHero;
-}
-
-interface SetHerolistSortOrderAction {
+interface SetHerolistSortOrderAction extends DefaultAction {
 	type: SET_HEROLIST_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-interface SetHerolistVisibilityFilterAction {
+interface SetHerolistVisibilityFilterAction extends DefaultAction {
 	type: SET_HEROLIST_VISIBILITY_FILTER;
 	payload: {
 		filterOption: string;
 	};
 }
 
-interface CreateHeroAction {
+interface CreateHeroAction extends DefaultAction {
 	type: CREATE_HERO;
 	payload: {
 		name: string;
@@ -154,14 +167,14 @@ interface CreateHeroAction {
 
 // InventoryActions
 
-interface AddItemAction {
+interface AddItemAction extends DefaultAction {
 	type: ADD_ITEM;
 	payload: {
 		data: ItemInstance;
 	};
 }
 
-interface SetItemAction {
+interface SetItemAction extends DefaultAction {
 	type: SET_ITEM;
 	payload: {
 		id: string;
@@ -169,14 +182,14 @@ interface SetItemAction {
 	};
 }
 
-interface RemoveItemAction {
+interface RemoveItemAction extends DefaultAction {
 	type: REMOVE_ITEM;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetItemsSortOrderAction {
+interface SetItemsSortOrderAction extends DefaultAction {
 	type: SET_ITEMS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -185,35 +198,35 @@ interface SetItemsSortOrderAction {
 
 // LiturgiesActions
 
-interface ActivateLiturgyAction {
+interface ActivateLiturgyAction extends DefaultAction {
 	type: ACTIVATE_LITURGY;
 	payload: {
 		id: string;
 	};
 }
 
-interface DeactivateLiturgyAction {
+interface DeactivateLiturgyAction extends DefaultAction {
 	type: DEACTIVATE_LITURGY;
 	payload: {
 		id: string;
 	};
 }
 
-interface AddLiturgyPointAction {
+interface AddLiturgyPointAction extends DefaultAction {
 	type: ADD_LITURGY_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface RemoveLiturgyPointAction {
+interface RemoveLiturgyPointAction extends DefaultAction {
 	type: REMOVE_LITURGY_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetLiturgiesSortOrderAction {
+interface SetLiturgiesSortOrderAction extends DefaultAction {
 	type: SET_LITURGIES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -222,7 +235,7 @@ interface SetLiturgiesSortOrderAction {
 
 // LocationActions
 
-interface SetSectionAction {
+interface SetSectionAction extends DefaultAction {
 	type: SET_SECTION;
 	payload: {
 		section: 'main' | 'hero' | 'group';
@@ -230,7 +243,7 @@ interface SetSectionAction {
 	};
 }
 
-interface SetTabAction {
+interface SetTabAction extends DefaultAction {
 	type: SET_TAB;
 	payload: {
 		tab: string;
@@ -239,7 +252,7 @@ interface SetTabAction {
 
 // ProfessionActions
 
-interface SelectProfessionAction {
+interface SelectProfessionAction extends DefaultAction {
 	type: SELECT_PROFESSION;
 	payload: {
 		id: string;
@@ -260,19 +273,19 @@ interface Selections {
 	map: Map<ProfessionSelectionIds, ProfessionSelection>;
 }
 
-interface SetSelectionsAction {
+interface SetSelectionsAction extends DefaultAction {
 	type: ASSIGN_RCP_OPTIONS;
 	payload: Selections;
 }
 
-interface SetProfessionsSortOrderAction {
+interface SetProfessionsSortOrderAction extends DefaultAction {
 	type: SET_PROFESSIONS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-interface SetProfessionsVisibilityFilterAction {
+interface SetProfessionsVisibilityFilterAction extends DefaultAction {
 	type: SET_PROFESSIONS_VISIBILITY_FILTER;
 	payload: {
 		filter: string;
@@ -281,7 +294,7 @@ interface SetProfessionsVisibilityFilterAction {
 
 // ProfessionVariantActions
 
-interface SelectProfessionVariantAction {
+interface SelectProfessionVariantAction extends DefaultAction {
 	type: SELECT_PROFESSION_VARIANT;
 	payload: {
 		id: string | null;
@@ -290,70 +303,70 @@ interface SelectProfessionVariantAction {
 
 // ProfileActions
 
-interface SetHeroNameAction {
+interface SetHeroNameAction extends DefaultAction {
 	type: SET_HERO_NAME;
 	payload: {
 		name: string;
 	};
 }
 
-interface SetHeroAvatarAction {
+interface SetHeroAvatarAction extends DefaultAction {
 	type: SET_HERO_AVATAR;
 	payload: {
 		url: string;
 	};
 }
 
-interface SetFamilyAction {
+interface SetFamilyAction extends DefaultAction {
 	type: SET_FAMILY;
 	payload: {
 		family: string;
 	};
 }
 
-interface SetPlaceOfBirthAction {
+interface SetPlaceOfBirthAction extends DefaultAction {
 	type: SET_PLACEOFBIRTH;
 	payload: {
 		placeofbirth: string;
 	};
 }
 
-interface SetDateOfBirthAction {
+interface SetDateOfBirthAction extends DefaultAction {
 	type: SET_DATEOFBIRTH;
 	payload: {
 		dateofbirth: string;
 	};
 }
 
-interface SetAgeAction {
+interface SetAgeAction extends DefaultAction {
 	type: SET_AGE;
 	payload: {
 		age: string;
 	};
 }
 
-interface SetHairColorAction {
+interface SetHairColorAction extends DefaultAction {
 	type: SET_HAIRCOLOR;
 	payload: {
 		haircolor: number;
 	};
 }
 
-interface SetEyeColorAction {
+interface SetEyeColorAction extends DefaultAction {
 	type: SET_EYECOLOR;
 	payload: {
 		eyecolor: number;
 	};
 }
 
-interface SetSizeAction {
+interface SetSizeAction extends DefaultAction {
 	type: SET_SIZE;
 	payload: {
 		size: string;
 	};
 }
 
-interface SetWeightAction {
+interface SetWeightAction extends DefaultAction {
 	type: SET_WEIGHT;
 	payload: {
 		size?: string;
@@ -361,39 +374,39 @@ interface SetWeightAction {
 	};
 }
 
-interface SetTitleAction {
+interface SetTitleAction extends DefaultAction {
 	type: SET_TITLE;
 	payload: {
 		title: string;
 	};
 }
 
-interface SetSocialStatusAction {
+interface SetSocialStatusAction extends DefaultAction {
 	type: SET_SOCIALSTATUS;
 	payload: {
 		socialstatus: number;
 	};
 }
 
-interface SetCharacteristicsAction {
+interface SetCharacteristicsAction extends DefaultAction {
 	type: SET_CHARACTERISTICS;
 	payload: {
 		characteristics: string;
 	};
 }
 
-interface SetOtherInfoAction {
+interface SetOtherInfoAction extends DefaultAction {
 	type: SET_OTHERINFO;
 	payload: {
 		otherinfo: string;
 	};
 }
 
-interface EndHeroCreationAction {
+interface EndHeroCreationAction extends DefaultAction {
 	type: END_HERO_CREATION;
 }
 
-interface AddAdventurePointsAction {
+interface AddAdventurePointsAction extends DefaultAction {
 	type: ADD_ADVENTURE_POINTS;
 	payload: {
 		amount: number;
@@ -402,71 +415,71 @@ interface AddAdventurePointsAction {
 
 // RaceActions
 
-interface SelectRaceAction {
+interface SelectRaceAction extends DefaultAction {
 	type: SELECT_RACE;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetRacesSortOrderAction {
+interface SetRacesSortOrderAction extends DefaultAction {
 	type: SET_RACES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-interface SwitchRaceValueVisibilityAction {
+interface SwitchRaceValueVisibilityAction extends DefaultAction {
 	type: SWITCH_RACE_VALUE_VISIBILITY;
 }
 
 // ServerActions
 
-interface ReceiveDataTablesAction {
+interface ReceiveDataTablesAction extends DefaultAction {
 	type: RECEIVE_DATA_TABLES;
 	payload: {
 		data: RawData;
 	};
 }
 
-interface RequestHeroAvatarAction {
+interface RequestHeroAvatarAction extends DefaultAction {
 	type: REQUEST_HERO_AVATAR;
 }
 
-interface ReceiveHeroAvatarAction {
+interface ReceiveHeroAvatarAction extends DefaultAction {
 	type: RECEIVE_HERO_AVATAR;
 	payload: {
 		url: string;
 	};
 }
 
-interface RequestHeroDataAction {
+interface RequestHeroDataAction extends DefaultAction {
 	type: REQUEST_HERO_DATA;
 }
 
-interface ReceiveHeroDataAction {
+interface ReceiveHeroDataAction extends DefaultAction {
 	type: RECEIVE_HERO_DATA;
 	payload: {
 		data: Hero & HeroRest;
 	};
 }
 
-interface RequestHerolistAction {
+interface RequestHerolistAction extends DefaultAction {
 	type: REQUEST_HEROLIST;
 }
 
-interface ReceiveHerolistAction {
+interface ReceiveHerolistAction extends DefaultAction {
 	type: RECEIVE_HEROLIST;
 	payload: {
 		heroes: RawHerolist;
 	};
 }
 
-interface RequestLoginAction {
+interface RequestLoginAction extends DefaultAction {
 	type: REQUEST_LOGIN;
 }
 
-interface ReceiveLoginAction {
+interface ReceiveLoginAction extends DefaultAction {
 	type: RECEIVE_LOGIN;
 	payload: {
 		name: string;
@@ -477,109 +490,109 @@ interface ReceiveLoginAction {
 	};
 }
 
-interface RequestLogoutAction {
+interface RequestLogoutAction extends DefaultAction {
 	type: REQUEST_LOGOUT;
 }
 
-interface ReceiveLogoutAction {
+interface ReceiveLogoutAction extends DefaultAction {
 	type: RECEIVE_LOGOUT;
 }
 
-interface RequestNewUsernameAction {
+interface RequestNewUsernameAction extends DefaultAction {
 	type: REQUEST_NEW_USERNAME;
 }
 
-interface ReceiveNewUsernameAction {
+interface ReceiveNewUsernameAction extends DefaultAction {
 	type: RECEIVE_NEW_USERNAME;
 	payload: {
 		name: string;
 	}
 }
 
-interface RequestRegistrationAction {
+interface RequestRegistrationAction extends DefaultAction {
 	type: REQUEST_REGISTRATION;
 }
 
-interface ReceiveRegistrationAction {
+interface ReceiveRegistrationAction extends DefaultAction {
 	type: RECEIVE_REGISTRATION;
 }
 
-interface RequestUserDeletionAction {
+interface RequestUserDeletionAction extends DefaultAction {
 	type: REQUEST_USER_DELETION;
 }
 
-interface ReceiveUserDeletionAction {
+interface ReceiveUserDeletionAction extends DefaultAction {
 	type: RECEIVE_USER_DELETION;
 }
 
-interface RequestNewPasswordAction {
+interface RequestNewPasswordAction extends DefaultAction {
 	type: REQUEST_NEW_PASSWORD;
 }
 
-interface ReceiveNewPasswordAction {
+interface ReceiveNewPasswordAction extends DefaultAction {
 	type: RECEIVE_NEW_PASSWORD;
 }
 
-interface RequestNewDisplayNameAction {
+interface RequestNewDisplayNameAction extends DefaultAction {
 	type: REQUEST_NEW_DISPLAY_NAME;
 }
 
-interface ReceiveNewDisplayNameAction {
+interface ReceiveNewDisplayNameAction extends DefaultAction {
 	type: RECEIVE_NEW_DISPLAY_NAME;
 	payload: {
 		name: string;
 	}
 }
 
-interface RequestPasswordResetAction {
+interface RequestPasswordResetAction extends DefaultAction {
 	type: REQUEST_PASSWORD_RESET;
 }
 
-interface ReceivePasswordResetAction {
+interface ReceivePasswordResetAction extends DefaultAction {
 	type: RECEIVE_PASSWORD_RESET;
 }
 
-interface RequestUsernameAction {
+interface RequestUsernameAction extends DefaultAction {
 	type: REQUEST_USERNAME;
 }
 
-interface ReceiveUsernameAction {
+interface ReceiveUsernameAction extends DefaultAction {
 	type: RECEIVE_USERNAME;
 }
 
-interface RequestAccountActivationEmailAction {
+interface RequestAccountActivationEmailAction extends DefaultAction {
 	type: REQUEST_ACCOUNT_ACTIVATION_EMAIL;
 }
 
-interface ReceiveAccountActivationEmailAction {
+interface ReceiveAccountActivationEmailAction extends DefaultAction {
 	type: RECEIVE_ACCOUNT_ACTIVATION_EMAIL;
 }
 
-interface RequestHeroSaveAction {
+interface RequestHeroSaveAction extends DefaultAction {
 	type: REQUEST_HERO_SAVE;
 }
 
-interface ReceiveHeroSaveAction {
+interface ReceiveHeroSaveAction extends DefaultAction {
 	type: RECEIVE_HERO_SAVE;
 }
 
-interface RequestFailedAction {
+interface RequestFailedAction extends DefaultAction {
 	type: REQUEST_FAILED;
 }
 
 // SpecialAbilitiesActions
 
-interface ActivateSpecialAbilityAction {
+interface ActivateSpecialAbilityAction extends DefaultAction {
     type: ACTIVATE_SPECIALABILITY;
-    payload: ActivateArgs;
+    payload: UndoExtendedActivateArgs;
 }
 
-interface DeactivateSpecialAbilityAction {
+interface DeactivateSpecialAbilityAction extends DefaultAction {
     type: DEACTIVATE_SPECIALABILITY;
-    payload: DeactivateArgs;
+    payload: UndoExtendedDeactivateArgs;
 }
 
-interface SetSpecialAbilityTierAction {
+interface SetSpecialAbilityTierAction extends DefaultAction {
     type: SET_SPECIALABILITY_TIER;
     payload: {
         id: string;
@@ -589,7 +602,7 @@ interface SetSpecialAbilityTierAction {
     };
 }
 
-interface SetSpecialAbilitiesSortOrderAction {
+interface SetSpecialAbilitiesSortOrderAction extends DefaultAction {
     type: SET_SPECIALABILITIES_SORT_ORDER;
     payload: {
         sortOrder: string;
@@ -598,35 +611,35 @@ interface SetSpecialAbilitiesSortOrderAction {
 
 // SpellsActions
 
-interface ActivateSpellAction {
+interface ActivateSpellAction extends DefaultAction {
 	type: ACTIVATE_SPELL;
 	payload: {
 		id: string;
 	};
 }
 
-interface DeactivateSpellAction {
+interface DeactivateSpellAction extends DefaultAction {
 	type: DEACTIVATE_SPELL;
 	payload: {
 		id: string;
 	};
 }
 
-interface AddSpellPointAction {
+interface AddSpellPointAction extends DefaultAction {
 	type: ADD_SPELL_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface RemoveSpellPointAction {
+interface RemoveSpellPointAction extends DefaultAction {
 	type: REMOVE_SPELL_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetSpellsSortOrderAction {
+interface SetSpellsSortOrderAction extends DefaultAction {
 	type: SET_SPELLS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -635,27 +648,27 @@ interface SetSpellsSortOrderAction {
 
 // TalentsActions
 
-interface AddTalentPointAction {
+interface AddTalentPointAction extends DefaultAction {
 	type: ADD_TALENT_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface RemoveTalentPointAction {
+interface RemoveTalentPointAction extends DefaultAction {
 	type: REMOVE_TALENT_POINT;
 	payload: {
 		id: string;
 	};
 }
 
-interface SetTalentsSortOrderAction {
+interface SetTalentsSortOrderAction extends DefaultAction {
 	type: SET_TALENTS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
 	};
 }
 
-interface SwitchTalentRatingVisibilityAction {
+interface SwitchTalentRatingVisibilityAction extends DefaultAction {
 	type: SWITCH_TALENT_RATING_VISIBILITY;
 }

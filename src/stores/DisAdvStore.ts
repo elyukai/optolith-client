@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction;
+type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions;
 
 let _showRating = true;
 
@@ -21,22 +21,36 @@ class DisAdvStoreStatic extends Store {
 }
 
 const DisAdvStore = new DisAdvStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.RECEIVE_HERO_DATA:
-			_updateAll(action.payload.data.disadv);
-			break;
+	if (action.undo) {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				break;
 
-		case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
-			_updateRating();
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(action.type) {
+			case ActionTypes.RECEIVE_HERO_DATA:
+				_updateAll(action.payload.data.disadv);
+				break;
 
-		case ActionTypes.ACTIVATE_DISADV:
-		case ActionTypes.DEACTIVATE_DISADV:
-		case ActionTypes.SET_DISADV_TIER:
-			break;
+			case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
+				_updateRating();
+				break;
 
-		default:
-			return true;
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.SET_DISADV_TIER:
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	DisAdvStore.emitChange();

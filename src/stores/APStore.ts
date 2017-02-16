@@ -103,7 +103,7 @@ class APStoreStatic extends Store {
 
 const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-	if (action.undoAction) {
+	if (action.undo) {
 		switch (action.type) {
 			case ActionTypes.ACTIVATE_DISADV:
 			case ActionTypes.DEACTIVATE_DISADV:
@@ -192,7 +192,7 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 				break;
 
 			case ActionTypes.SELECT_PROFESSION_VARIANT:
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, (get(action.payload.id) as ProfessionVariantInstance).ap);
+				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, action.payload.id ? (get(action.payload.id) as ProfessionVariantInstance).ap : 0);
 				break;
 
 			case ActionTypes.ASSIGN_RCP_OPTIONS:

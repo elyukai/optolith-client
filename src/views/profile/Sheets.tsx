@@ -18,4 +18,4 @@ export default () => (
 			<ChantSheet />
 		</Scroll>
 	</div>
-)
+);

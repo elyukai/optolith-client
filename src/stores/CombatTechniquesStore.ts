@@ -3,7 +3,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import Store from './Store';
 
-type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction;
+type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions;
 
 const CATEGORY = Categories.COMBAT_TECHNIQUES;
 
@@ -45,17 +45,31 @@ class CombatTechniquesStoreStatic extends Store {
 }
 
 const CombatTechniquesStore = new CombatTechniquesStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-			break;
+	if (action.undo) {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				break;
 
-		case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
-			_updateSortOrder(action.payload.sortOrder);
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(action.type) {
+			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+				break;
 
-		default:
-			return true;
+			case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
+				_updateSortOrder(action.payload.sortOrder);
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	CombatTechniquesStore.emitChange();

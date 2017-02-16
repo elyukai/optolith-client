@@ -16,7 +16,7 @@ export default class OverviewAddAP extends React.Component<Props, State> {
 		value: ''
 	};
 
-	onChange = (event: Event) => this.setState({ value: event.target.value });
+	onChange = (event: InputTextEvent) => this.setState({ value: event.target.value });
 	addAP = () => ProfileActions.addAdventurePoints(parseInt(this.state.value));
 
 	render() {

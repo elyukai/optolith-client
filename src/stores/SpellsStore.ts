@@ -6,7 +6,7 @@ import ELStore from './ELStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
-type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction;
+type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | UndoTriggerActions;
 
 const CATEGORY = Categories.SPELLS;
 
@@ -76,19 +76,33 @@ class SpellsStoreStatic extends Store {
 }
 
 const SpellsStore = new SpellsStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.ACTIVATE_SPELL:
-		case ActionTypes.DEACTIVATE_SPELL:
-		case ActionTypes.ADD_SPELL_POINT:
-		case ActionTypes.REMOVE_SPELL_POINT:
-			break;
+	if (action.undo) {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_DISADV:
+			case ActionTypes.ACTIVATE_SPECIALABILITY:
+			case ActionTypes.DEACTIVATE_DISADV:
+			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				break;
 
-		case ActionTypes.SET_SPELLS_SORT_ORDER:
-			_updateSortOrder(action.payload.sortOrder);
-			break;
+			default:
+				return true;
+		}
+	}
+	else {
+		switch(action.type) {
+			case ActionTypes.ACTIVATE_SPELL:
+			case ActionTypes.DEACTIVATE_SPELL:
+			case ActionTypes.ADD_SPELL_POINT:
+			case ActionTypes.REMOVE_SPELL_POINT:
+				break;
 
-		default:
-			return true;
+			case ActionTypes.SET_SPELLS_SORT_ORDER:
+				_updateSortOrder(action.payload.sortOrder);
+				break;
+
+			default:
+				return true;
+		}
 	}
 
 	SpellsStore.emitChange();

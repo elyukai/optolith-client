@@ -177,7 +177,7 @@ export default class Activatable extends Dependent {
 						dependency = value;
 					}
 					else {
-						dependency = { sid: sid === 'sel' ? sel : sid, sid2 };
+						dependency = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
 					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).addDependency(dependency);
 				}
@@ -207,7 +207,7 @@ export default class Activatable extends Dependent {
 						dependency = value;
 					}
 					else {
-						dependency = { sid: sid === 'sel' ? sel : sid, sid2 };
+						dependency = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
 					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).removeDependency(dependency);
 				}

@@ -5,6 +5,8 @@ declare global {
 
 	interface EventTarget {
 		readonly value: string;
+		readonly files: FileList | null;
+		readonly result: string;
 	}
 }
 

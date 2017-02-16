@@ -6,11 +6,13 @@ import TextBox from '../../components/TextBox';
 export default () => {
 	let bonus = 0;
 
-	if (get('ADV_14').active) {
-		bonus += get('ADV_14').tier;
+	const increaseObject = get('ADV_14') as AdvantageInstance;
+	const decreaseObject = get('DISADV_31') as DisadvantageInstance;
+	if (increaseObject.isActive) {
+		bonus += increaseObject.active[0].tier!;
 	}
-	else if (get('DISADV_31').active) {
-		bonus -= get('DISADV_31').tier;
+	else if (decreaseObject.isActive) {
+		bonus -= decreaseObject.active[0].tier!;
 	}
 
 	return (

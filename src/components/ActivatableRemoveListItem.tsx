@@ -197,7 +197,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		if (category === Categories.DISADVANTAGES) {
 			currentCost = -currentCost;
 		}
-		args.cost = -currentCost;
+		args.cost = currentCost;
 
 		if (dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
 			disabled = true;

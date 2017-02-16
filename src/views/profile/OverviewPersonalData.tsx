@@ -26,18 +26,18 @@ interface Props {
 };
 
 export default class OverviewPersonalData extends React.Component<Props, undefined> {
-	changeFamily = (e: Event) => ProfileActions.setFamily(e.target.value);
-	changePlaceOfBirth = (e: Event) => ProfileActions.setPlaceOfBirth(e.target.value);
-	changeDateOfBirth = (e: Event) => ProfileActions.setDateOfBirth(e.target.value);
-	changeAge = (e: Event) => ProfileActions.setAge(e.target.value);
+	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value);
+	changePlaceOfBirth = (e: InputTextEvent) => ProfileActions.setPlaceOfBirth(e.target.value);
+	changeDateOfBirth = (e: InputTextEvent) => ProfileActions.setDateOfBirth(e.target.value);
+	changeAge = (e: InputTextEvent) => ProfileActions.setAge(e.target.value);
 	changeHaircolor = (result: number) => ProfileActions.setHairColor(result);
 	changeEyecolor = (result: number) => ProfileActions.setEyeColor(result);
-	changeSize = (e: Event) => ProfileActions.setSize(e.target.value);
-	changeWeight = (e: Event) => ProfileActions.setWeight(e.target.value);
-	changeTitle = (e: Event) => ProfileActions.setTitle(e.target.value);
+	changeSize = (e: InputTextEvent) => ProfileActions.setSize(e.target.value);
+	changeWeight = (e: InputTextEvent) => ProfileActions.setWeight(e.target.value);
+	changeTitle = (e: InputTextEvent) => ProfileActions.setTitle(e.target.value);
 	changeSocialStatus = (result: number) => ProfileActions.setSocialStatus(result);
-	changeCharacteristics = (e: Event) => ProfileActions.setCharacteristics(e.target.value);
-	changeOtherInfo = (e: Event) => ProfileActions.setOtherInfo(e.target.value);
+	changeCharacteristics = (e: InputTextEvent) => ProfileActions.setCharacteristics(e.target.value);
+	changeOtherInfo = (e: InputTextEvent) => ProfileActions.setOtherInfo(e.target.value);
 
 	rerollHair = () => ProfileActions.rerollHairColor();
 	rerollEyes = () => ProfileActions.rerollEyeColor();

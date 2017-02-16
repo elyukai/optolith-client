@@ -26,6 +26,10 @@ interface RawHero {
 	readonly sex: 'm' | 'f';
 }
 
+interface RawHerolist {
+	[id: string]: RawHero;
+}
+
 interface RawRace {
 	id: string;
 	name: string;
