@@ -1,4 +1,4 @@
-import { requestList, setSortOrder, setVisibilityFilter } from '../../actions/HerolistActions';
+import { requestList, setSortOrder, setVisibilityFilter, insertHero } from '../../actions/HerolistActions';
 import { filterAndSort } from '../../utils/ListUtils';
 import * as React from 'react';
 import APStore from '../../stores/APStore';
@@ -24,12 +24,14 @@ interface State {
 	filterText: string;
 	view: string;
 	sortOrder: string;
+	file: File | undefined;
 }
 
 export default class Herolist extends React.Component<undefined, State> {
 
 	state = {
 		filterText: '',
+		file: undefined,
 		list: HerolistStore.getAll(),
 		view: HerolistStore.getView(),
 		sortOrder: HerolistStore.getSortOrder()
@@ -46,7 +48,16 @@ export default class Herolist extends React.Component<undefined, State> {
 	changeView = (option: string) => setVisibilityFilter(option);
 	showHeroCreation = () => createOverlay(<HeroCreation />);
 	refresh = () => requestList();
-	loadJSON = () => console.log('Implement JSON loading');
+	changeFile = (event: InputTextEvent) => {
+		const file = event.target.files && event.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = e => {
+				insertHero(e.target.result);
+			};
+			reader.readAsText(file);
+		}
+	};
 
 	componentDidMount() {
 		HerolistStore.addChangeListener(this._updateHerolistStore );
@@ -58,7 +69,7 @@ export default class Herolist extends React.Component<undefined, State> {
 
 	render() {
 
-		const { filterText, list: rawList, sortOrder, view } = this.state;
+		const { filterText, list: rawList, sortOrder, view, file } = this.state;
 
 		const list = filterAndSort(rawList, filterText, sortOrder).filter(e => {
 			if (view === 'own') {
@@ -111,7 +122,11 @@ export default class Herolist extends React.Component<undefined, State> {
 							/>
 						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
-						<BorderButton label="Datei laden" onClick={this.loadJSON} />
+						<TextField
+							onChange={this.changeFile}
+							fullWidth
+							type="file"
+							/>
 					</div>
 					<Scroll className="list">
 						<ul>

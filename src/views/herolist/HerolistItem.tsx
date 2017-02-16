@@ -33,6 +33,8 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 
 		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
 
+		const isOpen = id === ProfileStore.getID();
+
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
 
@@ -100,7 +102,7 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 					<h2><span className="name">{name}</span>{playerElement}</h2>
 					{rcpElement}
 				</div>
-				{(() => id === ProfileStore.getID() ? (
+				{(() => isOpen ? (
 					<IconButton icon="&#xE89E;" onClick={this.show} />
 				) : (
 					<IconButton icon="&#xE5DD;" onClick={this.load} />

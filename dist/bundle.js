@@ -6400,11 +6400,10 @@ function createNewHero(name) {
     });
 }
 function saveHero(data) {
-    const blob = new Blob([data], { type: "application/json" });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${data.overview.name}.json`;
-    a.click();
+    const part = JSON.stringify(data);
+    const blob = new Blob([part], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
 }
 function changeHeroAvatar(data) {
     const reader = new FileReader();
@@ -7347,7 +7346,24 @@ const requestHero = (id) => {
     });
     __WEBPACK_IMPORTED_MODULE_1__utils_WebAPIUtils__["k" /* requestHero */](id);
 };
-/* harmony export (immutable) */ __webpack_exports__["d"] = requestHero;
+/* harmony export (immutable) */ __webpack_exports__["e"] = requestHero;
+
+const insertHero = (json) => {
+    const parsed = JSON.parse(json);
+    const overview = parsed.overview;
+    const newOverview = {
+        dateCreated: new Date(overview.dateCreated),
+        dateModified: new Date(overview.dateModified)
+    };
+    const data = Object.assign({}, parsed.details, Object.assign({}, parsed.overview, newOverview));
+    __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
+        type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["e" /* RECEIVE_HERO_DATA */],
+        payload: {
+            data
+        }
+    });
+};
+/* harmony export (immutable) */ __webpack_exports__["d"] = insertHero;
 
 const createHero = (name, sex, el) => __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
     type: __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["p" /* CREATE_HERO */],
@@ -7357,7 +7373,7 @@ const createHero = (name, sex, el) => __WEBPACK_IMPORTED_MODULE_2__dispatcher_Ap
         el
     }
 });
-/* harmony export (immutable) */ __webpack_exports__["e"] = createHero;
+/* harmony export (immutable) */ __webpack_exports__["f"] = createHero;
 
 const requestHeroSave = () => {
     __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* default */].dispatch({
@@ -7365,7 +7381,7 @@ const requestHeroSave = () => {
     });
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_saveHero__["a" /* default */])();
 };
-/* harmony export (immutable) */ __webpack_exports__["f"] = requestHeroSave;
+/* harmony export (immutable) */ __webpack_exports__["g"] = requestHeroSave;
 
 
 
@@ -14105,12 +14121,12 @@ class HeroCreation extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         this.changeName = (event) => this.setState({ name: event.target.value });
         this.changeGender = (gender) => this.setState({ gender });
         this.changeEL = (el) => this.setState({ el });
-        this.create = () => __WEBPACK_IMPORTED_MODULE_0__actions_HerolistActions__["e" /* createHero */](this.state.name, this.state.gender, this.state.el);
+        this.create = () => __WEBPACK_IMPORTED_MODULE_0__actions_HerolistActions__["f" /* createHero */](this.state.name, this.state.gender, this.state.el);
     }
     render() {
         const experienceLevels = Object.keys(__WEBPACK_IMPORTED_MODULE_4__stores_ELStore__["a" /* default */].getAll()).map(e => {
             const { id, name, ap } = __WEBPACK_IMPORTED_MODULE_4__stores_ELStore__["a" /* default */].get(e);
-            return { id, name: `${name} (${ap})` };
+            return { id, name: `${name} (${ap} AP)` };
         });
         return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_Dialog__["a" /* default */], { id: "herocreation", title: "Heldenerstellung", node: this.props.node, buttons: [
                 {
@@ -18258,7 +18274,7 @@ class TitleBar extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
         };
         this.login = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_15__views_account_Login__["a" /* default */], null));
         this.logout = () => __WEBPACK_IMPORTED_MODULE_0__actions_AuthActions__["d" /* requestLogout */]();
-        this.saveHero = () => __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__["f" /* requestHeroSave */]();
+        this.saveHero = () => __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__["g" /* requestHeroSave */]();
         this.saveGroup = () => __WEBPACK_IMPORTED_MODULE_3__actions_InGameActions__["a" /* save */]();
         this.undo = () => __WEBPACK_IMPORTED_MODULE_2__actions_HistoryActions__["a" /* undoLastAction */]();
     }
@@ -18352,7 +18368,7 @@ class TitleBar extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
                                 total - spent,
                                 " AP")),
                         __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_14__IconButton__["a" /* default */], { icon: "\uE166", onClick: this.undo, disabled: !isUndoAvailable }),
-                        __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__BorderButton__["a" /* default */], { label: "Speichern", onClick: this.saveHero, disabled: true }))));
+                        __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__BorderButton__["a" /* default */], { label: "Speichern", onClick: this.saveHero }))));
             }
             case 'group': {
                 return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_23__TitleBarWrapper__["a" /* default */], null,
@@ -20959,6 +20975,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         super(...arguments);
         this.state = {
             filterText: '',
+            file: undefined,
             list: __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__["a" /* default */].getAll(),
             view: __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__["a" /* default */].getView(),
             sortOrder: __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__["a" /* default */].getSortOrder()
@@ -20973,7 +20990,16 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         this.changeView = (option) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__actions_HerolistActions__["b" /* setVisibilityFilter */])(option);
         this.showHeroCreation = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_9__HeroCreation__["a" /* default */], null));
         this.refresh = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__actions_HerolistActions__["c" /* requestList */])();
-        this.loadJSON = () => console.log('Implement JSON loading');
+        this.changeFile = (event) => {
+            const file = event.target.files && event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__actions_HerolistActions__["d" /* insertHero */])(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        };
     }
     componentDidMount() {
         __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__["a" /* default */].addChangeListener(this._updateHerolistStore);
@@ -20982,7 +21008,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         __WEBPACK_IMPORTED_MODULE_11__stores_HerolistStore__["a" /* default */].removeChangeListener(this._updateHerolistStore);
     }
     render() {
-        const { filterText, list: rawList, sortOrder, view } = this.state;
+        const { filterText, list: rawList, sortOrder, view, file } = this.state;
         const list = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_ListUtils__["a" /* filterAndSort */])(rawList, filterText, sortOrder).filter(e => {
             if (view === 'own') {
                 return !e.player;
@@ -21018,7 +21044,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
                         ] }),
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Aktualisieren", onClick: this.refresh, disabled: true }),
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Erstellen", onClick: this.showHeroCreation, primary: true }),
-                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_BorderButton__["a" /* default */], { label: "Datei laden", onClick: this.loadJSON })),
+                    __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_18__components_TextField__["a" /* default */], { onChange: this.changeFile, fullWidth: true, type: "file" })),
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_17__components_Scroll__["a" /* default */], { className: "list" },
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("ul", null,
                         __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getID() === null && __WEBPACK_IMPORTED_MODULE_8__stores_ELStore__["a" /* default */].getStartID() !== 'EL_0' ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_10__HerolistItem__["a" /* default */], { id: null, avatar: __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getAvatar(), name: "Ungespeicherter Held", ap: { total: __WEBPACK_IMPORTED_MODULE_3__stores_APStore__["a" /* default */].getTotal() }, r: __WEBPACK_IMPORTED_MODULE_15__stores_RaceStore__["a" /* default */].getCurrentID(), c: __WEBPACK_IMPORTED_MODULE_6__stores_CultureStore__["a" /* default */].getCurrentID(), p: __WEBPACK_IMPORTED_MODULE_12__stores_ProfessionStore__["a" /* default */].getCurrentId(), pv: __WEBPACK_IMPORTED_MODULE_13__stores_ProfessionVariantStore__["a" /* default */].getCurrentID(), sex: __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__["a" /* default */].getSex() })) : null,
@@ -21060,11 +21086,12 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 class HerolistItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
     constructor() {
         super(...arguments);
-        this.load = () => this.props.id && __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__["d" /* requestHero */](this.props.id);
+        this.load = () => this.props.id && __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__["e" /* requestHero */](this.props.id);
         this.show = () => __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__["a" /* setSection */]('hero');
     }
     render() {
         const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
+        const isOpen = id === __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getID();
         const elRoman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
         const elAp = [900, 1000, 1100, 1200, 1400, 1700, 2100];
         let currentEL = 6;
@@ -21114,7 +21141,7 @@ class HerolistItem extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
                     __WEBPACK_IMPORTED_MODULE_3_react__["createElement"]("span", { className: "name" }, name),
                     playerElement),
                 rcpElement),
-            (() => id === __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getID() ? (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE89E", onClick: this.show })) : (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE5DD", onClick: this.load })))()));
+            (() => isOpen ? (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE89E", onClick: this.show })) : (__WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_IconButton__["a" /* default */], { icon: "\uE5DD", onClick: this.load })))()));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = HerolistItem;

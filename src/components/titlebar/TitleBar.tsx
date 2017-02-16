@@ -224,7 +224,6 @@ export default class TitleBar extends React.Component<Props, State> {
 							<BorderButton
 								label="Speichern"
 								onClick={this.saveHero}
-								disabled
 								/>
 						</TitleBarRight>
 					</TitleBarWrapper>

@@ -30,7 +30,7 @@ export default class HeroCreation extends React.Component<Props, State> {
 	render() {
 		const experienceLevels = Object.keys(ELStore.getAll()).map(e => {
 			const { id, name, ap } = ELStore.get(e);
-			return { id, name: `${name} (${ap})` };
+			return { id, name: `${name} (${ap} AP)` };
 		});
 
 		return (

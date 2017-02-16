@@ -292,11 +292,10 @@ export async function createNewHero(name: string): Promise<void> {
 }
 
 export function saveHero(data: SaveData) {
-	const blob = new Blob([data], { type: "application/json" });
-	const a = document.createElement('a');
-	a.href = URL.createObjectURL(blob);
-	a.download = `${data.overview.name}.json`;
-	a.click();
+	const part = JSON.stringify(data);
+	const blob = new Blob([part], { type: "application/json" });
+	const url = URL.createObjectURL(blob);
+	window.open(url, '_blank');
 }
 
 // export async function saveHero(data): Promise<void> {
