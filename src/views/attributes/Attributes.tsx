@@ -1,5 +1,6 @@
 import AttributeCalc from './AttributeCalc';
 import AttributeList from './AttributeList';
+import AttributesPermanentList from './AttributesPermanentList';
 import * as React from 'react';
 import Scroll from '../../components/Scroll';
 
@@ -27,6 +28,7 @@ export default class Attribute extends React.Component<Props, undefined> {
 						<div className="counter">Punkte in Eigenschaften: {sum}</div>
 						<AttributeList {...other} max={max} sumMax={sumMax} />
 						<AttributeCalc {...other} baseValues={baseValues} />
+						<AttributesPermanentList phase={other.phase} />
 					</Scroll>
 				</div>
 			</section>

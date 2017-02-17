@@ -4,7 +4,7 @@ import TooltipToggle from '../../components/TooltipToggle';
 
 interface Props {
 	className?: string;
-	label: string;
+	label?: string;
 	tooltip?: JSX.Element;
 	tooltipMargin?: number;
 	value: number | string;

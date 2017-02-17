@@ -1,8 +1,8 @@
 import * as AttributesActions from '../../actions/AttributesActions';
+import * as React from 'react';
 import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';
-import * as React from 'react';
 
 interface Props {
 	attribute: AttributeInstance;
