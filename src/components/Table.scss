@@ -1,7 +1,7 @@
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
-	-webkit-border-horizontal-spacing: 0px; 
+	-webkit-border-horizontal-spacing: 0px;
 	-webkit-border-vertical-spacing: 0px;
 	table-layout: auto;
 	width: 100%;
@@ -10,7 +10,7 @@ table {
 
 table.list {
 	td {
-		padding: 5px 5px 5px 11px;
+		padding: 0 8px;
 
 		&.name {
 			width: 100%;
@@ -42,11 +42,26 @@ table.list {
 
 		td {
 			height: 36px;
-			
+
 			&.name h2, &.fw {
 				font: 500 15px/15px Alegreya Sans;
 				text-transform: none;
 				color: #f0e6d2;
+			}
+
+			&.fw, &.check, &.skt {
+				display: flex;
+				padding: 0;
+
+				div {
+					height: 32px;
+					width: 32px;
+					margin-right: 8px;
+					border-width: 2px;
+					border-style: solid;
+					font: 500 12px/28px Alegreya Sans SC;
+					text-align: center;
+				}
 			}
 
 			&.check, &.skt {
@@ -60,13 +75,16 @@ table.list {
 				align-items: center;
 
 				.btn {
-					height: 26px;
-					padding: 0 14px 3px;
-					min-width: auto;
-					font-size: 16px;
 					flex: none;
+					background: transparent;
 
-					&:nth-child(2) {
+					&:hover {
+						background: transparent;
+					}
+
+					border: none;
+
+					&:not(:first-child) {
 						margin-left: 4px;
 					}
 				}
@@ -95,6 +113,188 @@ table.list {
 					}
 				}
 			}
+		}
+	}
+}
+
+.list-wrapper {
+	display: flex;
+	flex-direction: column;
+	padding: 1px 0;
+}
+
+.list-item {
+	flex: none;
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 8px;
+
+	&:hover{
+		.values {
+			$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+
+			@for $i from 1 through 8 {
+				.ATTR_#{$i} {
+					border-color: map-get($map: $colors, $key: $i);
+				}
+			}
+
+			.ATTR_6_8 {
+				border-color: $attr6 $attr8 $attr8 $attr6;
+			}
+		}
+
+		&::after {
+			position: absolute;
+			left: -11px;
+			top: -1px;
+			@include calc(width, "100% + 5px");
+			height: 100%;
+			content: "";
+			border-image: linear-gradient(to right, $color14 0%, transparentize($color14, .75) 100%);
+			border-image-slice: 1;
+			border-width: 1px 0 1px 6px;
+			border-style: solid;
+			border-color: transparent;
+			pointer-events: none;
+		}
+	}
+
+	&:not(:last-child) {
+		margin-bottom: 1px;
+	}
+
+	.name {
+		flex: 0 1 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	p {
+		font: 500 12px/16px Alegreya Sans;
+		letter-spacing: 0.05em;
+		margin-top: 2px;
+
+		&.title {
+			height: 16px;
+			// font: bold 15px/16px Alegreya;
+			// letter-spacing: 0.1em;
+			font: 500 15px/16px Alegreya Sans;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			// text-transform: uppercase;
+			text-transform: none;
+			color: $color1;
+			margin: 0;
+		}
+	}
+
+	.hr {
+		border-width: 1px 0 0;
+		background-color: $color12;
+		flex: 1 1 auto;
+		height: 1px;
+		margin: 0 10px;
+	}
+
+	.selections {
+		flex: none;
+		display: flex;
+
+		> div {
+			flex: none;
+			margin: 0 0 0 10px;
+
+			&.dropdown, &.textfield {
+				width: 200px;
+			}
+
+			&.dropdown.tiers {
+				width: 65px;
+			}
+		}
+	}
+
+	.values {
+		flex: none;
+		display: flex;
+		align-items: center;
+
+		> div {
+			height: 32px;
+			width: 32px;
+			margin-right: 8px;
+			border-width: 2px;
+			border-style: solid;
+			font: 500 12px/28px Alegreya Sans SC;
+			text-align: center;
+		}
+
+		.sr {
+			font-size: 15px;
+			color: $color1;
+		}
+
+		.ic {
+			margin-left: 4px;
+			color: $color2;
+		}
+
+		.sr, .ic, .cost {
+			border-color: $color12;
+			border-width: 1px;
+			margin-right: 12px;
+			line-height: 30px;
+		}
+
+		.check, .primary, .at, .pa {
+			border-color: $color12;
+		}
+
+		.ATTR_6_8 {
+			font-size: 8px;
+		}
+
+		.atpa {
+			width: 8px;
+			height: 2px;
+			background-color: $color12;
+			flex: none;
+			margin: 0 0 0 -8px;
+			border: none;
+		}
+
+		.fill {
+			width: auto;
+			height: 1px;
+			margin: 0;
+			border: none;
+			flex: 1 1 auto;
+		}
+	}
+
+	.btns {
+		flex: none;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+
+		.btn {
+			flex: none;
+			// background: transparent;
+
+			// &:hover {
+			// 	background: transparent;
+			// }
+
+			// border: none;
+
+			// &:not(:first-child) {
+			// 	margin-left: 4px;
+			// }
 		}
 	}
 }

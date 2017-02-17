@@ -1,0 +1,12 @@
+export const ADVANTAGES = 'ADVANTAGES';
+export const ATTRIBUTES = 'ATTRIBUTES';
+export const COMBAT_TECHNIQUES = 'COMBAT_TECHNIQUES';
+export const CULTURES = 'CULTURES';
+export const DISADVANTAGES = 'DISADVANTAGES';
+export const LITURGIES = 'LITURGIES';
+export const PROFESSION_VARIANTS = 'PROFESSION_VARIANTS';
+export const PROFESSIONS = 'PROFESSIONS';
+export const RACES = 'RACES';
+export const SPECIAL_ABILITIES = 'SPECIAL_ABILITIES';
+export const SPELLS = 'SPELLS';
+export const TALENTS = 'TALENTS';

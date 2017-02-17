@@ -1,0 +1,50 @@
+{
+	"rules": {
+		"no-any": false,
+		"no-empty": true,
+		"no-eval": true,
+		"no-empty-interface": true,
+		"prefer-for-of": true,
+		"curly": true,
+		"no-duplicate-variable": true,
+		"no-unused-expression": true,
+		"no-unused-new": true,
+		"no-unused-variable": [
+			true, "check-parameters", "react"
+		],
+		"no-var-keyword": true,
+		// "no-switch-case-fall-through": true,
+		// "switch-default": true,
+		"triple-equals": true,
+		"eofline": true,
+		"indent": [
+			true, "tabs"
+		],
+		"no-require-imports": true,
+		"no-trailing-whitespace": true,
+		"prefer-const": true,
+		"class-name": true,
+		"comment-format": [
+			true, "check-space"
+		],
+		"no-consecutive-blank-lines": [
+			true, 2
+		],
+		"object-literal-key-quotes": [
+			true, "consistent"
+		],
+		"object-literal-shorthand": true,
+		"one-variable-per-declaration": [
+			true, "ignore-for-loop"
+		],
+		"quotemark": [
+			true, "single", "jsx-double", "avoid-escape"
+		],
+		"semicolon": [
+			true, "always"
+		],
+		"variable-name": [
+			true, "check-format", "allow-leading-underscore", "allow-pascal-case"
+		]
+	}
+}

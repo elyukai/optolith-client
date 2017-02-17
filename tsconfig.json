@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "importHelpers": true,
+        "jsx": "react",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "noEmitHelpers": true,
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016",
+            "es2017"
+        ],
+        "noImplicitAny": true,
+        "outDir": "./dist/",
+		"removeComments": true,
+        "strictNullChecks": true,
+        "target": "es6",
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true
+   },
+    "include": [
+        "./src/actions/**/*",
+        "./src/components/**/*",
+        "./src/constants/**/*",
+        "./src/data/**/*",
+        "./src/dispatcher/**/*",
+        "./src/stores/**/*",
+        "./src/utils/**/*",
+        "./src/views/**/*",
+        "./src/*"
+    ],
+	"exclude": [
+		"node_modules"
+	]
+}

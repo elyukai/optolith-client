@@ -12,15 +12,15 @@ import TextField from '../../components/TextField';
 const GROUPS = ['Nahkampf', 'Fernkampf'];
 
 export default class extends Component {
-	
-	state = { 
+
+	state = {
 		list: CombatTechniquesStore.getAll(),
 		filter: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 		phase: PhaseStore.get()
 	};
-	
-	_updateCombatTechniquesStore = () => this.setState({ 
+
+	_updateCombatTechniquesStore = () => this.setState({
 		list: CombatTechniquesStore.getAll(),
 		filter: CombatTechniquesStore.getFilter(),
 		sortOrder: CombatTechniquesStore.getSortOrder()
@@ -30,11 +30,11 @@ export default class extends Component {
 	sort = option => CombatTechniquesActions.sort(option);
 	addPoint = id => CombatTechniquesActions.addPoint(id);
 	removePoint = id => CombatTechniquesActions.removePoint(id);
-	
+
 	componentDidMount() {
 		CombatTechniquesStore.addChangeListener(this._updateCombatTechniquesStore );
 	}
-	
+
 	componentWillUnmount() {
 		CombatTechniquesStore.removeChangeListener(this._updateCombatTechniquesStore );
 	}

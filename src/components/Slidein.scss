@@ -16,17 +16,17 @@
 	background: transparent;
 	pointer-events: none;
 	z-index: 900;
-		
+
 	&.slidein-open {
 		pointer-events: all;
 		display: flex;
 		// background: rgba(0, 0, 0, 0.25);
-		
+
 		> .slidein {
 			bottom: 0;
 		}
 	}
-	
+
 	.slidein {
 		position: relative;
 		background: #010a13;
@@ -38,8 +38,7 @@
 		color: #a1a1a1;
 		font: 13px/14px "Source Sans Pro";
 		letter-spacing: 0.03em;
-		padding: 3px 0;
-			
+
 		&:before {
 			position: absolute;
 			display: block;
@@ -53,7 +52,7 @@
 			left: 0;
 			z-index: 999;
 		}
-			
+
 		.slidein-close {
 			width: 36px;
 			height: 36px;
@@ -65,7 +64,7 @@
 			right: 20px;
 			top: -15px;
 			z-index: 1000;
-			
+
 			> div {
 				border: 2px solid #bda36c;
 				border-radius: 50%;
@@ -74,10 +73,10 @@
 				font: 18px/26px Material;
 				text-align: center;
 			}
-			
+
 			&:hover {
 				cursor: pointer;
-				
+
 				> div {
 					color: white;
 				}
@@ -154,7 +153,7 @@
 
 			// 				td {
 			// 					height: 36px;
-								
+
 			// 					&.name {
 			// 						vertical-align: middle;
 

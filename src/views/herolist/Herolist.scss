@@ -56,15 +56,33 @@
 
 		> .main {
 			flex: 1 1 100%;
-			margin-left: 16px;
+			margin: 0 16px;
+			overflow: hidden;
 
-			h2 .player {
-				padding-left: 20px;
-				font-size: 16px;
-				color: $color4;
+			h2 {
+				overflow: hidden;
+				display: flex;
+
+				.name {
+					flex: 0 1 auto;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				.player {
+					padding-left: 20px;
+					font-size: 16px;
+					color: $color4;
+					flex: none;
+				}
 			}
 
 			.rcp {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+
 				span:last-child {
 					font-weight: 500;
 				}
@@ -94,6 +112,10 @@
 			> svg, > .el > div.el-value {
 				visibility: visible;
 			}
+		}
+
+		> .btn {
+			flex: none;
 		}
 
 		> .btn.btn-primary {

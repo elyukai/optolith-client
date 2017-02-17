@@ -93,16 +93,15 @@ export default class Dropdown extends Component {
 
 		return (
 			<DropdownPosition>
-				
-			</DropdownPosition>
-			<div className={className} ref="container">
-				{labelTextELement}
-				<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
-					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
-					<div onClick={this.switch} className="value">{valueText}</div>
-					{this.state.position === 'bottom' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
+				<div className={className} ref="container">
+					{labelTextELement}
+					<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
+						{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
+						<div onClick={this.switch} className="value">{valueText}</div>
+						{this.state.position === 'bottom' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
+					</div>
 				</div>
-			</div>
+			</DropdownPosition>
 		);
 	}
 }

@@ -1,7 +1,23 @@
 #about {
-	.third-party-software {
+	&::before {
+		position: absolute;
+		@include calc(width, "100% - 70px");
+		height: 1px;
+		content: "";
+		background: $color10;
+		// background: #3a322b;
+		// background: #1f282d;
+		top: $titlebar-height;
+		left: 35px;
+	}
+
+	.scroll-inner {
+		padding-top: 20px;
+	}
+
+	.third-party-software-body {
 		font-size: 12px;
 		line-height: normal;
-		margin-top: 10px;
+		margin-top: 20px;
 	}
 }

@@ -65,19 +65,19 @@ export default class Dropdown extends Component {
 				hint={hint}
 				>
 			</DropdownToggle>
-			<div className={className} ref="container">
-				{labelTextElement}
-				<DropdownPosition
-					dropElement={dropElement}
-					isOpen={isOpen}
-					onMouseDown={this.insideFocus}
-					onMouseUp={this.insideBlur}
-					onTouchStart={this.insideFocus}
-					onTouchEnd={this.insideBlur}
-					position={position}
-					trigger={<div onClick={this.switch} className="value">{valueText}</div>}
-					/>
-			</div>
 		);
 	}
 }
+			// <div className={className} ref="container">
+			// 	{labelTextElement}
+			// 	<DropdownPosition
+			// 		dropElement={dropElement}
+			// 		isOpen={isOpen}
+			// 		onMouseDown={this.insideFocus}
+			// 		onMouseUp={this.insideBlur}
+			// 		onTouchStart={this.insideFocus}
+			// 		onTouchEnd={this.insideBlur}
+			// 		position={position}
+			// 		trigger={<div onClick={this.switch} className="value">{valueText}</div>}
+			// 		/>
+			// </div>

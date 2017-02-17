@@ -1,0 +1,176 @@
+#info .modal-container {
+	width: 322px;
+
+	// > div {
+	// 	border: 1px solid $color13;
+	// 	background: transparentize($background2, .5);
+	// 	margin-bottom: 11px;
+
+	// 	&:not(.scroll) {
+	// 		padding: 18px;
+	// 	}
+	// }
+
+	.modal-content-inner {
+		padding: 18px;
+	}
+
+	p {
+		font: 500 12px/16px Alegreya Sans;
+		letter-spacing: 0.05em;
+		margin-top: 16px;
+
+		&:last-child {
+			margin-bottom: 1px;
+		}
+	}
+
+	p.title {
+		font: bold 14px/18px Alegreya SC;
+		text-transform: uppercase;
+		color: $color1;
+		display: flex;
+		justify-content: space-between;
+		letter-spacing: 0.07em;
+
+		span:last-child {
+			color: $color2;
+		}
+	}
+
+	.info-header {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		align-content: space-between;
+		justify-content: center;
+		height: 16px;
+	}
+
+	.info-header p {
+		flex: none;
+		margin: 0;
+		color: #f1e6d4;
+	}
+
+	.info-header p:last-child {
+		margin-bottom: 0;
+	}
+
+	.title {
+		height: 16px;
+		display: block;
+		font: bold 15px/16px Alegreya;
+		letter-spacing: 0.1em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		text-transform: uppercase;
+	}
+
+	p span:first-child:after {
+		content: ": ";
+	}
+
+	p.rule {
+		color: #f1e6d4;
+	}
+
+	p.note {
+		color: #477;
+	}
+
+	p.warning {
+		color: #be1e37;
+	}
+
+	table {
+		margin-top: 15px;
+		font: 500 12px/16px Alegreya Sans;
+		letter-spacing: 0.05em;
+	}
+
+	table td {
+		padding: 0;
+		border: none;
+		height: auto;
+	}
+
+	table td:first-child {
+		color: #878683;
+		padding-right: 15px;
+		width: 0;
+	}
+
+	table td:last-child {
+		color: #f1e6d4;
+	}
+
+	.info-header .sr {
+		font-size: 15px;
+	}
+
+	.test {
+		display: flex;
+		align-items: center;
+		margin-top: 16px;
+		color: #f1e6d4;
+
+		div {
+			height: 32px;
+			width: 32px;
+			margin-right: 8px;
+			border-width: 2px;
+			border-style: solid;
+			font: 500 12px/28px Alegreya Sans SC;
+			text-align: center;
+		}
+
+		$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+
+		@for $i from 1 through 8 {
+			.ATTR_#{$i} {
+				border-color: map-get($map: $colors, $key: $i);
+			}
+		}
+
+		.at {
+			border-color: #aa1b32;
+		}
+
+		.pa {
+			border-color: #005177;
+		}
+
+		.at, .pa {
+			font-size: 15px;
+		}
+
+		.hr {
+			border-width: 1px 0 0;
+			color: #1e282d;
+			flex: 1 1 auto;
+			height: 1px;
+			margin-left: 2px;
+			margin-right: 10px;
+		}
+
+		.routine, .primary {
+			border-color: #1e282d;
+			border-width: 1px;
+			margin-right: 0;
+			color: #878683;
+			line-height: 30px;
+		}
+
+		.primary {
+			width: auto;
+			min-width: 32px;
+			padding: 0 8px;
+		}
+	}
+
+	.subtitle {
+		margin-top: 2px;
+	}
+}

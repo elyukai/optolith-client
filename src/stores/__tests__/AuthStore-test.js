@@ -1,7 +1,7 @@
 jest.mock('../../dispatcher/AppDispatcher');
 
 import AuthStore from '../AuthStore';
-import ActionTypes from '../../constants/ActionTypes';
+import * as ActionTypes from '../../constants/ActionTypes';
 import AppDispatcher from '../../dispatcher/AppDispatcher';
 
 describe('AuthStore', () => {
@@ -14,7 +14,7 @@ describe('AuthStore', () => {
 
 	it('receives new account', () => {
 		callback({
-			actionType: ActionTypes.RECEIVE_ACCOUNT,
+			type: ActionTypes.RECEIVE_ACCOUNT,
 			id: 4,
 			name: 'Elytherion'
 		});
