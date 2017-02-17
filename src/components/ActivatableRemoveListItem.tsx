@@ -26,7 +26,7 @@ interface Props {
 
 export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
-		const { id, active: { sid, tier }, index } = this.props.item;
+		const { id, active: { tier }, index } = this.props.item;
 		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
 		const finalCost = (selectedTier - (tier as number)) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
 		this.props.setTier(id, index, selectedTier, finalCost);
@@ -114,7 +114,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 				const skill = get(sid as string) as TalentInstance;
 				currentCost = skill.ic * counter;
-				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
+				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
 				break;
 			}
 			case 'SA_30':
@@ -144,8 +144,9 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 					add = sid as string;
 				}
 				else if (sel.length > 0 && cost === 'sel') {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
-					currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+					const selectionItem = getSelectionItem(sid!);
+					add = selectionItem!.name;
+					currentCost = selectionItem!.cost as number;
 				}
 				else if (sel.length > 0 && typeof cost === 'number') {
 					add = (getSelectionItem(sid as string | number) as SelectionObject).name;

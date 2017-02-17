@@ -21,7 +21,7 @@ export default class ForgotPassword extends React.Component<Props, State> {
 	forgotPassword = () => AuthActions.requestPasswordReset(this.state.email);
 	back = () => createOverlay(<Login />);
 
-	_onChange = (event: InputTextEvent) => this.setState({ email: event.target.value });
+	_onChange = (event: InputTextEvent) => this.setState({ email: event.target.value } as State);
 	_onEnter = (event: InputKeyEvent) => {
 		if (event.charCode === 13 && this.state.email !== '') {
 			this.forgotPassword();

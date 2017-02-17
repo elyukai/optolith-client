@@ -15,7 +15,7 @@ export default class Account extends React.Component<undefined, State> {
 		newName: ''
 	};
 
-	handleName = (event: InputTextEvent) => this.setState({ newName: event.target.value });
+	handleName = (event: InputTextEvent) => this.setState({ newName: event.target.value } as State);
 	changeName = () => AuthActions.requestNewUsername(this.state.newName);
 
 	render() {

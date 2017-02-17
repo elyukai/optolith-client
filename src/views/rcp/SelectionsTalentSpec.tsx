@@ -4,15 +4,17 @@ import TextField from '../../components/TextField';
 
 interface Props {
 	active: [number | null, string];
-	change: (index: number, result: number | React.MouseEvent<string>) => void;
+	change: (value: string | number) => void;
 	input: string | null;
-	list: { id: number; name: string; }[];
+	list: { id: number; name: string; }[] | null;
 	name: string;
 }
 
 export default class SelectionsTalentSpec extends React.Component<Props, undefined> {
 	render() {
 		const { active, change, input, list, name } = this.props;
+
+		const changeMiddleware = (event: InputTextEvent) => change(event.target.value);
 
 		return (
 			<div className="spec">
@@ -21,11 +23,11 @@ export default class SelectionsTalentSpec extends React.Component<Props, undefin
 				</h4>
 				<div>
 					{
-						list.length > 0 ? (
+						list ? (
 							<Dropdown
 								className="tiers"
 								value={active[0] || 0}
-								onChange={change.bind(null, 0)}
+								onChange={change}
 								options={list}
 								disabled={active[1] !== ''}
 								/>
@@ -36,7 +38,7 @@ export default class SelectionsTalentSpec extends React.Component<Props, undefin
 							<TextField
 								hint={input}
 								value={active[1]}
-								onChange={change.bind(null, 1)}
+								onChange={changeMiddleware}
 								disabled={input === null}
 								/>
 						) : null

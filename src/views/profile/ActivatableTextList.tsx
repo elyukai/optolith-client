@@ -8,16 +8,13 @@ interface Props {
 }
 
 export default (props: Props) => {
-	const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
 	const list = props.list.filter(obj => !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
-		const { id, active: activeObject, index } = obj;
+		const { id, active: activeObject } = obj;
 		const { sid, sid2, tier } = activeObject;
 		const a = get(id) as AdvantageInstance | DisadvantageInstance;
-		const { cost, category, sel, dependencies, active, input, getSelectionItem } = a;
+		const { cost, sel, input, getSelectionItem } = a;
 		let { tiers } = a;
 		let add = '';
-		let addSpecial = '';
 
 		switch (id) {
 			case 'ADV_4':
@@ -28,13 +25,12 @@ export default (props: Props) => {
 				break;
 			}
 			case 'ADV_16': {
-				const { name, ic, value } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
-				const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
+				const { name } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
 				add = name;
 				break;
 			}
 			case 'ADV_17': {
-				const { name, ic, value } = (get(sid as string)) as CombatTechniqueInstance;
+				const { name } = (get(sid as string)) as CombatTechniqueInstance;
 				add = name;
 				break;
 			}
@@ -50,8 +46,6 @@ export default (props: Props) => {
 				break;
 			case 'DISADV_34':
 			case 'DISADV_50': {
-				const maxCurrentTier = active.reduce((a,b) => (b.tier as number) > a ? b.tier as number : a, 0);
-				const subMaxCurrentTier = active.reduce((a,b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
 				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
 				break;
 			}
@@ -71,9 +65,8 @@ export default (props: Props) => {
 				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
 				break;
 			case 'SA_10': {
-				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 				const skill = get(sid as string) as TalentInstance;
-				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
+				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
 				break;
 			}
 			case 'SA_30':
@@ -122,9 +115,6 @@ export default (props: Props) => {
 		else if (add) {
 			name += ` (${add})`;
 		}
-		if (addSpecial) {
-			name += addSpecial;
-		}
 
 		return name;
 	}).sort().join(', ');
@@ -132,4 +122,4 @@ export default (props: Props) => {
 	return (
 		<div className="list">{list}</div>
 	);
-}
+};

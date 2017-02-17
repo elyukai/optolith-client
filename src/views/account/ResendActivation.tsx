@@ -21,7 +21,7 @@ export default class ResendActivation extends React.Component<Props, State> {
 	resendActivation = () => AuthActions.requestAccountActivationEmail(this.state.email);
 	back = () => createOverlay(<Login />);
 
-	_onChange = (event: InputTextEvent) => this.setState({email: event.target.value });
+	_onChange = (event: InputTextEvent) => this.setState({email: event.target.value } as State);
 	_onEnter = (event: InputKeyEvent) => {
 		if (event.charCode === 13 && this.state.email !== '') {
 			this.resendActivation();

@@ -41,9 +41,10 @@ interface RawRace {
 	attr: number[][];
 	attr_sel: [number, number[]];
 	typ_cultures: string[];
-	auto_adv: string[][];
-	imp_adv: (string | number)[][];
-	imp_dadv: (string | number)[][];
+	auto_adv: string[];
+	autoAdvCost: [number, number, number];
+	imp_adv: string[];
+	imp_dadv: string[];
 	typ_adv: string[];
 	typ_dadv: string[];
 	untyp_adv: string[];
@@ -76,10 +77,10 @@ interface RawProfession {
 	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
 	ap: number;
-	pre_req: [string, any][];
-	req: any[][];
+	pre_req: ProfessionDependencyObject[];
+	req: RequirementObject[];
 	sel: ProfessionSelections;
-	sa: (string | number | boolean)[][];
+	sa: RequirementObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number | null][];
@@ -96,10 +97,10 @@ interface RawProfessionVariant {
 	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
 	ap: number;
-	pre_req: [string, any][];
-	req: any[][];
+	pre_req: ProfessionDependencyObject[];
+	req: RequirementObject[];
 	sel: ProfessionSelections;
-	sa: (string | number | boolean)[][];
+	sa: RequirementObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 }

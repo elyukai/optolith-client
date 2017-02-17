@@ -125,7 +125,7 @@ function _assignRCP(selections: Selections) {
 		const [ mod, id ] = e;
 		(_byId[id] as AttributeInstance).mod += mod;
 	});
-	race.autoAdvantages.forEach(e => activatable.add(e));
+	race.autoAdvantages.forEach(e => activatable.add({ id: e }));
 	(_byId[selections.attrSel] as AttributeInstance).mod = race.attributeSelection[0];
 
 	// Culture selections:
@@ -161,7 +161,18 @@ function _assignRCP(selections: Selections) {
 		[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
 			skillRatingList.set(key, value);
 		});
-		professionVariant.specialAbilities.forEach(e => activatable.add(e));
+		professionVariant.specialAbilities.forEach(e => {
+			if (e.active === false) {
+				activatable.forEach(i => {
+					if (i.id === e.id) {
+						activatable.delete(i);
+					}
+				});
+			}
+			else {
+				activatable.add(e);
+			}
+		});
 	}
 
 	if (selections.spec !== null) {
@@ -199,7 +210,7 @@ function _assignRCP(selections: Selections) {
 	skillActivateList.forEach(e => _activate(e));
 
 	activatable.forEach(req => {
-		const { id, sid, sid2, tier, value } = req;
+		const { id, sid, sid2, tier } = req;
 		const obj = get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
 		const add: RequirementObject[] = [];
 		if (id === 'SA_10') {
@@ -210,8 +221,8 @@ function _assignRCP(selections: Selections) {
 		}
 		obj.addDependencies(add);
 	});
-	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...scripts);
-	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...languages);
+	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
+	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
 }
 
 function _clear() {

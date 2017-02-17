@@ -26,18 +26,18 @@ interface Props {
 };
 
 export default class OverviewPersonalData extends React.Component<Props, undefined> {
-	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value);
-	changePlaceOfBirth = (e: InputTextEvent) => ProfileActions.setPlaceOfBirth(e.target.value);
-	changeDateOfBirth = (e: InputTextEvent) => ProfileActions.setDateOfBirth(e.target.value);
-	changeAge = (e: InputTextEvent) => ProfileActions.setAge(e.target.value);
+	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value as string);
+	changePlaceOfBirth = (e: InputTextEvent) => ProfileActions.setPlaceOfBirth(e.target.value as string);
+	changeDateOfBirth = (e: InputTextEvent) => ProfileActions.setDateOfBirth(e.target.value as string);
+	changeAge = (e: InputTextEvent) => ProfileActions.setAge(e.target.value as string);
 	changeHaircolor = (result: number) => ProfileActions.setHairColor(result);
 	changeEyecolor = (result: number) => ProfileActions.setEyeColor(result);
-	changeSize = (e: InputTextEvent) => ProfileActions.setSize(e.target.value);
-	changeWeight = (e: InputTextEvent) => ProfileActions.setWeight(e.target.value);
-	changeTitle = (e: InputTextEvent) => ProfileActions.setTitle(e.target.value);
+	changeSize = (e: InputTextEvent) => ProfileActions.setSize(e.target.value as string);
+	changeWeight = (e: InputTextEvent) => ProfileActions.setWeight(e.target.value as string);
+	changeTitle = (e: InputTextEvent) => ProfileActions.setTitle(e.target.value as string);
 	changeSocialStatus = (result: number) => ProfileActions.setSocialStatus(result);
-	changeCharacteristics = (e: InputTextEvent) => ProfileActions.setCharacteristics(e.target.value);
-	changeOtherInfo = (e: InputTextEvent) => ProfileActions.setOtherInfo(e.target.value);
+	changeCharacteristics = (e: InputTextEvent) => ProfileActions.setCharacteristics(e.target.value as string);
+	changeOtherInfo = (e: InputTextEvent) => ProfileActions.setOtherInfo(e.target.value as string);
 
 	rerollHair = () => ProfileActions.rerollHairColor();
 	rerollEyes = () => ProfileActions.rerollEyeColor();

@@ -105,7 +105,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 	changeStp = (event: InputTextEvent) => this.setState({ stp: event.target.value } as State);
 	changeRange = (event: InputTextEvent, index: 1 | 2 | 3) => {
 		const range = this.state.range;
-		range[index] = event.target.value;
+		range[index] = event.target.value as string;
 		this.setState({ range } as State)
 	};
 	changeRange1 = (event: InputTextEvent) => this.changeRange(event, 1);

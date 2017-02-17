@@ -30,16 +30,16 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 
 		let variants;
 		if (profession.id === currentID && profession.variants.length > 0) {
-			let allVariants = ProfessionVariantStore.getAll().filter(e => {
+			const allVariants = ProfessionVariantStore.getAll().filter(e => {
 				if (profession.variants.includes(e.id)) {
 					if (e.dependencies !== null) {
 						return e.dependencies.every(req => {
-							if (req[0] === 'c') {
-								let cultureID = CultureStore.getCurrentID() as string;
-								return (req[1] as string[]).includes(cultureID);
-							} else if (req[0] === 'g') {
-								let gender = ProfileStore.getSex();
-								return gender === req[1];
+							if (req.id === 'CULTURE') {
+								const cultureID = CultureStore.getCurrentID() as string;
+								return (req.value as string[]).includes(cultureID);
+							} else if (req.id === 'SEX') {
+								const sex = ProfileStore.getSex();
+								return sex === req.value;
 							}
 							return false;
 						});
@@ -49,8 +49,9 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 				return false;
 			});
 			if (allVariants.length > 0) {
-				let variantList: { name: string; value: string | null; }[] = allVariants.map(e => {
-					let { ap, id, name } = e;
+				const variantList: { name: string; value: string | null; }[] = allVariants.map(e => {
+					const { ap, id } = e;
+					let { name } = e;
 					if (typeof name === 'object') {
 						name = name[sex];
 					}

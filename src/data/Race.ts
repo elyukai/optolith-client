@@ -15,9 +15,10 @@ export default class Race extends Core implements RaceInstance {
 	readonly attributes: [number, string][];
 	readonly attributeSelection: [number, string[]];
 	readonly typicalCultures: string[];
-	readonly autoAdvantages: (string | number)[][];
-	readonly importantAdvantages: (string | number)[][];
-	readonly importantDisadvantages: (string | number)[][];
+	readonly autoAdvantages: string[];
+	readonly automaticAdvantagesCost: [number, number, number];
+	readonly importantAdvantages: string[];
+	readonly importantDisadvantages: string[];
 	readonly typicalAdvantages: string[];
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];
@@ -28,7 +29,7 @@ export default class Race extends Core implements RaceInstance {
 	readonly weight: (number | [number, number])[];
 	readonly category = Categories.RACES;
 
-	constructor({ ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight, ...args }: RawRace) {
+	constructor({ ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, autoAdvCost, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight, ...args }: RawRace) {
 		super(args);
 
 		this.ap = ap;
@@ -43,9 +44,10 @@ export default class Race extends Core implements RaceInstance {
 
 		this.typicalCultures = typ_cultures.map(e => `C_${e}`);
 
-		this.autoAdvantages = fixIDs<number>(auto_adv, 'ADV');
-		this.importantAdvantages = fixIDs<number>(imp_adv, 'ADV');
-		this.importantDisadvantages = fixIDs<number>(imp_dadv, 'DISADV');
+		this.autoAdvantages = auto_adv.map(e => `ADV_${e}`);
+		this.automaticAdvantagesCost = autoAdvCost;
+		this.importantAdvantages = imp_adv.map(e => `ADV_${e}`);
+		this.importantDisadvantages = imp_dadv.map(e => `DISADV_${e}`);
 
 		this.typicalAdvantages = typ_adv.map(e => `ADV_${e}`);
 		this.typicalDisadvantages = typ_dadv.map(e => `DISADV_${e}`);

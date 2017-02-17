@@ -230,7 +230,7 @@ export default class Selections extends React.Component<Props, State> {
 
 			const talent = get(sid) as TalentInstance;
 			const name = talent.name;
-			const list = talent.specialisation.map((e, id) => ({ id, name: e }));
+			const list = talent.specialisation && talent.specialisation.map((e, id) => ({ id: id + 1, name: e }));
 			const input = talent.specialisationInput;
 
 			specElement = <SelectionsTalentSpec list={list} active={active} name={name} input={input} change={this.changeSpec} />;

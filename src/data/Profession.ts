@@ -7,10 +7,10 @@ import Core from './CoreGenderExtended';
 export default class Profession extends Core implements ProfessionInstance {
 	readonly subname: string | { m: string, f: string };
 	readonly ap: number;
-	readonly dependencies: (string | number | boolean)[][];
-	readonly requires: (string | number | boolean)[][];
+	readonly dependencies: ProfessionDependencyObject[];
+	readonly requires: RequirementObject[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: (string | number | boolean)[][];
+	readonly specialAbilities: RequirementObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number | null][];
@@ -26,11 +26,11 @@ export default class Profession extends Core implements ProfessionInstance {
 		super(other);
 		this.subname = subname;
 		this.ap = ap;
-		this.requires = pre_req;
-		this.dependencies = req;
+		this.dependencies = pre_req;
+		this.requires = req;
 		this.selections = sel;
 
-		this.specialAbilities = fixIDs<number | boolean>(sa, 'SA');
+		this.specialAbilities = sa;
 		this.combatTechniques = fixIDs<number>(combattech, 'CT') as [string, number][];
 		this.talents = fixIDs<number>(talents, 'TAL') as [string, number][];
 		this.spells = fixIDs<number>(spells, 'SPELL') as [string, number | null][];

@@ -53,14 +53,7 @@ export default class Activatable extends Dependent {
 		return this.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
 	}
 
-	getSelectionItem = (id: string | number) => {
-		for (const selectionItem of this.sel) {
-			if (selectionItem.id === id) {
-				return selectionItem;
-			}
-		}
-		return undefined;
-	}
+	getSelectionItem = (id: string | number) => this.sel.find(e => e.id === id);
 
 	activate({ sel, sel2, input, tier }: ActivateObject) {
 		const adds: RequirementObject[] = [];
@@ -101,7 +94,7 @@ export default class Activatable extends Dependent {
 				}
 				break;
 			case 'SA_10':
-				if (input === '') {
+				if (!input) {
 					active = { sid: sel, sid2: sel2 };
 				} else if (this.active.filter(e => e.sid === input).length === 0) {
 					active = { sid: sel, sid2: input };

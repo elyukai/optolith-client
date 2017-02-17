@@ -98,9 +98,10 @@ interface RaceInstance {
 	readonly attributes: [number, string][];
 	readonly attributeSelection: [number, string[]];
 	readonly typicalCultures: string[];
-	readonly autoAdvantages: (string | number)[][];
-	readonly importantAdvantages: (string | number)[][];
-	readonly importantDisadvantages: (string | number)[][];
+	readonly autoAdvantages: string[];
+	readonly automaticAdvantagesCost: [number, number, number];
+	readonly importantAdvantages: string[];
+	readonly importantDisadvantages: string[];
 	readonly typicalAdvantages: string[];
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];
@@ -164,15 +165,20 @@ type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_T
 type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CantripsSelection | CursesSelection;
 type ProfessionSelections = ProfessionSelection[];
 
+interface ProfessionNameForSexes {
+	m: string;
+	f: string;
+}
+
 interface ProfessionInstance {
 	readonly id: string;
-	readonly name: string | { m: string, f: string };
-	readonly subname: string | { m: string, f: string };
+	readonly name: string | ProfessionNameForSexes;
+	readonly subname: string | ProfessionNameForSexes;
 	readonly ap: number;
-	readonly dependencies: (string | number | boolean)[][];
-	readonly requires: (string | number | boolean)[][];
+	readonly dependencies: ProfessionDependencyObject[];
+	readonly requires: RequirementObject[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: (string | number | boolean)[][];
+	readonly specialAbilities: RequirementObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number | null][];
@@ -187,12 +193,12 @@ interface ProfessionInstance {
 
 interface ProfessionVariantInstance {
 	readonly id: string;
-	readonly name: string | { m: string, f: string };
+	readonly name: string | ProfessionNameForSexes;
 	readonly ap: number;
-	readonly dependencies: [string, string | string[]][];
-	readonly requires: (string | number | boolean)[][];
+	readonly dependencies: ProfessionDependencyObject[];
+	readonly requires: RequirementObject[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: (string | number | boolean)[][];
+	readonly specialAbilities: RequirementObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly category: PROFESSION_VARIANTS;
@@ -247,6 +253,11 @@ interface RequirementObject {
 	tier?: number;
 	value?: number;
 	type?: 1 | 2;
+}
+
+interface ProfessionDependencyObject {
+	id: string;
+	value: string | string[];
 }
 
 interface DependencyObject {
@@ -451,7 +462,7 @@ interface TalentInstance {
 	readonly ic: number;
 	readonly check: string[];
 	readonly encumbrance: string;
-	readonly specialisation: string[];
+	readonly specialisation: string[] | null;
 	readonly specialisationInput: string | null;
 	dependencies: (boolean | ActiveObject)[];
 	value: number;

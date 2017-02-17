@@ -816,7 +816,7 @@ function _assignRCP(selections) {
         const [mod, id] = e;
         _byId[id].mod += mod;
     });
-    race.autoAdvantages.forEach(e => activatable.add(e));
+    race.autoAdvantages.forEach(e => activatable.add({ id: e }));
     _byId[selections.attrSel].mod = race.attributeSelection[0];
     if (selections.useCulturePackage) {
         culture.talents.forEach(([key, value]) => {
@@ -843,7 +843,18 @@ function _assignRCP(selections) {
         [...professionVariant.talents, ...professionVariant.combatTechniques].forEach(([key, value]) => {
             skillRatingList.set(key, value);
         });
-        professionVariant.specialAbilities.forEach(e => activatable.add(e));
+        professionVariant.specialAbilities.forEach(e => {
+            if (e.active === false) {
+                activatable.forEach(i => {
+                    if (i.id === e.id) {
+                        activatable.delete(i);
+                    }
+                });
+            }
+            else {
+                activatable.add(e);
+            }
+        });
     }
     if (selections.spec !== null) {
         activatable.add({
@@ -873,7 +884,7 @@ function _assignRCP(selections) {
     skillRatingList.forEach((value, key) => _addSR(key, value));
     skillActivateList.forEach(e => _activate(e));
     activatable.forEach(req => {
-        const { id, sid, sid2, tier, value } = req;
+        const { id, sid, sid2, tier } = req;
         const obj = get(id);
         const add = [];
         if (id === 'SA_10') {
@@ -885,8 +896,8 @@ function _assignRCP(selections) {
         }
         obj.addDependencies(add);
     });
-    _byId['SA_28'].active.push(...scripts);
-    _byId['SA_30'].active.push(...languages);
+    _byId['SA_28'].active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
+    _byId['SA_30'].active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
 }
 function _clear() {
     for (const id in _byId) {
@@ -2856,6 +2867,8 @@ function _assignRCP(selections) {
         const id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
         _spent += __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])('SA_28').sel[id - 1].cost;
     }
+    const race = __WEBPACK_IMPORTED_MODULE_7__RaceStore__["a" /* default */].getCurrent();
+    _adv = race.automaticAdvantagesCost;
     const p = __WEBPACK_IMPORTED_MODULE_5__ProfessionStore__["a" /* default */].getCurrent();
     if (p && p.id !== 'P_0') {
         const apCosts = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils_reqPurchase__["a" /* default */])(p.requires);
@@ -3157,7 +3170,7 @@ class Dialog extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 class RadioButtonGroup extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     render() {
         const { active, array, disabled, onClick } = this.props;
-        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "radiobutton-group" }, array.map((option) => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__RadioButton__["a" /* default */], { key: option.value || undefined, value: option.value, active: active === option.value, onClick: onClick.bind(null, option.value), disabled: option.disabled || disabled }, option.name)))));
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "radiobutton-group" }, array.map((option) => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__RadioButton__["a" /* default */], { key: option.value || '__default__', value: option.value, active: active === option.value, onClick: onClick.bind(null, option.value), disabled: option.disabled || disabled }, option.name)))));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = RadioButtonGroup;
@@ -9731,14 +9744,7 @@ class Activatable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
         var { ap, input, max, req, sel, tiers, gr } = _a, args = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](_a, ["ap", "input", "max", "req", "sel", "tiers", "gr"]);
         super(args);
         this.active = [];
-        this.getSelectionItem = (id) => {
-            for (const selectionItem of this.sel) {
-                if (selectionItem.id === id) {
-                    return selectionItem;
-                }
-            }
-            return undefined;
-        };
+        this.getSelectionItem = (id) => this.sel.find(e => e.id === id);
         this.cost = ap;
         this.input = input;
         this.max = max;
@@ -9805,7 +9811,7 @@ class Activatable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
                 }
                 break;
             case 'SA_10':
-                if (input === '') {
+                if (!input) {
                     active = { sid: sel, sid2: sel2 };
                 }
                 else if (this.active.filter(e => e.sid === input).length === 0) {
@@ -9975,7 +9981,7 @@ class Increasable extends __WEBPACK_IMPORTED_MODULE_1__Dependent__["a" /* defaul
 
 class Race extends __WEBPACK_IMPORTED_MODULE_1__Core__["a" /* default */] {
     constructor(_a) {
-        var { ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight } = _a, args = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](_a, ["ap", "le", "sk", "zk", "gs", "attr", "attr_sel", "typ_cultures", "auto_adv", "imp_adv", "imp_dadv", "typ_adv", "typ_dadv", "untyp_adv", "untyp_dadv", "hair", "eyes", "size", "weight"]);
+        var { ap, le, sk, zk, gs, attr, attr_sel, typ_cultures, auto_adv, autoAdvCost, imp_adv, imp_dadv, typ_adv, typ_dadv, untyp_adv, untyp_dadv, hair, eyes, size, weight } = _a, args = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](_a, ["ap", "le", "sk", "zk", "gs", "attr", "attr_sel", "typ_cultures", "auto_adv", "autoAdvCost", "imp_adv", "imp_dadv", "typ_adv", "typ_dadv", "untyp_adv", "untyp_dadv", "hair", "eyes", "size", "weight"]);
         super(args);
         this.category = __WEBPACK_IMPORTED_MODULE_4__constants_Categories__["a" /* RACES */];
         this.ap = ap;
@@ -9986,9 +9992,10 @@ class Race extends __WEBPACK_IMPORTED_MODULE_1__Core__["a" /* default */] {
         this.attributes = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_DataUtils__["a" /* fixIDs */])(attr, 'ATTR', 1);
         this.attributeSelection = [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)];
         this.typicalCultures = typ_cultures.map(e => `C_${e}`);
-        this.autoAdvantages = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_DataUtils__["a" /* fixIDs */])(auto_adv, 'ADV');
-        this.importantAdvantages = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_DataUtils__["a" /* fixIDs */])(imp_adv, 'ADV');
-        this.importantDisadvantages = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_DataUtils__["a" /* fixIDs */])(imp_dadv, 'DISADV');
+        this.autoAdvantages = auto_adv.map(e => `ADV_${e}`);
+        this.automaticAdvantagesCost = autoAdvCost;
+        this.importantAdvantages = imp_adv.map(e => `ADV_${e}`);
+        this.importantDisadvantages = imp_dadv.map(e => `DISADV_${e}`);
         this.typicalAdvantages = typ_adv.map(e => `ADV_${e}`);
         this.typicalDisadvantages = typ_dadv.map(e => `DISADV_${e}`);
         this.untypicalAdvantages = untyp_adv.map(e => `ADV_${e}`);
@@ -13061,7 +13068,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Compon
                 if (this.state.selected !== '') {
                     const o = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(id).sel.filter(e => e.id === this.state.selected)[0];
                     currentCost = o.cost;
-                    sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id, name: e })) : undefined;
+                    sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id: id + 1, name: e })) : undefined;
                     input = o.specialisationInput;
                 }
                 args.sel = this.state.selected;
@@ -13186,7 +13193,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
     constructor() {
         super(...arguments);
         this.handleSelectTier = (selectedTier) => {
-            const { id, active: { sid, tier }, index } = this.props.item;
+            const { id, active: { tier }, index } = this.props.item;
             const { cost, category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(id);
             const finalCost = (selectedTier - tier) * cost * (category === __WEBPACK_IMPORTED_MODULE_1__constants_Categories__["f" /* DISADVANTAGES */] ? -1 : 1);
             this.props.setTier(id, index, selectedTier, finalCost);
@@ -13304,8 +13311,9 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Com
                     add = sid;
                 }
                 else if (sel.length > 0 && cost === 'sel') {
-                    add = getSelectionItem(sid).name;
-                    currentCost = getSelectionItem(sid).cost;
+                    const selectionItem = getSelectionItem(sid);
+                    add = selectionItem.name;
+                    currentCost = selectionItem.cost;
                 }
                 else if (sel.length > 0 && typeof cost === 'number') {
                     add = getSelectionItem(sid).name;
@@ -14387,15 +14395,13 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /* harmony default export */ __webpack_exports__["a"] = (props) => {
-    const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
     const list = props.list.filter(obj => !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
-        const { id, active: activeObject, index } = obj;
+        const { id, active: activeObject } = obj;
         const { sid, sid2, tier } = activeObject;
         const a = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(id);
-        const { cost, category, sel, dependencies, active, input, getSelectionItem } = a;
+        const { cost, sel, input, getSelectionItem } = a;
         let { tiers } = a;
         let add = '';
-        let addSpecial = '';
         switch (id) {
             case 'ADV_4':
             case 'ADV_47':
@@ -14405,13 +14411,12 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                 break;
             }
             case 'ADV_16': {
-                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid));
-                const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
+                const { name } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid));
                 add = name;
                 break;
             }
             case 'ADV_17': {
-                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid));
+                const { name } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid));
                 add = name;
                 break;
             }
@@ -14427,8 +14432,6 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                 break;
             case 'DISADV_34':
             case 'DISADV_50': {
-                const maxCurrentTier = active.reduce((a, b) => b.tier > a ? b.tier : a, 0);
-                const subMaxCurrentTier = active.reduce((a, b) => b.tier > a && b.tier < maxCurrentTier ? b.tier : a, 0);
                 add = typeof sid === 'number' ? sel[sid - 1].name : sid;
                 break;
             }
@@ -14449,7 +14452,6 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                 add = getSelectionItem(sid).name;
                 break;
             case 'SA_10': {
-                const counter = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(id).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
                 const skill = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid);
                 add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
                 break;
@@ -14497,9 +14499,6 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         }
         else if (add) {
             name += ` (${add})`;
-        }
-        if (addSpecial) {
-            name += addSpecial;
         }
         return name;
     }).sort().join(', ');
@@ -18829,10 +18828,10 @@ class Profession extends __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended__["a" /
         this.category = __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["i" /* PROFESSIONS */];
         this.subname = subname;
         this.ap = ap;
-        this.requires = pre_req;
-        this.dependencies = req;
+        this.dependencies = pre_req;
+        this.requires = req;
         this.selections = sel;
-        this.specialAbilities = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(sa, 'SA');
+        this.specialAbilities = sa;
         this.combatTechniques = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(combattech, 'CT');
         this.talents = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(talents, 'TAL');
         this.spells = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(spells, 'SPELL');
@@ -18870,7 +18869,7 @@ class ProfessionVariant extends __WEBPACK_IMPORTED_MODULE_3__CoreGenderExtended_
         this.dependencies = pre_req;
         this.requires = req;
         this.selections = sel;
-        this.specialAbilities = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(sa, 'SA');
+        this.specialAbilities = sa;
         this.combatTechniques = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(combattech, 'CT');
         this.talents = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__utils_DataUtils__["a" /* fixIDs */])(talents, 'TAL');
     }
@@ -22979,17 +22978,17 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
         });
         let variants;
         if (profession.id === currentID && profession.variants.length > 0) {
-            let allVariants = __WEBPACK_IMPORTED_MODULE_6__stores_ProfessionVariantStore__["a" /* default */].getAll().filter(e => {
+            const allVariants = __WEBPACK_IMPORTED_MODULE_6__stores_ProfessionVariantStore__["a" /* default */].getAll().filter(e => {
                 if (profession.variants.includes(e.id)) {
                     if (e.dependencies !== null) {
                         return e.dependencies.every(req => {
-                            if (req[0] === 'c') {
-                                let cultureID = __WEBPACK_IMPORTED_MODULE_5__stores_CultureStore__["a" /* default */].getCurrentID();
-                                return req[1].includes(cultureID);
+                            if (req.id === 'CULTURE') {
+                                const cultureID = __WEBPACK_IMPORTED_MODULE_5__stores_CultureStore__["a" /* default */].getCurrentID();
+                                return req.value.includes(cultureID);
                             }
-                            else if (req[0] === 'g') {
-                                let gender = __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getSex();
-                                return gender === req[1];
+                            else if (req.id === 'SEX') {
+                                const sex = __WEBPACK_IMPORTED_MODULE_7__stores_ProfileStore__["a" /* default */].getSex();
+                                return sex === req.value;
                             }
                             return false;
                         });
@@ -22999,8 +22998,9 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
                 return false;
             });
             if (allVariants.length > 0) {
-                let variantList = allVariants.map(e => {
-                    let { ap, id, name } = e;
+                const variantList = allVariants.map(e => {
+                    const { ap, id } = e;
+                    let { name } = e;
                     if (typeof name === 'object') {
                         name = name[sex];
                     }
@@ -23443,7 +23443,7 @@ class Selections extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] {
             const { sid } = professionSelections.get('SPECIALISATION');
             const talent = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__stores_ListStore__["a" /* get */])(sid);
             const name = talent.name;
-            const list = talent.specialisation.map((e, id) => ({ id, name: e }));
+            const list = talent.specialisation && talent.specialisation.map((e, id) => ({ id: id + 1, name: e }));
             const input = talent.specialisationInput;
             specElement = __WEBPACK_IMPORTED_MODULE_3_react__["createElement"](__WEBPACK_IMPORTED_MODULE_16__SelectionsTalentSpec__["a" /* default */], { list: list, active: active, name: name, input: input, change: this.changeSpec });
         }
@@ -23636,14 +23636,15 @@ class SelectionsLangLitc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 class SelectionsTalentSpec extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     render() {
         const { active, change, input, list, name } = this.props;
+        const changeMiddleware = (event) => change(event.target.value);
         return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "spec" },
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h4", null,
                 "Anwendungsgebiet f\u00FCr Fertigkeitsspezialisierung (",
                 name,
                 ")"),
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null,
-                list.length > 0 ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Dropdown__["a" /* default */], { className: "tiers", value: active[0] || 0, onChange: change.bind(null, 0), options: list, disabled: active[1] !== '' })) : null,
-                input !== null ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_TextField__["a" /* default */], { hint: input, value: active[1], onChange: change.bind(null, 1), disabled: input === null })) : null)));
+                list ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_Dropdown__["a" /* default */], { className: "tiers", value: active[0] || 0, onChange: change, options: list, disabled: active[1] !== '' })) : null,
+                input !== null ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_TextField__["a" /* default */], { hint: input, value: active[1], onChange: changeMiddleware, disabled: input === null })) : null)));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = SelectionsTalentSpec;
@@ -23880,7 +23881,7 @@ const getTalent = (skill) => {
     const routine = skill.value > 0 ? dependentCheckMod < 4 ? [dependentCheckMod, lessAttrPoints > 0] : false : false;
     const routineSign = routine && routine[0] > 0 ? '+' : '';
     const routineOptional = routine && routine[1] ? '!' : '';
-    const finalUseAreas = [...skill.specialisation, skill.specialisationInput].filter(e => typeof e === 'string');
+    const finalUseAreas = [...(skill.specialisation || []), skill.specialisationInput].filter(e => typeof e === 'string');
     const enc = skill.encumbrance === 'true' ? 'Ja' : skill.encumbrance === 'false' ? 'Nein' : 'Evtl';
     return (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "talent" },
         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "talent-header info-header" },

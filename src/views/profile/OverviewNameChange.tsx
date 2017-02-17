@@ -25,7 +25,7 @@ export default class OverviewNameChange extends React.Component<Props, State> {
 		}
 	}
 
-	handleInput = (event: InputTextEvent) => this.setState({ name: event.target.value });
+	handleInput = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
 
 	render() {
 		return (

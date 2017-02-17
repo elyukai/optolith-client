@@ -62,6 +62,9 @@ function _assignRCP(selections: Selections) {
 		_spent += (get('SA_28') as SpecialAbilityInstance).sel[id - 1].cost!;
 	}
 
+	const race = RaceStore.getCurrent();
+	_adv = race.automaticAdvantagesCost;
+
 	const p = ProfessionStore.getCurrent();
 	if (p && p.id !== 'P_0') {
 		const apCosts = reqPurchase(p.requires);
