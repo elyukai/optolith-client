@@ -137,10 +137,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				break;
 
 			default:
-				if (id === 'SA_92' && phase < 3 && typeof currentCost === 'number') {
-					currentCost = (currentCost as number) + 4;
-				}
-				else if (input) {
+				if (input) {
 					add = sid as string;
 				}
 				else if (sel.length > 0 && cost === 'sel') {

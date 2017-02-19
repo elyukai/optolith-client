@@ -1,6 +1,6 @@
 /// <reference path="../constants/ActionTypes.d.ts" />
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddLifePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | SwitchDisAdvRatingVisibilityAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | SetSectionAction | SetTabAction | SelectProfessionAction | SetSelectionsAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SelectProfessionVariantAction | SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | EndHeroCreationAction | AddAdventurePointsAction | SelectRaceAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction | RequestNewPasswordAction | ReceiveNewPasswordAction | RequestNewDisplayNameAction | ReceiveNewDisplayNameAction | RequestPasswordResetAction | ReceivePasswordResetAction | RequestUsernameAction | ReceiveUsernameAction | RequestAccountActivationEmailAction | ReceiveAccountActivationEmailAction | RequestHeroSaveAction | ReceiveHeroSaveAction | RequestFailedAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddLifePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | SwitchDisAdvRatingVisibilityAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | SetSectionAction | SetTabAction | SelectProfessionAction | SetSelectionsAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SelectProfessionVariantAction | SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | EndHeroCreationAction | AddAdventurePointsAction | SelectRaceAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction | RequestNewPasswordAction | ReceiveNewPasswordAction | RequestNewDisplayNameAction | ReceiveNewDisplayNameAction | RequestPasswordResetAction | ReceivePasswordResetAction | RequestUsernameAction | ReceiveUsernameAction | RequestAccountActivationEmailAction | ReceiveAccountActivationEmailAction | RequestHeroSaveAction | ReceiveHeroSaveAction | RequestFailedAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction;
 
 type UndoTriggerActions = ActivateDisAdvAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction;
 
@@ -36,6 +36,40 @@ interface AddArcaneEnergyPointAction extends DefaultAction {
 
 interface AddKarmaPointAction extends DefaultAction {
 	type: ADD_KARMA_POINT;
+}
+
+interface RedeemAEPointAction extends DefaultAction {
+	type: REDEEM_AE_POINT;
+}
+
+interface RedeemAEPointAction extends DefaultAction {
+	type: REDEEM_AE_POINT;
+}
+
+interface RemoveRedeemedAEPointAction extends DefaultAction {
+	type: REMOVE_REDEEMED_AE_POINT;
+}
+
+interface RemovePermanentAEPointAction extends DefaultAction {
+	type: REMOVE_PERMANENT_AE_POINTS;
+	payload: {
+		value: number;
+	};
+}
+
+interface RedeemKPPointAction extends DefaultAction {
+	type: REDEEM_KP_POINT;
+}
+
+interface RemoveRedeemedKPPointAction extends DefaultAction {
+	type: REMOVE_REDEEMED_KP_POINT;
+}
+
+interface RemovePermanentKPPointAction extends DefaultAction {
+	type: REMOVE_PERMANENT_KP_POINTS;
+	payload: {
+		value: number;
+	};
 }
 
 // CombatTechniquesActions

@@ -20,9 +20,9 @@ export const setHeroAvatar = (source: string | File) => {
 			}
 		});
 	}
-	else {
-		WebAPIUtils.changeHeroAvatar(source);
-	}
+	// else {
+	// 	WebAPIUtils.changeHeroAvatar(source);
+	// }
 };
 	// changeAvatar({ source, extern, file }) {
 	// 	if (source === 'ext') {

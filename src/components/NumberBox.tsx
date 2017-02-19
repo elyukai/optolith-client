@@ -10,8 +10,8 @@ export default class NumberBox extends React.Component<Props, undefined> {
 		const { current, max } = this.props;
 		return (
 			<div className="number-box">
-				{ current || current === 0 ? <span className="current">{current}</span> : null }
-				{ max ? <span className="max">{max}</span> : null }
+				{ typeof current === 'number' ? <span className="current">{current}</span> : null }
+				{ typeof max === 'number' ? <span className="max">{max}</span> : null }
 			</div>
 		);
 	}

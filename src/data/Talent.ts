@@ -36,7 +36,7 @@ export default class Talent extends Skill implements TalentInstance {
 	}
 
 	get isDecreasable(): boolean {
-		const SA_18_REQ = (get('SA_18') as SpecialAbilityInstance).active && (get('TAL_51') as Talent).value + (get('TAL_55') as Talent).value < 12;
+		const SA_18_REQ = (get('SA_18') as SpecialAbilityInstance).isActive && (get('TAL_51') as Talent).value + (get('TAL_55') as Talent).value < 12;
 
 		return (['TAL_51','TAL_55'].includes(this.id) && SA_18_REQ) || this.value > Math.max(0, ...(this.dependencies));
 	}

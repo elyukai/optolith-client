@@ -12,7 +12,7 @@
 	}
 
 	.scroll-inner {
-		flex-wrap: wrap;
+		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
@@ -22,10 +22,10 @@
 		text-align: center;
 	}
 
-	.main, .calculated {
+	.main, .calculated, .permanent {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: center;
+		width: 616px;
 
 		.number-box {
 			top: 70px;
@@ -42,13 +42,6 @@
 	.main {
 		padding-bottom: 16px;
 		// border-bottom: 1px solid transparentize(white, .925);
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-
-		.number-box {
-			width: 24px;
-		}
 	}
 
 	.calculated {
@@ -74,7 +67,7 @@
 		padding: 2px;
 		background: $background4;
 	}
-	
+
 	.value-inner {
 		border: 1px solid $color4;
 		padding: 1px;
@@ -110,6 +103,24 @@
 			&.ATTR_#{$i} > .value {
 				border-color: map-get($map: $colors, $key: $i);
 			}
+		}
+	}
+
+	.permanent {
+		padding-left: 77px;
+
+		.value-inner > div {
+			height: 23px;
+			line-height: 23px;
+			font-size: 14px;
+		}
+
+		.number-box {
+			top: 20px;
+		}
+
+		.placeholder {
+			width: 77px;
 		}
 	}
 }

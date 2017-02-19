@@ -6,11 +6,11 @@ import createOverlay from '../../utils/createOverlay';
 import SkillInfo from './SkillInfo';
 
 interface Props {
-	activate?: (id: string) => void;
+	activate?: () => void;
 	activateDisabled?: boolean;
 	addDisabled?: boolean;
 	addFillElement?: boolean;
-	addPoint?: (id: string) => void;
+	addPoint?: () => void;
 	addValues?: { className: string; value?: string | number }[];
 	check?: string[];
 	checkDisabled?: boolean;
@@ -20,7 +20,7 @@ interface Props {
 	isNotActive?: boolean;
 	name: string;
 	removeDisabled?: boolean;
-	removePoint?: (id: string) => void;
+	removePoint?: () => void;
 	sr?: number;
 	typ?: boolean;
 	untyp?: boolean;
@@ -45,10 +45,10 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		const values: JSX.Element[] = [];
 
 		if (sr || sr === 0) {
-			values.push(<div key="sr" className="sr">{sr}</div>)
+			values.push(<div key="sr" className="sr">{sr}</div>);
 		}
 		else if (!addPoint && !isNotActive) {
-			values.push(<div key="sr"  className="sr empty"></div>)
+			values.push(<div key="sr"  className="sr empty"></div>);
 		}
 
 		if (!checkDisabled) {

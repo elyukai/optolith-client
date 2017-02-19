@@ -1,11 +1,11 @@
 import { check, checkDisAdvantages, final } from '../utils/iccalc';
 import { get } from './ListStore';
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
+import * as secondaryAttributes from '../utils/secondaryAttributes';
 import alert from '../utils/alert';
 import APStore from './APStore';
-import * as secondaryAttributes from '../utils/secondaryAttributes';
-import * as ActionTypes from '../constants/ActionTypes';
 import AttributeStore from './AttributeStore';
-import * as Categories from '../constants/Categories';
 import Store from './Store';
 
 let _cost = 0;
@@ -41,15 +41,13 @@ function _updateDisAdvCost(id: string, cost: number, valid?: boolean) {
 		const add = category === Categories.ADVANTAGES;
 		const target = () => add ? adv : disadv;
 
-		// const isKar = reqs.some((e: [string, number]) => e[0] === 'ADV_12' && e[1]);
-		// const isMag = reqs.some((e: [string, number]) => e[0] === 'ADV_50' && e[1]);
-		// const index = isKar ? 2 : isMag ? 1 : 0;
-		const index = 0;
+		const isKar = reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
+		const isMag = reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
+		const index = isKar ? 2 : isMag ? 1 : 0;
 
 		const validDisAdv = checkDisAdvantages(cost, index, target(), spent, total, add);
 
-		// const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
-		const sub = '';
+		const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
 		const text = add ? 'Vorteile' : 'Nachteile';
 
 		if (!validDisAdv[2]) {
@@ -139,7 +137,7 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
 				_updateOwnRequirements((get(action.payload.id) as AdvantageInstance | DisadvantageInstance).isDeactivatable);
-				_updateCost(-action.payload.cost);
+				_updateCost(-action.payload.cost - AttributeStore.getPermanentRedeemedChangeAmount(action.payload.id) * 2, true);
 				break;
 
 			case ActionTypes.SET_DISADV_TIER:
@@ -181,6 +179,20 @@ const RequirementsStore = new RequirementsStoreStatic((action: Action) => {
 				const obj = secondaryAttributes.get('KP') as Energy;
 				_updateOwnRequirements(obj.currentAdd < obj.maxAdd);
 				_updateCost(final(4, AttributeStore.getAdd('KP') + 1));
+				break;
+			}
+
+			case ActionTypes.REDEEM_AE_POINT:
+			case ActionTypes.REDEEM_KP_POINT: {
+				_updateOwnRequirements(true);
+				_updateCost(2);
+				break;
+			}
+
+			case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+			case ActionTypes.REMOVE_REDEEMED_KP_POINT: {
+				_updateOwnRequirements(true);
+				_updateCost(-2, true);
 				break;
 			}
 

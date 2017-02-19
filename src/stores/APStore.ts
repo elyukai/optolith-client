@@ -12,7 +12,7 @@ import reqPurchase from '../utils/reqPurchase';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction;
+type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
 
 let _total = 0;
 let _spent = 0;
@@ -108,12 +108,6 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 	if (action.undo) {
 		switch (action.type) {
-			case ActionTypes.ACTIVATE_DISADV:
-			case ActionTypes.DEACTIVATE_DISADV:
-			case ActionTypes.ACTIVATE_SPECIALABILITY:
-			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				return true;
-
 			case ActionTypes.ADD_ADVENTURE_POINTS:
 				_total -= action.payload.amount;
 				break;
@@ -146,6 +140,10 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 			case ActionTypes.REMOVE_SPELL_POINT:
 			case ActionTypes.REMOVE_LITURGY_POINT:
+			case ActionTypes.REDEEM_AE_POINT:
+			case ActionTypes.REDEEM_KP_POINT:
+			case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+			case ActionTypes.REMOVE_REDEEMED_KP_POINT:
 				if (RequirementsStore.isValid()) {
 					_spend(RequirementsStore.getCurrentCost());
 				}

@@ -95,8 +95,8 @@ export default class Professions extends React.Component<undefined, State> {
 						}
 					]} />
 				</div>
-				<Scroll className="list professions">
-					<ul>
+				<Scroll className="list">
+					<ul className="professions">
 						{
 							list.map(profession => <ProfessionsListItem
 								key={profession.id}
