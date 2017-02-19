@@ -50,8 +50,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 		let tempState = this.props.item;
 		if (tempState) {
 			if (tempState.isTemplateLocked) {
-				const { id } = tempState;
-				tempState = { ...InventoryStore.getTemplate(this.state.template), id };
+				const { id, where } = tempState;
+				tempState = { ...InventoryStore.getTemplate(tempState.template), id, where };
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -135,7 +135,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 		const itemToAdd = convertToSave(this.state);
 		const nanKeys = containsNaN(itemToAdd);
 		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`)
 		}
 		else {
 			InventoryActions.addToList(itemToAdd);

@@ -24,7 +24,10 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 
 	render() {
 
-		const { add, data: { gr, name, amount, price, weight, where, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } } = this.props;
+		const { add, data } = this.props;
+		const { isTemplateLocked, template, where } = data;
+		const item = isTemplateLocked ? { ...InventoryStore.getTemplate(template), where } : data;
+		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } = item;
 
 		const numberValue = amount > 1 ? amount : null;
 

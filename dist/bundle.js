@@ -14464,7 +14464,7 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
             const itemToAdd = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["b" /* convertToSave */])(this.state);
             const nanKeys = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["c" /* containsNaN */])(itemToAdd);
             if (nanKeys) {
-                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_alert__["a" /* default */])('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e) => FIELDS[e])}`);
+                __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_alert__["a" /* default */])('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e) => FIELDS[e]).join(', ')}`);
             }
             else {
                 __WEBPACK_IMPORTED_MODULE_0__actions_InventoryActions__["c" /* addToList */](itemToAdd);
@@ -14483,8 +14483,8 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
         let tempState = this.props.item;
         if (tempState) {
             if (tempState.isTemplateLocked) {
-                const { id } = tempState;
-                tempState = Object.assign({}, __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getTemplate(this.state.template), { id });
+                const { id, where } = tempState;
+                tempState = Object.assign({}, __WEBPACK_IMPORTED_MODULE_9__stores_InventoryStore__["a" /* default */].getTemplate(tempState.template), { id, where });
             }
             this.state = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ItemUtils__["a" /* convertToEdit */])(tempState);
         }
@@ -18948,7 +18948,7 @@ class Item extends __WEBPACK_IMPORTED_MODULE_0__Core__["a" /* default */] {
         this.addPenalties = addPenalties;
         this.where = where;
         this.template = template;
-        this.isTemplateLocked = isTemplateLocked || true;
+        this.isTemplateLocked = typeof isTemplateLocked === 'boolean' ? isTemplateLocked : true;
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Item;
@@ -19394,10 +19394,10 @@ const TabStore = new TabStoreStatic((action) => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const convertToEdit = (item) => (Object.assign({}, item, { at: item.at.toString(), damageBonus: item.damageBonus.toString(), damageDiceNumber: item.damageDiceNumber.toString(), damageFlat: item.damageFlat.toString(), enc: item.enc.toString(), length: item.length.toString(), amount: item.amount.toString(), pa: item.pa.toString(), price: item.price.toString(), pro: item.pro.toString(), range: item.range.map(e => e.toString()), reloadTime: item.reloadTime.toString(), stp: item.stp.toString(), weight: item.weight.toString() }));
+const convertToEdit = (item) => (Object.assign({}, item, { at: item.at ? item.at.toString() : '', damageBonus: item.damageBonus ? item.damageBonus.toString() : '', damageDiceNumber: item.damageDiceNumber ? item.damageDiceNumber.toString() : '', damageFlat: item.damageFlat ? item.damageFlat.toString() : '', enc: item.enc ? item.enc.toString() : '', length: item.length ? item.length.toString() : '', amount: item.amount ? item.amount.toString() : '', pa: item.pa ? item.pa.toString() : '', price: item.price ? item.price.toString() : '', pro: item.pro ? item.pro.toString() : '', range: item.range ? item.range.map(e => e.toString()) : ['', '', ''], reloadTime: item.reloadTime ? item.reloadTime.toString() : '', stp: item.stp ? item.stp.toString() : '', weight: item.weight ? item.weight.toString() : '' }));
 /* harmony export (immutable) */ __webpack_exports__["a"] = convertToEdit;
 
-const convertToSave = (item) => (Object.assign({}, item, { at: Number.parseInt(item.at.replace(/\,/, '.')), damageBonus: Number.parseInt(item.damageBonus.replace(/\,/, '.')), damageDiceNumber: Number.parseInt(item.damageDiceNumber.replace(/\,/, '.')), damageFlat: Number.parseInt(item.damageFlat.replace(/\,/, '.')), enc: Number.parseInt(item.enc.replace(/\,/, '.')), length: Number.parseInt(item.length.replace(/\,/, '.')), amount: Number.parseInt(item.amount.replace(/\,/, '.')), pa: Number.parseInt(item.pa.replace(/\,/, '.')), price: Number.parseInt(item.price.replace(/\,/, '.')), pro: Number.parseInt(item.pro.replace(/\,/, '.')), range: item.range.map(e => Number.parseInt(e.replace(/\,/, '.'))), reloadTime: Number.parseInt(item.reloadTime.replace(/\,/, '.')), stp: Number.parseInt(item.stp.replace(/\,/, '.')), weight: Number.parseInt(item.weight.replace(/\,/, '.')) }));
+const convertToSave = (item) => (Object.assign({}, item, { at: item.at ? Number.parseInt(item.at.replace(/\,/, '.')) : 0, damageBonus: item.damageBonus ? Number.parseInt(item.damageBonus.replace(/\,/, '.')) : 0, damageDiceNumber: item.damageDiceNumber ? Number.parseInt(item.damageDiceNumber.replace(/\,/, '.')) : 0, damageFlat: item.damageFlat ? Number.parseInt(item.damageFlat.replace(/\,/, '.')) : 0, enc: item.enc ? Number.parseInt(item.enc.replace(/\,/, '.')) : 0, length: item.length ? Number.parseInt(item.length.replace(/\,/, '.')) : 0, amount: item.amount ? Number.parseInt(item.amount.replace(/\,/, '.')) : 0, pa: item.pa ? Number.parseInt(item.pa.replace(/\,/, '.')) : 0, price: item.price ? Number.parseInt(item.price.replace(/\,/, '.')) : 0, pro: item.pro ? Number.parseInt(item.pro.replace(/\,/, '.')) : 0, range: item.range.map(e => e ? Number.parseInt(e.replace(/\,/, '.')) : 0), reloadTime: item.reloadTime ? Number.parseInt(item.reloadTime.replace(/\,/, '.')) : 0, stp: item.stp ? Number.parseInt(item.stp.replace(/\,/, '.')) : 0, weight: item.weight ? Number.parseInt(item.weight.replace(/\,/, '.')) : 0 }));
 /* harmony export (immutable) */ __webpack_exports__["b"] = convertToSave;
 
 const containsNaN = (item) => {
@@ -21689,7 +21689,10 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
         this.add = () => __WEBPACK_IMPORTED_MODULE_1__actions_InventoryActions__["c" /* addToList */](this.props.data);
     }
     render() {
-        const { add, data: { gr, name, amount, price, weight, where, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } } = this.props;
+        const { add, data } = this.props;
+        const { isTemplateLocked, template, where } = data;
+        const item = isTemplateLocked ? Object.assign({}, __WEBPACK_IMPORTED_MODULE_5__stores_InventoryStore__["a" /* default */].getTemplate(template), { where }) : data;
+        const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } = item;
         const numberValue = amount > 1 ? amount : null;
         return (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TooltipToggle__["a" /* default */], { content: __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { className: "inventory-item" },
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("h4", null,
