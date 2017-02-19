@@ -6,11 +6,6 @@ import * as React from 'react';
 
 interface State {
 	attributes: AttributeInstance[];
-	baseValues: {
-		lp: number;
-		ae: number;
-		kp: number;
-	};
 	el: ExperienceLevel;
 	phase: number;
 }
@@ -19,14 +14,12 @@ export default class AttributesController extends React.Component<undefined, Sta
 
 	state = {
 		attributes: AttributeStore.getAll(),
-		baseValues: AttributeStore.getAddEnergies(),
 		el: ELStore.getStart(),
 		phase: PhaseStore.get()
 	};
 
 	_updateAttributeStore = () => this.setState({
-		attributes: AttributeStore.getAll(),
-		baseValues: AttributeStore.getAddEnergies()
+		attributes: AttributeStore.getAll()
 	} as State);
 	_updatePhaseStore = () => this.setState({
 		phase: PhaseStore.get()

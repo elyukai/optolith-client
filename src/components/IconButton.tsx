@@ -3,6 +3,7 @@ import Button from './Button';
 import Icon from './Icon';
 
 interface Props {
+	onClick?: () => void;
 	icon: string;
 	flat?: boolean;
 	[id: string]: any;

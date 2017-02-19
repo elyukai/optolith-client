@@ -238,9 +238,6 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						sel = sel.filter(e => !sid.includes(e.id) && !dsid.includes(e.id));
 					}
 					const phase = PhaseStore.get();
-					if (id === 'SA_92' && phase < 3) {
-						cost = (cost as number) + 4;
-					}
 					finalEntries.push({ id, name, cost, tiers, input, sel, gr });
 					break;
 				}

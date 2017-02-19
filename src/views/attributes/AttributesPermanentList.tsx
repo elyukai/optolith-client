@@ -1,8 +1,7 @@
 import { getAE, getKP } from '../../utils/secondaryAttributes';
+import * as AttributesActions from '../../actions/AttributesActions';
 import * as React from 'react';
-import AttributeBorder from './AttributeBorder';
-import IconButton from '../../components/IconButton';
-import NumberBox from '../../components/NumberBox';
+import AttributesPermanentListItem from './AttributesPermanentListItem';
 
 interface Props {
 	phase: number;
@@ -16,12 +15,26 @@ export default class AttributesPermanentList extends React.Component<Props, unde
 
 		return (
 			<div className="permanent">
-				<AttributeBorder value={0}>
-					<NumberBox max={1} />
-				</AttributeBorder>
-				<AttributeBorder value={0}>
-					<NumberBox max={1} />
-				</AttributeBorder>
+				{ typeof AE.value === 'number' ? (
+					<AttributesPermanentListItem
+						redeemed={AE.permanentRedeemed}
+						lost={AE.permanentLost}
+						redeem={AttributesActions.redeemAEPoint}
+						removeRedeemed={AttributesActions.removeRedeemedAEPoint}
+						removePermanent={AttributesActions.removePermanentAEPoint}
+						phase={phase}
+						/>
+				) : <div className="placeholder"></div> }
+				{ typeof KP.value === 'number' ? (
+					<AttributesPermanentListItem
+						redeemed={KP.permanentRedeemed}
+						lost={KP.permanentLost}
+						redeem={AttributesActions.redeemKPPoint}
+						removeRedeemed={AttributesActions.removeRedeemedKPPoint}
+						removePermanent={AttributesActions.removePermanentKPPoint}
+						phase={phase}
+						/>
+				) : null }
 			</div>
 		);
 	}

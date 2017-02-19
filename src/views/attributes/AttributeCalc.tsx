@@ -3,10 +3,6 @@ import * as React from 'react';
 import secondaryAttributes from '../../utils/secondaryAttributes';
 
 interface Props {
-	attributes: AttributeInstance[];
-	baseValues: {
-		[id: string]: number
-	};
 	phase: number;
 }
 

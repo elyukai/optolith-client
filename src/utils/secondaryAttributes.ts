@@ -14,7 +14,7 @@ type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 
 const addEnergies = () => AttributeStore.getAddEnergies();
 
-export const getLP = (): SecondaryAttribute => {
+export const getLP = (): Energy => {
 	const base = RaceStore.getCurrent().lp + CON().value * 2;
 	let mod = 0;
 	const add = addEnergies().lp;
@@ -32,6 +32,7 @@ export const getLP = (): SecondaryAttribute => {
 		short: 'LE',
 		name: 'Lebensenergie',
 		calc: '(GW der Spezies + KO + KO)',
+		add,
 		base,
 		mod,
 		value,
@@ -40,11 +41,13 @@ export const getLP = (): SecondaryAttribute => {
 	};
 };
 
-export const getAE = (): SecondaryAttribute => {
+export const getAE = (): EnergyWithLoss => {
 	const primary = getPrimaryAttrID(1);
 	let base = 0;
 	let mod = 0;
 	const add = addEnergies().ae;
+	const permanentLost = addEnergies().permanentAE.lost;
+	const permanentRedeemed = addEnergies().permanentAE.redeemed;
 	if (primary !== 'ATTR_0') {
 		base = 20 + PRIMARY(primary).value;
 	}
@@ -56,7 +59,7 @@ export const getAE = (): SecondaryAttribute => {
 	else if (decreaseObject) {
 		mod -= decreaseObject.tier!;
 	}
-	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
+	const value = primary !== 'ATTR_0' ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
 		id: 'AE',
 		short: 'AE',
@@ -67,15 +70,19 @@ export const getAE = (): SecondaryAttribute => {
 		add,
 		value,
 		maxAdd: (PRIMARY(primary) || {}).value,
-		currentAdd: add
+		currentAdd: add,
+		permanentLost,
+		permanentRedeemed
 	};
 };
 
-export const getKP = (): SecondaryAttribute => {
+export const getKP = (): EnergyWithLoss => {
 	const primary = getPrimaryAttrID(2);
 	let base = 0;
 	let mod = 0;
 	const add = addEnergies().kp;
+	const permanentLost = addEnergies().permanentKP.lost;
+	const permanentRedeemed = addEnergies().permanentKP.redeemed;
 	if (primary !== 'ATTR_0') {
 		base = 20 + PRIMARY(primary).value;
 	}
@@ -87,7 +94,7 @@ export const getKP = (): SecondaryAttribute => {
 	else if (decreaseObject) {
 		mod -= decreaseObject.tier!;
 	}
-	const value = primary !== 'ATTR_0' ? base + mod + add : '-';
+	const value = primary !== 'ATTR_0' ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
 		id: 'KP',
 		short: 'KE',
@@ -98,7 +105,9 @@ export const getKP = (): SecondaryAttribute => {
 		add,
 		value,
 		maxAdd: (PRIMARY(primary) || {}).value,
-		currentAdd: add
+		currentAdd: add,
+		permanentLost,
+		permanentRedeemed
 	};
 };
 

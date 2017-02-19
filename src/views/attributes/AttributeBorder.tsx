@@ -1,5 +1,5 @@
+import * as React from 'react';
 import classNames from 'classnames';
-import React, { Component, PropTypes } from 'react';
 import TooltipToggle from '../../components/TooltipToggle';
 
 interface Props {
@@ -10,16 +10,7 @@ interface Props {
 	value: number | string;
 }
 
-export default class AttributeBorder extends Component<Props, any> {
-
-	static propTypes = {
-		className: PropTypes.string,
-		label: PropTypes.string.isRequired,
-		tooltip: PropTypes.node,
-		tooltipMargin: PropTypes.number,
-		value: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ])
-	};
-
+export default class AttributeBorder extends React.Component<Props, undefined> {
 	render() {
 
 		const className = classNames( 'attr', this.props.className );

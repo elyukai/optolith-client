@@ -62,6 +62,14 @@ interface HeroRest {
 		readonly lp: number;
 		readonly ae: number;
 		readonly kp: number;
+		readonly permanentAE: {
+			lost: number;
+			redeemed: number;
+		};
+		readonly permanentKP: {
+			lost: number;
+			redeemed: number;
+		};
 	};
 	readonly talents: {
 		readonly active: {
@@ -543,6 +551,8 @@ interface SecondaryAttribute {
 	value: number | string;
 	maxAdd?: number;
 	currentAdd?: number;
+	permanentLost?: number;
+	permanentRedeemed?: number;
 }
 
 interface Energy extends SecondaryAttribute {
@@ -551,6 +561,11 @@ interface Energy extends SecondaryAttribute {
 	mod: number;
 	maxAdd: number;
 	currentAdd: number;
+}
+
+interface EnergyWithLoss extends Energy {
+	permanentLost: number;
+	permanentRedeemed: number;
 }
 
 interface ExperienceLevel {

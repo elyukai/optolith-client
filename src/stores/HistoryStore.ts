@@ -13,8 +13,6 @@ import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | EndHeroCreationAction | SetSelectionsAction;
-
 interface HistoryPayload {
 	id?: string | number;
 	activeObject?: ActiveObject;
@@ -242,7 +240,8 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 					const instance = get(id) as ActivatableInstances;
 					const index = action.payload.index;
 					const newValue = instance.active[index];
-					const cost = RequirementsStore.getCurrentCost();
+					let cost = RequirementsStore.getCurrentCost();
+					cost -= AttributeStore.getPermanentRedeemedChangeAmount(action.payload.id) * 2;
 					_add(action.type, cost, { id, activeObject: newValue, index });
 				}
 				break;
@@ -261,6 +260,42 @@ const HistoryStore = new HistoryStoreStatic((action: Action) => {
 				AppDispatcher.waitFor([APStore.dispatchToken]);
 				_add(action.type, 0, action.payload, { value: APStore.getTotal()});
 				break;
+
+			case ActionTypes.REDEEM_AE_POINT:
+				if (RequirementsStore.isValid()) {
+					_add(action.type, RequirementsStore.getCurrentCost());
+				}
+				break;
+
+			case ActionTypes.REDEEM_KP_POINT:
+				if (RequirementsStore.isValid()) {
+					_add(action.type, RequirementsStore.getCurrentCost());
+				}
+				break;
+
+			case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+				if (RequirementsStore.isValid()) {
+					_add(action.type, RequirementsStore.getCurrentCost());
+				}
+				break;
+
+			case ActionTypes.REMOVE_REDEEMED_KP_POINT:
+				if (RequirementsStore.isValid()) {
+					_add(action.type, RequirementsStore.getCurrentCost());
+				}
+				break;
+
+			case ActionTypes.REMOVE_PERMANENT_AE_POINTS: {
+				const oldValue = AttributeStore.getAddEnergies().permanentAE.lost;
+				_add(action.type, RequirementsStore.getCurrentCost(), action.payload, { value: oldValue });
+				break;
+			}
+
+			case ActionTypes.REMOVE_PERMANENT_KP_POINTS: {
+				const oldValue = AttributeStore.getAddEnergies().permanentKP.lost;
+				_add(action.type, RequirementsStore.getCurrentCost(), action.payload, { value: oldValue });
+				break;
+			}
 
 			default:
 				return true;
