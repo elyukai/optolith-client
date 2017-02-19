@@ -148,7 +148,7 @@ let _byHeroId: { [id: string]: Hero} = {
 		dateModified: new Date('2016-10-18T16:18:28.420Z'),
 		player: 'U_5',
 		id: 'H_9',
-		phase: 2,
+		phase: 3,
 		name: 'Adario Orelio von Paligan',
 		avatar: 'images/portrait9.jpg',
 		ap: { total: 1777, spent: 1677, adv: [63, 0, 0], disadv: [39, 0, 0] },

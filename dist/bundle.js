@@ -8467,17 +8467,18 @@ class SkillListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
         this.showInfo = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__SkillInfo__["a" /* default */], { id: this.props.id }));
     }
     render() {
-        const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement } = this.props;
+        const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease } = this.props;
         const className = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({
             'list-item': true,
             'typ': typ,
-            'untyp': untyp
+            'untyp': untyp,
+            'no-increase': noIncrease
         });
         const values = [];
-        if (sr || sr === 0) {
+        if (typeof sr === 'number') {
             values.push(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { key: "sr", className: "sr" }, sr));
         }
-        else if (!addPoint && !isNotActive) {
+        else if (!addPoint && !isNotActive && !noIncrease) {
             values.push(__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("div", { key: "sr", className: "sr empty" }));
         }
         if (!checkDisabled) {
@@ -24161,7 +24162,7 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_6_react__["Component"] {
                         addPoint: this.addPoint.bind(null, obj.id),
                         addDisabled: !obj.isIncreasable
                     };
-                    return (__WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], Object.assign({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true }, other),
+                    return (__WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], Object.assign({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true, noIncrease: obj.gr === 3 }, other),
                         __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]("div", { className: "aspect" }, aspc)));
                 })))));
     }
@@ -24573,7 +24574,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                         addPoint: this.addPoint.bind(null, obj.id),
                         addDisabled: !obj.isIncreasable
                     };
-                    return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], Object.assign({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true }, other),
+                    return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__SkillListItem__["a" /* default */], Object.assign({ key: obj.id, id: obj.id, name: name, removePoint: phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined, removeDisabled: !obj.isDecreasable, addFillElement: true, noIncrease: obj.gr === 5 }, other),
                         __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "property" }, PROPERTIES[obj.property - 1])));
                 })))));
     }
