@@ -32,7 +32,7 @@ export default class Profile extends Component<undefined, ProfileState> {
 
 		const { phase, tab } = this.state;
 
-		var element;
+		let element;
 
 		switch (tab) {
 			case 'overview':

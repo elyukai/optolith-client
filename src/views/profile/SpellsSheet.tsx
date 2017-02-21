@@ -12,7 +12,7 @@ export default () => {
 		<div className="sheet spells">
 			<SheetHeader title="Zauber &amp; Rituale" add={[]} />
 			<div className="upper">
-				<TextBox label="Zauber &amy; Rituale">
+				<TextBox label="Zauber &amp; Rituale">
 				</TextBox>
 			</div>
 		</div>

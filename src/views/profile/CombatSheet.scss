@@ -1,0 +1,326 @@
+#combat-sheet {
+	.textbox {
+		flex-wrap: wrap;
+
+		h3 {
+			margin-bottom: 1mm;
+		}
+
+		&.life-points h3 {
+			margin-bottom: 4mm;
+		}
+	}
+
+	.upper {
+		display: flex;
+		align-items: center;
+		width: 100%;
+
+		.combat-techniques {
+			margin-right: 12mm;
+			flex: 1 1 auto;
+		}
+
+		tbody td {
+			&.name, &.value {
+				font: 500 11px/1 Alegreya Sans;
+			}
+
+			&.value {
+				font: bold 11px/1 Alegreya Sans;
+			}
+
+			&.at, &.pa {
+				font: 400 11px/1 Alegreya Sans;
+			}
+
+			&.primary, &.ic {
+				font: 11px/1 Alegreya SC;
+			}
+
+			&.at {
+				border-right: 0.15mm solid grey;
+			}
+		}
+
+		td {
+			&.primary, &.ic, &.value, &.at, &.pa {
+				text-align: center;
+			}
+
+			&.ic, &.value {
+				width: 12mm;
+			}
+
+			&.primary {
+				width: 14mm;
+			}
+
+			&.at, &.pa {
+				width: 8mm;
+			}
+
+			&.routine {
+				width: 3mm;
+			}
+
+			&.name {
+				padding: 0 1mm;
+				width: 34mm;
+			}
+
+			&:nth-child(2n+1), &:last-child {
+				background: rgba(0, 0, 0, 0.1);
+			}
+		}
+
+		.life-points {
+			width: 92mm;
+			display: flex;
+			flex-direction: column;
+
+			> div {
+				flex: none;
+				display: flex;
+
+				&:not(.life-points-first) {
+					padding-left: 12mm;
+				}
+			}
+
+			.box {
+				text-align: center;
+			}
+		}
+
+		.life-points-first, .life-points-second {
+			.labelbox {
+				flex-direction: column-reverse;
+				align-items: left;
+
+				.box {
+					width: 100%;
+				}
+			}
+
+			.labelbox:last-child {
+				flex: 1 1 auto;
+			}
+		}
+
+		.life-points-first {
+			.labelbox:first-child {
+				width: 10mm;
+				margin-right: 2mm;
+				font: bold 21px/9.4mm Alegreya Sans;
+				letter-spacing: 0.05em;
+			}
+
+			label {
+				font: bold 9px Alegreya Sans;
+				padding-bottom: 1mm;
+			}
+		}
+
+		.life-points-second {
+			margin: 1mm 0;
+
+			.box {
+				height: 1cm;
+				width: 100%;
+			}
+		}
+
+		.tiers {
+			margin-top: 2mm;
+			font: bold 10px/5mm Alegreya;
+			white-space: pre-wrap;
+			letter-spacing: 0;
+			height: 5mm;
+
+			.box {
+				width: 10mm;
+				height: 5mm;
+				margin-right: 2mm;
+				font: 500 11px/1 Alegreya Sans;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+	}
+
+	.lower {
+		flex: 1 1 auto;
+		display: flex;
+		flex-wrap: wrap;
+		position: relative;
+		align-content: space-between;
+		margin-top: 4mm;
+
+		> div {
+			flex: none;
+		}
+
+		.shields, .status {
+			width: 84mm;
+			margin-left: 6mm;
+		}
+
+		.armor, .activatable-list {
+			width: 102mm;
+		}
+
+		thead td {
+			text-align: center;
+		}
+
+		.shields tbody td {
+			&.mod {
+				font: bold 11px/1 Alegreya Sans;
+			}
+		}
+
+		.armor td {
+			&.weight {
+				width: auto;
+			}
+		}
+
+		tbody td {
+			&.at, &.pa, &.damage, &.ranged, &.pro, &.enc, &.add-penalties {
+				font: bold 11px/1 Alegreya Sans;
+			}
+
+			&.at, &.pro {
+				border-right: 0.15mm solid grey;
+			}
+
+			&.name, &.combat-technique, &.where, &.damage-bonus, &.mod, &.reach, &.range, &.weight, &.reload-time, &.ammunition, &.stp {
+				font: 400 11px/1 Alegreya Sans;
+			}
+		}
+
+		td {
+			&:not(.name):not(.combat-technique) {
+				text-align: center;
+			}
+
+			&.at, &.pa {
+				width: 12mm;
+			}
+
+			&.at-mod, &.pa-mod {
+				width: 10mm;
+			}
+
+			&.pro, &.enc {
+				width: 8mm;
+			}
+
+			&.damage-bonus, &.damage, &.reach, &.range, &.ranged, &.weight, &.reload-time {
+				width: 20mm;
+			}
+
+			&.ammunition, &.where {
+				width: 24mm;
+			}
+
+			&.name, &.combat-technique {
+				padding: 0 1mm;
+				width: 34mm;
+			}
+
+			&.name {
+				max-width: 34mm;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				white-space: nowrap;
+			}
+
+			&.name, &.damage-bonus, &.mod, &.at, &.pa, &.reload-time, &.range, &.ammunition, &.add-penalties, &.where {
+				background: rgba(0, 0, 0, 0.1);
+			}
+		}
+	}
+
+	.status {
+		display: flex;
+		border-top: 0.3mm solid grey;
+
+		> div {
+			flex: none;
+			display: flex;
+			flex-direction: column;
+
+			&:not(:last-child) {
+				border-right: 0.3mm solid grey;
+			}
+
+			&.status-tiers {
+				flex: 1 1 auto;
+			}
+
+			&.status-effects {
+				width: 24.5mm;
+			}
+
+			> div, > header {
+				flex: none;
+				display: flex;
+				height: 4.5mm;
+
+				span, h4 {
+					flex: 1 1 auto;
+					padding: 0 1mm;
+				}
+
+				> div {
+					width: 4.35mm;
+					padding: 0.5mm;
+					flex: none;
+
+					&:nth-child(2), &:nth-child(4) {
+						background: rgba(0, 0, 0, 0.1);
+					}
+				}
+
+				> div, span, h4 {
+					display: flex;
+					align-items: center;
+				}
+			}
+
+			> header {
+				border-bottom: 0.3mm solid grey;
+
+				h4 {
+					font: bold 13px/1 Alegreya SC;
+					letter-spacing: 0;
+					text-transform: none;
+					color: black;
+				}
+
+				div {
+					font: bold 10px/1 Alegreya;
+					justify-content: center;
+				}
+			}
+
+			> div {
+				border-bottom: 0.15mm solid grey;
+
+				span {
+					font: 500 11px/1 Alegreya Sans;
+				}
+
+				> div > div {
+					border: 0.45mm solid black;
+					height: 100%;
+					width: 100%;
+					background-color: white;
+				}
+			}
+		}
+	}
+}

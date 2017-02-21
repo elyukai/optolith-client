@@ -54,9 +54,6 @@ interface HeroRest {
 	readonly disadv: {
 		readonly ratingVisible: boolean;
 	};
-	readonly items: {
-		readonly [id: string]: ItemInstance;
-	};
 	readonly attr: {
 		readonly values: [string, number, number][];
 		readonly lp: number;
@@ -90,6 +87,18 @@ interface HeroRest {
 	readonly chants: {
 		readonly active: {
 			readonly [id: string]: number | null;
+		};
+	};
+	readonly inventory: {
+		readonly items: {
+			readonly [id: string]: ItemInstance;
+		};
+		readonly equipment: object;
+		readonly purse: {
+			readonly d: number;
+			readonly s: number;
+			readonly h: number;
+			readonly k: number;
 		};
 	};
 	readonly history: HistoryObject[];
@@ -496,6 +505,7 @@ interface ItemBaseInstance {
 	combatTechnique: string;
 	damageDiceSides: number;
 	gr: number;
+	isParryingWeapon: boolean;
 	isTemplateLocked: boolean;
 	reach: number;
 	template: string;
@@ -612,10 +622,7 @@ interface HeroSave extends HeroBase {
 	dateModified: string;
 }
 
-interface SaveData {
-	overview: HeroSave;
-	details: HeroRest;
-}
+interface SaveData extends HeroSave, HeroRest {}
 
 type InputTextEvent =  React.FormEvent<HTMLInputElement>;
 type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;

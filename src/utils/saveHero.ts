@@ -8,6 +8,7 @@ import CultureStore from '../stores/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import ELStore from '../stores/ELStore';
 import HistoryStore from '../stores/HistoryStore';
+import InventoryStore from '../stores/InventoryStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import PhaseStore from '../stores/PhaseStore';
 import ProfessionStore from '../stores/ProfessionStore';
@@ -19,36 +20,36 @@ import TalentsStore from '../stores/TalentsStore';
 import VersionStore from '../stores/VersionStore';
 
 export const generateArray = (): SaveData => ({
-	overview: {
-		clientVersion: VersionStore.get(),
-		dateCreated: (new Date()).toJSON(),
-		dateModified: (new Date()).toJSON(),
-		id: ProfileStore.getID(),
-		phase: PhaseStore.get(),
-		name: ProfileStore.getName(),
-		avatar: ProfileStore.getAvatar(),
-		ap: APStore.getAll(),
-		el: ELStore.getStartID(),
-		r: RaceStore.getCurrentID() as string,
-		c: CultureStore.getCurrentID() as string,
-		p: ProfessionStore.getCurrentId() as string,
-		pv: ProfessionVariantStore.getCurrentID(),
-		sex: ProfileStore.getSex()
+	clientVersion: VersionStore.get(),
+	dateCreated: (new Date()).toJSON(),
+	dateModified: (new Date()).toJSON(),
+	id: ProfileStore.getID(),
+	phase: PhaseStore.get(),
+	name: ProfileStore.getName(),
+	avatar: ProfileStore.getAvatar(),
+	ap: APStore.getAll(),
+	el: ELStore.getStartID(),
+	r: RaceStore.getCurrentID() as string,
+	c: CultureStore.getCurrentID() as string,
+	p: ProfessionStore.getCurrentId() as string,
+	pv: ProfessionVariantStore.getCurrentID(),
+	sex: ProfileStore.getSex(),
+	pers: ProfileStore.getAll(),
+	attr: AttributeStore.getForSave(),
+	activatable: ActivatableStore.getForSave(),
+	disadv: {
+		ratingVisible: DisAdvStore.getRating()
 	},
-	details: {
-		pers: ProfileStore.getAll(),
-		attr: AttributeStore.getForSave(),
-		activatable: ActivatableStore.getForSave(),
-		disadv: {
-			ratingVisible: DisAdvStore.getRating()
-		},
-		talents: TalentsStore.getForSave(),
-		ct: CombatTechniquesStore.getAllForSave(),
-		spells: SpellsStore.getForSave(),
-		chants: LiturgiesStore.getForSave(),
-		items: {},
-		history: HistoryStore.getAll()
-	}
+	talents: TalentsStore.getForSave(),
+	ct: CombatTechniquesStore.getAllForSave(),
+	spells: SpellsStore.getForSave(),
+	chants: LiturgiesStore.getForSave(),
+	inventory: {
+		items: InventoryStore.getAllById(),
+		equipment: {},
+		purse: InventoryStore.getPurse()
+	},
+	history: HistoryStore.getAll()
 });
 
 export default () => WebAPIUtils.saveHero(generateArray());

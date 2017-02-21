@@ -3,96 +3,20 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Item from '../data/Item';
 import Store from './Store';
 
-type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction;
+type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction | ReceiveHeroDataAction;
 
-let _itemsById: { [id: string]: Item } = {
-	ITEM_1: new Item({
-		id: 'ITEM_1',
-		name: 'Mörderstorchsäbel',
-		price: 100,
-		weight: 1.2,
-		amount: 1,
-		where: 'Gürtel',
-		gr: 1,
-		combatTechnique: 'CT_12',
-		damageDiceNumber: 1,
-		damageDiceSides: 6,
-		damageFlat: 6,
-		damageBonus: 14,
-		at: -1,
-		pa: 0,
-		reach: 2,
-		length: 76,
-		stp: 0,
-		range: [0, 0, 0],
-		reloadTime: 0,
-		ammunition: null,
-		pro: 0,
-		enc: 0,
-		addPenalties: false,
-		template: 'ITEMTPL_0',
-		isTemplateLocked: false
-	}),
-	ITEM_2: new Item({
-		id: 'ITEM_2',
-		name: 'Bogen des Rakorium Muntagonus',
-		price: 1234,
-		weight: 0.9,
-		amount: 1,
-		where: 'Fliegt',
-		gr: 2,
-		combatTechnique: 'CT_2',
-		damageDiceNumber: 2,
-		damageDiceSides: 6,
-		damageFlat: 0,
-		damageBonus: 0,
-		at: 0,
-		pa: 0,
-		reach: 0,
-		length: 123,
-		stp: 0,
-		range: [90, 60, 90],
-		reloadTime: 1,
-		ammunition: null,
-		pro: 0,
-		enc: 0,
-		addPenalties: false,
-		template: 'ITEMTPL_0',
-		isTemplateLocked: false
-	}),
-	ITEM_3: new Item({
-		id: 'ITEM_3',
-		name: 'Rüstung des Widderhorns',
-		price: 30,
-		weight: 4,
-		amount: 1,
-		where: '',
-		gr: 3,
-		combatTechnique: '',
-		damageDiceNumber: 0,
-		damageDiceSides: 6,
-		damageFlat: 0,
-		damageBonus: 0,
-		at: 0,
-		pa: 0,
-		reach: 0,
-		length: 123,
-		stp: 0,
-		range: [90, 60, 90],
-		reloadTime: 1,
-		ammunition: null,
-		pro: 4,
-		enc: 2,
-		addPenalties: true,
-		template: 'ITEMTPL_0',
-		isTemplateLocked: false
-	})
-};
-let _items = ['ITEM_1','ITEM_2','ITEM_3'];
+let _itemsById: { [id: string]: ItemInstance } = {};
+let _items: string[] = [];
 let _itemTemplatesById: { [id: string]: ItemInstance } = {};
 let _itemTemplates: string[] = [];
 let _filterText = '';
 let _sortOrder = 'name';
+let _purse = {
+	d: 0,
+	s: 0,
+	h: 0,
+	k: 0
+};
 
 function _init(raw: { [id: string]: RawItem }) {
 	for (const id in raw) {
@@ -101,34 +25,19 @@ function _init(raw: { [id: string]: RawItem }) {
 	}
 }
 
+function _updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: number; s: number; h: number; k: number; }}) {
+	for (const id in items) {
+		_itemsById[id] = new Item({ ...items[id] });
+		_items.push(id);
+	}
+	_purse = purse;
+}
+
 function _updateSortOrder(option: string) {
 	_sortOrder = option;
 }
 
 function _addItem(raw: ItemInstance, id: string) {
-	// if ([1,2].includes(data.gr)) {
-	// 	data.ddn = parseInt(data.ddn) || 0;
-	// 	data.df = parseInt(data.df) || 0;
-	// 	data.length = parseInt(data.length) || 0;
-	// }
-	// if (data.gr === 1) {
-	// 	data.db = parseInt(data.db) || 0;
-	// 	data.at = parseInt(data.at) || 0;
-	// 	data.pa = parseInt(data.pa) || 0;
-	// 	data.reach = parseInt(data.reach) || 0;
-	// 	data.stp = parseInt(data.stp) || 0;
-	// }
-	// else if (data.gr === 2) {
-	// 	data.rb1 = parseInt(data.rb1) || 0;
-	// 	data.rb2 = parseInt(data.rb2) || 0;
-	// 	data.rb3 = parseInt(data.rb3) || 0;
-	// 	data.range = [ data.rb1, data.rb2, data.rb3 ];
-	// 	data.rt = parseInt(data.rt) || 0;
-	// }
-	// else if (data.gr === 3) {
-	// 	data.pro = parseInt(data.pro) || 0;
-	// 	data.enc = parseInt(data.enc) || 0;
-	// }
 	_itemsById[id] = new Item({ ...raw, id });
 	_items.push(id);
 }
@@ -158,6 +67,10 @@ class InventoryStoreStatic extends Store {
 		return _items.map(e => _itemsById[e]);
 	}
 
+	getAllById() {
+		return _itemsById;
+	}
+
 	getTemplate(id: string) {
 		return _itemTemplatesById[id];
 	}
@@ -172,6 +85,10 @@ class InventoryStoreStatic extends Store {
 
 	getSortOrder() {
 		return _sortOrder;
+	}
+
+	getPurse() {
+		return _purse;
 	}
 
 }
@@ -196,6 +113,10 @@ const InventoryStore = new InventoryStoreStatic((action: Action) => {
 
 		case ActionTypes.RECEIVE_DATA_TABLES:
 			_init(action.payload.data.items);
+			break;
+
+		case ActionTypes.RECEIVE_HERO_DATA:
+			_updateAll(action.payload.data.inventory);
 			break;
 
 		default:

@@ -1,4 +1,4 @@
-import { getAllByCategory } from './ListStore';
+import { get, getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
@@ -6,7 +6,7 @@ import HistoryStore from './HistoryStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | SetSelectionsAction;
 
 const CATEGORY = Categories.ATTRIBUTES;
 
@@ -113,6 +113,12 @@ const changePermanentArcaneEnergyBySpecialAbility = (id: string, negative: boole
 		_permanentAE.redeemed = lost;
 	}
 };
+
+function _assign() {
+	if ((get('SA_92') as SpecialAbilityInstance).isActive) {
+		_permanentAE.lost += 2;
+	}
+}
 
 class AttributeStoreStatic extends Store {
 
@@ -227,6 +233,10 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 
 			case ActionTypes.RECEIVE_HERO_DATA:
 				_updateAll(action.payload.data.attr);
+				break;
+
+			case ActionTypes.ASSIGN_RCP_OPTIONS:
+				_assign();
 				break;
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:

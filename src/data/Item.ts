@@ -12,6 +12,7 @@ export default class Item extends Core implements ItemInstance {
 	damageFlat: number;
 	enc: number;
 	gr: number;
+	isParryingWeapon: boolean;
 	isTemplateLocked: boolean;
 	length: number;
 	amount: number;

@@ -5,15 +5,10 @@ import RaceStore from '../../stores/RaceStore';
 
 export interface MainSheetAttributesProps {
 	attributes: SecondaryAttribute[];
-	baseValues: {
-		lp: number;
-		ae: number;
-		kp: number;
-	};
 }
 
 export default (props: MainSheetAttributesProps ) => {
-	const { attributes, baseValues } = props;
+	const { attributes } = props;
 	const race = RaceStore.getCurrent();
 	return (
 		<div className="calculated">
@@ -30,25 +25,25 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[0].mod}
 				purchased={attributes[0].currentAdd}
 				subLabel="Grundwert"
-				subArray={[baseValues.lp]} />
+				subArray={[race.lp]} />
 			<MainSheetAttributesItem
 				label={attributes[1].name}
 				calc={attributes[1].calc}
 				value={attributes[1].value}
 				add={attributes[1].mod}
-				purchased={baseValues.ae}
+				purchased={attributes[1].currentAdd}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
-				subArray={[0,0]}
+				subArray={[attributes[1].permanentLost!,attributes[1].permanentRedeemed!]}
 				empty={attributes[1].value === '-'} />
 			<MainSheetAttributesItem
 				label={attributes[2].name}
 				calc={attributes[2].calc}
 				value={attributes[2].value}
 				add={attributes[2].mod}
-				purchased={baseValues.kp}
+				purchased={attributes[2].currentAdd}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
-				subArray={[0,0]}
-				empty={attributes[2].value === '-'} />
+				subArray={[attributes[2].permanentLost!,attributes[2].permanentRedeemed!]}
+				empty={typeof attributes[2].value === 'string'} />
 			<MainSheetAttributesItem
 				label={attributes[3].name}
 				calc={attributes[3].calc}

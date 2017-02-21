@@ -81,7 +81,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 				ammunition: null,
 				pro: '',
 				enc: '',
-				addPenalties: false
+				addPenalties: false,
+				isParryingWeapon: false
 			};
 		}
 	}
@@ -116,6 +117,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as State);
 	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as State);
 	changeAddPenalties = () => this.setState((prevState) => ({ addPenalties: !prevState.addPenalties } as State));
+	changeParryingWeapon = () => this.setState((prevState) => ({ isParryingWeapon: !prevState.isParryingWeapon } as State));
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
@@ -154,7 +156,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 
 	render() {
 		const { create, node } = this.props;
-		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
+		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
 		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(InventoryStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
@@ -339,6 +341,14 @@ export default class ItemEditor extends React.Component<Props, State> {
 								disabled={locked}
 								/>
 						) }
+					</div>
+					<div className="row">
+						<Checkbox
+							className="parrying-weapon"
+							label="Parierwaffe"
+							checked={isParryingWeapon}
+							onClick={this.changeParryingWeapon}
+							/>
 					</div>
 				</div> ) : null }
 				{ gr === 2 ? ( <div className="ranged">

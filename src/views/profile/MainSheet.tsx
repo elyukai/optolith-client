@@ -4,9 +4,7 @@ import * as React from 'react';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
 import ActivatableTextList from './ActivatableTextList';
 import APStore from '../../stores/APStore';
-import AttributeStore from '../../stores/AttributeStore';
 import CultureStore from '../../stores/CultureStore';
-import DisAdvStore from '../../stores/DisAdvStore';
 import ELStore from '../../stores/ELStore';
 import MainSheetAttributes from './MainSheetAttributes';
 import MainSheetPersonalData from './MainSheetPersonalData';
@@ -15,7 +13,6 @@ import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RaceStore from '../../stores/RaceStore';
 import SheetHeader from './SheetHeader';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import TextBox from '../../components/TextBox';
 
 export default () => {
@@ -32,10 +29,9 @@ export default () => {
 
 	const advActive = ActivatableStore.getActiveForView(Categories.ADVANTAGES);
 	const disadvActive = ActivatableStore.getActiveForView(Categories.DISADVANTAGES);
-	const generalsaActive = ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES).filter(({ gr }) => [1,2].includes(gr as number));
+	const generalsaActive = ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES).filter(e => [1,2].includes(e.gr!));
 
 	const attributes = secondaryAttributes.getAll();
-	const baseValues = AttributeStore.getAddEnergies();
 
 	return (
 		<div className="sheet" id="main-sheet">
@@ -54,17 +50,17 @@ export default () => {
 				/>
 			<div className="lower">
 				<div className="lists">
-					<TextBox className="advantages" label="Vorteile">
+					<TextBox className="activatable-list" label="Vorteile">
 						<ActivatableTextList list={advActive} />
 					</TextBox>
-					<TextBox className="disadvantages" label="Nachteile">
+					<TextBox className="activatable-list" label="Nachteile">
 						<ActivatableTextList list={disadvActive} />
 					</TextBox>
-					<TextBox className="general-special-abilities" label="Allgemeine Sonderfertigkeiten">
+					<TextBox className="activatable-list" label="Allgemeine Sonderfertigkeiten">
 						<ActivatableTextList list={generalsaActive} />
 					</TextBox>
 				</div>
-				<MainSheetAttributes attributes={attributes} baseValues={baseValues} />
+				<MainSheetAttributes attributes={attributes} />
 			</div>
 		</div>
 	);
