@@ -26,20 +26,22 @@ export default class Items extends React.Component<undefined, State> {
 				break;
 		}
 
+		const tabs = [
+			{
+				label: 'Inventar',
+				tag: 'inventory'
+			},
+			// {
+			// 	label: 'Ausrüstung',
+			// 	tag: 'equipment',
+			// 	disabled: true
+			// }
+		]
+
 		return (
 			<section id="items">
 				<SubTabs
-					tabs={[
-						{
-							label: 'Inventar',
-							tag: 'inventory'
-						},
-						{
-							label: 'Ausrüstung',
-							tag: 'equipment',
-							disabled: true
-						}
-					]}
+					tabs={tabs}
 					active={this.state.tab}
 					onClick={this.handleClick} />
 				{element}

@@ -7668,7 +7668,7 @@ function requestHero(id) {
                     weight: 4,
                     amount: 1,
                     where: '',
-                    gr: 3,
+                    gr: 4,
                     combatTechnique: '',
                     damageDiceNumber: 0,
                     damageDiceSides: 6,
@@ -14768,7 +14768,7 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
                         __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "range3", label: "Weit", value: range3, onChange: this.changeRange3, disabled: locked })),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Dropdown__["a" /* default */], { className: "ammunition", label: "Munition", hint: "Keine", value: ammunition, options: AMMUNITION, onChange: this.changeAmmunition, disabled: locked }),
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__components_TextField__["a" /* default */], { className: "length", label: "Länge in Hf.", value: length, onChange: this.changeLength, disabled: locked })))) : null,
-            gr === 3 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "armor" },
+            gr === 4 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "armor" },
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_Hr__["a" /* default */], null),
                 __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "row" },
                     __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "container" },
@@ -18564,7 +18564,7 @@ class TitleBar extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
                             __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_14__IconButton__["a" /* default */], { icon: "\uE868", disabled: true }))));
                 }
                 else {
-                    tabs.splice(1, 0, { label: 'Helden', tag: 'herolist' }, { label: 'Gruppen', tag: 'grouplist', disabled: true }, { label: 'Hausregeln', tag: 'own-rules', disabled: true });
+                    tabs.splice(1, 0, { label: 'Helden', tag: 'herolist' });
                     return (__WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_23__TitleBarWrapper__["a" /* default */], null,
                         __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_20__TitleBarLeft__["a" /* default */], null,
                             __WEBPACK_IMPORTED_MODULE_5_react__["createElement"](__WEBPACK_IMPORTED_MODULE_22__TitleBarTabs__["a" /* default */], { active: currentTab, tabs: tabs })),
@@ -21743,7 +21743,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                 __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("h4", null,
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", null, name),
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("span", null, numberValue)),
-                gr === 4 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "ammunition" }, "Munition") : null,
+                gr === 3 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "ammunition" }, "Munition") : null,
                 [4, 5].includes(gr) ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("table", { className: "melee" },
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tbody", null,
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
@@ -21838,7 +21838,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
                                 price,
                                 " S")))) : null,
-                gr === 3 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("table", { className: "armor" },
+                gr === 4 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("table", { className: "armor" },
                     __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tbody", null,
                         __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null, "RS"),
@@ -21856,7 +21856,7 @@ class InventoryListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"]
                             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", null,
                                 price,
                                 " S")))) : null,
-                gr === 3 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "armor" },
+                gr === 4 ? __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("p", { className: "armor" },
                     "Zus. Abz\u00FCge: ",
                     addPenalties ? '-1 GS, -1 INI' : '-') : null), margin: 11 }, add ? (__WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("tr", null,
             __WEBPACK_IMPORTED_MODULE_2_react__["createElement"]("td", { className: "name" }, name),
@@ -21913,18 +21913,14 @@ class Items extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                 element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Equipment__["a" /* default */], null);
                 break;
         }
+        const tabs = [
+            {
+                label: 'Inventar',
+                tag: 'inventory'
+            },
+        ];
         return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("section", { id: "items" },
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_SubTabs__["a" /* default */], { tabs: [
-                    {
-                        label: 'Inventar',
-                        tag: 'inventory'
-                    },
-                    {
-                        label: 'Ausrüstung',
-                        tag: 'equipment',
-                        disabled: true
-                    }
-                ], active: this.state.tab, onClick: this.handleClick }),
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_SubTabs__["a" /* default */], { tabs: tabs, active: this.state.tab, onClick: this.handleClick }),
             element));
     }
 }
@@ -23272,17 +23268,20 @@ class Profile extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
                 element = __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Sheets__["a" /* default */], null);
                 break;
         }
+        const tabs = [
+            {
+                label: 'Übersicht',
+                tag: 'overview'
+            }
+        ];
+        if (phase === 3) {
+            tabs.push({
+                label: 'Heldenbogen',
+                tag: 'sheets'
+            });
+        }
         return (__WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement("section", { id: "profile" },
-            __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_SubTabs__["a" /* default */], { tabs: [
-                    {
-                        label: 'Übersicht',
-                        tag: 'overview'
-                    },
-                    {
-                        label: 'Heldenbogen',
-                        tag: 'sheets'
-                    }
-                ], active: this.state.tab, onClick: this.handleClick }),
+            __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_SubTabs__["a" /* default */], { tabs: tabs, active: this.state.tab, onClick: this.handleClick }),
             element));
     }
 }
@@ -23945,13 +23944,13 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Cultures__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Professions__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Races__ = __webpack_require__(286);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Cultures__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Professions__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Races__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_SubTabs__ = __webpack_require__(46);
 
 
@@ -23960,57 +23959,60 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_2_react__["Component
 
 
 
-class RCP extends __WEBPACK_IMPORTED_MODULE_5_react__["Component"] {
+class RCP extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super(...arguments);
         this.state = {
             tab: 'race',
-            raceID: __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__["a" /* default */].getCurrentID(),
-            cultureID: __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__["a" /* default */].getCurrentID()
+            raceID: __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__["a" /* default */].getCurrentID(),
+            cultureID: __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__["a" /* default */].getCurrentID()
         };
-        this._updateCultureStore = () => this.setState({ cultureID: __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__["a" /* default */].getCurrentID() });
-        this._updateRaceStore = () => this.setState({ raceID: __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__["a" /* default */].getCurrentID() });
+        this._updateCultureStore = () => this.setState({ cultureID: __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__["a" /* default */].getCurrentID() });
+        this._updateRaceStore = () => this.setState({ raceID: __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__["a" /* default */].getCurrentID() });
         this.handleClick = (tab) => this.setState({ tab });
     }
     componentDidMount() {
-        __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__["a" /* default */].addChangeListener(this._updateCultureStore);
-        __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__["a" /* default */].addChangeListener(this._updateRaceStore);
+        __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__["a" /* default */].addChangeListener(this._updateCultureStore);
+        __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__["a" /* default */].addChangeListener(this._updateRaceStore);
     }
     componentWillUnmount() {
-        __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__["a" /* default */].removeChangeListener(this._updateCultureStore);
-        __WEBPACK_IMPORTED_MODULE_4__stores_RaceStore__["a" /* default */].removeChangeListener(this._updateRaceStore);
+        __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__["a" /* default */].removeChangeListener(this._updateCultureStore);
+        __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__["a" /* default */].removeChangeListener(this._updateRaceStore);
     }
     render() {
-        var element;
+        let element;
         switch (this.state.tab) {
             case 'race':
-                element = __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__Races__["a" /* default */], { changeTab: this.handleClick });
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Races__["a" /* default */], { changeTab: this.handleClick });
                 break;
             case 'culture':
-                element = __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__Cultures__["a" /* default */], { changeTab: this.handleClick });
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__Cultures__["a" /* default */], { changeTab: this.handleClick });
                 break;
             case 'profession':
-                element = __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__Professions__["a" /* default */], null);
+                element = __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__Professions__["a" /* default */], null);
                 break;
         }
         const { raceID, cultureID } = this.state;
-        return (__WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("section", { id: "rcp" },
-            __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_SubTabs__["a" /* default */], { tabs: [
-                    {
-                        label: 'Spezies',
-                        tag: 'race'
-                    },
-                    {
-                        label: 'Kultur',
-                        tag: 'culture',
-                        disabled: raceID === null
-                    },
-                    {
-                        label: 'Profession',
-                        tag: 'profession',
-                        disabled: cultureID === null
-                    }
-                ], active: this.state.tab, onClick: this.handleClick }),
+        const tabs = [
+            {
+                label: 'Spezies',
+                tag: 'race'
+            }
+        ];
+        if (raceID) {
+            tabs.push({
+                label: 'Kultur',
+                tag: 'culture'
+            });
+        }
+        if (cultureID) {
+            tabs.push({
+                label: 'Profession',
+                tag: 'profession'
+            });
+        }
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("section", { id: "rcp" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_SubTabs__["a" /* default */], { tabs: tabs, active: this.state.tab, onClick: this.handleClick }),
             element));
     }
 }

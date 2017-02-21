@@ -43,26 +43,26 @@ export default class Profile extends Component<undefined, ProfileState> {
 				break;
 		}
 
+		const tabs = [
+			{
+				label: 'Übersicht',
+				tag: 'overview'
+			}
+		];
+
+		if (phase === 3) {
+			tabs.push({
+				label: 'Heldenbogen',
+				tag: 'sheets'
+				// disabled: true
+				// disabled: phase < 3
+			});
+		}
+
 		return (
 			<section id="profile">
 				<SubTabs
-					tabs={[
-						{
-							label: 'Übersicht',
-							tag: 'overview'
-						},
-						// {
-						// 	label: 'Hintergrund',
-						// 	tag: 'background',
-						// 	disabled: true
-						// },
-						{
-							label: 'Heldenbogen',
-							tag: 'sheets'
-							// disabled: true
-							// disabled: phase < 3
-						}
-					]}
+					tabs={tabs}
 					active={this.state.tab}
 					onClick={this.handleClick} />
 				{element}

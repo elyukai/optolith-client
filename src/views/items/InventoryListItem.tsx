@@ -35,7 +35,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 			<TooltipToggle content={
 				<div className="inventory-item">
 					<h4><span>{name}</span><span>{numberValue}</span></h4>
-					{ gr === 4 ? <p className="ammunition">Munition</p> : null}
+					{ gr === 3 ? <p className="ammunition">Munition</p> : null}
 					{ [4,5].includes(gr) ? <table className="melee">
 						<tbody>
 							<tr>
@@ -120,7 +120,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 						</tbody>
 					</table> : null}
-					{ gr === 3 ? <table className="armor">
+					{ gr === 4 ? <table className="armor">
 						<tbody>
 							<tr>
 								<td>RS</td>
@@ -140,7 +140,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 						</tbody>
 					</table> : null}
-					{ gr === 3 ? <p className="armor">
+					{ gr === 4 ? <p className="armor">
 						Zus. Abzüge: {addPenalties ? '-1 GS, -1 INI' : '-'}
 					</p> : null}
 				</div>

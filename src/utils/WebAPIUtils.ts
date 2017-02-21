@@ -340,7 +340,7 @@ export function requestHero(id: string) {
 					weight: 4,
 					amount: 1,
 					where: '',
-					gr: 3,
+					gr: 4,
 					combatTechnique: '',
 					damageDiceNumber: 0,
 					damageDiceSides: 6,

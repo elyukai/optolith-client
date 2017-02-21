@@ -438,7 +438,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 							/>
 					</div>
 				</div> ) : null }
-				{ gr === 3 ? ( <div className="armor">
+				{ gr === 4 ? ( <div className="armor">
 					<Hr />
 					<div className="row">
 						<div className="container">
