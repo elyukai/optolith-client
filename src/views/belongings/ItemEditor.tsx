@@ -348,6 +348,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Parierwaffe"
 							checked={isParryingWeapon}
 							onClick={this.changeParryingWeapon}
+							disabled={locked}
 							/>
 					</div>
 				</div> ) : null }
