@@ -36,24 +36,26 @@
 	}
 
 	&.ATTR_8 {
-		margin-right: 0;
 		outline-color: #f60;
 	}
 
+	&.ATTR_8, &:last-child {
+		margin-right: 0;
+	}
+
 	.label {
-		font: bold 10px/14px Alegreya; // change
-		color: black; // change
+		font: bold 10px/14px Alegreya;
+		color: black;
 		letter-spacing: 0.05em;
-		text-transform: uppercase;
 		display: block;
-		top: 0; // change
-		padding: 2px 6px 0; // change
+		top: 0;
+		padding: 2px 6px 0;
 	}
 
 	.value {
 		text-align: center;
-		font: bold 21px/24px Alegreya Sans; // change
-		color: black; // change
+		font: bold 21px/24px Alegreya Sans;
+		color: black;
 		letter-spacing: 0.05em;
 		display: block;
 	}

@@ -174,27 +174,42 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 				_total += action.payload.amount;
 				break;
 
-			case ActionTypes.SELECT_RACE:
+			case ActionTypes.SELECT_RACE: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(RaceStore.getCurrent().ap, (get(action.payload.id) as RaceInstance).ap);
 				_calculateRCPDiff(CultureStore.getCurrent().ap, 0);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_CULTURE:
+			case ActionTypes.SELECT_CULTURE: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(CultureStore.getCurrent().ap, (get(action.payload.id) as CultureInstance).ap);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_PROFESSION:
+			case ActionTypes.SELECT_PROFESSION: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, (get(action.payload.id) as ProfessionInstance).ap);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_PROFESSION_VARIANT:
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, action.payload.id ? (get(action.payload.id) as ProfessionVariantInstance).ap : 0);
+			case ActionTypes.SELECT_PROFESSION_VARIANT: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
+				const professionVariantNext = get(action.payload.id!) as ProfessionVariantInstance | undefined;
+				_calculateRCPDiff(professionVariant ? professionVariant.ap : 0, professionVariantNext ? professionVariantNext.ap : 0);
 				break;
+			}
 
 			case ActionTypes.ASSIGN_RCP_OPTIONS:
 				_assignRCP(action.payload);

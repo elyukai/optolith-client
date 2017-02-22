@@ -31,7 +31,7 @@ export default class Liturgy extends Skill implements LiturgyInstance {
 		if (PhaseStore.get() < 3) {
 			max = ELStore.getStart().maxSkillRating;
 		} else {
-			const checkValues = this.check.map(attr => (get(attr) as AttributeInstance).value);
+			const checkValues = this.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
 			max = Math.max(...checkValues) + 2;
 		}
 

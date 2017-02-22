@@ -2,15 +2,15 @@ import * as React from 'react';
 import AttributeStore from '../../stores/AttributeStore';
 import SheetHeaderAttribute from './SheetHeaderAttribute';
 
-interface SheetHeaderProps {
-	add?: SecondaryAttribute[];
-	title: string;
-}
-
 interface HeaderValue {
 	id: string;
 	short: string;
-	value: number | string;
+	value?: number | string;
+}
+
+interface SheetHeaderProps {
+	add?: HeaderValue[];
+	title: string;
 }
 
 export default (props: SheetHeaderProps) => {

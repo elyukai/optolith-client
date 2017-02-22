@@ -1,6 +1,6 @@
+import * as React from 'react';
 import Overview from './Overview';
 import PhaseStore from '../../stores/PhaseStore';
-import React, { Component } from 'react';
 import Sheets from './Sheets';
 import SubTabs from '../../components/SubTabs';
 
@@ -9,11 +9,11 @@ interface ProfileState {
 	tab: string;
 }
 
-export default class Profile extends Component<undefined, ProfileState> {
+export default class Profile extends React.Component<undefined, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),
-		tab: 'sheets'
+		tab: 'overview'
 	};
 
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as ProfileState);
@@ -54,8 +54,6 @@ export default class Profile extends Component<undefined, ProfileState> {
 			tabs.push({
 				label: 'Heldenbogen',
 				tag: 'sheets'
-				// disabled: true
-				// disabled: phase < 3
 			});
 		}
 
