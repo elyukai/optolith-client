@@ -180,7 +180,7 @@ export default class TitleBar extends React.Component<Props, State> {
 						tabs.push(
 							{ label: 'Eigenschaften', tag: 'attributes' },
 							{ label: 'Fertigkeiten', tag: 'skills' },
-							{ label: 'Gegenstände', tag: 'items' }
+							{ label: 'Besitz', tag: 'belongings' }
 						);
 						break;
 				}

@@ -76,7 +76,8 @@ table {
 
 	tbody td {
 		height: 4.5mm;
-		border-width: 0.15mm 0;
+		border-width: 0 0 0.15mm;
+		font: 500 11px/1 Alegreya Sans;
 	}
 
 	.activatable-list > div {

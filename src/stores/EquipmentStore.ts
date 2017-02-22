@@ -3,7 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import Item from '../data/Item';
 import Store from './Store';
 
-type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction | ReceiveHeroDataAction;
+type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction | ReceiveHeroDataAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction;
 
 let _itemsById: { [id: string]: ItemInstance } = {};
 let _items: string[] = [];
@@ -12,10 +12,10 @@ let _itemTemplates: string[] = [];
 let _filterText = '';
 let _sortOrder = 'name';
 let _purse = {
-	d: 0,
-	s: 0,
-	h: 0,
-	k: 0
+	d: '0',
+	s: '0',
+	h: '0',
+	k: '0'
 };
 
 function _init(raw: { [id: string]: RawItem }) {
@@ -25,7 +25,7 @@ function _init(raw: { [id: string]: RawItem }) {
 	}
 }
 
-function _updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: number; s: number; h: number; k: number; }}) {
+function _updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: string; s: string; h: string; k: string; }}) {
 	for (const id in items) {
 		_itemsById[id] = new Item({ ...items[id] });
 		_items.push(id);
@@ -57,7 +57,7 @@ function _removeItem(id: string) {
 	});
 }
 
-class InventoryStoreStatic extends Store {
+class EquipmentStoreStatic extends Store {
 
 	get(id: string) {
 		return _itemsById[id];
@@ -93,10 +93,26 @@ class InventoryStoreStatic extends Store {
 
 }
 
-const InventoryStore = new InventoryStoreStatic((action: Action) => {
+const EquipmentStore = new EquipmentStoreStatic((action: Action) => {
 	switch( action.type ) {
 		case ActionTypes.SET_ITEMS_SORT_ORDER:
 			_updateSortOrder(action.payload.sortOrder);
+			break;
+
+		case ActionTypes.SET_DUCATES:
+			_purse.d = action.payload.value;
+			break;
+
+		case ActionTypes.SET_SILVERTHALERS:
+			_purse.s = action.payload.value;
+			break;
+
+		case ActionTypes.SET_HELLERS:
+			_purse.h = action.payload.value;
+			break;
+
+		case ActionTypes.SET_KREUTZERS:
+			_purse.k = action.payload.value;
 			break;
 
 		case ActionTypes.ADD_ITEM:
@@ -123,8 +139,8 @@ const InventoryStore = new InventoryStoreStatic((action: Action) => {
 			return true;
 	}
 
-	InventoryStore.emitChange();
+	EquipmentStore.emitChange();
 	return true;
 });
 
-export default InventoryStore;
+export default EquipmentStore;

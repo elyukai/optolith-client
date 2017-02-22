@@ -214,7 +214,14 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 					<div className="cost">{currentCost}</div>
 				</div>
 				<div className="btns">
-					<IconButton icon="&#xE15B;" onClick={this.removeFromList.bind(null, args as DeactivateArgs)} disabled={disabled || phase === 3} flat />
+					{phase === 2 ? (
+						<IconButton
+							icon="&#xE15B;"
+							onClick={this.removeFromList.bind(null, args as DeactivateArgs)}
+							disabled={disabled}
+							flat
+							/>
+					) : null}
 					<IconButton icon="&#xE88F;" flat disabled />
 				</div>
 			</div>

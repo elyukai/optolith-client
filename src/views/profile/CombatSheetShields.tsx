@@ -1,9 +1,9 @@
 import * as React from 'react';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import TextBox from '../../components/TextBox';
 
 export default () => {
-	const items = InventoryStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
+	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
 	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (

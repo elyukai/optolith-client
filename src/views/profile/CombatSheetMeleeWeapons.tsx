@@ -1,12 +1,11 @@
 import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import TextBox from '../../components/TextBox';
 
 export default () => {
-	const items = InventoryStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
+	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
 	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
-	console.log(items);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
 		<TextBox label="Nahkampfwaffen" className="melee-weapons">
@@ -27,12 +26,15 @@ export default () => {
 						list.map((e, i) => {
 							if (e) {
 								const combatTechnique = get(e.combatTechnique) as CombatTechniqueInstance;
+								let damageFlatBonus = Math.max(...combatTechnique.primary.map(attr => (get(attr) as AttributeInstance).value)) - e.damageBonus;
+								damageFlatBonus = damageFlatBonus > 0 ? damageFlatBonus : 0;
+								const damageFlat = e.damageFlat + damageFlatBonus;
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
 										<td className="combat-technique">{combatTechnique.name}</td>
 										<td className="damage-bonus">{combatTechnique.primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {e.damageBonus}</td>
-										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{e.damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
+										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
 										<td className="at-mod mod">{e.at > 0 && '+'}{e.at}</td>
 										<td className="pa-mod mod">{e.pa > 0 && '+'}{e.pa}</td>
 										<td className="reach">{['kurz','mittel','lang'][e.reach - 1]}</td>

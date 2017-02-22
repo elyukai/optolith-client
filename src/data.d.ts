@@ -95,10 +95,10 @@ interface HeroRest {
 		};
 		readonly equipment: object;
 		readonly purse: {
-			readonly d: number;
-			readonly s: number;
-			readonly h: number;
-			readonly k: number;
+			readonly d: string;
+			readonly s: string;
+			readonly h: string;
+			readonly k: string;
 		};
 	};
 	readonly history: HistoryObject[];

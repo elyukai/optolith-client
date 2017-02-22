@@ -364,7 +364,7 @@ export function requestHero(id: string) {
 			},
 			equipment: {},
 			purse: {
-				d:0,s:0,h:0,k:0
+				d:'0',s:'0',h:'0',k:'0'
 			}
 		}
 	});

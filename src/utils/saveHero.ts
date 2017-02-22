@@ -1,5 +1,4 @@
 import * as ActivatableStore from '../stores/ActivatableStore';
-import * as Categories from '../constants/Categories';
 import * as WebAPIUtils from './WebAPIUtils';
 import APStore from '../stores/APStore';
 import AttributeStore from '../stores/AttributeStore';
@@ -8,7 +7,7 @@ import CultureStore from '../stores/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import ELStore from '../stores/ELStore';
 import HistoryStore from '../stores/HistoryStore';
-import InventoryStore from '../stores/InventoryStore';
+import EquipmentStore from '../stores/EquipmentStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import PhaseStore from '../stores/PhaseStore';
 import ProfessionStore from '../stores/ProfessionStore';
@@ -45,9 +44,9 @@ export const generateArray = (): SaveData => ({
 	spells: SpellsStore.getForSave(),
 	chants: LiturgiesStore.getForSave(),
 	inventory: {
-		items: InventoryStore.getAllById(),
+		items: EquipmentStore.getAllById(),
 		equipment: {},
-		purse: InventoryStore.getPurse()
+		purse: EquipmentStore.getPurse()
 	},
 	history: HistoryStore.getAll()
 });

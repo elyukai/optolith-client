@@ -1,10 +1,10 @@
 import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import TextBox from '../../components/TextBox';
 
 export default () => {
-	const items = InventoryStore.getAll().filter(e => e.gr === 2);
+	const items = EquipmentStore.getAll().filter(e => e.gr === 2);
 	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
@@ -25,7 +25,7 @@ export default () => {
 						list.map((e, i) => {
 							if (e) {
 								const combatTechnique = get(e.combatTechnique) as CombatTechniqueInstance;
-								const ammunition = InventoryStore.get(e.ammunition!);
+								const ammunition = EquipmentStore.getTemplate(e.ammunition!);
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>

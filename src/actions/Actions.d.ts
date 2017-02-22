@@ -199,7 +199,7 @@ interface CreateHeroAction extends DefaultAction {
 
 // HistoryActions
 
-// InventoryActions
+// EquipmentActions
 
 interface AddItemAction extends DefaultAction {
 	type: ADD_ITEM;
@@ -227,6 +227,34 @@ interface SetItemsSortOrderAction extends DefaultAction {
 	type: SET_ITEMS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
+	};
+}
+
+interface SetDucatesAction extends DefaultAction {
+	type: SET_DUCATES;
+	payload: {
+		value: string;
+	};
+}
+
+interface SetSilverthalersAction extends DefaultAction {
+	type: SET_SILVERTHALERS;
+	payload: {
+		value: string;
+	};
+}
+
+interface SetHellersAction extends DefaultAction {
+	type: SET_HELLERS;
+	payload: {
+		value: string;
+	};
+}
+
+interface SetKreutzersAction extends DefaultAction {
+	type: SET_KREUTZERS;
+	payload: {
+		value: string;
 	};
 }
 

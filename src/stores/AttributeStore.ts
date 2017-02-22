@@ -168,8 +168,9 @@ class AttributeStoreStatic extends Store {
 }
 
 const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: Action) => {
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 	if (action.undo) {
+		AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 		switch(action.type) {
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
@@ -241,6 +242,7 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				break;
 
 			case ActionTypes.ADD_LIFE_POINT:
@@ -262,42 +264,50 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 				break;
 
 			case ActionTypes.REDEEM_AE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_redeemAEPoint();
 				}
 				break;
 
 			case ActionTypes.REDEEM_KP_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_redeemKPPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_removeRedeemedAEPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_REDEEMED_KP_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_removeRedeemedKPPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_PERMANENT_AE_POINTS:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				_removePermanentAEPoints(action.payload.value);
 				break;
 
 			case ActionTypes.REMOVE_PERMANENT_KP_POINTS:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				_removePermanentKPPoints(action.payload.value);
 				break;
 
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				changePermanentArcaneEnergyBySpecialAbility(action.payload.id);
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				changePermanentArcaneEnergyBySpecialAbility(action.payload.id, true);
 				break;
 

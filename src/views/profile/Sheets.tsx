@@ -1,6 +1,6 @@
+import BelongingsSheet from './BelongingsSheet';
 import ChantSheet from './ChantSheet';
 import CombatSheet from './CombatSheet';
-import InventorySheet from './InventorySheet';
 import MainSheet from './MainSheet';
 import * as React from 'react';
 import Scroll from '../../components/Scroll';
@@ -13,7 +13,7 @@ export default () => (
 			<MainSheet />
 			<SkillsSheet />
 			<CombatSheet />
-			<InventorySheet />
+			<BelongingsSheet />
 			<SpellsSheet />
 			<ChantSheet />
 		</Scroll>

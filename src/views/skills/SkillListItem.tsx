@@ -92,7 +92,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 						flat
 						/>
 				) : null }
-				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} />
+				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled />
 			</div>
 		);
 

@@ -1,4 +1,4 @@
-#sheets .sheet-wrapper .sheet.inventory {
+#belongings {
 	.item-categories {
 		margin-top: 0;
 		display: flex;
@@ -9,7 +9,7 @@
 		width: calc(100% + 20px);
 
 		> div {
-			margin: 20px 0 0 !important;
+			margin: 20px 0 0;
 			width: 50%;
 			padding-right: 20px;
 			padding-bottom: 40px;
@@ -18,15 +18,15 @@
 			> h3 {
 				line-height: 18px;
 			}
-			
+
 			> table {
-				margin: 0 !important;
+				margin: 0;
 			}
-			
+
 			&.all-items {
 				flex: 0 100%;
 			}
-			
+
 			&.provisions {
 				min-height: 200px;
 			}
@@ -80,7 +80,7 @@
 			&.name {
 				text-transform: none;
 				text-indent: -10px;
-				padding-left: 10px !important;
+				padding-left: 10px;
 				padding-right: 15px;
 			}
 		}
@@ -97,6 +97,26 @@
 			&.charges {
 				width: 10px;
 				white-space: nowrap;
+			}
+		}
+	}
+
+	.upper {
+		.purse {
+			display: flex;
+			flex-direction: column;
+			width: 44mm;
+
+			.top {
+				.labelbox {
+					height: 4mm;
+					margin-bottom: 2mm;
+					flex-direction: row-reverse;
+
+					.box {
+						width: 24mm;
+					}
+				}
 			}
 		}
 	}

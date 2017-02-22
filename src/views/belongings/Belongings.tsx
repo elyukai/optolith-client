@@ -1,15 +1,14 @@
 import * as React from 'react';
 import Equipment from './Equipment';
-import Inventory from './Inventory';
 import SubTabs from '../../components/SubTabs';
 
 interface State {
 	tab: string;
 }
 
-export default class Items extends React.Component<undefined, State> {
+export default class Belongings extends React.Component<undefined, State> {
 	state = {
-		tab: 'inventory'
+		tab: 'equipment'
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
@@ -18,9 +17,6 @@ export default class Items extends React.Component<undefined, State> {
 		let element;
 
 		switch (this.state.tab) {
-			case 'inventory':
-				element = <Inventory />;
-				break;
 			case 'equipment':
 				element = <Equipment />;
 				break;
@@ -28,15 +24,10 @@ export default class Items extends React.Component<undefined, State> {
 
 		const tabs = [
 			{
-				label: 'Inventar',
-				tag: 'inventory'
-			},
-			// {
-			// 	label: 'Ausrüstung',
-			// 	tag: 'equipment',
-			// 	disabled: true
-			// }
-		]
+				label: 'Ausrüstung',
+				tag: 'equipment'
+			}
+		];
 
 		return (
 			<section id="items">

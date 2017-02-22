@@ -13,7 +13,7 @@ export default class Profile extends Component<undefined, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),
-		tab: 'overview'
+		tab: 'sheets'
 	};
 
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as ProfileState);

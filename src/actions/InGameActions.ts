@@ -1,5 +1,5 @@
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import ActionTypes from '../constants/ActionTypes';
 
 export function load() {
 	AppDispatcher.dispatch({

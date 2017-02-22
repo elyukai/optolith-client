@@ -1,4 +1,4 @@
-import * as InventoryActions from '../../actions/InventoryActions';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
 import alert from '../../utils/alert';
 import Checkbox from '../../components/Checkbox';
@@ -7,7 +7,7 @@ import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 import Label from '../../components/Label';
 import TextField from '../../components/TextField';
@@ -51,7 +51,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 		if (tempState) {
 			if (tempState.isTemplateLocked) {
 				const { id, where } = tempState;
-				tempState = { ...InventoryStore.getTemplate(tempState.template), id, where };
+				tempState = { ...EquipmentStore.getTemplate(tempState.template), id, where };
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -121,13 +121,13 @@ export default class ItemEditor extends React.Component<Props, State> {
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
+			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
 			this.setState(convertToEdit(template));
 		}
 	};
 	lockTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id };
+			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id };
 			this.setState(convertToEdit(template));
 		}
 	};
@@ -140,7 +140,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`)
 		}
 		else {
-			InventoryActions.addToList(itemToAdd);
+			EquipmentActions.addToList(itemToAdd);
 		}
 	}
 	saveItem = () => {
@@ -150,7 +150,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
 		}
 		else {
-			InventoryActions.set(this.state.id, itemToAdd);
+			EquipmentActions.set(this.state.id, itemToAdd);
 		}
 	}
 
@@ -158,8 +158,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 		const { create, node } = this.props;
 		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
-		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(InventoryStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 
 		return (
 			<Dialog

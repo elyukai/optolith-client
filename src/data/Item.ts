@@ -53,7 +53,8 @@ export default class Item extends Core implements ItemInstance {
 			enc,
 			addPenalties,
 			template,
-			isTemplateLocked
+			isTemplateLocked,
+			isParryingWeapon
 		} = args;
 
 		this.price = price;
@@ -81,5 +82,6 @@ export default class Item extends Core implements ItemInstance {
 		this.where = where;
 		this.template = template;
 		this.isTemplateLocked = typeof isTemplateLocked === 'boolean' ? isTemplateLocked : true;
+		this.isParryingWeapon = isParryingWeapon;
 	}
 }

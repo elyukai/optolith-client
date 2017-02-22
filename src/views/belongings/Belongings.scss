@@ -1,6 +1,6 @@
 @import "ItemEditor";
 
-#inventory {
+#equipment {
 	tbody {
 		td:last-child {
 			padding-right: 11px;
@@ -10,6 +10,39 @@
 			height: 32px;
 			padding: 2px;
 		}
+	}
+
+	.purse {
+		display: flex;
+		flex-direction: column;
+
+		h4 {
+			flex: 1 0 100%;
+			justify-content: center;
+		}
+
+		.fields {
+			display: flex;
+			margin-top: 16px;
+		}
+
+		.textfield {
+			flex: 1 1 25%;
+			margin: 0;
+
+			label {
+				padding-left: 2px;
+			}
+
+			&:not(:last-child) {
+				margin-right: 10px;
+			}
+		}
+	}
+
+	.list-item .type {
+		margin-left: 4px;
+		margin-right: 12px;
 	}
 }
 
