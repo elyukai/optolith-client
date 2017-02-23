@@ -1,4 +1,5 @@
 import * as React from 'react';
+import OptionalRules from './OptionalRules';
 import Overview from './Overview';
 import PhaseStore from '../../stores/PhaseStore';
 import Sheets from './Sheets';
@@ -41,6 +42,9 @@ export default class Profile extends React.Component<undefined, ProfileState> {
 			case 'sheets':
 				element = <Sheets />;
 				break;
+			case 'optionalRules':
+				element = <OptionalRules />;
+				break;
 		}
 
 		const tabs = [
@@ -54,6 +58,9 @@ export default class Profile extends React.Component<undefined, ProfileState> {
 			tabs.push({
 				label: 'Heldenbogen',
 				tag: 'sheets'
+			}, {
+				label: 'Optionalregeln',
+				tag: 'optionalRules'
 			});
 		}
 

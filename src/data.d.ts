@@ -89,11 +89,12 @@ interface HeroRest {
 			readonly [id: string]: number | null;
 		};
 	};
-	readonly inventory: {
+	readonly belongings: {
 		readonly items: {
 			readonly [id: string]: ItemInstance;
 		};
 		readonly equipment: object;
+		readonly pet: object;
 		readonly purse: {
 			readonly d: string;
 			readonly s: string;
@@ -101,6 +102,7 @@ interface HeroRest {
 			readonly k: string;
 		};
 	};
+	readonly rules: Rules;
 	readonly history: HistoryObject[];
 }
 
@@ -588,6 +590,10 @@ interface ExperienceLevel {
 	maxTotalAttributeValues: number;
 	maxSpellsLiturgies: number;
 	maxUnfamiliarSpells: number;
+}
+
+interface Rules {
+	higherParadeValues: number;
 }
 
 interface HistoryPayload {

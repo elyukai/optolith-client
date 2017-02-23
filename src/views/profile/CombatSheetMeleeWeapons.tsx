@@ -1,12 +1,15 @@
 import { get } from '../../stores/ListStore';
 import * as React from 'react';
 import EquipmentStore from '../../stores/EquipmentStore';
+import RulesStore from '../../stores/RulesStore';
 import TextBox from '../../components/TextBox';
 
 export default () => {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
 	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
 	list.splice(0, Math.min(items.length, 4), ...items);
+	const paradeBonus = RulesStore.getAll().higherParadeValues;
+
 	return (
 		<TextBox label="Nahkampfwaffen" className="melee-weapons">
 			<table>
@@ -39,7 +42,7 @@ export default () => {
 										<td className="pa-mod mod">{e.pa > 0 && '+'}{e.pa}</td>
 										<td className="reach">{['kurz','mittel','lang'][e.reach - 1]}</td>
 										<td className="at">{combatTechnique.at + e.at}</td>
-										<td className="pa">{(combatTechnique.pa as number) + e.pa}</td>
+										<td className="pa">{(combatTechnique.pa as number) + e.pa + paradeBonus}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>
 								);

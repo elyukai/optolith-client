@@ -37,6 +37,15 @@
 				text-align: center;
 			}
 
+			&.property {
+				font-size: 9px;
+			}
+
+			&.aspect {
+				font-size: 8px;
+				white-space: normal;
+			}
+
 			&.name, &.effect {
 				overflow: hidden;
 				text-overflow: ellipsis;

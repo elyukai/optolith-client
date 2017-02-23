@@ -132,7 +132,7 @@ const EquipmentStore = new EquipmentStoreStatic((action: Action) => {
 			break;
 
 		case ActionTypes.RECEIVE_HERO_DATA:
-			_updateAll(action.payload.data.inventory);
+			_updateAll(action.payload.data.belongings);
 			break;
 
 		default:

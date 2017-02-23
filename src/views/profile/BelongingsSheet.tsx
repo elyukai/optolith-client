@@ -82,8 +82,8 @@ export default () => {
 					</div>
 					<div className="total">
 						<label>Gesamt</label>
-						<span>{dotToComma(items.reduce((n, i) => n + i.price, 0))}</span>
-						<span>{dotToComma(items.reduce((n, i) => n + i.weight, 0))}</span>
+						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.price, 0) * 100) / 100)}</span>
+						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.weight, 0) * 100) / 100)}</span>
 					</div>
 				</TextBox>
 				<TextBox label="Geldbeutel" className="purse">

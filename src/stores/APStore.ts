@@ -23,14 +23,17 @@ function _spend(cost: number) {
 	_spent += cost;
 }
 
-function _spendDisadv(cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
+function _spendDisadv(id: string, cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
 	const target = () => add ? _adv : _disadv;
-	_spent += cost;
 	const absCost = add ? cost : -cost;
 	target()[0] += absCost;
 	if (index > 0) {
 		target()[index] += absCost;
 	}
+	if (['DISADV_17','DISADV_18'].includes(id)) {
+		cost += add ? 10 : -10;
+	}
+	_spent += cost;
 }
 
 function _calculateRCPDiff(current: number = 0, next: number = 0) {
@@ -153,7 +156,7 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.DEACTIVATE_DISADV:
 				if (RequirementsStore.isValid()) {
-					_spendDisadv(RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
+					_spendDisadv(action.payload.id, RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
 				}
 				break;
 

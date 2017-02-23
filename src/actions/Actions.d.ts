@@ -495,6 +495,15 @@ interface SwitchRaceValueVisibilityAction extends DefaultAction {
 	type: SWITCH_RACE_VALUE_VISIBILITY;
 }
 
+// RulesActions
+
+interface SetHigherParadeValuesAction extends DefaultAction {
+	type: SET_HIGHER_PARADE_VALUES;
+	payload: {
+		value: number;
+	};
+}
+
 // ServerActions
 
 interface ReceiveDataTablesAction extends DefaultAction {

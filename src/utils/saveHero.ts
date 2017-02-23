@@ -14,6 +14,7 @@ import ProfessionStore from '../stores/ProfessionStore';
 import ProfessionVariantStore from '../stores/ProfessionVariantStore';
 import ProfileStore from '../stores/ProfileStore';
 import RaceStore from '../stores/RaceStore';
+import RulesStore from '../stores/RulesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
 import VersionStore from '../stores/VersionStore';
@@ -43,11 +44,13 @@ export const generateArray = (): SaveData => ({
 	ct: CombatTechniquesStore.getAllForSave(),
 	spells: SpellsStore.getForSave(),
 	chants: LiturgiesStore.getForSave(),
-	inventory: {
+	belongings: {
 		items: EquipmentStore.getAllById(),
 		equipment: {},
+		pet: {},
 		purse: EquipmentStore.getPurse()
 	},
+	rules: RulesStore.getAll(),
 	history: HistoryStore.getAll()
 });
 

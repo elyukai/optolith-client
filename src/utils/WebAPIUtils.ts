@@ -275,7 +275,10 @@ export function requestHero(id: string) {
 			active:{SA_10:[{sid:'TAL_48',sid2:'Test'}],SA_28:[{sid:9},{sid:14}],SA_30:[{sid:8,tier:4},{sid:23,tier:2},{sid:6,tier:1}],SA_86:[{sid:1}]}
 		},
 		history: [],
-		inventory: {
+		rules: {
+			higherParadeValues: 0
+		},
+		belongings: {
 			items: {
 				ITEM_1: {
 					id: 'ITEM_1',
@@ -363,6 +366,7 @@ export function requestHero(id: string) {
 				}
 			},
 			equipment: {},
+			pet: {},
 			purse: {
 				d:'0',s:'0',h:'0',k:'0'
 			}
