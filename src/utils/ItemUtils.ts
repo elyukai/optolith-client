@@ -24,7 +24,7 @@ export const convertToSave = (item: ItemEditorInstance) => ({
 	damageFlat: item.damageFlat ? Number.parseInt(item.damageFlat.replace(/\,/, '.')) : 0,
 	enc: item.enc ? Number.parseInt(item.enc.replace(/\,/, '.')) : 0,
 	length: item.length ? Number.parseFloat(item.length.replace(/\,/, '.')) : 0,
-	amount: item.amount ? Number.parseInt(item.amount.replace(/\,/, '.')) : 0,
+	amount: item.amount ? Number.parseInt(item.amount.replace(/\,/, '.')) : 1,
 	pa: item.pa ? Number.parseInt(item.pa.replace(/\,/, '.')) : 0,
 	price: item.price ? Number.parseFloat(item.price.replace(/\,/, '.')) : 0,
 	pro: item.pro ? Number.parseInt(item.pro.replace(/\,/, '.')) : 0,

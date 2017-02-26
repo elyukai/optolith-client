@@ -265,7 +265,7 @@ interface IncreasableRequirementObject {
 }
 
 interface RequirementObject {
-	id: string;
+	id: string | string[];
 	active?: boolean;
 	sid?: string | number | number[];
 	sid2?: string | number;
@@ -274,20 +274,32 @@ interface RequirementObject {
 	type?: 1 | 2;
 }
 
+interface SkillOptionalDependency {
+	value: number;
+	origin: string;
+}
+
 interface ProfessionDependencyObject {
 	id: string;
 	value: string | string[];
 }
 
-interface DependencyObject {
-	sid?: string | number;
-	sid2?: string | number;
+interface DependencyObject extends ActiveObject {
+	origin?: string;
 }
 
 interface ValidationObject extends ActiveObject {
 	id: string;
 	active: boolean | number;
 }
+
+interface ProfessionDependencyCost {
+	total: number;
+	adv: [number, number, number];
+	disadv: [number, number, number];
+}
+
+type ActivatableInstanceDependency = boolean | DependencyObject;
 
 interface AdvantageInstance {
 	readonly id: string;
@@ -300,15 +312,15 @@ interface AdvantageInstance {
 	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: ADVANTAGES;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: ActivatableInstanceDependency): void;
+	removeDependency(dependency: ActivatableInstanceDependency): boolean;
 	readonly isMultiselect: boolean;
 	readonly isActive: boolean;
 	readonly isActivatable: boolean;
@@ -330,15 +342,15 @@ interface DisadvantageInstance {
 	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: DISADVANTAGES;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: ActivatableInstanceDependency): void;
+	removeDependency(dependency: ActivatableInstanceDependency): boolean;
 	readonly isMultiselect: boolean;
 	readonly isActive: boolean;
 	readonly isActivatable: boolean;
@@ -360,15 +372,15 @@ interface SpecialAbilityInstance {
 	readonly sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: SPECIAL_ABILITIES;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
 	readonly sid: (string | number)[];
 	readonly dsid: (string | number | boolean | undefined)[];
 	getSelectionItem(id: string | number): SelectionObject | undefined;
 	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
 	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: ActivatableInstanceDependency): void;
+	removeDependency(dependency: ActivatableInstanceDependency): boolean;
 	readonly isMultiselect: boolean;
 	readonly isActive: boolean;
 	readonly isActivatable: boolean;
@@ -379,19 +391,21 @@ interface SpecialAbilityInstance {
 	reset(): void;
 }
 
+type AttributeInstanceDependency = number | ActiveObject | SkillOptionalDependency;
+
 interface AttributeInstance {
 	readonly id: string;
 	readonly name: string;
 	readonly ic: number;
 	readonly category: ATTRIBUTES;
 	readonly short: string;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: AttributeInstanceDependency[];
 	value: number;
 	mod: number;
 	readonly isIncreasable: boolean;
 	readonly isDecreasable: boolean;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: AttributeInstanceDependency): void;
+	removeDependency(dependency: AttributeInstanceDependency): boolean;
 	set(value: number): void;
 	add(value: number): void;
 	remove(value: number): void;
@@ -400,6 +414,8 @@ interface AttributeInstance {
 	reset(): void;
 }
 
+type CombatTechniqueInstanceDependency = number | ActiveObject | SkillOptionalDependency;
+
 interface CombatTechniqueInstance {
 	readonly id: string;
 	readonly name: string;
@@ -407,14 +423,14 @@ interface CombatTechniqueInstance {
 	readonly gr: number;
 	readonly primary: string[];
 	readonly category: COMBAT_TECHNIQUES;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: CombatTechniqueInstanceDependency[];
 	value: number;
 	readonly at: number;
 	readonly pa: number | string;
 	readonly isIncreasable: boolean;
 	readonly isDecreasable: boolean;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: CombatTechniqueInstanceDependency): void;
+	removeDependency(dependency: CombatTechniqueInstanceDependency): boolean;
 	set(value: number): void;
 	add(value: number): void;
 	remove(value: number): void;
@@ -422,6 +438,8 @@ interface CombatTechniqueInstance {
 	removePoint(): void;
 	reset(): void;
 }
+
+type LiturgyInstanceDependency = number | boolean | ActiveObject | SkillOptionalDependency;
 
 interface LiturgyInstance {
 	readonly id: string;
@@ -432,14 +450,14 @@ interface LiturgyInstance {
 	readonly aspect: number[];
 	readonly category: LITURGIES;
 	readonly ic: number;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: LiturgyInstanceDependency[];
 	value: number;
 	active: boolean;
 	readonly isOwnTradition: boolean;
 	readonly isIncreasable: boolean;
 	readonly isDecreasable: boolean;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: LiturgyInstanceDependency): void;
+	removeDependency(dependency: LiturgyInstanceDependency): boolean;
 	set(value: number): void;
 	add(value: number): void;
 	remove(value: number): void;
@@ -447,6 +465,8 @@ interface LiturgyInstance {
 	removePoint(): void;
 	reset(): void;
 }
+
+type SpellInstanceDependency = number | boolean | ActiveObject | SkillOptionalDependency;
 
 interface SpellInstance {
 	readonly id: string;
@@ -457,14 +477,14 @@ interface SpellInstance {
 	readonly property: number;
 	readonly category: SPELLS;
 	readonly ic: number;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: SpellInstanceDependency[];
 	value: number;
 	active: boolean;
 	readonly isOwnTradition: boolean;
 	readonly isIncreasable: boolean;
 	readonly isDecreasable: boolean;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: SpellInstanceDependency): void;
+	removeDependency(dependency: SpellInstanceDependency): boolean;
 	set(value: number): void;
 	add(value: number): void;
 	remove(value: number): void;
@@ -472,6 +492,8 @@ interface SpellInstance {
 	removePoint(): void;
 	reset(): void;
 }
+
+type TalentInstanceDependency = number | ActiveObject | SkillOptionalDependency;
 
 interface TalentInstance {
 	readonly id: string;
@@ -483,14 +505,14 @@ interface TalentInstance {
 	readonly encumbrance: string;
 	readonly specialisation: string[] | null;
 	readonly specialisationInput: string | null;
-	dependencies: (boolean | ActiveObject)[];
+	dependencies: TalentInstanceDependency[];
 	value: number;
 	readonly isIncreasable: boolean;
 	readonly isDecreasable: boolean;
 	readonly isTyp: boolean;
 	readonly isUntyp: boolean;
-	addDependency(dependency: boolean | ActiveObject): void;
-	removeDependency(dependency: boolean | ActiveObject): boolean;
+	addDependency(dependency: TalentInstanceDependency): void;
+	removeDependency(dependency: TalentInstanceDependency): boolean;
 	set(value: number): void;
 	add(value: number): void;
 	remove(value: number): void;
@@ -550,6 +572,7 @@ interface ItemEditorInstance extends ItemBaseInstance {
 }
 
 type IncreasableInstances = AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
+type IncreasableNonactiveInstances = AttributeInstance | TalentInstance | CombatTechniqueInstance;
 type ActivatableInstances = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
 
 interface SecondaryAttribute {

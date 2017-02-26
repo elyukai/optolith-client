@@ -36,7 +36,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 				<div className="inventory-item">
 					<h4><span>{name}</span><span>{numberValue}</span></h4>
 					{ gr === 3 ? <p className="ammunition">Munition</p> : null}
-					{ [4,5].includes(gr) ? <table className="melee">
+					{ ![1,2,4].includes(gr) ? <table className="melee">
 						<tbody>
 							<tr>
 								<td>Gewicht</td>
@@ -104,7 +104,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>Munitionstyp</td>
-								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: 'Keine Munition ausgewählt' }).name}</td>
+								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: 'Keine' }).name}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>
@@ -162,7 +162,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 				):(
 					<div className="list-item">
 						<div className="name">
-							<p className="title">{numberValue}{numberValue && ''}{name}</p>
+							<p className="title">{numberValue}{numberValue && 'x '}{name}</p>
 						</div>
 						<div className="hr"></div>
 						<div className="type">{GROUPS[gr - 1]}</div>

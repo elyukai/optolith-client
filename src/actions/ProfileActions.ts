@@ -1,6 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import * as WebAPIUtils from '../utils/WebAPIUtils';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import ProfileStore from '../stores/ProfileStore';
 import Race from '../data/Race';
 import RaceStore from '../stores/RaceStore';
 
@@ -112,7 +113,7 @@ export const rerollSize = () => {
 
 export const rerollWeight = () => {
 	const race = RaceStore.getCurrent();
-	const [ weight, size ] = Race.rerollWeight(race);
+	const [ weight, size ] = Race.rerollWeight(race, ProfileStore.getSize());
 	setWeight(weight, size);
 };
 

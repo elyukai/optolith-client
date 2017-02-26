@@ -149,5 +149,9 @@
 
 	.activatable-list {
 		min-height: 60mm;
+
+		&:not(.cantrips):not(.blessings) {
+			width: 76mm;
+		}
 	}
 }

@@ -71,7 +71,9 @@ function _assignRCP(selections: Selections) {
 	const p = ProfessionStore.getCurrent();
 	if (p && p.id !== 'P_0') {
 		const apCosts = reqPurchase(p.requires);
-		_spent += apCosts;
+		_spent += apCosts.total;
+		_adv = _adv.map((e, i) => e + apCosts.adv[i]);
+		_disadv = apCosts.disadv;
 	}
 }
 

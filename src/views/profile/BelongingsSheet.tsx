@@ -1,12 +1,11 @@
 import { sort } from '../../utils/ListUtils';
 import { get } from '../../stores/ListStore';
 import * as React from 'react';
+import dotToComma from '../../utils/dotToComma';
 import EquipmentStore from '../../stores/EquipmentStore';
 import LabelBox from '../../components/LabelBox';
 import SheetHeader from './SheetHeader';
 import TextBox from '../../components/TextBox';
-
-const dotToComma = (number: number) => number.toString().replace(/\./, ',');
 
 const rowCreator = (e: ItemInstance | undefined, i: number) => {
 	if (e) {
@@ -82,8 +81,8 @@ export default () => {
 					</div>
 					<div className="total">
 						<label>Gesamt</label>
-						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.price, 0) * 100) / 100)}</span>
-						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.weight, 0) * 100) / 100)}</span>
+						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.price || n, 0) * 100) / 100)}</span>
+						<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.weight || n, 0) * 100) / 100)}</span>
 					</div>
 				</TextBox>
 				<TextBox label="Geldbeutel" className="purse">
