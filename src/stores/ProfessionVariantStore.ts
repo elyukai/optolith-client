@@ -26,15 +26,15 @@ class ProfessionVariantStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return _currentId !== null ? get(_currentId) as ProfessionVariantInstance : {} as ProfessionVariantInstance;
+		return _currentId ? get(_currentId) as ProfessionVariantInstance : undefined;
 	}
 
 	getCurrentName() {
-		return this.getCurrent() !== undefined ? this.getCurrent().name : null;
+		return _currentId ? this.getCurrent()!.name : undefined;
 	}
 
 	getNameByID(id: string) {
-		return get(id) !== undefined ? get(id).name : null;
+		return get(id) !== undefined ? get(id).name : undefined;
 	}
 
 }

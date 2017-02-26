@@ -12,6 +12,12 @@
 	}
 }
 
+table {
+	border-spacing: 0;
+	white-space: nowrap;
+	width: 100%;
+}
+
 .sheet {
 	flex: none;
 	width: 21cm;
@@ -54,6 +60,30 @@
 		font: bold 16px Alegreya;
 		letter-spacing: 0;
 		width: 100%;
+	}
+
+	td {
+		border-style: solid;
+		border-color: #c8c8c8;
+	}
+
+	thead td {
+		height: 5mm;
+		border-width: 0.3mm 0;
+		font: bold 10px/1 Alegreya SC;
+		border-color: grey;
+	}
+
+	tbody td {
+		height: 4.5mm;
+		border-width: 0 0 0.15mm;
+		font: 500 11px/1 Alegreya Sans;
+	}
+
+	.activatable-list > div {
+		font: 400 16px Alegreya Sans;
+		letter-spacing: 0;
+		padding-top: 8px;
 	}
 }
 

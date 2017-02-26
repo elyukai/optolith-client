@@ -1,4 +1,4 @@
-import { getAllByCategory } from './ListStore';
+import { get, getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
@@ -6,7 +6,7 @@ import HistoryStore from './HistoryStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | SetSelectionsAction;
 
 const CATEGORY = Categories.ATTRIBUTES;
 
@@ -114,6 +114,12 @@ const changePermanentArcaneEnergyBySpecialAbility = (id: string, negative: boole
 	}
 };
 
+function _assign() {
+	if ((get('SA_92') as SpecialAbilityInstance).isActive) {
+		_permanentAE.lost += 2;
+	}
+}
+
 class AttributeStoreStatic extends Store {
 
 	getAll() {
@@ -162,8 +168,9 @@ class AttributeStoreStatic extends Store {
 }
 
 const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: Action) => {
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken, HistoryStore.dispatchToken]);
+	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 	if (action.undo) {
+		AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 		switch(action.type) {
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
@@ -229,8 +236,13 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 				_updateAll(action.payload.data.attr);
 				break;
 
+			case ActionTypes.ASSIGN_RCP_OPTIONS:
+				_assign();
+				break;
+
 			case ActionTypes.ADD_ATTRIBUTE_POINT:
 			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				break;
 
 			case ActionTypes.ADD_LIFE_POINT:
@@ -252,42 +264,50 @@ const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic((action: A
 				break;
 
 			case ActionTypes.REDEEM_AE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_redeemAEPoint();
 				}
 				break;
 
 			case ActionTypes.REDEEM_KP_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_redeemKPPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_removeRedeemedAEPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_REDEEMED_KP_POINT:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				if (RequirementsStore.isValid()) {
 					_removeRedeemedKPPoint();
 				}
 				break;
 
 			case ActionTypes.REMOVE_PERMANENT_AE_POINTS:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				_removePermanentAEPoints(action.payload.value);
 				break;
 
 			case ActionTypes.REMOVE_PERMANENT_KP_POINTS:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				_removePermanentKPPoints(action.payload.value);
 				break;
 
 			case ActionTypes.ACTIVATE_SPECIALABILITY:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				changePermanentArcaneEnergyBySpecialAbility(action.payload.id);
 				break;
 
 			case ActionTypes.DEACTIVATE_SPECIALABILITY:
+				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				changePermanentArcaneEnergyBySpecialAbility(action.payload.id, true);
 				break;
 

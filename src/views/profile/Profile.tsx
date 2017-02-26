@@ -1,6 +1,7 @@
+import * as React from 'react';
+import OptionalRules from './OptionalRules';
 import Overview from './Overview';
 import PhaseStore from '../../stores/PhaseStore';
-import React, { Component } from 'react';
 import Sheets from './Sheets';
 import SubTabs from '../../components/SubTabs';
 
@@ -9,7 +10,7 @@ interface ProfileState {
 	tab: string;
 }
 
-export default class Profile extends Component<undefined, ProfileState> {
+export default class Profile extends React.Component<undefined, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),
@@ -32,7 +33,7 @@ export default class Profile extends Component<undefined, ProfileState> {
 
 		const { phase, tab } = this.state;
 
-		var element;
+		let element;
 
 		switch (tab) {
 			case 'overview':
@@ -41,28 +42,32 @@ export default class Profile extends Component<undefined, ProfileState> {
 			case 'sheets':
 				element = <Sheets />;
 				break;
+			case 'optionalRules':
+				element = <OptionalRules />;
+				break;
+		}
+
+		const tabs = [
+			{
+				label: 'Übersicht',
+				tag: 'overview'
+			}
+		];
+
+		if (phase === 3) {
+			tabs.push({
+				label: 'Heldenbogen',
+				tag: 'sheets'
+			}, {
+				label: 'Optionalregeln',
+				tag: 'optionalRules'
+			});
 		}
 
 		return (
 			<section id="profile">
 				<SubTabs
-					tabs={[
-						{
-							label: 'Übersicht',
-							tag: 'overview'
-						},
-						// {
-						// 	label: 'Hintergrund',
-						// 	tag: 'background',
-						// 	disabled: true
-						// },
-						{
-							label: 'Heldenbogen',
-							tag: 'sheets'
-							// disabled: true
-							// disabled: phase < 3
-						}
-					]}
+					tabs={tabs}
 					active={this.state.tab}
 					onClick={this.handleClick} />
 				{element}

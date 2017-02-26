@@ -170,6 +170,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 										removePoint={phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!obj.isDecreasable}
 										addFillElement
+										noIncrease={obj.gr === 3}
 										{...other} >
 										<div className="aspect">{aspc}</div>
 									</SkillListItem>

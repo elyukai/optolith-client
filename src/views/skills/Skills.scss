@@ -15,6 +15,14 @@
 			width: 252px;
 		}
 
+		&.no-increase .values {
+			width: 284px;
+
+			.fill {
+				margin-right: 10px;
+			}
+		}
+
 		.property, .aspect {
 			margin-left: 4px;
 			margin-right: 12px;

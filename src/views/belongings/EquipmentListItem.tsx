@@ -1,9 +1,9 @@
 import { get } from '../../stores/ListStore';
-import * as InventoryActions from '../../actions/InventoryActions';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
 import createOverlay from '../../utils/createOverlay';
 import IconButton from '../../components/IconButton';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import ItemEditor from './ItemEditor';
 import TooltipToggle from '../../components/TooltipToggle';
 
@@ -12,19 +12,22 @@ interface Props {
 	data: ItemInstance;
 }
 
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Rüstungen', 'Munition', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
+const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
-export default class InventoryListItem extends React.Component<Props, undefined> {
+export default class EquipmentListItem extends React.Component<Props, undefined> {
 	edit = () => {
-		const item = InventoryStore.get(this.props.data.id);
+		const item = EquipmentStore.get(this.props.data.id);
 		createOverlay(<ItemEditor item={item} />);
 	}
-	delete = () => InventoryActions.removeFromList(this.props.data.id);
-	add = () => InventoryActions.addToList(this.props.data);
+	delete = () => EquipmentActions.removeFromList(this.props.data.id);
+	add = () => EquipmentActions.addToList(this.props.data);
 
 	render() {
 
-		const { add, data: { gr, name, amount, price, weight, where, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } } = this.props;
+		const { add, data } = this.props;
+		const { isTemplateLocked, template, where } = data;
+		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template), where } : data;
+		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } = item;
 
 		const numberValue = amount > 1 ? amount : null;
 
@@ -32,8 +35,8 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 			<TooltipToggle content={
 				<div className="inventory-item">
 					<h4><span>{name}</span><span>{numberValue}</span></h4>
-					{ gr === 4 ? <p className="ammunition">Munition</p> : null}
-					{ [4,5].includes(gr) ? <table className="melee">
+					{ gr === 3 ? <p className="ammunition">Munition</p> : null}
+					{ ![1,2,4].includes(gr) ? <table className="melee">
 						<tbody>
 							<tr>
 								<td>Gewicht</td>
@@ -101,7 +104,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>Munitionstyp</td>
-								<td>{(ammunition ? InventoryStore.getTemplate(ammunition) : { name: 'Keine Munition ausgewählt' }).name}</td>
+								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: 'Keine' }).name}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>
@@ -117,7 +120,7 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 						</tbody>
 					</table> : null}
-					{ gr === 3 ? <table className="armor">
+					{ gr === 4 ? <table className="armor">
 						<tbody>
 							<tr>
 								<td>RS</td>
@@ -137,40 +140,45 @@ export default class InventoryListItem extends React.Component<Props, undefined>
 							</tr>
 						</tbody>
 					</table> : null}
-					{ gr === 3 ? <p className="armor">
+					{ gr === 4 ? <p className="armor">
 						Zus. Abzüge: {addPenalties ? '-1 GS, -1 INI' : '-'}
 					</p> : null}
 				</div>
 			} margin={11}>
 				{add ? (
-					<tr>
-						<td className="name">{name}</td>
-						<td className="inc">
+					<div className="list-item">
+						<div className="name">
+							<p className="title">{name}</p>
+						</div>
+						<div className="hr"></div>
+						<div className="btns">
 							<IconButton
 								icon="&#xE145;"
 								onClick={this.add}
+								flat
 								/>
-						</td>
-					</tr>
+						</div>
+					</div>
 				):(
-					<tr>
-						<td className="type">{GROUPS[gr - 1]}</td>
-						<td className="number">{numberValue}</td>
-						<td className="name">{name}</td>
-						<td className="price">{price} S</td>
-						<td className="weight">{weight} Stn</td>
-						<td className="where">{where}</td>
-						<td className="inc">
+					<div className="list-item">
+						<div className="name">
+							<p className="title">{numberValue}{numberValue && 'x '}{name}</p>
+						</div>
+						<div className="hr"></div>
+						<div className="type">{GROUPS[gr - 1]}</div>
+						<div className="btns">
 							<IconButton
 								icon="&#xE254;"
 								onClick={this.edit}
+								flat
 								/>
 							<IconButton
 								icon="&#xE872;"
 								onClick={this.delete}
+								flat
 								/>
-						</td>
-					</tr>
+						</div>
+					</div>
 				)}
 			</TooltipToggle>
 		);

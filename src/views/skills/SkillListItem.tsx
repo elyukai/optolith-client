@@ -19,6 +19,7 @@ interface Props {
 	id: string;
 	isNotActive?: boolean;
 	name: string;
+	noIncrease?: boolean;
 	removeDisabled?: boolean;
 	removePoint?: () => void;
 	sr?: number;
@@ -30,12 +31,13 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease } = this.props;
 
 		const className = classNames({
 			'list-item': true,
 			'typ': typ,
-			'untyp': untyp
+			'untyp': untyp,
+			'no-increase': noIncrease
 		});
 
 		// const groupElement = group ? (
@@ -44,10 +46,10 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 
 		const values: JSX.Element[] = [];
 
-		if (sr || sr === 0) {
+		if (typeof sr === 'number') {
 			values.push(<div key="sr" className="sr">{sr}</div>);
 		}
-		else if (!addPoint && !isNotActive) {
+		else if (!addPoint && !isNotActive && !noIncrease) {
 			values.push(<div key="sr"  className="sr empty"></div>);
 		}
 
@@ -90,7 +92,7 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 						flat
 						/>
 				) : null }
-				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} />
+				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled />
 			</div>
 		);
 

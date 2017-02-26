@@ -45,6 +45,9 @@
 		],
 		"variable-name": [
 			true, "check-format", "allow-leading-underscore", "allow-pascal-case"
+		],
+		"ordered-imports": [
+			true
 		]
 	}
 }

@@ -199,6 +199,7 @@ interface RawItem {
 	enc: number;
 	addPenalties: boolean;
 	template: string;
+	isParryingWeapon: boolean;
 }
 
 interface RawExperienceLevel {

@@ -137,7 +137,7 @@ export default class Selections extends React.Component<Props, State> {
 			});
 		}
 
-		if (ProfessionVariantStore.getCurrentID() !== null) {
+		if (professionVariant) {
 			professionVariant.selections.forEach(e => {
 				if (e.id === 'COMBAT_TECHNIQUES' && e.active === false) {
 					professionSelections.delete(e.id);

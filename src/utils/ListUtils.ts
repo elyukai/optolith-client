@@ -6,8 +6,8 @@ interface Data {
 	ic?: number;
 	property?: number;
 	aspect?: number[];
-	price?: string;
-	weight?: string;
+	price?: number;
+	weight?: number;
 	where?: string;
 	[id: string]: any;
 }

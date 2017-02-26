@@ -137,8 +137,8 @@ export default class TitleBar extends React.Component<Props, State> {
 				} else {
 					tabs.splice(1, 0,
 						{ label: 'Helden', tag: 'herolist' },
-						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
-						{ label: 'Hausregeln', tag: 'own-rules', disabled: true }
+						// { label: 'Gruppen', tag: 'grouplist', disabled: true },
+						// { label: 'Hausregeln', tag: 'own-rules', disabled: true }
 					);
 					return (
 						<TitleBarWrapper>
@@ -180,7 +180,7 @@ export default class TitleBar extends React.Component<Props, State> {
 						tabs.push(
 							{ label: 'Eigenschaften', tag: 'attributes' },
 							{ label: 'Fertigkeiten', tag: 'skills' },
-							{ label: 'Gegenstände', tag: 'items' }
+							{ label: 'Besitz', tag: 'belongings' }
 						);
 						break;
 				}

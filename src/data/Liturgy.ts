@@ -21,7 +21,8 @@ export default class Liturgy extends Skill implements LiturgyInstance {
 	}
 
 	get isOwnTradition(): boolean {
-		return this.tradition.some(e => e === 1 || e === (get('SA_86') as SpecialAbilityInstance).sid[0] as number + 1);
+		const SA = get('SA_102') as SpecialAbilityInstance;
+		return this.tradition.some(e => e === 1 || e === SA.sid[0] as number + 1);
 	}
 
 	get isIncreasable(): boolean {
@@ -31,7 +32,7 @@ export default class Liturgy extends Skill implements LiturgyInstance {
 		if (PhaseStore.get() < 3) {
 			max = ELStore.getStart().maxSkillRating;
 		} else {
-			const checkValues = this.check.map(attr => (get(attr) as AttributeInstance).value);
+			const checkValues = this.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
 			max = Math.max(...checkValues) + 2;
 		}
 

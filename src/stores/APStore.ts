@@ -23,14 +23,17 @@ function _spend(cost: number) {
 	_spent += cost;
 }
 
-function _spendDisadv(cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
+function _spendDisadv(id: string, cost: number, [ add, index ]: [boolean, 0 | 1 | 2]) {
 	const target = () => add ? _adv : _disadv;
-	_spent += cost;
 	const absCost = add ? cost : -cost;
 	target()[0] += absCost;
 	if (index > 0) {
 		target()[index] += absCost;
 	}
+	if (['DISADV_17','DISADV_18'].includes(id)) {
+		cost += add ? 10 : -10;
+	}
+	_spent += cost;
 }
 
 function _calculateRCPDiff(current: number = 0, next: number = 0) {
@@ -68,7 +71,9 @@ function _assignRCP(selections: Selections) {
 	const p = ProfessionStore.getCurrent();
 	if (p && p.id !== 'P_0') {
 		const apCosts = reqPurchase(p.requires);
-		_spent += apCosts;
+		_spent += apCosts.total;
+		_adv = _adv.map((e, i) => e + apCosts.adv[i]);
+		_disadv = apCosts.disadv;
 	}
 }
 
@@ -153,7 +158,7 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 			case ActionTypes.SET_DISADV_TIER:
 			case ActionTypes.DEACTIVATE_DISADV:
 				if (RequirementsStore.isValid()) {
-					_spendDisadv(RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
+					_spendDisadv(action.payload.id, RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
 				}
 				break;
 
@@ -174,27 +179,42 @@ const APStore: APStoreStatic = new APStoreStatic((action: Action) => {
 				_total += action.payload.amount;
 				break;
 
-			case ActionTypes.SELECT_RACE:
+			case ActionTypes.SELECT_RACE: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(RaceStore.getCurrent().ap, (get(action.payload.id) as RaceInstance).ap);
 				_calculateRCPDiff(CultureStore.getCurrent().ap, 0);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_CULTURE:
+			case ActionTypes.SELECT_CULTURE: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(CultureStore.getCurrent().ap, (get(action.payload.id) as CultureInstance).ap);
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, 0);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_PROFESSION:
+			case ActionTypes.SELECT_PROFESSION: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
 				_calculateRCPDiff(ProfessionStore.getCurrent().ap, (get(action.payload.id) as ProfessionInstance).ap);
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, 0);
+				if (professionVariant) {
+					_calculateRCPDiff(professionVariant.ap, 0);
+				}
 				break;
+			}
 
-			case ActionTypes.SELECT_PROFESSION_VARIANT:
-				_calculateRCPDiff(ProfessionVariantStore.getCurrent().ap, action.payload.id ? (get(action.payload.id) as ProfessionVariantInstance).ap : 0);
+			case ActionTypes.SELECT_PROFESSION_VARIANT: {
+				const professionVariant = ProfessionVariantStore.getCurrent();
+				const professionVariantNext = get(action.payload.id!) as ProfessionVariantInstance | undefined;
+				_calculateRCPDiff(professionVariant ? professionVariant.ap : 0, professionVariantNext ? professionVariantNext.ap : 0);
 				break;
+			}
 
 			case ActionTypes.ASSIGN_RCP_OPTIONS:
 				_assignRCP(action.payload);

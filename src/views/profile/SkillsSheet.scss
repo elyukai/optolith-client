@@ -4,9 +4,9 @@
 
 		h3 {
 			margin-bottom: 4mm;
-		}	
+		}
 	}
-	
+
 	.upper {
 		display: flex;
 		width: 100%;
@@ -15,34 +15,31 @@
 			width: 50%;
 		}
 
-		table:first-child tbody tr {
+		table:first-child tbody tr td:last-child {
 			border-right: 0.3mm solid grey;
 		}
 
 		thead td {
-			height: 5mm;
-			border-width: 0.3mm 0;
-			font: bold 10px/1 Alegreya SC;
 			text-align: center;
-			border-color: grey;
 		}
 
 		tbody td {
-			height: 4.5mm;
-			border-width: 0.15mm 0;
-			
 			&.check, &.enc, &.ic, &.sr, &.routine {
 				text-align: center;
 			}
-			
-			&.name, &.sr {
+
+			&.name {
 				font: 500 11px/1 Alegreya Sans;
 			}
-			
+
+			&.sr {
+				font: bold 11px/1 Alegreya Sans;
+			}
+
 			&.comment, &.routine {
 				font: 400 11px/1 Alegreya Sans;
 			}
-			
+
 			&.check, &.enc, &.ic {
 				font: 8px/1 Alegreya SC;
 			}
@@ -53,9 +50,6 @@
 		}
 
 		td {
-			border-style: solid;
-			border-color: #c8c8c8;
-
 			&.ic {
 				width: 4.5mm;
 			}
@@ -110,13 +104,12 @@
 	.languages-list {
 		td:last-child {
 			width: 10.4mm;
-			border-left: 0.15mm solid #c8c8c8;
+			border-left-width: 0.15mm;
 			text-align: center;
 		}
 
-		tr:not(:last-child) td {
-			height: 4.5mm;
-			border-bottom: 0.15mm solid #c8c8c8;
+		td {
+			border-width: 0 0 0.15mm;
 		}
 	}
 
@@ -128,27 +121,16 @@
 		thead div {
 			word-wrap: break-word;
 		}
-		
+
 		td {
 			text-align: center;
-			border-style: solid;
-			border-color: #c8c8c8;		
 		}
 
 		td:nth-child(2n) {
 			background: rgba(0, 0, 0, 0.1);
 		}
 
-		thead td {
-			border-width: 0.3mm 0;
-			font: bold 10px/1 Alegreya SC;
-			border-color: grey;
-		}
-
 		tbody td {
-			height: 4.5mm;
-			border-width: 0.15mm 0;
-			font: 500 11px/1 Alegreya Sans;
 			padding: 0 1mm;
 		}
 	}
@@ -184,11 +166,11 @@
 			width: 11mm;
 
 			&:nth-child(2) {
-				border-right: 0.3mm solid grey;
+				border-right: 0.15mm solid grey;
 			}
 
 			&:nth-child(3) {
-				border-left: 0.3mm solid grey;
+				border-left: 0.15mm solid grey;
 			}
 		}
 

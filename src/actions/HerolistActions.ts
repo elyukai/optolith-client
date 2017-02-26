@@ -50,12 +50,11 @@ export const requestHero = (id: string) => {
 
 export const insertHero = (json: string) => {
 	const parsed = JSON.parse(json) as SaveData;
-	const overview = parsed.overview;
-	const newOverview = {
-		dateCreated: new Date(overview.dateCreated),
-		dateModified: new Date(overview.dateModified)
+	const newParsed = {
+		dateCreated: new Date(parsed.dateCreated),
+		dateModified: new Date(parsed.dateModified)
 	};
-	const data = { ...parsed.details, ...{ ...parsed.overview, ...newOverview } } as Hero & HeroRest;
+	const data = { ...parsed, ...newParsed } as Hero & HeroRest;
 	AppDispatcher.dispatch<ReceiveHeroDataAction>({
 		type: RECEIVE_HERO_DATA,
 		payload: {

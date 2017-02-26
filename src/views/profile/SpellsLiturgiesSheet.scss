@@ -1,0 +1,157 @@
+
+#spells .AE_MAX, #liturgies .KP_MAX {
+	width: 28mm;
+}
+
+#spells .AE_CURRENT, #liturgies .KP_CURRENT {
+	width: 92mm;
+}
+
+#spells, #liturgies {
+	.all {
+		flex-wrap: wrap;
+		align-content: space-between;
+		justify-content: space-between;
+		flex: 1 1 auto;
+	}
+
+	.skill-list {
+		width: 100%;
+
+		h3 {
+			margin-bottom: 1mm;
+		}
+
+		thead td {
+			text-align: center;
+
+			&.check, &.cost, &.cast-time, &.range, &.duration, &.property, &.aspect {
+				overflow: hidden;
+				word-wrap: break-word;
+				white-space: normal;
+			}
+		}
+
+		tbody td {
+			&:not(.name):not(.effect) {
+				text-align: center;
+			}
+
+			&.property {
+				font-size: 9px;
+			}
+
+			&.aspect {
+				font-size: 8px;
+				white-space: normal;
+			}
+
+			&.name, &.effect {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				padding: 0 1mm;
+			}
+		}
+
+		td {
+			&:nth-child(2n+1) {
+				background: rgba(0, 0, 0, 0.1);
+			}
+
+			&.check, &.cost, &.cast-time, &.range, &.duration, &.property, &.aspect {
+				width: 14mm;
+				max-width: 14mm;
+			}
+
+			&.check.mod {
+				font-size: 8px;
+			}
+
+			&.value, &.ic {
+				width: 6mm;
+			}
+
+			&.value {
+				font-weight: bold;
+			}
+
+			&.ref {
+				width: 4mm;
+			}
+
+			&.name {
+				width: 30mm;
+			}
+		}
+	}
+
+	.tradition-properties, .tradition-aspects {
+		padding-top: calc(4mm + 22px);
+		display: flex;
+		flex-wrap: wrap;
+
+		div {
+			border: 0.3mm solid black;
+			height: 12mm;
+
+			.label {
+				font: bold 10px/14px Alegreya;
+				color: black;
+				display: block;
+				top: 0;
+				padding: 2px 6px 0;
+			}
+
+			.value {
+				font: 400 16px/7mm Alegreya Sans;
+				letter-spacing: 0;
+				display: block;
+			}
+
+			&.primary {
+				width: 24mm;
+				margin-right: 4mm;
+				margin-bottom: 2mm;
+
+				.value {
+					font: bold 21px/24px Alegreya Sans;
+					letter-spacing: 0.05em;
+				}
+			}
+
+			&.primary, &.properties, &.aspects {
+				.value {
+					text-align: center;
+				}
+			}
+
+			&.properties, &.aspects {
+				flex: 1 1 0;
+				margin-bottom: 2mm;
+			}
+
+			&.tradition {
+				width: 100%;
+				height: 26.5mm;
+
+				.value {
+					padding: 0 1.5mm;
+				}
+			}
+		}
+	}
+
+	.tradition-properties, .tradition-aspects, .cantrips, .blessings {
+		width: 108mm;
+		margin-left: 8mm;
+	}
+
+	.activatable-list {
+		min-height: 60mm;
+
+		&:not(.cantrips):not(.blessings) {
+			width: 76mm;
+		}
+	}
+}

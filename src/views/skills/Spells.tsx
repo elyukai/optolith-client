@@ -187,6 +187,7 @@ export default class Spells extends React.Component<undefined, State> {
 										removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!obj.isDecreasable}
 										addFillElement
+										noIncrease={obj.gr === 5}
 										{...other} >
 										<div className="property">{PROPERTIES[obj.property - 1]}</div>
 									</SkillListItem>

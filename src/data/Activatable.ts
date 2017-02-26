@@ -1,6 +1,7 @@
-import Dependent from './Dependent';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 import validate from '../utils/validate';
+import { fn } from '../utils/validate';
+import Dependent from './Dependent';
 
 type ConstructorArgument = (RawAdvantage | RawDisadvantage | RawSpecialAbility) & {
 	tiers: number | null;
@@ -42,6 +43,18 @@ export default class Activatable extends Dependent {
 	}
 
 	get isDeactivatable() {
+		const dependencies = this.dependencies.filter(e => {
+			if (typeof e === 'object' && e.origin) {
+				const origin = get(e.origin) as SpecialAbilityInstance;
+				const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin!)) as RequirementObject | undefined;
+				if (req) {
+					const resultOfAll = (req.id as string[]).map(e => fn({ ...req, id: e }));
+					return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? true : false;
+				}
+				return true;
+			}
+			return true;
+		});
 		return this.dependencies.length === 0;
 	}
 
@@ -162,17 +175,32 @@ export default class Activatable extends Dependent {
 					(get(id) as AttributeInstance).addDependency(value as number);
 				}
 				else {
-					let dependency;
-					if (Object.keys(req).length === 2) {
-						dependency = active as boolean;
-					}
-					else if (value) {
-						dependency = value;
+					if (Array.isArray(id)) {
+						if (Object.keys(req).length === 2) {
+							const object = { active, origin: this.id };
+							id.forEach(e => (get(e) as ActivatableInstances).addDependency(object));
+						}
+						else if (value) {
+							const object: SkillOptionalDependency = { value, origin: this.id };
+							id.forEach(e => (get(e) as IncreasableNonactiveInstances).addDependency(object));
+						}
+						else {
+							const object = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: this.id };
+							id.forEach(e => (get(e) as ActivatableInstances).addDependency(object));
+						}
 					}
 					else {
-						dependency = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+						if (Object.keys(req).length === 2) {
+							(get(id) as ActivatableInstances).addDependency(active!);
+						}
+						else if (value) {
+							(get(id) as IncreasableNonactiveInstances).addDependency(value);
+						}
+						else {
+							const object = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+							(get(id) as ActivatableInstances).addDependency(object);
+						}
 					}
-					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).addDependency(dependency);
 				}
 			}
 		});
@@ -192,17 +220,32 @@ export default class Activatable extends Dependent {
 					(get(id) as AttributeInstance).removeDependency(value as number);
 				}
 				else {
-					let dependency;
-					if (Object.keys(req).length === 2) {
-						dependency = active as boolean;
-					}
-					else if (value) {
-						dependency = value;
+					if (Array.isArray(id)) {
+						if (Object.keys(req).length === 2) {
+							const object = { active, origin: this.id };
+							id.forEach(e => (get(e) as ActivatableInstances).removeDependency(object));
+						}
+						else if (value) {
+							const object: SkillOptionalDependency = { value, origin: this.id };
+							id.forEach(e => (get(e) as IncreasableNonactiveInstances).removeDependency(object));
+						}
+						else {
+							const object = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: this.id };
+							id.forEach(e => (get(e) as ActivatableInstances).removeDependency(object));
+						}
 					}
 					else {
-						dependency = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+						if (Object.keys(req).length === 2) {
+							(get(id) as ActivatableInstances).removeDependency(active!);
+						}
+						else if (value) {
+							(get(id) as IncreasableNonactiveInstances).removeDependency(value);
+						}
+						else {
+							const object = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+							(get(id) as ActivatableInstances).removeDependency(object);
+						}
 					}
-					(get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | TalentInstance).removeDependency(dependency);
 				}
 			}
 		});

@@ -1,0 +1,14 @@
+#optional-rules {
+	.scroll-inner > div {
+		margin-top: 10px;
+	}
+
+	.options {
+		display: flex;
+	}
+
+	.dropdown {
+		margin: 0 0 0 10px;
+		width: 60px;
+	}
+}

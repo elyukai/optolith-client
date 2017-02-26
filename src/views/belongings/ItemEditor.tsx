@@ -1,4 +1,4 @@
-import * as InventoryActions from '../../actions/InventoryActions';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
 import alert from '../../utils/alert';
 import Checkbox from '../../components/Checkbox';
@@ -7,7 +7,7 @@ import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import InventoryStore from '../../stores/InventoryStore';
+import EquipmentStore from '../../stores/EquipmentStore';
 import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 import Label from '../../components/Label';
 import TextField from '../../components/TextField';
@@ -50,8 +50,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 		let tempState = this.props.item;
 		if (tempState) {
 			if (tempState.isTemplateLocked) {
-				const { id } = tempState;
-				tempState = { ...InventoryStore.getTemplate(this.state.template), id };
+				const { id, where } = tempState;
+				tempState = { ...EquipmentStore.getTemplate(tempState.template), id, where };
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -81,7 +81,8 @@ export default class ItemEditor extends React.Component<Props, State> {
 				ammunition: null,
 				pro: '',
 				enc: '',
-				addPenalties: false
+				addPenalties: false,
+				isParryingWeapon: false
 			};
 		}
 	}
@@ -116,16 +117,17 @@ export default class ItemEditor extends React.Component<Props, State> {
 	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as State);
 	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as State);
 	changeAddPenalties = () => this.setState((prevState) => ({ addPenalties: !prevState.addPenalties } as State));
+	changeParryingWeapon = () => this.setState((prevState) => ({ isParryingWeapon: !prevState.isParryingWeapon } as State));
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
+			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
 			this.setState(convertToEdit(template));
 		}
 	};
 	lockTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
-			const template = { ...InventoryStore.getTemplate(this.state.template), id: this.state.id };
+			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id };
 			this.setState(convertToEdit(template));
 		}
 	};
@@ -135,10 +137,10 @@ export default class ItemEditor extends React.Component<Props, State> {
 		const itemToAdd = convertToSave(this.state);
 		const nanKeys = containsNaN(itemToAdd);
 		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`)
 		}
 		else {
-			InventoryActions.addToList(itemToAdd);
+			EquipmentActions.addToList(itemToAdd);
 		}
 	}
 	saveItem = () => {
@@ -148,16 +150,16 @@ export default class ItemEditor extends React.Component<Props, State> {
 			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
 		}
 		else {
-			InventoryActions.set(this.state.id, itemToAdd);
+			EquipmentActions.set(this.state.id, itemToAdd);
 		}
 	}
 
 	render() {
 		const { create, node } = this.props;
-		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
+		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
-		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(InventoryStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(InventoryStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 
 		return (
 			<Dialog
@@ -340,6 +342,15 @@ export default class ItemEditor extends React.Component<Props, State> {
 								/>
 						) }
 					</div>
+					<div className="row">
+						<Checkbox
+							className="parrying-weapon"
+							label="Parierwaffe"
+							checked={isParryingWeapon}
+							onClick={this.changeParryingWeapon}
+							disabled={locked}
+							/>
+					</div>
 				</div> ) : null }
 				{ gr === 2 ? ( <div className="ranged">
 					<Hr />
@@ -428,7 +439,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 							/>
 					</div>
 				</div> ) : null }
-				{ gr === 3 ? ( <div className="armor">
+				{ gr === 4 ? ( <div className="armor">
 					<Hr />
 					<div className="row">
 						<div className="container">

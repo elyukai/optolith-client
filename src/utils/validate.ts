@@ -1,10 +1,10 @@
 import * as Categories from '../constants/Categories';
 import CultureStore from '../stores/CultureStore';
+import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
 import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
-import { get, getPrimaryAttrID, getAllByCategoryGroup } from '../stores/ListStore';
 
-export const fn = (req: 'RCP' | RequirementObject, id?: string) => {
+export const fn = (req: 'RCP' | RequirementObject, id?: string): boolean => {
 	if (req === 'RCP') {
 		const currentRace = RaceStore.getCurrent() || {};
 		const currentCulture = CultureStore.getCurrent() || {};
@@ -23,7 +23,11 @@ export const fn = (req: 'RCP' | RequirementObject, id?: string) => {
 		return array.some(e => e === id);
 	} else {
 		let id = req.id;
-		if (id === 'RACE') {
+		if (Array.isArray(id)) {
+			const resultOfAll = id.map(e => fn({ ...req, id: e }));
+			return resultOfAll.includes(true);
+		}
+		else if (id === 'RACE') {
 			return (req.sid as number[]).map(e => `R_${e}`).includes(RaceStore.getCurrentID() as string);
 		}
 		else if (req.id === 'ATTR_PRIMARY') {
