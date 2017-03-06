@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
@@ -15,8 +16,10 @@ interface AddObject {
 }
 
 interface Props {
-	className?: string;
 	item: AdvantageInstance | DisadvantageInstance;
+	isImportant?: boolean;
+	isTypical?: boolean;
+	isUntypical?: boolean;
 	addToList(args: ActivateArgs): void;
 }
 
@@ -69,7 +72,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 	}
 
 	render() {
-		const { className, item: { id, name, cost, sel, tiers } } = this.props;
+		const { item: { id, name, cost, sel, tiers }, isImportant, isTypical, isUntypical } = this.props;
 		let { item: { input } } = this.props;
 		const { category } = get(id) as AdvantageInstance | DisadvantageInstance;
 		let sel2: SelectionObject[] | undefined;
@@ -300,7 +303,14 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		}
 
 		return (
-			<div className={className ? 'list-item ' + className : 'list-item'}>
+			<div
+				className={classNames({
+					'imp': isImportant,
+					'list-item': true,
+					'typ': isTypical,
+					'untyp': isUntypical,
+				})}
+				>
 				<div className="name">
 					<p className="title">{name}</p>
 				</div>

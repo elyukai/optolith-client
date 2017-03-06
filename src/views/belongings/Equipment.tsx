@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
 import Aside from '../../components/Aside';
 import BorderButton from '../../components/BorderButton';
+import Dropdown from '../../components/Dropdown';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import SortOptions from '../../components/SortOptions';
@@ -11,18 +12,18 @@ import { get } from '../../stores/ListStore';
 import { isActive } from '../../utils/ActivatableUtils';
 import createOverlay from '../../utils/createOverlay';
 import dotToComma from '../../utils/dotToComma';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort, sortByName } from '../../utils/ListUtils';
 import EquipmentListItem from './EquipmentListItem';
 import ItemEditor from './ItemEditor';
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
+const groupsSelectionItems = GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
 
 interface State {
-	items: ItemInstance[];
-	filterText: string;
+	filterGroupSlidein: number;
 	filterTextSlidein: string;
-	sortOrder: string;
-	templates: ItemInstance[];
+	filterText: string;
+	items: ItemInstance[];
 	purse: {
 		d: string;
 		s: string;
@@ -30,10 +31,13 @@ interface State {
 		k: string;
 	};
 	showAddSlidein: boolean;
+	sortOrder: string;
+	templates: ItemInstance[];
 }
 
 export default class Inventory extends React.Component<undefined, State> {
 	state = {
+		filterGroupSlidein: 1,
 		filterText: '',
 		filterTextSlidein: '',
 		items: EquipmentStore.getAll(),
@@ -44,7 +48,8 @@ export default class Inventory extends React.Component<undefined, State> {
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
+	filterGroupSlidein = (gr: number) => this.setState({ filterGroupSlidein: gr } as State);
 	sort = (option: string) => EquipmentActions.setSortOrder(option);
 	setDucates = (event: InputTextEvent) => EquipmentActions.setDucates(event.target.value as string);
 	setSilverthalers = (event: InputTextEvent) => EquipmentActions.setSilverthalers(event.target.value as string);
@@ -65,10 +70,26 @@ export default class Inventory extends React.Component<undefined, State> {
 
 	render() {
 
-		const { filterText, items, showAddSlidein, sortOrder, templates, purse, filterTextSlidein } = this.state;
+		const {
+			filterText,
+			items,
+			showAddSlidein,
+			sortOrder,
+			templates,
+			purse,
+			filterTextSlidein,
+			filterGroupSlidein,
+		} = this.state;
 
 		const list = filterAndSort(items, filterText, sortOrder, GROUPS);
-		const templateList = filterAndSort(templates, filterTextSlidein, 'name');
+
+		const filterTemplates = (e: ItemInstance): boolean => {
+			const isGroup = e.gr === filterGroupSlidein;
+			const isNotInList = !items.find(item => item.template === e.template && item.isTemplateLocked);
+			return isGroup && isNotInList;
+		};
+
+		const templateList = filterAndSort(templates.filter(filterTemplates), filterTextSlidein, 'name') as ItemInstance[];
 
 		const totalPrice = Math.round(list.reduce((n, i) => n + i.price || n, 0) * 100) / 100;
 		let startMoney = 750;
@@ -88,6 +109,12 @@ export default class Inventory extends React.Component<undefined, State> {
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<div className="options">
 						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<Dropdown
+							value={filterGroupSlidein}
+							onChange={this.filterGroupSlidein}
+							options={groupsSelectionItems}
+							fullWidth
+							/>
 					</div>
 					<Scroll className="list">
 						<div className="list-wrapper">

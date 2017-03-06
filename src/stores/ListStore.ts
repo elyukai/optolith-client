@@ -464,7 +464,7 @@ class ListStoreStatic extends Store {
 						} else {
 							counter.set(p.sid, 1);
 						}
-						const addRequire = { id: p.sid, sid: counter.get(p.sid) * 6 } as RequirementObject;
+						const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 } as RequirementObject;
 						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, [addRequire]);
 						this.mergeIntoList(list);
 					});

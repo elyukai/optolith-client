@@ -705,7 +705,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_17__Store__["a" /* defau
                         else {
                             counter.set(p.sid, 1);
                         }
-                        const addRequire = { id: p.sid, sid: counter.get(p.sid) * 6 };
+                        const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 };
                         const list = __WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__["b" /* addDependencies */](this.byId[id], [addRequire]);
                         this.mergeIntoList(list);
                     });
@@ -2663,7 +2663,7 @@ const addDependencies = (obj, adds = [], sel) => {
             else {
                 if (Array.isArray(id)) {
                     let add;
-                    if (Object.keys(req).length === 2) {
+                    if (Object.keys(req).length === 2 && typeof active === 'boolean') {
                         add = { active, origin: obj.id };
                     }
                     else if (value) {
@@ -2679,7 +2679,7 @@ const addDependencies = (obj, adds = [], sel) => {
                 }
                 else {
                     let add;
-                    if (Object.keys(req).length === 2) {
+                    if (Object.keys(req).length === 2 && typeof active === 'boolean') {
                         add = active;
                     }
                     else if (value) {
@@ -2721,7 +2721,7 @@ const removeDependencies = (obj, adds = [], sel) => {
             else {
                 if (Array.isArray(id)) {
                     let add;
-                    if (Object.keys(req).length === 2) {
+                    if (Object.keys(req).length === 2 && typeof active === 'boolean') {
                         add = { active, origin: obj.id };
                     }
                     else if (value) {
@@ -2737,7 +2737,7 @@ const removeDependencies = (obj, adds = [], sel) => {
                 }
                 else {
                     let add;
-                    if (Object.keys(req).length === 2) {
+                    if (Object.keys(req).length === 2 && typeof active === 'boolean') {
                         add = active;
                     }
                     else if (value) {
@@ -2793,35 +2793,6 @@ function createDialogNode() {
 
 /***/ }),
 /* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(135);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Icon__ = __webpack_require__(75);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Text__ = __webpack_require__(55);
-
-
-
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = (props) => {
-    const { checked, children, className, label, onClick } = props, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](props, ["checked", "children", "className", "label", "onClick"]);
-    return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__Activate__["a" /* default */], Object.assign({}, other, { active: checked, className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('checkbox', className), onClick: onClick }),
-        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Icon__["a" /* default */], null,
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "border" }),
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "hook" })),
-        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Text__["a" /* default */], null, label || children)));
-};
-
-
-/***/ }),
-/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2901,6 +2872,35 @@ class Dropdown extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 
 
 /***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_tslib__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(135);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Icon__ = __webpack_require__(75);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Text__ = __webpack_require__(55);
+
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["a"] = (props) => {
+    const { checked, children, className, label, onClick } = props, other = __WEBPACK_IMPORTED_MODULE_0_tslib__["b" /* __rest */](props, ["checked", "children", "className", "label", "onClick"]);
+    return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__Activate__["a" /* default */], Object.assign({}, other, { active: checked, className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('checkbox', className), onClick: onClick }),
+        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Icon__["a" /* default */], null,
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "border" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "hook" })),
+        __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Text__["a" /* default */], null, label || children)));
+};
+
+
+/***/ }),
 /* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2927,7 +2927,7 @@ const filterSex = (list, filterText, addProperty) => {
 /* unused harmony export filterSex */
 
 const sortByName = (a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-/* unused harmony export sortByName */
+/* harmony export (immutable) */ __webpack_exports__["b"] = sortByName;
 
 const sortByNameSex = (a, b) => {
     const an = a.name[SEX] || a.name;
@@ -3016,7 +3016,7 @@ const sort = (list, sortOrder) => {
     }
     return list.sort(sort);
 };
-/* harmony export (immutable) */ __webpack_exports__["b"] = sort;
+/* harmony export (immutable) */ __webpack_exports__["c"] = sort;
 
 const sortSex = (list, sortOrder) => {
     let sort;
@@ -14120,20 +14120,23 @@ const switchRaceValueVisibilityFilter = () => __WEBPACK_IMPORTED_MODULE_1__dispa
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_Categories__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Dropdown__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__IconButton__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__TextField__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants_Categories__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ListStore__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Dropdown__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__IconButton__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__TextField__ = __webpack_require__(9);
 
 
 
 
 
 
-class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
+
+class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
     constructor() {
         super(...arguments);
         this.state = {
@@ -14176,9 +14179,9 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
         };
     }
     render() {
-        const { className, item: { id, name, cost, sel, tiers } } = this.props;
+        const { item: { id, name, cost, sel, tiers }, isImportant, isTypical, isUntypical } = this.props;
         let { item: { input } } = this.props;
-        const { category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id);
+        const { category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id);
         let sel2;
         const args = { id, cost: 0 };
         let currentCost;
@@ -14198,13 +14201,13 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
             case 'ADV_47':
             case 'DISADV_48':
                 if (this.state.selected !== '') {
-                    currentCost = cost[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(this.state.selected).ic - 1];
+                    currentCost = cost[__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(this.state.selected).ic - 1];
                 }
                 args.sel = this.state.selected;
                 break;
             case 'ADV_28':
             case 'ADV_29':
-                currentCost = typeof this.state.selected === 'number' ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost : '';
+                currentCost = typeof this.state.selected === 'number' ? __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost : '';
                 break;
             case 'DISADV_1':
                 if (this.state.selectedTier > 0) {
@@ -14220,12 +14223,12 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
             case 'DISADV_34':
             case 'DISADV_50': {
                 if (this.state.selectedTier > 0) {
-                    const maxCurrentTier = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).active.reduce((a, b) => b.tier > a ? b.tier : a, 0);
+                    const maxCurrentTier = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).active.reduce((a, b) => b.tier > a ? b.tier : a, 0);
                     currentCost = maxCurrentTier >= this.state.selectedTier ? 0 : cost * (this.state.selectedTier - maxCurrentTier);
                 }
-                const currentSelIDs = new Set(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).active.map(e => e.sid));
+                const currentSelIDs = new Set(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).active.map(e => e.sid));
                 const newSel = sel.filter(e => this.state.selectedTier === e.tier && !currentSelIDs.has(e.id));
-                selectElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__Dropdown__["a" /* default */], { value: this.state.selected, onChange: this.handleSelect, options: newSel, disabled: this.state.selectedTier === 0 || selectElementDisabled }));
+                selectElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Dropdown__["a" /* default */], { value: this.state.selected, onChange: this.handleSelect, options: newSel, disabled: this.state.selectedTier === 0 || selectElementDisabled }));
                 if (this.state.selected === '' && this.state.input === '') {
                     disabled = true;
                 }
@@ -14250,16 +14253,16 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                     let disab = true;
                     if ([7, 8].includes(this.state.selected)) {
                         args.input = this.state.input;
-                        currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost;
+                        currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost;
                         disab = false;
                     }
-                    inputElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__TextField__["a" /* default */], { value: this.state.input, onChange: this.handleInput, disabled: disab }));
+                    inputElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__TextField__["a" /* default */], { value: this.state.input, onChange: this.handleInput, disabled: disab }));
                 }
-                if (this.state.selected === 7 && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).active.filter(e => e.sid === 7).length > 0) {
+                if (this.state.selected === 7 && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).active.filter(e => e.sid === 7).length > 0) {
                     currentCost = 0;
                 }
                 else if (this.state.selected !== '') {
-                    currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost;
+                    currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).sel[this.state.selected - 1].cost;
                 }
                 args.sel = this.state.selected;
                 break;
@@ -14268,13 +14271,13 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                 if (this.state.selected === '' && this.state.input === '') {
                     disabled = true;
                 }
-                currentCost = id === 'DISADV_36' && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).active.length > 2 ? 0 : cost;
+                currentCost = id === 'DISADV_36' && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).active.length > 2 ? 0 : cost;
                 args.sel = this.state.selected;
                 args.input = this.state.input;
                 break;
             case 'SA_10':
                 if (this.state.selected !== '') {
-                    const o = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).sel.filter(e => e.id === this.state.selected)[0];
+                    const o = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).sel.filter(e => e.id === this.state.selected)[0];
                     currentCost = o.cost;
                     sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id: id + 1, name: e })) : undefined;
                     input = o.specialisationInput;
@@ -14294,7 +14297,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                 if (cost === 'sel') {
                     if (this.state.selected !== '') {
                         const selected = typeof this.state.selected === 'string' ? Number.parseInt(this.state.selected) : this.state.selected;
-                        currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["b" /* get */])(id).sel[selected - 1].cost;
+                        currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).sel[selected - 1].cost;
                     }
                     args.sel = this.state.selected;
                 }
@@ -14317,7 +14320,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                 }
                 break;
         }
-        if (category === __WEBPACK_IMPORTED_MODULE_1__constants_Categories__["d" /* DISADVANTAGES */] && currentCost) {
+        if (category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["d" /* DISADVANTAGES */] && currentCost) {
             currentCost = -currentCost;
         }
         if (typeof currentCost === 'number') {
@@ -14326,26 +14329,26 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
         const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
         if (tiers) {
             const array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
-            tierElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__Dropdown__["a" /* default */], { className: "tiers", value: this.state.selectedTier, onChange: this.handleSelectTier, options: array }));
+            tierElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Dropdown__["a" /* default */], { className: "tiers", value: this.state.selectedTier, onChange: this.handleSelectTier, options: array }));
             if (this.state.selectedTier === 0) {
                 disabled = true;
             }
         }
         if (sel && sel.length > 0 && !['DISADV_34', 'DISADV_50'].includes(id)) {
-            selectElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__Dropdown__["a" /* default */], { value: this.state.selected, onChange: this.handleSelect, options: sel, disabled: selectElementDisabled }));
+            selectElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Dropdown__["a" /* default */], { value: this.state.selected, onChange: this.handleSelect, options: sel, disabled: selectElementDisabled }));
         }
         if (sel && this.state.selected === '' && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
             disabled = true;
         }
         if (input && !['ADV_28', 'ADV_29'].includes(id)) {
-            inputElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__TextField__["a" /* default */], { hint: input, value: this.state.input, onChange: this.handleInput }));
+            inputElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__TextField__["a" /* default */], { hint: input, value: this.state.input, onChange: this.handleInput }));
             if (!this.state.input && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
                 disabled = true;
             }
         }
         if (id === 'SA_10' && sel2) {
-            inputElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__TextField__["a" /* default */], { hint: input === null ? '' : input, value: this.state.input, onChange: this.handleInput, disabled: input === null }));
-            selectElement2 = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__Dropdown__["a" /* default */], { value: this.state.selected2, onChange: this.handleSelect2, options: sel2, disabled: sel2.length === 0 || this.state.input !== '' || this.state.selected === '' }));
+            inputElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__TextField__["a" /* default */], { hint: input === null ? '' : input, value: this.state.input, onChange: this.handleInput, disabled: input === null }));
+            selectElement2 = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__Dropdown__["a" /* default */], { value: this.state.selected2, onChange: this.handleSelect2, options: sel2, disabled: sel2.length === 0 || this.state.input !== '' || this.state.selected === '' }));
             if (this.state.selected2 === '' && this.state.input === '') {
                 disabled = true;
             }
@@ -14358,21 +14361,26 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
         else {
             tierElement2 = tierElement;
         }
-        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: className ? 'list-item ' + className : 'list-item' },
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "name" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", { className: "title" }, name)),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "selections" },
+        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: __WEBPACK_IMPORTED_MODULE_0_classnames___default()({
+                'imp': isImportant,
+                'list-item': true,
+                'typ': isTypical,
+                'untyp': isUntypical,
+            }) },
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "name" },
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", { className: "title" }, name)),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "selections" },
                 tierElement1,
                 selectElement,
                 selectElement2,
                 inputElement,
                 tierElement2),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "hr" }),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "values" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "cost" }, currentCost)),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "btns" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__IconButton__["a" /* default */], { icon: "\uE145", disabled: disabled, onClick: this.addToList.bind(null, args), flat: true }),
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__IconButton__["a" /* default */], { icon: "\uE88F", flat: true, disabled: true }))));
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "hr" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "values" },
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "cost" }, currentCost)),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "btns" },
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__IconButton__["a" /* default */], { icon: "\uE145", disabled: disabled, onClick: this.addToList.bind(null, args), flat: true }),
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__IconButton__["a" /* default */], { icon: "\uE88F", flat: true, disabled: true }))));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ActivatableAddListItem;
@@ -14384,14 +14392,16 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_Categories__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ELStore__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ListStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Dropdown__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__IconButton__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants_Categories__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ELStore__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_ListStore__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Dropdown__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__IconButton__ = __webpack_require__(23);
 
 
 
@@ -14399,24 +14409,25 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
 
 
 
-class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
+
+class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
     constructor() {
         super(...arguments);
         this.handleSelectTier = (selectedTier) => {
             const { id, active: { tier }, index } = this.props.item;
-            const { cost, category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id);
-            const finalCost = (selectedTier - tier) * cost * (category === __WEBPACK_IMPORTED_MODULE_1__constants_Categories__["d" /* DISADVANTAGES */] ? -1 : 1);
+            const { cost, category } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(id);
+            const finalCost = (selectedTier - tier) * cost * (category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["d" /* DISADVANTAGES */] ? -1 : 1);
             this.props.setTier(id, index, selectedTier, finalCost);
         };
         this.removeFromList = (args) => this.props.removeFromList(args);
     }
     render() {
-        const { phase, item: { id, active: activeObject, index } } = this.props;
+        const { phase, item: { id, active: activeObject, index }, isImportant, isTypical, isUntypical } = this.props;
         const { sid, sid2, tier } = activeObject;
-        const a = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id);
+        const a = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(id);
         const { cost, category, sel, dependencies, active, input } = a;
         let { tiers } = a;
-        let disabled = !__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["j" /* isDeactivatable */])(a);
+        let disabled = !__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["j" /* isDeactivatable */])(a);
         let add = '';
         let addSpecial = '';
         let currentCost = undefined;
@@ -14425,30 +14436,30 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Com
             case 'ADV_4':
             case 'ADV_47':
             case 'DISADV_48': {
-                const { name, ic } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(sid));
+                const { name, ic } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(sid));
                 add = name;
                 currentCost = cost[ic - 1];
                 break;
             }
             case 'ADV_16': {
-                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(sid));
+                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(sid));
                 const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
                 add = name;
                 currentCost = cost[ic - 1];
-                disabled = disabled || __WEBPACK_IMPORTED_MODULE_2__stores_ELStore__["a" /* default */].getStart().maxSkillRating + counter === value;
+                disabled = disabled || __WEBPACK_IMPORTED_MODULE_3__stores_ELStore__["a" /* default */].getStart().maxSkillRating + counter === value;
                 break;
             }
             case 'ADV_17': {
-                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(sid));
+                const { name, ic, value } = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(sid));
                 add = name;
                 currentCost = cost[ic - 1];
-                disabled = disabled || __WEBPACK_IMPORTED_MODULE_2__stores_ELStore__["a" /* default */].getStart().maxCombatTechniqueRating + 1 === value;
+                disabled = disabled || __WEBPACK_IMPORTED_MODULE_3__stores_ELStore__["a" /* default */].getStart().maxCombatTechniqueRating + 1 === value;
                 break;
             }
             case 'ADV_28':
             case 'ADV_29':
-                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
-                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
+                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
                 break;
             case 'ADV_32':
             case 'DISADV_1':
@@ -14469,13 +14480,13 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Com
                     currentCost = 0;
                 }
                 else {
-                    currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
+                    currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
                 }
                 if ([7, 8].includes(sid)) {
-                    add = `${__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name}: ${sid2}`;
+                    add = `${__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name}: ${sid2}`;
                 }
                 else {
-                    add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                    add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
                 }
                 break;
             }
@@ -14485,45 +14496,45 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Com
                 break;
             case 'DISADV_37':
             case 'DISADV_51':
-                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
-                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
+                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
                 break;
             case 'SA_10': {
-                const counter = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(id).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
-                const skill = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["b" /* get */])(sid);
+                const counter = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(id).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
+                const skill = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])(sid);
                 currentCost = skill.ic * counter;
                 add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation[sid2 - 1] : sid2}`;
                 break;
             }
             case 'SA_30':
                 tiers = 3;
-                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
                 break;
             case 'SA_86':
-                if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["a" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_1__constants_Categories__["h" /* SPELLS */]).some(e => e.active)) {
+                if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["a" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_2__constants_Categories__["h" /* SPELLS */]).some(e => e.active)) {
                     disabled = true;
                 }
-                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
-                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
+                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
                 break;
             case 'SA_102':
-                if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__stores_ListStore__["a" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_1__constants_Categories__["g" /* LITURGIES */]).some(e => e.active)) {
+                if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["a" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_2__constants_Categories__["g" /* LITURGIES */]).some(e => e.active)) {
                     disabled = true;
                 }
-                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
-                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
+                add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                currentCost = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).cost;
                 break;
             default:
                 if (input) {
                     add = sid;
                 }
                 else if (sel.length > 0 && cost === 'sel') {
-                    const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid);
+                    const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid);
                     add = selectionItem.name;
                     currentCost = selectionItem.cost;
                 }
                 else if (sel.length > 0 && typeof cost === 'number') {
-                    add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
+                    add = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["k" /* getSelectionItem */])(a, sid).name;
                 }
                 break;
         }
@@ -14538,7 +14549,7 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Com
                 array = array.filter(e => e.id >= tier);
             }
             if (array.length > 1) {
-                tierElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__Dropdown__["a" /* default */], { className: "tiers", value: tier, onChange: this.handleSelectTier, options: array }));
+                tierElement = (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__Dropdown__["a" /* default */], { className: "tiers", value: tier, onChange: this.handleSelectTier, options: array }));
             }
             else {
                 addSpecial = ' ' + array[0].name;
@@ -14564,23 +14575,28 @@ class ActivatableRemoveListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Com
         if (!currentCost) {
             currentCost = cost;
         }
-        if (category === __WEBPACK_IMPORTED_MODULE_1__constants_Categories__["d" /* DISADVANTAGES */]) {
+        if (category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["d" /* DISADVANTAGES */]) {
             currentCost = -currentCost;
         }
         args.cost = currentCost;
         if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
             disabled = true;
         }
-        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-item" },
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "name" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("p", { className: "title" }, name)),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "selections" }, tierElement),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "hr" }),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "values" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "cost" }, currentCost)),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "btns" },
-                phase === 2 ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__IconButton__["a" /* default */], { icon: "\uE15B", onClick: this.removeFromList.bind(null, args), disabled: disabled, flat: true })) : null,
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__IconButton__["a" /* default */], { icon: "\uE88F", flat: true, disabled: true }))));
+        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: __WEBPACK_IMPORTED_MODULE_0_classnames___default()({
+                'imp': isImportant,
+                'list-item': true,
+                'typ': isTypical,
+                'untyp': isUntypical,
+            }) },
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "name" },
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("p", { className: "title" }, name)),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "selections" }, tierElement),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "hr" }),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "values" },
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "cost" }, currentCost)),
+            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "btns" },
+                phase === 2 ? (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__IconButton__["a" /* default */], { icon: "\uE15B", onClick: this.removeFromList.bind(null, args), disabled: disabled, flat: true })) : null,
+                __WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__IconButton__["a" /* default */], { icon: "\uE88F", flat: true, disabled: true }))));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = ActivatableRemoveListItem;
@@ -15362,9 +15378,9 @@ const checkDisAdvantages = (cost, index, target, spent, total, add) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__ = __webpack_require__(90);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dialog__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Hr__ = __webpack_require__(191);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_IconButton__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Label__ = __webpack_require__(93);
@@ -15594,29 +15610,23 @@ class ItemEditor extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_DisAdvActions__ = __webpack_require__(89);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ActivatableAddListItem__ = __webpack_require__(133);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_ActivatableRemoveListItem__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__ = __webpack_require__(89);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_ActivatableAddListItem__ = __webpack_require__(133);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ActivatableRemoveListItem__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(12);
 
 
 
 
 
-
-class DisAdvList extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
+class DisAdvList extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     render() {
         const { active, list: rawList, rating, showRating, type } = this.props;
-        const list = active ? (rawList.map((item, index) => (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_ActivatableRemoveListItem__["a" /* default */], { key: `${type}_ACTIVE_${index}`, item: item, phase: this.props.phase, setTier: __WEBPACK_IMPORTED_MODULE_2__actions_DisAdvActions__["b" /* setTier */], removeFromList: __WEBPACK_IMPORTED_MODULE_2__actions_DisAdvActions__["c" /* removeFromList */] })))) : (rawList.map(item => {
-            const className = __WEBPACK_IMPORTED_MODULE_0_classnames___default()(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
-            return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_ActivatableAddListItem__["a" /* default */], { key: item.id, item: item, className: className, addToList: __WEBPACK_IMPORTED_MODULE_2__actions_DisAdvActions__["d" /* addToList */] }));
-        }));
-        return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Scroll__["a" /* default */], { className: "list" },
-            __WEBPACK_IMPORTED_MODULE_1_react__["createElement"]("div", { className: "list-wrapper" }, list)));
+        const list = active ? (rawList.map((item, index) => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_ActivatableRemoveListItem__["a" /* default */], { key: `${type}_ACTIVE_${index}`, item: item, phase: this.props.phase, setTier: __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__["b" /* setTier */], removeFromList: __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__["c" /* removeFromList */], isImportant: rating[item.id] === 'IMP' && showRating, isTypical: rating[item.id] === 'TYP' && showRating, isUntypical: rating[item.id] === 'UNTYP' && showRating })))) : (rawList.map(item => (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_ActivatableAddListItem__["a" /* default */], { key: item.id, item: item, addToList: __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__["d" /* addToList */], isImportant: rating[item.id] === 'IMP' && showRating, isTypical: rating[item.id] === 'TYP' && showRating, isUntypical: rating[item.id] === 'UNTYP' && showRating }))));
+        return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Scroll__["a" /* default */], { className: "list" },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-wrapper" }, list)));
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = DisAdvList;
@@ -15632,7 +15642,7 @@ class DisAdvList extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Dialog__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_TextField__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_ELStore__ = __webpack_require__(17);
 
@@ -21513,18 +21523,20 @@ class Belongings extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Aside__ = __webpack_require__(189);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Slidein__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_SortOptions__ = __webpack_require__(196);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_TextField__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_ListStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_ActivatableUtils__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils_createOverlay__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_dotToComma__ = __webpack_require__(144);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_ListUtils__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__EquipmentListItem__ = __webpack_require__(236);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ItemEditor__ = __webpack_require__(146);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Slidein__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_SortOptions__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TextField__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_ListStore__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils_ActivatableUtils__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_createOverlay__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_dotToComma__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__utils_ListUtils__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__EquipmentListItem__ = __webpack_require__(236);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__ItemEditor__ = __webpack_require__(146);
+
 
 
 
@@ -21546,79 +21558,87 @@ class Inventory extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
     constructor() {
         super(...arguments);
         this.state = {
+            filterGroupSlidein: 1,
             filterText: '',
             filterTextSlidein: '',
-            items: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getAll(),
-            purse: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getPurse(),
+            items: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getAll(),
+            purse: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getPurse(),
             showAddSlidein: false,
-            sortOrder: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getSortOrder(),
-            templates: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getAllTemplates(),
+            sortOrder: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getSortOrder(),
+            templates: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getAllTemplates(),
         };
         this.filter = (event) => this.setState({ filterText: event.target.value });
-        this.filterSlidein = (event) => this.setState({ filterText: event.target.value });
+        this.filterSlidein = (event) => this.setState({ filterTextSlidein: event.target.value });
+        this.filterGroupSlidein = (gr) => this.setState({ filterGroupSlidein: gr });
         this.sort = (option) => __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__["a" /* setSortOrder */](option);
         this.setDucates = (event) => __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__["b" /* setDucates */](event.target.value);
         this.setSilverthalers = (event) => __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__["c" /* setSilverthalers */](event.target.value);
         this.setHellers = (event) => __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__["d" /* setHellers */](event.target.value);
         this.setKreutzers = (event) => __WEBPACK_IMPORTED_MODULE_1__actions_EquipmentActions__["e" /* setKreutzers */](event.target.value);
-        this.showItemCreation = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_15__ItemEditor__["a" /* default */], { create: true, item: {} }));
+        this.showItemCreation = () => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__utils_createOverlay__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_16__ItemEditor__["a" /* default */], { create: true, item: {} }));
         this.showAddSlidein = () => this.setState({ showAddSlidein: true });
         this.hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' });
-        this.updateEquipmentStore = () => this.setState({ items: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getAll(), sortOrder: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getSortOrder(), purse: __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].getPurse() });
+        this.updateEquipmentStore = () => this.setState({ items: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getAll(), sortOrder: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getSortOrder(), purse: __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].getPurse() });
     }
     componentDidMount() {
-        __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].addChangeListener(this.updateEquipmentStore);
+        __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].addChangeListener(this.updateEquipmentStore);
     }
     componentWillUnmount() {
-        __WEBPACK_IMPORTED_MODULE_8__stores_EquipmentStore__["a" /* default */].removeChangeListener(this.updateEquipmentStore);
+        __WEBPACK_IMPORTED_MODULE_9__stores_EquipmentStore__["a" /* default */].removeChangeListener(this.updateEquipmentStore);
     }
     render() {
-        const { filterText, items, showAddSlidein, sortOrder, templates, purse, filterTextSlidein } = this.state;
-        const list = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__utils_ListUtils__["a" /* filterAndSort */])(items, filterText, sortOrder, GROUPS);
-        const templateList = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__utils_ListUtils__["a" /* filterAndSort */])(templates, filterTextSlidein, 'name');
+        const { filterText, items, showAddSlidein, sortOrder, templates, purse, filterTextSlidein, filterGroupSlidein, } = this.state;
+        const list = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ListUtils__["a" /* filterAndSort */])(items, filterText, sortOrder, GROUPS);
+        const filterTemplates = (e) => {
+            const isGroup = e.gr === filterGroupSlidein;
+            const isNotInList = !items.find(item => item.template === e.template && item.isTemplateLocked);
+            return isGroup && isNotInList;
+        };
+        const templateList = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ListUtils__["a" /* filterAndSort */])(templates.filter(filterTemplates), filterTextSlidein, 'name');
         const totalPrice = Math.round(list.reduce((n, i) => n + i.price || n, 0) * 100) / 100;
         let startMoney = 750;
-        const ADV_36 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["b" /* get */])('ADV_36');
-        const DISADV_2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["b" /* get */])('DISADV_2');
-        if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ActivatableUtils__["h" /* isActive */])(ADV_36)) {
+        const ADV_36 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__stores_ListStore__["b" /* get */])('ADV_36');
+        const DISADV_2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__stores_ListStore__["b" /* get */])('DISADV_2');
+        if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__utils_ActivatableUtils__["h" /* isActive */])(ADV_36)) {
             startMoney += ADV_36.active[0].tier * 250;
         }
-        else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_ActivatableUtils__["h" /* isActive */])(DISADV_2)) {
+        else if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__utils_ActivatableUtils__["h" /* isActive */])(DISADV_2)) {
             startMoney -= DISADV_2.active[0].tier * 250;
         }
         const totalWeight = Math.round(list.reduce((n, i) => n + i.weight || n, 0) * 100) / 100;
-        const carryingCapacity = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["b" /* get */])('STR').value * 2;
+        const carryingCapacity = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__stores_ListStore__["b" /* get */])('STR').value * 2;
         return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "page", id: "equipment" },
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_Slidein__["a" /* default */], { isOpen: showAddSlidein, close: this.hideAddSlidein },
                 __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "options" },
-                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { hint: "Suchen", value: filterTextSlidein, onChange: this.filterSlidein, fullWidth: true })),
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Scroll__["a" /* default */], { className: "list" },
-                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-wrapper" }, templateList.map(obj => __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_14__EquipmentListItem__["a" /* default */], { key: obj.id, data: obj, add: true }))))),
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Suchen", value: filterTextSlidein, onChange: this.filterSlidein, fullWidth: true }),
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Dropdown__["a" /* default */], { value: filterGroupSlidein, onChange: this.filterGroupSlidein, options: GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(__WEBPACK_IMPORTED_MODULE_14__utils_ListUtils__["b" /* sortByName */]), fullWidth: true })),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Scroll__["a" /* default */], { className: "list" },
+                    __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-wrapper" }, templateList.map(obj => __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_15__EquipmentListItem__["a" /* default */], { key: obj.id, data: obj, add: true }))))),
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "options" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_6__components_SortOptions__["a" /* default */], { options: ['name', 'groupname', 'where'], sortOrder: sortOrder, sort: this.sort }),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { hint: "Suchen", value: filterText, onChange: this.filter, fullWidth: true }),
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_SortOptions__["a" /* default */], { options: ['name', 'groupname', 'where'], sortOrder: sortOrder, sort: this.sort }),
                 __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_BorderButton__["a" /* default */], { label: "Hinzufügen", onClick: this.showAddSlidein }),
                 __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_BorderButton__["a" /* default */], { label: "Erstellen", onClick: this.showItemCreation })),
-            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Scroll__["a" /* default */], { className: "list" },
-                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-wrapper" }, list.map(obj => __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_14__EquipmentListItem__["a" /* default */], { key: obj.id, data: obj })))),
+            __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_5__components_Scroll__["a" /* default */], { className: "list" },
+                __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "list-wrapper" }, list.map(obj => __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_15__EquipmentListItem__["a" /* default */], { key: obj.id, data: obj })))),
             __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_Aside__["a" /* default */], null,
                 __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "purse" },
                     __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h4", null, "Geldbeutel"),
                     __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fields" },
-                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { label: "D", value: purse.d, onChange: this.setDucates }),
-                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { label: "S", value: purse.s, onChange: this.setSilverthalers }),
-                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { label: "H", value: purse.h, onChange: this.setHellers }),
-                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_7__components_TextField__["a" /* default */], { label: "K", value: purse.k, onChange: this.setKreutzers }))),
+                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { label: "D", value: purse.d, onChange: this.setDucates }),
+                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { label: "S", value: purse.s, onChange: this.setSilverthalers }),
+                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { label: "H", value: purse.h, onChange: this.setHellers }),
+                        __WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_8__components_TextField__["a" /* default */], { label: "K", value: purse.k, onChange: this.setKreutzers }))),
                 __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "total-points" },
                     __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h4", null, "Gesamt"),
                     __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", { className: "fields" },
                         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null,
-                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__utils_dotToComma__["a" /* default */])(totalPrice),
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__utils_dotToComma__["a" /* default */])(totalPrice),
                             " / ",
                             startMoney,
                             " S"),
                         __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("div", null,
-                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_12__utils_dotToComma__["a" /* default */])(totalWeight),
+                            __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_13__utils_dotToComma__["a" /* default */])(totalWeight),
                             " / ",
                             carryingCapacity,
                             " Stn"))))));
@@ -21817,7 +21837,7 @@ class EquipmentListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"]
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Slidein__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__constants_Categories__ = __webpack_require__(10);
@@ -21959,7 +21979,7 @@ class DisAdv extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_DisAdvActions__ = __webpack_require__(89);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Slidein__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__constants_Categories__ = __webpack_require__(10);
@@ -22085,7 +22105,7 @@ class Grouplist extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_HerolistActions__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_TextField__ = __webpack_require__(9);
@@ -22443,7 +22463,7 @@ const rowCreator = (e, i) => {
 /* harmony default export */ __webpack_exports__["a"] = () => {
     const { value } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__stores_ListStore__["b" /* get */])('STR');
     const { d, s, h, k } = __WEBPACK_IMPORTED_MODULE_3__stores_EquipmentStore__["a" /* default */].getPurse();
-    const items = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__utils_ListUtils__["b" /* sort */])(__WEBPACK_IMPORTED_MODULE_3__stores_EquipmentStore__["a" /* default */].getAll(), __WEBPACK_IMPORTED_MODULE_3__stores_EquipmentStore__["a" /* default */].getSortOrder());
+    const items = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__utils_ListUtils__["c" /* sort */])(__WEBPACK_IMPORTED_MODULE_3__stores_EquipmentStore__["a" /* default */].getAll(), __WEBPACK_IMPORTED_MODULE_3__stores_EquipmentStore__["a" /* default */].getSortOrder());
     const firstColumn = Array(66).fill(undefined);
     firstColumn.splice(0, Math.min(items.length, 66), ...items);
     const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));
@@ -23191,7 +23211,7 @@ const rowIterator = (e, i) => {
 };
 /* harmony default export */ __webpack_exports__["a"] = () => {
     const filtered = __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getAll().filter(e => e.active && e.gr !== 3 && __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_7__utils_LiturgyUtils__["d" /* isOwnTradition */])(e));
-    const liturgies = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__utils_ListUtils__["b" /* sort */])(filtered, __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getSortOrder());
+    const liturgies = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__utils_ListUtils__["c" /* sort */])(filtered, __WEBPACK_IMPORTED_MODULE_4__stores_LiturgiesStore__["a" /* default */].getSortOrder());
     const list = Array(21).fill(undefined);
     list.splice(0, Math.min(liturgies.length, 21), ...liturgies);
     return (__WEBPACK_IMPORTED_MODULE_1_react__["createElement"](__WEBPACK_IMPORTED_MODULE_2__components_TextBox__["a" /* default */], { label: "Liturgien & Zeremonien", className: "skill-list" },
@@ -23520,8 +23540,8 @@ const rowIterator = (e, i) => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_RulesActions__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_RulesStore__ = __webpack_require__(99);
 
@@ -23759,7 +23779,7 @@ class OverviewAddAP extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfileActions__ = __webpack_require__(73);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Avatar__ = __webpack_require__(74);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dialog__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);
 
 
@@ -23873,7 +23893,7 @@ class OverviewNameChange extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfileActions__ = __webpack_require__(73);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_IconButton__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_InputButtonGroup__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);
@@ -24420,7 +24440,7 @@ const iterateList = (arr) => arr.map(obj => {
 
 /* harmony default export */ __webpack_exports__["a"] = () => {
     const filtered = __WEBPACK_IMPORTED_MODULE_4__stores_SpellsStore__["a" /* default */].getAll().filter(e => e.active && e.gr !== 5);
-    const spells = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ListUtils__["b" /* sort */])(filtered, __WEBPACK_IMPORTED_MODULE_4__stores_SpellsStore__["a" /* default */].getSortOrder());
+    const spells = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__utils_ListUtils__["c" /* sort */])(filtered, __WEBPACK_IMPORTED_MODULE_4__stores_SpellsStore__["a" /* default */].getSortOrder());
     const list = Array(21).fill(undefined);
     list.splice(0, Math.min(spells.length, 21), ...spells);
     const PROPERTIES = __WEBPACK_IMPORTED_MODULE_4__stores_SpellsStore__["a" /* default */].getPropertyNames();
@@ -24520,8 +24540,8 @@ const iterateList = (arr) => arr.map(obj => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CultureActions__ = __webpack_require__(130);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_TextField__ = __webpack_require__(9);
@@ -24640,7 +24660,7 @@ class CulturesListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfessionActions__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_ProfessionVariantActions__ = __webpack_require__(131);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_TextField__ = __webpack_require__(9);
@@ -24916,7 +24936,7 @@ class RCP extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_RaceActions__ = __webpack_require__(132);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);
@@ -25039,8 +25059,8 @@ class RacesListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_ProfessionActions__ = __webpack_require__(91);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Slidein__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__constants_Categories__ = __webpack_require__(10);
@@ -25288,7 +25308,7 @@ class Selections extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(27);
 
 
 class SelectionsCantrips extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
@@ -25316,7 +25336,7 @@ class SelectionsCantrips extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(27);
 
 
 class SelectionsCt extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
@@ -25346,7 +25366,7 @@ class SelectionsCt extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
 
 
 
@@ -25381,8 +25401,8 @@ class SelectionsCurses extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Checkbox__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Dropdown__ = __webpack_require__(26);
 
 
 
@@ -25418,7 +25438,7 @@ class SelectionsLangLitc extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Dropdown__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Dropdown__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_TextField__ = __webpack_require__(9);
 
 
@@ -25933,7 +25953,7 @@ class SpecialAbilities extends __WEBPACK_IMPORTED_MODULE_3_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_SpellsActions__ = __webpack_require__(187);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_BorderButton__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Slidein__ = __webpack_require__(48);
@@ -26079,7 +26099,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_TalentsActions__ = __webpack_require__(188);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Checkbox__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_RadioButtonGroup__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(9);

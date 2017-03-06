@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import * as React from 'react';
 import * as DisAdvActions from '../../actions/DisAdvActions';
 import ActivatableAddListItem from '../../components/ActivatableAddListItem';
@@ -26,21 +25,22 @@ export default class DisAdvList extends React.Component<Props, undefined> {
 					phase={this.props.phase}
 					setTier={DisAdvActions.setTier}
 					removeFromList={DisAdvActions.removeFromList}
+					isImportant={rating[item.id] === 'IMP' && showRating}
+					isTypical={rating[item.id] === 'TYP' && showRating}
+					isUntypical={rating[item.id] === 'UNTYP' && showRating}
 					/>
 			))
 		) : (
-			rawList.map(item => {
-				const className = classNames(showRating && rating.hasOwnProperty(item.id) && rating[item.id]);
-
-				return (
-					<ActivatableAddListItem
-						key={item.id}
-						item={item as AdvantageInstance | DisadvantageInstance}
-						className={className}
-						addToList={DisAdvActions.addToList}
-						/>
-				);
-			})
+			rawList.map(item => (
+				<ActivatableAddListItem
+					key={item.id}
+					item={item as AdvantageInstance | DisadvantageInstance}
+					addToList={DisAdvActions.addToList}
+					isImportant={rating[item.id] === 'IMP' && showRating}
+					isTypical={rating[item.id] === 'TYP' && showRating}
+					isUntypical={rating[item.id] === 'UNTYP' && showRating}
+					/>
+			))
 		);
 
 		return (

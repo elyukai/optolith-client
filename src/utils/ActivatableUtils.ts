@@ -159,7 +159,7 @@ export const addDependencies = (obj: ActivatableInstance, adds: RequirementObjec
 			else {
 				if (Array.isArray(id)) {
 					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2) {
+					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
 						add = { active, origin: obj.id };
 					}
 					else if (value) {
@@ -175,8 +175,8 @@ export const addDependencies = (obj: ActivatableInstance, adds: RequirementObjec
 				}
 				else {
 					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2) {
-						add = active!;
+					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
+						add = active;
 					}
 					else if (value) {
 						add = value;
@@ -218,7 +218,7 @@ export const removeDependencies = (obj: ActivatableInstance, adds: RequirementOb
 			else {
 				if (Array.isArray(id)) {
 					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2) {
+					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
 						add = { active, origin: obj.id };
 					}
 					else if (value) {
@@ -234,7 +234,7 @@ export const removeDependencies = (obj: ActivatableInstance, adds: RequirementOb
 				}
 				else {
 					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2) {
+					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
 						add = active!;
 					}
 					else if (value) {

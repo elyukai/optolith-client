@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import ELStore from '../stores/ELStore';
@@ -21,6 +22,9 @@ interface RemoveObject {
 interface Props {
 	item: Active;
 	phase: number;
+	isImportant?: boolean;
+	isTypical?: boolean;
+	isUntypical?: boolean;
 	setTier(id: string, index: number, tier: number, cost: number): void;
 	removeFromList(args: DeactivateArgs): void;
 }
@@ -35,7 +39,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { phase, item: { id, active: activeObject, index }} = this.props;
+		const { phase, item: { id, active: activeObject, index }, isImportant, isTypical, isUntypical } = this.props;
 		const { sid, sid2, tier } = activeObject;
 		const a = get(id) as ActivatableInstance & { tiers?: number; };
 		const { cost, category, sel, dependencies, active, input } = a;
@@ -206,7 +210,14 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		}
 
 		return (
-			<div className="list-item">
+			<div
+				className={classNames({
+					'imp': isImportant,
+					'list-item': true,
+					'typ': isTypical,
+					'untyp': isUntypical,
+				})}
+				>
 				<div className="name">
 					<p className="title">{name}</p>
 				</div>
