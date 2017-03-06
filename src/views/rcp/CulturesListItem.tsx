@@ -1,14 +1,14 @@
-import { get } from '../../stores/ListStore';
-import * as CultureActions from '../../actions/CultureActions';
-import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
 import classNames from 'classnames';
+import * as React from 'react';
+import * as CultureActions from '../../actions/CultureActions';
+import BorderButton from '../../components/BorderButton';
+import { get } from '../../stores/ListStore';
 
 interface Props {
-	changeTab: (tab: string) => void;
 	currentID: string | null;
 	culture: CultureInstance;
 	showDetails: boolean;
+	changeTab(tab: string): void;
 }
 
 export default class CulturesListItem extends React.Component<Props, undefined> {
@@ -17,12 +17,12 @@ export default class CulturesListItem extends React.Component<Props, undefined> 
 	render() {
 		const { changeTab, currentID, culture, showDetails } = this.props;
 
-		const className = classNames({
-			'active': culture.id === currentID
-		});
-
 		return (
-			<li className={className}>
+			<li
+				className={classNames({
+					'active': culture.id === currentID,
+				})}
+				>
 				<div className="left">
 					<h2>{culture.name} ({culture.ap} AP)</h2>
 					{

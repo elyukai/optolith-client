@@ -1,9 +1,9 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import createOverlay, { close } from '../../utils/createOverlay';
+import * as AuthActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
-import Login from './Login';
 import TextField from '../../components/TextField';
+import createOverlay, { close } from '../../utils/createOverlay';
+import Login from './Login';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -15,7 +15,7 @@ interface State {
 
 export default class ForgotUsername extends React.Component<Props, State> {
 	state = {
-		email: ''
+		email: '',
 	};
 
 	forgotUsername = () => AuthActions.requestUsername(this.state.email);
@@ -27,7 +27,7 @@ export default class ForgotUsername extends React.Component<Props, State> {
 			this.forgotUsername();
 			close(this.props.node!);
 		}
-	};
+	}
 
 	render() {
 
@@ -36,15 +36,15 @@ export default class ForgotUsername extends React.Component<Props, State> {
 		return (
 			<Dialog id="forgotusername" title="Benutzername vergessen" node={this.props.node} buttons={[
 				{
+					disabled: email === '',
 					label: 'E-Mail anfordern',
 					onClick: this.forgotUsername,
 					primary: true,
-					disabled: email === ''
 				},
 				{
 					label: 'Zurück',
-					onClick: this.back
-				}
+					onClick: this.back,
+				},
 			]}>
 				<TextField
 					hint="Registrierte E-Mail-Adresse"

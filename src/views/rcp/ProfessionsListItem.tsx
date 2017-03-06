@@ -1,19 +1,19 @@
+import classNames from 'classnames';
+import * as React from 'react';
 import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
-import * as React from 'react';
 import BorderButton from '../../components/BorderButton';
-import classNames from 'classnames';
+import RadioButtonGroup from '../../components/RadioButtonGroup';
 import CultureStore from '../../stores/CultureStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
 
 interface Props {
 	currentID: string | null;
 	currentVID: string | null;
 	profession: ProfessionInstance;
 	sex: 'm' | 'f';
-	showAddSlidein: () => void;
+	showAddSlidein(): void;
 }
 
 export default class ProfessionsListItem extends React.Component<Props, undefined> {
@@ -23,10 +23,6 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 	render() {
 
 		const { showAddSlidein, currentID, currentVID, profession, sex } = this.props;
-
-		const className = classNames({
-			'active': profession.id === currentID
-		});
 
 		let variants;
 		if (profession.id === currentID && profession.variants.length > 0) {
@@ -49,7 +45,7 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 				return false;
 			});
 			if (allVariants.length > 0) {
-				const variantList: { name: string; value: string | null; }[] = allVariants.map(e => {
+				const variantList: Array<{ name: string; value: string | null; }> = allVariants.map(e => {
 					const { ap, id } = e;
 					let { name } = e;
 					if (typeof name === 'object') {
@@ -57,12 +53,12 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 					}
 					return {
 						name: `${name} (${profession.ap + ap} AP)`,
-						value: id
+						value: id,
 					};
 				});
 				variantList.splice(0, 0, {
 					name: 'Keine Variante',
-					value: null
+					value: null,
 				});
 				variants = (
 					<RadioButtonGroup
@@ -84,7 +80,11 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 		}
 
 		return (
-			<li className={className}>
+			<li
+				className={classNames({
+					'active': profession.id === currentID,
+				})}
+				>
 				<div className="left">
 					<h2>{name} ({profession.ap} AP)</h2>
 					{subname ? <h3>{subname}</h3> : null}

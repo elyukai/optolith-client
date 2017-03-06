@@ -1,6 +1,6 @@
 import AttributeStore from '../stores/AttributeStore';
-import RaceStore from '../stores/RaceStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
+import RaceStore from '../stores/RaceStore';
 
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
@@ -15,7 +15,7 @@ type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 const addEnergies = () => AttributeStore.getAddEnergies();
 
 export const getLP = (): Energy => {
-	const base = RaceStore.getCurrent().lp + CON().value * 2;
+	const base = RaceStore.getCurrent()!.lp + CON().value * 2;
 	let mod = 0;
 	const add = addEnergies().lp;
 	const increaseObject = (get('ADV_25') as AdvantageInstance).active[0];
@@ -28,16 +28,16 @@ export const getLP = (): Energy => {
 	}
 	const value = base + mod + add;
 	return {
-		id: 'LP',
-		short: 'LE',
-		name: 'Lebensenergie',
-		calc: '(GW der Spezies + KO + KO)',
 		add,
 		base,
-		mod,
-		value,
+		calc: '(GW der Spezies + KO + KO)',
+		currentAdd: add,
+		id: 'LP',
 		maxAdd: CON().value,
-		currentAdd: add
+		mod,
+		name: 'Lebensenergie',
+		short: 'LE',
+		value,
 	};
 };
 
@@ -48,7 +48,7 @@ export const getAE = (): EnergyWithLoss => {
 	const add = addEnergies().ae;
 	const permanentLost = addEnergies().permanentAE.lost;
 	const permanentRedeemed = addEnergies().permanentAE.redeemed;
-	if (primary !== 'ATTR_0') {
+	if (primary) {
 		base = 20 + PRIMARY(primary).value;
 	}
 	const increaseObject = (get('ADV_23') as AdvantageInstance).active[0];
@@ -59,20 +59,20 @@ export const getAE = (): EnergyWithLoss => {
 	else if (decreaseObject) {
 		mod -= decreaseObject.tier!;
 	}
-	const value = primary !== 'ATTR_0' ? base + mod + add + permanentRedeemed - permanentLost : '-';
+	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
-		id: 'AE',
-		short: 'AE',
-		name: 'Astralenergie',
-		calc: '(20 durch Zauberer + Leiteigenschaft)',
-		base,
-		mod,
 		add,
-		value,
-		maxAdd: (PRIMARY(primary) || {}).value,
+		base,
+		calc: '(20 durch Zauberer + Leiteigenschaft)',
 		currentAdd: add,
+		id: 'AE',
+		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
+		mod,
+		name: 'Astralenergie',
 		permanentLost,
-		permanentRedeemed
+		permanentRedeemed,
+		short: 'AE',
+		value,
 	};
 };
 
@@ -83,7 +83,7 @@ export const getKP = (): EnergyWithLoss => {
 	const add = addEnergies().kp;
 	const permanentLost = addEnergies().permanentKP.lost;
 	const permanentRedeemed = addEnergies().permanentKP.redeemed;
-	if (primary !== 'ATTR_0') {
+	if (primary) {
 		base = 20 + PRIMARY(primary).value;
 	}
 	const increaseObject = (get('ADV_24') as AdvantageInstance).active[0];
@@ -94,25 +94,25 @@ export const getKP = (): EnergyWithLoss => {
 	else if (decreaseObject) {
 		mod -= decreaseObject.tier!;
 	}
-	const value = primary !== 'ATTR_0' ? base + mod + add + permanentRedeemed - permanentLost : '-';
+	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
-		id: 'KP',
-		short: 'KE',
-		name: 'Karmaenergie',
-		calc: '(20 durch Geweiht + Leiteigenschaft)',
-		base,
-		mod,
 		add,
-		value,
-		maxAdd: (PRIMARY(primary) || {}).value,
+		base,
+		calc: '(20 durch Geweiht + Leiteigenschaft)',
 		currentAdd: add,
+		id: 'KP',
+		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
+		mod,
+		name: 'Karmaenergie',
 		permanentLost,
-		permanentRedeemed
+		permanentRedeemed,
+		short: 'KE',
+		value,
 	};
 };
 
 export const getSPI = (): SecondaryAttribute => {
-	const base = RaceStore.getCurrent().spi + Math.round((COU().value + SGC().value + INT().value) / 6);
+	const base = RaceStore.getCurrent()!.spi + Math.round((COU().value + SGC().value + INT().value) / 6);
 	let mod = 0;
 	const increaseObject = (get('ADV_26') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_29') as DisadvantageInstance).active[0];
@@ -124,18 +124,18 @@ export const getSPI = (): SecondaryAttribute => {
 	}
 	const value = base + mod;
 	return {
-		id: 'SPI',
-		short: 'SK',
-		name: 'Seelenkraft',
-		calc: '(GW der Spezies + (MU + KL + IN)/6)',
 		base,
+		calc: '(GW der Spezies + (MU + KL + IN)/6)',
+		id: 'SPI',
 		mod,
-		value
+		name: 'Seelenkraft',
+		short: 'SK',
+		value,
 	};
 };
 
 export const getTOU = (): SecondaryAttribute => {
-	const base = RaceStore.getCurrent().tou + Math.round((CON().value * 2 + STR().value) / 6);
+	const base = RaceStore.getCurrent()!.tou + Math.round((CON().value * 2 + STR().value) / 6);
 	let mod = 0;
 	const increaseObject = (get('ADV_27') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_30') as DisadvantageInstance).active[0];
@@ -147,43 +147,43 @@ export const getTOU = (): SecondaryAttribute => {
 	}
 	const value = base + mod;
 	return {
-		id: 'TOU',
-		short: 'ZK',
-		name: 'Zähigkeit',
-		calc: '(GW der Spezies + (KO + KO + KK)/6)',
 		base,
+		calc: '(GW der Spezies + (KO + KO + KK)/6)',
+		id: 'TOU',
 		mod,
-		value
+		name: 'Zähigkeit',
+		short: 'ZK',
+		value,
 	};
 };
 
 export const getDO = (): SecondaryAttribute => ({
-	id: 'DO',
-	short: 'AW',
-	name: 'Ausweichen',
 	calc: '(GE/2)',
-	value: Math.round(AGI().value / 2)
+	id: 'DO',
+	name: 'Ausweichen',
+	short: 'AW',
+	value: Math.round(AGI().value / 2),
 });
 
 export const getINI = (): SecondaryAttribute => ({
-	id: 'INI',
-	short: 'INI',
-	name: 'Initiative',
 	calc: '(MU + GE)/2',
-	value: Math.round((COU().value + AGI().value) / 2)
+	id: 'INI',
+	name: 'Initiative',
+	short: 'INI',
+	value: Math.round((COU().value + AGI().value) / 2),
 });
 
 export const getMOV = (): SecondaryAttribute => {
-	let value = RaceStore.getCurrent().mov;
+	let value = RaceStore.getCurrent()!.mov;
 	if ((get('DISADV_51') as DisadvantageInstance).active.includes(3)) {
 		value = Math.round(value / 2);
 	}
 	return {
-		id: 'MOV',
-		short: 'GS',
-		name: 'Geschwindigkeit',
 		calc: '(GW der Spezies, mögl. Einbeinig)',
-		value
+		id: 'MOV',
+		name: 'Geschwindigkeit',
+		short: 'GS',
+		value,
 	};
 };
 
@@ -218,7 +218,7 @@ export const getAll = (): SecondaryAttribute[] => [
 	getTOU(),
 	getDO(),
 	getINI(),
-	getMOV()
+	getMOV(),
 ];
 
 export default getAll;

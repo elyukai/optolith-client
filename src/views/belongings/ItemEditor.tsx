@@ -1,16 +1,16 @@
-import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
-import alert from '../../utils/alert';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import Checkbox from '../../components/Checkbox';
-import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
-import EquipmentStore from '../../stores/EquipmentStore';
-import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 import Label from '../../components/Label';
 import TextField from '../../components/TextField';
+import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
+import EquipmentStore from '../../stores/EquipmentStore';
+import alert from '../../utils/alert';
+import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 
 interface Props {
 	create?: boolean;
@@ -18,32 +18,30 @@ interface Props {
 	node?: HTMLDivElement;
 }
 
-interface State extends ItemEditorInstance {}
-
 const FIELDS = {
-	price: 'Preis',
-	weight: 'Gewicht',
 	amount: 'Anzahl',
+	at: 'AT',
+	damageBonus: 'Schadensschwelle',
 	damageDiceNumber: 'Anzahl Schadenswürfel',
 	damageFlat: 'Zusätzlicher Schaden',
-	damageBonus: 'Schadensschwelle',
-	at: 'AT',
-	pa: 'PA',
+	enc: 'BE',
 	length: 'Länge',
-	stp: 'Strukturpunkte',
+	pa: 'PA',
+	price: 'Preis',
+	pro: 'RS',
 	range: 'Reichweite',
 	reloadTime: 'Ladezeit',
-	pro: 'RS',
-	enc: 'BE'
+	stp: 'Strukturpunkte',
+	weight: 'Gewicht',
 };
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
-const GROUPS_SELECTION = GROUPS.map((e,i) => ({ id: i + 1, name: e }));
+const GROUPS_SELECTION = GROUPS.map((e, i) => ({ id: i + 1, name: e }));
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
-export default class ItemEditor extends React.Component<Props, State> {
-	state: State;
+export default class ItemEditor extends React.Component<Props, ItemEditorInstance> {
+	state: ItemEditorInstance;
 
 	constructor(props: Props) {
 		super(props);
@@ -57,87 +55,87 @@ export default class ItemEditor extends React.Component<Props, State> {
 		}
 		else {
 			this.state = {
-				id: '',
-				name: '',
-				price: '',
-				weight: '',
+				addPenalties: false,
+				ammunition: null,
 				amount: '',
-				where: '',
-				gr: 0,
-				template: 'ITEMTPL_0',
-				isTemplateLocked: false,
+				at: '',
 				combatTechnique: 'CT_0',
+				damageBonus: '',
 				damageDiceNumber: '',
 				damageDiceSides: 0,
 				damageFlat: '',
-				damageBonus: '',
-				at: '',
-				pa: '',
-				reach: 0,
-				length: '',
-				stp: '',
-				range: ['', '', ''],
-				reloadTime: '',
-				ammunition: null,
-				pro: '',
 				enc: '',
-				addPenalties: false,
-				isParryingWeapon: false
+				gr: 0,
+				id: '',
+				isParryingWeapon: false,
+				isTemplateLocked: false,
+				length: '',
+				name: '',
+				pa: '',
+				price: '',
+				pro: '',
+				range: ['', '', ''],
+				reach: 0,
+				reloadTime: '',
+				stp: '',
+				template: 'ITEMTPL_0',
+				weight: '',
+				where: '',
 			};
 		}
 	}
 
-	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
-	changePrice = (event: InputTextEvent) => this.setState({ price: event.target.value } as State);
-	changeWeight = (event: InputTextEvent) => this.setState({ weight: event.target.value } as State);
-	changeAmount = (event: InputTextEvent) => this.setState({ amount: event.target.value } as State);
-	changeWhere = (event: InputTextEvent) => this.setState({ where: event.target.value } as State);
-	changeGroup = (id: number) => this.setState({ gr: id } as State);
-	changeTemplate = (id: string) => this.setState({ template: id } as State);
-	changeCombatTechnique = (id: string) => this.setState({ combatTechnique: id } as State);
-	changeDamageDiceNumber = (event: InputTextEvent) => this.setState({ damageDiceNumber: event.target.value } as State);
-	changeDamageDiceSides = (id: number) => this.setState({ damageDiceSides: id } as State);
-	changeDamageFlat = (event: InputTextEvent) => this.setState({ damageFlat: event.target.value } as State);
-	changeDamageBonus = (event: InputTextEvent) => this.setState({ damageBonus: event.target.value } as State);
-	changeAT = (event: InputTextEvent) => this.setState({ at: event.target.value } as State);
-	changePA = (event: InputTextEvent) => this.setState({ pa: event.target.value } as State);
-	changeReach = (id: number) => this.setState({ reach: id } as State);
-	changeLength = (event: InputTextEvent) => this.setState({ length: event.target.value } as State);
-	changeStp = (event: InputTextEvent) => this.setState({ stp: event.target.value } as State);
+	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as ItemEditorInstance);
+	changePrice = (event: InputTextEvent) => this.setState({ price: event.target.value } as ItemEditorInstance);
+	changeWeight = (event: InputTextEvent) => this.setState({ weight: event.target.value } as ItemEditorInstance);
+	changeAmount = (event: InputTextEvent) => this.setState({ amount: event.target.value } as ItemEditorInstance);
+	changeWhere = (event: InputTextEvent) => this.setState({ where: event.target.value } as ItemEditorInstance);
+	changeGroup = (id: number) => this.setState({ gr: id } as ItemEditorInstance);
+	changeTemplate = (id: string) => this.setState({ template: id } as ItemEditorInstance);
+	changeCombatTechnique = (id: string) => this.setState({ combatTechnique: id } as ItemEditorInstance);
+	changeDamageDiceNumber = (event: InputTextEvent) => this.setState({ damageDiceNumber: event.target.value } as ItemEditorInstance);
+	changeDamageDiceSides = (id: number) => this.setState({ damageDiceSides: id } as ItemEditorInstance);
+	changeDamageFlat = (event: InputTextEvent) => this.setState({ damageFlat: event.target.value } as ItemEditorInstance);
+	changeDamageBonus = (event: InputTextEvent) => this.setState({ damageBonus: event.target.value } as ItemEditorInstance);
+	changeAT = (event: InputTextEvent) => this.setState({ at: event.target.value } as ItemEditorInstance);
+	changePA = (event: InputTextEvent) => this.setState({ pa: event.target.value } as ItemEditorInstance);
+	changeReach = (id: number) => this.setState({ reach: id } as ItemEditorInstance);
+	changeLength = (event: InputTextEvent) => this.setState({ length: event.target.value } as ItemEditorInstance);
+	changeStp = (event: InputTextEvent) => this.setState({ stp: event.target.value } as ItemEditorInstance);
 	changeRange = (event: InputTextEvent, index: 1 | 2 | 3) => {
 		const range = this.state.range;
 		range[index] = event.target.value as string;
-		this.setState({ range } as State)
-	};
+		this.setState({ range } as ItemEditorInstance);
+	}
 	changeRange1 = (event: InputTextEvent) => this.changeRange(event, 1);
 	changeRange2 = (event: InputTextEvent) => this.changeRange(event, 2);
 	changeRange3 = (event: InputTextEvent) => this.changeRange(event, 3);
-	changeReloadTime = (event: InputTextEvent) => this.setState({ reloadTime: event.target.value } as State);
-	changeAmmunition = (id: string) => this.setState({ ammunition: id } as State);
-	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as State);
-	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as State);
-	changeAddPenalties = () => this.setState((prevState) => ({ addPenalties: !prevState.addPenalties } as State));
-	changeParryingWeapon = () => this.setState((prevState) => ({ isParryingWeapon: !prevState.isParryingWeapon } as State));
+	changeReloadTime = (event: InputTextEvent) => this.setState({ reloadTime: event.target.value } as ItemEditorInstance);
+	changeAmmunition = (id: string) => this.setState({ ammunition: id } as ItemEditorInstance);
+	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as ItemEditorInstance);
+	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as ItemEditorInstance);
+	changeAddPenalties = () => this.setState(prevState => ({ addPenalties: !prevState.addPenalties } as ItemEditorInstance));
+	changeParryingWeapon = () => this.setState(prevState => ({ isParryingWeapon: !prevState.isParryingWeapon } as ItemEditorInstance));
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
 			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
 			this.setState(convertToEdit(template));
 		}
-	};
+	}
 	lockTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
 			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id };
 			this.setState(convertToEdit(template));
 		}
-	};
-	unlockTemplate = () => this.setState({ isTemplateLocked: false } as State);
+	}
+	unlockTemplate = () => this.setState({ isTemplateLocked: false } as ItemEditorInstance);
 
 	addItem = () => {
 		const itemToAdd = convertToSave(this.state);
 		const nanKeys = containsNaN(itemToAdd);
 		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`)
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`);
 		}
 		else {
 			EquipmentActions.addToList(itemToAdd);
@@ -147,7 +145,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 		const itemToAdd = convertToSave(this.state);
 		const nanKeys = containsNaN(itemToAdd);
 		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`)
+			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`);
 		}
 		else {
 			EquipmentActions.set(this.state.id, itemToAdd);
@@ -158,7 +156,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 		const { create, node } = this.props;
 		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
-		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a,b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 
 		return (
@@ -168,11 +166,11 @@ export default class ItemEditor extends React.Component<Props, State> {
 				node={node}
 				buttons={[
 					{
+						autoWidth: true,
+						disabled: name === '' || gr === 0,
 						label: 'Speichern',
 						onClick: create ? this.addItem : this.saveItem,
-						autoWidth: true,
-						disabled: name === '' || gr === 0
-					}
+					},
 				]}>
 				<div className="main">
 					<div className="row">
@@ -287,7 +285,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[{id:3,name:'W3'},{id:6,name:'W6'},{id:20,name:'W20'}]}
+								options={[{id: 3, name: 'W3'}, {id: 6, name: 'W6'}, {id: 20, name: 'W20'}]}
 								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
@@ -305,7 +303,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 							label="Reichweite"
 							hint="Auswählen"
 							value={reach}
-							options={[{id:1,name:'Kurz'},{id:2,name:'Mittel'},{id:3,name:'Lang'}]}
+							options={[{id: 1, name: 'Kurz'}, {id: 2, name: 'Mittel'}, {id: 3, name: 'Lang'}]}
 							onChange={this.changeReach}
 							disabled={locked}
 							/>
@@ -385,7 +383,7 @@ export default class ItemEditor extends React.Component<Props, State> {
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[{id:3,name:'W3'},{id:6,name:'W6'},{id:20,name:'W20'}]}
+								options={[{id: 3, name: 'W3'}, {id: 6, name: 'W6'}, {id: 20, name: 'W20'}]}
 								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>

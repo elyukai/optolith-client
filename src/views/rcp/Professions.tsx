@@ -1,17 +1,17 @@
-import { filterAndSort } from '../../utils/ListUtils';
+import * as React from 'react';
 import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
-import * as React from 'react';
-import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
-import ProfessionsListItem from './ProfessionsListItem';
+import RadioButtonGroup from '../../components/RadioButtonGroup';
+import Scroll from '../../components/Scroll';
+import TextField from '../../components/TextField';
+import CultureStore from '../../stores/CultureStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
+import { filterAndSort } from '../../utils/ListUtils';
+import ProfessionsListItem from './ProfessionsListItem';
 import Selections from './Selections';
-import TextField from '../../components/TextField';
 
 interface State {
 	professions: ProfessionInstance[];
@@ -25,23 +25,23 @@ interface State {
 
 export default class Professions extends React.Component<undefined, State> {
 	state = {
-		professions: ProfessionStore.getAll(),
 		currentID: ProfessionStore.getCurrentId(),
+		currentVID: ProfessionVariantStore.getCurrentID(),
 		filterText: '',
+		professions: ProfessionStore.getAll(),
+		showAddSlidein: false,
 		sortOrder: ProfessionStore.getSortOrder(),
 		visibility: ProfessionStore.areAllVisible(),
-		currentVID: ProfessionVariantStore.getCurrentID(),
-		showAddSlidein: false
 	};
 
 	_updateProfessionStore = () => this.setState({
-		professions: ProfessionStore.getAll(),
 		currentID: ProfessionStore.getCurrentId(),
+		professions: ProfessionStore.getAll(),
 		sortOrder: ProfessionStore.getSortOrder(),
-		visibility: ProfessionStore.areAllVisible()
+		visibility: ProfessionStore.areAllVisible(),
 	} as State);
 	_updateProfessionVariantStore = () => this.setState({
-		currentVID: ProfessionVariantStore.getCurrentID()
+		currentVID: ProfessionVariantStore.getCurrentID(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -70,7 +70,7 @@ export default class Professions extends React.Component<undefined, State> {
 
 		const sex = ProfileStore.getSex();
 
-		const list = filterAndSort(professions.filter(e => visibility === 'all' || currentCulture.typicalProfessions.includes(e.id) || e.id === 'P_0'), filterText, sortOrder, sex);
+		const list = filterAndSort(professions.filter(e => visibility === 'all' || currentCulture!.typicalProfessions.includes(e.id) || e.id === 'P_0'), filterText, sortOrder, sex);
 
 		return (
 			<div className="page" id="professions">
@@ -82,17 +82,17 @@ export default class Professions extends React.Component<undefined, State> {
 					<Dropdown
 						value={visibility}
 						onChange={this.changeView}
-						options={[{id:'all',name:'Alle Professionen'},{id:'common',name:'Übliche Professionen'}]}
+						options={[{id: 'all', name: 'Alle Professionen'}, {id: 'common', name: 'Übliche Professionen'}]}
 						fullWidth />
 					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
 						{
 							name: 'Alphabetisch',
-							value: 'name'
+							value: 'name',
 						},
 						{
 							name: 'Nach Kosten',
-							value: 'cost'
-						}
+							value: 'cost',
+						},
 					]} />
 				</div>
 				<Scroll className="list">
@@ -105,7 +105,7 @@ export default class Professions extends React.Component<undefined, State> {
 								currentVID={currentVID}
 								profession={profession}
 								sex={sex}
-								/>
+								/>,
 							)
 						}
 					</ul>

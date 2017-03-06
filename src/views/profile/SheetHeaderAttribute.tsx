@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
 interface SheetHeaderAttributeProps {
 	id: string;
@@ -7,14 +7,9 @@ interface SheetHeaderAttributeProps {
 	value?: number | string;
 }
 
-export default (props: SheetHeaderAttributeProps) => {
-	const { id, label, value } = props;
-	const className = classNames('sheet-attribute', id);
-
-	return (
-		<div className={className}>
-			<span className="label">{label}</span>
-			<span className="value">{value}</span>
-		</div>
-	);
-}
+export default (props: SheetHeaderAttributeProps) => (
+	<div className={classNames('sheet-attribute', props.id)}>
+		<span className="label">{props.label}</span>
+		<span className="value">{props.value}</span>
+	</div>
+);

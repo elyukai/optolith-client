@@ -1,5 +1,5 @@
-import AttributeListItem from './AttributeListItem';
 import * as React from 'react';
+import AttributeListItem from './AttributeListItem';
 
 interface Props {
 	attributes: AttributeInstance[];

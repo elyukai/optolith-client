@@ -1,35 +1,37 @@
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
-import * as ActionTypes from '../constants/ActionTypes';
-
-let _requestsOpen = false;
 
 class GroupsStoreStatic extends Store {
+	private requestsOpen = false;
+	readonly dispatchToken: string;
+
+	constructor() {
+		super();
+		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			// switch( action.type ) {
+			// 	case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
+			// 		_requestsOpen = true;
+			// 		break;
+
+			// 	case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
+			// 		_requestsOpen = false;
+			// 		break;
+
+			// 	default:
+			// 		return true;
+			// }
+			this.emitChange();
+			return true;
+		});
+	}
 
 	getRequestsSlideinState() {
-		return _requestsOpen;
+		return this.requestsOpen;
 	}
 
 }
 
-const GroupsStore = new GroupsStoreStatic(action => {
-	// switch( action.type ) {
-	// 	case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
-	// 		_requestsOpen = true;
-	// 		break;
-
-	// 	case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
-	// 		_requestsOpen = false;
-	// 		break;
-
-	// 	default:
-	// 		return true;
-	// }
-
-	// GroupsStore.emitChange();
-
-	return true;
-
-});
+const GroupsStore = new GroupsStoreStatic();
 
 export default GroupsStore;

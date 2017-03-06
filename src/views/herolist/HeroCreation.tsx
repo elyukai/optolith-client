@@ -1,9 +1,9 @@
-import * as HerolistActions from '../../actions/HerolistActions';
 import * as React from 'react';
+import * as HerolistActions from '../../actions/HerolistActions';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
-import ELStore from '../../stores/ELStore';
 import TextField from '../../components/TextField';
+import ELStore from '../../stores/ELStore';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -17,9 +17,9 @@ interface State {
 
 export default class HeroCreation extends React.Component<Props, State> {
 	state = {
-		name: '',
+		el: 'EL_0',
 		gender: '',
-		el: 'EL_0'
+		name: '',
 	};
 
 	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
@@ -36,17 +36,17 @@ export default class HeroCreation extends React.Component<Props, State> {
 		return (
 			<Dialog id="herocreation" title="Heldenerstellung" node={this.props.node} buttons={[
 				{
+					disabled: this.state.name === '' || this.state.gender === '' || this.state.el === 'EL_0',
 					label: 'Starten',
 					onClick: this.create,
 					primary: true,
-					disabled: this.state.name === '' || this.state.gender === '' || this.state.el === 'EL_0'
-				}
+				},
 			]}>
 				<TextField hint="Name des Helden" value={this.state.name} onChange={this.changeName} fullWidth />
 				<Dropdown
 					value={this.state.gender}
 					onChange={this.changeGender}
-					options={[{id:'m',name:'männlich'},{id:'f',name:'weiblich'}]}
+					options={[{id: 'm', name: 'männlich'}, {id: 'f', name: 'weiblich'}]}
 					hint="Geschlecht auswählen"
 					fullWidth />
 				<Dropdown

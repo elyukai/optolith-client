@@ -1,8 +1,8 @@
+import * as React from 'react';
+import Scroll from '../../components/Scroll';
 import AttributeCalc from './AttributeCalc';
 import AttributeList from './AttributeList';
 import AttributesPermanentList from './AttributesPermanentList';
-import * as React from 'react';
-import Scroll from '../../components/Scroll';
 
 interface Props {
 	attributes: AttributeInstance[];

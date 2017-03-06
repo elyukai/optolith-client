@@ -1,5 +1,5 @@
-import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
+import * as ProfileActions from '../../actions/ProfileActions';
 import AvatarWrapper from '../../components/Avatar';
 import Dialog from '../../components/Dialog';
 import Dropdown from '../../components/Dropdown';
@@ -19,11 +19,11 @@ interface State {
 
 export default class ProfileAvatarChange extends React.Component<Props, State> {
 	state = {
-		sourceType: '',
-		url: '',
 		file: undefined,
 		filePreview: '',
-		fileValid: false
+		fileValid: false,
+		sourceType: '',
+		url: '',
 	} as State;
 
 	changeSourceType = (type: string) => this.setState({ sourceType: type } as State);
@@ -32,7 +32,7 @@ export default class ProfileAvatarChange extends React.Component<Props, State> {
 		const reader = new FileReader();
 		const file = event.target.files && event.target.files[0];
 		const filetype = file && file.type;
-		const mime: (string | null)[] = ['image/jpeg','image/png','image/jpg'];
+		const mime: Array<string | null> = ['image/jpeg', 'image/png', 'image/jpg'];
 		if (!file || !mime.includes(filetype) || file.size <= 524288) {
 			this.setState({ file, fileValid: false, filePreview: '' } as State);
 		} else {
@@ -51,17 +51,22 @@ export default class ProfileAvatarChange extends React.Component<Props, State> {
 		const { sourceType, url, file, fileValid, filePreview } = this.state;
 
 		return (
-			<Dialog id="profileavatarchange" title="Portrait ändern" node={this.props.node} buttons={[
-				{
-					label: 'Ändern',
-					onClick: this.load,
-					disabled: sourceType === '' || (sourceType === 'extern' && url === '') || (sourceType === 'file' && file && !fileValid)
-				}
-			]}>
+			<Dialog
+				id="profileavatarchange"
+				title="Portrait ändern"
+				node={this.props.node}
+				buttons={[
+					{
+						disabled: sourceType === '' || (sourceType === 'extern' && url === '') || (sourceType === 'file' && file && !fileValid),
+						label: 'Ändern',
+						onClick: this.load,
+					},
+				]}
+				>
 				<Dropdown
 					value={sourceType}
 					onChange={this.changeSourceType}
-					options={[{id:'extern',name:'Externes Bild'},{id:'file',name:'Bilddatei (max. 500KB)'}]}
+					options={[{id: 'extern', name: 'Externes Bild'}, {id: 'file', name: 'Bilddatei (max. 500KB)'}]}
 					hint="Bildquelle auswählen"
 					fullWidth />
 				{(() => {

@@ -1,6 +1,6 @@
-import AttributeCalcItem from './AttributeCalcItem';
 import * as React from 'react';
 import secondaryAttributes from '../../utils/secondaryAttributes';
+import AttributeCalcItem from './AttributeCalcItem';
 
 interface Props {
 	phase: number;

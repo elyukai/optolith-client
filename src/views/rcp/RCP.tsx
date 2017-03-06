@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Cultures from './Cultures';
+import SubTabs from '../../components/SubTabs';
 import CultureStore from '../../stores/CultureStore';
+import RaceStore from '../../stores/RaceStore';
+import Cultures from './Cultures';
 import Professions from './Professions';
 import Races from './Races';
-import RaceStore from '../../stores/RaceStore';
-import SubTabs from '../../components/SubTabs';
 
 interface State {
 	cultureID: string | null;
@@ -14,9 +14,9 @@ interface State {
 
 export default class RCP extends React.Component<undefined, State> {
 	state = {
-		tab: 'race',
+		cultureID: CultureStore.getCurrentID(),
 		raceID: RaceStore.getCurrentID(),
-		cultureID: CultureStore.getCurrentID()
+		tab: 'race',
 	};
 
 	_updateCultureStore = () => this.setState({ cultureID: CultureStore.getCurrentID() } as State);
@@ -54,20 +54,20 @@ export default class RCP extends React.Component<undefined, State> {
 		const tabs = [
 			{
 				label: 'Spezies',
-				tag: 'race'
-			}
+				tag: 'race',
+			},
 		];
 
 		if (raceID) {
 			tabs.push({
 				label: 'Kultur',
-				tag: 'culture'
+				tag: 'culture',
 			});
 		}
 		if (cultureID) {
 			tabs.push({
 				label: 'Profession',
-				tag: 'profession'
+				tag: 'profession',
 			});
 		}
 
@@ -76,7 +76,8 @@ export default class RCP extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={tabs}
 					active={this.state.tab}
-					onClick={this.handleClick} />
+					onClick={this.handleClick}
+					/>
 				{element}
 			</section>
 		);

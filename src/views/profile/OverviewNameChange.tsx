@@ -3,9 +3,9 @@ import IconButton from '../../components/IconButton';
 import TextField from '../../components/TextField';
 
 interface Props {
-	cancel: () => void;
-	change: (name: string) => void;
 	name: string;
+	cancel(): void;
+	change(name: string): void;
 }
 
 interface State {
@@ -14,7 +14,7 @@ interface State {
 
 export default class OverviewNameChange extends React.Component<Props, State> {
 	state = {
-		name: this.props.name
+		name: this.props.name,
 	};
 
 	change = () => this.props.change(this.state.name);

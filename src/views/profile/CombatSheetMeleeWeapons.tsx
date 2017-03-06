@@ -1,12 +1,13 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import EquipmentStore from '../../stores/EquipmentStore';
-import RulesStore from '../../stores/RulesStore';
 import TextBox from '../../components/TextBox';
+import EquipmentStore from '../../stores/EquipmentStore';
+import { get } from '../../stores/ListStore';
+import RulesStore from '../../stores/RulesStore';
+import { getAt, getPa } from '../../utils/CombatTechniqueUtils';
 
 export default () => {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
-	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
+	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	const paradeBonus = RulesStore.getAll().higherParadeValues;
 
@@ -40,9 +41,9 @@ export default () => {
 										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
 										<td className="at-mod mod">{e.at > 0 && '+'}{e.at}</td>
 										<td className="pa-mod mod">{e.pa > 0 && '+'}{e.pa}</td>
-										<td className="reach">{['kurz','mittel','lang'][e.reach - 1]}</td>
-										<td className="at">{combatTechnique.at + e.at}</td>
-										<td className="pa">{(combatTechnique.pa as number) + e.pa + paradeBonus}</td>
+										<td className="reach">{['kurz', 'mittel', 'lang'][e.reach - 1]}</td>
+										<td className="at">{getAt(combatTechnique) + e.at}</td>
+										<td className="pa">{(getPa(combatTechnique) as number) + e.pa + paradeBonus}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>
 								);

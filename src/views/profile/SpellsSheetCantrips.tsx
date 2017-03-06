@@ -1,6 +1,6 @@
 import * as React from 'react';
-import SpellsStore from '../../stores/SpellsStore';
 import TextBox from '../../components/TextBox';
+import SpellsStore from '../../stores/SpellsStore';
 
 export default () => (
 	<TextBox label="Zaubertricks" className="cantrips activatable-list">

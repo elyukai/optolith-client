@@ -1,5 +1,5 @@
-import { get, getPrimaryAttr } from '../../stores/ListStore';
 import * as React from 'react';
+import { get, getPrimaryAttr } from '../../stores/ListStore';
 
 export default () => {
 	const SA_88 = get('SA_88') as SpecialAbilityInstance;
@@ -13,18 +13,19 @@ export default () => {
 	const primary = getPrimaryAttr(1) as AttributeInstance;
 
 	return (
-	<div className="tradition-properties">
-		<div className="primary">
-			<span className="label">Leiteigenschaft</span>
-			<span className="value">{primary && primary.short}</span>
+		<div className="tradition-properties">
+			<div className="primary">
+				<span className="label">Leiteigenschaft</span>
+				<span className="value">{primary && primary.short}</span>
+			</div>
+			<div className="properties">
+				<span className="label">Merkmal(e)</span>
+				<span className="value">{activePropertyNames}</span>
+			</div>
+			<div className="tradition">
+				<span className="label">Tradition</span>
+				<span className="value">{activeTraditionNames}</span>
+			</div>
 		</div>
-		<div className="properties">
-			<span className="label">Merkmal(e)</span>
-			<span className="value">{activePropertyNames}</span>
-		</div>
-		<div className="tradition">
-			<span className="label">Tradition</span>
-			<span className="value">{activeTraditionNames}</span>
-		</div>
-	</div>
-)};
+	);
+};

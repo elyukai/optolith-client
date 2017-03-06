@@ -1,8 +1,8 @@
-import Attributes from './Attributes';
+import * as React from 'react';
 import AttributeStore from '../../stores/AttributeStore';
 import ELStore from '../../stores/ELStore';
 import PhaseStore from '../../stores/PhaseStore';
-import * as React from 'react';
+import Attributes from './Attributes';
 
 interface State {
 	attributes: AttributeInstance[];
@@ -15,15 +15,11 @@ export default class AttributesController extends React.Component<undefined, Sta
 	state = {
 		attributes: AttributeStore.getAll(),
 		el: ELStore.getStart(),
-		phase: PhaseStore.get()
+		phase: PhaseStore.get(),
 	};
 
-	_updateAttributeStore = () => this.setState({
-		attributes: AttributeStore.getAll()
-	} as State);
-	_updatePhaseStore = () => this.setState({
-		phase: PhaseStore.get()
-	} as State);
+	_updateAttributeStore = () => this.setState({ attributes: AttributeStore.getAll() } as State);
+	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as State);
 
 	componentDidMount() {
 		AttributeStore.addChangeListener(this._updateAttributeStore);
@@ -37,7 +33,7 @@ export default class AttributesController extends React.Component<undefined, Sta
 
 	render() {
 
-		const sum = this.state.attributes.reduce((a,b) => a + b.value, 0);
+		const sum = this.state.attributes.reduce((a, b) => a + b.value, 0);
 
 		return (
 			<Attributes {...this.state} sum={sum} />

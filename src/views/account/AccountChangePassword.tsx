@@ -1,8 +1,8 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
+import * as AuthActions from '../../actions/AuthActions';
 import IconButton from '../../components/IconButton';
-import TextField from '../../components/TextField';
 import InputButtonGroup from '../../components/InputButtonGroup';
+import TextField from '../../components/TextField';
 
 const ERROR_MESSAGE = 'Das Passwort muss mindestens 5 und darf maximal 20 Zeichen umfassen.';
 
@@ -12,7 +12,7 @@ interface State {
 
 export default class Account extends React.Component<undefined, State> {
 	state = {
-		newPassword: ''
+		newPassword: '',
 	};
 
 	handlePassword = (event: InputTextEvent) => this.setState({ newPassword: event.target.value } as State);

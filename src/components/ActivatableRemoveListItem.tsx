@@ -1,9 +1,10 @@
-import { get, getAllByCategory } from '../stores/ListStore';
-import * as Categories from '../constants/Categories';
 import * as React from 'react';
+import * as Categories from '../constants/Categories';
+import ELStore from '../stores/ELStore';
+import { get, getAllByCategory } from '../stores/ListStore';
+import { getSelectionItem, isDeactivatable } from '../utils/ActivatableUtils';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
-import ELStore from '../stores/ELStore';
 
 interface Active {
 	id: string;
@@ -20,14 +21,14 @@ interface RemoveObject {
 interface Props {
 	item: Active;
 	phase: number;
-	setTier: (id: string, index: number, tier: number, cost: number) => void;
-	removeFromList: (args: DeactivateArgs) => void;
+	setTier(id: string, index: number, tier: number, cost: number): void;
+	removeFromList(args: DeactivateArgs): void;
 }
 
 export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, active: { tier }, index } = this.props.item;
-		const { cost, category } = get(id) as AdvantageInstance | DisadvantageInstance;
+		const { cost, category } = get(id) as ActivatableInstance;
 		const finalCost = (selectedTier - (tier as number)) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
 		this.props.setTier(id, index, selectedTier, finalCost);
 	}
@@ -36,10 +37,10 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 	render() {
 		const { phase, item: { id, active: activeObject, index }} = this.props;
 		const { sid, sid2, tier } = activeObject;
-		const a = get(id) as AdvantageInstance | DisadvantageInstance;
-		const { cost, category, sel, dependencies, active, input, getSelectionItem } = a;
+		const a = get(id) as ActivatableInstance & { tiers?: number; };
+		const { cost, category, sel, dependencies, active, input } = a;
 		let { tiers } = a;
-		let disabled = false;
+		let disabled = !isDeactivatable(a);
 		let add = '';
 		let addSpecial = '';
 		let currentCost: number | undefined = undefined;
@@ -71,8 +72,8 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			}
 			case 'ADV_28':
 			case 'ADV_29':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
 				break;
 			case 'ADV_32':
 			case 'DISADV_1':
@@ -82,8 +83,8 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				break;
 			case 'DISADV_34':
 			case 'DISADV_50': {
-				const maxCurrentTier = active.reduce((a,b) => (b.tier as number) > a ? b.tier as number : a, 0);
-				const subMaxCurrentTier = active.reduce((a,b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
+				const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
+				const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
 				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
 				currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
 				break;
@@ -92,12 +93,12 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
 					currentCost = 0;
 				} else {
-					currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+					currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
 				}
-				if ([7,8].includes(sid as number)) {
-					add = `${(getSelectionItem(sid as string | number) as SelectionObject).name}: ${sid2}`;
+				if ([7, 8].includes(sid as number)) {
+					add = `${(getSelectionItem(a, sid as string | number) as SelectionObject).name}: ${sid2}`;
 				} else {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
 				}
 				break;
 			}
@@ -107,8 +108,8 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				break;
 			case 'DISADV_37':
 			case 'DISADV_51':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
 				break;
 			case 'SA_10': {
 				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
@@ -119,21 +120,21 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			}
 			case 'SA_30':
 				tiers = 3;
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
 				break;
 			case 'SA_86':
 				if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
 					disabled = true;
 				}
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
 				break;
 			case 'SA_102':
 				if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
 					disabled = true;
 				}
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(sid as string | number) as SelectionObject).cost as number;
+				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
 				break;
 
 			default:
@@ -141,19 +142,19 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 					add = sid as string;
 				}
 				else if (sel.length > 0 && cost === 'sel') {
-					const selectionItem = getSelectionItem(sid!);
+					const selectionItem = getSelectionItem(a, sid!);
 					add = selectionItem!.name;
 					currentCost = selectionItem!.cost as number;
 				}
 				else if (sel.length > 0 && typeof cost === 'number') {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
 				}
 				break;
 		}
 
 		let tierElement;
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-		if (tiers && !['DISADV_34','DISADV_50'].includes(id)) {
+		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			let array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
 			if (id === 'SA_30' && (tier === 4 || this.props.phase < 3)) {
 				array.push({ id: 4, name: 'MS' });
@@ -176,13 +177,13 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		}
 
 		let { name } = a;
-		if (['ADV_28','ADV_29'].includes(id)) {
+		if (['ADV_28', 'ADV_29'].includes(id)) {
 			name = `Immunität gegen ${add}`;
 		}
 		else if (id === 'DISADV_1') {
 			name = `Angst vor ${add}`;
 		}
-		else if (['DISADV_34','DISADV_50'].includes(id)) {
+		else if (['DISADV_34', 'DISADV_50'].includes(id)) {
 			name  += ` ${roman[(tier as number) - 1]} (${add})`;
 		}
 		else if (add) {
@@ -200,7 +201,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		}
 		args.cost = currentCost;
 
-		if (dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
+		if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
 			disabled = true;
 		}
 

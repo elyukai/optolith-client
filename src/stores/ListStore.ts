@@ -1,513 +1,643 @@
 /// <reference path="../actions/Actions.d.ts" />
 /// <reference path="../data.d.ts" />
 
+import * as ActionTypes from '../constants/ActionTypes';
+import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
-import CultureStore from './CultureStore';
-import HistoryStore from './HistoryStore';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
+import * as AttributeUtils from '../utils/AttributeUtils';
+import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
+import { final } from '../utils/iccalc';
+import * as IncreasableUtils from '../utils/IncreasableUtils';
 import init from '../utils/init';
+import * as LiturgyUtils from '../utils/LiturgyUtils';
+import * as SpellUtils from '../utils/SpellUtils';
+import * as TalentUtils from '../utils/TalentUtils';
+import CultureStore from './CultureStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
-import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
+import Store from './Store';
 
 type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
 
-let _byId: {
-	[id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
-} = {};
-let _allIds: string[] = [];
+class ListStoreStatic extends Store {
+	readonly dispatchToken: string;
+	private byId: ToListById<Instance> = {};
+	private allIds: string[] = [];
 
-function _activate(id: string) {
-	(_byId[id] as LiturgyInstance | SpellInstance).active = true;
-}
+	constructor() {
+		super();
 
-function _deactivate(id: string) {
-	(_byId[id] as LiturgyInstance | SpellInstance).active = false;
-}
+		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+			if (action.undo) {
+				switch (action.type) {
+					case ActionTypes.ACTIVATE_SPELL:
+					case ActionTypes.ACTIVATE_LITURGY:
+						this.deactivate(action.payload.id);
+						break;
 
-function _addPoint(id: string) {
-	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).addPoint();
-}
+					case ActionTypes.DEACTIVATE_SPELL:
+					case ActionTypes.DEACTIVATE_LITURGY:
+						this.activate(action.payload.id);
+						break;
 
-function _removePoint(id: string) {
-	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).removePoint();
-}
+					case ActionTypes.ACTIVATE_DISADV:
+					case ActionTypes.ACTIVATE_SPECIALABILITY:
+						const id = action.payload.id;
+						const index = action.payload.index!;
+						const active = action.payload.activeObject!;
+						const adds = [];
+						let sid;
+						switch (id) {
+							case 'ADV_4':
+							case 'ADV_16':
+							case 'DISADV_48':
+								sid = active.sid as string;
+								break;
+							case 'SA_10':
+								adds.push({ id: active.sid as string, value: (this.byId[id] as ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+								break;
+						}
+						ActivatableUtils.removeDependencies(this.byId[id] as ActivatableInstance, adds, sid);
+						(this.byId[id] as ActivatableInstance).active.splice(index, 1);
+						break;
 
-function _setValue(id: string, value: number) {
-	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).set(value);
-}
-
-function _addSR(id: string, value: number) {
-	(_byId[id] as AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).add(value);
-}
-
-function _activateDASA(id: string, args: ActivateArgs) {
-	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).activate(args);
-}
-
-function _deactivateDASA(id: string, index: number) {
-	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).deactivate(index);
-}
-
-function _updateTier(id: string, index: number, tier: number) {
-	(_byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).setTier(index, tier);
-}
-
-function _init(data: RawData) {
-	_byId = init(data);
-	_allIds = Object.keys(_byId);
-}
-
-function _updateAll({ attr, talents, ct, spells, chants, disadv, activatable }: Hero & HeroRest) {
-	attr.values.forEach(e => {
-		const [ id, value, mod ] = e;
-		_setValue(id, value);
-		(_byId[id] as AttributeInstance).mod = mod;
-	});
-	const flatSkills = { ...talents.active, ...ct.active };
-	Object.keys(flatSkills).forEach(id => {
-		_setValue(id, flatSkills[id]);
-	});
-	const activateSkills = { ...spells.active, ...chants.active };
-	Object.keys(activateSkills).forEach(id => {
-		const value = activateSkills[id];
-		_activate(id);
-		if (value !== null) {
-			_setValue(id, value);
-		}
-	});
-	Object.keys(activatable).forEach(id => {
-		const values = activatable[id];
-		type Activatable = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
-		(_byId[id] as Activatable).active = values;
-		switch (id) {
-			case 'ADV_4':
-			case 'ADV_16':
-			case 'DISADV_48':
-				values.forEach(p => (_byId[id] as Activatable).addDependencies([], p.sid as string));
-				break;
-			case 'SA_10': {
-				const counter = new Map();
-				values.forEach(p => {
-					if (counter.has(p.sid)) {
-						counter.set(p.sid, counter.get(p.sid) + 1);
-					} else {
-						counter.set(p.sid, 1);
+					case ActionTypes.DEACTIVATE_DISADV:
+					case ActionTypes.DEACTIVATE_SPECIALABILITY: {
+						const id = action.payload.id;
+						const index = action.payload.index;
+						const active = action.payload.activeObject!;
+						(this.byId[id] as ActivatableInstance).active.splice(index, 0, active);
+						const adds = [];
+						let sid;
+						switch (id) {
+							case 'ADV_4':
+							case 'ADV_16':
+							case 'DISADV_48':
+								sid = active.sid as string;
+								break;
+							case 'SA_10':
+								adds.push({ id: active.sid as string, value: (this.byId[id] as ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+								break;
+						}
+						ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, adds, sid);
+						break;
 					}
-					(_byId[id] as Activatable).addDependencies([{ id: p.sid, sid: counter.get(p.sid) * 6 } as RequirementObject]);
-				});
-				break;
-			}
-			default:
-				values.forEach(() => (_byId[id] as Activatable).addDependencies());
-		}
-	});
-}
 
-function _assignRCP(selections: Selections) {
-	const race = RaceStore.getCurrent();
-	const culture = CultureStore.getCurrent();
-	const profession = ProfessionStore.getCurrent();
-	const professionVariant = ProfessionVariantStore.getCurrent();
+					case ActionTypes.SET_DISADV_TIER:
+					case ActionTypes.SET_SPECIALABILITY_TIER:
+						this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
+						break;
 
-	const skillRatingList = new Map<string, number>();
-	const skillActivateList = new Set<string>();
-	const activatable = new Set<RequirementObject>();
-	const languages = new Map<number, number>();
-	const scripts = new Set<number>();
+					case ActionTypes.ADD_ATTRIBUTE_POINT:
+					case ActionTypes.ADD_TALENT_POINT:
+					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+					case ActionTypes.ADD_SPELL_POINT:
+					case ActionTypes.ADD_LITURGY_POINT:
+						this.removePoint(action.payload.id);
+						break;
 
-	// Race selections:
+					case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+					case ActionTypes.REMOVE_TALENT_POINT:
+					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+					case ActionTypes.REMOVE_SPELL_POINT:
+					case ActionTypes.REMOVE_LITURGY_POINT:
+						this.addPoint(action.payload.id);
+						break;
 
-	race.attributes.forEach(e => {
-		const [ mod, id ] = e;
-		(_byId[id] as AttributeInstance).mod += mod;
-	});
-	race.autoAdvantages.forEach(e => activatable.add({ id: e }));
-	(_byId[selections.attrSel] as AttributeInstance).mod = race.attributeSelection[0];
-
-	// Culture selections:
-
-	if (selections.useCulturePackage) {
-		culture.talents.forEach(([ key, value ]) => {
-			skillRatingList.set(key, value);
-		});
-	}
-
-	const motherTongueId = culture.languages.length > 1 ? selections.lang : culture.languages[0];
-	languages.set(motherTongueId, 4);
-
-	if (selections.buyLiteracy) {
-		const motherTongueScriptId = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-		scripts.add(motherTongueScriptId);
-	}
-
-	// Profession selections:
-
-	[ ...profession.talents, ...profession.combatTechniques ].forEach(([ key, value ]) => {
-		skillRatingList.set(key, value);
-	});
-	[ ...profession.spells, ...profession.liturgies ].forEach(([ key, value ]) => {
-		skillActivateList.add(key);
-		if (typeof value === 'number') {
-			skillRatingList.set(key, value);
-		}
-	});
-	profession.specialAbilities.forEach(e => activatable.add(e));
-
-	if (professionVariant) {
-		[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
-			skillRatingList.set(key, value);
-		});
-		professionVariant.specialAbilities.forEach(e => {
-			if (e.active === false) {
-				activatable.forEach(i => {
-					if (i.id === e.id) {
-						activatable.delete(i);
-					}
-				});
+					default:
+						return true;
+				}
 			}
 			else {
-				activatable.add(e);
+				switch (action.type) {
+					case ActionTypes.RECEIVE_DATA_TABLES:
+						this.init(action.payload.data);
+						break;
+
+					case ActionTypes.RECEIVE_HERO_DATA:
+						this.updateAll(action.payload.data);
+						break;
+
+					case ActionTypes.ASSIGN_RCP_OPTIONS:
+						this.assignRCP(action.payload);
+						break;
+
+					case ActionTypes.CREATE_HERO:
+						this.clear();
+						break;
+
+					case ActionTypes.ACTIVATE_SPELL:
+					case ActionTypes.ACTIVATE_LITURGY:
+						if (RequirementsStore.isValid()) {
+							this.activate(action.payload.id);
+						}
+						break;
+
+					case ActionTypes.DEACTIVATE_SPELL:
+					case ActionTypes.DEACTIVATE_LITURGY:
+						if (RequirementsStore.isValid()) {
+							this.deactivate(action.payload.id);
+						}
+						break;
+
+					case ActionTypes.ACTIVATE_DISADV:
+					case ActionTypes.ACTIVATE_SPECIALABILITY:
+						if (RequirementsStore.isValid()) {
+							this.activateDASA(action.payload.id, action.payload);
+						}
+						break;
+
+					case ActionTypes.DEACTIVATE_DISADV:
+					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+						if (RequirementsStore.isValid()) {
+							AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+							this.deactivateDASA(action.payload.id, action.payload.index);
+						}
+						break;
+
+					case ActionTypes.SET_DISADV_TIER:
+					case ActionTypes.SET_SPECIALABILITY_TIER:
+						if (RequirementsStore.isValid()) {
+							this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
+						}
+						break;
+
+					case ActionTypes.ADD_ATTRIBUTE_POINT:
+					case ActionTypes.ADD_TALENT_POINT:
+					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+					case ActionTypes.ADD_SPELL_POINT:
+					case ActionTypes.ADD_LITURGY_POINT:
+						if (RequirementsStore.isValid()) {
+							this.addPoint(action.payload.id);
+						}
+						break;
+
+					case ActionTypes.REMOVE_ATTRIBUTE_POINT:
+					case ActionTypes.REMOVE_TALENT_POINT:
+					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+					case ActionTypes.REMOVE_SPELL_POINT:
+					case ActionTypes.REMOVE_LITURGY_POINT:
+						if (RequirementsStore.isValid()) {
+							this.removePoint(action.payload.id);
+						}
+						break;
+
+					default:
+						return true;
+				}
+			}
+
+			ListStore.emitChange();
+			return true;
+		});
+	}
+
+	get(id: string) {
+		switch (id) {
+			case 'COU':
+				return this.byId.ATTR_1;
+			case 'SGC':
+				return this.byId.ATTR_2;
+			case 'INT':
+				return this.byId.ATTR_3;
+			case 'CHA':
+				return this.byId.ATTR_4;
+			case 'DEX':
+				return this.byId.ATTR_5;
+			case 'AGI':
+				return this.byId.ATTR_6;
+			case 'CON':
+				return this.byId.ATTR_7;
+			case 'STR':
+				return this.byId.ATTR_8;
+
+			default:
+				return this.byId[id];
+		}
+	}
+
+	getObjByCategory(...categories: Category[]) {
+		const list: { [id: string]: Instance } = {};
+		for (const id in this.byId) {
+			if (this.byId.hasOwnProperty(id)) {
+				const obj = this.byId[id];
+				if (categories.includes(obj.category)) {
+					list[id] = obj;
+				}
+			}
+		}
+		return list;
+	}
+
+	getObjByCategoryGroup(category: Category, ...gr: number[]) {
+		const list: ToListById<Instance> = {};
+		for (const id in this.byId) {
+			if (this.byId.hasOwnProperty(id)) {
+				const obj = this.byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
+				if (obj.category === category && gr.includes(obj.gr)) {
+					list[id] = obj;
+				}
+			}
+		}
+		return list;
+	}
+
+	getAllByCategory(...categories: Category[]) {
+		const list = [];
+		for (const id in this.byId) {
+			if (this.byId.hasOwnProperty(id)) {
+				const obj = this.byId[id];
+				if (categories.includes(obj.category)) {
+					list.push(obj);
+				}
+			}
+		}
+		return list;
+	}
+
+	getAllByCategoryGroup(category: Category, ...gr: number[]) {
+		const list = [];
+		for (const id in this.byId) {
+			if (this.byId.hasOwnProperty(id)) {
+				const obj = this.byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
+				if (obj.category === category && gr.includes(obj.gr)) {
+					list.push(obj);
+				}
+			}
+		}
+		return list;
+	}
+
+	getPrimaryAttrID(type: 1 | 2) {
+		let attr;
+		if (type === 1) {
+			const tradition = get('SA_86') as SpecialAbilityInstance;
+			switch (ActivatableUtils.getSids(tradition)[0]) {
+				case 1:
+					attr = 'SGC';
+					break;
+				case 2:
+					attr = 'CHA';
+					break;
+				case 3:
+					attr = 'INT';
+					break;
+			}
+		} else if (type === 2) {
+			const tradition = get('SA_102') as SpecialAbilityInstance;
+			switch (ActivatableUtils.getSids(tradition)[0]) {
+				case 1:
+					attr = 'SGC';
+					break;
+				case 2:
+					attr = 'COU';
+					break;
+				case 3:
+					attr = 'COU';
+					break;
+				case 4:
+					attr = 'SGC';
+					break;
+				case 5:
+					attr = 'INT';
+					break;
+				case 6:
+					attr = 'INT';
+					break;
+			}
+		}
+		return attr;
+	}
+
+	getPrimaryAttr(type: 1 | 2) {
+		const id = getPrimaryAttrID(type);
+		if (id) {
+			return get(id) as AttributeInstance;
+		}
+		return;
+	}
+
+	getCostListForProfessionDependencies(reqs: RequirementObject[]) {
+		return reqs.map<number | ProfessionDependencyCost>(req => {
+			const { id, sid, sid2, tier, value } = req;
+			const obj = get(id as string) as Instance & { tiers?: number };
+
+			switch (obj.category) {
+				case Categories.ATTRIBUTES: {
+					const values: number[] = Array.from({ length: value! - 8 }, ({}, i) => i + 8);
+					this.byId[id as string] = IncreasableUtils.set(obj, value!);
+					return values.map(e => final(5, e)).reduce((a, b) => a + b, 0);
+				}
+
+				case Categories.ADVANTAGES:
+				case Categories.DISADVANTAGES:
+				case Categories.SPECIAL_ABILITIES: {
+					let cost;
+					(this.byId[id as string] as ActivatableInstance).active.push({ sid: sid as string | number | undefined, sid2, tier });
+					this.byId = {
+						...this.byId,
+						...ActivatableUtils.addDependencies(obj),
+					};
+					if (obj.tiers) {
+						cost = (obj.cost as number) * tier!;
+					}
+					else if (obj.sel.length > 0) {
+						cost = obj.sel[(sid as number) - 1].cost!;
+					}
+					else {
+						cost = obj.cost as number;
+					}
+					if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
+						const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
+						const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
+						const index = isKar ? 2 : isMag ? 1 : 0;
+
+						cost = {
+							adv: [0, 0, 0],
+							disadv: [0, 0, 0],
+							total: cost,
+						} as ProfessionDependencyCost;
+
+						if (obj.category === Categories.ADVANTAGES) {
+							cost.adv[0] = cost.total;
+							cost.adv[index] = cost.total;
+						}
+						else {
+							cost.disadv[0] = cost.total;
+							cost.disadv[index] = cost.total;
+						}
+					}
+					return cost || 0;
+				}
+			}
+			return 0;
+		});
+	}
+
+	private activate(id: string) {
+		(this.byId[id] as LiturgyInstance | SpellInstance).active = true;
+	}
+
+	private deactivate(id: string) {
+		(this.byId[id] as LiturgyInstance | SpellInstance).active = false;
+	}
+
+	private addPoint(id: string) {
+		this.byId[id] = IncreasableUtils.addPoint(this.byId[id] as IncreasableInstance);
+	}
+
+	private removePoint(id: string) {
+		this.byId[id] = IncreasableUtils.removePoint(this.byId[id] as IncreasableInstance);
+	}
+
+	private setValue(id: string, value: number) {
+		this.byId[id] = IncreasableUtils.set(this.byId[id] as IncreasableInstance, value);
+	}
+
+	private addSR(id: string, value: number) {
+		this.byId[id] = IncreasableUtils.add(this.byId[id] as IncreasableInstance, value);
+	}
+
+	private activateDASA(id: string, args: ActivateArgs) {
+		this.mergeIntoList(ActivatableUtils.activate(this.byId[id] as ActivatableInstance, args));
+	}
+
+	private deactivateDASA(id: string, index: number) {
+		this.mergeIntoList(ActivatableUtils.deactivate(this.byId[id] as ActivatableInstance, index));
+	}
+
+	private updateTier(id: string, index: number, tier: number) {
+		this.byId[id] = ActivatableUtils.setTier(this.byId[id] as ActivatableInstance, index, tier);
+	}
+
+	private mergeIntoList(list: ToListById<Instance>) {
+		this.byId = {
+			...this.byId,
+			...list,
+		};
+	}
+
+	private init(data: RawData) {
+		this.byId = init(data);
+		this.allIds = Object.keys(this.byId);
+	}
+
+	private updateAll({ attr, talents, ct, spells, chants, activatable }: Hero & HeroRest) {
+		attr.values.forEach(e => {
+			const [ id, value, mod ] = e;
+			this.setValue(id, value);
+			(this.byId[id] as AttributeInstance).mod = mod;
+		});
+		const flatSkills = { ...talents.active, ...ct.active };
+		Object.keys(flatSkills).forEach(id => {
+			this.setValue(id, flatSkills[id]);
+		});
+		const activateSkills = { ...spells.active, ...chants.active };
+		Object.keys(activateSkills).forEach(id => {
+			const value = activateSkills[id];
+			this.activate(id);
+			if (value !== null) {
+				this.setValue(id, value);
+			}
+		});
+		Object.keys(activatable).forEach(id => {
+			const values = activatable[id];
+			(this.byId[id] as ActivatableInstance).active = values;
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_16':
+				case 'DISADV_48':
+					values.forEach(p => {
+						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, [], p.sid as string);
+						this.mergeIntoList(list);
+					});
+					break;
+				case 'SA_10': {
+					const counter = new Map();
+					values.forEach(p => {
+						if (counter.has(p.sid)) {
+							counter.set(p.sid, counter.get(p.sid) + 1);
+						} else {
+							counter.set(p.sid, 1);
+						}
+						const addRequire = { id: p.sid, sid: counter.get(p.sid) * 6 } as RequirementObject;
+						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, [addRequire]);
+						this.mergeIntoList(list);
+					});
+					break;
+				}
+				default:
+					values.forEach(() => {
+						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance);
+						this.mergeIntoList(list);
+					});
 			}
 		});
 	}
 
-	if (selections.spec !== null) {
-		activatable.add({
-			id: 'SA_10',
-			sid: (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid,
-			sid2: selections.spec
+	private assignRCP(selections: Selections) {
+		const race = RaceStore.getCurrent();
+		const culture = CultureStore.getCurrent();
+		const profession = ProfessionStore.getCurrent();
+		const professionVariant = ProfessionVariantStore.getCurrent();
+
+		const skillRatingList = new Map<string, number>();
+		const skillActivateList = new Set<string>();
+		const activatable = new Set<RequirementObject>();
+		const languages = new Map<number, number>();
+		const scripts = new Set<number>();
+
+		// Race selections:
+
+		race!.attributes.forEach(e => {
+			const [ mod, id ] = e;
+			(this.byId[id] as AttributeInstance).mod += mod;
 		});
-	}
+		race!.autoAdvantages.forEach(e => activatable.add({ id: e }));
+		(this.byId[selections.attrSel] as AttributeInstance).mod = race!.attributeSelection[0];
 
-	selections.langLitc.forEach((value, key) => {
-		const [ category, id ] = key.split('_');
-		if (category === 'LANG') {
-			languages.set(Number.parseInt(id), value / 2);
-		} else {
-			scripts.add(Number.parseInt(id));
+		// Culture selections:
+
+		if (selections.useCulturePackage) {
+			culture!.talents.forEach(([ key, value ]) => {
+				skillRatingList.set(key, value);
+			});
 		}
-	});
 
-	selections.combattech.forEach(e => {
-		skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
-	});
+		const motherTongueId = culture!.languages.length > 1 ? selections.lang : culture!.languages[0];
+		languages.set(motherTongueId, 4);
 
-	selections.cantrips.forEach(e => {
-		skillActivateList.add(e);
-	});
-
-	selections.curses.forEach((value, key) => {
-		skillRatingList.set(key, value);
-	});
-
-	// Apply:
-
-	skillRatingList.forEach((value, key) => _addSR(key, value));
-	skillActivateList.forEach(e => _activate(e));
-
-	activatable.forEach(req => {
-		const { id, sid, sid2, tier } = req;
-		const obj = get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
-		const add: RequirementObject[] = [];
-		if (id === 'SA_10') {
-			obj.active.push({ sid: sid as string, sid2 });
-			add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
-		} else {
-			obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+		if (selections.buyLiteracy) {
+			const motherTongueScriptId = culture!.scripts.length > 1 ? selections.litc : culture!.scripts[0];
+			scripts.add(motherTongueScriptId);
 		}
-		obj.addDependencies(add);
-	});
-	(_byId['SA_28'] as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
-	(_byId['SA_30'] as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
-}
 
-function _clear() {
-	for (const id in _byId) {
-		const e = _byId[id] as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
-		if (e.reset) {
-			e.reset();
-		}
-	}
-}
+		// Profession selections:
 
-const ListStore = new Store((action: Action) => {
-	AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-	if (action.undo) {
-		switch(action.type) {
-			case ActionTypes.ACTIVATE_SPELL:
-			case ActionTypes.ACTIVATE_LITURGY:
-				_deactivate(action.payload.id);
-				break;
-
-			case ActionTypes.DEACTIVATE_SPELL:
-			case ActionTypes.DEACTIVATE_LITURGY:
-				_activate(action.payload.id);
-				break;
-
-			case ActionTypes.ACTIVATE_DISADV:
-			case ActionTypes.ACTIVATE_SPECIALABILITY:
-				const id = action.payload.id;
-				const index = action.payload.index!;
-				const active = action.payload.activeObject!;
-				const adds = [];
-				let sid;
-				switch (id) {
-					case 'ADV_4':
-					case 'ADV_16':
-					case 'DISADV_48':
-						sid = active.sid as string;
-						break;
-					case 'SA_10':
-						adds.push({ id: active.sid as string, value: (_byId[id] as ActivatableInstances).active.filter(e => e.sid === active.sid).length * 6 });
-						break;
-				}
-				(_byId[id] as ActivatableInstances).removeDependencies(adds, sid);
-				(_byId[id] as ActivatableInstances).active.splice(index, 1);
-				break;
-
-			case ActionTypes.DEACTIVATE_DISADV:
-			case ActionTypes.DEACTIVATE_SPECIALABILITY: {
-				const id = action.payload.id;
-				const index = action.payload.index;
-				const active = action.payload.activeObject!;
-				(_byId[id] as ActivatableInstances).active.splice(index, 0, active);
-				const adds = [];
-				let sid;
-				switch (id) {
-					case 'ADV_4':
-					case 'ADV_16':
-					case 'DISADV_48':
-						sid = active.sid as string;
-						break;
-					case 'SA_10':
-						adds.push({ id: active.sid as string, value: (_byId[id] as ActivatableInstances).active.filter(e => e.sid === active.sid).length * 6 });
-						break;
-				}
-				(_byId[id] as ActivatableInstances).addDependencies(adds, sid);
-				break;
+		[ ...profession!.talents, ...profession!.combatTechniques ].forEach(([ key, value ]) => {
+			skillRatingList.set(key, value);
+		});
+		[ ...profession!.spells, ...profession!.liturgies ].forEach(([ key, value ]) => {
+			skillActivateList.add(key);
+			if (typeof value === 'number') {
+				skillRatingList.set(key, value);
 			}
+		});
+		profession!.specialAbilities.forEach(e => activatable.add(e));
 
-			case ActionTypes.SET_DISADV_TIER:
-			case ActionTypes.SET_SPECIALABILITY_TIER:
-				_updateTier(action.payload.id, action.payload.index, action.payload.tier);
-				break;
-
-			case ActionTypes.ADD_ATTRIBUTE_POINT:
-			case ActionTypes.ADD_TALENT_POINT:
-			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-			case ActionTypes.ADD_SPELL_POINT:
-			case ActionTypes.ADD_LITURGY_POINT:
-				_removePoint(action.payload.id);
-				break;
-
-			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-			case ActionTypes.REMOVE_TALENT_POINT:
-			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-			case ActionTypes.REMOVE_SPELL_POINT:
-			case ActionTypes.REMOVE_LITURGY_POINT:
-				_addPoint(action.payload.id);
-				break;
-
-			default:
-				return true;
+		if (professionVariant) {
+			[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
+				skillRatingList.set(key, value);
+			});
+			professionVariant.specialAbilities.forEach(e => {
+				if (e.active === false) {
+					activatable.forEach(i => {
+						if (i.id === e.id) {
+							activatable.delete(i);
+						}
+					});
+				}
+				else {
+					activatable.add(e);
+				}
+			});
 		}
-	}
-	else {
-		switch(action.type) {
-			case ActionTypes.RECEIVE_DATA_TABLES:
-				_init(action.payload.data);
-				break;
 
-			case ActionTypes.RECEIVE_HERO_DATA:
-				_updateAll(action.payload.data);
-				break;
-
-			case ActionTypes.ASSIGN_RCP_OPTIONS:
-				_assignRCP(action.payload);
-				break;
-
-			case ActionTypes.CREATE_HERO:
-				_clear();
-				break;
-
-			case ActionTypes.ACTIVATE_SPELL:
-			case ActionTypes.ACTIVATE_LITURGY:
-				if (RequirementsStore.isValid()) {
-					_activate(action.payload.id);
-				}
-				break;
-
-			case ActionTypes.DEACTIVATE_SPELL:
-			case ActionTypes.DEACTIVATE_LITURGY:
-				if (RequirementsStore.isValid()) {
-					_deactivate(action.payload.id);
-				}
-				break;
-
-			case ActionTypes.ACTIVATE_DISADV:
-			case ActionTypes.ACTIVATE_SPECIALABILITY:
-				if (RequirementsStore.isValid()) {
-					_activateDASA(action.payload.id, action.payload);
-				}
-				break;
-
-			case ActionTypes.DEACTIVATE_DISADV:
-			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				if (RequirementsStore.isValid()) {
-					AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-					_deactivateDASA(action.payload.id, action.payload.index);
-				}
-				break;
-
-			case ActionTypes.SET_DISADV_TIER:
-			case ActionTypes.SET_SPECIALABILITY_TIER:
-				if (RequirementsStore.isValid()) {
-					_updateTier(action.payload.id, action.payload.index, action.payload.tier);
-				}
-				break;
-
-			case ActionTypes.ADD_ATTRIBUTE_POINT:
-			case ActionTypes.ADD_TALENT_POINT:
-			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-			case ActionTypes.ADD_SPELL_POINT:
-			case ActionTypes.ADD_LITURGY_POINT:
-				if (RequirementsStore.isValid()) {
-					_addPoint(action.payload.id);
-				}
-				break;
-
-			case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-			case ActionTypes.REMOVE_TALENT_POINT:
-			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-			case ActionTypes.REMOVE_SPELL_POINT:
-			case ActionTypes.REMOVE_LITURGY_POINT:
-				if (RequirementsStore.isValid()) {
-					_removePoint(action.payload.id);
-				}
-				break;
-
-			default:
-				return true;
+		if (selections.spec !== null) {
+			activatable.add({
+				id: 'SA_10',
+				sid: (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid,
+				sid2: selections.spec,
+			});
 		}
+
+		selections.langLitc.forEach((value, key) => {
+			const [ category, id ] = key.split('_');
+			if (category === 'LANG') {
+				languages.set(Number.parseInt(id), value / 2);
+			} else {
+				scripts.add(Number.parseInt(id));
+			}
+		});
+
+		selections.combattech.forEach(e => {
+			skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
+		});
+
+		selections.cantrips.forEach(e => {
+			skillActivateList.add(e);
+		});
+
+		selections.curses.forEach((value, key) => {
+			skillRatingList.set(key, value);
+		});
+
+		// Apply:
+
+		skillRatingList.forEach((value, key) => this.addSR(key, value));
+		skillActivateList.forEach(e => this.activate(e));
+
+		activatable.forEach(req => {
+			const { id, sid, sid2, tier } = req;
+			const obj = get(id as string) as ActivatableInstance;
+			const add: RequirementObject[] = [];
+			if (id === 'SA_10') {
+				obj.active.push({ sid: sid as string, sid2 });
+				add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
+			} else {
+				obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+			}
+			ActivatableUtils.addDependencies(obj, add);
+		});
+		(this.byId.SA_28 as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
+		(this.byId.SA_30 as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
 	}
 
-	ListStore.emitChange();
+	private clear() {
+		for (const id in this.byId) {
+			if (this.byId.hasOwnProperty(id)) {
+				const e = this.byId[id];
+				if (e.category === Categories.ATTRIBUTES) {
+					this.byId[id] = AttributeUtils.reset(e);
+				}
+				else if (e.category === Categories.COMBAT_TECHNIQUES) {
+					this.byId[id] = CombatTechniqueUtils.reset(e);
+				}
+				else if (e.category === Categories.LITURGIES) {
+					this.byId[id] = LiturgyUtils.reset(e);
+				}
+				else if (e.category === Categories.SPELLS) {
+					this.byId[id] = SpellUtils.reset(e);
+				}
+				else if (e.category === Categories.TALENTS) {
+					this.byId[id] = TalentUtils.reset(e);
+				}
+				else if (e.category === Categories.ADVANTAGES || e.category === Categories.DISADVANTAGES || e.category === Categories.SPECIAL_ABILITIES) {
+					this.byId[id] = ActivatableUtils.reset(e);
+				}
+			}
+		}
+	}
+}
 
-	return true;
-
-});
+const ListStore = new ListStoreStatic();
 
 export default ListStore;
 
-export const get = (id: string) => {
-	switch (id) {
-		case 'COU':
-			return _byId['ATTR_1'];
-		case 'SGC':
-			return _byId['ATTR_2'];
-		case 'INT':
-			return _byId['ATTR_3'];
-		case 'CHA':
-			return _byId['ATTR_4'];
-		case 'DEX':
-			return _byId['ATTR_5'];
-		case 'AGI':
-			return _byId['ATTR_6'];
-		case 'CON':
-			return _byId['ATTR_7'];
-		case 'STR':
-			return _byId['ATTR_8'];
+export const get = (id: string) => ListStore.get(id);
 
-		default:
-			return _byId[id];
-	}
-};
+export const getObjByCategory = (...categories: Category[]) => ListStore.getObjByCategory(...categories);
 
-export const getObjByCategory = (...categories: Category[]) => {
-	const list: { [id: string]: AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance | AttributeInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance } = {};
-	for (const id in _byId) {
-		const obj = _byId[id];
-		if (categories.includes(obj.category)) {
-			list[id] = obj;
-		}
-	}
-	return list;
-};
+export const getObjByCategoryGroup = (category: Category, ...gr: number[]) => ListStore.getObjByCategoryGroup(category, ...gr);
 
-export const getObjByCategoryGroup = (category: Category, ...gr: number[]) => {
-	const list: { [id: string]: TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance } = {};
-	for (const id in _byId) {
-		const obj = _byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
-		if (obj.category === category && gr.includes(obj.gr)) {
-			list[id] = obj;
-		}
-	}
-	return list;
-};
+export const getAllByCategory = (...categories: Category[]) => ListStore.getAllByCategory(...categories);
 
-export const getAllByCategory = (...categories: Category[]) => {
-	const list = [];
-	for (const id in _byId) {
-		const obj = _byId[id];
-		if (categories.includes(obj.category)) {
-			list.push(obj);
-		}
-	}
-	return list;
-};
+export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => ListStore.getAllByCategoryGroup(category, ...gr);
 
-export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => {
-	const list = [];
-	for (const id in _byId) {
-		const obj = _byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
-		if (obj.category === category && gr.includes(obj.gr)) {
-			list.push(obj);
-		}
-	}
-	return list;
-};
+export const getPrimaryAttrID = (type: 1 | 2) => ListStore.getPrimaryAttrID(type);
 
-export const getPrimaryAttrID = (type: 1 | 2) => {
-	let attr;
-	if (type === 1) {
-		switch ((get('SA_86') as SpecialAbilityInstance).sid[0]) {
-			case 1:
-				attr = 'SGC';
-				break;
-			case 2:
-				attr = 'CHA';
-				break;
-			case 3:
-				attr = 'INT';
-				break;
-		}
-	} else if (type === 2) {
-		switch ((get('SA_102') as SpecialAbilityInstance).sid[0]) {
-			case 1:
-				attr = 'SGC';
-				break;
-			case 2:
-				attr = 'COU';
-				break;
-			case 3:
-				attr = 'COU';
-				break;
-			case 4:
-				attr = 'SGC';
-				break;
-			case 5:
-				attr = 'INT';
-				break;
-			case 6:
-				attr = 'INT';
-				break;
-		}
-	}
-	return attr || 'ATTR_0';
-};
-
-export const getPrimaryAttr = (type: 1 | 2) => get(getPrimaryAttrID(type));
+export const getPrimaryAttr = (type: 1 | 2) => ListStore.getPrimaryAttr(type);

@@ -1,14 +1,14 @@
-import * as RaceActions from '../../actions/RaceActions';
-import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
 import classNames from 'classnames';
+import * as React from 'react';
+import * as RaceActions from '../../actions/RaceActions';
+import BorderButton from '../../components/BorderButton';
 import VerticalList from '../../components/VerticalList';
 
 interface Props {
-	changeTab: (tab: string) => void;
 	currentID: string | null;
 	race: RaceInstance;
 	showDetails: boolean;
+	changeTab(tab: string): void;
 }
 
 export default class RacesListItem extends React.Component<Props, undefined> {
@@ -18,12 +18,12 @@ export default class RacesListItem extends React.Component<Props, undefined> {
 
 		const { changeTab, currentID, race, showDetails } = this.props;
 
-		const className = classNames({
-			'active': race.id === currentID
-		});
-
 		return (
-			<li className={className}>
+			<li
+				className={classNames({
+					'active': race.id === currentID,
+				})}
+				>
 				<div className="left">
 					<h2>{race.name} ({race.ap} AP)</h2>
 					{

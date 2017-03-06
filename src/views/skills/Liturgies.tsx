@@ -1,39 +1,40 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import BorderButton from '../../components/BorderButton';
-import * as LiturgiesActions from '../../actions/LiturgiesActions';
-import LiturgiesStore from '../../stores/LiturgiesStore';
-import PhaseStore from '../../stores/PhaseStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
 import * as React from 'react';
+import * as LiturgiesActions from '../../actions/LiturgiesActions';
+import BorderButton from '../../components/BorderButton';
+import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
-import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
+import LiturgiesStore from '../../stores/LiturgiesStore';
+import PhaseStore from '../../stores/PhaseStore';
+import { filterAndSort } from '../../utils/ListUtils';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
+import SkillListItem from './SkillListItem';
 
 interface State {
-	liturgies: LiturgyInstance[];
 	addChantsDisabled: boolean;
 	filterText: string;
-	sortOrder: string;
+	liturgies: LiturgyInstance[];
 	phase: number;
 	showAddSlidein: boolean;
+	sortOrder: string;
 }
 
 export default class Liturgies extends React.Component<undefined, State> {
 
 	state = {
-		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: '',
-		sortOrder: LiturgiesStore.getSortOrder(),
+		liturgies: LiturgiesStore.getAll(),
 		phase: PhaseStore.get(),
-		showAddSlidein: false
+		showAddSlidein: false,
+		sortOrder: LiturgiesStore.getSortOrder(),
 	};
 
 	_updateLiturgiesStore = () => this.setState({
-		liturgies: LiturgiesStore.getAll(),
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
-		sortOrder: LiturgiesStore.getSortOrder()
+		liturgies: LiturgiesStore.getAll(),
+		sortOrder: LiturgiesStore.getSortOrder(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -54,7 +55,6 @@ export default class Liturgies extends React.Component<undefined, State> {
 	}
 
 	render() {
-
 		const GROUPS = LiturgiesStore.getGroupNames();
 		const ASPECTS = LiturgiesStore.getAspectNames();
 
@@ -64,7 +64,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 			{ name: 'Alphabetisch', value: 'name' },
 			{ name: 'Nach Aspekt', value: 'aspect' },
 			{ name: 'Nach Gruppe', value: 'group' },
-			{ name: 'Nach Steigerungsfaktor', value: 'ic' }
+			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
 		const list = filterAndSort(liturgies, filterText, sortOrder);
@@ -77,7 +77,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 				listActive.push(e);
 			}
 			else {
-				if (e.isOwnTradition) {
+				if (isOwnTradition(e)) {
 					listDeactive.push(e);
 				}
 			}
@@ -97,32 +97,35 @@ export default class Liturgies extends React.Component<undefined, State> {
 					<Scroll className="list">
 						<div className="list-wrapper">
 							{
-								listDeactive.map(liturgy => {
-									const [ a, b, c, checkmod ] = liturgy.check;
+								listDeactive.map(obj => {
+									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
 
-									const name = liturgy.name;
+									const name = obj.name;
 
-									const aspc = liturgy.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
+									const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-									const obj = liturgy.gr === 3 ? {} : {
+									const add = obj.gr === 3 ? {} : {
 										check,
 										checkmod,
-										ic: liturgy.ic
+										ic: obj.ic,
 									};
 
 									return (
 										<SkillListItem
-											key={liturgy.id}
-											id={liturgy.id}
+											key={obj.id}
+											id={obj.id}
 											name={name}
 											isNotActive
-											activate={this.addToList.bind(null, liturgy.id)}
-											activateDisabled={addChantsDisabled && liturgy.gr < 3}
+											activate={this.addToList.bind(null, obj.id)}
+											activateDisabled={addChantsDisabled && obj.gr < 3}
 											addFillElement
-											{...obj}
+											{...add}
 											>
-											<div className="aspect">{aspc}</div>
+											<div className="aspect">
+												{aspc}
+												{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
+											</div>
 										</SkillListItem>
 									);
 								})
@@ -151,15 +154,15 @@ export default class Liturgies extends React.Component<undefined, State> {
 
 								const name = obj.name;
 
-								const aspc = obj.aspect.map(e => ASPECTS[e - 1]).sort().join(', ');
+								const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-								const other = obj.gr === 3 ? {} : {
-									sr: obj.value,
+								const add = obj.gr === 3 ? {} : {
+									addDisabled: !isIncreasable(obj),
+									addPoint: this.addPoint.bind(null, obj.id),
 									check,
 									checkmod,
 									ic: obj.ic,
-									addPoint: this.addPoint.bind(null, obj.id),
-									addDisabled: !obj.isIncreasable
+									sr: obj.value,
 								};
 
 								return (
@@ -168,10 +171,11 @@ export default class Liturgies extends React.Component<undefined, State> {
 										id={obj.id}
 										name={name}
 										removePoint={phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!obj.isDecreasable}
+										removeDisabled={!isDecreasable(obj)}
 										addFillElement
 										noIncrease={obj.gr === 3}
-										{...other} >
+										{...add}
+										>
 										<div className="aspect">{aspc}</div>
 									</SkillListItem>
 								);

@@ -1,12 +1,12 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import createOverlay, { close } from '../../utils/createOverlay';
+import * as AuthActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
+import TextField from '../../components/TextField';
+import createOverlay, { close } from '../../utils/createOverlay';
 import ForgotPassword from './ForgotPassword';
 import ForgotUsername from './ForgotUsername';
 import Register from './Register';
 import ResendActivation from './ResendActivation';
-import TextField from '../../components/TextField';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -19,8 +19,8 @@ interface State {
 
 export default class Login extends React.Component<Props, State> {
 	state = {
+		password: '',
 		username: '',
-		password: ''
 	};
 
 	login = () => AuthActions.requestLogin(this.state.username, this.state.password);
@@ -36,32 +36,37 @@ export default class Login extends React.Component<Props, State> {
 			this.login();
 			close(this.props.node!);
 		}
-	};
+	}
 
 	render() {
 
 		const { username, password } = this.state;
 
 		return (
-			<Dialog id="login" title="Anmelden" node={this.props.node} buttons={[
-				{
-					label: 'Anmelden',
-					onClick: this.login,
-					primary: true,
-					disabled: username === '' || password === ''
-				},
-				{
-					label: 'Registrieren',
-					onClick: this.register
-				}
-			]}>
+			<Dialog
+				id="login"
+				title="Anmelden"
+				node={this.props.node}
+				buttons={[
+					{
+						disabled: username === '' || password === '',
+						label: 'Anmelden',
+						onClick: this.login,
+						primary: true,
+					},
+					{
+						label: 'Registrieren',
+						onClick: this.register,
+					},
+				]}
+				>
 				<TextField
 					hint="Benutzername"
 					value={username}
 					onChange={this.changeUsername}
 					onKeyDown={this._onEnter}
 					fullWidth
-				/>
+					/>
 				<TextField
 					hint="Passwort"
 					value={password}
@@ -69,7 +74,7 @@ export default class Login extends React.Component<Props, State> {
 					onKeyDown={this._onEnter}
 					type="password"
 					fullWidth
-				/>
+					/>
 				<p>
 					<span className="link" onClick={this.forgotUsername}>
 						Benutzername vergessen

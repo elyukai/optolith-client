@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Imprint from './Imprint';
 import SubTabs from '../../components/SubTabs';
+import Imprint from './Imprint';
 import ThirdPartyLicenses from './ThirdPartyLicenses';
 import TOU from './TOU';
 
@@ -10,7 +10,7 @@ interface State {
 
 export default class About extends React.Component<undefined, State> {
 	state = {
-		tab: 'imprint'
+		tab: 'imprint',
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
@@ -39,15 +39,15 @@ export default class About extends React.Component<undefined, State> {
 					tabs={[
 						{
 							label: 'Impressum',
-							tag: 'imprint'
+							tag: 'imprint',
 						},
 						{
 							label: 'Haftungsausschluss',
-							tag: 'tou'
+							tag: 'tou',
 						},
 						{
 							label: 'Third-party licenses',
-							tag: 'thirdPartyLicenses'
+							tag: 'thirdPartyLicenses',
 						}
 					]}
 					active={this.state.tab}

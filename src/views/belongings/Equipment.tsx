@@ -1,18 +1,19 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import { get } from '../../stores/ListStore';
-import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import Aside from '../../components/Aside';
 import BorderButton from '../../components/BorderButton';
-import createOverlay from '../../utils/createOverlay';
-import dotToComma from '../../utils/dotToComma';
-import EquipmentListItem from './EquipmentListItem';
-import EquipmentStore from '../../stores/EquipmentStore';
-import ItemEditor from './ItemEditor';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import SortOptions from '../../components/SortOptions';
 import TextField from '../../components/TextField';
+import EquipmentStore from '../../stores/EquipmentStore';
+import { get } from '../../stores/ListStore';
+import { isActive } from '../../utils/ActivatableUtils';
+import createOverlay from '../../utils/createOverlay';
+import dotToComma from '../../utils/dotToComma';
+import { filterAndSort } from '../../utils/ListUtils';
+import EquipmentListItem from './EquipmentListItem';
+import ItemEditor from './ItemEditor';
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
@@ -33,16 +34,14 @@ interface State {
 
 export default class Inventory extends React.Component<undefined, State> {
 	state = {
-		items: EquipmentStore.getAll(),
 		filterText: '',
 		filterTextSlidein: '',
+		items: EquipmentStore.getAll(),
+		purse: EquipmentStore.getPurse(),
+		showAddSlidein: false,
 		sortOrder: EquipmentStore.getSortOrder(),
 		templates: EquipmentStore.getAllTemplates(),
-		purse: EquipmentStore.getPurse(),
-		showAddSlidein: false
 	};
-
-	private updateEquipmentStore = () => this.setState({ items: EquipmentStore.getAll(), sortOrder: EquipmentStore.getSortOrder(), purse: EquipmentStore.getPurse() } as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -75,10 +74,10 @@ export default class Inventory extends React.Component<undefined, State> {
 		let startMoney = 750;
 		const ADV_36 = get('ADV_36') as AdvantageInstance;
 		const DISADV_2 = get('DISADV_2') as DisadvantageInstance;
-		if (ADV_36.isActive) {
+		if (isActive(ADV_36)) {
 			startMoney += ADV_36.active[0].tier! * 250;
 		}
-		else if (DISADV_2.isActive) {
+		else if (isActive(DISADV_2)) {
 			startMoney -= DISADV_2.active[0].tier! * 250;
 		}
 		const totalWeight = Math.round(list.reduce((n, i) => n + i.weight || n, 0) * 100) / 100;
@@ -136,4 +135,6 @@ export default class Inventory extends React.Component<undefined, State> {
 			</div>
 		);
 	}
+
+	private updateEquipmentStore = () => this.setState({ items: EquipmentStore.getAll(), sortOrder: EquipmentStore.getSortOrder(), purse: EquipmentStore.getPurse() } as State);
 }

@@ -1,5 +1,5 @@
-import { getAE } from '../../utils/secondaryAttributes';
 import * as React from 'react';
+import { getAE } from '../../utils/secondaryAttributes';
 import AttributeMods from './AttributeMods';
 import SheetHeader from './SheetHeader';
 import SpellsSheetCantrips from './SpellsSheetCantrips';
@@ -10,7 +10,7 @@ import SpellsSheetTraditionsProperties from './SpellsSheetTraditionsProperties';
 export default () => {
 	const addHeader = [
 		{ id: 'AE_MAX', short: 'AsP Max.', value: getAE().value },
-		{ id: 'AE_CURRENT', short: 'Aktuell' }
+		{ id: 'AE_CURRENT', short: 'Aktuell' },
 	];
 
 	return (

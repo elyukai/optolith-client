@@ -1,103 +1,114 @@
 import * as Categories from '../constants/Categories';
-import Advantage from '../data/Advantage';
-import Attribute from '../data/Attribute';
-import CombatTechnique from '../data/CombatTechnique';
-import Culture from '../data/Culture';
-import Disadvantage from '../data/Disadvantage';
-import Liturgy from '../data/Liturgy';
-import Profession from '../data/Profession';
-import ProfessionVariant from '../data/ProfessionVariant';
-import Race from '../data/Race';
-import SpecialAbility from '../data/SpecialAbility';
-import Spell from '../data/Spell';
-import Talent from '../data/Talent';
-
-interface List {
-	[id: string]: any;
-}
+import * as InitUtils from '../utils/InitUtils';
 
 type RawDataClass = RawAdvantage | RawAttribute | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
 
-type DataClass = typeof Advantage | typeof Attribute | typeof CombatTechnique | typeof Culture | typeof Disadvantage | typeof Liturgy | typeof Profession | typeof ProfessionVariant | typeof Race | typeof SpecialAbility | typeof Spell | typeof Talent;
-
 type Source = {
 	[id: string]: RawDataClass;
+} & object;
+
+interface List {
+	[id: string]: InstanceInInit;
+}
+
+const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance => {
+	return [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(obj.category);
 };
 
-export default ({ attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities }: RawData) => {
-	const _list: List = {};
+export default (raw: RawData) => {
+	const { attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities } = raw;
 
-	const iterate = (source: Source, DataClass: DataClass & { new(data: RawDataClass): void; }) => {
+	const list: List = {};
+
+	const iterate = <TRaw extends RawDataClass, T extends InstanceInInit>(source: { [id: string]: TRaw }, initFn: (raw: TRaw) => T) => {
 		for (const id in source) {
-			_list[id] = new DataClass(source[id]);
+			if (source.hasOwnProperty(id)) {
+				list[id] = initFn(source[id]);
+			}
 		}
 	};
 
 	const getAllByCategory = (...categories: Category[]) => {
-		const list = [];
-		for (const id in _list) {
-			const obj = _list[id];
-			if (categories.includes(obj.category)) {
-				list.push(obj);
+		const filteredList = [];
+		for (const id in list) {
+			if (list.hasOwnProperty(id)) {
+				const obj = list[id];
+				if (categories.includes(obj.category)) {
+					filteredList.push(obj);
+				}
 			}
 		}
-		return list;
+		return filteredList;
 	};
 
-	iterate(races, Race);
-	iterate(cultures, Culture);
-	iterate(professions, Profession);
-	_list['P_0'] = new Profession({
+	iterate(races, InitUtils.initRace);
+	iterate(cultures, InitUtils.initCulture);
+	iterate(professions, InitUtils.initProfession);
+	list.P_0 = InitUtils.initProfession({
+		ap: 0,
+		chants: [],
+		combattech: [],
 		id: 'P_0',
 		name: 'Eigene Profession',
-		subname: '',
-		ap: 0,
 		pre_req: [],
 		req: [],
-		sel: [],
 		sa: [],
-		combattech: [],
-		talents: [],
+		sel: [],
 		spells: [],
-		chants: [],
+		subname: '',
+		talents: [],
 		typ_adv: [],
 		typ_dadv: [],
 		untyp_adv: [],
 		untyp_dadv: [],
-		vars: []
+		vars: [],
 	});
-	iterate(professionVariants, ProfessionVariant);
-	iterate(attributes, Attribute);
-	iterate(talents, Talent);
-	iterate(combattech, CombatTechnique);
-	iterate(spells, Spell);
-	iterate(liturgies, Liturgy);
-	iterate(adv, Advantage);
-	iterate(disadv, Disadvantage);
-	iterate(specialabilities, SpecialAbility);
+	iterate(professionVariants, InitUtils.initProfessionVariant);
+	iterate(attributes, InitUtils.initAttribute);
+	iterate(talents, InitUtils.initTalent);
+	iterate(combattech, InitUtils.initCombatTechnique);
+	iterate(spells, InitUtils.initSpell);
+	iterate(liturgies, InitUtils.initLiturgy);
+	iterate(adv, InitUtils.initAdvantage);
+	iterate(disadv, InitUtils.initDisadvantage);
+	iterate(specialabilities, InitUtils.initSpecialAbility);
 
-	for (const id in _list) {
-		const { category, sel } = _list[id] as { category: Category; sel: (string | { id: string | number; name: string; cost?: number; })[] };
-		if ([Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(category)) {
-			_list[id].sel = (() => {
+	for (const id in list) {
+		if (list.hasOwnProperty(id)) {
+			const obj = list[id];
+			if (isActivatableInstance(obj)) {
 				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
-					return getAllByCategory(...(sel as { id: string | number; name: Category; cost?: number; }[]).map(e => e.name))
-					.filter(({ category: cg, gr }) => !((cg === Categories.SPELLS && gr === 5) || (cg === Categories.LITURGIES && gr === 3)))
-					.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
-					.map(({ id, name, skt }) => ({ id, name, cost: skt }));
+					const rawNames = getAllByCategory(...obj.sel.map(e => e.id as Category)) as SkillishInstance[];
+					const filtered = rawNames.filter(({ category, gr }) => {
+						const isCantrip = category === Categories.SPELLS && gr === 5;
+						const isBlessing = category === Categories.LITURGIES && gr === 3;
+						return !isCantrip && !isBlessing;
+					});
+					const mapped = filtered.map(({ id, name, ic }) => ({ id, name, cost: ic }));
+					mapped.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					obj.sel = mapped;
 				}
 
 				if (id === 'SA_72') {
-					return (sel as { id: number; name: string; cost: number; }[]).map((e,i) => ({ ...e, name: _list[e.name].name }));
+					type SpecialAbility72Selection = Array<{ id: number; name: string; cost: number; }>;
+					obj.sel = (obj.sel as SpecialAbility72Selection).map(e => ({ ...e, name: list[e.name].name as string }));
 				}
 
 				if (id === 'SA_10') {
-					return (getAllByCategory(Categories.TALENTS) as TalentInstance[]).map(({ id, name, ic, specialisation, specialisationInput }) => ({ id, name, cost: ic, specialisation, specialisationInput }));
+					const talents = getAllByCategory(Categories.TALENTS) as TalentInstance[];
+					obj.sel = talents.map(talent => {
+						const { id, name, ic, specialisation, specialisationInput } = talent;
+						return {
+							id,
+							name,
+							cost: ic,
+							specialisation,
+							specialisationInput,
+						};
+					});
 				}
-
-				return sel;
-			})();
+			}
 		}
 	}
-	return _list;
+	return list;
 };

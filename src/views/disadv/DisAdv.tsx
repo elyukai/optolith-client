@@ -1,7 +1,7 @@
 import * as React from 'react';
+import SubTabs from '../../components/SubTabs';
 import Advantages from './Advantages';
 import Disadvantages from './Disadvantages';
-import SubTabs from '../../components/SubTabs';
 
 interface State {
 	tab: string;
@@ -10,7 +10,7 @@ interface State {
 export default class DisAdv extends React.Component<undefined, State> {
 
 	state = {
-		tab: 'adv'
+		tab: 'adv',
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
@@ -34,12 +34,12 @@ export default class DisAdv extends React.Component<undefined, State> {
 					tabs={[
 						{
 							label: 'Vorteile',
-							tag: 'adv'
+							tag: 'adv',
 						},
 						{
 							label: 'Nachteile',
-							tag: 'disadv'
-						}
+							tag: 'disadv',
+						},
 					]}
 					active={this.state.tab}
 					onClick={this.handleClick} />

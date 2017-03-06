@@ -1,9 +1,9 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import createOverlay, { close } from '../../utils/createOverlay';
+import * as AuthActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
-import Login from './Login';
 import TextField from '../../components/TextField';
+import createOverlay, { close } from '../../utils/createOverlay';
+import Login from './Login';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -15,7 +15,7 @@ interface State {
 
 export default class ForgotPassword extends React.Component<Props, State> {
 	state = {
-		email: ''
+		email: '',
 	};
 
 	forgotPassword = () => AuthActions.requestPasswordReset(this.state.email);
@@ -27,7 +27,7 @@ export default class ForgotPassword extends React.Component<Props, State> {
 			this.forgotPassword();
 			close(this.props.node!);
 		}
-	};
+	}
 
 	render() {
 
@@ -36,15 +36,15 @@ export default class ForgotPassword extends React.Component<Props, State> {
 		return (
 			<Dialog id="forgotpassword" title="Passwort vergessen" node={this.props.node} buttons={[
 				{
+					disabled: email === '',
 					label: 'E-Mail anfordern',
 					onClick: this.forgotPassword,
 					primary: true,
-					disabled: email === ''
 				},
 				{
 					label: 'Zurück',
-					onClick: this.back
-				}
+					onClick: this.back,
+				},
 			]}>
 				<TextField
 					hint="Registrierte E-Mail-Adresse"

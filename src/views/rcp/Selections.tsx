@@ -1,24 +1,24 @@
-import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
-import * as Categories from '../../constants/Categories';
-import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as React from 'react';
+import * as ProfessionActions from '../../actions/ProfessionActions';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
-import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
+import Scroll from '../../components/Scroll';
+import Slidein from '../../components/Slidein';
+import * as Categories from '../../constants/Categories';
+import CultureStore from '../../stores/CultureStore';
+import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
-import Scroll from '../../components/Scroll';
 import SelectionsCantrips from './SelectionsCantrips';
 import SelectionsCt from './SelectionsCt';
 import SelectionsCurses from './SelectionsCurses';
 import SelectionsLangLitc from './SelectionsLangLitc';
 import SelectionsTalentSpec from './SelectionsTalentSpec';
-import Slidein from '../../components/Slidein';
 
 interface Props {
-	close: () => void;
+	close(): void;
 }
 
 interface State {
@@ -37,15 +37,15 @@ interface State {
 export default class Selections extends React.Component<Props, State> {
 	state = {
 		attrSel: 'ATTR_0',
-		useCulturePackage: true,
-		lang: 0,
 		buyLiteracy: false,
-		litc: 0,
 		cantrips: new Set(),
 		combattech: new Set(),
 		curses: new Map(),
+		lang: 0,
 		langLitc: new Map(),
-		spec: [null, '']
+		litc: 0,
+		spec: [null, ''],
+		useCulturePackage: true,
 	} as State;
 
 	changeAttrSel = (option: string) => this.setState({ attrSel: option } as State);
@@ -107,20 +107,20 @@ export default class Selections extends React.Component<Props, State> {
 			spec[1] = value;
 		}
 		this.setState({ spec } as State);
-	};
+	}
 
 	assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
 		ProfessionActions.setSelections({
 			...this.state,
 			map: selMap,
-			spec: this.state.spec[1] ? this.state.spec[1] : this.state.spec[0]!
+			spec: this.state.spec[1] ? this.state.spec[1] : this.state.spec[0]!,
 		});
-	};
+	}
 
 	render() {
-		const race = RaceStore.getCurrent();
-		const culture = CultureStore.getCurrent();
-		const profession = ProfessionStore.getCurrent();
+		const race = RaceStore.getCurrent()!;
+		const culture = CultureStore.getCurrent()!;
+		const profession = ProfessionStore.getCurrent()!;
 		const professionVariant = ProfessionVariantStore.getCurrent();
 
 		const { close } = this.props;
@@ -177,7 +177,7 @@ export default class Selections extends React.Component<Props, State> {
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
-			langLitcApLeft = value - Array.from(active.values()).reduce((a,b) => a + b, 0);
+			langLitcApLeft = value - Array.from(active.values()).reduce((a, b) => a + b, 0);
 
 			langLitcElement = <SelectionsLangLitc list={list} active={active} apTotal={value} apLeft={langLitcApLeft} change={this.changeLangLitc} />;
 		}
@@ -193,7 +193,7 @@ export default class Selections extends React.Component<Props, State> {
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
-			cursesApLeft = value - (active.size + Array.from(active.values()).reduce((a,b) => a + b, 0)) * 2;
+			cursesApLeft = value - (active.size + Array.from(active.values()).reduce((a, b) => a + b, 0)) * 2;
 
 			cursesElement = <SelectionsCurses list={list} active={active} apTotal={value} apLeft={cursesApLeft} change={this.changeCurse} />;
 		}

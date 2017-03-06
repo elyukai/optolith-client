@@ -1,19 +1,20 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import { get } from '../../stores/ListStore';
-import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
-import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
-import PhaseStore from '../../stores/PhaseStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
 import * as React from 'react';
+import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
+import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
-import SkillListItem from './SkillListItem';
 import TextField from '../../components/TextField';
+import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
+import { get } from '../../stores/ListStore';
+import PhaseStore from '../../stores/PhaseStore';
+import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
+import { filterAndSort } from '../../utils/ListUtils';
+import SkillListItem from './SkillListItem';
 
 interface State {
 	combattechniques: CombatTechniqueInstance[];
 	filterText: string;
-	sortOrder: string;
 	phase: number;
+	sortOrder: string;
 }
 
 export default class CombatTechniques extends React.Component<undefined, State> {
@@ -21,13 +22,13 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: '',
+		phase: PhaseStore.get(),
 		sortOrder: CombatTechniquesStore.getSortOrder(),
-		phase: PhaseStore.get()
 	};
 
 	_updateCombatTechniquesStore = () => this.setState({
 		combattechniques: CombatTechniquesStore.getAll(),
-		sortOrder: CombatTechniquesStore.getSortOrder()
+		sortOrder: CombatTechniquesStore.getSortOrder(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -44,7 +45,6 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 	}
 
 	render() {
-
 		const GROUPS = ['Nahkampf', 'Fernkampf'];
 
 		const { combattechniques, filterText, phase, sortOrder } = this.state;
@@ -55,11 +55,15 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 			<div className="page" id="combattechniques">
 				<div className="options">
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
-						{ name: 'Alphabetisch', value: 'name' },
-						{ name: 'Nach Gruppe', value: 'group' },
-						{ name: 'Nach Steigerungsfaktor', value: 'ic' }
-					]} />
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={[
+							{ name: 'Alphabetisch', value: 'name' },
+							{ name: 'Nach Gruppe', value: 'group' },
+							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+						]}
+						/>
 				</div>
 				<Scroll>
 					<div className="list-wrapper">
@@ -76,16 +80,17 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 										ic={obj.ic}
 										checkDisabled
 										addPoint={this.addPoint.bind(null, obj.id)}
-										addDisabled={!obj.isIncreasable}
+										addDisabled={!isIncreasable(obj)}
 										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!obj.isDecreasable}
+										removeDisabled={!isDecreasable(obj)}
 										addValues={[
 											{ className: primaryClassName, value: primary },
-											{ className: 'at', value: obj.at },
+											{ className: 'at', value: getAt(obj) },
 											{ className: 'atpa' },
-											{ className: 'pa', value: obj.pa }
+											{ className: 'pa', value: getPa(obj) },
 										]}
 										>
+										<div className="group">{GROUPS[obj.gr - 1]}</div>
 									</SkillListItem>
 								);
 							})

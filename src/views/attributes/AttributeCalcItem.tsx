@@ -1,8 +1,8 @@
+import * as React from 'react';
 import * as AttributeActions from '../../actions/AttributesActions';
-import AttributeBorder from './AttributeBorder';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';
-import * as React from 'react';
+import AttributeBorder from './AttributeBorder';
 
 interface Props {
 	attribute: SecondaryAttribute;
@@ -27,16 +27,12 @@ export default class AttributeCalcItem extends React.Component<Props, undefined>
 		const { attribute : { base, calc, currentAdd, maxAdd, mod, name, short, value }, phase } = this.props;
 
 		const increaseElement = maxAdd && value !== '-' && phase > 2 ? (
-			<IconButton className="add" icon="&#xE145;" onClick={this.addMaxEnergyPoint} disabled={!maxAdd || currentAdd && currentAdd >= maxAdd} />
+			<IconButton
+				className="add"
+				icon="&#xE145;"
+				onClick={this.addMaxEnergyPoint}
+				disabled={!maxAdd || currentAdd && currentAdd >= maxAdd}/>
 		) : null;
-
-		// const rebuyElement = this.props.attribute.hasOwnProperty('disabledPermanent') && value !== '-' && phase > 2 ? (
-		// 	<IconButton className="rebuy" icon="&#xE923;" disabled={disabledPermanent} />
-		// ) : null;
-
-		// const rebuyUndoElement = this.props.attribute.hasOwnProperty('disabledPermanent') && value !== '-' && phase > 2 ? (
-		// 	<IconButton className="rebuy-undo" icon="&#xE8B3;" disabled={disabledPermanent} />
-		// ) : null;
 
 		return (
 			<AttributeBorder label={short} value={value} tooltip={<div className="calc-attr-overlay">
@@ -53,5 +49,3 @@ export default class AttributeCalcItem extends React.Component<Props, undefined>
 		);
 	}
 }
-				// {rebuyElement}
-				// {rebuyUndoElement}

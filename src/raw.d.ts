@@ -38,7 +38,7 @@ interface RawRace {
 	sk: number;
 	zk: number;
 	gs: number;
-	attr: number[][];
+	attr: [number, number][];
 	attr_sel: [number, number[]];
 	typ_cultures: string[];
 	auto_adv: string[];
@@ -95,7 +95,6 @@ interface RawProfession {
 interface RawProfessionVariant {
 	id: string;
 	name: string | { m: string, f: string };
-	subname: string | { m: string, f: string };
 	ap: number;
 	pre_req: ProfessionDependencyObject[];
 	req: RequirementObject[];
@@ -135,7 +134,7 @@ interface RawDisadvantage extends RawAdvantage {}
 interface RawLiturgy {
 	id: string;
 	name: string;
-	check: [number, number, number];
+	check: [number, number, number, string | never];
 	skt: number;
 	trad: number[];
 	aspc: number[];
@@ -156,7 +155,7 @@ interface RawSpecialAbility {
 interface RawSpell {
 	id: string;
 	name: string;
-	check: [number, number, number];
+	check: [number, number, number, string | never];
 	skt: number;
 	trad: number[];
 	merk: number;

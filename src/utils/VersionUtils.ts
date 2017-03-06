@@ -1,27 +1,25 @@
-const _major = 1;
-const _minor = 0;
-const _patch = 0;
-const _version = [ _major, _minor, _patch ];
-
 class VersionStoreStatic {
+	private major = 1;
+	private minor = 0;
+	private patch = 0;
+	private version = [ this.major, this.minor, this.patch ];
 
 	get() {
-		return _version.join('.');
+		return this.version.join('.');
 	}
 
 	isLower(version: string) {
 		const versionArray = version.split('.').map(e => parseInt(e));
-		if (versionArray[0] < _version[0]) {
+		if (versionArray[0] < this.version[0]) {
 			return true;
-		} else if (versionArray[1] < _version[1]) {
+		} else if (versionArray[1] < this.version[1]) {
 			return true;
-		} else if (versionArray[2] < _version[2]) {
+		} else if (versionArray[2] < this.version[2]) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
 }
 
 const VersionStore = new VersionStoreStatic();

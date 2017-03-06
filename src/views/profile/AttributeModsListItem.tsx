@@ -14,4 +14,4 @@ export default (props: AttributeInstance) => {
 			<td>{value + 3}</td>
 		</tr>
 	);
-}
+};

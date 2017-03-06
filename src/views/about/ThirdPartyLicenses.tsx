@@ -1,9 +1,9 @@
 import * as React from 'react';
-import VersionStore from '../../stores/VersionStore';
 import Scroll from '../../components/Scroll';
+import VersionUtils from '../../utils/VersionUtils';
 
 export default () => {
-	const version = VersionStore.get();
+	const version = VersionUtils.get();
 	return (
 		<div className="page" id="third-party-software">
 			<Scroll className="text">

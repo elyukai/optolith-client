@@ -1,13 +1,13 @@
-import * as DisAdvActions from '../../actions/DisAdvActions';
+import classNames from 'classnames';
 import * as React from 'react';
+import * as DisAdvActions from '../../actions/DisAdvActions';
 import ActivatableAddListItem from '../../components/ActivatableAddListItem';
 import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
 import Scroll from '../../components/Scroll';
-import classNames from 'classnames';
 
 interface Props {
 	active?: boolean;
-	list: (AdvantageInstance | DisadvantageInstance | ActiveViewObject)[];
+	list: Array<AdvantageInstance | DisadvantageInstance | ActiveViewObject>;
 	phase: number;
 	rating: { [id: string]: string };
 	showRating: boolean;

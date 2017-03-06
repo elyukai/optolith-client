@@ -12,7 +12,7 @@ interface State {
 
 export default class Account extends React.Component<undefined, State> {
 	state = {
-		newName: ''
+		newName: '',
 	};
 
 	handleName = (event: InputTextEvent) => this.setState({ newName: event.target.value } as State);

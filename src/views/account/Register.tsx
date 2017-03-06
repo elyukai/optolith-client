@@ -1,9 +1,9 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import createOverlay, { close } from '../../utils/createOverlay';
+import * as AuthActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
-import Login from './Login';
 import TextField from '../../components/TextField';
+import createOverlay, { close } from '../../utils/createOverlay';
+import Login from './Login';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -28,9 +28,9 @@ export default class Register extends React.Component<Props, State> {
 		displayName: '',
 		email: '',
 		email2: '',
-		username: '',
 		password: '',
-		password2: ''
+		password2: '',
+		username: '',
 	};
 
 	register = () => AuthActions.requestRegistration(this.state.email, this.state.username, this.state.displayName, this.state.password);
@@ -70,9 +70,6 @@ export default class Register extends React.Component<Props, State> {
 		return (
 			<Dialog id="login" title="Registrieren" node={this.props.node} buttons={[
 				{
-					label: 'Registrieren',
-					onClick: this.register,
-					primary: true,
 					disabled:
 						email === '' ||
 						!_validateEmail(email) ||
@@ -86,12 +83,15 @@ export default class Register extends React.Component<Props, State> {
 						password === '' ||
 						password.length < 5 ||
 						password.length > 20 ||
-						password !== password2
+						password !== password2,
+					label: 'Registrieren',
+					onClick: this.register,
+					primary: true,
 				},
 				{
 					label: 'Zurück',
-					onClick: this.back
-				}
+					onClick: this.back,
+				},
 			]}>
 				<TextField
 					hint="E-Mail-Adresse"

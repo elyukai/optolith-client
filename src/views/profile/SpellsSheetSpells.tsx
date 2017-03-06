@@ -1,14 +1,15 @@
-import { get } from '../../stores/ListStore';
-import { sort } from '../../utils/ListUtils';
-import * as React from 'react';
 import classNames from 'classnames';
-import SpellsStore from '../../stores/SpellsStore';
+import * as React from 'react';
 import TextBox from '../../components/TextBox';
+import { get } from '../../stores/ListStore';
+import SpellsStore from '../../stores/SpellsStore';
+import { sort } from '../../utils/ListUtils';
+import { isOwnTradition } from '../../utils/SpellUtils';
 
 export default () => {
 	const filtered = SpellsStore.getAll().filter(e => e.active && e.gr !== 5);
 	const spells = sort(filtered, SpellsStore.getSortOrder()) as SpellInstance[];
-	const list = Array(21).fill(undefined) as (SpellInstance | undefined)[];
+	const list = Array(21).fill(undefined) as Array<SpellInstance | undefined>;
 	list.splice(0, Math.min(spells.length, 21), ...spells);
 	const PROPERTIES = SpellsStore.getPropertyNames();
 	const TRADITIONS = SpellsStore.getTraditionNames();
@@ -37,7 +38,7 @@ export default () => {
 								const checkmod = rawCheck.splice(3)[0];
 								const check = rawCheck.map(attr => (get(attr) as AttributeInstance).short).join('/');
 								let name = e.name;
-								if (!e.isOwnTradition) {
+								if (!isOwnTradition(e)) {
 									name += ` (${e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
 								}
 								return (
@@ -50,7 +51,7 @@ export default () => {
 										<td className="range"></td>
 										<td className="duration"></td>
 										<td className="property">{PROPERTIES[e.property - 1]}</td>
-										<td className="ic">{['A','B','C','D'][e.ic - 1]}</td>
+										<td className="ic">{['A', 'B', 'C', 'D'][e.ic - 1]}</td>
 										<td className="effect"></td>
 										<td className="ref"></td>
 									</tr>

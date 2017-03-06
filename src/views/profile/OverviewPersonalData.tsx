@@ -1,5 +1,5 @@
-import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
+import * as ProfileActions from '../../actions/ProfileActions';
 import Dropdown from '../../components/Dropdown';
 import IconButton from '../../components/IconButton';
 import InputButtonGroup from '../../components/InputButtonGroup';

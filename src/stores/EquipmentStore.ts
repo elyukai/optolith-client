@@ -1,146 +1,153 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import Item from '../data/Item';
+import { initItem } from '../utils/InitUtils';
 import Store from './Store';
 
 type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction | ReceiveHeroDataAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction;
 
-let _itemsById: { [id: string]: ItemInstance } = {};
-let _items: string[] = [];
-let _itemTemplatesById: { [id: string]: ItemInstance } = {};
-let _itemTemplates: string[] = [];
-let _filterText = '';
-let _sortOrder = 'name';
-let _purse = {
-	d: '0',
-	s: '0',
-	h: '0',
-	k: '0'
-};
-
-function _init(raw: { [id: string]: RawItem }) {
-	for (const id in raw) {
-		_itemTemplatesById[id] = new Item({ ...raw[id], amount: 1, isTemplateLocked: true });
-		_itemTemplates.push(id);
-	}
-}
-
-function _updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: string; s: string; h: string; k: string; }}) {
-	for (const id in items) {
-		_itemsById[id] = new Item({ ...items[id] });
-		_items.push(id);
-	}
-	_purse = purse;
-}
-
-function _updateSortOrder(option: string) {
-	_sortOrder = option;
-}
-
-function _addItem(raw: ItemInstance, id: string) {
-	_itemsById[id] = new Item({ ...raw, id });
-	_items.push(id);
-}
-
-function _saveItem(id: string, item: ItemInstance) {
-	_itemsById[id] = new Item(item);
-}
-
-function _removeItem(id: string) {
-	delete _itemsById[id];
-	_items.some((e,i) => {
-		if (e === id) {
-			_items.splice(i, 1);
-			return true;
-		}
-		return false;
-	});
-}
-
 class EquipmentStoreStatic extends Store {
+	private itemsById: { [id: string]: ItemInstance } = {};
+	private items: string[] = [];
+	private itemTemplatesById: { [id: string]: ItemInstance } = {};
+	private itemTemplates: string[] = [];
+	private filterText = '';
+	private sortOrder = 'name';
+	private purse = {
+		d: '0',
+		h: '0',
+		k: '0',
+		s: '0',
+	};
+	readonly dispatchToken: string;
+
+	constructor() {
+		super();
+		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			switch (action.type) {
+				case ActionTypes.SET_ITEMS_SORT_ORDER:
+					this.updateSortOrder(action.payload.sortOrder);
+					break;
+
+				case ActionTypes.SET_DUCATES:
+					this.purse.d = action.payload.value;
+					break;
+
+				case ActionTypes.SET_SILVERTHALERS:
+					this.purse.s = action.payload.value;
+					break;
+
+				case ActionTypes.SET_HELLERS:
+					this.purse.h = action.payload.value;
+					break;
+
+				case ActionTypes.SET_KREUTZERS:
+					this.purse.k = action.payload.value;
+					break;
+
+				case ActionTypes.ADD_ITEM:
+					this.addItem(action.payload.data, 'ITEM_' + (this.items[this.items.length - 1] ? this.items[this.items.length - 1].split('_')[1] + 1 : 1));
+					break;
+
+				case ActionTypes.SET_ITEM:
+					this.saveItem(action.payload.id, action.payload.data);
+					break;
+
+				case ActionTypes.REMOVE_ITEM:
+					this.removeItem(action.payload.id);
+					break;
+
+				case ActionTypes.RECEIVE_DATA_TABLES:
+					this.init(action.payload.data.items);
+					break;
+
+				case ActionTypes.RECEIVE_HERO_DATA:
+					this.updateAll(action.payload.data.belongings);
+					break;
+
+				default:
+					return true;
+			}
+			this.emitChange();
+			return true;
+		});
+	}
 
 	get(id: string) {
-		return _itemsById[id];
+		return this.itemsById[id];
 	}
 
 	getAll() {
-		return _items.map(e => _itemsById[e]);
+		return this.items.map(e => this.itemsById[e]);
 	}
 
 	getAllById() {
-		return _itemsById;
+		return this.itemsById;
 	}
 
 	getTemplate(id: string) {
-		return _itemTemplatesById[id];
+		return this.itemTemplatesById[id];
 	}
 
 	getAllTemplates() {
-		return _itemTemplates.map(e => _itemTemplatesById[e]);
+		return this.itemTemplates.map(e => this.itemTemplatesById[e]);
 	}
 
 	getFilterText() {
-		return _filterText;
+		return this.filterText;
 	}
 
 	getSortOrder() {
-		return _sortOrder;
+		return this.sortOrder;
 	}
 
 	getPurse() {
-		return _purse;
+		return this.purse;
 	}
 
+	private init(raw: { [id: string]: RawItem }) {
+		for (const id in raw) {
+			if (raw.hasOwnProperty(id)) {
+				this.itemTemplatesById[id] = initItem({ ...raw[id], amount: 1, isTemplateLocked: true });
+				this.itemTemplates.push(id);
+			}
+		}
+	}
+
+	private updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: string; s: string; h: string; k: string; }}) {
+		for (const id in items) {
+			if (items.hasOwnProperty(id)) {
+				this.itemsById[id] = items[id];
+				this.items.push(id);
+			}
+		}
+		this.purse = purse;
+	}
+
+	private updateSortOrder(option: string) {
+		this.sortOrder = option;
+	}
+
+	private addItem(raw: ItemInstance, id: string) {
+		this.itemsById[id] = { ...raw, id };
+		this.items.push(id);
+	}
+
+	private saveItem(id: string, item: ItemInstance) {
+		this.itemsById[id] = item;
+	}
+
+	private removeItem(id: string) {
+		delete this.itemsById[id];
+		this.items.some((e, i) => {
+			if (e === id) {
+				this.items.splice(i, 1);
+				return true;
+			}
+			return false;
+		});
+	}
 }
 
-const EquipmentStore = new EquipmentStoreStatic((action: Action) => {
-	switch( action.type ) {
-		case ActionTypes.SET_ITEMS_SORT_ORDER:
-			_updateSortOrder(action.payload.sortOrder);
-			break;
-
-		case ActionTypes.SET_DUCATES:
-			_purse.d = action.payload.value;
-			break;
-
-		case ActionTypes.SET_SILVERTHALERS:
-			_purse.s = action.payload.value;
-			break;
-
-		case ActionTypes.SET_HELLERS:
-			_purse.h = action.payload.value;
-			break;
-
-		case ActionTypes.SET_KREUTZERS:
-			_purse.k = action.payload.value;
-			break;
-
-		case ActionTypes.ADD_ITEM:
-			_addItem(action.payload.data, 'ITEM_' + (_items[_items.length - 1] ? _items[_items.length - 1].split('_')[1] + 1 : 1));
-			break;
-
-		case ActionTypes.SET_ITEM:
-			_saveItem(action.payload.id, action.payload.data);
-			break;
-
-		case ActionTypes.REMOVE_ITEM:
-			_removeItem(action.payload.id);
-			break;
-
-		case ActionTypes.RECEIVE_DATA_TABLES:
-			_init(action.payload.data.items);
-			break;
-
-		case ActionTypes.RECEIVE_HERO_DATA:
-			_updateAll(action.payload.data.belongings);
-			break;
-
-		default:
-			return true;
-	}
-
-	EquipmentStore.emitChange();
-	return true;
-});
+const EquipmentStore = new EquipmentStoreStatic();
 
 export default EquipmentStore;

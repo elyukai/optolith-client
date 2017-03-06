@@ -1,12 +1,12 @@
-import { getAE, getKP } from '../../utils/secondaryAttributes';
 import * as React from 'react';
+import Scroll from '../../components/Scroll';
+import { getAE, getKP } from '../../utils/secondaryAttributes';
 import BelongingsSheet from './BelongingsSheet';
 import CombatSheet from './CombatSheet';
 import LiturgiesSheet from './LiturgiesSheet';
 import MainSheet from './MainSheet';
-import Scroll from '../../components/Scroll';
-import SpellsSheet from './SpellsSheet';
 import SkillsSheet from './SkillsSheet';
+import SpellsSheet from './SpellsSheet';
 
 export default () => (
 	<div className="page" id="sheets">

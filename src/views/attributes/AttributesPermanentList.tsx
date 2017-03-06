@@ -1,6 +1,6 @@
-import { getAE, getKP } from '../../utils/secondaryAttributes';
-import * as AttributesActions from '../../actions/AttributesActions';
 import * as React from 'react';
+import * as AttributesActions from '../../actions/AttributesActions';
+import { getAE, getKP } from '../../utils/secondaryAttributes';
 import AttributesPermanentListItem from './AttributesPermanentListItem';
 
 interface Props {

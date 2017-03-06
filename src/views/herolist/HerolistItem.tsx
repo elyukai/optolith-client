@@ -1,13 +1,13 @@
-import { get } from '../../stores/ListStore';
+import classNames from 'classnames';
+import * as React from 'react';
+import ProgressArc from 'react-progress-arc';
 import * as HerolistActions from '../../actions/HerolistActions';
 import * as LocationActions from '../../actions/LocationActions';
-import * as React from 'react';
 import Avatar from '../../components/Avatar';
-import classNames from 'classnames';
 import IconButton from '../../components/IconButton';
-import ProfileStore from '../../stores/ProfileStore';
-import ProgressArc from 'react-progress-arc';
 import VerticalList from '../../components/VerticalList';
+import { get } from '../../stores/ListStore';
+import ProfileStore from '../../stores/ProfileStore';
 
 interface Props {
 	id: string | null;

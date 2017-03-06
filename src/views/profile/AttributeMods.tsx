@@ -1,7 +1,7 @@
 import * as React from 'react';
-import AttributeModsListItem from './AttributeModsListItem';
-import AttributeStore from '../../stores/AttributeStore';
 import TextBox from '../../components/TextBox';
+import AttributeStore from '../../stores/AttributeStore';
+import AttributeModsListItem from './AttributeModsListItem';
 
 export default () => {
 	const attributes: AttributeInstance[] = AttributeStore.getAll();
@@ -26,4 +26,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-}
+};

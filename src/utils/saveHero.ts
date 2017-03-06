@@ -1,13 +1,12 @@
 import * as ActivatableStore from '../stores/ActivatableStore';
-import * as WebAPIUtils from './WebAPIUtils';
 import APStore from '../stores/APStore';
 import AttributeStore from '../stores/AttributeStore';
 import CombatTechniquesStore from '../stores/CombatTechniquesStore';
 import CultureStore from '../stores/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import ELStore from '../stores/ELStore';
-import HistoryStore from '../stores/HistoryStore';
 import EquipmentStore from '../stores/EquipmentStore';
+import HistoryStore from '../stores/HistoryStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import PhaseStore from '../stores/PhaseStore';
 import ProfessionStore from '../stores/ProfessionStore';
@@ -17,10 +16,11 @@ import RaceStore from '../stores/RaceStore';
 import RulesStore from '../stores/RulesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
-import VersionStore from '../stores/VersionStore';
+import VersionUtils from '../utils/VersionUtils';
+import * as WebAPIUtils from './WebAPIUtils';
 
 export const generateArray = (): SaveData => ({
-	clientVersion: VersionStore.get(),
+	clientVersion: VersionUtils.get(),
 	dateCreated: (new Date()).toJSON(),
 	dateModified: (new Date()).toJSON(),
 	id: ProfileStore.getID(),
@@ -38,20 +38,20 @@ export const generateArray = (): SaveData => ({
 	attr: AttributeStore.getForSave(),
 	activatable: ActivatableStore.getForSave(),
 	disadv: {
-		ratingVisible: DisAdvStore.getRating()
+		ratingVisible: DisAdvStore.getRating(),
 	},
 	talents: TalentsStore.getForSave(),
 	ct: CombatTechniquesStore.getAllForSave(),
 	spells: SpellsStore.getForSave(),
 	chants: LiturgiesStore.getForSave(),
 	belongings: {
-		items: EquipmentStore.getAllById(),
 		equipment: {},
+		items: EquipmentStore.getAllById(),
 		pet: {},
-		purse: EquipmentStore.getPurse()
+		purse: EquipmentStore.getPurse(),
 	},
 	rules: RulesStore.getAll(),
-	history: HistoryStore.getAll()
+	history: HistoryStore.getAll(),
 });
 
 export default () => WebAPIUtils.saveHero(generateArray());

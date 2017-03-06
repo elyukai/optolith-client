@@ -1,16 +1,15 @@
-import { Component } from 'react';
-import { filterAndSort } from '../../utils/ListUtils';
 import * as React from 'react';
 import * as TalentsActions from '../../actions/TalentsActions';
-import Aside from '../../components/Aside';
 import Checkbox from '../../components/Checkbox';
-import CultureStore from '../../stores/CultureStore';
-import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
-import SkillListItem from './SkillListItem';
-import TalentsStore from '../../stores/TalentsStore';
 import TextField from '../../components/TextField';
+import CultureStore from '../../stores/CultureStore';
+import PhaseStore from '../../stores/PhaseStore';
+import TalentsStore from '../../stores/TalentsStore';
+import { filterAndSort } from '../../utils/ListUtils';
+import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
+import SkillListItem from './SkillListItem';
 
 interface State {
 	currentCulture: CultureInstance;
@@ -21,21 +20,21 @@ interface State {
 	talents: TalentInstance[];
 }
 
-export default class Talents extends Component<undefined, State> {
+export default class Talents extends React.Component<undefined, State> {
 
 	state = {
-		talents: TalentsStore.getAll(),
+		currentCulture: CultureStore.getCurrent()!,
 		filterText: '',
+		phase: PhaseStore.get(),
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.isRatingVisible(),
-		currentCulture: CultureStore.getCurrent(),
-		phase: PhaseStore.get()
+		talents: TalentsStore.getAll(),
 	};
 
 	_updateTalentsStore = () => this.setState({
-		talents: TalentsStore.getAll(),
 		sortOrder: TalentsStore.getSortOrder(),
-		talentRating: TalentsStore.isRatingVisible()
+		talentRating: TalentsStore.isRatingVisible(),
+		talents: TalentsStore.getAll(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -64,11 +63,15 @@ export default class Talents extends Component<undefined, State> {
 			<div className="page" id="talents">
 				<div className="options">
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
-						{ name: 'Alphabetisch', value: 'name' },
-						{ name: 'Nach Gruppe', value: 'group' },
-						{ name: 'Nach Steigerungsfaktor', value: 'ic' }
-					]} />
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={[
+							{ name: 'Alphabetisch', value: 'name' },
+							{ name: 'Nach Gruppe', value: 'group' },
+							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+						]}
+						/>
 					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Wertung durch Kultur anzeigen</Checkbox>
 				</div>
 				<Scroll className="list">
@@ -78,16 +81,19 @@ export default class Talents extends Component<undefined, State> {
 								<SkillListItem
 									key={obj.id}
 									id={obj.id}
-									typ={talentRating && obj.isTyp}
-									untyp={talentRating && obj.isUntyp}
+									typ={talentRating && isTyp(obj)}
+									untyp={talentRating && isUntyp(obj)}
 									name={obj.name}
 									sr={obj.value}
 									check={obj.check}
 									ic={obj.ic}
 									addPoint={this.addPoint.bind(null, obj.id)}
-									addDisabled={!obj.isIncreasable}
+									addDisabled={!isIncreasable(obj)}
 									removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-									removeDisabled={!obj.isDecreasable} />
+									removeDisabled={!isDecreasable(obj)}
+									>
+									<div className="group">{GROUPS[obj.gr - 1]}</div>
+								</SkillListItem>
 							))
 						}
 					</div>

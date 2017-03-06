@@ -1,15 +1,15 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import * as RaceActions from '../../actions/RaceActions';
 import * as React from 'react';
+import * as RaceActions from '../../actions/RaceActions';
 import Checkbox from '../../components/Checkbox';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
-import RacesListItem from './RacesListItem';
-import RaceStore from '../../stores/RaceStore';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
+import RaceStore from '../../stores/RaceStore';
+import { filterAndSort } from '../../utils/ListUtils';
+import RacesListItem from './RacesListItem';
 
 interface Props {
-	changeTab: (tab: string) => void;
+	changeTab(tab: string): void;
 }
 
 interface State {
@@ -22,18 +22,18 @@ interface State {
 
 export default class Races extends React.Component<Props, State> {
 	state = {
-		races: RaceStore.getAll(),
+		areValuesVisible: RaceStore.areValuesVisible(),
 		currentID: RaceStore.getCurrentID(),
 		filterText: '',
+		races: RaceStore.getAll(),
 		sortOrder: RaceStore.getSortOrder(),
-		areValuesVisible: RaceStore.areValuesVisible()
 	};
 
 	_updateRaceStore = () => this.setState({
-		races: RaceStore.getAll(),
+		areValuesVisible: RaceStore.areValuesVisible(),
 		currentID: RaceStore.getCurrentID(),
+		races: RaceStore.getAll(),
 		sortOrder: RaceStore.getSortOrder(),
-		areValuesVisible: RaceStore.areValuesVisible()
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -63,7 +63,7 @@ export default class Races extends React.Component<Props, State> {
 						onClick={this.sort}
 						array={[
 							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Kosten', value: 'cost' }
+							{ name: 'Nach Kosten', value: 'cost' },
 						]}
 						/>
 					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
@@ -77,7 +77,7 @@ export default class Races extends React.Component<Props, State> {
 								currentID={currentID}
 								race={race}
 								showDetails={areValuesVisible}
-								/>
+								/>,
 							)
 						}
 					</ul>

@@ -1,11 +1,11 @@
-import { sort } from '../../utils/ListUtils';
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import dotToComma from '../../utils/dotToComma';
-import EquipmentStore from '../../stores/EquipmentStore';
 import LabelBox from '../../components/LabelBox';
-import SheetHeader from './SheetHeader';
 import TextBox from '../../components/TextBox';
+import EquipmentStore from '../../stores/EquipmentStore';
+import { get } from '../../stores/ListStore';
+import dotToComma from '../../utils/dotToComma';
+import { sort } from '../../utils/ListUtils';
+import SheetHeader from './SheetHeader';
 
 const rowCreator = (e: ItemInstance | undefined, i: number) => {
 	if (e) {
@@ -36,7 +36,7 @@ export default () => {
 	const { value } = get('STR') as AttributeInstance;
 	const { d, s, h, k } = EquipmentStore.getPurse();
 	const items = sort(EquipmentStore.getAll(), EquipmentStore.getSortOrder()) as ItemInstance[];
-	const firstColumn = Array(66).fill(undefined) as (ItemInstance | undefined)[];
+	const firstColumn = Array(66).fill(undefined) as Array<ItemInstance | undefined>;
 	firstColumn.splice(0, Math.min(items.length, 66), ...items);
 	const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));
 

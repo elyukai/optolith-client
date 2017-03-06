@@ -1,23 +1,22 @@
-import { requestList, setSortOrder, setVisibilityFilter, insertHero } from '../../actions/HerolistActions';
-import { filterAndSort } from '../../utils/ListUtils';
 import * as React from 'react';
-import APStore from '../../stores/APStore';
-import Aside from '../../components/Aside';
+import { insertHero, requestList, setSortOrder, setVisibilityFilter } from '../../actions/HerolistActions';
 import BorderButton from '../../components/BorderButton';
-import createOverlay from '../../utils/createOverlay';
-import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
+import RadioButtonGroup from '../../components/RadioButtonGroup';
+import Scroll from '../../components/Scroll';
+import TextField from '../../components/TextField';
+import APStore from '../../stores/APStore';
+import CultureStore from '../../stores/CultureStore';
 import ELStore from '../../stores/ELStore';
-import HeroCreation from './HeroCreation';
-import HerolistItem from './HerolistItem';
 import HerolistStore from '../../stores/HerolistStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RaceStore from '../../stores/RaceStore';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
+import createOverlay from '../../utils/createOverlay';
+import { filterAndSort } from '../../utils/ListUtils';
+import HeroCreation from './HeroCreation';
+import HerolistItem from './HerolistItem';
 
 interface State {
 	list: Hero[];
@@ -30,17 +29,17 @@ interface State {
 export default class Herolist extends React.Component<undefined, State> {
 
 	state = {
-		filterText: '',
 		file: undefined,
+		filterText: '',
 		list: HerolistStore.getAll(),
+		sortOrder: HerolistStore.getSortOrder(),
 		view: HerolistStore.getView(),
-		sortOrder: HerolistStore.getSortOrder()
 	};
 
 	_updateHerolistStore = () => this.setState({
 		list: HerolistStore.getAll(),
+		sortOrder: HerolistStore.getSortOrder(),
 		view: HerolistStore.getView(),
-		sortOrder: HerolistStore.getSortOrder()
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -60,16 +59,16 @@ export default class Herolist extends React.Component<undefined, State> {
 	};
 
 	componentDidMount() {
-		HerolistStore.addChangeListener(this._updateHerolistStore );
+		HerolistStore.addChangeListener(this._updateHerolistStore);
 	}
 
 	componentWillUnmount() {
-		HerolistStore.removeChangeListener(this._updateHerolistStore );
+		HerolistStore.removeChangeListener(this._updateHerolistStore);
 	}
 
 	render() {
 
-		const { filterText, list: rawList, sortOrder, view, file } = this.state;
+		const { filterText, list: rawList, sortOrder, view } = this.state;
 
 		const list = filterAndSort(rawList, filterText, sortOrder).filter(e => {
 			if (view === 'own') {
@@ -102,7 +101,7 @@ export default class Herolist extends React.Component<undefined, State> {
 							options={[
 								{ id: 'all', name: 'Alle Helden' },
 								{ id: 'own', name: 'Eigene Helden' },
-								{ id: 'shared', name: 'Geteilte Helden' }
+								{ id: 'shared', name: 'Geteilte Helden' },
 							]}
 							fullWidth
 							/>
@@ -112,12 +111,12 @@ export default class Herolist extends React.Component<undefined, State> {
 							array={[
 								{
 									name: 'Alphabetisch',
-									value: 'name'
+									value: 'name',
 								},
 								{
 									name: 'AP',
-									value: 'ap'
-								}
+									value: 'ap',
+								},
 							]}
 							/>
 						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />

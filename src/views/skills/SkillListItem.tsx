@@ -1,17 +1,15 @@
+import classNames from 'classnames';
+import * as React from 'react';
 import IconButton from '../../components/IconButton';
 import { get } from '../../stores/ListStore';
-import * as React from 'react';
-import classNames from 'classnames';
 import createOverlay from '../../utils/createOverlay';
 import SkillInfo from './SkillInfo';
 
 interface Props {
-	activate?: () => void;
 	activateDisabled?: boolean;
 	addDisabled?: boolean;
 	addFillElement?: boolean;
-	addPoint?: () => void;
-	addValues?: { className: string; value?: string | number }[];
+	addValues?: Array<{ className: string; value?: string | number }>;
 	check?: string[];
 	checkDisabled?: boolean;
 	checkmod?: string;
@@ -21,10 +19,12 @@ interface Props {
 	name: string;
 	noIncrease?: boolean;
 	removeDisabled?: boolean;
-	removePoint?: () => void;
 	sr?: number;
 	typ?: boolean;
 	untyp?: boolean;
+	activate?(): void;
+	addPoint?(): void;
+	removePoint?(): void;
 }
 
 export default class SkillListItem extends React.Component<Props, undefined> {
@@ -35,9 +35,9 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 
 		const className = classNames({
 			'list-item': true,
+			'no-increase': noIncrease,
 			'typ': typ,
 			'untyp': untyp,
-			'no-increase': noIncrease
 		});
 
 		// const groupElement = group ? (

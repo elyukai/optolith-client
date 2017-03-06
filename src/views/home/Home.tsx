@@ -1,23 +1,20 @@
 import * as React from 'react';
-import Overview from './Overview';
 import SubTabs from '../../components/SubTabs';
+import Overview from './Overview';
 
 interface State {
 	tab: string;
 }
 
 export default class Home extends React.Component<undefined, State> {
-
 	state = {
-		tab: 'overview'
+		tab: 'overview',
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
 
 	render() {
-
 		const { tab } = this.state;
-
 		let element;
 
 		switch (tab) {
@@ -32,18 +29,18 @@ export default class Home extends React.Component<undefined, State> {
 					tabs={[
 						{
 							label: 'Übersicht',
-							tag: 'overview'
+							tag: 'overview',
 						},
 						{
+							disabled: true,
 							label: 'Neuigkeiten',
 							tag: 'news',
-							disabled: true
 						},
 						{
+							disabled: true,
 							label: 'Letzte Änderungen',
 							tag: 'patchnotes',
-							disabled: true
-						}
+						},
 					]}
 					active={this.state.tab}
 					onClick={this.handleClick} />

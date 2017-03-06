@@ -1,8 +1,8 @@
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import * as Categories from '../../constants/Categories';
 import * as React from 'react';
-import ActivatableTextList from './ActivatableTextList';
 import TextBox from '../../components/TextBox';
+import * as Categories from '../../constants/Categories';
+import * as ActivatableStore from '../../stores/ActivatableStore';
+import ActivatableTextList from './ActivatableTextList';
 
 export default () => (
 	<TextBox label="Kampfsonderfertigkeiten" className="activatable-list">

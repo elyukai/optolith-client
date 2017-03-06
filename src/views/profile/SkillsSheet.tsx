@@ -1,13 +1,13 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
+import TextBox from '../../components/TextBox';
+import { get } from '../../stores/ListStore';
+import TalentsStore from '../../stores/TalentsStore';
 import AttributeMods from './AttributeMods';
 import SheetHeader from './SheetHeader';
-import TalentsStore from '../../stores/TalentsStore';
-import TextBox from '../../components/TextBox';
 
 const getRoutineValue = (sr: number, attributes: number[]) => {
 	if (sr > 0 ) {
-		const lessAttrPoints = attributes.map(e => e < 13 ? 13 - e : 0).reduce((a,b) => a + b, 0);
+		const lessAttrPoints = attributes.map(e => e < 13 ? 13 - e : 0).reduce((a, b) => a + b, 0);
 		const flatRoutineLevel = Math.floor((sr - 1) / 3);
 		const checkMod = flatRoutineLevel * -1 + 3;
 		const dependentCheckMod = checkMod + lessAttrPoints;
@@ -21,7 +21,7 @@ const iterateList = (arr: TalentInstance[]): JSX.Element[] => arr.map(obj => {
 	const checkValues = check.map(e => (get(e) as AttributeInstance).value);
 	const checkString = check.map(e => (get(e) as AttributeInstance).short).join('/');
 	const encString = encumbrance === 'true' ? 'Ja' : encumbrance === 'false' ? 'Nein' : 'Evtl';
-	const ics = ['A','B','C','D'];
+	const ics = ['A', 'B', 'C', 'D'];
 	const routine = getRoutineValue(value, checkValues);
 	const routineSign = routine && routine[0] > 0 ? '+' : '';
 	const routineMark = routine && routine[1] ? '!' : '';
@@ -37,15 +37,15 @@ const iterateList = (arr: TalentInstance[]): JSX.Element[] => arr.map(obj => {
 });
 
 export default () => {
-	const talentsByGroup: TalentInstance[][] = [[],[],[],[],[]];
+	const talentsByGroup: TalentInstance[][] = [[], [], [], [], []];
 	TalentsStore.getAll().forEach(obj => talentsByGroup[obj.gr - 1].push(obj));
 
 	const groupChecksIds = [
-		['COU','AGI','STR'],
-		['INT','CHA','CHA'],
-		['COU','AGI','CON'],
-		['SGC','SGC','INT'],
-		['DEX','DEX','CON']
+		['COU', 'AGI', 'STR'],
+		['INT', 'CHA', 'CHA'],
+		['COU', 'AGI', 'CON'],
+		['SGC', 'SGC', 'INT'],
+		['DEX', 'DEX', 'CON'],
 	];
 	const groupChecks = groupChecksIds.map(arr => arr.map(e => (get(e) as AttributeInstance).short).join('/'));
 
@@ -53,7 +53,7 @@ export default () => {
 	const languages = SA_30.active.map(({ sid, tier }) => {
 		const { id, name } = SA_30.sel[(sid as number) - 1];
 		return ({ id, name, tier: tier! });
-	}).sort((a,b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+	}).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
 	const SA_28 = get('SA_28') as SpecialAbilityInstance;
 	const scripts = SA_28.active.map(({ sid }) => SA_30.sel[(sid as number) - 1].name).sort();

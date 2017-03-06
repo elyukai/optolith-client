@@ -1,43 +1,44 @@
-import { filterAndSort } from '../../utils/ListUtils';
 import * as React from 'react';
 import * as SpellsActions from '../../actions/SpellsActions';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
-import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
-import SkillListItem from './SkillListItem';
 import Slidein from '../../components/Slidein';
-import SpellsStore from '../../stores/SpellsStore';
 import TextField from '../../components/TextField';
+import PhaseStore from '../../stores/PhaseStore';
+import SpellsStore from '../../stores/SpellsStore';
+import { filterAndSort } from '../../utils/ListUtils';
+import { isActivatable, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
+import SkillListItem from './SkillListItem';
 
 interface State {
-	spells: SpellInstance[];
 	addSpellsDisabled: boolean;
 	areMaxUnfamiliar: boolean;
 	filterText: string;
-	sortOrder: string;
 	phase: number;
 	showAddSlidein: boolean;
+	sortOrder: string;
+	spells: SpellInstance[];
 }
 
 export default class Spells extends React.Component<undefined, State> {
 
 	state = {
-		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 		filterText: '',
-		sortOrder: SpellsStore.getSortOrder(),
 		phase: PhaseStore.get(),
-		showAddSlidein: false
+		showAddSlidein: false,
+		sortOrder: SpellsStore.getSortOrder(),
+		spells: SpellsStore.getAll(),
 	};
 
 	_updateSpellsStore = () => this.setState({
-		spells: SpellsStore.getAll(),
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
-		sortOrder: SpellsStore.getSortOrder()
+		sortOrder: SpellsStore.getSortOrder(),
+		spells: SpellsStore.getAll(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -58,7 +59,6 @@ export default class Spells extends React.Component<undefined, State> {
 	}
 
 	render() {
-
 		const GROUPS = SpellsStore.getGroupNames();
 		const PROPERTIES = SpellsStore.getPropertyNames();
 		const TRADITIONS = SpellsStore.getTraditionNames();
@@ -69,7 +69,7 @@ export default class Spells extends React.Component<undefined, State> {
 			{ name: 'Alphabetisch', value: 'name' },
 			{ name: 'Nach Gruppe', value: 'group' },
 			{ name: 'Nach Merkmal', value: 'property' },
-			{ name: 'Nach Steigerungsfaktor', value: 'ic' }
+			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
 		const list = filterAndSort(spells, filterText, sortOrder);
@@ -81,8 +81,8 @@ export default class Spells extends React.Component<undefined, State> {
 			if (e.active) {
 				listActive.push(e);
 			}
-			else {
-				if (!e.isOwnTradition) {
+			else if (isActivatable(e)) {
+				if (!isOwnTradition(e)) {
 					if (e.gr < 2 && !areMaxUnfamiliar) {
 						listDeactive.push(e);
 					}
@@ -112,33 +112,33 @@ export default class Spells extends React.Component<undefined, State> {
 					<Scroll className="list">
 						<div className="list-wrapper">
 							{
-								listDeactive.map(spell => {
-									const [ a, b, c, checkmod ] = spell.check;
+								listDeactive.map(obj => {
+									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
 
-									let name = spell.name;
-									if (!spell.isOwnTradition) {
-										name += ` (${spell.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+									let name = obj.name;
+									if (!isOwnTradition(obj)) {
+										name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
 									}
 
-									const obj = spell.gr === 5 ? {} : {
+									const add = obj.gr === 5 ? {} : {
 										check,
 										checkmod,
-										ic: spell.ic
+										ic: obj.ic,
 									};
 
 									return (
 										<SkillListItem
-											key={spell.id}
-											id={spell.id}
+											key={obj.id}
+											id={obj.id}
 											name={name}
 											isNotActive
-											activate={this.addToList.bind(null, spell.id)}
-											activateDisabled={addSpellsDisabled && spell.gr < 3}
+											activate={this.addToList.bind(null, obj.id)}
+											activateDisabled={addSpellsDisabled && obj.gr < 3}
 											addFillElement
-											{...obj}
+											{...add}
 											>
-											<div className="property">{PROPERTIES[spell.property - 1]}</div>
+											<div className="property">{PROPERTIES[obj.property - 1]}</div>
 										</SkillListItem>
 									);
 								})
@@ -166,17 +166,17 @@ export default class Spells extends React.Component<undefined, State> {
 								const check = [ a1, a2, a3 ];
 
 								let name = obj.name;
-								if (!obj.isOwnTradition) {
+								if (!isOwnTradition(obj)) {
 									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
 								}
 
 								const other = obj.gr === 5 ? {} : {
-									sr: obj.value,
+									addDisabled: !isIncreasable(obj),
+									addPoint: this.addPoint.bind(null, obj.id),
 									check,
 									checkmod,
 									ic: obj.ic,
-									addPoint: this.addPoint.bind(null, obj.id),
-									addDisabled: !obj.isIncreasable
+									sr: obj.value,
 								};
 
 								return (
@@ -185,11 +185,14 @@ export default class Spells extends React.Component<undefined, State> {
 										id={obj.id}
 										name={name}
 										removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!obj.isDecreasable}
+										removeDisabled={!isDecreasable(obj)}
 										addFillElement
 										noIncrease={obj.gr === 5}
 										{...other} >
-										<div className="property">{PROPERTIES[obj.property - 1]}</div>
+										<div className="property">
+											{PROPERTIES[obj.property - 1]}
+											{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
+										</div>
 									</SkillListItem>
 								);
 							})

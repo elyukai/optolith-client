@@ -1,11 +1,12 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import EquipmentStore from '../../stores/EquipmentStore';
 import TextBox from '../../components/TextBox';
+import EquipmentStore from '../../stores/EquipmentStore';
+import { get } from '../../stores/ListStore';
+import { getAt } from '../../utils/CombatTechniqueUtils';
 
 export default () => {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 2);
-	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
+	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
 		<TextBox label="Fernkampfwaffen" className="melee-weapons">
@@ -33,7 +34,7 @@ export default () => {
 										<td className="reload-time">{e.reloadTime} Akt.</td>
 										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{e.damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
 										<td className="range">{e.range.join('/')}</td>
-										<td className="ranged">{combatTechnique.at}</td>
+										<td className="ranged">{getAt(combatTechnique)}</td>
 										<td className="ammunition">{ammunition && ammunition.name}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>

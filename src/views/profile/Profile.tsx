@@ -1,9 +1,9 @@
 import * as React from 'react';
+import SubTabs from '../../components/SubTabs';
+import PhaseStore from '../../stores/PhaseStore';
 import OptionalRules from './OptionalRules';
 import Overview from './Overview';
-import PhaseStore from '../../stores/PhaseStore';
 import Sheets from './Sheets';
-import SubTabs from '../../components/SubTabs';
 
 interface ProfileState {
 	phase: number;
@@ -14,7 +14,7 @@ export default class Profile extends React.Component<undefined, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),
-		tab: 'overview'
+		tab: 'overview',
 	};
 
 	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as ProfileState);
@@ -50,17 +50,17 @@ export default class Profile extends React.Component<undefined, ProfileState> {
 		const tabs = [
 			{
 				label: 'Übersicht',
-				tag: 'overview'
-			}
+				tag: 'overview',
+			},
 		];
 
 		if (phase === 3) {
 			tabs.push({
 				label: 'Heldenbogen',
-				tag: 'sheets'
+				tag: 'sheets',
 			}, {
 				label: 'Optionalregeln',
-				tag: 'optionalRules'
+				tag: 'optionalRules',
 			});
 		}
 

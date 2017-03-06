@@ -1,6 +1,6 @@
-import { get } from '../stores/ListStore';
-import * as Categories from '../constants/Categories';
 import * as React from 'react';
+import * as Categories from '../constants/Categories';
+import { get } from '../stores/ListStore';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
 import TextField from './TextField';
@@ -17,7 +17,7 @@ interface AddObject {
 interface Props {
 	className?: string;
 	item: AdvantageInstance | DisadvantageInstance;
-	addToList: (args: ActivateArgs) => void;
+	addToList(args: ActivateArgs): void;
 }
 
 interface State {
@@ -30,11 +30,11 @@ interface State {
 
 export default class ActivatableAddListItem extends React.Component<Props, State> {
 	state: State = {
+		input: '',
+		input2: '',
 		selected: '',
 		selected2: '',
 		selectedTier: 0,
-		input: '',
-		input2: ''
 	};
 
 	handleSelect = (selected: string | number) => {
@@ -47,7 +47,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 	}
 	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
 	handleSelectTier = (selectedTier: number) => {
-		if (['DISADV_34','DISADV_50'].includes(this.props.item.id)) {
+		if (['DISADV_34', 'DISADV_50'].includes(this.props.item.id)) {
 			this.setState({ selectedTier, selected: '' } as State);
 		} else {
 			this.setState({ selectedTier } as State);
@@ -59,11 +59,11 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		this.props.addToList(args);
 		if (this.state.selected !== '' || this.state.selectedTier !== 0 || this.state.input !== '') {
 			this.setState({
+				input: '',
+				input2: '',
 				selected: '',
 				selected2: '',
 				selectedTier: 0,
-				input: '',
-				input2: ''
 			} as State);
 		}
 	}
@@ -82,7 +82,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		let selectElement;
 		let selectElement2;
 		let selectElementDisabled = false;
-		if (['ADV_32','DISADV_1','DISADV_24','DISADV_34','DISADV_36','DISADV_45','DISADV_50'].includes(id) && this.state.input) {
+		if (['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id) && this.state.input) {
 			selectElementDisabled = true;
 		}
 		let inputElement;
@@ -116,11 +116,11 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'DISADV_34':
 			case 'DISADV_50': {
 				if (this.state.selectedTier > 0) {
-					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a,b) => (b.tier as number) > a ? (b.tier as number) : a, 0);
+					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a, b) => (b.tier as number) > a ? (b.tier as number) : a, 0);
 					currentCost = maxCurrentTier >= this.state.selectedTier ? 0 : (cost as number) * (this.state.selectedTier - maxCurrentTier);
 				}
 				const currentSelIDs = new Set((get(id) as DisadvantageInstance).active.map(e => e.sid));
-				const newSel = (sel as (SelectionObject & { tier: number; })[]).filter(e => this.state.selectedTier === e.tier && !currentSelIDs.has(e.id));
+				const newSel = (sel as Array<SelectionObject & { tier: number; }>).filter(e => this.state.selectedTier === e.tier && !currentSelIDs.has(e.id));
 				selectElement = (
 					<Dropdown
 						value={this.state.selected}
@@ -150,7 +150,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'DISADV_51':
 				if (id === 'DISADV_33') {
 					let disab = true;
-					if ([7,8].includes(this.state.selected as number)) {
+					if ([7, 8].includes(this.state.selected as number)) {
 						args.input = this.state.input;
 						currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1].cost;
 						disab = false;
@@ -179,7 +179,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				args.input = this.state.input;
 				break;
 			case 'SA_10':
-				type Sel = (SelectionObject & { specialisation: string[] | null; specialisationInput: string | null })[];
+				type Sel = Array<SelectionObject & { specialisation: string[] | null; specialisationInput: string | null }>;
 				if (this.state.selected !== '') {
 					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).filter(e => e.id === this.state.selected)[0];
 					currentCost = o.cost;
@@ -244,7 +244,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			}
 		}
 
-		if (sel && sel.length > 0 && !['DISADV_34','DISADV_50'].includes(id)) {
+		if (sel && sel.length > 0 && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			selectElement = (
 				<Dropdown
 					value={this.state.selected}
@@ -254,18 +254,18 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			);
 		}
 
-		if (sel && this.state.selected === '' && !['ADV_32','DISADV_1','DISADV_24','DISADV_34','DISADV_36','DISADV_45','DISADV_50'].includes(id)) {
+		if (sel && this.state.selected === '' && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
 			disabled = true;
 		}
 
-		if (input && !['ADV_28','ADV_29'].includes(id)) {
+		if (input && !['ADV_28', 'ADV_29'].includes(id)) {
 			inputElement = (
 				<TextField
 					hint={input}
 					value={this.state.input}
 					onChange={this.handleInput} />
 			);
-			if (!this.state.input && !['ADV_32','DISADV_1','DISADV_24','DISADV_34','DISADV_36','DISADV_45','DISADV_50'].includes(id)) {
+			if (!this.state.input && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
 				disabled = true;
 			}
 		}
@@ -293,7 +293,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		let tierElement1;
 		let tierElement2;
 
-		if (['DISADV_34','DISADV_50'].includes(id)) {
+		if (['DISADV_34', 'DISADV_50'].includes(id)) {
 			tierElement1 = tierElement;
 		} else {
 			tierElement2 = tierElement;

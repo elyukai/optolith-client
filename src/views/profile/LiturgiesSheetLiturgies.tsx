@@ -1,17 +1,19 @@
-import { get } from '../../stores/ListStore';
-import { sort } from '../../utils/ListUtils';
-import * as React from 'react';
 import classNames from 'classnames';
-import LiturgiesStore from '../../stores/LiturgiesStore';
+import * as React from 'react';
 import TextBox from '../../components/TextBox';
+import { get } from '../../stores/ListStore';
+import LiturgiesStore from '../../stores/LiturgiesStore';
+import { getSids } from '../../utils/ActivatableUtils';
+import { sort } from '../../utils/ListUtils';
+import { isOwnTradition } from '../../utils/LiturgyUtils';
 
 const rowIterator = (e: LiturgyInstance, i: number) => {
 	if (e) {
 		const rawCheck = e.check;
 		const checkmod = rawCheck.splice(3)[0];
 		const check = rawCheck.map(attr => (get(attr) as AttributeInstance).short).join('/');
-		const traditionId = (get('SA_102') as SpecialAbilityInstance).sid[0];
-		const aspectIds = e.aspect.filter(e => e === 1 || Math.round((e - 1) / 2) === traditionId);
+		const traditionId = getSids(get('SA_102') as SpecialAbilityInstance)[0];
+		const aspectIds = e.aspects.filter(e => e === 1 || Math.round((e - 1) / 2) === traditionId);
 		const aspects = aspectIds.map(e => LiturgiesStore.getAspectNames()[e - 1]);
 
 		return (
@@ -24,7 +26,7 @@ const rowIterator = (e: LiturgyInstance, i: number) => {
 				<td className="range"></td>
 				<td className="duration"></td>
 				<td className={classNames('aspect', checkmod && 'multi')}>{aspects.join(', ')}</td>
-				<td className="ic">{['A','B','C','D'][e.ic - 1]}</td>
+				<td className="ic">{['A', 'B', 'C', 'D'][e.ic - 1]}</td>
 				<td className="effect"></td>
 				<td className="ref"></td>
 			</tr>
@@ -50,9 +52,9 @@ const rowIterator = (e: LiturgyInstance, i: number) => {
 };
 
 export default () => {
-	const filtered = LiturgiesStore.getAll().filter(e => e.active && e.gr !== 3 && e.isOwnTradition);
+	const filtered = LiturgiesStore.getAll().filter(e => e.active && e.gr !== 3 && isOwnTradition(e));
 	const liturgies = sort(filtered, LiturgiesStore.getSortOrder()) as LiturgyInstance[];
-	const list = Array(21).fill(undefined) as (LiturgyInstance | undefined)[];
+	const list = Array(21).fill(undefined) as Array<LiturgyInstance | undefined>;
 	list.splice(0, Math.min(liturgies.length, 21), ...liturgies);
 
 	return (

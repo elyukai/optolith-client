@@ -1,17 +1,17 @@
 import * as React from 'react';
-import AttributeBorder from './AttributeBorder';
-import AttributesRemovePermanent from './AttributesRemovePermanent';
-import createOverlay from '../../utils/createOverlay';
 import IconButton from '../../components/IconButton';
 import NumberBox from '../../components/NumberBox';
+import createOverlay from '../../utils/createOverlay';
+import AttributeBorder from './AttributeBorder';
+import AttributesRemovePermanent from './AttributesRemovePermanent';
 
 interface Props {
 	redeemed: number;
 	lost: number;
 	phase: number;
-	redeem: () => void;
-	removeRedeemed: () => void;
-	removePermanent: (value: number) => void;
+	redeem(): void;
+	removeRedeemed(): void;
+	removePermanent(value: number): void;
 }
 
 export default (props: Props) => {

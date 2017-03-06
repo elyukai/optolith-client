@@ -1,16 +1,16 @@
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import * as Categories from '../../constants/Categories';
-import * as DisAdvActions from '../../actions/DisAdvActions';
 import * as React from 'react';
+import * as DisAdvActions from '../../actions/DisAdvActions';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
+import Slidein from '../../components/Slidein';
+import TextField from '../../components/TextField';
+import * as Categories from '../../constants/Categories';
+import * as ActivatableStore from '../../stores/ActivatableStore';
 import CultureStore from '../../stores/CultureStore';
-import DisAdvList from './DisAdvList';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import RaceStore from '../../stores/RaceStore';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
+import DisAdvList from './DisAdvList';
 
 interface State {
 	filterText: string;
@@ -25,21 +25,21 @@ interface State {
 
 export default class Disadvantages extends React.Component<undefined, State> {
 	state = {
-		filterText: '',
-		showRating: DisAdvStore.getRating(),
+		culture: CultureStore.getCurrent()!,
 		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
 		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
+		filterText: '',
+		profession: ProfessionStore.getCurrent()!,
+		race: RaceStore.getCurrent()!,
 		showAddSlidein: false,
-		race: RaceStore.getCurrent(),
-		culture: CultureStore.getCurrent(),
-		profession: ProfessionStore.getCurrent()
+		showRating: DisAdvStore.getRating(),
 	};
 
 	_updateDisAdvStore = () => this.setState({
-		showRating: DisAdvStore.getRating(),
 		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES)
-	} as State);
+		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
+		showRating: DisAdvStore.getRating(),
+	} as State)
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	changeRating = () => DisAdvActions.switchRatingVisibility();

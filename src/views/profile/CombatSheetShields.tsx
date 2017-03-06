@@ -1,10 +1,10 @@
 import * as React from 'react';
-import EquipmentStore from '../../stores/EquipmentStore';
 import TextBox from '../../components/TextBox';
+import EquipmentStore from '../../stores/EquipmentStore';
 
 export default () => {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
-	const list = ([undefined,undefined,undefined,undefined] as (ItemInstance | undefined)[]);
+	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
 		<TextBox label="Schild/Parierwaffe" className="shields">

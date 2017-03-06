@@ -1,28 +1,27 @@
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import * as Categories from '../../constants/Categories';
-import * as ProfileActions from '../../actions/ProfileActions';
 import * as React from 'react';
-import ActivatableTextList from './ActivatableTextList';
+import * as ProfileActions from '../../actions/ProfileActions';
 import AvatarWrapper from '../../components/AvatarWrapper';
-import APStore from '../../stores/APStore';
 import BorderButton from '../../components/BorderButton';
+import IconButton from '../../components/IconButton';
+import Scroll from '../../components/Scroll';
+import VerticalList from '../../components/VerticalList';
+import * as Categories from '../../constants/Categories';
+import * as ActivatableStore from '../../stores/ActivatableStore';
+import APStore from '../../stores/APStore';
+import CultureStore from '../../stores/CultureStore';
+import ELStore from '../../stores/ELStore';
+import PhaseStore from '../../stores/PhaseStore';
+import ProfessionStore from '../../stores/ProfessionStore';
+import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
+import ProfileStore from '../../stores/ProfileStore';
+import RaceStore from '../../stores/RaceStore';
 import calcEL from '../../utils/calcEL';
 import createOverlay from '../../utils/createOverlay';
-import CultureStore from '../../stores/CultureStore';
-import DisAdvStore from '../../stores/DisAdvStore';
-import ELStore from '../../stores/ELStore';
-import IconButton from '../../components/IconButton';
+import ActivatableTextList from './ActivatableTextList';
 import OverviewAddAP from './OverviewAddAP';
 import OverviewAvatarChange from './OverviewAvatarChange';
 import OverviewNameChange from './OverviewNameChange';
 import OverviewPersonalData from './OverviewPersonalData';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import RaceStore from '../../stores/RaceStore';
-import PhaseStore from '../../stores/PhaseStore';
-import ProfileStore from '../../stores/ProfileStore';
-import Scroll from '../../components/Scroll';
-import VerticalList from '../../components/VerticalList';
 
 interface State {
 	ap: number;
@@ -50,12 +49,12 @@ interface State {
 export default class ProfileOverview extends React.Component<undefined, State> {
 
 	state = {
-		ap: APStore.getTotal(),
+		...ProfileStore.getAll(),
 		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
+		ap: APStore.getTotal(),
 		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		...(ProfileStore.getAll()),
+		editName: false,
 		phase: PhaseStore.get(),
-		editName: false
 	};
 
 	_updateAPStore = () => this.setState({ ap: APStore.getTotal() } as State);
@@ -78,7 +77,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 	changeName = (name: string) => {
 		ProfileActions.setHeroName(name);
 		this.setState({ editName: false } as State);
-	};
+	}
 	editName = () => this.setState({ editName: true } as State);
 	editNameCancel = () => this.setState({ editName: false } as State);
 
@@ -121,34 +120,40 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 										<span>{sex}</span>
 										<span className="race">
 											{(() => {
-												const { name } = RaceStore.getCurrent();
-												return name;
+												const race = RaceStore.getCurrent();
+												return race && race.name;
 											})()}
 										</span>
 										<span className="culture">
 											{(() => {
-												const { name } = CultureStore.getCurrent();
-												return name;
+												const culture = CultureStore.getCurrent();
+												return culture && culture.name;
 											})()}
 										</span>
 										<span className="profession">
 											{(() => {
-												let { name, subname } = ProfessionStore.getCurrent();
+												const profession = ProfessionStore.getCurrent();
 
-												if (typeof name === 'object') {
-													name = name[this.state.sex];
+												if (profession) {
+													let { name, subname } = profession;
+
+													if (typeof name === 'object') {
+														name = name[this.state.sex];
+													}
+													if (typeof subname === 'object') {
+														subname = subname[this.state.sex];
+													}
+
+													let { name: vname = { m: '', f: '' } } = ProfessionVariantStore.getCurrent() || {};
+
+													if (typeof vname === 'object') {
+														vname = vname[this.state.sex];
+													}
+
+													return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
 												}
-												if (typeof subname === 'object') {
-													subname = subname[this.state.sex];
-												}
 
-												let { name: vname = { m: '', f: '' } } = ProfessionVariantStore.getCurrent() || {};
-
-												if (typeof vname === 'object') {
-													vname = vname[this.state.sex];
-												}
-
-												return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
+												return;
 											})()}
 										</span>
 									</VerticalList>
@@ -185,10 +190,10 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 						isProfessionUndefined ? null : (
 							<OverviewPersonalData
 								{...personal}
-								race={RaceStore.getCurrent()}
-								culture={CultureStore.getCurrent()}
-								haircolorTags={ProfileStore.getHaircolorTags()}
+								culture={CultureStore.getCurrent()!}
 								eyecolorTags={ProfileStore.getEyecolorTags()}
+								haircolorTags={ProfileStore.getHaircolorTags()}
+								race={RaceStore.getCurrent()!}
 								socialstatusTags={ProfileStore.getSocialstatusTags()}
 								/>
 						)

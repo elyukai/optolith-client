@@ -1,67 +1,70 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import { get, getAllByCategory } from './ListStore';
-import APStore from '../stores/APStore';
-import Store from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import APStore from '../stores/APStore';
+import { get, getAllByCategory } from './ListStore';
+import Store from './Store';
 
 type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction;
 
-const CATEGORY = Categories.PROFESSION_VARIANTS;
-
-let _currentId: string | null = null;
-
-function _updateCurrentID(id: string | null) {
-	_currentId = id;
-}
-
 class ProfessionVariantStoreStatic extends Store {
+	private readonly category: PROFESSION_VARIANTS = Categories.PROFESSION_VARIANTS;
+	readonly dispatchToken: string;
+	private currentId: string | null = null;
+
+	constructor() {
+		super();
+		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			switch (action.type) {
+				case ActionTypes.RECEIVE_HERO_DATA:
+					this.updateCurrentID(action.payload.data.pv);
+					break;
+
+				case ActionTypes.SELECT_RACE:
+				case ActionTypes.SELECT_CULTURE:
+				case ActionTypes.SELECT_PROFESSION:
+					this.updateCurrentID(null);
+					break;
+
+				case ActionTypes.SELECT_PROFESSION_VARIANT:
+					AppDispatcher.waitFor([APStore.dispatchToken]);
+					this.updateCurrentID(action.payload.id);
+					break;
+
+				default:
+					return true;
+			}
+			this.emitChange();
+			return true;
+		});
+	}
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as ProfessionVariantInstance[];
+		return getAllByCategory(this.category) as ProfessionVariantInstance[];
 	}
 
 	getCurrentID() {
-		return _currentId;
+		return this.currentId;
 	}
 
 	getCurrent() {
-		return _currentId ? get(_currentId) as ProfessionVariantInstance : undefined;
+		return this.currentId ? get(this.currentId) as ProfessionVariantInstance : undefined;
 	}
 
 	getCurrentName() {
-		return _currentId ? this.getCurrent()!.name : undefined;
+		const current = this.getCurrent();
+		return current ? current.name : undefined;
 	}
 
 	getNameByID(id: string) {
 		return get(id) !== undefined ? get(id).name : undefined;
 	}
 
+	private updateCurrentID(id: string | null) {
+		this.currentId = id;
+	}
 }
 
-const ProfessionVariantStore = new ProfessionVariantStoreStatic((action: Action) => {
-	switch(action.type) {
-		case ActionTypes.RECEIVE_HERO_DATA:
-			_updateCurrentID(action.payload.data.pv);
-			break;
-
-		case ActionTypes.SELECT_RACE:
-		case ActionTypes.SELECT_CULTURE:
-		case ActionTypes.SELECT_PROFESSION:
-			_updateCurrentID(null);
-			break;
-
-		case ActionTypes.SELECT_PROFESSION_VARIANT:
-			AppDispatcher.waitFor([APStore.dispatchToken]);
-			_updateCurrentID(action.payload.id);
-			break;
-
-		default:
-			return true;
-	}
-
-	ProfessionVariantStore.emitChange();
-	return true;
-});
+const ProfessionVariantStore = new ProfessionVariantStoreStatic();
 
 export default ProfessionVariantStore;

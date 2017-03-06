@@ -1,6 +1,6 @@
 import * as React from 'react';
-import LiturgiesStore from '../../stores/LiturgiesStore';
 import TextBox from '../../components/TextBox';
+import LiturgiesStore from '../../stores/LiturgiesStore';
 
 export default () => (
 	<TextBox label="Segnungen" className="blessings activatable-list">

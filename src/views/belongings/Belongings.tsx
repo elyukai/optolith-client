@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Equipment from './Equipment';
 import SubTabs from '../../components/SubTabs';
+import Equipment from './Equipment';
 
 interface State {
 	tab: string;
@@ -8,7 +8,7 @@ interface State {
 
 export default class Belongings extends React.Component<undefined, State> {
 	state = {
-		tab: 'equipment'
+		tab: 'equipment',
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
@@ -25,8 +25,8 @@ export default class Belongings extends React.Component<undefined, State> {
 		const tabs = [
 			{
 				label: 'Ausrüstung',
-				tag: 'equipment'
-			}
+				tag: 'equipment',
+			},
 		];
 
 		return (
@@ -34,7 +34,8 @@ export default class Belongings extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={tabs}
 					active={this.state.tab}
-					onClick={this.handleClick} />
+					onClick={this.handleClick}
+					/>
 				{element}
 			</section>
 		);

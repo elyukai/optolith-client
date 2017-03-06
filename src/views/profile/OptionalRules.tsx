@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as RulesActions from '../../actions/RulesActions';
 import Checkbox from '../../components/Checkbox';
 import Dropdown from '../../components/Dropdown';
-import RulesStore from '../../stores/RulesStore';
 import Scroll from '../../components/Scroll';
+import RulesStore from '../../stores/RulesStore';
 
 interface State {
 	higherParadeValues: number;
@@ -37,7 +37,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 							>
 						</Checkbox>
 						<Dropdown
-							options={[{id:2,name:'+2'},{id:4,name:'+4'}]}
+							options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
 							value={higherParadeValues}
 							onChange={(id: number) => RulesActions.setHigherParadeValues(id)}
 							disabled={higherParadeValues === 0}

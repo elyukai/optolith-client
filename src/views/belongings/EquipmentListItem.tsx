@@ -1,11 +1,11 @@
-import { get } from '../../stores/ListStore';
-import * as EquipmentActions from '../../actions/EquipmentActions';
 import * as React from 'react';
-import createOverlay from '../../utils/createOverlay';
+import * as EquipmentActions from '../../actions/EquipmentActions';
 import IconButton from '../../components/IconButton';
-import EquipmentStore from '../../stores/EquipmentStore';
-import ItemEditor from './ItemEditor';
 import TooltipToggle from '../../components/TooltipToggle';
+import EquipmentStore from '../../stores/EquipmentStore';
+import { get } from '../../stores/ListStore';
+import createOverlay from '../../utils/createOverlay';
+import ItemEditor from './ItemEditor';
 
 interface Props {
 	add?: boolean;
@@ -36,7 +36,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 				<div className="inventory-item">
 					<h4><span>{name}</span><span>{numberValue}</span></h4>
 					{ gr === 3 ? <p className="ammunition">Munition</p> : null}
-					{ ![1,2,4].includes(gr) ? <table className="melee">
+					{ ![1, 2, 4].includes(gr) ? <table className="melee">
 						<tbody>
 							<tr>
 								<td>Gewicht</td>
@@ -68,7 +68,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>RW</td>
-								<td>{['Kurz','Mittel','Lang'][reach - 1]}</td>
+								<td>{['Kurz', 'Mittel', 'Lang'][reach - 1]}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>
@@ -159,7 +159,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 								/>
 						</div>
 					</div>
-				):(
+				) : (
 					<div className="list-item">
 						<div className="name">
 							<p className="title">{numberValue}{numberValue && 'x '}{name}</p>

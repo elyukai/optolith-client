@@ -1,17 +1,18 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
 import LabelBox from '../../components/LabelBox';
 import TextBox from '../../components/TextBox';
+import { get } from '../../stores/ListStore';
+import { isActive } from '../../utils/ActivatableUtils';
 
 export default () => {
 	let bonus = 0;
 
 	const increaseObject = get('ADV_14') as AdvantageInstance;
 	const decreaseObject = get('DISADV_31') as DisadvantageInstance;
-	if (increaseObject.isActive) {
+	if (isActive(increaseObject)) {
 		bonus += increaseObject.active[0].tier!;
 	}
-	else if (decreaseObject.isActive) {
+	else if (isActive(decreaseObject)) {
 		bonus -= decreaseObject.active[0].tier!;
 	}
 
@@ -23,4 +24,4 @@ export default () => {
 			<LabelBox label="Aktuell" value="" />
 		</TextBox>
 	);
-}
+};

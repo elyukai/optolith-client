@@ -4,7 +4,7 @@ import TextField from '../../components/TextField';
 
 interface Props {
 	node?: HTMLDivElement;
-	remove: (value: number) => void;
+	remove(value: number): void;
 }
 
 interface State {
@@ -13,7 +13,7 @@ interface State {
 
 export default class AttributesRemovePermanent extends React.Component<Props, State> {
 	state = {
-		value: ''
+		value: '',
 	};
 
 	onChange = (event: InputTextEvent) => this.setState({ value: event.target.value } as State);
@@ -26,13 +26,13 @@ export default class AttributesRemovePermanent extends React.Component<Props, St
 		return (
 			<Dialog id="overview-add-ap" title="Permanenter Verlust" node={this.props.node} buttons={[
 				{
+					disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) < 1,
 					label: 'Hinzufügen',
 					onClick: this.remove,
-					disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) < 1
 				},
 				{
-					label: 'Abbrechen'
-				}
+					label: 'Abbrechen',
+				},
 			]}>
 				<TextField
 					hint="Wie viele permanente Punkte sollen entfernt werden?"

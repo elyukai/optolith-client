@@ -1,7 +1,8 @@
 /// <reference path="../../data.d.ts" />
 
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
+import { get } from '../../stores/ListStore';
+import { getSelectionItem } from '../../utils/ActivatableUtils';
 
 interface Props {
 	list: ActiveViewObject[];
@@ -12,7 +13,7 @@ export default (props: Props) => {
 		const { id, active: activeObject } = obj;
 		const { sid, sid2, tier } = activeObject;
 		const a = get(id) as AdvantageInstance | DisadvantageInstance;
-		const { cost, sel, input, getSelectionItem } = a;
+		const { cost, sel, input } = a;
 		let { tiers } = a;
 		let add = '';
 
@@ -36,7 +37,7 @@ export default (props: Props) => {
 			}
 			case 'ADV_28':
 			case 'ADV_29':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				break;
 			case 'ADV_32':
 			case 'DISADV_1':
@@ -50,10 +51,10 @@ export default (props: Props) => {
 				break;
 			}
 			case 'DISADV_33': {
-				if ([7,8].includes(sid as number)) {
-					add = `${(getSelectionItem(sid as string | number) as SelectionObject).name}: ${sid2}`;
+				if ([7, 8].includes(sid as number)) {
+					add = `${(getSelectionItem(a, sid!) as SelectionObject).name}: ${sid2}`;
 				} else {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				}
 				break;
 			}
@@ -62,7 +63,7 @@ export default (props: Props) => {
 				break;
 			case 'DISADV_37':
 			case 'DISADV_51':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				break;
 			case 'SA_10': {
 				const skill = get(sid as string) as TalentInstance;
@@ -71,13 +72,13 @@ export default (props: Props) => {
 			}
 			case 'SA_30':
 				tiers = 3;
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				break;
 			case 'SA_86':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				break;
 			case 'SA_102':
-				add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+				add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				break;
 
 			default:
@@ -85,17 +86,17 @@ export default (props: Props) => {
 					add = sid as string;
 				}
 				else if (sel.length > 0 && cost === 'sel') {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				}
 				else if (sel.length > 0 && typeof cost === 'number') {
-					add = (getSelectionItem(sid as string | number) as SelectionObject).name;
+					add = (getSelectionItem(a, sid!) as SelectionObject).name;
 				}
 				break;
 		}
 
 		let { name } = a;
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-		if (tiers && !['DISADV_34','DISADV_50'].includes(id)) {
+		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			if (id === 'SA_30' && tier === 4) {
 				name += ` MS`;
 			}
@@ -103,13 +104,13 @@ export default (props: Props) => {
 				name += ` ${roman[(tier as number) - 1]}`;
 			}
 		}
-		if (['ADV_28','ADV_29'].includes(id)) {
+		if (['ADV_28', 'ADV_29'].includes(id)) {
 			name = `Immunität gegen ${add}`;
 		}
 		else if (id === 'DISADV_1') {
 			name = `Angst vor ${add}`;
 		}
-		else if (['DISADV_34','DISADV_50'].includes(id)) {
+		else if (['DISADV_34', 'DISADV_50'].includes(id)) {
 			name  += ` ${roman[(tier as number) - 1]} (${add})`;
 		}
 		else if (add) {

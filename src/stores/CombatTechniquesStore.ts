@@ -1,22 +1,52 @@
-import { get, getAllByCategory } from './ListStore';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+import AppDispatcher from '../dispatcher/AppDispatcher';
+import { get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
 type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions;
 
-const CATEGORY = Categories.COMBAT_TECHNIQUES;
-
-let _sortOrder = 'name';
-
-function _updateSortOrder(option: string) {
-	_sortOrder = option;
-}
-
 class CombatTechniquesStoreStatic extends Store {
+	private readonly category: COMBAT_TECHNIQUES = Categories.COMBAT_TECHNIQUES;
+	private sortOrder = 'name';
+	readonly dispatchToken: string;
+
+	constructor() {
+		super();
+		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			if (action.undo) {
+				switch (action.type) {
+					case ActionTypes.ACTIVATE_DISADV:
+					case ActionTypes.ACTIVATE_SPECIALABILITY:
+					case ActionTypes.DEACTIVATE_DISADV:
+					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+						break;
+
+					default:
+						return true;
+				}
+			}
+			else {
+				switch (action.type) {
+					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
+					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
+						break;
+
+					case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
+						this.updateSortOrder(action.payload.sortOrder);
+						break;
+
+					default:
+						return true;
+				}
+			}
+			this.emitChange();
+			return true;
+		});
+	}
 
 	getAll() {
-		return getAllByCategory(CATEGORY) as CombatTechniqueInstance[];
+		return getAllByCategory(this.category) as CombatTechniqueInstance[];
 	}
 
 	getAllForSave() {
@@ -39,41 +69,14 @@ class CombatTechniquesStoreStatic extends Store {
 	}
 
 	getSortOrder() {
-		return _sortOrder;
+		return this.sortOrder;
 	}
 
+	private updateSortOrder(option: string) {
+		this.sortOrder = option;
+	}
 }
 
-const CombatTechniquesStore = new CombatTechniquesStoreStatic((action: Action) => {
-	if (action.undo) {
-		switch(action.type) {
-			case ActionTypes.ACTIVATE_DISADV:
-			case ActionTypes.ACTIVATE_SPECIALABILITY:
-			case ActionTypes.DEACTIVATE_DISADV:
-			case ActionTypes.DEACTIVATE_SPECIALABILITY:
-				break;
-
-			default:
-				return true;
-		}
-	}
-	else {
-		switch(action.type) {
-			case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-			case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-				break;
-
-			case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
-				_updateSortOrder(action.payload.sortOrder);
-				break;
-
-			default:
-				return true;
-		}
-	}
-
-	CombatTechniquesStore.emitChange();
-	return true;
-});
+const CombatTechniquesStore = new CombatTechniquesStoreStatic();
 
 export default CombatTechniquesStore;

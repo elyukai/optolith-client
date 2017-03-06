@@ -1,7 +1,7 @@
 import * as React from 'react';
+import RaceStore from '../../stores/RaceStore';
 import MainSheetAttributesItem from './MainSheetAttributesItem';
 import MainSheetFatePoints from './MainSheetFatePoints';
-import RaceStore from '../../stores/RaceStore';
 
 export interface MainSheetAttributesProps {
 	attributes: SecondaryAttribute[];
@@ -9,7 +9,7 @@ export interface MainSheetAttributesProps {
 
 export default (props: MainSheetAttributesProps ) => {
 	const { attributes } = props;
-	const race = RaceStore.getCurrent();
+	const race = RaceStore.getCurrent()!;
 	return (
 		<div className="calculated">
 			<div className="calc-header">
@@ -33,7 +33,7 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[1].mod}
 				purchased={attributes[1].currentAdd}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
-				subArray={[attributes[1].permanentLost!,attributes[1].permanentRedeemed!]}
+				subArray={[attributes[1].permanentLost!, attributes[1].permanentRedeemed!]}
 				empty={attributes[1].value === '-'} />
 			<MainSheetAttributesItem
 				label={attributes[2].name}
@@ -42,7 +42,7 @@ export default (props: MainSheetAttributesProps ) => {
 				add={attributes[2].mod}
 				purchased={attributes[2].currentAdd}
 				subLabel="perm. eingesetzt/davon zurückgekauft"
-				subArray={[attributes[2].permanentLost!,attributes[2].permanentRedeemed!]}
+				subArray={[attributes[2].permanentLost!, attributes[2].permanentRedeemed!]}
 				empty={typeof attributes[2].value === 'string'} />
 			<MainSheetAttributesItem
 				label={attributes[3].name}
@@ -75,4 +75,4 @@ export default (props: MainSheetAttributesProps ) => {
 			<MainSheetFatePoints />
 		</div>
 	);
-}
+};

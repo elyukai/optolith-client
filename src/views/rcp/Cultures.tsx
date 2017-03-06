@@ -1,17 +1,17 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import * as CultureActions from '../../actions/CultureActions';
 import * as React from 'react';
+import * as CultureActions from '../../actions/CultureActions';
 import Checkbox from '../../components/Checkbox';
-import CulturesListItem from './CulturesListItem';
-import CultureStore from '../../stores/CultureStore';
 import Dropdown from '../../components/Dropdown';
-import RaceStore from '../../stores/RaceStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
+import CultureStore from '../../stores/CultureStore';
+import RaceStore from '../../stores/RaceStore';
+import { filterAndSort } from '../../utils/ListUtils';
+import CulturesListItem from './CulturesListItem';
 
 interface Props {
-	changeTab: (tab: string) => void;
+	changeTab(tab: string): void;
 }
 
 interface State {
@@ -28,17 +28,17 @@ export default class Cultures extends React.Component<Props, State> {
 		cultures: CultureStore.getAll(),
 		currentID: CultureStore.getCurrentID(),
 		filterText: '',
-		sortOrder: CultureStore.getSortOrder(),
 		showDetails: CultureStore.areValuesVisible(),
-		visibilityFilter: CultureStore.areAllVisible()
+		sortOrder: CultureStore.getSortOrder(),
+		visibilityFilter: CultureStore.areAllVisible(),
 	};
 
 	_updateCultureStore = () => this.setState({
 		cultures: CultureStore.getAll(),
 		currentID: CultureStore.getCurrentID(),
-		sortOrder: CultureStore.getSortOrder(),
 		showDetails: CultureStore.areValuesVisible(),
-		visibilityFilter: CultureStore.areAllVisible()
+		sortOrder: CultureStore.getSortOrder(),
+		visibilityFilter: CultureStore.areAllVisible(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -59,7 +59,7 @@ export default class Cultures extends React.Component<Props, State> {
 
 		const currentRace = RaceStore.getCurrent();
 
-		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace.typicalCultures.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace!.typicalCultures.includes(e.id)), filterText, sortOrder);
 
 		return (
 			<div className="page" id="cultures">
@@ -76,7 +76,7 @@ export default class Cultures extends React.Component<Props, State> {
 						onClick={this.sort}
 						array={[
 							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Kosten', value: 'cost' }
+							{ name: 'Nach Kosten', value: 'cost' },
 						]}
 						/>
 					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
@@ -90,7 +90,7 @@ export default class Cultures extends React.Component<Props, State> {
 								currentID={currentID}
 								culture={culture}
 								showDetails={showDetails}
-								/>
+								/>,
 							)
 						}
 					</ul>

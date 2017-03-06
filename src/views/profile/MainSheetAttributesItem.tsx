@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
 export interface MainSheetAttributesItem {
 	add?: number;
@@ -43,17 +43,21 @@ export default (props: MainSheetAttributesItem) => {
 			<div className="values">
 				<div className="base">{props.empty ? '-' : props.value}</div>
 				<div className="add">{props.empty ? '-' : props.add}</div>
-				<div className={classNames(
-					'purchased',
-					props.purchased === null && 'blocked'
-				)}>{ props.purchased === null ? '\uE14B' : props.empty ? '-' : props.purchased}</div>
+				<div
+					className={classNames({
+						'blocked': props.purchased === null,
+						'purchased': true,
+					})}
+					>
+					{ props.purchased === null ? '\uE14B' : props.empty ? '-' : props.purchased}
+				</div>
 				<div className="max">{final}</div>
 				{
 					props.subArray ? props.subArray.map(
-						(value, index) => <div key={props.label + index} className="sub">{props.empty ? '-' : value}</div>
+						(value, index) => <div key={props.label + index} className="sub">{props.empty ? '-' : value}</div>,
 					) : null
 				}
 			</div>
 		</div>
 	);
-}
+};

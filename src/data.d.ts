@@ -1,11 +1,17 @@
 /// <reference path="./constants/Categories.d.ts" />
 
-declare interface AdventurePoints {
+interface AdventurePoints {
 	total: number;
 	spent: number;
 	adv: [number, number, number];
 	disadv: [number, number, number];
 }
+
+type ToListById<T> = {
+	[id: string]: T;
+};
+
+type ToList<T> = T[];
 
 interface HeroBase {
 	readonly clientVersion: string;
@@ -286,6 +292,7 @@ interface ProfessionDependencyObject {
 
 interface DependencyObject extends ActiveObject {
 	origin?: string;
+	active?: boolean;
 }
 
 interface ValidationObject extends ActiveObject {
@@ -299,226 +306,136 @@ interface ProfessionDependencyCost {
 	disadv: [number, number, number];
 }
 
+type AllDependency = ActivatableInstanceDependency | AttributeInstanceDependency | CombatTechniqueInstanceDependency | SpellInstanceDependency | TalentInstanceDependency;
+
 type ActivatableInstanceDependency = boolean | DependencyObject;
 
-interface AdvantageInstance {
+interface AdvantageInstanceInInit {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | null;
 	readonly reqs: ('RCP' | RequirementObject)[];
-	readonly tiers?: number | null;
-	readonly sel: SelectionObject[];
-	readonly gr: number;
+	readonly tiers: number | null;
+	sel: SelectionObject[];
 	readonly category: ADVANTAGES;
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
-	readonly sid: (string | number)[];
-	readonly dsid: (string | number | boolean | undefined)[];
-	getSelectionItem(id: string | number): SelectionObject | undefined;
-	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: ActivatableInstanceDependency): void;
-	removeDependency(dependency: ActivatableInstanceDependency): boolean;
-	readonly isMultiselect: boolean;
-	readonly isActive: boolean;
-	readonly isActivatable: boolean;
-	readonly isDeactivatable: boolean;
-	activate(args: ActivateArgs): void;
-	deactivate(index: number): void;
-	setTier(index: number, tier: number): void;
-	reset(): void;
 }
 
-interface DisadvantageInstance {
+interface AdvantageInstance extends AdvantageInstanceInInit {
+	readonly sel: SelectionObject[];
+}
+
+interface DisadvantageInstanceInInit {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | null;
 	readonly reqs: ('RCP' | RequirementObject)[];
-	readonly tiers?: number | null;
-	readonly sel: SelectionObject[];
-	readonly gr: number;
+	readonly tiers: number | null;
+	sel: SelectionObject[];
 	readonly category: DISADVANTAGES;
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
-	readonly sid: (string | number)[];
-	readonly dsid: (string | number | boolean | undefined)[];
-	getSelectionItem(id: string | number): SelectionObject | undefined;
-	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: ActivatableInstanceDependency): void;
-	removeDependency(dependency: ActivatableInstanceDependency): boolean;
-	readonly isMultiselect: boolean;
-	readonly isActive: boolean;
-	readonly isActivatable: boolean;
-	readonly isDeactivatable: boolean;
-	activate(args: ActivateArgs): void;
-	deactivate(index: number): void;
-	setTier(index: number, tier: number): void;
-	reset(): void;
 }
 
-interface SpecialAbilityInstance {
+interface DisadvantageInstance extends DisadvantageInstanceInInit {
+	readonly sel: SelectionObject[];
+}
+
+interface SpecialAbilityInstanceInInit {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
 	readonly input: string | null;
 	readonly max: number | false | null;
 	readonly reqs: ('RCP' | RequirementObject)[];
-	readonly tiers?: number | null;
-	readonly sel: SelectionObject[];
+	sel: SelectionObject[];
 	readonly gr: number;
 	readonly category: SPECIAL_ABILITIES;
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
-	readonly sid: (string | number)[];
-	readonly dsid: (string | number | boolean | undefined)[];
-	getSelectionItem(id: string | number): SelectionObject | undefined;
-	addDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	removeDependencies(adds?: RequirementObject[], sel?: string | undefined): void;
-	addDependency(dependency: ActivatableInstanceDependency): void;
-	removeDependency(dependency: ActivatableInstanceDependency): boolean;
-	readonly isMultiselect: boolean;
-	readonly isActive: boolean;
-	readonly isActivatable: boolean;
-	readonly isDeactivatable: boolean;
-	activate(args: ActivateArgs): void;
-	deactivate(index: number): void;
-	setTier(index: number, tier: number): void;
-	reset(): void;
 }
 
-type AttributeInstanceDependency = number | ActiveObject | SkillOptionalDependency;
+interface SpecialAbilityInstance extends SpecialAbilityInstanceInInit {
+	readonly sel: SelectionObject[];
+}
+
+type AttributeInstanceDependency = number | SkillOptionalDependency;
 
 interface AttributeInstance {
+	readonly category: ATTRIBUTES;
+	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly ic: number;
-	readonly category: ATTRIBUTES;
 	readonly short: string;
 	dependencies: AttributeInstanceDependency[];
-	value: number;
 	mod: number;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	addDependency(dependency: AttributeInstanceDependency): void;
-	removeDependency(dependency: AttributeInstanceDependency): boolean;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-	reset(): void;
+	value: number;
 }
 
-type CombatTechniqueInstanceDependency = number | ActiveObject | SkillOptionalDependency;
+type CombatTechniqueInstanceDependency = number;
 
 interface CombatTechniqueInstance {
+	readonly category: COMBAT_TECHNIQUES;
+	readonly gr: number;
+	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly ic: number;
-	readonly gr: number;
 	readonly primary: string[];
-	readonly category: COMBAT_TECHNIQUES;
 	dependencies: CombatTechniqueInstanceDependency[];
 	value: number;
-	readonly at: number;
-	readonly pa: number | string;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	addDependency(dependency: CombatTechniqueInstanceDependency): void;
-	removeDependency(dependency: CombatTechniqueInstanceDependency): boolean;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-	reset(): void;
 }
 
-type LiturgyInstanceDependency = number | boolean | ActiveObject | SkillOptionalDependency;
+type LiturgyInstanceDependency = SpellInstanceDependency;
 
 interface LiturgyInstance {
+	readonly aspects: number[];
+	readonly category: LITURGIES;
+	readonly check: string[];
+	readonly gr: number;
+	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly gr: number;
-	readonly check: string[];
 	readonly tradition: number[];
-	readonly aspect: number[];
-	readonly category: LITURGIES;
-	readonly ic: number;
+	active: boolean;
 	dependencies: LiturgyInstanceDependency[];
 	value: number;
-	active: boolean;
-	readonly isOwnTradition: boolean;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	addDependency(dependency: LiturgyInstanceDependency): void;
-	removeDependency(dependency: LiturgyInstanceDependency): boolean;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-	reset(): void;
 }
 
-type SpellInstanceDependency = number | boolean | ActiveObject | SkillOptionalDependency;
+type SpellInstanceDependency = number | boolean | SkillOptionalDependency;
 
 interface SpellInstance {
+	readonly category: SPELLS;
+	readonly check: string[];
+	readonly gr: number;
+	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly gr: number;
-	readonly check: string[];
-	readonly tradition: number[];
 	readonly property: number;
-	readonly category: SPELLS;
-	readonly ic: number;
+	readonly tradition: number[];
+	active: boolean;
 	dependencies: SpellInstanceDependency[];
 	value: number;
-	active: boolean;
-	readonly isOwnTradition: boolean;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	addDependency(dependency: SpellInstanceDependency): void;
-	removeDependency(dependency: SpellInstanceDependency): boolean;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-	reset(): void;
 }
 
-type TalentInstanceDependency = number | ActiveObject | SkillOptionalDependency;
+type TalentInstanceDependency = number | SkillOptionalDependency;
 
 interface TalentInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly gr: number;
 	readonly category: TALENTS;
-	readonly ic: number;
 	readonly check: string[];
 	readonly encumbrance: string;
+	readonly gr: number;
+	readonly ic: number;
+	readonly id: string;
+	readonly name: string;
 	readonly specialisation: string[] | null;
 	readonly specialisationInput: string | null;
 	dependencies: TalentInstanceDependency[];
 	value: number;
-	readonly isIncreasable: boolean;
-	readonly isDecreasable: boolean;
-	readonly isTyp: boolean;
-	readonly isUntyp: boolean;
-	addDependency(dependency: TalentInstanceDependency): void;
-	removeDependency(dependency: TalentInstanceDependency): boolean;
-	set(value: number): void;
-	add(value: number): void;
-	remove(value: number): void;
-	addPoint(): void;
-	removePoint(): void;
-	reset(): void;
 }
 
 interface ItemBaseInstance {
@@ -571,9 +488,16 @@ interface ItemEditorInstance extends ItemBaseInstance {
 	weight: string;
 }
 
-type IncreasableInstances = AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
-type IncreasableNonactiveInstances = AttributeInstance | TalentInstance | CombatTechniqueInstance;
-type ActivatableInstances = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
+type Instance = AbilityInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
+type InstanceInInit = AbilityInstanceInInit | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
+type AbilityInstance = ActivatableInstance | IncreasableInstance;
+type AbilityInstanceInInit = ActivatableInstanceInInit | IncreasableInstance;
+type ActivatableInstance = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
+type ActivatableInstanceInInit = AdvantageInstanceInInit | DisadvantageInstanceInInit | SpecialAbilityInstanceInInit;
+type IncreasableInstance = AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
+
+type IncreasableNonactiveInstance = AttributeInstance | TalentInstance | CombatTechniqueInstance;
+type SkillishInstance = SpellInstance | LiturgyInstance | TalentInstance | CombatTechniqueInstance;
 
 interface SecondaryAttribute {
 	id: string;

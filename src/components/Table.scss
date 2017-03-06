@@ -73,6 +73,11 @@
 		}
 	}
 
+	.property, .aspect, .group {
+		margin-left: 4px;
+		margin-right: 12px;
+	}
+
 	.hr {
 		border-width: 1px 0 0;
 		background-color: $color12;
@@ -108,8 +113,7 @@
 			height: 32px;
 			width: 32px;
 			margin-right: 8px;
-			border-width: 2px;
-			border-style: solid;
+			border: 2px solid $color12;
 			font: 500 12px/28px Alegreya Sans SC;
 			text-align: center;
 		}
@@ -125,14 +129,9 @@
 		}
 
 		.sr, .ic, .cost {
-			border-color: $color12;
 			border-width: 1px;
 			margin-right: 12px;
 			line-height: 30px;
-		}
-
-		.check, .primary, .at, .pa {
-			border-color: $color12;
 		}
 
 		.ATTR_6_8 {
@@ -165,17 +164,48 @@
 
 		.btn {
 			flex: none;
-			// background: transparent;
+		}
+	}
 
-			// &:hover {
-			// 	background: transparent;
-			// }
+	&.imp {
+		.group {
+			color: #c89c3d;
+		}
 
-			// border: none;
+		.values > div {
+			border-color: #c89c3d;
+		}
 
-			// &:not(:first-child) {
-			// 	margin-left: 4px;
-			// }
+		p.title, .values .sr {
+			color: #fabe0a;
+		}
+	}
+
+	&.typ {
+		.group {
+			color: #005177;
+		}
+
+		.values > div {
+			border-color: #005177;
+		}
+
+		p.title, .values .sr {
+			color: #0acbe6;
+		}
+	}
+
+	&.untyp {
+		.group {
+			color: #aa1b32;
+		}
+
+		.values > div {
+			border-color: #aa1b32;
+		}
+
+		p.title, .values .sr {
+			color: #ff2345;
 		}
 	}
 }

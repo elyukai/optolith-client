@@ -1,7 +1,8 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import TextBox from '../../components/TextBox';
+import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
+import { get } from '../../stores/ListStore';
+import { getAt, getPa } from '../../utils/CombatTechniqueUtils';
 
 export default () => (
 	<TextBox label="Kampftechniken" className="combat-techniques">
@@ -20,10 +21,10 @@ export default () => (
 						<tr key={e.id}>
 							<td className="name">{e.name}</td>
 							<td className="primary">{e.primary.map(attr => (get(attr) as AttributeInstance).short).join('/')}</td>
-							<td className="ic">{['A','B','C','D'][e.ic - 1]}</td>
+							<td className="ic">{['A', 'B', 'C', 'D'][e.ic - 1]}</td>
 							<td className="value">{e.value}</td>
-							<td className="at">{e.at}</td>
-							<td className="pa">{e.pa}</td>
+							<td className="at">{getAt(e)}</td>
+							<td className="pa">{getPa(e)}</td>
 						</tr>
 					))
 				}

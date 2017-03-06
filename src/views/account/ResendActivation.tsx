@@ -1,9 +1,9 @@
-import * as AuthActions from '../../actions/AuthActions';
 import * as React from 'react';
-import createOverlay, { close } from '../../utils/createOverlay';
+import * as AuthActions from '../../actions/AuthActions';
 import Dialog from '../../components/Dialog';
-import Login from './Login';
 import TextField from '../../components/TextField';
+import createOverlay, { close } from '../../utils/createOverlay';
+import Login from './Login';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -15,7 +15,7 @@ interface State {
 
 export default class ResendActivation extends React.Component<Props, State> {
 	state = {
-		email: ''
+		email: '',
 	};
 
 	resendActivation = () => AuthActions.requestAccountActivationEmail(this.state.email);
@@ -36,15 +36,15 @@ export default class ResendActivation extends React.Component<Props, State> {
 		return (
 			<Dialog id="resendactivation" title="Aktivierungslink erneut senden" node={this.props.node} buttons={[
 				{
+					disabled: email === '',
 					label: 'E-Mail anfordern',
 					onClick: this.resendActivation,
 					primary: true,
-					disabled: email === ''
 				},
 				{
 					label: 'Zurück',
-					onClick: this.back
-				}
+					onClick: this.back,
+				},
 			]}>
 				<TextField
 					hint="Registrierte E-Mail-Adresse"

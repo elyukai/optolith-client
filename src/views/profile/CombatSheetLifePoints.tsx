@@ -1,8 +1,8 @@
-import { getLP } from '../../utils/secondaryAttributes';
 import * as React from 'react';
 import Box from '../../components/Box';
 import LabelBox from '../../components/LabelBox';
 import TextBox from '../../components/TextBox';
+import { getLP } from '../../utils/secondaryAttributes';
 
 export default () => {
 	const lp = getLP().value as number;
