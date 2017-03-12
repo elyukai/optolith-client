@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
+import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
 import TextField from './TextField';
@@ -16,7 +17,7 @@ interface AddObject {
 }
 
 interface Props {
-	item: AdvantageInstance | DisadvantageInstance;
+	item: ActivatableInstance;
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
@@ -30,6 +31,8 @@ interface State {
 	input: string;
 	input2: string;
 }
+
+const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
 export default class ActivatableAddListItem extends React.Component<Props, State> {
 	state: State = {
@@ -72,9 +75,10 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 	}
 
 	render() {
-		const { item: { id, name, cost, sel, tiers }, isImportant, isTypical, isUntypical } = this.props;
+		const { item, isImportant, isTypical, isUntypical } = this.props;
+		const { id, name, cost, sel, tiers } = item as ActivatableInstance & { tiers?: number; };
 		let { item: { input } } = this.props;
-		const { category } = get(id) as AdvantageInstance | DisadvantageInstance;
+		const { category, gr } = get(id) as ActivatableInstance & { gr?: number; };
 		let sel2: SelectionObject[] | undefined;
 
 		const args: ActivateArgs = { id, cost: 0 };
@@ -322,6 +326,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 					{tierElement2}
 				</div>
 				<div className="hr"></div>
+				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
 				<div className="values">
 					<div className="cost">{currentCost}</div>
 				</div>

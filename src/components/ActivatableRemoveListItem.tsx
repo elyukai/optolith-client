@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import ELStore from '../stores/ELStore';
 import { get, getAllByCategory } from '../stores/ListStore';
+import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import { getSelectionItem, isDeactivatable } from '../utils/ActivatableUtils';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
@@ -29,6 +30,8 @@ interface Props {
 	removeFromList(args: DeactivateArgs): void;
 }
 
+const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
+
 export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, active: { tier }, index } = this.props.item;
@@ -41,8 +44,8 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 	render() {
 		const { phase, item: { id, active: activeObject, index }, isImportant, isTypical, isUntypical } = this.props;
 		const { sid, sid2, tier } = activeObject;
-		const a = get(id) as ActivatableInstance & { tiers?: number; };
-		const { cost, category, sel, dependencies, active, input } = a;
+		const a = get(id) as ActivatableInstance & { tiers?: number; gr?: number; };
+		const { cost, category, sel, dependencies, active, input, gr } = a;
 		let { tiers } = a;
 		let disabled = !isDeactivatable(a);
 		let add = '';
@@ -225,6 +228,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 					{tierElement}
 				</div>
 				<div className="hr"></div>
+				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
 				<div className="values">
 					<div className="cost">{currentCost}</div>
 				</div>

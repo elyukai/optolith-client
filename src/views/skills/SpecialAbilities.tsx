@@ -1,17 +1,17 @@
-import { filterAndSort } from '../../utils/ListUtils';
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import * as Categories from '../../constants/Categories';
 import * as React from 'react';
 import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
 import ActivatableAddListItem from '../../components/ActivatableAddListItem';
 import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
 import BorderButton from '../../components/BorderButton';
-import PhaseStore from '../../stores/PhaseStore';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import TextField from '../../components/TextField';
+import * as Categories from '../../constants/Categories';
+import * as ActivatableStore from '../../stores/ActivatableStore';
+import PhaseStore from '../../stores/PhaseStore';
+import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
+import { filterAndSort } from '../../utils/ListUtils';
 
 interface State {
 	saActive: ActiveViewObject[];
@@ -24,18 +24,18 @@ interface State {
 
 export default class SpecialAbilities extends React.Component<any, State> {
 	state = {
+		filterText: '',
+		phase: PhaseStore.get(),
 		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
 		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
-		filterText: '',
+		showAddSlidein: false,
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
-		phase: PhaseStore.get(),
-		showAddSlidein: false
 	};
 
 	_updateSpecialAbilitiesStore = () => this.setState({
 		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
 		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
-		sortOrder: SpecialAbilitiesStore.getSortOrder()
+		sortOrder: SpecialAbilitiesStore.getSortOrder(),
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -56,7 +56,7 @@ export default class SpecialAbilities extends React.Component<any, State> {
 
 		const sortArray = [
 			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'group' }
+			{ name: 'Nach Gruppe', value: 'group' },
 		];
 
 		const listActive = filterAndSort(saActive, filterText, sortOrder);

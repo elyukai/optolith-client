@@ -32,5 +32,9 @@ module.exports = {
 		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
 			outputStyle: 'compressed'
 		}}})
-	]
+	],
+	externals: {
+		'react': 'React',
+		'react-dom': 'ReactDOM'
+	}
 };
