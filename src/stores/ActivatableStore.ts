@@ -27,7 +27,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 	} | {
 		[id: string]: SpecialAbilityInstance;
 	};
-	const finalEntries: any[] = [];
+	const finalEntries = [];
 	for (const id in allEntries) {
 		if (allEntries.hasOwnProperty(id)) {
 			const a = allEntries[id] as ActivatableInstance & { tiers?: number; gr?: number; };
