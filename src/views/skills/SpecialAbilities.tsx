@@ -27,7 +27,7 @@ export default class SpecialAbilities extends React.Component<any, State> {
 		filterText: '',
 		phase: PhaseStore.get(),
 		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
-		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
+		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES) as SpecialAbilityInstance[],
 		showAddSlidein: false,
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
 	};

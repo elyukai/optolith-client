@@ -24,8 +24,8 @@ export default class Belongings extends React.Component<undefined, State> {
 
 		const tabs = [
 			{
+				id: 'equipment',
 				label: 'Ausrüstung',
-				tag: 'equipment',
 			},
 		];
 

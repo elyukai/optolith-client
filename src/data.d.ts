@@ -11,6 +11,10 @@ type ToListById<T> = {
 	[id: string]: T;
 };
 
+type ToOptionalKeys<T> = {
+	[K in keyof T]?: T[K];
+};
+
 type ToList<T> = T[];
 
 interface HeroBase {
@@ -158,7 +162,7 @@ interface CultureInstance {
 
 interface SpecialisationSelection {
 	id: 'SPECIALISATION';
-	sid: string;
+	sid: string | string[];
 }
 
 interface LanguagesScriptsSelection {
@@ -168,6 +172,14 @@ interface LanguagesScriptsSelection {
 
 interface CombatTechniquesSelection {
 	id: 'COMBAT_TECHNIQUES';
+	active?: boolean;
+	amount: number;
+	value: number;
+	sid: string[];
+}
+
+interface CombatTechniquesSecondSelection {
+	id: 'COMBAT_TECHNIQUES_SECOND';
 	active?: boolean;
 	amount: number;
 	value: number;
@@ -186,9 +198,25 @@ interface CursesSelection {
 	value: number;
 }
 
-type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'CANTRIPS' | 'CURSES';
-type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CantripsSelection | CursesSelection;
+type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES';
+type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection;
 type ProfessionSelections = ProfessionSelection[];
+
+interface Selections {
+	attrSel: string;
+	useCulturePackage: boolean;
+	lang: number;
+	buyLiteracy: boolean;
+	litc: number;
+	cantrips: Set<string>;
+	combattech: Set<string>;
+	combatTechniquesSecond: Set<string>;
+	curses: Map<string, number>;
+	langLitc: Map<string, number>;
+	spec: string | number;
+	specTalentId?: string;
+	map: Map<ProfessionSelectionIds, ProfessionSelection>;
+}
 
 interface ProfessionNameForSexes {
 	m: string;
@@ -579,3 +607,10 @@ interface SaveData extends HeroSave, HeroRest {}
 
 type InputTextEvent =  React.FormEvent<HTMLInputElement>;
 type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;
+
+interface SubTab {
+	id: string;
+	label: string;
+	disabled?: boolean;
+	// element: JSX.Element;
+}

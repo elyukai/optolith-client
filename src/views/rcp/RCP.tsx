@@ -53,21 +53,21 @@ export default class RCP extends React.Component<undefined, State> {
 
 		const tabs = [
 			{
+				id: 'race',
 				label: 'Spezies',
-				tag: 'race',
 			},
 		];
 
 		if (raceID) {
 			tabs.push({
+				id: 'culture',
 				label: 'Kultur',
-				tag: 'culture',
 			});
 		}
 		if (cultureID) {
 			tabs.push({
+				id: 'profession',
 				label: 'Profession',
-				tag: 'profession',
 			});
 		}
 

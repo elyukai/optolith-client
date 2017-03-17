@@ -27,7 +27,7 @@ export default class Disadvantages extends React.Component<undefined, State> {
 	state = {
 		culture: CultureStore.getCurrent()!,
 		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
+		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES) as DisadvantageInstance[],
 		filterText: '',
 		profession: ProfessionStore.getCurrent()!,
 		race: RaceStore.getCurrent()!,

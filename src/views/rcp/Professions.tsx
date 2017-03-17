@@ -28,7 +28,7 @@ export default class Professions extends React.Component<undefined, State> {
 		currentID: ProfessionStore.getCurrentId(),
 		currentVID: ProfessionVariantStore.getCurrentID(),
 		filterText: '',
-		professions: ProfessionStore.getAll(),
+		professions: ProfessionStore.getAllValid(),
 		showAddSlidein: false,
 		sortOrder: ProfessionStore.getSortOrder(),
 		visibility: ProfessionStore.areAllVisible(),
@@ -36,7 +36,7 @@ export default class Professions extends React.Component<undefined, State> {
 
 	_updateProfessionStore = () => this.setState({
 		currentID: ProfessionStore.getCurrentId(),
-		professions: ProfessionStore.getAll(),
+		professions: ProfessionStore.getAllValid(),
 		sortOrder: ProfessionStore.getSortOrder(),
 		visibility: ProfessionStore.areAllVisible(),
 	} as State);

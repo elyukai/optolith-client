@@ -14,6 +14,7 @@ import * as LiturgyUtils from '../utils/LiturgyUtils';
 import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
 import CultureStore from './CultureStore';
+import ELStore from './ELStore';
 import ProfessionStore from './ProfessionStore';
 import ProfessionVariantStore from './ProfessionVariantStore';
 import RaceStore from './RaceStore';
@@ -333,6 +334,12 @@ class ListStoreStatic extends Store {
 					return values.map(e => final(5, e)).reduce((a, b) => a + b, 0);
 				}
 
+				case Categories.TALENTS: {
+					const values: number[] = Array.from({ length: value! - obj.value }, ({}, i) => i + obj.value);
+					this.byId[id as string] = IncreasableUtils.set(obj, value!);
+					return values.map(e => final(obj.ic, e)).reduce((a, b) => a + b, 0);
+				}
+
 				case Categories.ADVANTAGES:
 				case Categories.DISADVANTAGES:
 				case Categories.SPECIAL_ABILITIES: {
@@ -376,6 +383,19 @@ class ListStoreStatic extends Store {
 			}
 			return 0;
 		});
+	}
+
+	getSpareAPForCombatTechniques() {
+		const allCombatTechniques = this.getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+		const combatTechniqueValueMax = ELStore.getStart().maxCombatTechniqueRating;
+		const valueTooHigh = allCombatTechniques.filter(e => e.value > combatTechniqueValueMax);
+		valueTooHigh.forEach(e => {
+			this.byId[e.id] = IncreasableUtils.set(e, combatTechniqueValueMax);
+		});
+		return valueTooHigh.reduce<number>((ap, instance) => {
+			const values: number[] = Array.from({ length: instance.value - combatTechniqueValueMax }, ({}, i) => i + combatTechniqueValueMax + 1);
+			return ap + values.map(e => final(instance.ic, e)).reduce((a, b) => a + b, 0);
+		}, 0);
 	}
 
 	private activate(id: string) {
@@ -548,11 +568,21 @@ class ListStoreStatic extends Store {
 		}
 
 		if (selections.spec !== null) {
-			activatable.add({
-				id: 'SA_10',
-				sid: (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid,
-				sid2: selections.spec,
-			});
+			const talentId = (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid;
+			if (Array.isArray(talentId)) {
+				activatable.add({
+					id: 'SA_10',
+					sid: selections.specTalentId!,
+					sid2: selections.spec,
+				});
+			}
+			else {
+				activatable.add({
+					id: 'SA_10',
+					sid: talentId,
+					sid2: selections.spec,
+				});
+			}
 		}
 
 		selections.langLitc.forEach((value, key) => {
@@ -566,6 +596,10 @@ class ListStoreStatic extends Store {
 
 		selections.combattech.forEach(e => {
 			skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
+		});
+
+		selections.combatTechniquesSecond.forEach(e => {
+			skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSelection).value);
 		});
 
 		selections.cantrips.forEach(e => {
@@ -595,6 +629,8 @@ class ListStoreStatic extends Store {
 		});
 		(this.byId.SA_28 as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
 		(this.byId.SA_30 as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
+
+
 	}
 
 	private clear() {

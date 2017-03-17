@@ -33,12 +33,12 @@ export default class DisAdv extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={[
 						{
+							id: 'adv',
 							label: 'Vorteile',
-							tag: 'adv',
 						},
 						{
+							id: 'disadv',
 							label: 'Nachteile',
-							tag: 'disadv',
 						},
 					]}
 					active={this.state.tab}

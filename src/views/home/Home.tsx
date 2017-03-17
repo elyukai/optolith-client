@@ -28,18 +28,18 @@ export default class Home extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={[
 						{
+							id: 'overview',
 							label: 'Übersicht',
-							tag: 'overview',
 						},
 						{
 							disabled: true,
+							id: 'news',
 							label: 'Neuigkeiten',
-							tag: 'news',
 						},
 						{
 							disabled: true,
+							id: 'patchnotes',
 							label: 'Letzte Änderungen',
-							tag: 'patchnotes',
 						},
 					]}
 					active={this.state.tab}

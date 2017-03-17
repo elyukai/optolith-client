@@ -1,11 +1,11 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
+import SubTabs from '../../components/SubTabs';
+import { get } from '../../stores/ListStore';
+import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import CombatTechniques from './CombatTechniques';
 import Liturgies from './Liturgies';
 import SpecialAbilities from './SpecialAbilities';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import Spells from './Spells';
-import SubTabs from '../../components/SubTabs';
 import Talents from './Talents';
 
 interface State {
@@ -17,14 +17,14 @@ interface State {
 export default class Skills extends React.Component<undefined, State> {
 
 	state = {
-		tab: 'talents',
+		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
 		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
+		tab: 'talents',
 	};
 
 	_updateSpecialAbilitiesStore = () => this.setState({
+		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
 		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
 	} as State)
 
 	handleClick = (tab: string) => this.setState({ tab } as State);
@@ -45,48 +45,48 @@ export default class Skills extends React.Component<undefined, State> {
 
 		switch (tab) {
 			case 'talents':
-				skillElement = <Talents />;
+				skillElement = Talents;
 				break;
 			case 'combat':
-				skillElement = <CombatTechniques />;
+				skillElement = CombatTechniques;
 				break;
 			case 'spells':
-				skillElement = <Spells />;
+				skillElement = Spells;
 				break;
 			case 'liturgies':
-				skillElement = <Liturgies />;
+				skillElement = Liturgies;
 				break;
 			case 'special':
-				skillElement = <SpecialAbilities />;
+				skillElement = SpecialAbilities;
 				break;
 		}
 
 		const tabs = [
 			{
+				id: 'talents',
 				label: 'Talente',
-				tag: 'talents'
 			},
 			{
+				id: 'combat',
 				label: 'Kampftechniken',
-				tag: 'combat'
 			},
 			{
+				id: 'special',
 				label: 'Sonderfertigkeiten',
-				tag: 'special'
-			}
+			},
 		];
 
 		if (showSpells) {
 			tabs.push({
+				id: 'spells',
 				label: 'Zauber',
-				tag: 'spells'
 			});
 		}
 
 		if (showChants) {
 			tabs.push({
+				id: 'liturgies',
 				label: 'Liturgien',
-				tag: 'liturgies'
 			});
 		}
 

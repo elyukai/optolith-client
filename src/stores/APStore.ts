@@ -252,10 +252,19 @@ class APStoreStatic extends Store {
 				total: 0,
 			};
 
+			const requires = [ ...p.requires ];
+			const pv = ProfessionVariantStore.getCurrent();
+
+			if (pv) {
+				requires.push(...pv.requires);
+			}
+
 			const apCostsList = ListStore.getCostListForProfessionDependencies(p.requires);
 			const apCosts = apCostsList.reduce<ProfessionDependencyCost>(reducer, initialValue);
+			const spareAP = ListStore.getSpareAPForCombatTechniques();
 
 			this.spent += apCosts.total;
+			this.spent -= spareAP;
 			this.spentForAdvantages = this.spentForAdvantages.map((e, i) => e + apCosts.adv[i]);
 			this.spentForDisadvantages = apCosts.disadv;
 		}

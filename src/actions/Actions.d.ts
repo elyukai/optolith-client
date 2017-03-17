@@ -321,20 +321,6 @@ interface SelectProfessionAction extends DefaultAction {
 	};
 }
 
-interface Selections {
-	attrSel: string;
-	useCulturePackage: boolean;
-	lang: number;
-	buyLiteracy: boolean;
-	litc: number;
-	cantrips: Set<string>;
-	combattech: Set<string>;
-	curses: Map<string, number>;
-	langLitc: Map<string, number>;
-	spec: string | number;
-	map: Map<ProfessionSelectionIds, ProfessionSelection>;
-}
-
 interface SetSelectionsAction extends DefaultAction {
 	type: ASSIGN_RCP_OPTIONS;
 	payload: Selections;

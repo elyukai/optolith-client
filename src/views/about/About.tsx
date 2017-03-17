@@ -38,17 +38,17 @@ export default class About extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={[
 						{
+							id: 'imprint',
 							label: 'Impressum',
-							tag: 'imprint',
 						},
 						{
+							id: 'tou',
 							label: 'Haftungsausschluss',
-							tag: 'tou',
 						},
 						{
+							id: 'thirdPartyLicenses',
 							label: 'Third-party licenses',
-							tag: 'thirdPartyLicenses',
-						}
+						},
 					]}
 					active={this.state.tab}
 					onClick={this.handleClick} />

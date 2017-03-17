@@ -29,24 +29,28 @@ interface State {
 	litc: number;
 	cantrips: Set<string>;
 	combattech: Set<string>;
+	combatTechniquesSecond: Set<string>;
 	curses: Map<string, number>;
 	langLitc: Map<string, number>;
 	spec: [number | null, string];
+	specTalentId?: string;
 }
 
 export default class Selections extends React.Component<Props, State> {
 	state = {
 		attrSel: 'ATTR_0',
 		buyLiteracy: false,
-		cantrips: new Set(),
-		combattech: new Set(),
-		curses: new Map(),
+		cantrips: new Set<string>(),
+		combatTechniquesSecond: new Set<string>(),
+		combattech: new Set<string>(),
+		curses: new Map<string, number>(),
 		lang: 0,
-		langLitc: new Map(),
+		langLitc: new Map<string, number>(),
 		litc: 0,
-		spec: [null, ''],
+		spec: [null, ''] as [number | null, string],
+		specTalentId: undefined,
 		useCulturePackage: true,
-	} as State;
+	};
 
 	changeAttrSel = (option: string) => this.setState({ attrSel: option } as State);
 	changeCulturePackage = () => this.setState({ useCulturePackage: !this.state.useCulturePackage } as State);
@@ -67,6 +71,13 @@ export default class Selections extends React.Component<Props, State> {
 			combattech.add(id);
 		}
 		this.setState({ combattech } as State);
+	}
+	changeSecondCombatTechniques = (id: string) => {
+		const combattech = this.state.combatTechniquesSecond;
+		if (!combattech.delete(id)) {
+			combattech.add(id);
+		}
+		this.setState({ combatTechniquesSecond: combattech } as State);
 	}
 	changeCurse = (id: string, option: 'add' | 'remove') => {
 		const { curses } = this.state;
@@ -98,6 +109,9 @@ export default class Selections extends React.Component<Props, State> {
 		}
 		this.setState({ langLitc } as State);
 	}
+	changeSpecId = (id: string) => {
+		this.setState({ specTalentId: id, spec: [null, ''] } as State);
+	}
 	changeSpec = (value: number | string) => {
 		const spec = this.state.spec;
 		if (typeof value === 'number') {
@@ -124,7 +138,20 @@ export default class Selections extends React.Component<Props, State> {
 		const professionVariant = ProfessionVariantStore.getCurrent();
 
 		const { close } = this.props;
-		const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = this.state;
+		const {
+			attrSel,
+			buyLiteracy,
+			cantrips,
+			combattech,
+			combatTechniquesSecond,
+			curses,
+			lang,
+			langLitc,
+			litc,
+			spec,
+			specTalentId,
+			useCulturePackage,
+		} = this.state;
 
 		const selectLang = culture.languages.length > 1;
 		const selectLitc = culture.scripts.length > 1;
@@ -207,7 +234,37 @@ export default class Selections extends React.Component<Props, State> {
 			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
 			const list = rawList.filter(e => sid.includes(e.id));
 
-			ctElement = <SelectionsCt list={list} active={active} num={value} amount={amount} change={this.changeCombattech} />;
+			ctElement = (
+				<SelectionsCt
+					list={list}
+					active={active}
+					num={value}
+					amount={amount}
+					disabled={combatTechniquesSecond}
+					change={this.changeCombattech}
+					/>
+			);
+		}
+
+		let combatTechniqueSecondElement;
+
+		if (professionSelections.has('COMBAT_TECHNIQUES_SECOND')) {
+			const active = combatTechniquesSecond;
+			const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSecondSelection;
+
+			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+			const list = rawList.filter(e => sid.includes(e.id));
+
+			combatTechniqueSecondElement = (
+				<SelectionsCt
+					list={list}
+					active={active}
+					num={value}
+					amount={amount}
+					disabled={combattech}
+					change={this.changeCombattech}
+					/>
+			);
 		}
 
 		let cantripsElement = null;
@@ -225,15 +282,16 @@ export default class Selections extends React.Component<Props, State> {
 		let specElement = null;
 
 		if (professionSelections.has('SPECIALISATION')) {
-			const active = spec;
-			const { sid } = professionSelections.get('SPECIALISATION') as SpecialisationSelection;
-
-			const talent = get(sid) as TalentInstance;
-			const name = talent.name;
-			const list = talent.specialisation && talent.specialisation.map((e, id) => ({ id: id + 1, name: e }));
-			const input = talent.specialisationInput;
-
-			specElement = <SelectionsTalentSpec list={list} active={active} name={name} input={input} change={this.changeSpec} />;
+			const options = professionSelections.get('SPECIALISATION') as SpecialisationSelection;
+			specElement = (
+				<SelectionsTalentSpec
+					options={options}
+					active={spec}
+					activeId={specTalentId}
+					change={this.changeSpec}
+					changeId={this.changeSpecId}
+					/>
+			);
 		}
 
 		return (
@@ -288,6 +346,7 @@ export default class Selections extends React.Component<Props, State> {
 					{specElement}
 					{langLitcElement}
 					{ctElement}
+					{combatTechniqueSecondElement}
 					{cursesElement}
 					{cantripsElement}
 					<BorderButton

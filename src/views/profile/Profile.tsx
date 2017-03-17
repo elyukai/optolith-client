@@ -49,18 +49,18 @@ export default class Profile extends React.Component<undefined, ProfileState> {
 
 		const tabs = [
 			{
+				id: 'overview',
 				label: 'Übersicht',
-				tag: 'overview',
 			},
 		];
 
 		if (phase === 3) {
 			tabs.push({
+				id: 'sheets',
 				label: 'Heldenbogen',
-				tag: 'sheets',
 			}, {
+				id: 'optionalRules',
 				label: 'Optionalregeln',
-				tag: 'optionalRules',
 			});
 		}
 

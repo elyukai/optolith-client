@@ -26,7 +26,7 @@ interface State {
 export default class Advantages extends React.Component<undefined, State> {
 	state = {
 		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
-		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
+		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES) as AdvantageInstance[],
 		culture: CultureStore.getCurrent()!,
 		filterText: '',
 		profession: ProfessionStore.getCurrent()!,
@@ -39,7 +39,7 @@ export default class Advantages extends React.Component<undefined, State> {
 		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
 		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
 		showRating: DisAdvStore.getRating(),
-	} as State)
+	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	changeRating = () => DisAdvActions.switchRatingVisibility();

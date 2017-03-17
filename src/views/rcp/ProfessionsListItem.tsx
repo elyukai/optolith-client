@@ -26,24 +26,7 @@ export default class ProfessionsListItem extends React.Component<Props, undefine
 
 		let variants;
 		if (profession.id === currentID && profession.variants.length > 0) {
-			const allVariants = ProfessionVariantStore.getAll().filter(e => {
-				if (profession.variants.includes(e.id)) {
-					if (e.dependencies !== null) {
-						return e.dependencies.every(req => {
-							if (req.id === 'CULTURE') {
-								const cultureID = CultureStore.getCurrentID() as string;
-								return (req.value as string[]).includes(cultureID);
-							} else if (req.id === 'SEX') {
-								const sex = ProfileStore.getSex();
-								return sex === req.value;
-							}
-							return false;
-						});
-					}
-					return true;
-				}
-				return false;
-			});
+			const allVariants = ProfessionVariantStore.getAllValid(profession.variants);
 			if (allVariants.length > 0) {
 				const variantList: Array<{ name: string; value: string | null; }> = allVariants.map(e => {
 					const { ap, id } = e;

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 import Text from './Text';
 
 interface Props {
@@ -7,16 +7,16 @@ interface Props {
 	className?: string;
 	disabled?: boolean;
 	label: string;
-	onClick: () => void;
+	onClick(): void;
 }
 
-export default class TabProps extends React.Component<Props, undefined> {
+export default class Tab extends React.Component<Props, undefined> {
 	render() {
 		const { active, children, disabled, label, onClick } = this.props;
 		const className = classNames(this.props.className, {
-			'tab': true,
+			'active': active,
 			'disabled': disabled,
-			'active': active
+			'tab': true,
 		});
 
 		return (
