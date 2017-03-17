@@ -45,19 +45,19 @@ export default class Skills extends React.Component<undefined, State> {
 
 		switch (tab) {
 			case 'talents':
-				skillElement = Talents;
+				skillElement = <Talents />;
 				break;
 			case 'combat':
-				skillElement = CombatTechniques;
+				skillElement = <CombatTechniques />;
 				break;
 			case 'spells':
-				skillElement = Spells;
+				skillElement = <Spells />;
 				break;
 			case 'liturgies':
-				skillElement = Liturgies;
+				skillElement = <Liturgies />;
 				break;
 			case 'special':
-				skillElement = SpecialAbilities;
+				skillElement = <SpecialAbilities />;
 				break;
 		}
 
