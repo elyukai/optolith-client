@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
 import AvatarWrapper from '../../components/AvatarWrapper';
 import BorderButton from '../../components/BorderButton';
+import EditText from '../../components/EditText';
 import IconButton from '../../components/IconButton';
 import Scroll from '../../components/Scroll';
 import VerticalList from '../../components/VerticalList';
@@ -20,7 +21,6 @@ import createOverlay from '../../utils/createOverlay';
 import ActivatableTextList from './ActivatableTextList';
 import OverviewAddAP from './OverviewAddAP';
 import OverviewAvatarChange from './OverviewAvatarChange';
-import OverviewNameChange from './OverviewNameChange';
 import OverviewPersonalData from './OverviewPersonalData';
 
 interface State {
@@ -29,6 +29,7 @@ interface State {
 	disadvActive: ActiveViewObject[];
 	phase: number;
 	name: string;
+	professionName: string;
 	sex: 'm' | 'f';
 	avatar: string;
 	family: string;
@@ -44,6 +45,7 @@ interface State {
 	characteristics: string;
 	otherinfo: string;
 	editName: boolean;
+	editProfessionName: boolean;
 }
 
 export default class ProfileOverview extends React.Component<undefined, State> {
@@ -54,6 +56,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 		ap: APStore.getTotal(),
 		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
 		editName: false,
+		editProfessionName: false,
 		phase: PhaseStore.get(),
 	};
 
@@ -78,34 +81,58 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 		ProfileActions.setHeroName(name);
 		this.setState({ editName: false } as State);
 	}
+	changeProfessionName = (name: string) => {
+		ProfileActions.setCustomProfessionName(name);
+		this.setState({ editProfessionName: false } as State);
+	}
 	editName = () => this.setState({ editName: true } as State);
 	editNameCancel = () => this.setState({ editName: false } as State);
+	editProfessionName = () => this.setState({ editProfessionName: true } as State);
+	editProfessionNameCancel = () => this.setState({ editProfessionName: false } as State);
 
 	endCharacterCreation = () => ProfileActions.endHeroCreation();
 	deleteHero = () => ProfileActions.deleteHero();
 	addAP = () => createOverlay(<OverviewAddAP />);
 
 	render() {
-
-		const { ap, avatar, editName, name, phase, ...personal } = this.state;
+		const { ap, avatar, editName, editProfessionName, name, phase, professionName, ...personal } = this.state;
 
 		const sex = this.state.sex === 'm' ? 'Männlich' : 'Weiblich';
 
-		const isProfessionUndefined = ProfessionStore.getCurrentId() === null;
+		const professionId = ProfessionStore.getCurrentId();
+		const isOwnProfession = professionId === 'P_0';
+		const isProfessionUndefined = professionId === null;
 
 		const currentEL = calcEL(ap);
 
 		const nameElement = editName ? (
-			<OverviewNameChange
+			<EditText
+				className="change-name"
 				cancel={this.editNameCancel}
-				change={this.changeName}
-				name={name} />
+				submit={this.changeName}
+				text={name}
+				autoFocus
+				/>
 		) : (
-			<h1>
+			<h1 className="confirm-edit">
 				{name}
 				<IconButton icon="&#xE254;" onClick={this.editName} />
 			</h1>
 		);
+
+		const professionNameElement = phase > 1 && isOwnProfession && (editProfessionName ? (
+			<EditText
+				cancel={this.editProfessionNameCancel}
+				submit={this.changeProfessionName}
+				text={professionName}
+				/>
+		) : (
+			<BorderButton
+				className="edit-profession-name-btn"
+				label="Professionsnamen ändern"
+				onClick={this.editProfessionName}
+				/>
+		));
 
 		return (
 			<div className="page" id="overview">
@@ -137,9 +164,13 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 												if (profession) {
 													let { name, subname } = profession;
 
-													if (typeof name === 'object') {
+													if (typeof name === 'object' && !isOwnProfession) {
 														name = name[this.state.sex];
 													}
+													else if (isOwnProfession) {
+														name = professionName;
+													}
+
 													if (typeof subname === 'object') {
 														subname = subname[this.state.sex];
 													}
@@ -172,15 +203,18 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 							</VerticalList>
 						</div>
 					</div>
-					{
-						phase === 3 ? (
-							<BorderButton
-								className="add-ap"
-								label="AP hinzufügen"
-								onClick={this.addAP}
-								/>
-						) : null
-					}
+					<div className="main-profile-actions">
+						{
+							phase === 3 ? (
+								<BorderButton
+									className="add-ap"
+									label="AP hinzufügen"
+									onClick={this.addAP}
+									/>
+							) : null
+						}
+						{professionNameElement}
+					</div>
 					{
 						isProfessionUndefined ? null : (
 							<h3>Persönliche Daten</h3>

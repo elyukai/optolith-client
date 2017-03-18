@@ -58,7 +58,7 @@
 		"indent": [true, "tabs"],
 		"max-classes-per-file": [true, 1],
 		"no-require-imports": true,
-		"object-literal-sort-keys": true,
+		// "object-literal-sort-keys": true,
 		"prefer-const": true,
 		"trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
 

@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | SetHigherParadeValuesAction;
+type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | SetHigherParadeValuesAction | SwitchAttributeValueLimitAction;
 
 class RulesStoreStatic extends Store {
 	private rules: Rules;
@@ -16,15 +16,23 @@ class RulesStoreStatic extends Store {
 				case ActionTypes.CREATE_HERO:
 					this.rules = {
 						higherParadeValues: 0,
+						attributeValueLimit: false,
 					};
 					break;
 
 				case ActionTypes.RECEIVE_HERO_DATA:
-					this.rules = action.payload.data.rules;
+					this.rules = {
+						...this.rules,
+						...action.payload.data.rules,
+					};
 					break;
 
 				case ActionTypes.SET_HIGHER_PARADE_VALUES:
 					this.rules.higherParadeValues = action.payload.value;
+					break;
+
+				case ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT:
+					this.rules.attributeValueLimit = !this.rules.attributeValueLimit;
 					break;
 
 				default:
@@ -37,6 +45,10 @@ class RulesStoreStatic extends Store {
 
 	getAll() {
 		return this.rules;
+	}
+
+	getAttributeValueLimit() {
+		return this.rules.attributeValueLimit;
 	}
 }
 

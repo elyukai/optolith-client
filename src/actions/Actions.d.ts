@@ -358,6 +358,13 @@ interface SetHeroNameAction extends DefaultAction {
 	};
 }
 
+interface SetCustomProfessionNameAction extends DefaultAction {
+	type: SET_CUSTOM_PROFESSION_NAME;
+	payload: {
+		name: string;
+	};
+}
+
 interface SetHeroAvatarAction extends DefaultAction {
 	type: SET_HERO_AVATAR;
 	payload: {
@@ -488,6 +495,10 @@ interface SetHigherParadeValuesAction extends DefaultAction {
 	payload: {
 		value: number;
 	};
+}
+
+interface SwitchAttributeValueLimitAction extends DefaultAction {
+	type: SWITCH_ATTRIBUTE_VALUE_LIMIT;
 }
 
 // ServerActions

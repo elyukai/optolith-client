@@ -17,6 +17,7 @@
 @import "Checkbox";
 @import "Dialog";
 @import "Dropdown";
+@import "EditText";
 @import "Hr";
 @import "IconButton";
 @import "Label";
@@ -37,3 +38,7 @@
 @import "ToolBar";
 @import "TooltipToggle";
 @import "VerticalList";
+
+.flex {
+	display: flex;
+}

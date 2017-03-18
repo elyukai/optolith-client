@@ -22,7 +22,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 	}
 
 	render() {
-		const { higherParadeValues } = this.state;
+		const { attributeValueLimit, higherParadeValues } = this.state;
 
 		return (
 			<div className="page" id="optional-rules">
@@ -35,7 +35,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Aventurisches Kompendium"
 						disabled
@@ -68,28 +68,31 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 					<div className="options">
 						<Checkbox
 							checked={higherParadeValues > 0}
-							onClick={() => RulesActions.setHigherParadeValues(higherParadeValues > 0 ? 0 : 2)}
+							onClick={this.switchHigherParadeValues}
 							label="Höhere Verteidigungswerte"
 							/>
 						<Dropdown
 							options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
 							value={higherParadeValues}
-							onChange={(id: number) => RulesActions.setHigherParadeValues(id)}
+							onChange={this.changeHigherParadeValues}
 							disabled={higherParadeValues === 0}
 							/>
 					</div>
 					<Checkbox
-						checked={false}
-						onClick={this.changeCheckboxTrap}
+						checked={attributeValueLimit}
+						onClick={this.changeAttributeValueLimit}
 						label="Eigenschaftsobergrenze"
-						disabled
 						/>
 				</Scroll>
 			</div>
 		);
 	}
 
+	private switchHigherParadeValues = () => {
+		RulesActions.setHigherParadeValues(this.state.higherParadeValues > 0 ? 0 : 2);
+	}
+	private changeHigherParadeValues = (id: number) => RulesActions.setHigherParadeValues(id);
+	private changeAttributeValueLimit = () => RulesActions.switchAttributeValueLimit();
 	private changeCheckboxTrap = () => undefined;
-
 	private updateRulesStore = () => this.setState(RulesStore.getAll());
 }

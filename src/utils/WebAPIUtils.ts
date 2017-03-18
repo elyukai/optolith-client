@@ -277,6 +277,7 @@ export function requestHero(id: string) {
 		history: [],
 		rules: {
 			higherParadeValues: 0,
+			attributeValueLimit: false,
 		},
 		belongings: {
 			items: {
@@ -396,9 +397,14 @@ export async function createNewHero(name: string): Promise<void> {
 
 export function saveHero(data: SaveData) {
 	const part = JSON.stringify(data);
-	const blob = new Blob([part], { type: "application/json" });
+	const blob = new Blob([part], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
-	window.open(url, '_blank');
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `${data.name}.json`;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
 }
 
 // export async function saveHero(data): Promise<void> {
@@ -417,11 +423,11 @@ export function saveHero(data: SaveData) {
 
 export function changeHeroAvatar(data: File) {
 	const reader = new FileReader();
-	reader.onload = async (event) => {
+	reader.onload = async event => {
 		try {
 			const response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
-				method: 'post',
 				body: event.target.result,
+				method: 'post',
 			});
 			const result = await response.text();
 			ServerActions.receiveHeroAvatar(result);

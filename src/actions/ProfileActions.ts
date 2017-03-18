@@ -10,6 +10,13 @@ export const setHeroName = (name: string) => AppDispatcher.dispatch<SetHeroNameA
 	},
 });
 
+export const setCustomProfessionName = (name: string) => AppDispatcher.dispatch<SetCustomProfessionNameAction>({
+	type: ActionTypes.SET_CUSTOM_PROFESSION_NAME,
+	payload: {
+		name,
+	},
+});
+
 export const setHeroAvatar = (source: string | File) => {
 	if (typeof source === 'string') {
 		AppDispatcher.dispatch<SetHeroAvatarAction>({

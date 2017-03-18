@@ -28,6 +28,7 @@ interface HeroBase {
 	readonly r: string;
 	readonly c: string;
 	readonly p: string;
+	professionName?: string;
 	readonly pv: string | null;
 	readonly sex: 'm' | 'f';
 }
@@ -569,6 +570,7 @@ interface ExperienceLevel {
 
 interface Rules {
 	higherParadeValues: number;
+	attributeValueLimit: boolean;
 }
 
 interface HistoryPayload {

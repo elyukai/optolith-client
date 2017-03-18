@@ -34,9 +34,17 @@ export default class OverviewNameChange extends React.Component<Props, State> {
 					value={this.state.name}
 					onChange={this.handleInput}
 					onKeyDown={this.handleEnter}
-					autoFocus />
-				<IconButton icon="&#xE876;" onClick={this.change} disabled={this.state.name === ''} />
-				<IconButton icon="&#xE5CD;" onClick={this.props.cancel} />
+					autoFocus
+					/>
+				<IconButton
+					icon="&#xE876;"
+					onClick={this.change}
+					disabled={this.state.name === ''}
+					/>
+				<IconButton
+					icon="&#xE5CD;"
+					onClick={this.props.cancel}
+					/>
 			</div>
 		);
 	}

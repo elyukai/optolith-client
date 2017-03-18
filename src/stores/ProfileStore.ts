@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import ProfessionStore from './ProfessionStore';
 import RaceStore from './RaceStore';
 import Store from './Store';
 
-type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction;
+type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | SetCustomProfessionNameAction;
 
 const HAIRCOLORS = RaceStore.hairColors;
 const EYECOLORS = RaceStore.eyeColors;
@@ -12,6 +13,7 @@ const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 class ProfileStoreStatic extends Store {
 	private id: string | null = null;
 	private name = '';
+	private professionName = '';
 	private sex: 'm' | 'f' = '' as 'm' | 'f';
 	private avatar = '';
 	private family = '';
@@ -41,6 +43,9 @@ class ProfileStoreStatic extends Store {
 				case ActionTypes.RECEIVE_HERO_DATA:
 					this.updateID(action.payload.data.id);
 					this.updateName(action.payload.data.name);
+					if (action.payload.data.professionName) {
+						this.updateProfessionName(action.payload.data.professionName);
+					}
 					this.updateSex(action.payload.data.sex);
 					this.updateAvatar(action.payload.data.avatar);
 					this.updateFamily(action.payload.data.pers.family);
@@ -59,6 +64,10 @@ class ProfileStoreStatic extends Store {
 
 				case ActionTypes.SET_HERO_NAME:
 					this.updateName(action.payload.name);
+					break;
+
+				case ActionTypes.SET_CUSTOM_PROFESSION_NAME:
+					this.updateProfessionName(action.payload.name);
 					break;
 
 				case ActionTypes.SET_HERO_AVATAR:
@@ -116,6 +125,13 @@ class ProfileStoreStatic extends Store {
 					this.updateOtherInfo(action.payload.otherinfo);
 					break;
 
+				case ActionTypes.ASSIGN_RCP_OPTIONS:
+					AppDispatcher.waitFor([ProfessionStore.dispatchToken]);
+					if (ProfessionStore.getCurrentId() === 'P_0') {
+						this.updateProfessionName('Eigene Profession');
+					}
+					break;
+
 				// case ActionTypes.REROLL_HAIRCOLOR:
 				// 	this.rerollHair();
 				// 	break;
@@ -150,6 +166,26 @@ class ProfileStoreStatic extends Store {
 			family: this.family,
 			haircolor: this.haircolor,
 			name: this.name,
+			professionName: this.professionName,
+			otherinfo: this.otherinfo,
+			placeofbirth: this.placeofbirth,
+			sex: this.sex,
+			size: this.size,
+			socialstatus: this.socialstatus,
+			title: this.title,
+			weight: this.weight,
+		};
+	}
+
+	getAllPersonalData() {
+		return {
+			age: this.age,
+			avatar: this.avatar,
+			characteristics: this.characteristics,
+			dateofbirth: this.dateofbirth,
+			eyecolor: this.eyecolor,
+			family: this.family,
+			haircolor: this.haircolor,
 			otherinfo: this.otherinfo,
 			placeofbirth: this.placeofbirth,
 			sex: this.sex,
@@ -166,6 +202,10 @@ class ProfileStoreStatic extends Store {
 
 	getName() {
 		return this.name;
+	}
+
+	getCustomProfessionName() {
+		return this.professionName;
 	}
 
 	getSex() {
@@ -219,6 +259,10 @@ class ProfileStoreStatic extends Store {
 
 	private updateName(text: string) {
 		this.name = text;
+	}
+
+	private updateProfessionName(text: string) {
+		this.professionName = text;
 	}
 
 	private updateSex(id: 'm' | 'f') {

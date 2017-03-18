@@ -19,39 +19,47 @@ import TalentsStore from '../stores/TalentsStore';
 import VersionUtils from '../utils/VersionUtils';
 import * as WebAPIUtils from './WebAPIUtils';
 
-export const generateArray = (): SaveData => ({
-	clientVersion: VersionUtils.get(),
-	dateCreated: (new Date()).toJSON(),
-	dateModified: (new Date()).toJSON(),
-	id: ProfileStore.getID(),
-	phase: PhaseStore.get(),
-	name: ProfileStore.getName(),
-	avatar: ProfileStore.getAvatar(),
-	ap: APStore.getAll(),
-	el: ELStore.getStartID(),
-	r: RaceStore.getCurrentID() as string,
-	c: CultureStore.getCurrentID() as string,
-	p: ProfessionStore.getCurrentId() as string,
-	pv: ProfessionVariantStore.getCurrentID(),
-	sex: ProfileStore.getSex(),
-	pers: ProfileStore.getAll(),
-	attr: AttributeStore.getForSave(),
-	activatable: ActivatableStore.getForSave(),
-	disadv: {
-		ratingVisible: DisAdvStore.getRating(),
-	},
-	talents: TalentsStore.getForSave(),
-	ct: CombatTechniquesStore.getAllForSave(),
-	spells: SpellsStore.getForSave(),
-	chants: LiturgiesStore.getForSave(),
-	belongings: {
-		equipment: {},
-		items: EquipmentStore.getAllById(),
-		pet: {},
-		purse: EquipmentStore.getPurse(),
-	},
-	rules: RulesStore.getAll(),
-	history: HistoryStore.getAll(),
-});
+export function generateArray(): SaveData {
+	const obj: SaveData = {
+		clientVersion: VersionUtils.get(),
+		dateCreated: (new Date()).toJSON(),
+		dateModified: (new Date()).toJSON(),
+		id: ProfileStore.getID(),
+		phase: PhaseStore.get(),
+		name: ProfileStore.getName(),
+		avatar: ProfileStore.getAvatar(),
+		ap: APStore.getAll(),
+		el: ELStore.getStartID(),
+		r: RaceStore.getCurrentID() as string,
+		c: CultureStore.getCurrentID() as string,
+		p: ProfessionStore.getCurrentId() as string,
+		pv: ProfessionVariantStore.getCurrentID(),
+		sex: ProfileStore.getSex(),
+		pers: ProfileStore.getAllPersonalData(),
+		attr: AttributeStore.getForSave(),
+		activatable: ActivatableStore.getForSave(),
+		disadv: {
+			ratingVisible: DisAdvStore.getRating(),
+		},
+		talents: TalentsStore.getForSave(),
+		ct: CombatTechniquesStore.getAllForSave(),
+		spells: SpellsStore.getForSave(),
+		chants: LiturgiesStore.getForSave(),
+		belongings: {
+			equipment: {},
+			items: EquipmentStore.getAllById(),
+			pet: {},
+			purse: EquipmentStore.getPurse(),
+		},
+		rules: RulesStore.getAll(),
+		history: HistoryStore.getAll(),
+	};
+
+	if (obj.p === 'P_0') {
+		obj.professionName = ProfileStore.getCustomProfessionName();
+	}
+
+	return obj;
+};
 
 export default () => WebAPIUtils.saveHero(generateArray());

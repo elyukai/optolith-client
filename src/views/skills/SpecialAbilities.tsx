@@ -76,9 +76,9 @@ export default class SpecialAbilities extends React.Component<any, State> {
 					<Scroll className="list">
 						<div className="list-wrapper">
 							{
-								listDeactive.map((sa, index) => (
+								listDeactive.map(sa => (
 									<ActivatableAddListItem
-										key={`SA_DEACTIVE_${index}`}
+										key={sa.id}
 										item={sa}
 										addToList={SpecialAbilitiesActions.addToList}
 										/>

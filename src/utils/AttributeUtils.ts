@@ -1,12 +1,21 @@
+import APStore from '../stores/APStore';
 import AttributeStore from '../stores/AttributeStore';
 import ELStore from '../stores/ELStore';
 import { get } from '../stores/ListStore';
 import PhaseStore from '../stores/PhaseStore';
+import RulesStore from '../stores/RulesStore';
+import calcEL from '../utils/calcEL';
 
 export const isIncreasable = (obj: AttributeInstance): boolean => {
 	if (PhaseStore.get() < 3) {
 		const max = AttributeStore.getSum() >= ELStore.getStart().maxTotalAttributeValues ? 0 : ELStore.getStart().maxAttributeValue + obj.mod;
 		return obj.value < max;
+	}
+	else if (RulesStore.getAttributeValueLimit()) {
+		const currentAp = APStore.getTotal();
+		const currentElId = calcEL(currentAp);
+		const currentEl = ELStore.get(currentElId);
+		return obj.value < currentEl.maxAttributeValue + 2;
 	}
 	return true;
 };
