@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { getDSids, getSids, isActive } from '../utils/ActivatableUtils';
+import { getDSids, getSids, isActivatable, isActive } from '../utils/ActivatableUtils';
 import validate from '../utils/validate';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
 
@@ -31,8 +31,8 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 	for (const id in allEntries) {
 		if (allEntries.hasOwnProperty(id)) {
 			const a = allEntries[id] as ActivatableInstance & { tiers?: number; gr?: number; };
-			const { cost, max, active, name, input, tiers, dependencies, reqs, gr } = a;
-			if (!validate(reqs, id) || dependencies.includes(false)) {
+			const { cost, max, active, name, input, tiers, dependencies, gr } = a;
+			if (!isActivatable(a) || dependencies.includes(false)) {
 				continue;
 			}
 			if (max === null || active.length < max) {

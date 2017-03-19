@@ -32,11 +32,8 @@ export default class AttributesController extends React.Component<undefined, Sta
 	}
 
 	render() {
-
-		const sum = this.state.attributes.reduce((a, b) => a + b.value, 0);
-
 		return (
-			<Attributes {...this.state} sum={sum} />
+			<Attributes {...this.state} />
 		);
 	}
 }

@@ -3,9 +3,9 @@ import CultureStore from '../stores/CultureStore';
 import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
 import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
-import { getSids } from '../utils/ActivatableUtils';
+import { getSids, isActive } from '../utils/ActivatableUtils';
 
-export const fn = (req: 'RCP' | RequirementObject, id?: string): boolean => {
+export const validateInstanceRequirementObject = (req: 'RCP' | RequirementObject, id?: string): boolean => {
 	if (req === 'RCP') {
 		const currentRace = RaceStore.getCurrent()!;
 		const currentCulture = CultureStore.getCurrent()!;
@@ -25,7 +25,7 @@ export const fn = (req: 'RCP' | RequirementObject, id?: string): boolean => {
 	} else {
 		let id: string | string[] | undefined = req.id;
 		if (Array.isArray(id)) {
-			const resultOfAll = id.map(e => fn({ ...req, id: e }));
+			const resultOfAll = id.map(e => validateInstanceRequirementObject({ ...req, id: e }));
 			return resultOfAll.includes(true);
 		}
 		else if (id === 'RACE') {
@@ -69,11 +69,13 @@ export const fn = (req: 'RCP' | RequirementObject, id?: string): boolean => {
 					if (req.sid) {
 						return req.active === getSids(a).includes(req.sid as string | number);
 					}
-					return a.active.length > 0 === req.active;
+					return isActive(a) === req.active;
 			}
 		}
 	}
 	return false;
 };
 
-export default (reqs: Array<'RCP' | RequirementObject>, id?: string): boolean => reqs.every(req => fn(req, id));
+export default function validateInstance (reqs: Array<'RCP' | RequirementObject>, id?: string): boolean {
+	return reqs.every(req => validateInstanceRequirementObject(req, id));
+}

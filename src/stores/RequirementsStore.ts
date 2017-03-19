@@ -68,12 +68,12 @@ class RequirementsStoreStatic extends Store {
 						break;
 
 					case ActionTypes.DEACTIVATE_DISADV:
-						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as ActivatableInstance));
+						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(get(action.payload.id) as ActivatableInstance));
 						this.updateDisAdvCost(action.payload.id, -action.payload.cost);
 						break;
 
 					case ActionTypes.DEACTIVATE_SPECIALABILITY:
-						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as ActivatableInstance));
+						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(get(action.payload.id) as ActivatableInstance));
 						this.updateCost(-action.payload.cost - AttributeStore.getPermanentRedeemedChangeAmount(action.payload.id) * 2, true);
 						break;
 

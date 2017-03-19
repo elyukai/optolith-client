@@ -629,8 +629,6 @@ class ListStoreStatic extends Store {
 		});
 		(this.byId.SA_28 as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
 		(this.byId.SA_30 as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
-
-
 	}
 
 	private clear() {

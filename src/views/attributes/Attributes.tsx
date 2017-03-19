@@ -8,13 +8,13 @@ interface Props {
 	attributes: AttributeInstance[];
 	el: ExperienceLevel;
 	phase: number;
-	sum: number;
 }
 
 export default class Attribute extends React.Component<Props, undefined> {
 	render() {
-		const { el, sum, ...other } = this.props;
+		const { attributes, el, phase } = this.props;
 
+		const sum = attributes.reduce((a, b) => a + b.value, 0);
 		const sumMax = sum >= el.maxTotalAttributeValues;
 		const max = el.maxAttributeValue;
 
@@ -23,9 +23,14 @@ export default class Attribute extends React.Component<Props, undefined> {
 				<div className="page">
 					<Scroll>
 						<div className="counter">Punkte in Eigenschaften: {sum}</div>
-						<AttributeList {...other} max={max} sumMax={sumMax} />
-						<AttributeCalc {...other} />
-						<AttributesPermanentList phase={other.phase} />
+						<AttributeList
+							attributes={attributes}
+							max={max}
+							phase={phase}
+							sumMax={sumMax}
+							/>
+						<AttributeCalc phase={phase} />
+						<AttributesPermanentList phase={phase} />
 					</Scroll>
 				</div>
 			</section>
