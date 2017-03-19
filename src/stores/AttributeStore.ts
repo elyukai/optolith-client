@@ -34,8 +34,6 @@ class AttributeStoreStatic extends Store {
 				switch (action.type) {
 					case ActionTypes.ADD_ATTRIBUTE_POINT:
 					case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-					case ActionTypes.ACTIVATE_DISADV:
-					case ActionTypes.DEACTIVATE_DISADV:
 						break;
 
 					case ActionTypes.ACTIVATE_SPECIALABILITY:

@@ -198,27 +198,7 @@ class ListStoreStatic extends Store {
 	}
 
 	get(id: string) {
-		switch (id) {
-			case 'COU':
-				return this.byId.ATTR_1;
-			case 'SGC':
-				return this.byId.ATTR_2;
-			case 'INT':
-				return this.byId.ATTR_3;
-			case 'CHA':
-				return this.byId.ATTR_4;
-			case 'DEX':
-				return this.byId.ATTR_5;
-			case 'AGI':
-				return this.byId.ATTR_6;
-			case 'CON':
-				return this.byId.ATTR_7;
-			case 'STR':
-				return this.byId.ATTR_8;
-
-			default:
-				return this.byId[id];
-		}
+		return this.byId[AttributeUtils.convertId(id)];
 	}
 
 	getObjByCategory(...categories: Category[]) {
@@ -323,7 +303,7 @@ class ListStoreStatic extends Store {
 	}
 
 	getCostListForProfessionDependencies(reqs: RequirementObject[]) {
-		return reqs.map<number | ProfessionDependencyCost>(req => {
+		const totalCost = reqs.map<number | ProfessionDependencyCost>(req => {
 			const { id, sid, sid2, tier, value } = req;
 			const obj = get(id as string) as Instance & { tiers?: number };
 
@@ -366,16 +346,20 @@ class ListStoreStatic extends Store {
 						cost = {
 							adv: [0, 0, 0],
 							disadv: [0, 0, 0],
-							total: cost,
+							total: obj.category === Categories.DISADVANTAGES ? -cost : cost,
 						} as ProfessionDependencyCost;
 
 						if (obj.category === Categories.ADVANTAGES) {
 							cost.adv[0] = cost.total;
-							cost.adv[index] = cost.total;
+							if (index > 0) {
+								cost.adv[index] = cost.total;
+							}
 						}
 						else {
-							cost.disadv[0] = cost.total;
-							cost.disadv[index] = cost.total;
+							cost.disadv[0] = -cost.total;
+							if (index > 0) {
+								cost.disadv[index] = -cost.total;
+							}
 						}
 					}
 					return cost || 0;
@@ -383,6 +367,7 @@ class ListStoreStatic extends Store {
 			}
 			return 0;
 		});
+		return totalCost;
 	}
 
 	getSpareAPForCombatTechniques() {
@@ -506,6 +491,14 @@ class ListStoreStatic extends Store {
 		const professionVariant = ProfessionVariantStore.getCurrent();
 
 		const skillRatingList = new Map<string, number>();
+		const addToSkillRatingList = (id: string, value: number) => {
+			if (skillRatingList.has(id)) {
+				skillRatingList.set(id, skillRatingList.get(id)! + value);
+			}
+			else {
+				skillRatingList.set(id, value);
+			}
+		};
 		const skillActivateList = new Set<string>();
 		const activatable = new Set<RequirementObject>();
 		const languages = new Map<number, number>();
@@ -539,19 +532,19 @@ class ListStoreStatic extends Store {
 		// Profession selections:
 
 		[ ...profession!.talents, ...profession!.combatTechniques ].forEach(([ key, value ]) => {
-			skillRatingList.set(key, value);
+			addToSkillRatingList(key, value);
 		});
 		[ ...profession!.spells, ...profession!.liturgies ].forEach(([ key, value ]) => {
 			skillActivateList.add(key);
 			if (typeof value === 'number') {
-				skillRatingList.set(key, value);
+				addToSkillRatingList(key, value);
 			}
 		});
 		profession!.specialAbilities.forEach(e => activatable.add(e));
 
 		if (professionVariant) {
 			[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
-				skillRatingList.set(key, value);
+				addToSkillRatingList(key, value);
 			});
 			professionVariant.specialAbilities.forEach(e => {
 				if (e.active === false) {
@@ -595,11 +588,11 @@ class ListStoreStatic extends Store {
 		});
 
 		selections.combattech.forEach(e => {
-			skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
+			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
 		});
 
 		selections.combatTechniquesSecond.forEach(e => {
-			skillRatingList.set(e, (selections.map.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSelection).value);
+			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSelection).value);
 		});
 
 		selections.cantrips.forEach(e => {

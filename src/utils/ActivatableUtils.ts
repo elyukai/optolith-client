@@ -1,5 +1,6 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
+import { convertId } from './AttributeUtils';
 import * as DependentUtils from './DependentUtils';
 import validate from './validate';
 import { validateInstanceRequirementObject } from './validate';
@@ -180,33 +181,6 @@ export function setTier(obj: ActivatableInstance, index: number, tier: number): 
 };
 
 function getInstance<T extends AbilityInstance>(instances: ToListById<AbilityInstance>, id: string) {
-	switch (id) {
-		case 'COU':
-			id = 'ATTR_1';
-			break;
-		case 'SGC':
-			id = 'ATTR_2';
-			break;
-		case 'INT':
-			id = 'ATTR_3';
-			break;
-		case 'CHA':
-			id = 'ATTR_4';
-			break;
-		case 'DEX':
-			id = 'ATTR_5';
-			break;
-		case 'AGI':
-			id = 'ATTR_6';
-			break;
-		case 'CON':
-			id = 'ATTR_7';
-			break;
-		case 'STR':
-			id = 'ATTR_8';
-			break;
-	}
-
 	return (instances.hasOwnProperty(id) ? instances[id] : get(id)) as T;
 }
 
@@ -224,11 +198,10 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 				return;
 			}
 			if (id === 'ATTR_PRIMARY') {
-				id = getPrimaryAttrID(type as 1 | 2);
+				id = convertId(getPrimaryAttrID(type as 1 | 2));
 				if (id) {
 					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					const dependentAbility = DependentUtils.addDependency(requiredAbility, value!);
-					instances[dependentAbility.id] = dependentAbility;
+					instances[id] = DependentUtils.addDependency(requiredAbility, value!);
 				}
 			}
 			else {
@@ -244,9 +217,9 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
 					}
 					id.forEach(e => {
-						const requiredAbility = getInstance(instances, e);
-						const dependentAbility = DependentUtils.addDependency(requiredAbility, add);
-						instances[dependentAbility.id] = dependentAbility;
+						const id = convertId(e);
+						const requiredAbility = getInstance(instances, id);
+						instances[id] = DependentUtils.addDependency(requiredAbility, add);
 					});
 				}
 				else {
@@ -260,9 +233,9 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 					else {
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
+					id = convertId(id);
 					const requiredAbility = getInstance(instances, id);
-					const dependentAbility = DependentUtils.addDependency(requiredAbility, add);
-					instances[dependentAbility.id] = dependentAbility;
+					instances[id] = DependentUtils.addDependency(requiredAbility, add);
 				}
 			}
 		}
@@ -284,11 +257,10 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 				return;
 			}
 			if (id === 'ATTR_PRIMARY') {
-				id = getPrimaryAttrID(type as 1 | 2);
+				id = convertId(getPrimaryAttrID(type as 1 | 2));
 				if (id) {
 					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					const dependentAbility = DependentUtils.removeDependency(requiredAbility, value!);
-					instances[dependentAbility.id] = dependentAbility;
+					instances[id] = DependentUtils.removeDependency(requiredAbility, value!);
 				}
 			}
 			else {
@@ -304,9 +276,9 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
 					}
 					id.forEach(e => {
-						const requiredAbility = getInstance(instances, e);
-						const dependentAbility = DependentUtils.removeDependency(requiredAbility, add);
-						instances[dependentAbility.id] = dependentAbility;
+						const id = convertId(e);
+						const requiredAbility = getInstance(instances, id);
+						instances[id] = DependentUtils.removeDependency(requiredAbility, add);
 					});
 				}
 				else {
@@ -320,9 +292,9 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 					else {
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
+					id = convertId(id);
 					const requiredAbility = getInstance(instances, id);
-					const dependentAbility = DependentUtils.removeDependency(requiredAbility, add);
-					instances[dependentAbility.id] = dependentAbility;
+					instances[id] = DependentUtils.removeDependency(requiredAbility, add);
 				}
 			}
 		}

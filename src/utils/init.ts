@@ -75,11 +75,12 @@ export default (raw: RawData) => {
 
 	for (const id in list) {
 		if (list.hasOwnProperty(id)) {
-			const obj = list[id];
+			const obj = list[id] as InstanceInInit;
 			if (isActivatableInstance(obj)) {
 				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
-					const rawNames = getAllByCategory(...obj.sel.map(e => e.id as Category)) as SkillishInstance[];
-					const filtered = rawNames.filter(({ category, gr }) => {
+					const rawNames = getAllByCategory(...obj.sel.map(e => e.name as Category)) as SkillishInstance[];
+					const filtered = rawNames.filter(e => {
+						const { category, gr } = e;
 						const isCantrip = category === Categories.SPELLS && gr === 5;
 						const isBlessing = category === Categories.LITURGIES && gr === 3;
 						return !isCantrip && !isBlessing;
@@ -107,6 +108,8 @@ export default (raw: RawData) => {
 						};
 					});
 				}
+
+				list[id] = obj;
 			}
 		}
 	}

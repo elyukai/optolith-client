@@ -19,10 +19,10 @@ class SpellsStoreStatic extends Store {
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			if (action.undo) {
 				switch (action.type) {
-					case ActionTypes.ACTIVATE_DISADV:
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
-					case ActionTypes.DEACTIVATE_DISADV:
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+					case ActionTypes.ACTIVATE_SPELL:
+					case ActionTypes.DEACTIVATE_SPELL:
+					case ActionTypes.ADD_SPELL_POINT:
+					case ActionTypes.REMOVE_SPELL_POINT:
 						break;
 
 					default:

@@ -18,10 +18,10 @@ class LiturgiesStoreStatic extends Store {
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			if (action.undo) {
 				switch (action.type) {
-					case ActionTypes.ACTIVATE_DISADV:
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
-					case ActionTypes.DEACTIVATE_DISADV:
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+					case ActionTypes.ACTIVATE_LITURGY:
+					case ActionTypes.DEACTIVATE_LITURGY:
+					case ActionTypes.ADD_LITURGY_POINT:
+					case ActionTypes.REMOVE_LITURGY_POINT:
 						break;
 
 					default:

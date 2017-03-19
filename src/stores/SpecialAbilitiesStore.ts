@@ -14,10 +14,9 @@ class SpecialAbilitiesStoreStatic extends Store {
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			if (action.undo) {
 				switch (action.type) {
-					case ActionTypes.ACTIVATE_DISADV:
 					case ActionTypes.ACTIVATE_SPECIALABILITY:
-					case ActionTypes.DEACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+					case ActionTypes.SET_SPECIALABILITY_TIER:
 						break;
 
 					default:

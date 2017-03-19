@@ -14,9 +14,7 @@ class DisAdvStoreStatic extends Store {
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_DISADV:
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
 					case ActionTypes.DEACTIVATE_DISADV:
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
 						break;
 
 					default:

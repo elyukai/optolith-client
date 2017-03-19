@@ -17,10 +17,8 @@ class TalentsStoreStatic extends Store {
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			if (action.undo) {
 				switch (action.type) {
-					case ActionTypes.ACTIVATE_DISADV:
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
-					case ActionTypes.DEACTIVATE_DISADV:
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+					case ActionTypes.ADD_TALENT_POINT:
+					case ActionTypes.REMOVE_TALENT_POINT:
 						break;
 
 					default:
