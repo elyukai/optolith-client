@@ -12,6 +12,7 @@ import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
 import APStore from './APStore';
 import AttributeStore from './AttributeStore';
+import CombatTechniquesStore from './CombatTechniquesStore';
 import { get } from './ListStore';
 import Store from './Store';
 
@@ -72,10 +73,14 @@ class RequirementsStoreStatic extends Store {
 						this.updateDisAdvCost(action.payload.id, -action.payload.cost);
 						break;
 
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
+					case ActionTypes.DEACTIVATE_SPECIALABILITY: {
 						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(get(action.payload.id) as ActivatableInstance));
-						this.updateCost(-action.payload.cost - AttributeStore.getPermanentRedeemedChangeAmount(action.payload.id) * 2, true);
+						const id = action.payload.id;
+						const redeemedPointsChange = AttributeStore.getPermanentRedeemedChangeAmount(id);
+						const reducedCombatTechnique = CombatTechniquesStore.getValueChange(id);
+						this.updateCost(-action.payload.cost - redeemedPointsChange * 2 - reducedCombatTechnique * 2, true);
 						break;
+					}
 
 					case ActionTypes.SET_DISADV_TIER:
 						this.updateOwnRequirements(true);

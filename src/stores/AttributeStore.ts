@@ -3,7 +3,7 @@ import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import HistoryStore from './HistoryStore';
-import { get, getAllByCategory } from './ListStore';
+import { default as ListStore, get, getAllByCategory } from './ListStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
@@ -28,7 +28,7 @@ class AttributeStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
+			AppDispatcher.waitFor([RequirementsStore.dispatchToken, ListStore.dispatchToken]);
 			if (action.undo) {
 				AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 				switch (action.type) {

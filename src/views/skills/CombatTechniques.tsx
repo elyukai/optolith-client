@@ -18,7 +18,6 @@ interface State {
 }
 
 export default class CombatTechniques extends React.Component<undefined, State> {
-
 	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: '',
@@ -26,10 +25,12 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 		sortOrder: CombatTechniquesStore.getSortOrder(),
 	};
 
-	_updateCombatTechniquesStore = () => this.setState({
-		combattechniques: CombatTechniquesStore.getAll(),
-		sortOrder: CombatTechniquesStore.getSortOrder(),
-	} as State);
+	_updateCombatTechniquesStore = () => {
+		this.setState({
+			combattechniques: CombatTechniquesStore.getAll(),
+			sortOrder: CombatTechniquesStore.getSortOrder(),
+		} as State);
+	}
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => CombatTechniquesActions.setSortOrder(option);

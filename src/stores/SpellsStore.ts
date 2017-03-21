@@ -3,7 +3,7 @@ import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { getSids } from '../utils/ActivatableUtils';
 import ELStore from './ELStore';
-import { get, getAllByCategory } from './ListStore';
+import { default as ListStore, get, getAllByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
@@ -17,6 +17,7 @@ class SpellsStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_SPELL:

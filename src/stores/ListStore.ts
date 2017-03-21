@@ -155,7 +155,6 @@ class ListStoreStatic extends Store {
 					case ActionTypes.DEACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_SPECIALABILITY:
 						if (RequirementsStore.isValid()) {
-							AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
 							this.deactivateDASA(action.payload.id, action.payload.index);
 						}
 						break;
@@ -413,6 +412,9 @@ class ListStoreStatic extends Store {
 
 	private deactivateDASA(id: string, index: number) {
 		this.mergeIntoList(ActivatableUtils.deactivate(this.byId[id] as ActivatableInstance, index));
+		if (id === 'SA_125') {
+			this.setValue('CT_17', 6);
+		}
 	}
 
 	private updateTier(id: string, index: number, tier: number) {

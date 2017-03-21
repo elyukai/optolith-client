@@ -1,17 +1,19 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import { default as ListStore } from './ListStore';
 import Store from './Store';
 
 type Action = ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | UndoTriggerActions;
 
 class SpecialAbilitiesStoreStatic extends Store {
 	private readonly groups = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stabzauber)', 'Magisch (Hexe)', 'Geweiht', 'Magisch (Bann-/Schutzkreis)', 'Kampfstil (bewaffnet)', 'Kampfstil (unbewaffnet)', 'Kampf (erweitert)', 'Befehl'];
-	private sortOrder = 'group';
+	private sortOrder = 'groupname';
 	readonly dispatchToken: string;
 
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_SPECIALABILITY:

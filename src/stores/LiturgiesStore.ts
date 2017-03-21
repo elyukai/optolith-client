@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import ELStore from './ELStore';
-import { getAllByCategory } from './ListStore';
+import { default as ListStore, getAllByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
@@ -16,6 +16,7 @@ class LiturgiesStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_LITURGY:

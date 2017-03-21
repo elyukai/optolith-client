@@ -21,7 +21,6 @@ interface State {
 }
 
 export default class Talents extends React.Component<undefined, State> {
-
 	state = {
 		currentCulture: CultureStore.getCurrent()!,
 		filterText: '',
@@ -52,12 +51,11 @@ export default class Talents extends React.Component<undefined, State> {
 	}
 
 	render() {
-
 		const GROUPS = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
 
 		const { filterText, phase, sortOrder, talentRating, talents } = this.state;
 
-		const list = filterAndSort<TalentInstance>(talents, filterText, sortOrder);
+		const list = filterAndSort(talents, filterText, sortOrder);
 
 		return (
 			<div className="page" id="talents">

@@ -3,6 +3,7 @@ import * as DisAdvActions from '../../actions/DisAdvActions';
 import ActivatableAddListItem from '../../components/ActivatableAddListItem';
 import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
 import Scroll from '../../components/Scroll';
+import { sortByName } from '../../utils/ListUtils';
 
 interface Props {
 	active?: boolean;
@@ -16,6 +17,8 @@ interface Props {
 export default class DisAdvList extends React.Component<Props, undefined> {
 	render() {
 		const { active, list: rawList, rating, showRating, type } = this.props;
+
+		rawList.sort(sortByName);
 
 		const list = active ? (
 			rawList.map((item, index) => (

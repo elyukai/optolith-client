@@ -266,7 +266,11 @@ interface ActiveObject {
 
 interface ActiveViewObject {
 	id: string;
-	active: ActiveObject;
+	name: string;
+	tier?: number;
+	tiers?: number;
+	cost: number;
+	disabled: boolean;
 	index: number;
 	gr?: number;
 }

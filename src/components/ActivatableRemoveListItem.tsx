@@ -1,18 +1,8 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import * as Categories from '../constants/Categories';
-import ELStore from '../stores/ELStore';
-import { get, getAllByCategory } from '../stores/ListStore';
 import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
-import { getSelectionItem, isDeactivatable } from '../utils/ActivatableUtils';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
-
-interface Active {
-	id: string;
-	active: ActiveObject;
-	index: number;
-}
 
 interface RemoveObject {
 	id: string;
@@ -21,7 +11,7 @@ interface RemoveObject {
 }
 
 interface Props {
-	item: Active;
+	item: ActiveViewObject;
 	phase: number;
 	isImportant?: boolean;
 	isTypical?: boolean;
@@ -34,130 +24,17 @@ const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
 export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
-		const { id, active: { tier }, index } = this.props.item;
-		const { cost, category } = get(id) as ActivatableInstance;
-		const finalCost = (selectedTier - (tier as number)) * (cost as number) * (category === Categories.DISADVANTAGES ? -1 : 1);
+		const { id, tier, index, cost } = this.props.item;
+		const finalCost = (selectedTier - (tier as number)) * (cost as number);
 		this.props.setTier(id, index, selectedTier, finalCost);
 	}
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { phase, item: { id, active: activeObject, index }, isImportant, isTypical, isUntypical } = this.props;
-		const { sid, sid2, tier } = activeObject;
-		const a = get(id) as ActivatableInstance & { tiers?: number; gr?: number; };
-		const { cost, category, sel, dependencies, active, input, gr } = a;
-		let { tiers } = a;
-		let disabled = !isDeactivatable(a);
-		let add = '';
+		const { phase, item, isImportant, isTypical, isUntypical } = this.props;
+		const { id, tier, tiers, index, disabled, gr } = item;
+		let { cost, name } = item;
 		let addSpecial = '';
-		let currentCost: number | undefined = undefined;
-		const args: RemoveObject = { id, index, cost: 0 };
-
-		switch (id) {
-			case 'ADV_4':
-			case 'ADV_47':
-			case 'DISADV_48': {
-				const { name, ic } = (get(sid as string)) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
-				add = name;
-				currentCost = (cost as number[])[ic - 1];
-				break;
-			}
-			case 'ADV_16': {
-				const { name, ic, value } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
-				const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
-				add = name;
-				currentCost = (cost as number[])[ic - 1];
-				disabled = disabled || ELStore.getStart().maxSkillRating + counter === value;
-				break;
-			}
-			case 'ADV_17': {
-				const { name, ic, value } = (get(sid as string)) as CombatTechniqueInstance;
-				add = name;
-				currentCost = (cost as number[])[ic - 1];
-				disabled = disabled || ELStore.getStart().maxCombatTechniqueRating + 1 === value;
-				break;
-			}
-			case 'ADV_28':
-			case 'ADV_29':
-				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
-				break;
-			case 'ADV_32':
-			case 'DISADV_1':
-			case 'DISADV_24':
-			case 'DISADV_45':
-				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
-				break;
-			case 'DISADV_34':
-			case 'DISADV_50': {
-				const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
-				const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
-				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
-				currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
-				break;
-			}
-			case 'DISADV_33': {
-				if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
-					currentCost = 0;
-				} else {
-					currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
-				}
-				if ([7, 8].includes(sid as number)) {
-					add = `${(getSelectionItem(a, sid as string | number) as SelectionObject).name}: ${sid2}`;
-				} else {
-					add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				}
-				break;
-			}
-			case 'DISADV_36':
-				add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
-				currentCost = active.length > 3 ? 0 : cost as number;
-				break;
-			case 'DISADV_37':
-			case 'DISADV_51':
-				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
-				break;
-			case 'SA_10': {
-				const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
-				const skill = get(sid as string) as TalentInstance;
-				currentCost = skill.ic * counter;
-				add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
-				break;
-			}
-			case 'SA_30':
-				tiers = 3;
-				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				break;
-			case 'SA_86':
-				if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
-					disabled = true;
-				}
-				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
-				break;
-			case 'SA_102':
-				if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
-					disabled = true;
-				}
-				add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
-				break;
-
-			default:
-				if (input) {
-					add = sid as string;
-				}
-				else if (sel.length > 0 && cost === 'sel') {
-					const selectionItem = getSelectionItem(a, sid!);
-					add = selectionItem!.name;
-					currentCost = selectionItem!.cost as number;
-				}
-				else if (sel.length > 0 && typeof cost === 'number') {
-					add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-				}
-				break;
-		}
 
 		let tierElement;
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -180,37 +57,14 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			} else {
 				addSpecial = ' ' + array[0].name;
 			}
-			currentCost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier!;
+			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier!;
 		}
 
-		let { name } = a;
-		if (['ADV_28', 'ADV_29'].includes(id)) {
-			name = `Immunität gegen ${add}`;
-		}
-		else if (id === 'DISADV_1') {
-			name = `Angst vor ${add}`;
-		}
-		else if (['DISADV_34', 'DISADV_50'].includes(id)) {
-			name  += ` ${roman[(tier as number) - 1]} (${add})`;
-		}
-		else if (add) {
-			name += ` (${add})`;
-		}
 		if (addSpecial) {
 			name += addSpecial;
 		}
 
-		if (!currentCost) {
-			currentCost = cost as number;
-		}
-		if (category === Categories.DISADVANTAGES) {
-			currentCost = -currentCost;
-		}
-		args.cost = currentCost;
-
-		if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
-			disabled = true;
-		}
+		const args: RemoveObject = { id, index, cost };
 
 		return (
 			<div
@@ -230,7 +84,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 				<div className="hr"></div>
 				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
 				<div className="values">
-					<div className="cost">{currentCost}</div>
+					<div className="cost">{cost}</div>
 				</div>
 				<div className="btns">
 					{phase === 2 ? (

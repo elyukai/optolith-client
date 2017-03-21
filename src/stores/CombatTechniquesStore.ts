@@ -1,7 +1,8 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { get, getAllByCategory } from './ListStore';
+import { isActive } from '../utils/ActivatableUtils';
+import { default as ListStore, get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
 type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions;
@@ -14,6 +15,7 @@ class CombatTechniquesStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
@@ -44,7 +46,14 @@ class CombatTechniquesStoreStatic extends Store {
 	}
 
 	getAll() {
-		return getAllByCategory(this.category) as CombatTechniqueInstance[];
+		const allEntries = getAllByCategory(this.category) as CombatTechniqueInstance[];
+		return allEntries.filter(e => {
+			if (e.id === 'CT_17') {
+				const dependency = get('SA_125') as SpecialAbilityInstance;
+				return isActive(dependency);
+			}
+			return true;
+		});
 	}
 
 	getAllForSave() {
@@ -68,6 +77,13 @@ class CombatTechniquesStoreStatic extends Store {
 
 	getSortOrder() {
 		return this.sortOrder;
+	}
+
+	getValueChange(id: string) {
+		if (id === 'SA_125') {
+			return (get('CT_17') as CombatTechniqueInstance).value - 6;
+		}
+		return 0;
 	}
 
 	private updateSortOrder(option: string) {

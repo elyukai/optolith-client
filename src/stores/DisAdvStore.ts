@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import { default as ListStore } from './ListStore';
 import Store from './Store';
 
 type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions;
@@ -11,6 +12,7 @@ class DisAdvStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_DISADV:

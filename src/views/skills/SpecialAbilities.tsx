@@ -56,11 +56,13 @@ export default class SpecialAbilities extends React.Component<any, State> {
 
 		const sortArray = [
 			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'group' },
+			{ name: 'Nach Gruppe', value: 'groupname' },
 		];
 
-		const listActive = filterAndSort(saActive, filterText, sortOrder);
-		const listDeactive = filterAndSort(saDeactive, filterText, sortOrder);
+		const groupNames = SpecialAbilitiesStore.getGroupNames();
+
+		const listActive = filterAndSort(saActive, filterText, sortOrder, groupNames);
+		const listDeactive = filterAndSort(saDeactive, filterText, sortOrder, groupNames);
 
 		return (
 			<div className="page" id="specialabilities">

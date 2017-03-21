@@ -1,6 +1,7 @@
 import * as Categories from '../constants/Categories';
-import { getDSids, getSids, isActivatable, isActive } from '../utils/ActivatableUtils';
+import { getDSids, getSelectionItem, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import validate from '../utils/validate';
+import ELStore from './ELStore';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
 
 export const getForSave = (): { [id: string]: ActiveObject[] } => {
@@ -12,12 +13,172 @@ export const getForSave = (): { [id: string]: ActiveObject[] } => {
 	return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
 };
 
-export const getActiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES) => {
-	const allEntries = getAllByCategory(category) as Array<ActivatableInstance & { gr?: number; }>;
-	const filteredEntries = allEntries.filter(e => isActive(e));
-	const convert = (id: string, active: ActiveObject[], gr?: number) => active.map((active, index) => ({ id, active, index, gr }));
-	return filteredEntries.reduce((a, { id, active, gr }) => a.concat(convert(id, active, gr)), [] as ActiveViewObject[]);
-};
+export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES): ActiveViewObject[] {
+	const allEntries = getObjByCategory(category) as ToListById<ActivatableInstance & { gr?: number; tiers?: number; }>;
+	const finalEntries: ActiveViewObject[] = [];
+
+	for (const id in allEntries) {
+		if (allEntries.hasOwnProperty(id) && isActive(allEntries[id])) {
+			const a = get(id) as ActivatableInstance & { tiers?: number; gr?: number; };
+			const { cost, category, sel, dependencies, input, gr, name, active } = a;
+			let { tiers } = a;
+
+			active.forEach((current, index) => {
+				const { sid, sid2, tier } = current;
+				let disabled = !isDeactivatable(a);
+				let add = '';
+				let currentCost: number | undefined = undefined;
+				const activeObject: ActiveViewObject & { [id: string]: any; } = {
+					id,
+					index,
+					name,
+					cost: 0,
+					gr,
+					disabled: false,
+				};
+
+				switch (id) {
+					case 'ADV_4':
+					case 'ADV_47':
+					case 'DISADV_48': {
+						const { name, ic } = (get(sid as string)) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
+						add = name;
+						currentCost = (cost as number[])[ic - 1];
+						break;
+					}
+					case 'ADV_16': {
+						const { name, ic, value } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
+						const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
+						add = name;
+						currentCost = (cost as number[])[ic - 1];
+						disabled = disabled || ELStore.getStart().maxSkillRating + counter === value;
+						break;
+					}
+					case 'ADV_17': {
+						const { name, ic, value } = (get(sid as string)) as CombatTechniqueInstance;
+						add = name;
+						currentCost = (cost as number[])[ic - 1];
+						disabled = disabled || ELStore.getStart().maxCombatTechniqueRating + 1 === value;
+						break;
+					}
+					case 'ADV_28':
+					case 'ADV_29':
+						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						break;
+					case 'ADV_32':
+					case 'DISADV_1':
+					case 'DISADV_24':
+					case 'DISADV_45':
+						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						break;
+					case 'DISADV_34':
+					case 'DISADV_50': {
+						const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
+						const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
+						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
+						break;
+					}
+					case 'DISADV_33': {
+						if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
+							currentCost = 0;
+						} else {
+							currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						}
+						if ([7, 8].includes(sid as number)) {
+							add = `${(getSelectionItem(a, sid as string | number) as SelectionObject).name}: ${sid2}`;
+						} else {
+							add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						}
+						break;
+					}
+					case 'DISADV_36':
+						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						currentCost = active.length > 3 ? 0 : cost as number;
+						break;
+					case 'DISADV_37':
+					case 'DISADV_51':
+						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						break;
+					case 'SA_10': {
+						const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
+						const skill = get(sid as string) as TalentInstance;
+						currentCost = skill.ic * counter;
+						add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
+						break;
+					}
+					case 'SA_30':
+						tiers = 3;
+						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						break;
+					case 'SA_86':
+						if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
+							disabled = true;
+						}
+						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						break;
+					case 'SA_102':
+						if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
+							disabled = true;
+						}
+						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						break;
+
+					default:
+						if (input) {
+							add = sid as string;
+						}
+						else if (sel.length > 0 && cost === 'sel') {
+							const selectionItem = getSelectionItem(a, sid!);
+							add = selectionItem!.name;
+							currentCost = selectionItem!.cost as number;
+						}
+						else if (sel.length > 0 && typeof cost === 'number') {
+							add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						}
+						break;
+				}
+
+				const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+				if (['ADV_28', 'ADV_29'].includes(id)) {
+					activeObject.name = `Immunität gegen ${add}`;
+				}
+				else if (id === 'DISADV_1') {
+					activeObject.name = `Angst vor ${add}`;
+				}
+				else if (['DISADV_34', 'DISADV_50'].includes(id)) {
+					activeObject.name  += ` ${roman[(tier as number) - 1]} (${add})`;
+				}
+				else if (add) {
+					activeObject.name += ` (${add})`;
+				}
+
+				if (!currentCost) {
+					currentCost = cost as number;
+				}
+				if (category === Categories.DISADVANTAGES) {
+					currentCost = -currentCost;
+				}
+
+				activeObject.cost = currentCost;
+
+				if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
+					disabled = true;
+				}
+
+				activeObject.disabled = disabled;
+
+				finalEntries.push(activeObject);
+			});
+		}
+	}
+	return finalEntries;
+}
 
 export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES) => {
 	const allEntries = getObjByCategory(category) as {

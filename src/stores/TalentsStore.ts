@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { getAllByCategory } from './ListStore';
+import { default as ListStore, getAllByCategory } from './ListStore';
 import Store from './Store';
 
 type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | UndoTriggerActions;
@@ -15,6 +15,7 @@ class TalentsStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
+			AppDispatcher.waitFor([ListStore.dispatchToken]);
 			if (action.undo) {
 				switch (action.type) {
 					case ActionTypes.ADD_TALENT_POINT:
