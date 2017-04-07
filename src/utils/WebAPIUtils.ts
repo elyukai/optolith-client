@@ -228,6 +228,7 @@ export function requestHero(id: string) {
 			socialstatus: 2,
 			characteristics: 'Reibt sich die Hände',
 			otherinfo: 'Hat einen Golem ...',
+			cultureAreaKnowledge: 'Rashdul',
 		},
 		attr: {
 			values: [

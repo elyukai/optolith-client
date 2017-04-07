@@ -4,7 +4,7 @@ import { get } from '../stores/ListStore';
 import PhaseStore from '../stores/PhaseStore';
 import { isActive } from '../utils/ActivatableUtils';
 
-export const isIncreasable = (obj: TalentInstance): boolean => {
+export function isIncreasable(obj: TalentInstance): boolean {
 	let max = 0;
 	const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
 
@@ -16,9 +16,9 @@ export const isIncreasable = (obj: TalentInstance): boolean => {
 	}
 
 	return obj.value < max + bonus;
-};
+}
 
-export const isDecreasable = (obj: TalentInstance): boolean => {
+export function isDecreasable(obj: TalentInstance): boolean {
 	const SA_18_REQ = isActive(get('SA_18') as SpecialAbilityInstance) && (get('TAL_51') as TalentInstance).value + (get('TAL_55') as TalentInstance).value < 12;
 
 	const dependencies = obj.dependencies.map(e => {
@@ -35,20 +35,22 @@ export const isDecreasable = (obj: TalentInstance): boolean => {
 	});
 
 	return (['TAL_51', 'TAL_55'].includes(obj.id) && SA_18_REQ) || obj.value > Math.max(0, ...dependencies);
-};
+}
 
-export const isTyp = (obj: TalentInstance): boolean => {
+export function isTyp(obj: TalentInstance): boolean {
 	const culture = CultureStore.getCurrent();
 	return culture!.typicalTalents.includes(obj.id);
-};
+}
 
-export const isUntyp = (obj: TalentInstance): boolean => {
+export function isUntyp(obj: TalentInstance): boolean {
 	const culture = CultureStore.getCurrent();
 	return culture!.untypicalTalents.includes(obj.id);
-};
+}
 
-export const reset = (obj: TalentInstance): TalentInstance => ({
-	...obj,
-	dependencies: [],
-	value: 0,
-});
+export function reset(obj: TalentInstance): TalentInstance {
+	return {
+		...obj,
+		dependencies: [],
+		value: 0,
+	};
+}

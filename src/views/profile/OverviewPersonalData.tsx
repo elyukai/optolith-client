@@ -9,6 +9,7 @@ interface Props {
 	age: string;
 	characteristics: string;
 	culture: CultureInstance;
+	cultureAreaKnowledge: string;
 	dateofbirth: string;
 	eyecolor: number;
 	eyecolorTags: string[];
@@ -23,7 +24,7 @@ interface Props {
 	socialstatusTags: string[];
 	title: string;
 	weight: number | string;
-};
+}
 
 export default class OverviewPersonalData extends React.Component<Props, undefined> {
 	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value as string);
@@ -38,6 +39,7 @@ export default class OverviewPersonalData extends React.Component<Props, undefin
 	changeSocialStatus = (result: number) => ProfileActions.setSocialStatus(result);
 	changeCharacteristics = (e: InputTextEvent) => ProfileActions.setCharacteristics(e.target.value as string);
 	changeOtherInfo = (e: InputTextEvent) => ProfileActions.setOtherInfo(e.target.value as string);
+	changeCultureAreaKnowledge = (e: InputTextEvent) => ProfileActions.setCultureAreaKnowledge(e.target.value as string);
 
 	rerollHair = () => ProfileActions.rerollHairColor();
 	rerollEyes = () => ProfileActions.rerollEyeColor();
@@ -45,7 +47,7 @@ export default class OverviewPersonalData extends React.Component<Props, undefin
 	rerollWeight = () => ProfileActions.rerollWeight();
 
 	render() {
-		const { age, characteristics, culture, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
+		const { age, characteristics, culture, cultureAreaKnowledge, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
 
 		const hairArr = race ? haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)) : [];
 		const eyesArr = race ? eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id)) : [];
@@ -142,6 +144,13 @@ export default class OverviewPersonalData extends React.Component<Props, undefin
 						label="Sonstiges"
 						value={otherinfo}
 						onChange={this.changeOtherInfo}
+						/>
+				</div>
+				<div>
+					<TextField
+						label="Ortskenntnis durch Kultur"
+						value={cultureAreaKnowledge}
+						onChange={this.changeCultureAreaKnowledge}
 						/>
 				</div>
 			</div>

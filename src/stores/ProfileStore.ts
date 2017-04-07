@@ -4,7 +4,7 @@ import ProfessionStore from './ProfessionStore';
 import RaceStore from './RaceStore';
 import Store from './Store';
 
-type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | SetCustomProfessionNameAction;
+type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | SetCultureAreaKnowledge | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | SetCustomProfessionNameAction;
 
 const HAIRCOLORS = RaceStore.hairColors;
 const EYECOLORS = RaceStore.eyeColors;
@@ -28,6 +28,7 @@ class ProfileStoreStatic extends Store {
 	private socialstatus = 0;
 	private characteristics = '';
 	private otherinfo = '';
+	private cultureAreaKnowledge = '';
 	readonly dispatchToken: string;
 
 	constructor() {
@@ -60,6 +61,7 @@ class ProfileStoreStatic extends Store {
 					this.updateSocialStatus(action.payload.data.pers.socialstatus);
 					this.updateCharacteristics(action.payload.data.pers.characteristics);
 					this.updateOtherInfo(action.payload.data.pers.otherinfo);
+					this.cultureAreaKnowledge = action.payload.data.pers.cultureAreaKnowledge;
 					break;
 
 				case ActionTypes.SET_HERO_NAME:
@@ -125,6 +127,10 @@ class ProfileStoreStatic extends Store {
 					this.updateOtherInfo(action.payload.otherinfo);
 					break;
 
+				case ActionTypes.SET_CULTURE_AREA_KNOWLEDGE:
+					this.cultureAreaKnowledge = action.payload.cultureAreaKnowledge;
+					break;
+
 				case ActionTypes.ASSIGN_RCP_OPTIONS:
 					AppDispatcher.waitFor([ProfessionStore.dispatchToken]);
 					if (ProfessionStore.getCurrentId() === 'P_0') {
@@ -161,6 +167,7 @@ class ProfileStoreStatic extends Store {
 			age: this.age,
 			avatar: this.avatar,
 			characteristics: this.characteristics,
+			cultureAreaKnowledge: this.cultureAreaKnowledge,
 			dateofbirth: this.dateofbirth,
 			eyecolor: this.eyecolor,
 			family: this.family,
@@ -182,6 +189,7 @@ class ProfileStoreStatic extends Store {
 			age: this.age,
 			avatar: this.avatar,
 			characteristics: this.characteristics,
+			cultureAreaKnowledge: this.cultureAreaKnowledge,
 			dateofbirth: this.dateofbirth,
 			eyecolor: this.eyecolor,
 			family: this.family,
@@ -223,6 +231,10 @@ class ProfileStoreStatic extends Store {
 			size: this.size,
 			weight: this.weight,
 		};
+	}
+
+	getCultureAreaKnowledge() {
+		return this.cultureAreaKnowledge;
 	}
 
 	getHaircolor() {
@@ -338,6 +350,7 @@ class ProfileStoreStatic extends Store {
 		this.socialstatus = 0;
 		this.characteristics = '';
 		this.otherinfo = '';
+		this.cultureAreaKnowledge = '';
 	}
 
 }

@@ -1,25 +1,16 @@
-import { Component, PropTypes } from 'react';
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
 interface Props {
 	className?: string;
+	children?: React.ReactNode;
 }
 
-export default class VerticalList extends Component<Props, {}> {
-
-	static propTypes = {
-		className: PropTypes.string
-	};
-
-	render() {
-
-		const { children, className, ...other } = this.props;
-
-		return (
-			<div {...other} className={classNames(className, 'vertical-list')}>
-				{children}
-			</div>
-		);
-	}
+export default function VerticalList(props: Props) {
+	const { children, className, ...other } = props;
+	return (
+		<div {...other} className={classNames(className, 'vertical-list')}>
+			{children}
+		</div>
+	);
 }

@@ -323,41 +323,49 @@ class ListStoreStatic extends Store {
 				case Categories.DISADVANTAGES:
 				case Categories.SPECIAL_ABILITIES: {
 					let cost;
-					(this.byId[id as string] as ActivatableInstance).active.push({ sid: sid as string | number | undefined, sid2, tier });
-					this.byId = {
-						...this.byId,
-						...ActivatableUtils.addDependencies(obj),
-					};
-					if (obj.tiers) {
-						cost = (obj.cost as number) * tier!;
-					}
-					else if (obj.sel.length > 0) {
-						cost = obj.sel[(sid as number) - 1].cost!;
-					}
-					else {
-						cost = obj.cost as number;
-					}
-					if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
-						const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
-						const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
-						const index = isKar ? 2 : isMag ? 1 : 0;
+					const activeObject = { sid: sid as string | number | undefined, sid2, tier };
 
-						cost = {
-							adv: [0, 0, 0],
-							disadv: [0, 0, 0],
-							total: obj.category === Categories.DISADVANTAGES ? -cost : cost,
-						} as ProfessionDependencyCost;
+					const checkIfActive = (e: ActiveObject) => Object.keys(activeObject).every((key: keyof ActiveObject) => {
+						return activeObject[key] === e[key];
+					});
 
-						if (obj.category === Categories.ADVANTAGES) {
-							cost.adv[0] = cost.total;
-							if (index > 0) {
-								cost.adv[index] = cost.total;
-							}
+					if (!obj.active.find(checkIfActive)) {
+						(this.byId[id as string] as ActivatableInstance).active.push(activeObject);
+						this.byId = {
+							...this.byId,
+							...ActivatableUtils.addDependencies(obj),
+						};
+						if (obj.tiers) {
+							cost = (obj.cost as number) * tier!;
+						}
+						else if (obj.sel.length > 0) {
+							cost = obj.sel[(sid as number) - 1].cost!;
 						}
 						else {
-							cost.disadv[0] = -cost.total;
-							if (index > 0) {
-								cost.disadv[index] = -cost.total;
+							cost = obj.cost as number;
+						}
+						if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
+							const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
+							const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
+							const index = isKar ? 2 : isMag ? 1 : 0;
+
+							cost = {
+								adv: [0, 0, 0],
+								disadv: [0, 0, 0],
+								total: obj.category === Categories.DISADVANTAGES ? -cost : cost,
+							} as ProfessionDependencyCost;
+
+							if (obj.category === Categories.ADVANTAGES) {
+								cost.adv[0] = cost.total;
+								if (index > 0) {
+									cost.adv[index] = cost.total;
+								}
+							}
+							else {
+								cost.disadv[0] = -cost.total;
+								if (index > 0) {
+									cost.disadv[index] = -cost.total;
+								}
 							}
 						}
 					}

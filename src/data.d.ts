@@ -58,6 +58,7 @@ interface HeroRest {
 		readonly socialstatus: number;
 		readonly characteristics: string;
 		readonly otherinfo: string;
+		readonly cultureAreaKnowledge: string;
 	};
 	readonly activatable: {
 		readonly [id: string]: ActiveObject[];

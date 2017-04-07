@@ -5,27 +5,28 @@ import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
 import { getSids, isActive } from '../utils/ActivatableUtils';
 
-export const validateInstanceRequirementObject = (req: 'RCP' | RequirementObject, id?: string): boolean => {
+export function validateInstanceRequirementObject(req: 'RCP' | RequirementObject, sourceId: string): boolean {
 	if (req === 'RCP') {
 		const currentRace = RaceStore.getCurrent()!;
 		const currentCulture = CultureStore.getCurrent()!;
 		const currentProfession = ProfessionStore.getCurrent()!;
-		const array = [];
 
-		array.push(...currentRace.importantAdvantages.map(e => e[0] as string));
-		array.push(...currentRace.importantDisadvantages.map(e => e[0] as string));
-		array.push(...currentRace.typicalAdvantages);
-		array.push(...currentRace.typicalDisadvantages);
-		array.push(...currentCulture.typicalAdvantages);
-		array.push(...currentCulture.typicalDisadvantages);
-		array.push(...currentProfession.typicalAdvantages);
-		array.push(...currentProfession.typicalDisadvantages);
+		const array = [
+			...currentRace.importantAdvantages,
+			...currentRace.importantDisadvantages,
+			...currentRace.typicalAdvantages,
+			...currentRace.typicalDisadvantages,
+			...currentCulture.typicalAdvantages,
+			...currentCulture.typicalDisadvantages,
+			...currentProfession.typicalAdvantages,
+			...currentProfession.typicalDisadvantages,
+		];
 
-		return array.some(e => e === id);
+		return array.includes(sourceId);
 	} else {
 		let id: string | string[] | undefined = req.id;
 		if (Array.isArray(id)) {
-			const resultOfAll = id.map(e => validateInstanceRequirementObject({ ...req, id: e }));
+			const resultOfAll = id.map(e => validateInstanceRequirementObject({ ...req, id: e }, sourceId));
 			return resultOfAll.includes(true);
 		}
 		else if (id === 'RACE') {
@@ -74,8 +75,8 @@ export const validateInstanceRequirementObject = (req: 'RCP' | RequirementObject
 		}
 	}
 	return false;
-};
+}
 
-export default function validateInstance (reqs: Array<'RCP' | RequirementObject>, id?: string): boolean {
+export default function validateInstance (reqs: Array<'RCP' | RequirementObject>, id: string): boolean {
 	return reqs.every(req => validateInstanceRequirementObject(req, id));
 }

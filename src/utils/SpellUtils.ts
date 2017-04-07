@@ -4,12 +4,12 @@ import PhaseStore from '../stores/PhaseStore';
 import SpellsStore from '../stores/SpellsStore';
 import { getSids } from './ActivatableUtils';
 
-export const isOwnTradition = (obj: SpellInstance): boolean => {
+export function isOwnTradition(obj: SpellInstance): boolean {
 	const SA = get('SA_86') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
-};
+}
 
-export const isIncreasable = (obj: SpellInstance): boolean => {
+export function isIncreasable(obj: SpellInstance): boolean {
 	let max = 0;
 	const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
 
@@ -25,9 +25,9 @@ export const isIncreasable = (obj: SpellInstance): boolean => {
 	}
 
 	return obj.value < max + bonus;
-};
+}
 
-export const isDecreasable = (obj: SpellInstance): boolean => {
+export function isDecreasable(obj: SpellInstance): boolean {
 	switch (obj.id) {
 		case 'SPELL_28': {
 			const SPELL_48 = get('SPELL_48') as SpellInstance;
@@ -64,9 +64,9 @@ export const isDecreasable = (obj: SpellInstance): boolean => {
 		return !(counter.get(obj.property) <= 3 && obj.value <= 10 && obj.gr !== 5);
 	}
 	return true;
-};
+}
 
-export const isActivatable = (obj: SpellInstance): boolean => {
+export function isActivatable(obj: SpellInstance): boolean {
 	switch (obj.id) {
 		case 'SPELL_48': {
 			const SPELL_28 = get('SPELL_28') as SpellInstance;
@@ -86,11 +86,13 @@ export const isActivatable = (obj: SpellInstance): boolean => {
 		}
 	}
 	return true;
-};
+}
 
-export const reset = (obj: SpellInstance): SpellInstance => ({
-	...obj,
-	active: false,
-	dependencies: [],
-	value: 0,
-});
+export function reset(obj: SpellInstance): SpellInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: [],
+		value: 0,
+	};
+}

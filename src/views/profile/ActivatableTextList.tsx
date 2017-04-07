@@ -1,11 +1,14 @@
 import * as React from 'react';
 
 interface Props {
-	list: ActiveViewObject[];
+	list: Array<ActiveViewObject | string>;
 }
 
 export default (props: Props) => {
-	const list = props.list.filter(obj => !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
+	const list = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
+		if (typeof obj === 'string') {
+			return obj;
+		}
 		const { tiers, id, tier } = obj;
 		let { name } = obj;
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];

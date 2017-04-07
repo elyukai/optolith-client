@@ -42,10 +42,6 @@ export default class About extends React.Component<undefined, State> {
 							label: 'Impressum',
 						},
 						{
-							id: 'tou',
-							label: 'Haftungsausschluss',
-						},
-						{
 							id: 'thirdPartyLicenses',
 							label: 'Third-party licenses',
 						},
@@ -57,3 +53,8 @@ export default class About extends React.Component<undefined, State> {
 		);
 	}
 }
+
+						// {
+						// 	id: 'tou',
+						// 	label: 'Haftungsausschluss',
+						// },

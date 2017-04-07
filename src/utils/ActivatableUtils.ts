@@ -39,7 +39,7 @@ export function isActivatable(obj: ActivatableInstance): boolean {
 			return false;
 		}
 	}
-	return validate(obj.reqs);
+	return validate(obj.reqs, obj.id);
 };
 
 export function isDeactivatable(obj: ActivatableInstance): boolean {
@@ -59,7 +59,7 @@ export function isDeactivatable(obj: ActivatableInstance): boolean {
 			const origin = get(e.origin) as SpecialAbilityInstance;
 			const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin!)) as RequirementObject | undefined;
 			if (req) {
-				const resultOfAll = (req.id as string[]).map(e => validateInstanceRequirementObject({ ...req, id: e }));
+				const resultOfAll = (req.id as string[]).map(e => validateInstanceRequirementObject({ ...req, id: e }, obj.id));
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? true : false;
 			}
 			return true;

@@ -23,26 +23,25 @@ interface NameBySexData extends Data {
 	};
 }
 
-export const filter = (list: PlainNameData[], filterText: string, addProperty?: string): PlainNameData[] => {
+export function filter(list: PlainNameData[], filterText: string, addProperty?: string): PlainNameData[] {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
 		return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || (obj[addProperty] as string).toLowerCase().match(filterText)));
 	}
 	return list;
-};
+}
 
 let SEX: 'm' | 'f';
 
-export const filterSex = (list: NameBySexData[], filterText: string, addProperty?: string): NameBySexData[] => {
+export function filterSex(list: NameBySexData[], filterText: string, addProperty?: string): NameBySexData[] {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
 		return list.filter(obj => obj.name[SEX].toLowerCase().match(filterText) && (!addProperty || (obj[addProperty] as string).toLowerCase().match(filterText)));
 	}
 	return list;
-};
+}
 
 export const sortByName = (a: PlainNameData, b: PlainNameData) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-
 
 export const sortByNameSex = (a: NameBySexData, b: NameBySexData) => {
 	const an = a.name[SEX] || a.name;
@@ -83,7 +82,7 @@ export const sortByWeight = (a: PlainNameData, b: PlainNameData) => a.weight! < 
 
 export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where! < b.where! ? -1 : a.where! > b.where! ? 1 : sortByName(a, b);
 
-export const sort = (list: PlainNameData[], sortOrder: string): PlainNameData[] => {
+export function sort(list: PlainNameData[], sortOrder: string): PlainNameData[] {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -121,9 +120,9 @@ export const sort = (list: PlainNameData[], sortOrder: string): PlainNameData[] 
 			return list;
 	}
 	return list.sort(sort);
-};
+}
 
-export const sortSex = (list: NameBySexData[], sortOrder: string): NameBySexData[] => {
+export function sortSex(list: NameBySexData[], sortOrder: string): NameBySexData[] {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -137,9 +136,9 @@ export const sortSex = (list: NameBySexData[], sortOrder: string): NameBySexData
 			return list;
 	}
 	return list.sort(sort);
-};
+}
 
-export const filterAndSort = <T>(list: T[], filterText: string, sortOrder: string, option?: string[] | 'm' | 'f'): T[] => {
+export function filterAndSort<T>(list: T[], filterText: string, sortOrder: string, option?: string[] | 'm' | 'f'): T[] {
 	if (Array.isArray(option)) {
 		GROUPS = option;
 	}
@@ -148,4 +147,4 @@ export const filterAndSort = <T>(list: T[], filterText: string, sortOrder: strin
 		return sortSex(filterSex(list as any, filterText), sortOrder) as any;
 	}
 	return sort(filter(list as any, filterText), sortOrder) as any;
-};
+}

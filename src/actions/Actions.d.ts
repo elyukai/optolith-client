@@ -457,6 +457,13 @@ interface SetOtherInfoAction extends DefaultAction {
 	};
 }
 
+interface SetCultureAreaKnowledge extends DefaultAction {
+	type: SET_CULTURE_AREA_KNOWLEDGE;
+	payload: {
+		cultureAreaKnowledge: string;
+	};
+}
+
 interface EndHeroCreationAction extends DefaultAction {
 	type: END_HERO_CREATION;
 }

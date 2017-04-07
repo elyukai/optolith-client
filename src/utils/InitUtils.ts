@@ -1,6 +1,6 @@
 import * as Categories from '../constants/Categories';
 
-export const initRace = (raw: RawRace): RaceInstance => {
+export function initRace(raw: RawRace): RaceInstance {
 	const { id, name, ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
 	return {
 		ap,
@@ -29,7 +29,7 @@ export const initRace = (raw: RawRace): RaceInstance => {
 	};
 };
 
-export const initCulture = (raw: RawCulture): CultureInstance => {
+export function initCulture(raw: RawCulture): CultureInstance {
 	const { id, name, ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents } = raw;
 	return {
 		ap,
@@ -50,7 +50,7 @@ export const initCulture = (raw: RawCulture): CultureInstance => {
 	};
 };
 
-export const initProfession = (raw: RawProfession): ProfessionInstance => {
+export function initProfession(raw: RawProfession): ProfessionInstance {
 	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars } = raw;
 	return {
 		ap,
@@ -74,7 +74,7 @@ export const initProfession = (raw: RawProfession): ProfessionInstance => {
 	};
 };
 
-export const initProfessionVariant = (raw: RawProfessionVariant): ProfessionVariantInstance => {
+export function initProfessionVariant(raw: RawProfessionVariant): ProfessionVariantInstance {
 	const { id, name, ap, pre_req, req, sel, sa, combattech, talents } = raw;
 	return {
 		ap,
@@ -90,7 +90,7 @@ export const initProfessionVariant = (raw: RawProfessionVariant): ProfessionVari
 	};
 };
 
-export const initAdvantage = (raw: RawAdvantage): AdvantageInstance => {
+export function initAdvantage(raw: RawAdvantage): AdvantageInstance {
 	const { id, name, ap, input, max, sel, req, tiers } = raw;
 	return {
 		active: [],
@@ -107,7 +107,7 @@ export const initAdvantage = (raw: RawAdvantage): AdvantageInstance => {
 	};
 };
 
-export const initDisadvantage = (raw: RawDisadvantage): DisadvantageInstance => {
+export function initDisadvantage(raw: RawDisadvantage): DisadvantageInstance {
 	const { id, name, ap, input, max, sel, req, tiers } = raw;
 	return {
 		active: [],
@@ -124,7 +124,7 @@ export const initDisadvantage = (raw: RawDisadvantage): DisadvantageInstance => 
 	};
 };
 
-export const initSpecialAbility = (raw: RawSpecialAbility): SpecialAbilityInstance => {
+export function initSpecialAbility(raw: RawSpecialAbility): SpecialAbilityInstance {
 	const { id, name, ap, input, max, sel, req, gr } = raw;
 	return {
 		active: [],
@@ -141,7 +141,7 @@ export const initSpecialAbility = (raw: RawSpecialAbility): SpecialAbilityInstan
 	};
 };
 
-export const initAttribute = (raw: RawAttribute): AttributeInstance => {
+export function initAttribute(raw: RawAttribute): AttributeInstance {
 	const { id, name, short } = raw;
 	return {
 		category: Categories.ATTRIBUTES,
@@ -155,7 +155,7 @@ export const initAttribute = (raw: RawAttribute): AttributeInstance => {
 	};
 };
 
-export const initCombatTechnique = (raw: RawCombatTechnique): CombatTechniqueInstance => {
+export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueInstance {
 	const { id, name, gr, skt, leit } = raw;
 	return {
 		category: Categories.COMBAT_TECHNIQUES,
@@ -174,7 +174,7 @@ type Check = [string, string, string, string | never];
 
 const fixCheckIds = (check: RawCheck): Check => check.map(e => typeof e === 'number' ? `ATTR_${e}` : e);
 
-export const initLiturgy = (raw: RawLiturgy): LiturgyInstance => {
+export function initLiturgy(raw: RawLiturgy): LiturgyInstance {
 	const { id, name, check, gr, skt, aspc, trad } = raw;
 	return {
 		active: false,
@@ -191,7 +191,7 @@ export const initLiturgy = (raw: RawLiturgy): LiturgyInstance => {
 	};
 };
 
-export const initSpell = (raw: RawSpell): SpellInstance => {
+export function initSpell(raw: RawSpell): SpellInstance {
 	const { id, name, check, gr, skt, merk, trad } = raw;
 	return {
 		active: false,
@@ -208,7 +208,7 @@ export const initSpell = (raw: RawSpell): SpellInstance => {
 	};
 };
 
-export const initTalent = (raw: RawTalent): TalentInstance => {
+export function initTalent(raw: RawTalent): TalentInstance {
 	const { id, name, be, check, gr, skt, spec, spec_input } = raw;
 	return {
 		category: Categories.TALENTS,
@@ -225,7 +225,7 @@ export const initTalent = (raw: RawTalent): TalentInstance => {
 	};
 };
 
-export const initItem = (raw: RawItem): ItemInstance => {
+export function initItem(raw: RawItem): ItemInstance {
 	return {
 		...raw,
 		amount: 1,

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
+import Checkbox from '../../components/Checkbox';
 import Dropdown from '../../components/Dropdown';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
@@ -84,16 +85,23 @@ export default class Professions extends React.Component<undefined, State> {
 						onChange={this.changeView}
 						options={[{id: 'all', name: 'Alle Professionen'}, {id: 'common', name: 'Übliche Professionen'}]}
 						fullWidth />
-					<RadioButtonGroup active={sortOrder} onClick={this.sort} array={[
-						{
-							name: 'Alphabetisch',
-							value: 'name',
-						},
-						{
-							name: 'Nach Kosten',
-							value: 'cost',
-						},
-					]} />
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={this.sort}
+						array={[
+							{
+								name: 'Alphabetisch',
+								value: 'name',
+							},
+							{
+								name: 'Nach Kosten',
+								value: 'cost',
+							},
+						]}
+						/>
+					<Checkbox checked={false} onClick={() => undefined} disabled>
+						Professionen aus Erweiterungen immer anzeigen
+					</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul className="professions">

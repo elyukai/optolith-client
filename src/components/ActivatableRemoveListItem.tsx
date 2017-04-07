@@ -60,21 +60,20 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier!;
 		}
 
-		if (addSpecial) {
+		if (addSpecial !== '') {
 			name += addSpecial;
 		}
 
 		const args: RemoveObject = { id, index, cost };
 
 		return (
-			<div
-				className={classNames({
-					'imp': isImportant,
-					'list-item': true,
-					'typ': isTypical,
-					'untyp': isUntypical,
-				})}
-				>
+			<div className={classNames({
+				'imp': isImportant,
+				'list-item': true,
+				'typ': isTypical,
+				'untyp': isUntypical,
+			})}
+			>
 				<div className="name">
 					<p className="title">{name}</p>
 				</div>

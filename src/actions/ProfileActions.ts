@@ -150,6 +150,13 @@ export const setOtherInfo = (otherinfo: string) => AppDispatcher.dispatch<SetOth
 	},
 });
 
+export const setCultureAreaKnowledge = (cultureAreaKnowledge: string) => AppDispatcher.dispatch<SetCultureAreaKnowledge>({
+	type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE,
+	payload: {
+		cultureAreaKnowledge,
+	},
+});
+
 export const endHeroCreation = () => AppDispatcher.dispatch<EndHeroCreationAction>({
 	type: ActionTypes.END_HERO_CREATION,
 });

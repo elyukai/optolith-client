@@ -173,6 +173,11 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 
 				activeObject.disabled = disabled;
 
+				if (typeof tiers === 'number') {
+					activeObject.tiers = tiers;
+					activeObject.tier = tier;
+				}
+
 				finalEntries.push(activeObject);
 			});
 		}
@@ -277,7 +282,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						}
 						break;
 					case 'SA_3': {
-						const sel = (a.sel as Array<SelectionObject & { req: RequirementObject[] }>).filter(e => !active.includes(e.id) && validate(e.req) && !getDSids(a).includes(e.id));
+						const sel = (a.sel as Array<SelectionObject & { req: RequirementObject[] }>).filter(e => !active.includes(e.id) && validate(e.req, id) && !getDSids(a).includes(e.id));
 						if (sel.length > 0) {
 							finalEntries.push({ id, name, sel, cost, gr });
 						}

@@ -14,7 +14,7 @@ type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 
 const addEnergies = () => AttributeStore.getAddEnergies();
 
-export const getLP = (): Energy => {
+export function getLP(): Energy {
 	const base = RaceStore.getCurrent()!.lp + CON().value * 2;
 	let mod = 0;
 	const add = addEnergies().lp;
@@ -39,9 +39,9 @@ export const getLP = (): Energy => {
 		short: 'LE',
 		value,
 	};
-};
+}
 
-export const getAE = (): EnergyWithLoss => {
+export function getAE(): EnergyWithLoss {
 	const primary = getPrimaryAttrID(1);
 	let base = 0;
 	let mod = 0;
@@ -74,9 +74,9 @@ export const getAE = (): EnergyWithLoss => {
 		short: 'AE',
 		value,
 	};
-};
+}
 
-export const getKP = (): EnergyWithLoss => {
+export function getKP(): EnergyWithLoss {
 	const primary = getPrimaryAttrID(2);
 	let base = 0;
 	let mod = 0;
@@ -109,9 +109,9 @@ export const getKP = (): EnergyWithLoss => {
 		short: 'KE',
 		value,
 	};
-};
+}
 
-export const getSPI = (): SecondaryAttribute => {
+export function getSPI(): SecondaryAttribute {
 	const base = RaceStore.getCurrent()!.spi + Math.round((COU().value + SGC().value + INT().value) / 6);
 	let mod = 0;
 	const increaseObject = (get('ADV_26') as AdvantageInstance).active[0];
@@ -132,9 +132,9 @@ export const getSPI = (): SecondaryAttribute => {
 		short: 'SK',
 		value,
 	};
-};
+}
 
-export const getTOU = (): SecondaryAttribute => {
+export function getTOU(): SecondaryAttribute {
 	const base = RaceStore.getCurrent()!.tou + Math.round((CON().value * 2 + STR().value) / 6);
 	let mod = 0;
 	const increaseObject = (get('ADV_27') as AdvantageInstance).active[0];
@@ -155,25 +155,29 @@ export const getTOU = (): SecondaryAttribute => {
 		short: 'ZK',
 		value,
 	};
-};
+}
 
-export const getDO = (): SecondaryAttribute => ({
-	calc: '(GE/2)',
-	id: 'DO',
-	name: 'Ausweichen',
-	short: 'AW',
-	value: Math.round(AGI().value / 2),
-});
+export function getDO(): SecondaryAttribute {
+	return {
+		calc: '(GE/2)',
+		id: 'DO',
+		name: 'Ausweichen',
+		short: 'AW',
+		value: Math.round(AGI().value / 2),
+	};
+}
 
-export const getINI = (): SecondaryAttribute => ({
-	calc: '(MU + GE)/2',
-	id: 'INI',
-	name: 'Initiative',
-	short: 'INI',
-	value: Math.round((COU().value + AGI().value) / 2),
-});
+export function getINI(): SecondaryAttribute {
+	return {
+		calc: '(MU + GE)/2',
+		id: 'INI',
+		name: 'Initiative',
+		short: 'INI',
+		value: Math.round((COU().value + AGI().value) / 2),
+	};
+}
 
-export const getMOV = (): SecondaryAttribute => {
+export function getMOV(): SecondaryAttribute {
 	let value = RaceStore.getCurrent()!.mov;
 	if ((get('DISADV_51') as DisadvantageInstance).active.includes(3)) {
 		value = Math.round(value / 2);
@@ -185,9 +189,9 @@ export const getMOV = (): SecondaryAttribute => {
 		short: 'GS',
 		value,
 	};
-};
+}
 
-const _get = (id: ids): SecondaryAttribute => {
+function _get(id: ids): SecondaryAttribute {
 	switch (id) {
 		case 'LP':
 			return getLP();
@@ -206,19 +210,21 @@ const _get = (id: ids): SecondaryAttribute => {
 		case 'MOV':
 			return getMOV();
 	}
-};
+}
 
 export { _get as get };
 
-export const getAll = (): SecondaryAttribute[] => [
-	getLP(),
-	getAE(),
-	getKP(),
-	getSPI(),
-	getTOU(),
-	getDO(),
-	getINI(),
-	getMOV(),
-];
+export function getAll(): SecondaryAttribute[] {
+	return [
+		getLP(),
+		getAE(),
+		getKP(),
+		getSPI(),
+		getTOU(),
+		getDO(),
+		getINI(),
+		getMOV(),
+	];
+}
 
 export default getAll;

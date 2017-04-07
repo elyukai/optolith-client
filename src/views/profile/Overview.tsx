@@ -44,6 +44,7 @@ interface State {
 	socialstatus: number;
 	characteristics: string;
 	otherinfo: string;
+	cultureAreaKnowledge: string;
 	editName: boolean;
 	editProfessionName: boolean;
 }

@@ -4,12 +4,12 @@ import LiturgiesStore from '../stores/LiturgiesStore';
 import PhaseStore from '../stores/PhaseStore';
 import { getSids } from './ActivatableUtils';
 
-export const isOwnTradition = (obj: LiturgyInstance): boolean => {
+export function isOwnTradition(obj: LiturgyInstance): boolean {
 	const SA = get('SA_102') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
-};
+}
 
-export const isIncreasable = (obj: LiturgyInstance): boolean => {
+export function isIncreasable(obj: LiturgyInstance): boolean {
 	let max = 0;
 	const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
 
@@ -25,20 +25,22 @@ export const isIncreasable = (obj: LiturgyInstance): boolean => {
 	}
 
 	return obj.value < max + bonus;
-};
+}
 
-export const isDecreasable = (obj: LiturgyInstance): boolean => {
+export function isDecreasable(obj: LiturgyInstance): boolean {
 	if ((get('SA_103') as SpecialAbilityInstance).active.includes(obj.aspects)) {
 		const counter = LiturgiesStore.getAspectCounter();
 
 		return !(counter.get(obj.aspects) <= 3 && obj.value <= 10 && obj.gr !== 5);
 	}
 	return true;
-};
+}
 
-export const reset = (obj: LiturgyInstance): LiturgyInstance => ({
-	...obj,
-	active: false,
-	dependencies: [],
-	value: 0,
-});
+export function reset(obj: LiturgyInstance): LiturgyInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: [],
+		value: 0,
+	};
+}

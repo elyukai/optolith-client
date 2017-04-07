@@ -6,7 +6,7 @@ import PhaseStore from '../stores/PhaseStore';
 import RulesStore from '../stores/RulesStore';
 import calcEL from '../utils/calcEL';
 
-export const isIncreasable = (obj: AttributeInstance): boolean => {
+export function isIncreasable(obj: AttributeInstance): boolean {
 	if (PhaseStore.get() < 3) {
 		const max = AttributeStore.getSum() >= ELStore.getStart().maxTotalAttributeValues ? 0 : ELStore.getStart().maxAttributeValue + obj.mod;
 		return obj.value < max;
@@ -18,9 +18,9 @@ export const isIncreasable = (obj: AttributeInstance): boolean => {
 		return obj.value < currentEl.maxAttributeValue + 2;
 	}
 	return true;
-};
+}
 
-export const isDecreasable = (obj: AttributeInstance): boolean => {
+export function isDecreasable(obj: AttributeInstance): boolean {
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
 			const target = get(e.origin) as SpecialAbilityInstance;
@@ -35,14 +35,16 @@ export const isDecreasable = (obj: AttributeInstance): boolean => {
 	});
 
 	return obj.value > Math.max(8, ...dependencies);
-};
+}
 
-export const reset = (obj: AttributeInstance): AttributeInstance => ({
-	...obj,
-	dependencies: [],
-	mod: 0,
-	value: 8,
-});
+export function reset(obj: AttributeInstance): AttributeInstance {
+	return {
+		...obj,
+		dependencies: [],
+		mod: 0,
+		value: 8,
+	};
+}
 
 export function convertId<T extends string | undefined>(id: T): T {
 	switch (id) {
