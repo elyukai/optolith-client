@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "electron": "^1.6.2",
     "flux": "^2.1.1",
+    "fs": "0.0.1-security",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-gemini-scrollbar": "^2.1.5",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@types/classnames": "^0.0.32",
+    "@types/electron": "^1.4.35",
     "@types/flux": "^0.0.34",
     "@types/node": "^6.0.63",
     "@types/react": "^0.14.57",

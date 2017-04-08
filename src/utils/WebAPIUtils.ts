@@ -15,13 +15,15 @@ function connectionError(error: Error) {
 }
 
 export async function getAllData(): Promise<void> {
-	try {
-		const response = await fetch('data/DSA5.json');
-		const result = await response.json() as RawData;
-		ServerActions.receiveDataTables(result);
-	} catch (e) {
-		connectionError(Error(e));
-	}
+	readFile('./dist/data/DSA5.json', 'utf8', (e, data) => {
+		if (e) {
+			connectionError(e);
+		}
+		else {
+			const result = JSON.parse(data);
+			ServerActions.receiveDataTables(result);
+		}
+	});
 }
 
 export async function checkEmail(email: string): Promise<string | void> {

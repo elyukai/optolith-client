@@ -13,7 +13,10 @@ function createWindow () {
     height: 720,
     resizable: false,
     icon: 'dist/favicon.png',
-    frame: false
+    frame: false,
+    center: true,
+    title: 'DSA5 Heldentool',
+    titleBarStyle: 'hidden'
   });
 
   // and load the index.html of the app.

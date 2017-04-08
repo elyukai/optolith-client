@@ -1,17 +1,18 @@
-import { Component } from 'react';
+import { remote } from 'electron';
 import * as React from 'react';
-// import { remote } from 'electron';
 
-export default class TitleBarDrag extends Component<any, any> {
+interface Props {
+	children?: React.ReactNode;
+}
 
-	render() {
-		// const window = remote.getCurrentWindow();
-		const close = () => window.close();
+function close() {
+	remote.getCurrentWindow().close();
+}
 
-		return (
-			<div className="titlebar-controls">
-				<div className="titlebar-controls-btn" onClick={close}>&#xE5CD;</div>
-			</div>
-		);
-	}
+export default function TitleBarDrag() {
+	return (
+		<div className="titlebar-controls">
+			<div className="titlebar-controls-btn" onClick={close}>&#xE5CD;</div>
+		</div>
+	);
 }

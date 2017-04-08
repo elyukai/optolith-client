@@ -147,7 +147,7 @@ export default class TitleBar extends React.Component<Props, State> {
 							</TitleBarLeft>
 							<TitleBarRight>
 								<TitleBarTabs active={currentTab} tabs={[
-									{ label: account.name, tag: 'account' }
+									{ label: account.name, tag: 'account', disabled: true },
 								]} />
 								<BorderButton label="Abmelden" onClick={this.logout} disabled />
 								<IconButton

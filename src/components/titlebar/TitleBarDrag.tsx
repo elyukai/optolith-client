@@ -1,13 +1,13 @@
-import { Component } from 'react';
 import * as React from 'react';
 
-export default class TitleBarDrag extends Component<any, any> {
+interface Props {
+	children?: React.ReactNode;
+}
 
-	render() {
-		return (
-			<div className="titlebar-drag">
-				{this.props.children}
-			</div>
-		);
-	}
+export default function TitleBarDrag(props: Props) {
+	return (
+		<div className="titlebar-drag">
+			{props.children}
+		</div>
+	);
 }

@@ -17,7 +17,7 @@
         "outDir": "./dist/",
 		"removeComments": true,
         "strictNullChecks": true,
-        "target": "es5",
+        "target": "es2016",
         "alwaysStrict": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,

@@ -36,5 +36,6 @@ module.exports = {
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM'
-	}
+	},
+	target: 'electron-renderer'
 };
