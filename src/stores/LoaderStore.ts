@@ -3,7 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import ListStore from './ListStore';
 import Store from './Store';
 
-type Action = ReceiveDataTablesAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction;
+type Action = ReceiveInitialDataAction | RequestHeroAvatarAction | ReceiveHeroAvatarAction | RequestHeroDataAction | ReceiveHeroDataAction | RequestHerolistAction | ReceiveHerolistAction | RequestLoginAction | ReceiveLoginAction | RequestLogoutAction | ReceiveLogoutAction | RequestNewUsernameAction | ReceiveNewUsernameAction | RequestUserDeletionAction | ReceiveUserDeletionAction | RequestRegistrationAction | ReceiveRegistrationAction;
 
 class LoaderStoreStatic extends Store {
 	private loading = true;
@@ -25,7 +25,7 @@ class LoaderStoreStatic extends Store {
 					this.startLoading();
 					break;
 
-				case ActionTypes.RECEIVE_DATA_TABLES:
+				case ActionTypes.RECEIVE_INITIAL_DATA:
 					AppDispatcher.waitFor([ListStore.dispatchToken]);
 					this.stopLoading();
 					break;

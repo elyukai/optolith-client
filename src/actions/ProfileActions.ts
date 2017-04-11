@@ -17,18 +17,13 @@ export const setCustomProfessionName = (name: string) => AppDispatcher.dispatch<
 	},
 });
 
-export const setHeroAvatar = (source: string | File) => {
-	if (typeof source === 'string') {
-		AppDispatcher.dispatch<SetHeroAvatarAction>({
-			type: ActionTypes.SET_HERO_AVATAR,
-			payload: {
-				url: source,
-			},
-		});
-	}
-	// else {
-	// 	WebAPIUtils.changeHeroAvatar(source);
-	// }
+export const setHeroAvatar = (path: string) => {
+	AppDispatcher.dispatch<SetHeroAvatarAction>({
+		type: ActionTypes.SET_HERO_AVATAR,
+		payload: {
+			url: path,
+		},
+	});
 };
 	// changeAvatar({ source, extern, file }) {
 	// 	if (source === 'ext') {

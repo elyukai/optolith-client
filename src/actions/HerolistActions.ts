@@ -1,24 +1,26 @@
-import { REQUEST_HEROLIST, CREATE_HERO, SET_HEROLIST_SORT_ORDER, SET_HEROLIST_VISIBILITY_FILTER, REQUEST_HERO_DATA, REQUEST_HERO_SAVE, RECEIVE_HERO_DATA } from '../constants/ActionTypes';
-import * as WebAPIUtils from '../utils/WebAPIUtils';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import saveHero from '../utils/saveHero';
+import HerolistStore from '../stores/HerolistStore';
+import * as FileAPIUtils from '../utils/FileAPIUtils';
+import generateHeroSaveData from '../utils/generateHeroSaveData';
+import * as WebAPIUtils from '../utils/WebAPIUtils';
 
 export const requestList = () => {
 	WebAPIUtils.getHeroes();
 	AppDispatcher.dispatch<RequestHerolistAction>({
-		type: REQUEST_HEROLIST
+		type: ActionTypes.REQUEST_HEROLIST
 	});
 };
 
 export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetHerolistSortOrderAction>({
-	type: SET_HEROLIST_SORT_ORDER,
+	type: ActionTypes.SET_HEROLIST_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
 export const setVisibilityFilter = (filterOption: string) => AppDispatcher.dispatch<SetHerolistVisibilityFilterAction>({
-	type: SET_HEROLIST_VISIBILITY_FILTER,
+	type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
 	payload: {
 		filterOption
 	}
@@ -43,20 +45,20 @@ export const requestHero = (id: string) => {
 	// 	this.loadFx(id);
 	// }
 	AppDispatcher.dispatch<RequestHeroDataAction>({
-		type: REQUEST_HERO_DATA
+		type: ActionTypes.REQUEST_HERO_DATA
 	});
 	WebAPIUtils.requestHero(id);
 };
 
 export const insertHero = (json: string) => {
-	const parsed = JSON.parse(json) as SaveData;
+	const parsed = JSON.parse(json) as HeroSave;
 	const newParsed = {
 		dateCreated: new Date(parsed.dateCreated),
 		dateModified: new Date(parsed.dateModified)
 	};
-	const data = { ...parsed, ...newParsed } as Hero & HeroRest;
+	const data = { ...parsed, ...newParsed } as Hero;
 	AppDispatcher.dispatch<ReceiveHeroDataAction>({
-		type: RECEIVE_HERO_DATA,
+		type: ActionTypes.RECEIVE_HERO_DATA,
 		payload: {
 			data
 		}
@@ -64,7 +66,7 @@ export const insertHero = (json: string) => {
 };
 
 export const createHero = (name: string, sex: 'm' | 'f', el: string) => AppDispatcher.dispatch<CreateHeroAction>({
-	type: CREATE_HERO,
+	type: ActionTypes.CREATE_HERO,
 	payload: {
 		name,
 		sex,
@@ -72,9 +74,39 @@ export const createHero = (name: string, sex: 'm' | 'f', el: string) => AppDispa
 	}
 });
 
+export const loadHero = (indexId: string) => {
+	AppDispatcher.dispatch<ReceiveHeroDataAction>({
+		type: ActionTypes.RECEIVE_HERO_DATA,
+		payload: {
+			data: HerolistStore.get(indexId)
+		}
+	});
+};
+
+export const saveHero = () => {
+	const current = HerolistStore.getCurrent();
+	const data = generateHeroSaveData();
+	AppDispatcher.dispatch<SaveHeroAction>({
+		type: ActionTypes.SAVE_HERO,
+		payload: {
+			current,
+			data
+		}
+	});
+};
+
+export const deleteHero = (indexId: string) => {
+	AppDispatcher.dispatch<DeleteHeroAction>({
+		type: ActionTypes.DELETE_HERO,
+		payload: {
+			indexId
+		}
+	});
+};
+
 export const requestHeroSave = () => {
 	AppDispatcher.dispatch<RequestHeroSaveAction>({
-		type: REQUEST_HERO_SAVE
+		type: ActionTypes.REQUEST_HERO_SAVE
 	});
-	saveHero();
+	WebAPIUtils.saveHero(generateHeroSaveData());
 };

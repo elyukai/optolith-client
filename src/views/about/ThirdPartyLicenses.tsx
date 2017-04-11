@@ -7,14 +7,14 @@ export default () => {
 	return (
 		<div className="page" id="third-party-software">
 			<Scroll className="text">
-				<h2>TDE5 Heroes Browser Client v{version}</h2>
+				<h2>TDE5 Heroes Client v{version}</h2>
 				Third Party Software and Content Licenses
 				<div className="third-party-software-body">
 					Dieses Produkt wurde unter Lizenz erstellt. Das Schwarze Auge und sein Logo sowie Aventuria, Dere, Myranor, Riesland, Tharun und Uthuria und ihre Logos sind eingetragene Marken von Significant GbR in Deutschland, den U.S.A. und anderen Ländern. Ulisses Spiele und sein Logo sind eingetragene Marken der Ulisses Medien und Spiele Distribution GmbH.<br/>
 					<br/>
 					Dieses Werk enthält Material, das durch Ulisses Spiele und/oder andere Autoren urheberrechtlich geschützt ist. Solches Material wird mit Erlaubnis im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS verwendet.<br/>
 					<br/>
-					Alle anderen Originalmaterialien in diesem Werk sind &copy; 2017-present von Lukas Obermann und werden im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS veröffentlicht.<br/>
+					Alle anderen Originalmaterialien in diesem Werk sind &copy; 2017-Gegenwart von Lukas Obermann und werden im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS veröffentlicht.<br/>
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
@@ -103,6 +103,17 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
+					electron<br/>
+					Copyright (c) 2015 Mathias Buus-Madsen, Max Ogden and contributors<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
 					events<br/>
 					MIT<br/>
 					<br/>
@@ -127,7 +138,7 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
-					Flux<br/>
+					flux<br/>
 					For Flux software<br/>
 					<br/>
 					Copyright (c) 2014-2015, Facebook, Inc. All rights reserved.<br/>
@@ -294,7 +305,7 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
-					TypeScript<br/>
+					typescript<br/>
 					Copyright (c) Microsoft Corporation. All rights reserved.<br/>
 					Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0<br/>
 					<br/>

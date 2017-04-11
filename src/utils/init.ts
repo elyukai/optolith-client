@@ -15,7 +15,7 @@ const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance 
 	return [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(obj.category);
 };
 
-export default (raw: RawData) => {
+export default (raw: RawTables) => {
 	const { attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities } = raw;
 
 	const list: List = {};

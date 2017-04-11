@@ -66,9 +66,9 @@ class HistoryStoreStatic extends Store {
 						this.resetSaveIndex();
 						break;
 
-					// case ActionTypes.RECEIVE_HERO_SAVE:
-					// 	this.resetSaveIndex();
-					// 	break;
+					case ActionTypes.SAVE_HERO:
+						this.resetSaveIndex();
+						break;
 
 					case ActionTypes.ACTIVATE_SPELL:
 					case ActionTypes.ACTIVATE_LITURGY:

@@ -25,10 +25,6 @@ class DisAdvStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
-					case ActionTypes.RECEIVE_HERO_DATA:
-						this.updateAll(action.payload.data.disadv);
-						break;
-
 					case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
 						this.updateRating();
 						break;

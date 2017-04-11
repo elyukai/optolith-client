@@ -114,12 +114,14 @@
 			}
 		}
 
-		> .btn {
+		.buttons {
 			flex: none;
-		}
+			display: flex;
 
-		> .btn.btn-primary {
-			min-width: 140px;
+			> .btn {
+				flex: none;
+				margin-left: 6px;
+			}
 		}
 	}
 }

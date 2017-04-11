@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export const receiveDataTables = (data: RawData) => AppDispatcher.dispatch<ReceiveDataTablesAction>({
+export const receiveDataTables = (data: RawTables) => AppDispatcher.dispatch<ReceiveDataTablesAction>({
 	type: ActionTypes.RECEIVE_DATA_TABLES,
 	payload: {
 		data
@@ -19,7 +19,7 @@ export const receiveRegistration = () => AppDispatcher.dispatch<ReceiveRegistrat
 	type: ActionTypes.RECEIVE_REGISTRATION
 });
 
-export const receiveHeroData = (data: Hero & HeroRest) => AppDispatcher.dispatch<ReceiveHeroDataAction>({
+export const receiveHeroData = (data: Hero) => AppDispatcher.dispatch<ReceiveHeroDataAction>({
 	type: ActionTypes.RECEIVE_HERO_DATA,
 	payload: {
 		data

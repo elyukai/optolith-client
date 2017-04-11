@@ -8,7 +8,9 @@ import ProfileStore from '../stores/ProfileStore';
 import alert from '../utils/alert';
 
 function connectionError(error: Error) {
-	alert('Verbindung nicht möglich', 'Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! ' + JSON.stringify(error) + ' Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!');
+	alert('Verbindung nicht möglich', `Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!
+
+	(Fehler: ${JSON.stringify(error)})`);
 	AppDispatcher.dispatch<RequestFailedAction>({
 		type: ActionTypes.REQUEST_FAILED,
 	});
@@ -116,7 +118,7 @@ export async function login(username: string, password: string): Promise<void> {
 			displayName: string;
 			email: string;
 			sessionToken: string;
-			heroes: { [id: string]: RawHero };
+			heroes: RawHero[];
 		};
 		const { name, displayName, email, sessionToken, heroes } = result;
 		ServerActions.receiveLogin(name, displayName, email, sessionToken, heroes);
@@ -258,25 +260,11 @@ export function requestHero(id: string) {
 		activatable: {
 			ADV_3: [{}], ADV_5: [{}], ADV_40: [{}], ADV_47: [{sid: 'CT_2'}], ADV_49: [{}], ADV_50: [{}], DISADV_1: [{sid: 2, tier: 2}], DISADV_15: [{}], DISADV_25: [{}], DISADV_40: [{tier: 1}], SA_10: [{sid: 'TAL_48', sid2: 'Test'}], SA_28: [{sid: 9}, {sid: 14}], SA_30: [{sid: 8, tier: 4}, {sid: 23, tier: 2}, {sid: 6, tier: 1}], SA_86: [{sid: 1}],
 		},
-		disadv: {
-			ratingVisible: true,
-		},
-		talents: {
-			active: {TAL_8: 6, TAL_10: 4, TAL_18: 7, TAL_20: 5, TAL_21: 4, TAL_25: 4, TAL_28: 9, TAL_29: 7, TAL_34: 4, TAL_38: 5, TAL_39: 3, TAL_40: 2, TAL_47: 5, TAL_48: 8, TAL_50: 7, TAL_51: 1, TAL_55: 1, TAL_59: 1},
-			ratingVisible: true,
-		},
-		ct: {
-			active: {CT_3: 8, CT_5: 8},
-		},
-		spells: {
-			active: {},
-		},
-		chants: {
-			active: {},
-		},
-		sa: {
-			active: {SA_10: [{sid: 'TAL_48', sid2: 'Test'}], SA_28: [{sid: 9}, {sid: 14}], SA_30: [{sid: 8, tier: 4}, {sid: 23, tier: 2}, {sid: 6, tier: 1}], SA_86: [{sid: 1}]},
-		},
+		talents: {TAL_8: 6, TAL_10: 4, TAL_18: 7, TAL_20: 5, TAL_21: 4, TAL_25: 4, TAL_28: 9, TAL_29: 7, TAL_34: 4, TAL_38: 5, TAL_39: 3, TAL_40: 2, TAL_47: 5, TAL_48: 8, TAL_50: 7, TAL_51: 1, TAL_55: 1, TAL_59: 1},
+		ct: {CT_3: 8, CT_5: 8},
+		spells: {},
+		chants: {},
+		sa: {SA_10: [{sid: 'TAL_48', sid2: 'Test'}], SA_28: [{sid: 9}, {sid: 14}], SA_30: [{sid: 8, tier: 4}, {sid: 23, tier: 2}, {sid: 6, tier: 1}], SA_86: [{sid: 1}]},
 		history: [],
 		rules: {
 			higherParadeValues: 0,
@@ -398,7 +386,7 @@ export async function createNewHero(name: string): Promise<void> {
 	}
 }
 
-export function saveHero(data: SaveData) {
+export function saveHero(data: HeroSave) {
 	const part = JSON.stringify(data);
 	const blob = new Blob([part], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
@@ -428,7 +416,7 @@ export function changeHeroAvatar(data: File) {
 	const reader = new FileReader();
 	reader.onload = async event => {
 		try {
-			const response = await fetch('php/uploadheropic.php?hid=' + ProfileStore.getID(), {
+			const response = await fetch('php/uploadheropic.php?hid=' + HerolistStore.getCurrent().id, {
 				body: event.target.result,
 				method: 'post',
 			});

@@ -19,7 +19,7 @@ import HeroCreation from './HeroCreation';
 import HerolistItem from './HerolistItem';
 
 interface State {
-	list: Hero[];
+	list: Array<Hero>;
 	filterText: string;
 	view: string;
 	sortOrder: string;
@@ -56,7 +56,7 @@ export default class Herolist extends React.Component<undefined, State> {
 			};
 			reader.readAsText(file);
 		}
-	};
+	}
 
 	componentDidMount() {
 		HerolistStore.addChangeListener(this._updateHerolistStore);
@@ -83,7 +83,7 @@ export default class Herolist extends React.Component<undefined, State> {
 				return { ...e, player: HerolistStore.getUser(e.player) };
 			}
 			return e as Hero & { player: undefined; };
-		}).map(hero => <HerolistItem key={hero.id} {...hero} />);
+		}).map(hero => <HerolistItem key={hero.indexId} {...hero} />);
 
 		return (
 			<section id="herolist">
@@ -119,20 +119,14 @@ export default class Herolist extends React.Component<undefined, State> {
 								},
 							]}
 							/>
-						<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
-						<TextField
-							onChange={this.changeFile}
-							fullWidth
-							type="file"
-							/>
 					</div>
 					<Scroll className="list">
 						<ul>
 							{
-								ProfileStore.getID() === null && ELStore.getStartID() !== 'EL_0' ? (
+								HerolistStore.getCurrent().indexId === null && ELStore.getStartID() !== 'EL_0' ? (
 									<HerolistItem
-										id={null}
+										indexId={null}
 										avatar={ProfileStore.getAvatar()}
 										name="Ungespeicherter Held"
 										ap={{ total: APStore.getTotal() }}
@@ -152,3 +146,10 @@ export default class Herolist extends React.Component<undefined, State> {
 		);
 	}
 }
+
+						/*<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
+						<TextField
+							onChange={this.changeFile}
+							fullWidth
+							type="file"
+							/>*/

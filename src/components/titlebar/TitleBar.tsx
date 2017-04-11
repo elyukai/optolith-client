@@ -1,28 +1,28 @@
+import * as React from 'react';
 import * as AuthActions from '../../actions/AuthActions';
 import * as HerolistActions from '../../actions/HerolistActions';
 import * as HistoryActions from '../../actions/HistoryActions';
 import * as InGameActions from '../../actions/InGameActions';
 import * as LocationActions from '../../actions/LocationActions';
-import * as React from 'react';
 import APStore from '../../stores/APStore';
 import AuthStore from '../../stores/AuthStore';
-import AvatarWrapper from '../AvatarWrapper';
-import BorderButton from '../BorderButton';
-import createOverlay from '../../utils/createOverlay';
 import ELStore from '../../stores/ELStore';
-import HeroCreation from '../../views/herolist/HeroCreation';
 import HistoryStore from '../../stores/HistoryStore';
-import IconButton from '../IconButton';
-import Login from '../../views/account/Login';
 import PhaseStore from '../../stores/PhaseStore';
 import ProfileStore from '../../stores/ProfileStore';
+import createOverlay from '../../utils/createOverlay';
+import Login from '../../views/account/Login';
+import HeroCreation from '../../views/herolist/HeroCreation';
+import AvatarWrapper from '../AvatarWrapper';
+import BorderButton from '../BorderButton';
+import IconButton from '../IconButton';
 import Text from '../Text';
+import TooltipToggle from '../TooltipToggle';
 import TitleBarBack from './TitleBarBack';
 import TitleBarLeft from './TitleBarLeft';
 import TitleBarRight from './TitleBarRight';
 import TitleBarTabs from './TitleBarTabs';
 import TitleBarWrapper from './TitleBarWrapper';
-import TooltipToggle from '../TooltipToggle';
 
 interface State {
 	account: {
@@ -95,7 +95,7 @@ export default class TitleBar extends React.Component<Props, State> {
 	}
 	login = () => createOverlay(<Login />);
 	logout = () => AuthActions.requestLogout();
-	saveHero = () => HerolistActions.requestHeroSave();
+	saveHero = () => HerolistActions.saveHero();
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();
 

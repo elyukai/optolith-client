@@ -1,5 +1,3 @@
-/// <reference path="../index.d.ts" />
-
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get } from '../stores/ListStore';

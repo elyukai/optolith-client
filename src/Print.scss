@@ -19,6 +19,7 @@
 
 	#body {
 		display: block;
+		border: none;
 	}
 
 	.titlebar, .subtabs {
@@ -35,7 +36,7 @@
 		flex: unset;
 		display: block;
 
-		.options {
+		.options, .print-document {
 			display: none;
 		}
 	}
@@ -61,65 +62,14 @@
 		.sheet {
 			margin-top: 0 !important;
 			height: 296mm !important;
+			-webkit-print-color-adjust: exact;
 
 			&:not(:last-child) {
 				page-break-after: always;
 			}
 
-			> .header {
-				.attributes {
-					> .attr {
-						> .value {
-							border-width: calc(0.5mm - 0.57pt/2) !important;
-
-							> div {
-								border-width: 0.57pt !important;
-								position: relative;
-
-								> div {
-									@include size(100%);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			&.main {
-				> .upper {
-					> .ap {
-						> div {
-							span {
-								&:first-child {
-									// border-width: $border-1px !important;
-								}
-							}
-						}
-					}
-
-					> .portrait {
-						.avatar {
-							// border-width: $border-1px !important;
-						}
-					}
-				}
-
-				> .lower {
-					> .calculated {
-						> div {
-							> .values {
-								> div {
-									// border-width: $border-1px !important;
-
-									> div {
-										width: calc(1.2mm - 0.57pt);
-										height: calc(1.2mm - 0.57pt);
-									}
-								}
-							}
-						}
-					}
-				}
+			&:last-child {
+				page-break-after: avoid;
 			}
 		}
 	}

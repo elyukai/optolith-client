@@ -42,7 +42,13 @@ export default class HeroCreation extends React.Component<Props, State> {
 					primary: true,
 				},
 			]}>
-				<TextField hint="Name des Helden" value={this.state.name} onChange={this.changeName} fullWidth />
+				<TextField
+					hint="Name des Helden"
+					value={this.state.name}
+					onChange={this.changeName}
+					fullWidth
+					autoFocus
+					/>
 				<Dropdown
 					value={this.state.gender}
 					onChange={this.changeGender}

@@ -11,14 +11,14 @@ $modal-padding: 24px;
 	z-index: 10000;
 	justify-content: center;
 	align-items: center;
-	
+
 	.modal-container {
 		width: 380px;
 		height: auto;
 		background: #010a13;
 		border: 1px solid #785a28;
 		position: relative;
-		
+
 		&:before, &:after {
 			position: absolute;
 			display: block;
@@ -28,15 +28,15 @@ $modal-padding: 24px;
 			left: 4px;
 			background: #785a28;
 		}
-		
+
 		&:before {
 			top: -5px;
 		}
-		
+
 		&:after {
 			bottom: -5px;
 		}
-		
+
 		.modal-close {
 			width: 36px;
 			height: 36px;
@@ -47,25 +47,25 @@ $modal-padding: 24px;
 			border: 1px solid #785a28;
 			right: -18px;
 			top: -18px;
-			
+
 			> div {
 				border: 1.5px solid #bda36c;
 				border-radius: 50%;
 				color: #bda36c;
 				margin: 2px;
-				font: 14px/27px "C5AUI";
+				font: 16px/27px Material;
 				text-align: center;
 			}
-			
+
 			&:hover {
 				cursor: pointer;
-				
+
 				> div {
 					color: #f1e6d4;
 				}
 			}
 		}
-		
+
 		.modal-header {
 			padding: $modal-padding $modal-padding $modal-padding * 5/8;
 
@@ -76,7 +76,7 @@ $modal-padding: 24px;
 				text-transform: uppercase;
 			}
 		}
-		
+
 		.modal-content {
 			position: relative;
 			@include calc(height, "100% - 77px");
@@ -86,7 +86,7 @@ $modal-padding: 24px;
 				font: 11px/16px "Source Sans Pro";
 				letter-spacing: 0.05em;
 				padding: 0 $modal-padding 55px;
-				
+
 				p {
 					margin-top: 14px;
 
@@ -95,7 +95,7 @@ $modal-padding: 24px;
 						display: block;
 						letter-spacing: 0.03em;
 						line-height: 22px;
-						
+
 						&:hover {
 							color: #3685a7;
 							cursor: pointer;
@@ -107,12 +107,12 @@ $modal-padding: 24px;
 					&:first-child {
 						margin-top: 0;
 					}
-					
+
 					margin-top: 14px;
 				}
 			}
 		}
-			
+
 		.dialog-buttons {
 			display: flex;
 			justify-content: center;
@@ -121,16 +121,16 @@ $modal-padding: 24px;
 			height: 32px;
 			left: 0;
 			bottom: -1px;
-			
+
 			> .dialog-buttons-inner {
 				background: #010a13;
 				position: relative;
 				padding: 0 1px;
-				
+
 				> div {
 					box-shadow: 0 none;
 					margin: 0 1px;
-				
+
 					&:first-child:before, &:last-child:after {
 						position: absolute;
 						display: block;
@@ -140,11 +140,11 @@ $modal-padding: 24px;
 						bottom: 0;
 						background: #785a28;
 					}
-					
+
 					&:first-child:before {
 						left: -1px;
 					}
-					
+
 					&:last-child:after {
 						right: -1px;
 					}

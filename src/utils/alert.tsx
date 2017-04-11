@@ -1,12 +1,12 @@
-import createOverlay from './createOverlay';
-import Dialog from '../components/Dialog';
 import * as React from 'react';
+import Dialog from '../components/Dialog';
+import createOverlay from './createOverlay';
 
 interface Button {
 	label: string;
-	onClick?: () => void;
 	primary?: boolean;
 	disabled?: boolean;
+	onClick?(): void;
 }
 
 export default function(title: string, content?: string, buttons?: Button[]): void {

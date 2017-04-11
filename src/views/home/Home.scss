@@ -17,7 +17,15 @@
 
 	h2 {
 		font-size: 32px;
-		line-height: normal;
+		line-height: 88px;
 		letter-spacing: 0.075em;
+		display: flex;
+	}
+
+	.scriptorium {
+		background: url("images/scriptorium.png") center/contain no-repeat;
+		width: 200px;
+		height: 100px;
+		margin-right: 20px;
 	}
 }

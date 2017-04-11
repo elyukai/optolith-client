@@ -14,7 +14,7 @@
             "es2017"
         ],
         "noImplicitAny": true,
-        "outDir": "./dist/",
+        "outDir": "./resources/",
 		"removeComments": true,
         "strictNullChecks": true,
         "target": "es2016",

@@ -11,8 +11,9 @@ const EYECOLORS = RaceStore.eyeColors;
 const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 class ProfileStoreStatic extends Store {
-	private id: string | null = null;
 	private name = '';
+	private dateCreated: Date;
+	private dateModified: Date;
 	private professionName = '';
 	private sex: 'm' | 'f' = '' as 'm' | 'f';
 	private avatar = '';
@@ -42,11 +43,12 @@ class ProfileStoreStatic extends Store {
 					break;
 
 				case ActionTypes.RECEIVE_HERO_DATA:
-					this.updateID(action.payload.data.id);
 					this.updateName(action.payload.data.name);
 					if (action.payload.data.professionName) {
 						this.updateProfessionName(action.payload.data.professionName);
 					}
+					this.dateCreated = action.payload.data.dateCreated;
+					this.dateModified = action.payload.data.dateModified;
 					this.updateSex(action.payload.data.sex);
 					this.updateAvatar(action.payload.data.avatar);
 					this.updateFamily(action.payload.data.pers.family);
@@ -204,8 +206,22 @@ class ProfileStoreStatic extends Store {
 		};
 	}
 
-	getID() {
-		return this.id;
+	getForSave() {
+		return {
+			age: this.age,
+			characteristics: this.characteristics,
+			cultureAreaKnowledge: this.cultureAreaKnowledge,
+			dateofbirth: this.dateofbirth,
+			eyecolor: this.eyecolor,
+			family: this.family,
+			haircolor: this.haircolor,
+			otherinfo: this.otherinfo,
+			placeofbirth: this.placeofbirth,
+			size: this.size,
+			socialstatus: this.socialstatus,
+			title: this.title,
+			weight: this.weight,
+		};
 	}
 
 	getName() {
@@ -265,8 +281,12 @@ class ProfileStoreStatic extends Store {
 		return SOCIALSTATUS;
 	}
 
-	private updateID(id: string | null) {
-		this.id = id;
+	getDateCreated() {
+		return this.dateCreated;
+	}
+
+	getDateModified() {
+		return this.dateModified;
 	}
 
 	private updateName(text: string) {
@@ -334,7 +354,6 @@ class ProfileStoreStatic extends Store {
 	}
 
 	private clear() {
-		this.id = null;
 		this.name = '';
 		this.sex = '' as 'm' | 'f';
 		this.avatar = '';

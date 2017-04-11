@@ -62,7 +62,7 @@ class LiturgiesStoreStatic extends Store {
 				active[id] = value;
 			}
 		});
-		return { active };
+		return active;
 	}
 
 	getAspectCounter() {

@@ -1,6 +1,6 @@
 import ELStore from '../stores/ELStore';
 
-export default (ap: number): string => {
+export default function calcEL(ap: number): string {
 	const els = ELStore.getAll();
 	const ids = [];
 	const tiers = [];
@@ -12,15 +12,13 @@ export default (ap: number): string => {
 		}
 	}
 
-	let index = ids.length - 1;
-
-	tiers.some((e, i) => {
-		if (e > ap) {
-			index = i - 1;
-			return true;
-		}
-		return false;
-	});
+	let index = tiers.findIndex(e => e > ap);
+	if (index > -1) {
+		index -= 1;
+	}
+	else {
+		index = tiers.length;
+	}
 
 	return ids[index];
-};
+}

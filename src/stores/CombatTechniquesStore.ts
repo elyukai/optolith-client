@@ -64,7 +64,7 @@ class CombatTechniquesStoreStatic extends Store {
 				active[id] = value;
 			}
 		});
-		return { active };
+		return active;
 	}
 
 	getMaxPrimaryAttributeValueByID(array: string[]) {

@@ -5,8 +5,8 @@ interface Props {
 	className?: string;
 	hasWrapper?: boolean;
 	img?: boolean;
-	onClick?: () => void;
 	src: string;
+	onClick?(): void;
 }
 
 export default (props: Props) => {
@@ -28,7 +28,7 @@ export default (props: Props) => {
 	) : (
 		<div
 			className={className}
-			style={{ backgroundImage: `url(${src})` }}
+			style={{ backgroundImage: `url("${src}")` }}
 			onClick={onClick}
 			/>
 	);

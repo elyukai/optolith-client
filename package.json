@@ -1,18 +1,20 @@
 {
-  "name": "cha5app",
+  "name": "tdeheroes",
+  "productName": "DSA5 Heldentool",
   "version": "1.0.0",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
-  "main": "dist/main.js",
+  "author": "Lukas Obermann",
+  "license": "See LICENSE file",
+  "main": "resources/main.js",
   "directories": {
     "test": "test"
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "electron": "^1.6.2",
     "flux": "^2.1.1",
     "fs": "0.0.1-security",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react": "^15.5.3",
+    "react-dom": "^15.5.3",
     "react-gemini-scrollbar": "^2.1.5",
     "react-perfect-scrollbar": "^0.1.5",
     "react-progress-arc": "^1.0.7",
@@ -29,6 +31,7 @@
     "@types/whatwg-fetch": "0.0.33",
     "awesome-typescript-loader": "^3.0.3",
     "css-loader": "^0.26.1",
+    "electron": "^1.6.2",
     "eslint": "^3.15.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-react": "^6.9.0",
@@ -47,11 +50,9 @@
   "scripts": {
     "watch": "webpack --watch",
     "start": "electron .",
-    "build": "webpack",
-    "buildpro": "SET NODE_ENV=production && webpack -p",
+    "build": "electron-packager . tdeheroes --overwrite --platform win32 --arch x64 --out '../TDE app files'",
+    "setup": "electron-installer-windows --src '../TDE app files/tdeheroes-win32-x64' --dest '../TDE app files/installers'",
     "test": "jest"
   },
-  "author": "Lukas Obermann",
-  "license": "ISC",
   "repository": {}
 }

@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 
-type Action = CreateHeroAction | ReceiveHeroDataAction | ReceiveDataTablesAction;
+type Action = CreateHeroAction | ReceiveHeroDataAction | ReceiveInitialDataAction;
 
 class ELStoreStatic extends Store {
 	private byId: { [id: string]: ExperienceLevel } = {};
@@ -22,8 +22,8 @@ class ELStoreStatic extends Store {
 					this.update(action.payload.data.el);
 					break;
 
-				case ActionTypes.RECEIVE_DATA_TABLES:
-					this.init(action.payload.data.el);
+				case ActionTypes.RECEIVE_INITIAL_DATA:
+					this.init(action.payload.tables.el);
 					break;
 
 				default:

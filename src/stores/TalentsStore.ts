@@ -61,7 +61,7 @@ class TalentsStoreStatic extends Store {
 				active[id] = value;
 			}
 		});
-		return { active, ratingVisible: this.ratingVisible };
+		return active;
 	}
 
 	getSortOrder() {

@@ -63,7 +63,7 @@ class SpellsStoreStatic extends Store {
 				active[id] = value;
 			}
 		});
-		return { active };
+		return active;
 	}
 
 	getPropertyCounter() {

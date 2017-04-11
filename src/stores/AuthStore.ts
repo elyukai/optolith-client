@@ -2,7 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import Store from './Store';
 
-type Action = ReceiveLoginAction | ReceiveNewUsernameAction | ReceiveLogoutAction | ReceiveDataTablesAction;
+type Action = ReceiveLoginAction | ReceiveNewUsernameAction | ReceiveLogoutAction | ReceiveInitialDataAction;
 
 class AuthStoreStatic extends Store {
 	private name = '';
@@ -16,7 +16,7 @@ class AuthStoreStatic extends Store {
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
 				// Testing purpose:
-				case ActionTypes.RECEIVE_DATA_TABLES:
+				case ActionTypes.RECEIVE_INITIAL_DATA:
 					this.update('Elytherion', 'Elytherion', 'lukas.obermann@live.de');
 					break;
 

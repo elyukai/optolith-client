@@ -1,5 +1,4 @@
 /// <reference path="../actions/Actions.d.ts" />
-/// <reference path="../data.d.ts" />
 
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
@@ -21,7 +20,7 @@ import RaceStore from './RaceStore';
 import RequirementsStore from './RequirementsStore';
 import Store from './Store';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
+type Action = ReceiveInitialDataAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
 
 class ListStoreStatic extends Store {
 	readonly dispatchToken: string;
@@ -115,8 +114,8 @@ class ListStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
-					case ActionTypes.RECEIVE_DATA_TABLES:
-						this.init(action.payload.data);
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.init(action.payload.tables);
 						break;
 
 					case ActionTypes.RECEIVE_HERO_DATA:
@@ -436,22 +435,22 @@ class ListStoreStatic extends Store {
 		};
 	}
 
-	private init(data: RawData) {
+	private init(data: RawTables) {
 		this.byId = init(data);
 		this.allIds = Object.keys(this.byId);
 	}
 
-	private updateAll({ attr, talents, ct, spells, chants, activatable }: Hero & HeroRest) {
+	private updateAll({ attr, talents, ct, spells, chants, activatable }: Hero) {
 		attr.values.forEach(e => {
 			const [ id, value, mod ] = e;
 			this.setValue(id, value);
 			(this.byId[id] as AttributeInstance).mod = mod;
 		});
-		const flatSkills = { ...talents.active, ...ct.active };
+		const flatSkills = { ...talents, ...ct };
 		Object.keys(flatSkills).forEach(id => {
 			this.setValue(id, flatSkills[id]);
 		});
-		const activateSkills = { ...spells.active, ...chants.active };
+		const activateSkills = { ...spells, ...chants };
 		Object.keys(activateSkills).forEach(id => {
 			const value = activateSkills[id];
 			this.activate(id);
