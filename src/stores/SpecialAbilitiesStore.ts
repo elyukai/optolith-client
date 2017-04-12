@@ -3,7 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { default as ListStore } from './ListStore';
 import Store from './Store';
 
-type Action = ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | UndoTriggerActions;
+type Action = ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class SpecialAbilitiesStoreStatic extends Store {
 	private readonly groups = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stabzauber)', 'Magisch (Hexe)', 'Geweiht', 'Magisch (Bann-/Schutzkreis)', 'Kampfstil (bewaffnet)', 'Kampfstil (unbewaffnet)', 'Kampf (erweitert)', 'Befehl'];
@@ -27,6 +27,10 @@ class SpecialAbilitiesStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.updateSortOrder(action.payload.config.specialAbilitiesSortOrder);
+						break;
+
 					case ActionTypes.SET_SPECIALABILITIES_SORT_ORDER:
 						this.updateSortOrder(action.payload.sortOrder);
 						break;

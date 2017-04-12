@@ -152,4 +152,21 @@ $modal-padding: 24px;
 			}
 		}
 	}
+
+	&.no-content .modal-container {
+		width: 300px;
+
+		.modal-header {
+			padding: 16px 0 47px;
+
+			.modal-header-inner {
+				font-size: 16px;
+				text-align: center;
+			}
+		}
+
+		.modal-content {
+			display: none;
+		}
+	}
 }

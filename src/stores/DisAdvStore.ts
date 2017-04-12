@@ -3,7 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { default as ListStore } from './ListStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions;
+type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class DisAdvStoreStatic extends Store {
 	private showRating = true;
@@ -25,6 +25,10 @@ class DisAdvStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.showRating = action.payload.config.advantagesDisadvantagesCultureRatingVisibility;
+						break;
+
 					case ActionTypes.SWITCH_DISADV_RATING_VISIBILITY:
 						this.updateRating();
 						break;

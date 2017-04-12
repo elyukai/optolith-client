@@ -8,7 +8,7 @@ import { get, getAllByCategory } from './ListStore';
 import ProfileStore from './ProfileStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction;
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction;
 
 class ProfessionVariantStoreStatic extends Store {
 	private readonly category: PROFESSION_VARIANTS = Categories.PROFESSION_VARIANTS;
@@ -23,6 +23,7 @@ class ProfessionVariantStoreStatic extends Store {
 					this.updateCurrentID(action.payload.data.pv);
 					break;
 
+				case ActionTypes.CREATE_HERO:
 				case ActionTypes.SELECT_RACE:
 				case ActionTypes.SELECT_CULTURE:
 				case ActionTypes.SELECT_PROFESSION:

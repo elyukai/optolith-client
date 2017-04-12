@@ -1,3 +1,4 @@
+import { remote } from 'electron';
 import * as React from 'react';
 import * as AuthActions from '../../actions/AuthActions';
 import * as HerolistActions from '../../actions/HerolistActions';
@@ -98,6 +99,7 @@ export default class TitleBar extends React.Component<Props, State> {
 	saveHero = () => HerolistActions.saveHero();
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();
+	openDevtools = () => remote.getCurrentWindow().webContents.openDevTools();
 
 	render() {
 
@@ -118,10 +120,6 @@ export default class TitleBar extends React.Component<Props, State> {
 							</TitleBarLeft>
 							<TitleBarRight>
 								<BorderButton
-									label={this.state.el === 'EL_0' ? 'Testen' : 'Test fortsetzen'}
-									onClick={this.test}
-									/>
-								<BorderButton
 									label="Anmelden"
 									onClick={this.login}
 									primary
@@ -129,7 +127,7 @@ export default class TitleBar extends React.Component<Props, State> {
 									/>
 								<IconButton
 									icon="&#xE868;"
-									disabled
+									onClick={this.openDevtools}
 									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
@@ -137,8 +135,8 @@ export default class TitleBar extends React.Component<Props, State> {
 				} else {
 					tabs.splice(1, 0,
 						{ label: 'Helden', tag: 'herolist' },
-						// { label: 'Gruppen', tag: 'grouplist', disabled: true },
-						// { label: 'Hausregeln', tag: 'own-rules', disabled: true }
+						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
+						{ label: 'Hausregeln', tag: 'own-rules', disabled: true }
 					);
 					return (
 						<TitleBarWrapper>
@@ -152,7 +150,7 @@ export default class TitleBar extends React.Component<Props, State> {
 								<BorderButton label="Abmelden" onClick={this.logout} disabled />
 								<IconButton
 									icon="&#xE868;"
-									disabled
+									onClick={this.openDevtools}
 									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
@@ -225,6 +223,10 @@ export default class TitleBar extends React.Component<Props, State> {
 								label="Speichern"
 								onClick={this.saveHero}
 								/>
+							<IconButton
+								icon="&#xE868;"
+								onClick={this.openDevtools}
+								/>
 						</TitleBarRight>
 					</TitleBarWrapper>
 				);
@@ -241,6 +243,10 @@ export default class TitleBar extends React.Component<Props, State> {
 							<BorderButton
 								label="Speichern"
 								onClick={this.saveGroup}
+								/>
+							<IconButton
+								icon="&#xE868;"
+								onClick={this.openDevtools}
 								/>
 						</TitleBarRight>
 					</TitleBarWrapper>

@@ -140,22 +140,6 @@ class ProfileStoreStatic extends Store {
 					}
 					break;
 
-				// case ActionTypes.REROLL_HAIRCOLOR:
-				// 	this.rerollHair();
-				// 	break;
-
-				// case ActionTypes.REROLL_EYECOLOR:
-				// 	this.rerollEyes();
-				// 	break;
-
-				// case ActionTypes.REROLL_SIZE:
-				// 	this.rerollSize();
-				// 	break;
-
-				// case ActionTypes.REROLL_WEIGHT:
-				// 	this.rerollWeight();
-				// 	break;
-
 				default:
 					return true;
 			}

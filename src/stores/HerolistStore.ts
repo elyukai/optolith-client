@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import alert from '../utils/alert';
 import * as FileAPIUtils from '../utils/FileAPIUtils';
 import Store from './Store';
 
-type Action = SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | ReceiveLoginAction | ReceiveHerolistAction | ReceiveInitialDataAction | CreateHeroAction | ReceiveHeroDataAction | SaveHeroAction;
+type Action = SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | ReceiveLoginAction | ReceiveHerolistAction | ReceiveInitialDataAction | CreateHeroAction | ReceiveHeroDataAction | SaveHeroAction | DeleteHeroAction | ReceiveImportedHeroAction;
 
 class HerolistStoreStatic extends Store {
 	private byHeroId: { [id: string]: Hero} = {};
@@ -31,32 +32,11 @@ class HerolistStoreStatic extends Store {
 					break;
 
 				case ActionTypes.SAVE_HERO:
-					const indexId = action.payload.current.indexId;
-					if (typeof indexId === 'string') {
-						const player = this.byHeroId[indexId].player;
-						const { dateCreated, dateModified } = action.payload.data;
-						this.byHeroId[indexId] = {
-							...action.payload.data,
-							indexId,
-							dateCreated: new Date(dateCreated),
-							dateModified: new Date(dateModified)
-						};
-						if (player) {
-							this.byHeroId[indexId].player = player;
-						}
-					}
-					else {
-						const newIndexForId = this.allHeroIds[this.allHeroIds.length - 1].split('_')[1] + 1;
-						const newIndexId = `HI_${newIndexForId}`;
-						this.byHeroId[newIndexId] = {
-							...action.payload.data,
-							indexId: newIndexId,
-							dateCreated: new Date(),
-							dateModified: new Date()
-						};
-						this.allHeroIds.push(newIndexId);
-					}
-					FileAPIUtils.saveAll();
+					this.saveHero(action.payload.current.indexId, action.payload.data);
+					break;
+
+				case ActionTypes.DELETE_HERO:
+					this.deleteHero(action.payload.indexId);
 					break;
 
 				case ActionTypes.SET_HEROLIST_SORT_ORDER:
@@ -71,6 +51,10 @@ class HerolistStoreStatic extends Store {
 				case ActionTypes.RECEIVE_LOGIN:
 				case ActionTypes.RECEIVE_HEROLIST:
 					this.updateHeroes(action.payload.heroes);
+					break;
+
+				case ActionTypes.RECEIVE_IMPORTED_HERO:
+					this.importHero(action.payload.data);
 					break;
 
 				default:
@@ -108,19 +92,21 @@ class HerolistStoreStatic extends Store {
 		};
 	}
 
+	getForSave(id: string) {
+		const { player: playerId, indexId, ...hero } = this.byHeroId[id];
+		const raw: RawHero = {
+			...hero,
+			dateCreated: hero.dateCreated.toJSON(),
+			dateModified: hero.dateModified.toJSON(),
+		};
+		if (playerId) {
+			raw.player = this.byUserId[playerId];
+		}
+		return raw;
+	}
+
 	getAllForSave() {
-		return this.allHeroIds.map(e => {
-			const { player: playerId, indexId, ...hero } = this.byHeroId[e];
-			const raw: RawHero = {
-				...hero,
-				dateCreated: hero.dateCreated.toJSON(),
-				dateModified: hero.dateModified.toJSON(),
-			};
-			if (playerId) {
-				raw.player = this.byUserId[playerId];
-			}
-			return raw;
-		});
+		return this.allHeroIds.map(e => this.getForSave(e));
 	}
 
 	private updateSortOrder(option: string) {
@@ -151,6 +137,61 @@ class HerolistStoreStatic extends Store {
 		});
 		this.allHeroIds = Object.keys(this.byHeroId);
 		this.allUserIds = Object.keys(this.byUserId);
+	}
+
+	private saveHero(indexId: string | null, data: HeroSave) {
+		if (typeof indexId === 'string') {
+			const player = this.byHeroId[indexId].player;
+			this.byHeroId[indexId] = {
+				...data,
+				indexId
+			};
+			if (player) {
+				this.byHeroId[indexId].player = player;
+			}
+		}
+		else {
+			const newIndexId = this.getNewIndexId();
+			this.byHeroId[newIndexId] = {
+				...data,
+				indexId: newIndexId,
+				dateCreated: new Date(),
+				dateModified: new Date()
+			};
+			this.allHeroIds.push(newIndexId);
+			this.currentIndexId = newIndexId;
+		}
+		FileAPIUtils.saveAll();
+		alert('Helden gespeichert');
+	}
+
+	private deleteHero(indexId: string) {
+		delete this.byHeroId[indexId];
+		this.allHeroIds.splice(this.allHeroIds.findIndex(e => e === indexId), 1);
+		FileAPIUtils.saveAll();
+	}
+
+	private importHero(hero: RawHero) {
+		const indexId = this.getNewIndexId();
+		const { player, ...other } = hero;
+		this.byHeroId[indexId] = {
+			...other,
+			index: Number.parseInt(indexId.split('_')[1]),
+			indexId,
+			dateCreated: new Date(hero.dateCreated),
+			dateModified: new Date(hero.dateModified),
+		};
+		if (player) {
+			this.byHeroId[indexId].player = player.id;
+			this.byUserId[player.id] = player;
+		}
+		this.allHeroIds.push(indexId);
+		FileAPIUtils.saveAll();
+	}
+
+	private getNewIndexId() {
+		const newIndexForId = Number.parseInt(this.allHeroIds[this.allHeroIds.length - 1].split('_')[1]) + 1;
+		return `HI_${newIndexForId}`;
 	}
 }
 

@@ -12,6 +12,7 @@ import HistoryStore from '../../stores/HistoryStore';
 import { get } from '../../stores/ListStore';
 import ProfileStore from '../../stores/ProfileStore';
 import confirm from '../../utils/confirm';
+import * as FileAPIUtils from '../../utils/FileAPIUtils';
 
 interface Props {
 	indexId: string | null;
@@ -32,8 +33,8 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 
 	load = () => {
 		const indexId = this.props.indexId;
-		const saveToLoad = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
-		if (indexId && saveToLoad) {
+		const safeToLoad = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
+		if (indexId && safeToLoad) {
 			HerolistActions.loadHero(indexId);
 		}
 		else if (indexId) {
@@ -48,6 +49,23 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 		}
 	}
 	show = () => LocationActions.setSection('hero');
+	saveHeroAsJSON = () => {
+		const indexId = this.props.indexId;
+		const safeToSave = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
+		if (indexId && safeToSave) {
+			FileAPIUtils.saveHero(indexId);
+		}
+		else if (indexId) {
+			confirm('Ungespeicherte Aktionen', 'Beim aktuell geöffneten Helden sind einige Aktionen ungespeichert. Soll ohne Speichern fortgefahren werden?', true).then(result => {
+				if (result === true) {
+					FileAPIUtils.saveHero(indexId);
+				}
+				else {
+					LocationActions.setSection('hero');
+				}
+			});
+		}
+	}
 	delete = () => {
 		const indexId = this.props.indexId;
 		if (indexId) {
@@ -131,6 +149,7 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 					{rcpElement}
 				</div>
 				<div className="buttons">
+					{indexId && <IconButton icon="&#xE80D;" onClick={this.saveHeroAsJSON} />}
 					{indexId && <IconButton icon="&#xE872;" onClick={this.delete} />}
 					{(() => isOpen ? (
 						<IconButton icon="&#xE89E;" onClick={this.show} />

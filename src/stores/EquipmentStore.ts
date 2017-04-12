@@ -3,7 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { initItem } from '../utils/InitUtils';
 import Store from './Store';
 
-type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveDataTablesAction | ReceiveHeroDataAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction;
+type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveHeroDataAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction;
 
 class EquipmentStoreStatic extends Store {
 	private itemsById: { [id: string]: ItemInstance } = {};
@@ -24,8 +24,13 @@ class EquipmentStoreStatic extends Store {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
+				case ActionTypes.RECEIVE_INITIAL_DATA:
+					this.updateSortOrder(action.payload.config.equipmentSortOrder);
+					this.init(action.payload.tables.items);
+					break;
+
 				case ActionTypes.SET_ITEMS_SORT_ORDER:
-					this.updateSortOrder(action.payload.sortOrder);
+					this.sortOrder = action.payload.sortOrder;
 					break;
 
 				case ActionTypes.SET_DUCATES:
@@ -54,10 +59,6 @@ class EquipmentStoreStatic extends Store {
 
 				case ActionTypes.REMOVE_ITEM:
 					this.removeItem(action.payload.id);
-					break;
-
-				case ActionTypes.RECEIVE_DATA_TABLES:
-					this.init(action.payload.data.items);
 					break;
 
 				case ActionTypes.RECEIVE_HERO_DATA:

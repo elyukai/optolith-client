@@ -1,5 +1,7 @@
+import { remote } from 'electron';
 import * as React from 'react';
-import { insertHero, requestList, setSortOrder, setVisibilityFilter } from '../../actions/HerolistActions';
+import * as HerolistActions from '../../actions/HerolistActions';
+import { setSection } from '../../actions/LocationActions';
 import BorderButton from '../../components/BorderButton';
 import Dropdown from '../../components/Dropdown';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
@@ -9,17 +11,20 @@ import APStore from '../../stores/APStore';
 import CultureStore from '../../stores/CultureStore';
 import ELStore from '../../stores/ELStore';
 import HerolistStore from '../../stores/HerolistStore';
+import HistoryStore from '../../stores/HistoryStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RaceStore from '../../stores/RaceStore';
+import confirm from '../../utils/confirm';
 import createOverlay from '../../utils/createOverlay';
+import { importHero } from '../../utils/FileAPIUtils';
 import { filterAndSort } from '../../utils/ListUtils';
 import HeroCreation from './HeroCreation';
 import HerolistItem from './HerolistItem';
 
 interface State {
-	list: Array<Hero>;
+	list: Hero[];
 	filterText: string;
 	view: string;
 	sortOrder: string;
@@ -43,19 +48,45 @@ export default class Herolist extends React.Component<undefined, State> {
 	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => setSortOrder(option);
-	changeView = (option: string) => setVisibilityFilter(option);
-	showHeroCreation = () => createOverlay(<HeroCreation />);
-	refresh = () => requestList();
+	sort = (option: string) => HerolistActions.setSortOrder(option);
+	changeView = (option: string) => HerolistActions.setVisibilityFilter(option);
+	showHeroCreation = () => {
+		const safeToLoad = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
+		if (safeToLoad) {
+			createOverlay(<HeroCreation />);
+		}
+		else {
+			confirm('Ungespeicherte Aktionen', 'Beim aktuell geöffneten Helden sind einige Aktionen ungespeichert. Soll ohne Speichern fortgefahren werden?', true).then(result => {
+				if (result === true) {
+					createOverlay(<HeroCreation />);
+				}
+				else {
+					setSection('hero');
+				}
+			});
+		}
+	}
+	refresh = () => HerolistActions.requestList();
 	changeFile = (event: InputTextEvent) => {
 		const file = event.target.files && event.target.files[0];
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = e => {
-				insertHero(e.target.result);
+				HerolistActions.insertHero(e.target.result);
 			};
 			reader.readAsText(file);
 		}
+	}
+	importHero = () => {
+		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+			filters: [{ name: 'JSON', extensions: ['json'] }]
+		}, fileNames => {
+			const fileName = fileNames[0];
+			const splitted = fileName.split('.');
+			if (splitted[splitted.length - 1] === 'json') {
+				importHero(fileName);
+			}
+		});
 	}
 
 	componentDidMount() {
@@ -120,6 +151,7 @@ export default class Herolist extends React.Component<undefined, State> {
 							]}
 							/>
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
+						<BorderButton label="Importieren" onClick={this.importHero} />
 					</div>
 					<Scroll className="list">
 						<ul>
@@ -146,10 +178,3 @@ export default class Herolist extends React.Component<undefined, State> {
 		);
 	}
 }
-
-						/*<BorderButton label="Aktualisieren" onClick={this.refresh} disabled />
-						<TextField
-							onChange={this.changeFile}
-							fullWidth
-							type="file"
-							/>*/

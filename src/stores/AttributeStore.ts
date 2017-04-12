@@ -281,6 +281,8 @@ class AttributeStoreStatic extends Store {
 		this.addedLifePoints = 0;
 		this.addedArcaneEnergy = 0;
 		this.addedKarmaPoints = 0;
+		this.permanentArcaneEnergy = { lost: 0, redeemed: 0 };
+		this.permanentKarmaPoints = { lost: 0, redeemed: 0 };
 	}
 
 	private updateAll(obj: { lp: number; ae: number; kp: number; permanentAE: { lost: number; redeemed: number; }; permanentKP: { lost: number; redeemed: number; }; }) {

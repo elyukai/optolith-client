@@ -5,12 +5,17 @@ import createOverlay from './createOverlay';
 interface Button {
 	label: string;
 	primary?: boolean;
+	autoWidth?: boolean;
 	disabled?: boolean;
 	onClick?(): void;
 }
 
-export default function(title: string, content?: string, buttons?: Button[]): void {
+export default function(title: string, content?: string, buttons: Button[] = [{ label: 'OK', autoWidth: true }]): void {
+	let className;
+	if (typeof content !== 'string') {
+		className = 'no-content';
+	}
 	createOverlay(
-		<Dialog title={title} buttons={buttons}>{content}</Dialog>
+		<Dialog title={title} buttons={buttons} className={className}>{content}</Dialog>
 	);
 }

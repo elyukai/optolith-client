@@ -2,13 +2,15 @@ import * as React from 'react';
 import BorderButton from './BorderButton';
 
 interface Button {
+	autoWidth?: boolean;
 	label: string;
-	onClick?: () => void;
+	primary?: boolean;
+	onClick?(): void;
 }
 
 interface Props {
 	list: Button[];
-	onClickDefault?: (func?: () => void) => void;
+	onClickDefault?(func?: () => void): void;
 }
 
 export default class DialogButtons extends React.Component<Props, undefined> {

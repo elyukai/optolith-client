@@ -10,7 +10,7 @@ function createWindow() {
 		width: 1280,
 		height: 720,
 		resizable: false,
-		icon: 'resources/favicon.png',
+		icon: path.join(app.getAppPath(), 'resources/favicon.png'),
 		frame: false,
 		center: true,
 		title: 'DSA5 Heldentool',
@@ -24,7 +24,7 @@ function createWindow() {
 		slashes: true
 	}));
 
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 
 	mainWindow.once('ready-to-show', () => {
 		mainWindow.show();
@@ -34,6 +34,8 @@ function createWindow() {
 		mainWindow = null;
 	});
 }
+
+app.setAppUserModelId('lukasobermann.tdeheroes');
 
 app.on('ready', createWindow);
 

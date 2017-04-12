@@ -4,12 +4,12 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { default as ListStore, getAllByCategory } from './ListStore';
 import Store from './Store';
 
-type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | UndoTriggerActions;
+type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class TalentsStoreStatic extends Store {
 	private readonly category: TALENTS = Categories.TALENTS;
 	private sortOrder = 'group';
-	private ratingVisible = true;
+	private cultureRatingVisibility = true;
 	readonly dispatchToken: string;
 
 	constructor() {
@@ -28,6 +28,11 @@ class TalentsStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.cultureRatingVisibility = action.payload.config.talentsCultureRatingVisibility;
+						this.sortOrder = action.payload.config.talentsSortOrder;
+						break;
+
 					case ActionTypes.ADD_TALENT_POINT:
 					case ActionTypes.REMOVE_TALENT_POINT:
 						break;
@@ -69,7 +74,7 @@ class TalentsStoreStatic extends Store {
 	}
 
 	isRatingVisible() {
-		return this.ratingVisible;
+		return this.cultureRatingVisibility;
 	}
 
 	private updateSortOrder(option: string) {
@@ -77,7 +82,7 @@ class TalentsStoreStatic extends Store {
 	}
 
 	private updateRatingVisibility() {
-		this.ratingVisible = !this.ratingVisible;
+		this.cultureRatingVisibility = !this.cultureRatingVisibility;
 	}
 }
 

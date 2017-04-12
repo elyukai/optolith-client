@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import * as React from 'react';
 import Loader from '../components/Loader';
-import LoaderStore from '../stores/LoaderStore';
-import Route from './Route';
-import TabStore from '../stores/TabStore';
 import TitleBar from '../components/titlebar/TitleBar';
+import LoaderStore from '../stores/LoaderStore';
+import TabStore from '../stores/TabStore';
+import Route from './Route';
 
 interface State {
 	isLoading: boolean;

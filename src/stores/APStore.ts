@@ -36,6 +36,12 @@ class APStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.CREATE_HERO:
+						AppDispatcher.waitFor([ELStore.dispatchToken]);
+						this.clear();
+						this.total = ELStore.getStart().ap;
+						break;
+
 					case ActionTypes.RECEIVE_HERO_DATA:
 						this.updateAll(action.payload.data.ap);
 						break;
@@ -136,12 +142,6 @@ class APStoreStatic extends Store {
 
 					case ActionTypes.ASSIGN_RCP_OPTIONS:
 						this.assignRCP(action.payload);
-						break;
-
-					case ActionTypes.CREATE_HERO:
-						this.clear();
-						AppDispatcher.waitFor([ELStore.dispatchToken]);
-						this.total = ELStore.getStart().ap;
 						break;
 
 					default:

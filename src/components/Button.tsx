@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
 interface Props {
 	autoWidth?: boolean;
@@ -8,9 +8,9 @@ interface Props {
 	disabled?: boolean;
 	flat?: boolean;
 	fullWidth?: boolean;
-	onClick?: () => void;
 	primary?: boolean;
 	round?: boolean;
+	onClick?(): void;
 	[id: string]: any;
 }
 

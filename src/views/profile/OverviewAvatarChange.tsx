@@ -30,7 +30,7 @@ export default class ProfileAvatarChange extends React.Component<Props, State> {
 			const fileName = fileNames[0];
 			const splitted = fileName.split('.');
 			if (extensions.includes(splitted[splitted.length - 1])) {
-				this.setState({ fileValid: true, url: 'file:///' + fileName.replace(/\\/g, '/') } as State);
+				this.setState({ fileValid: true, url: 'file://' + fileName.replace(/\\/g, '/') } as State);
 			}
 			else {
 				this.setState({ fileValid: false, url: '' } as State);
@@ -59,11 +59,8 @@ export default class ProfileAvatarChange extends React.Component<Props, State> {
 				]}
 				>
 				<BorderButton label="Datei auswählen" onClick={this.selectFile} />
-				{fileValid ? (
-					<AvatarWrapper src={url} />
-				) : (
-					<p>Die Datei ist ungültig! Überprüfe bitte das Dateiformat und die Dateigröße!</p>
-				)}
+				{fileValid === true && url !== '' && <AvatarWrapper src={url} />}
+				{fileValid === false && url !== '' && <p>Die Datei ist ungültig! Überprüfe bitte das Dateiformat und die Dateigröße!</p>}
 			</Dialog>
 		);
 	}

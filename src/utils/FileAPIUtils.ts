@@ -45,8 +45,7 @@ const initialConfig = {
 
 export function loadInitialData() {
 	const appPath = getAppDataPath();
-	readFile('./resources/data.json', 'utf8', (error, data) => {
-	// readFile('./resources/app/resources/data.json', 'utf8', (error, data) => {
+	readFile(join(remote.app.getAppPath(), 'resources/data.json'), 'utf8', (error, data) => {
 		if (error) {
 			alert('Fehler', `Bei der Laden der Regeln ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
 		}
@@ -117,6 +116,29 @@ export function saveAllHeroes() {
 	}
 }
 
+export function saveHero(indexId: string) {
+	const currentWindow = remote.getCurrentWindow();
+	const data = HerolistStore.getForSave(indexId);
+	remote.dialog.showSaveDialog(currentWindow, {
+		title: 'Held als JSON speichern',
+		filters: [
+			{name: 'JSON', extensions: ['json']},
+		],
+		defaultPath: data.name
+	}, filename => {
+		if (filename) {
+			writeFile(filename, JSON.stringify(data), error => {
+				if (error) {
+					alert('Fehler', `Beim Speichern der Datei ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+				}
+				else {
+					alert('Held gepeichert');
+				}
+			});
+		}
+	});
+}
+
 export function saveAll() {
 	saveConfig();
 	saveAllHeroes();
@@ -144,9 +166,23 @@ export function printToPDF() {
 						if (error) {
 							alert('Fehler', `Beim Speichern der PDF ist ein Fehler aufgetreten. Überprüfe, ob, wenn du hiermit eine alte PDF überschreibst, du diese alte PDF nicht irgendwo geöffnet hast, denn solange sie geöffnet ist, kann sie nicht überschrieben werden! Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
 						}
+						else {
+							alert('PDF gespeichert');
+						}
 					});
 				}
 			});
+		}
+	});
+}
+
+export function importHero(path: string) {
+	readFile(path, 'utf8', (error, data) => {
+		if (error) {
+			alert('Fehler', `Bei der Laden der Datei ist ein Fehler aufgetreten. (Fehler: ${JSON.stringify(error)})`);
+		}
+		else {
+			FileActions.receiveImportedHero(JSON.parse(data));
 		}
 	});
 }

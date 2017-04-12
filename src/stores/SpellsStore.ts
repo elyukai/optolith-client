@@ -7,7 +7,7 @@ import { default as ListStore, get, getAllByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
-type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | UndoTriggerActions;
+type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class SpellsStoreStatic extends Store {
 	private readonly category: SPELLS = Categories.SPELLS;
@@ -32,6 +32,10 @@ class SpellsStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.updateSortOrder(action.payload.config.spellsSortOrder);
+						break;
+
 					case ActionTypes.ACTIVATE_SPELL:
 					case ActionTypes.DEACTIVATE_SPELL:
 					case ActionTypes.ADD_SPELL_POINT:

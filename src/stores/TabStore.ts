@@ -6,7 +6,7 @@ import Store from './Store';
 type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | ReceiveUserDeletionAction | ReceiveRegistrationAction;
 
 class TabStoreStatic extends Store {
-	private currentTab = 'herolist';
+	private currentTab = 'home';
 	private currentSection = 'main';
 	readonly dispatchToken: string;
 

@@ -119,6 +119,7 @@ class ListStoreStatic extends Store {
 						break;
 
 					case ActionTypes.RECEIVE_HERO_DATA:
+						this.clear();
 						this.updateAll(action.payload.data);
 						break;
 

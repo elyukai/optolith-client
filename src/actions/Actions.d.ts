@@ -175,6 +175,13 @@ interface SwitchDisAdvRatingVisibilityAction extends DefaultAction {
 
 // FileActions
 
+interface ReceiveImportedHeroAction extends DefaultAction {
+	type: RECEIVE_IMPORTED_HERO;
+	payload: {
+		data: RawHero;
+	};
+}
+
 interface ReceiveInitialDataAction extends DefaultAction {
 	type: RECEIVE_INITIAL_DATA;
 	payload: Raw;

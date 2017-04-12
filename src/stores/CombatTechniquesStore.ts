@@ -5,7 +5,7 @@ import { isActive } from '../utils/ActivatableUtils';
 import { default as ListStore, get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
-type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions;
+type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class CombatTechniquesStoreStatic extends Store {
 	private readonly category: COMBAT_TECHNIQUES = Categories.COMBAT_TECHNIQUES;
@@ -28,6 +28,10 @@ class CombatTechniquesStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.updateSortOrder(action.payload.config.combatTechniquesSortOrder);
+						break;
+
 					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 						break;

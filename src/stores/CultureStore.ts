@@ -5,7 +5,7 @@ import APStore from '../stores/APStore';
 import { get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction;
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | ReceiveInitialDataAction | CreateHeroAction;
 
 class CultureStoreStatic extends Store {
 	private readonly category: CULTURES = Categories.CULTURES;
@@ -20,10 +20,17 @@ class CultureStoreStatic extends Store {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
+				case ActionTypes.RECEIVE_INITIAL_DATA:
+					this.sortOrder = action.payload.config.culturesSortOrder;
+					this.valueVisibility = action.payload.config.culturesValueVisibility;
+					this.visibilityFilter = action.payload.config.culturesVisibilityFilter;
+					break;
+
 				case ActionTypes.RECEIVE_HERO_DATA:
 					this.updateCurrentID(action.payload.data.c);
 					break;
 
+				case ActionTypes.CREATE_HERO:
 				case ActionTypes.SELECT_RACE:
 					this.updateCurrentID(null);
 					break;
@@ -38,7 +45,7 @@ class CultureStoreStatic extends Store {
 					break;
 
 				case ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY:
-					this.updateValuevisibility();
+					this.updateValueVisibility();
 					break;
 
 				case ActionTypes.SET_CULTURES_VISIBILITY_FILTER:
@@ -90,7 +97,7 @@ class CultureStoreStatic extends Store {
 		this.sortOrder = sortOrder;
 	}
 
-	private updateValuevisibility() {
+	private updateValueVisibility() {
 		this.valueVisibility = !this.valueVisibility;
 	}
 

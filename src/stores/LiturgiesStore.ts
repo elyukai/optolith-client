@@ -6,7 +6,7 @@ import { default as ListStore, getAllByCategory } from './ListStore';
 import PhaseStore from './PhaseStore';
 import Store from './Store';
 
-type Action = ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | UndoTriggerActions;
+type Action = ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class LiturgiesStoreStatic extends Store {
 	private readonly category: LITURGIES = Categories.LITURGIES;
@@ -31,6 +31,10 @@ class LiturgiesStoreStatic extends Store {
 			}
 			else {
 				switch (action.type) {
+					case ActionTypes.RECEIVE_INITIAL_DATA:
+						this.updateSortOrder(action.payload.config.liturgiesSortOrder);
+						break;
+
 					case ActionTypes.ACTIVATE_LITURGY:
 					case ActionTypes.DEACTIVATE_LITURGY:
 					case ActionTypes.ADD_LITURGY_POINT:

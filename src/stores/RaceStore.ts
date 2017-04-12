@@ -6,13 +6,13 @@ import dice from '../utils/dice';
 import { get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
-type Action = SelectRaceAction | ReceiveHeroDataAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction;
+type Action = SelectRaceAction | ReceiveHeroDataAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | CreateHeroAction | ReceiveInitialDataAction;
 
 class RaceStoreStatic extends Store {
 	private readonly category: RACES = Categories.RACES;
 	private currentId: string | null = null;
 	private sortOrder = 'name';
-	private showDetails = true;
+	private valueVisibility = true;
 	readonly dispatchToken: string;
 	readonly hairColors = ['blauschwarz', 'blond', 'braun', 'dunkelblond', 'dunkelbraun', 'goldblond', 'grau', 'hellblond', 'hellbraun', 'kupferrot', 'mittelblond', 'mittelbraun', 'rot', 'rotblond', 'schneeweiß', 'schwarz', 'silbern', 'weißblond', 'dunkelgrau', 'hellgrau', 'salzweiß', 'silberweiß', 'feuerrot'];
 	readonly eyeColors = ['amethystviolett', 'bernsteinfarben', 'blau', 'braun', 'dunkelbraun', 'dunkelviolett', 'eisgrau', 'goldgesprenkelt', 'grau', 'graublau', 'grün', 'hellbraun', 'rubinrot', 'saphirblau', 'schwarz', 'schwarzbraun', 'silbergrau', 'smaragdgrün'];
@@ -21,8 +21,17 @@ class RaceStoreStatic extends Store {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
+				case ActionTypes.RECEIVE_INITIAL_DATA:
+					this.sortOrder = action.payload.config.racesSortOrder;
+					this.valueVisibility = action.payload.config.racesValueVisibility;
+					break;
+
 				case ActionTypes.RECEIVE_HERO_DATA:
 					this.updateCurrentID(action.payload.data.r);
+					break;
+
+				case ActionTypes.CREATE_HERO:
+					this.updateCurrentID(null);
 					break;
 
 				case ActionTypes.SELECT_RACE:
@@ -72,7 +81,7 @@ class RaceStoreStatic extends Store {
 	}
 
 	areValuesVisible() {
-		return this.showDetails;
+		return this.valueVisibility;
 	}
 
 	rerollHairColor(current: RaceInstance) {
@@ -126,7 +135,7 @@ class RaceStoreStatic extends Store {
 	}
 
 	private updateDetails() {
-		this.showDetails = !this.showDetails;
+		this.valueVisibility = !this.valueVisibility;
 	}
 }
 
