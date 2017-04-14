@@ -1,21 +1,21 @@
 {
 	"rules": {
 		// TypeScript Specific
-		// "member-access": true,
-		"member-ordering": [
-			true,
-			{
-				"order": [
-					"static-field",
-					"instance-field",
-					"constructor",
-					"public-instance-method",
-					"protected-instance-method",
-					"private-instance-method"
-				]
-			}
-		],
-		// "no-any": true,
+		"member-access": [true, "no-public"],
+		// "member-ordering": [
+		// 	true,
+		// 	{
+		// 		"order": [
+		// 			"static-field",
+		// 			"instance-field",
+		// 			"constructor",
+		// 			"public-instance-method",
+		// 			"protected-instance-method",
+		// 			"private-instance-method"
+		// 		]
+		// 	}
+		// ],
+		"no-any": true,
 		"no-empty-interface": true,
 		// "no-non-null-assertion": true,
 		// "no-reference": true,
@@ -46,7 +46,7 @@
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
 		"no-unused-new": true,
-		"no-unused-variable": [true, "check-parameters", "react"],
+		"no-unused-variable": [true, "check-parameters", { "ignore-pattern": "^_" }],
 		"no-var-keyword": true,
 		"restrict-plus-operands": true,
 		"strict-type-predicates": true,

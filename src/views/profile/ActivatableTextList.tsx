@@ -4,7 +4,21 @@ interface Props {
 	list: Array<ActiveViewObject | string>;
 }
 
-export default (props: Props) => {
+interface EnhancedReduce {
+	final: string[];
+	previousLowerTier: boolean;
+}
+
+function findTier(name: string) {
+	const parts = name.split(' ');
+	if (parts[parts.length - 1].match(/[IVX]+/)) {
+		const tier = parts.pop()!;
+		return [parts.join(' '), tier] as [string, string];
+	}
+	return parts.join(' ');
+}
+
+export default function ActivatableTextList(props: Props) {
 	const list = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
 		if (typeof obj === 'string') {
 			return obj;
@@ -22,9 +36,39 @@ export default (props: Props) => {
 		}
 
 		return name;
-	}).sort().join(', ');
+	}).sort().reduce<EnhancedReduce>((previous, current, index, array) => {
+		const splitted = findTier(current);
+		if (Array.isArray(splitted)) {
+			const nextSplitted = findTier(array[index + 1]);
+			if (Array.isArray(nextSplitted) && splitted[0] === nextSplitted[0]) {
+				if (previous.previousLowerTier === true) {
+					return previous;
+				}
+				return {
+					final: [ ...previous.final, `${current}-` ],
+					previousLowerTier: true
+				};
+			}
+			if (previous.previousLowerTier === true) {
+				const other = [ ...previous.final ];
+				const last = other.pop();
+
+				return {
+					final: [ ...other, `${last}${splitted[1]}` ],
+					previousLowerTier: false
+				};
+			}
+		}
+		return {
+			final: [ ...previous.final, current ],
+			previousLowerTier: false
+		};
+	}, {
+		final: [],
+		previousLowerTier: false
+	}).final.join(', ');
 
 	return (
 		<div className="list">{list}</div>
 	);
-};
+}

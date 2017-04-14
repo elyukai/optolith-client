@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { getDSids, getSelectionItem, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
+import { getDSids, getSelectionItem, getSelectionName, getSelectionNameAndCost, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import validate from '../utils/validate';
 import ELStore from './ELStore';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
@@ -26,9 +26,9 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 			active.forEach((current, index) => {
 				const { sid, sid2, tier } = current;
 				let disabled = !isDeactivatable(a);
-				let add = '';
-				let currentCost: number | undefined = undefined;
-				const activeObject: ActiveViewObject & { [id: string]: any; } = {
+				let add: string | undefined;
+				let currentCost: number | undefined;
+				const activeObject: ActiveViewObject & { [id: string]: object | string | number | boolean | undefined; } = {
 					id,
 					index,
 					name,
@@ -62,34 +62,37 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						break;
 					}
 					case 'ADV_28':
-					case 'ADV_29':
-						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+					case 'ADV_29': {
+						const selectionItem = getSelectionItem(a, sid);
+						add = selectionItem && selectionItem.name;
+						currentCost = selectionItem && selectionItem.cost;
 						break;
+					}
 					case 'ADV_32':
 					case 'DISADV_1':
 					case 'DISADV_24':
 					case 'DISADV_45':
-						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						add = typeof sid === 'number' ? getSelectionName(a, sid) : sid;
 						break;
 					case 'DISADV_34':
 					case 'DISADV_50': {
 						const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
 						const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
-						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						add = typeof sid === 'number' ? getSelectionName(a, sid) : sid;
 						currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
 						break;
 					}
 					case 'DISADV_33': {
+						const selectionItem = getSelectionItem(a, sid);
 						if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
 							currentCost = 0;
 						} else {
-							currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+							currentCost = selectionItem && selectionItem.cost as number;
 						}
 						if ([7, 8].includes(sid as number)) {
-							add = `${(getSelectionItem(a, sid as string | number) as SelectionObject).name}: ${sid2}`;
+							add = `${selectionItem && selectionItem.name}: ${sid2}`;
 						} else {
-							add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+							add = selectionItem && selectionItem.name;
 						}
 						break;
 					}
@@ -98,10 +101,12 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						currentCost = active.length > 3 ? 0 : cost as number;
 						break;
 					case 'DISADV_37':
-					case 'DISADV_51':
-						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+					case 'DISADV_51': {
+						const selectionItem = getSelectionItem(a, sid);
+						add = selectionItem && selectionItem.name;
+						currentCost = selectionItem && selectionItem.cost as number;
 						break;
+					}
 					case 'SA_10': {
 						const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 						const skill = get(sid as string) as TalentInstance;
@@ -111,34 +116,38 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 					}
 					case 'SA_30':
 						tiers = 3;
-						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+						add = getSelectionName(a, sid);
 						break;
-					case 'SA_86':
+					case 'SA_86': {
 						if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
 							disabled = true;
 						}
-						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						const selectionItem = getSelectionItem(a, sid);
+						add = selectionItem && selectionItem.name;
+						currentCost = selectionItem && selectionItem.cost as number;
 						break;
-					case 'SA_102':
+					}
+					case 'SA_102': {
 						if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
 							disabled = true;
 						}
-						add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
-						currentCost = (getSelectionItem(a, sid as string | number) as SelectionObject).cost as number;
+						const selectionItem = getSelectionItem(a, sid);
+						add = selectionItem && selectionItem.name;
+						currentCost = selectionItem && selectionItem.cost as number;
 						break;
+					}
 
 					default:
 						if (input) {
 							add = sid as string;
 						}
 						else if (sel.length > 0 && cost === 'sel') {
-							const selectionItem = getSelectionItem(a, sid!);
-							add = selectionItem!.name;
-							currentCost = selectionItem!.cost as number;
+							const selectionItem = getSelectionItem(a, sid);
+							add = selectionItem && selectionItem.name;
+							currentCost = selectionItem && selectionItem.cost;
 						}
 						else if (sel.length > 0 && typeof cost === 'number') {
-							add = (getSelectionItem(a, sid as string | number) as SelectionObject).name;
+							add = getSelectionName(a, sid);
 						}
 						break;
 				}

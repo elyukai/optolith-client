@@ -1,4 +1,4 @@
-/// <reference path="../actions/Actions.d.ts" />
+/// <reference path="../@types/actions.d.ts" />
 
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';

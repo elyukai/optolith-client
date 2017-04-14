@@ -43,6 +43,78 @@ p {
 	width: 100%;
 }
 
-@import "components/_Components";
-@import "views/_Views";
+.flex {
+	display: flex;
+}
+
+%label {
+	label {
+		color: #a19b8f;
+		letter-spacing: 0.05em;
+		display: block;
+		font: 500 12px/1 Alegreya Sans;
+		padding-bottom: 6px;
+	}
+}
+
+@import "components/Aside";
+@import "components/Avatar";
+@import "components/AvatarWrapper";
+@import "components/BorderButton";
+@import "components/Box";
+@import "components/Button";
+@import "components/Checkbox";
+@import "components/Dialog";
+@import "components/Dropdown";
+@import "components/EditText";
+@import "components/Hr";
+@import "components/IconButton";
+@import "components/Label";
+@import "components/LabelBox";
+@import "components/Loader";
+@import "components/NumberBox";
+@import "components/Overlay";
+@import "components/Plain";
+@import "components/ProgressBar";
+@import "components/RadioButton";
+@import "components/Scroll";
+@import "components/Slidein";
+@import "components/Slider";
+@import "components/SubTabs";
+@import "components/Table";
+@import "components/TextField";
+@import "components/InputButtonGroup";
+@import "components/titlebar/TitleBar";
+@import "components/ToolBar";
+@import "components/TooltipToggle";
+@import "components/VerticalList";
+
+@import "views/Router";
+@import "views/Route";
+@import "views/about/About";
+@import "views/account/Account";
+@import "views/attributes/Attribute";
+@import "views/disadv/DisAdv";
+@import "views/herolist/Herolist";
+@import "views/home/Home";
+@import "views/belongings/Belongings";
+@import "views/master/Master";
+@import "views/master/InGame";
+@import "views/master/InGameControls";
+@import "views/master/InGameTableCenter";
+@import "views/master/InGameTableHealth";
+@import "views/master/InGameTableIni";
+@import "views/master/InGameTableLeft";
+@import "views/master/InGameTableRight";
+@import "views/profile/Profile";
+@import "views/profile/CombatSheet";
+@import "views/profile/BelongingsSheet";
+@import "views/profile/MainSheet";
+@import "views/profile/OptionalRules";
+@import "views/profile/Sheets";
+@import "views/profile/SpellsLiturgiesSheet";
+@import "views/profile/SkillsSheet";
+@import "views/rcp/RCP";
+@import "views/skills/Skills";
+
 @import "Print";

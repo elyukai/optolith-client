@@ -56,7 +56,7 @@ export default () => {
 	}).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
 	const SA_28 = get('SA_28') as SpecialAbilityInstance;
-	const scripts = SA_28.active.map(({ sid }) => SA_30.sel[(sid as number) - 1].name).sort();
+	const scripts = SA_28.active.map(({ sid }) => SA_28.sel[(sid as number) - 1].name).sort();
 
 	return (
 		<div className="sheet" id="skills-sheet">

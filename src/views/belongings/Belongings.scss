@@ -40,6 +40,16 @@
 		}
 	}
 
+	.total-points {
+		display: flex;
+		flex-direction: column;
+
+		h4 {
+			flex: 1 0 100%;
+			justify-content: center;
+		}
+	}
+
 	.list-item .type {
 		margin-left: 4px;
 		margin-right: 12px;

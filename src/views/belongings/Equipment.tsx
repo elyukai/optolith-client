@@ -7,6 +7,8 @@ import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import SortOptions from '../../components/SortOptions';
 import TextField from '../../components/TextField';
+import APStore from '../../stores/APStore';
+import ELStore from '../../stores/ELStore';
 import EquipmentStore from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { isActive } from '../../utils/ActivatableUtils';
@@ -104,6 +106,8 @@ export default class Inventory extends React.Component<undefined, State> {
 		const totalWeight = Math.round(list.reduce((n, i) => n + i.weight || n, 0) * 100) / 100;
 		const carryingCapacity = (get('STR') as AttributeInstance).value * 2;
 
+		const hasNoAddedAP = APStore.getTotal() === ELStore.getStart().ap;
+
 		return (
 			<div className="page" id="equipment">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
@@ -152,9 +156,9 @@ export default class Inventory extends React.Component<undefined, State> {
 						</div>
 					</div>
 					<div className="total-points">
-						<h4>Gesamt</h4>
+						<h4>{hasNoAddedAP && 'Startgeld & '}Tragkraft</h4>
 						<div className="fields">
-							<div>{dotToComma(totalPrice)} / {startMoney} S</div>
+							{hasNoAddedAP && <div>{dotToComma(totalPrice)} / {startMoney} S</div>}
 							<div>{dotToComma(totalWeight)} / {carryingCapacity} Stn</div>
 						</div>
 					</div>

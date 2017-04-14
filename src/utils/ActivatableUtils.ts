@@ -7,11 +7,11 @@ import { validateInstanceRequirementObject } from './validate';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
 	return obj.max !== 1;
-};
+}
 
 export function isActive(obj: ActivatableInstance): boolean {
 	return obj.active.length > 0;
-};
+}
 
 export function isActivatable(obj: ActivatableInstance): boolean {
 	if (obj.category === SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
@@ -40,7 +40,7 @@ export function isActivatable(obj: ActivatableInstance): boolean {
 		}
 	}
 	return validate(obj.reqs, obj.id);
-};
+}
 
 export function isDeactivatable(obj: ActivatableInstance): boolean {
 	if (obj.id === 'SA_183') {
@@ -67,19 +67,36 @@ export function isDeactivatable(obj: ActivatableInstance): boolean {
 		return true;
 	});
 	return dependencies.length === 0;
-};
+}
 
 export function getSids(obj: ActivatableInstance): Array<string | number> {
 	return obj.active.map(e => e.sid!);
-};
+}
 
 export function getDSids(obj: ActivatableInstance): Array<string | number | boolean | undefined> {
 	return obj.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
-};
+}
 
-export function getSelectionItem(obj: ActivatableInstance, id: string | number): SelectionObject | undefined {
+export function getSelectionItem(obj: ActivatableInstance, id?: string | number): SelectionObject | undefined {
 	return obj.sel.find(e => e.id === id);
-};
+}
+
+export function getSelectionName(obj: ActivatableInstance, id?: string | number) {
+	const selectionItem = getSelectionItem(obj, id);
+	if (selectionItem) {
+		return selectionItem.name;
+	}
+	return undefined;
+}
+
+export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | number) {
+	const selectionItem = getSelectionItem(obj, id);
+	if (selectionItem) {
+		const { name, cost } = selectionItem;
+		return { name, cost: cost! };
+	}
+	return undefined;
+}
 
 export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): ToListById<AbilityInstance> {
 	const adds: RequirementObject[] = [];
@@ -150,7 +167,7 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 		obj.active.push(active);
 	}
 	return addDependencies(obj, adds, sidNew);
-};
+}
 
 export function deactivate(obj: ActivatableInstance, index: number): ToListById<AbilityInstance> {
 	const adds: RequirementObject[] = [];
@@ -168,7 +185,7 @@ export function deactivate(obj: ActivatableInstance, index: number): ToListById<
 	}
 	obj.active.splice(index, 1);
 	return removeDependencies(obj, adds, sidOld);
-};
+}
 
 export function setTier(obj: ActivatableInstance, index: number, tier: number): ActivatableInstance {
 	obj.active[index].tier = tier;
@@ -178,7 +195,7 @@ export function setTier(obj: ActivatableInstance, index: number, tier: number): 
 		...obj,
 		active,
 	};
-};
+}
 
 function getInstance<T extends AbilityInstance>(instances: ToListById<AbilityInstance>, id: string) {
 	return (instances.hasOwnProperty(id) ? instances[id] : get(id)) as T;
@@ -241,7 +258,7 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 		}
 	});
 	return instances;
-};
+}
 
 export function removeDependencies(obj: ActivatableInstance, adds: RequirementObject[] = [], sel?: string): ToListById<AbilityInstance> {
 	const allReqs = [ ...obj.reqs, ...adds ];
@@ -301,7 +318,7 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 	});
 
 	return instances;
-};
+}
 
 export function reset(obj: ActivatableInstance): ActivatableInstance {
 	return {
@@ -309,4 +326,4 @@ export function reset(obj: ActivatableInstance): ActivatableInstance {
 		active: [],
 		dependencies: [],
 	};
-};
+}

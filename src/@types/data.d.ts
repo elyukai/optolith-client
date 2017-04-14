@@ -461,7 +461,6 @@ interface TalentInstance {
 interface ItemBaseInstance {
 	id: string;
 	name: string;
-	addPenalties: boolean;
 	ammunition: string | null;
 	combatTechnique: string;
 	damageDiceSides: number;
@@ -471,10 +470,14 @@ interface ItemBaseInstance {
 	reach: number;
 	template: string;
 	where: string;
+	isTwoHandedWeapon: boolean;
+	improvisedWeaponGroup?: number;
 }
 
 interface ItemInstance extends ItemBaseInstance {
 	at: number;
+	addINIPenalty?: number;
+	addMOVPenalty?: number;
 	damageBonus: number;
 	damageDiceNumber: number;
 	damageFlat: number;
@@ -489,10 +492,13 @@ interface ItemInstance extends ItemBaseInstance {
 	reloadTime: number;
 	stp: number;
 	weight: number;
+	stabilityMod?: number;
 }
 
 interface ItemEditorInstance extends ItemBaseInstance {
 	at: string;
+	addINIPenalty: string;
+	addMOVPenalty: string;
 	damageBonus: string;
 	damageDiceNumber: string;
 	damageFlat: string;
@@ -506,6 +512,7 @@ interface ItemEditorInstance extends ItemBaseInstance {
 	reloadTime: string;
 	stp: string;
 	weight: string;
+	stabilityMod: string;
 }
 
 type Instance = AbilityInstance | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;

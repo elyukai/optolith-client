@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
 import Checkbox from '../../components/Checkbox';
@@ -6,6 +7,7 @@ import Dropdown from '../../components/Dropdown';
 import Hr from '../../components/Hr';
 import IconButton from '../../components/IconButton';
 import Label from '../../components/Label';
+import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
 import EquipmentStore from '../../stores/EquipmentStore';
@@ -38,6 +40,10 @@ const FIELDS = {
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
 const GROUPS_SELECTION = GROUPS.map((e, i) => ({ id: i + 1, name: e }));
+const IMP_GROUPS_SELECTION = [
+	{ id: 1, name: GROUPS[0] },
+	{ id: 2, name: GROUPS[1] }
+];
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
 export default class ItemEditor extends React.Component<Props, ItemEditorInstance> {
@@ -55,7 +61,9 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 		}
 		else {
 			this.state = {
-				addPenalties: false,
+				addMOVPenalty: '',
+				addINIPenalty: '',
+				stabilityMod: '',
 				ammunition: null,
 				amount: '',
 				at: '',
@@ -69,6 +77,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 				id: '',
 				isParryingWeapon: false,
 				isTemplateLocked: false,
+				isTwoHandedWeapon: false,
 				length: '',
 				name: '',
 				pa: '',
@@ -114,8 +123,26 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 	changeAmmunition = (id: string) => this.setState({ ammunition: id } as ItemEditorInstance);
 	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as ItemEditorInstance);
 	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as ItemEditorInstance);
-	changeAddPenalties = () => this.setState(prevState => ({ addPenalties: !prevState.addPenalties } as ItemEditorInstance));
-	changeParryingWeapon = () => this.setState(prevState => ({ isParryingWeapon: !prevState.isParryingWeapon } as ItemEditorInstance));
+	changeAddGSPenalty = (event: InputTextEvent) => this.setState({ addMOVPenalty: event.target.value } as ItemEditorInstance);
+	changeAddINIPenalty = (event: InputTextEvent) => this.setState({ addINIPenalty: event.target.value } as ItemEditorInstance);
+	changeStabilityMod = (event: InputTextEvent) => this.setState({ stabilityMod: event.target.value } as ItemEditorInstance);
+	changeParryingWeapon = () => {
+		this.setState(prevState => ({ isParryingWeapon: !prevState.isParryingWeapon } as ItemEditorInstance));
+	}
+	changeTwoHandedWeapon = () => {
+		this.setState(prevState => ({ isTwoHandedWeapon: !prevState.isTwoHandedWeapon } as ItemEditorInstance));
+	}
+	changeImprovisedWeapon = () => {
+		if (typeof this.state.improvisedWeaponGroup === 'number') {
+			this.setState({ improvisedWeaponGroup: undefined } as ItemEditorInstance);
+		}
+		else {
+			this.setState({ improvisedWeaponGroup: 0 } as ItemEditorInstance);
+		}
+	}
+	changeImprovisedWeaponGroup = (group: number) => {
+		this.setState({ improvisedWeaponGroup: group } as ItemEditorInstance);
+	}
 
 	applyTemplate = () => {
 		if (this.state.template !== 'ITEMTPL_0') {
@@ -154,7 +181,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 
 	render() {
 		const { create, node } = this.props;
-		const { addPenalties, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
+		const { addMOVPenalty, addINIPenalty, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
 		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
@@ -222,6 +249,23 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 							disabled={locked}
 							/>
 					</div>
+					{gr > 4 && <div className="row">
+						<Checkbox
+							className="improvised-weapon"
+							label="Improvisierte Waffe"
+							checked={typeof improvisedWeaponGroup === 'number'}
+							onClick={this.changeImprovisedWeapon}
+							disabled={locked}
+							/>
+						<Dropdown
+							className="gr imp-gr"
+							hint="Waffentyp"
+							value={improvisedWeaponGroup || 0}
+							options={IMP_GROUPS_SELECTION}
+							onChange={this.changeImprovisedWeaponGroup}
+							disabled={locked || typeof improvisedWeaponGroup !== 'number'}
+							/>
+					</div>}
 					<Hr />
 					<div className="row">
 						<Dropdown
@@ -252,7 +296,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 						)}
 					</div>
 				</div>
-				{ gr === 1 ? ( <div className="melee">
+				{ gr === 1 || improvisedWeaponGroup === 1 ? ( <div className="melee">
 					<Hr />
 					<div className="row">
 						<Dropdown
@@ -285,7 +329,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[{id: 3, name: 'W3'}, {id: 6, name: 'W6'}, {id: 20, name: 'W20'}]}
+								options={[{id: 2, name: 'W2'}, {id: 3, name: 'W3'}, {id: 6, name: 'W6'}]}
 								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
@@ -296,6 +340,13 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 								disabled={locked}
 								/>
 						</div>
+						<TextField
+							className="stabilitymod"
+							label="BF-Mod."
+							value={stabilityMod}
+							onChange={this.changeStabilityMod}
+							disabled={locked}
+							/>
 					</div>
 					<div className="row">
 						<Dropdown
@@ -348,9 +399,16 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 							onClick={this.changeParryingWeapon}
 							disabled={locked}
 							/>
+						<Checkbox
+							className="twohanded-weapon"
+							label="Zweihandwaffe"
+							checked={isTwoHandedWeapon}
+							onClick={this.changeTwoHandedWeapon}
+							disabled={locked}
+							/>
 					</div>
 				</div> ) : null }
-				{ gr === 2 ? ( <div className="ranged">
+				{ gr === 2 || improvisedWeaponGroup === 2 ? ( <div className="ranged">
 					<Hr />
 					<div className="row">
 						<Dropdown
@@ -394,6 +452,13 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 								disabled={locked}
 								/>
 						</div>
+						<TextField
+							className="stabilitymod"
+							label="BF-Mod."
+							value={stabilityMod}
+							onChange={this.changeStabilityMod}
+							disabled={locked}
+							/>
 					</div>
 					<div className="row">
 						<div className="container">
@@ -456,13 +521,29 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 								disabled={locked}
 								/>
 						</div>
-						<Checkbox
-							className="addpenalties"
-							label="Zusätzliche Abzüge"
-							checked={addPenalties}
-							onClick={this.changeAddPenalties}
-							disabled={locked}
-							/>
+						<div className="container armor-add">
+							<TextField
+								className="mov"
+								label="GS"
+								value={addMOVPenalty}
+								onChange={this.changeENC}
+								disabled={locked}
+								/>
+							<TextField
+								className="ini"
+								label="INI"
+								value={enc}
+								onChange={this.changeENC}
+								disabled={locked}
+								/>
+							<TextField
+								className="stabilitymod"
+								label="ST-Mod."
+								value={stabilityMod}
+								onChange={this.changeStabilityMod}
+								disabled={locked}
+								/>
+						</div>
 					</div>
 				</div> ) : null }
 			</Dialog>

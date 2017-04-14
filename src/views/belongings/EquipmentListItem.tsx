@@ -27,9 +27,19 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 		const { add, data } = this.props;
 		const { isTemplateLocked, template, where } = data;
 		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template), where } : data;
-		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addPenalties } = item;
+		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addMOVPenalty, addINIPenalty } = item;
 
 		const numberValue = amount > 1 ? amount : null;
+
+		const addPenalties = [];
+
+		if (typeof addMOVPenalty === 'number') {
+			addPenalties.push(`-${addMOVPenalty} GS`);
+		}
+
+		if (typeof addINIPenalty === 'number') {
+			addPenalties.push(`-${addINIPenalty} INI`);
+		}
 
 		return (
 			<TooltipToggle content={
@@ -141,7 +151,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 						</tbody>
 					</table> : null}
 					{ gr === 4 ? <p className="armor">
-						Zus. Abzüge: {addPenalties ? '-1 GS, -1 INI' : '-'}
+						Zus. Abzüge: {addPenalties.length > 0 ? addPenalties.join(', ') : '-'}
 					</p> : null}
 				</div>
 			} margin={11}>

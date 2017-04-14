@@ -4,3 +4,4 @@ npm-debug.log*
 .vscode/
 /data/
 ~$TDE5.xlsx
+/dist/

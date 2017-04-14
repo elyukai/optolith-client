@@ -1,0 +1,24 @@
+.progressbar {
+	border: 1px solid transparent;
+	border-image: linear-gradient(to bottom, $color14 0%, $color8 100%);
+	background: $color15;
+	padding: 1px;
+	height: 90px;
+	width: 8px;
+	position: relative;
+
+	&:not(.horizontal) .progressbar-overlay {
+		top: 0;
+		width: 4px;
+	}
+
+	&.horizontal {
+		height: 8px;
+		width: 90px;
+
+		.progressbar-overlay {
+			right: 0;
+			height: 4px;
+		}
+	}
+}

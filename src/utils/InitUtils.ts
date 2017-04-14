@@ -27,7 +27,7 @@ export function initRace(raw: RawRace): RaceInstance {
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
 		weight,
 	};
-};
+}
 
 export function initCulture(raw: RawCulture): CultureInstance {
 	const { id, name, ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents } = raw;
@@ -48,7 +48,7 @@ export function initCulture(raw: RawCulture): CultureInstance {
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
 		untypicalTalents: untyp_talents.map(e => `TAL_${e}`),
 	};
-};
+}
 
 export function initProfession(raw: RawProfession): ProfessionInstance {
 	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars } = raw;
@@ -72,7 +72,7 @@ export function initProfession(raw: RawProfession): ProfessionInstance {
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
 		variants: vars.map(e => `PV_${e}`),
 	};
-};
+}
 
 export function initProfessionVariant(raw: RawProfessionVariant): ProfessionVariantInstance {
 	const { id, name, ap, pre_req, req, sel, sa, combattech, talents } = raw;
@@ -88,7 +88,7 @@ export function initProfessionVariant(raw: RawProfessionVariant): ProfessionVari
 		specialAbilities: sa,
 		talents: talents.map<[string, number]>(e => [`TAL_${e[0]}`, e[1]]),
 	};
-};
+}
 
 export function initAdvantage(raw: RawAdvantage): AdvantageInstance {
 	const { id, name, ap, input, max, sel, req, tiers } = raw;
@@ -105,7 +105,7 @@ export function initAdvantage(raw: RawAdvantage): AdvantageInstance {
 		sel,
 		tiers,
 	};
-};
+}
 
 export function initDisadvantage(raw: RawDisadvantage): DisadvantageInstance {
 	const { id, name, ap, input, max, sel, req, tiers } = raw;
@@ -122,7 +122,7 @@ export function initDisadvantage(raw: RawDisadvantage): DisadvantageInstance {
 		sel,
 		tiers,
 	};
-};
+}
 
 export function initSpecialAbility(raw: RawSpecialAbility): SpecialAbilityInstance {
 	const { id, name, ap, input, max, sel, req, gr } = raw;
@@ -139,7 +139,7 @@ export function initSpecialAbility(raw: RawSpecialAbility): SpecialAbilityInstan
 		reqs: req,
 		sel,
 	};
-};
+}
 
 export function initAttribute(raw: RawAttribute): AttributeInstance {
 	const { id, name, short } = raw;
@@ -153,7 +153,7 @@ export function initAttribute(raw: RawAttribute): AttributeInstance {
 		short,
 		value: 8,
 	};
-};
+}
 
 export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueInstance {
 	const { id, name, gr, skt, leit } = raw;
@@ -167,7 +167,7 @@ export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueIns
 		primary: leit,
 		value: 6,
 	};
-};
+}
 
 type RawCheck = [number, number, number, string | never];
 type Check = [string, string, string, string | never];
@@ -189,7 +189,7 @@ export function initLiturgy(raw: RawLiturgy): LiturgyInstance {
 		tradition: trad,
 		value: 0,
 	};
-};
+}
 
 export function initSpell(raw: RawSpell): SpellInstance {
 	const { id, name, check, gr, skt, merk, trad } = raw;
@@ -204,9 +204,9 @@ export function initSpell(raw: RawSpell): SpellInstance {
 		name,
 		property: merk,
 		tradition: trad,
-		value: 0,
+		value: 0
 	};
-};
+}
 
 export function initTalent(raw: RawTalent): TalentInstance {
 	const { id, name, be, check, gr, skt, spec, spec_input } = raw;
@@ -221,14 +221,17 @@ export function initTalent(raw: RawTalent): TalentInstance {
 		name,
 		specialisation: spec,
 		specialisationInput: spec_input,
-		value: 0,
+		value: 0
 	};
-};
+}
 
 export function initItem(raw: RawItem): ItemInstance {
+	const { addPenalties, ...other } = raw;
 	return {
-		...raw,
+		...other,
+		addMOVPenalty: addPenalties ? 1 : undefined,
+		addINIPenalty: addPenalties ? 1 : undefined,
 		amount: 1,
-		isTemplateLocked: true,
+		isTemplateLocked: true
 	};
-};
+}

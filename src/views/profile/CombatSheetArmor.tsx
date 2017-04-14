@@ -21,12 +21,22 @@ export default () => {
 					{
 						list.map((e, i) => {
 							if (e) {
+								const addPenalties = [];
+
+								if (typeof e.addMOVPenalty === 'number') {
+									addPenalties.push(`-${e.addMOVPenalty} GS`);
+								}
+
+								if (typeof e.addINIPenalty === 'number') {
+									addPenalties.push(`-${e.addINIPenalty} INI`);
+								}
+
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
 										<td className="pro">{e.pro}</td>
 										<td className="enc">{e.enc}</td>
-										<td className="add-penalties">{e.addPenalties ? '-1 GS, -1 INI' : '-'}</td>
+										<td className="add-penalties">{addPenalties.length > 0 ? addPenalties.join(', ') : '-'}</td>
 										<td className="weight">{e.weight} Stn</td>
 										<td className="where">{e.where}</td>
 									</tr>

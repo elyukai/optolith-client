@@ -178,6 +178,8 @@ interface RawItem {
 	addPenalties: boolean;
 	template: string;
 	isParryingWeapon: boolean;
+	isTwoHandedWeapon: boolean;
+	improvisedWeaponGroup?: number;
 }
 
 interface RawExperienceLevel {
