@@ -327,3 +327,22 @@ export function reset(obj: ActivatableInstance): ActivatableInstance {
 		dependencies: [],
 	};
 }
+
+export function getFullName(obj: string | ActiveViewObject): string {
+	if (typeof obj === 'string') {
+		return obj;
+	}
+	const { tiers, id, tier } = obj;
+	let { name } = obj;
+	const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+	if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
+		if (id === 'SA_30' && tier === 4) {
+			name += ` MS`;
+		}
+		else {
+			name += ` ${roman[(tier as number) - 1]}`;
+		}
+	}
+
+	return name;
+}

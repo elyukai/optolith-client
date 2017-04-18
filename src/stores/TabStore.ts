@@ -67,32 +67,34 @@ class TabStoreStatic extends Store {
 	}
 
 	private updateSection(section: 'main' | 'hero' | 'group', tab?: string) {
-		const before = this.currentSection;
+		if (section !== this.currentSection) {
+			const before = this.currentSection;
 
-		this.currentSection = section;
+			this.currentSection = section;
 
-		if (tab) {
-			this.updateTab(tab);
-		}
-		else {
-			switch (section) {
-				case 'main':
-					if (before === 'hero') {
-						if (AuthStore.getName() === '') {
-							this.currentTab = 'home';
-						} else {
-							this.currentTab = 'herolist';
+			if (tab) {
+				this.updateTab(tab);
+			}
+			else {
+				switch (section) {
+					case 'main':
+						if (before === 'hero') {
+							if (AuthStore.getName() === '') {
+								this.currentTab = 'home';
+							} else {
+								this.currentTab = 'herolist';
+							}
+						} else if (before === 'group') {
+							this.currentTab = 'grouplist';
 						}
-					} else if (before === 'group') {
-						this.currentTab = 'grouplist';
-					}
-					break;
-				case 'hero':
-					this.currentTab = 'profile';
-					break;
-				case 'group':
-					this.currentTab = 'master';
-					break;
+						break;
+					case 'hero':
+						this.currentTab = 'profile';
+						break;
+					case 'group':
+						this.currentTab = 'master';
+						break;
+				}
 			}
 		}
 	}

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
 import Scroll from '../../components/Scroll';
-import { printToPDF } from '../../utils/FileAPIUtils';
 import { getAE, getKP } from '../../utils/secondaryAttributes';
 import BelongingsSheet from './BelongingsSheet';
 import CombatSheet from './CombatSheet';
@@ -13,11 +11,6 @@ import SpellsSheet from './SpellsSheet';
 export default () => (
 	<div className="page" id="sheets">
 		<Scroll className="sheet-wrapper">
-			<BorderButton
-				className="print-document"
-				label="Dokument drucken"
-				onClick={printToPDF}
-				/>
 			<MainSheet />
 			<SkillsSheet />
 			<CombatSheet />

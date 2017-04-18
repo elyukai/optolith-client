@@ -26,12 +26,12 @@ export default class AttributeCalcItem extends React.Component<Props, undefined>
 
 		const { attribute : { base, calc, currentAdd, maxAdd, mod, name, short, value }, phase } = this.props;
 
-		const increaseElement = maxAdd && value !== '-' && phase > 2 ? (
+		const increaseElement = typeof currentAdd === 'number' && typeof maxAdd === 'number' && value !== '-' && phase > 2 ? (
 			<IconButton
 				className="add"
 				icon="&#xE145;"
 				onClick={this.addMaxEnergyPoint}
-				disabled={!maxAdd || currentAdd && currentAdd >= maxAdd}/>
+				disabled={currentAdd >= maxAdd}/>
 		) : null;
 
 		return (

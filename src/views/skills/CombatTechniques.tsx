@@ -1,5 +1,9 @@
 import * as React from 'react';
 import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
+import List from '../../components/List';
+import ListItemGroup from '../../components/ListItemGroup';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
@@ -53,8 +57,8 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 		const list = filterAndSort(combattechniques, filterText, sortOrder);
 
 		return (
-			<div className="page" id="combattechniques">
-				<div className="options">
+			<Page id="combattechniques">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
@@ -65,9 +69,9 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 						]}
 						/>
-				</div>
+				</Options>
 				<Scroll>
-					<div className="list-wrapper">
+					<List>
 						{
 							list.map(obj => {
 								const primary = obj.primary.map(attr => (get(attr) as AttributeInstance).short).join('/');
@@ -91,14 +95,14 @@ export default class CombatTechniques extends React.Component<undefined, State> 
 											{ className: 'pa', value: getPa(obj) },
 										]}
 										>
-										<div className="group">{GROUPS[obj.gr - 1]}</div>
+										<ListItemGroup list={GROUPS} index={obj.gr} />
 									</SkillListItem>
 								);
 							})
 						}
-					</div>
+					</List>
 				</Scroll>
-			</div>
+			</Page>
 		);
 	}
 }

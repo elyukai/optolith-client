@@ -22,6 +22,8 @@ interface State {
 	sortOrder: string;
 	showAddSlidein: boolean;
 	visibility: string;
+	groupVisibility: number;
+	extensionVisibility: boolean;
 }
 
 export default class Professions extends React.Component<undefined, State> {
@@ -32,14 +34,18 @@ export default class Professions extends React.Component<undefined, State> {
 		professions: ProfessionStore.getAllValid(),
 		showAddSlidein: false,
 		sortOrder: ProfessionStore.getSortOrder(),
-		visibility: ProfessionStore.areAllVisible(),
+		visibility: ProfessionStore.getVisibilityFilter(),
+		groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
+		extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
 	};
 
 	_updateProfessionStore = () => this.setState({
 		currentID: ProfessionStore.getCurrentId(),
 		professions: ProfessionStore.getAllValid(),
 		sortOrder: ProfessionStore.getSortOrder(),
-		visibility: ProfessionStore.areAllVisible(),
+		visibility: ProfessionStore.getVisibilityFilter(),
+		groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
+		extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
 	} as State);
 	_updateProfessionVariantStore = () => this.setState({
 		currentVID: ProfessionVariantStore.getCurrentID(),
@@ -48,6 +54,8 @@ export default class Professions extends React.Component<undefined, State> {
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => ProfessionActions.setProfessionsSortOrder(option);
 	changeView = (view: string) => ProfessionActions.setProfessionsVisibilityFilter(view);
+	changeGroupVisibility = (id: number) => ProfessionActions.setProfessionsGroupVisibilityFilter(id);
+	switchExtensionVisibility = () => ProfessionActions.switchProfessionsExpansionVisibilityFilter();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
@@ -65,13 +73,18 @@ export default class Professions extends React.Component<undefined, State> {
 
 	render() {
 
-		const { currentID, currentVID, filterText, professions, showAddSlidein, visibility, sortOrder } = this.state;
+		const { currentID, currentVID, filterText, professions, showAddSlidein, visibility, groupVisibility, extensionVisibility, sortOrder } = this.state;
 
 		const currentCulture = CultureStore.getCurrent();
 
 		const sex = ProfileStore.getSex();
 
-		const list = filterAndSort(professions.filter(e => visibility === 'all' || currentCulture!.typicalProfessions.includes(e.id) || e.id === 'P_0'), filterText, sortOrder, sex);
+		const list = filterAndSort(professions.filter(e => {
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || currentCulture!.typicalProfessions.includes(e.id);
+			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
+			const extensionVisible = e.src.id === 'US25001' ? commonVisible : extensionVisibility;
+			return groupVisible && extensionVisible;
+		}), filterText, sortOrder, sex);
 
 		return (
 			<div className="page" id="professions">
@@ -84,7 +97,14 @@ export default class Professions extends React.Component<undefined, State> {
 						value={visibility}
 						onChange={this.changeView}
 						options={[{id: 'all', name: 'Alle Professionen'}, {id: 'common', name: 'Übliche Professionen'}]}
-						fullWidth />
+						fullWidth
+						/>
+					<Dropdown
+						value={groupVisibility}
+						onChange={this.changeGroupVisibility}
+						options={[{id: 0, name: 'Alle Professionsgruppen'}, {id: 1, name: 'Weltliche Professionen'}, {id: 2, name: 'Magische Professionen'}, {id: 3, name: 'Geweihte Professionen'}]}
+						fullWidth
+						/>
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
@@ -99,7 +119,7 @@ export default class Professions extends React.Component<undefined, State> {
 							},
 						]}
 						/>
-					<Checkbox checked={false} onClick={() => undefined} disabled>
+					<Checkbox checked={extensionVisibility} onClick={this.switchExtensionVisibility}>
 						Professionen aus Erweiterungen immer anzeigen
 					</Checkbox>
 				</div>

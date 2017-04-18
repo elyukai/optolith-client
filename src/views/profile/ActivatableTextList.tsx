@@ -19,7 +19,7 @@ function findTier(name: string) {
 }
 
 export default function ActivatableTextList(props: Props) {
-	const list = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
+	const listToString = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
 		if (typeof obj === 'string') {
 			return obj;
 		}
@@ -36,18 +36,25 @@ export default function ActivatableTextList(props: Props) {
 		}
 
 		return name;
-	}).sort().reduce<EnhancedReduce>((previous, current, index, array) => {
+	});
+
+	listToString.sort();
+
+	const list = listToString.reduce<EnhancedReduce>((previous, current, index, array) => {
 		const splitted = findTier(current);
 		if (Array.isArray(splitted)) {
-			const nextSplitted = findTier(array[index + 1]);
-			if (Array.isArray(nextSplitted) && splitted[0] === nextSplitted[0]) {
-				if (previous.previousLowerTier === true) {
-					return previous;
+			const nextElement = array[index + 1];
+			if (typeof nextElement === 'string') {
+				const nextSplitted = findTier(nextElement);
+				if (Array.isArray(nextSplitted) && splitted[0] === nextSplitted[0]) {
+					if (previous.previousLowerTier === true) {
+						return previous;
+					}
+					return {
+						final: [ ...previous.final, `${current}-` ],
+						previousLowerTier: true
+					};
 				}
-				return {
-					final: [ ...previous.final, `${current}-` ],
-					previousLowerTier: true
-				};
 			}
 			if (previous.previousLowerTier === true) {
 				const other = [ ...previous.final ];

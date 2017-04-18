@@ -149,6 +149,10 @@ export default class TitleBar extends React.Component<Props, State> {
 								]} />
 								<BorderButton label="Abmelden" onClick={this.logout} disabled />
 								<IconButton
+									icon="&#xE8B8;"
+									disabled
+									/>
+								<IconButton
 									icon="&#xE868;"
 									onClick={this.openDevtools}
 									/>

@@ -1,10 +1,18 @@
 import * as React from 'react';
 import * as LiturgiesActions from '../../actions/LiturgiesActions';
 import BorderButton from '../../components/BorderButton';
+import Checkbox from '../../components/Checkbox';
+import List from '../../components/List';
+import ListItem from '../../components/ListItem';
+import ListItemGroup from '../../components/ListItemGroup';
+import ListItemName from '../../components/ListItemName';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
+import ConfigStore from '../../stores/ConfigStore';
 import LiturgiesStore from '../../stores/LiturgiesStore';
 import PhaseStore from '../../stores/PhaseStore';
 import { filterAndSort } from '../../utils/ListUtils';
@@ -14,51 +22,52 @@ import SkillListItem from './SkillListItem';
 interface State {
 	addChantsDisabled: boolean;
 	filterText: string;
+	filterTextSlidein: string;
 	liturgies: LiturgyInstance[];
 	phase: number;
 	showAddSlidein: boolean;
 	sortOrder: string;
+	enableActiveItemHints: boolean;
 }
 
 export default class Liturgies extends React.Component<undefined, State> {
-
 	state = {
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: '',
+		filterTextSlidein: '',
 		liturgies: LiturgiesStore.getAll(),
 		phase: PhaseStore.get(),
 		showAddSlidein: false,
 		sortOrder: LiturgiesStore.getSortOrder(),
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
-	_updateLiturgiesStore = () => this.setState({
-		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
-		liturgies: LiturgiesStore.getAll(),
-		sortOrder: LiturgiesStore.getSortOrder(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	sort = (option: string) => LiturgiesActions.setSortOrder(option);
 	addToList = (id: string) => LiturgiesActions.addToList(id);
 	addPoint = (id: string) => LiturgiesActions.addPoint(id);
 	removeFromList = (id: string) => LiturgiesActions.removeFromList(id);
 	removePoint = (id: string) => LiturgiesActions.removePoint(id);
+	switchActiveItemHints = () => LiturgiesActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
 	componentDidMount() {
-		LiturgiesStore.addChangeListener(this._updateLiturgiesStore );
+		ConfigStore.addChangeListener(this.updateConfigStore);
+		LiturgiesStore.addChangeListener(this.updateLiturgiesStore);
 	}
 
 	componentWillUnmount() {
-		LiturgiesStore.removeChangeListener(this._updateLiturgiesStore );
+		ConfigStore.removeChangeListener(this.updateConfigStore);
+		LiturgiesStore.removeChangeListener(this.updateLiturgiesStore);
 	}
 
 	render() {
 		const GROUPS = LiturgiesStore.getGroupNames();
 		const ASPECTS = LiturgiesStore.getAspectNames();
 
-		const { addChantsDisabled, filterText, phase, showAddSlidein, sortOrder, liturgies } = this.state;
+		const { addChantsDisabled, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, liturgies } = this.state;
 
 		const sortArray = [
 			{ name: 'Alphabetisch', value: 'name' },
@@ -67,14 +76,15 @@ export default class Liturgies extends React.Component<undefined, State> {
 			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
-		const list = filterAndSort(liturgies, filterText, sortOrder);
-
 		const listActive: LiturgyInstance[] = [];
 		const listDeactive: LiturgyInstance[] = [];
 
-		list.forEach(e => {
+		liturgies.forEach(e => {
 			if (e.active) {
 				listActive.push(e);
+				if (enableActiveItemHints === true) {
+					listDeactive.push(e);
+				}
 			}
 			else {
 				if (isOwnTradition(e)) {
@@ -83,21 +93,34 @@ export default class Liturgies extends React.Component<undefined, State> {
 			}
 		});
 
+		const sortedActiveList = filterAndSort(listActive, filterText, sortOrder);
+		const sortedDeactiveList = filterAndSort(listDeactive, filterTextSlidein, sortOrder);
+
 		return (
-			<div className="page" id="liturgies">
+			<Page id="liturgies">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<Options>
+						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+					</Options>
+					<Scroll>
+						<List>
 							{
-								listDeactive.map(obj => {
+								sortedDeactiveList.map(obj => {
+									if (obj.active === true) {
+										const { id, name } = obj;
+										return (
+											<ListItem key={id} disabled>
+												<ListItemName main={name} />
+											</ListItem>
+										);
+									}
+
 									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
 
@@ -122,18 +145,18 @@ export default class Liturgies extends React.Component<undefined, State> {
 											addFillElement
 											{...add}
 											>
-											<div className="aspect">
+											<ListItemGroup>
 												{aspc}
-												{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
-											</div>
+												{sortOrder === 'group' && ` / ${GROUPS[obj.gr - 1]}`}
+											</ListItemGroup>
 										</SkillListItem>
 									);
 								})
 							}
-						</div>
+						</List>
 					</Scroll>
 				</Slidein>
-				<div className="options">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
@@ -144,11 +167,11 @@ export default class Liturgies extends React.Component<undefined, State> {
 						label="Hinzufügen"
 						onClick={this.showAddSlidein}
 						/>
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
+				</Options>
+				<Scroll>
+					<List>
 						{
-							listActive.map(obj => {
+							sortedActiveList.map(obj => {
 								const [ a1, a2, a3, checkmod ] = obj.check;
 								const check = [ a1, a2, a3 ];
 
@@ -176,14 +199,31 @@ export default class Liturgies extends React.Component<undefined, State> {
 										noIncrease={obj.gr === 3}
 										{...add}
 										>
-										<div className="aspect">{aspc}</div>
+										<ListItemGroup>
+											{aspc}
+											{sortOrder === 'group' && ` / ${GROUPS[obj.gr - 1]}`}
+										</ListItemGroup>
 									</SkillListItem>
 								);
 							})
 						}
-					</div>
+					</List>
 				</Scroll>
-			</div>
+			</Page>
 		);
+	}
+
+	private updateLiturgiesStore = () => {
+		this.setState({
+			addChantsDisabled: LiturgiesStore.isActivationDisabled(),
+			liturgies: LiturgiesStore.getAll(),
+			sortOrder: LiturgiesStore.getSortOrder(),
+		} as State);
+	}
+
+	private updateConfigStore = () => {
+		this.setState({
+			enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		} as State);
 	}
 }

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 import GeminiScrollbar from 'react-gemini-scrollbar';
 import Label from './Label';
 
@@ -9,9 +9,9 @@ interface Props {
 	fullWidth?: boolean;
 	hint?: string;
 	label?: string;
-	onChange: (option: number | string | null) => void;
-	options: { id: number | string | null; name: string; }[];
+	options: Array<{ id: number | string | null; name: string; }>;
 	value: boolean | string | number | null;
+	onChange?(option: number | string | null): void;
 }
 
 interface State {
@@ -42,7 +42,10 @@ export default class Dropdown extends React.Component<Props, State> {
 	}
 
 	onChange = (option: number | string | null) => {
-		this.props.onChange(option);
+		const { onChange } = this.props;
+		if (typeof onChange === 'function') {
+			onChange(option);
+		}
 		this.setState({ isOpen: false } as State);
 	}
 
@@ -96,9 +99,9 @@ export default class Dropdown extends React.Component<Props, State> {
 			<div className={className} ref={node => this.containerRef = node}>
 				<Label text={this.props.label} disabled={this.props.disabled} />
 				<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
-					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
+					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height: 0}}></div>}
 					<div onClick={this.switch} className="value">{valueText}</div>
-					{this.state.position === 'bottom' && this.state.isOpen ? downElement : <div style={{height:0}}></div>}
+					{this.state.position === 'bottom' && this.state.isOpen ? downElement : <div style={{height: 0}}></div>}
 				</div>
 			</div>
 		);

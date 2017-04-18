@@ -158,27 +158,34 @@ export function getTOU(): SecondaryAttribute {
 }
 
 export function getDO(): SecondaryAttribute {
+	const base = Math.round(AGI().value / 2);
+	const value = base;
 	return {
 		calc: '(GE/2)',
 		id: 'DO',
 		name: 'Ausweichen',
 		short: 'AW',
-		value: Math.round(AGI().value / 2),
+		base,
+		value
 	};
 }
 
 export function getINI(): SecondaryAttribute {
+	const base = Math.round((COU().value + AGI().value) / 2);
+	const value = base;
 	return {
 		calc: '(MU + GE)/2',
 		id: 'INI',
 		name: 'Initiative',
 		short: 'INI',
-		value: Math.round((COU().value + AGI().value) / 2),
+		base,
+		value
 	};
 }
 
 export function getMOV(): SecondaryAttribute {
-	let value = RaceStore.getCurrent()!.mov;
+	const base = RaceStore.getCurrent()!.mov;
+	let value = base;
 	if ((get('DISADV_51') as DisadvantageInstance).active.includes(3)) {
 		value = Math.round(value / 2);
 	}
@@ -187,7 +194,8 @@ export function getMOV(): SecondaryAttribute {
 		id: 'MOV',
 		name: 'Geschwindigkeit',
 		short: 'GS',
-		value,
+		base,
+		value
 	};
 }
 

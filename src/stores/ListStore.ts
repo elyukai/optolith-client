@@ -308,15 +308,21 @@ class ListStoreStatic extends Store {
 
 			switch (obj.category) {
 				case Categories.ATTRIBUTES: {
-					const values: number[] = Array.from({ length: value! - 8 }, ({}, i) => i + 8);
-					this.byId[id as string] = IncreasableUtils.set(obj, value!);
-					return values.map(e => final(5, e)).reduce((a, b) => a + b, 0);
+					if (typeof value === 'number') {
+						const values: number[] = Array.from({ length: value - 8 }, (_, i) => i + 8);
+						this.byId[id as string] = IncreasableUtils.set(obj, value);
+						return values.map(e => final(5, e)).reduce((a, b) => a + b, 0);
+					}
+					return 0;
 				}
 
 				case Categories.TALENTS: {
-					const values: number[] = Array.from({ length: value! - obj.value }, ({}, i) => i + obj.value);
-					this.byId[id as string] = IncreasableUtils.set(obj, value!);
-					return values.map(e => final(obj.ic, e)).reduce((a, b) => a + b, 0);
+					if (typeof value === 'number') {
+						const values: number[] = Array.from({ length: value - obj.value }, (_, i) => i + obj.value);
+						this.byId[id as string] = IncreasableUtils.set(obj, value);
+						return values.map(e => final(obj.ic, e)).reduce((a, b) => a + b, 0);
+					}
+					return 0;
 				}
 
 				case Categories.ADVANTAGES:
@@ -385,7 +391,7 @@ class ListStoreStatic extends Store {
 			this.byId[e.id] = IncreasableUtils.set(e, combatTechniqueValueMax);
 		});
 		return valueTooHigh.reduce<number>((ap, instance) => {
-			const values: number[] = Array.from({ length: instance.value - combatTechniqueValueMax }, ({}, i) => i + combatTechniqueValueMax + 1);
+			const values: number[] = Array.from({ length: instance.value - combatTechniqueValueMax }, (_, i) => i + combatTechniqueValueMax + 1);
 			return ap + values.map(e => final(instance.ic, e)).reduce((a, b) => a + b, 0);
 		}, 0);
 	}
@@ -461,7 +467,7 @@ class ListStoreStatic extends Store {
 		});
 		Object.keys(activatable).forEach(id => {
 			const values = activatable[id];
-			(this.byId[id] as ActivatableInstance).active = values;
+			(this.byId[id] as ActivatableInstance).active = [ ...values.map(e => ({ ...e })) ];
 			switch (id) {
 				case 'ADV_4':
 				case 'ADV_16':

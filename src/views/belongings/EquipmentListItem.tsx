@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
 import IconButton from '../../components/IconButton';
+import ListItem from '../../components/ListItem';
+import ListItemButtons from '../../components/ListItemButtons';
+import ListItemGroup from '../../components/ListItemGroup';
+import ListItemName from '../../components/ListItemName';
+import ListItemSeparator from '../../components/ListItemSeparator';
 import TooltipToggle from '../../components/TooltipToggle';
 import EquipmentStore from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
@@ -156,27 +161,23 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 				</div>
 			} margin={11}>
 				{add ? (
-					<div className="list-item">
-						<div className="name">
-							<p className="title">{name}</p>
-						</div>
-						<div className="hr"></div>
-						<div className="btns">
+					<ListItem>
+						<ListItemName main={name} />
+						<ListItemSeparator />
+						<ListItemButtons>
 							<IconButton
 								icon="&#xE145;"
 								onClick={this.add}
 								flat
 								/>
-						</div>
-					</div>
+						</ListItemButtons>
+					</ListItem>
 				) : (
-					<div className="list-item">
-						<div className="name">
-							<p className="title">{numberValue}{numberValue && 'x '}{name}</p>
-						</div>
-						<div className="hr"></div>
-						<div className="type">{GROUPS[gr - 1]}</div>
-						<div className="btns">
+					<ListItem>
+						<ListItemName main={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
+						<ListItemSeparator />
+						<ListItemGroup list={GROUPS} index={gr} />
+						<ListItemButtons>
 							<IconButton
 								icon="&#xE254;"
 								onClick={this.edit}
@@ -187,8 +188,8 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 								onClick={this.delete}
 								flat
 								/>
-						</div>
-					</div>
+						</ListItemButtons>
+					</ListItem>
 				)}
 			</TooltipToggle>
 		);

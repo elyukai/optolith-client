@@ -2,10 +2,17 @@ import * as React from 'react';
 import * as SpellsActions from '../../actions/SpellsActions';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
+import List from '../../components/List';
+import ListItem from '../../components/ListItem';
+import ListItemGroup from '../../components/ListItemGroup';
+import ListItemName from '../../components/ListItemName';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
+import ConfigStore from '../../stores/ConfigStore';
 import PhaseStore from '../../stores/PhaseStore';
 import SpellsStore from '../../stores/SpellsStore';
 import { filterAndSort } from '../../utils/ListUtils';
@@ -16,46 +23,46 @@ interface State {
 	addSpellsDisabled: boolean;
 	areMaxUnfamiliar: boolean;
 	filterText: string;
+	filterTextSlidein: string;
 	phase: number;
 	showAddSlidein: boolean;
 	sortOrder: string;
 	spells: SpellInstance[];
+	enableActiveItemHints: boolean;
 }
 
 export default class Spells extends React.Component<undefined, State> {
-
 	state = {
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 		filterText: '',
+		filterTextSlidein: '',
 		phase: PhaseStore.get(),
 		showAddSlidein: false,
 		sortOrder: SpellsStore.getSortOrder(),
 		spells: SpellsStore.getAll(),
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
-	_updateSpellsStore = () => this.setState({
-		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
-		sortOrder: SpellsStore.getSortOrder(),
-		spells: SpellsStore.getAll(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	sort = (option: string) => SpellsActions.setSortOrder(option);
 	addToList = (id: string) => SpellsActions.addToList(id);
 	addPoint = (id: string) => SpellsActions.addPoint(id);
 	removeFromList = (id: string) => SpellsActions.removeFromList(id);
 	removePoint = (id: string) => SpellsActions.removePoint(id);
+	switchActiveItemHints = () => SpellsActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
 	componentDidMount() {
-		SpellsStore.addChangeListener(this._updateSpellsStore );
+		ConfigStore.addChangeListener(this.updateConfigStore);
+		SpellsStore.addChangeListener(this.updateSpellsStore);
 	}
 
 	componentWillUnmount() {
-		SpellsStore.removeChangeListener(this._updateSpellsStore );
+		ConfigStore.removeChangeListener(this.updateConfigStore);
+		SpellsStore.removeChangeListener(this.updateSpellsStore);
 	}
 
 	render() {
@@ -63,7 +70,7 @@ export default class Spells extends React.Component<undefined, State> {
 		const PROPERTIES = SpellsStore.getPropertyNames();
 		const TRADITIONS = SpellsStore.getTraditionNames();
 
-		const { addSpellsDisabled, areMaxUnfamiliar, filterText, phase, showAddSlidein, sortOrder, spells } = this.state;
+		const { addSpellsDisabled, areMaxUnfamiliar, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, spells } = this.state;
 
 		const sortArray = [
 			{ name: 'Alphabetisch', value: 'name' },
@@ -72,14 +79,15 @@ export default class Spells extends React.Component<undefined, State> {
 			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
-		const list = filterAndSort(spells, filterText, sortOrder);
-
 		const listActive: SpellInstance[] = [];
 		const listDeactive: SpellInstance[] = [];
 
-		list.forEach(e => {
+		spells.forEach(e => {
 			if (e.active) {
 				listActive.push(e);
+				if (enableActiveItemHints === true) {
+					listDeactive.push(e);
+				}
 			}
 			else if (isActivatable(e)) {
 				if (!isOwnTradition(e)) {
@@ -93,33 +101,44 @@ export default class Spells extends React.Component<undefined, State> {
 			}
 		});
 
+		const sortedActiveList = filterAndSort(listActive, filterText, sortOrder);
+		const sortedDeactiveList = filterAndSort(listDeactive, filterTextSlidein, sortOrder);
+
 		return (
-			<div className="page" id="spells">
+			<Page id="spells">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<Options>
+						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-						<Checkbox
-							checked={true}
-							onClick={() => undefined}
-							disabled
-							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+					</Options>
+					<Scroll>
+						<List>
 							{
-								listDeactive.map(obj => {
+								sortedDeactiveList.map(obj => {
+									let extendName = '';
+									if (!isOwnTradition(obj)) {
+										extendName += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+									}
+
+									if (obj.active === true) {
+										const { id, name } = obj;
+										const extendedName = name + extendName;
+										return (
+											<ListItem key={id} disabled>
+												<ListItemName main={extendedName} />
+											</ListItem>
+										);
+									}
+
 									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
 
-									let name = obj.name;
-									if (!isOwnTradition(obj)) {
-										name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
-									}
+									const name = obj.name + extendName;
 
 									const add = obj.gr === 5 ? {} : {
 										check,
@@ -138,15 +157,18 @@ export default class Spells extends React.Component<undefined, State> {
 											addFillElement
 											{...add}
 											>
-											<div className="property">{PROPERTIES[obj.property - 1]}</div>
+											<ListItemGroup>
+												{PROPERTIES[obj.property - 1]}
+												{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
+											</ListItemGroup>
 										</SkillListItem>
 									);
 								})
 							}
-						</div>
+						</List>
 					</Scroll>
 				</Slidein>
-				<div className="options">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
@@ -157,11 +179,11 @@ export default class Spells extends React.Component<undefined, State> {
 						label="Hinzufügen"
 						onClick={this.showAddSlidein}
 						/>
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
+				</Options>
+				<Scroll>
+					<List>
 						{
-							listActive.map(obj => {
+							sortedActiveList.map(obj => {
 								const [ a1, a2, a3, checkmod ] = obj.check;
 								const check = [ a1, a2, a3 ];
 
@@ -189,17 +211,32 @@ export default class Spells extends React.Component<undefined, State> {
 										addFillElement
 										noIncrease={obj.gr === 5}
 										{...other} >
-										<div className="property">
+										<ListItemGroup>
 											{PROPERTIES[obj.property - 1]}
 											{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
-										</div>
+										</ListItemGroup>
 									</SkillListItem>
 								);
 							})
 						}
-					</div>
+					</List>
 				</Scroll>
-			</div>
+			</Page>
 		);
+	}
+
+	private updateSpellsStore = () => {
+		this.setState({
+			addSpellsDisabled: SpellsStore.isActivationDisabled(),
+			areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
+			sortOrder: SpellsStore.getSortOrder(),
+			spells: SpellsStore.getAll(),
+		} as State);
+	}
+
+	private updateConfigStore = () => {
+		this.setState({
+			enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		} as State);
 	}
 }

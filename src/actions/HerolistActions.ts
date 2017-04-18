@@ -83,14 +83,15 @@ export const loadHero = (indexId: string) => {
 	});
 };
 
-export const saveHero = () => {
+export const saveHero = (closeAfterSave?: boolean) => {
 	const current = HerolistStore.getCurrent();
 	const data = generateHeroSaveData();
 	AppDispatcher.dispatch<SaveHeroAction>({
 		type: ActionTypes.SAVE_HERO,
 		payload: {
 			current,
-			data
+			data,
+			closeAfterSave
 		}
 	});
 };

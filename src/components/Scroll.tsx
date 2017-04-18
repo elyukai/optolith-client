@@ -1,6 +1,6 @@
 // import PerfectScrollbar from 'react-perfect-scrollbar';
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 import GeminiScrollbar from 'react-gemini-scrollbar';
 
 interface Props {

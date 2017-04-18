@@ -78,7 +78,7 @@
 		"one-line": [true, "check-open-brace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
 		"ordered-imports": [true],
-		"prefer-method-signature": true,
+		// "prefer-method-signature": true,
 		"quotemark": [true, "single", "jsx-double", "avoid-escape"],
 		"semicolon": [true, "always"],
 		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],

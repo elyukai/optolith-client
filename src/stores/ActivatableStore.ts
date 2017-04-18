@@ -202,7 +202,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 	} | {
 		[id: string]: SpecialAbilityInstance;
 	};
-	const finalEntries: Array<ToOptionalKeys<ActivatableInstance>> = [];
+	const finalEntries: DeactiveViewObject[] = [];
 	for (const id in allEntries) {
 		if (allEntries.hasOwnProperty(id)) {
 			const a = allEntries[id] as ActivatableInstance & { tiers?: number; gr?: number; };
@@ -418,5 +418,5 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 			}
 		}
 	}
-	return finalEntries as ActivatableInstance[];
+	return finalEntries;
 };

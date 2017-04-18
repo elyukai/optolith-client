@@ -6,6 +6,8 @@ import AttributeBorder from './AttributeBorder';
 import AttributesRemovePermanent from './AttributesRemovePermanent';
 
 interface Props {
+	label: string;
+	name: string;
 	redeemed: number;
 	lost: number;
 	phase: number;
@@ -15,14 +17,20 @@ interface Props {
 }
 
 export default (props: Props) => {
-	const { phase, redeem, removePermanent, removeRedeemed, redeemed, lost } = props;
+	const { label, name, phase, redeem, removePermanent, removeRedeemed, redeemed, lost } = props;
 	const available = lost - redeemed;
 
 	return (
-		<AttributeBorder value={available}>
-			{ phase === 2 ? (
-				<NumberBox max={lost} />
-			) : null }
+		<AttributeBorder
+			label={label}
+			value={available}
+			tooltip={<div className="calc-attr-overlay">
+				<h4><span>{name}</span><span>{available}</span></h4>
+				<p>Gesamt verloren: {lost}</p>
+				<p>Zurückgekauft: {redeemed}</p>
+			</div>}
+			tooltipMargin={7}
+			>
 			{ phase === 2 ? (
 				<IconButton
 					className="add"

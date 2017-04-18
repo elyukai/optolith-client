@@ -3,9 +3,10 @@ import Button from './Button';
 import Icon from './Icon';
 
 interface Props {
-	onClick?: () => void;
 	icon: string;
+	disabled?: boolean;
 	flat?: boolean;
+	onClick?(): void;
 	[id: string]: any;
 }
 

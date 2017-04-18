@@ -6,7 +6,11 @@ import SpellsStore from '../../stores/SpellsStore';
 import { sort } from '../../utils/ListUtils';
 import { isOwnTradition } from '../../utils/SpellUtils';
 
-export default () => {
+interface Props {
+	attributeValueVisibility: boolean;
+}
+
+export default function SpellsSheetMain(props: Props) {
 	const filtered = SpellsStore.getAll().filter(e => e.active && e.gr !== 5);
 	const spells = sort(filtered, SpellsStore.getSortOrder()) as SpellInstance[];
 	const list = Array(21).fill(undefined) as Array<SpellInstance | undefined>;
@@ -36,7 +40,15 @@ export default () => {
 							if (e) {
 								const rawCheck = e.check;
 								const checkmod = rawCheck.splice(3)[0];
-								const check = rawCheck.map(attr => (get(attr) as AttributeInstance).short).join('/');
+								const check = rawCheck.map(attr => {
+									const attribute = get(attr) as AttributeInstance;
+									if (props.attributeValueVisibility === true) {
+										return attribute.value;
+									}
+									else {
+										return attribute.short;
+									}
+								}).join('/');
 								let name = e.name;
 								if (!isOwnTradition(e)) {
 									name += ` (${e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
@@ -80,4 +92,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-};
+}

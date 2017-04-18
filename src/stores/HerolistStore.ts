@@ -1,3 +1,5 @@
+import { remote } from 'electron';
+import { last } from 'lodash';
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import alert from '../utils/alert';
@@ -32,7 +34,7 @@ class HerolistStoreStatic extends Store {
 					break;
 
 				case ActionTypes.SAVE_HERO:
-					this.saveHero(action.payload.current.indexId, action.payload.data);
+					this.saveHero(action.payload.current.indexId, action.payload.data, action.payload.closeAfterSave);
 					break;
 
 				case ActionTypes.DELETE_HERO:
@@ -139,7 +141,7 @@ class HerolistStoreStatic extends Store {
 		this.allUserIds = Object.keys(this.byUserId);
 	}
 
-	private saveHero(indexId: string | null, data: HeroSave) {
+	private saveHero(indexId: string | null, data: HeroSave, closeAfterSave?: boolean) {
 		if (typeof indexId === 'string') {
 			const player = this.byHeroId[indexId].player;
 			this.byHeroId[indexId] = {
@@ -162,7 +164,7 @@ class HerolistStoreStatic extends Store {
 			this.currentIndexId = newIndexId;
 		}
 		FileAPIUtils.saveAll();
-		alert('Helden gespeichert');
+		alert('Alles gespeichert');
 	}
 
 	private deleteHero(indexId: string) {
@@ -190,7 +192,8 @@ class HerolistStoreStatic extends Store {
 	}
 
 	private getNewIndexId() {
-		const newIndexForId = Number.parseInt(this.allHeroIds[this.allHeroIds.length - 1].split('_')[1]) + 1;
+		const lastIndex = last(this.allHeroIds);
+		const newIndexForId = typeof lastIndex === 'string' ? Number.parseInt(last(this.allHeroIds).split('_')[1]) + 1 : 1;
 		return `HI_${newIndexForId}`;
 	}
 }

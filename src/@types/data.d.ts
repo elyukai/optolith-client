@@ -230,6 +230,11 @@ interface ProfessionInstance {
 	readonly untypicalDisadvantages: string[];
 	readonly variants: string[];
 	readonly category: PROFESSIONS;
+	readonly gr: number;
+	readonly src: {
+		id: string;
+		page?: string;
+	};
 }
 
 interface ProfessionVariantInstance {
@@ -259,6 +264,16 @@ interface ActiveViewObject {
 	cost: number;
 	disabled: boolean;
 	index: number;
+	gr?: number;
+}
+
+interface DeactiveViewObject {
+	id: string;
+	name: string;
+	cost?: string | number | number[];
+	input?: string | null;
+	tiers?: number | null;
+	sel?: SelectionObject[];
 	gr?: number;
 }
 
@@ -342,6 +357,7 @@ interface AdvantageInstanceInInit {
 	readonly category: ADVANTAGES;
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
+	gr: number;
 }
 
 interface AdvantageInstance extends AdvantageInstanceInInit {
@@ -360,6 +376,7 @@ interface DisadvantageInstanceInInit {
 	readonly category: DISADVANTAGES;
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
+	gr: number;
 }
 
 interface DisadvantageInstance extends DisadvantageInstanceInInit {
@@ -590,11 +607,17 @@ interface HistoryObject {
 	prevState: HistoryPrevState;
 }
 
-interface LanguagesScriptsSelectionListItem {
+interface LanguagesSelectionListItem {
 	id: string;
 	name: string;
-	cost?: number;
-	disabled: boolean;
+	native?: boolean;
+}
+
+interface ScriptsSelectionListItem {
+	id: string;
+	name: string;
+	cost: number;
+	native?: boolean;
 }
 
 interface HeroSave extends HeroBase {

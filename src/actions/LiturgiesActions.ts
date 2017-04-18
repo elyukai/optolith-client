@@ -1,37 +1,41 @@
-import { ACTIVATE_LITURGY, DEACTIVATE_LITURGY, ADD_LITURGY_POINT, REMOVE_LITURGY_POINT, SET_LITURGIES_SORT_ORDER } from '../constants/ActionTypes';
+import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
 export const addToList = (id: string) => AppDispatcher.dispatch<ActivateLiturgyAction>({
-	type: ACTIVATE_LITURGY,
+	type: ActionTypes.ACTIVATE_LITURGY,
 	payload: {
 		id
 	}
 });
 
 export const removeFromList = (id: string) => AppDispatcher.dispatch<DeactivateLiturgyAction>({
-	type: DEACTIVATE_LITURGY,
+	type: ActionTypes.DEACTIVATE_LITURGY,
 	payload: {
 		id
 	}
 });
 
 export const addPoint = (id: string) => AppDispatcher.dispatch<AddLiturgyPointAction>({
-	type: ADD_LITURGY_POINT,
+	type: ActionTypes.ADD_LITURGY_POINT,
 	payload: {
 		id
 	}
 });
 
 export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveLiturgyPointAction>({
-	type: REMOVE_LITURGY_POINT,
+	type: ActionTypes.REMOVE_LITURGY_POINT,
 	payload: {
 		id
 	}
 });
 
 export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetLiturgiesSortOrderAction>({
-	type: SET_LITURGIES_SORT_ORDER,
+	type: ActionTypes.SET_LITURGIES_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
+});
+
+export const switchEnableActiveItemHints = () => AppDispatcher.dispatch<SwitchEnableActiveItemHintsAction>({
+	type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS
 });

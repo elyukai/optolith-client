@@ -11,6 +11,8 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListS
 import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import RaceStore from '../../stores/RaceStore';
+import { getSelectionItem } from '../../utils/ActivatableUtils';
+import { sortByName } from '../../utils/ListUtils';
 import SelectionsCantrips from './SelectionsCantrips';
 import SelectionsCt from './SelectionsCt';
 import SelectionsCurses from './SelectionsCurses';
@@ -175,6 +177,17 @@ export default class Selections extends React.Component<Props, State> {
 			});
 		}
 
+		let buyScriptElement;
+
+		if (culture.scripts.length > 0) {
+			const selectionItem = getSelectionItem(get('SA_28') as SpecialAbilityInstance, culture.scripts[0]);
+			buyScriptElement = (
+				<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
+					Schrift kaufen{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
+				</Checkbox>
+			);
+		}
+
 		let langLitcElement = null;
 		let langLitcApLeft = 0;
 
@@ -185,28 +198,39 @@ export default class Selections extends React.Component<Props, State> {
 			const SA_28 = get('SA_28') as SpecialAbilityInstance;
 			const SA_30 = get('SA_30') as SpecialAbilityInstance;
 
-			const list: LanguagesScriptsSelectionListItem[] = [];
+			const scripts: ScriptsSelectionListItem[] = [];
+			const languages: LanguagesSelectionListItem[] = [];
 
 			SA_28.sel.forEach(e => {
 				const sid = e.id as number;
-				const cost = SA_28.sel[sid - 1].cost;
+				const cost = SA_28.sel[sid - 1].cost!;
 				const name = SA_28.sel[sid - 1].name;
-				const disabled = buyLiteracy && ((!selectLitc && sid === culture.scripts[0]) || (selectLitc && sid === litc));
-				list.push({ id: `LITC_${sid}`, name, cost, disabled });
+				const native = buyLiteracy && ((!selectLitc && sid === culture.scripts[0]) || (selectLitc && sid === litc));
+				scripts.push({ id: `LITC_${sid}`, name, cost, native });
 			});
 
 			SA_30.sel.forEach(e => {
 				const sid = e.id as number;
 				const name = SA_30.sel[sid - 1].name;
-				const disabled = (!selectLang && sid === culture.languages[0]) || (selectLang && sid === lang);
-				list.push({ id: `LANG_${sid}`, name, disabled });
+				const native = (!selectLang && sid === culture.languages[0]) || (selectLang && sid === lang);
+				languages.push({ id: `LANG_${sid}`, name, native });
 			});
 
-			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+			scripts.sort(sortByName);
+			languages.sort(sortByName);
 
 			langLitcApLeft = value - Array.from(active.values()).reduce((a, b) => a + b, 0);
 
-			langLitcElement = <SelectionsLangLitc list={list} active={active} apTotal={value} apLeft={langLitcApLeft} change={this.changeLangLitc} />;
+			langLitcElement = (
+				<SelectionsLangLitc
+					scripts={scripts}
+					languages={languages}
+					active={active}
+					apTotal={value}
+					apLeft={langLitcApLeft}
+					change={this.changeLangLitc}
+					/>
+			);
 		}
 
 		let cursesElement = null;
@@ -238,7 +262,7 @@ export default class Selections extends React.Component<Props, State> {
 				<SelectionsCt
 					list={list}
 					active={active}
-					num={value}
+					value={value}
 					amount={amount}
 					disabled={combatTechniquesSecond}
 					change={this.changeCombattech}
@@ -259,7 +283,7 @@ export default class Selections extends React.Component<Props, State> {
 				<SelectionsCt
 					list={list}
 					active={active}
-					num={value}
+					value={value}
 					amount={amount}
 					disabled={combattech}
 					change={this.changeCombattech}
@@ -312,23 +336,19 @@ export default class Selections extends React.Component<Props, State> {
 						Kulturpaket kaufen ({culture.ap} AP)
 					</Checkbox>
 					{
-						selectLang ? (
+						selectLang && (
 							<Dropdown
 								hint="Muttersprache auswählen"
 								value={lang}
 								onChange={this.changeLang}
 								options={culture.languages.map(e => {
-									const lang = (get('SA_30') as SpecialAbilityInstance).sel[e - 1];
-									return { id: e, name: lang.name };
+									const lang = getSelectionItem(get('SA_30') as SpecialAbilityInstance, e);
+									return { id: e, name: `${lang && lang.name}` };
 								})}
 								disabled={langLitc.size > 0} />
-						) : null
+						)
 					}
-					<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
-						Schrift kaufen{
-							!selectLitc ? ` (${(get('SA_28') as SpecialAbilityInstance).sel[culture.scripts[0] - 1].name}, ${(get('SA_28') as SpecialAbilityInstance).sel[culture.scripts[0] - 1].cost} AP)` : ''
-						}
-					</Checkbox>
+					{buyScriptElement}
 					{
 						selectLitc ? (
 							<Dropdown
@@ -336,8 +356,8 @@ export default class Selections extends React.Component<Props, State> {
 								value={litc}
 								onChange={this.changeLitc}
 								options={culture.scripts.map(e => {
-									const lit = (get('SA_28') as SpecialAbilityInstance).sel[e - 1];
-									return { id: e, name: `${lit.name} (${lit.cost} AP)` };
+									const lit = getSelectionItem(get('SA_28') as SpecialAbilityInstance, e);
+									return { id: e, name: `${lit && lit.name} (${lit && lit.cost} AP)` };
 								})}
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null

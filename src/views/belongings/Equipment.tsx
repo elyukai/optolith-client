@@ -3,6 +3,9 @@ import * as EquipmentActions from '../../actions/EquipmentActions';
 import Aside from '../../components/Aside';
 import BorderButton from '../../components/BorderButton';
 import Dropdown from '../../components/Dropdown';
+import List from '../../components/List';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import SortOptions from '../../components/SortOptions';
@@ -18,13 +21,13 @@ import { filterAndSort, sortByName } from '../../utils/ListUtils';
 import EquipmentListItem from './EquipmentListItem';
 import ItemEditor from './ItemEditor';
 
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
+const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Fortbewegungsmittel'];
 const groupsSelectionItems = GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
 
 interface State {
 	filterGroupSlidein: number;
-	filterTextSlidein: string;
 	filterText: string;
+	filterTextSlidein: string;
 	items: ItemInstance[];
 	purse: {
 		d: string;
@@ -73,14 +76,14 @@ export default class Inventory extends React.Component<undefined, State> {
 	render() {
 
 		const {
+			filterGroupSlidein,
 			filterText,
+			filterTextSlidein,
 			items,
 			showAddSlidein,
 			sortOrder,
 			templates,
 			purse,
-			filterTextSlidein,
-			filterGroupSlidein,
 		} = this.state;
 
 		const list = filterAndSort(items, filterText, sortOrder, GROUPS);
@@ -91,7 +94,7 @@ export default class Inventory extends React.Component<undefined, State> {
 			return isGroup && isNotInList;
 		};
 
-		const templateList = filterAndSort(templates.filter(filterTemplates), filterTextSlidein, 'name') as ItemInstance[];
+		const templateList = filterAndSort(templates.filter(filterTemplates), filterTextSlidein, 'name');
 
 		const totalPrice = Math.round(list.reduce((n, i) => n + i.price || n, 0) * 100) / 100;
 		let startMoney = 750;
@@ -109,9 +112,9 @@ export default class Inventory extends React.Component<undefined, State> {
 		const hasNoAddedAP = APStore.getTotal() === ELStore.getStart().ap;
 
 		return (
-			<div className="page" id="equipment">
+			<Page id="equipment">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
+					<Options>
 						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<Dropdown
 							value={filterGroupSlidein}
@@ -119,16 +122,16 @@ export default class Inventory extends React.Component<undefined, State> {
 							options={groupsSelectionItems}
 							fullWidth
 							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
+					</Options>
+					<Scroll>
+						<List>
 							{
 								templateList.map(obj => <EquipmentListItem key={obj.id} data={obj} add />)
 							}
-						</div>
+						</List>
 					</Scroll>
 				</Slidein>
-				<div className="options">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						options={[ 'name', 'groupname', 'where' ]}
@@ -137,13 +140,13 @@ export default class Inventory extends React.Component<undefined, State> {
 						/>
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
 					<BorderButton label="Erstellen" onClick={this.showItemCreation} />
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
+				</Options>
+				<Scroll>
+					<List>
 						{
 							list.map(obj => <EquipmentListItem key={obj.id} data={obj} />)
 						}
-					</div>
+					</List>
 				</Scroll>
 				<Aside>
 					<div className="purse">
@@ -163,7 +166,7 @@ export default class Inventory extends React.Component<undefined, State> {
 						</div>
 					</div>
 				</Aside>
-			</div>
+			</Page>
 		);
 	}
 

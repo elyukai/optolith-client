@@ -1,6 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { get } from '../stores/ListStore';
+import { getSelectionItem } from '../utils/ActivatableUtils';
 import CultureStore from './CultureStore';
 import ELStore from './ELStore';
 import ListStore from './ListStore';
@@ -212,8 +213,8 @@ class APStoreStatic extends Store {
 	private updateAll(obj: AdventurePoints) {
 		this.total = obj.total;
 		this.spent = obj.spent;
-		this.spentForAdvantages = obj.adv;
-		this.spentForDisadvantages = obj.disadv;
+		this.spentForAdvantages = [ ...obj.adv ] as [number, number, number];
+		this.spentForDisadvantages = [ ...obj.disadv ] as [number, number, number];
 	}
 
 	private assignRCP(selections: Selections) {
@@ -224,7 +225,8 @@ class APStoreStatic extends Store {
 		if (selections.buyLiteracy) {
 			const culture = CultureStore.getCurrent();
 			const id = culture!.scripts.length > 1 ? selections.litc : culture!.scripts[0];
-			this.spent += (get('SA_28') as SpecialAbilityInstance).sel[id - 1].cost!;
+			const selectionItem = getSelectionItem(get('SA_28') as SpecialAbilityInstance, id);
+			this.spent += selectionItem && selectionItem.cost || 0;
 		}
 
 		const race = RaceStore.getCurrent();

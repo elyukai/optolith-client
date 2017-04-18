@@ -2,21 +2,28 @@ import * as React from 'react';
 import * as DisAdvActions from '../../actions/DisAdvActions';
 import BorderButton from '../../components/BorderButton';
 import Checkbox from '../../components/Checkbox';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
+import RecommendedReference from '../../components/RecommendedReference';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
+import ConfigStore from '../../stores/ConfigStore';
 import CultureStore from '../../stores/CultureStore';
 import DisAdvStore from '../../stores/DisAdvStore';
 import ProfessionStore from '../../stores/ProfessionStore';
 import RaceStore from '../../stores/RaceStore';
-import DisAdvList from './DisAdvList';
+import ActiveList from './ActiveList';
+import DeactiveList from './DeactiveList';
 
 interface State {
 	filterText: string;
+	filterTextSlidein: string;
 	showRating: boolean;
-	disadvActive: ActiveViewObject[];
-	disadvDeactive: DisadvantageInstance[];
+	enableActiveItemHints: boolean;
+	activeList: ActiveViewObject[];
+	list: DisadvantageInstance[];
 	showAddSlidein: boolean;
 	race: RaceInstance;
 	culture: CultureInstance;
@@ -26,66 +33,95 @@ interface State {
 export default class Disadvantages extends React.Component<undefined, State> {
 	state = {
 		culture: CultureStore.getCurrent()!,
-		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES) as DisadvantageInstance[],
+		activeList: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
+		list: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES) as DisadvantageInstance[],
 		filterText: '',
+		filterTextSlidein: '',
 		profession: ProfessionStore.getCurrent()!,
 		race: RaceStore.getCurrent()!,
 		showAddSlidein: false,
 		showRating: DisAdvStore.getRating(),
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
-	_updateDisAdvStore = () => this.setState({
-		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
-		showRating: DisAdvStore.getRating(),
-	} as State)
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	changeRating = () => DisAdvActions.switchRatingVisibility();
+	switchActiveItemHints = () => DisAdvActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
 	componentDidMount() {
-		DisAdvStore.addChangeListener(this._updateDisAdvStore );
+		ConfigStore.addChangeListener(this.updateConfigStore);
+		DisAdvStore.addChangeListener(this.updateDisAdvStore);
 	}
 
 	componentWillUnmount() {
-		DisAdvStore.removeChangeListener(this._updateDisAdvStore );
+		ConfigStore.removeChangeListener(this.updateConfigStore);
+		DisAdvStore.removeChangeListener(this.updateDisAdvStore);
 	}
 
 	render() {
-
 		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP' } = {};
-		const { race, culture, profession } = this.state;
+		const { activeList, enableActiveItemHints, list, filterText, filterTextSlidein, race, culture, profession, showRating } = this.state;
 
 		const IMP = 'IMP';
 		const TYP = 'TYP';
 		const UNTYP = 'UNTYP';
 
-		race.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		race.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		culture.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		culture.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		profession.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		profession.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		race.importantDisadvantages.forEach(e => { rating[e[0]] = IMP; });
+		if (showRating) {
+			race.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+			race.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
+			culture.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+			culture.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
+			profession.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
+			profession.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
+			race.importantDisadvantages.forEach(e => { rating[e[0]] = IMP; });
+		}
 
 		return (
-			<div className="page" id="advantages">
+			<Page id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
-						<Checkbox checked={this.state.showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
-					</div>
-					<DisAdvList list={this.state.disadvDeactive} type="DISADV" rating={rating} showRating={this.state.showRating} phase={2} />
+					<Options>
+						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<Checkbox checked={showRating} onClick={this.changeRating}>Empfohlen durch Spezies, Kultur und Profession</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						{showRating && <RecommendedReference/>}
+					</Options>
+					<DeactiveList
+						activeList={enableActiveItemHints ? activeList : undefined}
+						filterText={filterTextSlidein}
+						list={list}
+						rating={rating}
+						showRating={showRating}
+						/>
 				</Slidein>
-				<div className="options">
-					<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
+				<Options>
+					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-				</div>
-				<DisAdvList list={this.state.disadvActive} type="DISADV" rating={rating} showRating={this.state.showRating} active phase={2} />
-			</div>
+					{showRating && <RecommendedReference/>}
+				</Options>
+				<ActiveList
+					filterText={filterText}
+					list={activeList}
+					rating={rating}
+					showRating={showRating}
+					/>
+			</Page>
 		);
+	}
+
+	private updateDisAdvStore = () => {
+		this.setState({
+			activeList: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
+			list: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
+			showRating: DisAdvStore.getRating(),
+		} as State);
+	}
+
+	private updateConfigStore = () => {
+		this.setState({
+			enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		} as State);
 	}
 }

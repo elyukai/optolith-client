@@ -8,7 +8,7 @@ interface Props {
 	currentID: string | null;
 	culture: CultureInstance;
 	showDetails: boolean;
-	changeTab(tab: string): void;
+	changeTab(): void;
 }
 
 export default class CulturesListItem extends React.Component<Props, undefined> {

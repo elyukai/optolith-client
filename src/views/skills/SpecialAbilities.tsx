@@ -1,58 +1,64 @@
 import * as React from 'react';
 import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
-import ActivatableAddListItem from '../../components/ActivatableAddListItem';
-import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
+import ActivatableAddList from '../../components/ActivatableAddList';
+import ActivatableRemoveList from '../../components/ActivatableRemoveList';
 import BorderButton from '../../components/BorderButton';
+import Checkbox from '../../components/Checkbox';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
 import Scroll from '../../components/Scroll';
 import Slidein from '../../components/Slidein';
 import TextField from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
+import ConfigStore from '../../stores/ConfigStore';
 import PhaseStore from '../../stores/PhaseStore';
 import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
 import { filterAndSort } from '../../utils/ListUtils';
 
 interface State {
-	saActive: ActiveViewObject[];
-	saDeactive: SpecialAbilityInstance[];
+	activeList: ActiveViewObject[];
+	list: SpecialAbilityInstance[];
 	filterText: string;
+	filterTextSlidein: string;
 	sortOrder: string;
 	phase: number;
 	showAddSlidein: boolean;
+	enableActiveItemHints: boolean;
 }
 
-export default class SpecialAbilities extends React.Component<any, State> {
+export default class SpecialAbilities extends React.Component<undefined, State> {
 	state = {
 		filterText: '',
+		filterTextSlidein: '',
 		phase: PhaseStore.get(),
-		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
-		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES) as SpecialAbilityInstance[],
+		activeList: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
+		list: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES) as SpecialAbilityInstance[],
 		showAddSlidein: false,
 		sortOrder: SpecialAbilitiesStore.getSortOrder(),
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
-	_updateSpecialAbilitiesStore = () => this.setState({
-		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
-		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
-		sortOrder: SpecialAbilitiesStore.getSortOrder(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	sort = (option: string) => SpecialAbilitiesActions.setSortOrder(option);
+	switchActiveItemHints = () => SpecialAbilitiesActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
 	componentDidMount() {
-		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
+		ConfigStore.addChangeListener(this.updateConfigStore);
+		SpecialAbilitiesStore.addChangeListener(this.updateSpecialAbilitiesStore);
 	}
 
 	componentWillUnmount() {
-		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
+		ConfigStore.removeChangeListener(this.updateConfigStore);
+		SpecialAbilitiesStore.removeChangeListener(this.updateSpecialAbilitiesStore);
 	}
 
 	render() {
-		const { filterText, phase, saActive, saDeactive, showAddSlidein, sortOrder } = this.state;
+		const { enableActiveItemHints, filterText, filterTextSlidein, phase, activeList, list, showAddSlidein, sortOrder } = this.state;
 
 		const sortArray = [
 			{ name: 'Alphabetisch', value: 'name' },
@@ -61,35 +67,28 @@ export default class SpecialAbilities extends React.Component<any, State> {
 
 		const groupNames = SpecialAbilitiesStore.getGroupNames();
 
-		const listActive = filterAndSort(saActive, filterText, sortOrder, groupNames);
-		const listDeactive = filterAndSort(saDeactive, filterText, sortOrder, groupNames);
-
 		return (
-			<div className="page" id="specialabilities">
+			<Page id="specialabilities">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<Options>
+						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
-							{
-								listDeactive.map(sa => (
-									<ActivatableAddListItem
-										key={sa.id}
-										item={sa}
-										addToList={SpecialAbilitiesActions.addToList}
-										/>
-								))
-							}
-						</div>
-					</Scroll>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+					</Options>
+					<ActivatableAddList
+						activeList={enableActiveItemHints ? activeList : undefined}
+						addToList={SpecialAbilitiesActions.addToList}
+						filterText={filterTextSlidein}
+						groupNames={groupNames}
+						list={list}
+						sortOrder={sortOrder}
+						/>
 				</Slidein>
-				<div className="options">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
@@ -97,23 +96,31 @@ export default class SpecialAbilities extends React.Component<any, State> {
 						array={sortArray}
 						/>
 					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
-						{
-							listActive.map((sa, index) => (
-								<ActivatableRemoveListItem
-									key={`SA_ACTIVE_${index}`}
-									item={sa}
-									phase={phase}
-									removeFromList={SpecialAbilitiesActions.removeFromList}
-									setTier={SpecialAbilitiesActions.setTier}
-									/>
-							))
-						}
-					</div>
-				</Scroll>
-			</div>
+				</Options>
+				<ActivatableRemoveList
+					filterText={filterText}
+					groupNames={groupNames}
+					list={activeList}
+					phase={phase}
+					removeFromList={SpecialAbilitiesActions.removeFromList}
+					setTier={SpecialAbilitiesActions.setTier}
+					sortOrder={sortOrder}
+					/>
+			</Page>
 		);
+	}
+
+	private updateSpecialAbilitiesStore = () => {
+		this.setState({
+			activeList: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
+			list: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
+			sortOrder: SpecialAbilitiesStore.getSortOrder(),
+		} as State);
+	}
+
+	private updateConfigStore = () => {
+		this.setState({
+			enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		} as State);
 	}
 }

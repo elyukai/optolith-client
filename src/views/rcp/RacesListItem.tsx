@@ -8,7 +8,7 @@ interface Props {
 	currentID: string | null;
 	race: RaceInstance;
 	showDetails: boolean;
-	changeTab(tab: string): void;
+	changeTab(): void;
 }
 
 export default class RacesListItem extends React.Component<Props, undefined> {

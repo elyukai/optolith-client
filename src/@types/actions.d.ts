@@ -11,6 +11,12 @@ interface DefaultAction {
 	cost?: number;
 }
 
+// Global Actions
+
+interface SwitchEnableActiveItemHintsAction extends DefaultAction {
+	type: SWITCH_ENABLE_ACTIVE_ITEM_HINTS;
+}
+
 // AttributesActions
 
 interface AddAttributePointAction extends DefaultAction {
@@ -220,6 +226,7 @@ interface SaveHeroAction extends DefaultAction {
 			indexId: string | null;
 		};
 		data: HeroSave;
+		closeAfterSave?: boolean;
 	};
 }
 
@@ -371,6 +378,17 @@ interface SetProfessionsVisibilityFilterAction extends DefaultAction {
 	payload: {
 		filter: string;
 	};
+}
+
+interface SetProfessionsGroupVisibilityFilterAction extends DefaultAction {
+	type: SET_PROFESSIONS_GROUP_VISIBILITY_FILTER;
+	payload: {
+		filter: number;
+	};
+}
+
+interface SwitchProfessionsExpansionVisibilityFilterAction extends DefaultAction {
+	type: SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER;
 }
 
 // ProfessionVariantActions
@@ -686,6 +704,12 @@ interface ReceiveHeroSaveAction extends DefaultAction {
 
 interface RequestFailedAction extends DefaultAction {
 	type: REQUEST_FAILED;
+}
+
+// SheetActions
+
+interface SwitchSheetAttributeValueVisibilityAction extends DefaultAction {
+    type: SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY;
 }
 
 // SpecialAbilitiesActions

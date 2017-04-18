@@ -6,13 +6,15 @@ import ELStore from '../stores/ELStore';
 import { get, getAllByCategory } from './ListStore';
 import Store from './Store';
 
-type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | ReceiveInitialDataAction | CreateHeroAction;
+type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | ReceiveInitialDataAction | CreateHeroAction | SetProfessionsGroupVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction;
 
 class ProfessionStoreStatic extends Store {
 	private readonly category: PROFESSIONS = Categories.PROFESSIONS;
 	private currentId: string | null = null;
 	private sortOrder = 'name';
 	private visibilityFilter = 'common';
+	private groupVisibilityFilter = 0;
+	private expansionVisibilityFilter = false;
 	readonly dispatchToken: string;
 
 	constructor() {
@@ -22,6 +24,8 @@ class ProfessionStoreStatic extends Store {
 				case ActionTypes.RECEIVE_INITIAL_DATA:
 					this.sortOrder = action.payload.config.professionsSortOrder;
 					this.visibilityFilter = action.payload.config.professionsVisibilityFilter;
+					this.groupVisibilityFilter = action.payload.config.professionsGroupVisibilityFilter;
+					this.expansionVisibilityFilter = action.payload.config.professionsFromExpansionsVisibility;
 					break;
 
 				case ActionTypes.RECEIVE_HERO_DATA:
@@ -44,7 +48,15 @@ class ProfessionStoreStatic extends Store {
 					break;
 
 				case ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER:
-					this.updateView(action.payload.filter);
+					this.updateVisibilityFilter(action.payload.filter);
+					break;
+
+				case ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER:
+					this.updateGroupVisibilityFilter(action.payload.filter);
+					break;
+
+				case ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER:
+					this.updateExpansionVisibilityFilter();
 					break;
 
 				default:
@@ -93,8 +105,16 @@ class ProfessionStoreStatic extends Store {
 		return this.sortOrder;
 	}
 
-	areAllVisible() {
+	getVisibilityFilter() {
 		return this.visibilityFilter;
+	}
+
+	getGroupVisibilityFilter() {
+		return this.groupVisibilityFilter;
+	}
+
+	getExpansionVisibilityFilter() {
+		return this.expansionVisibilityFilter;
 	}
 
 	private updateCurrentID(id: string | null) {
@@ -105,8 +125,16 @@ class ProfessionStoreStatic extends Store {
 		this.sortOrder = option;
 	}
 
-	private updateView(view: string) {
-		this.visibilityFilter = view;
+	private updateVisibilityFilter(filter: string) {
+		this.visibilityFilter = filter;
+	}
+
+	private updateGroupVisibilityFilter(filter: number) {
+		this.groupVisibilityFilter = filter;
+	}
+
+	private updateExpansionVisibilityFilter() {
+		this.expansionVisibilityFilter = !this.expansionVisibilityFilter;
 	}
 }
 

@@ -38,6 +38,7 @@ export default class Races extends React.Component<Props, State> {
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => RaceActions.setRacesSortOrder(option);
+	changeTab = () => this.props.changeTab('culture');
 	changeValueVisibility = () => RaceActions.switchRaceValueVisibilityFilter();
 
 	componentDidMount() {
@@ -73,7 +74,7 @@ export default class Races extends React.Component<Props, State> {
 						{
 							list.map(race => <RacesListItem
 								key={race.id}
-								changeTab={this.props.changeTab.bind(null, 'culture')}
+								changeTab={this.changeTab}
 								currentID={currentID}
 								race={race}
 								showDetails={areValuesVisible}

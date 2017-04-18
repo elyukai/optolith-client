@@ -18,12 +18,30 @@ table {
 	width: 100%;
 }
 
+.print-document {
+	margin-top: 0;
+}
+
+.sheet-wrapper {
+	display: flex;
+	margin-top: 30px;
+}
+
+.sheet-options {
+	flex: none;
+	width: 200px;
+	margin-right: 35px;
+
+	&:last-child {
+		margin-bottom: 30px;
+	}
+}
+
 .sheet {
 	flex: none;
 	width: 21cm;
 	height: 29.7cm;
 	background: white;
-	margin-top: 30px;
 	text-align: left;
 	padding: 0.89cm;
 	font: 11px/16px Alegreya;
@@ -31,10 +49,6 @@ table {
 	letter-spacing: 0;
 	display: flex;
 	flex-direction: column;
-
-	&:last-child {
-		margin-bottom: 30px;
-	}
 
 	> div {
 		display: flex;

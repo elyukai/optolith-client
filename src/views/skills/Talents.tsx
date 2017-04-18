@@ -1,7 +1,12 @@
 import * as React from 'react';
 import * as TalentsActions from '../../actions/TalentsActions';
 import Checkbox from '../../components/Checkbox';
+import List from '../../components/List';
+import ListItemGroup from '../../components/ListItemGroup';
+import Options from '../../components/Options';
+import Page from '../../components/Page';
 import RadioButtonGroup from '../../components/RadioButtonGroup';
+import RecommendedReference from '../../components/RecommendedReference';
 import Scroll from '../../components/Scroll';
 import TextField from '../../components/TextField';
 import CultureStore from '../../stores/CultureStore';
@@ -58,8 +63,8 @@ export default class Talents extends React.Component<undefined, State> {
 		const list = filterAndSort(talents, filterText, sortOrder);
 
 		return (
-			<div className="page" id="talents">
-				<div className="options">
+			<Page id="talents">
+				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
@@ -70,10 +75,11 @@ export default class Talents extends React.Component<undefined, State> {
 							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 						]}
 						/>
-					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Wertung durch Kultur anzeigen</Checkbox>
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
+					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Empfohlen durch Kultur</Checkbox>
+					{talentRating && <RecommendedReference/>}
+				</Options>
+				<Scroll>
+					<List>
 						{
 							list.map(obj => (
 								<SkillListItem
@@ -90,13 +96,13 @@ export default class Talents extends React.Component<undefined, State> {
 									removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
 									removeDisabled={!isDecreasable(obj)}
 									>
-									<div className="group">{GROUPS[obj.gr - 1]}</div>
+									<ListItemGroup list={GROUPS} index={obj.gr} />
 								</SkillListItem>
 							))
 						}
-					</div>
+					</List>
 				</Scroll>
-			</div>
+			</Page>
 		);
 	}
 }

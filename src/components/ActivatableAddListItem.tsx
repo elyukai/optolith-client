@@ -3,8 +3,16 @@ import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
 import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
+import ListItem from './ListItem';
+import ListItemButtons from './ListItemButtons';
+import ListItemGroup from './ListItemGroup';
+import ListItemName from './ListItemName';
+import ListItemSelections from './ListItemSelections';
+import ListItemSeparator from './ListItemSeparator';
+import ListItemValues from './ListItemValues';
 import TextField from './TextField';
 
 interface AddObject {
@@ -17,10 +25,11 @@ interface AddObject {
 }
 
 interface Props {
-	item: ActivatableInstance;
+	item: DeactiveViewObject;
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
+	hideGroup?: boolean;
 	addToList(args: ActivateArgs): void;
 }
 
@@ -75,10 +84,10 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 	}
 
 	render() {
-		const { item, isImportant, isTypical, isUntypical } = this.props;
+		const { item, isImportant, isTypical, isUntypical, hideGroup } = this.props;
 		const { id, name, cost, sel, tiers } = item as ActivatableInstance & { tiers?: number; };
 		let { item: { input } } = this.props;
-		const { category, gr } = get(id) as ActivatableInstance & { gr?: number; };
+		const { category, gr } = get(id) as ActivatableInstance;
 		let sel2: SelectionObject[] | undefined;
 
 		const args: ActivateArgs = { id, cost: 0 };
@@ -101,14 +110,17 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'ADV_47':
 			case 'DISADV_48':
 				if (this.state.selected !== '') {
-					currentCost = (cost as number[])[(get(this.state.selected as string) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).ic - 1];
+					currentCost = (cost as number[])[(get(this.state.selected as string) as SkillishInstance).ic - 1];
 				}
 				args.sel = this.state.selected;
 				break;
 			case 'ADV_28':
-			case 'ADV_29':
-				currentCost = typeof this.state.selected === 'number' ? (get(id) as AdvantageInstance).sel[this.state.selected as number - 1].cost : '';
+			case 'ADV_29': {
+				const item = get(id) as ActivatableInstance;
+				const selectionItem = ActivatableUtils.getSelectionItem(item, this.state.selected);
+				currentCost = selectionItem && selectionItem.cost;
 				break;
+			}
 			case 'DISADV_1':
 				if (this.state.selectedTier > 0) {
 					currentCost = (cost as number) * this.state.selectedTier;
@@ -159,7 +171,9 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 					let disab = true;
 					if ([7, 8].includes(this.state.selected as number)) {
 						args.input = this.state.input;
-						currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1].cost;
+						const item = get(id) as ActivatableInstance;
+						const selectionItem = ActivatableUtils.getSelectionItem(item, this.state.selected);
+						currentCost = selectionItem && selectionItem.cost;
 						disab = false;
 					}
 					inputElement = (
@@ -172,7 +186,9 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				if (this.state.selected === 7 && (get(id) as DisadvantageInstance).active.filter(e => e.sid === 7).length > 0) {
 					currentCost = 0;
 				} else if (this.state.selected !== '') {
-					currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1].cost;
+					const item = get(id) as ActivatableInstance;
+					const selectionItem = ActivatableUtils.getSelectionItem(item, this.state.selected);
+					currentCost = selectionItem && selectionItem.cost;
 				}
 				args.sel = this.state.selected;
 				break;
@@ -208,18 +224,20 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				if (cost === 'sel') {
 					if (this.state.selected !== '') {
 						const selected = typeof this.state.selected === 'string' ? Number.parseInt(this.state.selected) : this.state.selected;
-						currentCost = (get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).sel[selected - 1].cost;
+						const item = get(id) as ActivatableInstance;
+						const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
+						currentCost = selectionItem && selectionItem.cost;
 					}
 					args.sel = this.state.selected;
 				} else if (sel !== undefined && sel.length > 0) {
 					args.sel = this.state.selected;
 					currentCost = cost as number;
-				} else if (tiers !== undefined && tiers !== null) {
+				} else if (tiers) {
 					if (this.state.selectedTier > 0) {
 						currentCost = (cost as number) * this.state.selectedTier;
 					}
 					args.tier = this.state.selectedTier;
-				} else if (input !== undefined && input !== null) {
+				} else if (input) {
 					args.input = this.state.input;
 					currentCost = cost as number;
 				} else {
@@ -307,34 +325,25 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		}
 
 		return (
-			<div
-				className={classNames({
-					'imp': isImportant,
-					'list-item': true,
-					'typ': isTypical,
-					'untyp': isUntypical,
-				})}
-				>
-				<div className="name">
-					<p className="title">{name}</p>
-				</div>
-				<div className="selections">
+			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
+				<ListItemName main={name} />
+				<ListItemSelections>
 					{tierElement1}
 					{selectElement}
 					{selectElement2}
 					{inputElement}
 					{tierElement2}
-				</div>
-				<div className="hr"></div>
-				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
-				<div className="values">
+				</ListItemSelections>
+				<ListItemSeparator/>
+				{!hideGroup && <ListItemGroup list={specialAbilityGroupNames} index={gr} />}
+				<ListItemValues>
 					<div className="cost">{currentCost}</div>
-				</div>
-				<div className="btns">
+				</ListItemValues>
+				<ListItemButtons>
 					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
 					<IconButton icon="&#xE88F;" flat disabled />
-				</div>
-			</div>
+				</ListItemButtons>
+			</ListItem>
 		);
 	}
 }

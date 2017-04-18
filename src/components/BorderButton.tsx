@@ -3,9 +3,15 @@ import Button from './Button';
 import Text from './Text';
 
 interface Props {
+	autoWidth?: boolean;
 	children?: React.ReactNode;
+	className?: string;
+	disabled?: boolean;
+	flat?: boolean;
+	fullWidth?: boolean;
 	label: string;
-	[propType: string]: any;
+	primary?: boolean;
+	onClick?(): void;
 }
 
 export default (props: Props) => {

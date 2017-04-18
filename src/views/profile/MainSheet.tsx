@@ -1,4 +1,5 @@
 import * as React from 'react';
+import BorderButton from '../../components/BorderButton';
 import TextBox from '../../components/TextBox';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
@@ -9,13 +10,16 @@ import ProfessionStore from '../../stores/ProfessionStore';
 import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
 import ProfileStore from '../../stores/ProfileStore';
 import RaceStore from '../../stores/RaceStore';
+import { printToPDF } from '../../utils/FileAPIUtils';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
 import ActivatableTextList from './ActivatableTextList';
 import MainSheetAttributes from './MainSheetAttributes';
 import MainSheetPersonalData from './MainSheetPersonalData';
-import SheetHeader from './SheetHeader';
+import Sheet from './Sheet';
+import SheetOptions from './SheetOptions';
+import SheetWrapper from './SheetWrapper';
 
-export default () => {
+export default function MainSheet() {
 	const ap = APStore.getAll();
 	const el = ELStore.getStart().name;
 	const profile = ProfileStore.getAll();
@@ -37,34 +41,43 @@ export default () => {
 	const attributes = secondaryAttributes.getAll();
 
 	return (
-		<div className="sheet" id="main-sheet">
-			<SheetHeader title="Persönliche Daten" />
-			<MainSheetPersonalData
-				ap={ap}
-				culture={culture}
-				el={el}
-				eyecolorTags={eyecolorTags}
-				haircolorTags={haircolorTags}
-				profession={profession}
-				professionVariant={professionVariant}
-				profile={profile}
-				race={race}
-				socialstatusTags={socialstatusTags}
-				/>
-			<div className="lower">
-				<div className="lists">
-					<TextBox className="activatable-list" label="Vorteile">
-						<ActivatableTextList list={advActive} />
-					</TextBox>
-					<TextBox className="activatable-list" label="Nachteile">
-						<ActivatableTextList list={disadvActive} />
-					</TextBox>
-					<TextBox className="activatable-list" label="Allgemeine Sonderfertigkeiten">
-						<ActivatableTextList list={generalsaActive} />
-					</TextBox>
+		<SheetWrapper>
+			<SheetOptions>
+				<BorderButton
+					className="print-document"
+					label="Dokument drucken"
+					onClick={printToPDF}
+					fullWidth
+					/>
+			</SheetOptions>
+			<Sheet id="main-sheet" title="Persönliche Daten">
+				<MainSheetPersonalData
+					ap={ap}
+					culture={culture}
+					el={el}
+					eyecolorTags={eyecolorTags}
+					haircolorTags={haircolorTags}
+					profession={profession}
+					professionVariant={professionVariant}
+					profile={profile}
+					race={race}
+					socialstatusTags={socialstatusTags}
+					/>
+				<div className="lower">
+					<div className="lists">
+						<TextBox className="activatable-list" label="Vorteile">
+							<ActivatableTextList list={advActive} />
+						</TextBox>
+						<TextBox className="activatable-list" label="Nachteile">
+							<ActivatableTextList list={disadvActive} />
+						</TextBox>
+						<TextBox className="activatable-list" label="Allgemeine Sonderfertigkeiten">
+							<ActivatableTextList list={generalsaActive} />
+						</TextBox>
+					</div>
+					<MainSheetAttributes attributes={attributes} />
 				</div>
-				<MainSheetAttributes attributes={attributes} />
-			</div>
-		</div>
+			</Sheet>
+		</SheetWrapper>
 	);
-};
+}

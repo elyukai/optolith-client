@@ -51,7 +51,7 @@ export function initCulture(raw: RawCulture): CultureInstance {
 }
 
 export function initProfession(raw: RawProfession): ProfessionInstance {
-	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars } = raw;
+	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src } = raw;
 	return {
 		ap,
 		category: Categories.PROFESSIONS,
@@ -71,6 +71,8 @@ export function initProfession(raw: RawProfession): ProfessionInstance {
 		untypicalAdvantages: untyp_adv.map(e => `ADV_${e}`),
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
 		variants: vars.map(e => `PV_${e}`),
+		gr,
+		src
 	};
 }
 
@@ -104,6 +106,7 @@ export function initAdvantage(raw: RawAdvantage): AdvantageInstance {
 		reqs: req,
 		sel,
 		tiers,
+		gr: 1
 	};
 }
 
@@ -121,6 +124,7 @@ export function initDisadvantage(raw: RawDisadvantage): DisadvantageInstance {
 		reqs: req,
 		sel,
 		tiers,
+		gr: 1
 	};
 }
 

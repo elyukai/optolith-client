@@ -4,6 +4,7 @@ import { join } from 'path';
 import * as FileActions from '../actions/FileActions';
 import * as ServerActions from '../actions/ServerActions';
 import CombatTechniquesStore from '../stores/CombatTechniquesStore';
+import ConfigStore from '../stores/ConfigStore';
 import CultureStore from '../stores/CultureStore';
 import DisAdvStore from '../stores/DisAdvStore';
 import EquipmentStore from '../stores/EquipmentStore';
@@ -11,6 +12,7 @@ import HerolistStore from '../stores/HerolistStore';
 import LiturgiesStore from '../stores/LiturgiesStore';
 import ProfessionStore from '../stores/ProfessionStore';
 import RaceStore from '../stores/RaceStore';
+import SheetStore from '../stores/SheetStore';
 import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import SpellsStore from '../stores/SpellsStore';
 import TalentsStore from '../stores/TalentsStore';
@@ -20,7 +22,7 @@ function getAppDataPath() {
 	return remote.app.getPath('userData');
 }
 
-const initialConfig = {
+const initialConfig: Config = {
 	herolistSortOrder: 'name',
 	herolistVisibilityFilter: 'all',
 	racesSortOrder: 'name',
@@ -30,10 +32,11 @@ const initialConfig = {
 	culturesValueVisibility: true,
 	professionsSortOrder: 'name',
 	professionsVisibilityFilter: 'common',
+	professionsGroupVisibilityFilter: 0,
 	professionsFromExpansionsVisibility: false,
-	advantagesDisadvantagesCultureRatingVisibility: true,
+	advantagesDisadvantagesCultureRatingVisibility: false,
 	talentsSortOrder: 'group',
-	talentsCultureRatingVisibility: true,
+	talentsCultureRatingVisibility: false,
 	combatTechniquesSortOrder: 'name',
 	specialAbilitiesSortOrder: 'group',
 	spellsSortOrder: 'name',
@@ -41,6 +44,7 @@ const initialConfig = {
 	liturgiesSortOrder: 'name',
 	equipmentSortOrder: 'name',
 	equipmentGroupVisibilityFilter: 1,
+	enableActiveItemHints: false
 };
 
 export function loadInitialData() {
@@ -53,7 +57,7 @@ export function loadInitialData() {
 			const tables = JSON.parse(data);
 			const configPath = join(appPath, 'config.json');
 			readFile(configPath, 'utf8', (error, data) => {
-				const config = error ? initialConfig : JSON.parse(data);
+				const config = error ? initialConfig : { ...initialConfig, ...JSON.parse(data) };
 				const heroesPath = join(appPath, 'heroes.json');
 				readFile(heroesPath, 'utf8', (error, data) => {
 					const heroes = error ? [] : JSON.parse(data);
@@ -81,8 +85,9 @@ export function saveConfig() {
 		culturesVisibilityFilter: CultureStore.areAllVisible(),
 		culturesValueVisibility: CultureStore.areValuesVisible(),
 		professionsSortOrder: ProfessionStore.getSortOrder(),
-		professionsVisibilityFilter: ProfessionStore.areAllVisible(),
-		professionsFromExpansionsVisibility: false,
+		professionsVisibilityFilter: ProfessionStore.getVisibilityFilter(),
+		professionsGroupVisibilityFilter: ProfessionStore.getGroupVisibilityFilter(),
+		professionsFromExpansionsVisibility: ProfessionStore.getExpansionVisibilityFilter(),
 		advantagesDisadvantagesCultureRatingVisibility: DisAdvStore.getRating(),
 		talentsSortOrder: TalentsStore.getSortOrder(),
 		talentsCultureRatingVisibility: TalentsStore.isRatingVisible(),
@@ -93,6 +98,8 @@ export function saveConfig() {
 		liturgiesSortOrder: LiturgiesStore.getSortOrder(),
 		equipmentSortOrder: EquipmentStore.getSortOrder(),
 		equipmentGroupVisibilityFilter: 1,
+		...SheetStore.getForSave(),
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
 	try {

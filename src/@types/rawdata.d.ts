@@ -69,6 +69,11 @@ interface RawProfession {
 	untyp_adv: string[];
 	untyp_dadv: string[];
 	vars: string[];
+	gr: number;
+	src: {
+		id: string;
+		page?: string;
+	}
 }
 
 interface RawProfessionVariant {
@@ -221,6 +226,7 @@ interface Config {
 	culturesValueVisibility: boolean;
 	professionsSortOrder: string;
 	professionsVisibilityFilter: string;
+	professionsGroupVisibilityFilter: number;
 	professionsFromExpansionsVisibility: boolean;
 	advantagesDisadvantagesCultureRatingVisibility: boolean;
 	talentsSortOrder: string;
@@ -232,6 +238,8 @@ interface Config {
 	liturgiesSortOrder: string;
 	equipmentSortOrder: string;
 	equipmentGroupVisibilityFilter: number;
+	sheetCheckAttributeValueVisibility?: boolean;
+	enableActiveItemHints: boolean;
 }
 
 interface Raw {

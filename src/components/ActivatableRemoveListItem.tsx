@@ -3,6 +3,13 @@ import * as React from 'react';
 import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
 import Dropdown from './Dropdown';
 import IconButton from './IconButton';
+import ListItem from './ListItem';
+import ListItemButtons from './ListItemButtons';
+import ListItemGroup from './ListItemGroup';
+import ListItemName from './ListItemName';
+import ListItemSelections from './ListItemSelections';
+import ListItemSeparator from './ListItemSeparator';
+import ListItemValues from './ListItemValues';
 
 interface RemoveObject {
 	id: string;
@@ -12,7 +19,8 @@ interface RemoveObject {
 
 interface Props {
 	item: ActiveViewObject;
-	phase: number;
+	phase?: number;
+	hideGroup?: boolean;
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
@@ -31,7 +39,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { phase, item, isImportant, isTypical, isUntypical } = this.props;
+		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical } = this.props;
 		const { id, tier, tiers, index, disabled, gr } = item;
 		let { cost, name } = item;
 		let addSpecial = '';
@@ -40,7 +48,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			let array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
-			if (id === 'SA_30' && (tier === 4 || this.props.phase < 3)) {
+			if (id === 'SA_30' && (tier === 4 || phase < 3)) {
 				array.push({ id: 4, name: 'MS' });
 			}
 			if (this.props.phase === 3) {
@@ -67,36 +75,28 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 		const args: RemoveObject = { id, index, cost };
 
 		return (
-			<div className={classNames({
-				'imp': isImportant,
-				'list-item': true,
-				'typ': isTypical,
-				'untyp': isUntypical,
-			})}
-			>
-				<div className="name">
-					<p className="title">{name}</p>
-				</div>
-				<div className="selections">
+			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
+				<ListItemName main={name} />
+				<ListItemSelections>
 					{tierElement}
-				</div>
-				<div className="hr"></div>
-				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
-				<div className="values">
+				</ListItemSelections>
+				<ListItemSeparator/>
+				{!hideGroup && <ListItemGroup list={specialAbilityGroupNames} index={gr} />}
+				<ListItemValues>
 					<div className="cost">{cost}</div>
-				</div>
-				<div className="btns">
-					{phase === 2 ? (
+				</ListItemValues>
+				<ListItemButtons>
+					{phase === 2 && (
 						<IconButton
 							icon="&#xE15B;"
 							onClick={this.removeFromList.bind(null, args as DeactivateArgs)}
 							disabled={disabled}
 							flat
 							/>
-					) : null}
+					)}
 					<IconButton icon="&#xE88F;" flat disabled />
-				</div>
-			</div>
+				</ListItemButtons>
+			</ListItem>
 		);
 	}
 }

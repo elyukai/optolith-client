@@ -62,6 +62,8 @@ export default (raw: RawTables) => {
 		untyp_adv: [],
 		untyp_dadv: [],
 		vars: [],
+		gr: 0,
+		src: { id: 'US25001' }
 	});
 	iterate(professionVariants, InitUtils.initProfessionVariant);
 	iterate(attributes, InitUtils.initAttribute);

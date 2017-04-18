@@ -1,17 +1,6 @@
 @import "ItemEditor";
 
 #equipment {
-	tbody {
-		td:last-child {
-			padding-right: 11px;
-		}
-
-		td.inc > .btn {
-			height: 32px;
-			padding: 2px;
-		}
-	}
-
 	.purse {
 		display: flex;
 		flex-direction: column;
@@ -50,7 +39,7 @@
 		}
 	}
 
-	.list-item .type {
+	li .group {
 		margin-left: 4px;
 		margin-right: 12px;
 	}

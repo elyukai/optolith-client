@@ -1,6 +1,10 @@
-import classNames from 'classnames';
 import * as React from 'react';
 import IconButton from '../../components/IconButton';
+import ListItem from '../../components/ListItem';
+import ListItemButtons from '../../components/ListItemButtons';
+import ListItemName from '../../components/ListItemName';
+import ListItemSeparator from '../../components/ListItemSeparator';
+import ListItemValues from '../../components/ListItemValues';
 import { get } from '../../stores/ListStore';
 import createOverlay from '../../utils/createOverlay';
 import SkillInfo from './SkillInfo';
@@ -33,17 +37,6 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 	render() {
 		const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease } = this.props;
 
-		const className = classNames({
-			'list-item': true,
-			'no-increase': noIncrease,
-			'typ': typ,
-			'untyp': untyp,
-		});
-
-		// const groupElement = group ? (
-		// 	<p className="group">{group}</p>
-		// ) : null;
-
 		const values: JSX.Element[] = [];
 
 		if (typeof sr === 'number') {
@@ -66,7 +59,6 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
 
-
 		if (addFillElement) {
 			values.push(<div key="fill" className="fill"></div>);
 		}
@@ -78,11 +70,11 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		values.push(...addValues.map(e => <div key={e.className} className={e.className}>{e.value}</div>));
 
 		const btnElement = isNotActive ? (
-			<div className="btns">
+			<ListItemButtons>
 				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} flat />
-			</div>
+			</ListItemButtons>
 		) : (
-			<div className="btns">
+			<ListItemButtons>
 				{ addPoint ? <IconButton icon="&#xE145;" onClick={addPoint} disabled={addDisabled} flat /> : null }
 				{ removePoint ? (
 					<IconButton
@@ -93,21 +85,19 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 						/>
 				) : null }
 				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled />
-			</div>
+			</ListItemButtons>
 		);
 
 		return (
-			<div className={className}>
-				<div className="name">
-					<p className="title">{name}</p>
-				</div>
-				<div className="hr"></div>
+			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp}>
+				<ListItemName main={name} />
+				<ListItemSeparator />
 				{children}
-				<div className="values">
+				<ListItemValues>
 					{values}
-				</div>
+				</ListItemValues>
 				{btnElement}
-			</div>
+			</ListItem>
 		);
 	}
 }

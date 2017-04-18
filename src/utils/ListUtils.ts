@@ -82,7 +82,7 @@ export const sortByWeight = (a: PlainNameData, b: PlainNameData) => a.weight! < 
 
 export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where! < b.where! ? -1 : a.where! > b.where! ? 1 : sortByName(a, b);
 
-export function sort(list: PlainNameData[], sortOrder: string): PlainNameData[] {
+export function sort<T extends PlainNameData>(list: T[], sortOrder: string): T[] {
 	let sort;
 	switch (sortOrder) {
 		case 'name':

@@ -43,6 +43,7 @@
 			&.check, &.enc, &.ic {
 				font: 8px/1 Alegreya SC;
 			}
+
 		}
 
 		tbody tr.group td {
@@ -58,8 +59,12 @@
 				width: 3mm;
 			}
 
-			&.name, &.check, &.enc, &.sr, &.comment {
+			&.name, &.enc, &.sr, &.comment {
 				padding: 0 1mm;
+			}
+
+			&.check {
+				width: 14mm;
 			}
 
 			&.comment {

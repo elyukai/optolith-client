@@ -60,7 +60,7 @@
 			.btn {
 				min-width: 140px;
 			}
-			
+
 			@extend %yellow-border;
 		}
 	}
@@ -116,48 +116,63 @@
 			}
 		}
 
-		> div {
+		.languages-scripts {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 
-			&:hover {
-				background: #1e2328;
-			}
-
-			> .checkbox {
+			> div {
 				flex: 1 1 100%;
 
-				&:hover {
-					background: none;
-				}
-			}
+				> div {
+					display: flex;
+					align-items: center;
 
-			> .dropdown {
-				margin: 0;
-				line-height: 26px;
+					&:not(.disabled):hover {
+						background: #1e2328;
+					}
 
-				> div > div {
-					&.value {
-						height: 28px;
+					> .checkbox {
+						flex: 1 1 100%;
 
-						&::before {
-							top: 9px;
+						&:hover {
+							background: none;
+						}
+					}
+
+					> .dropdown {
+						flex: none;
+						margin: 0;
+						line-height: 26px;
+						width: 60px;
+
+						> div > div {
+							&.value {
+								height: 28px;
+
+								&::before {
+									top: 9px;
+								}
+
+								&::after {
+									bottom: 9px;
+								}
+							}
 						}
 
-						&::after {
-							bottom: 9px;
+						&.bottom > div > .down {
+							top: 28px;
+						}
+
+						&.top > div > .down {
+							bottom: 28px;
 						}
 					}
 				}
-
-				&.bottom > div > .down {
-					top: 28px;
-				}
-
-				&.top > div > .down {
-					bottom: 28px;
-				}
 			}
+		}
+
+		.scripts {
+			margin-left: 20px;
 		}
 	}
 

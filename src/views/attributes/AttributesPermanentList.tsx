@@ -17,6 +17,8 @@ export default class AttributesPermanentList extends React.Component<Props, unde
 			<div className="permanent">
 				{ typeof AE.value === 'number' ? (
 					<AttributesPermanentListItem
+						label="pAsP"
+						name="Perm. Astralenergie"
 						redeemed={AE.permanentRedeemed}
 						lost={AE.permanentLost}
 						redeem={AttributesActions.redeemAEPoint}
@@ -25,8 +27,10 @@ export default class AttributesPermanentList extends React.Component<Props, unde
 						phase={phase}
 						/>
 				) : <div className="placeholder"></div> }
-				{ typeof KP.value === 'number' ? (
+				{ typeof KP.value === 'number' && (
 					<AttributesPermanentListItem
+						label="pKaP"
+						name="Perm. Karmaenergie"
 						redeemed={KP.permanentRedeemed}
 						lost={KP.permanentLost}
 						redeem={AttributesActions.redeemKPPoint}
@@ -34,7 +38,7 @@ export default class AttributesPermanentList extends React.Component<Props, unde
 						removePermanent={AttributesActions.removePermanentKPPoint}
 						phase={phase}
 						/>
-				) : null }
+				) }
 			</div>
 		);
 	}
