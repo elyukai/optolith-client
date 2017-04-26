@@ -1,17 +1,22 @@
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemovePermanentAEPointAction, RemovePermanentKPPointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { AttributeInstance, SpecialAbilityInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import HistoryStore from './HistoryStore';
-import { default as ListStore, get, getAllByCategory } from './ListStore';
-import RequirementsStore from './RequirementsStore';
-import Store from './Store';
+import { HistoryStore } from './HistoryStore';
+import { get, getAllByCategory, ListStore } from './ListStore';
+import { RequirementsStore } from './RequirementsStore';
+import { Store } from './Store';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | ReceiveHeroDataAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | SetSelectionsAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | SetSelectionsAction;
 type ids = 'LP' | 'AE' | 'KP';
 
 class AttributeStoreStatic extends Store {
-	private readonly category: ATTRIBUTES = Categories.ATTRIBUTES;
+	private readonly category = Categories.ATTRIBUTES;
 	private addedLifePoints = 0;
 	private addedArcaneEnergy = 0;
 	private addedKarmaPoints = 0;
@@ -90,7 +95,7 @@ class AttributeStoreStatic extends Store {
 						this.clear();
 						break;
 
-					case ActionTypes.RECEIVE_HERO_DATA:
+					case ActionTypes.LOAD_HERO:
 						this.updateAll(action.payload.data.attr);
 						break;
 
@@ -320,6 +325,4 @@ class AttributeStoreStatic extends Store {
 	}
 }
 
-const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic();
-
-export default AttributeStore;
+export const AttributeStore: AttributeStoreStatic = new AttributeStoreStatic();

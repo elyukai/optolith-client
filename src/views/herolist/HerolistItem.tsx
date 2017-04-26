@@ -1,46 +1,50 @@
-import classNames from 'classnames';
 import * as React from 'react';
 import ProgressArc from 'react-progress-arc';
 import * as HerolistActions from '../../actions/HerolistActions';
 import * as LocationActions from '../../actions/LocationActions';
-import AvatarWrapper from '../../components/AvatarWrapper';
-import IconButton from '../../components/IconButton';
-import VerticalList from '../../components/VerticalList';
-import ELStore from '../../stores/ELStore';
-import HerolistStore from '../../stores/HerolistStore';
-import HistoryStore from '../../stores/HistoryStore';
+import { AvatarWrapper } from '../../components/AvatarWrapper';
+import { IconButton } from '../../components/IconButton';
+import { ListItem } from '../../components/ListItem';
+import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
+import { VerticalList } from '../../components/VerticalList';
+import { ELStore } from '../../stores/ELStore';
+import { HerolistStore } from '../../stores/HerolistStore';
+import { HistoryStore } from '../../stores/HistoryStore';
 import { get } from '../../stores/ListStore';
-import ProfileStore from '../../stores/ProfileStore';
-import confirm from '../../utils/confirm';
+import { ProfessionInstance, User } from '../../types/data.d';
+import { calcElIdNumber } from '../../utils/calcEL';
+import { confirm } from '../../utils/confirm';
 import * as FileAPIUtils from '../../utils/FileAPIUtils';
 
-interface Props {
-	indexId: string | null;
+export interface HerolistItemProps {
+	id?: string;
 	name: string;
 	ap: {
 		total: number;
 	};
 	avatar: string;
-	c: string | null;
-	p: string | null;
+	c?: string;
+	p?: string;
 	player?: User;
-	pv: string | null;
-	r: string | null;
+	pv?: string;
+	r?: string;
 	sex: 'm' | 'f';
 }
 
-export default class HerolistItem extends React.Component<Props, undefined> {
+export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 
 	load = () => {
-		const indexId = this.props.indexId;
+		const id = this.props.id;
 		const safeToLoad = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
-		if (indexId && safeToLoad) {
-			HerolistActions.loadHero(indexId);
+		if (id && safeToLoad) {
+			HerolistActions.loadHero(id);
 		}
-		else if (indexId) {
+		else if (id) {
 			confirm('Ungespeicherte Aktionen', 'Beim aktuell geöffneten Helden sind einige Aktionen ungespeichert. Soll ohne Speichern fortgefahren werden?', true).then(result => {
 				if (result === true) {
-					HerolistActions.loadHero(indexId);
+					HerolistActions.loadHero(id);
 				}
 				else {
 					LocationActions.setSection('hero');
@@ -50,15 +54,15 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 	}
 	show = () => LocationActions.setSection('hero');
 	saveHeroAsJSON = () => {
-		const indexId = this.props.indexId;
+		const id = this.props.id;
 		const safeToSave = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
-		if (indexId && safeToSave) {
-			FileAPIUtils.saveHero(indexId);
+		if (id && safeToSave) {
+			FileAPIUtils.saveHero(id);
 		}
-		else if (indexId) {
+		else if (id) {
 			confirm('Ungespeicherte Aktionen', 'Beim aktuell geöffneten Helden sind einige Aktionen ungespeichert. Soll ohne Speichern fortgefahren werden?', true).then(result => {
 				if (result === true) {
-					FileAPIUtils.saveHero(indexId);
+					FileAPIUtils.saveHero(id);
 				}
 				else {
 					LocationActions.setSection('hero');
@@ -67,43 +71,25 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 		}
 	}
 	delete = () => {
-		const indexId = this.props.indexId;
-		if (indexId) {
+		const id = this.props.id;
+		if (id) {
 			confirm(`${this.props.name} löschen`, 'Soll der Held wirklich gelöscht werden? Die Aktion kann nich rückgängig gemacht werden!', true).then(result => {
 				if (result === true) {
-					HerolistActions.deleteHero(indexId);
+					HerolistActions.deleteHero(id);
 				}
 			});
 		}
 	}
 
 	render() {
-		const { player, indexId, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
-
-		const isOpen = indexId === HerolistStore.getCurrent().indexId;
-
+		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
-		const elAp = [ 900, 1000, 1100, 1200, 1400, 1700, 2100 ];
+		const elNumber = calcElIdNumber(apTotal);
+		const el = ELStore.get(`EL_${elNumber}`);
+		const elProgress = elNumber === 7 ? 1 : ((apTotal - el.ap) / (ELStore.get(`EL_${elNumber + 1}`).ap - el.ap));
+		const isOpen = id === HerolistStore.getCurrentId();
 
-		let currentEL = 6;
-
-		for (let i = 0; i < elAp.length; i++) {
-			if (elAp[i] === apTotal) {
-				currentEL = i;
-				break;
-			} else if (elAp[i] > apTotal) {
-				currentEL = i - 1;
-				break;
-			}
-		}
-
-		const elProgress = currentEL === 6 ? 1 : ((apTotal - elAp[currentEL]) / (elAp[currentEL + 1] - elAp[currentEL]));
-
-		const playerElement = player ? (
-			<span className="player">{player.displayName}</span>
-		) : null;
-
-		const rcpElement = indexId !== null ? (
+		const rcpElement = id !== null && (
 			<VerticalList className="rcp">
 				<span className="race">
 					{(() => {
@@ -134,30 +120,28 @@ export default class HerolistItem extends React.Component<Props, undefined> {
 					})()}
 				</span>
 			</VerticalList>
-		) : null;
+		);
 
 		return (
-			<li className="hero-list-item">
+			<ListItem>
 				<ProgressArc completed={elProgress} diameter={63} strokeWidth={4} />
-				<AvatarWrapper className="el" src={avatar}>
-					<div className="el-value">
-						<h2>{elRoman[currentEL]}</h2>
-					</div>
+				<AvatarWrapper src={avatar}>
+					<h2>{elRoman[elNumber - 1]}</h2>
 				</AvatarWrapper>
-				<div className="main">
-					<h2><span className="name">{name}</span>{playerElement}</h2>
+				<ListItemName name={name} addName={player && player.displayName} large>
 					{rcpElement}
-				</div>
-				<div className="buttons">
-					{indexId && <IconButton icon="&#xE80D;" onClick={this.saveHeroAsJSON} />}
-					{indexId && <IconButton icon="&#xE872;" onClick={this.delete} />}
+				</ListItemName>
+				<ListItemSeparator/>
+				<ListItemButtons>
+					{id && <IconButton icon="&#xE80D;" onClick={this.saveHeroAsJSON} />}
+					{id && <IconButton icon="&#xE872;" onClick={this.delete} />}
 					{(() => isOpen ? (
 						<IconButton icon="&#xE89E;" onClick={this.show} />
 					) : (
 						<IconButton icon="&#xE5DD;" onClick={this.load} />
 					))()}
-				</div>
-			</li>
+				</ListItemButtons>
+			</ListItem>
 		);
 	}
 }

@@ -1,34 +1,26 @@
 import * as React from 'react';
-import BorderButton from './BorderButton';
+import { BorderButton, BorderButtonProps } from './BorderButton';
 
-interface Button {
-	autoWidth?: boolean;
-	label: string;
-	primary?: boolean;
-	onClick?(): void;
-}
+export { BorderButtonProps as ButtonProps };
 
-interface Props {
-	list: Button[];
+export interface DialogButtonsProps {
+	list: BorderButtonProps[];
 	onClickDefault?(func?: () => void): void;
 }
 
-export default class DialogButtons extends React.Component<Props, undefined> {
-	render() {
+export function DialogButtons(props: DialogButtonsProps) {
+	const { list, onClickDefault } = props;
 
-		const { list, onClickDefault } = this.props;
+	const buttons = Array.isArray(list) && list.length > 0 ? list.map(e => {
+		e.onClick = onClickDefault && onClickDefault.bind(null, e.onClick);
+		return <BorderButton {...e} key={e.label} />;
+	}) : [];
 
-		const buttons = Array.isArray(list) && list.length > 0 ? list.map(e => {
-			e.onClick = onClickDefault && onClickDefault.bind(null, e.onClick);
-			return <BorderButton {...e} key={e.label} />;
-		}) : [];
-
-		return (
-			<div className="dialog-buttons">
-				<div className="dialog-buttons-inner">
-					{buttons}
-				</div>
+	return (
+		<div className="dialog-buttons">
+			<div className="dialog-buttons-inner">
+				{buttons}
 			</div>
-		);
-	}
+		</div>
+	);
 }

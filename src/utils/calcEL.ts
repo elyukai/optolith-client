@@ -1,13 +1,11 @@
-import ELStore from '../stores/ELStore';
+import { ELStore } from '../stores/ELStore';
 
-export default function calcEL(ap: number): string {
+export function calcElIdNumber(ap: number): number {
 	const els = ELStore.getAll();
-	const ids = [];
 	const tiers = [];
 
 	for (const id in els) {
 		if (els.hasOwnProperty(id)) {
-			ids.push(id);
 			tiers.push(els[id].ap);
 		}
 	}
@@ -20,5 +18,18 @@ export default function calcEL(ap: number): string {
 		index = tiers.length;
 	}
 
-	return ids[index];
+	return index + 1;
+}
+
+export function calcEL(ap: number): string {
+	const els = ELStore.getAll();
+	const ids = [];
+
+	for (const id in els) {
+		if (els.hasOwnProperty(id)) {
+			ids.push(id);
+		}
+	}
+
+	return ids[calcElIdNumber(ap) - 1];
 }

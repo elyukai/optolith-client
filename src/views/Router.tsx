@@ -1,10 +1,12 @@
-import { Component } from 'react';
+import { remote } from 'electron';
 import * as React from 'react';
-import Loader from '../components/Loader';
-import TitleBar from '../components/titlebar/TitleBar';
-import LoaderStore from '../stores/LoaderStore';
-import TabStore from '../stores/TabStore';
-import Route from './Route';
+import { Loader } from '../components/Loader';
+import { TitleBar } from '../components/titlebar/TitleBar';
+import { TitleBarControls } from '../components/titlebar/TitleBarControls';
+import { TitleBarDrag } from '../components/titlebar/TitleBarDrag';
+import { LoaderStore } from '../stores/LoaderStore';
+import { TabStore } from '../stores/LocationStore';
+import { Route } from './Route';
 
 interface State {
 	isLoading: boolean;
@@ -13,8 +15,7 @@ interface State {
 	tab: string;
 }
 
-export default class Router extends Component<{}, State> {
-
+export class Router extends React.Component<undefined, State> {
 	state = {
 		section: TabStore.getCurrentSID(),
 		tab: TabStore.getCurrentID(),
@@ -42,12 +43,15 @@ export default class Router extends Component<{}, State> {
 	}
 
 	render() {
-
 		const { isLoading, loadingText, section, tab } = this.state;
+		const controlsElement = remote.process.platform !== 'darwin' && <TitleBarControls/>;
 
 		return (
 			<div id="body">
-				<Loader isLoading={isLoading} text={loadingText} />
+				<TitleBarDrag>
+					{controlsElement}
+				</TitleBarDrag>
+				{isLoading && <Loader text={loadingText} />}
 				<TitleBar currentSection={section} currentTab={tab} />
 				<Route id={tab} />
 			</div>

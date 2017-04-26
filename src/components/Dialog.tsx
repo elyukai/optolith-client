@@ -1,23 +1,17 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import { close } from '../utils/createOverlay';
-import DialogButtons from './DialogButtons';
+import { ButtonProps, DialogButtons } from './DialogButtons';
 
-interface Props {
-	buttons?: Array<{
-		autoWidth?: boolean;
-		disabled?: boolean;
-		label: string;
-		primary?: boolean;
-		onClick?(): void;
-	}>;
+export interface DialogProps {
+	buttons?: ButtonProps[];
 	className?: string;
 	id?: string;
 	node?: HTMLDivElement;
 	title?: string;
 }
 
-export default class Dialog extends React.Component<Props, undefined> {
+export class Dialog extends React.Component<DialogProps, {}> {
 	close = () => close(this.props.node as HTMLDivElement);
 
 	clickButton = (func: () => void) => {

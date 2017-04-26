@@ -1,10 +1,10 @@
-// import TextareaAutosize from 'react-textarea-autosize';
-import * as React from 'react';
+// import { TextareaAutosize } from 'react-textarea-autosize';
 import classNames from 'classnames';
-import Label from './Label';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import { findDOMNode } from 'react-dom';
+import { Label } from './Label';
 
-interface Props {
+export interface TextFieldProps {
 	autoFocus?: boolean;
 	className?: string;
 	countCurrent?: number;
@@ -20,22 +20,17 @@ interface Props {
 	value?: string | number;
 }
 
-export default class TextField extends React.Component<Props, undefined> {
-	static defaultProps = {
-		multiLine: false,
-		type: 'text'
-	};
-
+export class TextField extends React.Component<TextFieldProps, {}> {
 	inputRef: HTMLInputElement;
 
 	componentDidMount() {
 		if (this.props.autoFocus) {
-			ReactDOM.findDOMNode<HTMLInputElement>(this.inputRef).focus();
+			findDOMNode<HTMLInputElement>(this.inputRef).focus();
 		}
 	}
 
 	render() {
-		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type, value } = this.props;
+		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type = 'text', value } = this.props;
 
 		const hintElement = hint ? (
 			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>
@@ -66,7 +61,7 @@ export default class TextField extends React.Component<Props, undefined> {
 		return (
 			<div className={classNames(className, { textfield: true, fullWidth, disabled })}>
 				{hintElement}
-				<Label text={label} />
+				{label && <Label text={label} />}
 				{inputElement}
 				{counterTextElement}
 			</div>

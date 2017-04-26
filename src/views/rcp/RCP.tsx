@@ -1,18 +1,18 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import CultureStore from '../../stores/CultureStore';
-import RaceStore from '../../stores/RaceStore';
-import Cultures from './Cultures';
-import Professions from './Professions';
-import Races from './Races';
+import { SubTabs } from '../../components/SubTabs';
+import { CultureStore } from '../../stores/CultureStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { Cultures } from './Cultures';
+import { Professions } from './Professions';
+import { Races } from './Races';
 
 interface State {
-	cultureID: string | null;
-	raceID: string | null;
+	cultureID?: string;
+	raceID?: string;
 	tab: string;
 }
 
-export default class RCP extends React.Component<undefined, State> {
+export class RCP extends React.Component<undefined, State> {
 	state = {
 		cultureID: CultureStore.getCurrentID(),
 		raceID: RaceStore.getCurrentID(),

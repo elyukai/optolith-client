@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-interface Props {
+export interface ListProps {
 	children?: React.ReactNode;
 }
 
-export default function List(props: Props) {
+export function List(props: ListProps) {
 	const { children } = props;
 	return (
 		<ul className="list-wrapper">

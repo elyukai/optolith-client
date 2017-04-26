@@ -1,16 +1,20 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SelectRaceAction, SetRacesSortOrderAction, SwitchRaceValueVisibilityAction } from '../actions/RaceActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import APStore from '../stores/APStore';
-import dice from '../utils/dice';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { APStore } from '../stores/APStore';
+import { RaceInstance } from '../types/data.d';
+import { dice } from '../utils/dice';
 import { get, getAllByCategory } from './ListStore';
-import Store from './Store';
+import { Store } from './Store';
 
-type Action = SelectRaceAction | ReceiveHeroDataAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | CreateHeroAction | ReceiveInitialDataAction;
+type Action = SelectRaceAction | LoadHeroAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | CreateHeroAction | ReceiveInitialDataAction;
 
 class RaceStoreStatic extends Store {
-	private readonly category: RACES = Categories.RACES;
-	private currentId: string | null = null;
+	private readonly category: Categories.RACES = Categories.RACES;
+	private currentId?: string;
 	private sortOrder = 'name';
 	private valueVisibility = true;
 	readonly dispatchToken: string;
@@ -26,12 +30,12 @@ class RaceStoreStatic extends Store {
 					this.valueVisibility = action.payload.config.racesValueVisibility;
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.updateCurrentID(action.payload.data.r);
 					break;
 
 				case ActionTypes.CREATE_HERO:
-					this.updateCurrentID(null);
+					this.updateCurrentID();
 					break;
 
 				case ActionTypes.SELECT_RACE:
@@ -64,16 +68,10 @@ class RaceStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return this.currentId !== null ? get(this.currentId) as RaceInstance : undefined;
-	}
-
-	getCurrentName() {
-		const current = this.getCurrent();
-		return current ? current.name : undefined;
-	}
-
-	getNameByID(id: string) {
-		return get(id) ? get(id).name : null;
+		if (this.currentId !== undefined) {
+			return get(this.currentId) as RaceInstance | undefined;
+		}
+		return undefined;
 	}
 
 	getSortOrder() {
@@ -126,7 +124,7 @@ class RaceStoreStatic extends Store {
 		return [result.toString(), size] as [string, string];
 	}
 
-	private updateCurrentID(id: string | null) {
+	private updateCurrentID(id?: string) {
 		this.currentId = id;
 	}
 
@@ -139,6 +137,4 @@ class RaceStoreStatic extends Store {
 	}
 }
 
-const RaceStore = new RaceStoreStatic();
-
-export default RaceStore;
+export const RaceStore = new RaceStoreStatic();

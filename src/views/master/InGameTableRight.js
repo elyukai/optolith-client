@@ -1,8 +1,8 @@
-import InGameActions from '../../actions/InGameActions';
+import { InGameActions } from '../../actions/InGameActions';
 import React, { Component } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class InGameTableRight extends Component {
+export class InGameTableRight extends Component {
 
 	static propTypes = {
 		fighters: React.PropTypes.array.isRequired,

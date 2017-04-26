@@ -1,23 +1,24 @@
 import * as React from 'react';
 import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import CultureStore from '../../stores/CultureStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import ProfileStore from '../../stores/ProfileStore';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { CultureStore } from '../../stores/CultureStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
+import { ProfileStore } from '../../stores/ProfileStore';
+import { InputTextEvent, ProfessionInstance } from '../../types/data.d';
 import { filterAndSort } from '../../utils/ListUtils';
-import ProfessionsListItem from './ProfessionsListItem';
-import Selections from './Selections';
+import { ProfessionsListItem } from './ProfessionsListItem';
+import { Selections } from './Selections';
 
 interface State {
 	professions: ProfessionInstance[];
-	currentID: string | null;
-	currentVID: string | null;
+	currentID?: string;
+	currentVID?: string;
 	filterText: string;
 	sortOrder: string;
 	showAddSlidein: boolean;
@@ -26,7 +27,7 @@ interface State {
 	extensionVisibility: boolean;
 }
 
-export default class Professions extends React.Component<undefined, State> {
+export class Professions extends React.Component<undefined, State> {
 	state = {
 		currentID: ProfessionStore.getCurrentId(),
 		currentVID: ProfessionVariantStore.getCurrentID(),
@@ -59,7 +60,7 @@ export default class Professions extends React.Component<undefined, State> {
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
 
-	selectProfessionVariant = (id: string | null) => ProfessionVariantActions.selectProfessionVariant(id);
+	selectProfessionVariant = (id?: string) => ProfessionVariantActions.selectProfessionVariant(id);
 
 	componentDidMount() {
 		ProfessionStore.addChangeListener(this._updateProfessionStore);
@@ -80,7 +81,8 @@ export default class Professions extends React.Component<undefined, State> {
 		const sex = ProfileStore.getSex();
 
 		const list = filterAndSort(professions.filter(e => {
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || currentCulture!.typicalProfessions.includes(e.id);
+			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : typicalList.list.includes(e.id) !== typicalList.reverse);
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
 			const extensionVisible = e.src.id === 'US25001' ? commonVisible : extensionVisibility;
 			return groupVisible && extensionVisible;

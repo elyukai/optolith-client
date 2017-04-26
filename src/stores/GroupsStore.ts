@@ -1,6 +1,6 @@
-import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+// import * as ActionTypes from '../constants/ActionTypes';
+// import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Store } from './Store';
 
 class GroupsStoreStatic extends Store {
 	private requestsOpen = false;
@@ -8,22 +8,22 @@ class GroupsStoreStatic extends Store {
 
 	constructor() {
 		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			// switch( action.type ) {
-			// 	case ActionTypes.SHOW_MASTER_REQUESTED_LIST:
-			// 		_requestsOpen = true;
-			// 		break;
+		// this.dispatchToken = AppDispatcher.register((action: Action) => {
+		// 	switch (action.type) {
+		// 		case ActionTypes.ACTIVATE_DISADV:
+		// 			_requestsOpen = true;
+		// 			break;
 
-			// 	case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
-			// 		_requestsOpen = false;
-			// 		break;
+		// 		case ActionTypes.HIDE_MASTER_REQUESTED_LIST:
+		// 			_requestsOpen = false;
+		// 			break;
 
-			// 	default:
-			// 		return true;
-			// }
-			this.emitChange();
-			return true;
-		});
+		// 		default:
+		// 			return true;
+		// 	}
+		// 	this.emitChange();
+		// 	return true;
+		// });
 	}
 
 	getRequestsSlideinState() {
@@ -32,6 +32,4 @@ class GroupsStoreStatic extends Store {
 
 }
 
-const GroupsStore = new GroupsStoreStatic();
-
-export default GroupsStore;
+export const GroupsStore = new GroupsStoreStatic();

@@ -1,10 +1,10 @@
-import Checkbox from '../../components/Checkbox';
-import IconButton from '../../components/IconButton';
-import InGameActions from '../../actions/InGameActions';
+import { Checkbox } from '../../components/Checkbox';
+import { IconButton } from '../../components/IconButton';
+import { InGameActions } from '../../actions/InGameActions';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class InGameControls extends Component {
+export class InGameControls extends Component {
 
 	static propTypes = {
 		maxIni: PropTypes.number.isRequired,

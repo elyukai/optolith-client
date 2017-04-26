@@ -1,19 +1,19 @@
 import * as React from 'react';
-import AttributeStore from '../../stores/AttributeStore';
-import SheetHeaderAttribute from './SheetHeaderAttribute';
+import { AttributeStore } from '../../stores/AttributeStore';
+import { SheetHeaderAttribute } from './SheetHeaderAttribute';
 
-interface HeaderValue {
+export interface HeaderValue {
 	id: string;
 	short: string;
 	value?: number | string;
 }
 
-interface SheetHeaderProps {
+export interface SheetHeaderProps {
 	add?: HeaderValue[];
 	title: string;
 }
 
-export default (props: SheetHeaderProps) => {
+export function SheetHeader(props: SheetHeaderProps) {
 	const { add = [], title } = props;
 	const array: HeaderValue[] = [ ...AttributeStore.getAll(), ...add ];
 
@@ -31,4 +31,4 @@ export default (props: SheetHeaderProps) => {
 			</div>
 		</div>
 	);
-};
+}

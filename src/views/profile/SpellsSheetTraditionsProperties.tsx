@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { get, getPrimaryAttr } from '../../stores/ListStore';
+import { AttributeInstance, SpecialAbilityInstance } from '../../types/data.d';
 
-export default () => {
+export function SpellsSheetTraditionsProperties() {
 	const SA_88 = get('SA_88') as SpecialAbilityInstance;
 	const activeProperties = SA_88.active.map(e => e.sid);
-	const activePropertyNames = activeProperties.map(sid => SA_88.sel.find(e => e.id === sid)!.name).join(', ');
+	const activePropertyNames = activeProperties.map(sid => SA_88.sel!.find(e => e.id === sid)!.name).join(', ');
 
 	const SA_86 = get('SA_86') as SpecialAbilityInstance;
 	const activeTraditions = SA_86.active.map(e => e.sid);
-	const activeTraditionNames = activeTraditions.map(sid => SA_86.sel.find(e => e.id === sid)!.name).join(', ');
+	const activeTraditionNames = activeTraditions.map(sid => SA_86.sel!.find(e => e.id === sid)!.name).join(', ');
 
 	const primary = getPrimaryAttr(1) as AttributeInstance;
 
@@ -28,4 +29,4 @@ export default () => {
 			</div>
 		</div>
 	);
-};
+}

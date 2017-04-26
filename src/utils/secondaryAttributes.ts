@@ -1,6 +1,7 @@
-import AttributeStore from '../stores/AttributeStore';
+import { AttributeStore } from '../stores/AttributeStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
-import RaceStore from '../stores/RaceStore';
+import { RaceStore } from '../stores/RaceStore';
+import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
@@ -234,5 +235,3 @@ export function getAll(): SecondaryAttribute[] {
 		getMOV(),
 	];
 }
-
-export default getAll;

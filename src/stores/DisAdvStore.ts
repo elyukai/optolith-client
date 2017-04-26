@@ -1,9 +1,12 @@
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction, SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import { default as ListStore } from './ListStore';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { ListStore } from './ListStore';
+import { Store } from './Store';
 
-type Action = ReceiveHeroDataAction | SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions | ReceiveInitialDataAction;
+type Action = SwitchDisAdvRatingVisibilityAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class DisAdvStoreStatic extends Store {
 	private showRating = true;
@@ -54,12 +57,6 @@ class DisAdvStoreStatic extends Store {
 	private updateRating() {
 		this.showRating = !this.showRating;
 	}
-
-	private updateAll(disadv: { ratingVisible: boolean; }) {
-		this.showRating = disadv.ratingVisible;
-	}
 }
 
-const DisAdvStore = new DisAdvStoreStatic();
-
-export default DisAdvStore;
+export const DisAdvStore = new DisAdvStoreStatic();

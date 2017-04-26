@@ -1,8 +1,8 @@
-import { findDOMNode } from 'react-dom';
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
+import { findDOMNode } from 'react-dom';
 
-interface Props {
+export interface OverlayProps {
 	className?: string;
 	margin?: number;
 	node?: React.ReactNode;
@@ -10,12 +10,12 @@ interface Props {
 	trigger: Element;
 }
 
-interface State {
+interface OverlayState {
 	position?: string;
 	style: any;
 }
 
-export default class Overlay extends React.Component<Props, State> {
+export class Overlay extends React.Component<OverlayProps, OverlayState> {
 	state = {
 		style: {},
 		position: ''
@@ -27,12 +27,12 @@ export default class Overlay extends React.Component<Props, State> {
 		const { margin = 0, position, trigger } = this.props;
 		const triggerCoordinates = trigger.getBoundingClientRect();
 		const overlayCoordinates = this.overlayRef.getBoundingClientRect();
-		let top: number = 0;
-		let left: number = 0;
+		let top = 0;
+		let left = 0;
 
 		const setHorizonally = () => {
 			left = Math.max(0, triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2);
-			let right = window.innerWidth - overlayCoordinates.width - left;
+			const right = window.innerWidth - overlayCoordinates.width - left;
 			if (right < 0) {
 				left = Math.max(left, left + right);
 			}
@@ -50,7 +50,7 @@ export default class Overlay extends React.Component<Props, State> {
 
 		const setVertically = () => {
 			top = Math.max(0, triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2);
-			let bottom = window.innerHeight - overlayCoordinates.height - top;
+			const bottom = window.innerHeight - overlayCoordinates.height - top;
 			if (bottom < 0) {
 				top = Math.max(bottom, top + bottom);
 			}
@@ -103,31 +103,29 @@ export default class Overlay extends React.Component<Props, State> {
 			style: { top, left },
 			position: finalPosition
 		});
-	};
+	}
 
 	componentDidMount() {
 		this.alignToElement();
 	}
 
 	render() {
-
-		let { children, className, ...other } = this.props;
-		let { position, style } = this.state;
-
-		className = classNames(this.props.className, {
-			'overlay': true,
-			['overlay-' + position]: true
-		});
+		const { children, className, ...other } = this.props;
+		const { position, style } = this.state;
 
 		delete other.margin;
 		delete other.node;
 		delete other.position;
 		delete other.trigger;
 
-		let newOther = { ...other, style };
+		const newOther = { ...other, style };
 
 		return (
-			<div {...newOther} className={className} ref={node => this.overlayRef = findDOMNode(node)}>
+			<div
+				{...newOther}
+				className={classNames(this.props.className, 'overlay', 'overlay-' + position)}
+				ref={node => this.overlayRef = findDOMNode(node)}
+				>
 				{children}
 			</div>
 		);

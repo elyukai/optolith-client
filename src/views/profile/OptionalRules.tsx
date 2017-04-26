@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as RulesActions from '../../actions/RulesActions';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
-import Scroll from '../../components/Scroll';
-import RulesStore from '../../stores/RulesStore';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { Scroll } from '../../components/Scroll';
+import { RulesStore } from '../../stores/RulesStore';
 
 interface State {
 	higherParadeValues: number;
 }
 
-export default class ProfileOverview extends React.Component<undefined, State> {
-
+export class OptionalRules extends React.Component<undefined, State> {
 	state = RulesStore.getAll();
 
 	componentDidMount() {
@@ -53,7 +52,7 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked={true}
 						onClick={this.changeCheckboxTrap}
 						label="Aventurische Rüstkammer"
 						disabled

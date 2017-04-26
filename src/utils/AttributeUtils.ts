@@ -1,10 +1,11 @@
-import APStore from '../stores/APStore';
-import AttributeStore from '../stores/AttributeStore';
-import ELStore from '../stores/ELStore';
+import { APStore } from '../stores/APStore';
+import { AttributeStore } from '../stores/AttributeStore';
+import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
-import PhaseStore from '../stores/PhaseStore';
-import RulesStore from '../stores/RulesStore';
-import calcEL from '../utils/calcEL';
+import { PhaseStore } from '../stores/PhaseStore';
+import { RulesStore } from '../stores/RulesStore';
+import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import { calcEL } from '../utils/calcEL';
 
 export function isIncreasable(obj: AttributeInstance): boolean {
 	if (PhaseStore.get() < 3) {

@@ -1,10 +1,9 @@
 import { remote } from 'electron';
 import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
-import AvatarWrapper from '../../components/AvatarWrapper';
-import BorderButton from '../../components/BorderButton';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
+import { AvatarWrapper } from '../../components/AvatarWrapper';
+import { BorderButton } from '../../components/BorderButton';
+import { Dialog } from '../../components/Dialog';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -15,13 +14,12 @@ interface State {
 	fileValid: boolean;
 }
 
-export default class ProfileAvatarChange extends React.Component<Props, State> {
+export class OverviewAvatarChange extends React.Component<Props, State> {
 	state = {
 		fileValid: false,
 		url: ''
 	} as State;
 
-	changeUrl = (event: InputTextEvent) => this.setState({ url: event.target.value } as State);
 	selectFile = () => {
 		const extensions = ['jpeg', 'png', 'jpg'];
 		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
@@ -65,5 +63,3 @@ export default class ProfileAvatarChange extends React.Component<Props, State> {
 		);
 	}
 }
-
-				// <TextField value={url} onChange={this.changeUrl} fullWidth />

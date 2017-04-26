@@ -1,16 +1,16 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import PhaseStore from '../../stores/PhaseStore';
-import OptionalRules from './OptionalRules';
-import Overview from './Overview';
-import Sheets from './Sheets';
+import { SubTabs } from '../../components/SubTabs';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { OptionalRules } from './OptionalRules';
+import { Overview } from './Overview';
+import { Sheets } from './Sheets';
 
 interface ProfileState {
 	phase: number;
 	tab: string;
 }
 
-export default class Profile extends React.Component<undefined, ProfileState> {
+export class Profile extends React.Component<undefined, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),

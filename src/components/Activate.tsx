@@ -1,17 +1,19 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface ActivateProps {
 	active: boolean;
 	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
-	value?: string | number | null;
-	onClick(): void;
+	value?: string | number;
+	onClick(value?: string | number): void;
 }
 
-export default function Activate(props: Props) {
+export function Activate(props: ActivateProps) {
 	const { active, className, disabled, onClick, value, ...other } = props;
+
+	const onClickEval = disabled ? undefined : () => onClick(value);
 
 	return (
 		<div
@@ -20,7 +22,7 @@ export default function Activate(props: Props) {
 				'active': active,
 				'disabled': disabled
 			})}
-			onClick={disabled ? undefined : onClick.bind(null, value)}
+			onClick={onClickEval}
 			/>
 	);
 }

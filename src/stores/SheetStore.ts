@@ -1,6 +1,8 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { SwitchSheetAttributeValueVisibilityAction } from '../actions/SheetActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Store } from './Store';
 
 type Action = ReceiveInitialDataAction | SwitchSheetAttributeValueVisibilityAction;
 
@@ -59,6 +61,4 @@ class SheetStoreStatic extends Store {
 	}
 }
 
-const SheetStore = new SheetStoreStatic();
-
-export default SheetStore;
+export const SheetStore = new SheetStoreStatic();

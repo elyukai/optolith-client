@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 
 const CHANGE_EVENT = 'change';
 
-export default class Store extends EventEmitter {
+export class Store extends EventEmitter {
 	emitChange() {
 		this.emit(CHANGE_EVENT);
 	}

@@ -1,9 +1,10 @@
 import * as Categories from '../constants/Categories';
-import CultureStore from '../stores/CultureStore';
+import { CultureStore } from '../stores/CultureStore';
 import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
-import ProfessionStore from '../stores/ProfessionStore';
-import RaceStore from '../stores/RaceStore';
-import { getSids, isActive } from '../utils/ActivatableUtils';
+import { ProfessionStore } from '../stores/ProfessionStore';
+import { RaceStore } from '../stores/RaceStore';
+import { ActivatableInstance, RequirementObject } from '../types/data.d';
+import { getSids, isActive } from './ActivatableUtils';
 
 export function validateInstanceRequirementObject(req: 'RCP' | RequirementObject, sourceId: string): boolean {
 	if (req === 'RCP') {
@@ -68,7 +69,11 @@ export function validateInstanceRequirementObject(req: 'RCP' | RequirementObject
 				case Categories.DISADVANTAGES:
 				case Categories.SPECIAL_ABILITIES:
 					if (req.sid) {
-						return req.active === getSids(a).includes(req.sid as string | number);
+						if (Array.isArray(req.sid)) {
+							const activeSids = getSids(a);
+							return req.active === req.sid.some(e => activeSids.includes(e));
+						}
+						return req.active === getSids(a).includes(req.sid);
 					}
 					return isActive(a) === req.active;
 			}
@@ -77,6 +82,6 @@ export function validateInstanceRequirementObject(req: 'RCP' | RequirementObject
 	return false;
 }
 
-export default function validateInstance (reqs: Array<'RCP' | RequirementObject>, id: string): boolean {
+export function validateInstance (reqs: Array<'RCP' | RequirementObject>, id: string): boolean {
 	return reqs.every(req => validateInstanceRequirementObject(req, id));
 }

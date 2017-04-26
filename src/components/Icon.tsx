@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface IconProps {
 	className?: string;
 	[id: string]: any;
 }
 
-export default function Icon(props: Props){
+export function Icon(props: IconProps) {
 	const { className, ...other } = props;
 
 	return (

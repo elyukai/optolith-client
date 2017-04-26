@@ -1,15 +1,19 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction, SetLiturgiesSortOrderAction } from '../actions/LiturgiesActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import ELStore from './ELStore';
-import { default as ListStore, getAllByCategory } from './ListStore';
-import PhaseStore from './PhaseStore';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { BlessingInstance, LiturgyInstance } from '../types/data.d';
+import { ELStore } from './ELStore';
+import { getAllByCategory, ListStore } from './ListStore';
+import { PhaseStore } from './PhaseStore';
+import { Store } from './Store';
 
 type Action = ActivateLiturgyAction | DeactivateLiturgyAction | AddLiturgyPointAction | RemoveLiturgyPointAction | SetLiturgiesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class LiturgiesStoreStatic extends Store {
-	private readonly category: LITURGIES = Categories.LITURGIES;
+	private readonly category = Categories.LITURGIES;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
 
@@ -58,15 +62,30 @@ class LiturgiesStoreStatic extends Store {
 		return getAllByCategory(this.category) as LiturgyInstance[];
 	}
 
+	getAllBlessings() {
+		return getAllByCategory(Categories.BLESSINGS) as BlessingInstance[];
+	}
+
 	getForSave() {
-		const active: { [id: string]: number } = {};
+		const list: { [id: string]: number } = {};
 		this.getAll().forEach(e => {
-			const { active: a, id, value } = e;
-			if (a) {
-				active[id] = value;
+			const { active, id, value } = e;
+			if (active) {
+				list[id] = value;
 			}
 		});
-		return active;
+		return list;
+	}
+
+	getBlessingsForSave() {
+		const list: string[] = [];
+		this.getAllBlessings().forEach(e => {
+			const { active, id } = e;
+			if (active) {
+				list.push(id);
+			}
+		});
+		return list;
 	}
 
 	getAspectCounter() {
@@ -106,6 +125,4 @@ class LiturgiesStoreStatic extends Store {
 	}
 }
 
-const LiturgiesStore = new LiturgiesStoreStatic();
-
-export default LiturgiesStore;
+export const LiturgiesStore = new LiturgiesStoreStatic();

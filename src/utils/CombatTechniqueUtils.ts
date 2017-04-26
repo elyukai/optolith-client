@@ -1,7 +1,8 @@
-import CombatTechniquesStore from '../stores/CombatTechniquesStore';
-import ELStore from '../stores/ELStore';
+import { CombatTechniquesStore } from '../stores/CombatTechniquesStore';
+import { ELStore } from '../stores/ELStore';
 import { get, getAllByCategoryGroup } from '../stores/ListStore';
-import PhaseStore from '../stores/PhaseStore';
+import { PhaseStore } from '../stores/PhaseStore';
+import { AdvantageInstance, CombatTechniqueInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
 export function getAt(obj: CombatTechniqueInstance): number {

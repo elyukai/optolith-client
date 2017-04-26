@@ -1,16 +1,17 @@
+import classNames from 'classnames';
 import * as React from 'react';
 
-export default class Text extends React.Component<any, any> {
-	static defaultProps = {
-		className: 'text'
-	};
+export interface TextProps {
+	children?: React.ReactNode;
+	className?: string;
+	[id: string]: any;
+}
 
-	render() {
-		const { children, ...other } = this.props;
-		return (
-			<div {...other}>
-				{children}
-			</div>
-		);
-	}
+export function Text(props: TextProps) {
+	const { children, className, ...other } = props;
+	return (
+		<div {...other} className={classNames('text', className)}>
+			{children}
+		</div>
+	);
 }

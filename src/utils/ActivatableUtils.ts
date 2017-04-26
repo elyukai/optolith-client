@@ -1,9 +1,9 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
+import { AbilityInstance, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AttributeInstance, DependencyObject, RequirementObject, SelectionObject, SkillOptionalDependency, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { convertId } from './AttributeUtils';
 import * as DependentUtils from './DependentUtils';
-import validate from './validate';
-import { validateInstanceRequirementObject } from './validate';
+import { validateInstance, validateInstanceRequirementObject } from './validate';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
 	return obj.max !== 1;
@@ -32,6 +32,22 @@ export function isActivatable(obj: ActivatableInstance): boolean {
 			}
 		}
 	}
+	if (obj.category === SPECIAL_ABILITIES && obj.gr === 13) {
+		const combinationAvailable = isActive(get('SA_293') as SpecialAbilityInstance);
+		if (combinationAvailable) {
+			const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+			const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr).length;
+			if (allEqualTypeStyles >= 2) {
+				return false;
+			}
+		}
+		else {
+			const allEqualTypeStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
+			if (allEqualTypeStyles.find(e => isActive(e))) {
+				return false;
+			}
+		}
+	}
 	else if (obj.id === 'SA_183') {
 		const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
 		const isOneActive = allStyles.find(e => isActive(e));
@@ -39,10 +55,17 @@ export function isActivatable(obj: ActivatableInstance): boolean {
 			return false;
 		}
 	}
-	return validate(obj.reqs, obj.id);
+	else if (obj.id === 'SA_293') {
+		const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+		const isOneActive = allStyles.find(e => isActive(e));
+		if (!isOneActive) {
+			return false;
+		}
+	}
+	return validateInstance(obj.reqs, obj.id);
 }
 
-export function isDeactivatable(obj: ActivatableInstance): boolean {
+export function isDeactivatable(obj: ActivatableInstance, sid?: string | number): boolean {
 	if (obj.id === 'SA_183') {
 		const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
 		const allArmedStyles = allStyles.filter(e => e.gr === 9);
@@ -51,6 +74,13 @@ export function isDeactivatable(obj: ActivatableInstance): boolean {
 		const armedStyleActive = allArmedStyles.filter(e => isActive(e)).length;
 		const unarmedStyleActive = allUnarmedStyles.filter(e => isActive(e)).length;
 		if (totalActive >= 3 || armedStyleActive >= 2 || unarmedStyleActive >= 2) {
+			return false;
+		}
+	}
+	else if (obj.id === 'SA_293') {
+		const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+		const totalActive = allStyles.filter(e => isActive(e)).length;
+		if (totalActive >= 2) {
 			return false;
 		}
 	}
@@ -64,6 +94,12 @@ export function isDeactivatable(obj: ActivatableInstance): boolean {
 			}
 			return true;
 		}
+		else if (typeof e === 'object' && Array.isArray(e.sid)) {
+			const list = e.sid;
+			if (list.includes(sid as number)) {
+				return !getSids(obj).some(n => n !== sid && list.includes(n as number));
+			}
+		}
 		return true;
 	});
 	return dependencies.length === 0;
@@ -73,12 +109,15 @@ export function getSids(obj: ActivatableInstance): Array<string | number> {
 	return obj.active.map(e => e.sid!);
 }
 
-export function getDSids(obj: ActivatableInstance): Array<string | number | boolean | undefined> {
+export function getDSids(obj: ActivatableInstance): Array<(string | number)[] | string | number | boolean | undefined> {
 	return obj.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
 }
 
 export function getSelectionItem(obj: ActivatableInstance, id?: string | number): SelectionObject | undefined {
-	return obj.sel.find(e => e.id === id);
+	if (obj.sel) {
+		return obj.sel.find(e => e.id === id);
+	}
+	return undefined;
 }
 
 export function getSelectionName(obj: ActivatableInstance, id?: string | number) {
@@ -147,6 +186,14 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 		case 'SA_30':
 			active = { sid: sel, tier };
 			break;
+		case 'SA_97':
+			adds.push({ id: 'SA_88', active: true, sid: sel });
+			break;
+		case 'SA_484': {
+			const selectionItem = getSelectionItem(obj, sel) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
+			adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+			break;
+		}
 
 		default:
 			if (sel) {
@@ -182,6 +229,14 @@ export function deactivate(obj: ActivatableInstance, index: number): ToListById<
 		case 'SA_10':
 			adds.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
 			break;
+		case 'SA_97':
+			adds.push({ id: 'SA_88', active: true, sid });
+			break;
+		case 'SA_484': {
+			const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
+			adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+			break;
+		}
 	}
 	obj.active.splice(index, 1);
 	return removeDependencies(obj, adds, sidOld);
@@ -247,6 +302,9 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 					else if (value) {
 						add = value;
 					}
+					else if (Array.isArray(sid)) {
+						add = { active, sid };
+					}
 					else {
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
@@ -306,6 +364,9 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 					else if (value) {
 						add = value;
 					}
+					else if (Array.isArray(sid)) {
+						add = { active, sid };
+					}
 					else {
 						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
 					}
@@ -340,7 +401,7 @@ export function getFullName(obj: string | ActiveViewObject): string {
 			name += ` MS`;
 		}
 		else {
-			name += ` ${roman[(tier as number) - 1]}`;
+			name += ` ${roman[(tier!) - 1]}`;
 		}
 	}
 

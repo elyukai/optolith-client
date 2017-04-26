@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { ActivateArgs, ActiveViewObject, DeactiveViewObject } from '../types/data.d';
 import { getFullName } from '../utils/ActivatableUtils';
 import { filterAndSort } from '../utils/ListUtils';
-import ActivatableAddListItem from './ActivatableAddListItem';
-import List from './List';
-import ListItem from './ListItem';
-import ListItemName from './ListItemName';
-import Scroll from './Scroll';
+import { ActivatableAddListItem } from './ActivatableAddListItem';
+import { List } from './List';
+import { ListItem } from './ListItem';
+import { ListItemName } from './ListItemName';
+import { Scroll } from './Scroll';
 
 type CombinedList = Array<DeactiveViewObject & { active: false } | ActiveViewObject & { active: true }>;
 
@@ -21,7 +22,7 @@ interface Props {
 	addToList(args: ActivateArgs): void;
 }
 
-export default function ActivatableAddList(props: Props) {
+export function ActivatableAddList(props: Props) {
 	const { activeList, addToList, filterText = '', groupNames, hideGroup, list, rating, showRating, sortOrder = 'name' } = props;
 
 	const combinedList: CombinedList = list.map<DeactiveViewObject & { active: false }>(e => {
@@ -50,7 +51,7 @@ export default function ActivatableAddList(props: Props) {
 						const name = getFullName(item);
 						return (
 							<ListItem key={name} disabled>
-								<ListItemName main={name} />
+								<ListItemName name={name} />
 							</ListItem>
 						);
 					}

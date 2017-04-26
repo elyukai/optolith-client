@@ -1,14 +1,14 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import Imprint from './Imprint';
-import ThirdPartyLicenses from './ThirdPartyLicenses';
-import TOU from './TOU';
+import { SubTabs } from '../../components/SubTabs';
+import { Imprint } from './Imprint';
+import { ThirdPartyLicenses } from './ThirdPartyLicenses';
+import { TOU } from './TOU';
 
 interface State {
 	tab: string;
 }
 
-export default class About extends React.Component<undefined, State> {
+export class About extends React.Component<undefined, State> {
 	state = {
 		tab: 'imprint',
 	};
@@ -53,8 +53,3 @@ export default class About extends React.Component<undefined, State> {
 		);
 	}
 }
-
-						// {
-						// 	id: 'tou',
-						// 	label: 'Haftungsausschluss',
-						// },

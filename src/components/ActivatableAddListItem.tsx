@@ -1,28 +1,19 @@
-import classNames from 'classnames';
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
-import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
+import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
+import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import Dropdown from './Dropdown';
-import IconButton from './IconButton';
-import ListItem from './ListItem';
-import ListItemButtons from './ListItemButtons';
-import ListItemGroup from './ListItemGroup';
-import ListItemName from './ListItemName';
-import ListItemSelections from './ListItemSelections';
-import ListItemSeparator from './ListItemSeparator';
-import ListItemValues from './ListItemValues';
-import TextField from './TextField';
-
-interface AddObject {
-	id: string;
-	cost?: number;
-	sel?: string | number;
-	sel2?: string | number;
-	input?: string;
-	tier?: number;
-}
+import { Dropdown } from './Dropdown';
+import { IconButton } from './IconButton';
+import { ListItem } from './ListItem';
+import { ListItemButtons } from './ListItemButtons';
+import { ListItemGroup } from './ListItemGroup';
+import { ListItemName } from './ListItemName';
+import { ListItemSelections } from './ListItemSelections';
+import { ListItemSeparator } from './ListItemSeparator';
+import { ListItemValues } from './ListItemValues';
+import { TextField } from './TextField';
 
 interface Props {
 	item: DeactiveViewObject;
@@ -43,7 +34,7 @@ interface State {
 
 const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
-export default class ActivatableAddListItem extends React.Component<Props, State> {
+export class ActivatableAddListItem extends React.Component<Props, State> {
 	state: State = {
 		input: '',
 		input2: '',
@@ -109,6 +100,8 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'ADV_17':
 			case 'ADV_47':
 			case 'DISADV_48':
+			case 'SA_252':
+			case 'SA_273':
 				if (this.state.selected !== '') {
 					currentCost = (cost as number[])[(get(this.state.selected as string) as SkillishInstance).ic - 1];
 				}
@@ -202,7 +195,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 				args.input = this.state.input;
 				break;
 			case 'SA_10':
-				type Sel = Array<SelectionObject & { specialisation: string[] | null; specialisationInput: string | null }>;
+				type Sel = Array<SelectionObject & { specialisation?: string[]; specialisationInput?: string }>;
 				if (this.state.selected !== '') {
 					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).filter(e => e.id === this.state.selected)[0];
 					currentCost = o.cost;
@@ -326,7 +319,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 
 		return (
 			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
-				<ListItemName main={name} />
+				<ListItemName name={name} />
 				<ListItemSelections>
 					{tierElement1}
 					{selectElement}

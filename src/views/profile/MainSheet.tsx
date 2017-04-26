@@ -1,25 +1,25 @@
 import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
-import TextBox from '../../components/TextBox';
+import { BorderButton } from '../../components/BorderButton';
+import { TextBox } from '../../components/TextBox';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
-import APStore from '../../stores/APStore';
-import CultureStore from '../../stores/CultureStore';
-import ELStore from '../../stores/ELStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import ProfileStore from '../../stores/ProfileStore';
-import RaceStore from '../../stores/RaceStore';
+import { APStore } from '../../stores/APStore';
+import { CultureStore } from '../../stores/CultureStore';
+import { ELStore } from '../../stores/ELStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
+import { ProfileStore } from '../../stores/ProfileStore';
+import { RaceStore } from '../../stores/RaceStore';
 import { printToPDF } from '../../utils/FileAPIUtils';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
-import ActivatableTextList from './ActivatableTextList';
-import MainSheetAttributes from './MainSheetAttributes';
-import MainSheetPersonalData from './MainSheetPersonalData';
-import Sheet from './Sheet';
-import SheetOptions from './SheetOptions';
-import SheetWrapper from './SheetWrapper';
+import { ActivatableTextList } from './ActivatableTextList';
+import { MainSheetAttributes } from './MainSheetAttributes';
+import { MainSheetPersonalData } from './MainSheetPersonalData';
+import { Sheet } from './Sheet';
+import { SheetOptions } from './SheetOptions';
+import { SheetWrapper } from './SheetWrapper';
 
-export default function MainSheet() {
+export function MainSheet() {
 	const ap = APStore.getAll();
 	const el = ELStore.getStart().name;
 	const profile = ProfileStore.getAll();

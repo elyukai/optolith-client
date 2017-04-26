@@ -1,11 +1,12 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { TextBox } from '../../components/TextBox';
+import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
-import RulesStore from '../../stores/RulesStore';
+import { RulesStore } from '../../stores/RulesStore';
+import { AttributeInstance, CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
 import { getAt, getPa } from '../../utils/CombatTechniqueUtils';
 
-export default () => {
+export function CombatSheetMeleeWeapons() {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
 	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
@@ -29,21 +30,21 @@ export default () => {
 					{
 						list.map((e, i) => {
 							if (e) {
-								const combatTechnique = get(e.combatTechnique) as CombatTechniqueInstance;
-								let damageFlatBonus = Math.max(...combatTechnique.primary.map(attr => (get(attr) as AttributeInstance).value)) - e.damageBonus;
+								const combatTechnique = get(e.combatTechnique!) as CombatTechniqueInstance;
+								let damageFlatBonus = Math.max(...combatTechnique.primary.map(attr => (get(attr) as AttributeInstance).value)) - (e.damageBonus || 0);
 								damageFlatBonus = damageFlatBonus > 0 ? damageFlatBonus : 0;
-								const damageFlat = e.damageFlat + damageFlatBonus;
+								const damageFlat = e.damageFlat! + damageFlatBonus;
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
 										<td className="combat-technique">{combatTechnique.name}</td>
 										<td className="damage-bonus">{combatTechnique.primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {e.damageBonus}</td>
 										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
-										<td className="at-mod mod">{e.at > 0 && '+'}{e.at}</td>
-										<td className="pa-mod mod">{e.pa > 0 && '+'}{e.pa}</td>
-										<td className="reach">{['kurz', 'mittel', 'lang'][e.reach - 1]}</td>
-										<td className="at">{getAt(combatTechnique) + e.at}</td>
-										<td className="pa">{(getPa(combatTechnique) as number) + e.pa + paradeBonus}</td>
+										<td className="at-mod mod">{e.at && e.at > 0 && '+'}{e.at}</td>
+										<td className="pa-mod mod">{e.pa && e.pa > 0 && '+'}{e.pa}</td>
+										<td className="reach">{e.reach && ['kurz', 'mittel', 'lang'][e.reach - 1]}</td>
+										<td className="at">{getAt(combatTechnique) + (e.at || 0)}</td>
+										<td className="pa">{(getPa(combatTechnique) as number) + (e.pa || 0) + paradeBonus}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>
 								);
@@ -70,4 +71,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-};
+}

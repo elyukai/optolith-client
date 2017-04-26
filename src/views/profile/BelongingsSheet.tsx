@@ -1,13 +1,14 @@
 import * as React from 'react';
-import LabelBox from '../../components/LabelBox';
-import TextBox from '../../components/TextBox';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { LabelBox } from '../../components/LabelBox';
+import { TextBox } from '../../components/TextBox';
+import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
-import dotToComma from '../../utils/dotToComma';
+import { AttributeInstance, ItemInstance } from '../../types/data.d';
+import { dotToComma } from '../../utils/i18n';
 import { sort } from '../../utils/ListUtils';
-import Sheet from './Sheet';
-import SheetOptions from './SheetOptions';
-import SheetWrapper from './SheetWrapper';
+import { Sheet } from './Sheet';
+import { SheetOptions } from './SheetOptions';
+import { SheetWrapper } from './SheetWrapper';
 
 const rowCreator = (e: ItemInstance | undefined, i: number) => {
 	if (e) {
@@ -16,7 +17,7 @@ const rowCreator = (e: ItemInstance | undefined, i: number) => {
 				<td className="name">{e.name}</td>
 				<td className="amount">{e.amount > 1 ? e.amount : null}</td>
 				<td className="price">{e.price > 0 ? dotToComma(e.price) : null}</td>
-				<td className="weight">{e.weight > 0 ? dotToComma(e.weight) : null}</td>
+				<td className="weight">{e.weight && e.weight > 0 ? dotToComma(e.weight) : null}</td>
 				<td className="where">{e.where}</td>
 			</tr>
 		);
@@ -34,7 +35,7 @@ const rowCreator = (e: ItemInstance | undefined, i: number) => {
 	}
 };
 
-export default () => {
+export function BelongingsSheet() {
 	const { value } = get('STR') as AttributeInstance;
 	const { d, s, h, k } = EquipmentStore.getPurse();
 	const items = sort(EquipmentStore.getAll(), EquipmentStore.getSortOrder()) as ItemInstance[];
@@ -85,7 +86,7 @@ export default () => {
 						<div className="total">
 							<label>Gesamt</label>
 							<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.price || n, 0) * 100) / 100)}</span>
-							<span>{dotToComma(Math.round(items.reduce((n, i) => n + i.weight || n, 0) * 100) / 100)}</span>
+							<span>{dotToComma(Math.round(items.reduce((n, i) => i.weight ? n + i.weight : n, 0) * 100) / 100)}</span>
 						</div>
 					</TextBox>
 					<TextBox label="Geldbeutel" className="purse">
@@ -142,7 +143,7 @@ export default () => {
 			</Sheet>
 		</SheetWrapper>
 	);
-};
+}
 /*			<div className="fill"></div>
 			<TextBox label="Tier" className="pet">
 

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import Tab from './Tab';
+import { SubTab } from '../types/data.d';
+import { Tab } from './Tab';
 
-interface Props {
+export interface SubtabsProps {
 	active: string;
 	tabs: SubTab[];
 	onClick(tab: string): void;
 }
 
-export default class Subtabs extends React.Component<Props, undefined> {
+export class SubTabs extends React.Component<SubtabsProps, {}> {
 	setTab = (tab: string) => this.props.onClick(tab);
 
 	render() {

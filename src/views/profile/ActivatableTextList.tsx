@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ActiveViewObject } from '../../types/data.d';
 
 interface Props {
 	list: Array<ActiveViewObject | string>;
@@ -18,7 +19,7 @@ function findTier(name: string) {
 	return parts.join(' ');
 }
 
-export default function ActivatableTextList(props: Props) {
+export function ActivatableTextList(props: Props) {
 	const listToString = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
 		if (typeof obj === 'string') {
 			return obj;

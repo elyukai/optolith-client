@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-interface Props {
+export interface ProgressBarOverlayProps {
 	current: number;
 	max: number;
 	horizontal?: boolean;
 }
 
-export default function ProgressBarOverlay(props: Props) {
+export function ProgressBarOverlay(props: ProgressBarOverlayProps) {
 	const { current, max, horizontal } = props;
 
 	const style = horizontal ? { width: current / max } : { height: current / max };

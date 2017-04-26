@@ -1,13 +1,12 @@
 import * as React from 'react';
-import Scroll from '../../components/Scroll';
-import VersionUtils from '../../utils/VersionUtils';
+import { Scroll } from '../../components/Scroll';
+import { currentVersion } from '../../utils/VersionUtils';
 
-export default () => {
-	const version = VersionUtils.get();
+export function ThirdPartyLicenses() {
 	return (
 		<div className="page" id="third-party-software">
 			<Scroll className="text">
-				<h2>TDE5 Heroes Client v{version}</h2>
+				<h2>TDE5 Heroes Client v{currentVersion}</h2>
 				Third Party Software and Content Licenses
 				<div className="third-party-software-body">
 					Dieses Produkt wurde unter Lizenz erstellt. Das Schwarze Auge und sein Logo sowie Aventuria, Dere, Myranor, Riesland, Tharun und Uthuria und ihre Logos sind eingetragene Marken von Significant GbR in Deutschland, den U.S.A. und anderen Ländern. Ulisses Spiele und sein Logo sind eingetragene Marken der Ulisses Medien und Spiele Distribution GmbH.<br/>
@@ -327,4 +326,4 @@ export default () => {
 			</Scroll>
 		</div>
 	);
-};
+}

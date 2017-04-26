@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as HerolistActions from '../../actions/HerolistActions';
-import Dialog from '../../components/Dialog';
-import Dropdown from '../../components/Dropdown';
-import TextField from '../../components/TextField';
-import ELStore from '../../stores/ELStore';
+import { Dialog } from '../../components/Dialog';
+import { Dropdown } from '../../components/Dropdown';
+import { TextField } from '../../components/TextField';
+import { ELStore } from '../../stores/ELStore';
+import { InputTextEvent } from '../../types/data.d';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -15,7 +16,7 @@ interface State {
 	el: string;
 }
 
-export default class HeroCreation extends React.Component<Props, State> {
+export class HeroCreation extends React.Component<Props, State> {
 	state = {
 		el: 'EL_0',
 		gender: '',

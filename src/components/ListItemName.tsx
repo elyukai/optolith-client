@@ -1,16 +1,20 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface ListItemNameProps {
+	addName?: string;
 	children?: React.ReactNode;
-	main: string;
+	large?: boolean | JSX.Element;
+	name: string;
 }
 
-export default function ListItemName(props: Props) {
-	const { children, main } = props;
+export function ListItemName(props: ListItemNameProps) {
+	const { addName, children, large, name } = props;
+	const addNameElement = addName && <span className="add">{addName}</span>;
+	const nameElement = addName ? <span>{name}</span> : name;
 	return (
-		<div className="name">
-			<p className="title">{main}</p>
+		<div className={classNames('name', large && 'large')}>
+			<p className="title">{nameElement}{addNameElement}</p>
 			{children}
 		</div>
 	);

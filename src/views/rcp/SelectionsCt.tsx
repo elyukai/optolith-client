@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Checkbox from '../../components/Checkbox';
+import { Checkbox } from '../../components/Checkbox';
 
 interface Props {
 	active: Set<string>;
@@ -14,7 +14,7 @@ interface Props {
 	change(id: string): void;
 }
 
-export default class SelectionsCt extends React.Component<Props, undefined> {
+export class SelectionsCt extends React.Component<Props, undefined> {
 	render() {
 		const amountTags = ['Eine', 'Zwei'];
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export default function RecommendedReference() {
+export function RecommendedReference() {
 	return (
 		<div className="recommended-ref">
 			<div className="rec">

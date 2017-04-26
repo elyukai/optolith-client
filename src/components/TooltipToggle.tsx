@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
-import createOverlay, { close } from '../utils/createOverlay';
-import Overlay from './Overlay';
+import { close, createOverlay } from '../utils/createOverlay';
+import { Overlay } from './Overlay';
 
-interface Props {
+export interface TooltipToggleProps {
 	content: React.ReactNode;
 	margin?: number;
 	position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-export default class TooltipToggle extends React.Component<Props, undefined> {
+export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
 	triggerRef: Element;
 	node?: HTMLDivElement;
 

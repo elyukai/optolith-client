@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-interface Props {
+export interface OptionsProps {
 	children?: React.ReactNode;
 }
 
-export default function Options(props: Props) {
+export function Options(props: OptionsProps) {
 	const { children } = props;
 	return (
 		<div className="options">

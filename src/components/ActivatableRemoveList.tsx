@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
 import { filterAndSort } from '../utils/ListUtils';
-import ActivatableRemoveListItem from './ActivatableRemoveListItem';
-import List from './List';
-import Scroll from './Scroll';
+import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
+import { List } from './List';
+import { Scroll } from './Scroll';
 
 interface Props {
 	filterText?: string;
@@ -17,7 +18,7 @@ interface Props {
 	removeFromList(args: DeactivateArgs): void;
 }
 
-export default function ActivatableRemoveList(props: Props) {
+export function ActivatableRemoveList(props: Props) {
 	const { filterText = '', groupNames, hideGroup, list, phase, rating, removeFromList, setTier, showRating, sortOrder = 'name' } = props;
 
 	const sortedList = filterAndSort(list, filterText, sortOrder, groupNames);

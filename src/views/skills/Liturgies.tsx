@@ -1,41 +1,44 @@
 import * as React from 'react';
+import * as ConfigActions from '../../actions/ConfigActions';
 import * as LiturgiesActions from '../../actions/LiturgiesActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import List from '../../components/List';
-import ListItem from '../../components/ListItem';
-import ListItemGroup from '../../components/ListItemGroup';
-import ListItemName from '../../components/ListItemName';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import ConfigStore from '../../stores/ConfigStore';
-import LiturgiesStore from '../../stores/LiturgiesStore';
-import PhaseStore from '../../stores/PhaseStore';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { List } from '../../components/List';
+import { ListItem } from '../../components/ListItem';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { ListItemName } from '../../components/ListItemName';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import * as Categories from '../../constants/Categories';
+import { ConfigStore } from '../../stores/ConfigStore';
+import { LiturgiesStore } from '../../stores/LiturgiesStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { BlessingInstance, InputTextEvent, LiturgyInstance } from '../../types/data.d';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
-import SkillListItem from './SkillListItem';
+import { SkillListItem } from './SkillListItem';
 
 interface State {
 	addChantsDisabled: boolean;
 	filterText: string;
 	filterTextSlidein: string;
-	liturgies: LiturgyInstance[];
+	liturgies: (BlessingInstance | LiturgyInstance)[];
 	phase: number;
 	showAddSlidein: boolean;
 	sortOrder: string;
 	enableActiveItemHints: boolean;
 }
 
-export default class Liturgies extends React.Component<undefined, State> {
+export class Liturgies extends React.Component<undefined, State> {
 	state = {
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: '',
 		filterTextSlidein: '',
-		liturgies: LiturgiesStore.getAll(),
+		liturgies: [ ...LiturgiesStore.getAll(), ...LiturgiesStore.getAllBlessings() ],
 		phase: PhaseStore.get(),
 		showAddSlidein: false,
 		sortOrder: LiturgiesStore.getSortOrder(),
@@ -49,7 +52,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 	addPoint = (id: string) => LiturgiesActions.addPoint(id);
 	removeFromList = (id: string) => LiturgiesActions.removeFromList(id);
 	removePoint = (id: string) => LiturgiesActions.removePoint(id);
-	switchActiveItemHints = () => LiturgiesActions.switchEnableActiveItemHints();
+	switchActiveItemHints = () => ConfigActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
@@ -76,8 +79,8 @@ export default class Liturgies extends React.Component<undefined, State> {
 			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
-		const listActive: LiturgyInstance[] = [];
-		const listDeactive: LiturgyInstance[] = [];
+		const listActive: (BlessingInstance | LiturgyInstance)[] = [];
+		const listDeactive: (BlessingInstance | LiturgyInstance)[] = [];
 
 		liturgies.forEach(e => {
 			if (e.active) {
@@ -116,19 +119,37 @@ export default class Liturgies extends React.Component<undefined, State> {
 										const { id, name } = obj;
 										return (
 											<ListItem key={id} disabled>
-												<ListItemName main={name} />
+												<ListItemName name={name} />
 											</ListItem>
+										);
+									}
+
+									const name = obj.name;
+
+									const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
+
+									if (obj.category === Categories.BLESSINGS) {
+										return (
+											<SkillListItem
+												key={obj.id}
+												id={obj.id}
+												name={name}
+												isNotActive
+												activate={this.addToList.bind(null, obj.id)}
+												addFillElement
+												>
+												<ListItemGroup>
+													{aspc}
+													{sortOrder === 'group' && ` / Segnung`}
+												</ListItemGroup>
+											</SkillListItem>
 										);
 									}
 
 									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
 
-									const name = obj.name;
-
-									const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
-
-									const add = obj.gr === 3 ? {} : {
+									const add = {
 										check,
 										checkmod,
 										ic: obj.ic,
@@ -172,14 +193,32 @@ export default class Liturgies extends React.Component<undefined, State> {
 					<List>
 						{
 							sortedActiveList.map(obj => {
-								const [ a1, a2, a3, checkmod ] = obj.check;
-								const check = [ a1, a2, a3 ];
-
 								const name = obj.name;
 
 								const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
 
-								const add = obj.gr === 3 ? {} : {
+								if (obj.category === Categories.BLESSINGS) {
+									return (
+										<SkillListItem
+											key={obj.id}
+											id={obj.id}
+											name={name}
+											removePoint={phase < 3 ? this.removeFromList.bind(null, obj.id) : undefined}
+											addFillElement
+											noIncrease
+											>
+											<ListItemGroup>
+												{aspc}
+												{sortOrder === 'group' && ` / Segnung`}
+											</ListItemGroup>
+										</SkillListItem>
+									);
+								}
+
+								const [ a1, a2, a3, checkmod ] = obj.check;
+								const check = [ a1, a2, a3 ];
+
+								const add = {
 									addDisabled: !isIncreasable(obj),
 									addPoint: this.addPoint.bind(null, obj.id),
 									check,
@@ -193,10 +232,9 @@ export default class Liturgies extends React.Component<undefined, State> {
 										key={obj.id}
 										id={obj.id}
 										name={name}
-										removePoint={phase < 3 ? obj.gr === 3 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
+										removePoint={phase < 3 ? obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!isDecreasable(obj)}
 										addFillElement
-										noIncrease={obj.gr === 3}
 										{...add}
 										>
 										<ListItemGroup>
@@ -216,7 +254,7 @@ export default class Liturgies extends React.Component<undefined, State> {
 	private updateLiturgiesStore = () => {
 		this.setState({
 			addChantsDisabled: LiturgiesStore.isActivationDisabled(),
-			liturgies: LiturgiesStore.getAll(),
+			liturgies: [ ...LiturgiesStore.getAll(), ...LiturgiesStore.getAllBlessings() ],
 			sortOrder: LiturgiesStore.getSortOrder(),
 		} as State);
 	}

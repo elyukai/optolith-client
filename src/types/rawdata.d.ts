@@ -1,15 +1,94 @@
-/// <reference path="./data.d.ts" />
+import * as Data from './data.d';
 
-interface RawHero extends HeroBase {
-	readonly id: string | null;
-	readonly dateCreated: string;
-	readonly dateModified: string;
-	player?: User;
+export interface RawHero {
+	clientVersion: string;
+	phase: number;
+	name: string;
+	avatar: string;
+	ap: Data.AdventurePoints;
+	el: string;
+	r: string;
+	c: string;
+	p: string;
+	professionName?: string;
+	pv: string | null;
+	sex: 'm' | 'f';
+	pers: {
+		 family: string;
+		 placeofbirth: string;
+		 dateofbirth: string;
+		 age: string;
+		 haircolor: number;
+		 eyecolor: number;
+		 size: string;
+		 weight: string;
+		 title: string;
+		 socialstatus: number;
+		 characteristics: string;
+		 otherinfo: string;
+		 cultureAreaKnowledge: string;
+	};
+	activatable: {
+		 [id: string]: Data.ActiveObject[];
+	};
+	attr: {
+		 values: [string, number, number][];
+		 lp: number;
+		 ae: number;
+		 kp: number;
+		 permanentAE: {
+			lost: number;
+			redeemed: number;
+		};
+		 permanentKP: {
+			lost: number;
+			redeemed: number;
+		};
+	};
+	talents: {
+		 [id: string]: number;
+	};
+	ct: {
+		 [id: string]: number;
+	};
+	spells: {
+		 [id: string]: number | null;
+	};
+	chants: {
+		 [id: string]: number | null;
+	};
+	belongings: {
+		 items: {
+			 [id: string]: Data.ItemInstanceOld;
+		};
+		 equipment: object;
+		 pet: object;
+		 purse: {
+			 d: string;
+			 s: string;
+			 h: string;
+			 k: string;
+		};
+	};
+	rules: Data.Rules;
+	history: Data.HistoryObject[];
+	pets: Data.PetInstance[];
+	id: string;
+	dateCreated: string;
+	dateModified: string;
+	player?: Data.User;
 }
 
-type RawHerolist = RawHero[];
+export interface RawHeroNew extends Data.HeroBase {
+	readonly id: string;
+	readonly dateCreated: string;
+	readonly dateModified: string;
+	player?: Data.User;
+}
 
-interface RawRace {
+export type RawHerolist = RawHero[] | Data.ToListById<RawHeroNew>;
+
+export interface RawRace {
 	id: string;
 	name: string;
 	ap: number;
@@ -34,14 +113,14 @@ interface RawRace {
 	weight: (number | [number, number])[];
 }
 
-interface RawCulture {
+export interface RawCulture {
 	id: string;
 	name: string;
 	ap: number;
 	lang: number[];
 	literacy: number[];
 	social: number[];
-	typ_prof: string[];
+	typ_prof: Data.TypicalProfession[];
 	typ_adv: string[];
 	typ_dadv: string[];
 	untyp_adv: string[];
@@ -51,61 +130,63 @@ interface RawCulture {
 	talents: [string, number][];
 }
 
-interface RawProfession {
+export interface RawProfession {
 	id: string;
 	name: string | { m: string, f: string };
 	subname: string | { m: string, f: string };
 	ap: number;
-	pre_req: ProfessionDependencyObject[];
-	req: RequirementObject[];
-	sel: ProfessionSelections;
-	sa: RequirementObject[];
+	pre_req: Data.ProfessionDependencyObject[];
+	req: Data.RequirementObject[];
+	sel: Data.ProfessionSelections;
+	sa: Data.RequirementObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
-	spells: [string, number | null][];
-	chants: [string, number | null][];
+	spells: [string, number][];
+	chants: [string, number][];
+	blessings: string[];
 	typ_adv: string[];
 	typ_dadv: string[];
 	untyp_adv: string[];
 	untyp_dadv: string[];
 	vars: string[];
 	gr: number;
+	sgr: number;
 	src: {
 		id: string;
 		page?: string;
 	}
 }
 
-interface RawProfessionVariant {
+export interface RawProfessionVariant {
 	id: string;
 	name: string | { m: string, f: string };
 	ap: number;
-	pre_req: ProfessionDependencyObject[];
-	req: RequirementObject[];
-	sel: ProfessionSelections;
-	sa: RequirementObject[];
+	pre_req: Data.ProfessionDependencyObject[];
+	req: Data.RequirementObject[];
+	sel: Data.ProfessionSelections;
+	sa: Data.RequirementObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 }
 
-interface RawAdvantage {
+export interface RawAdvantage {
 	id: string;
 	name: string;
 	ap: number | number[] | string;
-	tiers: number | null;
-	max: number | null;
-	sel: SelectionObject[];
-	input: string;
-	req: ('RCP' | RequirementObject)[];
+	tiers?: number;
+	max?: number;
+	sel?: Data.SelectionObject[];
+	input?: string;
+	req: ('RCP' | Data.RequirementObject)[];
 }
 
-interface RawAttribute {
+export interface RawAttribute {
 	id: string;
 	name: string;
 	short: string;
 }
 
-interface RawCombatTechnique {
+export interface RawCombatTechnique {
 	id: string;
 	name: string;
 	skt: number;
@@ -113,9 +194,9 @@ interface RawCombatTechnique {
 	gr: number;
 }
 
-interface RawDisadvantage extends RawAdvantage {}
+export interface RawDisadvantage extends RawAdvantage {}
 
-interface RawLiturgy {
+export interface RawLiturgy {
 	id: string;
 	name: string;
 	check: [number, number, number, string | never];
@@ -125,18 +206,26 @@ interface RawLiturgy {
 	gr: number;
 }
 
-interface RawSpecialAbility {
+export interface RawBlessing {
+	id: string;
+	name: string;
+	aspc: number[];
+	trad: number[];
+	reqs: Data.RequirementObject[];
+}
+
+export interface RawSpecialAbility {
 	id: string;
 	name: string;
 	ap: number | number[] | string;
-	max: number | null;
-	sel: SelectionObject[];
-	input: string;
-	req: ('RCP' | RequirementObject)[];
+	max?: number;
+	sel?: Data.SelectionObject[];
+	input?: string;
+	req: ('RCP' | Data.RequirementObject)[];
 	gr: number;
 }
 
-interface RawSpell {
+export interface RawSpell {
 	id: string;
 	name: string;
 	check: [number, number, number, string | never];
@@ -146,7 +235,15 @@ interface RawSpell {
 	gr: number;
 }
 
-interface RawTalent {
+export interface RawCantrip {
+	id: string;
+	name: string;
+	merk: number;
+	trad: number[];
+	reqs: Data.RequirementObject[];
+}
+
+export interface RawTalent {
 	id: string;
 	name: string;
 	check: [string, string, string];
@@ -154,40 +251,39 @@ interface RawTalent {
 	be: 'true' | 'false' | 'evtl';
 	gr: number;
 	spec: string[];
-	spec_input: string | null;
+	spec_input?: string;
 }
 
-interface RawItem {
+export interface RawItem {
 	id: string;
 	name: string;
 	price: number;
 	weight: number;
-	number: number;
 	where: string;
-	gr: number;
-	combatTechnique: string;
-	damageDiceNumber: number;
-	damageDiceSides: number;
-	damageFlat: number;
-	damageBonus: number;
-	at: number;
-	pa: number;
-	reach: number;
-	length: number;
-	stp: number;
-	range: [number, number, number];
-	reloadTime: number;
-	ammunition: string | null;
-	pro: number;
-	enc: number;
-	addPenalties: boolean;
 	template: string;
-	isParryingWeapon: boolean;
-	isTwoHandedWeapon: boolean;
-	improvisedWeaponGroup?: number;
+	imp: number;
+	gr: number;
+	combatTechnique?: string;
+	damageDiceNumber?: number;
+	damageDiceSides?: number;
+	damageFlat?: number;
+	damageBonus?: number;
+	at?: number;
+	pa?: number;
+	reach?: number;
+	length?: number;
+	stp?: number;
+	range?: [number, number, number];
+	reloadTime?: number;
+	ammunition?: string;
+	pro?: number;
+	enc?: number;
+	addPenalties?: boolean;
+	isParryingWeapon?: boolean;
+	isTwoHandedWeapon?: boolean;
 }
 
-interface RawExperienceLevel {
+export interface RawExperienceLevel {
 	id: string;
 	name: string;
 	ap: number;
@@ -199,9 +295,11 @@ interface RawExperienceLevel {
 	max_unfamiliar_spells: number;
 }
 
-interface RawTables {
+export interface RawTables {
 	adv: { [id: string]: RawAdvantage };
 	attributes: { [id: string]: RawAttribute };
+	blessings: { [id: string]: RawBlessing };
+	cantrips: { [id: string]: RawCantrip };
 	combattech: { [id: string]: RawCombatTechnique };
 	cultures: { [id: string]: RawCulture };
 	disadv: { [id: string]: RawDisadvantage };
@@ -216,7 +314,7 @@ interface RawTables {
 	talents: { [id: string]: RawTalent };
 }
 
-interface Config {
+export interface Config {
 	herolistSortOrder: string;
 	herolistVisibilityFilter: string;
 	racesSortOrder: string;
@@ -242,7 +340,7 @@ interface Config {
 	enableActiveItemHints: boolean;
 }
 
-interface Raw {
+export interface Raw {
 	config: Config;
 	heroes: RawHerolist;
 	tables: RawTables;

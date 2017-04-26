@@ -1,17 +1,15 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-interface Props {
+export interface LabelProps {
 	className?: string;
 	disabled?: boolean;
 	text?: string;
 }
 
-export default class Label extends React.Component<Props, undefined> {
-	render() {
-		const { className, disabled, text, ...other } = this.props;
-		return text ? (
-			<label {...other} className={classNames(className, disabled && 'disabled')}>{text}</label>
-		) : null;
-	}
+export function Label(props: LabelProps) {
+	const { className, disabled, text, ...other } = props;
+	return (
+		<label {...other} className={classNames(className, disabled && 'disabled')}>{text}</label>
+	);
 }

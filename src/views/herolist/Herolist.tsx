@@ -2,26 +2,30 @@ import { remote } from 'electron';
 import * as React from 'react';
 import * as HerolistActions from '../../actions/HerolistActions';
 import { setSection } from '../../actions/LocationActions';
-import BorderButton from '../../components/BorderButton';
-import Dropdown from '../../components/Dropdown';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import APStore from '../../stores/APStore';
-import CultureStore from '../../stores/CultureStore';
-import ELStore from '../../stores/ELStore';
-import HerolistStore from '../../stores/HerolistStore';
-import HistoryStore from '../../stores/HistoryStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import ProfileStore from '../../stores/ProfileStore';
-import RaceStore from '../../stores/RaceStore';
-import confirm from '../../utils/confirm';
-import createOverlay from '../../utils/createOverlay';
+import { BorderButton } from '../../components/BorderButton';
+import { Dropdown } from '../../components/Dropdown';
+import { List } from '../../components/List';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { APStore } from '../../stores/APStore';
+import { CultureStore } from '../../stores/CultureStore';
+import { ELStore } from '../../stores/ELStore';
+import { HerolistStore } from '../../stores/HerolistStore';
+import { HistoryStore } from '../../stores/HistoryStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
+import { ProfileStore } from '../../stores/ProfileStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { Hero, InputTextEvent } from '../../types/data.d';
+import { confirm } from '../../utils/confirm';
+import { createOverlay } from '../../utils/createOverlay';
 import { importHero } from '../../utils/FileAPIUtils';
 import { filterAndSort } from '../../utils/ListUtils';
-import HeroCreation from './HeroCreation';
-import HerolistItem from './HerolistItem';
+import { HeroCreation } from './HeroCreation';
+import { HerolistItem } from './HerolistItem';
 
 interface State {
 	list: Hero[];
@@ -31,7 +35,7 @@ interface State {
 	file: File | undefined;
 }
 
-export default class Herolist extends React.Component<undefined, State> {
+export class Herolist extends React.Component<undefined, State> {
 
 	state = {
 		file: undefined,
@@ -64,17 +68,6 @@ export default class Herolist extends React.Component<undefined, State> {
 					setSection('hero');
 				}
 			});
-		}
-	}
-	refresh = () => HerolistActions.requestList();
-	changeFile = (event: InputTextEvent) => {
-		const file = event.target.files && event.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = e => {
-				HerolistActions.insertHero(e.target.result);
-			};
-			reader.readAsText(file);
 		}
 	}
 	importHero = () => {
@@ -114,12 +107,12 @@ export default class Herolist extends React.Component<undefined, State> {
 				return { ...e, player: HerolistStore.getUser(e.player) };
 			}
 			return e as Hero & { player: undefined; };
-		}).map(hero => <HerolistItem key={hero.indexId} {...hero} />);
+		}).map(hero => <HerolistItem key={hero.id} {...hero} />);
 
 		return (
 			<section id="herolist">
-				<div className="page">
-					<div className="options">
+				<Page>
+					<Options>
 						<TextField
 							hint="Suchen"
 							value={filterText}
@@ -152,13 +145,12 @@ export default class Herolist extends React.Component<undefined, State> {
 							/>
 						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
 						<BorderButton label="Importieren" onClick={this.importHero} />
-					</div>
-					<Scroll className="list">
-						<ul>
+					</Options>
+					<Scroll>
+						<List>
 							{
-								HerolistStore.getCurrent().indexId === null && ELStore.getStartID() !== 'EL_0' ? (
+								HerolistStore.getCurrentId() === undefined && ELStore.getStartID() !== 'EL_0' && (
 									<HerolistItem
-										indexId={null}
 										avatar={ProfileStore.getAvatar()}
 										name="Ungespeicherter Held"
 										ap={{ total: APStore.getTotal() }}
@@ -168,12 +160,12 @@ export default class Herolist extends React.Component<undefined, State> {
 										pv={ProfessionVariantStore.getCurrentID()}
 										sex={ProfileStore.getSex()}
 										/>
-								) : null
+								)
 							}
 							{list}
-						</ul>
+						</List>
 					</Scroll>
-				</div>
+				</Page>
 			</section>
 		);
 	}

@@ -41,10 +41,39 @@ ul.list-wrapper {
 				border-color: transparent;
 				pointer-events: none;
 			}
+
+			.avatar-wrapper h2 {
+				visibility: visible;
+			}
 		}
 
 		&:not(:last-child) {
 			margin-bottom: 1px;
+		}
+
+		.avatar-wrapper {
+			$size: 55px;
+			$padding: 2px;
+			margin-right: 14px;
+			z-index: 1;
+			flex: none;
+			@include size($size);
+
+			> div {
+				@include size($size - $padding * 2);
+				border-radius: 50%;
+			}
+
+			h2 {
+				position: absolute;
+				text-align: center;
+				line-height: $size - $padding * 2;
+				font-size: 21px;
+				visibility: hidden;
+				background: rgba(0, 0, 0, .75);
+				border-radius: 50%;
+				@include size($size - $padding * 2);
+			}
 		}
 
 		.name {
@@ -52,6 +81,32 @@ ul.list-wrapper {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+
+			&.large {
+				p.title {
+					font: bold 18px/28px Alegreya;
+					letter-spacing: 0.05em;
+					text-transform: uppercase;
+					height: 28px;
+
+					span:not(.add) {
+						margin: 20px 0 0;
+						flex: 0 1 auto;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						padding: 0;
+						color: $color1;
+					}
+
+					.add {
+						padding-left: 20px;
+						font-size: 16px;
+						color: $color4;
+						flex: none;
+					}
+				}
+			}
 		}
 
 		p {
@@ -71,6 +126,7 @@ ul.list-wrapper {
 				text-transform: none;
 				color: $color1;
 				margin: 0;
+				display: flex;
 			}
 		}
 
@@ -165,6 +221,10 @@ ul.list-wrapper {
 
 			.btn {
 				flex: none;
+
+				&:not(.btn-flat):not(:first-child) {
+					margin-left: 5px;
+				}
 			}
 		}
 
@@ -221,4 +281,3 @@ ul.list-wrapper {
 		}
 	}
 }
-

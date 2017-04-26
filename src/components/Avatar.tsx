@@ -1,7 +1,7 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-interface Props {
+export interface AvatarProps {
 	className?: string;
 	hasWrapper?: boolean;
 	img?: boolean;
@@ -9,7 +9,7 @@ interface Props {
 	onClick?(): void;
 }
 
-export default (props: Props) => {
+export function Avatar(props: AvatarProps) {
 	const { hasWrapper, img, onClick, src = '' } = props;
 	let { className } = props;
 
@@ -32,4 +32,4 @@ export default (props: Props) => {
 			onClick={onClick}
 			/>
 	);
-};
+}

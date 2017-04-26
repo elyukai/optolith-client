@@ -1,14 +1,15 @@
 import * as React from 'react';
 import * as CultureActions from '../../actions/CultureActions';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import CultureStore from '../../stores/CultureStore';
-import RaceStore from '../../stores/RaceStore';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { CultureStore } from '../../stores/CultureStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { CultureInstance, InputTextEvent } from '../../types/data.d';
 import { filterAndSort } from '../../utils/ListUtils';
-import CulturesListItem from './CulturesListItem';
+import { CulturesListItem } from './CulturesListItem';
 
 interface Props {
 	changeTab(tab: string): void;
@@ -16,14 +17,14 @@ interface Props {
 
 interface State {
 	cultures: CultureInstance[];
-	currentID: string | null;
+	currentID?: string;
 	filterText: string;
 	sortOrder: string;
 	showDetails: boolean;
 	visibilityFilter: string;
 }
 
-export default class Cultures extends React.Component<Props, State> {
+export class Cultures extends React.Component<Props, State> {
 	state = {
 		cultures: CultureStore.getAll(),
 		currentID: CultureStore.getCurrentID(),

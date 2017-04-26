@@ -1,8 +1,9 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { TextBox } from '../../components/TextBox';
+import { EquipmentStore } from '../../stores/EquipmentStore';
+import { ItemInstance } from '../../types/data.d';
 
-export default () => {
+export function CombatSheetShields() {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
 	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
@@ -23,7 +24,7 @@ export default () => {
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
 										<td className="stp">{e.stp}</td>
-										<td className="mod">{e.at > 0 && '+'}{e.at}/{e.pa > 0 && '+'}{e.pa}</td>
+										<td className="mod">{e.at && e.at > 0 && '+'}{e.at}/{e.pa && e.pa > 0 && '+'}{e.pa}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>
 								);
@@ -44,4 +45,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-};
+}

@@ -1,23 +1,26 @@
 import * as React from 'react';
+import * as ConfigActions from '../../actions/ConfigActions';
 import * as SpellsActions from '../../actions/SpellsActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import List from '../../components/List';
-import ListItem from '../../components/ListItem';
-import ListItemGroup from '../../components/ListItemGroup';
-import ListItemName from '../../components/ListItemName';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import ConfigStore from '../../stores/ConfigStore';
-import PhaseStore from '../../stores/PhaseStore';
-import SpellsStore from '../../stores/SpellsStore';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { List } from '../../components/List';
+import { ListItem } from '../../components/ListItem';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { ListItemName } from '../../components/ListItemName';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import * as Categories from '../../constants/Categories';
+import { ConfigStore } from '../../stores/ConfigStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { SpellsStore } from '../../stores/SpellsStore';
+import { CantripInstance, InputTextEvent, SpellInstance } from '../../types/data.d';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isActivatable, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
-import SkillListItem from './SkillListItem';
+import { SkillListItem } from './SkillListItem';
 
 interface State {
 	addSpellsDisabled: boolean;
@@ -27,11 +30,11 @@ interface State {
 	phase: number;
 	showAddSlidein: boolean;
 	sortOrder: string;
-	spells: SpellInstance[];
+	spells: (SpellInstance | CantripInstance)[];
 	enableActiveItemHints: boolean;
 }
 
-export default class Spells extends React.Component<undefined, State> {
+export class Spells extends React.Component<undefined, State> {
 	state = {
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
@@ -40,7 +43,7 @@ export default class Spells extends React.Component<undefined, State> {
 		phase: PhaseStore.get(),
 		showAddSlidein: false,
 		sortOrder: SpellsStore.getSortOrder(),
-		spells: SpellsStore.getAll(),
+		spells: [ ...SpellsStore.getAll(), ...SpellsStore.getAllCantrips() ],
 		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
@@ -51,7 +54,7 @@ export default class Spells extends React.Component<undefined, State> {
 	addPoint = (id: string) => SpellsActions.addPoint(id);
 	removeFromList = (id: string) => SpellsActions.removeFromList(id);
 	removePoint = (id: string) => SpellsActions.removePoint(id);
-	switchActiveItemHints = () => SpellsActions.switchEnableActiveItemHints();
+	switchActiveItemHints = () => ConfigActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
@@ -79,8 +82,8 @@ export default class Spells extends React.Component<undefined, State> {
 			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
 		];
 
-		const listActive: SpellInstance[] = [];
-		const listDeactive: SpellInstance[] = [];
+		const listActive: (SpellInstance | CantripInstance)[] = [];
+		const listDeactive: (SpellInstance | CantripInstance)[] = [];
 
 		spells.forEach(e => {
 			if (e.active) {
@@ -91,7 +94,7 @@ export default class Spells extends React.Component<undefined, State> {
 			}
 			else if (isActivatable(e)) {
 				if (!isOwnTradition(e)) {
-					if (e.gr < 2 && !areMaxUnfamiliar) {
+					if (e.category === Categories.CANTRIPS || e.gr < 2 && !areMaxUnfamiliar) {
 						listDeactive.push(e);
 					}
 				}
@@ -130,21 +133,33 @@ export default class Spells extends React.Component<undefined, State> {
 										const extendedName = name + extendName;
 										return (
 											<ListItem key={id} disabled>
-												<ListItemName main={extendedName} />
+												<ListItemName name={extendedName} />
 											</ListItem>
+										);
+									}
+
+									const name = obj.name + extendName;
+
+									if (obj.category === Categories.CANTRIPS) {
+										return (
+											<SkillListItem
+												key={obj.id}
+												id={obj.id}
+												name={name}
+												isNotActive
+												activate={this.addToList.bind(null, obj.id)}
+												addFillElement
+												>
+												<ListItemGroup>
+													{PROPERTIES[obj.property - 1]}
+													{sortOrder === 'group' ? ` / Trick` : null}
+												</ListItemGroup>
+											</SkillListItem>
 										);
 									}
 
 									const [ a, b, c, checkmod ] = obj.check;
 									const check = [ a, b, c ];
-
-									const name = obj.name + extendName;
-
-									const add = obj.gr === 5 ? {} : {
-										check,
-										checkmod,
-										ic: obj.ic,
-									};
 
 									return (
 										<SkillListItem
@@ -155,7 +170,9 @@ export default class Spells extends React.Component<undefined, State> {
 											activate={this.addToList.bind(null, obj.id)}
 											activateDisabled={addSpellsDisabled && obj.gr < 3}
 											addFillElement
-											{...add}
+											check={check}
+											checkmod={checkmod}
+											ic={obj.ic}
 											>
 											<ListItemGroup>
 												{PROPERTIES[obj.property - 1]}
@@ -184,15 +201,33 @@ export default class Spells extends React.Component<undefined, State> {
 					<List>
 						{
 							sortedActiveList.map(obj => {
-								const [ a1, a2, a3, checkmod ] = obj.check;
-								const check = [ a1, a2, a3 ];
-
 								let name = obj.name;
 								if (!isOwnTradition(obj)) {
 									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
 								}
 
-								const other = obj.gr === 5 ? {} : {
+								if (obj.category === Categories.CANTRIPS) {
+									return (
+										<SkillListItem
+											key={obj.id}
+											id={obj.id}
+											name={name}
+											removePoint={phase < 3 ? this.removeFromList.bind(null, obj.id) : undefined}
+											addFillElement
+											noIncrease
+											>
+											<ListItemGroup>
+												{PROPERTIES[obj.property - 1]}
+												{sortOrder === 'group' ? ` / Trick` : null}
+											</ListItemGroup>
+										</SkillListItem>
+									);
+								}
+
+								const [ a1, a2, a3, checkmod ] = obj.check;
+								const check = [ a1, a2, a3 ];
+
+								const other = {
 									addDisabled: !isIncreasable(obj),
 									addPoint: this.addPoint.bind(null, obj.id),
 									check,
@@ -206,10 +241,9 @@ export default class Spells extends React.Component<undefined, State> {
 										key={obj.id}
 										id={obj.id}
 										name={name}
-										removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
+										removePoint={phase < 3 ? obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!isDecreasable(obj)}
 										addFillElement
-										noIncrease={obj.gr === 5}
 										{...other} >
 										<ListItemGroup>
 											{PROPERTIES[obj.property - 1]}
@@ -230,7 +264,7 @@ export default class Spells extends React.Component<undefined, State> {
 			addSpellsDisabled: SpellsStore.isActivationDisabled(),
 			areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 			sortOrder: SpellsStore.getSortOrder(),
-			spells: SpellsStore.getAll(),
+			spells: [ ...SpellsStore.getAll(), ...SpellsStore.getAllCantrips() ]
 		} as State);
 	}
 

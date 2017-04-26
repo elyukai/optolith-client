@@ -1,27 +1,28 @@
 import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
-import AvatarWrapper from '../../components/AvatarWrapper';
-import BorderButton from '../../components/BorderButton';
-import EditText from '../../components/EditText';
-import IconButton from '../../components/IconButton';
-import Scroll from '../../components/Scroll';
-import VerticalList from '../../components/VerticalList';
+import { AvatarWrapper } from '../../components/AvatarWrapper';
+import { BorderButton } from '../../components/BorderButton';
+import { EditText } from '../../components/EditText';
+import { IconButton } from '../../components/IconButton';
+import { Scroll } from '../../components/Scroll';
+import { VerticalList } from '../../components/VerticalList';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
-import APStore from '../../stores/APStore';
-import CultureStore from '../../stores/CultureStore';
-import ELStore from '../../stores/ELStore';
-import PhaseStore from '../../stores/PhaseStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import ProfileStore from '../../stores/ProfileStore';
-import RaceStore from '../../stores/RaceStore';
-import calcEL from '../../utils/calcEL';
-import createOverlay from '../../utils/createOverlay';
-import ActivatableTextList from './ActivatableTextList';
-import OverviewAddAP from './OverviewAddAP';
-import OverviewAvatarChange from './OverviewAvatarChange';
-import OverviewPersonalData from './OverviewPersonalData';
+import { APStore } from '../../stores/APStore';
+import { CultureStore } from '../../stores/CultureStore';
+import { ELStore } from '../../stores/ELStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
+import { ProfileStore } from '../../stores/ProfileStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { ActiveViewObject } from '../../types/data.d';
+import { calcEL } from '../../utils/calcEL';
+import { createOverlay } from '../../utils/createOverlay';
+import { ActivatableTextList } from './ActivatableTextList';
+import { OverviewAddAP } from './OverviewAddAP';
+import { OverviewAvatarChange } from './OverviewAvatarChange';
+import { OverviewPersonalData } from './OverviewPersonalData';
 
 interface State {
 	ap: number;
@@ -49,7 +50,7 @@ interface State {
 	editProfessionName: boolean;
 }
 
-export default class ProfileOverview extends React.Component<undefined, State> {
+export class Overview extends React.Component<undefined, State> {
 
 	state = {
 		...ProfileStore.getAll(),
@@ -92,7 +93,6 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 	editProfessionNameCancel = () => this.setState({ editProfessionName: false } as State);
 
 	endCharacterCreation = () => ProfileActions.endHeroCreation();
-	deleteHero = () => ProfileActions.deleteHero();
 	addAP = () => createOverlay(<OverviewAddAP />);
 
 	render() {
@@ -252,12 +252,6 @@ export default class ProfileOverview extends React.Component<undefined, State> {
 								<ActivatableTextList list={this.state.advActive} />
 								<h3>Nachteile</h3>
 								<ActivatableTextList list={this.state.disadvActive} />
-								<BorderButton
-									className="delete-char"
-									label="Held löschen"
-									onClick={this.deleteHero}
-									disabled
-									/>
 							</div>
 						) : null
 					}

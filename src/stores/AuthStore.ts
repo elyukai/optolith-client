@@ -1,6 +1,8 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { ReceiveLoginAction, ReceiveLogoutAction, ReceiveNewUsernameAction } from '../actions/ServerActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Store } from './Store';
 
 type Action = ReceiveLoginAction | ReceiveNewUsernameAction | ReceiveLogoutAction | ReceiveInitialDataAction;
 
@@ -8,7 +10,7 @@ class AuthStoreStatic extends Store {
 	private name = '';
 	private displayName = '';
 	private email = '';
-	private sessionToken: string | null = null;
+	private sessionToken?: string;
 	readonly dispatchToken: string;
 
 	constructor() {
@@ -61,7 +63,7 @@ class AuthStoreStatic extends Store {
 		return this.sessionToken;
 	}
 
-	private update(name: string, displayName: string, email: string, sessionToken: string | null = null) {
+	private update(name: string, displayName: string, email: string, sessionToken?: string) {
 		this.name = name;
 		this.displayName = displayName;
 		this.email = email;
@@ -76,10 +78,8 @@ class AuthStoreStatic extends Store {
 		this.name = '';
 		this.displayName = '';
 		this.email = '';
-		this.sessionToken = null;
+		this.sessionToken = undefined;
 	}
 }
 
-const AuthStore = new AuthStoreStatic();
-
-export default AuthStore;
+export const AuthStore = new AuthStoreStatic();

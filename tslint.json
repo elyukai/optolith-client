@@ -1,7 +1,8 @@
 {
 	"rules": {
 		// TypeScript Specific
-		"member-access": [true, "no-public"],
+		"adjacent-overload-signatures": true,
+		"ban-types": [true, ["null", "Use undefined instead of null."]],
 		// "member-ordering": [
 		// 	true,
 		// 	{
@@ -15,9 +16,12 @@
 		// 		]
 		// 	}
 		// ],
-		"no-any": true,
+		// "no-any": true,
 		"no-empty-interface": true,
-		// "no-non-null-assertion": true,
+		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
+		"no-non-null-assertion": {
+			"severity": "warning"
+		},
 		// "no-reference": true,
 		"no-var-requires": true,
 		"only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
@@ -40,12 +44,12 @@
 		"no-inferred-empty-object-type": true,
 		"no-invalid-this": true,
 		"no-misused-new": true,
+		// "no-null-keyword": true,
 		"no-string-literal": true,
 		"no-switch-case-fall-through": true,
 		"no-unsafe-any": true,
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
-		"no-unused-new": true,
 		"no-unused-variable": [true, "check-parameters", { "ignore-pattern": "^_" }],
 		"no-var-keyword": true,
 		"restrict-plus-operands": true,
@@ -57,12 +61,12 @@
 		"eofline": true,
 		"indent": [true, "tabs"],
 		"max-classes-per-file": [true, 1],
+		"no-default-export": true,
 		"no-require-imports": true,
 		// "object-literal-sort-keys": true,
 		"prefer-const": true,
 
 		// Style
-		"array-type": [true, "array-simple"],
 		"arrow-parens": [true, "ban-single-arg-parens"],
 		"arrow-return-shorthand": true,
 		"callable-types": true,
@@ -78,7 +82,6 @@
 		"one-line": [true, "check-open-brace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
 		"ordered-imports": [true],
-		// "prefer-method-signature": true,
 		"quotemark": [true, "single", "jsx-double", "avoid-escape"],
 		"semicolon": [true, "always"],
 		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],

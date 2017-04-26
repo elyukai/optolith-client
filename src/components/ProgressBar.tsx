@@ -1,15 +1,12 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import ProgressBarOverlay from './ProgressBarOverlay';
+import { ProgressBarOverlay, ProgressBarOverlayProps } from './ProgressBarOverlay';
 
-interface Props {
+export interface ProgressBarProps extends ProgressBarOverlayProps {
 	className?: string;
-	current: number;
-	max: number;
-	horizontal?: boolean;
 }
 
-export default function ProgressBar(props: Props) {
+export function ProgressBar(props: ProgressBarProps) {
 	const { className, horizontal, ...other } = props;
 	return (
 		<div className={classNames('progressbar', className, { horizontal })}>

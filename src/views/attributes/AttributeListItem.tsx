@@ -1,22 +1,22 @@
 import * as React from 'react';
 import * as AttributesActions from '../../actions/AttributesActions';
-import IconButton from '../../components/IconButton';
-import NumberBox from '../../components/NumberBox';
-import ELStore from '../../stores/ELStore';
+import { IconButton } from '../../components/IconButton';
+import { NumberBox } from '../../components/NumberBox';
+import { ELStore } from '../../stores/ELStore';
+import { AttributeInstance } from '../../types/data.d';
 import { isDecreasable, isIncreasable } from '../../utils/AttributeUtils';
-import AttributeBorder from './AttributeBorder';
+import { AttributeBorder } from './AttributeBorder';
 
-interface Props {
+export interface AttributeListItemProps {
 	attribute: AttributeInstance;
 	phase: number;
 }
 
-export default class AttributeListItem extends React.Component<Props, undefined> {
+export class AttributeListItem extends React.Component<AttributeListItemProps, {}> {
 	addPoint = () => AttributesActions.addPoint(this.props.attribute.id);
 	removePoint = () => AttributesActions.removePoint(this.props.attribute.id);
 
 	render() {
-
 		const { attribute, phase } = this.props;
 		const { id, short, name, value, mod } = attribute;
 

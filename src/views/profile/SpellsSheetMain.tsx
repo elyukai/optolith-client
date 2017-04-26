@@ -1,19 +1,21 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
+import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
-import SpellsStore from '../../stores/SpellsStore';
+import { SpellsStore } from '../../stores/SpellsStore';
+import { AttributeInstance, SpellInstance } from '../../types/data.d';
 import { sort } from '../../utils/ListUtils';
+import { get as getSec } from '../../utils/secondaryAttributes';
 import { isOwnTradition } from '../../utils/SpellUtils';
 
 interface Props {
 	attributeValueVisibility: boolean;
 }
 
-export default function SpellsSheetMain(props: Props) {
-	const filtered = SpellsStore.getAll().filter(e => e.active && e.gr !== 5);
-	const spells = sort(filtered, SpellsStore.getSortOrder()) as SpellInstance[];
-	const list = Array(21).fill(undefined) as Array<SpellInstance | undefined>;
+export function SpellsSheetMain(props: Props) {
+	const filtered = SpellsStore.getAll().filter(e => e.active);
+	const spells = sort(filtered, SpellsStore.getSortOrder());
+	const list = Array<SpellInstance | undefined>(21).fill(undefined);
 	list.splice(0, Math.min(spells.length, 21), ...spells);
 	const PROPERTIES = SpellsStore.getPropertyNames();
 	const TRADITIONS = SpellsStore.getTraditionNames();
@@ -39,7 +41,7 @@ export default function SpellsSheetMain(props: Props) {
 						list.map((e, i) => {
 							if (e) {
 								const rawCheck = e.check;
-								const checkmod = rawCheck.splice(3)[0];
+								const checkmod = rawCheck.splice(3)[0] as 'SPI' | 'TOU' | undefined;
 								const check = rawCheck.map(attr => {
 									const attribute = get(attr) as AttributeInstance;
 									if (props.attributeValueVisibility === true) {
@@ -56,7 +58,7 @@ export default function SpellsSheetMain(props: Props) {
 								return (
 									<tr key={e.id}>
 										<td className="name">{name}</td>
-										<td className={classNames('check', checkmod && 'mod')}>{check}{checkmod ? ` (+${checkmod})` : null}</td>
+										<td className={classNames('check', checkmod && 'mod')}>{check}{checkmod ? ` (+${getSec(checkmod).short})` : null}</td>
 										<td className="value">{e.value}</td>
 										<td className="cost"></td>
 										<td className="cast-time"></td>

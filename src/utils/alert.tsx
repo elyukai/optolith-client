@@ -1,17 +1,11 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import Dialog from '../components/Dialog';
+import { BorderButtonProps } from '../components/BorderButton';
+import { Dialog } from '../components/Dialog';
 import { close } from '../utils/createOverlay';
-import createOverlay from './createOverlay';
+import { createOverlay } from './createOverlay';
 
-interface Button {
-	label: string;
-	primary?: boolean;
-	autoWidth?: boolean;
-	disabled?: boolean;
-	onClick?(): void;
-}
-export default function alert(title: string, expand?: (() => void) | string, buttons: Button[] = [{ label: 'OK', autoWidth: true }]): void {
+export function alert(title: string, expand?: (() => void) | string, buttons: BorderButtonProps[] = [{ label: 'OK', autoWidth: true }]): void {
 	let className;
 	let content;
 	if (typeof expand !== 'string') {

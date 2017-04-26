@@ -1,12 +1,13 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import Equipment from './Equipment';
+import { SubTabs } from '../../components/SubTabs';
+import { Equipment } from './Equipment';
+import { Pets } from './Pets';
 
-interface State {
+export interface BelongingsState {
 	tab: string;
 }
 
-export default class Belongings extends React.Component<undefined, State> {
+export class Belongings extends React.Component<undefined, BelongingsState> {
 	state = {
 		tab: 'equipment',
 	};
@@ -20,12 +21,19 @@ export default class Belongings extends React.Component<undefined, State> {
 			case 'equipment':
 				element = <Equipment />;
 				break;
+			case 'pets':
+				element = <Pets />;
+				break;
 		}
 
 		const tabs = [
 			{
 				id: 'equipment',
 				label: 'Ausrüstung',
+			},
+			{
+				id: 'pets',
+				label: 'Begleiter'
 			},
 		];
 

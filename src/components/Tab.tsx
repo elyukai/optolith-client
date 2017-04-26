@@ -1,28 +1,31 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import Text from './Text';
+import { Text } from './Text';
 
-interface Props {
-	active: boolean;
+export interface TabBaseProps {
+	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
 	label: string;
+}
+
+export interface TabProps extends TabBaseProps {
+	active: boolean;
 	onClick(): void;
 }
 
-export default class Tab extends React.Component<Props, undefined> {
-	render() {
-		const { active, children, disabled, label, onClick } = this.props;
-		const className = classNames(this.props.className, {
-			'active': active,
-			'disabled': disabled,
-			'tab': true,
-		});
-
-		return (
-			<div className={className} onClick={disabled ? undefined : onClick}>
-				<Text>{label || children}</Text>
-			</div>
-		);
-	}
+export function Tab(props: TabProps) {
+	const { active, children, className, disabled, label, onClick } = props;
+	return (
+		<div
+			className={classNames(className, {
+				'active': active,
+				'disabled': disabled,
+				'tab': true,
+			})}
+			onClick={disabled ? undefined : onClick}
+			>
+			<Text>{label || children}</Text>
+		</div>
+	);
 }

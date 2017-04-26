@@ -1,8 +1,16 @@
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemovePermanentAEPointAction, RemovePermanentKPPointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import * as Data from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import alert from '../utils/alert';
+import { alert } from '../utils/alert';
 import * as AttributeUtils from '../utils/AttributeUtils';
 import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
 import { check, checkDisAdvantages, final } from '../utils/iccalc';
@@ -10,11 +18,13 @@ import * as LiturgyUtils from '../utils/LiturgyUtils';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
-import APStore from './APStore';
-import AttributeStore from './AttributeStore';
-import CombatTechniquesStore from './CombatTechniquesStore';
+import { APStore } from './APStore';
+import { AttributeStore } from './AttributeStore';
+import { CombatTechniquesStore } from './CombatTechniquesStore';
 import { get } from './ListStore';
-import Store from './Store';
+import { Store } from './Store';
+
+type Action = ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | AddArcaneEnergyPointAction | AddAttributePointAction | AddKarmaPointAction | AddLifePointAction | RedeemAEPointAction | RedeemKPPointAction | RemoveAttributePointAction | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | AddTalentPointAction | RemoveTalentPointAction;
 
 class RequirementsStoreStatic extends Store {
 	readonly dispatchToken: string;
@@ -34,9 +44,9 @@ class RequirementsStoreStatic extends Store {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_SPELL:
 					case ActionTypes.ACTIVATE_LITURGY: {
-						const obj = get(action.payload.id) as LiturgyInstance | SpellInstance;
+						const obj = get(action.payload.id) as Data.ActivatableSkillishInstance;
 						this.updateOwnRequirements(true);
-						if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
+						if (obj.category === Categories.CANTRIPS || obj.category === Categories.BLESSINGS) {
 							this.updateCost(1);
 						}
 						else {
@@ -47,9 +57,9 @@ class RequirementsStoreStatic extends Store {
 
 					case ActionTypes.DEACTIVATE_SPELL:
 					case ActionTypes.DEACTIVATE_LITURGY: {
-						const obj = get(action.payload.id) as LiturgyInstance | SpellInstance;
+						const obj = get(action.payload.id) as Data.ActivatableSkillishInstance;
 						this.updateOwnRequirements(true);
-						if ((obj.category === Categories.SPELLS && obj.gr === 5) || (obj.category === Categories.LITURGIES && obj.gr === 3)) {
+						if (obj.category === Categories.CANTRIPS || obj.category === Categories.BLESSINGS) {
 							this.updateCost(-1);
 						}
 						else {
@@ -59,22 +69,25 @@ class RequirementsStoreStatic extends Store {
 					}
 
 					case ActionTypes.ACTIVATE_DISADV:
-						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as ActivatableInstance));
+						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as Data.ActivatableInstance));
 						this.updateDisAdvCost(action.payload.id, action.payload.cost);
 						break;
 
 					case ActionTypes.ACTIVATE_SPECIALABILITY:
-						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as ActivatableInstance));
+						this.updateOwnRequirements(ActivatableUtils.isActivatable(get(action.payload.id) as Data.ActivatableInstance));
 						this.updateCost(action.payload.cost);
 						break;
 
-					case ActionTypes.DEACTIVATE_DISADV:
-						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(get(action.payload.id) as ActivatableInstance));
+					case ActionTypes.DEACTIVATE_DISADV: {
+						const obj = get(action.payload.id) as Data.ActivatableInstance;
+						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(obj, obj.active[action.payload.index].sid));
 						this.updateDisAdvCost(action.payload.id, -action.payload.cost);
 						break;
+					}
 
 					case ActionTypes.DEACTIVATE_SPECIALABILITY: {
-						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(get(action.payload.id) as ActivatableInstance));
+						const obj = get(action.payload.id) as Data.ActivatableInstance;
+						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(obj, obj.active[action.payload.index].sid));
 						const id = action.payload.id;
 						const redeemedPointsChange = AttributeStore.getPermanentRedeemedChangeAmount(id);
 						const reducedCombatTechnique = CombatTechniquesStore.getValueChange(id);
@@ -93,56 +106,56 @@ class RequirementsStoreStatic extends Store {
 						break;
 
 					case ActionTypes.ADD_ATTRIBUTE_POINT: {
-						const obj = get(action.payload.id) as AttributeInstance;
+						const obj = get(action.payload.id) as Data.AttributeInstance;
 						this.updateOwnRequirements(AttributeUtils.isIncreasable(obj));
 						this.updateCost(final(obj.ic, obj.value + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_COMBATTECHNIQUE_POINT: {
-						const obj = get(action.payload.id) as CombatTechniqueInstance;
+						const obj = get(action.payload.id) as Data.CombatTechniqueInstance;
 						this.updateOwnRequirements(CombatTechniqueUtils.isIncreasable(obj));
 						this.updateCost(final(obj.ic, obj.value + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_LITURGY_POINT: {
-						const obj = get(action.payload.id) as LiturgyInstance;
+						const obj = get(action.payload.id) as Data.LiturgyInstance;
 						this.updateOwnRequirements(LiturgyUtils.isIncreasable(obj));
 						this.updateCost(final(obj.ic, obj.value + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_SPELL_POINT: {
-						const obj = get(action.payload.id) as SpellInstance;
+						const obj = get(action.payload.id) as Data.SpellInstance;
 						this.updateOwnRequirements(SpellUtils.isIncreasable(obj));
 						this.updateCost(final(obj.ic, obj.value + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_TALENT_POINT: {
-						const obj = get(action.payload.id) as TalentInstance;
+						const obj = get(action.payload.id) as Data.TalentInstance;
 						this.updateOwnRequirements(TalentUtils.isIncreasable(obj));
 						this.updateCost(final(obj.ic, obj.value + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_LIFE_POINT: {
-						const obj = secondaryAttributes.get('LP') as Energy;
+						const obj = secondaryAttributes.get('LP') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
 						this.updateCost(final(4, AttributeStore.getAdd('LP') + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_ARCANE_ENERGY_POINT: {
-						const obj = secondaryAttributes.get('AE') as Energy;
+						const obj = secondaryAttributes.get('AE') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
 						this.updateCost(final(4, AttributeStore.getAdd('AE') + 1));
 						break;
 					}
 
 					case ActionTypes.ADD_KARMA_POINT: {
-						const obj = secondaryAttributes.get('KP') as Energy;
+						const obj = secondaryAttributes.get('KP') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
 						this.updateCost(final(4, AttributeStore.getAdd('KP') + 1));
 						break;
@@ -163,35 +176,35 @@ class RequirementsStoreStatic extends Store {
 					}
 
 					case ActionTypes.REMOVE_ATTRIBUTE_POINT: {
-						const obj = get(action.payload.id) as AttributeInstance;
+						const obj = get(action.payload.id) as Data.AttributeInstance;
 						this.updateOwnRequirements(AttributeUtils.isDecreasable(obj));
 						this.updateCost(final(obj.ic, obj.value) * -1);
 						break;
 					}
 
 					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT: {
-						const obj = get(action.payload.id) as CombatTechniqueInstance;
+						const obj = get(action.payload.id) as Data.CombatTechniqueInstance;
 						this.updateOwnRequirements(CombatTechniqueUtils.isDecreasable(obj));
 						this.updateCost(final(obj.ic, obj.value) * -1);
 						break;
 					}
 
 					case ActionTypes.REMOVE_LITURGY_POINT: {
-						const obj = get(action.payload.id) as LiturgyInstance;
+						const obj = get(action.payload.id) as Data.LiturgyInstance;
 						this.updateOwnRequirements(LiturgyUtils.isDecreasable(obj));
 						this.updateCost(final(obj.ic, obj.value) * -1);
 						break;
 					}
 
 					case ActionTypes.REMOVE_SPELL_POINT: {
-						const obj = get(action.payload.id) as SpellInstance;
+						const obj = get(action.payload.id) as Data.SpellInstance;
 						this.updateOwnRequirements(SpellUtils.isDecreasable(obj));
 						this.updateCost(final(obj.ic, obj.value) * -1);
 						break;
 					}
 
 					case ActionTypes.REMOVE_TALENT_POINT: {
-						const obj = get(action.payload.id) as TalentInstance;
+						const obj = get(action.payload.id) as Data.TalentInstance;
 						this.updateOwnRequirements(TalentUtils.isDecreasable(obj));
 						this.updateCost(final(obj.ic, obj.value) * -1);
 						break;
@@ -241,7 +254,7 @@ class RequirementsStoreStatic extends Store {
 			}
 		}
 		else {
-			const { category, reqs } = get(id) as AdvantageInstance | DisadvantageInstance;
+			const { category, reqs } = get(id) as Data.AdvantageInstance | Data.DisadvantageInstance;
 			const { adv, disadv, spent, total } = APStore.getAll();
 			const add = category === Categories.ADVANTAGES;
 			const target = () => add ? adv : disadv;
@@ -277,6 +290,4 @@ class RequirementsStoreStatic extends Store {
 	}
 }
 
-const RequirementsStore = new RequirementsStoreStatic();
-
-export default RequirementsStore;
+export const RequirementsStore = new RequirementsStoreStatic();

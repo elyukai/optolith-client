@@ -1,21 +1,21 @@
 import * as React from 'react';
+import * as ConfigActions from '../../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
-import ActivatableAddList from '../../components/ActivatableAddList';
-import ActivatableRemoveList from '../../components/ActivatableRemoveList';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
+import { ActivatableAddList } from '../../components/ActivatableAddList';
+import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
-import ConfigStore from '../../stores/ConfigStore';
-import PhaseStore from '../../stores/PhaseStore';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
-import { filterAndSort } from '../../utils/ListUtils';
+import { ConfigStore } from '../../stores/ConfigStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { SpecialAbilitiesStore } from '../../stores/SpecialAbilitiesStore';
+import { ActiveViewObject, InputTextEvent, SpecialAbilityInstance } from '../../types/data.d';
 
 interface State {
 	activeList: ActiveViewObject[];
@@ -28,7 +28,7 @@ interface State {
 	enableActiveItemHints: boolean;
 }
 
-export default class SpecialAbilities extends React.Component<undefined, State> {
+export class SpecialAbilities extends React.Component<undefined, State> {
 	state = {
 		filterText: '',
 		filterTextSlidein: '',
@@ -43,9 +43,9 @@ export default class SpecialAbilities extends React.Component<undefined, State> 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	sort = (option: string) => SpecialAbilitiesActions.setSortOrder(option);
-	switchActiveItemHints = () => SpecialAbilitiesActions.switchEnableActiveItemHints();
+	switchActiveItemHints = () => ConfigActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
 	componentDidMount() {
 		ConfigStore.addChangeListener(this.updateConfigStore);

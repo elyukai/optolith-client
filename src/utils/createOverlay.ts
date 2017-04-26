@@ -13,7 +13,7 @@ export function createDialogNode(): HTMLDivElement {
 	return node;
 }
 
-export default function createOverlay(element: JSX.Element): HTMLDivElement {
+export function createOverlay(element: JSX.Element): HTMLDivElement {
 	const node = createDialogNode();
 	render( React.cloneElement(element, { node }), node );
 	return node;

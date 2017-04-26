@@ -1,15 +1,16 @@
 import * as React from 'react';
 import * as AttributeActions from '../../actions/AttributesActions';
-import IconButton from '../../components/IconButton';
-import NumberBox from '../../components/NumberBox';
-import AttributeBorder from './AttributeBorder';
+import { IconButton } from '../../components/IconButton';
+import { NumberBox } from '../../components/NumberBox';
+import { SecondaryAttribute } from '../../types/data.d';
+import { AttributeBorder } from './AttributeBorder';
 
-interface Props {
+export interface AttributeCalcItemProps {
 	attribute: SecondaryAttribute;
 	phase: number;
 }
 
-export default class AttributeCalcItem extends React.Component<Props, undefined> {
+export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {}> {
 	addMaxEnergyPoint = () => {
 		if (this.props.attribute.id === 'LP') {
 			AttributeActions.addLifePoint();

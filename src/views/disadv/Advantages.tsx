@@ -1,21 +1,23 @@
 import * as React from 'react';
+import * as ConfigActions from '../../actions/ConfigActions';
 import * as DisAdvActions from '../../actions/DisAdvActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RecommendedReference from '../../components/RecommendedReference';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RecommendedReference } from '../../components/RecommendedReference';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
-import ConfigStore from '../../stores/ConfigStore';
-import CultureStore from '../../stores/CultureStore';
-import DisAdvStore from '../../stores/DisAdvStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import RaceStore from '../../stores/RaceStore';
-import ActiveList from './ActiveList';
-import DeactiveList from './DeactiveList';
+import { ConfigStore } from '../../stores/ConfigStore';
+import { CultureStore } from '../../stores/CultureStore';
+import { DisAdvStore } from '../../stores/DisAdvStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { ActiveViewObject, CultureInstance, DeactiveViewObject, InputTextEvent, ProfessionInstance, RaceInstance } from '../../types/data.d';
+import { ActiveList } from './ActiveList';
+import { DeactiveList } from './DeactiveList';
 
 interface State {
 	filterText: string;
@@ -30,7 +32,7 @@ interface State {
 	profession: ProfessionInstance;
 }
 
-export default class Advantages extends React.Component<undefined, State> {
+export class Advantages extends React.Component<undefined, State> {
 	state = {
 		activeList: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
 		list: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
@@ -47,7 +49,7 @@ export default class Advantages extends React.Component<undefined, State> {
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
 	changeRating = () => DisAdvActions.switchRatingVisibility();
-	switchActiveItemHints = () => DisAdvActions.switchEnableActiveItemHints();
+	switchActiveItemHints = () => ConfigActions.switchEnableActiveItemHints();
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 

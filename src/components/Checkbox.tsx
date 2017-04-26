@@ -1,10 +1,10 @@
-import * as React from 'react';
-import Activate from './Activate';
 import classNames from 'classnames';
-import Icon from './Icon';
-import Text from './Text';
+import * as React from 'react';
+import { Activate } from './Activate';
+import { Icon } from './Icon';
+import { Text } from './Text';
 
-interface Props {
+export interface CheckboxProps {
 	checked: boolean;
 	children?: React.ReactNode;
 	className?: string;
@@ -13,7 +13,7 @@ interface Props {
 	onClick: () => void;
 }
 
-export default (props: Props) => {
+export function Checkbox(props: CheckboxProps) {
 	const { checked, children, className, label, onClick, ...other } = props;
 
 	return (
@@ -27,4 +27,4 @@ export default (props: Props) => {
 			</Text>
 		</Activate>
 	);
-};
+}

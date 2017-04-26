@@ -1,16 +1,17 @@
 import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
-import IconButton from '../../components/IconButton';
-import ListItem from '../../components/ListItem';
-import ListItemButtons from '../../components/ListItemButtons';
-import ListItemGroup from '../../components/ListItemGroup';
-import ListItemName from '../../components/ListItemName';
-import ListItemSeparator from '../../components/ListItemSeparator';
-import TooltipToggle from '../../components/TooltipToggle';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { IconButton } from '../../components/IconButton';
+import { ListItem } from '../../components/ListItem';
+import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
+import { TooltipToggle } from '../../components/TooltipToggle';
+import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
-import createOverlay from '../../utils/createOverlay';
-import ItemEditor from './ItemEditor';
+import { AttributeInstance, CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
+import { createOverlay } from '../../utils/createOverlay';
+import { ItemEditor } from './ItemEditor';
 
 interface Props {
 	add?: boolean;
@@ -19,7 +20,7 @@ interface Props {
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
-export default class EquipmentListItem extends React.Component<Props, undefined> {
+export class EquipmentListItem extends React.Component<Props, undefined> {
 	edit = () => {
 		const item = EquipmentStore.get(this.props.data.id);
 		createOverlay(<ItemEditor item={item} />);
@@ -31,7 +32,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 
 		const { add, data } = this.props;
 		const { isTemplateLocked, template, where } = data;
-		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template), where } : data;
+		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template!), where } : data;
 		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addMOVPenalty, addINIPenalty } = item;
 
 		const numberValue = amount > 1 ? amount : null;
@@ -67,23 +68,23 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 						<tbody>
 							<tr>
 								<td>Kampftechnik</td>
-								<td>{get(combatTechnique).name}</td>
+								<td>{combatTechnique && get(combatTechnique).name}</td>
 							</tr>
 							<tr>
 								<td>TP</td>
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
+								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat && damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
 							</tr>
 							<tr>
 								<td>L+S</td>
-								<td>{(get(combatTechnique) as CombatTechniqueInstance).primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {damageBonus}</td>
+								<td>{combatTechnique && (get(combatTechnique) as CombatTechniqueInstance).primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {damageBonus}</td>
 							</tr>
 							<tr>
 								<td>AT/PA-Mod</td>
-								<td>{at > 0 ? '+' : null}{at}/{pa > 0 ? '+' : null}{pa}</td>
+								<td>{at && at > 0 ? '+' : null}{at}/{pa && pa > 0 ? '+' : null}{pa}</td>
 							</tr>
 							<tr>
 								<td>RW</td>
-								<td>{['Kurz', 'Mittel', 'Lang'][reach - 1]}</td>
+								<td>{reach && ['Kurz', 'Mittel', 'Lang'][reach - 1]}</td>
 							</tr>
 							<tr>
 								<td>Gewicht</td>
@@ -103,11 +104,11 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 						<tbody>
 							<tr>
 								<td>Kampftechnik</td>
-								<td>{get(combatTechnique).name}</td>
+								<td>{combatTechnique && get(combatTechnique).name}</td>
 							</tr>
 							<tr>
 								<td>TP</td>
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
+								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat && damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
 							</tr>
 							<tr>
 								<td>LZ</td>
@@ -115,7 +116,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 							</tr>
 							<tr>
 								<td>RW</td>
-								<td>{range.join('/')}</td>
+								<td>{range && range.join('/')}</td>
 							</tr>
 							<tr>
 								<td>Munitionstyp</td>
@@ -162,7 +163,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 			} margin={11}>
 				{add ? (
 					<ListItem>
-						<ListItemName main={name} />
+						<ListItemName name={name} />
 						<ListItemSeparator />
 						<ListItemButtons>
 							<IconButton
@@ -174,7 +175,7 @@ export default class EquipmentListItem extends React.Component<Props, undefined>
 					</ListItem>
 				) : (
 					<ListItem>
-						<ListItemName main={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
+						<ListItemName name={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
 						<ListItemSeparator />
 						<ListItemGroup list={GROUPS} index={gr} />
 						<ListItemButtons>

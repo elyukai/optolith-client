@@ -1,16 +1,11 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import * as HerolistActions from '../../actions/HerolistActions';
 import { setSection } from '../../actions/LocationActions';
-import ELStore from '../../stores/ELStore';
-import HistoryStore from '../../stores/HistoryStore';
-import alert from '../../utils/alert';
-import confirm from '../../utils/confirm';
+import { ELStore } from '../../stores/ELStore';
+import { HistoryStore } from '../../stores/HistoryStore';
+import { alert } from '../../utils/alert';
+import { confirm } from '../../utils/confirm';
 import { saveAll } from '../../utils/FileAPIUtils';
-
-interface Props {
-	children?: React.ReactNode;
-}
 
 function minimize() {
 	remote.getCurrentWindow().minimize();
@@ -39,7 +34,7 @@ function close() {
 	}
 }
 
-export default function TitleBarDrag() {
+export function TitleBarControls() {
 	return (
 		<div className="titlebar-controls">
 			<div className="titlebar-controls-btn" onClick={minimize}>&#xE15B;</div>

@@ -1,29 +1,27 @@
 import * as React from 'react';
-import secondaryAttributes from '../../utils/secondaryAttributes';
-import AttributeCalcItem from './AttributeCalcItem';
+import { getAll } from '../../utils/secondaryAttributes';
+import { AttributeCalcItem } from './AttributeCalcItem';
 
-interface Props {
+export interface AttributesCalcProps {
 	phase: number;
 }
 
-export default class AttributeCalc extends React.Component<Props, undefined> {
-	render() {
-		const { phase } = this.props;
+export function AttributeCalc(props: AttributesCalcProps) {
+	const { phase } = props;
 
-		const calculated = secondaryAttributes();
+	const calculated = getAll();
 
-		return (
-			<div className="calculated">
-				{
-					calculated.map(attribute => (
-						<AttributeCalcItem
-							key={attribute.id}
-							attribute={attribute}
-							phase={phase}
-							/>
-					))
-				}
-			</div>
-		);
-	}
+	return (
+		<div className="calculated">
+			{
+				calculated.map(attribute => (
+					<AttributeCalcItem
+						key={attribute.id}
+						attribute={attribute}
+						phase={phase}
+						/>
+				))
+			}
+		</div>
+	);
 }

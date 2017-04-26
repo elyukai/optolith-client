@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface VerticalListProps {
 	className?: string;
 	children?: React.ReactNode;
 }
 
-export default function VerticalList(props: Props) {
+export function VerticalList(props: VerticalListProps) {
 	const { children, className, ...other } = props;
 	return (
 		<div {...other} className={classNames(className, 'vertical-list')}>

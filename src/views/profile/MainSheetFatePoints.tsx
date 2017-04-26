@@ -1,10 +1,11 @@
 import * as React from 'react';
-import LabelBox from '../../components/LabelBox';
-import TextBox from '../../components/TextBox';
+import { LabelBox } from '../../components/LabelBox';
+import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
+import { AdvantageInstance, DisadvantageInstance } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 
-export default () => {
+export function MainSheetFatePoints() {
 	let bonus = 0;
 
 	const increaseObject = get('ADV_14') as AdvantageInstance;
@@ -24,4 +25,4 @@ export default () => {
 			<LabelBox label="Aktuell" value="" />
 		</TextBox>
 	);
-};
+}

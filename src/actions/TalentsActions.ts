@@ -1,27 +1,52 @@
-import { ADD_TALENT_POINT, REMOVE_TALENT_POINT, SET_TALENTS_SORT_ORDER, SWITCH_TALENT_RATING_VISIBILITY } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+
+export interface AddTalentPointAction extends Action {
+	type: ActionTypes.ADD_TALENT_POINT;
+	payload: {
+		id: string;
+	};
+}
 
 export const addPoint = (id: string) => AppDispatcher.dispatch<AddTalentPointAction>({
-	type: ADD_TALENT_POINT,
+	type: ActionTypes.ADD_TALENT_POINT,
 	payload: {
 		id
 	}
 });
+
+export interface RemoveTalentPointAction extends Action {
+	type: ActionTypes.REMOVE_TALENT_POINT;
+	payload: {
+		id: string;
+	};
+}
 
 export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveTalentPointAction>({
-	type: REMOVE_TALENT_POINT,
+	type: ActionTypes.REMOVE_TALENT_POINT,
 	payload: {
 		id
 	}
 });
 
+export interface SetTalentsSortOrderAction extends Action {
+	type: ActionTypes.SET_TALENTS_SORT_ORDER;
+	payload: {
+		sortOrder: string;
+	};
+}
+
 export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetTalentsSortOrderAction>({
-	type: SET_TALENTS_SORT_ORDER,
+	type: ActionTypes.SET_TALENTS_SORT_ORDER,
 	payload: {
 		sortOrder
 	}
 });
 
+export interface SwitchTalentRatingVisibilityAction extends Action {
+	type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY;
+}
+
 export const switchRatingVisibility = () => AppDispatcher.dispatch<SwitchTalentRatingVisibilityAction>({
-	type: SWITCH_TALENT_RATING_VISIBILITY
+	type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY
 });

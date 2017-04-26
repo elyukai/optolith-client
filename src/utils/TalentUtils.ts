@@ -1,8 +1,9 @@
-import CultureStore from '../stores/CultureStore';
-import ELStore from '../stores/ELStore';
+import { CultureStore } from '../stores/CultureStore';
+import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
-import PhaseStore from '../stores/PhaseStore';
-import { isActive } from '../utils/ActivatableUtils';
+import { PhaseStore } from '../stores/PhaseStore';
+import { AdvantageInstance, AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import { isActive } from './ActivatableUtils';
 
 export function isIncreasable(obj: TalentInstance): boolean {
 	let max = 0;

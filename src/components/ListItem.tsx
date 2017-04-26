@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface ListItemProps {
 	children?: React.ReactNode;
 	disabled?: boolean;
 	important?: boolean;
@@ -10,7 +10,7 @@ interface Props {
 	unrecommended?: boolean;
 }
 
-export default class ListItem extends React.Component<Props, undefined> {
+export class ListItem extends React.Component<ListItemProps, {}> {
 	render() {
 		const { children, disabled, important, noIncrease, recommended, unrecommended, ...other } = this.props;
 		return (

@@ -1,11 +1,9 @@
 import * as Categories from '../constants/Categories';
+import { ActivatableInstance, InstanceInInit, SkillishInstance, TalentInstance } from '../types/data.d';
+import { RawAdvantage, RawAttribute, RawBlessing, RawCantrip, RawCombatTechnique, RawCulture, RawDisadvantage, RawLiturgy, RawProfession, RawProfessionVariant, RawRace, RawSpecialAbility, RawSpell, RawTables, RawTalent } from '../types/rawdata.d';
 import * as InitUtils from '../utils/InitUtils';
 
-type RawDataClass = RawAdvantage | RawAttribute | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
-
-type Source = {
-	[id: string]: RawDataClass;
-} & object;
+type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
 
 interface List {
 	[id: string]: InstanceInInit;
@@ -15,8 +13,8 @@ const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance 
 	return [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(obj.category);
 };
 
-export default (raw: RawTables) => {
-	const { attributes, adv, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities } = raw;
+export function init(raw: RawTables) {
+	const { attributes, adv, blessings, cantrips, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities } = raw;
 
 	const list: List = {};
 
@@ -28,7 +26,7 @@ export default (raw: RawTables) => {
 		}
 	};
 
-	const getAllByCategory = (...categories: Category[]) => {
+	const getAllByCategory = (...categories: Categories.Category[]) => {
 		const filteredList = [];
 		for (const id in list) {
 			if (list.hasOwnProperty(id)) {
@@ -54,6 +52,7 @@ export default (raw: RawTables) => {
 		req: [],
 		sa: [],
 		sel: [],
+		blessings: [],
 		spells: [],
 		subname: '',
 		talents: [],
@@ -63,6 +62,7 @@ export default (raw: RawTables) => {
 		untyp_dadv: [],
 		vars: [],
 		gr: 0,
+		sgr: 0,
 		src: { id: 'US25001' }
 	});
 	iterate(professionVariants, InitUtils.initProfessionVariant);
@@ -70,7 +70,9 @@ export default (raw: RawTables) => {
 	iterate(talents, InitUtils.initTalent);
 	iterate(combattech, InitUtils.initCombatTechnique);
 	iterate(spells, InitUtils.initSpell);
+	iterate(cantrips, InitUtils.initCantrip);
 	iterate(liturgies, InitUtils.initLiturgy);
+	iterate(blessings, InitUtils.initBlessing);
 	iterate(adv, InitUtils.initAdvantage);
 	iterate(disadv, InitUtils.initDisadvantage);
 	iterate(specialabilities, InitUtils.initSpecialAbility);
@@ -79,15 +81,9 @@ export default (raw: RawTables) => {
 		if (list.hasOwnProperty(id)) {
 			const obj = list[id] as InstanceInInit;
 			if (isActivatableInstance(obj)) {
-				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48'].includes(id)) {
-					const rawNames = getAllByCategory(...obj.sel.map(e => e.name as Category)) as SkillishInstance[];
-					const filtered = rawNames.filter(e => {
-						const { category, gr } = e;
-						const isCantrip = category === Categories.SPELLS && gr === 5;
-						const isBlessing = category === Categories.LITURGIES && gr === 3;
-						return !isCantrip && !isBlessing;
-					});
-					const mapped = filtered.map(({ id, name, ic }) => ({ id, name, cost: ic }));
+				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48', 'SA_252', 'SA_273'].includes(id)) {
+					const rawNames = getAllByCategory(...obj.sel!.map(e => e.name as Categories.Category)) as SkillishInstance[];
+					const mapped = rawNames.map(({ id, name, ic }) => ({ id, name, cost: ic }));
 					mapped.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 					obj.sel = mapped;
 				}
@@ -116,4 +112,4 @@ export default (raw: RawTables) => {
 		}
 	}
 	return list;
-};
+}

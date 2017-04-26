@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-interface Props {
+export interface ListItemSelectionsProps {
 	children?: React.ReactNode;
 }
 
-export default function ListItemSelections(props: Props) {
+export function ListItemSelections(props: ListItemSelectionsProps) {
 	const { children } = props;
 	return (
 		<div className="selections">

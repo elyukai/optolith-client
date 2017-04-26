@@ -1,30 +1,40 @@
-/// <reference path="../@types/actions.d.ts" />
-
+import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import * as Data from '../types/data.d';
+import { RawTables } from '../types/rawdata.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as AttributeUtils from '../utils/AttributeUtils';
 import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
 import { final } from '../utils/iccalc';
 import * as IncreasableUtils from '../utils/IncreasableUtils';
-import init from '../utils/init';
+import { init } from '../utils/init';
 import * as LiturgyUtils from '../utils/LiturgyUtils';
 import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
-import CultureStore from './CultureStore';
-import ELStore from './ELStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
-import RaceStore from './RaceStore';
-import RequirementsStore from './RequirementsStore';
-import Store from './Store';
+import { CultureStore } from './CultureStore';
+import { ELStore } from './ELStore';
+import { ProfessionStore } from './ProfessionStore';
+import { ProfessionVariantStore } from './ProfessionVariantStore';
+import { RaceStore } from './RaceStore';
+import { RequirementsStore } from './RequirementsStore';
+import { Store } from './Store';
 
-type Action = ReceiveInitialDataAction | ReceiveHeroDataAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
+type Action = ReceiveInitialDataAction | LoadHeroAction | CreateHeroAction | AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | SetSelectionsAction;
 
 class ListStoreStatic extends Store {
 	readonly dispatchToken: string;
-	private byId: ToListById<Instance> = {};
+	private byId: Data.ToListById<Data.Instance> = {};
 	private allIds: string[] = [];
 
 	constructor() {
@@ -58,11 +68,11 @@ class ListStoreStatic extends Store {
 								sid = active.sid as string;
 								break;
 							case 'SA_10':
-								adds.push({ id: active.sid as string, value: (this.byId[id] as ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+								adds.push({ id: active.sid as string, value: (this.byId[id] as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
 								break;
 						}
-						ActivatableUtils.removeDependencies(this.byId[id] as ActivatableInstance, adds, sid);
-						(this.byId[id] as ActivatableInstance).active.splice(index, 1);
+						ActivatableUtils.removeDependencies(this.byId[id] as Data.ActivatableInstance, adds, sid);
+						(this.byId[id] as Data.ActivatableInstance).active.splice(index, 1);
 						break;
 
 					case ActionTypes.DEACTIVATE_DISADV:
@@ -70,7 +80,7 @@ class ListStoreStatic extends Store {
 						const id = action.payload.id;
 						const index = action.payload.index;
 						const active = action.payload.activeObject!;
-						(this.byId[id] as ActivatableInstance).active.splice(index, 0, active);
+						(this.byId[id] as Data.ActivatableInstance).active.splice(index, 0, active);
 						const adds = [];
 						let sid;
 						switch (id) {
@@ -80,10 +90,10 @@ class ListStoreStatic extends Store {
 								sid = active.sid as string;
 								break;
 							case 'SA_10':
-								adds.push({ id: active.sid as string, value: (this.byId[id] as ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+								adds.push({ id: active.sid as string, value: (this.byId[id] as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
 								break;
 						}
-						ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, adds, sid);
+						ActivatableUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, adds, sid);
 						break;
 					}
 
@@ -118,7 +128,7 @@ class ListStoreStatic extends Store {
 						this.init(action.payload.tables);
 						break;
 
-					case ActionTypes.RECEIVE_HERO_DATA:
+					case ActionTypes.LOAD_HERO:
 						this.clear();
 						this.updateAll(action.payload.data);
 						break;
@@ -200,8 +210,8 @@ class ListStoreStatic extends Store {
 		return this.byId[AttributeUtils.convertId(id)];
 	}
 
-	getObjByCategory(...categories: Category[]) {
-		const list: { [id: string]: Instance } = {};
+	getObjByCategory(...categories: Categories.Category[]) {
+		const list: { [id: string]: Data.Instance } = {};
 		for (const id in this.byId) {
 			if (this.byId.hasOwnProperty(id)) {
 				const obj = this.byId[id];
@@ -213,11 +223,11 @@ class ListStoreStatic extends Store {
 		return list;
 	}
 
-	getObjByCategoryGroup(category: Category, ...gr: number[]) {
-		const list: ToListById<Instance> = {};
+	getObjByCategoryGroup(category: Categories.Category, ...gr: number[]) {
+		const list: Data.ToListById<Data.Instance> = {};
 		for (const id in this.byId) {
 			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
+				const obj = this.byId[id] as Data.SkillishInstance | Data.SpecialAbilityInstance;
 				if (obj.category === category && gr.includes(obj.gr)) {
 					list[id] = obj;
 				}
@@ -226,7 +236,7 @@ class ListStoreStatic extends Store {
 		return list;
 	}
 
-	getAllByCategory(...categories: Category[]) {
+	getAllByCategory(...categories: Categories.Category[]) {
 		const list = [];
 		for (const id in this.byId) {
 			if (this.byId.hasOwnProperty(id)) {
@@ -239,11 +249,11 @@ class ListStoreStatic extends Store {
 		return list;
 	}
 
-	getAllByCategoryGroup(category: Category, ...gr: number[]) {
+	getAllByCategoryGroup(category: Categories.Category, ...gr: number[]) {
 		const list = [];
 		for (const id in this.byId) {
 			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id] as TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance | SpecialAbilityInstance;
+				const obj = this.byId[id] as Data.SkillishInstance | Data.SpecialAbilityInstance;
 				if (obj.category === category && gr.includes(obj.gr)) {
 					list.push(obj);
 				}
@@ -255,7 +265,7 @@ class ListStoreStatic extends Store {
 	getPrimaryAttrID(type: 1 | 2) {
 		let attr;
 		if (type === 1) {
-			const tradition = get('SA_86') as SpecialAbilityInstance;
+			const tradition = get('SA_86') as Data.SpecialAbilityInstance;
 			switch (ActivatableUtils.getSids(tradition)[0]) {
 				case 1:
 					attr = 'SGC';
@@ -268,7 +278,7 @@ class ListStoreStatic extends Store {
 					break;
 			}
 		} else if (type === 2) {
-			const tradition = get('SA_102') as SpecialAbilityInstance;
+			const tradition = get('SA_102') as Data.SpecialAbilityInstance;
 			switch (ActivatableUtils.getSids(tradition)[0]) {
 				case 1:
 					attr = 'SGC';
@@ -296,15 +306,15 @@ class ListStoreStatic extends Store {
 	getPrimaryAttr(type: 1 | 2) {
 		const id = getPrimaryAttrID(type);
 		if (id) {
-			return get(id) as AttributeInstance;
+			return get(id) as Data.AttributeInstance;
 		}
 		return;
 	}
 
-	getCostListForProfessionDependencies(reqs: RequirementObject[]) {
-		const totalCost = reqs.map<number | ProfessionDependencyCost>(req => {
+	getCostListForProfessionDependencies(reqs: Data.RequirementObject[]) {
+		const totalCost = reqs.map<number | Data.ProfessionDependencyCost>(req => {
 			const { id, sid, sid2, tier, value } = req;
-			const obj = get(id as string) as Instance & { tiers?: number };
+			const obj = get(id as string) as Data.Instance & { tiers?: number };
 
 			switch (obj.category) {
 				case Categories.ATTRIBUTES: {
@@ -331,12 +341,12 @@ class ListStoreStatic extends Store {
 					let cost;
 					const activeObject = { sid: sid as string | number | undefined, sid2, tier };
 
-					const checkIfActive = (e: ActiveObject) => Object.keys(activeObject).every((key: keyof ActiveObject) => {
+					const checkIfActive = (e: Data.ActiveObject) => Object.keys(activeObject).every((key: keyof Data.ActiveObject) => {
 						return activeObject[key] === e[key];
 					});
 
 					if (!obj.active.find(checkIfActive)) {
-						(this.byId[id as string] as ActivatableInstance).active.push(activeObject);
+						(this.byId[id as string] as Data.ActivatableInstance).active.push(activeObject);
 						this.byId = {
 							...this.byId,
 							...ActivatableUtils.addDependencies(obj),
@@ -344,7 +354,7 @@ class ListStoreStatic extends Store {
 						if (obj.tiers) {
 							cost = (obj.cost as number) * tier!;
 						}
-						else if (obj.sel.length > 0) {
+						else if (Array.isArray(obj.sel)) {
 							cost = obj.sel[(sid as number) - 1].cost!;
 						}
 						else {
@@ -359,7 +369,7 @@ class ListStoreStatic extends Store {
 								adv: [0, 0, 0],
 								disadv: [0, 0, 0],
 								total: obj.category === Categories.DISADVANTAGES ? -cost : cost,
-							} as ProfessionDependencyCost;
+							} as Data.ProfessionDependencyCost;
 
 							if (obj.category === Categories.ADVANTAGES) {
 								cost.adv[0] = cost.total;
@@ -384,7 +394,7 @@ class ListStoreStatic extends Store {
 	}
 
 	getSpareAPForCombatTechniques() {
-		const allCombatTechniques = this.getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+		const allCombatTechniques = this.getAllByCategory(Categories.COMBAT_TECHNIQUES) as Data.CombatTechniqueInstance[];
 		const combatTechniqueValueMax = ELStore.getStart().maxCombatTechniqueRating;
 		const valueTooHigh = allCombatTechniques.filter(e => e.value > combatTechniqueValueMax);
 		valueTooHigh.forEach(e => {
@@ -397,45 +407,45 @@ class ListStoreStatic extends Store {
 	}
 
 	private activate(id: string) {
-		(this.byId[id] as LiturgyInstance | SpellInstance).active = true;
+		(this.byId[id] as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = true;
 	}
 
 	private deactivate(id: string) {
-		(this.byId[id] as LiturgyInstance | SpellInstance).active = false;
+		(this.byId[id] as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = false;
 	}
 
 	private addPoint(id: string) {
-		this.byId[id] = IncreasableUtils.addPoint(this.byId[id] as IncreasableInstance);
+		this.byId[id] = IncreasableUtils.addPoint(this.byId[id] as Data.IncreasableInstance);
 	}
 
 	private removePoint(id: string) {
-		this.byId[id] = IncreasableUtils.removePoint(this.byId[id] as IncreasableInstance);
+		this.byId[id] = IncreasableUtils.removePoint(this.byId[id] as Data.IncreasableInstance);
 	}
 
 	private setValue(id: string, value: number) {
-		this.byId[id] = IncreasableUtils.set(this.byId[id] as IncreasableInstance, value);
+		this.byId[id] = IncreasableUtils.set(this.byId[id] as Data.IncreasableInstance, value);
 	}
 
 	private addSR(id: string, value: number) {
-		this.byId[id] = IncreasableUtils.add(this.byId[id] as IncreasableInstance, value);
+		this.byId[id] = IncreasableUtils.add(this.byId[id] as Data.IncreasableInstance, value);
 	}
 
-	private activateDASA(id: string, args: ActivateArgs) {
-		this.mergeIntoList(ActivatableUtils.activate(this.byId[id] as ActivatableInstance, args));
+	private activateDASA(id: string, args: Data.ActivateArgs) {
+		this.mergeIntoList(ActivatableUtils.activate(this.byId[id] as Data.ActivatableInstance, args));
 	}
 
 	private deactivateDASA(id: string, index: number) {
-		this.mergeIntoList(ActivatableUtils.deactivate(this.byId[id] as ActivatableInstance, index));
+		this.mergeIntoList(ActivatableUtils.deactivate(this.byId[id] as Data.ActivatableInstance, index));
 		if (id === 'SA_125') {
 			this.setValue('CT_17', 6);
 		}
 	}
 
 	private updateTier(id: string, index: number, tier: number) {
-		this.byId[id] = ActivatableUtils.setTier(this.byId[id] as ActivatableInstance, index, tier);
+		this.byId[id] = ActivatableUtils.setTier(this.byId[id] as Data.ActivatableInstance, index, tier);
 	}
 
-	private mergeIntoList(list: ToListById<Instance>) {
+	private mergeIntoList(list: Data.ToListById<Data.Instance>) {
 		this.byId = {
 			...this.byId,
 			...list,
@@ -447,33 +457,35 @@ class ListStoreStatic extends Store {
 		this.allIds = Object.keys(this.byId);
 	}
 
-	private updateAll({ attr, talents, ct, spells, chants, activatable }: Hero) {
+	private updateAll({ attr, talents, ct, spells, blessings, cantrips, liturgies, activatable }: Data.Hero) {
 		attr.values.forEach(e => {
 			const [ id, value, mod ] = e;
 			this.setValue(id, value);
-			(this.byId[id] as AttributeInstance).mod = mod;
+			(this.byId[id] as Data.AttributeInstance).mod = mod;
 		});
 		const flatSkills = { ...talents, ...ct };
 		Object.keys(flatSkills).forEach(id => {
 			this.setValue(id, flatSkills[id]);
 		});
-		const activateSkills = { ...spells, ...chants };
+		const activateSkills = { ...spells, ...liturgies };
 		Object.keys(activateSkills).forEach(id => {
 			const value = activateSkills[id];
 			this.activate(id);
-			if (value !== null) {
-				this.setValue(id, value);
-			}
+			this.setValue(id, value);
+		});
+		const activateBlessingsLiturgies = [ ...blessings, ...cantrips ];
+		activateBlessingsLiturgies.forEach(id => {
+			this.activate(id);
 		});
 		Object.keys(activatable).forEach(id => {
 			const values = activatable[id];
-			(this.byId[id] as ActivatableInstance).active = [ ...values.map(e => ({ ...e })) ];
+			(this.byId[id] as Data.ActivatableInstance).active = [ ...values.map(e => ({ ...e })) ];
 			switch (id) {
 				case 'ADV_4':
 				case 'ADV_16':
 				case 'DISADV_48':
 					values.forEach(p => {
-						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, [], p.sid as string);
+						const list = ActivatableUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, [], p.sid as string);
 						this.mergeIntoList(list);
 					});
 					break;
@@ -485,25 +497,25 @@ class ListStoreStatic extends Store {
 						} else {
 							counter.set(p.sid, 1);
 						}
-						const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 } as RequirementObject;
-						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance, [addRequire]);
+						const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 } as Data.RequirementObject;
+						const list = ActivatableUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, [addRequire]);
 						this.mergeIntoList(list);
 					});
 					break;
 				}
 				default:
 					values.forEach(() => {
-						const list = ActivatableUtils.addDependencies(this.byId[id] as ActivatableInstance);
+						const list = ActivatableUtils.addDependencies(this.byId[id] as Data.ActivatableInstance);
 						this.mergeIntoList(list);
 					});
 			}
 		});
 	}
 
-	private assignRCP(selections: Selections) {
-		const race = RaceStore.getCurrent();
-		const culture = CultureStore.getCurrent();
-		const profession = ProfessionStore.getCurrent();
+	private assignRCP(selections: Data.Selections) {
+		const race = RaceStore.getCurrent()!;
+		const culture = CultureStore.getCurrent()!;
+		const profession = ProfessionStore.getCurrent()!;
 		const professionVariant = ProfessionVariantStore.getCurrent();
 
 		const skillRatingList = new Map<string, number>();
@@ -516,47 +528,48 @@ class ListStoreStatic extends Store {
 			}
 		};
 		const skillActivateList = new Set<string>();
-		const activatable = new Set<RequirementObject>();
+		const activatable = new Set<Data.RequirementObject>();
 		const languages = new Map<number, number>();
 		const scripts = new Set<number>();
 
 		// Race selections:
 
-		race!.attributes.forEach(e => {
+		race.attributes.forEach(e => {
 			const [ mod, id ] = e;
-			(this.byId[id] as AttributeInstance).mod += mod;
+			(this.byId[id] as Data.AttributeInstance).mod += mod;
 		});
-		race!.autoAdvantages.forEach(e => activatable.add({ id: e }));
-		(this.byId[selections.attrSel] as AttributeInstance).mod = race!.attributeSelection[0];
+		race.autoAdvantages.forEach(e => activatable.add({ id: e }));
+		(this.byId[selections.attrSel] as Data.AttributeInstance).mod = race.attributeSelection[0];
 
 		// Culture selections:
 
 		if (selections.useCulturePackage) {
-			culture!.talents.forEach(([ key, value ]) => {
+			culture.talents.forEach(([ key, value ]) => {
 				skillRatingList.set(key, value);
 			});
 		}
 
-		const motherTongueId = culture!.languages.length > 1 ? selections.lang : culture!.languages[0];
+		const motherTongueId = culture.languages.length > 1 ? selections.lang : culture.languages[0];
 		languages.set(motherTongueId, 4);
 
 		if (selections.buyLiteracy) {
-			const motherTongueScriptId = culture!.scripts.length > 1 ? selections.litc : culture!.scripts[0];
+			const motherTongueScriptId = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
 			scripts.add(motherTongueScriptId);
 		}
 
 		// Profession selections:
 
-		[ ...profession!.talents, ...profession!.combatTechniques ].forEach(([ key, value ]) => {
+		[ ...profession.talents, ...profession.combatTechniques ].forEach(([ key, value ]) => {
 			addToSkillRatingList(key, value);
 		});
-		[ ...profession!.spells, ...profession!.liturgies ].forEach(([ key, value ]) => {
+		[ ...profession.spells, ...profession.liturgies ].forEach(([ key, value ]) => {
 			skillActivateList.add(key);
 			if (typeof value === 'number') {
 				addToSkillRatingList(key, value);
 			}
 		});
-		profession!.specialAbilities.forEach(e => activatable.add(e));
+		profession.blessings.forEach(e => skillActivateList.add(e));
+		profession.specialAbilities.forEach(e => activatable.add(e));
 
 		if (professionVariant) {
 			[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
@@ -576,8 +589,8 @@ class ListStoreStatic extends Store {
 			});
 		}
 
-		if (selections.spec !== null) {
-			const talentId = (selections.map.get('SPECIALISATION') as SpecialisationSelection).sid;
+		if (selections.spec !== undefined) {
+			const talentId = (selections.map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
 			if (Array.isArray(talentId)) {
 				activatable.add({
 					id: 'SA_10',
@@ -604,11 +617,11 @@ class ListStoreStatic extends Store {
 		});
 
 		selections.combattech.forEach(e => {
-			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).value);
+			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES') as Data.CombatTechniquesSelection).value);
 		});
 
 		selections.combatTechniquesSecond.forEach(e => {
-			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSelection).value);
+			addToSkillRatingList(e, (selections.map.get('COMBAT_TECHNIQUES_SECOND') as Data.CombatTechniquesSelection).value);
 		});
 
 		selections.cantrips.forEach(e => {
@@ -626,8 +639,8 @@ class ListStoreStatic extends Store {
 
 		activatable.forEach(req => {
 			const { id, sid, sid2, tier } = req;
-			const obj = get(id as string) as ActivatableInstance;
-			const add: RequirementObject[] = [];
+			const obj = get(id as string) as Data.ActivatableInstance;
+			const add: Data.RequirementObject[] = [];
 			if (id === 'SA_10') {
 				obj.active.push({ sid: sid as string, sid2 });
 				add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
@@ -636,8 +649,8 @@ class ListStoreStatic extends Store {
 			}
 			ActivatableUtils.addDependencies(obj, add);
 		});
-		(this.byId.SA_28 as SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
-		(this.byId.SA_30 as SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
+		(this.byId.SA_28 as Data.SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
+		(this.byId.SA_30 as Data.SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
 	}
 
 	private clear() {
@@ -656,6 +669,12 @@ class ListStoreStatic extends Store {
 				else if (e.category === Categories.SPELLS) {
 					this.byId[id] = SpellUtils.reset(e);
 				}
+				else if (e.category === Categories.BLESSINGS) {
+					this.byId[id] = LiturgyUtils.resetBlessing(e);
+				}
+				else if (e.category === Categories.CANTRIPS) {
+					this.byId[id] = SpellUtils.resetCantrip(e);
+				}
 				else if (e.category === Categories.TALENTS) {
 					this.byId[id] = TalentUtils.reset(e);
 				}
@@ -667,19 +686,17 @@ class ListStoreStatic extends Store {
 	}
 }
 
-const ListStore = new ListStoreStatic();
-
-export default ListStore;
+export const ListStore = new ListStoreStatic();
 
 export const get = (id: string) => ListStore.get(id);
 
-export const getObjByCategory = (...categories: Category[]) => ListStore.getObjByCategory(...categories);
+export const getObjByCategory = (...categories: Categories.Category[]) => ListStore.getObjByCategory(...categories);
 
-export const getObjByCategoryGroup = (category: Category, ...gr: number[]) => ListStore.getObjByCategoryGroup(category, ...gr);
+export const getObjByCategoryGroup = (category: Categories.Category, ...gr: number[]) => ListStore.getObjByCategoryGroup(category, ...gr);
 
-export const getAllByCategory = (...categories: Category[]) => ListStore.getAllByCategory(...categories);
+export const getAllByCategory = (...categories: Categories.Category[]) => ListStore.getAllByCategory(...categories);
 
-export const getAllByCategoryGroup = (category: Category, ...gr: number[]) => ListStore.getAllByCategoryGroup(category, ...gr);
+export const getAllByCategoryGroup = (category: Categories.Category, ...gr: number[]) => ListStore.getAllByCategoryGroup(category, ...gr);
 
 export const getPrimaryAttrID = (type: 1 | 2) => ListStore.getPrimaryAttrID(type);
 

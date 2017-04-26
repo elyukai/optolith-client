@@ -1,10 +1,11 @@
-import ELStore from '../stores/ELStore';
+import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
-import PhaseStore from '../stores/PhaseStore';
-import SpellsStore from '../stores/SpellsStore';
+import { PhaseStore } from '../stores/PhaseStore';
+import { SpellsStore } from '../stores/SpellsStore';
+import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
-export function isOwnTradition(obj: SpellInstance): boolean {
+export function isOwnTradition(obj: SpellInstance | CantripInstance): boolean {
 	const SA = get('SA_86') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
@@ -66,7 +67,7 @@ export function isDecreasable(obj: SpellInstance): boolean {
 	return true;
 }
 
-export function isActivatable(obj: SpellInstance): boolean {
+export function isActivatable(obj: SpellInstance | CantripInstance): boolean {
 	switch (obj.id) {
 		case 'SPELL_48': {
 			const SPELL_28 = get('SPELL_28') as SpellInstance;
@@ -93,6 +94,14 @@ export function reset(obj: SpellInstance): SpellInstance {
 		...obj,
 		active: false,
 		dependencies: [],
-		value: 0,
+		value: 0
+	};
+}
+
+export function resetCantrip(obj: CantripInstance): CantripInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: []
 	};
 }

@@ -5,31 +5,31 @@ import * as HerolistActions from '../../actions/HerolistActions';
 import * as HistoryActions from '../../actions/HistoryActions';
 import * as InGameActions from '../../actions/InGameActions';
 import * as LocationActions from '../../actions/LocationActions';
-import APStore from '../../stores/APStore';
-import AuthStore from '../../stores/AuthStore';
-import ELStore from '../../stores/ELStore';
-import HistoryStore from '../../stores/HistoryStore';
-import PhaseStore from '../../stores/PhaseStore';
-import ProfileStore from '../../stores/ProfileStore';
-import createOverlay from '../../utils/createOverlay';
-import Login from '../../views/account/Login';
-import HeroCreation from '../../views/herolist/HeroCreation';
-import AvatarWrapper from '../AvatarWrapper';
-import BorderButton from '../BorderButton';
-import IconButton from '../IconButton';
-import Text from '../Text';
-import TooltipToggle from '../TooltipToggle';
-import TitleBarBack from './TitleBarBack';
-import TitleBarLeft from './TitleBarLeft';
-import TitleBarRight from './TitleBarRight';
-import TitleBarTabs from './TitleBarTabs';
-import TitleBarWrapper from './TitleBarWrapper';
+import { APStore } from '../../stores/APStore';
+import { AuthStore } from '../../stores/AuthStore';
+import { ELStore } from '../../stores/ELStore';
+import { HistoryStore } from '../../stores/HistoryStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { ProfileStore } from '../../stores/ProfileStore';
+import { createOverlay } from '../../utils/createOverlay';
+import { Login } from '../../views/account/Login';
+import { HeroCreation } from '../../views/herolist/HeroCreation';
+import { AvatarWrapper } from '../AvatarWrapper';
+import { BorderButton } from '../BorderButton';
+import { IconButton } from '../IconButton';
+import { Text } from '../Text';
+import { TooltipToggle } from '../TooltipToggle';
+import { TitleBarBack } from './TitleBarBack';
+import { TitleBarLeft } from './TitleBarLeft';
+import { TitleBarRight } from './TitleBarRight';
+import { TitleBarTabProps, TitleBarTabs } from './TitleBarTabs';
+import { TitleBarWrapper } from './TitleBarWrapper';
 
 interface State {
 	account: {
 		name: string;
 		email: string;
-		sessionToken: string | null;
+		sessionToken?: string;
 		displayName: string;
 	};
 	ap: {
@@ -49,13 +49,7 @@ interface Props {
 	currentTab: string;
 }
 
-interface Tab {
-	label: string;
-	tag: string;
-	disabled?: boolean;
-}
-
-export default class TitleBar extends React.Component<Props, State> {
+export class TitleBar extends React.Component<Props, State> {
 	state = {
 		account: AuthStore.getAll(),
 		ap: APStore.getAll(),
@@ -108,7 +102,7 @@ export default class TitleBar extends React.Component<Props, State> {
 
 		switch (currentSection) {
 			case 'main': {
-				const tabs: Tab[] = [
+				const tabs: TitleBarTabProps[] = [
 					{ label: 'Start', tag: 'home' },
 					{ label: 'Über', tag: 'about' }
 				];
@@ -207,11 +201,11 @@ export default class TitleBar extends React.Component<Props, State> {
 										<hr />
 										<p>
 											{adv[0]} / 80 AP für Vorteile<br/>
-											{adv[1] > 0 ? `${adv[1]} / 50 für magische Vorteile` : null}
-											{adv[2] > 0 ? `${adv[2]} / 50 für karmale Vorteile` : null}
+											{adv[1] > 0 && `${adv[1]} / 50 für magische Vorteile`}
+											{adv[2] > 0 && `${adv[2]} / 50 für karmale Vorteile`}
 											{disadv[0]} / 80 AP für Nachteile<br/>
-											{disadv[1] > 0 ? `${disadv[1]} / 50 für magische Nachteile` : null}
-											{disadv[2] > 0 ? `${disadv[2]} / 50 für karmale Nachteile` : null}
+											{disadv[1] > 0 && `${disadv[1]} / 50 für magische Nachteile`}
+											{disadv[2] > 0 && `${disadv[2]} / 50 für karmale Nachteile`}
 										</p>
 									</div>
 								}

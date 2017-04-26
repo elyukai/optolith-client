@@ -1,11 +1,12 @@
-/// <reference path="../@types/external.d.ts" />
-/// <reference path="../@types/rawdata.d.ts" />
+/// <reference path="../types/external.d.ts" />
 
 import { Dispatcher } from 'flux';
 
 export interface Action {
-	[id: string]: any;
 	type: string;
+	payload?: any;
+	undo?: boolean;
+	cost?: number;
 }
 
-export default new Dispatcher<Action>();
+export const AppDispatcher = new Dispatcher<Action>();

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-export interface MainSheetAttributesItem {
+export interface MainSheetAttributesItemProps {
 	add?: number;
 	calc: string;
 	empty?: boolean;
@@ -13,7 +13,7 @@ export interface MainSheetAttributesItem {
 	value: number | string;
 }
 
-export default (props: MainSheetAttributesItem) => {
+export function MainSheetAttributesItem(props: MainSheetAttributesItemProps) {
 	const { add = 0, value, purchased, max } = props;
 	let final;
 	if (typeof value === 'string') {
@@ -60,4 +60,4 @@ export default (props: MainSheetAttributesItem) => {
 			</div>
 		</div>
 	);
-};
+}

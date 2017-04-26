@@ -1,17 +1,16 @@
-import { omit } from 'lodash';
 import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
-import Checkbox from '../../components/Checkbox';
-import Dialog from '../../components/Dialog';
-import Dropdown from '../../components/Dropdown';
-import Hr from '../../components/Hr';
-import IconButton from '../../components/IconButton';
-import Label from '../../components/Label';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
-import EquipmentStore from '../../stores/EquipmentStore';
-import alert from '../../utils/alert';
+import { Checkbox } from '../../components/Checkbox';
+import { Dialog } from '../../components/Dialog';
+import { Dropdown } from '../../components/Dropdown';
+import { Hr } from '../../components/Hr';
+import { IconButton } from '../../components/IconButton';
+import { Label } from '../../components/Label';
+import { TextField } from '../../components/TextField';
+import { CombatTechniquesStore } from '../../stores/CombatTechniquesStore';
+import { EquipmentStore } from '../../stores/EquipmentStore';
+import { InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
+import { alert } from '../../utils/alert';
 import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
 
 interface Props {
@@ -46,7 +45,7 @@ const IMP_GROUPS_SELECTION = [
 ];
 // const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
-export default class ItemEditor extends React.Component<Props, ItemEditorInstance> {
+export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	state: ItemEditorInstance;
 
 	constructor(props: Props) {
@@ -55,7 +54,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 		if (tempState) {
 			if (tempState.isTemplateLocked) {
 				const { id, where } = tempState;
-				tempState = { ...EquipmentStore.getTemplate(tempState.template), id, where };
+				tempState = { ...EquipmentStore.getTemplate(tempState.template!), id, where };
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -64,7 +63,6 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 				addMOVPenalty: '',
 				addINIPenalty: '',
 				stabilityMod: '',
-				ammunition: null,
 				amount: '',
 				at: '',
 				combatTechnique: 'CT_0',
@@ -87,7 +85,6 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 				reach: 0,
 				reloadTime: '',
 				stp: '',
-				template: 'ITEMTPL_0',
 				weight: '',
 				where: '',
 			};
@@ -123,7 +120,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 	changeAmmunition = (id: string) => this.setState({ ammunition: id } as ItemEditorInstance);
 	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as ItemEditorInstance);
 	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as ItemEditorInstance);
-	changeAddGSPenalty = (event: InputTextEvent) => this.setState({ addMOVPenalty: event.target.value } as ItemEditorInstance);
+	changeAddMOVPenalty = (event: InputTextEvent) => this.setState({ addMOVPenalty: event.target.value } as ItemEditorInstance);
 	changeAddINIPenalty = (event: InputTextEvent) => this.setState({ addINIPenalty: event.target.value } as ItemEditorInstance);
 	changeStabilityMod = (event: InputTextEvent) => this.setState({ stabilityMod: event.target.value } as ItemEditorInstance);
 	changeParryingWeapon = () => {
@@ -145,13 +142,13 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 	}
 
 	applyTemplate = () => {
-		if (this.state.template !== 'ITEMTPL_0') {
+		if (typeof this.state.template === 'string') {
 			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
 			this.setState(convertToEdit(template));
 		}
 	}
 	lockTemplate = () => {
-		if (this.state.template !== 'ITEMTPL_0') {
+		if (typeof this.state.template === 'string') {
 			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id };
 			this.setState(convertToEdit(template));
 		}
@@ -184,7 +181,7 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 		const { addMOVPenalty, addINIPenalty, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
 
 		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{id: null, name: 'Keine'} as { id: string | null; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const AMMUNITION = [{name: 'Keine'} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 
 		return (
 			<Dialog
@@ -395,14 +392,14 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 						<Checkbox
 							className="parrying-weapon"
 							label="Parierwaffe"
-							checked={isParryingWeapon}
+							checked={!!isParryingWeapon}
 							onClick={this.changeParryingWeapon}
 							disabled={locked}
 							/>
 						<Checkbox
 							className="twohanded-weapon"
 							label="Zweihandwaffe"
-							checked={isTwoHandedWeapon}
+							checked={!!isTwoHandedWeapon}
 							onClick={this.changeTwoHandedWeapon}
 							disabled={locked}
 							/>
@@ -526,14 +523,14 @@ export default class ItemEditor extends React.Component<Props, ItemEditorInstanc
 								className="mov"
 								label="GS"
 								value={addMOVPenalty}
-								onChange={this.changeENC}
+								onChange={this.changeAddMOVPenalty}
 								disabled={locked}
 								/>
 							<TextField
 								className="ini"
 								label="INI"
-								value={enc}
-								onChange={this.changeENC}
+								value={addINIPenalty}
+								onChange={this.changeAddINIPenalty}
 								disabled={locked}
 								/>
 							<TextField

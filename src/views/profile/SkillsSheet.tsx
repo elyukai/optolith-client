@@ -1,14 +1,16 @@
 import * as React from 'react';
 import * as SheetActions from '../../actions/SheetActions';
-import Checkbox from '../../components/Checkbox';
-import TextBox from '../../components/TextBox';
+import { Checkbox } from '../../components/Checkbox';
+import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
-import SheetStore from '../../stores/SheetStore';
-import TalentsStore from '../../stores/TalentsStore';
-import AttributeMods from './AttributeMods';
-import Sheet from './Sheet';
-import SheetOptions from './SheetOptions';
-import SheetWrapper from './SheetWrapper';
+import { SheetStore } from '../../stores/SheetStore';
+import { TalentsStore } from '../../stores/TalentsStore';
+import { AttributeInstance, SpecialAbilityInstance, TalentInstance } from '../../types/data.d';
+import { getSelectionItem, getSelectionName } from '../../utils/ActivatableUtils';
+import { AttributeMods } from './AttributeMods';
+import { Sheet } from './Sheet';
+import { SheetOptions } from './SheetOptions';
+import { SheetWrapper } from './SheetWrapper';
 
 const getRoutineValue = (sr: number, attributes: number[]) => {
 	if (sr > 0 ) {
@@ -53,7 +55,7 @@ interface State {
 	checkAttributeValueVisibility: boolean;
 }
 
-export default class SkillsSheet extends React.Component<undefined, State> {
+export class SkillsSheet extends React.Component<undefined, State> {
 	state = SheetStore.getAllForSpellsSheet();
 
 	componentDidMount() {
@@ -89,12 +91,12 @@ export default class SkillsSheet extends React.Component<undefined, State> {
 
 		const SA_30 = get('SA_30') as SpecialAbilityInstance;
 		const languages = SA_30.active.map(({ sid, tier }) => {
-			const { id, name } = SA_30.sel[(sid as number) - 1];
+			const { id, name } = getSelectionItem(SA_30, sid)!;
 			return ({ id, name, tier: tier! });
 		}).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
 		const SA_28 = get('SA_28') as SpecialAbilityInstance;
-		const scripts = SA_28.active.map(({ sid }) => SA_28.sel[(sid as number) - 1].name).sort();
+		const scripts = SA_28.active.map(({ sid }) => getSelectionName(SA_28, sid)).sort();
 
 		return (
 			<SheetWrapper>

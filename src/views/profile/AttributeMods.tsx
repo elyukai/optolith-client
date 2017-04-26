@@ -1,9 +1,10 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import AttributeStore from '../../stores/AttributeStore';
-import AttributeModsListItem from './AttributeModsListItem';
+import { TextBox } from '../../components/TextBox';
+import { AttributeStore } from '../../stores/AttributeStore';
+import { AttributeInstance } from '../../types/data.d';
+import { AttributeModsListItem } from './AttributeModsListItem';
 
-export default () => {
+export function AttributeMods() {
 	const attributes: AttributeInstance[] = AttributeStore.getAll();
 	return (
 		<TextBox className="attribute-mods" label="Eigenschaftsmodifikationen">
@@ -26,4 +27,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-};
+}

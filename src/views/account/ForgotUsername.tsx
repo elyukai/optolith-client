@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as AuthActions from '../../actions/AuthActions';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
-import createOverlay, { close } from '../../utils/createOverlay';
-import Login from './Login';
+import { Dialog } from '../../components/Dialog';
+import { TextField } from '../../components/TextField';
+import { InputKeyEvent, InputTextEvent } from '../../types/data.d';
+import { close, createOverlay } from '../../utils/createOverlay';
+import { Login } from './Login';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -13,7 +14,7 @@ interface State {
 	email: string;
 }
 
-export default class ForgotUsername extends React.Component<Props, State> {
+export class ForgotUsername extends React.Component<Props, State> {
 	state = {
 		email: '',
 	};

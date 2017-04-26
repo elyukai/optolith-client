@@ -1,17 +1,18 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import * as RaceActions from '../../actions/RaceActions';
-import BorderButton from '../../components/BorderButton';
-import VerticalList from '../../components/VerticalList';
+import { BorderButton } from '../../components/BorderButton';
+import { VerticalList } from '../../components/VerticalList';
+import { RaceInstance } from '../../types/data.d';
 
 interface Props {
-	currentID: string | null;
+	currentID?: string;
 	race: RaceInstance;
 	showDetails: boolean;
 	changeTab(): void;
 }
 
-export default class RacesListItem extends React.Component<Props, undefined> {
+export class RacesListItem extends React.Component<Props, undefined> {
 	selectRace = () => RaceActions.selectRace(this.props.race.id);
 
 	render() {

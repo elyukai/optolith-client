@@ -1,8 +1,12 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SetHigherParadeValuesAction, SwitchAttributeValueLimitAction } from '../actions/RulesActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Rules } from '../types/data.d';
+import { Store } from './Store';
 
-type Action = ReceiveDataTablesAction | ReceiveHeroDataAction | CreateHeroAction | SetHigherParadeValuesAction | SwitchAttributeValueLimitAction;
+type Action = ReceiveInitialDataAction | LoadHeroAction | CreateHeroAction | SetHigherParadeValuesAction | SwitchAttributeValueLimitAction;
 
 class RulesStoreStatic extends Store {
 	private rules: Rules;
@@ -12,7 +16,7 @@ class RulesStoreStatic extends Store {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
-				case ActionTypes.RECEIVE_DATA_TABLES:
+				case ActionTypes.RECEIVE_INITIAL_DATA:
 				case ActionTypes.CREATE_HERO:
 					this.rules = {
 						higherParadeValues: 0,
@@ -20,7 +24,7 @@ class RulesStoreStatic extends Store {
 					};
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.rules = {
 						...this.rules,
 						...action.payload.data.rules,
@@ -52,6 +56,4 @@ class RulesStoreStatic extends Store {
 	}
 }
 
-const RulesStore = new RulesStoreStatic();
-
-export default RulesStore;
+export const RulesStore = new RulesStoreStatic();

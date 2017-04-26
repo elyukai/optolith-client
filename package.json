@@ -1,7 +1,7 @@
 {
   "name": "tdeheroes",
   "productName": "DSA5 Heldentool",
-  "version": "0.44.4",
+  "version": "0.45.1",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
   "author": "Lukas Obermann",
   "license": "See LICENSE file",
@@ -52,7 +52,6 @@
     "webpack-dev-server": "^1.16.3"
   },
   "scripts": {
-    "watch": "webpack --watch",
     "start": "./node_modules/.bin/electron .",
     "build": "node build.js",
     "buildMac": "node buildMac.js",

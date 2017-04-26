@@ -1,34 +1,36 @@
 import * as Categories from '../constants/Categories';
-import { getDSids, getSelectionItem, getSelectionName, getSelectionNameAndCost, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
-import validate from '../utils/validate';
-import ELStore from './ELStore';
+import * as Data from '../types/data.d';
+import { getDSids, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
+import { sort } from '../utils/ListUtils';
+import { validateInstance } from '../utils/validate';
+import { ELStore } from './ELStore';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
 
-export const getForSave = (): { [id: string]: ActiveObject[] } => {
+export function getForSave(): { [id: string]: Data.ActiveObject[] } {
 	const allEntries = [
-		...getAllByCategory(Categories.ADVANTAGES) as AdvantageInstance[],
-		...getAllByCategory(Categories.DISADVANTAGES) as DisadvantageInstance[],
-		...getAllByCategory(Categories.SPECIAL_ABILITIES) as SpecialAbilityInstance[],
+		...getAllByCategory(Categories.ADVANTAGES) as Data.AdvantageInstance[],
+		...getAllByCategory(Categories.DISADVANTAGES) as Data.DisadvantageInstance[],
+		...getAllByCategory(Categories.SPECIAL_ABILITIES) as Data.SpecialAbilityInstance[],
 	];
 	return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
-};
+}
 
-export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES): ActiveViewObject[] {
-	const allEntries = getObjByCategory(category) as ToListById<ActivatableInstance & { gr?: number; tiers?: number; }>;
-	const finalEntries: ActiveViewObject[] = [];
+export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveViewObject[] {
+	const allEntries = getObjByCategory(category) as Data.ToListById<Data.ActivatableInstance & { gr?: number; tiers?: number; }>;
+	const finalEntries: Data.ActiveViewObject[] = [];
 
 	for (const id in allEntries) {
 		if (allEntries.hasOwnProperty(id) && isActive(allEntries[id])) {
-			const a = get(id) as ActivatableInstance & { tiers?: number; gr?: number; };
+			const a = get(id) as Data.ActivatableInstance & { tiers?: number; gr?: number; };
 			const { cost, category, sel, dependencies, input, gr, name, active } = a;
 			let { tiers } = a;
 
 			active.forEach((current, index) => {
 				const { sid, sid2, tier } = current;
-				let disabled = !isDeactivatable(a);
+				let disabled = !isDeactivatable(a, sid);
 				let add: string | undefined;
 				let currentCost: number | undefined;
-				const activeObject: ActiveViewObject & { [id: string]: object | string | number | boolean | undefined; } = {
+				const activeObject: Data.ActiveViewObject & { [id: string]: object | string | number | boolean | undefined; } = {
 					id,
 					index,
 					name,
@@ -41,13 +43,13 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 					case 'ADV_4':
 					case 'ADV_47':
 					case 'DISADV_48': {
-						const { name, ic } = (get(sid as string)) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance;
+						const { name, ic } = (get(sid as string)) as Data.SkillishInstance;
 						add = name;
 						currentCost = (cost as number[])[ic - 1];
 						break;
 					}
 					case 'ADV_16': {
-						const { name, ic, value } = (get(sid as string)) as LiturgyInstance | SpellInstance | TalentInstance;
+						const { name, ic, value } = (get(sid as string)) as Data.SkillInstance;
 						const counter = a.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
 						add = name;
 						currentCost = (cost as number[])[ic - 1];
@@ -55,7 +57,7 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						break;
 					}
 					case 'ADV_17': {
-						const { name, ic, value } = (get(sid as string)) as CombatTechniqueInstance;
+						const { name, ic, value } = (get(sid as string)) as Data.CombatTechniqueInstance;
 						add = name;
 						currentCost = (cost as number[])[ic - 1];
 						disabled = disabled || ELStore.getStart().maxCombatTechniqueRating + 1 === value;
@@ -97,7 +99,7 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						break;
 					}
 					case 'DISADV_36':
-						add = typeof sid === 'number' ? sel[sid - 1].name : sid as string;
+						add = typeof sid === 'number' ? getSelectionName(a, sid) : sid as string;
 						currentCost = active.length > 3 ? 0 : cost as number;
 						break;
 					case 'DISADV_37':
@@ -108,8 +110,8 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						break;
 					}
 					case 'SA_10': {
-						const counter = (get(id) as SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
-						const skill = get(sid as string) as TalentInstance;
+						const counter = (get(id) as Data.SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
+						const skill = get(sid as string) as Data.TalentInstance;
 						currentCost = skill.ic * counter;
 						add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
 						break;
@@ -119,7 +121,7 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						add = getSelectionName(a, sid);
 						break;
 					case 'SA_86': {
-						if ((getAllByCategory(Categories.SPELLS) as SpellInstance[]).some(e => e.active)) {
+						if ((getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).some(e => e.active)) {
 							disabled = true;
 						}
 						const selectionItem = getSelectionItem(a, sid);
@@ -128,7 +130,7 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						break;
 					}
 					case 'SA_102': {
-						if ((getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).some(e => e.active)) {
+						if ((getAllByCategory(Categories.LITURGIES) as Data.LiturgyInstance[]).some(e => e.active)) {
 							disabled = true;
 						}
 						const selectionItem = getSelectionItem(a, sid);
@@ -136,17 +138,29 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 						currentCost = selectionItem && selectionItem.cost as number;
 						break;
 					}
+					case 'SA_252': {
+						const { name, ic } = (get(sid as string)) as Data.SpellInstance;
+						add = name;
+						currentCost = (cost as number[])[ic - 1];
+						break;
+					}
+					case 'SA_484': {
+						const selectionItem = getSelectionItem(a, sid) as (Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }) | undefined;
+						add = selectionItem && `${(get(selectionItem.target) as Data.SpellInstance).name}: ${selectionItem.name}`;
+						currentCost = selectionItem && selectionItem.cost;
+						break;
+					}
 
 					default:
 						if (input) {
 							add = sid as string;
 						}
-						else if (sel.length > 0 && cost === 'sel') {
+						else if (Array.isArray(sel) && cost === 'sel') {
 							const selectionItem = getSelectionItem(a, sid);
 							add = selectionItem && selectionItem.name;
 							currentCost = selectionItem && selectionItem.cost;
 						}
-						else if (sel.length > 0 && typeof cost === 'number') {
+						else if (Array.isArray(sel) && typeof cost === 'number') {
 							add = getSelectionName(a, sid);
 						}
 						break;
@@ -176,7 +190,7 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 
 				activeObject.cost = currentCost;
 
-				if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
+				if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof Data.ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
 					disabled = true;
 				}
 
@@ -194,57 +208,63 @@ export function getActiveForView(category: ADVANTAGES | DISADVANTAGES | SPECIAL_
 	return finalEntries;
 }
 
-export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIAL_ABILITIES) => {
+export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.DeactiveViewObject[] {
 	const allEntries = getObjByCategory(category) as {
-		[id: string]: AdvantageInstance;
+		[id: string]: Data.AdvantageInstance;
 	} | {
-		[id: string]: DisadvantageInstance;
+		[id: string]: Data.DisadvantageInstance;
 	} | {
-		[id: string]: SpecialAbilityInstance;
+		[id: string]: Data.SpecialAbilityInstance;
 	};
-	const finalEntries: DeactiveViewObject[] = [];
+	const finalEntries: Data.DeactiveViewObject[] = [];
 	for (const id in allEntries) {
 		if (allEntries.hasOwnProperty(id)) {
-			const a = allEntries[id] as ActivatableInstance & { tiers?: number; gr?: number; };
+			const a = allEntries[id] as Data.ActivatableInstance & { tiers?: number; gr?: number; };
 			const { cost, max, active, name, input, tiers, dependencies, gr } = a;
 			if (!isActivatable(a) || dependencies.includes(false)) {
 				continue;
 			}
-			if (max === null || active.length < max) {
+			if (max === undefined || active.length < max) {
 				switch (id) {
 					case 'ADV_4':
 					case 'ADV_17':
-					case 'ADV_47': {
-						const sel = a.sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, sel, cost });
+					case 'ADV_47':
+					case 'SA_273': {
+						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
+						if (a.category === Categories.SPECIAL_ABILITIES) {
+							finalEntries.push({ id, name, sel, cost, gr });
+						}
+						else {
+							finalEntries.push({ id, name, sel, cost });
+						}
 						break;
 					}
 					case 'ADV_16': {
-						const sel = a.sel.filter(e => getSids(a).filter(d => d === e.id).length < 2 && !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => getSids(a).filter(d => d === e.id).length < 2 && !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, sel, cost });
 						break;
 					}
 					case 'ADV_28':
 					case 'ADV_29': {
-						const sel = a.sel.filter(e => !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, sel });
 						// advs.push({ id, name, sel, input });
 						break;
 					}
 					case 'ADV_32': {
-						const sel = a.sel.filter(e => !getSids(get('DISADV_24') as DisadvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => !getSids(get('DISADV_24') as Data.DisadvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, sel, input, cost });
 						break;
 					}
 					case 'DISADV_1':
 					case 'DISADV_34':
 					case 'DISADV_50': {
-						const sel = a.sel.filter(e => !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, tiers, sel, input, cost });
 						break;
 					}
 					case 'DISADV_24': {
-						const sel = a.sel.filter(e => !getSids(get('ADV_32') as AdvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => !getSids(get('ADV_32') as Data.AdvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, sel, input, cost });
 						break;
 					}
@@ -253,23 +273,23 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 					case 'DISADV_51': {
 						let sel;
 						if (a.id === 'DISADV_33') {
-							sel = a.sel.filter(e => ([7, 8].includes(e.id as number) || !getSids(a).includes(e.id)) && !getDSids(a).includes(e.id));
+							sel = a.sel!.filter(e => ([7, 8].includes(e.id as number) || !getSids(a).includes(e.id)) && !getDSids(a).includes(e.id));
 						}
 						else {
-							sel = a.sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
+							sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
 						}
 						finalEntries.push({ id, name, sel, cost });
 						break;
 					}
 					case 'DISADV_36': {
-						const sel = a.sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
+						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
 						finalEntries.push({ id, name, sel, input, cost });
 						break;
 					}
 					case 'DISADV_48': {
-						const sel = a.sel.filter(e => {
-							if ((get('ADV_40') as AdvantageInstance).active.length > 0 || (get('ADV_46') as AdvantageInstance).active.length > 0) {
-								if ((get(e.id as string) as LiturgyInstance | SpellInstance | TalentInstance).gr === 2) {
+						const sel = a.sel!.filter(e => {
+							if ((get('ADV_40') as Data.AdvantageInstance).active.length > 0 || (get('ADV_46') as Data.AdvantageInstance).active.length > 0) {
+								if ((get(e.id as string) as Data.SkillInstance).gr === 2) {
 									return false;
 								}
 							}
@@ -279,19 +299,19 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						break;
 					}
 					case 'SA_18': {
-						const sum = (get('TAL_51') as TalentInstance).value + (get('TAL_55') as TalentInstance).value;
+						const sum = (get('TAL_51') as Data.TalentInstance).value + (get('TAL_55') as Data.TalentInstance).value;
 						if (sum >= 12) {
 							finalEntries.push({ id, name, cost, gr });
 						}
 						break;
 					}
 					case 'SA_19':
-						if ((getAllByCategoryGroup(Categories.COMBAT_TECHNIQUES, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
+						if ((getAllByCategoryGroup(Categories.COMBAT_TECHNIQUES, 2) as Data.CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
 							finalEntries.push({ id, name, cost, gr });
 						}
 						break;
 					case 'SA_3': {
-						const sel = (a.sel as Array<SelectionObject & { req: RequirementObject[] }>).filter(e => !active.includes(e.id) && validate(e.req, id) && !getDSids(a).includes(e.id));
+						const sel = (a.sel as Array<Data.SelectionObject & { req: Data.RequirementObject[] }>).filter(e => !active.includes(e.id) && validateInstance(e.req, id) && !getDSids(a).includes(e.id));
 						if (sel.length > 0) {
 							finalEntries.push({ id, name, sel, cost, gr });
 						}
@@ -309,7 +329,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 							}
 							return map;
 						}, new Map<string, Array<number | string>>());
-						type Sel = Array<SelectionObject & { specialisation: string[] | null; specialisationInput: string | null }>;
+						type Sel = Array<Data.SelectionObject & { specialisation?: string[]; specialisationInput?: string }>;
 						const sel = (a.sel as Sel).filter(e => {
 							const id = e.id as string;
 							if (getDSids(a).includes(id)) {
@@ -317,10 +337,10 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 							}
 							else if (counter.has(id)) {
 								const arr = counter.get(id);
-								return arr && arr.length < 3 && (get(id) as TalentInstance).value >= 6 * (arr.length + 1);
+								return arr && arr.length < 3 && (get(id) as Data.TalentInstance).value >= 6 * (arr.length + 1);
 							}
 							else {
-								return (get(id) as TalentInstance).value >= 6;
+								return (get(id) as Data.TalentInstance).value >= 6;
 							}
 						}).map(e => {
 							const id = e.id as string;
@@ -339,13 +359,13 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						break;
 					}
 					case 'SA_29': {
-						type Sel = Array<SelectionObject & { talent: [string, number]; }>;
+						type Sel = Array<Data.SelectionObject & { talent: [string, number]; }>;
 						const sel = (a.sel as Sel).filter(e => {
 							if (getDSids(a).includes(e.id)) {
 								return false;
 							}
 							else {
-								return !active.includes(e.id) && (get(e.talent[0]) as TalentInstance).value >= e.talent[1];
+								return !active.includes(e.id) && (get(e.talent[0]) as Data.TalentInstance).value >= e.talent[1];
 							}
 						});
 						if (sel.length > 0) {
@@ -354,15 +374,14 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						break;
 					}
 					case 'SA_30': {
-						const sel = a.sel.filter(e => active.every(n => n.sid !== e.id) && !getDSids(a).includes(e.id));
-						sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+						const sel = sort(a.sel!.filter(e => active.every(n => n.sid !== e.id) && !getDSids(a).includes(e.id)), 'name');
 						if (sel.length > 0) {
 							finalEntries.push({ id, name, sel, cost, tiers: 3, gr });
 						}
 						break;
 					}
 					case 'SA_88': {
-						const spellsAbove10 = (getAllByCategory(Categories.SPELLS) as SpellInstance[]).filter(e => e.value >= 10);
+						const spellsAbove10 = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).filter(e => e.value >= 10);
 						const counter = spellsAbove10.reduce((map, obj) => {
 							const property = obj.property;
 							if (map.has(property)) {
@@ -373,7 +392,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 							}
 							return map;
 						}, new Map<number, number>());
-						const sel = a.sel.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+						const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 						if (sel.length > 0) {
 							const apArr = [10, 20, 40];
 							const cost = apArr[active.length];
@@ -381,8 +400,15 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						}
 						break;
 					}
+					case 'SA_97': {
+						const sel = sort(a.sel!.filter(e => getSids(get('SA_88') as Data.SpecialAbilityInstance).includes(e.id) && !getSids(a).includes(e.id)), 'name');
+						if (sel.length > 0) {
+							finalEntries.push({ id, name, sel, cost, gr });
+						}
+						break;
+					}
 					case 'SA_103': {
-						const liturgiesAbove10 = (getAllByCategory(Categories.LITURGIES) as LiturgyInstance[]).filter(e => e.value >= 10);
+						const liturgiesAbove10 = (getAllByCategory(Categories.LITURGIES) as Data.LiturgyInstance[]).filter(e => e.value >= 10);
 						const counter = liturgiesAbove10.reduce((map, obj) => {
 							const aspect = obj.aspects;
 							aspect.forEach(e => {
@@ -395,7 +421,7 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 							});
 							return map;
 						}, new Map<number, number>());
-						const sel = a.sel.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+						const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 						if (sel.length > 0) {
 							const apArr = [15, 25, 45];
 							const cost = apArr[active.length];
@@ -403,11 +429,44 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 						}
 						break;
 					}
+					case 'SA_252': {
+						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id) && (get(id) as Data.SpellInstance).value >= 10);
+						if (sel.length > 0) {
+							finalEntries.push({ id, name, sel, cost, gr });
+						}
+						break;
+					}
+					case 'SA_368': {
+						type EnhancedSelectionObject = Data.SelectionObject & { gr: number; tier: number; };
+						let sel = a.sel as EnhancedSelectionObject[];
+						if (isActive(a)) {
+							const selectedPath = (getSelectionItem(a, a.active[0].sid) as EnhancedSelectionObject).gr;
+							const lastTier = (getSelectionItem(a, a.active[a.active.length - 1].sid) as EnhancedSelectionObject).tier;
+							sel = sel.filter(e => e.gr === selectedPath && e.tier === lastTier + 1);
+						}
+						else {
+							sel = sel.filter(e => e.tier === 1);
+						}
+						if (sel.length > 0) {
+							finalEntries.push({ id, name, sel, cost, gr });
+						}
+						break;
+					}
+					case 'SA_484': {
+						const sel = (a.sel as Array<Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }>).filter(e => !getSids(a).includes(e.id) && validateInstance(e.req, id) && !getDSids(a).includes(e.id) && (get(e.target) as Data.SpellInstance).value > e.tier * 4 + 4).map(e => {
+							const { name, target, ...other } = e;
+							return { name: `${(get(target) as Data.SpellInstance).name}: ${name}`, target, ...other };
+						});
+						if (sel.length > 0) {
+							finalEntries.push({ id, name, sel, cost, gr });
+						}
+						break;
+					}
 
 					default: {
-						const tiers = a.tiers !== null ? a.tiers : undefined;
-						const input = a.input !== null ? a.input : undefined;
-						let sel = a.sel.length > 0 ? a.sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) : undefined;
+						const tiers = a.tiers !== undefined ? a.tiers : undefined;
+						const input = a.input !== undefined ? a.input : undefined;
+						let sel = Array.isArray(a.sel) ? a.sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) : undefined;
 						if (cost === 'sel' && sel) {
 							sel = sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
 						}
@@ -419,4 +478,4 @@ export const getDeactiveForView = (category: ADVANTAGES | DISADVANTAGES | SPECIA
 		}
 	}
 	return finalEntries;
-};
+}

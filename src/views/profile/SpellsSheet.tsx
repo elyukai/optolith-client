@@ -1,22 +1,22 @@
 import * as React from 'react';
 import * as SheetActions from '../../actions/SheetActions';
-import Checkbox from '../../components/Checkbox';
-import SheetStore from '../../stores/SheetStore';
+import { Checkbox } from '../../components/Checkbox';
+import { SheetStore } from '../../stores/SheetStore';
 import { getAE } from '../../utils/secondaryAttributes';
-import AttributeMods from './AttributeMods';
-import Sheet from './Sheet';
-import SheetOptions from './SheetOptions';
-import SheetWrapper from './SheetWrapper';
-import SpellsSheetCantrips from './SpellsSheetCantrips';
-import SpellsSheetMain from './SpellsSheetMain';
-import SpellsSheetSpecialAbilities from './SpellsSheetSpecialAbilities';
-import SpellsSheetTraditionsProperties from './SpellsSheetTraditionsProperties';
+import { AttributeMods } from './AttributeMods';
+import { Sheet } from './Sheet';
+import { SheetOptions } from './SheetOptions';
+import { SheetWrapper } from './SheetWrapper';
+import { SpellsSheetCantrips } from './SpellsSheetCantrips';
+import { SpellsSheetMain } from './SpellsSheetMain';
+import { SpellsSheetSpecialAbilities } from './SpellsSheetSpecialAbilities';
+import { SpellsSheetTraditionsProperties } from './SpellsSheetTraditionsProperties';
 
 interface State {
 	checkAttributeValueVisibility: boolean;
 }
 
-export default class SpellsSheet extends React.Component<undefined, State> {
+export class SpellsSheet extends React.Component<undefined, State> {
 	state = SheetStore.getAllForSpellsSheet();
 
 	componentDidMount() {

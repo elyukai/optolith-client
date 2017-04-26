@@ -1,12 +1,13 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
+import { SubTabs } from '../../components/SubTabs';
 import { get } from '../../stores/ListStore';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
-import CombatTechniques from './CombatTechniques';
-import Liturgies from './Liturgies';
-import SpecialAbilities from './SpecialAbilities';
-import Spells from './Spells';
-import Talents from './Talents';
+import { SpecialAbilitiesStore } from '../../stores/SpecialAbilitiesStore';
+import { SpecialAbilityInstance } from '../../types/data.d';
+import { CombatTechniques } from './CombatTechniques';
+import { Liturgies } from './Liturgies';
+import { SpecialAbilities } from './SpecialAbilities';
+import { Spells } from './Spells';
+import { Talents } from './Talents';
 
 interface State {
 	tab: string;
@@ -14,7 +15,7 @@ interface State {
 	showSpells: boolean;
 }
 
-export default class Skills extends React.Component<undefined, State> {
+export class Skills extends React.Component<undefined, State> {
 
 	state = {
 		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
@@ -38,7 +39,6 @@ export default class Skills extends React.Component<undefined, State> {
 	}
 
 	render() {
-
 		const { showChants, showSpells, tab } = this.state;
 
 		let skillElement;

@@ -1,8 +1,9 @@
 import * as React from 'react';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
+import { Dialog } from '../../components/Dialog';
+import { TextField } from '../../components/TextField';
+import { InputTextEvent } from '../../types/data.d';
 
-interface Props {
+export interface AttributesRemovePermanentProps {
 	node?: HTMLDivElement;
 	remove(value: number): void;
 }
@@ -11,7 +12,7 @@ interface State {
 	value: string;
 }
 
-export default class AttributesRemovePermanent extends React.Component<Props, State> {
+export class AttributesRemovePermanent extends React.Component<AttributesRemovePermanentProps, State> {
 	state = {
 		value: '',
 	};

@@ -1,3 +1,5 @@
+import { IncreasableInstance } from '../types/data.d';
+
 export function set(obj: IncreasableInstance, value: number): IncreasableInstance {
 	return ({ ...obj, value });
 }

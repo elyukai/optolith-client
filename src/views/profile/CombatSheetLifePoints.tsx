@@ -1,10 +1,10 @@
 import * as React from 'react';
-import Box from '../../components/Box';
-import LabelBox from '../../components/LabelBox';
-import TextBox from '../../components/TextBox';
+import { Box } from '../../components/Box';
+import { LabelBox } from '../../components/LabelBox';
+import { TextBox } from '../../components/TextBox';
 import { getLP } from '../../utils/secondaryAttributes';
 
-export default () => {
+export function CombatSheetLifePoints() {
 	const lp = getLP().value as number;
 
 	return (
@@ -38,4 +38,4 @@ export default () => {
 			</div>
 		</TextBox>
 	);
-};
+}

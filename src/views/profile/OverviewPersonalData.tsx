@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
-import Dropdown from '../../components/Dropdown';
-import IconButton from '../../components/IconButton';
-import InputButtonGroup from '../../components/InputButtonGroup';
-import TextField from '../../components/TextField';
+import { Dropdown } from '../../components/Dropdown';
+import { IconButton } from '../../components/IconButton';
+import { InputButtonGroup } from '../../components/InputButtonGroup';
+import { TextField } from '../../components/TextField';
+import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
 
 interface Props {
 	age: string;
@@ -26,7 +27,7 @@ interface Props {
 	weight: number | string;
 }
 
-export default class OverviewPersonalData extends React.Component<Props, undefined> {
+export class OverviewPersonalData extends React.Component<Props, undefined> {
 	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value as string);
 	changePlaceOfBirth = (e: InputTextEvent) => ProfileActions.setPlaceOfBirth(e.target.value as string);
 	changeDateOfBirth = (e: InputTextEvent) => ProfileActions.setDateOfBirth(e.target.value as string);

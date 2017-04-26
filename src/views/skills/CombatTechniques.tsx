@@ -1,18 +1,19 @@
 import * as React from 'react';
 import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
-import List from '../../components/List';
-import ListItemGroup from '../../components/ListItemGroup';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import CombatTechniquesStore from '../../stores/CombatTechniquesStore';
+import { List } from '../../components/List';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { CombatTechniquesStore } from '../../stores/CombatTechniquesStore';
 import { get } from '../../stores/ListStore';
-import PhaseStore from '../../stores/PhaseStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { AttributeInstance, CombatTechniqueInstance, InputTextEvent } from '../../types/data.d';
 import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
 import { filterAndSort } from '../../utils/ListUtils';
-import SkillListItem from './SkillListItem';
+import { SkillListItem } from './SkillListItem';
 
 interface State {
 	combattechniques: CombatTechniqueInstance[];
@@ -21,7 +22,7 @@ interface State {
 	sortOrder: string;
 }
 
-export default class CombatTechniques extends React.Component<undefined, State> {
+export class CombatTechniques extends React.Component<undefined, State> {
 	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: '',

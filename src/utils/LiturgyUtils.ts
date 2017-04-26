@@ -1,10 +1,11 @@
-import ELStore from '../stores/ELStore';
+import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
-import LiturgiesStore from '../stores/LiturgiesStore';
-import PhaseStore from '../stores/PhaseStore';
+import { LiturgiesStore } from '../stores/LiturgiesStore';
+import { PhaseStore } from '../stores/PhaseStore';
+import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
-export function isOwnTradition(obj: LiturgyInstance): boolean {
+export function isOwnTradition(obj: LiturgyInstance | BlessingInstance): boolean {
 	const SA = get('SA_102') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
@@ -42,5 +43,13 @@ export function reset(obj: LiturgyInstance): LiturgyInstance {
 		active: false,
 		dependencies: [],
 		value: 0,
+	};
+}
+
+export function resetBlessing(obj: BlessingInstance): BlessingInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: []
 	};
 }

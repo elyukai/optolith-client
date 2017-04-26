@@ -1,16 +1,16 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import Avatar from './Avatar';
+import { Avatar } from './Avatar';
 
-interface Props {
+export interface AvatarWrapperProps {
 	className?: string;
 	children?: React.ReactNode;
 	img?: boolean;
 	src: string;
-	onClick?(e: React.MouseEvent<any>): void;
+	onClick?(): void;
 }
 
-export default function AvatarWrapper(props: Props) {
+export function AvatarWrapper(props: AvatarWrapperProps) {
 	const { children, img, onClick, src } = props;
 	let { className } = props;
 

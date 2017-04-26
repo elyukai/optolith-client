@@ -1,9 +1,14 @@
+import { AddItemAction, RemoveItemAction, SetDucatesAction, SetHellersAction, SetItemAction, SetItemsSortOrderAction, SetKreutzersAction, SetSilverthalersAction } from '../actions/EquipmentActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Hero, ItemInstance } from '../types/data.d';
+import { RawItem } from '../types/rawdata.d';
 import { initItem } from '../utils/InitUtils';
-import Store from './Store';
+import { Store } from './Store';
 
-type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | ReceiveHeroDataAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction;
+type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | LoadHeroAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction;
 
 class EquipmentStoreStatic extends Store {
 	private itemsById: { [id: string]: ItemInstance } = {};
@@ -61,8 +66,8 @@ class EquipmentStoreStatic extends Store {
 					this.removeItem(action.payload.id);
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
-					this.updateAll(action.payload.data.belongings);
+				case ActionTypes.LOAD_HERO:
+					this.updateAll(action.payload.data);
 					break;
 
 				default:
@@ -114,7 +119,8 @@ class EquipmentStoreStatic extends Store {
 		}
 	}
 
-	private updateAll({ items, purse }: { items: { [id: string]: ItemInstance; }; purse: { d: string; s: string; h: string; k: string; }}) {
+	private updateAll(hero: Hero) {
+		const { belongings: { items, purse } } = hero;
 		for (const id in items) {
 			if (items.hasOwnProperty(id)) {
 				this.itemsById[id] = items[id];
@@ -149,6 +155,4 @@ class EquipmentStoreStatic extends Store {
 	}
 }
 
-const EquipmentStore = new EquipmentStoreStatic();
-
-export default EquipmentStore;
+export const EquipmentStore = new EquipmentStoreStatic();

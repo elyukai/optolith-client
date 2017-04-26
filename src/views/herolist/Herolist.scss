@@ -1,22 +1,10 @@
 @import "HeroCreation";
 
 #herolist {
-	ul {
-		margin: 0;
-		padding: 1px 0;
-		list-style: none;
-	}
-
-	li {
-		position: relative;
-		padding: 11px;
-		display: flex;
-		align-items: center;
-
-		> svg {
+	.list-wrapper li {
+		svg {
 			position: absolute;
-			top: 7px;
-			left: 7px;
+			left: 4px;
 			-webkit-filter: drop-shadow(0 0 2px black);
 			filter: drop-shadow(0 0 2px black);
 			z-index: 2;
@@ -28,99 +16,9 @@
 			}
 		}
 
-		> .el {
-			$size: 55px;
-			$padding: 2px;
-
-			z-index: 1;
-			flex: none;
-			@include size($size);
-
-			> div {
-				@include size($size - $padding * 2);
-				border-radius: 50%;
-			}
-
-			> div.el-value {
-				position: absolute;
-				visibility: hidden;
-				background: rgba(0, 0, 0, .75);
-
-				h2 {
-					text-align: center;
-					line-height: $size - $padding * 2;
-					font-size: 21px;
-				}
-			}
-		}
-
-		> .main {
-			flex: 1 1 100%;
-			margin: 0 16px;
-			overflow: hidden;
-
-			h2 {
-				overflow: hidden;
-				display: flex;
-
-				.name {
-					flex: 0 1 auto;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-
-				.player {
-					padding-left: 20px;
-					font-size: 16px;
-					color: $color4;
-					flex: none;
-				}
-			}
-
-			.rcp {
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-
-				span:last-child {
-					font-weight: 500;
-				}
-			}
-
-			// h2 {
-			// 	line-height: 22px;
-			// 	margin-bottom: 5px;
-			// }
-		}
-
-		.base-values {
-			display: flex;
-
-			> div:not(:first-child) {
-				margin-left: 11px;
-			}
-		}
-
-		&:not(:first-child) {
-			border-top: 1px solid transparentize(white, .925);
-		}
-
 		&:hover {
-			@extend %yellow-border;
-
-			> svg, > .el > div.el-value {
+			svg {
 				visibility: visible;
-			}
-		}
-
-		.buttons {
-			flex: none;
-			display: flex;
-
-			> .btn {
-				flex: none;
-				margin-left: 6px;
 			}
 		}
 	}

@@ -1,12 +1,12 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-interface Props {
+export interface BoxProps {
 	children?: React.ReactNode;
 	className?: string;
 }
 
-export default (props: Props) => {
+export function Box(props: BoxProps) {
 	const { children, ...other } = props;
 	let { className } = props;
 
@@ -17,4 +17,4 @@ export default (props: Props) => {
 			{children}
 		</div>
 	);
-};
+}

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
 
 interface Props {
 	active: Map<string, number>;
@@ -13,7 +13,7 @@ interface Props {
 	}[];
 }
 
-export default class SelectionsCurses extends React.Component<Props, undefined> {
+export class SelectionsCurses extends React.Component<Props, undefined> {
 	render() {
 		const { active, apTotal, apLeft, change, list } = this.props;
 

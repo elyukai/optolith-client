@@ -1,13 +1,14 @@
 import * as React from 'react';
-import RaceStore from '../../stores/RaceStore';
-import MainSheetAttributesItem from './MainSheetAttributesItem';
-import MainSheetFatePoints from './MainSheetFatePoints';
+import { RaceStore } from '../../stores/RaceStore';
+import { SecondaryAttribute } from '../../types/data.d';
+import { MainSheetAttributesItem } from './MainSheetAttributesItem';
+import { MainSheetFatePoints } from './MainSheetFatePoints';
 
 export interface MainSheetAttributesProps {
 	attributes: SecondaryAttribute[];
 }
 
-export default (props: MainSheetAttributesProps ) => {
+export function MainSheetAttributes(props: MainSheetAttributesProps ) {
 	const { attributes } = props;
 	const race = RaceStore.getCurrent()!;
 	return (
@@ -75,4 +76,4 @@ export default (props: MainSheetAttributesProps ) => {
 			<MainSheetFatePoints />
 		</div>
 	);
-};
+}

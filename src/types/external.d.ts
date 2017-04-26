@@ -7,7 +7,7 @@ declare module 'react-progress-arc' {
 
 	class ProgressArc extends React.Component<Props, any> {}
 
-	export default ProgressArc;
+	export = ProgressArc;
 }
 
 declare module 'react-gemini-scrollbar' {
@@ -17,5 +17,5 @@ declare module 'react-gemini-scrollbar' {
 
 	class GeminiScrollbar extends React.Component<Props, any> {}
 
-	export default GeminiScrollbar;
+	export = GeminiScrollbar;
 }

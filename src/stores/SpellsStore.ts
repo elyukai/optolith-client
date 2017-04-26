@@ -1,16 +1,20 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction, SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { getSids } from '../utils/ActivatableUtils';
-import ELStore from './ELStore';
-import { default as ListStore, get, getAllByCategory } from './ListStore';
-import PhaseStore from './PhaseStore';
-import Store from './Store';
+import { ELStore } from './ELStore';
+import { get, getAllByCategory, ListStore } from './ListStore';
+import { PhaseStore } from './PhaseStore';
+import { Store } from './Store';
 
 type Action = ActivateSpellAction | DeactivateSpellAction | AddSpellPointAction | RemoveSpellPointAction | SetSpellsSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class SpellsStoreStatic extends Store {
-	private readonly category: SPELLS = Categories.SPELLS;
+	private readonly category = Categories.SPELLS;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
 
@@ -59,15 +63,30 @@ class SpellsStoreStatic extends Store {
 		return getAllByCategory(this.category) as SpellInstance[];
 	}
 
+	getAllCantrips() {
+		return getAllByCategory(Categories.CANTRIPS) as CantripInstance[];
+	}
+
 	getForSave() {
-		const active: { [id: string]: number } = {};
+		const list: { [id: string]: number } = {};
 		this.getAll().forEach(e => {
-			const { active: a, id, value } = e;
-			if (a) {
-				active[id] = value;
+			const { active, id, value } = e;
+			if (active) {
+				list[id] = value;
 			}
 		});
-		return active;
+		return list;
+	}
+
+	getCantripsForSave() {
+		const list: string[] = [];
+		this.getAllCantrips().forEach(e => {
+			const { active, id } = e;
+			if (active) {
+				list.push(id);
+			}
+		});
+		return list;
 	}
 
 	getPropertyCounter() {
@@ -98,7 +117,7 @@ class SpellsStoreStatic extends Store {
 	}
 
 	getGroupNames() {
-		return ['Spruch', 'Ritual', 'Fluch', 'Lied', 'Trick'];
+		return ['Spruch', 'Ritual', 'Fluch', 'Lied'];
 	}
 
 	getPropertyNames() {
@@ -106,7 +125,7 @@ class SpellsStoreStatic extends Store {
 	}
 
 	getTraditionNames() {
-		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
+		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen', 'Druiden', 'Scharlatane', 'Zauberbarden', 'Zaubertänzer', 'Intuitive Zauberer', 'Meistertalentierte', 'Qabalyamagier', 'Kristallomanten', 'Geoden', 'Alchimisten', 'Schelme'];
 	}
 
 	getSortOrder() {
@@ -118,6 +137,4 @@ class SpellsStoreStatic extends Store {
 	}
 }
 
-const SpellsStore = new SpellsStoreStatic();
-
-export default SpellsStore;
+export const SpellsStore = new SpellsStoreStatic();

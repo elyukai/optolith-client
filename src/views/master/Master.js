@@ -1,9 +1,9 @@
-import Groups from './Groups';
-import InGame from './InGame';
+import { Groups } from './Groups';
+import { InGame } from './InGame';
 import React, { Component } from 'react';
-import SubTabs from '../../components/SubTabs';
+import { SubTabs } from '../../components/SubTabs';
 
-export default class Master extends Component {
+export class Master extends Component {
 
 	state = {
 		tab: 'ingame'

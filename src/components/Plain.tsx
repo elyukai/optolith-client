@@ -1,20 +1,18 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-interface Props {
+export interface PlainProps {
 	className: string;
 	label: string;
 	value?: string | number;
 }
 
-export default class Plain extends React.Component<Props, undefined> {
-	render() {
-		const className = classNames( 'plain', this.props.className );
-		return (
-			<div className={className}>
-				<div className="label">{this.props.label}</div>
-				<div className="value">{this.props.value}</div>
-			</div>
-		);
-	}
+export function Plain(props: PlainProps) {
+	const { className, label, value } = props;
+	return (
+		<div className={classNames('plain', className)}>
+			<div className="label">{label}</div>
+			<div className="value">{value}</div>
+		</div>
+	);
 }

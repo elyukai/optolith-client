@@ -1,8 +1,11 @@
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { EndHeroCreationAction } from '../actions/ProfileActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Store } from './Store';
 
-type Action = ReceiveHeroDataAction | CreateHeroAction | SetSelectionsAction | EndHeroCreationAction;
+type Action = LoadHeroAction | CreateHeroAction | SetSelectionsAction | EndHeroCreationAction;
 
 class PhaseStoreStatic extends Store {
 	private phase = 1;
@@ -12,7 +15,7 @@ class PhaseStoreStatic extends Store {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			switch (action.type) {
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.update(action.payload.data.phase);
 					break;
 
@@ -45,6 +48,4 @@ class PhaseStoreStatic extends Store {
 	}
 }
 
-const PhaseStore = new PhaseStoreStatic();
-
-export default PhaseStore;
+export const PhaseStore = new PhaseStoreStatic();

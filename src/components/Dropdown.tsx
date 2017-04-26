@@ -1,25 +1,25 @@
 import classNames from 'classnames';
 import * as React from 'react';
 import GeminiScrollbar from 'react-gemini-scrollbar';
-import Label from './Label';
+import { Label } from './Label';
 
-interface Props {
+export interface DropdownProps {
 	className?: string;
 	disabled?: boolean;
 	fullWidth?: boolean;
 	hint?: string;
 	label?: string;
-	options: Array<{ id: number | string | null; name: string; }>;
-	value: boolean | string | number | null;
-	onChange?(option: number | string | null): void;
+	options: Array<{ id?: number | string; name: string; }>;
+	value?: boolean | string | number;
+	onChange?(option?: number | string): void;
 }
 
-interface State {
+interface DropdownState {
 	isOpen: boolean;
 	position: string;
 }
 
-export default class Dropdown extends React.Component<Props, State> {
+export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 	state = {
 		isOpen: false,
 		position: 'bottom'
@@ -38,20 +38,20 @@ export default class Dropdown extends React.Component<Props, State> {
 				this.setState({ isOpen: !this.state.isOpen, position: 'bottom' });
 			}
 		}
-		this.setState({ isOpen: !this.state.isOpen } as State);
+		this.setState({ isOpen: !this.state.isOpen } as DropdownState);
 	}
 
-	onChange = (option: number | string | null) => {
+	onChange = (option?: number | string) => {
 		const { onChange } = this.props;
 		if (typeof onChange === 'function') {
 			onChange(option);
 		}
-		this.setState({ isOpen: false } as State);
+		this.setState({ isOpen: false } as DropdownState);
 	}
 
 	outsideClick = () => {
 		if (!this.clickInside && this.state.isOpen) {
-			this.setState({ isOpen: false } as State);
+			this.setState({ isOpen: false } as DropdownState);
 		}
 	}
 
@@ -97,7 +97,7 @@ export default class Dropdown extends React.Component<Props, State> {
 
 		return (
 			<div className={className} ref={node => this.containerRef = node}>
-				<Label text={this.props.label} disabled={this.props.disabled} />
+				{this.props.label && <Label text={this.props.label} disabled={this.props.disabled} />}
 				<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
 					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height: 0}}></div>}
 					<div onClick={this.switch} className="value">{valueText}</div>

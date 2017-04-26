@@ -1,9 +1,13 @@
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SetSectionAction, SetTabAction } from '../actions/LocationActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { ReceiveLogoutAction, ReceiveRegistrationAction, ReceiveUserDeletionAction } from '../actions/ServerActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import AuthStore from './AuthStore';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { AuthStore } from './AuthStore';
+import { Store } from './Store';
 
-type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | ReceiveUserDeletionAction | ReceiveRegistrationAction;
+type Action = SetTabAction | SetSectionAction | ReceiveLogoutAction | CreateHeroAction | LoadHeroAction | SetSelectionsAction | ReceiveUserDeletionAction | ReceiveRegistrationAction;
 
 class TabStoreStatic extends Store {
 	private currentTab = 'home';
@@ -34,7 +38,7 @@ class TabStoreStatic extends Store {
 					this.updateSection('hero', 'rcp');
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.updateSection('hero', 'profile');
 					break;
 
@@ -100,6 +104,4 @@ class TabStoreStatic extends Store {
 	}
 }
 
-const TabStore = new TabStoreStatic();
-
-export default TabStore;
+export const TabStore = new TabStoreStatic();

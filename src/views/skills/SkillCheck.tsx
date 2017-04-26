@@ -1,12 +1,13 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
+import { get } from '../../stores/ListStore';
+import { AttributeInstance } from '../../types/data.d';
 
 interface Props {
 	check: string[];
 	mod?: string;
 }
 
-export default class SkillListItem extends React.Component<Props, undefined> {
+export class SkillCheck extends React.Component<Props, undefined> {
 	render() {
 		const { check, mod } = this.props;
 

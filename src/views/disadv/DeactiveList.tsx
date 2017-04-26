@@ -1,14 +1,7 @@
 import * as React from 'react';
 import * as DisAdvActions from '../../actions/DisAdvActions';
-import ActivatableAddList from '../../components/ActivatableAddList';
-import List from '../../components/List';
-import ListItem from '../../components/ListItem';
-import ListItemName from '../../components/ListItemName';
-import Scroll from '../../components/Scroll';
-import { getFullName } from '../../utils/ActivatableUtils';
-import { sort } from '../../utils/ListUtils';
-
-type CombinedList = Array<DeactiveViewObject & { active: false } | ActiveViewObject & { active: true }>;
+import { ActivatableAddList } from '../../components/ActivatableAddList';
+import { ActiveViewObject, DeactiveViewObject } from '../../types/data.d';
 
 interface Props {
 	activeList?: ActiveViewObject[];
@@ -18,7 +11,7 @@ interface Props {
 	showRating: boolean;
 }
 
-export default function DeactiveList(props: Props) {
+export function DeactiveList(props: Props) {
 	const { activeList, filterText, list, rating, showRating } = props;
 	return (
 		<ActivatableAddList

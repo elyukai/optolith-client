@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-interface Props {
+export interface ButtonProps {
 	autoWidth?: boolean;
 	children?: React.ReactNode;
 	className?: string;
@@ -14,7 +14,7 @@ interface Props {
 	[id: string]: any;
 }
 
-export default (props: Props) => {
+export function Button(props: ButtonProps) {
 	const { autoWidth, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = props;
 	let { className } = props;
 
@@ -34,4 +34,4 @@ export default (props: Props) => {
 			{children}
 		</div>
 	);
-};
+}

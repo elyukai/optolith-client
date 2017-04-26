@@ -1,6 +1,8 @@
+import { SwitchEnableActiveItemHintsAction } from '../actions/ConfigActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { Store } from './Store';
 
 type Action = ReceiveInitialDataAction | SwitchEnableActiveItemHintsAction;
 
@@ -37,6 +39,4 @@ class ConfigStoreStatic extends Store {
 	}
 }
 
-const ConfigStore = new ConfigStoreStatic();
-
-export default ConfigStore;
+export const ConfigStore = new ConfigStoreStatic();

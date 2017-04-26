@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
+import { Dialog } from '../../components/Dialog';
+import { TextField } from '../../components/TextField';
+import { InputTextEvent } from '../../types/data.d';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -11,7 +12,7 @@ interface State {
 	value: string;
 }
 
-export default class OverviewAddAP extends React.Component<Props, State> {
+export class OverviewAddAP extends React.Component<Props, State> {
 	state = {
 		value: '',
 	};

@@ -1,25 +1,26 @@
 import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
-import Aside from '../../components/Aside';
-import BorderButton from '../../components/BorderButton';
-import Dropdown from '../../components/Dropdown';
-import List from '../../components/List';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import SortOptions from '../../components/SortOptions';
-import TextField from '../../components/TextField';
-import APStore from '../../stores/APStore';
-import ELStore from '../../stores/ELStore';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { Aside } from '../../components/Aside';
+import { BorderButton } from '../../components/BorderButton';
+import { Dropdown } from '../../components/Dropdown';
+import { List } from '../../components/List';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
+import { SortOptions } from '../../components/SortOptions';
+import { TextField } from '../../components/TextField';
+import { APStore } from '../../stores/APStore';
+import { ELStore } from '../../stores/ELStore';
+import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
+import { AdvantageInstance, AttributeInstance, DisadvantageInstance, InputTextEvent, ItemInstance } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
-import createOverlay from '../../utils/createOverlay';
-import dotToComma from '../../utils/dotToComma';
+import { createOverlay } from '../../utils/createOverlay';
+import { dotToComma } from '../../utils/i18n';
 import { filterAndSort, sortByName } from '../../utils/ListUtils';
-import EquipmentListItem from './EquipmentListItem';
-import ItemEditor from './ItemEditor';
+import { EquipmentListItem } from './EquipmentListItem';
+import { ItemEditor } from './ItemEditor';
 
 const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Fortbewegungsmittel'];
 const groupsSelectionItems = GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
@@ -40,7 +41,7 @@ interface State {
 	templates: ItemInstance[];
 }
 
-export default class Inventory extends React.Component<undefined, State> {
+export class Equipment extends React.Component<undefined, State> {
 	state = {
 		filterGroupSlidein: 1,
 		filterText: '',
@@ -106,7 +107,7 @@ export default class Inventory extends React.Component<undefined, State> {
 		else if (isActive(DISADV_2)) {
 			startMoney -= DISADV_2.active[0].tier! * 250;
 		}
-		const totalWeight = Math.round(list.reduce((n, i) => n + i.weight || n, 0) * 100) / 100;
+		const totalWeight = Math.round(list.reduce((n, i) => i.weight ? n + i.weight : n, 0) * 100) / 100;
 		const carryingCapacity = (get('STR') as AttributeInstance).value * 2;
 
 		const hasNoAddedAP = APStore.getTotal() === ELStore.getStart().ap;

@@ -1,22 +1,43 @@
-import { ADD_COMBATTECHNIQUE_POINT, REMOVE_COMBATTECHNIQUE_POINT, SET_COMBATTECHNIQUES_SORT_ORDER } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+
+export interface AddCombatTechniquePointAction extends Action {
+	type: ActionTypes.ADD_COMBATTECHNIQUE_POINT;
+	payload: {
+		id: string;
+	};
+}
 
 export const addPoint = (id: string) => AppDispatcher.dispatch<AddCombatTechniquePointAction>({
-	type: ADD_COMBATTECHNIQUE_POINT,
+	type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
 	payload: {
 		id
 	}
 });
+
+export interface RemoveCombatTechniquePointAction extends Action {
+	type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT;
+	payload: {
+		id: string;
+	};
+}
 
 export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveCombatTechniquePointAction>({
-	type: REMOVE_COMBATTECHNIQUE_POINT,
+	type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT,
 	payload: {
 		id
 	}
 });
 
+export interface SetCombatTechniquesSortOrderAction extends Action {
+	type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER;
+	payload: {
+		sortOrder: string;
+	};
+}
+
 export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetCombatTechniquesSortOrderAction>({
-	type: SET_COMBATTECHNIQUES_SORT_ORDER,
+	type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
 	payload: {
 		sortOrder
 	}

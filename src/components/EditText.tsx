@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import IconButton from './IconButton';
-import TextField from './TextField';
+import { InputKeyEvent, InputTextEvent } from '../types/data.d';
+import { IconButton } from './IconButton';
+import { TextField } from './TextField';
 
-interface Props {
+export interface EditTextProps {
 	autoFocus?: boolean;
 	className?: string;
 	text: string;
@@ -11,11 +12,11 @@ interface Props {
 	submit(text: string): void;
 }
 
-interface State {
+interface EditTextState {
 	text: string;
 }
 
-export default class EditText extends React.Component<Props, State> {
+export class EditText extends React.Component<EditTextProps, EditTextState> {
 	state = {
 		text: this.props.text,
 	};
@@ -28,7 +29,7 @@ export default class EditText extends React.Component<Props, State> {
 		}
 	}
 
-	handleInput = (event: InputTextEvent) => this.setState({ text: event.target.value } as State);
+	handleInput = (event: InputTextEvent) => this.setState({ text: event.target.value } as EditTextState);
 
 	render() {
 		return (

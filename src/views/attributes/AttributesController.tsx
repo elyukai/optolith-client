@@ -1,17 +1,17 @@
 import * as React from 'react';
-import AttributeStore from '../../stores/AttributeStore';
-import ELStore from '../../stores/ELStore';
-import PhaseStore from '../../stores/PhaseStore';
-import Attributes from './Attributes';
+import { AttributeStore } from '../../stores/AttributeStore';
+import { ELStore } from '../../stores/ELStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { AttributeInstance, ExperienceLevel } from '../../types/data.d';
+import { Attributes } from './Attributes';
 
-interface State {
+export interface State {
 	attributes: AttributeInstance[];
 	el: ExperienceLevel;
 	phase: number;
 }
 
-export default class AttributesController extends React.Component<undefined, State> {
-
+export class AttributesController extends React.Component<undefined, State> {
 	state = {
 		attributes: AttributeStore.getAll(),
 		el: ELStore.getStart(),

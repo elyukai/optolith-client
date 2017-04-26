@@ -1,15 +1,15 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
-import Dropdown from './Dropdown';
-import IconButton from './IconButton';
-import ListItem from './ListItem';
-import ListItemButtons from './ListItemButtons';
-import ListItemGroup from './ListItemGroup';
-import ListItemName from './ListItemName';
-import ListItemSelections from './ListItemSelections';
-import ListItemSeparator from './ListItemSeparator';
-import ListItemValues from './ListItemValues';
+import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
+import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
+import { Dropdown } from './Dropdown';
+import { IconButton } from './IconButton';
+import { ListItem } from './ListItem';
+import { ListItemButtons } from './ListItemButtons';
+import { ListItemGroup } from './ListItemGroup';
+import { ListItemName } from './ListItemName';
+import { ListItemSelections } from './ListItemSelections';
+import { ListItemSeparator } from './ListItemSeparator';
+import { ListItemValues } from './ListItemValues';
 
 interface RemoveObject {
 	id: string;
@@ -30,7 +30,7 @@ interface Props {
 
 const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
-export default class ActivatableRemoveListItem extends React.Component<Props, undefined> {
+export class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, tier, index, cost } = this.props.item;
 		const finalCost = (selectedTier - (tier as number)) * (cost as number);
@@ -76,7 +76,7 @@ export default class ActivatableRemoveListItem extends React.Component<Props, un
 
 		return (
 			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
-				<ListItemName main={name} />
+				<ListItemName name={name} />
 				<ListItemSelections>
 					{tierElement}
 				</ListItemSelections>

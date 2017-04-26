@@ -1,18 +1,18 @@
 import * as React from 'react';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
-import CombatSheetArmor from './CombatSheetArmor';
-import CombatSheetLifePoints from './CombatSheetLifePoints';
-import CombatSheetMeleeWeapons from './CombatSheetMeleeWeapons';
-import CombatSheetRangedWeapons from './CombatSheetRangedWeapons';
-import CombatSheetShields from './CombatSheetShields';
-import CombatSheetSpecialAbilities from './CombatSheetSpecialAbilities';
-import CombatSheetStates from './CombatSheetStates';
-import CombatSheetTechniques from './CombatSheetTechniques';
-import Sheet from './Sheet';
-import SheetOptions from './SheetOptions';
-import SheetWrapper from './SheetWrapper';
+import { CombatSheetArmor } from './CombatSheetArmor';
+import { CombatSheetLifePoints } from './CombatSheetLifePoints';
+import { CombatSheetMeleeWeapons } from './CombatSheetMeleeWeapons';
+import { CombatSheetRangedWeapons } from './CombatSheetRangedWeapons';
+import { CombatSheetShields } from './CombatSheetShields';
+import { CombatSheetSpecialAbilities } from './CombatSheetSpecialAbilities';
+import { CombatSheetStates } from './CombatSheetStates';
+import { CombatSheetTechniques } from './CombatSheetTechniques';
+import { Sheet } from './Sheet';
+import { SheetOptions } from './SheetOptions';
+import { SheetWrapper } from './SheetWrapper';
 
-export default () => {
+export function CombatSheet() {
 	const addHeader = secondaryAttributes.getAll();
 
 	addHeader.splice(1, 2);
@@ -36,4 +36,4 @@ export default () => {
 			</Sheet>
 		</SheetWrapper>
 	);
-};
+}

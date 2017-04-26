@@ -1,12 +1,12 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import Overview from './Overview';
+import { SubTabs } from '../../components/SubTabs';
+import { Overview } from './Overview';
 
 interface State {
 	tab: string;
 }
 
-export default class Home extends React.Component<undefined, State> {
+export class Home extends React.Component<undefined, State> {
 	state = {
 		tab: 'overview',
 	};

@@ -2,21 +2,21 @@ import { remote } from 'electron';
 import { readFile, writeFile, writeFileSync } from 'fs';
 import { join } from 'path';
 import * as FileActions from '../actions/FileActions';
-import * as ServerActions from '../actions/ServerActions';
-import CombatTechniquesStore from '../stores/CombatTechniquesStore';
-import ConfigStore from '../stores/ConfigStore';
-import CultureStore from '../stores/CultureStore';
-import DisAdvStore from '../stores/DisAdvStore';
-import EquipmentStore from '../stores/EquipmentStore';
-import HerolistStore from '../stores/HerolistStore';
-import LiturgiesStore from '../stores/LiturgiesStore';
-import ProfessionStore from '../stores/ProfessionStore';
-import RaceStore from '../stores/RaceStore';
-import SheetStore from '../stores/SheetStore';
-import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
-import SpellsStore from '../stores/SpellsStore';
-import TalentsStore from '../stores/TalentsStore';
-import alert from './alert';
+import { CombatTechniquesStore } from '../stores/CombatTechniquesStore';
+import { ConfigStore } from '../stores/ConfigStore';
+import { CultureStore } from '../stores/CultureStore';
+import { DisAdvStore } from '../stores/DisAdvStore';
+import { EquipmentStore } from '../stores/EquipmentStore';
+import { HerolistStore } from '../stores/HerolistStore';
+import { LiturgiesStore } from '../stores/LiturgiesStore';
+import { ProfessionStore } from '../stores/ProfessionStore';
+import { RaceStore } from '../stores/RaceStore';
+import { SheetStore } from '../stores/SheetStore';
+import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
+import { SpellsStore } from '../stores/SpellsStore';
+import { TalentsStore } from '../stores/TalentsStore';
+import { Config } from '../types/rawdata.d';
+import { alert } from './alert';
 
 function getAppDataPath() {
 	return remote.app.getPath('userData');
@@ -131,7 +131,7 @@ export function saveHero(indexId: string) {
 		filters: [
 			{name: 'JSON', extensions: ['json']},
 		],
-		defaultPath: data.name
+		defaultPath: data.name.replace(/\//, '\/')
 	}, filename => {
 		if (filename) {
 			writeFile(filename, JSON.stringify(data), error => {

@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-interface Props {
+export interface ListItemGroupProps {
 	children?: React.ReactNode;
 	index?: number;
 	list?: string[];
 }
 
-export default function ListItemGroup(props: Props) {
+export function ListItemGroup(props: ListItemGroupProps) {
 	const { children, index, list } = props;
 	if (typeof index === 'number' && Array.isArray(list)) {
 		return (

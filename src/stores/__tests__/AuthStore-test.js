@@ -1,15 +1,15 @@
 jest.mock('../../dispatcher/AppDispatcher');
 
-import AuthStore from '../AuthStore';
+import { AuthStore } from '../AuthStore';
 import * as ActionTypes from '../../constants/ActionTypes';
-import AppDispatcher from '../../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../../dispatcher/AppDispatcher';
 
 describe('AuthStore', () => {
 	const callback = AppDispatcher.register.mock.calls[0][0];
 
 	it('initializes with empty data fields', () => {
 		const account = AuthStore.getAll();
-		expect(account).toEqual({ id: null, name: '' });
+		expect(account).toEqual({ id: undefined, name: '' });
 	});
 
 	it('receives new account', () => {

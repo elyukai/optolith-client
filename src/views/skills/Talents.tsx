@@ -1,22 +1,23 @@
 import * as React from 'react';
 import * as TalentsActions from '../../actions/TalentsActions';
-import Checkbox from '../../components/Checkbox';
-import List from '../../components/List';
-import ListItemGroup from '../../components/ListItemGroup';
-import Options from '../../components/Options';
-import Page from '../../components/Page';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import RecommendedReference from '../../components/RecommendedReference';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import CultureStore from '../../stores/CultureStore';
-import PhaseStore from '../../stores/PhaseStore';
-import TalentsStore from '../../stores/TalentsStore';
+import { Checkbox } from '../../components/Checkbox';
+import { List } from '../../components/List';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { RecommendedReference } from '../../components/RecommendedReference';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { CultureStore } from '../../stores/CultureStore';
+import { PhaseStore } from '../../stores/PhaseStore';
+import { TalentsStore } from '../../stores/TalentsStore';
+import { CultureInstance, InputTextEvent, TalentInstance } from '../../types/data.d';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
-import SkillListItem from './SkillListItem';
+import { SkillListItem } from './SkillListItem';
 
-interface State {
+export interface TalentsState {
 	currentCulture: CultureInstance;
 	filterText: string;
 	phase: number;
@@ -25,7 +26,7 @@ interface State {
 	talents: TalentInstance[];
 }
 
-export default class Talents extends React.Component<undefined, State> {
+export class Talents extends React.Component<undefined, TalentsState> {
 	state = {
 		currentCulture: CultureStore.getCurrent()!,
 		filterText: '',
@@ -39,9 +40,9 @@ export default class Talents extends React.Component<undefined, State> {
 		sortOrder: TalentsStore.getSortOrder(),
 		talentRating: TalentsStore.isRatingVisible(),
 		talents: TalentsStore.getAll(),
-	} as State);
+	} as TalentsState);
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as TalentsState);
 	sort = (option: string) => TalentsActions.setSortOrder(option);
 	changeTalentRating = () => TalentsActions.switchRatingVisibility();
 	addPoint = (id: string) => TalentsActions.addPoint(id);
@@ -95,6 +96,7 @@ export default class Talents extends React.Component<undefined, State> {
 									addDisabled={!isIncreasable(obj)}
 									removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
 									removeDisabled={!isDecreasable(obj)}
+									enableInfo
 									>
 									<ListItemGroup list={GROUPS} index={obj.gr} />
 								</SkillListItem>

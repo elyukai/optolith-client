@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Avatar from '../../components/Avatar';
-import LabelBox from '../../components/LabelBox';
-import Plain from '../../components/Plain';
+import { Avatar } from '../../components/Avatar';
+import { LabelBox } from '../../components/LabelBox';
+import { Plain } from '../../components/Plain';
+import { CultureInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../../types/data.d';
 
 export interface MainSheetPersonalDataProps {
 	ap: {
@@ -35,7 +36,7 @@ export interface MainSheetPersonalDataProps {
 	socialstatusTags: string[];
 }
 
-export default (props: MainSheetPersonalDataProps) => {
+export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
 	const { ap, culture, el, eyecolorTags, haircolorTags, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar }, race, socialstatusTags } = props;
 
 	const raceName = race.name;
@@ -89,4 +90,4 @@ export default (props: MainSheetPersonalDataProps) => {
 			</div>
 		</div>
 	);
-};
+}

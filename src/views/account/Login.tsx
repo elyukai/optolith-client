@@ -1,12 +1,13 @@
 import * as React from 'react';
 import * as AuthActions from '../../actions/AuthActions';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
-import createOverlay, { close } from '../../utils/createOverlay';
-import ForgotPassword from './ForgotPassword';
-import ForgotUsername from './ForgotUsername';
-import Register from './Register';
-import ResendActivation from './ResendActivation';
+import { Dialog } from '../../components/Dialog';
+import { TextField } from '../../components/TextField';
+import { InputKeyEvent, InputTextEvent } from '../../types/data.d';
+import { close, createOverlay } from '../../utils/createOverlay';
+import { ForgotPassword } from './ForgotPassword';
+import { ForgotUsername } from './ForgotUsername';
+import { Register } from './Register';
+import { ResendActivation } from './ResendActivation';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -17,7 +18,7 @@ interface State {
 	password: string;
 }
 
-export default class Login extends React.Component<Props, State> {
+export class Login extends React.Component<Props, State> {
 	state = {
 		password: '',
 		username: '',

@@ -1,4 +1,6 @@
 import * as Categories from '../constants/Categories';
+import { AdvantageInstance, AttributeInstance, BlessingInstance, CantripInstance, CombatTechniqueInstance, CultureInstance, DisadvantageInstance, ItemInstance, LiturgyInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../types/data.d';
+import { RawAdvantage, RawAttribute, RawBlessing, RawCantrip, RawCombatTechnique, RawCulture, RawDisadvantage, RawItem, RawLiturgy, RawProfession, RawProfessionVariant, RawRace, RawSpecialAbility, RawSpell, RawTalent } from '../types/rawdata.d';
 
 export function initRace(raw: RawRace): RaceInstance {
 	const { id, name, ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
@@ -42,7 +44,7 @@ export function initCulture(raw: RawCulture): CultureInstance {
 		talents: talents.map<[string, number]>(e => [`TAL_${e[0]}`, e[1]]),
 		typicalAdvantages: typ_adv.map(e => `ADV_${e}`),
 		typicalDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
-		typicalProfessions: typ_prof.map(e => `P_${e}`),
+		typicalProfessions: typ_prof,
 		typicalTalents: typ_talents.map(e => `TAL_${e}`),
 		untypicalAdvantages: untyp_adv.map(e => `ADV_${e}`),
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
@@ -51,19 +53,20 @@ export function initCulture(raw: RawCulture): CultureInstance {
 }
 
 export function initProfession(raw: RawProfession): ProfessionInstance {
-	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src } = raw;
+	const { id, name, subname, ap, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src, blessings, sgr } = raw;
 	return {
 		ap,
 		category: Categories.PROFESSIONS,
 		combatTechniques: combattech.map<[string, number]>(e => [`CT_${e[0]}`, e[1]]),
 		dependencies: pre_req,
 		id,
-		liturgies: chants.map<[string, number | null]>(e => [`LITURGY_${e[0]}`, e[1]]),
+		liturgies: chants.map<[string, number]>(e => [`LITURGY_${e[0]}`, e[1]]),
+		blessings: blessings.map(e => `BLESSING_${e[0]}`),
 		name,
 		requires: req,
 		selections: sel,
 		specialAbilities: sa,
-		spells: spells.map<[string, number | null]>(e => [`SPELL_${e[0]}`, e[1]]),
+		spells: spells.map<[string, number]>(e => [`SPELL_${e[0]}`, e[1]]),
 		subname,
 		talents: talents.map<[string, number]>(e => [`TAL_${e[0]}`, e[1]]),
 		typicalAdvantages: typ_adv.map(e => `ADV_${e}`),
@@ -72,6 +75,7 @@ export function initProfession(raw: RawProfession): ProfessionInstance {
 		untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
 		variants: vars.map(e => `PV_${e}`),
 		gr,
+		subgr: sgr,
 		src
 	};
 }
@@ -173,10 +177,11 @@ export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueIns
 	};
 }
 
-type RawCheck = [number, number, number, string | never];
-type Check = [string, string, string, string | never];
-
-const fixCheckIds = (check: RawCheck): Check => check.map(e => typeof e === 'number' ? `ATTR_${e}` : e);
+// function fixCheckIds(check: [number, number, number]): [string, string, string];
+// function fixCheckIds(check: [number, number, number, string]): [string, string, string, string];
+function fixCheckIds<T extends (number | string)[]>(check: T) {
+	return check.map(e => typeof e === 'number' ? `ATTR_${e}` : e);
+}
 
 export function initLiturgy(raw: RawLiturgy): LiturgyInstance {
 	const { id, name, check, gr, skt, aspc, trad } = raw;
@@ -195,6 +200,19 @@ export function initLiturgy(raw: RawLiturgy): LiturgyInstance {
 	};
 }
 
+export function initBlessing(raw: RawBlessing): BlessingInstance {
+	const { id, name, aspc, trad, reqs } = raw;
+	return {
+		id,
+		name,
+		active: false,
+		category: Categories.BLESSINGS,
+		aspects: aspc,
+		tradition: trad,
+		reqs
+	};
+}
+
 export function initSpell(raw: RawSpell): SpellInstance {
 	const { id, name, check, gr, skt, merk, trad } = raw;
 	return {
@@ -209,6 +227,19 @@ export function initSpell(raw: RawSpell): SpellInstance {
 		property: merk,
 		tradition: trad,
 		value: 0
+	};
+}
+
+export function initCantrip(raw: RawCantrip): CantripInstance {
+	const { id, name, merk, trad, reqs } = raw;
+	return {
+		id,
+		name,
+		active: false,
+		category: Categories.CANTRIPS,
+		property: merk,
+		tradition: trad,
+		reqs
 	};
 }
 

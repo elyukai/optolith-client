@@ -1,4 +1,4 @@
-import APStore from '../stores/APStore';
+import { APStore } from '../stores/APStore';
 
 // AC = Activation Cost
 // IC = Improvement Cost
@@ -34,8 +34,6 @@ export function check(cost: number): boolean {
 }
 
 export const validate = (ic: number, sr: number): boolean => check(final(ic, sr));
-
-export default validate;
 
 export const checkDisAdvantages = (cost: number, index: number, target: number[], spent: number, total: number, add: boolean): boolean[] => {
 	const absCost = add ? cost : -cost;

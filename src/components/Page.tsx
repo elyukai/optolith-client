@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-interface Props {
+export interface PageProps {
 	children?: React.ReactNode;
-	id: string;
+	id?: string;
 }
 
-export default function Options(props: Props) {
+export function Page(props: PageProps) {
 	const { children, id } = props;
 	return (
 		<div className="page" id={id}>

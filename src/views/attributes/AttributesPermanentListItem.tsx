@@ -1,11 +1,10 @@
 import * as React from 'react';
-import IconButton from '../../components/IconButton';
-import NumberBox from '../../components/NumberBox';
-import createOverlay from '../../utils/createOverlay';
-import AttributeBorder from './AttributeBorder';
-import AttributesRemovePermanent from './AttributesRemovePermanent';
+import { IconButton } from '../../components/IconButton';
+import { createOverlay } from '../../utils/createOverlay';
+import { AttributeBorder } from './AttributeBorder';
+import { AttributesRemovePermanent } from './AttributesRemovePermanent';
 
-interface Props {
+export interface AttributesPermanentListItemProps {
 	label: string;
 	name: string;
 	redeemed: number;
@@ -16,7 +15,7 @@ interface Props {
 	removePermanent(value: number): void;
 }
 
-export default (props: Props) => {
+export function AttributesPermanentListItem(props: AttributesPermanentListItemProps) {
 	const { label, name, phase, redeem, removePermanent, removeRedeemed, redeemed, lost } = props;
 	const available = lost - redeemed;
 
@@ -55,4 +54,4 @@ export default (props: Props) => {
 				/>
 		</AttributeBorder>
 	);
-};
+}

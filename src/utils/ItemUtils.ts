@@ -1,3 +1,5 @@
+import { ItemEditorInstance, ItemInstance } from '../types/data.d';
+
 export function convertToEdit(item: ItemInstance): ItemEditorInstance {
 	return {
 		...item,

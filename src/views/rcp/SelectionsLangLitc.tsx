@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import * as React from 'react';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../types/data.d';
 
 interface Props {
 	active: Map<string, number>;
@@ -12,7 +13,7 @@ interface Props {
 	change(id: string, ap: number): void;
 }
 
-export default class SelectionsLangLitc extends React.Component<Props, undefined> {
+export class SelectionsLangLitc extends React.Component<Props, undefined> {
 	render() {
 		const { active, apTotal, apLeft, change, scripts, languages } = this.props;
 		const tiers = [{id: 2, name: 'I'}, {id: 4, name: 'II'}, {id: 6, name: 'III'}];

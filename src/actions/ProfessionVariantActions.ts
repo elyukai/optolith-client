@@ -1,8 +1,15 @@
-import { SELECT_PROFESSION_VARIANT } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 
-export const selectProfessionVariant = (id: string | null) => AppDispatcher.dispatch<SelectProfessionVariantAction>({
-	type: SELECT_PROFESSION_VARIANT,
+export interface SelectProfessionVariantAction extends Action {
+	type: ActionTypes.SELECT_PROFESSION_VARIANT;
+	payload: {
+		id?: string;
+	};
+}
+
+export const selectProfessionVariant = (id?: string) => AppDispatcher.dispatch<SelectProfessionVariantAction>({
+	type: ActionTypes.SELECT_PROFESSION_VARIANT,
 	payload: {
 		id
 	}

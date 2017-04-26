@@ -1,21 +1,20 @@
-import * as React from 'react';
-import Box from './Box';
 import classNames from 'classnames';
+import * as React from 'react';
+import { Box } from './Box';
 
-interface Props {
+export interface LabelBoxProps {
+	children?: React.ReactNode;
 	className?: string;
 	label: string;
 	value?: string | number;
 }
 
-export default class LabelBox extends React.Component<Props, undefined> {
-	render() {
-		const { className, children, label, value } = this.props;
-		return (
-			<div className={classNames('labelbox', className)}>
-				<Box>{value ? value : children}</Box>
-				<label>{label}</label>
-			</div>
-		);
-	}
+export function LabelBox(props: LabelBoxProps) {
+	const { className, children, label, value } = props;
+	return (
+		<div className={classNames('labelbox', className)}>
+			<Box>{value ? value : children}</Box>
+			<label>{label}</label>
+		</div>
+	);
 }

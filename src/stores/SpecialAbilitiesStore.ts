@@ -1,12 +1,15 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilitiesSortOrderAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import { default as ListStore } from './ListStore';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { ListStore } from './ListStore';
+import { Store } from './Store';
 
 type Action = ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | SetSpecialAbilitiesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class SpecialAbilitiesStoreStatic extends Store {
-	private readonly groups = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stabzauber)', 'Magisch (Hexe)', 'Geweiht', 'Magisch (Bann-/Schutzkreis)', 'Kampfstil (bewaffnet)', 'Kampfstil (unbewaffnet)', 'Kampf (erweitert)', 'Befehl'];
+	private readonly groups = ['Allgemein', 'Schicksal', 'Kampf', 'Magisch', 'Magisch (Stab)', 'Magisch (Hexe)', 'Geweiht', 'Magisch (Bann-/Schutzkreis)', 'Kampfstil (bewaffnet)', 'Kampfstil (unbewaffnet)', 'Kampf (erweitert)', 'Befehl', 'Zauberstil', 'Magisch (Erweitert)', 'Magisch (Bannschwert)', 'Magisch (Dolch)', 'Magisch (Instrument)', 'Magisch (Gewand)', 'Magisch (Kugel)', 'Magisch (Stecken)'];
 	private sortOrder = 'groupname';
 	readonly dispatchToken: string;
 
@@ -62,6 +65,4 @@ class SpecialAbilitiesStoreStatic extends Store {
 	}
 }
 
-const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic();
-
-export default SpecialAbilitiesStore;
+export const SpecialAbilitiesStore = new SpecialAbilitiesStoreStatic();

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import * as DisAdvActions from '../../actions/DisAdvActions';
-import ActivatableRemoveList from '../../components/ActivatableRemoveList';
-import List from '../../components/List';
-import Scroll from '../../components/Scroll';
-import { sort } from '../../utils/ListUtils';
+import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
+import { ActiveViewObject } from '../../types/data.d';
 
 interface Props {
 	filterText: string;
@@ -12,7 +10,7 @@ interface Props {
 	showRating: boolean;
 }
 
-export default function ActiveList(props: Props) {
+export function ActiveList(props: Props) {
 	const { filterText, list, rating, showRating } = props;
 	return (
 		<ActivatableRemoveList

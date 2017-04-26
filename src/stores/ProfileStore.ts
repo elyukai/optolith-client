@@ -1,10 +1,13 @@
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { SetAgeAction, SetCharacteristicsAction, SetCultureAreaKnowledge, SetCustomProfessionNameAction, SetDateOfBirthAction, SetEyeColorAction, SetFamilyAction, SetHairColorAction, SetHeroAvatarAction, SetHeroNameAction, SetOtherInfoAction, SetPlaceOfBirthAction, SetSizeAction, SetSocialStatusAction, SetTitleAction, SetWeightAction } from '../actions/ProfileActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import ProfessionStore from './ProfessionStore';
-import RaceStore from './RaceStore';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { ProfessionStore } from './ProfessionStore';
+import { RaceStore } from './RaceStore';
+import { Store } from './Store';
 
-type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | SetCultureAreaKnowledge | CreateHeroAction | ReceiveHeroDataAction | SetSelectionsAction | SetCustomProfessionNameAction;
+type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | SetCultureAreaKnowledge | CreateHeroAction | LoadHeroAction | SetSelectionsAction | SetCustomProfessionNameAction;
 
 const HAIRCOLORS = RaceStore.hairColors;
 const EYECOLORS = RaceStore.eyeColors;
@@ -42,7 +45,7 @@ class ProfileStoreStatic extends Store {
 					this.updateSex(action.payload.sex);
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.updateName(action.payload.data.name);
 					if (action.payload.data.professionName) {
 						this.updateProfessionName(action.payload.data.professionName);
@@ -358,6 +361,4 @@ class ProfileStoreStatic extends Store {
 
 }
 
-const ProfileStore = new ProfileStoreStatic();
-
-export default ProfileStore;
+export const ProfileStore = new ProfileStoreStatic();

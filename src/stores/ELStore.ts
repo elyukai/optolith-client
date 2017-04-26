@@ -1,8 +1,12 @@
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { ExperienceLevel } from '../types/data.d';
+import { RawExperienceLevel } from '../types/rawdata.d';
+import { Store } from './Store';
 
-type Action = CreateHeroAction | ReceiveHeroDataAction | ReceiveInitialDataAction;
+type Action = CreateHeroAction | LoadHeroAction | ReceiveInitialDataAction;
 
 class ELStoreStatic extends Store {
 	private byId: { [id: string]: ExperienceLevel } = {};
@@ -18,7 +22,7 @@ class ELStoreStatic extends Store {
 					this.update(action.payload.el);
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.update(action.payload.data.el);
 					break;
 
@@ -83,6 +87,4 @@ class ELStoreStatic extends Store {
 	}
 }
 
-const ELStore = new ELStoreStatic();
-
-export default ELStore;
+export const ELStore = new ELStoreStatic();

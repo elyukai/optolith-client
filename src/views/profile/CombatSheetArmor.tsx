@@ -1,8 +1,9 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { TextBox } from '../../components/TextBox';
+import { EquipmentStore } from '../../stores/EquipmentStore';
+import { ItemInstance } from '../../types/data.d';
 
-export default () => {
+export function CombatSheetArmor() {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 4 && e.combatTechnique !== 'CT_10');
 	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);

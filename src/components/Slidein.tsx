@@ -1,13 +1,13 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-interface Props {
+export interface SlideinProps {
 	close: () => void;
 	isOpen: boolean;
 }
 
-export default class Slidein extends React.Component<Props, undefined> {
-	shouldComponentUpdate(nextProps: Props) {
+export class Slidein extends React.Component<SlideinProps, {}> {
+	shouldComponentUpdate(nextProps: SlideinProps) {
 		return nextProps.isOpen !== this.props.isOpen || this.props.isOpen === true;
 	}
 

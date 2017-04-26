@@ -1,36 +1,18 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { get } from '../stores/ListStore';
+import { ActivatableInstance, HistoryObject, HistoryPayload, HistoryPrevState, IncreasableInstance, Selections } from '../types/data.d';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
-import APStore from './APStore';
-import AttributeStore from './AttributeStore';
-import CultureStore from './CultureStore';
-import ELStore from './ELStore';
-import ListStore from './ListStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
-import RaceStore from './RaceStore';
-import RequirementsStore from './RequirementsStore';
-import Store from './Store';
-
-interface HistoryPayload {
-	id?: string | number;
-	activeObject?: ActiveObject;
-	index?: number;
-	list?: Array<string | [string, number]>;
-	buy?: boolean;
-}
-
-// interface HistoryPrevState {
-
-// }
-
-interface HistoryObject {
-	type: string;
-	cost: number;
-	payload: HistoryPayload;
-	prevState: HistoryPrevState;
-}
+import { APStore } from './APStore';
+import { AttributeStore } from './AttributeStore';
+import { CultureStore } from './CultureStore';
+import { ELStore } from './ELStore';
+import { ListStore } from './ListStore';
+import { ProfessionStore } from './ProfessionStore';
+import { ProfessionVariantStore } from './ProfessionVariantStore';
+import { RaceStore } from './RaceStore';
+import { RequirementsStore } from './RequirementsStore';
+import { Store } from './Store';
 
 class HistoryStoreStatic extends Store {
 	readonly dispatchToken: string;
@@ -234,12 +216,12 @@ class HistoryStoreStatic extends Store {
 		return this.lastSaveIndex < this.history.length - 1;
 	}
 
-	getUndo() {
+	getUndo(): Action | undefined {
 		const lastIndex = this.history.length - 1;
 		if (this.lastSaveIndex < lastIndex) {
 			return this.history[this.history.length - 1];
 		}
-		return false;
+		return undefined;
 	}
 
 	private add(type: string, cost = 0, payload: HistoryPayload = {}, prevState: HistoryPrevState = {}) {
@@ -307,6 +289,4 @@ class HistoryStoreStatic extends Store {
 	}
 }
 
-const HistoryStore = new HistoryStoreStatic();
-
-export default HistoryStore;
+export const HistoryStore = new HistoryStoreStatic();

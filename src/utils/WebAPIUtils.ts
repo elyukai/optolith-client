@@ -1,17 +1,18 @@
 import { readFile } from 'fs';
 import * as ServerActions from '../actions/ServerActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import AuthStore from '../stores/AuthStore';
-import HerolistStore from '../stores/HerolistStore';
-import ProfileStore from '../stores/ProfileStore';
-import alert from '../utils/alert';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { AuthStore } from '../stores/AuthStore';
+import { HerolistStore } from '../stores/HerolistStore';
+import { HeroForSave } from '../types/data.d';
+import { RawHero, RawHerolist } from '../types/rawdata.d';
+import { alert } from '../utils/alert';
 
 function connectionError(error: Error) {
 	alert('Verbindung nicht möglich', `Die App konnte keine Verbindung zum Server herstellen. Bitte überprüfe deine Internetverbindung! Es kann bei diesem Problem auch möglich sein, dass etwas im Programmablauf nicht stimmt. Informiere uns bitte über dein Problem, sollte es deiner Erkenntnis nach nicht an der Verbindung liegen!
 
 	(Fehler: ${JSON.stringify(error)})`);
-	AppDispatcher.dispatch<RequestFailedAction>({
+	AppDispatcher.dispatch<ServerActions.RequestFailedAction>({
 		type: ActionTypes.REQUEST_FAILED,
 	});
 }
@@ -59,6 +60,7 @@ export async function register(email: string, name: string, displayname: string,
 		if (emailValid && nameValid) {
 			const response = await fetch('data/register.php?email=' + email + '&name=' + name + '&display=' + displayname + '&password=' + password);
 			const result = await response.text();
+			console.log(result);
 			ServerActions.receiveRegistration();
 		}
 		else {
@@ -71,7 +73,7 @@ export async function register(email: string, name: string, displayname: string,
 			else if (!nameValid) {
 				alert('Benutzername bereits vorhanden', 'Der Benutzername wird bereits verwendet.');
 			}
-			AppDispatcher.dispatch<RequestFailedAction>({
+			AppDispatcher.dispatch<ServerActions.RequestFailedAction>({
 				type: ActionTypes.REQUEST_FAILED
 			});
 		}
@@ -84,6 +86,7 @@ export async function sendPasswordCode(email: string): Promise<void> {
 	try {
 		const response = await fetch('php/forgetpw.php?e=' + email);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receivePasswordReset();
 	} catch (e) {
 		connectionError(e);
@@ -94,6 +97,7 @@ export async function sendUsername(email: string): Promise<void> {
 	try {
 		const response = await fetch('php/forgetusername.php?e=' + email);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receiveUsername();
 	} catch (e) {
 		connectionError(e);
@@ -104,6 +108,7 @@ export async function resendActivation(email: string): Promise<void> {
 	try {
 		const response = await fetch('php/regmailagain.php?e=' + email);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receiveAccountActivationEmail();
 	} catch (e) {
 		connectionError(e);
@@ -145,6 +150,7 @@ export async function setNewUsername(name: string): Promise<void> {
 	try {
 		const response = await fetch('php/changeaccount.php?token=' + AuthStore.getToken() + '&src=username&v=' + name);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receiveNewUsername(name);
 	} catch (e) {
 		connectionError(e);
@@ -155,6 +161,7 @@ export async function setNewDisplayName(name: string): Promise<void> {
 	try {
 		const response = await fetch('php/changeaccount.php?token=' + AuthStore.getToken() + '&src=displayname&v=' + name);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receiveNewDisplayName(name);
 	} catch (e) {
 		connectionError(e);
@@ -165,6 +172,7 @@ export async function setNewPassword(password: string): Promise<void> {
 	try {
 		const response = await fetch('php/changeaccount.php?token=' + AuthStore.getToken() + '&src=password&v=' + password);
 		const result = await response.text();
+		console.log(result);
 		ServerActions.receiveNewPassword();
 	} catch (e) {
 		connectionError(e);
@@ -194,10 +202,11 @@ export async function deleteAccount(): Promise<void> {
 		if (comfirmed) {
 			const response = await fetch('php/deleteaccount.php?token=' + AuthStore.getToken());
 			const result = await response.text();
+		console.log(result);
 			ServerActions.receiveUserDeletion();
 		}
 		else {
-			AppDispatcher.dispatch<RequestFailedAction>({
+			AppDispatcher.dispatch<ServerActions.RequestFailedAction>({
 				type: ActionTypes.REQUEST_FAILED
 			});
 		}
@@ -236,13 +245,14 @@ export async function createNewHero(name: string): Promise<void> {
 	try {
 		const response = await fetch('php/newhero.php?token=' + AuthStore.getToken() + '&n=' + name);
 		const result = await response.text();
+		console.log(result);
 		// ServerActions.createNewHeroSuccess(result);
 	} catch (e) {
 		connectionError(e);
 	}
 }
 
-export function saveHero(data: HeroSave) {
+export function saveHero(data: HeroForSave) {
 	const part = JSON.stringify(data);
 	const blob = new Blob([part], { type: 'application/json' });
 	const url = URL.createObjectURL(blob);
@@ -272,7 +282,7 @@ export function changeHeroAvatar(data: File) {
 	const reader = new FileReader();
 	reader.onload = async event => {
 		try {
-			const response = await fetch('php/uploadheropic.php?hid=' + HerolistStore.getCurrent().id, {
+			const response = await fetch('php/uploadheropic.php?hid=' + HerolistStore.getCurrentId(), {
 				body: event.target.result,
 				method: 'post',
 			});
@@ -289,6 +299,7 @@ export async function deleteHero(id: string): Promise<void> {
 	try {
 		const response = await fetch('php/deletehero.php?token=' + AuthStore.getToken() + '&hid=' + id);
 		const result = await response.text();
+		console.log(result);
 		// ServerActions.deleteHeroSuccess(result);
 	} catch (e) {
 		connectionError(e);

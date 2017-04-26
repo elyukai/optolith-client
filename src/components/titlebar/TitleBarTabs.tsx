@@ -1,24 +1,20 @@
-import { Component, PropTypes } from 'react';
 import * as React from 'react';
-import TabProps from '../../components/Tab';
 import { setTab } from '../../actions/LocationActions';
+import { Tab, TabBaseProps } from '../Tab';
 
-interface Props {
-	active: string;
-	tabs: any[];
+export interface TitleBarTabProps extends TabBaseProps {
+	tag: string;
 }
 
-export default class TitleBarTabs extends Component<Props, any> {
+export interface TitleBarTabsProps {
+	active: string;
+	tabs: TitleBarTabProps[];
+}
 
-	static propTypes = {
-		active: PropTypes.string.isRequired,
-		tabs: PropTypes.array.isRequired
-	};
-
+export class TitleBarTabs extends React.Component<TitleBarTabsProps, {}> {
 	handleClick = (tab: string) => setTab(tab);
 
 	render() {
-
 		const { active, tabs } = this.props;
 
 		return (
@@ -29,12 +25,12 @@ export default class TitleBarTabs extends Component<Props, any> {
 						const isActive = active === tag;
 
 						return (
-							<TabProps
+							<Tab
 								onClick={this.handleClick.bind(null, tag)}
 								{...other}
 								key={`tab-${tag}`}
-								active={isActive}>
-							</TabProps>
+								active={isActive}
+								/>
 						);
 					})
 				}

@@ -1,17 +1,31 @@
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
+import { SelectCultureAction } from '../actions/CultureActions';
+import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { SelectProfessionAction, SetSelectionsAction } from '../actions/ProfessionActions';
+import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActions';
+import { AddAdventurePointsAction } from '../actions/ProfileActions';
+import { SelectRaceAction } from '../actions/RaceActions';
+import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
+import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { get } from '../stores/ListStore';
+import { AdventurePoints, CultureInstance, ProfessionDependencyCost, ProfessionInstance, ProfessionVariantInstance, RaceInstance, Selections, SpecialAbilityInstance } from '../types/data.d';
 import { getSelectionItem } from '../utils/ActivatableUtils';
-import CultureStore from './CultureStore';
-import ELStore from './ELStore';
-import ListStore from './ListStore';
-import ProfessionStore from './ProfessionStore';
-import ProfessionVariantStore from './ProfessionVariantStore';
-import RaceStore from './RaceStore';
-import RequirementsStore from './RequirementsStore';
-import Store from './Store';
+import { CultureStore } from './CultureStore';
+import { ELStore } from './ELStore';
+import { ListStore } from './ListStore';
+import { ProfessionStore } from './ProfessionStore';
+import { ProfessionVariantStore } from './ProfessionVariantStore';
+import { RaceStore } from './RaceStore';
+import { RequirementsStore } from './RequirementsStore';
+import { Store } from './Store';
 
-type Action = ReceiveHeroDataAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
+type Action = LoadHeroAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
 
 class APStoreStatic extends Store {
 	private total = 0;
@@ -43,7 +57,7 @@ class APStoreStatic extends Store {
 						this.total = ELStore.getStart().ap;
 						break;
 
-					case ActionTypes.RECEIVE_HERO_DATA:
+					case ActionTypes.LOAD_HERO:
 						this.updateAll(action.payload.data.ap);
 						break;
 
@@ -271,6 +285,4 @@ class APStoreStatic extends Store {
 	}
 }
 
-const APStore: APStoreStatic = new APStoreStatic();
-
-export default APStore;
+export const APStore: APStoreStatic = new APStoreStatic();

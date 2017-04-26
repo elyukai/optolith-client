@@ -1,11 +1,11 @@
-import BorderButton from '../../components/BorderButton';
-import GroupsActions from '../../actions/GroupsActions';
-import GroupsStore from '../../stores/GroupsStore';
+import { BorderButton } from '../../components/BorderButton';
+import { GroupsActions } from '../../actions/GroupsActions';
+import { GroupsStore } from '../../stores/GroupsStore';
 import React, { Component } from 'react';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
 
-export default class Groups extends Component {
+export class Groups extends Component {
 
 	state = {
 		requestsOpen: GroupsStore.getRequestsSlideinState()

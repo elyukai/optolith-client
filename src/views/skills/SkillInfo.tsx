@@ -1,11 +1,12 @@
-import { get } from '../../stores/ListStore';
-import * as Categories from '../../constants/Categories';
 import * as React from 'react';
-import Dialog from '../../components/Dialog';
+import { Dialog } from '../../components/Dialog';
+import * as Categories from '../../constants/Categories';
+import { get } from '../../stores/ListStore';
+import { AttributeInstance, TalentInstance } from '../../types/data.d';
 
 const getTalent = (skill: TalentInstance) => {
 	const attrPoints = skill.check.map(id => (get(id) as AttributeInstance).value);
-	const lessAttrPoints = attrPoints.map(e => e < 13 ? 13 - e : 0).reduce((a,b) => a + b, 0);
+	const lessAttrPoints = attrPoints.map(e => e < 13 ? 13 - e : 0).reduce((a, b) => a + b, 0);
 	const flatRoutineLevel = Math.floor((skill.value - 1) / 3);
 	const checkMod = flatRoutineLevel * -1 + 3;
 	const dependentCheckMod = checkMod + lessAttrPoints;
@@ -64,12 +65,12 @@ const getTalent = (skill: TalentInstance) => {
 	);
 };
 
-interface Props {
+export interface SkillInfoProps {
 	id: string;
 	node?: HTMLDivElement;
 }
 
-export default class SkillInfo extends React.Component<Props, undefined> {
+export class SkillInfo extends React.Component<SkillInfoProps, {}> {
 	render() {
 		const skill = get(this.props.id);
 		let content: JSX.Element | null;

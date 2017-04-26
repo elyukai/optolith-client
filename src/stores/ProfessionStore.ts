@@ -1,16 +1,22 @@
+import { SelectCultureAction } from '../actions/CultureActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { SelectProfessionAction, SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction, SwitchProfessionsExpansionVisibilityFilterAction } from '../actions/ProfessionActions';
+import { SelectRaceAction } from '../actions/RaceActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import APStore from '../stores/APStore';
-import ELStore from '../stores/ELStore';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { APStore } from '../stores/APStore';
+import { ELStore } from '../stores/ELStore';
+import { ProfessionInstance } from '../types/data.d';
 import { get, getAllByCategory } from './ListStore';
-import Store from './Store';
+import { Store } from './Store';
 
-type Action = ReceiveHeroDataAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | ReceiveInitialDataAction | CreateHeroAction | SetProfessionsGroupVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction;
+type Action = LoadHeroAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | ReceiveInitialDataAction | CreateHeroAction | SetProfessionsGroupVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction;
 
 class ProfessionStoreStatic extends Store {
-	private readonly category: PROFESSIONS = Categories.PROFESSIONS;
-	private currentId: string | null = null;
+	private readonly category = Categories.PROFESSIONS;
+	private currentId?: string;
 	private sortOrder = 'name';
 	private visibilityFilter = 'common';
 	private groupVisibilityFilter = 0;
@@ -28,14 +34,14 @@ class ProfessionStoreStatic extends Store {
 					this.expansionVisibilityFilter = action.payload.config.professionsFromExpansionsVisibility;
 					break;
 
-				case ActionTypes.RECEIVE_HERO_DATA:
+				case ActionTypes.LOAD_HERO:
 					this.updateCurrentID(action.payload.data.p);
 					break;
 
 				case ActionTypes.CREATE_HERO:
 				case ActionTypes.SELECT_RACE:
 				case ActionTypes.SELECT_CULTURE:
-					this.updateCurrentID(null);
+					this.updateCurrentID(undefined);
 					break;
 
 				case ActionTypes.SELECT_PROFESSION:
@@ -93,7 +99,7 @@ class ProfessionStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		return this.currentId !== null ? get(this.currentId) as ProfessionInstance : undefined;
+		return this.currentId !== undefined ? get(this.currentId) as ProfessionInstance : undefined;
 	}
 
 	getCurrentName() {
@@ -117,7 +123,7 @@ class ProfessionStoreStatic extends Store {
 		return this.expansionVisibilityFilter;
 	}
 
-	private updateCurrentID(id: string | null) {
+	private updateCurrentID(id?: string) {
 		this.currentId = id;
 	}
 
@@ -138,6 +144,4 @@ class ProfessionStoreStatic extends Store {
 	}
 }
 
-const ProfessionStore = new ProfessionStoreStatic();
-
-export default ProfessionStore;
+export const ProfessionStore = new ProfessionStoreStatic();

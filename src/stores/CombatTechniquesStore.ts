@@ -1,14 +1,18 @@
+import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction, SetCombatTechniquesSortOrderAction } from '../actions/CombatTechniquesActions';
+import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { UndoTriggerActions } from '../actions/HistoryActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { AttributeInstance, CombatTechniqueInstance, SpecialAbilityInstance } from '../types/data.d';
 import { isActive } from '../utils/ActivatableUtils';
-import { default as ListStore, get, getAllByCategory } from './ListStore';
-import Store from './Store';
+import { get, getAllByCategory, ListStore } from './ListStore';
+import { Store } from './Store';
 
 type Action = AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | SetCombatTechniquesSortOrderAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class CombatTechniquesStoreStatic extends Store {
-	private readonly category: COMBAT_TECHNIQUES = Categories.COMBAT_TECHNIQUES;
+	private readonly category = Categories.COMBAT_TECHNIQUES;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
 
@@ -95,6 +99,4 @@ class CombatTechniquesStoreStatic extends Store {
 	}
 }
 
-const CombatTechniquesStore = new CombatTechniquesStoreStatic();
-
-export default CombatTechniquesStore;
+export const CombatTechniquesStore = new CombatTechniquesStoreStatic();

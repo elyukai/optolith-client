@@ -1,6 +1,7 @@
 import * as React from 'react';
-import IconButton from '../../components/IconButton';
-import TextField from '../../components/TextField';
+import { IconButton } from '../../components/IconButton';
+import { TextField } from '../../components/TextField';
+import { InputKeyEvent, InputTextEvent } from '../../types/data.d';
 
 interface Props {
 	name: string;
@@ -12,7 +13,7 @@ interface State {
 	name: string;
 }
 
-export default class OverviewNameChange extends React.Component<Props, State> {
+export class OverviewNameChange extends React.Component<Props, State> {
 	state = {
 		name: this.props.name,
 	};

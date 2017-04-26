@@ -1,7 +1,8 @@
 import * as React from 'react';
-import Dropdown from '../../components/Dropdown';
-import TextField from '../../components/TextField';
+import { Dropdown } from '../../components/Dropdown';
+import { TextField } from '../../components/TextField';
 import { get } from '../../stores/ListStore';
+import { InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
 
 interface Props {
 	active: [number | null, string];
@@ -11,7 +12,7 @@ interface Props {
 	changeId(id: string): void;
 }
 
-export default class SelectionsTalentSpec extends React.Component<Props, undefined> {
+export class SelectionsTalentSpec extends React.Component<Props, undefined> {
 
 	changeByInput = (event: InputTextEvent) => this.props.change(event.target.value);
 	changeId = (id: string) => this.props.changeId(id);

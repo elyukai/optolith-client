@@ -1,23 +1,24 @@
 import * as React from 'react';
 import * as ProfessionActions from '../../actions/ProfessionActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
 import * as Categories from '../../constants/Categories';
-import CultureStore from '../../stores/CultureStore';
+import { CultureStore } from '../../stores/CultureStore';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import RaceStore from '../../stores/RaceStore';
+import { ProfessionStore } from '../../stores/ProfessionStore';
+import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
+import { RaceStore } from '../../stores/RaceStore';
+import { CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection, SpellInstance } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortByName } from '../../utils/ListUtils';
-import SelectionsCantrips from './SelectionsCantrips';
-import SelectionsCt from './SelectionsCt';
-import SelectionsCurses from './SelectionsCurses';
-import SelectionsLangLitc from './SelectionsLangLitc';
-import SelectionsTalentSpec from './SelectionsTalentSpec';
+import { SelectionsCantrips } from './SelectionsCantrips';
+import { SelectionsCt } from './SelectionsCt';
+import { SelectionsCurses } from './SelectionsCurses';
+import { SelectionsLangLitc } from './SelectionsLangLitc';
+import { SelectionsTalentSpec } from './SelectionsTalentSpec';
 
 interface Props {
 	close(): void;
@@ -38,7 +39,7 @@ interface State {
 	specTalentId?: string;
 }
 
-export default class Selections extends React.Component<Props, State> {
+export class Selections extends React.Component<Props, State> {
 	state = {
 		attrSel: 'ATTR_0',
 		buyLiteracy: false,
@@ -160,7 +161,7 @@ export default class Selections extends React.Component<Props, State> {
 
 		const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection>();
 
-		if (![null, 'P_0'].includes(ProfessionStore.getCurrentId())) {
+		if (![undefined, 'P_0'].includes(ProfessionStore.getCurrentId())) {
 			profession.selections.forEach(e => {
 				professionSelections.set(e.id, e);
 			});
@@ -201,17 +202,20 @@ export default class Selections extends React.Component<Props, State> {
 			const scripts: ScriptsSelectionListItem[] = [];
 			const languages: LanguagesSelectionListItem[] = [];
 
-			SA_28.sel.forEach(e => {
+			const scriptsList = SA_28.sel!;
+			const languagesList = SA_30.sel!;
+
+			scriptsList.forEach(e => {
 				const sid = e.id as number;
-				const cost = SA_28.sel[sid - 1].cost!;
-				const name = SA_28.sel[sid - 1].name;
+				const cost = scriptsList[sid - 1].cost!;
+				const name = scriptsList[sid - 1].name;
 				const native = buyLiteracy && ((!selectLitc && sid === culture.scripts[0]) || (selectLitc && sid === litc));
 				scripts.push({ id: `LITC_${sid}`, name, cost, native });
 			});
 
-			SA_30.sel.forEach(e => {
+			languagesList.forEach(e => {
 				const sid = e.id as number;
-				const name = SA_30.sel[sid - 1].name;
+				const name = languagesList[sid - 1].name;
 				const native = (!selectLang && sid === culture.languages[0]) || (selectLang && sid === lang);
 				languages.push({ id: `LANG_${sid}`, name, native });
 			});

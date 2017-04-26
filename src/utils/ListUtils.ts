@@ -1,4 +1,4 @@
-import SpellsStore from '../stores/SpellsStore';
+import { SpellsStore } from '../stores/SpellsStore';
 
 interface Data {
 	ap?: number;
