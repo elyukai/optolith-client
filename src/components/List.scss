@@ -47,6 +47,21 @@ ul.list-wrapper {
 			}
 		}
 
+		&.top-margin {
+			margin-top: 48px;
+
+			&::before {
+				display: block;
+				position: absolute;
+				content: "";
+				@include size(12px);
+				border: 1px solid $color12;
+				transform: rotate(45deg);
+				top: -30px;
+				left: calc(50% - 6px);
+			}
+		}
+
 		&:not(:last-child) {
 			margin-bottom: 1px;
 		}

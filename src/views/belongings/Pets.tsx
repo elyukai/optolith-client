@@ -122,12 +122,12 @@ export class Pets extends React.Component<undefined, PetsState> {
 					setNotes={this.setNotes}
 					save={this.savePet}
 					/>
-				<Options>
-					{pets.length === 0 && <BorderButton
+				{pets.length === 0 && <Options>
+					<BorderButton
 						label="Hinzufügen"
 						onClick={this.addPet}
-						/>}
-				</Options>
+						/>
+				</Options>}
 				<Scroll>
 					<List>
 						{pets.map(e => (

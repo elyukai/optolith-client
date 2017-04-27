@@ -7,11 +7,13 @@ export interface TextProps {
 	[id: string]: any;
 }
 
-export function Text(props: TextProps) {
-	const { children, className, ...other } = props;
-	return (
-		<div {...other} className={classNames('text', className)}>
-			{children}
-		</div>
-	);
+export class Text extends React.Component<TextProps, {}> {
+	render() {
+		const { children, className, ...other } = this.props;
+		return (
+			<div {...other} className={classNames('text', className)}>
+				{children}
+			</div>
+		);
+	}
 }

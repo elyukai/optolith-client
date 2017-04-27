@@ -25,33 +25,6 @@ section {
 	flex: none;
 }
 
-.page {
-	flex: 1 1 auto;
-	padding: 8px 0 0;
-	font: 14px/22px Alegreya Sans;
-	letter-spacing: 0.025em;
-	color: $color2;
-	display: flex;
-	flex-wrap: nowrap;
-	position: relative;
-	overflow: hidden;
-	height: 100%;
-
-	> .options {
-		flex: 1 0 auto;
-		width: 200px;
-		margin-left: 35px;
-
-		.radiobutton-group, .btn {
-			width: 100%;
-		}
-
-		.btn {
-			margin-top: 10px;
-		}
-	}
-}
-
 .scroll-aside {
 	margin: 0 11px 0 34px;
 	width: 338px;

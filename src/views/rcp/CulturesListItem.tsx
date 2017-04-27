@@ -25,7 +25,7 @@ export class CulturesListItem extends React.Component<Props, undefined> {
 				})}
 				>
 				<div className="left">
-					<h2>{culture.name} ({culture.ap} AP)</h2>
+					<h2>{culture.name} (Kulturpaket: {culture.ap} AP)</h2>
 					{
 						showDetails ? (
 							<div className="details">

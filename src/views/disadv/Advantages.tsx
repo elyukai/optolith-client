@@ -10,6 +10,7 @@ import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import * as ActivatableStore from '../../stores/ActivatableStore';
+import { APStore } from '../../stores/APStore';
 import { ConfigStore } from '../../stores/ConfigStore';
 import { CultureStore } from '../../stores/CultureStore';
 import { DisAdvStore } from '../../stores/DisAdvStore';
@@ -30,6 +31,10 @@ interface State {
 	race: RaceInstance;
 	culture: CultureInstance;
 	profession: ProfessionInstance;
+	ap: {
+		adv: [number, number, number];
+		disadv: [number, number, number];
+	};
 }
 
 export class Advantages extends React.Component<undefined, State> {
@@ -43,7 +48,8 @@ export class Advantages extends React.Component<undefined, State> {
 		race: RaceStore.getCurrent()!,
 		showAddSlidein: false,
 		showRating: DisAdvStore.getRating(),
-		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility(),
+		ap: APStore.getForDisAdv()
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
@@ -65,7 +71,7 @@ export class Advantages extends React.Component<undefined, State> {
 
 	render() {
 		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP'} = {};
-		const { activeList, list, culture, enableActiveItemHints, filterText, filterTextSlidein, profession, race, showRating } = this.state;
+		const { ap, activeList, list, culture, enableActiveItemHints, filterText, filterTextSlidein, profession, race, showRating } = this.state;
 
 		const IMP = 'IMP';
 		const TYP = 'TYP';
@@ -88,6 +94,11 @@ export class Advantages extends React.Component<undefined, State> {
 						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={this.changeRating}>Empfohlen durch Spezies, Kultur und Profession</Checkbox>
 						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						<p>
+							{ap.adv[0]} / 80 AP für Vorteile<br/>
+							{ap.adv[1] > 0 && `${ap.adv[1]} / 50 für magische Vorteile`}
+							{ap.adv[2] > 0 && `${ap.adv[2]} / 50 für karmale Vorteile`}
+						</p>
 						{showRating && <RecommendedReference/>}
 					</Options>
 					<DeactiveList
@@ -115,6 +126,7 @@ export class Advantages extends React.Component<undefined, State> {
 
 	private updateDisAdvStore = () => {
 		this.setState({
+			ap: APStore.getForDisAdv(),
 			activeList: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
 			list: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
 			showRating: DisAdvStore.getRating(),

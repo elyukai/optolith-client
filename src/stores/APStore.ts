@@ -14,7 +14,7 @@ import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/Talent
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { get } from '../stores/ListStore';
-import { AdventurePoints, CultureInstance, ProfessionDependencyCost, ProfessionInstance, ProfessionVariantInstance, RaceInstance, Selections, SpecialAbilityInstance } from '../types/data.d';
+import { AdventurePoints, ProfessionDependencyCost, ProfessionInstance, ProfessionVariantInstance, RaceInstance, Selections, SpecialAbilityInstance } from '../types/data.d';
 import { getSelectionItem } from '../utils/ActivatableUtils';
 import { CultureStore } from './CultureStore';
 import { ELStore } from './ELStore';
@@ -114,11 +114,9 @@ class APStoreStatic extends Store {
 
 					case ActionTypes.SELECT_RACE: {
 						const race = RaceStore.getCurrent();
-						const culture = CultureStore.getCurrent();
 						const profession = ProfessionStore.getCurrent();
 						const professionVariant = ProfessionVariantStore.getCurrent();
 						this.calculateRCPDiff(race ? race.ap : 0, (get(action.payload.id) as RaceInstance).ap);
-						this.calculateRCPDiff(culture ? culture.ap : 0, 0);
 						this.calculateRCPDiff(profession ? profession.ap : 0, 0);
 						if (professionVariant) {
 							this.calculateRCPDiff(professionVariant.ap, 0);
@@ -127,10 +125,8 @@ class APStoreStatic extends Store {
 					}
 
 					case ActionTypes.SELECT_CULTURE: {
-						const culture = CultureStore.getCurrent();
 						const profession = ProfessionStore.getCurrent();
 						const professionVariant = ProfessionVariantStore.getCurrent();
-						this.calculateRCPDiff(culture ? culture.ap : 0, (get(action.payload.id) as CultureInstance).ap);
 						this.calculateRCPDiff(profession ? profession.ap : 0, 0);
 						if (professionVariant) {
 							this.calculateRCPDiff(professionVariant.ap, 0);
@@ -232,8 +228,8 @@ class APStoreStatic extends Store {
 	}
 
 	private assignRCP(selections: Selections) {
-		if (!selections.useCulturePackage) {
-			this.spent -= CultureStore.getCurrent()!.ap;
+		if (selections.useCulturePackage === true) {
+			this.spent += CultureStore.getCurrent()!.ap;
 		}
 
 		if (selections.buyLiteracy) {

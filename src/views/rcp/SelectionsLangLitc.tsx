@@ -69,11 +69,12 @@ export class SelectionsLangLitc extends React.Component<Props, undefined> {
 						{
 							scripts.map(obj => {
 								const { id, name, cost, native } = obj;
+								const disabled = native || !active.has(id) && apLeft - cost < 0;
 								return (
-									<div key={id}>
+									<div key={id} className={classNames(disabled && 'disabled')}>
 										<Checkbox
 											checked={active.has(id) || native === true}
-											disabled={native || !active.has(id) && apLeft - cost < 0}
+											disabled={disabled}
 											onClick={change.bind(null, id, cost)}>
 											{name} ({cost} AP)
 										</Checkbox>

@@ -589,7 +589,7 @@ class ListStoreStatic extends Store {
 			});
 		}
 
-		if (selections.spec !== undefined) {
+		if (selections.map.has('SPECIALISATION')) {
 			const talentId = (selections.map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
 			if (Array.isArray(talentId)) {
 				activatable.add({

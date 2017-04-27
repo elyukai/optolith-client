@@ -114,7 +114,9 @@ export class Liturgies extends React.Component<undefined, State> {
 					<Scroll>
 						<List>
 							{
-								sortedDeactiveList.map(obj => {
+								sortedDeactiveList.map((obj, index, array) => {
+									const prevObj = array[index - 1];
+
 									if (obj.active === true) {
 										const { id, name } = obj;
 										return (
@@ -137,6 +139,7 @@ export class Liturgies extends React.Component<undefined, State> {
 												isNotActive
 												activate={this.addToList.bind(null, obj.id)}
 												addFillElement
+												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 												>
 												<ListItemGroup>
 													{aspc}
@@ -164,6 +167,7 @@ export class Liturgies extends React.Component<undefined, State> {
 											activate={this.addToList.bind(null, obj.id)}
 											activateDisabled={addChantsDisabled && obj.gr < 3}
 											addFillElement
+											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 											{...add}
 											>
 											<ListItemGroup>
@@ -192,7 +196,9 @@ export class Liturgies extends React.Component<undefined, State> {
 				<Scroll>
 					<List>
 						{
-							sortedActiveList.map(obj => {
+							sortedActiveList.map((obj, index, array) => {
+								const prevObj = array[index - 1];
+
 								const name = obj.name;
 
 								const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
@@ -206,6 +212,7 @@ export class Liturgies extends React.Component<undefined, State> {
 											removePoint={phase < 3 ? this.removeFromList.bind(null, obj.id) : undefined}
 											addFillElement
 											noIncrease
+											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 											>
 											<ListItemGroup>
 												{aspc}
@@ -235,6 +242,7 @@ export class Liturgies extends React.Component<undefined, State> {
 										removePoint={phase < 3 ? obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!isDecreasable(obj)}
 										addFillElement
+										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 										{...add}
 										>
 										<ListItemGroup>

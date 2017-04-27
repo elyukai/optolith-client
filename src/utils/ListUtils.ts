@@ -53,7 +53,18 @@ export const sortByCost = (a: PlainNameData, b: PlainNameData) => a.ap! < b.ap! 
 
 export const sortByCostSex = (a: NameBySexData, b: NameBySexData) => a.ap! < b.ap! ? -1 : a.ap! > b.ap! ? 1 : sortByNameSex(a, b);
 
-export const sortByGroup = (a: PlainNameData, b: PlainNameData) => a.gr! < b.gr! ? -1 : a.gr! > b.gr! ? 1 : sortByName(a, b);
+export const sortByGroup = (a: PlainNameData, b: PlainNameData) => {
+	if (!a.gr && !b.gr) {
+		return sortByName(a, b);
+	}
+	else if (!a.gr) {
+		return 1;
+	}
+	else if (!b.gr) {
+		return -1;
+	}
+	return a.gr < b.gr ? -1 : a.gr > b.gr ? 1 : sortByName(a, b);
+};
 
 let GROUPS: string[];
 

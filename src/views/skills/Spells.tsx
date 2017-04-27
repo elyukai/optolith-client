@@ -122,7 +122,9 @@ export class Spells extends React.Component<undefined, State> {
 					<Scroll>
 						<List>
 							{
-								sortedDeactiveList.map(obj => {
+								sortedDeactiveList.map((obj, index, array) => {
+									const prevObj = array[index - 1];
+
 									let extendName = '';
 									if (!isOwnTradition(obj)) {
 										extendName += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
@@ -149,6 +151,7 @@ export class Spells extends React.Component<undefined, State> {
 												isNotActive
 												activate={this.addToList.bind(null, obj.id)}
 												addFillElement
+												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 												>
 												<ListItemGroup>
 													{PROPERTIES[obj.property - 1]}
@@ -173,6 +176,7 @@ export class Spells extends React.Component<undefined, State> {
 											check={check}
 											checkmod={checkmod}
 											ic={obj.ic}
+											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 											>
 											<ListItemGroup>
 												{PROPERTIES[obj.property - 1]}
@@ -200,7 +204,9 @@ export class Spells extends React.Component<undefined, State> {
 				<Scroll>
 					<List>
 						{
-							sortedActiveList.map(obj => {
+							sortedActiveList.map((obj, index, array) => {
+								const prevObj = array[index - 1];
+
 								let name = obj.name;
 								if (!isOwnTradition(obj)) {
 									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
@@ -215,6 +221,7 @@ export class Spells extends React.Component<undefined, State> {
 											removePoint={phase < 3 ? this.removeFromList.bind(null, obj.id) : undefined}
 											addFillElement
 											noIncrease
+											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 											>
 											<ListItemGroup>
 												{PROPERTIES[obj.property - 1]}
@@ -244,6 +251,7 @@ export class Spells extends React.Component<undefined, State> {
 										removePoint={phase < 3 ? obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!isDecreasable(obj)}
 										addFillElement
+										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 										{...other} >
 										<ListItemGroup>
 											{PROPERTIES[obj.property - 1]}

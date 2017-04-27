@@ -82,25 +82,29 @@ export class Talents extends React.Component<undefined, TalentsState> {
 				<Scroll>
 					<List>
 						{
-							list.map(obj => (
-								<SkillListItem
-									key={obj.id}
-									id={obj.id}
-									typ={talentRating && isTyp(obj)}
-									untyp={talentRating && isUntyp(obj)}
-									name={obj.name}
-									sr={obj.value}
-									check={obj.check}
-									ic={obj.ic}
-									addPoint={this.addPoint.bind(null, obj.id)}
-									addDisabled={!isIncreasable(obj)}
-									removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-									removeDisabled={!isDecreasable(obj)}
-									enableInfo
-									>
-									<ListItemGroup list={GROUPS} index={obj.gr} />
-								</SkillListItem>
-							))
+							list.map((obj, index, array) => {
+								const prevObj = array[index - 1];
+								return (
+									<SkillListItem
+										key={obj.id}
+										id={obj.id}
+										typ={talentRating && isTyp(obj)}
+										untyp={talentRating && isUntyp(obj)}
+										name={obj.name}
+										sr={obj.value}
+										check={obj.check}
+										ic={obj.ic}
+										addPoint={this.addPoint.bind(null, obj.id)}
+										addDisabled={!isIncreasable(obj)}
+										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!isDecreasable(obj)}
+										insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
+										enableInfo
+										>
+										<ListItemGroup list={GROUPS} index={obj.gr} />
+									</SkillListItem>
+								);
+							})
 						}
 					</List>
 				</Scroll>

@@ -21,6 +21,7 @@ export interface SkillListItemProps {
 	enableInfo?: boolean;
 	ic?: number;
 	id: string;
+	insertTopMargin?: boolean;
 	isNotActive?: boolean;
 	name: string;
 	noIncrease?: boolean;
@@ -37,7 +38,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, enableInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, enableInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -91,7 +92,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 		);
 
 		return (
-			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp}>
+			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp} insertTopMargin={insertTopMargin}>
 				<ListItemName name={name} />
 				<ListItemSeparator />
 				{children}

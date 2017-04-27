@@ -82,9 +82,9 @@ export class Professions extends React.Component<undefined, State> {
 
 		const list = filterAndSort(professions.filter(e => {
 			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : typicalList.list.includes(e.id) !== typicalList.reverse);
+			const commonVisible = e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
-			const extensionVisible = e.src.id === 'US25001' ? commonVisible : extensionVisibility;
+			const extensionVisible = visibility === 'all' || (e.src.id === 'US25001' ? commonVisible : extensionVisibility);
 			return groupVisible && extensionVisible;
 		}), filterText, sortOrder, sex);
 

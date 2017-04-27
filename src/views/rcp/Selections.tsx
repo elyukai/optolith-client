@@ -11,7 +11,7 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListS
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { RaceStore } from '../../stores/RaceStore';
-import { CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection, SpellInstance } from '../../types/data.d';
+import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortByName } from '../../utils/ListUtils';
 import { SelectionsCantrips } from './SelectionsCantrips';
@@ -52,7 +52,7 @@ export class Selections extends React.Component<Props, State> {
 		litc: 0,
 		spec: [null, ''] as [number | null, string],
 		specTalentId: undefined,
-		useCulturePackage: true,
+		useCulturePackage: false,
 	};
 
 	changeAttrSel = (option: string) => this.setState({ attrSel: option } as State);
@@ -301,7 +301,7 @@ export class Selections extends React.Component<Props, State> {
 			const active = cantrips;
 			const { amount, sid } = professionSelections.get('CANTRIPS') as CantripsSelection;
 
-			const rawList = getAllByCategory(Categories.SPELLS) as SpellInstance[];
+			const rawList = getAllByCategory(Categories.CANTRIPS) as CantripInstance[];
 			const list = rawList.filter(e => sid.includes(e.id));
 
 			cantripsElement = <SelectionsCantrips list={list} active={active} num={amount} change={this.changeCantrip} />;
