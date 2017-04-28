@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
+import { ArmorZones } from './ArmorZones';
 import { Equipment } from './Equipment';
 import { Pets } from './Pets';
 
@@ -21,6 +22,9 @@ export class Belongings extends React.Component<undefined, BelongingsState> {
 			case 'equipment':
 				element = <Equipment />;
 				break;
+			case 'armorzones':
+				element = <ArmorZones />;
+				break;
 			case 'pets':
 				element = <Pets />;
 				break;
@@ -30,6 +34,10 @@ export class Belongings extends React.Component<undefined, BelongingsState> {
 			{
 				id: 'equipment',
 				label: 'Ausrüstung',
+			},
+			{
+				id: 'armorzones',
+				label: 'Zonenrüstung',
 			},
 			{
 				id: 'pets',

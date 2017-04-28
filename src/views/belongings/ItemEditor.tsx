@@ -53,8 +53,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		let tempState = this.props.item;
 		if (tempState) {
 			if (tempState.isTemplateLocked) {
-				const { id, where } = tempState;
-				tempState = { ...EquipmentStore.getTemplate(tempState.template!), id, where };
+				const { id, where, loss } = tempState;
+				tempState = { ...EquipmentStore.getTemplate(tempState.template!), id, where, loss };
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -140,6 +140,12 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	changeImprovisedWeaponGroup = (group: number) => {
 		this.setState({ improvisedWeaponGroup: group } as ItemEditorInstance);
 	}
+	changeLoss = (id?: number) => {
+		this.setState({ loss: id } as ItemEditorInstance);
+	}
+	changeArmorZoneOnly = () => {
+		this.setState({ forArmorZoneOnly: !this.state.forArmorZoneOnly } as ItemEditorInstance);
+	}
 
 	applyTemplate = () => {
 		if (typeof this.state.template === 'string') {
@@ -178,10 +184,13 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	render() {
 		const { create, node } = this.props;
-		const { addMOVPenalty, addINIPenalty, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where } = this.state;
+		const { addMOVPenalty, addINIPenalty, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
 
 		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 		const AMMUNITION = [{name: 'Keine'} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+
+		const dice = [{id: 2, name: 'W2'}, {id: 3, name: 'W3'}, {id: 6, name: 'W6'}];
+		const lossTiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
 
 		return (
 			<Dialog
@@ -305,8 +314,6 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							/>
-					</div>
-					<div className="row">
 						<TextField
 							className="damage-bonus"
 							label="Schadensb."
@@ -314,6 +321,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							onChange={this.changeDamageBonus}
 							disabled={locked}
 							/>
+					</div>
+					<div className="row">
 						<div className="container">
 							<Label text="Schaden" disabled={locked} />
 							<TextField
@@ -326,7 +335,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[{id: 2, name: 'W2'}, {id: 3, name: 'W3'}, {id: 6, name: 'W6'}]}
+								options={dice}
 								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
@@ -343,6 +352,13 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							value={stabilityMod}
 							onChange={this.changeStabilityMod}
 							disabled={locked}
+							/>
+						<Dropdown
+							className="weapon-loss"
+							label="Beschädigung"
+							value={loss}
+							options={lossTiers}
+							onChange={this.changeLoss}
 							/>
 					</div>
 					<div className="row">
@@ -417,8 +433,6 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							/>
-					</div>
-					<div className="row">
 						<TextField
 							className="reloadtime"
 							label="Ladezeiten"
@@ -426,6 +440,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							onChange={this.changeReloadTime}
 							disabled={locked}
 							/>
+					</div>
+					<div className="row">
 						<div className="container">
 							<Label text="Schaden" disabled={locked} />
 							<TextField
@@ -438,7 +454,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								className="damage-dice-sides"
 								hint="W"
 								value={damageDiceSides}
-								options={[{id: 3, name: 'W3'}, {id: 6, name: 'W6'}, {id: 20, name: 'W20'}]}
+								options={dice}
 								onChange={this.changeDamageDiceSides}
 								disabled={locked}
 								/>
@@ -455,6 +471,13 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							value={stabilityMod}
 							onChange={this.changeStabilityMod}
 							disabled={locked}
+							/>
+						<Dropdown
+							className="weapon-loss"
+							label="Beschädigung"
+							value={loss}
+							options={lossTiers}
+							onChange={this.changeLoss}
 							/>
 					</div>
 					<div className="row">
@@ -533,6 +556,10 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								onChange={this.changeAddINIPenalty}
 								disabled={locked}
 								/>
+						</div>
+					</div>
+					<div className="row">
+						<div className="container armor-loss-container">
 							<TextField
 								className="stabilitymod"
 								label="ST-Mod."
@@ -540,7 +567,21 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								onChange={this.changeStabilityMod}
 								disabled={locked}
 								/>
+							<Dropdown
+								className="loss"
+								label="Verschleiß"
+								value={loss}
+								options={lossTiers}
+								onChange={this.changeLoss}
+								/>
 						</div>
+						<Checkbox
+							className="only-zones"
+							label="Nur Zonenrüstung"
+							checked={!!forArmorZoneOnly}
+							onClick={this.changeArmorZoneOnly}
+							disabled={locked}
+							/>
 					</div>
 				</div> ) : null }
 			</Dialog>

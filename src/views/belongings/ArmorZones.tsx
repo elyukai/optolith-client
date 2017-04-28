@@ -2,60 +2,45 @@ import * as React from 'react';
 import * as EquipmentActions from '../../actions/EquipmentActions';
 import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
-import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { APStore } from '../../stores/APStore';
 import { ELStore } from '../../stores/ELStore';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
-import { AdvantageInstance, AttributeInstance, DisadvantageInstance, InputTextEvent, ItemInstance } from '../../types/data.d';
+import { AdvantageInstance, ArmorZonesInstance, AttributeInstance, DisadvantageInstance, InputTextEvent } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
 import { dotToComma } from '../../utils/i18n';
-import { filterAndSort, sortByName } from '../../utils/ListUtils';
-import { EquipmentListItem } from './EquipmentListItem';
-import { ItemEditor } from './ItemEditor';
-
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Fortbewegungsmittel'];
-const groupsSelectionItems = GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
+import { filterAndSort } from '../../utils/ListUtils';
+import { ArmorZonesEditor } from './ArmorZonesEditor';
+import { ArmorZonesListItem } from './ArmorZonesListItem';
 
 interface State {
-	filterGroupSlidein: number;
 	filterText: string;
-	filterTextSlidein: string;
-	items: ItemInstance[];
+	items: ArmorZonesInstance[];
 	purse: {
 		d: string;
 		s: string;
 		h: string;
 		k: string;
 	};
-	showAddSlidein: boolean;
 	sortOrder: string;
-	templates: ItemInstance[];
 }
 
-export class Equipment extends React.Component<undefined, State> {
+export class ArmorZones extends React.Component<undefined, State> {
 	state = {
-		filterGroupSlidein: 1,
 		filterText: '',
-		filterTextSlidein: '',
-		items: EquipmentStore.getAll(),
+		items: EquipmentStore.getAllArmorZones(),
 		purse: EquipmentStore.getPurse(),
-		showAddSlidein: false,
 		sortOrder: EquipmentStore.getSortOrder(),
-		templates: EquipmentStore.getAllTemplates(),
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
-	filterGroupSlidein = (gr: number) => this.setState({ filterGroupSlidein: gr } as State);
 	sort = (option: string) => EquipmentActions.setSortOrder(option);
 	setDucates = (event: InputTextEvent) => EquipmentActions.setDucates(event.target.value as string);
 	setSilverthalers = (event: InputTextEvent) => EquipmentActions.setSilverthalers(event.target.value as string);
@@ -70,35 +55,19 @@ export class Equipment extends React.Component<undefined, State> {
 		EquipmentStore.removeChangeListener(this.updateEquipmentStore);
 	}
 
-	showItemCreation = () => createOverlay(<ItemEditor create item={{} as ItemInstance} />);
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
+	showArmorZonesCreation = () => createOverlay(<ArmorZonesEditor create />);
 
 	render() {
-
 		const {
-			filterGroupSlidein,
 			filterText,
-			filterTextSlidein,
 			items,
-			showAddSlidein,
 			sortOrder,
-			templates,
 			purse,
 		} = this.state;
 
-		const list = filterAndSort(items, filterText, sortOrder, GROUPS);
-
-		const filterTemplates = (e: ItemInstance): boolean => {
-			const isGroup = e.gr === filterGroupSlidein;
-			const isNotInList = !items.find(item => item.template === e.template && item.isTemplateLocked);
-			return isGroup && isNotInList;
-		};
-
-		const templateList = filterAndSort(templates.filter(filterTemplates), filterTextSlidein, 'name');
+		const list = filterAndSort(items, filterText, sortOrder);
 
 		const { price: totalPrice, weight: totalWeight } = EquipmentStore.getTotalPriceAndWeight();
-
 		let startMoney = 750;
 		const ADV_36 = get('ADV_36') as AdvantageInstance;
 		const DISADV_2 = get('DISADV_2') as DisadvantageInstance;
@@ -113,25 +82,7 @@ export class Equipment extends React.Component<undefined, State> {
 		const hasNoAddedAP = APStore.getTotal() === ELStore.getStart().ap;
 
 		return (
-			<Page id="equipment">
-				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
-						<Dropdown
-							value={filterGroupSlidein}
-							onChange={this.filterGroupSlidein}
-							options={groupsSelectionItems}
-							fullWidth
-							/>
-					</Options>
-					<Scroll>
-						<List>
-							{
-								templateList.map(obj => <EquipmentListItem key={obj.id} data={obj} add />)
-							}
-						</List>
-					</Scroll>
-				</Slidein>
+			<Page id="armor-zones">
 				<Options>
 					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
@@ -139,13 +90,12 @@ export class Equipment extends React.Component<undefined, State> {
 						sortOrder={sortOrder}
 						sort={this.sort}
 						/>
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-					<BorderButton label="Erstellen" onClick={this.showItemCreation} />
+					<BorderButton label="Erstellen" onClick={this.showArmorZonesCreation} />
 				</Options>
 				<Scroll>
 					<List>
 						{
-							list.map(obj => <EquipmentListItem key={obj.id} data={obj} />)
+							list.map(obj => <ArmorZonesListItem key={obj.id} data={obj} />)
 						}
 					</List>
 				</Scroll>
@@ -171,5 +121,5 @@ export class Equipment extends React.Component<undefined, State> {
 		);
 	}
 
-	private updateEquipmentStore = () => this.setState({ items: EquipmentStore.getAll(), sortOrder: EquipmentStore.getSortOrder(), purse: EquipmentStore.getPurse() } as State);
+	private updateEquipmentStore = () => this.setState({ items: EquipmentStore.getAllArmorZones(), sortOrder: EquipmentStore.getSortOrder(), purse: EquipmentStore.getPurse() } as State);
 }

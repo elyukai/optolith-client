@@ -48,6 +48,7 @@ export function generateHeroSaveData(): HeroForSave {
 		belongings: {
 			equipment: {},
 			items: EquipmentStore.getAllById(),
+			armorZones: EquipmentStore.getAllArmorZonesById(),
 			pet: {},
 			purse: EquipmentStore.getPurse(),
 		},

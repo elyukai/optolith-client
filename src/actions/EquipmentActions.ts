@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ItemInstance } from '../types/data.d';
+import { ArmorZonesInstance, ItemInstance } from '../types/data.d';
 
 export interface AddItemAction extends Action {
 	type: ActionTypes.ADD_ITEM;
@@ -11,6 +11,20 @@ export interface AddItemAction extends Action {
 
 export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemAction>({
 	type: ActionTypes.ADD_ITEM,
+	payload: {
+		data
+	}
+});
+
+export interface AddArmorZonesAction extends Action {
+	type: ActionTypes.ADD_ARMOR_ZONES;
+	payload: {
+		data: ArmorZonesInstance;
+	};
+}
+
+export const addArmorZonesToList = (data: ArmorZonesInstance) => AppDispatcher.dispatch<AddArmorZonesAction>({
+	type: ActionTypes.ADD_ARMOR_ZONES,
 	payload: {
 		data
 	}
@@ -32,6 +46,22 @@ export const set = (id: string, data: ItemInstance) => AppDispatcher.dispatch<Se
 	}
 });
 
+export interface SetArmorZonesAction extends Action {
+	type: ActionTypes.SET_ARMOR_ZONES;
+	payload: {
+		id: string;
+		data: ArmorZonesInstance;
+	};
+}
+
+export const setArmorZones = (id: string, data: ArmorZonesInstance) => AppDispatcher.dispatch<SetArmorZonesAction>({
+	type: ActionTypes.SET_ARMOR_ZONES,
+	payload: {
+		id,
+		data
+	}
+});
+
 export interface RemoveItemAction extends Action {
 	type: ActionTypes.REMOVE_ITEM;
 	payload: {
@@ -41,6 +71,20 @@ export interface RemoveItemAction extends Action {
 
 export const removeFromList = (id: string) => AppDispatcher.dispatch<RemoveItemAction>({
 	type: ActionTypes.REMOVE_ITEM,
+	payload: {
+		id
+	}
+});
+
+export interface RemoveArmorZonesAction extends Action {
+	type: ActionTypes.REMOVE_ARMOR_ZONES;
+	payload: {
+		id: string;
+	};
+}
+
+export const removeArmorZonesFromList = (id: string) => AppDispatcher.dispatch<RemoveArmorZonesAction>({
+	type: ActionTypes.REMOVE_ARMOR_ZONES,
 	payload: {
 		id
 	}

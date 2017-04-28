@@ -68,6 +68,7 @@ export interface HeroBase {
 	readonly blessings: string[];
 	readonly belongings: {
 		items: ToListById<ItemInstance>;
+		armorZones: ToListById<ArmorZonesInstance>;
 		equipment: object;
 		pet: object;
 		purse: {
@@ -559,6 +560,8 @@ export interface ItemBaseInstance {
 	where?: string;
 	isTwoHandedWeapon?: boolean;
 	improvisedWeaponGroup?: number;
+	loss?: number;
+	forArmorZoneOnly?: boolean;
 }
 
 export interface ItemInstance extends ItemBaseInstance {
@@ -599,6 +602,30 @@ export interface ItemEditorInstance extends ItemBaseInstance {
 	stp: string;
 	weight: string;
 	stabilityMod: string;
+}
+
+export interface ArmorZonesBaseInstance {
+	name: string;
+	head?: string;
+	headLoss?: number;
+	leftArm?: string;
+	leftArmLoss?: number;
+	rightArm?: string;
+	rightArmLoss?: number;
+	torso?: string;
+	torsoLoss?: number;
+	leftLeg?: string;
+	leftLegLoss?: number;
+	rightLeg?: string;
+	rightLegLoss?: number;
+}
+
+export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
+	id: string;
+}
+
+export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
+	id?: string;
 }
 
 export type Instance = AbilityInstanceExtended | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;

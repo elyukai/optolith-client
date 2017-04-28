@@ -93,7 +93,7 @@ export const sortByWeight = (a: PlainNameData, b: PlainNameData) => a.weight! < 
 
 export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where! < b.where! ? -1 : a.where! > b.where! ? 1 : sortByName(a, b);
 
-export function sort<T extends PlainNameData>(list: T[], sortOrder: string): T[] {
+export function sort<T extends PlainNameData>(list: T[], sortOrder: string = 'name'): T[] {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -133,7 +133,7 @@ export function sort<T extends PlainNameData>(list: T[], sortOrder: string): T[]
 	return list.sort(sort);
 }
 
-export function sortSex(list: NameBySexData[], sortOrder: string): NameBySexData[] {
+export function sortSex(list: NameBySexData[], sortOrder: string = 'name'): NameBySexData[] {
 	let sort;
 	switch (sortOrder) {
 		case 'name':
@@ -149,7 +149,7 @@ export function sortSex(list: NameBySexData[], sortOrder: string): NameBySexData
 	return list.sort(sort);
 }
 
-export function filterAndSort<T>(list: T[], filterText: string, sortOrder: string, option?: string[] | 'm' | 'f'): T[] {
+export function filterAndSort<T>(list: T[], filterText: string, sortOrder?: string, option?: string[] | 'm' | 'f'): T[] {
 	if (Array.isArray(option)) {
 		GROUPS = option;
 	}

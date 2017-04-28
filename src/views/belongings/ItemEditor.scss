@@ -1,4 +1,4 @@
-#item-editor {
+#item-editor, #armor-zones-editor {
 	.modal-container {
 		// width: 820px;
 		width: 400px;
@@ -60,10 +60,14 @@
 						&.armor-add {
 							flex: 1 1 auto;
 						}
+
+						&.armor-loss-container {
+							flex: 1 1 0;
+						}
 					}
 
 					> div {
-						&.number, &.btn {
+						&.number, &.btn, &.loss, &.weapon-loss {
 							flex: none;
 						}
 
@@ -71,11 +75,19 @@
 							width: 60px;
 						}
 
+						&.loss {
+							width: 57px;
+						}
+
+						&.weapon-loss {
+							width: 76px;
+						}
+
 						&.btn {
 							margin-left: 10px;
 						}
 
-						&.where {
+						&.where, &.combattechnique {
 							flex-grow: 2;
 						}
 
@@ -85,7 +97,7 @@
 					}
 
 					> div.container > div {
-						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc, &.stabilitymod {
+						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc, &.loss {
 							flex: none;
 						}
 
@@ -101,6 +113,10 @@
 							input {
 								text-align: center;
 							}
+						}
+
+						&.only-zones {
+							flex-grow: 2;
 						}
 					}
 				}
