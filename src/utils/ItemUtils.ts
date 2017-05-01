@@ -17,25 +17,25 @@ export function convertToEdit(item: ItemInstance): ItemEditorInstance {
 		reloadTime: item.reloadTime ? item.reloadTime.toString() : '',
 		stp: item.stp ? item.stp.toString() : '',
 		weight: item.weight ? item.weight.toString() : '',
-		addMOVPenalty: item.addMOVPenalty ? item.addMOVPenalty.toString() : '',
-		addINIPenalty: item.addINIPenalty ? item.addINIPenalty.toString() : '',
+		movMod: item.movMod ? item.movMod.toString() : '',
+		iniMod: item.iniMod ? item.iniMod.toString() : '',
 		stabilityMod: item.stabilityMod ? item.stabilityMod.toString() : '',
 	};
 }
 
 export function convertToSave(item: ItemEditorInstance): ItemInstance {
-	const { addMOVPenalty, addINIPenalty, stabilityMod, improvisedWeaponGroup, ...other } = item;
+	const { movMod, iniMod, stabilityMod, improvisedWeaponGroup, ...other } = item;
 	const add: {
-		addGSPenalty?: number;
-		addINIPenalty?: number;
+		movMod?: number;
+		iniMod?: number;
 		stabilityMod?: number;
 		improvisedWeaponGroup?: number;
 	} = {};
-	if (addMOVPenalty && Number.parseInt(addMOVPenalty.replace(/\,/, '.')) > 0) {
-		add.addGSPenalty = Number.parseInt(addMOVPenalty.replace(/\,/, '.'));
+	if (movMod && Number.parseInt(movMod.replace(/\,/, '.')) > 0) {
+		add.movMod = Number.parseInt(movMod.replace(/\,/, '.'));
 	}
-	if (addINIPenalty && Number.parseInt(addINIPenalty.replace(/\,/, '.')) > 0) {
-		add.addINIPenalty = Number.parseInt(addINIPenalty.replace(/\,/, '.'));
+	if (iniMod && Number.parseInt(iniMod.replace(/\,/, '.')) > 0) {
+		add.iniMod = Number.parseInt(iniMod.replace(/\,/, '.'));
 	}
 	if (stabilityMod && !Number.isNaN(Number.parseInt(stabilityMod.replace(/\,/, '.')))) {
 		add.stabilityMod = Number.parseInt(stabilityMod.replace(/\,/, '.'));

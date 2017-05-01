@@ -5,6 +5,7 @@ import { get } from '../../stores/ListStore';
 import { RulesStore } from '../../stores/RulesStore';
 import { AttributeInstance, CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
 import { getAt, getPa } from '../../utils/CombatTechniqueUtils';
+import { getRoman } from '../../utils/roman';
 
 export function CombatSheetMeleeWeapons() {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && e.combatTechnique !== 'CT_10');
@@ -16,15 +17,19 @@ export function CombatSheetMeleeWeapons() {
 		<TextBox label="Nahkampfwaffen" className="melee-weapons">
 			<table>
 				<thead>
-					<td className="name">Waffe</td>
-					<td className="combat-technique">Kampftechnik</td>
-					<td className="damage-bonus">Schadenb.</td>
-					<td className="damage">TP</td>
-					<td className="mod" colSpan={2}>AT/PA Mod.</td>
-					<td className="reach">Reichweite</td>
-					<td className="at">AT</td>
-					<td className="pa">PA</td>
-					<td className="weight">Gewicht</td>
+					<tr>
+						<th className="name">Waffe</th>
+						<th className="combat-technique">Kampftechnik</th>
+						<th className="damage-bonus">Schadenb.</th>
+						<th className="damage">TP</th>
+						<th className="mod" colSpan={2}>AT/PA Mod.</th>
+						<th className="reach">Reichweite</th>
+						<th className="bf">BF</th>
+						<th className="loss">V.</th>
+						<th className="at">AT</th>
+						<th className="pa">PA</th>
+						<th className="weight">Gewicht</th>
+					</tr>
 				</thead>
 				<tbody>
 					{
@@ -43,6 +48,8 @@ export function CombatSheetMeleeWeapons() {
 										<td className="at-mod mod">{e.at && e.at > 0 && '+'}{e.at}</td>
 										<td className="pa-mod mod">{e.pa && e.pa > 0 && '+'}{e.pa}</td>
 										<td className="reach">{e.reach && ['kurz', 'mittel', 'lang'][e.reach - 1]}</td>
+										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
+										<td className="loss">{e.loss && getRoman(e.loss)}</td>
 										<td className="at">{getAt(combatTechnique) + (e.at || 0)}</td>
 										<td className="pa">{(getPa(combatTechnique) as number) + (e.pa || 0) + paradeBonus}</td>
 										<td className="weight">{e.weight} Stn</td>
@@ -59,6 +66,8 @@ export function CombatSheetMeleeWeapons() {
 										<td className="at-mod mod"></td>
 										<td className="pa-mod mod"></td>
 										<td className="reach"></td>
+										<td className="bf"></td>
+										<td className="loss"></td>
 										<td className="at"></td>
 										<td className="pa"></td>
 										<td className="weight"></td>

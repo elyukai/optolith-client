@@ -187,9 +187,11 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 			active = { sid: sel, tier };
 			break;
 		case 'SA_97':
+			active = { sid: sel };
 			adds.push({ id: 'SA_88', active: true, sid: sel });
 			break;
 		case 'SA_484': {
+			active = { sid: sel };
 			const selectionItem = getSelectionItem(obj, sel) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
 			adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
 			break;

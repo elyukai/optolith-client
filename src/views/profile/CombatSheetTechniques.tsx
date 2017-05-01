@@ -11,12 +11,14 @@ export function CombatSheetTechniques() {
 		<TextBox label="Kampftechniken" className="combat-techniques">
 			<table>
 				<thead>
-					<td className="name">Kampftechniken</td>
-					<td className="primary">Leiteig.</td>
-					<td className="ic">Sf.</td>
-					<td className="value">Ktw.</td>
-					<td className="at">AT/FK</td>
-					<td className="pa">PA</td>
+					<tr>
+						<th className="name">Kampftechniken</th>
+						<th className="primary">Leiteig.</th>
+						<th className="ic">Sf.</th>
+						<th className="value">Ktw.</th>
+						<th className="at">AT/FK</th>
+						<th className="pa">PA</th>
+					</tr>
 				</thead>
 				<tbody>
 					{

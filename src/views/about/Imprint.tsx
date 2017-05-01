@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
+import { getLocale } from '../../stores/LocaleStore';
 
 export function Imprint() {
 	return (
 		<div className="page" id="imprint">
 			<Scroll className="text">
-				<h2>Impressum</h2>
+				<h2>{getLocale()['imprint.title']}</h2>
 
 				<h3>Lukas Obermann</h3>
 				<p>
 					Eekholl 11<br/>
 					24361 Groß Wittensee<br/>
+					Germany<br/>
 					<a href="mailto:lukas.obermann@live.de">lukas.obermann@live.de</a>
 				</p>
 
@@ -18,7 +20,7 @@ export function Imprint() {
 				<p>
 					Lehmberg 7b<br/>
 					24361 Groß Wittensee<br/>
-					<a href="mailto:schuchi@dsa-sh.de">schuchi@dsa-sh.de</a>
+					Germany
 				</p>
 			</Scroll>
 		</div>

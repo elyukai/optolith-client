@@ -11,7 +11,6 @@ type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPla
 
 const HAIRCOLORS = RaceStore.hairColors;
 const EYECOLORS = RaceStore.eyeColors;
-const SOCIALSTATUS = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 class ProfileStoreStatic extends Store {
 	private name = '';
@@ -262,10 +261,6 @@ class ProfileStoreStatic extends Store {
 
 	getWeight() {
 		return this.weight;
-	}
-
-	getSocialstatusTags() {
-		return SOCIALSTATUS;
 	}
 
 	getDateCreated() {

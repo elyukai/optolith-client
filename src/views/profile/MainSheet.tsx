@@ -6,6 +6,7 @@ import * as ActivatableStore from '../../stores/ActivatableStore';
 import { APStore } from '../../stores/APStore';
 import { CultureStore } from '../../stores/CultureStore';
 import { ELStore } from '../../stores/ELStore';
+import { getLocale } from '../../stores/LocaleStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
@@ -29,7 +30,7 @@ export function MainSheet() {
 	const professionVariant = ProfessionVariantStore.getCurrent();
 	const haircolorTags = ProfileStore.getHaircolorTags();
 	const eyecolorTags = ProfileStore.getEyecolorTags();
-	const socialstatusTags = ProfileStore.getSocialstatusTags();
+	const socialstatusTags = getLocale().socialstatus;
 
 	const advActive = ActivatableStore.getActiveForView(Categories.ADVANTAGES);
 	const disadvActive = ActivatableStore.getActiveForView(Categories.DISADVANTAGES);
@@ -45,12 +46,12 @@ export function MainSheet() {
 			<SheetOptions>
 				<BorderButton
 					className="print-document"
-					label="Dokument drucken"
+					label={getLocale()['charactersheet.actions.printtopdf']}
 					onClick={printToPDF}
 					fullWidth
 					/>
 			</SheetOptions>
-			<Sheet id="main-sheet" title="Persönliche Daten">
+			<Sheet id="main-sheet" title={getLocale()['charactersheet.main.title']}>
 				<MainSheetPersonalData
 					ap={ap}
 					culture={culture}
@@ -65,13 +66,13 @@ export function MainSheet() {
 					/>
 				<div className="lower">
 					<div className="lists">
-						<TextBox className="activatable-list" label="Vorteile">
+						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.advantages']}>
 							<ActivatableTextList list={advActive} />
 						</TextBox>
-						<TextBox className="activatable-list" label="Nachteile">
+						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.disadvantages']}>
 							<ActivatableTextList list={disadvActive} />
 						</TextBox>
-						<TextBox className="activatable-list" label="Allgemeine Sonderfertigkeiten">
+						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.generalspecialabilites']}>
 							<ActivatableTextList list={generalsaActive} />
 						</TextBox>
 					</div>

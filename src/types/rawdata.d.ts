@@ -191,6 +191,7 @@ export interface RawCombatTechnique {
 	name: string;
 	skt: number;
 	leit: string[];
+	bf: number;
 	gr: number;
 }
 
@@ -338,10 +339,16 @@ export interface Config {
 	equipmentGroupVisibilityFilter: number;
 	sheetCheckAttributeValueVisibility?: boolean;
 	enableActiveItemHints: boolean;
+	locale?: string;
+}
+
+export interface RawLocale {
+	ui: Data.Locale
 }
 
 export interface Raw {
 	config: Config;
 	heroes: RawHerolist;
 	tables: RawTables;
+	locales: Data.ToListById<RawLocale>;
 }

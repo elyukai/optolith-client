@@ -11,6 +11,7 @@ import { ELStore } from '../../stores/ELStore';
 import { HistoryStore } from '../../stores/HistoryStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { ProfileStore } from '../../stores/ProfileStore';
+import { Locale } from '../../types/data.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { Login } from '../../views/account/Login';
 import { HeroCreation } from '../../views/herolist/HeroCreation';
@@ -19,6 +20,7 @@ import { BorderButton } from '../BorderButton';
 import { IconButton } from '../IconButton';
 import { Text } from '../Text';
 import { TooltipToggle } from '../TooltipToggle';
+import { Settings } from './Settings';
 import { TitleBarBack } from './TitleBarBack';
 import { TitleBarLeft } from './TitleBarLeft';
 import { TitleBarRight } from './TitleBarRight';
@@ -47,6 +49,7 @@ interface State {
 interface Props {
 	currentSection: string;
 	currentTab: string;
+	locale: Locale;
 }
 
 export class TitleBar extends React.Component<Props, State> {
@@ -59,26 +62,20 @@ export class TitleBar extends React.Component<Props, State> {
 		phase: PhaseStore.get()
 	};
 
-	_updateAuthStore = () => this.setState({ account: AuthStore.getAll() } as State);
-	_updateAPStore = () => this.setState({ ap: APStore.getAll() } as State);
-	_updateHistoryStore = () => this.setState({ isUndoAvailable: HistoryStore.isUndoAvailable() } as State);
-	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as State);
-	_updateProfileStore = () => this.setState({ avatar: ProfileStore.getAvatar() } as State);
-
 	componentDidMount() {
-		AuthStore.addChangeListener(this._updateAuthStore);
-		APStore.addChangeListener(this._updateAPStore);
-		HistoryStore.addChangeListener(this._updateHistoryStore);
-		PhaseStore.addChangeListener(this._updatePhaseStore);
-		ProfileStore.addChangeListener(this._updateProfileStore);
+		AuthStore.addChangeListener(this.updateAuthStore);
+		APStore.addChangeListener(this.updateAPStore);
+		HistoryStore.addChangeListener(this.updateHistoryStore);
+		PhaseStore.addChangeListener(this.updatePhaseStore);
+		ProfileStore.addChangeListener(this.updateProfileStore);
 	}
 
 	componentWillUnmount() {
-		AuthStore.removeChangeListener(this._updateAuthStore);
-		APStore.removeChangeListener(this._updateAPStore);
-		HistoryStore.removeChangeListener(this._updateHistoryStore);
-		PhaseStore.removeChangeListener(this._updatePhaseStore);
-		ProfileStore.removeChangeListener(this._updateProfileStore);
+		AuthStore.removeChangeListener(this.updateAuthStore);
+		APStore.removeChangeListener(this.updateAPStore);
+		HistoryStore.removeChangeListener(this.updateHistoryStore);
+		PhaseStore.removeChangeListener(this.updatePhaseStore);
+		ProfileStore.removeChangeListener(this.updateProfileStore);
 	}
 
 	test = () => {
@@ -94,17 +91,18 @@ export class TitleBar extends React.Component<Props, State> {
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();
 	openDevtools = () => remote.getCurrentWindow().webContents.openDevTools();
+	showSettings = () => createOverlay(<Settings />);
 
 	render() {
 
-		const { currentSection, currentTab } = this.props;
+		const { currentSection, currentTab, locale } = this.props;
 		const { account, ap: { total, spent, adv, disadv }, avatar, isUndoAvailable, phase } = this.state;
 
 		switch (currentSection) {
 			case 'main': {
 				const tabs: TitleBarTabProps[] = [
-					{ label: 'Start', tag: 'home' },
-					{ label: 'Über', tag: 'about' }
+					{ label: locale['titlebar.tabs.home'], tag: 'home' },
+					{ label: locale['titlebar.tabs.about'], tag: 'about' }
 				];
 				if (!account.name) {
 					return (
@@ -114,7 +112,7 @@ export class TitleBar extends React.Component<Props, State> {
 							</TitleBarLeft>
 							<TitleBarRight>
 								<BorderButton
-									label="Anmelden"
+									label={locale['titlebar.actions.logout']}
 									onClick={this.login}
 									primary
 									disabled
@@ -128,9 +126,9 @@ export class TitleBar extends React.Component<Props, State> {
 					);
 				} else {
 					tabs.splice(1, 0,
-						{ label: 'Helden', tag: 'herolist' },
-						{ label: 'Gruppen', tag: 'grouplist', disabled: true },
-						{ label: 'Hausregeln', tag: 'own-rules', disabled: true }
+						{ label: locale['titlebar.tabs.heroes'], tag: 'herolist' },
+						{ label: locale['titlebar.tabs.groups'], tag: 'grouplist', disabled: true },
+						{ label: locale['titlebar.tabs.customrules'], tag: 'own-rules', disabled: true }
 					);
 					return (
 						<TitleBarWrapper>
@@ -141,10 +139,10 @@ export class TitleBar extends React.Component<Props, State> {
 								<TitleBarTabs active={currentTab} tabs={[
 									{ label: account.name, tag: 'account', disabled: true },
 								]} />
-								<BorderButton label="Abmelden" onClick={this.logout} disabled />
+								<BorderButton label={locale['titlebar.actions.logout']} onClick={this.logout} disabled />
 								<IconButton
 									icon="&#xE8B8;"
-									disabled
+									onClick={this.showSettings}
 									/>
 								<IconButton
 									icon="&#xE868;"
@@ -157,26 +155,26 @@ export class TitleBar extends React.Component<Props, State> {
 			}
 			case 'hero': {
 				const tabs = [
-					{ label: 'Profil', tag: 'profile' }
+					{ label: locale['titlebar.tabs.profile'], tag: 'profile' }
 				];
 				switch (phase) {
 					case 1:
 						tabs.push(
-							{ label: 'Spezies, Kultur & Profession', tag: 'rcp' }
+							{ label: locale['titlebar.tabs.racecultureprofession'], tag: 'rcp' }
 						);
 						break;
 					case 2:
 						tabs.push(
-							{ label: 'Eigenschaften', tag: 'attributes' },
-							{ label: 'Vorteile & Nachteile', tag: 'disadv' },
-							{ label: 'Fertigkeiten', tag: 'skills' }
+							{ label: locale['titlebar.tabs.attributes'], tag: 'attributes' },
+							{ label: locale['titlebar.tabs.advantagesdisadvantages'], tag: 'disadv' },
+							{ label: locale['titlebar.tabs.skills'], tag: 'skills' }
 						);
 						break;
 					case 3:
 						tabs.push(
-							{ label: 'Eigenschaften', tag: 'attributes' },
-							{ label: 'Fertigkeiten', tag: 'skills' },
-							{ label: 'Besitz', tag: 'belongings' }
+							{ label: locale['titlebar.tabs.attributes'], tag: 'attributes' },
+							{ label: locale['titlebar.tabs.skills'], tag: 'skills' },
+							{ label: locale['titlebar.tabs.belongings'], tag: 'belongings' }
 						);
 						break;
 				}
@@ -193,24 +191,24 @@ export class TitleBar extends React.Component<Props, State> {
 								margin={12}
 								content={
 									<div className="ap-details">
-										<h4>Abenteuerpunkte</h4>
+										<h4>{locale['titlebar.adventurepoints.title']}</h4>
 										<p className="general">
-											{total} AP gesamt<br/>
-											{spent} AP verwendet
+											{total} {locale['titlebar.adventurepoints.total']}<br/>
+											{spent} {locale['titlebar.adventurepoints.spent']}
 										</p>
 										<hr />
 										<p>
-											{adv[0]} / 80 AP für Vorteile<br/>
-											{adv[1] > 0 && `${adv[1]} / 50 für magische Vorteile`}
-											{adv[2] > 0 && `${adv[2]} / 50 für karmale Vorteile`}
-											{disadv[0]} / 80 AP für Nachteile<br/>
-											{disadv[1] > 0 && `${disadv[1]} / 50 für magische Nachteile`}
-											{disadv[2] > 0 && `${disadv[2]} / 50 für karmale Nachteile`}
+											<span>{adv[0]} / 80 {locale['titlebar.adventurepoints.advantages']}</span>
+											<span>{adv[1] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${adv[1]} / 50 ${locale['titlebar.adventurepoints.advantagesmagic']}`}</span>
+											<span>{adv[2] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${adv[2]} / 50 ${locale['titlebar.adventurepoints.advantagesblessed']}`}</span>
+											<span>{disadv[0]} / 80 AP {locale['titlebar.adventurepoints.disadvantages']}</span>
+											<span>{disadv[1] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${disadv[1]} / 50 ${locale['titlebar.adventurepoints.disadvantagesmagic']}`}</span>
+											<span>{disadv[2] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${disadv[2]} / 50 ${locale['titlebar.adventurepoints.disadvantagesblessed']}`}</span>
 										</p>
 									</div>
 								}
 								>
-								<Text className="collected-ap">{total - spent} AP</Text>
+								<Text className="collected-ap">{total - spent} {locale['titlebar.view.adventurepoints']}</Text>
 							</TooltipToggle>
 							<IconButton
 								icon="&#xE166;"
@@ -218,7 +216,7 @@ export class TitleBar extends React.Component<Props, State> {
 								disabled={!isUndoAvailable}
 								/>
 							<BorderButton
-								label="Speichern"
+								label={locale['titlebar.actions.save']}
 								onClick={this.saveHero}
 								/>
 							<IconButton
@@ -239,7 +237,7 @@ export class TitleBar extends React.Component<Props, State> {
 						</TitleBarLeft>
 						<TitleBarRight>
 							<BorderButton
-								label="Speichern"
+								label={locale['titlebar.actions.save']}
 								onClick={this.saveGroup}
 								/>
 							<IconButton
@@ -255,4 +253,10 @@ export class TitleBar extends React.Component<Props, State> {
 				return null;
 		}
 	}
+
+	private updateAuthStore = () => this.setState({ account: AuthStore.getAll() } as State);
+	private updateAPStore = () => this.setState({ ap: APStore.getAll() } as State);
+	private updateHistoryStore = () => this.setState({ isUndoAvailable: HistoryStore.isUndoAvailable() } as State);
+	private updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as State);
+	private updateProfileStore = () => this.setState({ avatar: ProfileStore.getAvatar() } as State);
 }

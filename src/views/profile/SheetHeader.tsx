@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AttributeStore } from '../../stores/AttributeStore';
+import { getLocale } from '../../stores/LocaleStore';
 import { SheetHeaderAttribute } from './SheetHeaderAttribute';
 
 export interface HeaderValue {
@@ -20,7 +21,7 @@ export function SheetHeader(props: SheetHeaderProps) {
 	return (
 		<div className="sheet-header">
 			<div className="sheet-title">
-				<h1>Heldendokument</h1>
+				<h1>{getLocale()['charactersheet.title']}</h1>
 				<p>{title}</p>
 				<img src="images/logo.svg" alt="" />
 			</div>

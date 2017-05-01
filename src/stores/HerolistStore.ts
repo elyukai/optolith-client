@@ -168,6 +168,7 @@ class HerolistStoreStatic extends Store {
 					blessings: newBlessings,
 					belongings: {
 						...otherBelongings,
+						armorZones: {},
 						items: newItems
 					},
 					pets: {},
@@ -183,15 +184,15 @@ class HerolistStoreStatic extends Store {
 		else {
 			Object.keys(heroes).forEach(key => {
 				const hero = heroes[key];
-				const { id, player, ...other } = hero;
-				this.byHeroId[id] = {
+				const { player, ...other } = hero;
+				this.byHeroId[key] = {
 					...other,
-					id,
+					id: key,
 					dateCreated: new Date(hero.dateCreated),
 					dateModified: new Date(hero.dateModified),
 				};
 				if (player) {
-					this.byHeroId[id].player = player.id;
+					this.byHeroId[key].player = player.id;
 					this.byUserId[player.id] = player;
 				}
 			});
@@ -237,7 +238,7 @@ class HerolistStoreStatic extends Store {
 		const { player, ...other } = hero;
 		this.byHeroId[newId] = {
 			...other,
-			newId,
+			id: newId,
 			dateCreated: new Date(hero.dateCreated),
 			dateModified: new Date(hero.dateModified),
 		};
@@ -251,7 +252,7 @@ class HerolistStoreStatic extends Store {
 	}
 
 	private getNewId() {
-		const newIdNumber = Date.now();
+		const newIdNumber = Date.now().valueOf();
 		return `HI_${newIdNumber}`;
 	}
 }

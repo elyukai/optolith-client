@@ -17,23 +17,23 @@
 				width: 50%;
 			}
 
-			.age, .gender, .size, .weight {
+			.age, .sex, .size, .weight {
 				width: 25%;
 			}
 
 			.name, .family, .dateofbirth, .race, .haircolor, .culture, .profession, .title, .characteristics, .otherinfo {
 				.label {
-					width: 80px;
+					width: 25mm;
 				}
 			}
 
 			.placeofbirth, .age, .size, .eyecolor, .socialstatus {
 				.label {
-					width: 63px;
+					width: 19mm;
 				}
 			}
 
-			.gender, .weight {
+			.sex, .weight {
 				.label {
 					width: 58px;
 				}
@@ -63,8 +63,14 @@
 					}
 
 					label {
-						margin-left: 0;
 						text-align: center;
+						margin-left: 0;
+					}
+				}
+
+				&.portrait {
+					label {
+						margin-left: 0;
 					}
 				}
 

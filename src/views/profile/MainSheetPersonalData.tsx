@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Avatar } from '../../components/Avatar';
 import { LabelBox } from '../../components/LabelBox';
 import { Plain } from '../../components/Plain';
+import { getLocale } from '../../stores/LocaleStore';
 import { CultureInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../../types/data.d';
 
 export interface MainSheetPersonalDataProps {
@@ -63,30 +64,30 @@ export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
 	return (
 		<div className="upper">
 			<div className="info">
-				<Plain className="name" label="Name" value={name} />
-				<Plain className="family" label="Familie" value={family} />
-				<Plain className="placeofbirth" label="Geburtsort" value={placeofbirth} />
-				<Plain className="dateofbirth" label="Geburtsdatum" value={dateofbirth} />
-				<Plain className="age" label="Alter" value={age} />
-				<Plain className="sex" label="Geschlecht" value={sex} />
-				<Plain className="race" label="Spezies" value={raceName} />
-				<Plain className="size" label="Größe" value={size} />
-				<Plain className="weight" label="Gewicht" value={weight} />
-				<Plain className="haircolor" label="Haarfarbe" value={haircolorName} />
-				<Plain className="eyecolor" label="Augenfarbe" value={eyecolorName} />
-				<Plain className="culture" label="Kultur" value={cultureName} />
-				<Plain className="socialstatus" label="Sozialstatus" value={socialstatusName} />
-				<Plain className="profession" label="Profession" value={professionName} />
-				<Plain className="title" label="Titel" value={title} />
-				<Plain className="characteristics" label="Charakteristika" value={characteristics} />
-				<Plain className="otherinfo" label="Sonstiges" value={otherinfo} />
+				<Plain className="name" label={getLocale()['charactersheet.main.heroname']} value={name} />
+				<Plain className="family" label={getLocale()['charactersheet.main.family']} value={family} />
+				<Plain className="placeofbirth" label={getLocale()['charactersheet.main.placeofbirth']} value={placeofbirth} />
+				<Plain className="dateofbirth" label={getLocale()['charactersheet.main.dateofbirth']} value={dateofbirth} />
+				<Plain className="age" label={getLocale()['charactersheet.main.age']} value={age} />
+				<Plain className="sex" label={getLocale()['charactersheet.main.sex']} value={sex} />
+				<Plain className="race" label={getLocale()['charactersheet.main.race']} value={raceName} />
+				<Plain className="size" label={getLocale()['charactersheet.main.size']} value={size} />
+				<Plain className="weight" label={getLocale()['charactersheet.main.weight']} value={weight} />
+				<Plain className="haircolor" label={getLocale()['charactersheet.main.haircolor']} value={haircolorName} />
+				<Plain className="eyecolor" label={getLocale()['charactersheet.main.eyecolor']} value={eyecolorName} />
+				<Plain className="culture" label={getLocale()['charactersheet.main.culture']} value={cultureName} />
+				<Plain className="socialstatus" label={getLocale()['charactersheet.main.socialstatus']} value={socialstatusName} />
+				<Plain className="profession" label={getLocale()['charactersheet.main.profession']} value={professionName} />
+				<Plain className="title" label={getLocale()['charactersheet.main.herotitle']} value={title} />
+				<Plain className="characteristics" label={getLocale()['charactersheet.main.characteristics']} value={characteristics} />
+				<Plain className="otherinfo" label={getLocale()['charactersheet.main.otherinfo']} value={otherinfo} />
 			</div>
 			<div className="ap-portrait">
-				<LabelBox className="el" label="Erfahrungsgrad" value={el} />
-				<LabelBox className="ap-total" label="AP gesamt" value={ap.total} />
-				<LabelBox className="portrait" label="Porträt/Wappen"><Avatar src={avatar} img /></LabelBox>
-				<LabelBox className="ap-available" label="AP verfügbar" value={ap.total - ap.spent} />
-				<LabelBox className="ap-used" label="AP ausgegeben" value={ap.spent} />
+				<LabelBox className="el" label={getLocale()['charactersheet.main.experiencelevel']} value={el} />
+				<LabelBox className="ap-total" label={getLocale()['charactersheet.main.totalap']} value={ap.total} />
+				<LabelBox className="portrait" label={getLocale()['charactersheet.main.avatar']}><Avatar src={avatar} img /></LabelBox>
+				<LabelBox className="ap-available" label={getLocale()['charactersheet.main.apcollected']} value={ap.total - ap.spent} />
+				<LabelBox className="ap-used" label={getLocale()['charactersheet.main.apspent']} value={ap.spent} />
 			</div>
 		</div>
 	);

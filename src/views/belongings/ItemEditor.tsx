@@ -60,8 +60,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		}
 		else {
 			this.state = {
-				addMOVPenalty: '',
-				addINIPenalty: '',
+				movMod: '',
+				iniMod: '',
 				stabilityMod: '',
 				amount: '',
 				at: '',
@@ -120,8 +120,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	changeAmmunition = (id: string) => this.setState({ ammunition: id } as ItemEditorInstance);
 	changePRO = (event: InputTextEvent) => this.setState({ pro: event.target.value } as ItemEditorInstance);
 	changeENC = (event: InputTextEvent) => this.setState({ enc: event.target.value } as ItemEditorInstance);
-	changeAddMOVPenalty = (event: InputTextEvent) => this.setState({ addMOVPenalty: event.target.value } as ItemEditorInstance);
-	changeAddINIPenalty = (event: InputTextEvent) => this.setState({ addINIPenalty: event.target.value } as ItemEditorInstance);
+	changeMovMod = (event: InputTextEvent) => this.setState({ movMod: event.target.value } as ItemEditorInstance);
+	changeIniMod = (event: InputTextEvent) => this.setState({ iniMod: event.target.value } as ItemEditorInstance);
 	changeStabilityMod = (event: InputTextEvent) => this.setState({ stabilityMod: event.target.value } as ItemEditorInstance);
 	changeParryingWeapon = () => {
 		this.setState(prevState => ({ isParryingWeapon: !prevState.isParryingWeapon } as ItemEditorInstance));
@@ -145,6 +145,12 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	}
 	changeArmorZoneOnly = () => {
 		this.setState({ forArmorZoneOnly: !this.state.forArmorZoneOnly } as ItemEditorInstance);
+	}
+	changeAddPenalties = () => {
+		this.setState({ addPenalties: !this.state.addPenalties } as ItemEditorInstance);
+	}
+	changeArmorType = (id: number) => {
+		this.setState({ armorType: id } as ItemEditorInstance);
 	}
 
 	applyTemplate = () => {
@@ -184,10 +190,11 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	render() {
 		const { create, node } = this.props;
-		const { addMOVPenalty, addINIPenalty, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
+		const { movMod, iniMod, addPenalties, armorType, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
 
 		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 		const AMMUNITION = [{name: 'Keine'} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const armorTypes = [{id: 1, name: 'Normale Kleidung'}, {id: 2, name: 'Schwere Kleidung'}, {id: 3, name: 'Stoffrüstung'}, {id: 4, name: 'Lederrüstung'}, {id: 5, name: 'Holzrüstung'}, {id: 6, name: 'Kettenrüstung'}, {id: 7, name: 'Schuppenrüstung'}, {id: 8, name: 'Plattenrüstung'}, {id: 9, name: 'Turnierrüstung'}];
 
 		const dice = [{id: 2, name: 'W2'}, {id: 3, name: 'W3'}, {id: 6, name: 'W6'}];
 		const lossTiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
@@ -541,22 +548,15 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								disabled={locked}
 								/>
 						</div>
-						<div className="container armor-add">
-							<TextField
-								className="mov"
-								label="GS"
-								value={addMOVPenalty}
-								onChange={this.changeAddMOVPenalty}
-								disabled={locked}
-								/>
-							<TextField
-								className="ini"
-								label="INI"
-								value={addINIPenalty}
-								onChange={this.changeAddINIPenalty}
-								disabled={locked}
-								/>
-						</div>
+						<Dropdown
+							className="armor-type"
+							label="Rüstungsart"
+							hint="Keine"
+							value={armorType}
+							options={armorTypes}
+							onChange={this.changeArmorType}
+							disabled={locked}
+							/>
 					</div>
 					<div className="row">
 						<div className="container armor-loss-container">
@@ -577,9 +577,34 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						</div>
 						<Checkbox
 							className="only-zones"
-							label="Nur Zonenrüstung"
+							label="Nur für Zonenrüstung"
 							checked={!!forArmorZoneOnly}
 							onClick={this.changeArmorZoneOnly}
+							disabled={locked}
+							/>
+					</div>
+					<div className="row">
+						<div className="container">
+							<TextField
+								className="mov"
+								label="GS-Mod."
+								value={movMod}
+								onChange={this.changeMovMod}
+								disabled={locked}
+								/>
+							<TextField
+								className="ini"
+								label="INI-Mod."
+								value={iniMod}
+								onChange={this.changeIniMod}
+								disabled={locked}
+								/>
+						</div>
+						<Checkbox
+							className="add-penalties"
+							label="Zusätzliche Abzüge"
+							checked={!!addPenalties}
+							onClick={this.changeAddPenalties}
 							disabled={locked}
 							/>
 					</div>

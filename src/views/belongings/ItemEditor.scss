@@ -62,7 +62,10 @@
 						}
 
 						&.armor-loss-container {
-							flex: 1 1 0;
+							.stabilitymod {
+								flex: none;
+								width: 57px;
+							}
 						}
 					}
 
@@ -97,12 +100,16 @@
 					}
 
 					> div.container > div {
-						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc, &.loss {
+						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc, &.loss, &.mov, &.ini {
 							flex: none;
 						}
 
 						&.damage-dice-sides {
 							width: 65px;
+						}
+
+						&.mov, &.ini {
+							width: 57px;
 						}
 
 						&.damage-dice-number, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
@@ -113,10 +120,6 @@
 							input {
 								text-align: center;
 							}
-						}
-
-						&.only-zones {
-							flex-grow: 2;
 						}
 					}
 				}

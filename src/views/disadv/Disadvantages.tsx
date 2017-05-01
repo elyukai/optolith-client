@@ -16,7 +16,7 @@ import { CultureStore } from '../../stores/CultureStore';
 import { DisAdvStore } from '../../stores/DisAdvStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { RaceStore } from '../../stores/RaceStore';
-import { ActiveViewObject, CultureInstance, DisadvantageInstance, InputTextEvent, ProfessionInstance, RaceInstance } from '../../types/data.d';
+import { ActiveViewObject, CultureInstance, DeactiveViewObject, InputTextEvent, ProfessionInstance, RaceInstance } from '../../types/data.d';
 import { ActiveList } from './ActiveList';
 import { DeactiveList } from './DeactiveList';
 
@@ -26,7 +26,7 @@ interface State {
 	showRating: boolean;
 	enableActiveItemHints: boolean;
 	activeList: ActiveViewObject[];
-	list: DisadvantageInstance[];
+	list: DeactiveViewObject[];
 	showAddSlidein: boolean;
 	race: RaceInstance;
 	culture: CultureInstance;
@@ -41,7 +41,7 @@ export class Disadvantages extends React.Component<undefined, State> {
 	state = {
 		culture: CultureStore.getCurrent()!,
 		activeList: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		list: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES) as DisadvantageInstance[],
+		list: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
 		filterText: '',
 		filterTextSlidein: '',
 		profession: ProfessionStore.getCurrent()!,
@@ -126,8 +126,8 @@ export class Disadvantages extends React.Component<undefined, State> {
 
 	private updateDisAdvStore = () => {
 		this.setState({
-			activeList: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
-			list: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
+			activeList: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
+			list: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
 			showRating: DisAdvStore.getRating(),
 			ap: APStore.getForDisAdv()
 		} as State);

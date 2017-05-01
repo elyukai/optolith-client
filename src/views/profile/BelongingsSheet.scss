@@ -20,11 +20,11 @@
 			}
 		}
 
-		thead td {
+		th {
 			text-align: center;
 		}
 
-		tbody td {
+		td {
 			font-weight: 400;
 
 			&.name, &.where {
@@ -34,7 +34,7 @@
 			}
 		}
 
-		td {
+		th, td {
 			&:nth-child(2n) {
 				background: rgba(0, 0, 0, 0.1);
 			}

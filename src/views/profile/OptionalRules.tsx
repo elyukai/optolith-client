@@ -3,6 +3,7 @@ import * as RulesActions from '../../actions/RulesActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
+import { getLocale } from '../../stores/LocaleStore';
 import { RulesStore } from '../../stores/RulesStore';
 
 interface State {
@@ -26,11 +27,17 @@ export class OptionalRules extends React.Component<undefined, State> {
 		return (
 			<div className="page" id="optional-rules">
 				<Scroll>
-					<h3>Regelbasis</h3>
+					<h3>{getLocale()['rules.rulebase']}</h3>
 					<Checkbox
 						checked
 						onClick={this.changeCheckboxTrap}
 						label="Regelwerk"
+						disabled
+						/>
+					<Checkbox
+						checked={false}
+						onClick={this.changeCheckboxTrap}
+						label="Aventurisches Bestiarium"
 						disabled
 						/>
 					<Checkbox
@@ -52,7 +59,7 @@ export class OptionalRules extends React.Component<undefined, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={true}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Aventurische Rüstkammer"
 						disabled
@@ -63,8 +70,20 @@ export class OptionalRules extends React.Component<undefined, State> {
 						label="Die Streitenden Königreiche"
 						disabled
 						/>
-					<h3>Optionalregeln</h3>
-					<div className="options">
+					<Checkbox
+						checked={false}
+						onClick={this.changeCheckboxTrap}
+						label="Die Siebenwindküste"
+						disabled
+						/>
+					<Checkbox
+						checked={false}
+						onClick={this.changeCheckboxTrap}
+						label="Tavernen"
+						disabled
+						/>
+					<h3>{getLocale()['rules.optionalrules']}</h3>
+					<div className="extended">
 						<Checkbox
 							checked={higherParadeValues > 0}
 							onClick={this.switchHigherParadeValues}

@@ -1,7 +1,9 @@
 import { AttributeStore } from '../stores/AttributeStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
+import { getLocale } from '../stores/LocaleStore';
 import { RaceStore } from '../stores/RaceStore';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
+import { isActive } from './ActivatableUtils';
 
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
@@ -11,7 +13,7 @@ const AGI = () => get('AGI') as AttributeInstance;
 const CON = () => get('CON') as AttributeInstance;
 const STR = () => get('STR') as AttributeInstance;
 
-type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
+type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WS';
 
 const addEnergies = () => AttributeStore.getAddEnergies();
 
@@ -31,13 +33,13 @@ export function getLP(): Energy {
 	return {
 		add,
 		base,
-		calc: '(GW der Spezies + KO + KO)',
+		calc: getLocale()['secondaryattributes.lp.calc'],
 		currentAdd: add,
 		id: 'LP',
 		maxAdd: CON().value,
 		mod,
-		name: 'Lebensenergie',
-		short: 'LE',
+		name: getLocale()['secondaryattributes.lp.name'],
+		short: getLocale()['secondaryattributes.lp.short'],
 		value,
 	};
 }
@@ -64,15 +66,15 @@ export function getAE(): EnergyWithLoss {
 	return {
 		add,
 		base,
-		calc: '(20 durch Zauberer + Leiteigenschaft)',
+		calc: getLocale()['secondaryattributes.ae.calc'],
 		currentAdd: add,
 		id: 'AE',
 		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
 		mod,
-		name: 'Astralenergie',
+		name: getLocale()['secondaryattributes.ae.name'],
 		permanentLost,
 		permanentRedeemed,
-		short: 'AE',
+		short: getLocale()['secondaryattributes.ae.short'],
 		value,
 	};
 }
@@ -99,15 +101,15 @@ export function getKP(): EnergyWithLoss {
 	return {
 		add,
 		base,
-		calc: '(20 durch Geweiht + Leiteigenschaft)',
+		calc: getLocale()['secondaryattributes.kp.calc'],
 		currentAdd: add,
 		id: 'KP',
 		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
 		mod,
-		name: 'Karmaenergie',
+		name: getLocale()['secondaryattributes.kp.name'],
 		permanentLost,
 		permanentRedeemed,
-		short: 'KE',
+		short: getLocale()['secondaryattributes.kp.short'],
 		value,
 	};
 }
@@ -115,8 +117,8 @@ export function getKP(): EnergyWithLoss {
 export function getSPI(): SecondaryAttribute {
 	const base = RaceStore.getCurrent()!.spi + Math.round((COU().value + SGC().value + INT().value) / 6);
 	let mod = 0;
-	const increaseObject = (get('ADV_26') as AdvantageInstance).active[0];
-	const decreaseObject = (get('DISADV_29') as DisadvantageInstance).active[0];
+	const increaseObject = isActive(get('ADV_26') as AdvantageInstance);
+	const decreaseObject = isActive(get('DISADV_29') as DisadvantageInstance);
 	if (increaseObject) {
 		mod++;
 	}
@@ -126,11 +128,11 @@ export function getSPI(): SecondaryAttribute {
 	const value = base + mod;
 	return {
 		base,
-		calc: '(GW der Spezies + (MU + KL + IN)/6)',
+		calc: getLocale()['secondaryattributes.spi.calc'],
 		id: 'SPI',
 		mod,
-		name: 'Seelenkraft',
-		short: 'SK',
+		name: getLocale()['secondaryattributes.spi.name'],
+		short: getLocale()['secondaryattributes.spi.short'],
 		value,
 	};
 }
@@ -138,8 +140,8 @@ export function getSPI(): SecondaryAttribute {
 export function getTOU(): SecondaryAttribute {
 	const base = RaceStore.getCurrent()!.tou + Math.round((CON().value * 2 + STR().value) / 6);
 	let mod = 0;
-	const increaseObject = (get('ADV_27') as AdvantageInstance).active[0];
-	const decreaseObject = (get('DISADV_30') as DisadvantageInstance).active[0];
+	const increaseObject = isActive(get('ADV_27') as AdvantageInstance);
+	const decreaseObject = isActive(get('DISADV_30') as DisadvantageInstance);
 	if (increaseObject) {
 		mod++;
 	}
@@ -149,11 +151,11 @@ export function getTOU(): SecondaryAttribute {
 	const value = base + mod;
 	return {
 		base,
-		calc: '(GW der Spezies + (KO + KO + KK)/6)',
+		calc: getLocale()['secondaryattributes.tou.calc'],
 		id: 'TOU',
 		mod,
-		name: 'Zähigkeit',
-		short: 'ZK',
+		name: getLocale()['secondaryattributes.tou.name'],
+		short: getLocale()['secondaryattributes.tou.short'],
 		value,
 	};
 }
@@ -162,10 +164,10 @@ export function getDO(): SecondaryAttribute {
 	const base = Math.round(AGI().value / 2);
 	const value = base;
 	return {
-		calc: '(GE/2)',
+		calc: getLocale()['secondaryattributes.do.calc'],
 		id: 'DO',
-		name: 'Ausweichen',
-		short: 'AW',
+		name: getLocale()['secondaryattributes.do.name'],
+		short: getLocale()['secondaryattributes.do.short'],
 		base,
 		value
 	};
@@ -175,10 +177,10 @@ export function getINI(): SecondaryAttribute {
 	const base = Math.round((COU().value + AGI().value) / 2);
 	const value = base;
 	return {
-		calc: '(MU + GE)/2',
+		calc: getLocale()['secondaryattributes.ini.calc'],
 		id: 'INI',
-		name: 'Initiative',
-		short: 'INI',
+		name: getLocale()['secondaryattributes.ini.name'],
+		short: getLocale()['secondaryattributes.ini.short'],
 		base,
 		value
 	};
@@ -191,10 +193,29 @@ export function getMOV(): SecondaryAttribute {
 		value = Math.round(value / 2);
 	}
 	return {
-		calc: '(GW der Spezies, mögl. Einbeinig)',
+		calc: getLocale()['secondaryattributes.mov.calc'],
 		id: 'MOV',
-		name: 'Geschwindigkeit',
-		short: 'GS',
+		name: getLocale()['secondaryattributes.mov.name'],
+		short: getLocale()['secondaryattributes.mov.short'],
+		base,
+		value
+	};
+}
+
+export function getWS(): SecondaryAttribute {
+	const base = Math.floor(COU().value / 2);
+	let value = base;
+	if (isActive(get('DISADV_54') as DisadvantageInstance)) {
+		value++;
+	}
+	else if (isActive(get('DISADV_56') as DisadvantageInstance)) {
+		value++;
+	}
+	return {
+		calc: getLocale()['secondaryattributes.ws.calc'],
+		id: 'WS',
+		name: getLocale()['secondaryattributes.ws.name'],
+		short: getLocale()['secondaryattributes.ws.short'],
 		base,
 		value
 	};
@@ -218,6 +239,8 @@ function _get(id: ids): SecondaryAttribute {
 			return getINI();
 		case 'MOV':
 			return getMOV();
+		case 'WS':
+			return getWS();
 	}
 }
 
@@ -233,5 +256,6 @@ export function getAll(): SecondaryAttribute[] {
 		getDO(),
 		getINI(),
 		getMOV(),
+		getWS(),
 	];
 }

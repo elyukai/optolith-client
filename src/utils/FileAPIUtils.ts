@@ -1,5 +1,5 @@
 import { remote } from 'electron';
-import { readFile, writeFile, writeFileSync } from 'fs';
+import * as fs from 'fs';
 import { join } from 'path';
 import * as FileActions from '../actions/FileActions';
 import { CombatTechniquesStore } from '../stores/CombatTechniquesStore';
@@ -9,13 +9,15 @@ import { DisAdvStore } from '../stores/DisAdvStore';
 import { EquipmentStore } from '../stores/EquipmentStore';
 import { HerolistStore } from '../stores/HerolistStore';
 import { LiturgiesStore } from '../stores/LiturgiesStore';
+import { LocaleStore } from '../stores/LocaleStore';
 import { ProfessionStore } from '../stores/ProfessionStore';
 import { RaceStore } from '../stores/RaceStore';
 import { SheetStore } from '../stores/SheetStore';
 import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
 import { SpellsStore } from '../stores/SpellsStore';
 import { TalentsStore } from '../stores/TalentsStore';
-import { Config } from '../types/rawdata.d';
+import { ToListById } from '../types/data.d';
+import { Config, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { alert } from './alert';
 
 function getAppDataPath() {
@@ -47,30 +49,52 @@ const initialConfig: Config = {
 	enableActiveItemHints: false
 };
 
-export function loadInitialData() {
+export async function loadInitialData() {
 	const appPath = getAppDataPath();
-	readFile(join(remote.app.getAppPath(), 'resources/data.json'), 'utf8', (error, data) => {
-		if (error) {
-			alert('Fehler', `Bei der Laden der Regeln ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+	const root = remote.app.getAppPath();
+	let tables: RawTables;
+	let heroes: RawHerolist;
+	let config: Config;
+	const locales: ToListById<RawLocale> = {};
+	try {
+		const result = await readFile(join(root, 'resources/data.json'));
+		tables = JSON.parse(result);
+	}
+	catch (error) {
+		alert('Fehler', `Bei der Laden der Regeln ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		tables = { adv: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadv: {}, el: {}, items: {}, liturgies: {}, professionVariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
+	}
+	try {
+		const result = await readFile(join(appPath, 'config.json'));
+		config = { ...initialConfig, ...JSON.parse(result) };
+	}
+	catch (error) {
+		config = initialConfig;
+	}
+	try {
+		const result = await readFile(join(appPath, 'heroes.json'));
+		heroes = JSON.parse(result);
+	}
+	catch (error) {
+		heroes = {};
+	}
+	try {
+		const result = await readDir(join(root, 'resources/locales'));
+		for (const file of result) {
+			const locale = await readFile(join(root, 'resources/locales', file));
+			locales[file.split('.')[0]] = JSON.parse(locale);
 		}
-		else {
-			const tables = JSON.parse(data);
-			const configPath = join(appPath, 'config.json');
-			readFile(configPath, 'utf8', (error, data) => {
-				const config = error ? initialConfig : { ...initialConfig, ...JSON.parse(data) };
-				const heroesPath = join(appPath, 'heroes.json');
-				readFile(heroesPath, 'utf8', (error, data) => {
-					const heroes = error ? [] : JSON.parse(data);
-					const initialData = {
-						config,
-						heroes,
-						tables,
-					};
-					FileActions.receiveInitialData(initialData);
-				});
-			});
-		}
-	});
+	}
+	catch (error) {
+		alert('Fehler', `Bei der Laden der Lokalisierungen ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+	}
+	const initialData = {
+		config,
+		heroes,
+		tables,
+		locales
+	};
+	FileActions.receiveInitialData(initialData);
 }
 
 export function saveConfig() {
@@ -99,11 +123,12 @@ export function saveConfig() {
 		equipmentSortOrder: EquipmentStore.getSortOrder(),
 		equipmentGroupVisibilityFilter: 1,
 		...SheetStore.getForSave(),
-		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
+		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility(),
+		locale: LocaleStore.getForSave()
 	};
 
 	try {
-		writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
+		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
 	}
 	catch (error) {
 		alert('Fehler', `Beim Speichern der Anwendungskonfiguration ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
@@ -116,34 +141,32 @@ export function saveAllHeroes() {
 	const data = HerolistStore.getAllForSave();
 
 	try {
-		writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
+		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
 	}
 	catch (error) {
 		alert('Fehler', `Beim Speichern der Helden ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
 	}
 }
 
-export function saveHero(indexId: string) {
+export async function saveHero(id: string) {
 	const currentWindow = remote.getCurrentWindow();
-	const data = HerolistStore.getForSave(indexId);
-	remote.dialog.showSaveDialog(currentWindow, {
+	const data = HerolistStore.getForSave(id);
+	const filename = await showSaveDialog(currentWindow, {
 		title: 'Held als JSON speichern',
 		filters: [
 			{name: 'JSON', extensions: ['json']},
 		],
 		defaultPath: data.name.replace(/\//, '\/')
-	}, filename => {
-		if (filename) {
-			writeFile(filename, JSON.stringify(data), error => {
-				if (error) {
-					alert('Fehler', `Beim Speichern der Datei ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
-				}
-				else {
-					alert('Held gepeichert');
-				}
-			});
-		}
 	});
+	if (filename) {
+		try {
+			await writeFile(filename, JSON.stringify(data));
+			alert('Held gespeichert');
+		}
+		catch (error) {
+			alert('Fehler', `Beim Speichern der Datei ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		}
+	}
 }
 
 export function saveAll() {
@@ -151,45 +174,106 @@ export function saveAll() {
 	saveAllHeroes();
 }
 
-export function printToPDF() {
+export async function printToPDF() {
 	const currentWindow = remote.getCurrentWindow();
-	currentWindow.webContents.printToPDF({
-		marginsType: 1,
-		pageSize: 'A4',
-		printBackground: true,
-	}, (error, data) => {
-		if (error) {
-			alert('Fehler', `Bei der Generierung der PDF ist ein Fehler aufgetreten. Versuche es noch einmal. Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+	try {
+		const data = await windowPrintToPDF(currentWindow, {
+			marginsType: 1,
+			pageSize: 'A4',
+			printBackground: true,
+		});
+		const filename = await showSaveDialog(currentWindow, {
+			title: 'Heldendokument als PDF speichern',
+			filters: [
+				{name: 'PDF', extensions: ['pdf']},
+			],
+		});
+		if (filename) {
+			try {
+				await writeFile(filename, data);
+				alert('PDF gespeichert');
+			}
+			catch (error) {
+				alert('Fehler', `Beim Speichern der PDF ist ein Fehler aufgetreten. Überprüfe, ob, wenn du hiermit eine alte PDF überschreibst, du diese alte PDF nicht irgendwo geöffnet hast, denn solange sie geöffnet ist, kann sie nicht überschrieben werden! Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+			}
 		}
-		else {
-			remote.dialog.showSaveDialog(currentWindow, {
-				title: 'Heldendokument als PDF speichern',
-				filters: [
-					{name: 'PDF', extensions: ['pdf']},
-				],
-			}, filename => {
-				if (filename) {
-					writeFile(filename, data, error => {
-						if (error) {
-							alert('Fehler', `Beim Speichern der PDF ist ein Fehler aufgetreten. Überprüfe, ob, wenn du hiermit eine alte PDF überschreibst, du diese alte PDF nicht irgendwo geöffnet hast, denn solange sie geöffnet ist, kann sie nicht überschrieben werden! Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
-						}
-						else {
-							alert('PDF gespeichert');
-						}
-					});
-				}
-			});
-		}
+	}
+	catch (error) {
+		alert('Fehler', `Bei der Generierung der PDF ist ein Fehler aufgetreten. Versuche es noch einmal. Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+	}
+}
+
+export async function importHero(path: string) {
+	try {
+		const result = await readFile(path);
+		FileActions.receiveImportedHero(JSON.parse(result));
+	}
+	catch (error) {
+		alert('Fehler', `Bei der Laden der Datei ist ein Fehler aufgetreten. (Fehler: ${JSON.stringify(error)})`);
+	}
+}
+
+export function readFile(path: string, encoding: string = 'utf8') {
+	return new Promise<string>((resolve, reject) => {
+		fs.readFile(path, encoding, (error, data) => {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(data);
+			}
+		});
 	});
 }
 
-export function importHero(path: string) {
-	readFile(path, 'utf8', (error, data) => {
-		if (error) {
-			alert('Fehler', `Bei der Laden der Datei ist ein Fehler aufgetreten. (Fehler: ${JSON.stringify(error)})`);
-		}
-		else {
-			FileActions.receiveImportedHero(JSON.parse(data));
-		}
+export function readDir(path: string) {
+	return new Promise<string[]>((resolve, reject) => {
+		fs.readdir(path, (error, data) => {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(data);
+			}
+		});
+	});
+}
+
+export function writeFile(path: string, data: any) {
+	return new Promise<void>((resolve, reject) => {
+		fs.writeFile(path, data, error => {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve();
+			}
+		});
+	});
+}
+/**
+ * Prints windows' web page as PDF with Chromium's preview printing custom settings.
+ */
+export function windowPrintToPDF(window: Electron.BrowserWindow, options: Electron.PrintToPDFOptions) {
+	return new Promise<Buffer>((resolve, reject) => {
+		window.webContents.printToPDF(options, (error, data) => {
+			if (error) {
+				reject(error);
+			}
+			else {
+				resolve(data);
+			}
+		});
+	});
+}
+
+/**
+ * Shows a native save dialog.
+ */
+export function showSaveDialog(window: Electron.BrowserWindow, options: Electron.SaveDialogOptions) {
+	return new Promise<string | undefined>(resolve => {
+		remote.dialog.showSaveDialog(window, options, filename => {
+			resolve(filename);
+		});
 	});
 }

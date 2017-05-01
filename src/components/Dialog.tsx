@@ -22,9 +22,8 @@ export class Dialog extends React.Component<DialogProps, {}> {
 	}
 
 	render() {
-		const { buttons = [], className, title, ...other } = this.props;
+		const { buttons = [], className, title, node: _, ...other } = this.props;
 		const contentStyle = buttons.length === 0 ? { paddingBottom: 26 } : {};
-		delete other.node;
 
 		return (
 			<div

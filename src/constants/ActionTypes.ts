@@ -1,3 +1,6 @@
+export const SET_LOCALE = 'SET_LOCALE';
+export type SET_LOCALE = 'SET_LOCALE';
+
 export const RECEIVE_DATA_TABLES = 'RECEIVE_DATA_TABLES';
 export type RECEIVE_DATA_TABLES = 'RECEIVE_DATA_TABLES';
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
+import { getLocale } from '../../stores/LocaleStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { OptionalRules } from './OptionalRules';
 import { Overview } from './Overview';
@@ -50,17 +51,17 @@ export class Profile extends React.Component<undefined, ProfileState> {
 		const tabs = [
 			{
 				id: 'overview',
-				label: 'Übersicht',
+				label: getLocale()['titlebar.tabs.profileoverview'],
 			},
 		];
 
 		if (phase === 3) {
 			tabs.push({
 				id: 'sheets',
-				label: 'Heldenbogen',
+				label: getLocale()['titlebar.tabs.charactersheet'],
 			}, {
 				id: 'optionalRules',
-				label: 'Optionalregeln',
+				label: getLocale()['titlebar.tabs.rules'],
 			});
 		}
 

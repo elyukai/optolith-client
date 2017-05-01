@@ -76,20 +76,21 @@ table {
 		width: 100%;
 	}
 
-	td {
+	th, td {
 		border-style: solid;
 		border-color: #c8c8c8;
 		border-width: 0;
+		padding: 0;
 	}
 
-	thead td {
+	th {
 		height: 5mm;
 		border-width: 0.3mm 0;
 		font: bold 10px/1 Alegreya SC;
 		border-color: grey;
 	}
 
-	tbody td {
+	td {
 		height: 4.5mm;
 		border-width: 0 0 0.15mm;
 		font: 500 11px/1 Alegreya Sans;

@@ -19,7 +19,6 @@ class CultureStoreStatic extends Store {
 	private valueVisibility = true;
 	private visibilityFilter = 'common';
 	readonly dispatchToken: string;
-	readonly socialstatus = [ 'Unfrei', 'Frei', 'Niederadel', 'Adel', 'Hochadel' ];
 
 	constructor() {
 		super();

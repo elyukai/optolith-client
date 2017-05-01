@@ -4,6 +4,7 @@ import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
 import { getAt } from '../../utils/CombatTechniqueUtils';
+import { getRoman } from '../../utils/roman';
 
 export function CombatSheetRangedWeapons() {
 	const items = EquipmentStore.getAll().filter(e => e.gr === 2);
@@ -13,14 +14,18 @@ export function CombatSheetRangedWeapons() {
 		<TextBox label="Fernkampfwaffen" className="melee-weapons">
 			<table>
 				<thead>
-					<td className="name">Waffe</td>
-					<td className="combat-technique">Kampftechnik</td>
-					<td className="reload-time">Ladezeiten</td>
-					<td className="damage">TP</td>
-					<td className="range">Reichweite</td>
-					<td className="ranged">Fernkampf</td>
-					<td className="ammunition">Munition</td>
-					<td className="weight">Gewicht</td>
+					<tr>
+						<th className="name">Waffe</th>
+						<th className="combat-technique">Kampftechnik</th>
+						<th className="reload-time">Ladezeiten</th>
+						<th className="damage">TP</th>
+						<th className="ammunition">Munition</th>
+						<th className="range">Reichweite</th>
+						<th className="bf">BF</th>
+						<th className="loss">V.</th>
+						<th className="ranged">Fernkampf</th>
+						<th className="weight">Gewicht</th>
+					</tr>
 				</thead>
 				<tbody>
 					{
@@ -34,9 +39,11 @@ export function CombatSheetRangedWeapons() {
 										<td className="combat-technique">{combatTechnique.name}</td>
 										<td className="reload-time">{e.reloadTime} Akt.</td>
 										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{e.damageFlat && e.damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
-										<td className="range">{e.range && e.range.join('/')}</td>
-										<td className="ranged">{getAt(combatTechnique)}</td>
 										<td className="ammunition">{ammunition && ammunition.name}</td>
+										<td className="range">{e.range && e.range.join('/')}</td>
+										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
+										<td className="loss">{e.loss && getRoman(e.loss)}</td>
+										<td className="ranged">{getAt(combatTechnique)}</td>
 										<td className="weight">{e.weight} Stn</td>
 									</tr>
 								);
@@ -48,9 +55,11 @@ export function CombatSheetRangedWeapons() {
 										<td className="combat-technique"></td>
 										<td className="reload-time"></td>
 										<td className="damage"></td>
-										<td className="range"></td>
-										<td className="ranged"></td>
 										<td className="ammunition"></td>
+										<td className="range"></td>
+										<td className="bf"></td>
+										<td className="loss"></td>
+										<td className="ranged"></td>
 										<td className="weight"></td>
 									</tr>
 								);

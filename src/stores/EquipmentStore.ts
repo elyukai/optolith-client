@@ -131,6 +131,42 @@ class EquipmentStoreStatic extends Store {
 		return this.purse;
 	}
 
+	getEncumbranceZoneTiers() {
+		return [0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8];
+	}
+
+	getZoneArmor(id?: string) {
+		if (id) {
+			return this.getTemplate(id) || this.get(id);
+		}
+		return;
+	}
+
+	getProtectionAndWeight(item: ArmorZonesInstance) {
+		const headArmor = this.getZoneArmor(item.head);
+		const torsoArmor = this.getZoneArmor(item.torso);
+		const leftArmArmor = this.getZoneArmor(item.leftArm);
+		const rightArmArmor = this.getZoneArmor(item.rightArm);
+		const leftLegArmor = this.getZoneArmor(item.leftLeg);
+		const rightLegArmor = this.getZoneArmor(item.rightLeg);
+		const headWeight = headArmor !== undefined ? (headArmor.weight || 0) : 0;
+		const headArmorValue = headArmor !== undefined ? (headArmor.pro || 0) : 0;
+		const torsoWeight = torsoArmor !== undefined ? (torsoArmor.weight || 0) : 0;
+		const torsoArmorValue = torsoArmor !== undefined ? (torsoArmor.pro || 0) : 0;
+		const leftArmWeight = leftArmArmor !== undefined ? (leftArmArmor.weight || 0) : 0;
+		const leftArmArmorValue = leftArmArmor !== undefined ? (leftArmArmor.pro || 0) : 0;
+		const rightArmWeight = rightArmArmor !== undefined ? (rightArmArmor.weight || 0) : 0;
+		const rightArmArmorValue = rightArmArmor !== undefined ? (rightArmArmor.pro || 0) : 0;
+		const leftLegWeight = leftLegArmor !== undefined ? (leftLegArmor.weight || 0) : 0;
+		const leftLegArmorValue = leftLegArmor !== undefined ? (leftLegArmor.pro || 0) : 0;
+		const rightLegWeight = rightLegArmor !== undefined ? (rightLegArmor.weight || 0) : 0;
+		const rightLegArmorValue = rightLegArmor !== undefined ? (rightLegArmor.pro || 0) : 0;
+		return {
+			pro: headArmorValue * 1 + torsoArmorValue * 5 + (leftArmArmorValue + rightArmArmorValue + leftLegArmorValue + rightLegArmorValue) * 2,
+			weight: torsoWeight * 0.5 + (headWeight + leftArmWeight + rightArmWeight + leftLegWeight + rightLegWeight) * 0.1
+		};
+	}
+
 	getTotalPriceAndWeight() {
 		const items = this.getAll();
 		const armorZones = this.getAllArmorZones();
@@ -141,12 +177,12 @@ class EquipmentStoreStatic extends Store {
 		}), { price: 0, weight: 0 });
 
 		const armorZonesResult = armorZones.reduce((n, i) => {
-			const headArmor: ItemInstance | undefined = i.head ? (this.getTemplate(i.head) || this.get(i.head)) : undefined;
-			const torsoArmor: ItemInstance | undefined = i.torso ? (this.getTemplate(i.torso) || this.get(i.torso)) : undefined;
-			const leftArmArmor: ItemInstance | undefined = i.leftArm ? (this.getTemplate(i.leftArm) || this.get(i.leftArm)) : undefined;
-			const rightArmArmor: ItemInstance | undefined = i.rightArm ? (this.getTemplate(i.rightArm) || this.get(i.rightArm)) : undefined;
-			const leftLegArmor: ItemInstance | undefined = i.leftLeg ? (this.getTemplate(i.leftLeg) || this.get(i.leftLeg)) : undefined;
-			const rightLegArmor: ItemInstance | undefined = i.rightLeg ? (this.getTemplate(i.rightLeg) || this.get(i.rightLeg)) : undefined;
+			const headArmor = this.getZoneArmor(i.head);
+			const torsoArmor = this.getZoneArmor(i.torso);
+			const leftArmArmor = this.getZoneArmor(i.leftArm);
+			const rightArmArmor = this.getZoneArmor(i.rightArm);
+			const leftLegArmor = this.getZoneArmor(i.leftLeg);
+			const rightLegArmor = this.getZoneArmor(i.rightLeg);
 			const headPrice = headArmor !== undefined ? (headArmor.price || 0) : 0;
 			const headWeight = headArmor !== undefined ? (headArmor.weight || 0) : 0;
 			const torsoPrice = torsoArmor !== undefined ? (torsoArmor.price || 0) : 0;
@@ -160,8 +196,8 @@ class EquipmentStoreStatic extends Store {
 			const rightLegPrice = rightLegArmor !== undefined ? (rightLegArmor.price || 0) : 0;
 			const rightLegWeight = rightLegArmor !== undefined ? (rightLegArmor.weight || 0) : 0;
 			return {
-				price: n.price + headPrice * 0.1 + torsoPrice * 0.5 + leftArmPrice * 0.1 + rightArmPrice * 0.1 + leftLegPrice * 0.1 + rightLegPrice * 0.1,
-				weight: n.weight + headWeight * 0.1 + torsoWeight * 0.5 + leftArmWeight * 0.1 + rightArmWeight * 0.1 + leftLegWeight * 0.1 + rightLegWeight * 0.1
+				price: n.price + torsoPrice * 0.5 + (headPrice + leftArmPrice + rightArmPrice + leftLegPrice + rightLegPrice) * 0.1,
+				weight: n.weight + torsoWeight * 0.5 + (headWeight + leftArmWeight + rightArmWeight + leftLegWeight + rightLegWeight) * 0.1
 			};
 		}, { price: 0, weight: 0 });
 

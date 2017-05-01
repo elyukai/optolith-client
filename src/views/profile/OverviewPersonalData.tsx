@@ -4,6 +4,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
+import { getLocale } from '../../stores/LocaleStore';
 import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
 
 interface Props {
@@ -58,35 +59,35 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 			<div className="personal-data">
 				<div>
 					<TextField
-						label="Familie"
+						label={getLocale()['personaldata.family']}
 						value={family}
 						onChange={this.changeFamily}
 						/>
 				</div>
 				<div>
 					<TextField
-						label="Geburtsort"
+						label={getLocale()['personaldata.placeofbirth']}
 						value={placeofbirth}
 						onChange={this.changePlaceOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						label="Geburtsdatum"
+						label={getLocale()['personaldata.dateofbirth']}
 						value={dateofbirth}
 						onChange={this.changeDateOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						label="Alter"
+						label={getLocale()['personaldata.age']}
 						value={age}
 						onChange={this.changeAge}
 						/>
 				</div>
 				<InputButtonGroup className="reroll">
 					<Dropdown
-						label="Haarfarbe"
+						label={getLocale()['personaldata.haircolor']}
 						value={haircolor}
 						onChange={this.changeHaircolor}
 						options={hairArr}
@@ -95,7 +96,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<Dropdown
-						label="Augenfarbe"
+						label={getLocale()['personaldata.eyecolor']}
 						value={eyecolor}
 						onChange={this.changeEyecolor}
 						options={eyesArr}
@@ -104,7 +105,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						label="Körpergröße"
+						label={getLocale()['personaldata.size']}
 						value={size}
 						onChange={this.changeSize}
 						/>
@@ -112,7 +113,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						label="Gewicht"
+						label={getLocale()['personaldata.size']}
 						value={weight}
 						onChange={this.changeWeight}
 						/>
@@ -120,14 +121,14 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<div>
 					<TextField
-						label="Titel"
+						label={getLocale()['personaldata.title']}
 						value={title}
 						onChange={this.changeTitle}
 						/>
 				</div>
 				<div>
 					<Dropdown
-						label="Sozialstatus"
+						label={getLocale()['personaldata.socialstatus']}
 						value={socialstatus}
 						onChange={this.changeSocialStatus}
 						options={socialArr}
@@ -135,21 +136,21 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</div>
 				<div>
 					<TextField
-						label="Charakteristika"
+						label={getLocale()['personaldata.characteristics']}
 						value={characteristics}
 						onChange={this.changeCharacteristics}
 						/>
 				</div>
 				<div>
 					<TextField
-						label="Sonstiges"
+						label={getLocale()['personaldata.otherinfo']}
 						value={otherinfo}
 						onChange={this.changeOtherInfo}
 						/>
 				</div>
 				<div>
 					<TextField
-						label="Ortskenntnis durch Kultur"
+						label={getLocale()['personaldata.cultureareaknowledge']}
 						value={cultureAreaKnowledge}
 						onChange={this.changeCultureAreaKnowledge}
 						/>

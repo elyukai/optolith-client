@@ -8,7 +8,6 @@ interface State {
 }
 
 export class DisAdv extends React.Component<undefined, State> {
-
 	state = {
 		tab: 'adv',
 	};
@@ -16,7 +15,6 @@ export class DisAdv extends React.Component<undefined, State> {
 	handleClick = (tab: string) => this.setState({ tab });
 
 	render() {
-
 		let element;
 
 		switch (this.state.tab) {

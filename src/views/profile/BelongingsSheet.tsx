@@ -53,11 +53,11 @@ export function BelongingsSheet() {
 							<table>
 								<thead>
 									<tr>
-										<td className="name">Gegenstand</td>
-										<td className="amount">#</td>
-										<td className="price">Wert</td>
-										<td className="weight">Gew.</td>
-										<td className="where">Wo getragen</td>
+										<th className="name">Gegenstand</th>
+										<th className="amount">#</th>
+										<th className="price">Wert</th>
+										<th className="weight">Gew.</th>
+										<th className="where">Wo getragen</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -69,11 +69,11 @@ export function BelongingsSheet() {
 							<table>
 								<thead>
 									<tr>
-										<td className="name">Gegenstand</td>
-										<td className="amount">#</td>
-										<td className="price">Wert</td>
-										<td className="weight">Gew.</td>
-										<td className="where">Wo getragen</td>
+										<th className="name">Gegenstand</th>
+										<th className="amount">#</th>
+										<th className="price">Wert</th>
+										<th className="weight">Gew.</th>
+										<th className="where">Wo getragen</th>
 									</tr>
 								</thead>
 								<tbody>

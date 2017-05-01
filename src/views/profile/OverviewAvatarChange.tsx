@@ -4,6 +4,7 @@ import * as ProfileActions from '../../actions/ProfileActions';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { Dialog } from '../../components/Dialog';
+import { getLocale } from '../../stores/LocaleStore';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -46,19 +47,19 @@ export class OverviewAvatarChange extends React.Component<Props, State> {
 		return (
 			<Dialog
 				id="profileavatarchange"
-				title="Portrait ändern"
+				title={getLocale()['changeheroavatar.title']}
 				node={this.props.node}
 				buttons={[
 					{
 						disabled: fileValid === false || url === '',
-						label: 'Ändern',
+						label: getLocale()['changeheroavatar.actions.change'],
 						onClick: this.load,
 					},
 				]}
 				>
-				<BorderButton label="Datei auswählen" onClick={this.selectFile} />
+				<BorderButton label={getLocale()['changeheroavatar.options.selectfile']} onClick={this.selectFile} />
 				{fileValid === true && url !== '' && <AvatarWrapper src={url} />}
-				{fileValid === false && url !== '' && <p>Die Datei ist ungültig! Überprüfe bitte das Dateiformat und die Dateigröße!</p>}
+				{fileValid === false && url !== '' && <p>{getLocale()['changeheroavatar.warnings.invalidfile']}</p>}
 			</Dialog>
 		);
 	}

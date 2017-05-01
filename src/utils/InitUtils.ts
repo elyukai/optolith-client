@@ -164,7 +164,7 @@ export function initAttribute(raw: RawAttribute): AttributeInstance {
 }
 
 export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueInstance {
-	const { id, name, gr, skt, leit } = raw;
+	const { id, name, gr, skt, leit, bf } = raw;
 	return {
 		category: Categories.COMBAT_TECHNIQUES,
 		dependencies: [],
@@ -174,6 +174,7 @@ export function initCombatTechnique(raw: RawCombatTechnique): CombatTechniqueIns
 		name,
 		primary: leit,
 		value: 6,
+		bf
 	};
 }
 
@@ -264,8 +265,7 @@ export function initItem(raw: RawItem): ItemInstance {
 	const { addPenalties, ...other } = raw;
 	return {
 		...other,
-		addMOVPenalty: addPenalties ? 1 : undefined,
-		addINIPenalty: addPenalties ? 1 : undefined,
+		addPenalties,
 		amount: 1,
 		isTemplateLocked: true
 	};

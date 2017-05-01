@@ -33,18 +33,18 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 		const { add, data } = this.props;
 		const { isTemplateLocked, template, where } = data;
 		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template!), where } : data;
-		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, addMOVPenalty, addINIPenalty } = item;
+		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties } = item;
 
 		const numberValue = amount > 1 ? amount : null;
 
-		const addPenalties = [];
+		const addPenaltiesArr = [];
 
-		if (typeof addMOVPenalty === 'number') {
-			addPenalties.push(`-${addMOVPenalty} GS`);
+		if (typeof movMod === 'number' && addPenalties === true) {
+			addPenaltiesArr.push(`-${1 + movMod} GS`);
 		}
 
-		if (typeof addINIPenalty === 'number') {
-			addPenalties.push(`-${addINIPenalty} INI`);
+		if (typeof iniMod === 'number' && addPenalties === true) {
+			addPenaltiesArr.push(`-${1 + iniMod} INI`);
 		}
 
 		return (
@@ -157,7 +157,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 						</tbody>
 					</table> : null}
 					{ gr === 4 ? <p className="armor">
-						Zus. Abzüge: {addPenalties.length > 0 ? addPenalties.join(', ') : '-'}
+						Zus. Abzüge: {addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}
 					</p> : null}
 				</div>
 			} margin={11}>

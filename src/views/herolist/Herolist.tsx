@@ -15,6 +15,7 @@ import { CultureStore } from '../../stores/CultureStore';
 import { ELStore } from '../../stores/ELStore';
 import { HerolistStore } from '../../stores/HerolistStore';
 import { HistoryStore } from '../../stores/HistoryStore';
+import { getLocale } from '../../stores/LocaleStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
@@ -60,7 +61,7 @@ export class Herolist extends React.Component<undefined, State> {
 			createOverlay(<HeroCreation />);
 		}
 		else {
-			confirm('Ungespeicherte Aktionen', 'Beim aktuell geöffneten Helden sind einige Aktionen ungespeichert. Soll ohne Speichern fortgefahren werden?', true).then(result => {
+			confirm(getLocale()['heroes.warnings.unsavedactions.title'], getLocale()['heroes.warnings.unsavedactions.text'], true).then(result => {
 				if (result === true) {
 					createOverlay(<HeroCreation />);
 				}
@@ -114,7 +115,7 @@ export class Herolist extends React.Component<undefined, State> {
 				<Page>
 					<Options>
 						<TextField
-							hint="Suchen"
+							hint={getLocale()['options.filtertext']}
 							value={filterText}
 							onChange={this.filter}
 							fullWidth
@@ -123,9 +124,9 @@ export class Herolist extends React.Component<undefined, State> {
 							value={view}
 							onChange={this.changeView}
 							options={[
-								{ id: 'all', name: 'Alle Helden' },
-								{ id: 'own', name: 'Eigene Helden' },
-								{ id: 'shared', name: 'Geteilte Helden' },
+								{ id: 'all', name: getLocale()['heroes.options.filter.all'] },
+								{ id: 'own', name: getLocale()['heroes.options.filter.own'] },
+								{ id: 'shared', name: getLocale()['heroes.options.filter.shared'] },
 							]}
 							fullWidth
 							/>
@@ -134,17 +135,17 @@ export class Herolist extends React.Component<undefined, State> {
 							onClick={this.sort}
 							array={[
 								{
-									name: 'Alphabetisch',
+									name: getLocale()['options.sortorder.alphabetically'],
 									value: 'name',
 								},
 								{
-									name: 'AP',
+									name: getLocale()['options.sortorder.ap'],
 									value: 'ap',
 								},
 							]}
 							/>
-						<BorderButton label="Erstellen" onClick={this.showHeroCreation} primary />
-						<BorderButton label="Importieren" onClick={this.importHero} />
+						<BorderButton label={getLocale()['heroes.actions.create']} onClick={this.showHeroCreation} primary />
+						<BorderButton label={getLocale()['heroes.actions.import']} onClick={this.importHero} />
 					</Options>
 					<Scroll>
 						<List>
@@ -152,7 +153,7 @@ export class Herolist extends React.Component<undefined, State> {
 								HerolistStore.getCurrentId() === undefined && ELStore.getStartID() !== 'EL_0' && (
 									<HerolistItem
 										avatar={ProfileStore.getAvatar()}
-										name="Ungespeicherter Held"
+										name={getLocale()['heroes.view.unsavedhero.title']}
 										ap={{ total: APStore.getTotal() }}
 										r={RaceStore.getCurrentID()}
 										c={CultureStore.getCurrentID()}

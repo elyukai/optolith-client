@@ -3,6 +3,7 @@ import { Scroll } from '../../components/Scroll';
 import { getAE, getKP } from '../../utils/secondaryAttributes';
 import { BelongingsSheet } from './BelongingsSheet';
 import { CombatSheet } from './CombatSheet';
+import { CombatSheetZones } from './CombatSheetZones';
 import { LiturgiesSheet } from './LiturgiesSheet';
 import { MainSheet } from './MainSheet';
 import { SkillsSheet } from './SkillsSheet';
@@ -15,6 +16,7 @@ export function Sheets() {
 				<MainSheet />
 				<SkillsSheet />
 				<CombatSheet />
+				<CombatSheetZones />
 				<BelongingsSheet />
 				{ typeof getAE().value === 'number' ? <SpellsSheet /> : null }
 				{ typeof getKP().value === 'number' ? <LiturgiesSheet /> : null }

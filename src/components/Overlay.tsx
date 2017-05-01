@@ -110,13 +110,8 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
 	}
 
 	render() {
-		const { children, className, ...other } = this.props;
+		const { children, className, node: _node, margin: _margin, position: _position, trigger: _trigger, ...other } = this.props;
 		const { position, style } = this.state;
-
-		delete other.margin;
-		delete other.node;
-		delete other.position;
-		delete other.trigger;
 
 		const newOther = { ...other, style };
 

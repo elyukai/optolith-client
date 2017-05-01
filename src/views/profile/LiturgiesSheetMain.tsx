@@ -74,17 +74,19 @@ export function LiturgiesSheetMain(props: Props) {
 		<TextBox label="Liturgien &amp; Zeremonien" className="skill-list">
 			<table>
 				<thead>
-					<td className="name">Liturgie/Zeremonie</td>
-					<td className="check">Probe</td>
-					<td className="value">Fw</td>
-					<td className="cost">Kosten</td>
-					<td className="cast-time">Liturgie&shy;dauer</td>
-					<td className="range">Reich&shy;weite</td>
-					<td className="duration">Wirkungs&shy;dauer</td>
-					<td className="aspect">Aspekt</td>
-					<td className="ic">Sf.</td>
-					<td className="effect">Wirkung</td>
-					<td className="ref">S.</td>
+					<tr>
+						<th className="name">Liturgie/Zeremonie</th>
+						<th className="check">Probe</th>
+						<th className="value">Fw</th>
+						<th className="cost">Kosten</th>
+						<th className="cast-time">Liturgie&shy;dauer</th>
+						<th className="range">Reich&shy;weite</th>
+						<th className="duration">Wirkungs&shy;dauer</th>
+						<th className="aspect">Aspekt</th>
+						<th className="ic">Sf.</th>
+						<th className="effect">Wirkung</th>
+						<th className="ref">S.</th>
+					</tr>
 				</thead>
 				<tbody>
 					{

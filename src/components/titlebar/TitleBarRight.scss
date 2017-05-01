@@ -4,7 +4,7 @@
 	position: relative;
 	margin: 0 35px;
 	align-items: center;
-		
+
 	// &:before {
 	// 	display: block;
 	// 	position: absolute;
@@ -34,5 +34,11 @@
 		margin: 0 11px 0 35px;
 		position: relative;
 		text-transform: uppercase;
+	}
+}
+
+.ap-details {
+	p > span {
+		display: block;
 	}
 }
