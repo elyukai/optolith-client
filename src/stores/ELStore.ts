@@ -2,14 +2,16 @@ import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ExperienceLevel } from '../types/data.d';
-import { RawExperienceLevel } from '../types/rawdata.d';
+import { ExperienceLevel, ToListById } from '../types/data.d';
+import { RawExperienceLevel, RawExperienceLevelLocale } from '../types/rawdata.d';
+import { initExperienceLevel } from '../utils/InitUtils';
+import { LocaleStore } from './LocaleStore';
 import { Store } from './Store';
 
 type Action = CreateHeroAction | LoadHeroAction | ReceiveInitialDataAction;
 
 class ELStoreStatic extends Store {
-	private byId: { [id: string]: ExperienceLevel } = {};
+	private byId: ToListById<ExperienceLevel> = {};
 	private allIds: string[];
 	private start = 'EL_0';
 	readonly dispatchToken: string;
@@ -27,7 +29,8 @@ class ELStoreStatic extends Store {
 					break;
 
 				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.init(action.payload.tables.el);
+					AppDispatcher.waitFor([LocaleStore.dispatchToken]);
+					this.init(action.payload.tables.el, action.payload.locales[LocaleStore.getLocale()!].el);
 					break;
 
 				default:
@@ -54,31 +57,13 @@ class ELStoreStatic extends Store {
 		return this.get(this.getStartID());
 	}
 
-	private init(el: { [id: string]: RawExperienceLevel }) {
+	private init(el: ToListById<RawExperienceLevel>, locale: ToListById<RawExperienceLevelLocale>) {
 		this.allIds = Object.keys(el);
 		this.allIds.forEach(e => {
-			const {
-				id,
-				name,
-				ap,
-				max_attr,
-				max_skill,
-				max_combattech,
-				max_attrsum,
-				max_spells_liturgies,
-				max_unfamiliar_spells,
-			} = el[e];
-			this.byId[e] = {
-				id,
-				name,
-				ap,
-				maxAttributeValue: max_attr,
-				maxCombatTechniqueRating: max_combattech,
-				maxSkillRating: max_skill,
-				maxSpellsLiturgies: max_spells_liturgies,
-				maxTotalAttributeValues: max_attrsum,
-				maxUnfamiliarSpells: max_unfamiliar_spells,
-			};
+			const result = initExperienceLevel(el[e], locale);
+			if (result) {
+				this.byId[e] = result;
+			}
 		});
 	}
 

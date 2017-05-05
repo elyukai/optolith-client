@@ -11,7 +11,7 @@ export interface State {
 	phase: number;
 }
 
-export class AttributesController extends React.Component<undefined, State> {
+export class AttributesController extends React.Component<{}, State> {
 	state = {
 		attributes: AttributeStore.getAll(),
 		el: ELStore.getStart(),

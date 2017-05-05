@@ -12,6 +12,7 @@ import { get } from '../../stores/ListStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { AttributeInstance, CombatTechniqueInstance, InputTextEvent } from '../../types/data.d';
 import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -22,7 +23,7 @@ interface State {
 	sortOrder: string;
 }
 
-export class CombatTechniques extends React.Component<undefined, State> {
+export class CombatTechniques extends React.Component<{}, State> {
 	state = {
 		combattechniques: CombatTechniquesStore.getAll(),
 		filterText: '',
@@ -51,8 +52,6 @@ export class CombatTechniques extends React.Component<undefined, State> {
 	}
 
 	render() {
-		const GROUPS = ['Nahkampf', 'Fernkampf'];
-
 		const { combattechniques, filterText, phase, sortOrder } = this.state;
 
 		const list = filterAndSort(combattechniques, filterText, sortOrder);
@@ -60,14 +59,14 @@ export class CombatTechniques extends React.Component<undefined, State> {
 		return (
 			<Page id="combattechniques">
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
 						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Gruppe', value: 'group' },
-							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+							{ name: translate('options.sortorder.alphabetically'), value: 'name' },
+							{ name: translate('options.sortorder.group'), value: 'group' },
+							{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
 						]}
 						/>
 				</Options>
@@ -96,7 +95,7 @@ export class CombatTechniques extends React.Component<undefined, State> {
 											{ className: 'pa', value: getPa(obj) },
 										]}
 										>
-										<ListItemGroup list={GROUPS} index={obj.gr} />
+										<ListItemGroup list={translate('combattechniques.view.groups')} index={obj.gr} />
 									</SkillListItem>
 								);
 							})

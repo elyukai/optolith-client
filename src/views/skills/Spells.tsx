@@ -18,6 +18,7 @@ import { ConfigStore } from '../../stores/ConfigStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { SpellsStore } from '../../stores/SpellsStore';
 import { CantripInstance, InputTextEvent, SpellInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isActivatable, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
@@ -34,7 +35,7 @@ interface State {
 	enableActiveItemHints: boolean;
 }
 
-export class Spells extends React.Component<undefined, State> {
+export class Spells extends React.Component<{}, State> {
 	state = {
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
 		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
@@ -69,17 +70,13 @@ export class Spells extends React.Component<undefined, State> {
 	}
 
 	render() {
-		const GROUPS = SpellsStore.getGroupNames();
-		const PROPERTIES = SpellsStore.getPropertyNames();
-		const TRADITIONS = SpellsStore.getTraditionNames();
-
 		const { addSpellsDisabled, areMaxUnfamiliar, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, spells } = this.state;
 
 		const sortArray = [
-			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'group' },
-			{ name: 'Nach Merkmal', value: 'property' },
-			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+			{ name: translate('options.sortorder.alphabetically'), value: 'name' },
+			{ name: translate('options.sortorder.group'), value: 'group' },
+			{ name: translate('options.sortorder.property'), value: 'property' },
+			{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
 		];
 
 		const listActive: (SpellInstance | CantripInstance)[] = [];
@@ -111,13 +108,13 @@ export class Spells extends React.Component<undefined, State> {
 			<Page id="spells">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate('options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>{translate('options.showactivated')}</Checkbox>
 					</Options>
 					<Scroll>
 						<List>
@@ -127,7 +124,7 @@ export class Spells extends React.Component<undefined, State> {
 
 									let extendName = '';
 									if (!isOwnTradition(obj)) {
-										extendName += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+										extendName += ` (${obj.tradition.map(e => translate('spells.view.traditions')[e - 1]).sort().join(', ')})`;
 									}
 
 									if (obj.active === true) {
@@ -154,8 +151,8 @@ export class Spells extends React.Component<undefined, State> {
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 												>
 												<ListItemGroup>
-													{PROPERTIES[obj.property - 1]}
-													{sortOrder === 'group' ? ` / Trick` : null}
+													{translate('spells.view.properties')[obj.property - 1]}
+													{sortOrder === 'group' ? ` / ${translate('spells.view.cantrip')}` : null}
 												</ListItemGroup>
 											</SkillListItem>
 										);
@@ -179,8 +176,8 @@ export class Spells extends React.Component<undefined, State> {
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 											>
 											<ListItemGroup>
-												{PROPERTIES[obj.property - 1]}
-												{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
+												{translate('spells.view.properties')[obj.property - 1]}
+												{sortOrder === 'group' ? ` / ${translate('spells.view.groups')[obj.gr - 1]}` : null}
 											</ListItemGroup>
 										</SkillListItem>
 									);
@@ -190,14 +187,14 @@ export class Spells extends React.Component<undefined, State> {
 					</Scroll>
 				</Slidein>
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
 						array={sortArray}
 						/>
 					<BorderButton
-						label="Hinzufügen"
+						label={translate('actions.addtolist')}
 						onClick={this.showAddSlidein}
 						/>
 				</Options>
@@ -209,7 +206,7 @@ export class Spells extends React.Component<undefined, State> {
 
 								let name = obj.name;
 								if (!isOwnTradition(obj)) {
-									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+									name += ` (${obj.tradition.map(e => translate('spells.view.traditions')[e - 1]).sort().join(', ')})`;
 								}
 
 								if (obj.category === Categories.CANTRIPS) {
@@ -224,8 +221,8 @@ export class Spells extends React.Component<undefined, State> {
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 											>
 											<ListItemGroup>
-												{PROPERTIES[obj.property - 1]}
-												{sortOrder === 'group' ? ` / Trick` : null}
+												{translate('spells.view.properties')[obj.property - 1]}
+												{sortOrder === 'group' ? ` / ${translate('spells.view.cantrip')}` : null}
 											</ListItemGroup>
 										</SkillListItem>
 									);
@@ -254,8 +251,8 @@ export class Spells extends React.Component<undefined, State> {
 										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 										{...other} >
 										<ListItemGroup>
-											{PROPERTIES[obj.property - 1]}
-											{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
+											{translate('spells.view.properties')[obj.property - 1]}
+											{sortOrder === 'group' ? ` / ${translate('spells.view.groups')[obj.gr - 1]}` : null}
 										</ListItemGroup>
 									</SkillListItem>
 								);

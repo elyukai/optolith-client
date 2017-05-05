@@ -12,7 +12,7 @@ interface State {
 	tab: string;
 }
 
-export class RCP extends React.Component<undefined, State> {
+export class RCP extends React.Component<{}, State> {
 	state = {
 		cultureID: CultureStore.getCurrentID(),
 		raceID: RaceStore.getCurrentID(),

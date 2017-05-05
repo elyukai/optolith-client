@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
+import { translate } from '../../utils/I18n';
 import { ArmorZones } from './ArmorZones';
 import { Equipment } from './Equipment';
 import { Pets } from './Pets';
@@ -8,7 +9,7 @@ export interface BelongingsState {
 	tab: string;
 }
 
-export class Belongings extends React.Component<undefined, BelongingsState> {
+export class Belongings extends React.Component<{}, BelongingsState> {
 	state = {
 		tab: 'equipment',
 	};
@@ -33,15 +34,15 @@ export class Belongings extends React.Component<undefined, BelongingsState> {
 		const tabs = [
 			{
 				id: 'equipment',
-				label: 'Ausrüstung',
+				label: translate('titlebar.tabs.equipment'),
 			},
 			{
 				id: 'armorzones',
-				label: 'Zonenrüstung',
+				label: translate('titlebar.tabs.zonearmor'),
 			},
 			{
 				id: 'pets',
-				label: 'Begleiter'
+				label: translate('titlebar.tabs.pets')
 			},
 		];
 

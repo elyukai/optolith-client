@@ -16,6 +16,7 @@ import { ConfigStore } from '../../stores/ConfigStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { SpecialAbilitiesStore } from '../../stores/SpecialAbilitiesStore';
 import { ActiveViewObject, InputTextEvent, SpecialAbilityInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface State {
 	activeList: ActiveViewObject[];
@@ -28,7 +29,7 @@ interface State {
 	enableActiveItemHints: boolean;
 }
 
-export class SpecialAbilities extends React.Component<undefined, State> {
+export class SpecialAbilities extends React.Component<{}, State> {
 	state = {
 		filterText: '',
 		filterTextSlidein: '',
@@ -61,23 +62,23 @@ export class SpecialAbilities extends React.Component<undefined, State> {
 		const { enableActiveItemHints, filterText, filterTextSlidein, phase, activeList, list, showAddSlidein, sortOrder } = this.state;
 
 		const sortArray = [
-			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'groupname' },
+			{ name: translate('options.sortorder.alphabetically'), value: 'name' },
+			{ name: translate('options.sortorder.group'), value: 'groupname' }
 		];
 
-		const groupNames = SpecialAbilitiesStore.getGroupNames();
+		const groupNames = translate('specialabilities.view.groups');
 
 		return (
 			<Page id="specialabilities">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate('options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>{translate('options.showactivated')}</Checkbox>
 					</Options>
 					<ActivatableAddList
 						activeList={enableActiveItemHints ? activeList : undefined}
@@ -89,13 +90,13 @@ export class SpecialAbilities extends React.Component<undefined, State> {
 						/>
 				</Slidein>
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
 						array={sortArray}
 						/>
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
+					<BorderButton label={translate('actions.addtolist')} onClick={this.showAddSlidein} />
 				</Options>
 				<ActivatableRemoveList
 					filterText={filterText}

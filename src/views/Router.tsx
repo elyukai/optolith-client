@@ -7,13 +7,13 @@ import { TitleBarDrag } from '../components/titlebar/TitleBarDrag';
 import { LoaderStore } from '../stores/LoaderStore';
 import { LocaleStore } from '../stores/LocaleStore';
 import { TabStore } from '../stores/LocationStore';
-import { Locale } from '../types/data.d';
+import { UILocale } from '../types/data.d';
 import { Route } from './Route';
 
 interface State {
 	isLoading: boolean;
 	loadingText: string;
-	locale: Locale;
+	locale: UILocale;
 	section: string;
 	tab: string;
 }
@@ -24,7 +24,7 @@ export class Router extends React.Component<{}, State> {
 		tab: TabStore.getCurrentID(),
 		isLoading: LoaderStore.isLoading(),
 		loadingText: LoaderStore.getLoadingText(),
-		locale: LocaleStore.getCurrent()
+		locale: LocaleStore.getMessages()
 	};
 
 	componentDidMount() {
@@ -64,7 +64,7 @@ export class Router extends React.Component<{}, State> {
 
 	private updateLocaleStore = () => {
 		this.setState({
-			locale: LocaleStore.getCurrent()
+			locale: LocaleStore.getMessages()
 		} as State);
 	}
 

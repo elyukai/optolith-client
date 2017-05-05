@@ -13,6 +13,7 @@ import { CultureStore } from '../../stores/CultureStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { TalentsStore } from '../../stores/TalentsStore';
 import { CultureInstance, InputTextEvent, TalentInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
@@ -26,7 +27,7 @@ export interface TalentsState {
 	talents: TalentInstance[];
 }
 
-export class Talents extends React.Component<undefined, TalentsState> {
+export class Talents extends React.Component<{}, TalentsState> {
 	state = {
 		currentCulture: CultureStore.getCurrent()!,
 		filterText: '',
@@ -36,12 +37,6 @@ export class Talents extends React.Component<undefined, TalentsState> {
 		talents: TalentsStore.getAll(),
 	};
 
-	_updateTalentsStore = () => this.setState({
-		sortOrder: TalentsStore.getSortOrder(),
-		talentRating: TalentsStore.isRatingVisible(),
-		talents: TalentsStore.getAll(),
-	} as TalentsState);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as TalentsState);
 	sort = (option: string) => TalentsActions.setSortOrder(option);
 	changeTalentRating = () => TalentsActions.switchRatingVisibility();
@@ -49,16 +44,14 @@ export class Talents extends React.Component<undefined, TalentsState> {
 	removePoint = (id: string) => TalentsActions.removePoint(id);
 
 	componentDidMount() {
-		TalentsStore.addChangeListener(this._updateTalentsStore );
+		TalentsStore.addChangeListener(this.updateTalentsStore);
 	}
 
 	componentWillUnmount() {
-		TalentsStore.removeChangeListener(this._updateTalentsStore );
+		TalentsStore.removeChangeListener(this.updateTalentsStore);
 	}
 
 	render() {
-		const GROUPS = ['Körper', 'Gesellschaft', 'Natur', 'Wissen', 'Handwerk'];
-
 		const { filterText, phase, sortOrder, talentRating, talents } = this.state;
 
 		const list = filterAndSort(talents, filterText, sortOrder);
@@ -66,17 +59,17 @@ export class Talents extends React.Component<undefined, TalentsState> {
 		return (
 			<Page id="talents">
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
 						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Gruppe', value: 'group' },
-							{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+							{ name: translate('options.sortorder.alphabetically'), value: 'name' },
+							{ name: translate('options.sortorder.group'), value: 'group' },
+							{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
 						]}
 						/>
-					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>Empfohlen durch Kultur</Checkbox>
+					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>{translate('skills.options.commoninculture')}</Checkbox>
 					{talentRating && <RecommendedReference/>}
 				</Options>
 				<Scroll>
@@ -99,9 +92,8 @@ export class Talents extends React.Component<undefined, TalentsState> {
 										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
 										removeDisabled={!isDecreasable(obj)}
 										insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
-										enableInfo
 										>
-										<ListItemGroup list={GROUPS} index={obj.gr} />
+										<ListItemGroup list={translate('skills.view.groups')} index={obj.gr} />
 									</SkillListItem>
 								);
 							})
@@ -110,5 +102,13 @@ export class Talents extends React.Component<undefined, TalentsState> {
 				</Scroll>
 			</Page>
 		);
+	}
+
+	private updateTalentsStore = () => {
+		this.setState({
+			sortOrder: TalentsStore.getSortOrder(),
+			talentRating: TalentsStore.isRatingVisible(),
+			talents: TalentsStore.getAll(),
+		} as TalentsState);
 	}
 }

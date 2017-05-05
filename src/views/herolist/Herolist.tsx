@@ -15,7 +15,6 @@ import { CultureStore } from '../../stores/CultureStore';
 import { ELStore } from '../../stores/ELStore';
 import { HerolistStore } from '../../stores/HerolistStore';
 import { HistoryStore } from '../../stores/HistoryStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
@@ -24,6 +23,7 @@ import { Hero, InputTextEvent } from '../../types/data.d';
 import { confirm } from '../../utils/confirm';
 import { createOverlay } from '../../utils/createOverlay';
 import { importHero } from '../../utils/FileAPIUtils';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
@@ -36,7 +36,7 @@ interface State {
 	file: File | undefined;
 }
 
-export class Herolist extends React.Component<undefined, State> {
+export class Herolist extends React.Component<{}, State> {
 
 	state = {
 		file: undefined,
@@ -45,12 +45,6 @@ export class Herolist extends React.Component<undefined, State> {
 		sortOrder: HerolistStore.getSortOrder(),
 		view: HerolistStore.getView(),
 	};
-
-	_updateHerolistStore = () => this.setState({
-		list: HerolistStore.getAll(),
-		sortOrder: HerolistStore.getSortOrder(),
-		view: HerolistStore.getView(),
-	} as State);
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => HerolistActions.setSortOrder(option);
@@ -61,7 +55,7 @@ export class Herolist extends React.Component<undefined, State> {
 			createOverlay(<HeroCreation />);
 		}
 		else {
-			confirm(getLocale()['heroes.warnings.unsavedactions.title'], getLocale()['heroes.warnings.unsavedactions.text'], true).then(result => {
+			confirm(translate('heroes.warnings.unsavedactions.title'), translate('heroes.warnings.unsavedactions.text'), true).then(result => {
 				if (result === true) {
 					createOverlay(<HeroCreation />);
 				}
@@ -84,11 +78,11 @@ export class Herolist extends React.Component<undefined, State> {
 	}
 
 	componentDidMount() {
-		HerolistStore.addChangeListener(this._updateHerolistStore);
+		HerolistStore.addChangeListener(this.updateHerolistStore);
 	}
 
 	componentWillUnmount() {
-		HerolistStore.removeChangeListener(this._updateHerolistStore);
+		HerolistStore.removeChangeListener(this.updateHerolistStore);
 	}
 
 	render() {
@@ -108,14 +102,30 @@ export class Herolist extends React.Component<undefined, State> {
 				return { ...e, player: HerolistStore.getUser(e.player) };
 			}
 			return e as Hero & { player: undefined; };
-		}).map(hero => <HerolistItem key={hero.id} {...hero} />);
+		}).map(hero => (
+			<HerolistItem
+				key={hero.id}
+				id={hero.id}
+				name={hero.name}
+				ap={{
+					total: hero.ap.total
+				}}
+				avatar={hero.avatar}
+				c={hero.c}
+				p={hero.p}
+				player={hero.player}
+				pv={hero.pv}
+				r={hero.r}
+				sex={hero.sex}
+				/>
+		));
 
 		return (
 			<section id="herolist">
 				<Page>
 					<Options>
 						<TextField
-							hint={getLocale()['options.filtertext']}
+							hint={translate('options.filtertext')}
 							value={filterText}
 							onChange={this.filter}
 							fullWidth
@@ -124,9 +134,9 @@ export class Herolist extends React.Component<undefined, State> {
 							value={view}
 							onChange={this.changeView}
 							options={[
-								{ id: 'all', name: getLocale()['heroes.options.filter.all'] },
-								{ id: 'own', name: getLocale()['heroes.options.filter.own'] },
-								{ id: 'shared', name: getLocale()['heroes.options.filter.shared'] },
+								{ id: 'all', name: translate('heroes.options.filter.all') },
+								{ id: 'own', name: translate('heroes.options.filter.own') },
+								{ id: 'shared', name: translate('heroes.options.filter.shared') },
 							]}
 							fullWidth
 							/>
@@ -135,17 +145,17 @@ export class Herolist extends React.Component<undefined, State> {
 							onClick={this.sort}
 							array={[
 								{
-									name: getLocale()['options.sortorder.alphabetically'],
+									name: translate('options.sortorder.alphabetically'),
 									value: 'name',
 								},
 								{
-									name: getLocale()['options.sortorder.ap'],
+									name: translate('options.sortorder.ap'),
 									value: 'ap',
 								},
 							]}
 							/>
-						<BorderButton label={getLocale()['heroes.actions.create']} onClick={this.showHeroCreation} primary />
-						<BorderButton label={getLocale()['heroes.actions.import']} onClick={this.importHero} />
+						<BorderButton label={translate('heroes.actions.create')} onClick={this.showHeroCreation} primary />
+						<BorderButton label={translate('heroes.actions.import')} onClick={this.importHero} />
 					</Options>
 					<Scroll>
 						<List>
@@ -153,7 +163,7 @@ export class Herolist extends React.Component<undefined, State> {
 								HerolistStore.getCurrentId() === undefined && ELStore.getStartID() !== 'EL_0' && (
 									<HerolistItem
 										avatar={ProfileStore.getAvatar()}
-										name={getLocale()['heroes.view.unsavedhero.title']}
+										name={translate('heroes.view.unsavedhero.title')}
 										ap={{ total: APStore.getTotal() }}
 										r={RaceStore.getCurrentID()}
 										c={CultureStore.getCurrentID()}
@@ -169,5 +179,13 @@ export class Herolist extends React.Component<undefined, State> {
 				</Page>
 			</section>
 		);
+	}
+
+	private updateHerolistStore = () => {
+		this.setState({
+			list: HerolistStore.getAll(),
+			sortOrder: HerolistStore.getSortOrder(),
+			view: HerolistStore.getView(),
+		} as State);
 	}
 }

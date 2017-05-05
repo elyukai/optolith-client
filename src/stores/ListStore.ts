@@ -12,7 +12,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import * as Data from '../types/data.d';
-import { RawTables } from '../types/rawdata.d';
+import { RawLocaleList, RawTables } from '../types/rawdata.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as AttributeUtils from '../utils/AttributeUtils';
 import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
@@ -24,6 +24,7 @@ import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
 import { CultureStore } from './CultureStore';
 import { ELStore } from './ELStore';
+import { LocaleStore } from './LocaleStore';
 import { ProfessionStore } from './ProfessionStore';
 import { ProfessionVariantStore } from './ProfessionVariantStore';
 import { RaceStore } from './RaceStore';
@@ -125,7 +126,7 @@ class ListStoreStatic extends Store {
 			else {
 				switch (action.type) {
 					case ActionTypes.RECEIVE_INITIAL_DATA:
-						this.init(action.payload.tables);
+						this.init(action.payload.tables, action.payload.locales);
 						break;
 
 					case ActionTypes.LOAD_HERO:
@@ -452,8 +453,9 @@ class ListStoreStatic extends Store {
 		};
 	}
 
-	private init(data: RawTables) {
-		this.byId = init(data);
+	private init(data: RawTables, locales: RawLocaleList) {
+		AppDispatcher.waitFor([LocaleStore.dispatchToken]);
+		this.byId = init(data, locales[LocaleStore.getLocale()!]);
 		this.allIds = Object.keys(this.byId);
 	}
 

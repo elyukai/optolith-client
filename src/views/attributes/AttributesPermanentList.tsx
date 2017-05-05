@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as AttributesActions from '../../actions/AttributesActions';
+import { translate } from '../../utils/I18n';
 import { getAE, getKP } from '../../utils/secondaryAttributes';
 import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 
@@ -16,8 +17,8 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 		<div className="permanent">
 			{ typeof AE.value === 'number' ? (
 				<AttributesPermanentListItem
-					label="pAsP"
-					name="Perm. Astralenergie"
+					label={translate('attributes.pae.short')}
+					name={translate('attributes.pae.name')}
 					redeemed={AE.permanentRedeemed}
 					lost={AE.permanentLost}
 					redeem={AttributesActions.redeemAEPoint}
@@ -28,8 +29,8 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 			) : <div className="placeholder"></div> }
 			{ typeof KP.value === 'number' && (
 				<AttributesPermanentListItem
-					label="pKaP"
-					name="Perm. Karmaenergie"
+					label={translate('attributes.pkp.short')}
+					name={translate('attributes.pkp.name')}
 					redeemed={KP.permanentRedeemed}
 					lost={KP.permanentLost}
 					redeem={AttributesActions.redeemKPPoint}

@@ -1,9 +1,9 @@
 import { AttributeStore } from '../stores/AttributeStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
-import { getLocale } from '../stores/LocaleStore';
 import { RaceStore } from '../stores/RaceStore';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
+import { translate } from './I18n';
 
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
@@ -33,13 +33,13 @@ export function getLP(): Energy {
 	return {
 		add,
 		base,
-		calc: getLocale()['secondaryattributes.lp.calc'],
+		calc: translate('secondaryattributes.lp.calc'),
 		currentAdd: add,
 		id: 'LP',
 		maxAdd: CON().value,
 		mod,
-		name: getLocale()['secondaryattributes.lp.name'],
-		short: getLocale()['secondaryattributes.lp.short'],
+		name: translate('secondaryattributes.lp.name'),
+		short: translate('secondaryattributes.lp.short'),
 		value,
 	};
 }
@@ -66,15 +66,15 @@ export function getAE(): EnergyWithLoss {
 	return {
 		add,
 		base,
-		calc: getLocale()['secondaryattributes.ae.calc'],
+		calc: translate('secondaryattributes.ae.calc'),
 		currentAdd: add,
 		id: 'AE',
 		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
 		mod,
-		name: getLocale()['secondaryattributes.ae.name'],
+		name: translate('secondaryattributes.ae.name'),
 		permanentLost,
 		permanentRedeemed,
-		short: getLocale()['secondaryattributes.ae.short'],
+		short: translate('secondaryattributes.ae.short'),
 		value,
 	};
 }
@@ -101,15 +101,15 @@ export function getKP(): EnergyWithLoss {
 	return {
 		add,
 		base,
-		calc: getLocale()['secondaryattributes.kp.calc'],
+		calc: translate('secondaryattributes.kp.calc'),
 		currentAdd: add,
 		id: 'KP',
 		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
 		mod,
-		name: getLocale()['secondaryattributes.kp.name'],
+		name: translate('secondaryattributes.kp.name'),
 		permanentLost,
 		permanentRedeemed,
-		short: getLocale()['secondaryattributes.kp.short'],
+		short: translate('secondaryattributes.kp.short'),
 		value,
 	};
 }
@@ -128,11 +128,11 @@ export function getSPI(): SecondaryAttribute {
 	const value = base + mod;
 	return {
 		base,
-		calc: getLocale()['secondaryattributes.spi.calc'],
+		calc: translate('secondaryattributes.spi.calc'),
 		id: 'SPI',
 		mod,
-		name: getLocale()['secondaryattributes.spi.name'],
-		short: getLocale()['secondaryattributes.spi.short'],
+		name: translate('secondaryattributes.spi.name'),
+		short: translate('secondaryattributes.spi.short'),
 		value,
 	};
 }
@@ -151,11 +151,11 @@ export function getTOU(): SecondaryAttribute {
 	const value = base + mod;
 	return {
 		base,
-		calc: getLocale()['secondaryattributes.tou.calc'],
+		calc: translate('secondaryattributes.tou.calc'),
 		id: 'TOU',
 		mod,
-		name: getLocale()['secondaryattributes.tou.name'],
-		short: getLocale()['secondaryattributes.tou.short'],
+		name: translate('secondaryattributes.tou.name'),
+		short: translate('secondaryattributes.tou.short'),
 		value,
 	};
 }
@@ -164,10 +164,10 @@ export function getDO(): SecondaryAttribute {
 	const base = Math.round(AGI().value / 2);
 	const value = base;
 	return {
-		calc: getLocale()['secondaryattributes.do.calc'],
+		calc: translate('secondaryattributes.do.calc'),
 		id: 'DO',
-		name: getLocale()['secondaryattributes.do.name'],
-		short: getLocale()['secondaryattributes.do.short'],
+		name: translate('secondaryattributes.do.name'),
+		short: translate('secondaryattributes.do.short'),
 		base,
 		value
 	};
@@ -177,10 +177,10 @@ export function getINI(): SecondaryAttribute {
 	const base = Math.round((COU().value + AGI().value) / 2);
 	const value = base;
 	return {
-		calc: getLocale()['secondaryattributes.ini.calc'],
+		calc: translate('secondaryattributes.ini.calc'),
 		id: 'INI',
-		name: getLocale()['secondaryattributes.ini.name'],
-		short: getLocale()['secondaryattributes.ini.short'],
+		name: translate('secondaryattributes.ini.name'),
+		short: translate('secondaryattributes.ini.short'),
 		base,
 		value
 	};
@@ -193,10 +193,10 @@ export function getMOV(): SecondaryAttribute {
 		value = Math.round(value / 2);
 	}
 	return {
-		calc: getLocale()['secondaryattributes.mov.calc'],
+		calc: translate('secondaryattributes.mov.calc'),
 		id: 'MOV',
-		name: getLocale()['secondaryattributes.mov.name'],
-		short: getLocale()['secondaryattributes.mov.short'],
+		name: translate('secondaryattributes.mov.name'),
+		short: translate('secondaryattributes.mov.short'),
 		base,
 		value
 	};
@@ -212,10 +212,10 @@ export function getWS(): SecondaryAttribute {
 		value++;
 	}
 	return {
-		calc: getLocale()['secondaryattributes.ws.calc'],
+		calc: translate('secondaryattributes.ws.calc'),
 		id: 'WS',
-		name: getLocale()['secondaryattributes.ws.name'],
-		short: getLocale()['secondaryattributes.ws.short'],
+		name: translate('secondaryattributes.ws.name'),
+		short: translate('secondaryattributes.ws.short'),
 		base,
 		value
 	};

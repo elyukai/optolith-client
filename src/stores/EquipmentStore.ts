@@ -255,6 +255,27 @@ class EquipmentStoreStatic extends Store {
 			}
 			return false;
 		});
+		this.armorZones.forEach(e => {
+			const obj = this.armorZonesById[e];
+			if (obj.head === id) {
+				obj.head = undefined;
+			}
+			if (obj.torso === id) {
+				obj.torso = undefined;
+			}
+			if (obj.leftArm === id) {
+				obj.leftArm = undefined;
+			}
+			if (obj.rightArm === id) {
+				obj.rightArm = undefined;
+			}
+			if (obj.leftLeg === id) {
+				obj.leftLeg = undefined;
+			}
+			if (obj.rightLeg === id) {
+				obj.rightLeg = undefined;
+			}
+		});
 	}
 
 	private addArmorZones(raw: ArmorZonesInstance, id: string) {

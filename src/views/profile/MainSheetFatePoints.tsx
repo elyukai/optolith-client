@@ -2,9 +2,9 @@ import * as React from 'react';
 import { LabelBox } from '../../components/LabelBox';
 import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { AdvantageInstance, DisadvantageInstance } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
+import { translate } from '../../utils/I18n';
 
 export function MainSheetFatePoints() {
 	let bonus = 0;
@@ -19,11 +19,11 @@ export function MainSheetFatePoints() {
 	}
 
 	return (
-		<TextBox className="fate-points" label={getLocale()['charactersheet.main.fatepoints']}>
-			<LabelBox label={getLocale()['charactersheet.main.headers.value']} value="3" />
-			<LabelBox label={getLocale()['charactersheet.main.headers.bonus']} value={bonus} />
-			<LabelBox label={getLocale()['charactersheet.main.headers.max']} value={3 + bonus} />
-			<LabelBox label={getLocale()['charactersheet.main.headers.current']} value="" />
+		<TextBox className="fate-points" label={translate('charactersheet.main.fatepoints')}>
+			<LabelBox label={translate('charactersheet.main.headers.value')} value="3" />
+			<LabelBox label={translate('charactersheet.main.headers.bonus')} value={bonus} />
+			<LabelBox label={translate('charactersheet.main.headers.max')} value={3 + bonus} />
+			<LabelBox label={translate('charactersheet.main.headers.current')} value="" />
 		</TextBox>
 	);
 }

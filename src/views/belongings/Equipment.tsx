@@ -17,7 +17,7 @@ import { get } from '../../stores/ListStore';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, InputTextEvent, ItemInstance } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
-import { dotToComma } from '../../utils/i18n';
+import { dotToComma } from '../../utils/I18n';
 import { filterAndSort, sortByName } from '../../utils/ListUtils';
 import { EquipmentListItem } from './EquipmentListItem';
 import { ItemEditor } from './ItemEditor';
@@ -41,7 +41,7 @@ interface State {
 	templates: ItemInstance[];
 }
 
-export class Equipment extends React.Component<undefined, State> {
+export class Equipment extends React.Component<{}, State> {
 	state = {
 		filterGroupSlidein: 1,
 		filterText: '',

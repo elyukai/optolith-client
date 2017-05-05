@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { setLocale } from '../../actions/LocaleActions';
-import { getLocale, LocaleStore } from '../../stores/LocaleStore';
+import { LocaleStore } from '../../stores/LocaleStore';
+import { translate } from '../../utils/I18n';
 import { Dialog } from '../Dialog';
 import { Dropdown } from '../Dropdown';
 
@@ -15,8 +16,8 @@ export interface SettingsState {
 
 export class Settings extends React.Component<SettingsProps, SettingsState> {
 	state = {
-		locale: LocaleStore.getCurrentId(),
-		localeType: LocaleStore.getCurrentIdType()
+		locale: LocaleStore.getLocale(),
+		localeType: LocaleStore.getLocaleType()
 	};
 
 	componentDidMount() {
@@ -37,18 +38,18 @@ export class Settings extends React.Component<SettingsProps, SettingsState> {
 		return (
 			<Dialog
 				id="settings"
-				title={getLocale()['settings.title']}
+				title={translate('settings.title')}
 				node={this.props.node}
-				buttons={[{label: getLocale()['settings.actions.close']}]}
+				buttons={[{label: translate('settings.actions.close')}]}
 				>
 				<Dropdown
 					options={[
-						{name: getLocale()['settings.options.defaultlanguage']},
+						{name: translate('settings.options.defaultlanguage')},
 						{id: 'de-DE', name: 'Deutsch (Deutschland)'},
 						{id: 'en-US', name: 'English (United States)'}
 					]}
 					value={localeType === 'default' ? undefined : locale}
-					label={getLocale()['settings.options.language']}
+					label={translate('settings.options.language')}
 					onChange={this.selectLocale}
 					/>
 			</Dialog>
@@ -57,8 +58,8 @@ export class Settings extends React.Component<SettingsProps, SettingsState> {
 
 	private updateLocaleStore = () => {
 		this.setState({
-			locale: LocaleStore.getCurrentId(),
-			localeType: LocaleStore.getCurrentIdType()
+			locale: LocaleStore.getLocale(),
+			localeType: LocaleStore.getLocaleType()
 		} as SettingsState);
 	}
 }

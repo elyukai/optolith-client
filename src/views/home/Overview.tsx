@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Scroll } from '../../components/Scroll';
-import { getLocale } from '../../stores/LocaleStore';
+import { translate } from '../../utils/I18n';
 
 export function Overview() {
 	return (
@@ -9,9 +9,9 @@ export function Overview() {
 			<Scroll className="text">
 				<h2>
 					<div className="scriptorium" />
-					{getLocale()['homeintro.title']}
+					{translate('homeintro.title')}
 				</h2>
-				<ReactMarkdown source={getLocale()['homeintro.text']} />
+				<ReactMarkdown source={translate('homeintro.text') || '...'} />
 			</Scroll>
 		</div>
 	);

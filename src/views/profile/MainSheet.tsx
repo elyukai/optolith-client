@@ -6,12 +6,12 @@ import * as ActivatableStore from '../../stores/ActivatableStore';
 import { APStore } from '../../stores/APStore';
 import { CultureStore } from '../../stores/CultureStore';
 import { ELStore } from '../../stores/ELStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { printToPDF } from '../../utils/FileAPIUtils';
+import { translate } from '../../utils/I18n';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
 import { ActivatableTextList } from './ActivatableTextList';
 import { MainSheetAttributes } from './MainSheetAttributes';
@@ -28,9 +28,9 @@ export function MainSheet() {
 	const culture = CultureStore.getCurrent()!;
 	const profession = ProfessionStore.getCurrent()!;
 	const professionVariant = ProfessionVariantStore.getCurrent();
-	const haircolorTags = ProfileStore.getHaircolorTags();
-	const eyecolorTags = ProfileStore.getEyecolorTags();
-	const socialstatusTags = getLocale().socialstatus;
+	const haircolorTags = translate('haircolors');
+	const eyecolorTags = translate('eyecolors');
+	const socialstatusTags = translate('socialstatus');
 
 	const advActive = ActivatableStore.getActiveForView(Categories.ADVANTAGES);
 	const disadvActive = ActivatableStore.getActiveForView(Categories.DISADVANTAGES);
@@ -46,12 +46,12 @@ export function MainSheet() {
 			<SheetOptions>
 				<BorderButton
 					className="print-document"
-					label={getLocale()['charactersheet.actions.printtopdf']}
+					label={translate('charactersheet.actions.printtopdf')}
 					onClick={printToPDF}
 					fullWidth
 					/>
 			</SheetOptions>
-			<Sheet id="main-sheet" title={getLocale()['charactersheet.main.title']}>
+			<Sheet id="main-sheet" title={translate('charactersheet.main.title')}>
 				<MainSheetPersonalData
 					ap={ap}
 					culture={culture}
@@ -66,13 +66,13 @@ export function MainSheet() {
 					/>
 				<div className="lower">
 					<div className="lists">
-						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.advantages']}>
+						<TextBox className="activatable-list" label={translate('charactersheet.main.advantages')}>
 							<ActivatableTextList list={advActive} />
 						</TextBox>
-						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.disadvantages']}>
+						<TextBox className="activatable-list" label={translate('charactersheet.main.disadvantages')}>
 							<ActivatableTextList list={disadvActive} />
 						</TextBox>
-						<TextBox className="activatable-list" label={getLocale()['charactersheet.main.generalspecialabilites']}>
+						<TextBox className="activatable-list" label={translate('charactersheet.main.generalspecialabilites')}>
 							<ActivatableTextList list={generalsaActive} />
 						</TextBox>
 					</div>

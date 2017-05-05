@@ -112,10 +112,6 @@ class LiturgiesStoreStatic extends Store {
 		return ['Allgemein', 'Antimagie', 'Ordnung', 'Schild', 'Sturm', 'Tod', 'Traum', 'Magie', 'Wissen', 'Handel', 'Schatten', 'Heilung', 'Landwirtschaft'];
 	}
 
-	getTraditionNames() {
-		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen'];
-	}
-
 	getSortOrder() {
 		return this.sortOrder;
 	}

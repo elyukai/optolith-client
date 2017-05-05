@@ -798,7 +798,7 @@ export interface PetEditorInstance extends PetBaseInstance {
 	pa: string;
 }
 
-export interface Locale {
+export interface UILocale {
 	"titlebar.tabs.home": string;
 	"titlebar.tabs.homeintro": string;
 	"titlebar.tabs.news": string;
@@ -848,6 +848,11 @@ export interface Locale {
 	"options.filtertext": string;
 	"options.sortorder.alphabetically": string;
 	"options.sortorder.ap": string;
+	"options.sortorder.group": string;
+	"options.sortorder.improvementcost": string;
+	"options.sortorder.property": string;
+	"options.sortorder.aspect": string;
+	"options.showactivated": string;
 	"homeintro.title": string;
 	"homeintro.text": string;
 	"heroes.actions.create": string;
@@ -896,6 +901,8 @@ export interface Locale {
 	"personaldata.otherinfo": string;
 	"personaldata.cultureareaknowledge": string;
 	"socialstatus": string[];
+	"haircolors": string[];
+	"eyecolors": string[];
 	"settings.title": string;
 	"settings.options.language": string;
 	"settings.options.defaultlanguage": string;
@@ -977,6 +984,8 @@ export interface Locale {
 	"charactersheet.attributemodifiers.title": string;
 	"rules.rulebase": string;
 	"rules.optionalrules": string;
+	"rules.optionalrules.maximumattributescores": string;
+	"rules.optionalrules.higherdefensestats": string;
 	"secondaryattributes.lp.name": string;
 	"secondaryattributes.lp.short": string;
 	"secondaryattributes.lp.calc": string;
@@ -1004,4 +1013,29 @@ export interface Locale {
 	"secondaryattributes.ws.name": string;
 	"secondaryattributes.ws.short": string;
 	"secondaryattributes.ws.calc": string;
+	"attributes.view.attributetotal": string;
+	"attributes.tooltips.modifier": string;
+	"attributes.tooltips.bought": string;
+	"attributes.tooltips.losttotal": string;
+	"attributes.tooltips.boughtback": string;
+	"attributes.pae.name": string;
+	"attributes.pae.short": string;
+	"attributes.pkp.name": string;
+	"attributes.pkp.short": string;
+	"advantages.options.common": string;
+	"disadvantages.options.common": string;
+	"skills.options.commoninculture": string;
+	"skills.view.groups": string[];
+	"view.commoninculture": string;
+	"view.uncommoninculture": string;
+	"combattechniques.view.groups": string[];
+	"actions.addtolist": string;
+	"specialabilities.view.groups": string[];
+	"spells.view.groups": string[];
+	"spells.view.cantrip": string;
+	"spells.view.properties": string[];
+	"spells.view.traditions": string[];
+	"liturgies.view.groups": string[];
+	"liturgies.view.blessing": string;
+	"liturgies.view.aspects": string[];
 }

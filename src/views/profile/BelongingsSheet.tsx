@@ -4,7 +4,7 @@ import { TextBox } from '../../components/TextBox';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { AttributeInstance, ItemInstance } from '../../types/data.d';
-import { dotToComma } from '../../utils/i18n';
+import { dotToComma } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';

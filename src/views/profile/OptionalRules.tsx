@@ -3,14 +3,14 @@ import * as RulesActions from '../../actions/RulesActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
-import { getLocale } from '../../stores/LocaleStore';
 import { RulesStore } from '../../stores/RulesStore';
+import { translate } from '../../utils/I18n';
 
 interface State {
 	higherParadeValues: number;
 }
 
-export class OptionalRules extends React.Component<undefined, State> {
+export class OptionalRules extends React.Component<{}, State> {
 	state = RulesStore.getAll();
 
 	componentDidMount() {
@@ -27,7 +27,7 @@ export class OptionalRules extends React.Component<undefined, State> {
 		return (
 			<div className="page" id="optional-rules">
 				<Scroll>
-					<h3>{getLocale()['rules.rulebase']}</h3>
+					<h3>{translate('rules.rulebase')}</h3>
 					<Checkbox
 						checked
 						onClick={this.changeCheckboxTrap}
@@ -82,12 +82,12 @@ export class OptionalRules extends React.Component<undefined, State> {
 						label="Tavernen"
 						disabled
 						/>
-					<h3>{getLocale()['rules.optionalrules']}</h3>
+					<h3>{translate('rules.optionalrules')}</h3>
 					<div className="extended">
 						<Checkbox
 							checked={higherParadeValues > 0}
 							onClick={this.switchHigherParadeValues}
-							label="Höhere Verteidigungswerte"
+							label={translate('rules.optionalrules.higherdefensestats')}
 							/>
 						<Dropdown
 							options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
@@ -99,7 +99,7 @@ export class OptionalRules extends React.Component<undefined, State> {
 					<Checkbox
 						checked={attributeValueLimit}
 						onClick={this.changeAttributeValueLimit}
-						label="Eigenschaftsobergrenze"
+						label={translate('rules.optionalrules.maximumattributescores')}
 						/>
 				</Scroll>
 			</div>

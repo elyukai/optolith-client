@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
-import { getLocale } from '../../stores/LocaleStore';
+import { translate } from '../../utils/I18n';
 
 export function Imprint() {
 	return (
 		<div className="page" id="imprint">
 			<Scroll className="text">
-				<h2>{getLocale()['imprint.title']}</h2>
+				<h2>{translate('imprint.title')}</h2>
 
 				<h3>Lukas Obermann</h3>
 				<p>

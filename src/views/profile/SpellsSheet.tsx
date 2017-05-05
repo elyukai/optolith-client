@@ -16,7 +16,7 @@ interface State {
 	checkAttributeValueVisibility: boolean;
 }
 
-export class SpellsSheet extends React.Component<undefined, State> {
+export class SpellsSheet extends React.Component<{}, State> {
 	state = SheetStore.getAllForSpellsSheet();
 
 	componentDidMount() {

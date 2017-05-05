@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
-import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
 import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { translate } from '../utils/I18n';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -31,8 +31,6 @@ interface State {
 	input: string;
 	input2: string;
 }
-
-const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
 export class ActivatableAddListItem extends React.Component<Props, State> {
 	state: State = {
@@ -328,7 +326,7 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 					{tierElement2}
 				</ListItemSelections>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={specialAbilityGroupNames} index={gr} />}
+				{!hideGroup && <ListItemGroup list={translate('specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className="cost">{currentCost}</div>
 				</ListItemValues>

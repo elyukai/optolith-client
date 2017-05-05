@@ -2,8 +2,8 @@ import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
 import { Dialog } from '../../components/Dialog';
 import { TextField } from '../../components/TextField';
-import { getLocale } from '../../stores/LocaleStore';
 import { InputTextEvent } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -28,21 +28,21 @@ export class OverviewAddAP extends React.Component<Props, State> {
 		return (
 			<Dialog
 				id="overview-add-ap"
-				title={getLocale()['addadventurepoints.title']}
+				title={translate('addadventurepoints.title')}
 				node={this.props.node}
 				buttons={[
 					{
 						disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) < 1,
-						label: getLocale()['addadventurepoints.actions.add'],
+						label: translate('addadventurepoints.actions.add'),
 						onClick: this.addAP,
 					},
 					{
-						label: getLocale()['addadventurepoints.actions.cancel'],
+						label: translate('addadventurepoints.actions.cancel'),
 					},
 				]}
 				>
 				<TextField
-					hint={getLocale()['addadventurepoints.options.adventurepoints']}
+					hint={translate('addadventurepoints.options.adventurepoints')}
 					value={value}
 					onChange={this.onChange}
 					fullWidth

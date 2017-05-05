@@ -11,7 +11,7 @@ interface State {
 	newPassword: string;
 }
 
-export class AccountChangePassword extends React.Component<undefined, State> {
+export class AccountChangePassword extends React.Component<{}, State> {
 	state = {
 		newPassword: '',
 	};

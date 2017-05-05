@@ -3,6 +3,7 @@ import { SubTabs } from '../../components/SubTabs';
 import { get } from '../../stores/ListStore';
 import { SpecialAbilitiesStore } from '../../stores/SpecialAbilitiesStore';
 import { SpecialAbilityInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { CombatTechniques } from './CombatTechniques';
 import { Liturgies } from './Liturgies';
 import { SpecialAbilities } from './SpecialAbilities';
@@ -15,7 +16,7 @@ interface State {
 	showSpells: boolean;
 }
 
-export class Skills extends React.Component<undefined, State> {
+export class Skills extends React.Component<{}, State> {
 
 	state = {
 		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
@@ -64,29 +65,29 @@ export class Skills extends React.Component<undefined, State> {
 		const tabs = [
 			{
 				id: 'talents',
-				label: 'Talente',
+				label: translate('titlebar.tabs.talents'),
 			},
 			{
 				id: 'combat',
-				label: 'Kampftechniken',
+				label: translate('titlebar.tabs.combattechniques'),
 			},
 			{
 				id: 'special',
-				label: 'Sonderfertigkeiten',
+				label: translate('titlebar.tabs.specialabilities'),
 			},
 		];
 
 		if (showSpells) {
 			tabs.push({
 				id: 'spells',
-				label: 'Zauber',
+				label: translate('titlebar.tabs.spells'),
 			});
 		}
 
 		if (showChants) {
 			tabs.push({
 				id: 'liturgies',
-				label: 'Liturgien',
+				label: translate('titlebar.tabs.liturgies'),
 			});
 		}
 

@@ -18,6 +18,7 @@ import { ConfigStore } from '../../stores/ConfigStore';
 import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { BlessingInstance, InputTextEvent, LiturgyInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
@@ -33,7 +34,7 @@ interface State {
 	enableActiveItemHints: boolean;
 }
 
-export class Liturgies extends React.Component<undefined, State> {
+export class Liturgies extends React.Component<{}, State> {
 	state = {
 		addChantsDisabled: LiturgiesStore.isActivationDisabled(),
 		filterText: '',
@@ -67,16 +68,13 @@ export class Liturgies extends React.Component<undefined, State> {
 	}
 
 	render() {
-		const GROUPS = LiturgiesStore.getGroupNames();
-		const ASPECTS = LiturgiesStore.getAspectNames();
-
 		const { addChantsDisabled, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, liturgies } = this.state;
 
 		const sortArray = [
-			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Aspekt', value: 'aspect' },
-			{ name: 'Nach Gruppe', value: 'group' },
-			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+			{ name: translate('options.sortorder.alphabetically'), value: 'name' },
+			{ name: translate('options.sortorder.aspect'), value: 'aspect' },
+			{ name: translate('options.sortorder.group'), value: 'group' },
+			{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
 		];
 
 		const listActive: (BlessingInstance | LiturgyInstance)[] = [];
@@ -103,13 +101,13 @@ export class Liturgies extends React.Component<undefined, State> {
 			<Page id="liturgies">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate('options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={this.sort}
 							array={sortArray}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>{translate('options.showactivated')}</Checkbox>
 					</Options>
 					<Scroll>
 						<List>
@@ -128,7 +126,7 @@ export class Liturgies extends React.Component<undefined, State> {
 
 									const name = obj.name;
 
-									const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
+									const aspc = obj.aspects.map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 									if (obj.category === Categories.BLESSINGS) {
 										return (
@@ -143,7 +141,7 @@ export class Liturgies extends React.Component<undefined, State> {
 												>
 												<ListItemGroup>
 													{aspc}
-													{sortOrder === 'group' && ` / Segnung`}
+													{sortOrder === 'group' && ` / ${translate('liturgies.view.blessing')}`}
 												</ListItemGroup>
 											</SkillListItem>
 										);
@@ -172,7 +170,7 @@ export class Liturgies extends React.Component<undefined, State> {
 											>
 											<ListItemGroup>
 												{aspc}
-												{sortOrder === 'group' && ` / ${GROUPS[obj.gr - 1]}`}
+												{sortOrder === 'group' && ` / ${translate('liturgies.view.groups')[obj.gr - 1]}`}
 											</ListItemGroup>
 										</SkillListItem>
 									);
@@ -182,14 +180,14 @@ export class Liturgies extends React.Component<undefined, State> {
 					</Scroll>
 				</Slidein>
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={this.sort}
 						array={sortArray}
 						/>
 					<BorderButton
-						label="Hinzufügen"
+						label={translate('actions.addtolist')}
 						onClick={this.showAddSlidein}
 						/>
 				</Options>
@@ -201,7 +199,7 @@ export class Liturgies extends React.Component<undefined, State> {
 
 								const name = obj.name;
 
-								const aspc = obj.aspects.map(e => ASPECTS[e - 1]).sort().join(', ');
+								const aspc = obj.aspects.map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 								if (obj.category === Categories.BLESSINGS) {
 									return (
@@ -216,7 +214,7 @@ export class Liturgies extends React.Component<undefined, State> {
 											>
 											<ListItemGroup>
 												{aspc}
-												{sortOrder === 'group' && ` / Segnung`}
+												{sortOrder === 'group' && ` / ${translate('liturgies.view.blessing')}`}
 											</ListItemGroup>
 										</SkillListItem>
 									);
@@ -247,7 +245,7 @@ export class Liturgies extends React.Component<undefined, State> {
 										>
 										<ListItemGroup>
 											{aspc}
-											{sortOrder === 'group' && ` / ${GROUPS[obj.gr - 1]}`}
+											{sortOrder === 'group' && ` / ${translate('liturgies.view.groups')[obj.gr - 1]}`}
 										</ListItemGroup>
 									</SkillListItem>
 								);

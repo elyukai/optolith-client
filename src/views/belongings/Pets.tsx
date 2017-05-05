@@ -16,7 +16,7 @@ export interface PetsState {
 	pets: PetInstance[];
 }
 
-export class Pets extends React.Component<undefined, PetsState> {
+export class Pets extends React.Component<{}, PetsState> {
 	state: PetsState = {
 		pets: PetsStore.getAll()
 	};

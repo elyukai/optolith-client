@@ -11,7 +11,7 @@ interface State {
 	newName: string;
 }
 
-export class AccountChangeName extends React.Component<undefined, State> {
+export class AccountChangeName extends React.Component<{}, State> {
 	state = {
 		newName: '',
 	};

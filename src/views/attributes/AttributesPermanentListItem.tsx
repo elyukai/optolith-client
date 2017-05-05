@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { createOverlay } from '../../utils/createOverlay';
+import { translate } from '../../utils/I18n';
 import { AttributeBorder } from './AttributeBorder';
 import { AttributesRemovePermanent } from './AttributesRemovePermanent';
 
@@ -25,8 +26,10 @@ export function AttributesPermanentListItem(props: AttributesPermanentListItemPr
 			value={available}
 			tooltip={<div className="calc-attr-overlay">
 				<h4><span>{name}</span><span>{available}</span></h4>
-				<p>Gesamt verloren: {lost}</p>
-				<p>Zurückgekauft: {redeemed}</p>
+				<p>
+					{translate('attributes.tooltips.losttotal')}: {lost}<br/>
+					{translate('attributes.tooltips.boughtback')}: {redeemed}
+				</p>
 			</div>}
 			tooltipMargin={7}
 			>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
+import { translate } from '../../utils/I18n';
 import { Advantages } from './Advantages';
 import { Disadvantages } from './Disadvantages';
 
@@ -7,7 +8,7 @@ interface State {
 	tab: string;
 }
 
-export class DisAdv extends React.Component<undefined, State> {
+export class DisAdv extends React.Component<{}, State> {
 	state = {
 		tab: 'adv',
 	};
@@ -32,11 +33,11 @@ export class DisAdv extends React.Component<undefined, State> {
 					tabs={[
 						{
 							id: 'adv',
-							label: 'Vorteile',
+							label: translate('titlebar.tabs.advantages'),
 						},
 						{
 							id: 'disadv',
-							label: 'Nachteile',
+							label: translate('titlebar.tabs.disadvantages'),
 						},
 					]}
 					active={this.state.tab}

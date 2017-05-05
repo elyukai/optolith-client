@@ -17,6 +17,7 @@ import { DisAdvStore } from '../../stores/DisAdvStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { ActiveViewObject, CultureInstance, DeactiveViewObject, InputTextEvent, ProfessionInstance, RaceInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { DeactiveList } from './DeactiveList';
 
@@ -37,7 +38,7 @@ interface State {
 	};
 }
 
-export class Advantages extends React.Component<undefined, State> {
+export class Advantages extends React.Component<{}, State> {
 	state = {
 		activeList: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
 		list: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
@@ -91,13 +92,13 @@ export class Advantages extends React.Component<undefined, State> {
 			<Page id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
-						<Checkbox checked={showRating} onClick={this.changeRating}>Empfohlen durch Spezies, Kultur und Profession</Checkbox>
-						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>Aktivierte anzeigen</Checkbox>
+						<TextField hint={translate('options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<Checkbox checked={showRating} onClick={this.changeRating}>{translate('advantages.options.common')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>{translate('options.showactivated')}</Checkbox>
 						<p>
-							{ap.adv[0]} / 80 AP für Vorteile<br/>
-							{ap.adv[1] > 0 && `${ap.adv[1]} / 50 für magische Vorteile`}
-							{ap.adv[2] > 0 && `${ap.adv[2]} / 50 für karmale Vorteile`}
+							{ap.adv[0]} / 80 {translate('titlebar.adventurepoints.advantages')}<br/>
+							{ap.adv[1] > 0 && `${translate('titlebar.adventurepoints.subprefix')} ${ap.adv[1]} / 50 ${translate('titlebar.adventurepoints.advantagesmagic')}`}
+							{ap.adv[2] > 0 && `${translate('titlebar.adventurepoints.subprefix')} ${ap.adv[2]} / 50 ${translate('titlebar.adventurepoints.advantagesblessed')}`}
 						</p>
 						{showRating && <RecommendedReference/>}
 					</Options>
@@ -110,8 +111,8 @@ export class Advantages extends React.Component<undefined, State> {
 						/>
 				</Slidein>
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<BorderButton label={translate('actions.addtolist')} onClick={this.showAddSlidein} />
 					{showRating && <RecommendedReference/>}
 				</Options>
 				<ActiveList

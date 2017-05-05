@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { SpecialAbilitiesStore } from '../stores/SpecialAbilitiesStore';
 import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
+import { translate } from '../utils/I18n';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -27,8 +27,6 @@ interface Props {
 	setTier(id: string, index: number, tier: number, cost: number): void;
 	removeFromList(args: DeactivateArgs): void;
 }
-
-const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
 
 export class ActivatableRemoveListItem extends React.Component<Props, undefined> {
 	handleSelectTier = (selectedTier: number) => {
@@ -81,7 +79,7 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 					{tierElement}
 				</ListItemSelections>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={specialAbilityGroupNames} index={gr} />}
+				{!hideGroup && <ListItemGroup list={translate('specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className="cost">{cost}</div>
 				</ListItemValues>

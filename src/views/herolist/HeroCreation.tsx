@@ -4,8 +4,8 @@ import { Dialog } from '../../components/Dialog';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { ELStore } from '../../stores/ELStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { InputTextEvent } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	node?: HTMLDivElement;
@@ -39,16 +39,16 @@ export class HeroCreation extends React.Component<Props, State> {
 		});
 
 		return (
-			<Dialog id="herocreation" title={getLocale()['herocreation.title']} node={this.props.node} buttons={[
+			<Dialog id="herocreation" title={translate('herocreation.title')} node={this.props.node} buttons={[
 				{
 					disabled: this.state.name === '' || !this.state.gender || !this.state.el,
-					label: getLocale()['herocreation.actions.start'],
+					label: translate('herocreation.actions.start'),
 					onClick: this.create,
 					primary: true,
 				},
 			]}>
 				<TextField
-					hint={getLocale()['herocreation.options.nameofhero']}
+					hint={translate('herocreation.options.nameofhero')}
 					value={this.state.name}
 					onChange={this.changeName}
 					fullWidth
@@ -57,14 +57,14 @@ export class HeroCreation extends React.Component<Props, State> {
 				<Dropdown
 					value={this.state.gender}
 					onChange={this.changeGender}
-					options={[{id: 'm', name: getLocale()['herocreation.options.selectsex.male']}, {id: 'f', name: getLocale()['herocreation.options.selectsex.female']}]}
-					hint={getLocale()['herocreation.options.selectsex']}
+					options={[{id: 'm', name: translate('herocreation.options.selectsex.male')}, {id: 'f', name: translate('herocreation.options.selectsex.female')}]}
+					hint={translate('herocreation.options.selectsex')}
 					fullWidth />
 				<Dropdown
 					value={this.state.el}
 					onChange={this.changeEL}
 					options={experienceLevels}
-					hint={getLocale()['herocreation.options.selectexperiencelevel']}
+					hint={translate('herocreation.options.selectexperiencelevel')}
 					fullWidth />
 			</Dialog>
 		);

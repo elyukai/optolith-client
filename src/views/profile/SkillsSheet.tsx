@@ -3,11 +3,12 @@ import * as SheetActions from '../../actions/SheetActions';
 import { Checkbox } from '../../components/Checkbox';
 import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { SheetStore } from '../../stores/SheetStore';
 import { TalentsStore } from '../../stores/TalentsStore';
 import { AttributeInstance, SpecialAbilityInstance, TalentInstance } from '../../types/data.d';
 import { getSelectionItem, getSelectionName } from '../../utils/ActivatableUtils';
+import { translate } from '../../utils/I18n';
+import { sort } from '../../utils/ListUtils';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';
@@ -24,7 +25,7 @@ const getRoutineValue = (sr: number, attributes: number[]) => {
 	return false;
 };
 
-const iterateList = (arr: TalentInstance[], checkValueVisibility: boolean): JSX.Element[] => arr.map(obj => {
+const iterateList = (arr: TalentInstance[], checkValueVisibility: boolean): JSX.Element[] => sort(arr).map(obj => {
 	const { id, name, check, encumbrance, ic, value } = obj;
 	const checkValues = check.map(e => (get(e) as AttributeInstance).value);
 	const checkString = check.map(e => {
@@ -36,7 +37,7 @@ const iterateList = (arr: TalentInstance[], checkValueVisibility: boolean): JSX.
 			return attribute.short;
 		}
 	}).join('/');
-	const encString = encumbrance === 'true' ? getLocale()['charactersheet.gamestats.skills.enc.yes'] : encumbrance === 'false' ? getLocale()['charactersheet.gamestats.skills.enc.no'] : getLocale()['charactersheet.gamestats.skills.enc.maybe'];
+	const encString = encumbrance === 'true' ? translate('charactersheet.gamestats.skills.enc.yes') : encumbrance === 'false' ? translate('charactersheet.gamestats.skills.enc.no') : translate('charactersheet.gamestats.skills.enc.maybe');
 	const ics = ['A', 'B', 'C', 'D'];
 	const routine = getRoutineValue(value, checkValues);
 	const routineSign = routine && routine[0] > 0 ? '+' : '';
@@ -56,7 +57,7 @@ interface State {
 	checkAttributeValueVisibility: boolean;
 }
 
-export class SkillsSheet extends React.Component<undefined, State> {
+export class SkillsSheet extends React.Component<{}, State> {
 	state = SheetStore.getAllForSpellsSheet();
 
 	componentDidMount() {
@@ -106,55 +107,55 @@ export class SkillsSheet extends React.Component<undefined, State> {
 						checked={this.state.checkAttributeValueVisibility}
 						onClick={this.switchAttributeValueVisibility}
 						>
-						{getLocale()['charactersheet.options.showattributevalues']}
+						{translate('charactersheet.options.showattributevalues')}
 					</Checkbox>
 				</SheetOptions>
-				<Sheet id="skills-sheet" title={getLocale()['charactersheet.gamestats.title']}>
-					<TextBox label={getLocale()['charactersheet.gamestats.skills.title']}>
+				<Sheet id="skills-sheet" title={translate('charactersheet.gamestats.title')}>
+					<TextBox label={translate('charactersheet.gamestats.skills.title')}>
 						<div className="upper">
 							<table>
 								<thead>
 									<tr>
-										<th className="name">{getLocale()['charactersheet.gamestats.skills.headers.skill']}</th>
-										<th className="check">{getLocale()['charactersheet.gamestats.skills.headers.check']}</th>
-										<th className="enc">{getLocale()['charactersheet.gamestats.skills.headers.enc']}</th>
-										<th className="ic">{getLocale()['charactersheet.gamestats.skills.headers.ic']}</th>
-										<th className="sr">{getLocale()['charactersheet.gamestats.skills.headers.sr']}</th>
-										<th className="routine">{getLocale()['charactersheet.gamestats.skills.headers.r']}</th>
-										<th className="comment">{getLocale()['charactersheet.gamestats.skills.headers.notes']}</th>
+										<th className="name">{translate('charactersheet.gamestats.skills.headers.skill')}</th>
+										<th className="check">{translate('charactersheet.gamestats.skills.headers.check')}</th>
+										<th className="enc">{translate('charactersheet.gamestats.skills.headers.enc')}</th>
+										<th className="ic">{translate('charactersheet.gamestats.skills.headers.ic')}</th>
+										<th className="sr">{translate('charactersheet.gamestats.skills.headers.sr')}</th>
+										<th className="routine">{translate('charactersheet.gamestats.skills.headers.r')}</th>
+										<th className="comment">{translate('charactersheet.gamestats.skills.headers.notes')}</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr className="group">
-										<td className="name">{getLocale()['charactersheet.gamestats.skills.subheaders.physical']}</td>
+										<td className="name">{translate('charactersheet.gamestats.skills.subheaders.physical')}</td>
 										<td className="check">{groupChecks[0]}</td>
 										<td className="enc"></td>
 										<td className="ic"></td>
 										<td className="sr"></td>
 										<td className="routine"></td>
-										<td className="comment">{getLocale()['charactersheet.gamestats.skills.subheaders.physicalpages']}</td>
+										<td className="comment">{translate('charactersheet.gamestats.skills.subheaders.physicalpages')}</td>
 									</tr>
 									{iterateList(talentsByGroup[0], checkAttributeValueVisibility)}
 									<tr><td/><td/><td/><td/><td/><td/><td/></tr>
 									<tr className="group">
-										<td className="name">{getLocale()['charactersheet.gamestats.skills.subheaders.social']}</td>
+										<td className="name">{translate('charactersheet.gamestats.skills.subheaders.social')}</td>
 										<td className="check">{groupChecks[1]}</td>
 										<td className="enc"></td>
 										<td className="ic"></td>
 										<td className="sr"></td>
 										<td className="routine"></td>
-										<td className="comment">{getLocale()['charactersheet.gamestats.skills.subheaders.socialpages']}</td>
+										<td className="comment">{translate('charactersheet.gamestats.skills.subheaders.socialpages')}</td>
 									</tr>
 									{iterateList(talentsByGroup[1], checkAttributeValueVisibility)}
 									<tr><td/><td/><td/><td/><td/><td/><td/></tr>
 									<tr className="group">
-										<td className="name">{getLocale()['charactersheet.gamestats.skills.subheaders.nature']}</td>
+										<td className="name">{translate('charactersheet.gamestats.skills.subheaders.nature')}</td>
 										<td className="check">{groupChecks[2]}</td>
 										<td className="enc"></td>
 										<td className="ic"></td>
 										<td className="sr"></td>
 										<td className="routine"></td>
-										<td className="comment">{getLocale()['charactersheet.gamestats.skills.subheaders.naturepages']}</td>
+										<td className="comment">{translate('charactersheet.gamestats.skills.subheaders.naturepages')}</td>
 									</tr>
 									{iterateList(talentsByGroup[2], checkAttributeValueVisibility)}
 								</tbody>
@@ -162,35 +163,35 @@ export class SkillsSheet extends React.Component<undefined, State> {
 							<table>
 								<thead>
 									<tr>
-										<th className="name">{getLocale()['charactersheet.gamestats.skills.headers.skill']}</th>
-										<th className="check">{getLocale()['charactersheet.gamestats.skills.headers.check']}</th>
-										<th className="enc">{getLocale()['charactersheet.gamestats.skills.headers.enc']}</th>
-										<th className="ic">{getLocale()['charactersheet.gamestats.skills.headers.ic']}</th>
-										<th className="sr">{getLocale()['charactersheet.gamestats.skills.headers.sr']}</th>
-										<th className="routine">{getLocale()['charactersheet.gamestats.skills.headers.r']}</th>
-										<th className="comment">{getLocale()['charactersheet.gamestats.skills.headers.notes']}</th>
+										<th className="name">{translate('charactersheet.gamestats.skills.headers.skill')}</th>
+										<th className="check">{translate('charactersheet.gamestats.skills.headers.check')}</th>
+										<th className="enc">{translate('charactersheet.gamestats.skills.headers.enc')}</th>
+										<th className="ic">{translate('charactersheet.gamestats.skills.headers.ic')}</th>
+										<th className="sr">{translate('charactersheet.gamestats.skills.headers.sr')}</th>
+										<th className="routine">{translate('charactersheet.gamestats.skills.headers.r')}</th>
+										<th className="comment">{translate('charactersheet.gamestats.skills.headers.notes')}</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr className="group">
-										<td className="name">{getLocale()['charactersheet.gamestats.skills.subheaders.knowledge']}</td>
+										<td className="name">{translate('charactersheet.gamestats.skills.subheaders.knowledge')}</td>
 										<td className="check">{groupChecks[3]}</td>
 										<td className="enc"></td>
 										<td className="ic"></td>
 										<td className="sr"></td>
 										<td className="routine"></td>
-										<td className="comment">{getLocale()['charactersheet.gamestats.skills.subheaders.knowledgepages']}</td>
+										<td className="comment">{translate('charactersheet.gamestats.skills.subheaders.knowledgepages')}</td>
 									</tr>
 									{iterateList(talentsByGroup[3], checkAttributeValueVisibility)}
 									<tr><td/><td/><td/><td/><td/><td/><td/></tr>
 									<tr className="group">
-										<td className="name">{getLocale()['charactersheet.gamestats.skills.subheaders.craft']}</td>
+										<td className="name">{translate('charactersheet.gamestats.skills.subheaders.craft')}</td>
 										<td className="check">{groupChecks[4]}</td>
 										<td className="enc"></td>
 										<td className="ic"></td>
 										<td className="sr"></td>
 										<td className="routine"></td>
-										<td className="comment">{getLocale()['charactersheet.gamestats.skills.subheaders.craftpages']}</td>
+										<td className="comment">{translate('charactersheet.gamestats.skills.subheaders.craftpages')}</td>
 									</tr>
 									{iterateList(talentsByGroup[4], checkAttributeValueVisibility)}
 								</tbody>
@@ -199,51 +200,51 @@ export class SkillsSheet extends React.Component<undefined, State> {
 					</TextBox>
 					<div className="lower">
 						<div className="abilites">
-							<TextBox label={getLocale()['charactersheet.gamestats.languages.title']}>
+							<TextBox label={translate('charactersheet.gamestats.languages.title')}>
 								<table className="languages-list">
 									<tbody>
 										{languages.map(e => <tr key={`lang-${e.id}`}>
 											<td>{e.name}</td>
-											<td>{e.tier === 4 ? getLocale()['charactersheet.gamestats.languages.native'] : e.tier}</td>
+											<td>{e.tier === 4 ? translate('charactersheet.gamestats.languages.native') : e.tier}</td>
 										</tr>)}
 									</tbody>
 								</table>
 							</TextBox>
-							<TextBox label={getLocale()['charactersheet.gamestats.knownscripts.title']}>
+							<TextBox label={translate('charactersheet.gamestats.knownscripts.title')}>
 								<div className="scripts-list">
 									{scripts.join(', ')}
 								</div>
 							</TextBox>
 						</div>
 						<AttributeMods />
-						<TextBox className="routine-checks" label={getLocale()['charactersheet.gamestats.routinechecks.title']}>
-							<p>{getLocale()['charactersheet.gamestats.routinechecks.texts.first']}</p>
-							<p>{getLocale()['charactersheet.gamestats.routinechecks.texts.second']}</p>
-							<p>{getLocale()['charactersheet.gamestats.routinechecks.texts.third']}</p>
-							<p>{getLocale()['charactersheet.gamestats.routinechecks.texts.fourth']}</p>
+						<TextBox className="routine-checks" label={translate('charactersheet.gamestats.routinechecks.title')}>
+							<p>{translate('charactersheet.gamestats.routinechecks.texts.first')}</p>
+							<p>{translate('charactersheet.gamestats.routinechecks.texts.second')}</p>
+							<p>{translate('charactersheet.gamestats.routinechecks.texts.third')}</p>
+							<p>{translate('charactersheet.gamestats.routinechecks.texts.fourth')}</p>
 							<table>
 								<thead>
 									<tr>
-										<th><div>{getLocale()['charactersheet.gamestats.routinechecks.headers.checkmod']}</div></th>
-										<th><div>{getLocale()['charactersheet.gamestats.routinechecks.headers.neededsr']}</div></th>
-										<th><div>{getLocale()['charactersheet.gamestats.routinechecks.headers.checkmod']}</div></th>
-										<th><div>{getLocale()['charactersheet.gamestats.routinechecks.headers.neededsr']}</div></th>
+										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.checkmod')}</div></th>
+										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.neededsr')}</div></th>
+										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.checkmod')}</div></th>
+										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.neededsr')}</div></th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr><td>{getLocale()['charactersheet.gamestats.routinechecks.from']} +3</td><td>1</td><td>-1</td><td>13</td></tr>
+									<tr><td>{translate('charactersheet.gamestats.routinechecks.from')} +3</td><td>1</td><td>-1</td><td>13</td></tr>
 									<tr><td>+2</td><td>4</td><td>-2</td><td>16</td></tr>
 									<tr><td>+1</td><td>7</td><td>-3</td><td>19</td></tr>
 									<tr><td>+/-0</td><td>10</td><td></td><td></td></tr>
 								</tbody>
 							</table>
 						</TextBox>
-						<TextBox className="quality-levels" label={getLocale()['charactersheet.gamestats.qualitylevels.title']}>
+						<TextBox className="quality-levels" label={translate('charactersheet.gamestats.qualitylevels.title')}>
 							<table>
 								<thead>
 									<tr>
-										<th><div>{getLocale()['charactersheet.gamestats.qualitylevels.headers.skillpoints']}</div></th>
-										<th><div>{getLocale()['charactersheet.gamestats.qualitylevels.headers.qualitylevel']}</div></th>
+										<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.skillpoints')}</div></th>
+										<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.qualitylevel')}</div></th>
 									</tr>
 								</thead>
 								<tbody>

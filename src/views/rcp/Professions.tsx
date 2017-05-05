@@ -27,7 +27,7 @@ interface State {
 	extensionVisibility: boolean;
 }
 
-export class Professions extends React.Component<undefined, State> {
+export class Professions extends React.Component<{}, State> {
 	state = {
 		currentID: ProfessionStore.getCurrentId(),
 		currentVID: ProfessionVariantStore.getCurrentID(),

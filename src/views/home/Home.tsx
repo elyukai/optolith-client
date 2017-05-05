@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { getLocale } from '../../stores/LocaleStore';
+import { translate } from '../../utils/I18n';
 import { Overview } from './Overview';
 
 interface State {
 	tab: string;
 }
 
-export class Home extends React.Component<undefined, State> {
+export class Home extends React.Component<{}, State> {
 	state = {
 		tab: 'overview',
 	};
@@ -30,17 +30,17 @@ export class Home extends React.Component<undefined, State> {
 					tabs={[
 						{
 							id: 'overview',
-							label: getLocale()['titlebar.tabs.homeintro'],
+							label: translate('titlebar.tabs.homeintro'),
 						},
 						{
 							disabled: true,
 							id: 'news',
-							label: getLocale()['titlebar.tabs.news'],
+							label: translate('titlebar.tabs.news'),
 						},
 						{
 							disabled: true,
 							id: 'patchnotes',
-							label: getLocale()['titlebar.tabs.lastchanges'],
+							label: translate('titlebar.tabs.lastchanges'),
 						},
 					]}
 					active={this.state.tab}

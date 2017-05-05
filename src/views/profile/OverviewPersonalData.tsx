@@ -4,8 +4,9 @@ import { Dropdown } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
-import { getLocale } from '../../stores/LocaleStore';
 import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
+import { sort } from '../../utils/ListUtils';
 
 interface Props {
 	age: string;
@@ -51,43 +52,43 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 	render() {
 		const { age, characteristics, culture, cultureAreaKnowledge, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
 
-		const hairArr = race ? haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)) : [];
-		const eyesArr = race ? eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id)) : [];
+		const hairArr = race ? sort(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id))) : [];
+		const eyesArr = race ? sort(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id))) : [];
 		const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
 
 		return (
 			<div className="personal-data">
 				<div>
 					<TextField
-						label={getLocale()['personaldata.family']}
+						label={translate('personaldata.family')}
 						value={family}
 						onChange={this.changeFamily}
 						/>
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.placeofbirth']}
+						label={translate('personaldata.placeofbirth')}
 						value={placeofbirth}
 						onChange={this.changePlaceOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.dateofbirth']}
+						label={translate('personaldata.dateofbirth')}
 						value={dateofbirth}
 						onChange={this.changeDateOfBirth}
 						/>
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.age']}
+						label={translate('personaldata.age')}
 						value={age}
 						onChange={this.changeAge}
 						/>
 				</div>
 				<InputButtonGroup className="reroll">
 					<Dropdown
-						label={getLocale()['personaldata.haircolor']}
+						label={translate('personaldata.haircolor')}
 						value={haircolor}
 						onChange={this.changeHaircolor}
 						options={hairArr}
@@ -96,7 +97,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<Dropdown
-						label={getLocale()['personaldata.eyecolor']}
+						label={translate('personaldata.eyecolor')}
 						value={eyecolor}
 						onChange={this.changeEyecolor}
 						options={eyesArr}
@@ -105,7 +106,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						label={getLocale()['personaldata.size']}
+						label={translate('personaldata.size')}
 						value={size}
 						onChange={this.changeSize}
 						/>
@@ -113,7 +114,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
-						label={getLocale()['personaldata.size']}
+						label={translate('personaldata.weight')}
 						value={weight}
 						onChange={this.changeWeight}
 						/>
@@ -121,14 +122,14 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</InputButtonGroup>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.title']}
+						label={translate('personaldata.title')}
 						value={title}
 						onChange={this.changeTitle}
 						/>
 				</div>
 				<div>
 					<Dropdown
-						label={getLocale()['personaldata.socialstatus']}
+						label={translate('personaldata.socialstatus')}
 						value={socialstatus}
 						onChange={this.changeSocialStatus}
 						options={socialArr}
@@ -136,21 +137,21 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.characteristics']}
+						label={translate('personaldata.characteristics')}
 						value={characteristics}
 						onChange={this.changeCharacteristics}
 						/>
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.otherinfo']}
+						label={translate('personaldata.otherinfo')}
 						value={otherinfo}
 						onChange={this.changeOtherInfo}
 						/>
 				</div>
 				<div>
 					<TextField
-						label={getLocale()['personaldata.cultureareaknowledge']}
+						label={translate('personaldata.cultureareaknowledge')}
 						value={cultureAreaKnowledge}
 						onChange={this.changeCultureAreaKnowledge}
 						/>

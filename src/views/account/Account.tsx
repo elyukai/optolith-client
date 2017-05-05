@@ -5,7 +5,7 @@ import { Scroll } from '../../components/Scroll';
 import { AccountChangeName } from './AccountChangeName';
 import { AccountChangePassword } from './AccountChangePassword';
 
-export class Account extends React.Component<undefined, undefined> {
+export class Account extends React.Component<{}, undefined> {
 	delete = () => AuthActions.requestUserDeletion();
 
 	render() {

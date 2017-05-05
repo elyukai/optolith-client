@@ -1,9 +1,11 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableInstance, InstanceInInit, SkillishInstance, TalentInstance } from '../types/data.d';
-import { RawAdvantage, RawAttribute, RawBlessing, RawCantrip, RawCombatTechnique, RawCulture, RawDisadvantage, RawLiturgy, RawProfession, RawProfessionVariant, RawRace, RawSpecialAbility, RawSpell, RawTables, RawTalent } from '../types/rawdata.d';
+import { ActivatableInstance, InstanceInInit, SkillishInstance, TalentInstance, ToListById } from '../types/data.d';
+import { RawAdvantage, RawAttribute, RawAttributeLocale, RawBlessing, RawCantrip, RawCombatTechnique, RawCulture, RawCultureLocale, RawDisadvantage, RawLiturgy, RawLocale, RawProfession, RawProfessionVariant, RawRace, RawRaceLocale, RawSpecialAbility, RawSpell, RawTables, RawTalent } from '../types/rawdata.d';
 import * as InitUtils from '../utils/InitUtils';
 
 type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
+
+type RawLocales = RawAttributeLocale | RawRaceLocale | RawCultureLocale;
 
 interface List {
 	[id: string]: InstanceInInit;
@@ -13,15 +15,18 @@ const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance 
 	return [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(obj.category);
 };
 
-export function init(raw: RawTables) {
+export function init(raw: RawTables, rawlocale: RawLocale) {
 	const { attributes, adv, blessings, cantrips, cultures, disadv, talents, combattech, professions, professionVariants, races, spells, liturgies, specialabilities } = raw;
 
 	const list: List = {};
 
-	const iterate = <TRaw extends RawDataClass, T extends InstanceInInit>(source: { [id: string]: TRaw }, initFn: (raw: TRaw) => T) => {
+	const iterate = <TRaw extends RawDataClass, T extends InstanceInInit, L extends RawLocales>(source: { [id: string]: TRaw }, initFn: (raw: TRaw, locale: ToListById<L>) => T | undefined, locale: ToListById<L>) => {
 		for (const id in source) {
 			if (source.hasOwnProperty(id)) {
-				list[id] = initFn(source[id]);
+				const result = initFn(source[id], locale);
+				if (result) {
+					list[id] = result;
+				}
 			}
 		}
 	};
@@ -39,8 +44,8 @@ export function init(raw: RawTables) {
 		return filteredList;
 	};
 
-	iterate(races, InitUtils.initRace);
-	iterate(cultures, InitUtils.initCulture);
+	iterate(races, InitUtils.initRace, rawlocale.races);
+	iterate(cultures, InitUtils.initCulture, rawlocale.cultures);
 	iterate(professions, InitUtils.initProfession);
 	list.P_0 = InitUtils.initProfession({
 		ap: 0,
@@ -66,8 +71,8 @@ export function init(raw: RawTables) {
 		src: { id: 'US25001' }
 	});
 	iterate(professionVariants, InitUtils.initProfessionVariant);
-	iterate(attributes, InitUtils.initAttribute);
-	iterate(talents, InitUtils.initTalent);
+	iterate(attributes, InitUtils.initAttribute, rawlocale.attributes);
+	iterate(talents, InitUtils.initTalent, rawlocale.talents);
 	iterate(combattech, InitUtils.initCombatTechnique);
 	iterate(spells, InitUtils.initSpell);
 	iterate(cantrips, InitUtils.initCantrip);

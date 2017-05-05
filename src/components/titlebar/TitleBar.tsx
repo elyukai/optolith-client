@@ -11,7 +11,7 @@ import { ELStore } from '../../stores/ELStore';
 import { HistoryStore } from '../../stores/HistoryStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { ProfileStore } from '../../stores/ProfileStore';
-import { Locale } from '../../types/data.d';
+import { UILocale } from '../../types/data.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { Login } from '../../views/account/Login';
 import { HeroCreation } from '../../views/herolist/HeroCreation';
@@ -49,7 +49,7 @@ interface State {
 interface Props {
 	currentSection: string;
 	currentTab: string;
-	locale: Locale;
+	locale: UILocale;
 }
 
 export class TitleBar extends React.Component<Props, State> {

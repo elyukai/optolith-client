@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export class RegistrationConfirm extends React.Component<undefined, undefined> {
+export class RegistrationConfirm extends React.Component<{}, undefined> {
 
 	render() {
 		return (

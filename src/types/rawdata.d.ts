@@ -88,6 +88,11 @@ export interface RawHeroNew extends Data.HeroBase {
 
 export type RawHerolist = RawHero[] | Data.ToListById<RawHeroNew>;
 
+export interface RawRaceLocale {
+	id: string;
+	name: string;
+}
+
 export interface RawRace {
 	id: string;
 	name: string;
@@ -111,6 +116,11 @@ export interface RawRace {
 	eyes: number[];
 	size: (number | [number, number])[];
 	weight: (number | [number, number])[];
+}
+
+export interface RawCultureLocale {
+	id: string;
+	name: string;
 }
 
 export interface RawCulture {
@@ -182,6 +192,10 @@ export interface RawAdvantage {
 
 export interface RawAttribute {
 	id: string;
+}
+
+export interface RawAttributeLocale {
+	id: string;
 	name: string;
 	short: string;
 }
@@ -246,11 +260,18 @@ export interface RawCantrip {
 
 export interface RawTalent {
 	id: string;
-	name: string;
 	check: [string, string, string];
 	skt: number;
-	be: 'true' | 'false' | 'evtl';
+	be: 'true' | 'false' | 'maybe';
 	gr: number;
+	name: string;
+	spec: string[];
+	spec_input?: string;
+}
+
+export interface RawTalentLocale {
+	id: string;
+	name: string;
 	spec: string[];
 	spec_input?: string;
 }
@@ -284,6 +305,11 @@ export interface RawItem {
 	isTwoHandedWeapon?: boolean;
 }
 
+export interface RawExperienceLevelLocale {
+	id: string;
+	name: string;
+}
+
 export interface RawExperienceLevel {
 	id: string;
 	name: string;
@@ -297,23 +323,34 @@ export interface RawExperienceLevel {
 }
 
 export interface RawTables {
-	adv: { [id: string]: RawAdvantage };
-	attributes: { [id: string]: RawAttribute };
-	blessings: { [id: string]: RawBlessing };
-	cantrips: { [id: string]: RawCantrip };
-	combattech: { [id: string]: RawCombatTechnique };
-	cultures: { [id: string]: RawCulture };
-	disadv: { [id: string]: RawDisadvantage };
-	el: { [id: string]: RawExperienceLevel };
-	items: { [id: string]: RawItem };
-	liturgies: { [id: string]: RawLiturgy };
-	professions: { [id: string]: RawProfession };
-	professionVariants: { [id: string]: RawProfessionVariant };
-	races: { [id: string]: RawRace };
-	specialabilities: { [id: string]: RawSpecialAbility };
-	spells: { [id: string]: RawSpell };
-	talents: { [id: string]: RawTalent };
+	adv: Data.ToListById<RawAdvantage>;
+	attributes: Data.ToListById<RawAttribute>;
+	blessings: Data.ToListById<RawBlessing>;
+	cantrips: Data.ToListById<RawCantrip>;
+	combattech: Data.ToListById<RawCombatTechnique>;
+	cultures: Data.ToListById<RawCulture>;
+	disadv: Data.ToListById<RawDisadvantage>;
+	el: Data.ToListById<RawExperienceLevel>;
+	items: Data.ToListById<RawItem>;
+	liturgies: Data.ToListById<RawLiturgy>;
+	professions: Data.ToListById<RawProfession>;
+	professionVariants: Data.ToListById<RawProfessionVariant>;
+	races: Data.ToListById<RawRace>;
+	specialabilities: Data.ToListById<RawSpecialAbility>;
+	spells: Data.ToListById<RawSpell>;
+	talents: Data.ToListById<RawTalent>;
 }
+
+export interface RawLocale {
+	ui: Data.UILocale;
+	el: Data.ToListById<RawExperienceLevelLocale>;
+	attributes: Data.ToListById<RawAttributeLocale>;
+	races: Data.ToListById<RawRaceLocale>;
+	cultures: Data.ToListById<RawCultureLocale>;
+	talents: Data.ToListById<RawTalentLocale>;
+}
+
+export type RawLocaleList = Data.ToListById<RawLocale>;
 
 export interface Config {
 	herolistSortOrder: string;
@@ -340,10 +377,6 @@ export interface Config {
 	sheetCheckAttributeValueVisibility?: boolean;
 	enableActiveItemHints: boolean;
 	locale?: string;
-}
-
-export interface RawLocale {
-	ui: Data.Locale
 }
 
 export interface Raw {

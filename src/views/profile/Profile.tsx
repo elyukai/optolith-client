@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { getLocale } from '../../stores/LocaleStore';
 import { PhaseStore } from '../../stores/PhaseStore';
+import { translate } from '../../utils/I18n';
 import { OptionalRules } from './OptionalRules';
 import { Overview } from './Overview';
 import { Sheets } from './Sheets';
@@ -11,7 +11,7 @@ interface ProfileState {
 	tab: string;
 }
 
-export class Profile extends React.Component<undefined, ProfileState> {
+export class Profile extends React.Component<{}, ProfileState> {
 
 	state = {
 		phase: PhaseStore.get(),
@@ -51,17 +51,17 @@ export class Profile extends React.Component<undefined, ProfileState> {
 		const tabs = [
 			{
 				id: 'overview',
-				label: getLocale()['titlebar.tabs.profileoverview'],
+				label: translate('titlebar.tabs.profileoverview'),
 			},
 		];
 
 		if (phase === 3) {
 			tabs.push({
 				id: 'sheets',
-				label: getLocale()['titlebar.tabs.charactersheet'],
+				label: translate('titlebar.tabs.charactersheet'),
 			}, {
 				id: 'optionalRules',
-				label: getLocale()['titlebar.tabs.rules'],
+				label: translate('titlebar.tabs.rules'),
 			});
 		}
 

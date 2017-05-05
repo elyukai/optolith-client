@@ -4,9 +4,7 @@ import { AttributeListItem } from './AttributeListItem';
 
 export interface AttributeListProps {
 	attributes: AttributeInstance[];
-	max: number;
 	phase: number;
-	sumMax: boolean;
 }
 
 export function AttributeList(props: AttributeListProps) {

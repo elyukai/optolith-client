@@ -144,6 +144,12 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 						currentCost = (cost as number[])[ic - 1];
 						break;
 					}
+					case 'SA_273': {
+						const { name, ic } = (get(sid as string)) as Data.SpellInstance;
+						add = name;
+						currentCost = (cost as number[])[ic - 1];
+						break;
+					}
 					case 'SA_484': {
 						const selectionItem = getSelectionItem(a, sid) as (Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }) | undefined;
 						add = selectionItem && `${(get(selectionItem.target) as Data.SpellInstance).name}: ${selectionItem.name}`;

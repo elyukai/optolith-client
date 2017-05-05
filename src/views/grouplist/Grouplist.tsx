@@ -5,7 +5,7 @@ import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
 
-export class Grouplist extends React.Component<undefined, undefined> {
+export class Grouplist extends React.Component<{}, undefined> {
 
 	filter = (event: InputTextEvent) => event.target.value;
 	openGroup = () => LocationActions.setSection('group');

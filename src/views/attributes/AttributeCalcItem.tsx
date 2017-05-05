@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as AttributeActions from '../../actions/AttributesActions';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
-import { SecondaryAttribute } from '../../types/data.d';
+import { SecondaryAttribute } from '../../types/data.d'
+import { translate } from '../../utils/I18n';;
 import { AttributeBorder } from './AttributeBorder';
 
 export interface AttributeCalcItemProps {
@@ -40,8 +41,8 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
 					<h4><span>{name}</span><span>{value}</span></h4>
 					<p className="calc-text">{calc} = {base || '-'}</p>
 					{ mod || mod === 0 || ((currentAdd || currentAdd === 0) && phase > 2) ? <p>
-						{ mod || mod === 0 ? <span className="mod">Modifikator: {mod}<br/></span> : null}
-						{ (currentAdd || currentAdd === 0) && phase > 2 ? <span className="add">Gekauft: {currentAdd} / {maxAdd || '-'}</span> : null}
+						{ mod || mod === 0 ? <span className="mod">{translate('attributes.tooltips.modifier')}: {mod}<br/></span> : null}
+						{ (currentAdd || currentAdd === 0) && phase > 2 ? <span className="add">{translate('attributes.tooltips.bought')}: {currentAdd} / {maxAdd || '-'}</span> : null}
 					</p> : null}
 				</div>} tooltipMargin={7}>
 				{ phase > 2 && maxAdd ? <NumberBox current={currentAdd} max={maxAdd} /> : null }

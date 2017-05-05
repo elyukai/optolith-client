@@ -15,7 +15,7 @@ import { get } from '../../stores/ListStore';
 import { AdvantageInstance, ArmorZonesInstance, AttributeInstance, DisadvantageInstance, InputTextEvent } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
-import { dotToComma } from '../../utils/i18n';
+import { dotToComma } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { ArmorZonesEditor } from './ArmorZonesEditor';
 import { ArmorZonesListItem } from './ArmorZonesListItem';
@@ -32,7 +32,7 @@ interface State {
 	sortOrder: string;
 }
 
-export class ArmorZones extends React.Component<undefined, State> {
+export class ArmorZones extends React.Component<{}, State> {
 	state = {
 		filterText: '',
 		items: EquipmentStore.getAllArmorZones(),

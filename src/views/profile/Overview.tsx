@@ -11,7 +11,6 @@ import * as ActivatableStore from '../../stores/ActivatableStore';
 import { APStore } from '../../stores/APStore';
 import { CultureStore } from '../../stores/CultureStore';
 import { ELStore } from '../../stores/ELStore';
-import { getLocale } from '../../stores/LocaleStore';
 import { PhaseStore } from '../../stores/PhaseStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
@@ -20,6 +19,7 @@ import { RaceStore } from '../../stores/RaceStore';
 import { ActiveViewObject } from '../../types/data.d';
 import { calcEL } from '../../utils/calcEL';
 import { createOverlay } from '../../utils/createOverlay';
+import { translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewAvatarChange } from './OverviewAvatarChange';
@@ -51,7 +51,7 @@ interface State {
 	editProfessionName: boolean;
 }
 
-export class Overview extends React.Component<undefined, State> {
+export class Overview extends React.Component<{}, State> {
 
 	state = {
 		...ProfileStore.getAll(),
@@ -97,9 +97,9 @@ export class Overview extends React.Component<undefined, State> {
 	addAP = () => createOverlay(<OverviewAddAP />);
 
 	render() {
-		const { ap, avatar, editName, editProfessionName, name, phase, professionName, ...personal } = this.state;
+		const { advActive, ap, avatar, disadvActive, editName, editProfessionName, name, phase, professionName, sex: sexId, ...personal } = this.state;
 
-		const sex = this.state.sex === 'm' ? getLocale()['profileoverview.view.male'] : getLocale()['profileoverview.view.female'];
+		const sex = sexId === 'm' ? translate('profileoverview.view.male') : translate('profileoverview.view.female');
 
 		const professionId = ProfessionStore.getCurrentId();
 		const isOwnProfession = professionId === 'P_0';
@@ -131,7 +131,7 @@ export class Overview extends React.Component<undefined, State> {
 		) : (
 			<BorderButton
 				className="edit-profession-name-btn"
-				label={getLocale()['profileoverview.view.editprofessionname']}
+				label={translate('profileoverview.view.editprofessionname')}
 				onClick={this.editProfessionName}
 				/>
 		));
@@ -167,20 +167,20 @@ export class Overview extends React.Component<undefined, State> {
 													let { name, subname } = profession;
 
 													if (typeof name === 'object' && !isOwnProfession) {
-														name = name[this.state.sex];
+														name = name[sexId];
 													}
 													else if (isOwnProfession) {
 														name = professionName;
 													}
 
 													if (typeof subname === 'object') {
-														subname = subname[this.state.sex];
+														subname = subname[sexId];
 													}
 
 													let { name: vname = { m: '', f: '' } } = ProfessionVariantStore.getCurrent() || {};
 
 													if (typeof vname === 'object') {
-														vname = vname[this.state.sex];
+														vname = vname[sexId];
 													}
 
 													return name + (subname ? ` (${subname})` : vname ? ` (${vname})` : '');
@@ -210,7 +210,7 @@ export class Overview extends React.Component<undefined, State> {
 							phase === 3 ? (
 								<BorderButton
 									className="add-ap"
-									label={getLocale()['profileoverview.actions.addadventurepoints']}
+									label={translate('profileoverview.actions.addadventurepoints')}
 									onClick={this.addAP}
 									/>
 							) : null
@@ -219,7 +219,7 @@ export class Overview extends React.Component<undefined, State> {
 					</div>
 					{
 						isProfessionUndefined ? null : (
-							<h3>{getLocale()['profileoverview.view.personaldata']}</h3>
+							<h3>{translate('profileoverview.view.personaldata')}</h3>
 						)
 					}
 					{
@@ -227,10 +227,10 @@ export class Overview extends React.Component<undefined, State> {
 							<OverviewPersonalData
 								{...personal}
 								culture={CultureStore.getCurrent()!}
-								eyecolorTags={ProfileStore.getEyecolorTags()}
-								haircolorTags={ProfileStore.getHaircolorTags()}
+								eyecolorTags={translate('eyecolors')}
+								haircolorTags={translate('haircolors')}
 								race={RaceStore.getCurrent()!}
-								socialstatusTags={getLocale().socialstatus}
+								socialstatusTags={translate('socialstatus')}
 								/>
 						)
 					}
@@ -239,7 +239,7 @@ export class Overview extends React.Component<undefined, State> {
 							<div>
 								<BorderButton
 									className="end-char-creation"
-									label={getLocale()['profileoverview.actions.endherocreation']}
+									label={translate('profileoverview.actions.endherocreation')}
 									onClick={this.endCharacterCreation}
 									primary
 									/>
@@ -249,10 +249,10 @@ export class Overview extends React.Component<undefined, State> {
 					{
 						phase === 3 ? (
 							<div>
-								<h3>{getLocale()['profileoverview.view.advantages']}</h3>
-								<ActivatableTextList list={this.state.advActive} />
-								<h3>{getLocale()['profileoverview.view.disadvantages']}</h3>
-								<ActivatableTextList list={this.state.disadvActive} />
+								<h3>{translate('profileoverview.view.advantages')}</h3>
+								<ActivatableTextList list={advActive} />
+								<h3>{translate('profileoverview.view.disadvantages')}</h3>
+								<ActivatableTextList list={disadvActive} />
 							</div>
 						) : null
 					}

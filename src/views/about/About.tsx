@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { getLocale } from '../../stores/LocaleStore';
+import { translate } from '../../utils/I18n';
 import { Imprint } from './Imprint';
 import { ThirdPartyLicenses } from './ThirdPartyLicenses';
 import { TOU } from './TOU';
@@ -9,7 +9,7 @@ interface State {
 	tab: string;
 }
 
-export class About extends React.Component<undefined, State> {
+export class About extends React.Component<{}, State> {
 	state = {
 		tab: 'imprint',
 	};
@@ -40,11 +40,11 @@ export class About extends React.Component<undefined, State> {
 					tabs={[
 						{
 							id: 'imprint',
-							label: getLocale()['titlebar.tabs.imprint'],
+							label: translate('titlebar.tabs.imprint'),
 						},
 						{
 							id: 'thirdPartyLicenses',
-							label: getLocale()['titlebar.tabs.thirdpartylicenses'],
+							label: translate('titlebar.tabs.thirdpartylicenses'),
 						},
 					]}
 					active={this.state.tab}
