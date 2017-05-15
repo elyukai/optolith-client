@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { ItemInstance } from '../../types/data.d';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { getRoman } from '../../utils/roman';
 
 export function CombatSheetArmor() {
@@ -10,18 +11,18 @@ export function CombatSheetArmor() {
 	list.splice(0, Math.min(items.length, 4), ...items);
 	const stabilityByArmorType = [4, 5, 6, 8, 9, 13, 12, 11, 10];
 	return (
-		<TextBox label="Rüstungen" className="armor">
+		<TextBox label={translate('charactersheet.combat.armor.title')} className="armor">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Rüstung</th>
-						<th className="st">St.</th>
-						<th className="loss">V.</th>
-						<th className="pro">RS</th>
-						<th className="enc">BE</th>
-						<th className="add-penalties">GS/INI</th>
-						<th className="weight">Gewicht</th>
-						<th className="where">Reise, ...</th>
+						<th className="name">{translate('charactersheet.combat.headers.armor')}</th>
+						<th className="st">{translate('charactersheet.combat.headers.st')}</th>
+						<th className="loss">{translate('charactersheet.combat.headers.loss')}</th>
+						<th className="pro">{translate('charactersheet.combat.headers.pro')}</th>
+						<th className="enc">{translate('charactersheet.combat.headers.enc')}</th>
+						<th className="add-penalties">{translate('charactersheet.combat.headers.addpenalties')}</th>
+						<th className="weight">{translate('charactersheet.combat.headers.weight')}</th>
+						<th className="where">{translate('charactersheet.combat.headers.where')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -46,7 +47,7 @@ export function CombatSheetArmor() {
 										<td className="pro">{e.pro}</td>
 										<td className="enc">{e.enc}</td>
 										<td className="add-penalties">{addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}</td>
-										<td className="weight">{e.weight} Stn</td>
+										<td className="weight">{localizeNumber(localizeWeight(e.weight))} {translate('charactersheet.combat.headers.weightunit')}</td>
 										<td className="where">{e.where}</td>
 									</tr>
 								);

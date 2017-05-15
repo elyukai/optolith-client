@@ -145,6 +145,24 @@
 		}
 	}
 
+	&.invalid:not(.disabled) {
+		label {
+			color: $unrecommended1;
+		}
+
+		> div {
+			> .value {
+				border-image: none;
+				border-color: $unrecommended2;
+				color: $unrecommended1;
+
+				&::before, &::after {
+					border-color: $unrecommended1 $unrecommended1 transparent transparent;
+				}
+			}
+		}
+	}
+
 	&.fullWidth {
 		width: auto;
 	}

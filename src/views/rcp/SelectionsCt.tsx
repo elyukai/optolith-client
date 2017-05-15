@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	active: Set<string>;
@@ -16,11 +17,11 @@ interface Props {
 
 export class SelectionsCt extends React.Component<Props, undefined> {
 	render() {
-		const amountTags = ['Eine', 'Zwei'];
+		const amountTags = [translate('rcpselections.labels.one'), translate('rcpselections.labels.two')];
 
 		const { active, amount, change, disabled, list, value, second } = this.props;
 
-		const text = second ? 'weitere' : 'der folgenden Kampftechniken';
+		const text = second ? translate('rcpselections.labels.more') : translate('rcpselections.labels.ofthefollowingcombattechniques');
 
 		return (
 			<div className="ct list">

@@ -18,6 +18,7 @@ export interface TextFieldProps {
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	type?: string;
 	value?: string | number;
+	valid?: boolean;
 }
 
 export class TextField extends React.Component<TextFieldProps, {}> {
@@ -30,11 +31,11 @@ export class TextField extends React.Component<TextFieldProps, {}> {
 	}
 
 	render() {
-		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type = 'text', value } = this.props;
+		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type = 'text', valid, value = '' } = this.props;
 
-		const hintElement = hint ? (
+		const hintElement = hint && (
 			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>
-		) : null;
+		);
 
 		// const inputElement = this.props.multiLine ? (
 		// 	<TextareaAutosize
@@ -54,12 +55,17 @@ export class TextField extends React.Component<TextFieldProps, {}> {
 			/>
 		);
 
-		const counterTextElement = countMax ? (
+		const counterTextElement = countMax && (
 			<div>{countCurrent} / {countMax}</div>
-		) : null;
+		);
 
 		return (
-			<div className={classNames(className, { textfield: true, fullWidth, disabled })}>
+			<div className={classNames(className, {
+				textfield: true,
+				fullWidth,
+				disabled,
+				invalid: valid === false
+			})}>
 				{hintElement}
 				{label && <Label text={label} />}
 				{inputElement}

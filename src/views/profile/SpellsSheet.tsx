@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as SheetActions from '../../actions/SheetActions';
 import { Checkbox } from '../../components/Checkbox';
 import { SheetStore } from '../../stores/SheetStore';
+import { translate } from '../../utils/I18n';
 import { getAE } from '../../utils/secondaryAttributes';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
@@ -29,8 +30,8 @@ export class SpellsSheet extends React.Component<{}, State> {
 
 	render() {
 		const addHeader = [
-			{ id: 'AE_MAX', short: 'AsP Max.', value: getAE().value },
-			{ id: 'AE_CURRENT', short: 'Aktuell' },
+			{ id: 'AE_MAX', short: translate('charactersheet.spells.headers.aemax'), value: getAE().value },
+			{ id: 'AE_CURRENT', short: translate('charactersheet.spells.headers.aecurrent') },
 		];
 
 		return (
@@ -40,10 +41,10 @@ export class SpellsSheet extends React.Component<{}, State> {
 						checked={this.state.checkAttributeValueVisibility}
 						onClick={this.switchAttributeValueVisibility}
 						>
-						Attributwerte anzeigen
+						{translate('charactersheet.options.showattributevalues')}
 					</Checkbox>
 				</SheetOptions>
-				<Sheet id="spells-sheet" title="Zauber &amp; Rituale" addHeaderInfo={addHeader}>
+				<Sheet id="spells-sheet" title={translate('charactersheet.spells.title')} addHeaderInfo={addHeader}>
 					<div className="all">
 						<SpellsSheetMain attributeValueVisibility={this.state.checkAttributeValueVisibility} />
 						<AttributeMods />

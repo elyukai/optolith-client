@@ -21,7 +21,7 @@ export interface HeroBase {
 	readonly clientVersion: string;
 	readonly phase: number;
 	readonly name: string;
-	readonly avatar: string;
+	readonly avatar?: string;
 	readonly ap: AdventurePoints;
 	readonly el: string;
 	readonly r: string;
@@ -31,19 +31,19 @@ export interface HeroBase {
 	readonly pv?: string;
 	readonly sex: 'm' | 'f';
 	readonly pers: {
-		family: string;
-		placeofbirth: string;
-		dateofbirth: string;
-		age: string;
-		haircolor: number;
-		eyecolor: number;
-		size: string;
-		weight: string;
-		title: string;
-		socialstatus: number;
-		characteristics: string;
-		otherinfo: string;
-		cultureAreaKnowledge: string;
+		family?: string;
+		placeofbirth?: string;
+		dateofbirth?: string;
+		age?: string;
+		haircolor?: number;
+		eyecolor?: number;
+		size?: string;
+		weight?: string;
+		title?: string;
+		socialstatus?: number;
+		characteristics?: string;
+		otherinfo?: string;
+		cultureAreaKnowledge?: string;
 	};
 	readonly activatable: ToListById<ActiveObject[]>;
 	readonly attr: {
@@ -218,7 +218,7 @@ export interface ProfessionNameForSexes {
 export interface ProfessionInstance {
 	readonly id: string;
 	readonly name: string | ProfessionNameForSexes;
-	readonly subname: string | ProfessionNameForSexes;
+	readonly subname?: string | ProfessionNameForSexes;
 	readonly ap: number;
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: RequirementObject[];
@@ -242,7 +242,7 @@ export interface ProfessionInstance {
 	readonly subgr: number;
 	readonly src: {
 		id: string;
-		page?: string;
+		page?: number;
 	};
 }
 
@@ -353,10 +353,28 @@ export interface SkillOptionalDependency {
 	origin: string;
 }
 
-export interface ProfessionDependencyObject {
-	id: string;
+export interface SexRequirement {
+	id: 'SEX';
+	value: 'm' | 'f';
+}
+
+export interface RaceRequirement {
+	id: 'RACE';
 	value: string | string[];
 }
+
+export interface CultureRequirement {
+	id: 'CULTURE';
+	value: string | string[];
+}
+
+export type ProfessionDependencyObject = SexRequirement | RaceRequirement | CultureRequirement;
+export type AllRequirementObjects = 'RCP' | RequirementObject | ProfessionDependencyObject;
+
+// export interface ProfessionDependencyObject {
+// 	id: string;
+// 	value: string | string[];
+// }
 
 export interface DependencyObject {
 	origin?: string;
@@ -500,6 +518,11 @@ export interface CantripInstance {
 
 export type TalentInstanceDependency = number | SkillOptionalDependency;
 
+export interface Application {
+	id: number;
+	name: string;
+}
+
 export interface TalentInstance {
 	readonly category: Categories.TALENTS;
 	readonly check: string[];
@@ -508,8 +531,8 @@ export interface TalentInstance {
 	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly specialisation?: string[];
-	readonly specialisationInput?: string;
+	readonly applications?: Application[];
+	readonly applicationsInput?: string;
 	dependencies: TalentInstanceDependency[];
 	value: number;
 }
@@ -833,7 +856,6 @@ export interface UILocale {
 	"titlebar.tabs.pets": string;
 	"titlebar.actions.login": string;
 	"titlebar.actions.logout": string;
-	"titlebar.actions.save": string;
 	"titlebar.view.adventurepoints": string;
 	"titlebar.adventurepoints.title": string;
 	"titlebar.adventurepoints.total": string;
@@ -852,7 +874,11 @@ export interface UILocale {
 	"options.sortorder.improvementcost": string;
 	"options.sortorder.property": string;
 	"options.sortorder.aspect": string;
+	"options.sortorder.location": string;
+	"options.sortorder.cost": string;
 	"options.showactivated": string;
+	"options.none": string;
+	"actions.save": string;
 	"homeintro.title": string;
 	"homeintro.text": string;
 	"heroes.actions.create": string;
@@ -982,6 +1008,142 @@ export interface UILocale {
 	"charactersheet.gamestats.qualitylevels.headers.skillpoints": string;
 	"charactersheet.gamestats.qualitylevels.headers.qualitylevel": string;
 	"charactersheet.attributemodifiers.title": string;
+	"charactersheet.combat.title": string;
+	"charactersheet.combat.combattechniques.title": string;
+	"charactersheet.combat.combattechniques.headers.name": string;
+	"charactersheet.combat.combattechniques.headers.primaryattribute": string;
+	"charactersheet.combat.combattechniques.headers.ic": string;
+	"charactersheet.combat.combattechniques.headers.ctr": string;
+	"charactersheet.combat.combattechniques.headers.atrc": string;
+	"charactersheet.combat.combattechniques.headers.pa": string;
+	"charactersheet.combat.lifepoints.title": string;
+	"charactersheet.combat.lifepoints.labels.max": string;
+	"charactersheet.combat.lifepoints.labels.current": string;
+	"charactersheet.combat.lifepoints.labels.pain1": string;
+	"charactersheet.combat.lifepoints.labels.pain2": string;
+	"charactersheet.combat.lifepoints.labels.pain3": string;
+	"charactersheet.combat.lifepoints.labels.pain4": string;
+	"charactersheet.combat.lifepoints.labels.dying": string;
+	"charactersheet.combat.closecombatweapons.title": string;
+	"charactersheet.combat.headers.weapon": string;
+	"charactersheet.combat.headers.combattechnique": string;
+	"charactersheet.combat.headers.damagebonus": string;
+	"charactersheet.combat.headers.dp": string;
+	"charactersheet.combat.headers.atpamod": string;
+	"charactersheet.combat.headers.reach": string;
+	"charactersheet.combat.headers.reachlabels": string[],
+	"charactersheet.combat.headers.bf": string,
+	"charactersheet.combat.headers.loss": string,
+	"charactersheet.combat.headers.at": string;
+	"charactersheet.combat.headers.pa": string;
+	"charactersheet.combat.headers.weight": string;
+	"charactersheet.combat.headers.weightunit": string;
+	"charactersheet.combat.rangedcombatweapons.title": string;
+	"charactersheet.combat.headers.reloadtime": string;
+	"charactersheet.combat.headers.rangebrackets": string;
+	"charactersheet.combat.headers.rangedcombat": string;
+	"charactersheet.combat.headers.ammunition": string;
+	"charactersheet.combat.armor.title": string;
+	"charactersheet.combat.headers.armor": string;
+	"charactersheet.combat.headers.st": string;
+	"charactersheet.combat.headers.pro": string;
+	"charactersheet.combat.headers.enc": string;
+	"charactersheet.combat.headers.addpenalties": string;
+	"charactersheet.combat.headers.where": string;
+	"charactersheet.combat.shieldparryingweapon.title": string;
+	"charactersheet.combat.headers.shieldparryingweapon": string;
+	"charactersheet.combat.headers.structurepoints": string;
+	"charactersheet.combat.combatspecialabilities.title": string;
+	"charactersheet.combat.conditionsstates.conditions": string;
+	"charactersheet.combat.conditionsstates.conditions.animosity": string;
+	"charactersheet.combat.conditionsstates.conditions.encumbrance": string;
+	"charactersheet.combat.conditionsstates.conditions.intoxicated": string;
+	"charactersheet.combat.conditionsstates.conditions.stupor": string;
+	"charactersheet.combat.conditionsstates.conditions.rapture": string;
+	"charactersheet.combat.conditionsstates.conditions.fear": string;
+	"charactersheet.combat.conditionsstates.conditions.paralysis": string;
+	"charactersheet.combat.conditionsstates.conditions.pain": string;
+	"charactersheet.combat.conditionsstates.conditions.confusion": string;
+	"charactersheet.combat.conditionsstates.states": string;
+	"charactersheet.combat.conditionsstates.states.immobilized": string;
+	"charactersheet.combat.conditionsstates.states.unconscious": string;
+	"charactersheet.combat.conditionsstates.states.blind": string;
+	"charactersheet.combat.conditionsstates.states.bloodlust": string;
+	"charactersheet.combat.conditionsstates.states.burning": string;
+	"charactersheet.combat.conditionsstates.states.cramped": string;
+	"charactersheet.combat.conditionsstates.states.bound": string;
+	"charactersheet.combat.conditionsstates.states.incapacitated": string;
+	"charactersheet.combat.conditionsstates.states.diseased": string;
+	"charactersheet.combat.conditionsstates.states.prone": string;
+	"charactersheet.combat.conditionsstates.states.misfortune": string;
+	"charactersheet.combat.conditionsstates.states.rage": string;
+	"charactersheet.combat.conditionsstates.states.mute": string;
+	"charactersheet.combat.conditionsstates.states.deaf": string;
+	"charactersheet.combat.conditionsstates.states.surprised": string;
+	"charactersheet.combat.conditionsstates.states.badsmell": string;
+	"charactersheet.combat.conditionsstates.states.invisible": string;
+	"charactersheet.combat.conditionsstates.states.poisoned": string;
+	"charactersheet.combat.conditionsstates.states.petrified": string;
+	"charactersheet.belongings.title": string;
+	"charactersheet.belongings.equipment.title": string;
+	"charactersheet.belongings.equipment.headers.item": string;
+	"charactersheet.belongings.equipment.headers.number": string;
+	"charactersheet.belongings.equipment.headers.price": string;
+	"charactersheet.belongings.equipment.headers.weight": string;
+	"charactersheet.belongings.equipment.headers.carriedwhere": string;
+	"charactersheet.belongings.equipment.footers.total": string;
+	"charactersheet.belongings.purse.title": string;
+	"charactersheet.belongings.purse.labels.ducats": string;
+	"charactersheet.belongings.purse.labels.silverthalers": string;
+	"charactersheet.belongings.purse.labels.halers": string;
+	"charactersheet.belongings.purse.labels.kreutzers": string;
+	"charactersheet.belongings.purse.labels.gems": string;
+	"charactersheet.belongings.purse.labels.jewelry": string;
+	"charactersheet.belongings.purse.labels.other": string;
+	"charactersheet.belongings.carryingcapacity.title": string;
+	"charactersheet.belongings.carryingcapacity.calc": string;
+	"charactersheet.belongings.carryingcapacity.label": string;
+	"charactersheet.belongings.animal.title": string;
+	"charactersheet.spells.title": string;
+	"charactersheet.spells.headers.aemax": string;
+	"charactersheet.spells.headers.aecurrent": string;
+	"charactersheet.spells.spellslist.title": string;
+	"charactersheet.spells.spellslist.headers.spellritual": string;
+	"charactersheet.spells.spellslist.headers.check": string;
+	"charactersheet.spells.spellslist.headers.sr": string;
+	"charactersheet.spells.spellslist.headers.cost": string;
+	"charactersheet.spells.spellslist.headers.castingtime": string;
+	"charactersheet.spells.spellslist.headers.range": string;
+	"charactersheet.spells.spellslist.headers.duration": string;
+	"charactersheet.spells.spellslist.headers.property": string;
+	"charactersheet.spells.spellslist.headers.ic": string;
+	"charactersheet.spells.spellslist.headers.effect": string;
+	"charactersheet.spells.spellslist.headers.page": string;
+	"charactersheet.spells.traditionsproperties.labels.primaryattribute": string;
+	"charactersheet.spells.traditionsproperties.labels.properties": string;
+	"charactersheet.spells.traditionsproperties.labels.tradition": string;
+	"charactersheet.spells.magicalspecialabilities.title": string;
+	"charactersheet.spells.cantrips.title": string;
+	"charactersheet.chants.title": string;
+	"charactersheet.chants.headers.kpmax": string;
+	"charactersheet.chants.headers.kpcurrent": string;
+	"charactersheet.chants.chantslist.title": string;
+	"charactersheet.chants.chantslist.headers.liturgyceremony": string;
+	"charactersheet.chants.chantslist.headers.check": string;
+	"charactersheet.chants.chantslist.headers.sr": string;
+	"charactersheet.chants.chantslist.headers.cost": string;
+	"charactersheet.chants.chantslist.headers.castingtime": string;
+	"charactersheet.chants.chantslist.headers.range": string;
+	"charactersheet.chants.chantslist.headers.duration": string;
+	"charactersheet.chants.chantslist.headers.property": string;
+	"charactersheet.chants.chantslist.headers.ic": string;
+	"charactersheet.chants.chantslist.headers.effect": string;
+	"charactersheet.chants.chantslist.headers.page": string;
+	"charactersheet.chants.traditionsaspects.labels.primaryattribute": string;
+	"charactersheet.chants.traditionsaspects.labels.aspects": string;
+	"charactersheet.chants.traditionsaspects.labels.tradition": string;
+	"charactersheet.chants.blessedspecialabilities.title": string;
+	"charactersheet.chants.blessings.title": string;
 	"rules.rulebase": string;
 	"rules.optionalrules": string;
 	"rules.optionalrules.maximumattributescores": string;
@@ -1013,6 +1175,37 @@ export interface UILocale {
 	"secondaryattributes.ws.name": string;
 	"secondaryattributes.ws.short": string;
 	"secondaryattributes.ws.calc": string;
+	"rcp.actions.select": string;
+	"rcp.actions.next": string;
+	"rcp.options.showvalues": string;
+	"cultures.options.allcultures": string;
+	"cultures.options.commoncultures": string;
+	"professions.options.allprofessions": string;
+	"professions.options.commonprofessions": string;
+	"professions.options.allprofessiongroups": string;
+	"professions.options.mundaneprofessions": string;
+	"professions.options.magicalprofessions": string;
+	"professions.options.blessedprofessions": string;
+	"professions.options.alwaysshowprofessionsfromextensions": string;
+	"professions.options.novariant": string;
+	"professions.ownprofession": string;
+	"rcpselections.labels.selectattributeadjustment": string;
+	"rcpselections.labels.buyculturalpackage": string;
+	"rcpselections.labels.selectnativetongue": string;
+	"rcpselections.labels.buyscript": string;
+	"rcpselections.labels.selectscript": string;
+	"rcpselections.labels.onecantrip": string;
+	"rcpselections.labels.twocantrips": string;
+	"rcpselections.labels.fromthefollowinglist": string;
+	"rcpselections.labels.one": string;
+	"rcpselections.labels.two": string;
+	"rcpselections.labels.more": string;
+	"rcpselections.labels.ofthefollowingcombattechniques": string;
+	"rcpselections.labels.cursestotaling": string;
+	"rcpselections.labels.languagesandliteracytotaling": string;
+	"rcpselections.labels.left": string;
+	"rcpselections.labels.applicationforskillspecialization": string;
+	"rcpselections.actions.complete": string;
 	"attributes.view.attributetotal": string;
 	"attributes.tooltips.modifier": string;
 	"attributes.tooltips.bought": string;
@@ -1038,4 +1231,120 @@ export interface UILocale {
 	"liturgies.view.groups": string[];
 	"liturgies.view.blessing": string;
 	"liturgies.view.aspects": string[];
+	"equipment.actions.create": string;
+	"equipment.view.purse": string;
+	"equipment.view.ducates": string;
+	"equipment.view.silverthalers": string;
+	"equipment.view.hellers": string;
+	"equipment.view.kreutzers": string;
+	"equipment.view.initialstartingwealth": string;
+	"equipment.view.carringandliftingcapactity": string;
+	"equipment.view.price": string;
+	"equipment.view.weight": string;
+	"equipment.view.groups": string[];
+	"equipment.view.armortypes": string[];
+	"equipment.view.dice": string[];
+	"equipment.view.list.ammunitionsubtitle": string;
+	"equipment.view.list.weight": string;
+	"equipment.view.list.weightunit": string;
+	"equipment.view.list.price": string;
+	"equipment.view.list.priceunit": string;
+	"equipment.view.list.combattechnique": string;
+	"equipment.view.list.damage": string;
+	"equipment.view.list.dice": string;
+	"equipment.view.list.primaryattributedamagethreshold": string;
+	"equipment.view.list.atpamod": string;
+	"equipment.view.list.reach": string;
+	"equipment.view.list.reachlabels": string[];
+	"equipment.view.list.length": string;
+	"equipment.view.list.lengthunit": string;
+	"equipment.view.list.reloadtime": string;
+	"equipment.view.list.reloadtimeunit": string;
+	"equipment.view.list.range": string;
+	"equipment.view.list.ammunition": string;
+	"equipment.view.list.pro": string;
+	"equipment.view.list.enc": string;
+	"equipment.view.list.additionalpenalties": string;
+	"itemeditor.titleedit": string;
+	"itemeditor.titlecreate": string;
+	"itemeditor.options.number": string;
+	"itemeditor.options.name": string;
+	"itemeditor.options.price": string;
+	"itemeditor.options.weight": string;
+	"itemeditor.options.carriedwhere": string;
+	"itemeditor.options.gr": string;
+	"itemeditor.options.grhint": string;
+	"itemeditor.options.improvisedweapon": string;
+	"itemeditor.options.improvisedweapongr": string;
+	"itemeditor.options.template": string;
+	"itemeditor.options.combattechnique": string;
+	"itemeditor.options.damagethreshold": string;
+	"itemeditor.options.damage": string;
+	"itemeditor.options.damagedice": string;
+	"itemeditor.options.bfmod": string;
+	"itemeditor.options.weaponloss": string;
+	"itemeditor.options.reach": string;
+	"itemeditor.options.reachshort": string;
+	"itemeditor.options.reachmedium": string;
+	"itemeditor.options.reachlong": string;
+	"itemeditor.options.atpamod": string;
+	"itemeditor.options.structurepoints": string;
+	"itemeditor.options.length": string;
+	"itemeditor.options.parryingweapon": string;
+	"itemeditor.options.twohandedweapon": string;
+	"itemeditor.options.reloadtime": string;
+	"itemeditor.options.rangeclose": string;
+	"itemeditor.options.rangemedium": string;
+	"itemeditor.options.rangefar": string;
+	"itemeditor.options.ammunition": string;
+	"itemeditor.options.pro": string;
+	"itemeditor.options.enc": string;
+	"itemeditor.options.armortype": string;
+	"itemeditor.options.stabilitymod": string;
+	"itemeditor.options.armorloss": string;
+	"itemeditor.options.zonesonly": string;
+	"itemeditor.options.movmod": string;
+	"itemeditor.options.inimod": string;
+	"itemeditor.options.additionalpenalties": string;
+	"zonearmor.actions.create": string;
+	"zonearmoreditor.titleedit": string;
+	"zonearmoreditor.titlecreate": string;
+	"zonearmoreditor.options.name": string;
+	"zonearmoreditor.options.loss": string;
+	"zonearmoreditor.options.head": string;
+	"zonearmoreditor.options.torso": string;
+	"zonearmoreditor.options.leftarm": string;
+	"zonearmoreditor.options.rightarm": string;
+	"zonearmoreditor.options.leftleg": string;
+	"zonearmoreditor.options.rightleg": string;
+	"pet.name": string;
+	"pet.sizecategory": string;
+	"pet.type": string;
+	"pet.apspent": string;
+	"pet.totalap": string;
+	"pet.ap": string;
+	"pet.lp": string;
+	"pet.ae": string;
+	"pet.spi": string;
+	"pet.tou": string;
+	"pet.pro": string;
+	"pet.ini": string;
+	"pet.mov": string;
+	"pet.attack": string;
+	"pet.at": string;
+	"pet.pa": string;
+	"pet.dp": string;
+	"pet.reach": string;
+	"pet.reachshort": string;
+	"pet.reachmedium": string;
+	"pet.reachlong": string;
+	"pet.actions": string;
+	"pet.skills": string;
+	"pet.specialabilities": string;
+	"pet.notes": string;
+	"avatarchange.title": string;
+	"avatarchange.actions.selectfile": string;
+	"avatarchange.actions.change": string;
+	"avatarchange.dialog.image": string;
+	"avatarchange.view.invalidfile": string;
 }

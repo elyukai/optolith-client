@@ -5,7 +5,7 @@ export interface AvatarProps {
 	className?: string;
 	hasWrapper?: boolean;
 	img?: boolean;
-	src: string;
+	src?: string;
 	onClick?(): void;
 }
 

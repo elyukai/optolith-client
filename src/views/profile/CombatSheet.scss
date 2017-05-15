@@ -96,7 +96,7 @@
 		.life-points-first, .life-points-second {
 			.labelbox {
 				flex-direction: column-reverse;
-				align-items: left;
+				align-items: flex-start;
 
 				.box {
 					width: 100%;
@@ -288,7 +288,8 @@
 			}
 
 			&.status-effects {
-				width: 24.5mm;
+				max-width: 24.5mm;
+				flex: 1 1 100%;
 			}
 
 			> div, > header {

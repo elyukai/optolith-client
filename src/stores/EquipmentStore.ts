@@ -4,8 +4,9 @@ import { LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { ArmorZonesInstance, Hero, ItemInstance } from '../types/data.d';
-import { RawItem } from '../types/rawdata.d';
+import { RawItem, RawLocale } from '../types/rawdata.d';
 import { initItem } from '../utils/InitUtils';
+import { LocaleStore } from './LocaleStore';
 import { Store } from './Store';
 
 type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | LoadHeroAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | SetArmorZonesAction;
@@ -32,7 +33,7 @@ class EquipmentStoreStatic extends Store {
 			switch (action.type) {
 				case ActionTypes.RECEIVE_INITIAL_DATA:
 					this.updateSortOrder(action.payload.config.equipmentSortOrder);
-					this.init(action.payload.tables.items);
+					this.init(action.payload.tables.items, action.payload.locales[LocaleStore.getLocale()!]);
 					break;
 
 				case ActionTypes.SET_ITEMS_SORT_ORDER:
@@ -207,11 +208,14 @@ class EquipmentStoreStatic extends Store {
 		};
 	}
 
-	private init(raw: { [id: string]: RawItem }) {
+	private init(raw: { [id: string]: RawItem }, rawlocale: RawLocale) {
 		for (const id in raw) {
 			if (raw.hasOwnProperty(id)) {
-				this.itemTemplatesById[id] = initItem({ ...raw[id], amount: 1, isTemplateLocked: true });
-				this.itemTemplates.push(id);
+				const result = initItem({ ...raw[id], amount: 1, isTemplateLocked: true }, rawlocale.items);
+				if (result) {
+					this.itemTemplatesById[id] = result;
+					this.itemTemplates.push(id);
+				}
 			}
 		}
 	}

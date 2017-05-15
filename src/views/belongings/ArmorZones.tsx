@@ -15,7 +15,7 @@ import { get } from '../../stores/ListStore';
 import { AdvantageInstance, ArmorZonesInstance, AttributeInstance, DisadvantageInstance, InputTextEvent } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
-import { dotToComma } from '../../utils/I18n';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { ArmorZonesEditor } from './ArmorZonesEditor';
 import { ArmorZonesListItem } from './ArmorZonesListItem';
@@ -84,13 +84,13 @@ export class ArmorZones extends React.Component<{}, State> {
 		return (
 			<Page id="armor-zones">
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
-						options={[ 'name', 'groupname', 'where' ]}
+						options={['name', 'groupname', 'where']}
 						sortOrder={sortOrder}
 						sort={this.sort}
 						/>
-					<BorderButton label="Erstellen" onClick={this.showArmorZonesCreation} />
+					<BorderButton label={translate('zonearmor.actions.create')} onClick={this.showArmorZonesCreation} />
 				</Options>
 				<Scroll>
 					<List>
@@ -101,19 +101,19 @@ export class ArmorZones extends React.Component<{}, State> {
 				</Scroll>
 				<Aside>
 					<div className="purse">
-						<h4>Geldbeutel</h4>
+						<h4>{translate('equipment.view.purse')}</h4>
 						<div className="fields">
-							<TextField label="D" value={purse.d} onChange={this.setDucates} />
-							<TextField label="S" value={purse.s} onChange={this.setSilverthalers} />
-							<TextField label="H" value={purse.h} onChange={this.setHellers} />
-							<TextField label="K" value={purse.k} onChange={this.setKreutzers} />
+							<TextField label={translate('equipment.view.ducates')} value={purse.d} onChange={this.setDucates} />
+							<TextField label={translate('equipment.view.silverthalers')} value={purse.s} onChange={this.setSilverthalers} />
+							<TextField label={translate('equipment.view.hellers')} value={purse.h} onChange={this.setHellers} />
+							<TextField label={translate('equipment.view.kreutzers')} value={purse.k} onChange={this.setKreutzers} />
 						</div>
 					</div>
 					<div className="total-points">
-						<h4>{hasNoAddedAP && 'Startgeld & '}Tragkraft</h4>
+						<h4>{hasNoAddedAP && `${translate('equipment.view.initialstartingwealth')} & `}{translate('equipment.view.carringandliftingcapactity')}</h4>
 						<div className="fields">
-							{hasNoAddedAP && <div>{dotToComma(totalPrice)} / {startMoney} S</div>}
-							<div>{dotToComma(totalWeight)} / {carryingCapacity} Stn</div>
+							{hasNoAddedAP && <div>{localizeNumber(totalPrice)} / {localizeNumber(startMoney)} {translate('equipment.view.price')}</div>}
+							<div>{localizeNumber(localizeWeight(totalWeight))} / {localizeNumber(localizeWeight(carryingCapacity))} {translate('equipment.view.weight')}</div>
 						</div>
 					</div>
 				</Aside>

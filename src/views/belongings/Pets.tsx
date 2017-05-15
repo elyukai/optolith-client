@@ -7,6 +7,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { PetsStore } from '../../stores/PetsStore';
 import { InputTextEvent, PetEditorInstance, PetInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { convertToEdit, convertToSave, getNewInstance } from '../../utils/PetUtils';
 import { PetEditor } from './PetEditor';
 import { PetsListItem } from './PetsListItem';
@@ -42,7 +43,7 @@ export class Pets extends React.Component<{}, PetsState> {
 	setCourage = (event: InputTextEvent) => this.setEditorField({ cou: event.target.value } as PetEditorInstance);
 	setSagacity = (event: InputTextEvent) => this.setEditorField({ sgc: event.target.value } as PetEditorInstance);
 	setIntuition = (event: InputTextEvent) => this.setEditorField({ int: event.target.value } as PetEditorInstance);
-	setCharism = (event: InputTextEvent) => this.setEditorField({ cha: event.target.value } as PetEditorInstance);
+	setCharisma = (event: InputTextEvent) => this.setEditorField({ cha: event.target.value } as PetEditorInstance);
 	setDexterity = (event: InputTextEvent) => this.setEditorField({ dex: event.target.value } as PetEditorInstance);
 	setAgility = (event: InputTextEvent) => this.setEditorField({ agi: event.target.value } as PetEditorInstance);
 	setConstitution = (event: InputTextEvent) => this.setEditorField({ con: event.target.value } as PetEditorInstance);
@@ -99,7 +100,7 @@ export class Pets extends React.Component<{}, PetsState> {
 					setCourage={this.setCourage}
 					setSagacity={this.setSagacity}
 					setIntuition={this.setIntuition}
-					setCharism={this.setCharism}
+					setCharisma={this.setCharisma}
 					setDexterity={this.setDexterity}
 					setAgility={this.setAgility}
 					setConstitution={this.setConstitution}
@@ -124,7 +125,7 @@ export class Pets extends React.Component<{}, PetsState> {
 					/>
 				{pets.length === 0 && <Options>
 					<BorderButton
-						label="Hinzufügen"
+						label={translate('actions.addtolist')}
 						onClick={this.addPet}
 						/>
 				</Options>}

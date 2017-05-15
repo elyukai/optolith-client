@@ -4,6 +4,7 @@ import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
 import { getAt } from '../../utils/CombatTechniqueUtils';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { getRoman } from '../../utils/roman';
 
 export function CombatSheetRangedWeapons() {
@@ -11,20 +12,20 @@ export function CombatSheetRangedWeapons() {
 	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
-		<TextBox label="Fernkampfwaffen" className="melee-weapons">
+		<TextBox label={translate('charactersheet.combat.rangedcombatweapons.title')} className="melee-weapons">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Waffe</th>
-						<th className="combat-technique">Kampftechnik</th>
-						<th className="reload-time">Ladezeiten</th>
-						<th className="damage">TP</th>
-						<th className="ammunition">Munition</th>
-						<th className="range">Reichweite</th>
-						<th className="bf">BF</th>
-						<th className="loss">V.</th>
-						<th className="ranged">Fernkampf</th>
-						<th className="weight">Gewicht</th>
+						<th className="name">{translate('charactersheet.combat.headers.weapon')}</th>
+						<th className="combat-technique">{translate('charactersheet.combat.headers.combattechnique')}</th>
+						<th className="reload-time">{translate('charactersheet.combat.headers.reloadtime')}</th>
+						<th className="damage">{translate('charactersheet.combat.headers.dp')}</th>
+						<th className="ammunition">{translate('charactersheet.combat.headers.ammunition')}</th>
+						<th className="range">{translate('charactersheet.combat.headers.rangebrackets')}</th>
+						<th className="bf">{translate('charactersheet.combat.headers.bf')}</th>
+						<th className="loss">{translate('charactersheet.combat.headers.loss')}</th>
+						<th className="ranged">{translate('charactersheet.combat.headers.rangedcombat')}</th>
+						<th className="weight">{translate('charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -44,7 +45,7 @@ export function CombatSheetRangedWeapons() {
 										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
 										<td className="ranged">{getAt(combatTechnique)}</td>
-										<td className="weight">{e.weight} Stn</td>
+										<td className="weight">{localizeNumber(localizeWeight(e.weight))} {translate('charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

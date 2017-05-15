@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
 import { get } from '../stores/ListStore';
-import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance } from '../types/data.d';
+import { ActivatableInstance, ActivateArgs, Application, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
 import { Dropdown } from './Dropdown';
@@ -193,12 +193,14 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 				args.input = this.state.input;
 				break;
 			case 'SA_10':
-				type Sel = Array<SelectionObject & { specialisation?: string[]; specialisationInput?: string }>;
+				type Sel = Array<SelectionObject & { applications?: Application[]; applicationsInput?: string }>;
 				if (this.state.selected !== '') {
-					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).filter(e => e.id === this.state.selected)[0];
-					currentCost = o.cost;
-					sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id: id + 1, name: e })) : undefined;
-					input = o.specialisationInput;
+					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === this.state.selected);
+					if (o) {
+						currentCost = o.cost;
+						sel2 = o.applications;
+						input = o.applicationsInput;
+					}
 				}
 				args.sel = this.state.selected;
 				args.sel2 = this.state.selected2;
@@ -289,10 +291,10 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 		if (id === 'SA_10' && sel2) {
 			inputElement = (
 				<TextField
-					hint={input === null ? '' : input}
+					hint={!input ? '' : input}
 					value={this.state.input}
 					onChange={this.handleInput}
-					disabled={input === null} />
+					disabled={!input} />
 			);
 			selectElement2 = (
 				<Dropdown

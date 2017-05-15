@@ -13,6 +13,7 @@ import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
+import { translate } from '../../utils/I18n';
 import { sortByName } from '../../utils/ListUtils';
 import { SelectionsCantrips } from './SelectionsCantrips';
 import { SelectionsCt } from './SelectionsCt';
@@ -184,7 +185,7 @@ export class Selections extends React.Component<Props, State> {
 			const selectionItem = getSelectionItem(get('SA_28') as SpecialAbilityInstance, culture.scripts[0]);
 			buyScriptElement = (
 				<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
-					Schrift kaufen{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
+					{translate('rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
 				</Checkbox>
 			);
 		}
@@ -325,9 +326,9 @@ export class Selections extends React.Component<Props, State> {
 		return (
 			<Slidein isOpen close={close}>
 				<Scroll>
-					<h3>Spezies</h3>
+					<h3>{translate('titlebar.tabs.race')}</h3>
 					<Dropdown
-						hint="Eigenschaftsmodifikation auswählen"
+						hint={translate('rcpselections.labels.selectattributeadjustment')}
 						value={attrSel}
 						onChange={this.changeAttrSel}
 						options={race.attributeSelection[1].map(e => {
@@ -335,14 +336,14 @@ export class Selections extends React.Component<Props, State> {
 							const value = race.attributeSelection[0];
 							return { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` };
 						})} />
-					<h3>Kultur</h3>
+					<h3>{translate('titlebar.tabs.culture')}</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-						Kulturpaket kaufen ({culture.ap} AP)
+						{translate('rcpselections.labels.buyculturalpackage')} ({culture.ap} AP)
 					</Checkbox>
 					{
 						selectLang && (
 							<Dropdown
-								hint="Muttersprache auswählen"
+								hint={translate('rcpselections.labels.selectnativetongue')}
 								value={lang}
 								onChange={this.changeLang}
 								options={culture.languages.map(e => {
@@ -356,7 +357,7 @@ export class Selections extends React.Component<Props, State> {
 					{
 						selectLitc ? (
 							<Dropdown
-								hint="Schrift auswählen"
+								hint={translate('rcpselections.labels.selectscript')}
 								value={litc}
 								onChange={this.changeLitc}
 								options={culture.scripts.map(e => {
@@ -366,7 +367,7 @@ export class Selections extends React.Component<Props, State> {
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					{ProfessionStore.getCurrentId() !== 'P_0' ? <h3>Profession</h3> : null}
+					{ProfessionStore.getCurrentId() !== 'P_0' && <h3>{translate('titlebar.tabs.profession')}</h3>}
 					{specElement}
 					{langLitcElement}
 					{ctElement}
@@ -374,7 +375,7 @@ export class Selections extends React.Component<Props, State> {
 					{cursesElement}
 					{cantripsElement}
 					<BorderButton
-						label="Fertigstellen"
+						label={translate('rcpselections.actions.complete')}
 						primary
 						disabled={
 							attrSel === 'ATTR_0' ||

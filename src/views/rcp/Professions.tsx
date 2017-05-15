@@ -3,14 +3,15 @@ import * as ProfessionActions from '../../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { CultureStore } from '../../stores/CultureStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
 import { InputTextEvent, ProfessionInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { Selections } from './Selections';
@@ -40,18 +41,6 @@ export class Professions extends React.Component<{}, State> {
 		extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
 	};
 
-	_updateProfessionStore = () => this.setState({
-		currentID: ProfessionStore.getCurrentId(),
-		professions: ProfessionStore.getAllValid(),
-		sortOrder: ProfessionStore.getSortOrder(),
-		visibility: ProfessionStore.getVisibilityFilter(),
-		groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
-		extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
-	} as State);
-	_updateProfessionVariantStore = () => this.setState({
-		currentVID: ProfessionVariantStore.getCurrentID(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => ProfessionActions.setProfessionsSortOrder(option);
 	changeView = (view: string) => ProfessionActions.setProfessionsVisibilityFilter(view);
@@ -63,13 +52,13 @@ export class Professions extends React.Component<{}, State> {
 	selectProfessionVariant = (id?: string) => ProfessionVariantActions.selectProfessionVariant(id);
 
 	componentDidMount() {
-		ProfessionStore.addChangeListener(this._updateProfessionStore);
-		ProfessionVariantStore.addChangeListener(this._updateProfessionVariantStore);
+		ProfessionStore.addChangeListener(this.updateProfessionStore);
+		ProfessionVariantStore.addChangeListener(this.updateProfessionVariantStore);
 	}
 
 	componentWillUnmount() {
-		ProfessionStore.removeChangeListener(this._updateProfessionStore);
-		ProfessionVariantStore.removeChangeListener(this._updateProfessionVariantStore);
+		ProfessionStore.removeChangeListener(this.updateProfessionStore);
+		ProfessionVariantStore.removeChangeListener(this.updateProfessionVariantStore);
 	}
 
 	render() {
@@ -94,35 +83,26 @@ export class Professions extends React.Component<{}, State> {
 					showAddSlidein ? <Selections close={this.hideAddSlidein} /> : null
 				}
 				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibility}
 						onChange={this.changeView}
-						options={[{id: 'all', name: 'Alle Professionen'}, {id: 'common', name: 'Übliche Professionen'}]}
+						options={[{id: 'all', name: translate('professions.options.allprofessions')}, {id: 'common', name: translate('professions.options.commonprofessions')}]}
 						fullWidth
 						/>
 					<Dropdown
 						value={groupVisibility}
 						onChange={this.changeGroupVisibility}
-						options={[{id: 0, name: 'Alle Professionsgruppen'}, {id: 1, name: 'Weltliche Professionen'}, {id: 2, name: 'Magische Professionen'}, {id: 3, name: 'Geweihte Professionen'}]}
+						options={[{id: 0, name: translate('professions.options.allprofessiongroups')}, {id: 1, name: translate('professions.options.mundaneprofessions')}, {id: 2, name: translate('professions.options.magicalprofessions')}, {id: 3, name: translate('professions.options.blessedprofessions')}]}
 						fullWidth
 						/>
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={this.sort}
-						array={[
-							{
-								name: 'Alphabetisch',
-								value: 'name',
-							},
-							{
-								name: 'Nach Kosten',
-								value: 'cost',
-							},
-						]}
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={this.sort}
+						options={['name', 'cost']}
 						/>
 					<Checkbox checked={extensionVisibility} onClick={this.switchExtensionVisibility}>
-						Professionen aus Erweiterungen immer anzeigen
+						{translate('professions.options.alwaysshowprofessionsfromextensions')}
 					</Checkbox>
 				</div>
 				<Scroll className="list">
@@ -142,5 +122,22 @@ export class Professions extends React.Component<{}, State> {
 				</Scroll>
 			</div>
 		);
+	}
+
+	private updateProfessionStore = () => {
+		this.setState({
+			currentID: ProfessionStore.getCurrentId(),
+			professions: ProfessionStore.getAllValid(),
+			sortOrder: ProfessionStore.getSortOrder(),
+			visibility: ProfessionStore.getVisibilityFilter(),
+			groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
+			extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
+		} as State);
+	}
+
+	private updateProfessionVariantStore = () => {
+		this.setState({
+			currentVID: ProfessionVariantStore.getCurrentID(),
+		} as State);
 	}
 }

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as RaceActions from '../../actions/RaceActions';
 import { Checkbox } from '../../components/Checkbox';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { RaceStore } from '../../stores/RaceStore';
 import { InputTextEvent, RaceInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { RacesListItem } from './RacesListItem';
 
@@ -30,28 +31,20 @@ export class Races extends React.Component<Props, State> {
 		sortOrder: RaceStore.getSortOrder(),
 	};
 
-	_updateRaceStore = () => this.setState({
-		areValuesVisible: RaceStore.areValuesVisible(),
-		currentID: RaceStore.getCurrentID(),
-		races: RaceStore.getAll(),
-		sortOrder: RaceStore.getSortOrder(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => RaceActions.setRacesSortOrder(option);
 	changeTab = () => this.props.changeTab('culture');
 	changeValueVisibility = () => RaceActions.switchRaceValueVisibilityFilter();
 
 	componentDidMount() {
-		RaceStore.addChangeListener(this._updateRaceStore);
+		RaceStore.addChangeListener(this.updateRaceStore);
 	}
 
 	componentWillUnmount() {
-		RaceStore.removeChangeListener(this._updateRaceStore);
+		RaceStore.removeChangeListener(this.updateRaceStore);
 	}
 
 	render() {
-
 		const { currentID, filterText, races, areValuesVisible, sortOrder } = this.state;
 
 		const list = filterAndSort(races, filterText, sortOrder);
@@ -59,16 +52,13 @@ export class Races extends React.Component<Props, State> {
 		return (
 			<div className="page" id="races">
 				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={this.sort}
-						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Kosten', value: 'cost' },
-						]}
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={this.sort}
+						options={['name', 'cost']}
 						/>
-					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
+					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{translate('rcp.options.showvalues')}</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>
@@ -86,5 +76,14 @@ export class Races extends React.Component<Props, State> {
 				</Scroll>
 			</div>
 		);
+	}
+
+	private updateRaceStore = () => {
+			this.setState({
+			areValuesVisible: RaceStore.areValuesVisible(),
+			currentID: RaceStore.getCurrentID(),
+			races: RaceStore.getAll(),
+			sortOrder: RaceStore.getSortOrder(),
+		} as State);
 	}
 }

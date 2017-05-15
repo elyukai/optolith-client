@@ -1,4 +1,5 @@
-import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { remote } from 'electron';
+import { CreateHeroAction, LoadHeroAction, saveHero } from '../actions/HerolistActions';
 import { SetSectionAction, SetTabAction } from '../actions/LocationActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import { ReceiveLogoutAction, ReceiveRegistrationAction, ReceiveUserDeletionAction } from '../actions/ServerActions';
@@ -74,6 +75,10 @@ class TabStoreStatic extends Store {
 		if (section !== this.currentSection) {
 			const before = this.currentSection;
 
+			if (before === 'hero') {
+				remote.globalShortcut.unregister('Ctrl+S');
+			}
+
 			this.currentSection = section;
 
 			if (tab) {
@@ -94,6 +99,9 @@ class TabStoreStatic extends Store {
 						break;
 					case 'hero':
 						this.currentTab = 'profile';
+						remote.globalShortcut.register('Ctrl+S', () => {
+							saveHero();
+						});
 						break;
 					case 'group':
 						this.currentTab = 'master';

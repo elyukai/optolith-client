@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	active: Map<string, number>;
@@ -21,7 +22,7 @@ export class SelectionsLangLitc extends React.Component<Props, undefined> {
 		return (
 			<div className="lang_lit list">
 				<h4>
-					Sprachen und Schriften für insgesamt {apTotal} AP ({apLeft} AP übrig)
+					{translate('rcpselections.labels.languagesandliteracytotaling')} {apTotal} AP ({apLeft} AP {translate('rcpselections.labels.left')})
 				</h4>
 				<div className="languages-scripts">
 					<div className="languages">

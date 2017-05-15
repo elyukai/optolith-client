@@ -9,24 +9,24 @@ import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 
 interface Props {
-	age: string;
-	characteristics: string;
+	age?: string;
+	characteristics?: string;
 	culture: CultureInstance;
-	cultureAreaKnowledge: string;
-	dateofbirth: string;
-	eyecolor: number;
+	cultureAreaKnowledge?: string;
+	dateofbirth?: string;
+	eyecolor?: number;
 	eyecolorTags: string[];
-	family: string;
-	haircolor: number;
+	family?: string;
+	haircolor?: number;
 	haircolorTags: string[];
-	otherinfo: string;
-	placeofbirth: string;
+	otherinfo?: string;
+	placeofbirth?: string;
 	race: RaceInstance;
-	size: number | string;
-	socialstatus: number;
+	size?: string;
+	socialstatus?: number;
 	socialstatusTags: string[];
-	title: string;
-	weight: number | string;
+	title?: string;
+	weight?: string;
 }
 
 export class OverviewPersonalData extends React.Component<Props, undefined> {
@@ -50,7 +50,26 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 	rerollWeight = () => ProfileActions.rerollWeight();
 
 	render() {
-		const { age, characteristics, culture, cultureAreaKnowledge, eyecolor, eyecolorTags, dateofbirth, family, haircolor, haircolorTags, otherinfo, placeofbirth, race, size, socialstatus, socialstatusTags, title, weight } = this.props;
+		const {
+			age = '',
+			characteristics = '',
+			culture,
+			cultureAreaKnowledge,
+			eyecolor,
+			eyecolorTags,
+			dateofbirth = '',
+			family = '',
+			haircolor,
+			haircolorTags,
+			otherinfo = '',
+			placeofbirth = '',
+			race,
+			size = '',
+			socialstatus,
+			socialstatusTags,
+			title = '',
+			weight = ''
+		} = this.props;
 
 		const hairArr = race ? sort(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id))) : [];
 		const eyesArr = race ? sort(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id))) : [];
@@ -93,7 +112,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 						onChange={this.changeHaircolor}
 						options={hairArr}
 						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollHair} />
+					<IconButton icon="&#xEB40;" onClick={this.rerollHair} />
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<Dropdown
@@ -102,7 +121,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 						onChange={this.changeEyecolor}
 						options={eyesArr}
 						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollEyes} />
+					<IconButton icon="&#xEB40;" onClick={this.rerollEyes} />
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
@@ -110,7 +129,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 						value={size}
 						onChange={this.changeSize}
 						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollSize} />
+					<IconButton icon="&#xEB40;" onClick={this.rerollSize} />
 				</InputButtonGroup>
 				<InputButtonGroup className="reroll">
 					<TextField
@@ -118,7 +137,7 @@ export class OverviewPersonalData extends React.Component<Props, undefined> {
 						value={weight}
 						onChange={this.changeWeight}
 						/>
-					<IconButton icon="&#xE863;" onClick={this.rerollWeight} />
+					<IconButton icon="&#xEB40;" onClick={this.rerollWeight} />
 				</InputButtonGroup>
 				<div>
 					<TextField

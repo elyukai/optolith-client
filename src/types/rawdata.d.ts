@@ -88,14 +88,8 @@ export interface RawHeroNew extends Data.HeroBase {
 
 export type RawHerolist = RawHero[] | Data.ToListById<RawHeroNew>;
 
-export interface RawRaceLocale {
-	id: string;
-	name: string;
-}
-
 export interface RawRace {
 	id: string;
-	name: string;
 	ap: number;
 	le: number;
 	sk: number;
@@ -118,14 +112,13 @@ export interface RawRace {
 	weight: (number | [number, number])[];
 }
 
-export interface RawCultureLocale {
+export interface RawRaceLocale {
 	id: string;
 	name: string;
 }
 
 export interface RawCulture {
 	id: string;
-	name: string;
 	ap: number;
 	lang: number[];
 	literacy: number[];
@@ -140,10 +133,13 @@ export interface RawCulture {
 	talents: [string, number][];
 }
 
+export interface RawCultureLocale {
+	id: string;
+	name: string;
+}
+
 export interface RawProfession {
 	id: string;
-	name: string | { m: string, f: string };
-	subname: string | { m: string, f: string };
 	ap: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: Data.RequirementObject[];
@@ -161,15 +157,19 @@ export interface RawProfession {
 	vars: string[];
 	gr: number;
 	sgr: number;
-	src: {
-		id: string;
-		page?: string;
-	}
+	src: string;
+}
+
+export interface RawProfessionLocale {
+	id: string;
+	name: string | { m: string, f: string };
+	subname?: string | { m: string, f: string };
+	req: Data.RequirementObject[];
+	src?: number;
 }
 
 export interface RawProfessionVariant {
 	id: string;
-	name: string | { m: string, f: string };
 	ap: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: Data.RequirementObject[];
@@ -179,15 +179,25 @@ export interface RawProfessionVariant {
 	talents: [string, number][];
 }
 
+export interface RawProfessionVariantLocale {
+	id: string;
+	name: string | { m: string, f: string };
+}
+
 export interface RawAdvantage {
 	id: string;
-	name: string;
 	ap: number | number[] | string;
 	tiers?: number;
 	max?: number;
 	sel?: Data.SelectionObject[];
-	input?: string;
 	req: ('RCP' | Data.RequirementObject)[];
+}
+
+export interface RawAdvantageLocale {
+	id: string;
+	name: string;
+	sel?: Data.SelectionObject[];
+	input?: string;
 }
 
 export interface RawAttribute {
@@ -202,47 +212,65 @@ export interface RawAttributeLocale {
 
 export interface RawCombatTechnique {
 	id: string;
-	name: string;
 	skt: number;
 	leit: string[];
 	bf: number;
 	gr: number;
 }
 
+export interface RawCombatTechniqueLocale {
+	id: string;
+	name: string;
+}
+
 export interface RawDisadvantage extends RawAdvantage {}
+
+export interface RawDisadvantageLocale extends RawAdvantageLocale {}
 
 export interface RawLiturgy {
 	id: string;
-	name: string;
 	check: [number, number, number, string | never];
 	skt: number;
 	trad: number[];
 	aspc: number[];
 	gr: number;
+}
+
+export interface RawLiturgyLocale {
+	id: string;
+	name: string;
 }
 
 export interface RawBlessing {
 	id: string;
-	name: string;
 	aspc: number[];
 	trad: number[];
 	reqs: Data.RequirementObject[];
 }
 
-export interface RawSpecialAbility {
+export interface RawBlessingLocale {
 	id: string;
 	name: string;
+}
+
+export interface RawSpecialAbility {
+	id: string;
 	ap: number | number[] | string;
 	max?: number;
 	sel?: Data.SelectionObject[];
-	input?: string;
 	req: ('RCP' | Data.RequirementObject)[];
 	gr: number;
 }
 
-export interface RawSpell {
+export interface RawSpecialAbilityLocale {
 	id: string;
 	name: string;
+	sel?: Data.SelectionObject[];
+	input?: string;
+}
+
+export interface RawSpell {
+	id: string;
 	check: [number, number, number, string | never];
 	skt: number;
 	trad: number[];
@@ -250,12 +278,21 @@ export interface RawSpell {
 	gr: number;
 }
 
-export interface RawCantrip {
+export interface RawSpellLocale {
 	id: string;
 	name: string;
+}
+
+export interface RawCantrip {
+	id: string;
 	merk: number;
 	trad: number[];
 	reqs: Data.RequirementObject[];
+}
+
+export interface RawCantripLocale {
+	id: string;
+	name: string;
 }
 
 export interface RawTalent {
@@ -265,20 +302,17 @@ export interface RawTalent {
 	be: 'true' | 'false' | 'maybe';
 	gr: number;
 	name: string;
-	spec: string[];
-	spec_input?: string;
 }
 
 export interface RawTalentLocale {
 	id: string;
 	name: string;
-	spec: string[];
+	spec: Data.Application[];
 	spec_input?: string;
 }
 
 export interface RawItem {
 	id: string;
-	name: string;
 	price: number;
 	weight: number;
 	where: string;
@@ -305,6 +339,11 @@ export interface RawItem {
 	isTwoHandedWeapon?: boolean;
 }
 
+export interface RawItemLocale {
+	id: string;
+	name: string;
+}
+
 export interface RawExperienceLevelLocale {
 	id: string;
 	name: string;
@@ -312,29 +351,28 @@ export interface RawExperienceLevelLocale {
 
 export interface RawExperienceLevel {
 	id: string;
-	name: string;
 	ap: number;
-	max_attr: number;
-	max_skill: number;
-	max_combattech: number;
-	max_attrsum: number;
-	max_spells_liturgies: number;
-	max_unfamiliar_spells: number;
+	maxAttributeValue: number;
+	maxSkillRating: number;
+	maxCombatTechniqueRating: number;
+	maxTotalAttributeValues: number;
+	maxSpellsLiturgies: number;
+	maxUnfamiliarSpells: number;
 }
 
 export interface RawTables {
-	adv: Data.ToListById<RawAdvantage>;
+	advantages: Data.ToListById<RawAdvantage>;
 	attributes: Data.ToListById<RawAttribute>;
 	blessings: Data.ToListById<RawBlessing>;
 	cantrips: Data.ToListById<RawCantrip>;
 	combattech: Data.ToListById<RawCombatTechnique>;
 	cultures: Data.ToListById<RawCulture>;
-	disadv: Data.ToListById<RawDisadvantage>;
+	disadvantages: Data.ToListById<RawDisadvantage>;
 	el: Data.ToListById<RawExperienceLevel>;
 	items: Data.ToListById<RawItem>;
 	liturgies: Data.ToListById<RawLiturgy>;
 	professions: Data.ToListById<RawProfession>;
-	professionVariants: Data.ToListById<RawProfessionVariant>;
+	professionvariants: Data.ToListById<RawProfessionVariant>;
 	races: Data.ToListById<RawRace>;
 	specialabilities: Data.ToListById<RawSpecialAbility>;
 	spells: Data.ToListById<RawSpell>;
@@ -347,7 +385,18 @@ export interface RawLocale {
 	attributes: Data.ToListById<RawAttributeLocale>;
 	races: Data.ToListById<RawRaceLocale>;
 	cultures: Data.ToListById<RawCultureLocale>;
+	professions: Data.ToListById<RawProfessionLocale>;
+	professionvariants: Data.ToListById<RawProfessionVariantLocale>;
+	advantages: Data.ToListById<RawAdvantageLocale>;
+	disadvantages: Data.ToListById<RawDisadvantageLocale>;
 	talents: Data.ToListById<RawTalentLocale>;
+	combattech: Data.ToListById<RawCombatTechniqueLocale>;
+	spells: Data.ToListById<RawSpellLocale>;
+	cantrips: Data.ToListById<RawCantripLocale>;
+	liturgies: Data.ToListById<RawLiturgyLocale>;
+	blessings: Data.ToListById<RawBlessingLocale>;
+	specialabilities: Data.ToListById<RawSpecialAbilityLocale>;
+	items: Data.ToListById<RawItemLocale>;
 }
 
 export type RawLocaleList = Data.ToListById<RawLocale>;

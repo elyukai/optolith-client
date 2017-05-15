@@ -10,40 +10,14 @@ import { TextField } from '../../components/TextField';
 import { CombatTechniquesStore } from '../../stores/CombatTechniquesStore';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
-import { alert } from '../../utils/alert';
-import { containsNaN, convertToEdit, convertToSave } from '../../utils/ItemUtils';
+import { translate } from '../../utils/I18n';
+import { convertToEdit, convertToSave } from '../../utils/ItemUtils';
 
 interface Props {
 	create?: boolean;
 	item?: ItemInstance;
 	node?: HTMLDivElement;
 }
-
-const FIELDS = {
-	amount: 'Anzahl',
-	at: 'AT',
-	damageBonus: 'Schadensschwelle',
-	damageDiceNumber: 'Anzahl Schadenswürfel',
-	damageFlat: 'Zusätzlicher Schaden',
-	enc: 'BE',
-	length: 'Länge',
-	pa: 'PA',
-	price: 'Preis',
-	pro: 'RS',
-	range: 'Reichweite',
-	reloadTime: 'Ladezeit',
-	stp: 'Strukturpunkte',
-	weight: 'Gewicht',
-};
-
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
-
-const GROUPS_SELECTION = GROUPS.map((e, i) => ({ id: i + 1, name: e }));
-const IMP_GROUPS_SELECTION = [
-	{ id: 1, name: GROUPS[0] },
-	{ id: 2, name: GROUPS[1] }
-];
-// const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
 export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	state: ItemEditorInstance;
@@ -65,10 +39,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 				stabilityMod: '',
 				amount: '',
 				at: '',
-				combatTechnique: 'CT_0',
 				damageBonus: '',
 				damageDiceNumber: '',
-				damageDiceSides: 0,
 				damageFlat: '',
 				enc: '',
 				gr: 0,
@@ -82,7 +54,6 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 				price: '',
 				pro: '',
 				range: ['', '', ''],
-				reach: 0,
 				reloadTime: '',
 				stp: '',
 				weight: '',
@@ -110,7 +81,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	changeStp = (event: InputTextEvent) => this.setState({ stp: event.target.value } as ItemEditorInstance);
 	changeRange = (event: InputTextEvent, index: 1 | 2 | 3) => {
 		const range = this.state.range;
-		range[index] = event.target.value as string;
+		range[index - 1] = event.target.value as string;
 		this.setState({ range } as ItemEditorInstance);
 	}
 	changeRange1 = (event: InputTextEvent) => this.changeRange(event, 1);
@@ -169,46 +140,71 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	addItem = () => {
 		const itemToAdd = convertToSave(this.state);
-		const nanKeys = containsNaN(itemToAdd);
-		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e]).join(', ')}`);
-		}
-		else {
-			EquipmentActions.addToList(itemToAdd);
-		}
+		EquipmentActions.addToList(itemToAdd);
 	}
 	saveItem = () => {
 		const itemToAdd = convertToSave(this.state);
-		const nanKeys = containsNaN(itemToAdd);
-		if (nanKeys) {
-			alert('Eingabefehler', `Bitte überprüfe folgende Felder: ${nanKeys.map((e: keyof typeof FIELDS) => FIELDS[e])}`);
-		}
-		else {
-			EquipmentActions.set(this.state.id, itemToAdd);
-		}
+		EquipmentActions.set(this.state.id, itemToAdd);
 	}
 
 	render() {
 		const { create, node } = this.props;
 		const { movMod, iniMod, addPenalties, armorType, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
 
-		const TEMPLATES = [{id: 'ITEMTPL_0', name: 'Keine Vorlage'}].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{name: 'Keine'} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
-		const armorTypes = [{id: 1, name: 'Normale Kleidung'}, {id: 2, name: 'Schwere Kleidung'}, {id: 3, name: 'Stoffrüstung'}, {id: 4, name: 'Lederrüstung'}, {id: 5, name: 'Holzrüstung'}, {id: 6, name: 'Kettenrüstung'}, {id: 7, name: 'Schuppenrüstung'}, {id: 8, name: 'Plattenrüstung'}, {id: 9, name: 'Turnierrüstung'}];
+		const GROUPS_SELECTION = translate('equipment.view.groups').map((e, i) => ({ id: i + 1, name: e }));
+		const IMP_GROUPS_SELECTION = [
+			{ id: 1, name: translate('equipment.view.groups')[0] },
+			{ id: 2, name: translate('equipment.view.groups')[1] }
+		];
+		// const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
+		const TEMPLATES = [{name: translate('options.none')} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const AMMUNITION = [{name: translate('options.none')} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const armorTypes = translate('equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e }));
 
-		const dice = [{id: 2, name: 'W2'}, {id: 3, name: 'W3'}, {id: 6, name: 'W6'}];
+		const dice = [2, 3, 6].map((e, i) => ({ id: e, name: translate('equipment.view.dice')[i] }));
 		const lossTiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
+
+		const regexInt = /^\d+$/;
+		const regexIntEmpty = /^\d*$/;
+		const regexIntN = /^-?\d+$/;
+		const regexIntNEmpty = /^(\d*|-\d+)$/;
+		const regexFloatEmpty = /^[\d,\.]*$/;
+
+		const validName = typeof name === 'string' && name.length > 0;
+		const validATMod = regexIntN.test(at);
+		const validDamageDiceNumber = regexIntEmpty.test(damageDiceNumber);
+		const validDamageFlat = regexIntNEmpty.test(damageFlat);
+		const validDamageThreshold = regexIntEmpty.test(damageBonus);
+		const validENC = regexInt.test(enc);
+		const validINIMod = regexIntNEmpty.test(iniMod);
+		const validLength = regexIntEmpty.test(length);
+		const validMOVMod = regexIntNEmpty.test(movMod);
+		const validNumber = regexIntEmpty.test(amount);
+		const validPAMod = regexIntN.test(pa);
+		const validPrice = regexFloatEmpty.test(price);
+		const validPRO = regexInt.test(pro);
+		const validRange1 = regexIntEmpty.test(range1);
+		const validRange2 = regexIntEmpty.test(range2);
+		const validRange3 = regexIntEmpty.test(range3);
+		const validStabilityMod = regexIntNEmpty.test(stabilityMod);
+		const validStructurePoints = regexIntEmpty.test(stp);
+		const validWeight = regexFloatEmpty.test(weight);
+
+		const validMelee = [validATMod, validDamageDiceNumber, validDamageFlat, validDamageThreshold, validLength, validNumber, validPAMod, validPrice, validStabilityMod, validStructurePoints, validWeight, typeof combatTechnique === 'string', typeof reach === 'number'];
+		const validRanged = [validATMod, validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPAMod, validPrice, validRange1, validRange2, validRange3, validStabilityMod, validWeight, typeof combatTechnique === 'string'];
+		const validArmor = [validENC, validINIMod, validMOVMod, validNumber, validPrice, validPRO, validStabilityMod, validWeight, typeof armorType === 'number'];
+		const validOther = [validNumber, validPrice, validStructurePoints, validWeight];
 
 		return (
 			<Dialog
 				id="item-editor"
-				title={'Gegenstand ' + (create ? 'erstellen' : 'bearbeiten')}
+				title={create ? translate('itemeditor.titlecreate') : translate('itemeditor.titleedit')}
 				node={node}
 				buttons={[
 					{
 						autoWidth: true,
-						disabled: name === '' || gr === 0,
-						label: 'Speichern',
+						disabled: !validNumber || !locked && (typeof gr !== 'number' || gr === 1 && !validMelee.every(e => e) || gr === 2 && !validRanged.every(e => e) || gr === 4 && !validArmor.every(e => e) || !validOther.every(e => e)),
+						label: translate('actions.save'),
 						onClick: create ? this.addItem : this.saveItem,
 					},
 				]}>
@@ -216,37 +212,41 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					<div className="row">
 						<TextField
 							className="number"
-							label="Menge"
+							label={translate('itemeditor.options.number')}
 							value={amount}
 							onChange={this.changeAmount}
+							valid={validNumber}
 							/>
 						<TextField
 							className="name"
-							label="Name"
+							label={translate('itemeditor.options.name')}
 							value={name}
 							onChange={this.changeName}
 							autoFocus={create}
 							disabled={locked}
+							valid={validName}
 							/>
 					</div>
 					<div className="row">
 						<TextField
 							className="price"
-							label="Preis in S"
+							label={translate('itemeditor.options.price')}
 							value={price}
 							onChange={this.changePrice}
 							disabled={locked}
+							valid={validPrice}
 							/>
 						<TextField
 							className="weight"
-							label="Gewicht in St"
+							label={translate('itemeditor.options.weight')}
 							value={weight}
 							onChange={this.changeWeight}
 							disabled={locked}
+							valid={validWeight}
 							/>
 						<TextField
 							className="where"
-							label="Wo getragen"
+							label={translate('itemeditor.options.carriedwhere')}
 							value={where}
 							onChange={this.changeWhere}
 							/>
@@ -254,25 +254,26 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					<div className="row">
 						<Dropdown
 							className="gr"
-							label="Art"
-							hint="Wähle den Typ des Gegenstands aus"
+							label={translate('itemeditor.options.gr')}
+							hint={translate('itemeditor.options.grhint')}
 							value={gr}
 							options={GROUPS_SELECTION}
 							onChange={this.changeGroup}
 							disabled={locked}
+							required
 							/>
 					</div>
 					{gr > 4 && <div className="row">
 						<Checkbox
 							className="improvised-weapon"
-							label="Improvisierte Waffe"
+							label={translate('itemeditor.options.improvisedweapon')}
 							checked={typeof improvisedWeaponGroup === 'number'}
 							onClick={this.changeImprovisedWeapon}
 							disabled={locked}
 							/>
 						<Dropdown
 							className="gr imp-gr"
-							hint="Waffentyp"
+							hint={translate('itemeditor.options.improvisedweapongr')}
 							value={improvisedWeaponGroup || 0}
 							options={IMP_GROUPS_SELECTION}
 							onChange={this.changeImprovisedWeaponGroup}
@@ -283,8 +284,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					<div className="row">
 						<Dropdown
 							className="template"
-							label="Vorlage"
-							hint="Keine"
+							label={translate('itemeditor.options.template')}
+							hint={translate('options.none')}
 							value={template}
 							options={TEMPLATES}
 							onChange={this.changeTemplate}
@@ -293,7 +294,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						<IconButton
 							icon="&#xE876;"
 							onClick={this.applyTemplate}
-							disabled={template === 'ITEMTPL_0' || locked}
+							disabled={template === 'ITEMTPL_0' || !template || locked}
 							/>
 						{locked ? (
 							<IconButton
@@ -304,43 +305,46 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							<IconButton
 								icon="&#xE899;"
 								onClick={this.lockTemplate}
-								disabled={template === 'ITEMTPL_0'}
+								disabled={template === 'ITEMTPL_0' || !template}
 								/>
 						)}
 					</div>
 				</div>
-				{ gr === 1 || improvisedWeaponGroup === 1 ? ( <div className="melee">
+				{(gr === 1 || improvisedWeaponGroup === 1) && ( <div className="melee">
 					<Hr />
 					<div className="row">
 						<Dropdown
 							className="combattechnique"
-							label="Kampftechnik"
-							hint="Keine"
+							label={translate('itemeditor.options.combattechnique')}
+							hint={translate('options.none')}
 							value={combatTechnique}
 							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(({ id, name }) => ({ id, name }))}
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
+							required
 							/>
 						<TextField
 							className="damage-bonus"
-							label="Schadensb."
+							label={translate('itemeditor.options.damagethreshold')}
 							value={damageBonus}
 							onChange={this.changeDamageBonus}
 							disabled={locked}
+							valid={validDamageThreshold}
 							/>
 					</div>
 					<div className="row">
 						<div className="container">
-							<Label text="Schaden" disabled={locked} />
+							<Label text={translate('itemeditor.options.damage')} disabled={locked} />
 							<TextField
 								className="damage-dice-number"
 								value={damageDiceNumber}
 								onChange={this.changeDamageDiceNumber}
 								disabled={locked}
+								valid={validDamageDiceNumber}
 								/>
 							<Dropdown
 								className="damage-dice-sides"
-								hint="W"
+								hint={translate('itemeditor.options.damagedice')}
 								value={damageDiceSides}
 								options={dice}
 								onChange={this.changeDamageDiceSides}
@@ -351,18 +355,20 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								value={damageFlat}
 								onChange={this.changeDamageFlat}
 								disabled={locked}
+								valid={validDamageFlat}
 								/>
 						</div>
 						<TextField
 							className="stabilitymod"
-							label="BF-Mod."
+							label={translate('itemeditor.options.bfmod')}
 							value={stabilityMod}
 							onChange={this.changeStabilityMod}
 							disabled={locked}
+							valid={validStabilityMod}
 							/>
 						<Dropdown
 							className="weapon-loss"
-							label="Beschädigung"
+							label={translate('itemeditor.options.weaponloss')}
 							value={loss}
 							options={lossTiers}
 							onChange={this.changeLoss}
@@ -371,78 +377,84 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					<div className="row">
 						<Dropdown
 							className="reach"
-							label="Reichweite"
-							hint="Auswählen"
+							label={translate('itemeditor.options.reach')}
+							hint={translate('options.none')}
 							value={reach}
-							options={[{id: 1, name: 'Kurz'}, {id: 2, name: 'Mittel'}, {id: 3, name: 'Lang'}]}
+							options={[{id: 1, name: translate('itemeditor.options.reachshort')}, {id: 2, name: translate('itemeditor.options.reachmedium')}, {id: 3, name: translate('itemeditor.options.reachlong')}]}
 							onChange={this.changeReach}
 							disabled={locked}
+							required
 							/>
 						<div className="container">
-							<Label text="AT/PA-Mod" disabled={locked} />
+							<Label text={translate('itemeditor.options.atpamod')} disabled={locked} />
 							<TextField
 								className="at"
 								value={at}
 								onChange={this.changeAT}
 								disabled={locked}
+								valid={validATMod}
 								/>
 							<TextField
 								className="pa"
 								value={pa}
 								onChange={this.changePA}
 								disabled={locked || combatTechnique === 'CT_6'}
+								valid={validPAMod}
 								/>
 						</div>
 						{ combatTechnique === 'CT_10' ? (
 							<TextField
 								className="stp"
-								label="Strukturp."
+								label={translate('itemeditor.options.structurepoints')}
 								value={stp}
 								onChange={this.changeStp}
 								disabled={locked}
+								valid={validStructurePoints}
 								/>
 						) : (
 							<TextField
 								className="length"
-								label="Länge in Hf."
+								label={translate('itemeditor.options.length')}
 								value={length}
 								onChange={this.changeLength}
 								disabled={locked}
+								valid={validLength}
 								/>
 						) }
 					</div>
 					<div className="row">
 						<Checkbox
 							className="parrying-weapon"
-							label="Parierwaffe"
+							label={translate('itemeditor.options.parryingweapon')}
 							checked={!!isParryingWeapon}
 							onClick={this.changeParryingWeapon}
 							disabled={locked}
 							/>
 						<Checkbox
 							className="twohanded-weapon"
-							label="Zweihandwaffe"
+							label={translate('itemeditor.options.twohandedweapon')}
 							checked={!!isTwoHandedWeapon}
 							onClick={this.changeTwoHandedWeapon}
 							disabled={locked}
 							/>
 					</div>
-				</div> ) : null }
-				{ gr === 2 || improvisedWeaponGroup === 2 ? ( <div className="ranged">
+				</div>)}
+				{(gr === 2 || improvisedWeaponGroup === 2) && (<div className="ranged">
 					<Hr />
 					<div className="row">
 						<Dropdown
 							className="combattechnique"
-							label="Kampftechnik"
-							hint="Keine"
+							label={translate('itemeditor.options.combattechnique')}
+							hint={translate('options.none')}
 							value={combatTechnique}
 							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(({ id, name }) => ({ id, name }))}
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
+							required
 							/>
 						<TextField
 							className="reloadtime"
-							label="Ladezeiten"
+							label={translate('itemeditor.options.reloadtime')}
 							value={reloadTime}
 							onChange={this.changeReloadTime}
 							disabled={locked}
@@ -450,16 +462,17 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					</div>
 					<div className="row">
 						<div className="container">
-							<Label text="Schaden" disabled={locked} />
+							<Label text={translate('itemeditor.options.damage')} disabled={locked} />
 							<TextField
 								className="damage-dice-number"
 								value={damageDiceNumber}
 								onChange={this.changeDamageDiceNumber}
 								disabled={locked}
+								valid={validDamageDiceNumber}
 								/>
 							<Dropdown
 								className="damage-dice-sides"
-								hint="W"
+								hint={translate('itemeditor.options.damagedice')}
 								value={damageDiceSides}
 								options={dice}
 								onChange={this.changeDamageDiceSides}
@@ -470,18 +483,20 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 								value={damageFlat}
 								onChange={this.changeDamageFlat}
 								disabled={locked}
+								valid={validDamageFlat}
 								/>
 						</div>
 						<TextField
 							className="stabilitymod"
-							label="BF-Mod."
+							label={translate('itemeditor.options.bfmod')}
 							value={stabilityMod}
 							onChange={this.changeStabilityMod}
 							disabled={locked}
+							valid={validStabilityMod}
 							/>
 						<Dropdown
 							className="weapon-loss"
-							label="Beschädigung"
+							label={translate('itemeditor.options.weaponloss')}
 							value={loss}
 							options={lossTiers}
 							onChange={this.changeLoss}
@@ -491,30 +506,33 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						<div className="container">
 							<TextField
 								className="range1"
-								label="Nah"
+								label={translate('itemeditor.options.rangeclose')}
 								value={range1}
 								onChange={this.changeRange1}
 								disabled={locked}
+								valid={validRange1}
 								/>
 							<TextField
 								className="range2"
-								label="Mittel"
+								label={translate('itemeditor.options.rangemedium')}
 								value={range2}
 								onChange={this.changeRange2}
 								disabled={locked}
+								valid={validRange2}
 								/>
 							<TextField
 								className="range3"
-								label="Weit"
+								label={translate('itemeditor.options.rangefar')}
 								value={range3}
 								onChange={this.changeRange3}
 								disabled={locked}
+								valid={validRange3}
 								/>
 						</div>
 						<Dropdown
 							className="ammunition"
-							label="Munition"
-							hint="Keine"
+							label={translate('itemeditor.options.ammunition')}
+							hint={translate('options.none')}
 							value={ammunition}
 							options={AMMUNITION}
 							onChange={this.changeAmmunition}
@@ -522,54 +540,59 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							/>
 						<TextField
 							className="length"
-							label="Länge in Hf."
+							label={translate('itemeditor.options.length')}
 							value={length}
 							onChange={this.changeLength}
 							disabled={locked}
+							valid={validLength}
 							/>
 					</div>
-				</div> ) : null }
-				{ gr === 4 ? ( <div className="armor">
+				</div>)}
+				{gr === 4 && ( <div className="armor">
 					<Hr />
 					<div className="row">
 						<div className="container">
 							<TextField
 								className="pro"
-								label="RS"
+								label={translate('itemeditor.options.pro')}
 								value={pro}
 								onChange={this.changePRO}
 								disabled={locked}
+								valid={validPRO}
 								/>
 							<TextField
 								className="enc"
-								label="BE"
+								label={translate('itemeditor.options.enc')}
 								value={enc}
 								onChange={this.changeENC}
 								disabled={locked}
+								valid={validENC}
 								/>
 						</div>
 						<Dropdown
 							className="armor-type"
-							label="Rüstungsart"
-							hint="Keine"
+							label={translate('itemeditor.options.armortype')}
+							hint={translate('options.none')}
 							value={armorType}
 							options={armorTypes}
 							onChange={this.changeArmorType}
 							disabled={locked}
+							required
 							/>
 					</div>
 					<div className="row">
 						<div className="container armor-loss-container">
 							<TextField
 								className="stabilitymod"
-								label="ST-Mod."
+								label={translate('itemeditor.options.stabilitymod')}
 								value={stabilityMod}
 								onChange={this.changeStabilityMod}
 								disabled={locked}
+								valid={validStabilityMod}
 								/>
 							<Dropdown
 								className="loss"
-								label="Verschleiß"
+								label={translate('itemeditor.options.armorloss')}
 								value={loss}
 								options={lossTiers}
 								onChange={this.changeLoss}
@@ -577,7 +600,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						</div>
 						<Checkbox
 							className="only-zones"
-							label="Nur für Zonenrüstung"
+							label={translate('itemeditor.options.zonesonly')}
 							checked={!!forArmorZoneOnly}
 							onClick={this.changeArmorZoneOnly}
 							disabled={locked}
@@ -587,28 +610,30 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						<div className="container">
 							<TextField
 								className="mov"
-								label="GS-Mod."
+								label={translate('itemeditor.options.movmod')}
 								value={movMod}
 								onChange={this.changeMovMod}
 								disabled={locked}
+								valid={validMOVMod}
 								/>
 							<TextField
 								className="ini"
-								label="INI-Mod."
+								label={translate('itemeditor.options.inimod')}
 								value={iniMod}
 								onChange={this.changeIniMod}
 								disabled={locked}
+								valid={validINIMod}
 								/>
 						</div>
 						<Checkbox
 							className="add-penalties"
-							label="Zusätzliche Abzüge"
+							label={translate('itemeditor.options.additionalpenalties')}
 							checked={!!addPenalties}
 							onClick={this.changeAddPenalties}
 							disabled={locked}
 							/>
 					</div>
-				</div> ) : null }
+				</div>)}
 			</Dialog>
 		);
 	}

@@ -10,6 +10,7 @@ export interface DropdownProps {
 	hint?: string;
 	label?: string;
 	options: Array<{ id?: number | string; name: string; }>;
+	required?: boolean;
 	value?: boolean | string | number;
 	onChange?(option?: number | string): void;
 }
@@ -69,22 +70,23 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 	}
 
 	render() {
-		const className = classNames( 'dropdown', this.state.isOpen && 'active', this.props.fullWidth && 'fullWidth', this.props.disabled && 'disabled', this.state.position, this.props.className );
+		const { className, disabled, fullWidth, hint, label, options, required, value } = this.props;
+		const { isOpen, position } = this.state;
 
-		const style = this.state.isOpen ? (this.props.options.length < 6 ? this.props.options.length * 33 + 1 : 166) : 0;
+		const style = isOpen ? (options.length < 6 ? options.length * 33 + 1 : 166) : 0;
 
-		const current = this.props.options.filter(e => e.id === this.props.value).reduce((a, b) => a = b, undefined);
-		const valueText = !current ? this.props.hint ? this.props.hint : '' : current.name;
+		const current = options.find(e => e.id === value);
+		const valueText = current ? current.name : hint;
 
 		const downElement = (
 			<div style={{ height: style }} className="down">
 				<div style={{ height: (style - 2) }}>
 					<GeminiScrollbar>
 						{
-							this.props.options.map(option => {
-								const classNameInner = classNames(option.id === this.props.value && 'active');
+							options.map(option => {
+								const classNameInner = classNames(option.id === value && 'active');
 								return (
-									<div className={classNameInner} key={option.id || 'null'} onClick={this.props.disabled ? null : this.onChange.bind(null, option.id)}>
+									<div className={classNameInner} key={option.id || '__DEFAULT__'} onClick={!disabled && this.onChange.bind(null, option.id)}>
 										{option.name}
 									</div>
 								);
@@ -95,13 +97,29 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 			</div>
 		);
 
+		const placeholder = <div style={{height: 0}}></div>;
+
 		return (
-			<div className={className} ref={node => this.containerRef = node}>
-				{this.props.label && <Label text={this.props.label} disabled={this.props.disabled} />}
-				<div onMouseDown={this.insideFocus} onMouseUp={this.insideBlur} onTouchStart={this.insideFocus} onTouchEnd={this.insideBlur}>
-					{this.state.position === 'top' && this.state.isOpen ? downElement : <div style={{height: 0}}></div>}
+			<div
+				className={classNames(className, position, {
+					dropdown: true,
+					active: isOpen,
+					fullWidth,
+					disabled,
+					invalid: required && current === undefined
+				})}
+				ref={node => this.containerRef = node}
+				>
+				{label && <Label text={label} disabled={disabled} />}
+				<div
+					onMouseDown={this.insideFocus}
+					onMouseUp={this.insideBlur}
+					onTouchStart={this.insideFocus}
+					onTouchEnd={this.insideBlur}
+					>
+					{position === 'top' && isOpen ? downElement : placeholder}
 					<div onClick={this.switch} className="value">{valueText}</div>
-					{this.state.position === 'bottom' && this.state.isOpen ? downElement : <div style={{height: 0}}></div>}
+					{position === 'bottom' && isOpen ? downElement : placeholder}
 				</div>
 			</div>
 		);

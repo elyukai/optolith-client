@@ -31,22 +31,22 @@ interface State {
 	disadvActive: ActiveViewObject[];
 	phase: number;
 	name: string;
-	professionName: string;
+	professionName?: string;
 	sex: 'm' | 'f';
-	avatar: string;
-	family: string;
-	placeofbirth: string;
-	dateofbirth: string;
-	age: string;
-	haircolor: number;
-	eyecolor: number;
-	size: string;
-	weight: string;
-	title: string;
-	socialstatus: number;
-	characteristics: string;
-	otherinfo: string;
-	cultureAreaKnowledge: string;
+	avatar?: string;
+	family?: string;
+	placeofbirth?: string;
+	dateofbirth?: string;
+	age?: string;
+	haircolor?: number;
+	eyecolor?: number;
+	size?: string;
+	weight?: string;
+	title?: string;
+	socialstatus?: number;
+	characteristics?: string;
+	otherinfo?: string;
+	cultureAreaKnowledge?: string;
 	editName: boolean;
 	editProfessionName: boolean;
 }
@@ -97,7 +97,19 @@ export class Overview extends React.Component<{}, State> {
 	addAP = () => createOverlay(<OverviewAddAP />);
 
 	render() {
-		const { advActive, ap, avatar, disadvActive, editName, editProfessionName, name, phase, professionName, sex: sexId, ...personal } = this.state;
+		const {
+			advActive,
+			ap,
+			avatar,
+			disadvActive,
+			editName,
+			editProfessionName,
+			name = '',
+			phase,
+			professionName = '',
+			sex: sexId,
+			...personal
+		} = this.state;
 
 		const sex = sexId === 'm' ? translate('profileoverview.view.male') : translate('profileoverview.view.female');
 

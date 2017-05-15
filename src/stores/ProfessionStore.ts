@@ -9,6 +9,7 @@ import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { APStore } from '../stores/APStore';
 import { ELStore } from '../stores/ELStore';
 import { ProfessionInstance } from '../types/data.d';
+import { validateInstance } from '../utils/validate';
 import { get, getAllByCategory } from './ListStore';
 import { Store } from './Store';
 
@@ -81,7 +82,7 @@ class ProfessionStoreStatic extends Store {
 		const allEntries = getAllByCategory(this.category) as ProfessionInstance[];
 		return allEntries.filter(e => {
 			const requires = e.requires;
-			return !requires.some(d => {
+			return validateInstance(e.dependencies, e.id) && !requires.some(d => {
 				if (typeof d.id === 'string') {
 					const entry = get(d.id);
 					if (entry.category === Categories.ATTRIBUTES && entry.value > ELStore.getStart().maxAttributeValue) {

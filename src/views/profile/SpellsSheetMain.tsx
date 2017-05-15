@@ -4,6 +4,7 @@ import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
 import { SpellsStore } from '../../stores/SpellsStore';
 import { AttributeInstance, SpellInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
 import { isOwnTradition } from '../../utils/SpellUtils';
@@ -21,21 +22,21 @@ export function SpellsSheetMain(props: Props) {
 	const TRADITIONS = SpellsStore.getTraditionNames();
 
 	return (
-		<TextBox label="Zauber &amp; Rituale" className="skill-list">
+		<TextBox label={translate('charactersheet.spells.spellslist.title')} className="skill-list">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Zauber/Ritual</th>
-						<th className="check">Probe</th>
-						<th className="value">Fw</th>
-						<th className="cost">Kosten</th>
-						<th className="cast-time">Zauber&shy;dauer</th>
-						<th className="range">Reich&shy;weite</th>
-						<th className="duration">Wirkungs&shy;dauer</th>
-						<th className="property">Merkmal</th>
-						<th className="ic">Sf.</th>
-						<th className="effect">Wirkung</th>
-						<th className="ref">S.</th>
+						<th className="name">{translate('charactersheet.spells.spellslist.headers.spellritual')}</th>
+						<th className="check">{translate('charactersheet.spells.spellslist.headers.check')}</th>
+						<th className="value">{translate('charactersheet.spells.spellslist.headers.sr')}</th>
+						<th className="cost">{translate('charactersheet.spells.spellslist.headers.cost')}</th>
+						<th className="cast-time">{translate('charactersheet.spells.spellslist.headers.castingtime')}</th>
+						<th className="range">{translate('charactersheet.spells.spellslist.headers.range')}</th>
+						<th className="duration">{translate('charactersheet.spells.spellslist.headers.duration')}</th>
+						<th className="property">{translate('charactersheet.spells.spellslist.headers.property')}</th>
+						<th className="ic">{translate('charactersheet.spells.spellslist.headers.ic')}</th>
+						<th className="effect">{translate('charactersheet.spells.spellslist.headers.effect')}</th>
+						<th className="ref">{translate('charactersheet.spells.spellslist.headers.page')}</th>
 					</tr>
 				</thead>
 				<tbody>

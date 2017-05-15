@@ -643,11 +643,25 @@ class ListStoreStatic extends Store {
 			const { id, sid, sid2, tier } = req;
 			const obj = get(id as string) as Data.ActivatableInstance;
 			const add: Data.RequirementObject[] = [];
-			if (id === 'SA_10') {
-				obj.active.push({ sid: sid as string, sid2 });
-				add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
-			} else {
-				obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+			switch (id) {
+				case 'SA_10':
+					obj.active.push({ sid: sid as string, sid2 });
+					add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
+					break;
+				case 'SA_97':
+					obj.active.push({ sid: sid as string });
+					add.push({ id: 'SA_88', active: true, sid: sid as string });
+					break;
+				case 'SA_484': {
+					obj.active.push({ sid: sid as string });
+					const selectionItem = ActivatableUtils.getSelectionItem(obj, sid as string) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
+					add.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+					break;
+				}
+
+				default:
+					obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+					break;
 			}
 			ActivatableUtils.addDependencies(obj, add);
 		});

@@ -3,7 +3,7 @@ import { get, getPrimaryAttrID } from '../stores/ListStore';
 import { RaceStore } from '../stores/RaceStore';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
-import { translate } from './I18n';
+import { getLocale, translate } from './I18n';
 
 const PRIMARY = (id: string) => get(id) as AttributeInstance;
 const COU = () => get('COU') as AttributeInstance;
@@ -247,6 +247,20 @@ function _get(id: ids): SecondaryAttribute {
 export { _get as get };
 
 export function getAll(): SecondaryAttribute[] {
+	const locale = getLocale();
+	if (locale === 'de-DE') {
+		return [
+			getLP(),
+			getAE(),
+			getKP(),
+			getSPI(),
+			getTOU(),
+			getDO(),
+			getINI(),
+			getMOV(),
+			getWS()
+		];
+	}
 	return [
 		getLP(),
 		getAE(),
@@ -255,7 +269,6 @@ export function getAll(): SecondaryAttribute[] {
 		getTOU(),
 		getDO(),
 		getINI(),
-		getMOV(),
-		getWS(),
+		getMOV()
 	];
 }

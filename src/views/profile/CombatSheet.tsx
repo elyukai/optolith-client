@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { translate } from '../../utils/I18n';
 import * as secondaryAttributes from '../../utils/secondaryAttributes';
 import { CombatSheetArmor } from './CombatSheetArmor';
 import { CombatSheetLifePoints } from './CombatSheetLifePoints';
@@ -20,7 +21,7 @@ export function CombatSheet() {
 	return (
 		<SheetWrapper>
 			<SheetOptions/>
-			<Sheet id="combat-sheet" title="Kampf" addHeaderInfo={addHeader}>
+			<Sheet id="combat-sheet" title={translate('charactersheet.combat.title')} addHeaderInfo={addHeader}>
 				<div className="upper">
 					<CombatSheetTechniques />
 					<CombatSheetLifePoints />

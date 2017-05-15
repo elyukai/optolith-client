@@ -24,7 +24,6 @@
 
 	.main, .calculated, .permanent {
 		display: flex;
-		width: 693px;
 
 		.number-box {
 			top: 70px;
@@ -38,11 +37,8 @@
 		}
 	}
 
-	.main, .calculated {
-		justify-content: center;
-	}
-
 	.main {
+		justify-content: center;
 		padding-bottom: 16px;
 		// border-bottom: 1px solid transparentize(white, .925);
 	}

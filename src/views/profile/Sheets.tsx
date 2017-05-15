@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
+import { getLocale } from '../../utils/I18n';
 import { getAE, getKP } from '../../utils/secondaryAttributes';
 import { BelongingsSheet } from './BelongingsSheet';
 import { CombatSheet } from './CombatSheet';
@@ -16,7 +17,7 @@ export function Sheets() {
 				<MainSheet />
 				<SkillsSheet />
 				<CombatSheet />
-				<CombatSheetZones />
+				{getLocale() === 'de-DE' && <CombatSheetZones />}
 				<BelongingsSheet />
 				{ typeof getAE().value === 'number' ? <SpellsSheet /> : null }
 				{ typeof getKP().value === 'number' ? <LiturgiesSheet /> : null }

@@ -62,7 +62,7 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		alert('Fehler', `Bei der Laden der Regeln ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
-		tables = { adv: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadv: {}, el: {}, items: {}, liturgies: {}, professionVariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
+		tables = { advantages: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadvantages: {}, el: {}, items: {}, liturgies: {}, professionvariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
 	}
 	try {
 		const result = await readFile(join(appPath, 'config.json'));

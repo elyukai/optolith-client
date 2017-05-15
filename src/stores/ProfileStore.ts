@@ -13,25 +13,25 @@ const HAIRCOLORS = RaceStore.hairColors;
 const EYECOLORS = RaceStore.eyeColors;
 
 class ProfileStoreStatic extends Store {
-	private name = '';
+	private name: string;
 	private dateCreated: Date;
 	private dateModified: Date;
-	private professionName = '';
-	private sex: 'm' | 'f' = '' as 'm' | 'f';
-	private avatar = '';
-	private family = '';
-	private placeofbirth = '';
-	private dateofbirth = '';
-	private age = '';
-	private haircolor = 0;
-	private eyecolor = 0;
-	private size = '';
-	private weight = '';
-	private title = '';
-	private socialstatus = 0;
-	private characteristics = '';
-	private otherinfo = '';
-	private cultureAreaKnowledge = '';
+	private professionName: string | undefined;
+	private sex: 'm' | 'f';
+	private avatar: string | undefined;
+	private family: string | undefined;
+	private placeofbirth: string | undefined;
+	private dateofbirth: string | undefined;
+	private age: string | undefined;
+	private haircolor: number | undefined;
+	private eyecolor: number | undefined;
+	private size: string | undefined;
+	private weight: string | undefined;
+	private title: string | undefined;
+	private socialstatus: number | undefined;
+	private characteristics: string | undefined;
+	private otherinfo: string | undefined;
+	private cultureAreaKnowledge: string | undefined;
 	readonly dispatchToken: string;
 
 	constructor() {
@@ -110,7 +110,7 @@ class ProfileStoreStatic extends Store {
 
 				case ActionTypes.SET_WEIGHT:
 					this.updateWeight(action.payload.weight);
-					if (action.payload.size && action.payload.size !== this.size) {
+					if (action.payload.size) {
 						this.updateSize(action.payload.size);
 					}
 					break;
@@ -275,7 +275,7 @@ class ProfileStoreStatic extends Store {
 		this.name = text;
 	}
 
-	private updateProfessionName(text: string) {
+	private updateProfessionName(text?: string) {
 		this.professionName = text;
 	}
 
@@ -283,75 +283,73 @@ class ProfileStoreStatic extends Store {
 		this.sex = id;
 	}
 
-	private updateAvatar(url: string) {
+	private updateAvatar(url?: string) {
 		this.avatar = url;
 	}
 
-	private updateFamily(text: string) {
-		this.family = text;
+	private updateFamily(text?: string) {
+		this.family = text && text.length === 0 ? undefined : text;
 	}
 
-	private updatePlaceOfBirth(text: string) {
-		this.placeofbirth = text;
+	private updatePlaceOfBirth(text?: string) {
+		this.placeofbirth = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateDateOfBirth(text: string) {
-		this.dateofbirth = text;
+	private updateDateOfBirth(text?: string) {
+		this.dateofbirth = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateAge(text: string) {
-		this.age = text;
+	private updateAge(text?: string) {
+		this.age = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateHaircolor(id: number) {
+	private updateHaircolor(id?: number) {
 		this.haircolor = id;
 	}
 
-	private updateEyecolor(id: number) {
+	private updateEyecolor(id?: number) {
 		this.eyecolor = id;
 	}
 
-	private updateSize(text: string) {
-		this.size = text;
+	private updateSize(text?: string) {
+		this.size = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateWeight(text: string) {
-		this.weight = text;
+	private updateWeight(text?: string) {
+		this.weight = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateTitle(text: string) {
-		this.title = text;
+	private updateTitle(text?: string) {
+		this.title = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateSocialStatus(id: number) {
+	private updateSocialStatus(id?: number) {
 		this.socialstatus = id;
 	}
 
-	private updateCharacteristics(text: string) {
-		this.characteristics = text;
+	private updateCharacteristics(text?: string) {
+		this.characteristics = text && text.length === 0 ? undefined : text;
 	}
 
-	private updateOtherInfo(text: string) {
-		this.otherinfo = text;
+	private updateOtherInfo(text?: string) {
+		this.otherinfo = text && text.length === 0 ? undefined : text;
 	}
 
 	private clear() {
-		this.name = '';
-		this.sex = '' as 'm' | 'f';
-		this.avatar = '';
-		this.family = '';
-		this.placeofbirth = '';
-		this.dateofbirth = '';
-		this.age = '';
-		this.haircolor = 0;
-		this.eyecolor = 0;
-		this.size = '';
-		this.weight = '';
-		this.title = '';
-		this.socialstatus = 0;
-		this.characteristics = '';
-		this.otherinfo = '';
-		this.cultureAreaKnowledge = '';
+		this.avatar = undefined;
+		this.family = undefined;
+		this.placeofbirth = undefined;
+		this.dateofbirth = undefined;
+		this.age = undefined;
+		this.haircolor = undefined;
+		this.eyecolor = undefined;
+		this.size = undefined;
+		this.weight = undefined;
+		this.title = undefined;
+		this.socialstatus = undefined;
+		this.characteristics = undefined;
+		this.otherinfo = undefined;
+		this.cultureAreaKnowledge = undefined;
 	}
 
 }

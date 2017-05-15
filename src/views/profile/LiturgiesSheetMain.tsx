@@ -5,6 +5,7 @@ import { get } from '../../stores/ListStore';
 import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { AttributeInstance, LiturgyInstance, SpecialAbilityInstance } from '../../types/data.d';
 import { getSids } from '../../utils/ActivatableUtils';
+import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
 
@@ -71,21 +72,21 @@ export function LiturgiesSheetMain(props: Props) {
 	};
 
 	return (
-		<TextBox label="Liturgien &amp; Zeremonien" className="skill-list">
+		<TextBox label={translate('charactersheet.chants.chantslist.title')} className="skill-list">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Liturgie/Zeremonie</th>
-						<th className="check">Probe</th>
-						<th className="value">Fw</th>
-						<th className="cost">Kosten</th>
-						<th className="cast-time">Liturgie&shy;dauer</th>
-						<th className="range">Reich&shy;weite</th>
-						<th className="duration">Wirkungs&shy;dauer</th>
-						<th className="aspect">Aspekt</th>
-						<th className="ic">Sf.</th>
-						<th className="effect">Wirkung</th>
-						<th className="ref">S.</th>
+						<th className="name">{translate('charactersheet.chants.chantslist.headers.liturgyceremony')}</th>
+						<th className="check">{translate('charactersheet.chants.chantslist.headers.check')}</th>
+						<th className="value">{translate('charactersheet.chants.chantslist.headers.sr')}</th>
+						<th className="cost">{translate('charactersheet.chants.chantslist.headers.cost')}</th>
+						<th className="cast-time">{translate('charactersheet.chants.chantslist.headers.castingtime')}</th>
+						<th className="range">{translate('charactersheet.chants.chantslist.headers.range')}</th>
+						<th className="duration">{translate('charactersheet.chants.chantslist.headers.duration')}</th>
+						<th className="aspect">{translate('charactersheet.chants.chantslist.headers.property')}</th>
+						<th className="ic">{translate('charactersheet.chants.chantslist.headers.ic')}</th>
+						<th className="effect">{translate('charactersheet.chants.chantslist.headers.effect')}</th>
+						<th className="ref">{translate('charactersheet.chants.chantslist.headers.page')}</th>
 					</tr>
 				</thead>
 				<tbody>

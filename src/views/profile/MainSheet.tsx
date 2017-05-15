@@ -36,7 +36,7 @@ export function MainSheet() {
 	const disadvActive = ActivatableStore.getActiveForView(Categories.DISADVANTAGES);
 	const generalsaActive = [
 		...ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES).filter(e => [1, 2].includes(e.gr!)),
-		`Ortskenntnis (Heimat: ${ProfileStore.getCultureAreaKnowledge()})`,
+		`Ortskenntnis (Heimat: ${ProfileStore.getCultureAreaKnowledge() || ''})`,
 	];
 
 	const attributes = secondaryAttributes.getAll();

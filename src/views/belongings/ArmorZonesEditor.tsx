@@ -5,6 +5,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, InputTextEvent } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 
 export interface ArmorZonesEditorProps {
@@ -45,49 +46,49 @@ export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps, Arm
 		const custom = EquipmentStore.getAll().filter(e => e.gr === 4 && !e.isTemplateLocked);
 
 		const combinedArmorList = sort([...templates, ...custom]);
-		const armorList = [{name: 'Keine'}, ...combinedArmorList];
+		const armorList = [{name: translate('options.none')}, ...combinedArmorList];
 		const tiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
 
 		return (
 			<Dialog
 				id="armor-zones-editor"
-				title={'Zonenrüstung ' + (create ? 'erstellen' : 'bearbeiten')}
+				title={create ? translate('zonearmoreditor.titlecreate') : translate('zonearmoreditor.titleedit')}
 				node={node}
 				buttons={[
 					{
 						autoWidth: true,
 						disabled: name === '',
-						label: 'Speichern',
+						label: translate('actions.save'),
 						onClick: create ? this.addItem : this.saveItem,
 					},
 				]}>
 				<div className="main">
 					<div className="row">
-						<TextField className="name" label="Name" value={name} onChange={this.changeName} autoFocus={create} />
+						<TextField className="name" label={translate('zonearmoreditor.options.name')} value={name} onChange={this.changeName} autoFocus={create} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Kopf" value={head} options={armorList} onChange={this.changeHead} />
-						<Dropdown className="loss" label="Verschleiß" value={headLoss} options={tiers} onChange={this.changeHeadLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.head')} value={head} options={armorList} onChange={this.changeHead} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={headLoss} options={tiers} onChange={this.changeHeadLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Linker Arm" value={leftArm} options={armorList} onChange={this.changeLeftArm} />
-						<Dropdown className="loss" label="Verschleiß" value={leftArmLoss} options={tiers} onChange={this.changeLeftArmLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.torso')} value={torso} options={armorList} onChange={this.changeTorso} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={torsoLoss} options={tiers} onChange={this.changeTorsoLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Rechter Arm" value={rightArm} options={armorList} onChange={this.changeRightArm} />
-						<Dropdown className="loss" label="Verschleiß" value={rightArmLoss} options={tiers} onChange={this.changeRightArmLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.leftarm')} value={leftArm} options={armorList} onChange={this.changeLeftArm} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={leftArmLoss} options={tiers} onChange={this.changeLeftArmLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Torso" value={torso} options={armorList} onChange={this.changeTorso} />
-						<Dropdown className="loss" label="Verschleiß" value={torsoLoss} options={tiers} onChange={this.changeTorsoLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.rightarm')} value={rightArm} options={armorList} onChange={this.changeRightArm} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={rightArmLoss} options={tiers} onChange={this.changeRightArmLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Linkes Bein" value={leftLeg} options={armorList} onChange={this.changeLeftLeg} />
-						<Dropdown className="loss" label="Verschleiß" value={leftLegLoss} options={tiers} onChange={this.changeLeftLegLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.leftleg')} value={leftLeg} options={armorList} onChange={this.changeLeftLeg} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={leftLegLoss} options={tiers} onChange={this.changeLeftLegLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label="Rechtes Bein" value={rightLeg} options={armorList} onChange={this.changeRightLeg} />
-						<Dropdown className="loss" label="Verschleiß" value={rightLegLoss} options={tiers} onChange={this.changeRightLegLoss} />
+						<Dropdown className="armor" label={translate('zonearmoreditor.options.rightleg')} value={rightLeg} options={armorList} onChange={this.changeRightLeg} />
+						<Dropdown className="loss" label={translate('zonearmoreditor.options.loss')} value={rightLegLoss} options={tiers} onChange={this.changeRightLegLoss} />
 					</div>
 				</div>
 			</Dialog>

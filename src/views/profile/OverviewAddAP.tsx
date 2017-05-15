@@ -32,7 +32,7 @@ export class OverviewAddAP extends React.Component<Props, State> {
 				node={this.props.node}
 				buttons={[
 					{
-						disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) < 1,
+						disabled: !/^\d+$/.test(value) || Number.parseInt(value) < 1,
 						label: translate('addadventurepoints.actions.add'),
 						onClick: this.addAP,
 					},

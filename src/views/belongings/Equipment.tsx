@@ -17,13 +17,10 @@ import { get } from '../../stores/ListStore';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, InputTextEvent, ItemInstance } from '../../types/data.d';
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
-import { dotToComma } from '../../utils/I18n';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { filterAndSort, sortByName } from '../../utils/ListUtils';
 import { EquipmentListItem } from './EquipmentListItem';
 import { ItemEditor } from './ItemEditor';
-
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Fortbewegungsmittel'];
-const groupsSelectionItems = GROUPS.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
 
 interface State {
 	filterGroupSlidein: number;
@@ -75,7 +72,6 @@ export class Equipment extends React.Component<{}, State> {
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
 
 	render() {
-
 		const {
 			filterGroupSlidein,
 			filterText,
@@ -87,7 +83,11 @@ export class Equipment extends React.Component<{}, State> {
 			purse,
 		} = this.state;
 
-		const list = filterAndSort(items, filterText, sortOrder, GROUPS);
+		const groups = translate('equipment.view.groups');
+
+		const groupsSelectionItems = groups.map((e, i) => ({ id: i + 1, name: e })).sort(sortByName);
+
+		const list = filterAndSort(items, filterText, sortOrder, groups);
 
 		const filterTemplates = (e: ItemInstance): boolean => {
 			const isGroup = e.gr === filterGroupSlidein;
@@ -116,7 +116,7 @@ export class Equipment extends React.Component<{}, State> {
 			<Page id="equipment">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint="Suchen" value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate('options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<Dropdown
 							value={filterGroupSlidein}
 							onChange={this.filterGroupSlidein}
@@ -133,14 +133,14 @@ export class Equipment extends React.Component<{}, State> {
 					</Scroll>
 				</Slidein>
 				<Options>
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						options={[ 'name', 'groupname', 'where' ]}
 						sortOrder={sortOrder}
 						sort={this.sort}
 						/>
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-					<BorderButton label="Erstellen" onClick={this.showItemCreation} />
+					<BorderButton label={translate('actions.addtolist')} onClick={this.showAddSlidein} />
+					<BorderButton label={translate('equipment.actions.create')} onClick={this.showItemCreation} />
 				</Options>
 				<Scroll>
 					<List>
@@ -151,19 +151,19 @@ export class Equipment extends React.Component<{}, State> {
 				</Scroll>
 				<Aside>
 					<div className="purse">
-						<h4>Geldbeutel</h4>
+						<h4>{translate('equipment.view.purse')}</h4>
 						<div className="fields">
-							<TextField label="D" value={purse.d} onChange={this.setDucates} />
-							<TextField label="S" value={purse.s} onChange={this.setSilverthalers} />
-							<TextField label="H" value={purse.h} onChange={this.setHellers} />
-							<TextField label="K" value={purse.k} onChange={this.setKreutzers} />
+							<TextField label={translate('equipment.view.ducates')} value={purse.d} onChange={this.setDucates} />
+							<TextField label={translate('equipment.view.silverthalers')} value={purse.s} onChange={this.setSilverthalers} />
+							<TextField label={translate('equipment.view.hellers')} value={purse.h} onChange={this.setHellers} />
+							<TextField label={translate('equipment.view.kreutzers')} value={purse.k} onChange={this.setKreutzers} />
 						</div>
 					</div>
 					<div className="total-points">
-						<h4>{hasNoAddedAP && 'Startgeld & '}Tragkraft</h4>
+						<h4>{hasNoAddedAP && `${translate('equipment.view.initialstartingwealth')} & `}{translate('equipment.view.carringandliftingcapactity')}</h4>
 						<div className="fields">
-							{hasNoAddedAP && <div>{dotToComma(totalPrice)} / {startMoney} S</div>}
-							<div>{dotToComma(totalWeight)} / {carryingCapacity} Stn</div>
+							{hasNoAddedAP && <div>{localizeNumber(totalPrice)} / {localizeNumber(startMoney)} {translate('equipment.view.price')}</div>}
+							<div>{localizeNumber(localizeWeight(totalWeight))} / {localizeNumber(localizeWeight(carryingCapacity))} {translate('equipment.view.weight')}</div>
 						</div>
 					</div>
 				</Aside>

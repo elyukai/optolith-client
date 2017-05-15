@@ -6,6 +6,7 @@ import { BorderButton } from '../../components/BorderButton';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfessionInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	currentID?: string;
@@ -40,7 +41,7 @@ export class ProfessionsListItem extends React.Component<Props, undefined> {
 				});
 
 				variantList.unshift({
-					name: 'Keine Variante',
+					name: translate('professions.options.novariant'),
 					value: undefined
 				});
 
@@ -71,20 +72,20 @@ export class ProfessionsListItem extends React.Component<Props, undefined> {
 				>
 				<div className="left">
 					<h2>{name} ({profession.ap} AP)</h2>
-					{subname ? <h3>{subname}</h3> : null}
+					{subname && <h3>{subname}</h3>}
 					{variants}
 				</div>
 				<div className="right">
 					{
 						profession.id === currentID ? (
 							<BorderButton
-								label="Weiter"
+								label={translate('rcp.actions.next')}
 								onClick={showAddSlidein}
 								primary
 								/>
 						) : (
 							<BorderButton
-								label="Auswählen"
+								label={translate('rcp.actions.select')}
 								onClick={this.selectProfession}
 								/>
 						)

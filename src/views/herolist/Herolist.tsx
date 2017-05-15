@@ -117,6 +117,7 @@ export class Herolist extends React.Component<{}, State> {
 				pv={hero.pv}
 				r={hero.r}
 				sex={hero.sex}
+				professionName={hero.professionName}
 				/>
 		));
 
@@ -170,6 +171,7 @@ export class Herolist extends React.Component<{}, State> {
 										p={ProfessionStore.getCurrentId()}
 										pv={ProfessionVariantStore.getCurrentID()}
 										sex={ProfileStore.getSex()}
+										professionName={ProfileStore.getCustomProfessionName()}
 										/>
 								)
 							}

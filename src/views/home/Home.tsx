@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
 import { translate } from '../../utils/I18n';
-import { Overview } from './Overview';
+import { Intro } from './Intro';
 
 interface State {
 	tab: string;
@@ -9,7 +9,7 @@ interface State {
 
 export class Home extends React.Component<{}, State> {
 	state = {
-		tab: 'overview',
+		tab: 'intro',
 	};
 
 	handleClick = (tab: string) => this.setState({ tab });
@@ -19,8 +19,8 @@ export class Home extends React.Component<{}, State> {
 		let element;
 
 		switch (tab) {
-			case 'overview':
-				element = <Overview />;
+			case 'intro':
+				element = <Intro />;
 				break;
 		}
 
@@ -29,7 +29,7 @@ export class Home extends React.Component<{}, State> {
 				<SubTabs
 					tabs={[
 						{
-							id: 'overview',
+							id: 'intro',
 							label: translate('titlebar.tabs.homeintro'),
 						},
 						{

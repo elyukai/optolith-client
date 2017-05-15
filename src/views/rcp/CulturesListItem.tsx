@@ -4,6 +4,7 @@ import * as CultureActions from '../../actions/CultureActions';
 import { BorderButton } from '../../components/BorderButton';
 import { get } from '../../stores/ListStore';
 import { CultureInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	currentID?: string;
@@ -25,28 +26,28 @@ export class CulturesListItem extends React.Component<Props, undefined> {
 				})}
 				>
 				<div className="left">
-					<h2>{culture.name} (Kulturpaket: {culture.ap} AP)</h2>
+					<h2>{culture.name} ({culture.ap} AP)</h2>
 					{
-						showDetails ? (
+						showDetails && (
 							<div className="details">
 								{
-									culture.talents.map(talent => `${get(talent[0]).name} +${talent[1]}`).join(', ')
+									culture.talents.map(talent => `${get(talent[0]).name} +${talent[1]}`).sort().join(', ')
 								}
 							</div>
-						) : null
+						)
 					}
 				</div>
 				<div className="right">
 					{
 						culture.id === currentID ? (
 							<BorderButton
-								label="Weiter"
+								label={translate('rcp.actions.next')}
 								onClick={changeTab}
 								primary
 								/>
 						) : (
 							<BorderButton
-								label="Auswählen"
+								label={translate('rcp.actions.select')}
 								onClick={this.selectCulture}
 								/>
 						)

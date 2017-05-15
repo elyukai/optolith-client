@@ -5,8 +5,10 @@ import { BorderButton } from '../../components/BorderButton';
 import { Dropdown } from '../../components/Dropdown';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, PetEditorInstance } from '../../types/data.d';
+import { get } from '../../stores/ListStore';
+import { AttributeInstance, InputTextEvent, PetEditorInstance } from '../../types/data.d';
 import { createOverlay } from '../../utils/createOverlay';
+import { translate } from '../../utils/I18n';
 
 export interface PetEditorProps {
 	data?: PetEditorInstance;
@@ -19,7 +21,7 @@ export interface PetEditorProps {
 	setCourage(event: InputTextEvent): void;
 	setSagacity(event: InputTextEvent): void;
 	setIntuition(event: InputTextEvent): void;
-	setCharism(event: InputTextEvent): void;
+	setCharisma(event: InputTextEvent): void;
 	setDexterity(event: InputTextEvent): void;
 	setAgility(event: InputTextEvent): void;
 	setConstitution(event: InputTextEvent): void;
@@ -52,7 +54,7 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 	}
 
 	render() {
-		const { data, hideSlidein, setActions, setAe, setAgility, setAt, setAttack, setCharism, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes } = this.props;
+		const { data, hideSlidein, setActions, setAe, setAgility, setAt, setAttack, setCharisma, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes } = this.props;
 
 		return (
 			<Slidein isOpen={!!data} close={hideSlidein}>
@@ -62,48 +64,48 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 					</div>
 					<div className="right">
 						<div className="row">
-							<TextField label="Name" value={data.name} onChange={setName} />
-							<TextField label="Größe" value={data.size} onChange={setSize} />
-							<TextField label="Typ" value={data.type} onChange={setType} />
-							<TextField label="Ausg. AP" value={data.spentAp} onChange={setSpentAp} />
-							<TextField label="Gesamt-AP" value={data.totalAp} onChange={setTotalAp} />
+							<TextField label={translate('pet.name')} value={data.name} onChange={setName} />
+							<TextField label={translate('pet.sizecategory')} value={data.size} onChange={setSize} />
+							<TextField label={translate('pet.type')} value={data.type} onChange={setType} />
+							<TextField label={translate('pet.apspent')} value={data.spentAp} onChange={setSpentAp} />
+							<TextField label={translate('pet.totalap')} value={data.totalAp} onChange={setTotalAp} />
 						</div>
 						<div className="row">
-							<TextField label="MU" value={data.cou} onChange={setCourage} />
-							<TextField label="KL" value={data.sgc} onChange={setSagacity} />
-							<TextField label="IN" value={data.int} onChange={setIntuition} />
-							<TextField label="CH" value={data.cha} onChange={setCharism} />
-							<TextField label="FF" value={data.dex} onChange={setDexterity} />
-							<TextField label="GE" value={data.agi} onChange={setAgility} />
-							<TextField label="KO" value={data.con} onChange={setConstitution} />
-							<TextField label="KK" value={data.str} onChange={setStrength} />
+							<TextField label={(get('COU') as AttributeInstance).short} value={data.cou} onChange={setCourage} />
+							<TextField label={(get('SGC') as AttributeInstance).short} value={data.sgc} onChange={setSagacity} />
+							<TextField label={(get('INT') as AttributeInstance).short} value={data.int} onChange={setIntuition} />
+							<TextField label={(get('CHA') as AttributeInstance).short} value={data.cha} onChange={setCharisma} />
+							<TextField label={(get('DEX') as AttributeInstance).short} value={data.dex} onChange={setDexterity} />
+							<TextField label={(get('AGI') as AttributeInstance).short} value={data.agi} onChange={setAgility} />
+							<TextField label={(get('CON') as AttributeInstance).short} value={data.con} onChange={setConstitution} />
+							<TextField label={(get('STR') as AttributeInstance).short} value={data.str} onChange={setStrength} />
 						</div>
 						<div className="row">
-							<TextField label="LeP" value={data.lp} onChange={setLp} />
-							<TextField label="AsP" value={data.ae} onChange={setAe} />
-							<TextField label="SK" value={data.spi} onChange={setSpi} />
-							<TextField label="ZK" value={data.tou} onChange={setTou} />
-							<TextField label="RS" value={data.pro} onChange={setPro} />
-							<TextField label="INI" value={data.ini} onChange={setIni} />
-							<TextField label="GS" value={data.mov} onChange={setMov} />
+							<TextField label={translate('pet.lp')} value={data.lp} onChange={setLp} />
+							<TextField label={translate('pet.ae')} value={data.ae} onChange={setAe} />
+							<TextField label={translate('pet.spi')} value={data.spi} onChange={setSpi} />
+							<TextField label={translate('pet.tou')} value={data.tou} onChange={setTou} />
+							<TextField label={translate('pet.pro')} value={data.pro} onChange={setPro} />
+							<TextField label={translate('pet.ini')} value={data.ini} onChange={setIni} />
+							<TextField label={translate('pet.mov')} value={data.mov} onChange={setMov} />
 						</div>
 						<div className="row">
-							<TextField label="Angriff" value={data.attack} onChange={setAttack} />
-							<TextField label="AT" value={data.at} onChange={setAt} />
-							<TextField label="PA" value={data.pa} onChange={setPa} />
-							<TextField label="TP" value={data.dp} onChange={setDp} />
-							<Dropdown label="RW" options={[{id: 1, name: 'Kurz'}, {id: 2, name: 'Mittel'}, {id: 3, name: 'Lang'}]} value={data.reach} onChange={setReach} />
+							<TextField label={translate('pet.attack')} value={data.attack} onChange={setAttack} />
+							<TextField label={translate('pet.at')} value={data.at} onChange={setAt} />
+							<TextField label={translate('pet.pa')} value={data.pa} onChange={setPa} />
+							<TextField label={translate('pet.dp')} value={data.dp} onChange={setDp} />
+							<Dropdown label={translate('pet.reach')} options={[{id: 1, name: translate('pet.reachshort')}, {id: 2, name: translate('pet.reachmedium')}, {id: 3, name: translate('pet.reachlong')}]} value={data.reach} onChange={setReach} />
 						</div>
 						<div className="row">
-							<TextField label="Aktionen" value={data.actions} onChange={setActions} />
-							<TextField label="Talente" value={data.talents} onChange={setTalents} />
-							<TextField label="Fertigkeiten" value={data.skills} onChange={setSkills} />
+							<TextField label={translate('pet.actions')} value={data.actions} onChange={setActions} />
+							<TextField label={translate('pet.skills')} value={data.talents} onChange={setTalents} />
+							<TextField label={translate('pet.specialabilities')} value={data.skills} onChange={setSkills} />
 						</div>
 						<div className="row">
-							<TextField label="Notizen" value={data.notes} onChange={setNotes} />
+							<TextField label={translate('pet.notes')} value={data.notes} onChange={setNotes} />
 						</div>
 						<BorderButton
-							label="Speichern"
+							label={translate('actions.save')}
 							onClick={this.saveEdit}
 							/>
 					</div>

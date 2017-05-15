@@ -2,12 +2,13 @@ import * as React from 'react';
 import * as CultureActions from '../../actions/CultureActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { CultureStore } from '../../stores/CultureStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { CultureInstance, InputTextEvent } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { CulturesListItem } from './CulturesListItem';
 
@@ -66,22 +67,19 @@ export class Cultures extends React.Component<Props, State> {
 		return (
 			<div className="page" id="cultures">
 				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibilityFilter}
 						onChange={this.changeView}
-						options={[{ id: 'all', name: 'Alle Kulturen' }, { id: 'common', name: 'Übliche Kulturen' }]}
+						options={[{ id: 'all', name: translate('cultures.options.allcultures') }, { id: 'common', name: translate('cultures.options.commoncultures') }]}
 						fullWidth
 						/>
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={this.sort}
-						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Kosten', value: 'cost' },
-						]}
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={this.sort}
+						options={['name', 'cost']}
 						/>
-					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
+					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>{translate('rcp.options.showvalues')}</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>

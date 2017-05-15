@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { get, getPrimaryAttr } from '../../stores/ListStore';
 import { AttributeInstance, SpecialAbilityInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 export function LiturgiesSheetTraditionsAspects() {
 	const SA_103 = get('SA_103') as SpecialAbilityInstance;
@@ -16,15 +17,15 @@ export function LiturgiesSheetTraditionsAspects() {
 	return (
 		<div className="tradition-aspects">
 			<div className="primary">
-				<span className="label">Leiteigenschaft</span>
+				<span className="label">{translate('charactersheet.chants.traditionsaspects.labels.primaryattribute')}</span>
 				<span className="value">{primary && primary.short}</span>
 			</div>
 			<div className="aspects">
-				<span className="label">Aspekt(e)</span>
+				<span className="label">{translate('charactersheet.chants.traditionsaspects.labels.aspects')}</span>
 				<span className="value">{activeAspectNames}</span>
 			</div>
 			<div className="tradition">
-				<span className="label">Tradition</span>
+				<span className="label">{translate('charactersheet.chants.traditionsaspects.labels.tradition')}</span>
 				<span className="value">{activeTraditionNames}</span>
 			</div>
 		</div>

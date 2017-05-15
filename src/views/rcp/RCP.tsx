@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
 import { CultureStore } from '../../stores/CultureStore';
 import { RaceStore } from '../../stores/RaceStore';
+import { translate } from '../../utils/I18n';
 import { Cultures } from './Cultures';
 import { Professions } from './Professions';
 import { Races } from './Races';
@@ -54,20 +55,20 @@ export class RCP extends React.Component<{}, State> {
 		const tabs = [
 			{
 				id: 'race',
-				label: 'Spezies',
+				label: translate('titlebar.tabs.race'),
 			},
 		];
 
 		if (raceID) {
 			tabs.push({
 				id: 'culture',
-				label: 'Kultur',
+				label: translate('titlebar.tabs.culture'),
 			});
 		}
 		if (cultureID) {
 			tabs.push({
 				id: 'profession',
-				label: 'Profession',
+				label: translate('titlebar.tabs.profession'),
 			});
 		}
 

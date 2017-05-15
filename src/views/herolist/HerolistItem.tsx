@@ -24,12 +24,13 @@ export interface HerolistItemProps {
 	ap: {
 		total: number;
 	};
-	avatar: string;
+	avatar?: string;
 	c?: string;
 	p?: string;
 	player?: User;
 	pv?: string;
 	r?: string;
+	professionName?: string;
 	sex: 'm' | 'f';
 }
 
@@ -82,7 +83,7 @@ export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 	}
 
 	render() {
-		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex } = this.props;
+		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex, professionName } = this.props;
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elNumber = calcElIdNumber(apTotal);
 		const el = ELStore.get(`EL_${elNumber}`);
@@ -105,6 +106,9 @@ export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 				</span>
 				<span className="profession">
 					{(() => {
+						if (p === 'P_0') {
+							return professionName;
+						}
 						let { name, subname } = p && get(p) as ProfessionInstance || { name: '', subname: undefined };
 						if (typeof name === 'object' && sex) {
 							name = name[sex];

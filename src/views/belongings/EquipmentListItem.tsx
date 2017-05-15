@@ -11,14 +11,13 @@ import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { AttributeInstance, CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
 import { createOverlay } from '../../utils/createOverlay';
+import { localizeNumber, localizeSize, localizeWeight, translate } from '../../utils/I18n';
 import { ItemEditor } from './ItemEditor';
 
 interface Props {
 	add?: boolean;
 	data: ItemInstance;
 }
-
-const GROUPS = ['Nahkampfwaffen', 'Fernkampfwaffen', 'Munition', 'Rüstungen', 'Waffenzubehör', 'Kleidung', 'Reisebedarf und Werkzeuge', 'Beleuchtung', 'Verbandzeug und Heilmittel', 'Behältnisse', 'Seile und Ketten', 'Diebeswerkzeug', 'Handwerkszeug', 'Orientierungshilfen', 'Schmuck', 'Edelsteine und Feingestein', 'Schreibwaren', 'Bücher', 'Magische Artefakte', 'Alchimica', 'Gifte', 'Heilkräuter', 'Musikinstrumente', 'Genussmittel und Luxus', 'Tiere', 'Tierbedarf', 'Forbewegungsmittel'];
 
 export class EquipmentListItem extends React.Component<Props, undefined> {
 	edit = () => {
@@ -39,125 +38,125 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 
 		const addPenaltiesArr = [];
 
-		if (typeof movMod === 'number' && addPenalties === true) {
-			addPenaltiesArr.push(`-${1 + movMod} GS`);
+		if (addPenalties === true) {
+			addPenaltiesArr.push(`-${1 + (movMod || 0)} GS`);
 		}
 
-		if (typeof iniMod === 'number' && addPenalties === true) {
-			addPenaltiesArr.push(`-${1 + iniMod} INI`);
+		if (addPenalties === true) {
+			addPenaltiesArr.push(`-${1 + (iniMod || 0)} INI`);
 		}
 
 		return (
 			<TooltipToggle content={
 				<div className="inventory-item">
 					<h4><span>{name}</span><span>{numberValue}</span></h4>
-					{ gr === 3 ? <p className="ammunition">Munition</p> : null}
-					{ ![1, 2, 4].includes(gr) ? <table className="melee">
+					{gr === 3 && <p className="ammunition">{translate('equipment.view.list.ammunitionsubtitle')}</p>}
+					{ ![1, 2, 4].includes(gr) && <table className="melee">
 						<tbody>
 							<tr>
-								<td>Gewicht</td>
-								<td>{weight} Stn</td>
+								<td>{translate('equipment.view.list.weight')}</td>
+								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
 							</tr>
 							<tr>
-								<td>Preis</td>
-								<td>{price} S</td>
+								<td>{translate('equipment.view.list.price')}</td>
+								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
 							</tr>
 						</tbody>
-					</table> : null}
+					</table>}
 					{ gr === 1 ? <table className="melee">
 						<tbody>
 							<tr>
-								<td>Kampftechnik</td>
+								<td>{translate('equipment.view.list.combattechnique')}</td>
 								<td>{combatTechnique && get(combatTechnique).name}</td>
 							</tr>
 							<tr>
-								<td>TP</td>
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat && damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
+								<td>{translate('equipment.view.list.damage')}</td>
+								<td>{damageDiceNumber}{translate('equipment.view.list.dice')}{damageDiceSides}{damageFlat && damageFlat > 0 && '+'}{damageFlat !== 0 && damageFlat}</td>
 							</tr>
 							<tr>
-								<td>L+S</td>
+								<td>{translate('equipment.view.list.primaryattributedamagethreshold')}</td>
 								<td>{combatTechnique && (get(combatTechnique) as CombatTechniqueInstance).primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {damageBonus}</td>
 							</tr>
 							<tr>
-								<td>AT/PA-Mod</td>
+								<td>{translate('equipment.view.list.atpamod')}</td>
 								<td>{at && at > 0 ? '+' : null}{at}/{pa && pa > 0 ? '+' : null}{pa}</td>
 							</tr>
 							<tr>
-								<td>RW</td>
-								<td>{reach && ['Kurz', 'Mittel', 'Lang'][reach - 1]}</td>
+								<td>{translate('equipment.view.list.reach')}</td>
+								<td>{reach && translate('equipment.view.list.reachlabels')[reach - 1]}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>
-								<td>{weight} Stn</td>
+								<td>{translate('equipment.view.list.weight')}</td>
+								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
 							</tr>
 							<tr>
-								<td>Länge</td>
-								<td>{length} HF</td>
+								<td>{translate('equipment.view.list.length')}</td>
+								<td>{localizeNumber(localizeSize(length))} {translate('equipment.view.list.lengthunit')}</td>
 							</tr>
 							<tr>
-								<td>Preis</td>
-								<td>{price} S</td>
+								<td>{translate('equipment.view.list.price')}</td>
+								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 2 ? <table className="ranged">
 						<tbody>
 							<tr>
-								<td>Kampftechnik</td>
+								<td>{translate('equipment.view.list.combattechnique')}</td>
 								<td>{combatTechnique && get(combatTechnique).name}</td>
 							</tr>
 							<tr>
-								<td>TP</td>
-								<td>{damageDiceNumber}W{damageDiceSides}{damageFlat && damageFlat > 0 ? '+' : null}{damageFlat !== 0 ? damageFlat : null}</td>
+								<td>{translate('equipment.view.list.damage')}</td>
+								<td>{damageDiceNumber}{translate('equipment.view.list.dice')}{damageDiceSides}{damageFlat && damageFlat > 0 && '+'}{damageFlat !== 0 && damageFlat}</td>
 							</tr>
 							<tr>
-								<td>LZ</td>
-								<td>{reloadTime}</td>
+								<td>{translate('equipment.view.list.reloadtime')}</td>
+								<td>{reloadTime} {translate('equipment.view.list.reloadtimeunit')}</td>
 							</tr>
 							<tr>
-								<td>RW</td>
+								<td>{translate('equipment.view.list.range')}</td>
 								<td>{range && range.join('/')}</td>
 							</tr>
 							<tr>
-								<td>Munitionstyp</td>
-								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: 'Keine' }).name}</td>
+								<td>{translate('equipment.view.list.ammunition')}</td>
+								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: translate('options.none')} ).name}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>
-								<td>{weight} Stn</td>
+								<td>{translate('equipment.view.list.weight')}</td>
+								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
 							</tr>
 							<tr>
-								<td>Länge</td>
-								<td>{length} HF</td>
+								<td>{translate('equipment.view.list.length')}</td>
+								<td>{localizeNumber(localizeSize(length))} {translate('equipment.view.list.lengthunit')}</td>
 							</tr>
 							<tr>
-								<td>Preis</td>
-								<td>{price} S</td>
+								<td>{translate('equipment.view.list.price')}</td>
+								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 4 ? <table className="armor">
 						<tbody>
 							<tr>
-								<td>RS</td>
+								<td>{translate('equipment.view.list.pro')}</td>
 								<td>{pro}</td>
 							</tr>
 							<tr>
-								<td>BE</td>
+								<td>{translate('equipment.view.list.enc')}</td>
 								<td>{enc}</td>
 							</tr>
 							<tr>
-								<td>Gewicht</td>
-								<td>{weight} Stn</td>
+								<td>{translate('equipment.view.list.weight')}</td>
+								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
 							</tr>
 							<tr>
-								<td>Preis</td>
-								<td>{price} S</td>
+								<td>{translate('equipment.view.list.price')}</td>
+								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
 							</tr>
 						</tbody>
 					</table> : null}
 					{ gr === 4 ? <p className="armor">
-						Zus. Abzüge: {addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}
+						{translate('equipment.view.list.additionalpenalties')}: {addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}
 					</p> : null}
 				</div>
 			} margin={11}>
@@ -177,7 +176,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 					<ListItem>
 						<ListItemName name={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
 						<ListItemSeparator />
-						<ListItemGroup list={GROUPS} index={gr} />
+						<ListItemGroup list={translate('equipment.view.groups')} index={gr} />
 						<ListItemButtons>
 							<IconButton
 								icon="&#xE254;"

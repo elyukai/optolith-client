@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { translate } from '../../utils/I18n';
+import { getLocale, translate } from '../../utils/I18n';
 import { ArmorZones } from './ArmorZones';
 import { Equipment } from './Equipment';
 import { Pets } from './Pets';
@@ -34,11 +34,12 @@ export class Belongings extends React.Component<{}, BelongingsState> {
 		const tabs = [
 			{
 				id: 'equipment',
-				label: translate('titlebar.tabs.equipment'),
+				label: translate('titlebar.tabs.equipment')
 			},
 			{
 				id: 'armorzones',
 				label: translate('titlebar.tabs.zonearmor'),
+				disabled: getLocale() !== 'de-DE'
 			},
 			{
 				id: 'pets',

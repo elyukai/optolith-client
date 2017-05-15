@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	active: Map<string, number>;
@@ -19,7 +20,7 @@ export class SelectionsCurses extends React.Component<Props, undefined> {
 
 		return (
 			<div className="curses list">
-				<h4>Flüche für insgesamt {apTotal} AP ({apLeft} AP übrig)</h4>
+				<h4>{translate('rcpselections.labels.cursestotaling')} {apTotal} AP ({apLeft} AP {translate('rcpselections.labels.left')})</h4>
 				{
 					list.map(obj => {
 						const { id, name } = obj;

@@ -3,6 +3,7 @@ import { TextBox } from '../../components/TextBox';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { get } from '../../stores/ListStore';
 import { CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { getRoman } from '../../utils/roman';
 
 export function CombatSheetShields() {
@@ -10,16 +11,16 @@ export function CombatSheetShields() {
 	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
 	list.splice(0, Math.min(items.length, 4), ...items);
 	return (
-		<TextBox label="Schild/Parierwaffe" className="shields">
+		<TextBox label={translate('charactersheet.combat.shieldparryingweapon.title')} className="shields">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Schild/Parierwaffe</th>
-						<th className="str">Str.</th>
-						<th className="bf">BF</th>
-						<th className="loss">V.</th>
-						<th className="mod">AT/PA Mod.</th>
-						<th className="weight">Gewicht</th>
+						<th className="name">{translate('charactersheet.combat.headers.shieldparryingweapon')}</th>
+						<th className="str">{translate('charactersheet.combat.headers.structurepoints')}</th>
+						<th className="bf">{translate('charactersheet.combat.headers.bf')}</th>
+						<th className="loss">{translate('charactersheet.combat.headers.loss')}</th>
+						<th className="mod">{translate('charactersheet.combat.headers.atpamod')}</th>
+						<th className="weight">{translate('charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -34,7 +35,7 @@ export function CombatSheetShields() {
 										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
 										<td className="mod">{e.at && e.at > 0 && '+'}{e.at}/{e.pa && e.pa > 0 && '+'}{e.pa}</td>
-										<td className="weight">{e.weight} Stn</td>
+										<td className="weight">{localizeNumber(localizeWeight(e.weight))} {translate('charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

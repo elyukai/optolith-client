@@ -1,9 +1,9 @@
 import * as React from 'react';
-import ReactMarkdown from 'react-markdown';
+import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
 import { translate } from '../../utils/I18n';
 
-export function Overview() {
+export function Intro() {
 	return (
 		<div className="page" id="home-overview">
 			<Scroll className="text">
@@ -11,7 +11,7 @@ export function Overview() {
 					<div className="scriptorium" />
 					{translate('homeintro.title')}
 				</h2>
-				<ReactMarkdown source={translate('homeintro.text') || '...'} />
+				<Markdown source={translate('homeintro.text')} />
 			</Scroll>
 		</div>
 	);

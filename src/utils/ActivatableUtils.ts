@@ -15,36 +15,56 @@ export function isActive(obj: ActivatableInstance): boolean {
 
 export function isActivatable(obj: ActivatableInstance): boolean {
 	if (obj.category === SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
-		const combinationAvailable = isActive(get('SA_183') as SpecialAbilityInstance);
-		if (combinationAvailable) {
+		const combinationSA = get('SA_183') as SpecialAbilityInstance;
+		if (!combinationSA) {
 			const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
-			const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr);
 			const totalActive = allStyles.filter(e => isActive(e)).length;
-			const equalTypeStyleActive = allEqualTypeStyles.filter(e => isActive(e)).length;
-			if (totalActive >= 3 || equalTypeStyleActive >= 2) {
+			if (totalActive >= 1) {
 				return false;
 			}
 		}
 		else {
-			const allEqualTypeStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
-			if (allEqualTypeStyles.find(e => isActive(e))) {
-				return false;
+			const combinationAvailable = isActive(combinationSA);
+			if (combinationAvailable) {
+				const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
+				const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr);
+				const totalActive = allStyles.filter(e => isActive(e)).length;
+				const equalTypeStyleActive = allEqualTypeStyles.filter(e => isActive(e)).length;
+				if (totalActive >= 3 || equalTypeStyleActive >= 2) {
+					return false;
+				}
+			}
+			else {
+				const allEqualTypeStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
+				if (allEqualTypeStyles.find(e => isActive(e))) {
+					return false;
+				}
 			}
 		}
 	}
 	if (obj.category === SPECIAL_ABILITIES && obj.gr === 13) {
-		const combinationAvailable = isActive(get('SA_293') as SpecialAbilityInstance);
-		if (combinationAvailable) {
+		const combinationSA = get('SA_293') as SpecialAbilityInstance;
+		if (!combinationSA) {
 			const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
-			const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr).length;
-			if (allEqualTypeStyles >= 2) {
+			const totalActive = allStyles.filter(e => isActive(e)).length;
+			if (totalActive >= 1) {
 				return false;
 			}
 		}
 		else {
-			const allEqualTypeStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
-			if (allEqualTypeStyles.find(e => isActive(e))) {
-				return false;
+			const combinationAvailable = isActive(combinationSA);
+			if (combinationAvailable) {
+				const allStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+				const totalActive = allStyles.filter(e => isActive(e)).length;
+				if (totalActive >= 2) {
+					return false;
+				}
+			}
+			else {
+				const allEqualTypeStyles = getAllByCategoryGroup(SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
+				if (allEqualTypeStyles.find(e => isActive(e))) {
+					return false;
+				}
 			}
 		}
 	}
@@ -293,7 +313,9 @@ export function addDependencies(obj: ActivatableInstance, adds: RequirementObjec
 					id.forEach(e => {
 						const id = convertId(e);
 						const requiredAbility = getInstance(instances, id);
-						instances[id] = DependentUtils.addDependency(requiredAbility, add);
+						if (requiredAbility) {
+							instances[id] = DependentUtils.addDependency(requiredAbility, add);
+						}
 					});
 				}
 				else {
@@ -355,7 +377,9 @@ export function removeDependencies(obj: ActivatableInstance, adds: RequirementOb
 					id.forEach(e => {
 						const id = convertId(e);
 						const requiredAbility = getInstance(instances, id);
-						instances[id] = DependentUtils.removeDependency(requiredAbility, add);
+						if (requiredAbility) {
+							instances[id] = DependentUtils.removeDependency(requiredAbility, add);
+						}
 					});
 				}
 				else {

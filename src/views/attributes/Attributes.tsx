@@ -26,8 +26,10 @@ export function Attributes(props: AttributesProps) {
 						attributes={attributes}
 						phase={phase}
 						/>
-					<AttributeCalc phase={phase} />
-					<AttributesPermanentList phase={phase} />
+					<div className="secondary">
+						<AttributeCalc phase={phase} />
+						<AttributesPermanentList phase={phase} />
+					</div>
 				</Scroll>
 			</div>
 		</section>

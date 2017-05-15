@@ -5,14 +5,17 @@ import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';
 import { SheetStore } from '../../stores/SheetStore';
 import { TalentsStore } from '../../stores/TalentsStore';
-import { AttributeInstance, SpecialAbilityInstance, TalentInstance } from '../../types/data.d';
-import { getSelectionItem, getSelectionName } from '../../utils/ActivatableUtils';
+import { AttributeInstance, TalentInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
+import { SkillsSheetLanguages } from './SkillsSheetLanguages';
+import { SkillsSheetQualityLevels } from './SkillsSheetQualityLevels';
+import { SkillsSheetRoutineChecks } from './SkillsSheetRoutineChecks';
+import { SkillsSheetScripts } from './SkillsSheetScripts';
 
 const getRoutineValue = (sr: number, attributes: number[]) => {
 	if (sr > 0 ) {
@@ -90,15 +93,6 @@ export class SkillsSheet extends React.Component<{}, State> {
 				return attribute.short;
 			}
 		}).join('/'));
-
-		const SA_30 = get('SA_30') as SpecialAbilityInstance;
-		const languages = SA_30.active.map(({ sid, tier }) => {
-			const { id, name } = getSelectionItem(SA_30, sid)!;
-			return ({ id, name, tier: tier! });
-		}).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-
-		const SA_28 = get('SA_28') as SpecialAbilityInstance;
-		const scripts = SA_28.active.map(({ sid }) => getSelectionName(SA_28, sid)).sort();
 
 		return (
 			<SheetWrapper>
@@ -200,63 +194,12 @@ export class SkillsSheet extends React.Component<{}, State> {
 					</TextBox>
 					<div className="lower">
 						<div className="abilites">
-							<TextBox label={translate('charactersheet.gamestats.languages.title')}>
-								<table className="languages-list">
-									<tbody>
-										{languages.map(e => <tr key={`lang-${e.id}`}>
-											<td>{e.name}</td>
-											<td>{e.tier === 4 ? translate('charactersheet.gamestats.languages.native') : e.tier}</td>
-										</tr>)}
-									</tbody>
-								</table>
-							</TextBox>
-							<TextBox label={translate('charactersheet.gamestats.knownscripts.title')}>
-								<div className="scripts-list">
-									{scripts.join(', ')}
-								</div>
-							</TextBox>
+							<SkillsSheetLanguages/>
+							<SkillsSheetScripts/>
 						</div>
 						<AttributeMods />
-						<TextBox className="routine-checks" label={translate('charactersheet.gamestats.routinechecks.title')}>
-							<p>{translate('charactersheet.gamestats.routinechecks.texts.first')}</p>
-							<p>{translate('charactersheet.gamestats.routinechecks.texts.second')}</p>
-							<p>{translate('charactersheet.gamestats.routinechecks.texts.third')}</p>
-							<p>{translate('charactersheet.gamestats.routinechecks.texts.fourth')}</p>
-							<table>
-								<thead>
-									<tr>
-										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.checkmod')}</div></th>
-										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.neededsr')}</div></th>
-										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.checkmod')}</div></th>
-										<th><div>{translate('charactersheet.gamestats.routinechecks.headers.neededsr')}</div></th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr><td>{translate('charactersheet.gamestats.routinechecks.from')} +3</td><td>1</td><td>-1</td><td>13</td></tr>
-									<tr><td>+2</td><td>4</td><td>-2</td><td>16</td></tr>
-									<tr><td>+1</td><td>7</td><td>-3</td><td>19</td></tr>
-									<tr><td>+/-0</td><td>10</td><td></td><td></td></tr>
-								</tbody>
-							</table>
-						</TextBox>
-						<TextBox className="quality-levels" label={translate('charactersheet.gamestats.qualitylevels.title')}>
-							<table>
-								<thead>
-									<tr>
-										<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.skillpoints')}</div></th>
-										<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.qualitylevel')}</div></th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr><td>0-3</td><td>1</td></tr>
-									<tr><td>4-6</td><td>2</td></tr>
-									<tr><td>7-9</td><td>3</td></tr>
-									<tr><td>10-12</td><td>4</td></tr>
-									<tr><td>13-15</td><td>5</td></tr>
-									<tr><td>16+</td><td>6</td></tr>
-								</tbody>
-							</table>
-						</TextBox>
+						<SkillsSheetRoutineChecks/>
+						<SkillsSheetQualityLevels/>
 					</div>
 				</Sheet>
 			</SheetWrapper>

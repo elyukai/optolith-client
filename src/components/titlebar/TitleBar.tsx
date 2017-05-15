@@ -40,7 +40,7 @@ interface State {
 		adv: [number, number, number];
 		disadv: [number, number, number];
 	};
-	avatar: string;
+	avatar?: string;
 	el: string;
 	isUndoAvailable: boolean;
 	phase: number;
@@ -116,6 +116,10 @@ export class TitleBar extends React.Component<Props, State> {
 									onClick={this.login}
 									primary
 									disabled
+									/>
+								<IconButton
+									icon="&#xE8B8;"
+									onClick={this.showSettings}
 									/>
 								<IconButton
 									icon="&#xE868;"
@@ -201,7 +205,7 @@ export class TitleBar extends React.Component<Props, State> {
 											<span>{adv[0]} / 80 {locale['titlebar.adventurepoints.advantages']}</span>
 											<span>{adv[1] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${adv[1]} / 50 ${locale['titlebar.adventurepoints.advantagesmagic']}`}</span>
 											<span>{adv[2] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${adv[2]} / 50 ${locale['titlebar.adventurepoints.advantagesblessed']}`}</span>
-											<span>{disadv[0]} / 80 AP {locale['titlebar.adventurepoints.disadvantages']}</span>
+											<span>{disadv[0]} / 80 {locale['titlebar.adventurepoints.disadvantages']}</span>
 											<span>{disadv[1] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${disadv[1]} / 50 ${locale['titlebar.adventurepoints.disadvantagesmagic']}`}</span>
 											<span>{disadv[2] > 0 && `${locale['titlebar.adventurepoints.subprefix']} ${disadv[2]} / 50 ${locale['titlebar.adventurepoints.disadvantagesblessed']}`}</span>
 										</p>
@@ -216,8 +220,12 @@ export class TitleBar extends React.Component<Props, State> {
 								disabled={!isUndoAvailable}
 								/>
 							<BorderButton
-								label={locale['titlebar.actions.save']}
+								label={locale['actions.save']}
 								onClick={this.saveHero}
+								/>
+							<IconButton
+								icon="&#xE8B8;"
+								onClick={this.showSettings}
 								/>
 							<IconButton
 								icon="&#xE868;"
@@ -237,8 +245,12 @@ export class TitleBar extends React.Component<Props, State> {
 						</TitleBarLeft>
 						<TitleBarRight>
 							<BorderButton
-								label={locale['titlebar.actions.save']}
+								label={locale['actions.save']}
 								onClick={this.saveGroup}
+								/>
+							<IconButton
+								icon="&#xE8B8;"
+								onClick={this.showSettings}
 								/>
 							<IconButton
 								icon="&#xE868;"

@@ -19,31 +19,35 @@ export interface MainSheetPersonalDataProps {
 	profile: {
 		name: string;
 		sex: 'm' | 'f';
-		avatar: string;
-		family: string;
-		placeofbirth: string;
-		dateofbirth: string;
-		age: string;
-		haircolor: number;
-		eyecolor: number;
-		size: string;
-		weight: string;
-		title: string;
-		socialstatus: number;
-		characteristics: string;
-		otherinfo: string;
+		avatar?: string;
+		family?: string;
+		placeofbirth?: string;
+		dateofbirth?: string;
+		age?: string;
+		haircolor?: number;
+		eyecolor?: number;
+		size?: string;
+		weight?: string;
+		title?: string;
+		socialstatus?: number;
+		characteristics?: string;
+		otherinfo?: string;
+		professionName?: string;
 	};
 	race: RaceInstance;
 	socialstatusTags: string[];
 }
 
 export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
-	const { ap, culture, el, eyecolorTags, haircolorTags, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar }, race, socialstatusTags } = props;
+	const { ap, culture, el, eyecolorTags, haircolorTags, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar, professionName: ownProfessionName }, race, socialstatusTags } = props;
 
 	const raceName = race.name;
 	const cultureName = culture.name;
 	const professionName = (() => {
-		let { name, subname } = profession || { name: 'Loading...', subname: null };
+		if (profession.id === 'P_0') {
+			return ownProfessionName;
+		}
+		let { name, subname } = profession || { name: 'Loading...', subname: undefined };
 		if (typeof name === 'object') {
 			name = name[sex];
 		}
@@ -57,9 +61,9 @@ export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
 		return name + (subname ? ` (${subname})` : professionVariant ? ` (${vname})` : '');
 	})();
 
-	const haircolorName = haircolorTags[haircolor - 1];
-	const eyecolorName = eyecolorTags[eyecolor - 1];
-	const socialstatusName = socialstatusTags[socialstatus - 1];
+	const haircolorName = haircolor && haircolorTags[haircolor - 1];
+	const eyecolorName = eyecolor && eyecolorTags[eyecolor - 1];
+	const socialstatusName = socialstatus && socialstatusTags[socialstatus - 1];
 
 	return (
 		<div className="upper">

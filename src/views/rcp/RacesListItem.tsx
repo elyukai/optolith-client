@@ -4,6 +4,7 @@ import * as RaceActions from '../../actions/RaceActions';
 import { BorderButton } from '../../components/BorderButton';
 import { VerticalList } from '../../components/VerticalList';
 import { RaceInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	currentID?: string;
@@ -30,10 +31,10 @@ export class RacesListItem extends React.Component<Props, undefined> {
 					{
 						showDetails ? (
 							<VerticalList className="details">
-								<span>LE {race.lp}</span>
-								<span>SK {race.spi}</span>
-								<span>ZK {race.tou}</span>
-								<span>GS {race.mov}</span>
+								<span>{translate('secondaryattributes.lp.short')} {race.lp}</span>
+								<span>{translate('secondaryattributes.spi.short')} {race.spi}</span>
+								<span>{translate('secondaryattributes.tou.short')} {race.tou}</span>
+								<span>{translate('secondaryattributes.mov.short')} {race.mov}</span>
 							</VerticalList>
 						) : null
 					}
@@ -42,13 +43,13 @@ export class RacesListItem extends React.Component<Props, undefined> {
 					{
 						race.id === currentID ? (
 							<BorderButton
-								label="Weiter"
+								label={translate('rcp.actions.next')}
 								onClick={changeTab}
 								primary
 								/>
 						) : (
 							<BorderButton
-								label="Auswählen"
+								label={translate('rcp.actions.select')}
 								onClick={this.selectRace}
 								/>
 						)

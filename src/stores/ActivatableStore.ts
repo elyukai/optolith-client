@@ -112,8 +112,12 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 					case 'SA_10': {
 						const counter = (get(id) as Data.SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 						const skill = get(sid as string) as Data.TalentInstance;
+						const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
+						if (typeof selectedApplication === 'undefined') {
+							return;
+						}
 						currentCost = skill.ic * counter;
-						add = `${skill.name}: ${typeof sid2 === 'number' ? skill.specialisation![sid2 - 1] : sid2}`;
+						add = `${skill.name}: ${typeof sid2 === 'number' ? selectedApplication.name : sid2}`;
 						break;
 					}
 					case 'SA_30':
@@ -335,7 +339,7 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 							}
 							return map;
 						}, new Map<string, Array<number | string>>());
-						type Sel = Array<Data.SelectionObject & { specialisation?: string[]; specialisationInput?: string }>;
+						type Sel = Array<Data.SelectionObject & { applications?: Data.Application[]; applicationsInput?: string }>;
 						const sel = (a.sel as Sel).filter(e => {
 							const id = e.id as string;
 							if (getDSids(a).includes(id)) {
@@ -354,8 +358,8 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 							if (arr) {
 								e.cost = e.cost! * arr.length + 1;
 							}
-							e.specialisation = e.specialisation && e.specialisation.filter(n => {
-								return !!counter.get(id) || (arr && !arr.includes(n[1]) || !arr);
+							e.applications = e.applications && e.applications.filter(n => {
+								return !arr || !arr.includes(n.id);
 							});
 							return e;
 						}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);

@@ -6,7 +6,7 @@ export interface AvatarWrapperProps {
 	className?: string;
 	children?: React.ReactNode;
 	img?: boolean;
-	src: string;
+	src?: string;
 	onClick?(): void;
 }
 

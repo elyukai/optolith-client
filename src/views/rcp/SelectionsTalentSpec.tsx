@@ -3,6 +3,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { get } from '../../stores/ListStore';
 import { InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 
 interface Props {
 	active: [number | null, string];
@@ -31,8 +32,8 @@ export class SelectionsTalentSpec extends React.Component<Props, undefined> {
 		else {
 			talent = get(Array.isArray(sid) ? activeId! : sid) as TalentInstance;
 			name = talent.name;
-			list = talent.specialisation && talent.specialisation.map((e, id) => ({ id: id + 1, name: e }));
-			input = talent.specialisationInput;
+			list = talent.applications;
+			input = talent.applicationsInput;
 		}
 
 		const selectTalentElement = Array.isArray(sid) && (
@@ -74,7 +75,7 @@ export class SelectionsTalentSpec extends React.Component<Props, undefined> {
 		return (
 			<div className="spec">
 				<h4>
-					Anwendungsgebiet für Fertigkeitsspezialisierung ({name})
+					{translate('rcpselections.labels.applicationforskillspecialization')} ({name})
 				</h4>
 				{selectTalentElement}
 				{selectionElement}

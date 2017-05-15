@@ -1,43 +1,65 @@
 import * as React from 'react';
+import { translate } from '../../utils/I18n';
+import { sort } from '../../utils/ListUtils';
 
 export function CombatSheetStates() {
+	const conditions = sort([
+		{id: 1, name: translate('charactersheet.combat.conditionsstates.conditions.animosity')},
+		{id: 2, name: translate('charactersheet.combat.conditionsstates.conditions.encumbrance')},
+		{id: 3, name: translate('charactersheet.combat.conditionsstates.conditions.intoxicated')},
+		{id: 4, name: translate('charactersheet.combat.conditionsstates.conditions.stupor')},
+		{id: 5, name: translate('charactersheet.combat.conditionsstates.conditions.rapture')},
+		{id: 6, name: translate('charactersheet.combat.conditionsstates.conditions.fear')},
+		{id: 7, name: translate('charactersheet.combat.conditionsstates.conditions.paralysis')},
+		{id: 8, name: translate('charactersheet.combat.conditionsstates.conditions.pain')},
+		{id: 9, name: translate('charactersheet.combat.conditionsstates.conditions.confusion')}
+	]);
+	const statesSecond = sort([
+		{id: 1, name: translate('charactersheet.combat.conditionsstates.states.immobilized')},
+		{id: 2, name: translate('charactersheet.combat.conditionsstates.states.unconscious')},
+		{id: 3, name: translate('charactersheet.combat.conditionsstates.states.blind')},
+		{id: 4, name: translate('charactersheet.combat.conditionsstates.states.bloodlust')},
+		{id: 5, name: translate('charactersheet.combat.conditionsstates.states.burning')},
+		{id: 6, name: translate('charactersheet.combat.conditionsstates.states.cramped')},
+		{id: 7, name: translate('charactersheet.combat.conditionsstates.states.bound')},
+		{id: 8, name: translate('charactersheet.combat.conditionsstates.states.incapacitated')},
+		{id: 9, name: translate('charactersheet.combat.conditionsstates.states.diseased')},
+		{id: 10, name: translate('charactersheet.combat.conditionsstates.states.prone')},
+		{id: 11, name: translate('charactersheet.combat.conditionsstates.states.misfortune')},
+		{id: 12, name: translate('charactersheet.combat.conditionsstates.states.rage')},
+		{id: 13, name: translate('charactersheet.combat.conditionsstates.states.mute')},
+		{id: 14, name: translate('charactersheet.combat.conditionsstates.states.deaf')},
+		{id: 15, name: translate('charactersheet.combat.conditionsstates.states.surprised')},
+		{id: 16, name: translate('charactersheet.combat.conditionsstates.states.badsmell')},
+		{id: 17, name: translate('charactersheet.combat.conditionsstates.states.invisible')},
+		{id: 18, name: translate('charactersheet.combat.conditionsstates.states.poisoned')},
+		{id: 19, name: translate('charactersheet.combat.conditionsstates.states.petrified')}
+	]);
+	const statesFirst = statesSecond.splice(0, 9);
 	return (
 		<div className="status">
 			<div className="status-tiers">
-				<header><h4>Zustände</h4><div>I</div><div>II</div><div>III</div><div>IV</div></header>
-				<div><span>Animosität</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Belastung</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Berauscht</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Betäubung</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Entrückt</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Furcht</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Paralyse</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Schmerz</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
-				<div><span>Verwirrung</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
+				<header><h4>{translate('charactersheet.combat.conditionsstates.conditions')}</h4><div>I</div><div>II</div><div>III</div><div>IV</div></header>
+				{conditions.map(e => {
+					return (
+						<div key={e.id}><span>{e.name}</span><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div></div>
+					);
+				})}
 			</div>
 			<div className="status-effects">
-				<header><h4>Status</h4></header>
-				<div><span>Bewegungsunf.</span><div><div></div></div></div>
-				<div><span>Bewusstlos</span><div><div></div></div></div>
-				<div><span>Blind</span><div><div></div></div></div>
-				<div><span>Blutrausch</span><div><div></div></div></div>
-				<div><span>Brennend</span><div><div></div></div></div>
-				<div><span>Eingeengt</span><div><div></div></div></div>
-				<div><span>Fixiert</span><div><div></div></div></div>
-				<div><span>Handlungsunf.</span><div><div></div></div></div>
-				<div><span>Krank</span><div><div></div></div></div>
+				<header><h4>{translate('charactersheet.combat.conditionsstates.states')}</h4></header>
+				{statesFirst.map(e => {
+					return (
+						<div key={e.id}><span>{e.name}</span><div><div></div></div></div>
+					);
+				})}
 			</div>
 			<div className="status-effects">
-				<div><span>Liegend</span><div><div></div></div></div>
-				<div><span>Pechmagnet</span><div><div></div></div></div>
-				<div><span>Raserei</span><div><div></div></div></div>
-				<div><span>Stumm</span><div><div></div></div></div>
-				<div><span>Taub</span><div><div></div></div></div>
-				<div><span>Überrascht</span><div><div></div></div></div>
-				<div><span>Übler Geruch</span><div><div></div></div></div>
-				<div><span>Unsichtbar</span><div><div></div></div></div>
-				<div><span>Vergiftet</span><div><div></div></div></div>
-				<div><span>Versteinert</span><div><div></div></div></div>
+				{statesSecond.map(e => {
+					return (
+						<div key={e.id}><span>{e.name}</span><div><div></div></div></div>
+					);
+				})}
 			</div>
 		</div>
 	);
