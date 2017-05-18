@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ProfileActions from '../../actions/ProfileActions';
+import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { EditText } from '../../components/EditText';
@@ -22,7 +23,6 @@ import { createOverlay } from '../../utils/createOverlay';
 import { translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
 import { OverviewAddAP } from './OverviewAddAP';
-import { OverviewAvatarChange } from './OverviewAvatarChange';
 import { OverviewPersonalData } from './OverviewPersonalData';
 
 interface State {
@@ -79,7 +79,7 @@ export class Overview extends React.Component<{}, State> {
 		ProfileStore.removeChangeListener(this._updateProfileStore );
 	}
 
-	showImageUpload = () => createOverlay(<OverviewAvatarChange />);
+	showImageUpload = () => createOverlay(<AvatarChange setPath={ProfileActions.setHeroAvatar} />);
 	changeName = (name: string) => {
 		ProfileActions.setHeroName(name);
 		this.setState({ editName: false } as State);

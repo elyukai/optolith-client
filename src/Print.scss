@@ -22,7 +22,7 @@
 		border: none;
 	}
 
-	.titlebar, .subtabs {
+	.titlebar, .titlebar-drag, .subtabs {
 		display: none;
 	}
 
@@ -35,6 +35,10 @@
 		padding-top: 0;
 		flex: unset;
 		display: block;
+
+		.sheet-wrapper {
+			margin-top: 0;
+		}
 
 		.sheet-options, .options, .print-document {
 			display: none;

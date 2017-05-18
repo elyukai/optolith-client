@@ -373,7 +373,7 @@ export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>):
 	const { id } = raw;
 	const localeObject = locale[id];
 	if (localeObject) {
-		const { name, spec, spec_input } = localeObject;
+		const { name, spec, spec_input, ...other } = localeObject;
 		const { be, check, gr, skt } = raw;
 		return {
 			category: Categories.TALENTS,
@@ -382,11 +382,11 @@ export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>):
 			encumbrance: be,
 			gr,
 			ic: skt,
-			id,
 			name,
 			applications: spec,
 			applicationsInput: spec_input,
-			value: 0
+			value: 0,
+			...other
 		};
 	}
 	return;

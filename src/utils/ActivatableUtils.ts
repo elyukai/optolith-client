@@ -9,7 +9,10 @@ export function isMultiselect(obj: ActivatableInstance): boolean {
 	return obj.max !== 1;
 }
 
-export function isActive(obj: ActivatableInstance): boolean {
+export function isActive(obj?: ActivatableInstance): boolean {
+	if (obj === undefined) {
+		return false;
+	}
 	return obj.active.length > 0;
 }
 

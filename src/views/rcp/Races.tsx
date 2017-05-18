@@ -58,7 +58,7 @@ export class Races extends React.Component<Props, State> {
 						sort={this.sort}
 						options={['name', 'cost']}
 						/>
-					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{translate('rcp.options.showvalues')}</Checkbox>
+					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{translate('races.options.showvalues')}</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>

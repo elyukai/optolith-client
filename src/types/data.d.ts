@@ -360,12 +360,12 @@ export interface SexRequirement {
 
 export interface RaceRequirement {
 	id: 'RACE';
-	value: string | string[];
+	value: number | number[];
 }
 
 export interface CultureRequirement {
 	id: 'CULTURE';
-	value: string | string[];
+	value: number | number[];
 }
 
 export type ProfessionDependencyObject = SexRequirement | RaceRequirement | CultureRequirement;
@@ -533,6 +533,12 @@ export interface TalentInstance {
 	readonly name: string;
 	readonly applications?: Application[];
 	readonly applicationsInput?: string;
+	readonly tools?: string;
+	readonly quality?: string;
+	readonly failed?: string;
+	readonly critical?: string;
+	readonly botch?: string;
+	readonly src?: string;
 	dependencies: TalentInstanceDependency[];
 	value: number;
 }
@@ -765,41 +771,50 @@ export interface SubTab {
 interface PetBaseInstance {
 	id?: string;
 	name: string;
+	avatar?: string;
+}
+
+export interface PetInstance extends PetBaseInstance {
+	size?: string;
+	type?: string;
+	attack?: string;
+	dp?: string;
+	reach?: string;
+	actions?: string;
+	talents?: string;
+	skills?: string;
+	notes?: string;
+	spentAp?: string;
+	totalAp?: string;
+	cou?: string;
+	sgc?: string;
+	int?: string;
+	cha?: string;
+	dex?: string;
+	agi?: string;
+	con?: string;
+	str?: string;
+	lp?: string;
+	ae?: string;
+	spi?: string;
+	tou?: string;
+	pro?: string;
+	ini?: string;
+	mov?: string;
+	at?: string;
+	pa?: string;
+}
+
+export interface PetEditorInstance extends PetBaseInstance {
 	size: string;
 	type: string;
-	avatar: string;
 	attack: string;
 	dp: string;
-	reach: number;
+	reach: string;
 	actions: string;
 	talents: string;
 	skills: string;
 	notes: string;
-}
-
-export interface PetInstance extends PetBaseInstance {
-	spentAp: number;
-	totalAp: number;
-	cou: number;
-	sgc: number;
-	int: number;
-	cha: number;
-	dex: number;
-	agi: number;
-	con: number;
-	str: number;
-	lp: number;
-	ae: number;
-	spi: number;
-	tou: number;
-	pro: number;
-	ini: number;
-	mov: number;
-	at: number;
-	pa: number;
-}
-
-export interface PetEditorInstance extends PetBaseInstance {
 	spentAp: string;
 	totalAp: string;
 	cou: string;
@@ -1177,9 +1192,10 @@ export interface UILocale {
 	"secondaryattributes.ws.calc": string;
 	"rcp.actions.select": string;
 	"rcp.actions.next": string;
-	"rcp.options.showvalues": string;
+	"races.options.showvalues": string;
 	"cultures.options.allcultures": string;
 	"cultures.options.commoncultures": string;
+	"cultures.options.showculturalpackagevalues": string;
 	"professions.options.allprofessions": string;
 	"professions.options.commonprofessions": string;
 	"professions.options.allprofessiongroups": string;
@@ -1217,8 +1233,18 @@ export interface UILocale {
 	"attributes.pkp.short": string;
 	"advantages.options.common": string;
 	"disadvantages.options.common": string;
+	"activatable.view.afraidof": string;
+	"activatable.view.immunityto": string;
 	"skills.options.commoninculture": string;
 	"skills.view.groups": string[];
+	"info.applications": string;
+	"info.encumbrance": string;
+	"info.tools": string;
+	"info.quality": string;
+	"info.failedcheck": string;
+	"info.criticalsuccess": string;
+	"info.botch": string;
+	"info.improvementcost": string;
 	"view.commoninculture": string;
 	"view.uncommoninculture": string;
 	"combattechniques.view.groups": string[];
@@ -1347,4 +1373,18 @@ export interface UILocale {
 	"avatarchange.actions.change": string;
 	"avatarchange.dialog.image": string;
 	"avatarchange.view.invalidfile": string;
+	"fileapi.error.title": string;
+	"fileapi.error.message.code": string;
+	"fileapi.error.message.loadtables": string;
+	"fileapi.error.message.loadl10ns": string;
+	"fileapi.error.message.saveconfig": string;
+	"fileapi.error.message.saveheroes": string;
+	"fileapi.exporthero.title": string;
+	"fileapi.exporthero.success": string;
+	"fileapi.error.message.exporthero": string;
+	"fileapi.printcharactersheettopdf.title": string;
+	"fileapi.printcharactersheettopdf.success": string;
+	"fileapi.error.message.printcharactersheettopdf": string;
+	"fileapi.error.message.printcharactersheettopdfpreparation": string;
+	"fileapi.error.message.importhero": string;
 }

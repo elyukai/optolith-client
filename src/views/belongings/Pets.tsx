@@ -59,7 +59,7 @@ export class Pets extends React.Component<{}, PetsState> {
 	setAt = (event: InputTextEvent) => this.setEditorField({ at: event.target.value } as PetEditorInstance);
 	setPa = (event: InputTextEvent) => this.setEditorField({ pa: event.target.value } as PetEditorInstance);
 	setDp = (event: InputTextEvent) => this.setEditorField({ dp: event.target.value } as PetEditorInstance);
-	setReach = (id: number) => this.setEditorField({ reach: id } as PetEditorInstance);
+	setReach = (event: InputTextEvent) => this.setEditorField({ reach: event.target.value } as PetEditorInstance);
 	setActions = (event: InputTextEvent) => this.setEditorField({ actions: event.target.value } as PetEditorInstance);
 	setTalents = (event: InputTextEvent) => this.setEditorField({ talents: event.target.value } as PetEditorInstance);
 	setSkills = (event: InputTextEvent) => this.setEditorField({ skills: event.target.value } as PetEditorInstance);

@@ -69,10 +69,12 @@ export class Herolist extends React.Component<{}, State> {
 		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
 			filters: [{ name: 'JSON', extensions: ['json'] }]
 		}, fileNames => {
-			const fileName = fileNames[0];
-			const splitted = fileName.split('.');
-			if (splitted[splitted.length - 1] === 'json') {
-				importHero(fileName);
+			if (fileNames) {
+				const fileName = fileNames[0];
+				const splitted = fileName.split('.');
+				if (splitted[splitted.length - 1] === 'json') {
+					importHero(fileName);
+				}
 			}
 		});
 	}

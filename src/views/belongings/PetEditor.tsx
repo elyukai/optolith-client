@@ -2,7 +2,6 @@ import * as React from 'react';
 import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
-import { Dropdown } from '../../components/Dropdown';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { get } from '../../stores/ListStore';
@@ -37,7 +36,7 @@ export interface PetEditorProps {
 	setAt(event: InputTextEvent): void;
 	setPa(event: InputTextEvent): void;
 	setDp(event: InputTextEvent): void;
-	setReach(id: number): void;
+	setReach(event: InputTextEvent): void;
 	setActions(event: InputTextEvent): void;
 	setTalents(event: InputTextEvent): void;
 	setSkills(event: InputTextEvent): void;
@@ -94,7 +93,7 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 							<TextField label={translate('pet.at')} value={data.at} onChange={setAt} />
 							<TextField label={translate('pet.pa')} value={data.pa} onChange={setPa} />
 							<TextField label={translate('pet.dp')} value={data.dp} onChange={setDp} />
-							<Dropdown label={translate('pet.reach')} options={[{id: 1, name: translate('pet.reachshort')}, {id: 2, name: translate('pet.reachmedium')}, {id: 3, name: translate('pet.reachlong')}]} value={data.reach} onChange={setReach} />
+							<TextField label={translate('pet.reach')} value={data.reach} onChange={setReach} />
 						</div>
 						<div className="row">
 							<TextField label={translate('pet.actions')} value={data.actions} onChange={setActions} />

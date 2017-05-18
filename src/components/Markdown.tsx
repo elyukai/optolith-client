@@ -2,12 +2,13 @@ import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export interface MarkdownProps {
+	className?: string;
 	source: string;
 }
 
 export function Markdown(props: MarkdownProps) {
-	const { source = '...' } = props;
+	const { className = '', source = '...' } = props;
 	return (
-		<ReactMarkdown source={source} skipHtml />
+		<ReactMarkdown source={source} skipHtml className={className} />
 	);
 }

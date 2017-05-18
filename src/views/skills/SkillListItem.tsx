@@ -7,8 +7,6 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { get } from '../../stores/ListStore';
 import { AttributeInstance } from '../../types/data.d';
-import { createOverlay } from '../../utils/createOverlay';
-import { SkillInfo } from './SkillInfo';
 
 export interface SkillListItemProps {
 	activateDisabled?: boolean;
@@ -18,7 +16,6 @@ export interface SkillListItemProps {
 	check?: string[];
 	checkDisabled?: boolean;
 	checkmod?: string;
-	enableInfo?: boolean;
 	ic?: number;
 	id: string;
 	insertTopMargin?: boolean;
@@ -32,13 +29,19 @@ export interface SkillListItemProps {
 	activate?(): void;
 	addPoint?(): void;
 	removePoint?(): void;
+	selectForInfo?(id: string): void;
 }
 
 export class SkillListItem extends React.Component<SkillListItemProps, {}> {
-	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
+	showInfo = () => {
+		const { selectForInfo } = this.props;
+		if (selectForInfo) {
+			selectForInfo(this.props.id);
+		}
+	}
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, enableInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -87,7 +90,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 						flat
 						/>
 				) : null }
-				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled={!enableInfo} />
+				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled={!selectForInfo} />
 			</ListItemButtons>
 		);
 

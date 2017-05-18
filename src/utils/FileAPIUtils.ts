@@ -19,6 +19,7 @@ import { TalentsStore } from '../stores/TalentsStore';
 import { ToListById } from '../types/data.d';
 import { Config, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { alert } from './alert';
+import { translate } from './I18n';
 
 function getAppDataPath() {
 	return remote.app.getPath('userData');
@@ -57,11 +58,11 @@ export async function loadInitialData() {
 	let config: Config;
 	const locales: ToListById<RawLocale> = {};
 	try {
-		const result = await readFile(join(root, 'resources/data.json'));
+		const result = await readFile(join(root, 'resources', 'data.json'));
 		tables = JSON.parse(result);
 	}
 	catch (error) {
-		alert('Fehler', `Bei der Laden der Regeln ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadtables')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 		tables = { advantages: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadvantages: {}, el: {}, items: {}, liturgies: {}, professionvariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
 	}
 	try {
@@ -79,14 +80,14 @@ export async function loadInitialData() {
 		heroes = {};
 	}
 	try {
-		const result = await readDir(join(root, 'resources/locales'));
+		const result = await readDir(join(root, 'resources', 'locales'));
 		for (const file of result) {
-			const locale = await readFile(join(root, 'resources/locales', file));
+			const locale = await readFile(join(root, 'resources', 'locales', file));
 			locales[file.split('.')[0]] = JSON.parse(locale);
 		}
 	}
 	catch (error) {
-		alert('Fehler', `Bei der Laden der Lokalisierungen ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadl10ns')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 	const initialData = {
 		config,
@@ -131,7 +132,7 @@ export function saveConfig() {
 		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
 	}
 	catch (error) {
-		alert('Fehler', `Beim Speichern der Anwendungskonfiguration ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.saveconfig')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -144,7 +145,7 @@ export function saveAllHeroes() {
 		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
 	}
 	catch (error) {
-		alert('Fehler', `Beim Speichern der Helden ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.saveheroes')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -152,7 +153,7 @@ export async function saveHero(id: string) {
 	const currentWindow = remote.getCurrentWindow();
 	const data = HerolistStore.getForSave(id);
 	const filename = await showSaveDialog(currentWindow, {
-		title: 'Held als JSON speichern',
+		title: translate('fileapi.exporthero.title'),
 		filters: [
 			{name: 'JSON', extensions: ['json']},
 		],
@@ -161,10 +162,10 @@ export async function saveHero(id: string) {
 	if (filename) {
 		try {
 			await writeFile(filename, JSON.stringify(data));
-			alert('Held gespeichert');
+			alert(translate('fileapi.exporthero.success'));
 		}
 		catch (error) {
-			alert('Fehler', `Beim Speichern der Datei ist ein Fehler aufgetreten. Informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+			alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.exporthero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 		}
 	}
 }
@@ -183,7 +184,7 @@ export async function printToPDF() {
 			printBackground: true,
 		});
 		const filename = await showSaveDialog(currentWindow, {
-			title: 'Heldendokument als PDF speichern',
+			title: translate('fileapi.printcharactersheettopdf.title'),
 			filters: [
 				{name: 'PDF', extensions: ['pdf']},
 			],
@@ -191,15 +192,15 @@ export async function printToPDF() {
 		if (filename) {
 			try {
 				await writeFile(filename, data);
-				alert('PDF gespeichert');
+				alert(translate('fileapi.printcharactersheettopdf.success'));
 			}
 			catch (error) {
-				alert('Fehler', `Beim Speichern der PDF ist ein Fehler aufgetreten. Überprüfe, ob, wenn du hiermit eine alte PDF überschreibst, du diese alte PDF nicht irgendwo geöffnet hast, denn solange sie geöffnet ist, kann sie nicht überschrieben werden! Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+				alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.printcharactersheettopdf')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 			}
 		}
 	}
 	catch (error) {
-		alert('Fehler', `Bei der Generierung der PDF ist ein Fehler aufgetreten. Versuche es noch einmal. Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler! (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.printcharactersheettopdfpreparation')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -209,7 +210,7 @@ export async function importHero(path: string) {
 		FileActions.receiveImportedHero(JSON.parse(result));
 	}
 	catch (error) {
-		alert('Fehler', `Bei der Laden der Datei ist ein Fehler aufgetreten. (Fehler: ${JSON.stringify(error)})`);
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.importhero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -251,6 +252,7 @@ export function writeFile(path: string, data: any) {
 		});
 	});
 }
+
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { setLocale } from '../../actions/LocaleActions';
 import { LocaleStore } from '../../stores/LocaleStore';
+import { saveConfig } from '../../utils/FileAPIUtils';
 import { translate } from '../../utils/I18n';
 import { Dialog } from '../Dialog';
 import { Dropdown } from '../Dropdown';
@@ -40,7 +41,7 @@ export class Settings extends React.Component<SettingsProps, SettingsState> {
 				id="settings"
 				title={translate('settings.title')}
 				node={this.props.node}
-				buttons={[{label: translate('settings.actions.close')}]}
+				buttons={[{label: translate('settings.actions.close'), onClick: saveConfig }]}
 				>
 				<Dropdown
 					options={[

@@ -74,6 +74,9 @@ export class Professions extends React.Component<{}, State> {
 			const commonVisible = e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
 			const extensionVisible = visibility === 'all' || (e.src.id === 'US25001' ? commonVisible : extensionVisibility);
+			if (e.id === 'P_17') {
+				console.log(typicalList, commonVisible, groupVisible, extensionVisible, groupVisible && extensionVisible);
+			}
 			return groupVisible && extensionVisible;
 		}), filterText, sortOrder, sex);
 

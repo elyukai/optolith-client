@@ -35,14 +35,14 @@ export function validateInstanceRequirementObject(req: AllRequirementObjects, so
 			if (Array.isArray(req.value)) {
 				return !!race && req.value.map(e => `R_${e}`).includes(race);
 			}
-			return !!race && race === req.value;
+			return !!race && race === `R_${req.value}`;
 		}
 		else if (isCultureRequirement(req)) {
 			const culture = CultureStore.getCurrentID();
 			if (Array.isArray(req.value)) {
-				return !!culture && req.value.includes(culture);
+				return !!culture && req.value.map(e => `C_${e}`).includes(culture);
 			}
-			return !!culture && culture === req.value;
+			return !!culture && culture === `C_${req.value}`;
 		}
 		else if (Array.isArray(id)) {
 			const resultOfAll = id.map(e => validateInstanceRequirementObject({ ...req, id: e }, sourceId));

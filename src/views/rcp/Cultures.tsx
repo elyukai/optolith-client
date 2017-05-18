@@ -35,14 +35,6 @@ export class Cultures extends React.Component<Props, State> {
 		visibilityFilter: CultureStore.areAllVisible(),
 	};
 
-	_updateCultureStore = () => this.setState({
-		cultures: CultureStore.getAll(),
-		currentID: CultureStore.getCurrentID(),
-		showDetails: CultureStore.areValuesVisible(),
-		sortOrder: CultureStore.getSortOrder(),
-		visibilityFilter: CultureStore.areAllVisible(),
-	} as State);
-
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
 	sort = (option: string) => CultureActions.setSortOrder(option);
 	changeTab = () => this.props.changeTab('profession');
@@ -50,11 +42,11 @@ export class Cultures extends React.Component<Props, State> {
 	changeView = (view: string) => CultureActions.setVisibilityFilter(view);
 
 	componentDidMount() {
-		CultureStore.addChangeListener(this._updateCultureStore);
+		CultureStore.addChangeListener(this.updateCultureStore);
 	}
 
 	componentWillUnmount() {
-		CultureStore.removeChangeListener(this._updateCultureStore);
+		CultureStore.removeChangeListener(this.updateCultureStore);
 	}
 
 	render() {
@@ -79,7 +71,7 @@ export class Cultures extends React.Component<Props, State> {
 						sort={this.sort}
 						options={['name', 'cost']}
 						/>
-					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>{translate('rcp.options.showvalues')}</Checkbox>
+					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>{translate('cultures.options.showculturalpackagevalues')}</Checkbox>
 				</div>
 				<Scroll className="list">
 					<ul>
@@ -97,5 +89,15 @@ export class Cultures extends React.Component<Props, State> {
 				</Scroll>
 			</div>
 		);
+	}
+
+	private updateCultureStore = () => {
+		this.setState({
+			cultures: CultureStore.getAll(),
+			currentID: CultureStore.getCurrentID(),
+			showDetails: CultureStore.areValuesVisible(),
+			sortOrder: CultureStore.getSortOrder(),
+			visibilityFilter: CultureStore.areAllVisible(),
+		} as State);
 	}
 }

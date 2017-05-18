@@ -10,7 +10,7 @@ function createWindow() {
 		width: 1280,
 		height: 720,
 		resizable: false,
-		icon: path.join(app.getAppPath(), 'resources/favicon.png'),
+		icon: path.join(app.getAppPath(), 'resources', 'favicon.png'),
 		frame: false,
 		center: true,
 		title: 'DSA5 Heldentool',

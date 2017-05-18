@@ -7,11 +7,10 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { ProfessionVariantInstance } from '../types/data.d';
+import { validateInstance } from '../utils/validate';
 import { APStore } from './APStore';
-import { CultureStore } from './CultureStore';
 import { ELStore } from './ELStore';
 import { get, getAllByCategory } from './ListStore';
-import { ProfileStore } from './ProfileStore';
 import { Store } from './Store';
 
 type Action = LoadHeroAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction;
@@ -58,17 +57,7 @@ class ProfessionVariantStoreStatic extends Store {
 		return allEntries.filter(e => {
 			if (variants.includes(e.id)) {
 				const { dependencies, requires } = e;
-				const validDependencies = dependencies.every(req => {
-					if (req.id === 'CULTURE') {
-						const cultureID = CultureStore.getCurrentID() as string;
-						return (req.value as string[]).includes(cultureID);
-					} else if (req.id === 'SEX') {
-						const sex = ProfileStore.getSex();
-						return sex === req.value;
-					}
-					return false;
-				});
-				const validRequires = !requires.some(d => {
+				const validRequires = validateInstance(dependencies, e.id) && !requires.some(d => {
 					if (typeof d.id === 'string') {
 						const entry = get(d.id);
 						if (entry.category === Categories.ATTRIBUTES && entry.value > ELStore.getStart().maxAttributeValue) {
@@ -78,7 +67,7 @@ class ProfessionVariantStoreStatic extends Store {
 					}
 					return false;
 				});
-				return validDependencies && validRequires;
+				return validRequires;
 			}
 			return false;
 		});

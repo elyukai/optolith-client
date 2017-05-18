@@ -96,6 +96,7 @@ ul.list-wrapper {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
+			overflow: hidden;
 
 			&.large {
 				p.title {
@@ -103,6 +104,7 @@ ul.list-wrapper {
 					letter-spacing: 0.05em;
 					text-transform: uppercase;
 					height: 28px;
+					display: flex;
 
 					span:not(.add) {
 						margin: 20px 0 0;
@@ -131,17 +133,13 @@ ul.list-wrapper {
 
 			&.title {
 				height: 16px;
-				// font: bold 15px/16px Alegreya;
-				// letter-spacing: 0.1em;
 				font: 500 15px/16px Alegreya Sans;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
-				// text-transform: uppercase;
 				text-transform: none;
 				color: $color1;
 				margin: 0;
-				display: flex;
 			}
 		}
 
@@ -156,6 +154,7 @@ ul.list-wrapper {
 			flex: 1 1 auto;
 			height: 1px;
 			margin: 0 10px;
+			min-width: 20px;
 		}
 
 		.selections {

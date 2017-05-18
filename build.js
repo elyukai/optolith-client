@@ -10,7 +10,7 @@ packager({
 	name: 'tdeheroes',
 	out: './dist',
 	overwrite: true,
-	platform: 'win32',
+	platform: ['win32', 'linux'],
 	win32metadata: {
 		CompanyName: 'Lukas Obermann',
 		FileDescription: 'DSA5 Heldentool',

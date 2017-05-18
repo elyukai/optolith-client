@@ -1,6 +1,7 @@
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 import { getDSids, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
+import { translate } from '../utils/I18n';
 import { sort } from '../utils/ListUtils';
 import { validateInstance } from '../utils/validate';
 import { ELStore } from './ELStore';
@@ -179,10 +180,10 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 				const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 
 				if (['ADV_28', 'ADV_29'].includes(id)) {
-					activeObject.name = `Immunität gegen ${add}`;
+					activeObject.name = `${translate('activatable.view.immunityto')} ${add}`;
 				}
 				else if (id === 'DISADV_1') {
-					activeObject.name = `Angst vor ${add}`;
+					activeObject.name = `${translate('activatable.view.afraidof')} ${add}`;
 				}
 				else if (['DISADV_34', 'DISADV_50'].includes(id)) {
 					activeObject.name  += ` ${roman[(tier as number) - 1]} (${add})`;

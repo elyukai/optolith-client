@@ -45,7 +45,6 @@ export function BelongingsSheet() {
 	firstColumn.splice(0, Math.min(items.length, 66), ...items);
 	const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));
 	const pet = PetsStore.getAll()[0];
-	const petreach = [{id: 1, name: translate('pet.reachshort')}, {id: 2, name: translate('pet.reachmedium')}, {id: 3, name: translate('pet.reachlong')}].find(e => e.id === pet.reach);
 
 	return (
 		<SheetWrapper>
@@ -252,7 +251,7 @@ export function BelongingsSheet() {
 									</div>
 									<div className="reach">
 										<span className="label">{translate('pet.reach')}</span>
-										<span className="value">{pet && petreach && petreach.name}</span>
+										<span className="value">{pet && pet.reach}</span>
 									</div>
 								</div>
 								<div className="row pet-actions">
