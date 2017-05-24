@@ -2,8 +2,9 @@ import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
 import { PhaseStore } from '../stores/PhaseStore';
 import { SpellsStore } from '../stores/SpellsStore';
-import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
+import { AbilityInstance, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
+import { addDependencies, removeDependencies } from './DependentUtils';
 
 export function isOwnTradition(obj: SpellInstance | CantripInstance): boolean {
 	const SA = get('SA_86') as SpecialAbilityInstance;
@@ -29,36 +30,6 @@ export function isIncreasable(obj: SpellInstance): boolean {
 }
 
 export function isDecreasable(obj: SpellInstance): boolean {
-	switch (obj.id) {
-		case 'SPELL_28': {
-			const SPELL_48 = get('SPELL_48') as SpellInstance;
-			if (SPELL_48.active) {
-				return obj.value > 10;
-			}
-			break;
-		}
-		case 'SPELL_48': {
-			const SPELL_47 = get('SPELL_47') as SpellInstance;
-			if (SPELL_47.active) {
-				return obj.value > 12;
-			}
-			break;
-		}
-		case 'SPELL_22': {
-			const SPELL_50 = get('SPELL_50') as SpellInstance;
-			if (SPELL_50.active) {
-				return obj.value > 10;
-			}
-			break;
-		}
-		case 'SPELL_50': {
-			const SPELL_49 = get('SPELL_49') as SpellInstance;
-			if (SPELL_49.active) {
-				return obj.value > 12;
-			}
-			break;
-		}
-	}
 	if ((get('SA_88') as SpecialAbilityInstance).active.includes(obj.property)) {
 		const counter = SpellsStore.getPropertyCounter();
 
@@ -67,26 +38,20 @@ export function isDecreasable(obj: SpellInstance): boolean {
 	return true;
 }
 
-export function isActivatable(obj: SpellInstance | CantripInstance): boolean {
-	switch (obj.id) {
-		case 'SPELL_48': {
-			const SPELL_28 = get('SPELL_28') as SpellInstance;
-			return SPELL_28.active && SPELL_28.value >= 10;
-		}
-		case 'SPELL_47': {
-			const SPELL_48 = get('SPELL_48') as SpellInstance;
-			return SPELL_48.active && SPELL_48.value >= 12;
-		}
-		case 'SPELL_50': {
-			const SPELL_22 = get('SPELL_22') as SpellInstance;
-			return SPELL_22.active && SPELL_22.value >= 10;
-		}
-		case 'SPELL_49': {
-			const SPELL_50 = get('SPELL_50') as SpellInstance;
-			return SPELL_50.active && SPELL_50.value >= 12;
-		}
-	}
-	return true;
+export function activate(obj: SpellInstance): ToListById<AbilityInstance> {
+	return addDependencies({ active: true, ...obj });
+}
+
+export function activateCantrip(obj: CantripInstance): ToListById<AbilityInstance> {
+	return addDependencies({ active: true, ...obj });
+}
+
+export function deactivate(obj: SpellInstance): ToListById<AbilityInstance> {
+	return removeDependencies({ active: false, ...obj });
+}
+
+export function deactivateCantrip(obj: CantripInstance): ToListById<AbilityInstance> {
+	return removeDependencies({ active: false, ...obj });
 }
 
 export function reset(obj: SpellInstance): SpellInstance {

@@ -1,10 +1,10 @@
 {
   "name": "tdeheroes",
   "productName": "DSA5 Heldentool",
-  "version": "0.47.1",
+  "version": "0.47.3",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
   "author": "Lukas Obermann",
-  "license": "See LICENSE file",
+  "license": "GPL-3.0",
   "main": "resources/main.js",
   "copyright": "Dieses Produkt wurde unter Lizenz erstellt. Das Schwarze Auge und sein Logo sowie Aventuria, Dere, Myranor, Riesland, Tharun und Uthuria und ihre Logos sind eingetragene Marken von Significant GbR in Deutschland, den U.S.A. und anderen Ländern. Ulisses Spiele und sein Logo sind eingetragene Marken der Ulisses Medien und Spiele Distribution GmbH. Dieses Werk enthält Material, das durch Ulisses Spiele und/oder andere Autoren urheberrechtlich geschützt ist. Solches Material wird mit Erlaubnis im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS verwendet. Alle anderen Originalmaterialien in diesem Werk sind Copyright (c) 2017-Gegenwart von Lukas Obermann und werden im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS veröffentlicht.",
   "directories": {
@@ -35,7 +35,9 @@
     "@types/semver": "^5.3.31",
     "awesome-typescript-loader": "^3.0.3",
     "css-loader": "^0.26.1",
-    "electron": "^1.7.0",
+    "electron": "^1.7.1",
+    "electron-builder": "^17.9.0",
+    "electron-packager": "^8.7.0",
     "eslint": "^3.15.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-react": "^6.9.0",
@@ -57,5 +59,6 @@
     "buildMac": "node buildMac.js",
     "setup": "electron-installer-windows --src dist/tdeheroes-win32-x64/ --dest dist/installers/tdeheroes-win32-x64/ --config installerconfig.json",
     "test": "jest"
-  }
+  },
+  "repository": {}
 }

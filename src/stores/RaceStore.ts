@@ -68,10 +68,7 @@ class RaceStoreStatic extends Store {
 	}
 
 	getCurrent() {
-		if (this.currentId !== undefined) {
-			return get(this.currentId) as RaceInstance | undefined;
-		}
-		return undefined;
+		return this.currentId ? get(this.currentId) as RaceInstance : undefined;
 	}
 
 	getSortOrder() {

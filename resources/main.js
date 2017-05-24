@@ -15,6 +15,11 @@ function createWindow() {
 		center: true,
 		title: 'DSA5 Heldentool',
 		titleBarStyle: 'hidden',
+		acceptFirstMouse: true,
+		backgroundColor: '#010a13',
+		// webPreferences: {
+		// 	devTools: false
+		// },
 		show: false
 	});
 

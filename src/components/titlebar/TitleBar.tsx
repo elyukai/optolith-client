@@ -90,21 +90,22 @@ export class TitleBar extends React.Component<Props, State> {
 	saveHero = () => HerolistActions.saveHero();
 	saveGroup = () => InGameActions.save();
 	undo = () => HistoryActions.undoLastAction();
-	openDevtools = () => remote.getCurrentWindow().webContents.openDevTools();
+	toggleDevtools = () => remote.getCurrentWindow().webContents.toggleDevTools();
 	showSettings = () => createOverlay(<Settings />);
 
 	render() {
 
 		const { currentSection, currentTab, locale } = this.props;
-		const { account, ap: { total, spent, adv, disadv }, avatar, isUndoAvailable, phase } = this.state;
+		const { ap: { total, spent, adv, disadv }, avatar, isUndoAvailable, phase } = this.state;
 
 		switch (currentSection) {
 			case 'main': {
 				const tabs: TitleBarTabProps[] = [
 					{ label: locale['titlebar.tabs.home'], tag: 'home' },
+					{ label: locale['titlebar.tabs.wiki'], tag: 'wiki', disabled: true },
 					{ label: locale['titlebar.tabs.about'], tag: 'about' }
 				];
-				if (!account.name) {
+				/*if (!account.name) {
 					return (
 						<TitleBarWrapper>
 							<TitleBarLeft>
@@ -128,11 +129,10 @@ export class TitleBar extends React.Component<Props, State> {
 							</TitleBarRight>
 						</TitleBarWrapper>
 					);
-				} else {
+				} else {*/
 					tabs.splice(1, 0,
 						{ label: locale['titlebar.tabs.heroes'], tag: 'herolist' },
-						{ label: locale['titlebar.tabs.groups'], tag: 'grouplist', disabled: true },
-						{ label: locale['titlebar.tabs.customrules'], tag: 'own-rules', disabled: true }
+						{ label: locale['titlebar.tabs.groups'], tag: 'grouplist', disabled: true }
 					);
 					return (
 						<TitleBarWrapper>
@@ -140,22 +140,22 @@ export class TitleBar extends React.Component<Props, State> {
 								<TitleBarTabs active={currentTab} tabs={tabs} />
 							</TitleBarLeft>
 							<TitleBarRight>
-								<TitleBarTabs active={currentTab} tabs={[
-									{ label: account.name, tag: 'account', disabled: true },
-								]} />
-								<BorderButton label={locale['titlebar.actions.logout']} onClick={this.logout} disabled />
 								<IconButton
 									icon="&#xE8B8;"
 									onClick={this.showSettings}
 									/>
 								<IconButton
 									icon="&#xE868;"
-									onClick={this.openDevtools}
+									onClick={this.toggleDevtools}
 									/>
 							</TitleBarRight>
 						</TitleBarWrapper>
 					);
-				}
+								/*<TitleBarTabs active={currentTab} tabs={[
+									{ label: account.name, tag: 'account', disabled: true },
+								]} />
+								<BorderButton label={locale['titlebar.actions.logout']} onClick={this.logout} disabled />*/
+				// }
 			}
 			case 'hero': {
 				const tabs = [
@@ -229,7 +229,7 @@ export class TitleBar extends React.Component<Props, State> {
 								/>
 							<IconButton
 								icon="&#xE868;"
-								onClick={this.openDevtools}
+								onClick={this.toggleDevtools}
 								/>
 						</TitleBarRight>
 					</TitleBarWrapper>
@@ -254,7 +254,7 @@ export class TitleBar extends React.Component<Props, State> {
 								/>
 							<IconButton
 								icon="&#xE868;"
-								onClick={this.openDevtools}
+								onClick={this.toggleDevtools}
 								/>
 						</TitleBarRight>
 					</TitleBarWrapper>

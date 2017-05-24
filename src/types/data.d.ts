@@ -1,3 +1,4 @@
+import * as DetailedData from './detaileddata.d';
 import * as Categories from '../constants/Categories';
 
 export interface AdventurePoints {
@@ -501,6 +502,7 @@ export interface SpellInstance {
 	readonly name: string;
 	readonly property: number;
 	readonly tradition: number[];
+	readonly reqs: RequirementObject[];
 	active: boolean;
 	dependencies: SpellInstanceDependency[];
 	value: number;
@@ -844,6 +846,7 @@ export interface UILocale {
 	"titlebar.tabs.heroes": string;
 	"titlebar.tabs.groups": string;
 	"titlebar.tabs.customrules": string;
+	"titlebar.tabs.wiki": string;
 	"titlebar.tabs.about": string;
 	"titlebar.tabs.imprint": string;
 	"titlebar.tabs.thirdpartylicenses": string;

@@ -1,13 +1,13 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
+import { UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 
 export interface ActivateDisAdvAction extends Action {
 	type: ActionTypes.ACTIVATE_DISADV;
 	payload: UndoExtendedActivateArgs;
 }
 
-export const addToList = (args: ActivateArgs) => AppDispatcher.dispatch<ActivateDisAdvAction>({
+export const addToList = (args: UndoExtendedActivateArgs) => AppDispatcher.dispatch<ActivateDisAdvAction>({
 	type: ActionTypes.ACTIVATE_DISADV,
 	payload: args
 });
@@ -17,7 +17,7 @@ export interface DeactivateDisAdvAction extends Action {
 	payload: UndoExtendedDeactivateArgs;
 }
 
-export const removeFromList = (args: DeactivateArgs) => AppDispatcher.dispatch<DeactivateDisAdvAction>({
+export const removeFromList = (args: UndoExtendedDeactivateArgs) => AppDispatcher.dispatch<DeactivateDisAdvAction>({
 	type: ActionTypes.DEACTIVATE_DISADV,
 	payload: args
 });

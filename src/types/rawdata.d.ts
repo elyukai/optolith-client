@@ -276,6 +276,7 @@ export interface RawSpell {
 	trad: number[];
 	merk: number;
 	gr: number;
+	reqs: Data.RequirementObject[];
 }
 
 export interface RawSpellLocale {

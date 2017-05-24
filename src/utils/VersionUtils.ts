@@ -1,3 +1,3 @@
 // import { semver } from 'semver';
 
-export const currentVersion = '0.47.1';
+export const currentVersion = '0.47.3';

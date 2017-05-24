@@ -1,0 +1,65 @@
+﻿id;name;ap;tiers;max;sel;req
+1;Adel;5;3;1;;
+2;Altersresistenz;5;;1;;RCP
+3;Angenehmer Geruch;6;;1;;
+4;Begabung;6&12&18&24;;3;TALENTS&SPELLS&LITURGIES;"{""id"":""DISADV_48"",""active"":false,""sid"":""sel""}"
+5;Beidhändig;15;;1;;
+6;Dunkelsicht;10;2;1;;"RCP&{""id"":""DISADV_25"",""active"":false}"
+7;Eisenaffine Aura;15;;1;;"{""id"":""ADV_50"",""active"":true}"
+8;Entfernungssinn;10;;1;;"{""id"":""DISADV_5"",""active"":false}&{""id"":""DISADV_7"",""active"":false}&{""id"":""DISADV_11"",""active"":false}&{""id"":""DISADV_51"",""active"":false,""sid"":2}"
+9;Flink;8;;1;;"{""id"":""DISADV_4"",""active"":false}&{""id"":""DISADV_12"",""active"":false}&{""id"":""DISADV_51"",""active"":false,""sid"":3}"
+10;Fuchssinn;15;;1;;
+11;Geborener Redner;4;;1;;"{""id"":""DISADV_46"",""active"":false}"
+12;Geweihter;25;;1;;
+13;Giftresistenz;10;2;1;;
+14;Glück;30;3;1;;"{""id"":""DISADV_31"",""active"":false}"
+15;Gutaussehend;20;2;1;;"{""id"":""DISADV_14"",""active"":false}"
+16;Herausragende Fertigkeit;2&4&6&8;;4;TALENTS&SPELLS&LITURGIES;"{""id"":""DISADV_48"",""active"":false,""sid"":""sel""}"
+17;Herausragende Kampftechnik;4&8&12&16;;2;COMBAT_TECHNIQUES;
+18;Herausragender Sinn (Sicht);12;;1;;"{""id"":""DISADV_5"",""active"":false}&{""id"":""DISADV_7"",""active"":false}"
+19;Herausragender Sinn (Gehör);12;;1;;"{""id"":""DISADV_8"",""active"":false}&{""id"":""DISADV_47"",""active"":false}"
+20;Herausragender Sinn (Geruch & Geschmack);6;;1;;"{""id"":""DISADV_9"",""active"":false}"
+21;Herausragender Sinn (Tastsinn);2;;1;;"{""id"":""DISADV_10"",""active"":false}"
+22;Hitzeresistenz;5;;1;;"{""id"":""DISADV_15"",""active"":false}"
+23;Hohe Astralkraft;6;7;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""DISADV_26"",""active"":false}"
+24;Hohe Karmalkraft;6;7;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""DISADV_27"",""active"":false}"
+25;Hohe Lebenskraft;6;7;1;;"{""id"":""DISADV_28"",""active"":false}"
+26;Hohe Seelenkraft;25;;1;;"{""id"":""DISADV_29"",""active"":false}"
+27;Hohe Zähigkeit;25;;1;;"{""id"":""DISADV_30"",""active"":false}"
+28;Immunität gegen (Gift);sel;;;1?Arax?2&2?Kelmon?1&3?Tulmadron?2&4?Wurara?1;
+29;Immunität gegen (Krankheit);sel;;;1?Flinker Difar?1&2?Lutanas?2&3?Rascher Wahn?3&4?Sumpffieber/Brabaker Schweiß?2&5?Zorganpocken?3;
+30;Kälteresistenz;5;;1;;"{""id"":""DISADV_16"",""active"":false}"
+31;Krankheitsresistenz;10;2;1;;"{""id"":""DISADV_21"",""active"":false}"
+32;Magische Einstimmung;40;;1;;"{""id"":""ADV_50"",""active"":true}"
+33;Mystiker;20;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ADV_35"",""active"":false}"
+34;Nichtschläfer;8;;1;;RCP
+35;Pragmatiker;10;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ADV_33"",""active"":false}"
+36;Reich;1;10;1;;
+37;Richtungssinn;10;;1;;"{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_27""}"
+38;Schlangenmensch;6;;1;;
+39;Schwer zu verzaubern;15;;1;;RCP
+40;Soziale Anpassungsfähigkeit;10;;1;;"{""id"":""DISADV_49"",""active"":false}&{""id"":""DISADV_48"",""active"":false,""sid"":""GR"",""sid2"":2}"
+41;Unscheinbar;4;;1;;
+42;Verbesserte Regeneration (Astralenergie);10;3;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""DISADV_38"",""active"":false}"
+43;Verbesserte Regeneration (Karmaenergie);10;3;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""DISADV_39"",""active"":false}"
+44;Verbesserte Regeneration (Lebensenergie);10;3;1;;"{""id"":""DISADV_40"",""active"":false}"
+45;Verhüllte Aura;20;;1;;"{""id"":""ADV_50"",""active"":true}"
+46;Vertrauenerweckend;25;;1;;"{""id"":""DISADV_48"",""active"":false,""sid"":""GR"",""sid2"":2}"
+47;Waffenbegabung;0&5&10&15;;1;COMBAT_TECHNIQUES;
+48;Wohlklang;5;;1;;"{""id"":""DISADV_46"",""active"":false}"
+49;Zäher Hund;20;;1;;"{""id"":""DISADV_55"",""active"":false}"
+50;Zauberer;25;;1;;
+51;Zeitgefühl;2;;1;;
+52;Zweistimmiger Gesang;5;;1;;RCP
+53;Zwergennase;8;;1;;
+54;Eisern;5;;1;;
+55;Hart im nehmen;3;;1;;
+56;Affinität zu Dämonen;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ADV_57"",""active"":false}"
+57;Affinität zu Elementaren;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ADV_56"",""active"":false}"
+58;Große Zauberauswahl;8;2;1;;"{""id"":""SA_86"",""active"":true,""sid"":9}&{""id"":""DISADV_59"",""active"":false}"
+59;Kein Bann des Eisen;25;;1;;"{""id"":""SA_86"",""active"":true,""sid"":10}&{""id"":""ADV_7"",""active"":false}"
+60;Machtvolle Zaubermelodien;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}&{""id"":""DISADV_60"",""active"":false}"
+61;Machtvolle Zaubertänze;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":8}&{""id"":""DISADV_61"",""active"":false}"
+62;Schutzgeist;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[9,10]}"
+63;Weitreichende Zaubermelodien;5;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}&{""id"":""DISADV_62"",""active"":false}"
+64;Weitreichende Zaubertänze;5;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":8}&{""id"":""DISADV_63"",""active"":false}"

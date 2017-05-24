@@ -1,0 +1,474 @@
+﻿id;name
+1;Basiliskenzunge
+2;Dolch
+3;Drachenzahn
+4;Linkhand
+5;Messer
+6;Schwerer Dolch
+7;Waqqif
+8;Florett
+9;Rapier
+10;Wolfsmesser
+11;Brabakbengel
+12;Keule
+13;Knüppel
+14;Lindwurmschläger
+15;Magierstab, kurz
+16;Magierstab, mittel
+17;Molokdeschnaja
+18;Orknase
+19;Rabenschnabel
+20;Sonnenzepter
+21;Streitaxt
+22;Streitkolben
+23;Morgenstern
+24;Kriegslanze
+25;Schlagring
+26;Holzschild
+27;Lederschild
+28;Thorwalerschild
+29;Großschild
+30;Barbarenschwert
+31;Entermesser
+32;Haumesser
+33;Khunchomer
+34;Kurzschwert
+35;Langschwert
+36;Robbentöter
+37;Säbel
+38;Sklaventod
+39;Dreizack
+40;Dschadra
+41;Hellebarde
+42;Holzspeer
+43;Kampfstab
+44;Magierstab, lang
+45;Speer
+46;Zweililien
+47;Anderthalbhänder
+48;Doppelkhunchomer
+49;Großer Sklaventod
+50;Rondrakamm
+51;Tuzakmesser
+52;Zweihänder
+53;Barbarenstreitaxt
+54;Felsspalter
+55;Kriegshammer
+56;Zwergenschlägel
+57;Balestrina
+58;Eisenwalder
+59;Handarmbrust
+60;Leichte Armbrust
+61;Schwere Armbrust
+62;Elfenbogen
+63;Kompositbogen
+64;Kurzbogen
+65;Langbogen
+66;Schneidzahn
+67;Stein
+68;Wurfbeil
+69;Wurfdolch
+70;Wurfkeule
+71;Wurfring
+72;Wurfscheibe
+73;Wurfspeer
+74;Wurfstern
+75;Pfeil
+76;Bolzen
+77;Kugel
+78;Normale Kleidung
+79;Felle
+80;Schwere Kleidung
+81;Winterkleidung
+82;Stoffrüstung
+83;Gambeson
+84;Lederüstung
+85;Kettenrüstung
+86;Schuppenrüstung
+87;Plattenrüstung
+88;Bogensehne
+89;Dolchscheide
+90;Köcher, für 20 Pfeile oder Bolzen
+91;Schwertscheide
+92;Unterkleidung für Metallrüstungen
+93;Waffenpflegeset (Schleifstein, Tücher)
+94;Ballkleid
+95;Barett
+96;Brusttuch
+97;Filzhut
+98;Gugel
+99;Halstuch
+100;Hemd
+101;Hose
+102;Hose mit Hosentasche
+103;Jacke
+104;Kaftan
+105;Kapuzenumhang
+106;Kleid
+107;Korsett
+108;Kutte
+109;Ledergürtel
+110;Lederhandschuhe
+111;Lederhut mit breiter Krempe
+112;Ledermantel
+113;Lederschuhe
+114;Lederschürze mit Taschen
+115;Lederstiefel
+116;Lendenschurz
+117;Magierrobe
+118;Mantel
+119;Nachthemd
+120;Pelzfäustlinge
+121;Pelzgefütterte Stiefel
+122;Pelzmütze
+123;Rock
+124;Sandalen
+125;Schal
+126;Schleier
+127;Schnürmieder
+128;Seidenschärpe
+129;Seidenstrümpfe
+130;Strohhut
+131;Tunika
+132;Turban
+133;Unterhosen
+134;Unterkleid
+135;Wappenrock
+136;Weste
+137;Wollstrümpfe
+138;Kleidungsset: Unfrei
+139;Kleidungsset: Frei
+140;Kleidungsset: Niederadel
+141;Kleidungsset: Adel
+142;Kleidungsset: Hochadel
+143;Angel mit Angelschnur
+144;Becher
+145;Beil/Handaxt
+146;Besen
+147;Bratspieß
+148;Dreizack
+149;Dreschflegel
+150;Essbesteck
+151;Feile
+152;Flaschenzug für 250 Stein
+153;Hammer
+154;Handbohrer
+155;Handsäge
+156;Hängematte
+157;Haumesser
+158;Holzfälleraxt
+159;Holzschale
+160;Holzteller
+161;Kletterhaken, 10 Stück
+162;Krug
+163;Kupferkessel
+164;Leim
+165;Meißel
+166;Messer
+167;Nadel- und Zwirnset
+168;Nägel, 10 Stück
+169;Pfanne
+170;Schaufel
+171;Schere
+172;Schlafsack
+173;Schneeschuhe
+174;Spaten
+175;Spitzhacke
+176;Strickleiter, pro Schritt
+177;Wolldecke
+178;Zange
+179;Zelt, 1 Person
+180;Zelt, 2 Personen
+181;Proviant für 1 Tag
+182;Fackel
+183;Gwen-Petryl-Stein, faustgroß
+184;Kerzen, 10 Stück
+185;Laterne
+186;Öllampe
+187;Abblendlaterne
+188;Feuerstein und Stahl
+189;Kerzenständer
+190;Lampenöl, 12 Stunden Brennzeit
+191;Zunder, 25 Portionen
+192;Zunderdose (Platz für 25 Portionen)
+193;Blutegel
+194;Chirurgische Instrumente
+195;Schädelbohrer
+196;Schröpfglas
+197;Verband, 10 Stück
+198;Wundnähzeug
+199;Feldflasche
+200;Geldbeutel
+201;Geldkatze
+202;Gürteltasche
+203;Kiepe
+204;Lederranzen
+205;Lederrucksack
+206;Phiole
+207;Puderdöschen
+208;Sack
+209;Schmuckkästchen
+210;Tiegel
+211;Trinkhorn
+212;Truhe
+213;Tuchbeutel
+214;Umhängetasche
+215;Vase
+216;Wasserschlauch
+217;Fesselseil, Hanf, pro Schritt
+218;Kette, pro Schritt
+219;Kletterseil, pro Schritt
+220;Schnur, pro 10 Schritt
+221;Brecheisen
+222;Dietrich
+223;Falscher Bart
+224;Wurfhaken
+225;Archaisches Labor
+226;Hexenküche
+227;Alchimistenlabor
+228;Feinmechanikerwerkzeug
+229;Gravurwerkzeug
+230;Kartographiewerkzeug
+231;Nähkästchen
+232;Tätowierwerkzeug
+233;Zimmermannskasten
+234;Abakus
+235;Astrolabium
+236;Bernsteinbrille
+237;Fernrohr
+238;Kompass (Südweiser)
+239;Quadrant
+240;Stundenglas
+241;Taschenuhr (Vinsalter Ei)
+242;Amulett, Bronze
+243;Amulett, Silber
+244;Amulett, Gold
+245;Armreif, Bronze
+246;Armreif, Silber
+247;Armreif, Gold
+248;Fibel, Bronze
+249;Fibel, Silber
+250;Fibel, Gold
+251;Halskette, Bronze
+252;Halskette, Silber
+253;Halskette, Gold
+254;Ohrring, Bronze
+255;Ohrring, Silber
+256;Ohrring, Gold
+257;Ring, Bronze
+258;Ring, Silber
+259;Ring, Gold
+260;Stirnreif, Bronze
+261;Stirnreif, Silber
+262;Stirnreif, Gold
+263;Amethyst
+264;Aquamarin
+265;Aventurin
+266;Bergkristall
+267;Bernstein
+268;Diamant
+269;Granat
+270;Grüne Jade
+271;Karneol
+272;Lapislazuli
+273;Mondstein
+274;Onyx
+275;Opal
+276;Perle
+277;Rubin
+278;Saphir
+279;Smaragd
+280;Topas
+281;Türkis
+282;Federkiel
+283;Federmesser
+284;Kohlestift
+285;Kreide
+286;Papier, 1 Blatt
+287;Pergament, 1 Blatt
+288;Pinsel
+289;Siegelwachs
+290;Tagebuch
+291;Tinte
+292;Brevier der zwölfgöttlichen Unterweisung
+293;Codex Albyricus
+294;Encyclopaedia Magica
+295;Hilffreycher Leytfaden des wandernden Adepten
+296;Armreif der Willensstärke
+297;Firnklinge
+298;Antidot
+299;Heiltrank
+300;Liebestrunk
+301;Unsichtbarkeitselixier
+302;Verwandlungselixier
+303;Waffenbalsam
+304;Willenstrunk
+305;Zaubertrank
+306;Arax
+307;Kelmon
+308;Tulmadron
+309;Wurara
+310;Alraune
+311;Axorda-Baum
+312;Donf
+313;Egelschreck
+314;Gulmond
+315;Lulanie
+316;Wirselkraut
+317;Drehleier
+318;Fanfare
+319;Flöte
+320;Handharfe
+321;Kabasflöte
+322;Laute
+323;Sackpfeife
+324;Schelle
+325;Signalhorn
+326;Spinett
+327;Standharfe
+328;Trommel
+329;Badeöl
+330;Bier, kleines Fässchen
+331;Brennglas
+332;Brettspiel
+333;Bürste
+334;Götterfigürchen
+335;Handspiegel
+336;Jonglierball
+337;Kaffee, geröstet
+338;Kakao
+339;Kamm
+340;Kristallkugel
+341;Lippenrot
+342;Nagelfeile
+343;Parfüm
+344;Pfeffer
+345;Puder
+346;Schnaps
+347;Schokolade
+348;Schwamm
+349;Seife
+350;Spielkarten
+351;Spieluhr
+352;Steckenpferd
+353;Stoffpuppe
+354;Tabak
+355;Tabakdose
+356;Tabakspfeife
+357;Taschentuch
+358;Wasserpfeife
+359;Wein
+360;Würfel, sechsseitig
+361;Hund
+362;Pferd
+363;Maultier
+364;Pony
+365;Halsband und Leine
+366;Hufeisen
+367;Packsattel
+368;Reitsattel
+369;Satteldecke
+370;Satteltasche
+371;Sporen
+372;Striegelzeug
+373;Zügel und Zaumzeug
+374;Hundefutter
+375;Pferdefutter
+376;Ponyfutter
+377;Bollerwagen
+378;Karren, einachsig
+379;Kleines Ruderboot
+380;Kleines Segelboot
+381;Kutsche
+382;Nudel-/Teigholz
+383;Schmiedehammer
+384;Sichel
+385;Turnierlanze
+386;Fuhrmannspeitsche
+387;Breitschwert
+388;Parazonium (zyklopäisches Kurzschwert)
+389;Scimshar (tulamidisches Kurzschwert)
+390;Turnierschwert
+391;Hirtenstab
+392;Kriegsflegel
+393;Pailos
+394;Sense
+395;Sturmsense
+396;Turnierzweihänder
+397;Schleuder
+398;Steinchen
+399;Holzrüstung
+400;Hornrüstung
+401;Knochenrüstung
+402;Turnierrüstung
+403;Armillarsphäre
+404;Boltankartenset, Stoff
+405;Boltankartenset, Papier
+406;Boltankartenset, Stoff, gezinkt
+407;Boltankartenset, Papier, gezinkt
+408;Brechstange
+409;Dietrichset (6 unterschiedliche Dietriche)
+410;Fernrohr, zusammenschiebbar
+411;Fernrohr, kleines
+412;Fernrohr, großes
+413;Fesselseil, Leder, pro Schritt
+414;Gwen-Petryl-Stein, kopfgroß
+415;Gwen-Petryl-Stein, fingerkuppengroß
+416;Herbarium Kuslikum
+417;Kamelspiel
+418;Kamelspiel, gezinkt
+419;Stundenkerze, 1 Stück
+420;Zauberkerze, 1 Stück
+421;Seidenseil, pro Schritt
+422;Kompass (Südweiser), Metallgehäuse
+423;Zauberkreide
+424;Leichtes Magiergewand
+425;Großes Magiergewand
+426;Beschwörungsgewand
+427;Konventsgewand
+428;Reisegewand für Magier
+429;Papier, gutes, 1 Blatt
+430;Pergament, gutes, 1 Blatt
+431;Prems Tierleben
+432;Seife, parfümiert
+433;Vademecum für das Waffenhandwerk
+434;Vorhängeschloss
+435;Phraischafwolldecke
+436;Würfel, sechsseitig, gezinkt
+437;Würfel, zwanzigseitig
+438;Würfel, zwanzigseitig, gezinkt
+439;Zelt, 4 Personen
+440;Großzelt, 12 Personen
+441;Seife mit Tuch
+442;Wurfhaken mit Kletterseil
+443;Hakendolch
+444;Jagdmesser
+445;Katar
+446;Mengbilar
+447;Ogerfänger
+448;Stockdegen
+449;Ochsenherde
+450;Ogerschelle
+451;Orchidee
+452;Panzerarm
+453;Faustschild
+454;Amazonensäbel
+455;Nachtwind
+456;Glefe
+457;Jagdspieß
+458;Schnitter
+459;Warunker Hammer
+460;Richtschwert
+461;Balläster-Armbrust
+462;Blasrohr
+463;Blasrohrpfeil
+464;Diskus
+465;Wurfnetz
+466;Iryanrüstung
+467;Kettenhemd
+468;Krötenhaut
+469;Lederharnisch
+470;Leichte Platte
+471;Schuppenpanzer
+472;Spiegelpanzer
+473;Tuchrüstung

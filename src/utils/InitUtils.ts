@@ -332,7 +332,7 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, check, gr, skt, merk, trad } = raw;
+		const { id, check, gr, skt, merk, trad, reqs } = raw;
 		return {
 			active: false,
 			category: Categories.SPELLS,
@@ -344,7 +344,8 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 			name,
 			property: merk,
 			tradition: trad,
-			value: 0
+			value: 0,
+			reqs: reqs
 		};
 	}
 	return;

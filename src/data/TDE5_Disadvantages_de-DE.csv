@@ -1,0 +1,64 @@
+﻿id;name;sel;input
+1;Angst vor …;1?Blut&2?Dunkelheit&3?Höhe&4?Insekten&5?dem Meer&6?Reptilien&7?engen Räumen&8?Spinnen&9?Toten und Untoten;Auslöser
+2;Arm;;
+3;Artefaktgebunden;;
+4;Behäbig;;
+5;Blind;;
+6;Blutrausch;;
+7;Eingeschränkter Sinn (Sicht);;
+8;Eingeschränkter Sinn (Gehör);;
+9;Eingeschränkter Sinn (Geruch & Geschmack);;
+10;Eingeschränkter Sinn (Tastsinn);;
+11;Farbenblind;;
+12;Fettleibig;;
+13;Giftanfällig;;
+14;Hässlich;;
+15;Hitzeempfindlich;;
+16;Kälteempfindlich;;
+17;Keine Flugsalbe;;
+18;Kein Vertrauter;;
+19;Körpergebundene Kraft;;
+20;Körperliche Auffälligkeit;;Auffälligkeit
+21;Krankheitsanfällig;;
+22;Lästige Mindergeister;;
+23;Lichtempfindlich;;
+24;Magische Einschränkung;1?Fluch der Auen&2?Fluch der Berge&3?Fluch des Eises&4?Fluch der Meere&5?Fluch der Nacht&6?Fluch des Waldes;Umgebung
+25;Nachtblind;;
+26;Niedrige Astralkraft;;
+27;Niedrige Karmalkraft;;
+28;Niedrige Lebenskraft;;
+29;Niedrige Seelenkraft;;
+30;Niedrige Zähigkeit;;
+31;Pech;;
+32;Pechmagnet;;
+33;Persönlichkeitsschwächen;1?Arroganz?10&2?Eitelkeit?10&3?Neid?5&4?Streitsucht?10&5?Unheimlich?8&6?Verwöhnt?10&7?Vorurteile?5&8?Weltfremd?10;
+34;Prinzipientreue;1?99 Gesetze&2?Moralkodex der Hesindekirche&3?Moralkodex der Phexkirche&4?Moralkodex der Preainekirche&5?99 Gesetze (streng)&6?Ehrenkodex der Krieger&7?Ehrenkodex der Ritter&8?Elfische Weltsicht&9?Moralkodex der Boronkirche&10?Moralkodex der Praioskirche&11?Moralkodex der Rondrakirche&12?Zwergischer Ehrenkodex&13?99 Gesetze (radikal)&14?Pazifismus;Prinzipie
+35;Schlafwandler;;
+36;Schlechte Angewohnheit;1?Barfüßer&2?Belästigung&3?Dritte Person&4?Duzer&5?Erster&6?Heulsuse&7?Hypochonder&8?Junge&9?Langschläfer&10?Links-Rechts-Schwäche&11?Mein Kind&12?Nägelkauer&13?Nase-/Ohrenbohrer&14?Nervös&15?Putzfimmel&16?Raucher&17?Redet wie ein Wasserfall&18?Schlechte Tischmanieren&19?Selbstgespräche&20?Unordentlich&21?Wir;Angewohnheit
+37;Schlechte Eigenschaft;1?Aberglaube?5&2?Autoritätsglaube?5&3?Geiz?5&4?Goldgier?5&5?Jähzorn?10&6?Kleptomanie?10&7?Naiv?10&8?Neugier?5&9?Rachsucht?5&10?Spielsucht?5&11?Verschwendungssucht?5;
+38;Schlechte Regeneration (Astralenergie);;
+39;Schlechte Regeneration (Karmalenergie);;
+40;Schlechte Regeneration (Lebensenergie);;
+41;Schwacher Astralkörper;;
+42;Schwacher Karmalkörper;;
+43;Sensibler Geruchssinn;;
+44;Sprachfehler;;
+45;Stigma;1?Albino&2?Brandmale&3?Grüne Haare&4?Katzenhafte Augen&5?Schlangenschuppen;Stigma
+46;Stumm;;
+47;Taub;;
+48;Unfähig;;
+49;Unfrei;;
+50;Verpflichtungen;1?Sippenmitglied gegenüber der Sippe&2?Verschuldeter Held&3?Adliger gegenüber seinem Lehnsherrn&4?Geweihter gegenüber seiner Kirche&5?Geweihter gegenüber seinem Tempel&6?Magier gegenüber seinem Lehrmeister&7?Magier gegenüber seiner Akademie&8?Magier gegenüber seiner Gilde&9?Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe;Verpflichtung
+51;Verstümmelt;1?Einarmig?30&2?Einäugig?10&3?Einbeinig?30&4?Einhändig?20&5?Einohrig?5;
+52;Wahrer Name;;
+53;Wilde Magie;;
+54;Zauberanfällig;;
+55;Zerbrechlich;;
+56;Gläsern;;
+57;Verweichlicht;;
+58;Instabiler Zauberer;;
+59;Kleine Zauberauswahl;;
+60;Schwache Zaubermelodien;;
+61;Schwache Zaubertänze;;
+62;Verminderte Zaubermelodien;;
+63;Verminderte Zaubertänze;;

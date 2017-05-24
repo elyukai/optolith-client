@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Cha5App JSON Helper</title>
+		<link href="../resources/favicon.png" rel="icon" type="image/png" size="256x256">
+
+		<style>
+			.flex {
+				display: flex;
+				flex-wrap: wrap;
+			}
+
+			input {
+				flex: none;
+				width: 100%;
+				margin-bottom: 11px;
+			}
+
+			button {
+				margin: 0 4px 4px 0;
+			}
+		</style>
+
+		<script type="module" src="convert.js"></script>
+	</head>
+
+	<body>
+		<input type="text">
+		<h3>Data</h3>
+		<div class="flex">
+			<button onclick="convert('attributes')">Attributes</button>
+			<button onclick="convert('races')">Races</button>
+			<button onclick="convert('cultures')">Cultures</button>
+			<button onclick="convert('professions')">Professions</button>
+			<button onclick="convert('profvariants')">ProfVariants</button>
+			<button onclick="convert('adv')">Advantages</button>
+			<button onclick="convert('disadv')">Disadvantages</button>
+			<button onclick="convert('talents')">Talents</button>
+			<button onclick="convert('combattech')">Combat Techniques</button>
+			<button onclick="convert('spells')">Spells</button>
+			<button onclick="convert('cantrips')">Cantrips</button>
+			<button onclick="convert('liturgies')">Liturgies</button>
+			<button onclick="convert('blessings')">Blessings</button>
+			<button onclick="convert('special')">Special Abilities</button>
+			<button onclick="convert('special_profsecret')">Special Abilities - Professional Secrets</button>
+			<button onclick="convert('special_literacies')">Special Abilities - Literacies</button>
+			<button onclick="convert('special_languages')">Special Abilities - Languages</button>
+			<button onclick="convert('special_spellx')">Special Abilities - Spell Variants</button>
+			<button onclick="convert('items')">Items</button>
+			<button onclick="convert('books')">Books</button>
+		</div>
+		<h3>Locales</h3>
+		<div class="flex">
+			<button onclick="convert('l10n_el')">Experience Levels</button>
+			<button onclick="convert('l10n_attributes')">Attributes</button>
+			<button onclick="convert('l10n_races')">Races</button>
+			<button onclick="convert('l10n_cultures')">Cultures</button>
+			<button onclick="convert('l10n_professions')">Professions</button>
+			<button onclick="convert('l10n_profvariants')">ProfVariants</button>
+			<button onclick="convert('l10n_adv')">Advantages</button>
+			<button onclick="convert('l10n_disadv')">Disadvantages</button>
+			<button onclick="convert('l10n_talents')">Talents</button>
+			<button onclick="convert('l10n_combattech')">Combat Techniques</button>
+			<button onclick="convert('l10n_spells')">Spells</button>
+			<button onclick="convert('l10n_cantrips')">Cantrips</button>
+			<button onclick="convert('l10n_liturgies')">Liturgies</button>
+			<button onclick="convert('l10n_blessings')">Blessings</button>
+			<button onclick="convert('l10n_special')">Special Abilities</button>
+			<button onclick="convert('l10n_special_profsecret')">Special Abilities - Professional Secrets</button>
+			<button onclick="convert('l10n_special_literacies')">Special Abilities - Literacies</button>
+			<button onclick="convert('l10n_special_languages')">Special Abilities - Languages</button>
+			<button onclick="convert('l10n_special_spellx')">Special Abilities - Spell Variants</button>
+			<button onclick="convert('l10n_items')">Items</button>
+			<button onclick="convert('l10n_books')">Books</button>
+		</div>
+	</body>
+</html>

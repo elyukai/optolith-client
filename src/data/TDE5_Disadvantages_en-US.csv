@@ -1,0 +1,64 @@
+﻿id;name;sel;input
+1;Afraid of...;1?Blood&2?Darkness&3?Heights&4?Insects&5?the Sea&6?Reptiles&7?Confined Spaces&8?Spiders&9?the Dead and the Undead;Trigger
+2;Poor;;
+3;Bound to Artifact;;
+4;Slow;;
+5;Blind;;
+6;Frenzy;;
+7;Restricted Sense (Sight);;
+8;Restricted Sense (Hearing);;
+9;Restricted Sense (Smell & Taste);;
+10;Restricted Sense (Tactile Sense);;
+11;Color-Blind;;
+12;Fat;;
+13;Susceptible to Poison;;
+14;Ugly;;
+15;Susceptible to Heat;;
+16;Susceptible to Cold;;
+17;No Flying Balm;;
+18;No Familiar;;
+19;Hair-Bound Power;;
+20;Physical Peculiarity;;Peculiarity
+21;Susceptible to Disease;;
+22;Annoyed by Minor Spirits;;
+23;Sensitive to Sunlight;;
+24;Magical Restriction;1?Curse of Glades&2?Curse of Mountains&3?Curse of Ice&4?Curse of Seas&5?Curse of Night&6?Curse of Forests;Environment
+25;Night-Blind;;
+26;Decreased Arcane Power;;
+27;Decreased Karma Points;;
+28;Decreased Life Points;;
+29;Decreased Spirit;;
+30;Decreased Toughness;;
+31;Bad Luck;;
+32;Misfortune;;
+33;Personality Flaw;1?Arrogance?10&2?Vanity?10&3?Envy?5&4?Feistiness?10&5?Unpleasant?8&6?Spoiled?10&7?Prejudice?5&8?Unworldly?10;
+34;Principles;1?99 Laws&2?Code of the Church of Hesinde&3?Code of the Church of Phex&4?Code of the Church of Peraine&5?99 Laws (Strict)&6?Warrior's Honor&7?Knight's Honor&8?Elven worldview&9?Code of the Church of Boron&10?Code of the Church of Praios&11?Code of the Church of Rondra&12?Dwarven Code&13?99 Laws (radical)&14?Pacifism;Principle
+35;Sleepwalker;;
+36;Bad Habit;1?Barefoot&3?Third Person&5?First&6?Crybaby&7?Hypochondriac&8?Sir&9?Late Sleeper&10?Left and Right&11?My Child&12?Nail-Biter&14?Nervous&15?Cleaning Bug&16?Smoker&17?Talk a Mile a Minute&18?Bad Table Manners&19?Talks to Themselves&20?Messy&21?We;Habit
+37;Negative Trait;1?Superstition?5&2?Submissive to Authorities?5&3?Stinginess?5&4?Avarice?5&5?Short Temper?10&6?Kleptomaniac?10&7?Gullible?10&8?Curiosity?5&9?Vengence?5&10?Gambling Addiction?5&11?Wastefulness?5;
+38;Weak Regeneration (Arcane Energy);;
+39;Weak Regeneration (Karma Points);;
+40;Weak Regeneration (Life Points);;
+41;Weak Astral Body;;
+42;Weak Karmic Body;;
+43;Sensitive Nose;;
+44;Speech Impediment;;
+45;Stigma;1?Albino&2?Brands&3?Green Hair&4?Cat Eyes&5?Snake Scales;Stigma
+46;Mute;;
+47;Deaf;;
+48;Incompetent;;
+49;Not Free;;
+50;Obligations;1?from a family member to the family&2?an indebpted hero&3?a noble to a liege&4?a Blessed One to a Church&5?a Blessed One to his Temple&6?a mage to a tutor&7?a mage to academy&8?a mage to a guild&9?a member of radical sect to the sect's leaders;Obligation
+51;Maimed;1?One-Armed?30&2?One-Eyed?10&3?One-Legged?30&4?One-Handed?20&5?One-Eared?5;
+52;True Name;;
+53;Wild Magic;;
+54;Susceptible to Spells;;
+55;Sensitive to Pain;;
+;;;
+;;;
+;;;
+;;;
+;;;
+;;;
+;;;
+;;;

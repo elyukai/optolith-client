@@ -95,7 +95,7 @@ export class Equipment extends React.Component<{}, State> {
 			return isGroup && isNotInList;
 		};
 
-		const templateList = filterAndSort(templates.filter(filterTemplates), filterTextSlidein, 'name');
+		const templateList = filterAndSort(filterTextSlidein.length > 0 ? templates.filter(filterTemplates) : templates, filterTextSlidein, 'name');
 
 		const { price: totalPrice, weight: totalWeight } = EquipmentStore.getTotalPriceAndWeight();
 

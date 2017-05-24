@@ -1,0 +1,57 @@
+﻿id;name;name_f;subname;subname_f;req;src
+1;Barde;Bardin;;;;129
+2;Gardist;Gardistin;;;;130
+3;Gaukler;Gauklerin;;;;131
+4;Gladiator;Gladiatorin;;;;132
+5;Händler;Händlerin;;;;133
+6;Heiler;Heilerin;;;;134
+7;Höfling;Höfling;;;;135
+8;Jäger;Jägerin;;;;136
+9;Krieger;Kriegerin;;;;137
+10;Prostituierter;Prostituierte;;;;138
+11;Ritter;Ritterin;;;;139
+12;Seefahrer;Seefahrerin;;;;140
+13;Söldner;Söldnerin;;;;141
+14;Spitzel;Spitzelin;;;;142
+15;Stammeskrieger;Stammeskriegerin;;;;143
+16;Streuner;Streunerin;;;;144
+17;Wildnisläufer;Wildnisläuferin;;;;145
+18;Zauberweber;Zauberweberin;;;;146
+19;Katzenhexer;Katzenhexe;Schöne der Nacht;Schöne der Nacht;;147
+20;Krötenhexer;Krötenhexe;Töchter der Erde;Töchter der Erde;;148
+21;Rabenhexer;Rabenhexe;Seher von Heute und Morgen;Seherin von Heute und Morgen;;149
+22;Gildenloser Magier;Gildenlose Magierin;Schüler des Magister Dagabor;Schülerin des Magister Dagabor;;150
+23;Graumagier;Graumagierin;Schule der Verformungen zu Lowangen;;;151
+24;Schwarzmagier;Schwarzmagierin;Akademie der Geistigen Kraft zu Fasar;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Schutz des Mittelreiches und seines Adels, Glaube an die Zwölfgötter, Wahrheitsliebe""}";152
+25;Weißmagier;Weißmagierin;Akademie Schwert und Stab zu Gareth;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";153
+26;Borongeweihter;Borongeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";154
+27;Hesindegeweihter;Hesindegeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";155
+28;Perainegeweihter;Perainegeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";156
+29;Phexgeweihter;Phexgeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";157
+30;Praiosgeweihter;Praiosgeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";158
+31;Rondrageweihter;Rondrageweihte;;;;159
+32;Adersin-Schwertgeselle;Adersin-Schwertgesellin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Duell-Kodex, Schutz der Schwachen""}";183
+33;Adliger;Adlige;;;;184
+34;Baburiner Krieger;Baburiner Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";185
+35;Balihoer Krieger;Balihoer Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";186
+36;Bauer;Bäuerin;;;;187
+37;Dajin-Buskur;Dajin-Buskur;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";188
+38;Diener;Dienerin;;;;189
+39;Elenviner Krieger;Elenviner Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";190
+40;Entdecker;Entdeckerin;;;;191
+41;Fedorino-Schwertgeselle;Fedorino-Schwertgeselle;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Duell-Kodex, Schutz der Schwachen""}";192
+42;Gelehrter;Gelehrte;;;;193
+43;Hirte;Hirtin;;;;194
+44;Hylailer Krieger;Hylailer Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";195
+45;Künstler;Künstlerin;;;;196
+46;Marwan Sahib-Balayan;Marwan Sahib-Balayan;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Loyalität, Kampf gegen echsische Umtriebe, Schutz der Schwachen""}";197
+47;Mechanikus;Mechanika;;;;198
+48;Mengbiller Krieger;Mengbiller Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";199
+49;Premer Krieger;Premer Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";200
+50;Schmied;Schmiedin;;;;201
+51;Sklave;Sklavin;;;;202
+52;Soldat;Soldatin;;;;203
+53;Tagelöhner;Tagelöhner;;;;204
+54;Wildniskundiger;Wildniskundige;;;;205
+55;Wirt;Wirtin;;;;206
+56;Zuckerbäcker;Zuckerbäckerin;;;;207

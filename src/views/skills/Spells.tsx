@@ -20,7 +20,8 @@ import { SpellsStore } from '../../stores/SpellsStore';
 import { CantripInstance, InputTextEvent, SpellInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
-import { isActivatable, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
+import { validateInstance } from '../../utils/validate';
 import { SkillListItem } from './SkillListItem';
 
 interface State {
@@ -89,7 +90,7 @@ export class Spells extends React.Component<{}, State> {
 					listDeactive.push(e);
 				}
 			}
-			else if (isActivatable(e)) {
+			else if (validateInstance(e.reqs, e.id)) {
 				if (!isOwnTradition(e)) {
 					if (e.category === Categories.CANTRIPS || e.gr < 2 && !areMaxUnfamiliar) {
 						listDeactive.push(e);

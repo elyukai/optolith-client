@@ -1,0 +1,466 @@
+﻿id;name
+1;Stärkerer Schild
+2;Großer Radius
+3;Reichweite Berührung
+4;Ausnahme
+5;Größerer Umfang
+6;Tadelloser Vorkoster
+7;Mittlere Tiere
+8;Keine Aufrechterhaltung
+9;Große Tiere
+10;Zielkategorie Objekt 
+11;Weites Zurückwerfen
+12;Erz-Zerstörer
+13;Zwei Ziele
+14;Vier Ziele
+15;Acht Ziele
+16;Reichweite Berührung
+17;Noch weiter
+18;Donnerstimme
+19;Zielkategorie Lebewesen
+20;Längere Wirkungsdauer
+21;Großer Radius
+22;Größere Reichweite
+23;Verteilte Wirkung
+24;Zwei Ziele
+25;Intensiver Strahl
+26;Windender Strahl
+27;Zwei Ziele
+28;Intensive Explosion
+29;Schneller Ball
+30;Großer Radius
+31;Gute Illusion 1
+32;Gute Illusion 2
+33;Gute Illusion 3
+34;Zielkategorie Lebewesen
+35;Schnellsteigerung
+36;Keine Aufrechterhaltung
+37;Zielkategorie Lebewesen
+38;Schnellsteigerung
+39;Keine Aufrechterhaltung
+40;Zielkategorie Lebewesen
+41;Schnellsteigerung
+42;Keine Aufrechterhaltung
+43;Zielkategorie Lebewesen
+44;Schnellsteigerung
+45;Keine Aufrechterhaltung
+46;Zwei Ziele
+47;Vier Ziele
+48;Massenerwachen
+49;Aus dem Limbus
+50;Stärkerer Sog
+51;Größerer Radius
+52;Gute Illusion 1
+53;Gute Illusion 2
+54;Gute Illusion 3
+55;Gute Illusion 1
+56;Gute Illusion 2
+57;Gute Illusion 3
+58;Zwei Personen
+59;Vier Personen
+60;Acht Personen
+61;Geistige Eigenschaften
+62;Zwei Ziele
+63;Vier Ziele
+64;Zielkategorie Lebewesen
+65;Sehschwierigkeiten
+66;Zwei Ziele
+67;Ausrüstung tarnen
+68;Unsichtbarer Jäger
+69;Reichweite Berührung
+70;Längere Wirkungsdauer 1
+71;Längere Wirkungsdauer 2
+72;Längere Wirkungsdauer 3
+73;Zielkategorie Objekt 
+74;Fixiert
+75;Humus-Zerstörer
+76;Reichweite erhöhen
+77;Zauberdauer senken
+78;Kosten senken
+79;Schutzhaut
+80;Großer Radius
+81;Reichweite Berührung
+82;Geisterzone
+83;Feenzone
+84;Durchdringung
+85;Höhere Zerstörungskraft 1
+86;Höhere Zerstörungskraft 2
+87;Ausgeweitete Zerstörung
+88;Großer Radius
+89;Angsteinflößende Dunkelheit
+90;Keine Aufrechterhaltung
+91;Weite Entfernung
+92;Keine Aufrechterhaltung
+93;Verbesserter Schatten
+94;Reichweite erhöhen
+95;Zauberdauer senken
+96;Kosten senken
+97;Metallgegenstände
+98;Zauberdauer modifizierbar
+99;Ausgeweitete Zerstörung
+100;Reichweite erhöhen
+101;Zauberdauer senken
+102;Kosten senken
+103;Kurze Rücksprache
+104;Mehr Personen
+105;Kommunikationsverbindung
+106;Längere Wirkungsdauer 1
+107;Längere Wirkungsdauer 2
+108;Längere Wirkungsdauer 3
+109;Durch Erz
+110;Durch Eis
+111;Spezielles Lebewesen
+112;Kerzenschein
+113;Heiße Aura
+114;Reichweite Berührung
+115;Mittlere Tiere
+116;Keine Aufrechterhaltung
+117;Große Tiere
+118;Wiederverschließbar
+119;Fallengespür
+120;Die Priesterkaiser kommen!
+121;Höhere Wand
+122;Zylinder
+123;Deckel
+124;Kurze Rücksprache
+125;Mehr Personen
+126;Kommunikationsverbindung
+127;Höhere Reichweite 1
+128;Höhere Reichweite 2
+129;Höhere Reichweite 3
+130;Formwuchs
+131;Längere Wirkungsdauer
+132;Viel längere Wirkungsdauer
+133;Reichweite erhöhen
+134;Zauberdauer senken
+135;Kosten senken
+136;Reichweite erhöhen
+137;Zauberdauer senken
+138;Kosten senken
+139;Zauberdauer modifizierbar
+140;Zwei Geister
+141;Drei Geister
+142;Größerer Schmerz
+143;Noch größerer Schmerz
+144;Noch viel größerer Schmerz
+145;Zauberdauer modifizierbar
+146;Zwei Elementare
+147;Drei Elementare
+148;Geistige Umnachtung
+149;Krämpfe
+150;Lange Berührungszeit
+151;Intensive Explosion
+152;Schneller Ball
+153;Großer Radius
+154;Zielkategorie Lebewesen
+155;Höhere Wirkungsdauer
+156;Jemand anderen benennen
+157;Reichweite erhöhen
+158;Zauberdauer senken
+159;Kosten senken
+160;Ohne Berührung
+161;Mehr Befehle
+162;Ohne Erinnerung
+163;Gute Illusion 1
+164;Gute Illusion 2
+165;Gute Illusion 3
+166;Zielkategorie Objekt 
+167;Erhöhter Schaden
+168;Wasser-Zerstörer
+169;Verbesserte Reaktion 1
+170;Verbesserte Reaktion 2
+171;Zurückspiegeln auf einen Dritten
+172;Wüterich
+173;Vorhersehbares Ende
+174;Nur bestimmte Ziele
+175;Ausnahme
+176;Tadelloser Entgifter
+177;Zwei Ziele
+178;Verteilte Wirkung
+179;Längere Wirkung
+180;Zwei Ziele
+181;Längere Wirkungsdauer 1
+182;Längere Berührungszeit
+183;Längere Wirkungsdauer 2
+184;Reichweite Berührung
+185;Andere Tätigkeiten
+186;Längere Wirkungsdauer
+187;Gute Illusion 1
+188;Gute Illusion 2
+189;Gute Illusion 3
+190;Merk dir mehr
+191;Merk dir noch mehr
+192;Längere Wirkungsdauer
+193;Gute Illusion 1
+194;Gute Illusion 2
+195;Gute Illusion 3
+196;Höhere Grundreichweite
+197;Höhere Flugreichweite
+198;Schnelle Kreatur
+199;Längere Wirkung
+200;Keine Aufrechterhaltung
+201;Unsichtbarer Inhalt
+202;Längere Wirkungsdauer
+203;Höheres Gewicht
+204;Wände und Decken
+205;Reichweite erhöhen
+206;Zauberdauer senken
+207;Kosten senken
+208;Längere Wirkungsdauer 1
+209;Längere Wirkungsdauer 2
+210;Längere Wirkungsdauer 3
+211;Intensiver Strahl
+212;Windender Strahl
+213;Zwei Ziele
+214;Intensive Explosion
+215;Schneller Ball
+216;Großer Radius
+217;Zauberdauer modifizierbar
+218;Zwei Dämonen
+219;Drei Dämonen
+220;Verteilte Wirkung
+221;Schnellsteigerung
+222;Keine Aufrechterhaltung
+223;Senkung der Parade
+224;Zielkategorie Lebewesen
+225;Zwei Ziele
+226;Gute Illusion 1
+227;Gute Illusion 2
+228;Gute Illusion 3
+229;Gute Illusion 1
+230;Gute Illusion 2
+231;Gute Illusion 3
+232;Zauberdauer modifizierbar
+233;Reichweite Berührung
+234;Reichweite 8 Schritt
+235;Gerüche
+236;Zielkategorie Lebewesen
+237;Größerer Radius
+238;Größere Reichweite
+239;Verteilte Wirkung
+240;Zwei Ziele
+241;Zielkategorie Lebewesen
+242;Schwächung
+243;Todesfluch
+244;Andere Farbe
+245;Längere Wirkungsdauer
+246;Große Angst
+247;Kampfhandlung vorhersehen
+248;Unbemerkt
+249;Keine Aufrechterhaltung
+250;Mehr Dienste
+251;Längere Dienste
+252;Mächtiges Wesen
+253;Mehr Strukturpunkte
+254;Höheres Gewicht
+255;Längere Brücke
+256;Zielkategorie Lebewesen
+257;Hörschwierigkeiten
+258;Zwei Ziele
+259;Reichweite erhöhen
+260;Zauberdauer senken
+261;Kosten senken
+262;Erleichterte Verteidigung
+263;Höhere Reichweite
+264;Mehr Ziele
+265;Reichweite erhöhen
+266;Zauberdauer senken
+267;Kosten senken
+268;Gute Illusion 1
+269;Gute Illusion 2
+270;Gute Illusion 3
+271;Mittlere Tiere
+272;Keine Aufrechterhaltung
+273;Große Tiere
+274;Gaukelei-Vorteil
+275;Etikette-Vorteil
+276;Gassenwissen-Vorteil
+277;Höhere/Niedrigere Temperatur 1
+278;Höhere/Niedrigere Temperatur 2
+279;Höhere/Niedrigere Temperatur 3
+280;Längere Wirkungsdauer
+281;Größerer Radius
+282;Höhere Reichweite
+283;Größere Objekte 1
+284;Längere Wirkungsdauer
+285;Größere Objekte 2
+286;Krankheitsübertragung
+287;Giftübertragung
+288;Freiwilliger
+289;Sofortraub
+290;Längere Wirkungsdauer
+291;Zwei Opfer
+292;Ohne Erinnerung
+293;Phasen
+294;Andere Erinnerung
+295;Mehr Ziele
+296;Geänderte Zielkategorie 1
+297;Geänderte Zielkategorie 2
+298;Kosten modifizierbar
+299;Kurze Regenerationsphase
+300;Längerfristige Wirkung
+301;Höheres Gewicht
+302;Längere Wirkungsdauer 1
+303;Längere Wirkungsdauer 2
+304;Nicht alle
+305;Größere Objekte
+306;Längere Wirkungsdauer
+307;Längere Wirkungsdauer 1
+308;Größerer Radius
+309;Längere Wirkungsdauer 2
+310;Längere Wirkungsdauer 1
+311;Längere Wirkungsdauer 2
+312;Längere Wirkungsdauer 3
+313;Einzelsinn schärfen
+314;Spurensuchen
+315;Keine Aufrechterhaltung
+316;Zwei Gegenstände
+317;Drei Gegenstände
+318;Vier Gegenstände
+319;Zielkategorie Objekt 
+320;Harte Schale
+321;Reichweite Berührung
+322;Schneller
+323;Noch schneller
+324;Noch viel schneller
+325;Zwei Ziele
+326;Vier Ziele
+327;Zielkategorie Lebewesen
+328;Gelungene Beeinflussung 1
+329;Gelungene Beeinflussung 2
+330;Gelungene Beeinflussung 3
+331;Kampfhandlung vorhersehen
+332;Unbemerkt
+333;Keine Aufrechterhaltung
+334;Zwei Ziele
+335;Vier Ziele
+336;Acht Ziele
+337;Verteilte Wirkung
+338;Längere Wirkung
+339;Zwei Ziele
+340;Großer Radius
+341;Reichweite Berührung
+342;Unbeeindruckter Zauberwirker
+343;Gute Illusion 1
+344;Gute Illusion 2
+345;Gute Illusion 3
+346;Aufteilung
+347;Langanhaltend
+348;Zweiter Schuss
+349;Lichtregulation
+350;Keine Aufrechterhaltung
+351;Verankern
+352;Verteilter Schaden 1
+353;Verteilter Schaden 2
+354;Verteilter Schaden 3
+355;Stärkerer Schild
+356;Großer Radius
+357;Reichweite Berührung
+358;Gelungene Beeinflussung 1
+359;Gelungene Beeinflussung 2
+360;Gelungene Beeinflussung 3
+361;Gute Illusion 1
+362;Gute Illusion 2
+363;Gute Illusion 3
+364;Zerstäuber
+365;Höhere Spuckreichweite
+366;Nachwirkung
+367;Ein- und ausfahrbare Krallen
+368;Kletterhilfe
+369;Scharfe Krallen
+370;Verteilte Wirkung
+371;Längere Wirkung
+372;Zwei Ziele
+373;Intensiver Strahl
+374;Windender Strahl
+375;Zwei Ziele
+376;Größere Menge
+377;Noch größere Menge
+378;Noch viel größere Menge
+379;Längere Aufrechterhaltung
+380;Reichweite Berührung
+381;Mehrere Lebewesen
+382;Weiter und höher 1
+383;Weiter und höher 2
+384;Krötenflink
+385;Größere Menge
+386;Noch größere Menge
+387;Noch viel größere Menge
+388;Mehr Gewicht
+389;Bessere Werte
+390;Noch viel bessere Werte
+391;Mehr Gewicht
+392;Noch mehr Gewicht
+393;Mehrere Objekte
+394;Wandernder Nebel
+395;Lange Wirkungsdauer
+396;Dichter Nebel
+397;Gute Illusion 1
+398;Gute Illusion 2
+399;Gute Illusion 3
+400;Zwei Gegenstände
+401;Kegelsicht
+402;Rundumsicht
+403;Verteilte Wirkung
+404;Längere Wirkung
+405;Zwei Ziele
+406;Sehen und Hören
+407;Helligkeit
+408;Durch Wände hindurchzaubern
+409;Verteilte Wirkung
+410;Schnellsteigerung
+411;Keine Aufrechterhaltung
+412;Weitgefasster Radau
+413;Stärkerer Besen
+414;Keine Aufrechterhaltung
+415;Mehr Fragen
+416;Antworten mit Zahlen
+417;Wann-Fragen beantworten
+418;Gleichwertig
+419;Geistige Fähigkeiten
+420;Längere Wirkungsdauer
+421;Längere Wirkungsdauer 1
+422;Erhöhte Reichweite
+423;Längere Wirkungsdauer 2
+424;Reichweite Berührung
+425;Längere Wirkungsdauer
+426;Wahre Schönheit
+427;Andere Kosten
+428;Reichweite Berührung
+429;Keine Aufrechterhaltung
+430;Verteilte Wirkung
+431;Längere Wirkung
+432;Zwei Ziele
+433;Wirkt durch Kleidung
+434;Reichweite Berührung
+435;Keine Aufrechterhaltung
+436;Reichweite Berührung
+437;Andere Kosten
+438;Keine Aufrechterhaltung
+439;Mehr Gewicht
+440;Größere Teleportationsmöglichkeit
+441;Transport
+442;Andere Kosten
+443;Keine Aufrechterhaltung
+444;Unsichtbare Kleidung
+445;Andere Kosten
+446;Keine Aufrechterhaltung
+447;Mehrere Ziele
+448;Geringere Ritualdauer
+449;Weniger Erschwernis 1
+450;Weniger Erschwernis 2
+451;Mehr Dienste
+452;Längerer Dienst
+453;Mächtiges Wesen
+454;Mehr Dienste
+455;Längerer Dienst
+456;Mächtiges Wesen
+457;Mehr Dienste
+458;Längerer Dienst
+459;Mächtiges Wesen
+460;Mehr Dienste
+461;Längerer Dienst
+462;Mächtiges Wesen
+463;Verkürzte Ritualdauer
+464;Trägerwahl
+465;Hass auf ….

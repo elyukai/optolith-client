@@ -1,7 +1,6 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
-import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
-import { AbilityInstance, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AttributeInstance, DependencyObject, RequirementObject, SelectionObject, SkillOptionalDependency, SpecialAbilityInstance, ToListById } from '../types/data.d';
-import { convertId } from './AttributeUtils';
+import { get, getAllByCategoryGroup } from '../stores/ListStore';
+import { AbilityInstance, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, RequirementObject, SelectionObject, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import * as DependentUtils from './DependentUtils';
 import { validateInstance, validateInstanceRequirementObject } from './validate';
 
@@ -110,7 +109,7 @@ export function isDeactivatable(obj: ActivatableInstance, sid?: string | number)
 	const dependencies = obj.dependencies.filter(e => {
 		if (typeof e === 'object' && e.origin) {
 			const origin = get(e.origin) as SpecialAbilityInstance;
-			const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin!)) as RequirementObject | undefined;
+			const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && !!e.origin && r.id.includes(e.origin)) as RequirementObject | undefined;
 			if (req) {
 				const resultOfAll = (req.id as string[]).map(e => validateInstanceRequirementObject({ ...req, id: e }, obj.id));
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? true : false;
@@ -129,7 +128,7 @@ export function isDeactivatable(obj: ActivatableInstance, sid?: string | number)
 }
 
 export function getSids(obj: ActivatableInstance): Array<string | number> {
-	return obj.active.map(e => e.sid!);
+	return obj.active.map(e => e.sid as string | number);
 }
 
 export function getDSids(obj: ActivatableInstance): Array<(string | number)[] | string | number | boolean | undefined> {
@@ -155,7 +154,7 @@ export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | 
 	const selectionItem = getSelectionItem(obj, id);
 	if (selectionItem) {
 		const { name, cost } = selectionItem;
-		return { name, cost: cost! };
+		return cost && { name, cost };
 	}
 	return undefined;
 }
@@ -238,7 +237,7 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 	if (active) {
 		obj.active.push(active);
 	}
-	return addDependencies(obj, adds, sidNew);
+	return DependentUtils.addDependencies(obj, adds, sidNew);
 }
 
 export function deactivate(obj: ActivatableInstance, index: number): ToListById<AbilityInstance> {
@@ -264,7 +263,7 @@ export function deactivate(obj: ActivatableInstance, index: number): ToListById<
 		}
 	}
 	obj.active.splice(index, 1);
-	return removeDependencies(obj, adds, sidOld);
+	return DependentUtils.removeDependencies(obj, adds, sidOld);
 }
 
 export function setTier(obj: ActivatableInstance, index: number, tier: number): ActivatableInstance {
@@ -275,139 +274,6 @@ export function setTier(obj: ActivatableInstance, index: number, tier: number): 
 		...obj,
 		active,
 	};
-}
-
-function getInstance<T extends AbilityInstance>(instances: ToListById<AbilityInstance>, id: string) {
-	return (instances.hasOwnProperty(id) ? instances[id] : get(id)) as T;
-}
-
-export function addDependencies(obj: ActivatableInstance, adds: RequirementObject[] = [], sel?: string): ToListById<AbilityInstance> {
-	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances: ToListById<AbilityInstance> = {
-		[obj.id]: obj,
-	};
-
-	allReqs.forEach(req => {
-		if (req !== 'RCP' && req.id !== 'RACE') {
-			const { active, value, sid, sid2, type } = req;
-			let id: string | string[] | undefined = req.id;
-			if (id === 'auto_req' || sid === 'GR') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = convertId(getPrimaryAttrID(type as 1 | 2));
-				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					instances[id] = DependentUtils.addDependency(requiredAbility, value!);
-				}
-			}
-			else {
-				if (Array.isArray(id)) {
-					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = { active, origin: obj.id };
-					}
-					else if (value) {
-						add = { value, origin: obj.id };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
-					}
-					id.forEach(e => {
-						const id = convertId(e);
-						const requiredAbility = getInstance(instances, id);
-						if (requiredAbility) {
-							instances[id] = DependentUtils.addDependency(requiredAbility, add);
-						}
-					});
-				}
-				else {
-					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = active;
-					}
-					else if (value) {
-						add = value;
-					}
-					else if (Array.isArray(sid)) {
-						add = { active, sid };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
-					}
-					id = convertId(id);
-					const requiredAbility = getInstance(instances, id);
-					instances[id] = DependentUtils.addDependency(requiredAbility, add);
-				}
-			}
-		}
-	});
-	return instances;
-}
-
-export function removeDependencies(obj: ActivatableInstance, adds: RequirementObject[] = [], sel?: string): ToListById<AbilityInstance> {
-	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances: ToListById<AbilityInstance> = {
-		[obj.id]: obj,
-	};
-
-	allReqs.forEach(req => {
-		if (req !== 'RCP' && req.id !== 'RACE') {
-			const { active, value, sid, sid2, type } = req;
-			let id: string | string[] | undefined = req.id;
-			if (id === 'auto_req' || sid === 'GR') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = convertId(getPrimaryAttrID(type as 1 | 2));
-				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					instances[id] = DependentUtils.removeDependency(requiredAbility, value!);
-				}
-			}
-			else {
-				if (Array.isArray(id)) {
-					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = { active, origin: obj.id };
-					}
-					else if (value) {
-						add = { value, origin: obj.id };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
-					}
-					id.forEach(e => {
-						const id = convertId(e);
-						const requiredAbility = getInstance(instances, id);
-						if (requiredAbility) {
-							instances[id] = DependentUtils.removeDependency(requiredAbility, add);
-						}
-					});
-				}
-				else {
-					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = active!;
-					}
-					else if (value) {
-						add = value;
-					}
-					else if (Array.isArray(sid)) {
-						add = { active, sid };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
-					}
-					id = convertId(id);
-					const requiredAbility = getInstance(instances, id);
-					instances[id] = DependentUtils.removeDependency(requiredAbility, add);
-				}
-			}
-		}
-	});
-
-	return instances;
 }
 
 export function reset(obj: ActivatableInstance): ActivatableInstance {
@@ -430,7 +296,7 @@ export function getFullName(obj: string | ActiveViewObject): string {
 			name += ` MS`;
 		}
 		else {
-			name += ` ${roman[(tier!) - 1]}`;
+			name += tier && ` ${roman[tier - 1]}`;
 		}
 	}
 
