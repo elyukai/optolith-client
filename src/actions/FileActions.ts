@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { Raw, RawHeroNew } from '../types/rawdata.d';
+import { Raw, RawHero } from '../types/rawdata.d';
 
 export interface ReceiveInitialDataAction extends Action {
 	type: ActionTypes.RECEIVE_INITIAL_DATA;
@@ -15,11 +15,11 @@ export const receiveInitialData = (payload: Raw) => AppDispatcher.dispatch<Recei
 export interface ReceiveImportedHeroAction extends Action {
 	type: ActionTypes.RECEIVE_IMPORTED_HERO;
 	payload: {
-		data: RawHeroNew;
+		data: RawHero;
 	};
 }
 
-export const receiveImportedHero = (data: RawHeroNew) => AppDispatcher.dispatch<ReceiveImportedHeroAction>({
+export const receiveImportedHero = (data: RawHero) => AppDispatcher.dispatch<ReceiveImportedHeroAction>({
 	type: ActionTypes.RECEIVE_IMPORTED_HERO,
 	payload: {
 		data

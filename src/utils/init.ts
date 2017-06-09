@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableInstance, InstanceInInit, SkillishInstance, TalentInstance, ToListById } from '../types/data.d';
+import { ActivatableInstance, CantripBlessingInstances, InstanceInInit, SkillishInstance, TalentInstance, ToListById } from '../types/data.d';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import { translate } from '../utils/I18n';
 import * as InitUtils from '../utils/InitUtils';
@@ -8,10 +8,6 @@ type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | Raw
 
 type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
 
-interface List {
-	[id: string]: InstanceInInit;
-}
-
 const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance => {
 	return [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES].includes(obj.category);
 };
@@ -19,30 +15,21 @@ const isActivatableInstance = (obj: InstanceInInit): obj is ActivatableInstance 
 export function init(raw: RawTables, rawlocale: RawLocale) {
 	const { attributes, advantages, blessings, cantrips, cultures, disadvantages, talents, combattech, professions, professionvariants, races, spells, liturgies, specialabilities } = raw;
 
-	const list: List = {};
+	const list: Map<string, InstanceInInit> = new Map();
 
 	const iterate = <TRaw extends RawDataClass, T extends InstanceInInit, L extends RawLocales>(source: { [id: string]: TRaw }, initFn: (raw: TRaw, locale: ToListById<L>) => T | undefined, locale: ToListById<L>) => {
 		for (const id in source) {
 			if (source.hasOwnProperty(id)) {
 				const result = initFn(source[id], locale);
 				if (result) {
-					list[id] = result;
+					list.set(id, result);
 				}
 			}
 		}
 	};
 
 	const getAllByCategory = (...categories: Categories.Category[]) => {
-		const filteredList = [];
-		for (const id in list) {
-			if (list.hasOwnProperty(id)) {
-				const obj = list[id];
-				if (categories.includes(obj.category)) {
-					filteredList.push(obj);
-				}
-			}
-		}
-		return filteredList;
+		return [...list.values()].filter(e => categories.includes(e.category));
 	};
 
 	iterate(races, InitUtils.initRace, rawlocale.races);
@@ -76,7 +63,7 @@ export function init(raw: RawTables, rawlocale: RawLocale) {
 		}
 	});
 	if (ownProfession) {
-		list.P_0 = ownProfession;
+		list.set('P_0', ownProfession);
 	}
 	iterate(professionvariants, InitUtils.initProfessionVariant, rawlocale.professionvariants);
 	iterate(attributes, InitUtils.initAttribute, rawlocale.attributes);
@@ -90,38 +77,41 @@ export function init(raw: RawTables, rawlocale: RawLocale) {
 	iterate(disadvantages, InitUtils.initDisadvantage, rawlocale.disadvantages);
 	iterate(specialabilities, InitUtils.initSpecialAbility, rawlocale.specialabilities);
 
-	for (const id in list) {
-		if (list.hasOwnProperty(id)) {
-			const obj = list[id] as InstanceInInit;
-			if (isActivatableInstance(obj)) {
-				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48', 'SA_252', 'SA_273'].includes(id)) {
-					const rawNames = getAllByCategory(...obj.sel!.map(e => e.id as Categories.Category)) as SkillishInstance[];
-					const mapped = rawNames.map(({ id, name, ic }) => ({ id, name, cost: ic }));
-					mapped.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-					obj.sel = mapped;
-				}
-
-				if (id === 'SA_72') {
-					type SpecialAbility72Selection = Array<{ id: number; name: string; cost: number; }>;
-					obj.sel = (obj.sel as SpecialAbility72Selection).map(e => ({ ...e, name: list[e.name].name as string }));
-				}
-
-				if (id === 'SA_10') {
-					const talents = getAllByCategory(Categories.TALENTS) as TalentInstance[];
-					obj.sel = talents.map(talent => {
-						const { id, name, ic, applications, applicationsInput } = talent;
-						return {
-							id,
-							name,
-							cost: ic,
-							applications,
-							applicationsInput,
-						};
-					});
-				}
-
-				list[id] = obj;
+	for (const [id, obj] of list) {
+		if (isActivatableInstance(obj)) {
+			if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47', 'DISADV_48', 'SA_252', 'SA_273'].includes(id) && obj.sel) {
+				const rawNames = getAllByCategory(...obj.sel.map(e => e.id as Categories.Category)) as SkillishInstance[];
+				const mapped = rawNames.map(({ id, name, ic }) => ({ id, name, cost: ic }));
+				mapped.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+				obj.sel = mapped;
 			}
+			else if (id === 'SA_282' && obj.sel) {
+				const rawNames = getAllByCategory(...obj.sel.map(e => e.id as Categories.Category)) as CantripBlessingInstances[];
+				const mapped = rawNames.map(({ id, name }) => ({ id, name }));
+				mapped.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+				obj.sel = mapped;
+			}
+			else if (id === 'SA_72') {
+				type SpecialAbility72Selection = Array<{ id: number; name: string; cost: number; }>;
+				obj.sel = (obj.sel as SpecialAbility72Selection).map(e => {
+					const entry = list.get(e.name);
+					return { ...e, name: entry ? entry.name as string : '...' };
+				});
+			}
+			else if (id === 'SA_10') {
+				const talents = getAllByCategory(Categories.TALENTS) as TalentInstance[];
+				obj.sel = talents.map(talent => {
+					const { id, name, ic, applications, applicationsInput } = talent;
+					return {
+						id,
+						name,
+						cost: ic,
+						applications,
+						applicationsInput,
+					};
+				});
+			}
+			list.set(id, obj);
 		}
 	}
 	return list;

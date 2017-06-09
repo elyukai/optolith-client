@@ -22,6 +22,7 @@ export interface HerolistItemProps {
 	id?: string;
 	name: string;
 	ap: {
+		spent: number;
 		total: number;
 	};
 	avatar?: string;
@@ -81,9 +82,15 @@ export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 			});
 		}
 	}
+	duplicate = () => {
+		const id = this.props.id;
+		if (id) {
+			HerolistActions.duplicateHero(id);
+		}
+	}
 
 	render() {
-		const { player, id, name, avatar, ap: { total: apTotal }, r, c, p, pv, sex, professionName } = this.props;
+		const { player, id, name, avatar, ap: { spent: apSpent, total: apTotal }, r, c, p, pv, sex, professionName } = this.props;
 		const elRoman = [ 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII' ];
 		const elNumber = calcElIdNumber(apTotal);
 		const el = ELStore.get(`EL_${elNumber}`);
@@ -123,6 +130,9 @@ export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 						return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
 					})()}
 				</span>
+				<span className="totalap">
+					{apSpent} / {apTotal} AP
+				</span>
 			</VerticalList>
 		);
 
@@ -137,6 +147,7 @@ export class HerolistItem extends React.Component<HerolistItemProps, {}> {
 				</ListItemName>
 				<ListItemSeparator/>
 				<ListItemButtons>
+					{id && <IconButton icon="&#xE14D;" onClick={this.duplicate} />}
 					{id && <IconButton icon="&#xE80D;" onClick={this.saveHeroAsJSON} />}
 					{id && <IconButton icon="&#xE872;" onClick={this.delete} />}
 					{(() => isOpen ? (

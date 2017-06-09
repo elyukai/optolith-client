@@ -18,8 +18,8 @@ export function SpellsSheetMain(props: Props) {
 	const spells = sort(filtered, SpellsStore.getSortOrder());
 	const list = Array<SpellInstance | undefined>(21).fill(undefined);
 	list.splice(0, Math.min(spells.length, 21), ...spells);
-	const PROPERTIES = SpellsStore.getPropertyNames();
-	const TRADITIONS = SpellsStore.getTraditionNames();
+	const PROPERTIES = translate('spells.view.properties');
+	const TRADITIONS = translate('spells.view.traditions');
 
 	return (
 		<TextBox label={translate('charactersheet.spells.spellslist.title')} className="skill-list">

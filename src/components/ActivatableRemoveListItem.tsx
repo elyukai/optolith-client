@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
 import { translate } from '../utils/I18n';
+import { getRoman } from '../utils/roman';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -38,32 +39,30 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 
 	render() {
 		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical } = this.props;
-		const { id, tier, tiers, index, disabled, gr } = item;
+		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr } = item;
 		let { cost, name } = item;
 		let addSpecial = '';
 
 		let tierElement;
-		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
-			let array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
+		if (tier && tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
+			const min = phase === 3 ? tier : Math.max(1, minTier);
+			const max = Math.min(tiers, maxTier);
+			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + 1) }));
 			if (id === 'SA_30' && (tier === 4 || phase < 3)) {
 				array.push({ id: 4, name: 'MS' });
-			}
-			if (this.props.phase === 3) {
-				array = array.filter(e => e.id >= tier!);
 			}
 			if (array.length > 1) {
 				tierElement = (
 					<Dropdown
 						className="tiers"
-						value={tier!}
+						value={tier}
 						onChange={this.handleSelectTier}
 						options={array} />
 				);
 			} else {
 				addSpecial = ' ' + array[0].name;
 			}
-			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier!;
+			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier;
 		}
 
 		if (addSpecial !== '') {

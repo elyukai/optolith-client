@@ -124,7 +124,7 @@ export class Liturgies extends React.Component<{}, State> {
 										);
 									}
 
-									const name = obj.name;
+									const { name } = obj;
 
 									const aspc = obj.aspects.map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
 
@@ -147,14 +147,8 @@ export class Liturgies extends React.Component<{}, State> {
 										);
 									}
 
-									const [ a, b, c, checkmod ] = obj.check;
-									const check = [ a, b, c ];
-
-									const add = {
-										check,
-										checkmod,
-										ic: obj.ic,
-									};
+									const { check, checkmod, ic } = obj;
+									const add = { check, checkmod, ic };
 
 									return (
 										<SkillListItem
@@ -220,16 +214,15 @@ export class Liturgies extends React.Component<{}, State> {
 									);
 								}
 
-								const [ a1, a2, a3, checkmod ] = obj.check;
-								const check = [ a1, a2, a3 ];
+								const { check, checkmod, ic, value } = obj;
 
 								const add = {
 									addDisabled: !isIncreasable(obj),
 									addPoint: this.addPoint.bind(null, obj.id),
 									check,
 									checkmod,
-									ic: obj.ic,
-									sr: obj.value,
+									ic,
+									sr: value,
 								};
 
 								return (

@@ -79,6 +79,8 @@ export const IMPORT_HERO = 'IMPORT_HERO';
 export type IMPORT_HERO = 'IMPORT_HERO';
 export const LOAD_HERO = 'LOAD_HERO';
 export type LOAD_HERO = 'LOAD_HERO';
+export const DUPLICATE_HERO = 'DUPLICATE_HERO';
+export type DUPLICATE_HERO = 'DUPLICATE_HERO';
 
 export const REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
 export type REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';

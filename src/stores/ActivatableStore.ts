@@ -1,9 +1,11 @@
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
+import * as Reusable from '../types/reusable.d';
 import { getDSids, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
 import { sort } from '../utils/ListUtils';
-import { validateInstance } from '../utils/validate';
+import { validate } from '../utils/RequirementUtils';
+import { APStore } from './APStore';
 import { ELStore } from './ELStore';
 import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
 
@@ -17,11 +19,12 @@ export function getForSave(): { [id: string]: Data.ActiveObject[] } {
 }
 
 export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveViewObject[] {
-	const allEntries = getObjByCategory(category) as Data.ToListById<Data.ActivatableInstance & { gr?: number; tiers?: number; }>;
+	const allEntries = getObjByCategory(category) as Map<string, Data.ActivatableInstance & { gr?: number; tiers?: number; }>;
 	const finalEntries: Data.ActiveViewObject[] = [];
 
-	for (const id in allEntries) {
-		if (allEntries.hasOwnProperty(id) && isActive(allEntries[id])) {
+	allEntries.forEach(entry => {
+		if (isActive(entry)) {
+			const { id } = entry;
 			const a = get(id) as Data.ActivatableInstance & { tiers?: number; gr?: number; };
 			const { cost, category, sel, dependencies, input, gr, name, active } = a;
 			let { tiers } = a;
@@ -77,6 +80,19 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 					case 'DISADV_45':
 						add = typeof sid === 'number' ? getSelectionName(a, sid) : sid;
 						break;
+					case 'ADV_58': {
+						const activeSpells = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+						if (activeSpells > 3) {
+							activeObject.minTier = activeSpells - 3;
+						}
+						break;
+					}
+					case 'ADV_68': {
+						const selectionItem = getSelectionItem(a, sid);
+						add = selectionItem && `${sid2} (${selectionItem.name})`;
+						currentCost = selectionItem && selectionItem.cost;
+						break;
+					}
 					case 'DISADV_34':
 					case 'DISADV_50': {
 						const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
@@ -108,6 +124,13 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 						const selectionItem = getSelectionItem(a, sid);
 						add = selectionItem && selectionItem.name;
 						currentCost = selectionItem && selectionItem.cost as number;
+						break;
+					}
+					case 'DISADV_59': {
+						const activeSpells = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+						if (activeSpells < 3) {
+							activeObject.maxTier = 3 - activeSpells;
+						}
 						break;
 					}
 					case 'SA_10': {
@@ -163,7 +186,7 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 					}
 
 					default:
-						if (input) {
+						if (typeof input === 'string') {
 							add = sid as string;
 						}
 						else if (Array.isArray(sel) && cost === 'sel') {
@@ -185,6 +208,9 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 				else if (id === 'DISADV_1') {
 					activeObject.name = `${translate('activatable.view.afraidof')} ${add}`;
 				}
+				else if (id === 'ADV_68') {
+					activeObject.name = `${translate('activatable.view.hatredof')} ${add}`;
+				}
 				else if (['DISADV_34', 'DISADV_50'].includes(id)) {
 					activeObject.name  += ` ${roman[(tier as number) - 1]} (${add})`;
 				}
@@ -201,292 +227,307 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 
 				activeObject.cost = currentCost;
 
+				if (typeof tiers === 'number') {
+					activeObject.tiers = tiers;
+					activeObject.tier = tier;
+					if (activeObject.minTier) {
+						disabled = true;
+					}
+				}
+
 				if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof Data.ActiveObject) => activeObject[key] === e[key]) && Object.keys(activeObject).length === Object.keys(e).length)) {
 					disabled = true;
 				}
 
 				activeObject.disabled = disabled;
 
-				if (typeof tiers === 'number') {
-					activeObject.tiers = tiers;
-					activeObject.tier = tier;
-				}
-
 				finalEntries.push(activeObject);
 			});
 		}
-	}
+	});
 	return finalEntries;
 }
 
 export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.DeactiveViewObject[] {
-	const allEntries = getObjByCategory(category) as {
-		[id: string]: Data.AdvantageInstance;
-	} | {
-		[id: string]: Data.DisadvantageInstance;
-	} | {
-		[id: string]: Data.SpecialAbilityInstance;
-	};
+	const allEntries = getObjByCategory(category) as Map<string, Data.AdvantageInstance | Data.DisadvantageInstance | Data.SpecialAbilityInstance>;
 	const finalEntries: Data.DeactiveViewObject[] = [];
-	for (const id in allEntries) {
-		if (allEntries.hasOwnProperty(id)) {
-			const a = allEntries[id] as Data.ActivatableInstance & { tiers?: number; gr?: number; };
-			const { cost, max, active, name, input, tiers, dependencies, gr } = a;
-			if (!isActivatable(a) || dependencies.includes(false)) {
-				continue;
-			}
-			if (max === undefined || active.length < max) {
-				switch (id) {
-					case 'ADV_4':
-					case 'ADV_17':
-					case 'ADV_47':
-					case 'SA_273': {
-						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
-						if (a.category === Categories.SPECIAL_ABILITIES) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						else {
-							finalEntries.push({ id, name, sel, cost });
-						}
-						break;
+	allEntries.forEach(entry => {
+		const a = entry as Data.ActivatableInstance & { tiers?: number; gr?: number; };
+		const { id, cost, max, active, name, input, tiers, dependencies, gr } = a;
+		if (isActivatable(a) && !dependencies.includes(false) && (max === undefined || active.length < max)) {
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_17':
+				case 'ADV_47':
+				case 'SA_273': {
+					const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
+					if (a.category === Categories.SPECIAL_ABILITIES) {
+						finalEntries.push({ id, name, sel, cost, gr });
 					}
-					case 'ADV_16': {
-						const sel = a.sel!.filter(e => getSids(a).filter(d => d === e.id).length < 2 && !getDSids(a).includes(e.id));
+					else {
 						finalEntries.push({ id, name, sel, cost });
-						break;
 					}
-					case 'ADV_28':
-					case 'ADV_29': {
-						const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, sel });
-						// advs.push({ id, name, sel, input });
-						break;
+					break;
+				}
+				case 'ADV_16': {
+					const sel = a.sel!.filter(e => getSids(a).filter(d => d === e.id).length < 2 && !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, sel, cost });
+					break;
+				}
+				case 'ADV_28':
+				case 'ADV_29': {
+					const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, sel });
+					// advs.push({ id, name, sel, input });
+					break;
+				}
+				case 'ADV_32': {
+					const sel = a.sel!.filter(e => !getSids(get('DISADV_24') as Data.DisadvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, sel, input, cost });
+					break;
+				}
+				case 'ADV_58': {
+					const activeSpells = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+					if (activeSpells > 3) {
+						finalEntries.push({ id, name, cost, tiers, minTier: activeSpells - 3 });
 					}
-					case 'ADV_32': {
-						const sel = a.sel!.filter(e => !getSids(get('DISADV_24') as Data.DisadvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, sel, input, cost });
-						break;
+					break;
+				}
+				case 'DISADV_1':
+				case 'DISADV_34':
+				case 'DISADV_50': {
+					const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, tiers, sel, input, cost });
+					break;
+				}
+				case 'DISADV_24': {
+					const sel = a.sel!.filter(e => !getSids(get('ADV_32') as Data.AdvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, sel, input, cost });
+					break;
+				}
+				case 'DISADV_33':
+				case 'DISADV_37':
+				case 'DISADV_51': {
+					let sel;
+					if (a.id === 'DISADV_33') {
+						sel = a.sel!.filter(e => ([7, 8].includes(e.id as number) || !getSids(a).includes(e.id)) && !getDSids(a).includes(e.id));
 					}
-					case 'DISADV_1':
-					case 'DISADV_34':
-					case 'DISADV_50': {
-						const sel = a.sel!.filter(e => !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, tiers, sel, input, cost });
-						break;
+					else {
+						sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
 					}
-					case 'DISADV_24': {
-						const sel = a.sel!.filter(e => !getSids(get('ADV_32') as Data.AdvantageInstance).includes(e.id) && !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, sel, input, cost });
-						break;
-					}
-					case 'DISADV_33':
-					case 'DISADV_37':
-					case 'DISADV_51': {
-						let sel;
-						if (a.id === 'DISADV_33') {
-							sel = a.sel!.filter(e => ([7, 8].includes(e.id as number) || !getSids(a).includes(e.id)) && !getDSids(a).includes(e.id));
-						}
-						else {
-							sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
-						}
-						finalEntries.push({ id, name, sel, cost });
-						break;
-					}
-					case 'DISADV_36': {
-						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
-						finalEntries.push({ id, name, sel, input, cost });
-						break;
-					}
-					case 'DISADV_48': {
-						const sel = a.sel!.filter(e => {
-							if ((get('ADV_40') as Data.AdvantageInstance).active.length > 0 || (get('ADV_46') as Data.AdvantageInstance).active.length > 0) {
-								if ((get(e.id as string) as Data.SkillInstance).gr === 2) {
-									return false;
-								}
-							}
-							return !getSids(a).includes(e.id) && !getDSids(a).includes(e.id);
-						});
-						finalEntries.push({ id, name, sel, cost });
-						break;
-					}
-					case 'SA_18': {
-						const sum = (get('TAL_51') as Data.TalentInstance).value + (get('TAL_55') as Data.TalentInstance).value;
-						if (sum >= 12) {
-							finalEntries.push({ id, name, cost, gr });
-						}
-						break;
-					}
-					case 'SA_19':
-						if ((getAllByCategoryGroup(Categories.COMBAT_TECHNIQUES, 2) as Data.CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
-							finalEntries.push({ id, name, cost, gr });
-						}
-						break;
-					case 'SA_3': {
-						const sel = (a.sel as Array<Data.SelectionObject & { req: Data.RequirementObject[] }>).filter(e => !active.includes(e.id) && validateInstance(e.req, id) && !getDSids(a).includes(e.id));
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_10': {
-						const counter = active.reduce((map, obj) => {
-							const sid = obj.sid as string;
-							const sid2 = obj.sid2 as string | number;
-							if (map.has(sid)) {
-								map.set(sid, [ ...(map.get(sid) as Array<number | string>), sid2]);
-							}
-							else {
-								map.set(sid, [ sid2 ]);
-							}
-							return map;
-						}, new Map<string, Array<number | string>>());
-						type Sel = Array<Data.SelectionObject & { applications?: Data.Application[]; applicationsInput?: string }>;
-						const sel = (a.sel as Sel).filter(e => {
-							const id = e.id as string;
-							if (getDSids(a).includes(id)) {
+					finalEntries.push({ id, name, sel, cost });
+					break;
+				}
+				case 'DISADV_36': {
+					const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
+					finalEntries.push({ id, name, sel, input, cost });
+					break;
+				}
+				case 'DISADV_48': {
+					const sel = a.sel!.filter(e => {
+						if ((get('ADV_40') as Data.AdvantageInstance).active.length > 0 || (get('ADV_46') as Data.AdvantageInstance).active.length > 0) {
+							if ((get(e.id as string) as Data.SkillInstance).gr === 2) {
 								return false;
 							}
-							else if (counter.has(id)) {
-								const arr = counter.get(id);
-								return arr && arr.length < 3 && (get(id) as Data.TalentInstance).value >= 6 * (arr.length + 1);
-							}
-							else {
-								return (get(id) as Data.TalentInstance).value >= 6;
-							}
-						}).map(e => {
-							const id = e.id as string;
+						}
+						return !getSids(a).includes(e.id) && !getDSids(a).includes(e.id);
+					});
+					finalEntries.push({ id, name, sel, cost });
+					break;
+				}
+				case 'DISADV_59': {
+					const activeSpells = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+					if (activeSpells < 3) {
+						finalEntries.push({ id, name, cost, tiers, maxTier: 3 - activeSpells });
+					}
+					break;
+				}
+				case 'SA_18': {
+					const sum = (get('TAL_51') as Data.TalentInstance).value + (get('TAL_55') as Data.TalentInstance).value;
+					if (sum >= 12) {
+						finalEntries.push({ id, name, cost, gr });
+					}
+					break;
+				}
+				case 'SA_19':
+					if ((getAllByCategoryGroup(Categories.COMBAT_TECHNIQUES, 2) as Data.CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
+						finalEntries.push({ id, name, cost, gr });
+					}
+					break;
+				case 'SA_3': {
+					const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[] }>).filter(e => !active.includes(e.id) && validate(e.req, id) && !getDSids(a).includes(e.id));
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_10': {
+					const counter = active.reduce((map, obj) => {
+						const sid = obj.sid as string;
+						const sid2 = obj.sid2 as string | number;
+						if (map.has(sid)) {
+							map.set(sid, [ ...(map.get(sid) as Array<number | string>), sid2]);
+						}
+						else {
+							map.set(sid, [ sid2 ]);
+						}
+						return map;
+					}, new Map<string, Array<number | string>>());
+					type Sel = Array<Data.SelectionObject & { applications?: Data.Application[]; applicationsInput?: string }>;
+					const sel = (a.sel as Sel).filter(e => {
+						const id = e.id as string;
+						if (getDSids(a).includes(id)) {
+							return false;
+						}
+						else if (counter.has(id)) {
 							const arr = counter.get(id);
-							if (arr) {
-								e.cost = e.cost! * arr.length + 1;
-							}
-							e.applications = e.applications && e.applications.filter(n => {
-								return !arr || !arr.includes(n.id);
-							});
-							return e;
-						}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_29': {
-						type Sel = Array<Data.SelectionObject & { talent: [string, number]; }>;
-						const sel = (a.sel as Sel).filter(e => {
-							if (getDSids(a).includes(e.id)) {
-								return false;
-							}
-							else {
-								return !active.includes(e.id) && (get(e.talent[0]) as Data.TalentInstance).value >= e.talent[1];
-							}
-						});
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_30': {
-						const sel = sort(a.sel!.filter(e => active.every(n => n.sid !== e.id) && !getDSids(a).includes(e.id)), 'name');
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, tiers: 3, gr });
-						}
-						break;
-					}
-					case 'SA_88': {
-						const spellsAbove10 = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).filter(e => e.value >= 10);
-						const counter = spellsAbove10.reduce((map, obj) => {
-							const property = obj.property;
-							if (map.has(property)) {
-								map.set(property, map.get(property)! + 1);
-							}
-							else {
-								map.set(property, 1);
-							}
-							return map;
-						}, new Map<number, number>());
-						const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-						if (sel.length > 0) {
-							const apArr = [10, 20, 40];
-							const cost = apArr[active.length];
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_97': {
-						const sel = sort(a.sel!.filter(e => getSids(get('SA_88') as Data.SpecialAbilityInstance).includes(e.id) && !getSids(a).includes(e.id)), 'name');
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_103': {
-						const liturgiesAbove10 = (getAllByCategory(Categories.LITURGIES) as Data.LiturgyInstance[]).filter(e => e.value >= 10);
-						const counter = liturgiesAbove10.reduce((map, obj) => {
-							const aspect = obj.aspects;
-							aspect.forEach(e => {
-								if (map.has(e)) {
-									map.set(e, map.get(e)! + 1);
-								}
-								else {
-									map.set(e, 1);
-								}
-							});
-							return map;
-						}, new Map<number, number>());
-						const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-						if (sel.length > 0) {
-							const apArr = [15, 25, 45];
-							const cost = apArr[active.length];
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_252': {
-						const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id) && (get(id) as Data.SpellInstance).value >= 10);
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
-					}
-					case 'SA_368': {
-						type EnhancedSelectionObject = Data.SelectionObject & { gr: number; tier: number; };
-						let sel = a.sel as EnhancedSelectionObject[];
-						if (isActive(a)) {
-							const selectedPath = (getSelectionItem(a, a.active[0].sid) as EnhancedSelectionObject).gr;
-							const lastTier = (getSelectionItem(a, a.active[a.active.length - 1].sid) as EnhancedSelectionObject).tier;
-							sel = sel.filter(e => e.gr === selectedPath && e.tier === lastTier + 1);
+							return arr && arr.length < 3 && (get(id) as Data.TalentInstance).value >= 6 * (arr.length + 1);
 						}
 						else {
-							sel = sel.filter(e => e.tier === 1);
+							return (get(id) as Data.TalentInstance).value >= 6;
 						}
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
+					}).map(e => {
+						const id = e.id as string;
+						const arr = counter.get(id);
+						if (arr) {
+							e.cost = e.cost! * arr.length + 1;
 						}
-						break;
-					}
-					case 'SA_484': {
-						const sel = (a.sel as Array<Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }>).filter(e => !getSids(a).includes(e.id) && validateInstance(e.req, id) && !getDSids(a).includes(e.id) && (get(e.target) as Data.SpellInstance).value > e.tier * 4 + 4).map(e => {
-							const { name, target, ...other } = e;
-							return { name: `${(get(target) as Data.SpellInstance).name}: ${name}`, target, ...other };
+						e.applications = e.applications && e.applications.filter(n => {
+							return !arr || !arr.includes(n.id);
 						});
-						if (sel.length > 0) {
-							finalEntries.push({ id, name, sel, cost, gr });
-						}
-						break;
+						return e;
+					}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
 					}
+					break;
+				}
+				case 'SA_29': {
+					type Sel = Array<Data.SelectionObject & { talent: [string, number]; }>;
+					const sel = (a.sel as Sel).filter(e => {
+						if (getDSids(a).includes(e.id)) {
+							return false;
+						}
+						else {
+							return !active.includes(e.id) && (get(e.talent[0]) as Data.TalentInstance).value >= e.talent[1];
+						}
+					});
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_30': {
+					const sel = sort(a.sel!.filter(e => active.every(n => n.sid !== e.id) && !getDSids(a).includes(e.id)), 'name');
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, tiers: 3, gr });
+					}
+					break;
+				}
+				case 'SA_86': {
+					const { adv, disadv } = APStore.getForDisAdv();
+					const sel = a.sel && sort(a.sel.filter(e => e.id < 6 && e.id > 9 || adv[1] <= 25 && disadv[1] <= 25));
+					if (Array.isArray(sel) && sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, tiers: 3, gr });
+					}
+					break;
+				}
+				case 'SA_88': {
+					const spellsAbove10 = (getAllByCategory(Categories.SPELLS) as Data.SpellInstance[]).filter(e => e.value >= 10);
+					const counter = spellsAbove10.reduce((map, obj) => {
+						const property = obj.property;
+						if (map.has(property)) {
+							map.set(property, map.get(property)! + 1);
+						}
+						else {
+							map.set(property, 1);
+						}
+						return map;
+					}, new Map<number, number>());
+					const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					if (sel.length > 0) {
+						const apArr = [10, 20, 40];
+						const cost = apArr[active.length];
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_97': {
+					const sel = sort(a.sel!.filter(e => getSids(get('SA_88') as Data.SpecialAbilityInstance).includes(e.id) && !getSids(a).includes(e.id)), 'name');
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_103': {
+					const liturgiesAbove10 = (getAllByCategory(Categories.LITURGIES) as Data.LiturgyInstance[]).filter(e => e.value >= 10);
+					const counter = liturgiesAbove10.reduce((map, obj) => {
+						const aspect = obj.aspects;
+						aspect.forEach(e => {
+							if (map.has(e)) {
+								map.set(e, map.get(e)! + 1);
+							}
+							else {
+								map.set(e, 1);
+							}
+						});
+						return map;
+					}, new Map<number, number>());
+					const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					if (sel.length > 0) {
+						const apArr = [15, 25, 45];
+						const cost = apArr[active.length];
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_252': {
+					const sel = a.sel!.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id) && (get(id) as Data.SpellInstance).value >= 10);
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_368': {
+					type EnhancedSelectionObject = Data.SelectionObject & { gr: number; tier: number; };
+					let sel = a.sel as EnhancedSelectionObject[];
+					if (isActive(a)) {
+						const selectedPath = (getSelectionItem(a, a.active[0].sid) as EnhancedSelectionObject).gr;
+						const lastTier = (getSelectionItem(a, a.active[a.active.length - 1].sid) as EnhancedSelectionObject).tier;
+						sel = sel.filter(e => e.gr === selectedPath && e.tier === lastTier + 1);
+					}
+					else {
+						sel = sel.filter(e => e.tier === 1);
+					}
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
+				case 'SA_484': {
+					const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[], target: string; tier: number; }>).filter(e => !getSids(a).includes(e.id) && validate(e.req, id) && !getDSids(a).includes(e.id) && (get(e.target) as Data.SpellInstance).value > e.tier * 4 + 4).map(e => {
+						const { name, target, ...other } = e;
+						return { name: `${(get(target) as Data.SpellInstance).name}: ${name}`, target, ...other };
+					});
+					if (sel.length > 0) {
+						finalEntries.push({ id, name, sel, cost, gr });
+					}
+					break;
+				}
 
-					default: {
-						const tiers = a.tiers !== undefined ? a.tiers : undefined;
-						const input = a.input !== undefined ? a.input : undefined;
-						let sel = Array.isArray(a.sel) ? a.sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) : undefined;
-						if (cost === 'sel' && sel) {
-							sel = sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
-						}
-						finalEntries.push({ id, name, cost, tiers, input, sel, gr });
-						break;
+				default: {
+					let sel = Array.isArray(a.sel) ? a.sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) : undefined;
+					if (cost === 'sel' && sel) {
+						sel = sel.filter(e => !getSids(a).includes(e.id) && !getDSids(a).includes(e.id));
 					}
+					finalEntries.push({ id, name, cost, tiers, input, sel, gr });
+					if (id === 'SA_261') {
+						console.log({ id, name, cost, tiers, input, sel, gr });
+					}
+					break;
 				}
 			}
 		}
-	}
+	});
 	return finalEntries;
 }

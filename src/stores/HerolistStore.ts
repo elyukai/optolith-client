@@ -1,20 +1,18 @@
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/FileActions';
-import { CreateHeroAction, DeleteHeroAction, LoadHeroAction, SaveHeroAction, SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
+import { CreateHeroAction, DeleteHeroAction, DuplicateHeroAction, LoadHeroAction, SaveHeroAction, SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
-import { Hero, HeroForSave, ItemInstance, User } from '../types/data.d';
-import { RawHerolist, RawHeroNew } from '../types/rawdata.d';
-import { alert } from '../utils/alert';
+import { Hero, HeroForSave, User } from '../types/data.d';
+import { RawHero, RawHerolist } from '../types/rawdata.d';
 import * as FileAPIUtils from '../utils/FileAPIUtils';
+import * as VersionUtils from '../utils/VersionUtils';
 import { Store } from './Store';
 
-type Action = SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | LoadHeroAction | SaveHeroAction | DeleteHeroAction | ReceiveInitialDataAction | ReceiveImportedHeroAction;
+type Action = SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | CreateHeroAction | LoadHeroAction | SaveHeroAction | DeleteHeroAction | ReceiveInitialDataAction | ReceiveImportedHeroAction | DuplicateHeroAction;
 
 class HerolistStoreStatic extends Store {
-	private byHeroId: { [id: string]: Hero} = {};
-	private allHeroIds: string[] = [];
-	private byUserId: { [id: string]: User} = {};
-	private allUserIds: string[] = [];
+	private heroes = new Map<string, Hero>();
+	private users = new Map<string, User>();
 	private currentId?: string;
 	private sortOrder = 'name';
 	private view = 'all';
@@ -56,6 +54,10 @@ class HerolistStoreStatic extends Store {
 					this.importHero(action.payload.data);
 					break;
 
+				case ActionTypes.DUPLICATE_HERO:
+					this.duplicateHero(action.payload.id);
+					break;
+
 				default:
 					return true;
 			}
@@ -65,15 +67,15 @@ class HerolistStoreStatic extends Store {
 	}
 
 	get(id: string) {
-		return this.byHeroId[id];
+		return this.heroes.get(id);
 	}
 
 	getUser(id: string) {
-		return this.byUserId[id];
+		return this.users.get(id);
 	}
 
 	getAll() {
-		return this.allHeroIds.map(e => this.byHeroId[e]);
+		return [...this.heroes.values()];
 	}
 
 	getSortOrder() {
@@ -89,21 +91,24 @@ class HerolistStoreStatic extends Store {
 	}
 
 	getForSave(id: string) {
-		const { player: playerId, ...hero } = this.byHeroId[id];
-		const raw: RawHeroNew = {
-			...hero,
-			id,
-			dateCreated: hero.dateCreated.toJSON(),
-			dateModified: hero.dateModified.toJSON(),
-		};
-		if (playerId) {
-			raw.player = this.byUserId[playerId];
+		const hero = this.heroes.get(id);
+		if (hero) {
+			const { player: playerId, ...rest } = hero;
+			return {
+				...hero,
+				id,
+				dateCreated: rest.dateCreated.toJSON(),
+				dateModified: rest.dateModified.toJSON(),
+				player: playerId ? this.users.get(playerId) : undefined
+			};
 		}
-		return raw;
+		return;
 	}
 
 	getAllForSave() {
-		return this.byHeroId;
+		return [...this.heroes].reduce((obj, [id, hero]) => {
+			return { ...obj, [id]: hero };
+		}, {});
 	}
 
 	private updateSortOrder(option: string) {
@@ -115,140 +120,78 @@ class HerolistStoreStatic extends Store {
 	}
 
 	private updateHeroes(heroes: RawHerolist) {
-		this.byHeroId = {};
-		this.byUserId = {};
-		if (Array.isArray(heroes)) {
-			heroes.forEach(hero => {
-				const { id, player, pv, spells, chants, belongings, ...other } = hero;
-				const { items, ...otherBelongings } = belongings;
-				const newId = `H_${new Date(hero.dateCreated).valueOf()}`;
-				const newLiturgies: { [id: string]: number; } = {};
-				const newBlessings: string[] = [];
-				const newCantrips: string[] = [];
-				const newSpells: { [id: string]: number; } = {};
-				const newItems: { [id: string]: ItemInstance } = {};
-				for (const id in chants) {
-					if (chants.hasOwnProperty(id)) {
-						const number = Number.parseInt(id.split('_')[1]);
-						if (number > 40) {
-							newBlessings.push(`BLESSING_${number - 40}`);
-						}
-						else {
-							newLiturgies[id] = chants[id] as number;
-						}
-					}
-				}
-				for (const id in spells) {
-					if (spells.hasOwnProperty(id)) {
-						const number = Number.parseInt(id.split('_')[1]);
-						if (number > 67) {
-							newCantrips.push(`CANTRIP_${number - 67}`);
-						}
-						else {
-							newSpells[id] = spells[id] as number;
-						}
-					}
-				}
-				for (const id in items) {
-					if (items.hasOwnProperty(id)) {
-						const { ammunition, ...other } = items[id];
-						newItems[id] = {
-							...other,
-							ammunition: typeof ammunition === 'string' ? ammunition : undefined
-						};
-					}
-				}
-				this.byHeroId[newId] = {
-					...other,
-					id: newId,
-					pv: typeof pv === 'string' ? pv : undefined,
-					spells: newSpells,
-					liturgies: newLiturgies,
-					cantrips: newCantrips,
-					blessings: newBlessings,
-					belongings: {
-						...otherBelongings,
-						armorZones: {},
-						items: newItems
-					},
-					pets: {},
-					dateCreated: new Date(hero.dateCreated),
-					dateModified: new Date(hero.dateModified),
-				};
-				if (player) {
-					this.byHeroId[newId].player = player.id;
-					this.byUserId[player.id] = player;
-				}
-			});
-		}
-		else {
-			Object.keys(heroes).forEach(key => {
-				const hero = heroes[key];
-				const { player, ...other } = hero;
-				this.byHeroId[key] = {
-					...other,
-					id: key,
-					dateCreated: new Date(hero.dateCreated),
-					dateModified: new Date(hero.dateModified),
-				};
-				if (player) {
-					this.byHeroId[key].player = player.id;
-					this.byUserId[player.id] = player;
-				}
-			});
-		}
-		this.allHeroIds = Object.keys(this.byHeroId);
-		this.allUserIds = Object.keys(this.byUserId);
+		this.heroes = new Map();
+		this.users = new Map();
+		Object.keys(heroes).forEach(key => {
+			const hero = heroes[key];
+			const { player, ...other } = hero;
+			const finalHero: Hero = {
+				...other,
+				id: key,
+				dateCreated: new Date(hero.dateCreated),
+				dateModified: new Date(hero.dateModified),
+			};
+			if (player) {
+				finalHero.player = player.id;
+				this.users.set(player.id, player);
+			}
+			this.heroes.set(key, VersionUtils.convertHero(finalHero));
+		});
 	}
 
 	private saveHero(data: HeroForSave) {
 		const id = this.currentId;
 		if (typeof id === 'string') {
-			const player = this.byHeroId[id].player;
-			this.byHeroId[id] = {
+			const oldData = this.heroes.get(id);
+			this.heroes.set(id, {
 				...data,
-				id
-			};
-			if (player) {
-				this.byHeroId[id].player = player;
-			}
+				id,
+				player: oldData && oldData.player
+			});
 		}
 		else {
 			const newId = this.getNewId();
-			this.byHeroId[newId] = {
+			this.heroes.set(newId, {
 				...data,
 				id: newId,
 				dateCreated: new Date(),
 				dateModified: new Date()
-			};
-			this.allHeroIds.push(newId);
+			});
+			this.currentId = newId;
 		}
 		FileAPIUtils.saveAll();
-		alert('Alles gespeichert');
 	}
 
 	private deleteHero(id: string) {
-		delete this.byHeroId[id];
-		this.allHeroIds.splice(this.allHeroIds.findIndex(e => e === id), 1);
-		FileAPIUtils.saveAll();
+		this.heroes.delete(id);
 	}
 
-	private importHero(hero: RawHeroNew) {
+	private importHero(hero: RawHero) {
 		const newId = this.getNewId();
 		const { player, ...other } = hero;
-		this.byHeroId[newId] = {
+		const finalHero: Hero = {
 			...other,
 			id: newId,
 			dateCreated: new Date(hero.dateCreated),
 			dateModified: new Date(hero.dateModified),
 		};
 		if (player) {
-			this.byHeroId[newId].player = player.id;
-			this.byUserId[player.id] = player;
-			this.allUserIds.push(player.id);
+			finalHero.player = player.id;
+			this.users.set(player.id, player);
 		}
-		this.allHeroIds.push(newId);
-		FileAPIUtils.saveAll();
+		this.heroes.set(newId, VersionUtils.convertHero(finalHero));
+	}
+
+	private duplicateHero(id: string) {
+		const newId = this.getNewId();
+		const hero = this.heroes.get(id);
+		if (hero) {
+			const finalHero: Hero = {
+				...hero,
+				id: newId
+			};
+			this.heroes.set(newId, finalHero);
+		}
 	}
 
 	private getNewId() {

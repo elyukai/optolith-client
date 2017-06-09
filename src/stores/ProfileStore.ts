@@ -288,19 +288,19 @@ class ProfileStoreStatic extends Store {
 	}
 
 	private updateFamily(text?: string) {
-		this.family = text && text.length === 0 ? undefined : text;
+		this.family = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updatePlaceOfBirth(text?: string) {
-		this.placeofbirth = text && text.length === 0 ? undefined : text;
+		this.placeofbirth = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateDateOfBirth(text?: string) {
-		this.dateofbirth = text && text.length === 0 ? undefined : text;
+		this.dateofbirth = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateAge(text?: string) {
-		this.age = text && text.length === 0 ? undefined : text;
+		this.age = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateHaircolor(id?: number) {
@@ -312,15 +312,15 @@ class ProfileStoreStatic extends Store {
 	}
 
 	private updateSize(text?: string) {
-		this.size = text && text.length === 0 ? undefined : text;
+		this.size = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateWeight(text?: string) {
-		this.weight = text && text.length === 0 ? undefined : text;
+		this.weight = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateTitle(text?: string) {
-		this.title = text && text.length === 0 ? undefined : text;
+		this.title = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateSocialStatus(id?: number) {
@@ -328,11 +328,11 @@ class ProfileStoreStatic extends Store {
 	}
 
 	private updateCharacteristics(text?: string) {
-		this.characteristics = text && text.length === 0 ? undefined : text;
+		this.characteristics = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private updateOtherInfo(text?: string) {
-		this.otherinfo = text && text.length === 0 ? undefined : text;
+		this.otherinfo = typeof text === 'string' && text.length === 0 ? undefined : text;
 	}
 
 	private clear() {

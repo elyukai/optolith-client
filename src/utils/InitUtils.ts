@@ -121,7 +121,7 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, ap, pre_req, req, sel, sa, combattech, talents } = raw;
+		const { id, ap, pre_req, req, sel, sa, combattech, talents, spells, chants } = raw;
 		return {
 			ap,
 			category: Categories.PROFESSION_VARIANTS,
@@ -133,6 +133,8 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
 			selections: sel,
 			specialAbilities: sa,
 			talents: talents.map<[string, number]>(e => [`TAL_${e[0]}`, e[1]]),
+			spells: spells.map<[string, number]>(e => [`SPELL_${e[0]}`, e[1]]),
+			liturgies: chants.map<[string, number]>(e => [`LITURGY_${e[0]}`, e[1]])
 		};
 	}
 	return;
@@ -211,7 +213,7 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name, sel: localeSel, input } = localeObject;
-		const { id, ap, max, sel, req, gr } = raw;
+		const { id, ap, tiers, max, sel, req, gr } = raw;
 		let finalSel: SelectionObject[] | undefined;
 		if (localeSel && sel) {
 			finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -230,6 +232,7 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
 			gr,
 			id,
 			input,
+			tiers,
 			max,
 			name,
 			reqs: req,
@@ -279,23 +282,18 @@ export function initCombatTechnique(raw: RawCombatTechnique, locale: ToListById<
 	return;
 }
 
-// function fixCheckIds(check: [number, number, number]): [string, string, string];
-// function fixCheckIds(check: [number, number, number, string]): [string, string, string, string];
-function fixCheckIds<T extends (number | string)[]>(check: T) {
-	return check.map(e => typeof e === 'number' ? `ATTR_${e}` : e);
-}
-
 export function initLiturgy(raw: RawLiturgy, locale: ToListById<RawLiturgyLocale>): LiturgyInstance | undefined {
 	const { id } = raw;
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, check, gr, skt, aspc, trad } = raw;
+		const { id, check, gr, skt, aspc, trad, mod } = raw;
 		return {
 			active: false,
 			aspects: aspc,
 			category: Categories.LITURGIES,
-			check: fixCheckIds(check),
+			check,
+			checkmod: mod,
 			dependencies: [],
 			gr,
 			ic: skt,
@@ -313,7 +311,7 @@ export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLoc
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, aspc, trad, reqs } = raw;
+		const { id, aspc, trad, req } = raw;
 		return {
 			id,
 			name,
@@ -321,7 +319,8 @@ export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLoc
 			category: Categories.BLESSINGS,
 			aspects: aspc,
 			tradition: trad,
-			reqs
+			reqs: req,
+			dependencies: []
 		};
 	}
 	return;
@@ -332,11 +331,12 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, check, gr, skt, merk, trad, reqs } = raw;
+		const { id, check, gr, skt, merk, trad, req, mod } = raw;
 		return {
 			active: false,
 			category: Categories.SPELLS,
-			check: fixCheckIds(check),
+			check,
+			checkmod: mod,
 			dependencies: [],
 			gr,
 			ic: skt,
@@ -345,7 +345,7 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 			property: merk,
 			tradition: trad,
 			value: 0,
-			reqs: reqs
+			reqs: req
 		};
 	}
 	return;
@@ -356,7 +356,7 @@ export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { id, merk, trad, reqs } = raw;
+		const { id, merk, trad, req } = raw;
 		return {
 			id,
 			name,
@@ -364,7 +364,8 @@ export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale
 			category: Categories.CANTRIPS,
 			property: merk,
 			tradition: trad,
-			reqs
+			reqs: req,
+			dependencies: []
 		};
 	}
 	return;

@@ -1,92 +1,14 @@
 import * as Data from './data.d';
+import * as Reusable from './reusable.d';
 
-export interface RawHero {
-	clientVersion: string;
-	phase: number;
-	name: string;
-	avatar: string;
-	ap: Data.AdventurePoints;
-	el: string;
-	r: string;
-	c: string;
-	p: string;
-	professionName?: string;
-	pv: string | null;
-	sex: 'm' | 'f';
-	pers: {
-		 family: string;
-		 placeofbirth: string;
-		 dateofbirth: string;
-		 age: string;
-		 haircolor: number;
-		 eyecolor: number;
-		 size: string;
-		 weight: string;
-		 title: string;
-		 socialstatus: number;
-		 characteristics: string;
-		 otherinfo: string;
-		 cultureAreaKnowledge: string;
-	};
-	activatable: {
-		 [id: string]: Data.ActiveObject[];
-	};
-	attr: {
-		 values: [string, number, number][];
-		 lp: number;
-		 ae: number;
-		 kp: number;
-		 permanentAE: {
-			lost: number;
-			redeemed: number;
-		};
-		 permanentKP: {
-			lost: number;
-			redeemed: number;
-		};
-	};
-	talents: {
-		 [id: string]: number;
-	};
-	ct: {
-		 [id: string]: number;
-	};
-	spells: {
-		 [id: string]: number | null;
-	};
-	chants: {
-		 [id: string]: number | null;
-	};
-	belongings: {
-		 items: {
-			 [id: string]: Data.ItemInstanceOld;
-		};
-		 equipment: object;
-		 pet: object;
-		 purse: {
-			 d: string;
-			 s: string;
-			 h: string;
-			 k: string;
-		};
-	};
-	rules: Data.Rules;
-	history: Data.HistoryObject[];
-	pets: Data.PetInstance[];
-	id: string;
-	dateCreated: string;
-	dateModified: string;
-	player?: Data.User;
-}
-
-export interface RawHeroNew extends Data.HeroBase {
+export interface RawHero extends Data.HeroBase {
 	readonly id: string;
 	readonly dateCreated: string;
 	readonly dateModified: string;
 	player?: Data.User;
 }
 
-export type RawHerolist = RawHero[] | Data.ToListById<RawHeroNew>;
+export type RawHerolist = Data.ToListById<RawHero>;
 
 export interface RawRace {
 	id: string;
@@ -142,9 +64,9 @@ export interface RawProfession {
 	id: string;
 	ap: number;
 	pre_req: Data.ProfessionDependencyObject[];
-	req: Data.RequirementObject[];
+	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
-	sa: Data.RequirementObject[];
+	sa: Reusable.RequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number][];
@@ -164,7 +86,7 @@ export interface RawProfessionLocale {
 	id: string;
 	name: string | { m: string, f: string };
 	subname?: string | { m: string, f: string };
-	req: Data.RequirementObject[];
+	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	src?: number;
 }
 
@@ -172,11 +94,13 @@ export interface RawProfessionVariant {
 	id: string;
 	ap: number;
 	pre_req: Data.ProfessionDependencyObject[];
-	req: Data.RequirementObject[];
+	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
-	sa: Data.RequirementObject[];
+	sa: Reusable.RequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
+	spells: [string, number][];
+	chants: [string, number][];
 }
 
 export interface RawProfessionVariantLocale {
@@ -190,7 +114,7 @@ export interface RawAdvantage {
 	tiers?: number;
 	max?: number;
 	sel?: Data.SelectionObject[];
-	req: ('RCP' | Data.RequirementObject)[];
+	req: ('RCP' | Reusable.AllRequirementTypes)[];
 }
 
 export interface RawAdvantageLocale {
@@ -229,7 +153,8 @@ export interface RawDisadvantageLocale extends RawAdvantageLocale {}
 
 export interface RawLiturgy {
 	id: string;
-	check: [number, number, number, string | never];
+	check: [string, string, string];
+	mod?: "SPI" | "TOU";
 	skt: number;
 	trad: number[];
 	aspc: number[];
@@ -245,7 +170,7 @@ export interface RawBlessing {
 	id: string;
 	aspc: number[];
 	trad: number[];
-	reqs: Data.RequirementObject[];
+	req: Reusable.AllRequirementTypes[];
 }
 
 export interface RawBlessingLocale {
@@ -256,9 +181,10 @@ export interface RawBlessingLocale {
 export interface RawSpecialAbility {
 	id: string;
 	ap: number | number[] | string;
+	tiers?: number;
 	max?: number;
 	sel?: Data.SelectionObject[];
-	req: ('RCP' | Data.RequirementObject)[];
+	req: ('RCP' | Reusable.AllRequirementTypes)[];
 	gr: number;
 }
 
@@ -271,12 +197,13 @@ export interface RawSpecialAbilityLocale {
 
 export interface RawSpell {
 	id: string;
-	check: [number, number, number, string | never];
+	check: [string, string, string];
+	mod?: "SPI" | "TOU";
 	skt: number;
 	trad: number[];
 	merk: number;
 	gr: number;
-	reqs: Data.RequirementObject[];
+	req: Reusable.AllRequirementTypes[];
 }
 
 export interface RawSpellLocale {
@@ -288,7 +215,7 @@ export interface RawCantrip {
 	id: string;
 	merk: number;
 	trad: number[];
-	reqs: Data.RequirementObject[];
+	req: Reusable.AllRequirementTypes[];
 }
 
 export interface RawCantripLocale {

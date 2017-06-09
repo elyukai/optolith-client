@@ -17,6 +17,7 @@ import { DisAdvStore } from '../../stores/DisAdvStore';
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { ActiveViewObject, CultureInstance, DeactiveViewObject, InputTextEvent, ProfessionInstance, RaceInstance } from '../../types/data.d';
+import { getAdvantagesDisadvantagesSubMax } from '../../utils/APUtils';
 import { translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { DeactiveList } from './DeactiveList';
@@ -73,6 +74,7 @@ export class Disadvantages extends React.Component<{}, State> {
 	render() {
 		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP' } = {};
 		const { ap, activeList, enableActiveItemHints, list, filterText, filterTextSlidein, race, culture, profession, showRating } = this.state;
+		const magical = getAdvantagesDisadvantagesSubMax(1);
 
 		const IMP = 'IMP';
 		const TYP = 'TYP';
@@ -96,9 +98,10 @@ export class Disadvantages extends React.Component<{}, State> {
 						<Checkbox checked={showRating} onClick={this.changeRating}>{translate('disadvantages.options.common')}</Checkbox>
 						<Checkbox checked={enableActiveItemHints} onClick={this.switchActiveItemHints}>{translate('options.showactivated')}</Checkbox>
 						<p>
-							{ap.disadv[0]} / 80 {translate('titlebar.adventurepoints.disadvantages')}<br/>
-							{ap.disadv[1] > 0 && `${translate('titlebar.adventurepoints.subprefix')} ${ap.disadv[1]} / 50 ${translate('titlebar.adventurepoints.disadvantagesmagic')}`}
-							{ap.disadv[2] > 0 && `${translate('titlebar.adventurepoints.subprefix')} ${ap.disadv[2]} / 50 ${translate('titlebar.adventurepoints.disadvantagesblessed')}`}
+							{translate('titlebar.adventurepoints.disadvantages', ap.disadv[0], 80)}<br/>
+							{ap.disadv[1] > 0 && translate('titlebar.adventurepoints.disadvantagesmagic', ap.disadv[1], magical)}
+							{ap.disadv[1] > 0 && ap.disadv[2] > 0 && <br/>}
+							{ap.disadv[2] > 0 && translate('titlebar.adventurepoints.disadvantagesblessed', ap.disadv[2], 50)}
 						</p>
 						{showRating && <RecommendedReference/>}
 					</Options>
@@ -112,6 +115,7 @@ export class Disadvantages extends React.Component<{}, State> {
 				</Slidein>
 				<Options>
 					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<Checkbox checked={showRating} onClick={this.changeRating}>{translate('disadvantages.options.common')}</Checkbox>
 					<BorderButton label={translate('actions.addtolist')} onClick={this.showAddSlidein} />
 					{showRating && <RecommendedReference/>}
 				</Options>

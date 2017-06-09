@@ -11,7 +11,6 @@ import { Store } from './Store';
 type Action = AddTalentPointAction | RemoveTalentPointAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | UndoTriggerActions | ReceiveInitialDataAction;
 
 class TalentsStoreStatic extends Store {
-	private readonly category = Categories.TALENTS;
 	private sortOrder = 'group';
 	private cultureRatingVisibility = true;
 	readonly dispatchToken: string;
@@ -59,7 +58,7 @@ class TalentsStoreStatic extends Store {
 	}
 
 	getAll() {
-		return getAllByCategory(this.category) as TalentInstance[];
+		return getAllByCategory(Categories.TALENTS) as TalentInstance[];
 	}
 
 	getForSave() {

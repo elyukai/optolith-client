@@ -1,3 +1,4 @@
+import { last } from 'lodash';
 import { APStore } from '../stores/APStore';
 import { AttributeStore } from '../stores/AttributeStore';
 import { ELStore } from '../stores/ELStore';
@@ -5,6 +6,7 @@ import { get } from '../stores/ListStore';
 import { PhaseStore } from '../stores/PhaseStore';
 import { RulesStore } from '../stores/RulesStore';
 import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { calcEL } from '../utils/calcEL';
 
 export function isIncreasable(obj: AttributeInstance): boolean {
@@ -69,4 +71,38 @@ export function convertId<T extends string | undefined>(id: T): T {
 		default:
 			return id;
 	}
+}
+
+export function getPrimaryAttributeId(type: 1 | 2) {
+	if (type === 1) {
+		const tradition = get('SA_86') as SpecialAbilityInstance;
+		switch (last(ActivatableUtils.getSids(tradition))) {
+			case 1:
+			case 4:
+			case 10:
+				return 'ATTR_2';
+			case 3:
+				return 'ATTR_3';
+			case 2:
+			case 5:
+			case 6:
+			case 7:
+				return 'ATTR_4';
+		}
+	}
+	else if (type === 2) {
+		const tradition = get('SA_102') as SpecialAbilityInstance;
+		switch (last(ActivatableUtils.getSids(tradition))) {
+			case 2:
+			case 3:
+				return 'ATTR_1';
+			case 1:
+			case 4:
+				return 'ATTR_2';
+			case 5:
+			case 6:
+				return 'ATTR_3';
+		}
+	}
+	return;
 }

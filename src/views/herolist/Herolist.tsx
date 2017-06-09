@@ -88,10 +88,9 @@ export class Herolist extends React.Component<{}, State> {
 	}
 
 	render() {
-
 		const { filterText, list: rawList, sortOrder, view } = this.state;
 
-		const list = filterAndSort(rawList, filterText, sortOrder).filter(e => {
+		const list = filterAndSort(rawList.filter(e => {
 			if (view === 'own') {
 				return !e.player;
 			}
@@ -99,23 +98,16 @@ export class Herolist extends React.Component<{}, State> {
 				return !!e.player;
 			}
 			return true;
-		}).map(e => {
-			if (typeof e.player === 'string') {
-				return { ...e, player: HerolistStore.getUser(e.player) };
-			}
-			return e as Hero & { player: undefined; };
-		}).map(hero => (
+		}), filterText, sortOrder).map(hero => (
 			<HerolistItem
 				key={hero.id}
 				id={hero.id}
 				name={hero.name}
-				ap={{
-					total: hero.ap.total
-				}}
+				ap={hero.ap}
 				avatar={hero.avatar}
 				c={hero.c}
 				p={hero.p}
-				player={hero.player}
+				player={typeof hero.player === 'string' ? HerolistStore.getUser(hero.player) : undefined}
 				pv={hero.pv}
 				r={hero.r}
 				sex={hero.sex}
@@ -167,7 +159,7 @@ export class Herolist extends React.Component<{}, State> {
 									<HerolistItem
 										avatar={ProfileStore.getAvatar()}
 										name={translate('heroes.view.unsavedhero.title')}
-										ap={{ total: APStore.getTotal() }}
+										ap={APStore.getAll()}
 										r={RaceStore.getCurrentID()}
 										c={CultureStore.getCurrentID()}
 										p={ProfessionStore.getCurrentId()}

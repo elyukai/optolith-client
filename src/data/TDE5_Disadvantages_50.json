@@ -1,0 +1,11 @@
+[
+	{"id":1,"name":"Sippenmitglied gegenüber der Sippe","tier":1},
+	{"id":2,"name":"Verschuldeter Held","tier":1},
+	{"id":3,"name":"Adliger gegenüber seinem Lehnsherrn","tier":2},
+	{"id":4,"name":"Geweihter gegenüber seiner Kirche","tier":2},
+	{"id":5,"name":"Geweihter gegenüber seinem Tempel","tier":2},
+	{"id":6,"name":"Magier gegenüber seinem Lehrmeister","tier":2},
+	{"id":7,"name":"Magier gegenüber seiner Akademie","tier":2},
+	{"id":8,"name":"Magier gegenüber seiner Gilde","tier":2},
+	{"id":9,"name":"Mitglied einer radikalen Sekte gegenüber den Anführern der Gruppe","tier":3}
+]

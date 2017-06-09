@@ -32,7 +32,7 @@ const initialConfig: Config = {
 	racesValueVisibility: true,
 	culturesSortOrder: 'name',
 	culturesVisibilityFilter: 'common',
-	culturesValueVisibility: true,
+	culturesValueVisibility: false,
 	professionsSortOrder: 'name',
 	professionsVisibilityFilter: 'common',
 	professionsGroupVisibilityFilter: 0,
@@ -152,20 +152,22 @@ export function saveAllHeroes() {
 export async function saveHero(id: string) {
 	const currentWindow = remote.getCurrentWindow();
 	const data = HerolistStore.getForSave(id);
-	const filename = await showSaveDialog(currentWindow, {
-		title: translate('fileapi.exporthero.title'),
-		filters: [
-			{name: 'JSON', extensions: ['json']},
-		],
-		defaultPath: data.name.replace(/\//, '\/')
-	});
-	if (filename) {
-		try {
-			await writeFile(filename, JSON.stringify(data));
-			alert(translate('fileapi.exporthero.success'));
-		}
-		catch (error) {
-			alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.exporthero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+	if (data) {
+		const filename = await showSaveDialog(currentWindow, {
+			title: translate('fileapi.exporthero.title'),
+			filters: [
+				{name: 'JSON', extensions: ['json']},
+			],
+			defaultPath: data.name.replace(/\//, '\/')
+		});
+		if (filename) {
+			try {
+				await writeFile(filename, JSON.stringify(data));
+				alert(translate('fileapi.exporthero.success'));
+			}
+			catch (error) {
+				alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.exporthero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+			}
 		}
 	}
 }
@@ -173,6 +175,7 @@ export async function saveHero(id: string) {
 export function saveAll() {
 	saveConfig();
 	saveAllHeroes();
+	alert('Alles gespeichert');
 }
 
 export async function printToPDF() {

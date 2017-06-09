@@ -21,12 +21,10 @@ import { CantripInstance, InputTextEvent, SpellInstance } from '../../types/data
 import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
-import { validateInstance } from '../../utils/validate';
 import { SkillListItem } from './SkillListItem';
 
-interface State {
+export interface SpellsState {
 	addSpellsDisabled: boolean;
-	areMaxUnfamiliar: boolean;
 	filterText: string;
 	filterTextSlidein: string;
 	phase: number;
@@ -36,29 +34,28 @@ interface State {
 	enableActiveItemHints: boolean;
 }
 
-export class Spells extends React.Component<{}, State> {
+export class Spells extends React.Component<{}, SpellsState> {
 	state = {
 		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 		filterText: '',
 		filterTextSlidein: '',
 		phase: PhaseStore.get(),
 		showAddSlidein: false,
 		sortOrder: SpellsStore.getSortOrder(),
-		spells: [ ...SpellsStore.getAll(), ...SpellsStore.getAllCantrips() ],
+		spells: SpellsStore.getAllForView(),
 		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as State);
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpellsState);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpellsState);
 	sort = (option: string) => SpellsActions.setSortOrder(option);
 	addToList = (id: string) => SpellsActions.addToList(id);
 	addPoint = (id: string) => SpellsActions.addPoint(id);
 	removeFromList = (id: string) => SpellsActions.removeFromList(id);
 	removePoint = (id: string) => SpellsActions.removePoint(id);
 	switchActiveItemHints = () => ConfigActions.switchEnableActiveItemHints();
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as State);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpellsState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpellsState);
 
 	componentDidMount() {
 		ConfigStore.addChangeListener(this.updateConfigStore);
@@ -71,7 +68,7 @@ export class Spells extends React.Component<{}, State> {
 	}
 
 	render() {
-		const { addSpellsDisabled, areMaxUnfamiliar, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, spells } = this.state;
+		const { addSpellsDisabled, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, spells } = this.state;
 
 		const sortArray = [
 			{ name: translate('options.sortorder.alphabetically'), value: 'name' },
@@ -90,15 +87,8 @@ export class Spells extends React.Component<{}, State> {
 					listDeactive.push(e);
 				}
 			}
-			else if (validateInstance(e.reqs, e.id)) {
-				if (!isOwnTradition(e)) {
-					if (e.category === Categories.CANTRIPS || e.gr < 2 && !areMaxUnfamiliar) {
-						listDeactive.push(e);
-					}
-				}
-				else {
-					listDeactive.push(e);
-				}
+			else {
+				listDeactive.push(e);
 			}
 		});
 
@@ -159,8 +149,7 @@ export class Spells extends React.Component<{}, State> {
 										);
 									}
 
-									const [ a, b, c, checkmod ] = obj.check;
-									const check = [ a, b, c ];
+									const { check, checkmod, ic } = obj;
 
 									return (
 										<SkillListItem
@@ -173,7 +162,7 @@ export class Spells extends React.Component<{}, State> {
 											addFillElement
 											check={check}
 											checkmod={checkmod}
-											ic={obj.ic}
+											ic={ic}
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 											>
 											<ListItemGroup>
@@ -229,16 +218,15 @@ export class Spells extends React.Component<{}, State> {
 									);
 								}
 
-								const [ a1, a2, a3, checkmod ] = obj.check;
-								const check = [ a1, a2, a3 ];
+								const { check, checkmod, ic, value } = obj;
 
 								const other = {
 									addDisabled: !isIncreasable(obj),
 									addPoint: this.addPoint.bind(null, obj.id),
 									check,
 									checkmod,
-									ic: obj.ic,
-									sr: obj.value,
+									ic,
+									sr: value,
 								};
 
 								return (
@@ -268,15 +256,14 @@ export class Spells extends React.Component<{}, State> {
 	private updateSpellsStore = () => {
 		this.setState({
 			addSpellsDisabled: SpellsStore.isActivationDisabled(),
-			areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 			sortOrder: SpellsStore.getSortOrder(),
-			spells: [ ...SpellsStore.getAll(), ...SpellsStore.getAllCantrips() ]
-		} as State);
+			spells: SpellsStore.getAllForView()
+		} as SpellsState);
 	}
 
 	private updateConfigStore = () => {
 		this.setState({
 			enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility()
-		} as State);
+		} as SpellsState);
 	}
 }

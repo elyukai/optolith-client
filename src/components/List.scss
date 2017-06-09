@@ -1,7 +1,7 @@
 ul.list-wrapper {
 	display: flex;
 	flex-direction: column;
-	padding: 1px 0;
+	padding: 0 0 1px 0;
 	margin: 0;
 	list-style: none;
 
@@ -10,7 +10,7 @@ ul.list-wrapper {
 		position: relative;
 		display: flex;
 		align-items: center;
-		padding: 8px;
+		padding: 9px 8px 8px;
 
 		&:hover{
 			.values {
@@ -30,9 +30,9 @@ ul.list-wrapper {
 			&::after {
 				position: absolute;
 				left: -11px;
-				top: -1px;
-				@include calc(width, "100% + 5px");
-				height: 100%;
+				top: 0;
+				width: calc(100% + 5px);
+				height: calc(100% - 1px);
 				content: "";
 				border-image: linear-gradient(to right, $color14 0%, transparentize($color14, .75) 100%);
 				border-image-slice: 1;
@@ -60,10 +60,6 @@ ul.list-wrapper {
 				top: -30px;
 				left: calc(50% - 6px);
 			}
-		}
-
-		&:not(:last-child) {
-			margin-bottom: 1px;
 		}
 
 		.avatar-wrapper {
@@ -293,5 +289,97 @@ ul.list-wrapper {
 				line-height: 32px;
 			}
 		}
+
+		&.placeholder {
+			pointer-events: none;
+
+			p.title {
+				position: relative;
+
+				&:after {
+					position: absolute;
+					display: block;
+					content: "";
+					left: 0;
+					height: 15px;
+					border-radius: 2px;
+					background: $color12;
+					width: 100%;
+				}
+			}
+
+			.placeholder-text {
+				display: inline-block;
+				height: 10px;
+				border-radius: 2px;
+				background: $color12;
+				margin: 10px 0;
+			}
+
+			&:first-child {
+				p.title {
+					width: 148px;
+				}
+
+				.placeholder-text {
+					width: 12px;
+				}
+			}
+
+			&:nth-child(2) {
+				opacity: .8;
+
+				p.title {
+					width: 111px;
+				}
+
+				.placeholder-text {
+					width: 4px;
+				}
+			}
+
+			&:nth-child(3) {
+				opacity: .6;
+
+				p.title {
+					width: 200px;
+				}
+
+				.placeholder-text {
+					width: 6px;
+				}
+			}
+
+			&:nth-child(4) {
+				opacity: .4;
+
+				p.title {
+					width: 138px;
+				}
+
+				.placeholder-text {
+					width: 13px;
+				}
+			}
+
+			&:nth-child(5) {
+				opacity: .2;
+
+				p.title {
+					width: 222px;
+				}
+
+				.placeholder-text {
+					width: 3px;
+				}
+			}
+		}
+	}
+
+	.placeholder-message {
+		width: 300px;
+		text-align: center;
+		align-self: center;
+		margin-top: -50px;
 	}
 }

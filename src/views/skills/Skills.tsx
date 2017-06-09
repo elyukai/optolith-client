@@ -3,6 +3,7 @@ import { SubTabs } from '../../components/SubTabs';
 import { get } from '../../stores/ListStore';
 import { SpecialAbilitiesStore } from '../../stores/SpecialAbilitiesStore';
 import { SpecialAbilityInstance } from '../../types/data.d';
+import { getSids, isActive } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
 import { CombatTechniques } from './CombatTechniques';
 import { Liturgies } from './Liturgies';
@@ -19,24 +20,19 @@ interface State {
 export class Skills extends React.Component<{}, State> {
 
 	state = {
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
-		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
+		showChants: isActive(get('SA_102') as SpecialAbilityInstance),
+		showSpells: isActive(get('SA_86') as SpecialAbilityInstance) && getSids(get('SA_86') as SpecialAbilityInstance)[0] !== 9,
 		tab: 'talents',
 	};
-
-	_updateSpecialAbilitiesStore = () => this.setState({
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0,
-		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
-	} as State)
 
 	handleClick = (tab: string) => this.setState({ tab } as State);
 
 	componentDidMount() {
-		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
+		SpecialAbilitiesStore.addChangeListener(this.updateSpecialAbilitiesStore);
 	}
 
 	componentWillUnmount() {
-		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
+		SpecialAbilitiesStore.removeChangeListener(this.updateSpecialAbilitiesStore);
 	}
 
 	render() {
@@ -100,5 +96,12 @@ export class Skills extends React.Component<{}, State> {
 				{skillElement}
 			</section>
 		);
+	}
+
+	private updateSpecialAbilitiesStore = () => {
+		this.setState({
+			showChants: isActive(get('SA_102') as SpecialAbilityInstance),
+			showSpells: isActive(get('SA_86') as SpecialAbilityInstance) && getSids(get('SA_86') as SpecialAbilityInstance)[0] !== 9,
+		} as State);
 	}
 }

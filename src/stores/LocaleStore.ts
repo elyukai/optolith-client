@@ -68,12 +68,16 @@ class LocaleStoreStatic extends Store {
 		this.messages = locales[this.locale].ui;
 	}
 
-	private updateLocale(locale: string = remote.app.getLocale().match(/^de/) ? 'de-DE' : 'en-US') {
+	private updateLocale(locale: string = this.getSystemLocale()) {
 		this.locale = locale;
 	}
 
 	private updateLocaleSetting(locale?: string) {
 		this.type = !locale ? 'default' : 'set';
+	}
+
+	getSystemLocale() {
+		return remote.app.getLocale().match(/^de/) ? 'de-DE' : 'en-US';
 	}
 }
 

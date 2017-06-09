@@ -7,7 +7,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { ProfessionVariantInstance } from '../types/data.d';
-import { validateInstance } from '../utils/validate';
+import { validate } from '../utils/RequirementUtils';
 import { APStore } from './APStore';
 import { ELStore } from './ELStore';
 import { get, getAllByCategory } from './ListStore';
@@ -57,10 +57,10 @@ class ProfessionVariantStoreStatic extends Store {
 		return allEntries.filter(e => {
 			if (variants.includes(e.id)) {
 				const { dependencies, requires } = e;
-				const validRequires = validateInstance(dependencies, e.id) && !requires.some(d => {
+				const validRequires = validate(dependencies, e.id) && !requires.some(d => {
 					if (typeof d.id === 'string') {
 						const entry = get(d.id);
-						if (entry.category === Categories.ATTRIBUTES && entry.value > ELStore.getStart().maxAttributeValue) {
+						if (typeof entry !== 'undefined' && entry.category === Categories.ATTRIBUTES && entry.value > ELStore.getStart().maxAttributeValue) {
 							return true;
 						}
 						return false;
@@ -87,7 +87,8 @@ class ProfessionVariantStoreStatic extends Store {
 	}
 
 	getNameByID(id: string) {
-		return get(id) !== undefined ? get(id).name : undefined;
+		const entry = get(id);
+		return typeof entry !== 'undefined' ? entry.name : undefined;
 	}
 
 	private updateCurrentID(id?: string) {

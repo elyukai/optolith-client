@@ -11,7 +11,7 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListS
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { RaceStore } from '../../stores/RaceStore';
-import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection } from '../../types/data.d';
+import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection, SpellInstance } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
 import { sortByName } from '../../utils/ListUtils';
@@ -245,7 +245,7 @@ export class Selections extends React.Component<Props, State> {
 			const active = curses;
 			const { value } = professionSelections.get('CURSES') as CursesSelection;
 
-			const list = getAllByCategoryGroup(Categories.SPELLS, 3);
+			const list = getAllByCategoryGroup(Categories.SPELLS, 3) as SpellInstance[];
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
@@ -334,7 +334,7 @@ export class Selections extends React.Component<Props, State> {
 						options={race.attributeSelection[1].map(e => {
 							const attr = get(e);
 							const value = race.attributeSelection[0];
-							return { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` };
+							return attr ? { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` } : { id: e, name: '...' };
 						})} />
 					<h3>{translate('titlebar.tabs.culture')}</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>

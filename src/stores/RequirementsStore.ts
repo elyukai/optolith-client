@@ -11,9 +11,10 @@ import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import * as Data from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { alert } from '../utils/alert';
+import { checkDisAdvantages, getAdvantagesDisadvantagesSubMax, validate } from '../utils/APUtils';
 import * as AttributeUtils from '../utils/AttributeUtils';
 import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
-import { check, checkDisAdvantages, final } from '../utils/iccalc';
+import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import * as LiturgyUtils from '../utils/LiturgyUtils';
 import * as secondaryAttributes from '../utils/secondaryAttributes';
 import * as SpellUtils from '../utils/SpellUtils';
@@ -50,7 +51,7 @@ class RequirementsStoreStatic extends Store {
 							this.updateCost(1);
 						}
 						else {
-							this.updateCost(final(obj.ic, 0));
+							this.updateCost(getIncreaseAP(obj.ic));
 						}
 						break;
 					}
@@ -63,7 +64,7 @@ class RequirementsStoreStatic extends Store {
 							this.updateCost(-1);
 						}
 						else {
-							this.updateCost(final(obj.ic, 0) * -1);
+							this.updateCost(getDecreaseAP(obj.ic));
 						}
 						break;
 					}
@@ -108,56 +109,56 @@ class RequirementsStoreStatic extends Store {
 					case ActionTypes.ADD_ATTRIBUTE_POINT: {
 						const obj = get(action.payload.id) as Data.AttributeInstance;
 						this.updateOwnRequirements(AttributeUtils.isIncreasable(obj));
-						this.updateCost(final(obj.ic, obj.value + 1));
+						this.updateCost(getIncreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.ADD_COMBATTECHNIQUE_POINT: {
 						const obj = get(action.payload.id) as Data.CombatTechniqueInstance;
 						this.updateOwnRequirements(CombatTechniqueUtils.isIncreasable(obj));
-						this.updateCost(final(obj.ic, obj.value + 1));
+						this.updateCost(getIncreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.ADD_LITURGY_POINT: {
 						const obj = get(action.payload.id) as Data.LiturgyInstance;
 						this.updateOwnRequirements(LiturgyUtils.isIncreasable(obj));
-						this.updateCost(final(obj.ic, obj.value + 1));
+						this.updateCost(getIncreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.ADD_SPELL_POINT: {
 						const obj = get(action.payload.id) as Data.SpellInstance;
 						this.updateOwnRequirements(SpellUtils.isIncreasable(obj));
-						this.updateCost(final(obj.ic, obj.value + 1));
+						this.updateCost(getIncreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.ADD_TALENT_POINT: {
 						const obj = get(action.payload.id) as Data.TalentInstance;
 						this.updateOwnRequirements(TalentUtils.isIncreasable(obj));
-						this.updateCost(final(obj.ic, obj.value + 1));
+						this.updateCost(getIncreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.ADD_LIFE_POINT: {
 						const obj = secondaryAttributes.get('LP') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
-						this.updateCost(final(4, AttributeStore.getAdd('LP') + 1));
+						this.updateCost(getIncreaseAP(4, AttributeStore.getAdd('LP')));
 						break;
 					}
 
 					case ActionTypes.ADD_ARCANE_ENERGY_POINT: {
 						const obj = secondaryAttributes.get('AE') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
-						this.updateCost(final(4, AttributeStore.getAdd('AE') + 1));
+						this.updateCost(getIncreaseAP(4, AttributeStore.getAdd('AE')));
 						break;
 					}
 
 					case ActionTypes.ADD_KARMA_POINT: {
 						const obj = secondaryAttributes.get('KP') as Data.Energy;
 						this.updateOwnRequirements(obj.currentAdd < obj.maxAdd);
-						this.updateCost(final(4, AttributeStore.getAdd('KP') + 1));
+						this.updateCost(getIncreaseAP(4, AttributeStore.getAdd('KP')));
 						break;
 					}
 
@@ -178,35 +179,35 @@ class RequirementsStoreStatic extends Store {
 					case ActionTypes.REMOVE_ATTRIBUTE_POINT: {
 						const obj = get(action.payload.id) as Data.AttributeInstance;
 						this.updateOwnRequirements(AttributeUtils.isDecreasable(obj));
-						this.updateCost(final(obj.ic, obj.value) * -1);
+						this.updateCost(getDecreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT: {
 						const obj = get(action.payload.id) as Data.CombatTechniqueInstance;
 						this.updateOwnRequirements(CombatTechniqueUtils.isDecreasable(obj));
-						this.updateCost(final(obj.ic, obj.value) * -1);
+						this.updateCost(getDecreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.REMOVE_LITURGY_POINT: {
 						const obj = get(action.payload.id) as Data.LiturgyInstance;
 						this.updateOwnRequirements(LiturgyUtils.isDecreasable(obj));
-						this.updateCost(final(obj.ic, obj.value) * -1);
+						this.updateCost(getDecreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.REMOVE_SPELL_POINT: {
 						const obj = get(action.payload.id) as Data.SpellInstance;
 						this.updateOwnRequirements(SpellUtils.isDecreasable(obj));
-						this.updateCost(final(obj.ic, obj.value) * -1);
+						this.updateCost(getDecreaseAP(obj.ic, obj.value));
 						break;
 					}
 
 					case ActionTypes.REMOVE_TALENT_POINT: {
 						const obj = get(action.payload.id) as Data.TalentInstance;
 						this.updateOwnRequirements(TalentUtils.isDecreasable(obj));
-						this.updateCost(final(obj.ic, obj.value) * -1);
+						this.updateCost(getDecreaseAP(obj.ic, obj.value));
 						break;
 					}
 
@@ -233,12 +234,12 @@ class RequirementsStoreStatic extends Store {
 
 	private updateCost(cost: number, valid?: boolean) {
 		this.cost = cost;
-		this.validCost = valid || check(this.cost);
+		this.validCost = valid || validate(this.cost);
 		if (valid !== undefined) {
 			this.validCost = valid;
 		}
 		else {
-			this.validCost = check(cost);
+			this.validCost = validate(cost);
 		}
 		if (!this.validCost) {
 			alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
@@ -254,22 +255,20 @@ class RequirementsStoreStatic extends Store {
 			}
 		}
 		else {
-			const { category, reqs } = get(id) as Data.AdvantageInstance | Data.DisadvantageInstance;
+			const entry = get(id) as Data.AdvantageInstance | Data.DisadvantageInstance;
 			const { adv, disadv, spent, total } = APStore.getAll();
-			const add = category === Categories.ADVANTAGES;
+			const add = entry.category === Categories.ADVANTAGES;
 			const target = () => add ? adv : disadv;
-
-			const isKar = reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
-			const isMag = reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
-			const index = isKar ? 2 : isMag ? 1 : 0;
+			const index = ActivatableUtils.getGroupIndex(entry);
 
 			const validDisAdv = checkDisAdvantages(cost, index, target(), spent, total, add);
 
-			const sub = isKar ? 'karmale' : isMag ? 'magische' : '';
+			const sub = index === 2 ? 'karmale' : index === 1 ? 'magische' : '';
 			const text = add ? 'Vorteile' : 'Nachteile';
 
 			if (!validDisAdv[2]) {
-				alert(`Obergrenze für ${sub} ${text} erreicht`, `Du kannst nicht mehr als 50 AP für ${sub} ${text} ausgeben!`);
+				const submax = getAdvantagesDisadvantagesSubMax(index);
+				alert(`Obergrenze für ${sub} ${text} erreicht`, `Du kannst nicht mehr als ${submax} AP für ${sub} ${text} ausgeben!`);
 			}
 			else if (!validDisAdv[1]) {
 				alert(`Obergrenze für ${text} erreicht`, `Du kannst nicht mehr als 80 AP für ${text} ausgeben!`);

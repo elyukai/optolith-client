@@ -1,7 +1,8 @@
+import { last } from 'lodash';
 import { AttributeStore } from '../stores/AttributeStore';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 import { RaceStore } from '../stores/RaceStore';
-import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
+import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, SecondaryAttribute, SpecialAbilityInstance } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
 import { getLocale, translate } from './I18n';
 
@@ -45,22 +46,33 @@ export function getLP(): Energy {
 }
 
 export function getAE(): EnergyWithLoss {
+	const lastTradition = last((get('SA_86') as SpecialAbilityInstance).active);
 	const primary = getPrimaryAttrID(1);
 	let base = 0;
 	let mod = 0;
+	let maxAdd = 0;
 	const add = addEnergies().ae;
 	const permanentLost = addEnergies().permanentAE.lost;
 	const permanentRedeemed = addEnergies().permanentAE.redeemed;
-	if (primary) {
-		base = 20 + PRIMARY(primary).value;
+	if (primary && (lastTradition === 6 || lastTradition === 7)) {
+		maxAdd = Math.round(PRIMARY(primary).value / 2);
+	}
+	else if (primary) {
+		maxAdd = PRIMARY(primary).value;
+	}
+	if (maxAdd > 0) {
+		base = 20 + maxAdd;
+	}
+	else if (isActive(get('ADV_50') as AdvantageInstance) && typeof lastTradition === 'number') {
+		base = 20;
 	}
 	const increaseObject = (get('ADV_23') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_26') as DisadvantageInstance).active[0];
-	if (increaseObject) {
-		mod += increaseObject.tier!;
+	if (increaseObject && increaseObject.tier) {
+		mod += increaseObject.tier;
 	}
-	else if (decreaseObject) {
-		mod -= decreaseObject.tier!;
+	else if (decreaseObject && decreaseObject.tier) {
+		mod -= decreaseObject.tier;
 	}
 	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
@@ -69,7 +81,7 @@ export function getAE(): EnergyWithLoss {
 		calc: translate('secondaryattributes.ae.calc'),
 		currentAdd: add,
 		id: 'AE',
-		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
+		maxAdd,
 		mod,
 		name: translate('secondaryattributes.ae.name'),
 		permanentLost,
@@ -91,11 +103,11 @@ export function getKP(): EnergyWithLoss {
 	}
 	const increaseObject = (get('ADV_24') as AdvantageInstance).active[0];
 	const decreaseObject = (get('DISADV_27') as DisadvantageInstance).active[0];
-	if (increaseObject) {
-		mod += increaseObject.tier!;
+	if (increaseObject && increaseObject.tier) {
+		mod += increaseObject.tier;
 	}
-	else if (decreaseObject) {
-		mod -= decreaseObject.tier!;
+	else if (decreaseObject && decreaseObject.tier) {
+		mod -= decreaseObject.tier;
 	}
 	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
 	return {
@@ -104,7 +116,7 @@ export function getKP(): EnergyWithLoss {
 		calc: translate('secondaryattributes.kp.calc'),
 		currentAdd: add,
 		id: 'KP',
-		maxAdd: (primary ? PRIMARY(primary) : { value: 0 }).value,
+		maxAdd: primary ? PRIMARY(primary).value : 0,
 		mod,
 		name: translate('secondaryattributes.kp.name'),
 		permanentLost,

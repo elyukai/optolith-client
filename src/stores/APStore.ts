@@ -152,6 +152,7 @@ class APStoreStatic extends Store {
 					}
 
 					case ActionTypes.ASSIGN_RCP_OPTIONS:
+						AppDispatcher.waitFor([ListStore.dispatchToken]);
 						this.assignRCP(action.payload);
 						break;
 
@@ -273,8 +274,7 @@ class APStoreStatic extends Store {
 			const apCosts = apCostsList.reduce<ProfessionDependencyCost>(reducer, initialValue);
 			const spareAP = ListStore.getSpareAPForCombatTechniques();
 
-			this.spent += apCosts.total;
-			this.spent -= spareAP;
+			this.spent += apCosts.total - spareAP;
 			this.spentForAdvantages = this.spentForAdvantages.map((e, i) => e + apCosts.adv[i]);
 			this.spentForDisadvantages = apCosts.disadv;
 		}

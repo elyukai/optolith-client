@@ -35,7 +35,7 @@ export class OptionalRules extends React.Component<{}, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Aventurisches Bestiarium"
 						disabled
@@ -49,11 +49,23 @@ export class OptionalRules extends React.Component<{}, State> {
 					<Checkbox
 						checked={false}
 						onClick={this.changeCheckboxTrap}
+						label="Aventurisches Götterwirken"
+						disabled
+						/>
+					<Checkbox
+						checked={false}
+						onClick={this.changeCheckboxTrap}
 						label="Aventurische Magie I"
 						disabled
 						/>
 					<Checkbox
 						checked={false}
+						onClick={this.changeCheckboxTrap}
+						label="Aventurische Magie II"
+						disabled
+						/>
+					<Checkbox
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Aventurische Namen"
 						disabled
@@ -79,7 +91,7 @@ export class OptionalRules extends React.Component<{}, State> {
 					<Checkbox
 						checked={false}
 						onClick={this.changeCheckboxTrap}
-						label="Tavernen"
+						label="Kneipen &amp; Tavernen"
 						disabled
 						/>
 					<h3>{translate('rules.optionalrules')}</h3>

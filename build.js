@@ -6,7 +6,7 @@ packager({
 	arch: 'x64',
 	asar: true,
 	icon: './resources/icon',
-	ignore: /(src|\/data$|data\/|\/css|\.vs|\.vscode|dist|__tests__|node_modules|webpack\.config\.js|tslint\.json|tsconfig\.json|jsconfig\.json|\.gitattributes|\.gitignore|build\.js)/,
+	ignore: /(src|\/data$|data\/|\/css|\.rpt2_cache|wiki|\.vs|\.vscode|dist|__tests__|node_modules|webpack\.config\.js|tslint\.json|tsconfig\.json|jsconfig\.json|\.gitattributes|\.gitignore|build\.js)/,
 	name: 'tdeheroes',
 	out: './dist',
 	overwrite: true,

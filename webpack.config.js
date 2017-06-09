@@ -13,26 +13,11 @@ module.exports = {
 	module: {
 		rules: [
 			{
-                test: /\.tsx?$/,
+				test: /\.tsx?$/,
 				use: ['awesome-typescript-loader']
-			},
-			{
-                test: /\.scss$/,
-				use: ExtractTextPlugin.extract({
-					use: [
-						'css-loader?-url',
-						'sass-loader'
-					]
-				}),
 			}
 		]
 	},
-    plugins: [
-        new ExtractTextPlugin('bundle.css'),
-		new webpack.LoaderOptionsPlugin({ options: { sassLoader: {
-			outputStyle: 'compressed'
-		}}})
-	],
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM'

@@ -2,6 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { HerolistStore } from '../stores/HerolistStore';
 import { Hero, HeroForSave } from '../types/data.d';
+import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 // import * as WebAPIUtils from '../utils/WebAPIUtils';
 
@@ -69,13 +70,20 @@ export interface LoadHeroAction extends Action {
 	};
 }
 
-export const loadHero = (indexId: string) => {
-	AppDispatcher.dispatch<LoadHeroAction>({
-		type: ActionTypes.LOAD_HERO,
-		payload: {
-			data: HerolistStore.get(indexId)
-		}
-	});
+export const loadHero = (id: string) => {
+	const data = HerolistStore.get(id);
+	if (data) {
+		AppDispatcher.dispatch<LoadHeroAction>({
+			type: ActionTypes.LOAD_HERO,
+			payload: {
+				data
+			}
+		});
+	}
+};
+
+export const save = () => {
+	saveAll();
 };
 
 export interface SaveHeroAction extends Action {
@@ -105,6 +113,22 @@ export interface DeleteHeroAction extends Action {
 export const deleteHero = (id: string) => {
 	AppDispatcher.dispatch<DeleteHeroAction>({
 		type: ActionTypes.DELETE_HERO,
+		payload: {
+			id
+		}
+	});
+};
+
+export interface DuplicateHeroAction extends Action {
+	type: ActionTypes.DUPLICATE_HERO;
+	payload: {
+		id: string;
+	};
+}
+
+export const duplicateHero = (id: string) => {
+	AppDispatcher.dispatch<DuplicateHeroAction>({
+		type: ActionTypes.DUPLICATE_HERO,
 		payload: {
 			id
 		}

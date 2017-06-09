@@ -41,7 +41,7 @@ export function BelongingsSheet() {
 	const { value } = get('STR') as AttributeInstance;
 	const { d, s, h, k } = EquipmentStore.getPurse();
 	const items = sort(EquipmentStore.getAll(), EquipmentStore.getSortOrder()) as ItemInstance[];
-	const firstColumn = Array(66).fill(undefined) as Array<ItemInstance | undefined>;
+	const firstColumn = Array.from({ length: 66 }) as Array<ItemInstance | undefined>;
 	firstColumn.splice(0, Math.min(items.length, 66), ...items);
 	const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));
 	const pet = PetsStore.getAll()[0];

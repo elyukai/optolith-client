@@ -22,14 +22,14 @@
 21;Rabenhexer;Rabenhexe;Seher von Heute und Morgen;Seherin von Heute und Morgen;;149
 22;Gildenloser Magier;Gildenlose Magierin;Schüler des Magister Dagabor;Schülerin des Magister Dagabor;;150
 23;Graumagier;Graumagierin;Schule der Verformungen zu Lowangen;;;151
-24;Schwarzmagier;Schwarzmagierin;Akademie der Geistigen Kraft zu Fasar;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Schutz des Mittelreiches und seines Adels, Glaube an die Zwölfgötter, Wahrheitsliebe""}";152
-25;Weißmagier;Weißmagierin;Akademie Schwert und Stab zu Gareth;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";153
+24;Schwarzmagier;Schwarzmagierin;Akademie der Geistigen Kraft zu Fasar;;;152
+25;Weißmagier;Weißmagierin;Akademie Schwert und Stab zu Gareth;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Schutz des Mittelreiches und seines Adels, Glaube an die Zwölfgötter, Wahrheitsliebe""}";153
 26;Borongeweihter;Borongeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";154
 27;Hesindegeweihter;Hesindegeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";155
 28;Perainegeweihter;Perainegeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";156
 29;Phexgeweihter;Phexgeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";157
 30;Praiosgeweihter;Praiosgeweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";158
-31;Rondrageweihter;Rondrageweihte;;;;159
+31;Rondrageweihter;Rondrageweihte;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Tempel, Kirche""}";159
 32;Adersin-Schwertgeselle;Adersin-Schwertgesellin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Duell-Kodex, Schutz der Schwachen""}";183
 33;Adliger;Adlige;;;;184
 34;Baburiner Krieger;Baburiner Kriegerin;;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Ehrenhaftigkeit, Loyalität, Schutz der Schwachen""}";185
@@ -55,3 +55,41 @@
 54;Wildniskundiger;Wildniskundige;;;;205
 55;Wirt;Wirtin;;;;206
 56;Zuckerbäcker;Zuckerbäckerin;;;;207
+57;Ceoladir;;;;;178
+58;Derwisch;;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Orden der Derwische""}";179
+59;Gildenloser Magier;Gildenlose Magierin;Schüler des Alrik Dagabor;Schülerin des Alrik Dagabor;;180
+60;Gildenloser Magier;Gildenlose Magierin;Seminar der elfischen Verständigung und natürlichen Heilung zu Donnerbach;;"{""id"":""DISADV_34"",""tier"":1,""sid"":""Völkerverständigung, Friedfertigkeit""}";181
+61;Gildenloser Magier;Gildenlose Magierin;Schüler des Vadif sal Karim;Schülerin des Vadif sal Karim;;182
+62;Gildenloser Magier;Gildenlose Magierin;Schüler der Khelbara ay Baburia;Schülerin der Khelbara ay Baburia;;183
+63;Graumagier;Graumagierin;Schule des Direkten Weges zu Gerasim;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Völkerverständigung, Friedfertigkeit""}";184
+64;Graumagier;Graumagierin;Halle der Antimagie zu Kuslik;;;185
+65;Graumagier;Graumagierin;Schule der Hellsicht zu Thorwal;;;186
+66;Graumagier;Graumagierin;Akademie der Hohen Magie zu Punin;;;187
+67;Graumagier;Graumagierin;Schule des Seienden Scheins zu Zorgan;;;188
+68;Graumagier;Graumagierin;Schule der Verformungen zu Lowangen;;;189
+69;Graumagier;Graumagierin;Schule der Vierfachen Verwandlung zu Sinoda;;;190
+70;Hazaqi;;;;;191
+71;Magischer Taugenichts;Magische Taugenicht;;;;192
+72;Majuna;;;;;193
+73;Qabaloth der Töchter Niobaras;;;;"{""id"":""DISADV_50"",""tier"":2,""sid"":""Qabalya""}";194
+74;Rahkisa;;;;;195
+75;Sangara;;;;;196
+76;Scharlatan;Scharlatanin;;;;197
+77;Schwarzmagier;Schwarzmagierin;Halle der Erleuchtung zu Al´Anfa;;;198
+78;Schwarzmagier;Schwarzmagierin;Schüler des Demirion Ophenos;Schülerin des Demirion Ophenos;;199
+79;Schwarzmagier;Schwarzmagierin;Akademie der Geistigen Kraft zu Fasar;;;200
+80;Sharisad;;;;;201
+81;Weißmagier;Weißmagierin;Akademie Schwert & Stab zu Gareth;;"{""id"":""DISADV_34"",""tier"":2,""sid"":""Schutz des Mittelreiches und seines Adels, Glaube an die Zwölfgötter, Wahrheitsliebe""}";203
+82;Weißmagier;Weißmagierin;Schüler des Hesindius Lichtblick;Schülerin des Hesindius Lichtblick;"{""id"":""DISADV_34"",""tier"":1,""sid"":""Hilfsbereitschaft, Bannung des Bösen""}";204
+83;Weißmagier;Weißmagierin;Schule der Austreibung zu Perricum;;;205
+84;Bogner;Bognerin;;;;142
+85;Deichbauer;Deichbauerin;;;;143
+86;Holzfäller;Holzfällerin;;;;143
+87;Ritter der Streitenden Königreiche;Ritterin der Streitenden Königreiche;Seenritter;Seenritterin;;144
+88;Ritter der Streitenden Königreiche;Ritterin der Streitenden Königreiche;Waldritter;Waldritterin;;144
+89;Graumagier;Graumagierin;Kampfseminar Andergast;;;145
+90;Weißmagier;Weißmagierin;Akademie von Licht und Dunkelheit;;;146
+91;Eulenhexe;Eulenhexer;Verschwiegene Schwesternschaft;;;146
+92;Schlangenhexe;Schlangenhexer;Schwesternschaft des Wissens;;;147
+93;Druide;Druidin;Mehrer der Macht;;;148
+94;Druide;Druidin;Sumudiener;Sumudienerin;;148

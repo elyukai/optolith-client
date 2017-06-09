@@ -4,6 +4,7 @@ import { get } from '../stores/ListStore';
 import { ActivatableInstance, ActivateArgs, Application, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
+import { getRoman } from '../utils/roman';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -74,7 +75,7 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 
 	render() {
 		const { item, isImportant, isTypical, isUntypical, hideGroup } = this.props;
-		const { id, name, cost, sel, tiers } = item as ActivatableInstance & { tiers?: number; };
+		const { id, name, cost, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
 		const { category, gr } = get(id) as ActivatableInstance;
 		let sel2: SelectionObject[] | undefined;
@@ -155,6 +156,13 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 				args.input = this.state.input;
 				currentCost = cost as number;
 				break;
+			case 'ADV_68':
+				args.sel = this.state.selected;
+				args.input = this.state.input;
+				const item = get(id) as ActivatableInstance;
+				const selectionItem = ActivatableUtils.getSelectionItem(item, this.state.selected);
+				currentCost = selectionItem && selectionItem.cost;
+				break;
 			case 'DISADV_33':
 			case 'DISADV_37':
 			case 'DISADV_51':
@@ -222,18 +230,22 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 						currentCost = selectionItem && selectionItem.cost;
 					}
 					args.sel = this.state.selected;
-				} else if (sel !== undefined && sel.length > 0) {
+				}
+				else if (sel !== undefined && sel.length > 0) {
 					args.sel = this.state.selected;
 					currentCost = cost as number;
-				} else if (tiers) {
+				}
+				else if (tiers) {
 					if (this.state.selectedTier > 0) {
 						currentCost = (cost as number) * this.state.selectedTier;
 					}
 					args.tier = this.state.selectedTier;
-				} else if (input) {
+				}
+				else if (input) {
 					args.input = this.state.input;
 					currentCost = cost as number;
-				} else {
+				}
+				else {
 					currentCost = cost as number;
 				}
 				break;
@@ -247,9 +259,10 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 			args.cost = currentCost;
 		}
 
-		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 		if (tiers) {
-			const array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
+			const min = Math.max(1, minTier);
+			const max = Math.min(tiers, maxTier);
+			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + 1) }));
 			tierElement = (
 				<Dropdown
 					className="tiers"

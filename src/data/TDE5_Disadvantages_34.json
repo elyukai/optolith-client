@@ -1,0 +1,16 @@
+[
+	{"id":1,"name":"99 Gesetze","tier":1},
+	{"id":2,"name":"Moralkodex der Hesindekirche","tier":1},
+	{"id":3,"name":"Moralkodex der Phexkirche","tier":1},
+	{"id":4,"name":"Moralkodex der Perainekirche","tier":1},
+	{"id":5,"name":"99 Gesetze (streng)","tier":2},
+	{"id":6,"name":"Ehrenkodex der Krieger","tier":2},
+	{"id":7,"name":"Ehrenkodex der Ritter","tier":2},
+	{"id":8,"name":"Elfische Weltsicht","tier":2},
+	{"id":9,"name":"Moralkodex der Boronkirche","tier":2},
+	{"id":10,"name":"Moralkodex der Praioskirche","tier":2},
+	{"id":11,"name":"Moralkodex der Rondrakirche","tier":2},
+	{"id":12,"name":"Zwergischer Ehrenkodex","tier":2},
+	{"id":13,"name":"99 Gesetze (radikal)","tier":3},
+	{"id":14,"name":"Pazifismus","tier":3}
+]

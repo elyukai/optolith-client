@@ -1,4 +1,4 @@
-import { SpellsStore } from '../stores/SpellsStore';
+import { translate } from './I18n';
 
 interface Data {
 	ap?: number;
@@ -77,7 +77,7 @@ export const sortByGroupName = (a: PlainNameData, b: PlainNameData) => {
 export const sortByIC = (a: PlainNameData, b: PlainNameData) => a.ic! < b.ic! ? -1 : a.ic! > b.ic! ? 1 : sortByName(a, b);
 
 export const sortByProperty = (a: PlainNameData, b: PlainNameData) => {
-	const PROPERTIES = SpellsStore.getPropertyNames();
+	const PROPERTIES = translate('spells.view.properties');
 	const ap = PROPERTIES[a.property! - 1];
 	const bp = PROPERTIES[b.property! - 1];
 	return ap < bp ? -1 : ap > bp ? 1 : sortByName(a, b);

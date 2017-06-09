@@ -62,3 +62,11 @@
 61;Schwache Zaubertänze;8;;1;;"{""id"":""SA_86"",""active"":true,""sid"":8}&{""id"":""ADV_61"",""active"":false}"
 62;Verminderte Zaubermelodien;2;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}&{""id"":""ADV_63"",""active"":false}"
 63;Verminderte Zaubertänze;2;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":8}&{""id"":""ADV_64"",""active"":false}"
+64;Jagdwildgeruch;10;;1;;
+65;Raubtiergeruch;3;;1;;"{""id"":""DISADV_48"",""active"":true,""sid"":""TAL_6""}&{""id"":""DISADV_48"",""active"":true,""sid"":""TAL_29""}"
+66;Böser Namensvetter;10;;1;;"{""id"":""ADV_72"",""active"":false}"
+67;Lächerlicher Name;3;;1;;"{""id"":""ADV_72"",""active"":false}&{""id"":""ADV_74"",""active"":false}&{""id"":""DISADV_69"",""active"":false}&{""id"":""DISADV_70"",""active"":false}"
+68;Schlechtes Namensgedächtnis;2;;1;;"{""id"":""ADV_73"",""active"":false}"
+69;Schurkenname;2;;1;;"{""id"":""ADV_72"",""active"":false}&{""id"":""ADV_74"",""active"":false}&{""id"":""DISADV_67"",""active"":false}&{""id"":""DISADV_70"",""active"":false}"
+70;Unpassender Name;4;;1;;"{""id"":""ADV_72"",""active"":false}&{""id"":""ADV_74"",""active"":false}&{""id"":""DISADV_67"",""active"":false}&{""id"":""DISADV_69"",""active"":false}"
+71;Unverträglichkeit gegenüber Alkohol;2;;1;;"{""id"":""SA_491"",""active"":false}"

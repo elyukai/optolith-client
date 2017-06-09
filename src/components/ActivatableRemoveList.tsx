@@ -3,6 +3,7 @@ import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
 import { filterAndSort } from '../utils/ListUtils';
 import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
 import { List } from './List';
+import { ListPlaceholder } from './ListPlaceholder';
 import { Scroll } from './Scroll';
 
 interface Props {
@@ -25,21 +26,25 @@ export function ActivatableRemoveList(props: Props) {
 
 	return (
 		<Scroll>
-			<List>
-				{sortedList.map(item => (
-					<ActivatableRemoveListItem
-						key={`${item.id}_${item.index}`}
-						item={item}
-						phase={phase}
-						setTier={setTier}
-						removeFromList={removeFromList}
-						isImportant={showRating && rating && rating[item.id] === 'IMP'}
-						isTypical={showRating && rating && rating[item.id] === 'TYP'}
-						isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
-						hideGroup={hideGroup}
-						/>
-				))}
-			</List>
+			{list.length === 0 ? (
+				<ListPlaceholder />
+			) : (
+				<List>
+					{sortedList.map(item => (
+						<ActivatableRemoveListItem
+							key={`${item.id}_${item.index}`}
+							item={item}
+							phase={phase}
+							setTier={setTier}
+							removeFromList={removeFromList}
+							isImportant={showRating && rating && rating[item.id] === 'IMP'}
+							isTypical={showRating && rating && rating[item.id] === 'TYP'}
+							isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
+							hideGroup={hideGroup}
+							/>
+					))}
+				</List>
+			)}
 		</Scroll>
 	);
 }

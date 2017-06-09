@@ -1,4 +1,5 @@
 import * as DetailedData from './detaileddata.d';
+import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
 
 export interface AdventurePoints {
@@ -15,8 +16,6 @@ export type ToListById<T> = {
 export type ToOptionalKeys<T> = {
 	[K in keyof T]?: T[K];
 };
-
-export type ToList<T> = T[];
 
 export interface HeroBase {
 	readonly clientVersion: string;
@@ -191,8 +190,20 @@ export interface CursesSelection {
 	value: number;
 }
 
-export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES';
-export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection;
+export interface SkillsSelection {
+	id: 'SKILLS';
+	/**
+	 * If specified, only choose from skills of the specified group.
+	 */
+	gr?: number;
+	/**
+	 * The AP value the user can spend.
+	 */
+	value: number;
+}
+
+export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
+export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
 export type ProfessionSelections = ProfessionSelection[];
 
 export interface Selections {
@@ -222,9 +233,9 @@ export interface ProfessionInstance {
 	readonly subname?: string | ProfessionNameForSexes;
 	readonly ap: number;
 	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: RequirementObject[];
+	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: RequirementObject[];
+	readonly specialAbilities: Reusable.RequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];
@@ -252,11 +263,13 @@ export interface ProfessionVariantInstance {
 	readonly name: string | ProfessionNameForSexes;
 	readonly ap: number;
 	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: RequirementObject[];
+	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: RequirementObject[];
+	readonly specialAbilities: Reusable.RequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
+	readonly spells: [string, number][];
+	readonly liturgies: [string, number][];
 	readonly category: Categories.PROFESSION_VARIANTS;
 }
 
@@ -271,6 +284,8 @@ export interface ActiveViewObject {
 	name: string;
 	tier?: number;
 	tiers?: number;
+	minTier?: number;
+	maxTier?: number;
 	cost: number;
 	disabled: boolean;
 	index: number;
@@ -281,8 +296,10 @@ export interface DeactiveViewObject {
 	id: string;
 	name: string;
 	cost?: string | number | number[];
-	input?: string | undefined;
-	tiers?: number | undefined;
+	input?: string;
+	tiers?: number;
+	minTier?: number;
+	maxTier?: number;
 	sel?: SelectionObject[];
 	gr?: number;
 }
@@ -369,8 +386,9 @@ export interface CultureRequirement {
 	value: number | number[];
 }
 
-export type ProfessionDependencyObject = SexRequirement | RaceRequirement | CultureRequirement;
-export type AllRequirementObjects = 'RCP' | RequirementObject | ProfessionDependencyObject;
+export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
+export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement;
+export type AllRequirements = 'RCP' | Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement;
 
 // export interface ProfessionDependencyObject {
 // 	id: string;
@@ -406,7 +424,7 @@ interface ActivatableInstanceBaseInInit {
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly reqs: ('RCP' | RequirementObject)[];
+	readonly reqs: ('RCP' | Reusable.AllRequirementTypes)[];
 	readonly tiers?: number;
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];
@@ -470,7 +488,8 @@ export type LiturgyInstanceDependency = SpellInstanceDependency;
 export interface LiturgyInstance {
 	readonly aspects: number[];
 	readonly category: Categories.LITURGIES;
-	readonly check: string[];
+	readonly check: [string, string, string];
+	readonly checkmod?: "SPI" | "TOU";
 	readonly gr: number;
 	readonly ic: number;
 	readonly id: string;
@@ -486,23 +505,25 @@ export interface BlessingInstance {
 	readonly name: string;
 	readonly aspects: number[];
 	readonly tradition: number[];
-	readonly reqs: RequirementObject[];
+	readonly reqs: Reusable.AllRequirementTypes[];
 	readonly category: Categories.BLESSINGS;
 	active: boolean;
+	dependencies: boolean[];
 }
 
 export type SpellInstanceDependency = number | boolean | SkillOptionalDependency;
 
 export interface SpellInstance {
 	readonly category: Categories.SPELLS;
-	readonly check: string[];
+	readonly check: [string, string, string];
+	readonly checkmod?: "SPI" | "TOU";
 	readonly gr: number;
 	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
 	readonly property: number;
 	readonly tradition: number[];
-	readonly reqs: RequirementObject[];
+	readonly reqs: Reusable.AllRequirementTypes[];
 	active: boolean;
 	dependencies: SpellInstanceDependency[];
 	value: number;
@@ -513,9 +534,10 @@ export interface CantripInstance {
 	readonly name: string;
 	readonly property: number;
 	readonly tradition: number[];
-	readonly reqs: RequirementObject[];
+	readonly reqs: Reusable.AllRequirementTypes[];
 	readonly category: Categories.CANTRIPS;
 	active: boolean;
+	dependencies: boolean[];
 }
 
 export type TalentInstanceDependency = number | SkillOptionalDependency;
@@ -675,6 +697,7 @@ export type IncreasableNonactiveInstance = AttributeInstance | TalentInstance | 
 export type SkillInstance = SpellInstance | LiturgyInstance | TalentInstance;
 export type SkillishInstance = SpellInstance | LiturgyInstance | TalentInstance | CombatTechniqueInstance;
 export type ActivatableSkillishInstance = SpellInstance | LiturgyInstance | CantripInstance | BlessingInstance;
+export type CantripBlessingInstances = CantripInstance | BlessingInstance;
 
 export interface SecondaryAttribute {
 	id: string;
@@ -878,7 +901,6 @@ export interface UILocale {
 	"titlebar.adventurepoints.title": string;
 	"titlebar.adventurepoints.total": string;
 	"titlebar.adventurepoints.spent": string;
-	"titlebar.adventurepoints.subprefix": string;
 	"titlebar.adventurepoints.advantages": string;
 	"titlebar.adventurepoints.advantagesmagic": string;
 	"titlebar.adventurepoints.advantagesblessed": string;
@@ -1238,6 +1260,7 @@ export interface UILocale {
 	"disadvantages.options.common": string;
 	"activatable.view.afraidof": string;
 	"activatable.view.immunityto": string;
+	"activatable.view.hatredof": string;
 	"skills.options.commoninculture": string;
 	"skills.view.groups": string[];
 	"info.applications": string;
@@ -1390,4 +1413,5 @@ export interface UILocale {
 	"fileapi.error.message.printcharactersheettopdf": string;
 	"fileapi.error.message.printcharactersheettopdfpreparation": string;
 	"fileapi.error.message.importhero": string;
+	"emptylist": string;
 }

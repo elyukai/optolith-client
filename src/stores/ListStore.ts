@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { isEqual } from 'lodash';
 import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
@@ -14,14 +14,16 @@ import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import * as Data from '../types/data.d';
 import { RawLocaleList, RawTables } from '../types/rawdata.d';
+import * as Reusable from '../types/reusable.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as AttributeUtils from '../utils/AttributeUtils';
 import * as CombatTechniqueUtils from '../utils/CombatTechniqueUtils';
 import * as DependentUtils from '../utils/DependentUtils';
-import { final } from '../utils/iccalc';
+import { getIncreaseRangeAP } from '../utils/ICUtils';
 import * as IncreasableUtils from '../utils/IncreasableUtils';
 import { init } from '../utils/init';
 import * as LiturgyUtils from '../utils/LiturgyUtils';
+import * as RequirementUtils from '../utils/RequirementUtils';
 import * as SpellUtils from '../utils/SpellUtils';
 import * as TalentUtils from '../utils/TalentUtils';
 import { CultureStore } from './CultureStore';
@@ -37,8 +39,7 @@ type Action = ReceiveInitialDataAction | LoadHeroAction | CreateHeroAction | Add
 
 class ListStoreStatic extends Store {
 	readonly dispatchToken: string;
-	private byId: Data.ToListById<Data.Instance> = {};
-	private allIds: string[] = [];
+	private byId = new Map<string, Data.Instance>();
 
 	constructor() {
 		super();
@@ -65,48 +66,14 @@ class ListStoreStatic extends Store {
 
 					case ActionTypes.ACTIVATE_DISADV:
 					case ActionTypes.ACTIVATE_SPECIALABILITY:
-						const id = action.payload.id;
-						const index = action.payload.index;
-						const active = action.payload.activeObject;
-						if (index && active) {
-							const adds = [];
-							let sid;
-							switch (id) {
-								case 'ADV_4':
-								case 'ADV_16':
-								case 'DISADV_48':
-									sid = active.sid as string;
-									break;
-								case 'SA_10':
-									adds.push({ id: active.sid as string, value: (this.byId[id] as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
-									break;
-							}
-							DependentUtils.removeDependencies(this.byId[id] as Data.ActivatableInstance, adds, sid);
-							(this.byId[id] as Data.ActivatableInstance).active.splice(index, 1);
-						}
+						const { id, index, activeObject } = action.payload;
+						this.undoActivatableActivation(id, index, activeObject);
 						break;
 
 					case ActionTypes.DEACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_SPECIALABILITY: {
-						const id = action.payload.id;
-						const index = action.payload.index;
-						const active = action.payload.activeObject;
-						if (active) {
-							(this.byId[id] as Data.ActivatableInstance).active.splice(index, 0, active);
-							const adds = [];
-							let sid;
-							switch (id) {
-								case 'ADV_4':
-								case 'ADV_16':
-								case 'DISADV_48':
-									sid = active.sid as string;
-									break;
-								case 'SA_10':
-									adds.push({ id: active.sid as string, value: (this.byId[id] as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
-									break;
-							}
-							DependentUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, adds, sid);
-						}
+						const { id, index, activeObject } = action.payload;
+						this.undoActivatableDeactivation(id, index, activeObject);
 						break;
 					}
 
@@ -181,14 +148,14 @@ class ListStoreStatic extends Store {
 					case ActionTypes.ACTIVATE_DISADV:
 					case ActionTypes.ACTIVATE_SPECIALABILITY:
 						if (RequirementsStore.isValid()) {
-							this.activateDASA(action.payload.id, action.payload);
+							this.activateActivatable(action.payload.id, action.payload);
 						}
 						break;
 
 					case ActionTypes.DEACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_SPECIALABILITY:
 						if (RequirementsStore.isValid()) {
-							this.deactivateDASA(action.payload.id, action.payload.index);
+							this.deactivateActivatable(action.payload.id, action.payload.index);
 						}
 						break;
 
@@ -230,150 +197,73 @@ class ListStoreStatic extends Store {
 	}
 
 	get(id: string) {
-		return this.byId[AttributeUtils.convertId(id)];
+		return this.byId.get(AttributeUtils.convertId(id));
 	}
 
 	getObjByCategory(...categories: Categories.Category[]) {
-		const list: { [id: string]: Data.Instance } = {};
-		for (const id in this.byId) {
-			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id];
-				if (categories.includes(obj.category)) {
-					list[id] = obj;
-				}
-			}
-		}
-		return list;
+		return new Map([...this.byId].filter(e => categories.includes(e[1].category)));
 	}
 
 	getObjByCategoryGroup(category: Categories.Category, ...gr: number[]) {
-		const list: Data.ToListById<Data.Instance> = {};
-		for (const id in this.byId) {
-			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id] as Data.SkillishInstance | Data.SpecialAbilityInstance;
-				if (obj.category === category && gr.includes(obj.gr)) {
-					list[id] = obj;
-				}
-			}
-		}
-		return list;
+		return new Map([...this.byId].filter(e => category === e[1].category && gr.includes((e[1] as Data.SkillishInstance | Data.SpecialAbilityInstance).gr)));
 	}
 
 	getAllByCategory(...categories: Categories.Category[]) {
-		const list = [];
-		for (const id in this.byId) {
-			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id];
-				if (categories.includes(obj.category)) {
-					list.push(obj);
-				}
-			}
-		}
-		return list;
+		return [...this.byId.values()].filter(e => categories.includes(e.category));
 	}
 
 	getAllByCategoryGroup(category: Categories.Category, ...gr: number[]) {
-		const list = [];
-		for (const id in this.byId) {
-			if (this.byId.hasOwnProperty(id)) {
-				const obj = this.byId[id] as Data.SkillishInstance | Data.SpecialAbilityInstance;
-				if (obj.category === category && gr.includes(obj.gr)) {
-					list.push(obj);
-				}
-			}
-		}
-		return list;
+		return [...this.byId.values()].filter(e => category === e.category && gr.includes((e as Data.SkillishInstance | Data.SpecialAbilityInstance).gr));
 	}
 
 	getPrimaryAttrID(type: 1 | 2) {
-		let attr;
-		if (type === 1) {
-			const tradition = get('SA_86') as Data.SpecialAbilityInstance;
-			switch (last(ActivatableUtils.getSids(tradition))) {
-				case 1:
-					attr = 'ATTR_2';
-					break;
-				case 2:
-					attr = 'ATTR_4';
-					break;
-				case 3:
-					attr = 'ATTR_3';
-					break;
-			}
-		} else if (type === 2) {
-			const tradition = get('SA_102') as Data.SpecialAbilityInstance;
-			switch (last(ActivatableUtils.getSids(tradition))) {
-				case 1:
-					attr = 'ATTR_2';
-					break;
-				case 2:
-					attr = 'ATTR_1';
-					break;
-				case 3:
-					attr = 'ATTR_1';
-					break;
-				case 4:
-					attr = 'ATTR_2';
-					break;
-				case 5:
-					attr = 'ATTR_3';
-					break;
-				case 6:
-					attr = 'ATTR_3';
-					break;
-			}
-		}
-		return attr;
+		return AttributeUtils.getPrimaryAttributeId(type);
 	}
 
 	getPrimaryAttr(type: 1 | 2) {
-		const id = getPrimaryAttrID(type);
+		const id = AttributeUtils.getPrimaryAttributeId(type);
 		if (id) {
 			return get(id) as Data.AttributeInstance;
 		}
 		return;
 	}
 
-	getCostListForProfessionDependencies(reqs: Data.RequirementObject[]) {
+	getCostListForProfessionDependencies(reqs: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[]) {
 		const totalCost = reqs.map<number | Data.ProfessionDependencyCost>(req => {
-			const { id, sid, sid2, tier, value } = req;
-			const obj = get(id as string) as Data.Instance & { tiers?: number };
-
-			switch (obj.category) {
-				case Categories.ATTRIBUTES: {
-					if (typeof value === 'number') {
-						const values: number[] = Array.from({ length: value - 8 }, (_, i) => i + 8);
-						this.byId[id as string] = IncreasableUtils.set(obj, value);
-						return values.map(e => final(5, e)).reduce((a, b) => a + b, 0);
+			if (RequirementUtils.isRequiringIncreasable(req)) {
+				const { id, value } = req;
+				if (typeof id === 'string') {
+					const obj = get(id) as Data.AttributeInstance | Data.TalentInstance;
+					switch (obj.category) {
+						case Categories.ATTRIBUTES: {
+							if (typeof value === 'number') {
+								this.byId.set(id, { ...obj, value });
+								return getIncreaseRangeAP(5, 8, value);
+							}
+							return 0;
+						}
+						case Categories.TALENTS: {
+							if (typeof value === 'number') {
+								this.byId.set(id, { ...obj, value });
+								return getIncreaseRangeAP(obj.ic, obj.value, value);
+							}
+							return 0;
+						}
 					}
-					return 0;
 				}
-
-				case Categories.TALENTS: {
-					if (typeof value === 'number') {
-						const values: number[] = Array.from({ length: value - obj.value }, (_, i) => i + obj.value);
-						this.byId[id as string] = IncreasableUtils.set(obj, value);
-						return values.map(e => final(obj.ic, e)).reduce((a, b) => a + b, 0);
-					}
-					return 0;
-				}
-
-				case Categories.ADVANTAGES:
-				case Categories.DISADVANTAGES:
-				case Categories.SPECIAL_ABILITIES: {
+			}
+			else {
+				const { id, sid, sid2, tier } = req;
+				if (typeof id === 'string') {
+					const obj = get(id) as Data.ActivatableInstance & { tiers?: number };
 					let cost;
 					const activeObject = { sid: sid as string | number | undefined, sid2, tier };
 
-					const checkIfActive = (e: Data.ActiveObject) => Object.keys(activeObject).every((key: keyof Data.ActiveObject) => {
-						return activeObject[key] === e[key];
-					});
+					const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
 					if (!obj.active.find(checkIfActive)) {
-						(this.byId[id as string] as Data.ActivatableInstance).active.push(activeObject);
-						this.byId = {
-							...this.byId,
-							...DependentUtils.addDependencies(obj),
-						};
+						(this.byId.get(id as string) as Data.ActivatableInstance).active.push(activeObject);
+						this.mergeIntoList(DependentUtils.addDependencies(obj));
 						if (obj.tiers && tier) {
 							cost = (obj.cost as number) * tier;
 						}
@@ -384,8 +274,8 @@ class ListStoreStatic extends Store {
 							cost = obj.cost as number;
 						}
 						if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
-							const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && !!e.active);
-							const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && !!e.active);
+							const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
+							const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
 							const index = isKar ? 2 : isMag ? 1 : 0;
 
 							cost = {
@@ -418,87 +308,127 @@ class ListStoreStatic extends Store {
 
 	getSpareAPForCombatTechniques() {
 		const allCombatTechniques = this.getAllByCategory(Categories.COMBAT_TECHNIQUES) as Data.CombatTechniqueInstance[];
-		const combatTechniqueValueMax = ELStore.getStart().maxCombatTechniqueRating;
-		const valueTooHigh = allCombatTechniques.filter(e => e.value > combatTechniqueValueMax);
+		const maxCombatTechniqueRating = ELStore.getStart().maxCombatTechniqueRating;
+		const valueTooHigh = allCombatTechniques.filter(e => e.value > maxCombatTechniqueRating);
 		valueTooHigh.forEach(e => {
-			this.byId[e.id] = IncreasableUtils.set(e, combatTechniqueValueMax);
+			this.byId.set(e.id, IncreasableUtils.set(e, maxCombatTechniqueRating));
 		});
 		return valueTooHigh.reduce<number>((ap, instance) => {
-			const values: number[] = Array.from({ length: instance.value - combatTechniqueValueMax }, (_, i) => i + combatTechniqueValueMax + 1);
-			return ap + values.map(e => final(instance.ic, e)).reduce((a, b) => a + b, 0);
+			return ap + getIncreaseRangeAP(instance.ic, maxCombatTechniqueRating, instance.value);
 		}, 0);
 	}
 
 	private activate(id: string) {
-		(this.byId[id] as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = true;
+		(this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = true;
 	}
 
 	private activateSpell(id: string) {
-		if (this.byId[id].category === Categories.CANTRIPS) {
-			this.activateCantrip(id);
-		}
-		else {
-			this.mergeIntoList(SpellUtils.activate(this.byId[id] as Data.SpellInstance));
+		const entry = this.byId.get(id);
+		if (entry) {
+			if (entry.category === Categories.CANTRIPS) {
+				this.activateCantrip(id);
+			}
+			else {
+				this.mergeIntoList(SpellUtils.activate(entry as Data.SpellInstance));
+			}
 		}
 	}
 
 	private activateCantrip(id: string) {
-		this.mergeIntoList(SpellUtils.activateCantrip(this.byId[id] as Data.CantripInstance));
+		this.mergeIntoList(SpellUtils.activateCantrip(this.byId.get(id) as Data.CantripInstance));
 	}
 
 	private deactivate(id: string) {
-		(this.byId[id] as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = false;
+		(this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = false;
 	}
 
 	private deactivateSpell(id: string) {
-		if (this.byId[id].category === Categories.CANTRIPS) {
-			this.deactivateCantrip(id);
-		}
-		else {
-			this.mergeIntoList(SpellUtils.deactivate(this.byId[id] as Data.SpellInstance));
+		const entry = this.byId.get(id);
+		if (entry) {
+			if (entry.category === Categories.CANTRIPS) {
+				this.deactivateCantrip(id);
+			}
+			else {
+				this.mergeIntoList(SpellUtils.deactivate(entry as Data.SpellInstance));
+			}
 		}
 	}
 
 	private deactivateCantrip(id: string) {
-		this.mergeIntoList(SpellUtils.deactivateCantrip(this.byId[id] as Data.CantripInstance));
+		this.mergeIntoList(SpellUtils.deactivateCantrip(this.byId.get(id) as Data.CantripInstance));
 	}
 
 	private addPoint(id: string) {
-		this.byId[id] = IncreasableUtils.addPoint(this.byId[id] as Data.IncreasableInstance);
+		this.byId.set(id, IncreasableUtils.addPoint(this.byId.get(id) as Data.IncreasableInstance));
 	}
 
 	private removePoint(id: string) {
-		this.byId[id] = IncreasableUtils.removePoint(this.byId[id] as Data.IncreasableInstance);
+		this.byId.set(id, IncreasableUtils.removePoint(this.byId.get(id) as Data.IncreasableInstance));
 	}
 
 	private setValue(id: string, value: number) {
-		this.byId[id] = IncreasableUtils.set(this.byId[id] as Data.IncreasableInstance, value);
+		this.byId.set(id, IncreasableUtils.set(this.byId.get(id) as Data.IncreasableInstance, value));
 	}
 
 	private addSR(id: string, value: number) {
-		this.byId[id] = IncreasableUtils.add(this.byId[id] as Data.IncreasableInstance, value);
+		this.byId.set(id, IncreasableUtils.add(this.byId.get(id) as Data.IncreasableInstance, value));
 	}
 
-	private activateDASA(id: string, args: Data.ActivateArgs) {
-		this.mergeIntoList(ActivatableUtils.activate(this.byId[id] as Data.ActivatableInstance, args));
+	private undoActivatableActivation(id: string, index?: number, active?: Data.ActiveObject) {
+		if (index && active) {
+			const adds = [];
+			let sid;
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_16':
+				case 'DISADV_48':
+					sid = active.sid as string;
+					break;
+				case 'SA_10':
+					adds.push({ id: active.sid as string, value: (this.byId.get(id) as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+					break;
+			}
+			(this.byId.get(id) as Data.ActivatableInstance).active.splice(index, 1);
+			this.mergeIntoList(DependentUtils.removeDependencies(this.byId.get(id) as Data.ActivatableInstance, adds, sid));
+		}
 	}
 
-	private deactivateDASA(id: string, index: number) {
-		this.mergeIntoList(ActivatableUtils.deactivate(this.byId[id] as Data.ActivatableInstance, index));
+	private undoActivatableDeactivation(id: string, index: number, active?: Data.ActiveObject) {
+		if (active) {
+			(this.byId.get(id) as Data.ActivatableInstance).active.splice(index, 0, active);
+			const adds = [];
+			let sid;
+			switch (id) {
+				case 'ADV_4':
+				case 'ADV_16':
+				case 'DISADV_48':
+					sid = active.sid as string;
+					break;
+				case 'SA_10':
+					adds.push({ id: active.sid as string, value: (this.byId.get(id) as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+					break;
+			}
+			DependentUtils.addDependencies(this.byId.get(id) as Data.ActivatableInstance, adds, sid);
+		}
+	}
+
+	private activateActivatable(id: string, args: Data.ActivateArgs) {
+		this.mergeIntoList(ActivatableUtils.activate(this.byId.get(id) as Data.ActivatableInstance, args));
+	}
+
+	private deactivateActivatable(id: string, index: number) {
+		this.mergeIntoList(ActivatableUtils.deactivate(this.byId.get(id) as Data.ActivatableInstance, index));
 		if (id === 'SA_125') {
 			this.setValue('CT_17', 6);
 		}
 	}
 
 	private updateTier(id: string, index: number, tier: number) {
-		this.byId[id] = ActivatableUtils.setTier(this.byId[id] as Data.ActivatableInstance, index, tier);
+		this.byId.set(id, ActivatableUtils.setTier(this.byId.get(id) as Data.ActivatableInstance, index, tier));
 	}
 
-	private mergeIntoList(list: Data.ToListById<Data.Instance>) {
-		this.byId = {
-			...this.byId,
-			...list,
-		};
+	private mergeIntoList(list: Map<string, Data.Instance>) {
+		this.byId = new Map([...this.byId, ...list]);
 	}
 
 	private init(data: RawTables, locales: RawLocaleList) {
@@ -506,7 +436,6 @@ class ListStoreStatic extends Store {
 		const locale = LocaleStore.getLocale();
 		if (locale) {
 			this.byId = init(data, locales[locale]);
-			this.allIds = Object.keys(this.byId);
 		}
 	}
 
@@ -514,7 +443,7 @@ class ListStoreStatic extends Store {
 		attr.values.forEach(e => {
 			const [ id, value, mod ] = e;
 			this.setValue(id, value);
-			(this.byId[id] as Data.AttributeInstance).mod = mod;
+			(this.byId.get(id) as Data.AttributeInstance).mod = mod;
 		});
 		const flatSkills = { ...talents, ...ct };
 		Object.keys(flatSkills).forEach(id => {
@@ -523,42 +452,55 @@ class ListStoreStatic extends Store {
 		const activateSkills = { ...spells, ...liturgies };
 		Object.keys(activateSkills).forEach(id => {
 			const value = activateSkills[id];
-			this.activate(id);
-			this.setValue(id, value);
+			const entry = this.byId.get(id);
+			if (entry && entry.category === Categories.SPELLS) {
+				const list = DependentUtils.addDependencies({ ...entry, active: true, value });
+				this.mergeIntoList(list);
+			}
+			else if (entry && entry.category === Categories.LITURGIES) {
+				this.byId.set(id, { ...entry, active: true, value });
+			}
 		});
 		const activateBlessingsLiturgies = [ ...blessings, ...cantrips ];
 		activateBlessingsLiturgies.forEach(id => {
-			this.activate(id);
+			const entry = this.byId.get(id);
+			if (entry && (entry.category === Categories.BLESSINGS || entry.category === Categories.CANTRIPS)) {
+				const list = DependentUtils.addDependencies({ ...entry, active: true });
+				this.mergeIntoList(list);
+			}
 		});
 		Object.keys(activatable).forEach(id => {
 			const values = activatable[id];
-			(this.byId[id] as Data.ActivatableInstance).active = [ ...values.map(e => ({ ...e })) ];
+			(this.byId.get(id) as Data.ActivatableInstance).active = [ ...values.map(e => ({ ...e })) ];
 			switch (id) {
 				case 'ADV_4':
 				case 'ADV_16':
 				case 'DISADV_48':
 					values.forEach(p => {
-						const list = DependentUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, [], p.sid as string);
+						const list = DependentUtils.addDependencies(this.byId.get(id) as Data.ActivatableInstance, [], p.sid as string);
 						this.mergeIntoList(list);
 					});
 					break;
 				case 'SA_10': {
-					const counter = new Map();
+					const counter = new Map<string, number>();
 					values.forEach(p => {
-						if (counter.has(p.sid)) {
-							counter.set(p.sid, counter.get(p.sid) + 1);
-						} else {
-							counter.set(p.sid, 1);
+						if (typeof p.sid === 'string') {
+							const current = counter.get(p.sid);
+							if (current) {
+								counter.set(p.sid, current + 1);
+							} else {
+								counter.set(p.sid, 1);
+							}
+							const addRequire: Reusable.RequiresIncreasableObject = { id: p.sid, value: counter.get(p.sid)! * 6 };
+							const list = DependentUtils.addDependencies(this.byId.get(id) as Data.ActivatableInstance, [addRequire]);
+							this.mergeIntoList(list);
 						}
-						const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 } as Data.RequirementObject;
-						const list = DependentUtils.addDependencies(this.byId[id] as Data.ActivatableInstance, [addRequire]);
-						this.mergeIntoList(list);
 					});
 					break;
 				}
 				default:
 					values.forEach(() => {
-						const list = DependentUtils.addDependencies(this.byId[id] as Data.ActivatableInstance);
+						const list = DependentUtils.addDependencies(this.byId.get(id) as Data.ActivatableInstance);
 						this.mergeIntoList(list);
 					});
 			}
@@ -582,7 +524,7 @@ class ListStoreStatic extends Store {
 			}
 		};
 		const skillActivateList = new Set<string>();
-		const activatable = new Set<Data.RequirementObject>();
+		const activatable = new Set<Reusable.RequiresActivatableObject>();
 		const languages = new Map<number, number>();
 		const scripts = new Set<number>();
 
@@ -591,10 +533,10 @@ class ListStoreStatic extends Store {
 		if (race) {
 			race.attributes.forEach(e => {
 				const [ mod, id ] = e;
-				(this.byId[id] as Data.AttributeInstance).mod += mod;
+				(this.byId.get(id) as Data.AttributeInstance).mod += mod;
 			});
-			race.autoAdvantages.forEach(e => activatable.add({ id: e }));
-			(this.byId[selections.attrSel] as Data.AttributeInstance).mod = race.attributeSelection[0];
+			race.autoAdvantages.forEach(e => activatable.add({ id: e, active: true }));
+			(this.byId.get(selections.attrSel) as Data.AttributeInstance).mod = race.attributeSelection[0];
 		}
 
 		// Culture selections:
@@ -635,6 +577,12 @@ class ListStoreStatic extends Store {
 			[ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
 				addToSkillRatingList(key, value);
 			});
+			[ ...professionVariant.spells, ...professionVariant.liturgies ].forEach(([ key, value ]) => {
+				skillActivateList.add(key);
+				if (typeof value === 'number') {
+					addToSkillRatingList(key, value);
+				}
+			});
 			professionVariant.specialAbilities.forEach(e => {
 				if (e.active === false) {
 					activatable.forEach(i => {
@@ -654,6 +602,7 @@ class ListStoreStatic extends Store {
 			if (Array.isArray(talentId)) {
 				activatable.add({
 					id: 'SA_10',
+					active: true,
 					sid: selections.specTalentId,
 					sid2: selections.spec,
 				});
@@ -661,6 +610,7 @@ class ListStoreStatic extends Store {
 			else {
 				activatable.add({
 					id: 'SA_10',
+					active: true,
 					sid: talentId,
 					sid2: selections.spec,
 				});
@@ -700,7 +650,7 @@ class ListStoreStatic extends Store {
 		activatable.forEach(req => {
 			const { id, sid, sid2, tier } = req;
 			const obj = get(id as string) as Data.ActivatableInstance;
-			const add: Data.RequirementObject[] = [];
+			const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
 			switch (id) {
 				case 'SA_10':
 					obj.active.push({ sid: sid as string, sid2 });
@@ -718,45 +668,49 @@ class ListStoreStatic extends Store {
 				}
 
 				default:
-					obj.active.push({ sid: sid as string | number | undefined, sid2, tier });
+					if (!Array.isArray(sid)) {
+						obj.active.push({ sid, sid2, tier });
+					}
 					break;
 			}
-			DependentUtils.addDependencies(obj, add);
+			this.mergeIntoList(DependentUtils.addDependencies(obj, add));
 		});
-		(this.byId.SA_28 as Data.SpecialAbilityInstance).active.push(...Array.from(scripts.values()).map(sid => ({ sid })));
-		(this.byId.SA_30 as Data.SpecialAbilityInstance).active.push(...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier })));
+
+		const SA_28 = this.byId.get('SA_28') as Data.SpecialAbilityInstance;
+		const SA_30 = this.byId.get('SA_30') as Data.SpecialAbilityInstance;
+		this.byId.set('SA_28', { ...SA_28, active: [ ...SA_28.active, ...Array.from(scripts.values()).map(sid => ({ sid }))]});
+		this.byId.set('SA_30', { ...SA_30, active: [ ...SA_30.active, ...Array.from(languages.entries()).map(([sid, tier]) => ({ sid, tier }))]});
 	}
 
 	private clear() {
-		for (const id in this.byId) {
-			if (this.byId.hasOwnProperty(id)) {
-				const e = this.byId[id];
-				if (e.category === Categories.ATTRIBUTES) {
-					this.byId[id] = AttributeUtils.reset(e);
-				}
-				else if (e.category === Categories.COMBAT_TECHNIQUES) {
-					this.byId[id] = CombatTechniqueUtils.reset(e);
-				}
-				else if (e.category === Categories.LITURGIES) {
-					this.byId[id] = LiturgyUtils.reset(e);
-				}
-				else if (e.category === Categories.SPELLS) {
-					this.byId[id] = SpellUtils.reset(e);
-				}
-				else if (e.category === Categories.BLESSINGS) {
-					this.byId[id] = LiturgyUtils.resetBlessing(e);
-				}
-				else if (e.category === Categories.CANTRIPS) {
-					this.byId[id] = SpellUtils.resetCantrip(e);
-				}
-				else if (e.category === Categories.TALENTS) {
-					this.byId[id] = TalentUtils.reset(e);
-				}
-				else if (e.category === Categories.ADVANTAGES || e.category === Categories.DISADVANTAGES || e.category === Categories.SPECIAL_ABILITIES) {
-					this.byId[id] = ActivatableUtils.reset(e);
-				}
+		this.byId = new Map([...this.byId].map((e): [string, Data.Instance] => {
+			const entry = e[1];
+			if (entry.category === Categories.ATTRIBUTES) {
+				return [e[0], AttributeUtils.reset(entry)];
 			}
-		}
+			else if (entry.category === Categories.COMBAT_TECHNIQUES) {
+				return [e[0], CombatTechniqueUtils.reset(entry)];
+			}
+			else if (entry.category === Categories.LITURGIES) {
+				return [e[0], LiturgyUtils.reset(entry)];
+			}
+			else if (entry.category === Categories.SPELLS) {
+				return [e[0], SpellUtils.reset(entry)];
+			}
+			else if (entry.category === Categories.BLESSINGS) {
+				return [e[0], LiturgyUtils.resetBlessing(entry)];
+			}
+			else if (entry.category === Categories.CANTRIPS) {
+				return [e[0], SpellUtils.resetCantrip(entry)];
+			}
+			else if (entry.category === Categories.TALENTS) {
+				return [e[0], TalentUtils.reset(entry)];
+			}
+			else if (entry.category === Categories.ADVANTAGES || entry.category === Categories.DISADVANTAGES || entry.category === Categories.SPECIAL_ABILITIES) {
+				return [e[0], ActivatableUtils.reset(entry)];
+			}
+			return e;
+		}));
 	}
 }
 

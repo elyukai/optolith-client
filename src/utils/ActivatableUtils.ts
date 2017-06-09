@@ -1,8 +1,10 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { get, getAllByCategoryGroup } from '../stores/ListStore';
-import { AbilityInstance, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, RequirementObject, SelectionObject, SpecialAbilityInstance, ToListById } from '../types/data.d';
+import { AbilityInstanceExtended, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SpecialAbilityInstance } from '../types/data.d';
+import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
-import { validateInstance, validateInstanceRequirementObject } from './validate';
+import { isRequiringActivatable, validate, validateObject } from './RequirementUtils';
+import { getRoman } from './roman';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
 	return obj.max !== 1;
@@ -84,7 +86,7 @@ export function isActivatable(obj: ActivatableInstance): boolean {
 			return false;
 		}
 	}
-	return validateInstance(obj.reqs, obj.id);
+	return validate(obj.reqs, obj.id);
 }
 
 export function isDeactivatable(obj: ActivatableInstance, sid?: string | number): boolean {
@@ -109,9 +111,9 @@ export function isDeactivatable(obj: ActivatableInstance, sid?: string | number)
 	const dependencies = obj.dependencies.filter(e => {
 		if (typeof e === 'object' && e.origin) {
 			const origin = get(e.origin) as SpecialAbilityInstance;
-			const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && !!e.origin && r.id.includes(e.origin)) as RequirementObject | undefined;
+			const req = origin.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && !!e.origin && r.id.includes(e.origin)) as AllRequirementObjects | undefined;
 			if (req) {
-				const resultOfAll = (req.id as string[]).map(e => validateInstanceRequirementObject({ ...req, id: e }, obj.id));
+				const resultOfAll = (req.id as string[]).map(e => validateObject({ ...req, id: e } as AllRequirementObjects, obj.id));
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? true : false;
 			}
 			return true;
@@ -159,8 +161,8 @@ export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | 
 	return undefined;
 }
 
-export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): ToListById<AbilityInstance> {
-	const adds: RequirementObject[] = [];
+export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): Map<string, AbilityInstanceExtended> {
+	const adds: AllRequirementTypes[] = [];
 	let active: ActiveObject | undefined;
 	let sidNew;
 	switch (obj.id) {
@@ -169,6 +171,9 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 		case 'DISADV_48':
 			active = { sid: sel };
 			sidNew = sel as string;
+			break;
+		case 'ADV_68':
+			active = { sid: sel, sid2: input };
 			break;
 		case 'DISADV_1':
 		case 'DISADV_34':
@@ -240,8 +245,8 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 	return DependentUtils.addDependencies(obj, adds, sidNew);
 }
 
-export function deactivate(obj: ActivatableInstance, index: number): ToListById<AbilityInstance> {
-	const adds: RequirementObject[] = [];
+export function deactivate(obj: ActivatableInstance, index: number): Map<string, AbilityInstanceExtended> {
+	const adds: AllRequirementTypes[] = [];
 	const sid = obj.active[index].sid;
 	let sidOld;
 	switch (obj.id) {
@@ -290,15 +295,19 @@ export function getFullName(obj: string | ActiveViewObject): string {
 	}
 	const { tiers, id, tier } = obj;
 	let { name } = obj;
-	const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 	if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 		if (id === 'SA_30' && tier === 4) {
 			name += ` MS`;
 		}
 		else {
-			name += tier && ` ${roman[tier - 1]}`;
+			name += tier && ` ${getRoman(tier)}`;
 		}
 	}
-
 	return name;
+}
+
+export function getGroupIndex(obj: ActivatableInstance): 0 | 1 | 2 {
+	const isBlessed = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && isRequiringActivatable(e) && !!e.active);
+	const isMagical = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && isRequiringActivatable(e) && !!e.active);
+	return isBlessed ? 2 : isMagical ? 1 : 0;
 }

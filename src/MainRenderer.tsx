@@ -12,7 +12,6 @@ declare global {
 
 import * as React from 'react';
 import { render } from 'react-dom';
-import './main.scss';
 import { loadInitialData } from './utils/FileAPIUtils';
 import { Router } from './views/Router';
 

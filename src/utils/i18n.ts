@@ -1,9 +1,16 @@
 import { LocaleStore } from '../stores/LocaleStore';
 import { UILocale } from '../types/data.d';
 
-export function translate<T extends keyof UILocale>(key: T): UILocale[T] {
+export function translate<T extends keyof UILocale>(key: T, ...params: (string | number)[]): UILocale[T] {
 	const messages = LocaleStore.getMessages();
-	return messages[key];
+	const message = messages[key];
+	if (params.length > 0 && typeof message === 'string') {
+		return message.replace(/\{(\d+)\}/g, (_, p1) => {
+			const param = params[Number.parseInt(p1)];
+			return typeof param === 'number' ? param.toString() : param;
+		});
+	}
+	return message;
 }
 
 export function getLocale() {
@@ -11,7 +18,7 @@ export function getLocale() {
 }
 
 export function localizeNumber(number: number) {
-	const locale = LocaleStore.getLocale();
+	const locale = LocaleStore.getLocale() || LocaleStore.getSystemLocale();
 	return number.toLocaleString(locale);
 }
 

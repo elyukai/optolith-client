@@ -63,3 +63,14 @@
 62;Schutzgeist;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[9,10]}"
 63;Weitreichende Zaubermelodien;5;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}&{""id"":""DISADV_62"",""active"":false}"
 64;Weitreichende Zaubertänze;5;3;1;;"{""id"":""SA_86"",""active"":true,""sid"":8}&{""id"":""DISADV_63"",""active"":false}"
+65;Basiliskentöter;10;;1;;
+66;Drachentöter;10;;1;;
+67;Feenfreund;3;;1;;
+68;Hass auf …;sel;;1;1?Häufig?15&2?Gelegentlich?10&3?Selten?5;
+69;Saumagen;2;2;1;;
+70;Tierfreund;10;;1;;
+71;Wasserlebewesen;15;;1;;RCP
+72;Allerweltsname;2;;1;;"{""id"":""ADV_74"",""active"":false}&{""id"":""DISADV_67"",""active"":false}&{""id"":""DISADV_69"",""active"":false}&{""id"":""DISADV_70"",""active"":false}"
+73;Gutes Namensgedächtnis;2;;1;;"{""id"":""DISADV_68"",""active"":false}"
+74;Heldenhafter Name;8;;1;;"{""id"":""ADV_72"",""active"":false}&{""id"":""DISADV_67"",""active"":false}&{""id"":""DISADV_69"",""active"":false}&{""id"":""DISADV_70"",""active"":false}"
+75;Schnell wieder auf den Beinen;2;;1;;

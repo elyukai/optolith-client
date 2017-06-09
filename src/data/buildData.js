@@ -1,4 +1,4 @@
-const { readFileSync, writeFile } = require('fs');
+const { readFile, readFileSync, writeFile } = require('fs');
 const { convertRequirements, splitList } = require('./buildUtils');
 const csvToArray = require('./csvToArray');
 
@@ -124,11 +124,11 @@ function iterateProfessions(array) {
 		}) : [];
 		obj.sa = obj.sa ? obj.sa.split('&').map(e => JSON.parse(e)) : [];
 
-		obj.combattech = obj.combattech.split('&').map(e => {
+		obj.combattech = obj.combattech ? obj.combattech.split('&').map(e => {
 			e = e.split('?');
 			e[1] = Number.parseInt(e[1]);
 			return e;
-		});
+		}) : [];
 
 		obj.talents = obj.talents.split('&').map(e => {
 			e = e.split('?');
@@ -188,6 +188,18 @@ function iterateProfessionVariants(array) {
 		});
 
 		obj.talents = !obj.talents ? [] : obj.talents.split('&').map(e => {
+			e = e.split('?');
+			e[1] = Number.parseInt(e[1]);
+			return e;
+		});
+
+		obj.spells = !obj.spells ? [] : obj.spells.split('&').map(e => {
+			e = e.split('?');
+			e[1] = Number.parseInt(e[1]);
+			return e;
+		});
+
+		obj.chants = !obj.chants ? [] : obj.chants.split('&').map(e => {
 			e = e.split('?');
 			e[1] = Number.parseInt(e[1]);
 			return e;
@@ -282,7 +294,7 @@ function iterateSpells(array) {
 	for (const obj of array) {
 		obj.id = 'SPELL_' + obj.id;
 		delete obj.name;
-		obj.check = obj.check ? obj.check.split('&').map((e,i) => i < 3 ? `ATTR_${e}` : e) : [];
+		obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
 		obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
 		obj.req = convertRequirements(obj.req);
 		list[obj.id] = obj;
@@ -307,7 +319,7 @@ function iterateChants(array) {
 	for (const obj of array) {
 		obj.id = 'LITURGY_' + obj.id;
 		delete obj.name;
-		obj.check = obj.check ? obj.check.split('&').map((e,i) => i < 3 ? `ATTR_${e}` : e) : [];
+		obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
 		obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
 		obj.aspc = obj.aspc.split('&').map(e => Number.parseInt(e));
 		obj.req = obj.req ? obj.req.split('&').map(e => e === 'RCP' ? 'RCP' : JSON.parse(e)) : [];

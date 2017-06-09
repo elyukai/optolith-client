@@ -5,3 +5,4 @@ npm-debug.log*
 /data/
 ~$TDE5.xlsx
 /dist/
+.rpt2_cache/

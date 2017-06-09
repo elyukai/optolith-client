@@ -4,7 +4,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { AuthStore } from '../stores/AuthStore';
 import { HerolistStore } from '../stores/HerolistStore';
-import { HeroForSave } from '../types/data.d';
+import { HeroForSave, ToListById } from '../types/data.d';
 import { RawHero, RawHerolist } from '../types/rawdata.d';
 import { alert } from '../utils/alert';
 
@@ -123,7 +123,7 @@ export async function login(username: string, password: string): Promise<void> {
 			displayName: string;
 			email: string;
 			sessionToken: string;
-			heroes: RawHero[];
+			heroes: ToListById<RawHero>;
 		};
 		const { name, displayName, email, sessionToken, heroes } = result;
 		ServerActions.receiveLogin(name, displayName, email, sessionToken, heroes);

@@ -2,7 +2,7 @@ import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
 import { PhaseStore } from '../stores/PhaseStore';
 import { SpellsStore } from '../stores/SpellsStore';
-import { AbilityInstance, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
+import { AbilityInstanceExtended, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 import { addDependencies, removeDependencies } from './DependentUtils';
 
@@ -38,19 +38,19 @@ export function isDecreasable(obj: SpellInstance): boolean {
 	return true;
 }
 
-export function activate(obj: SpellInstance): ToListById<AbilityInstance> {
+export function activate(obj: SpellInstance): Map<string, AbilityInstanceExtended> {
 	return addDependencies({ active: true, ...obj });
 }
 
-export function activateCantrip(obj: CantripInstance): ToListById<AbilityInstance> {
+export function activateCantrip(obj: CantripInstance): Map<string, AbilityInstanceExtended> {
 	return addDependencies({ active: true, ...obj });
 }
 
-export function deactivate(obj: SpellInstance): ToListById<AbilityInstance> {
+export function deactivate(obj: SpellInstance): Map<string, AbilityInstanceExtended> {
 	return removeDependencies({ active: false, ...obj });
 }
 
-export function deactivateCantrip(obj: CantripInstance): ToListById<AbilityInstance> {
+export function deactivateCantrip(obj: CantripInstance): Map<string, AbilityInstanceExtended> {
 	return removeDependencies({ active: false, ...obj });
 }
 

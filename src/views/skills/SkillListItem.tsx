@@ -7,6 +7,7 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { get } from '../../stores/ListStore';
 import { AttributeInstance } from '../../types/data.d';
+import * as secondaryAttributes from '../../utils/secondaryAttributes';
 
 export interface SkillListItemProps {
 	activateDisabled?: boolean;
@@ -15,7 +16,8 @@ export interface SkillListItemProps {
 	addValues?: Array<{ className: string; value?: string | number }>;
 	check?: string[];
 	checkDisabled?: boolean;
-	checkmod?: string;
+	checkmod?: 'SPI' | 'TOU';
+	children?: React.ReactNode;
 	ic?: number;
 	id: string;
 	insertTopMargin?: boolean;
@@ -40,6 +42,10 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 		}
 	}
 
+	shouldComponentUpdate(nextProps: SkillListItemProps) {
+		return this.props.sr !== nextProps.sr || this.props.children !== nextProps.children;
+	}
+
 	render() {
 		const { typ, untyp, name, sr, check, checkDisabled, checkmod, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
@@ -58,7 +64,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 					<div key={attr + index} className={'check ' + attr}>{(get(attr) as AttributeInstance).short}</div>
 				));
 				if (checkmod) {
-					values.push(<div key="mod" className="check mod">+{checkmod}</div>);
+					values.push(<div key="mod" className="check mod">+{secondaryAttributes.get(checkmod).short}</div>);
 				}
 			}
 		}

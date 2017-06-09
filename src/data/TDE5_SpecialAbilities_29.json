@@ -1,0 +1,20 @@
+[
+	{"id":1,"name":"Liebesroman","talent":["TAL_16",4]},
+	{"id":2,"name":"Poesie","talent":["TAL_18",4]},
+	{"id":3,"name":"Hetzschriften","talent":["TAL_15",4]},
+	{"id":4,"name":"Kriminalgeschichten","talent":["TAL_19",4]},
+	{"id":5,"name":"Märchen","talent":["TAL_21",4]},
+	{"id":6,"name":"Romane","talent":["TAL_21",4]},
+	{"id":7,"name":"Fachpublikationen: Brett- & Glücksspiel","talent":["TAL_31",4]},
+	{"id":8,"name":"Fachpublikationen: Geographie","talent":["TAL_32",4]},
+	{"id":9,"name":"Fachpublikationen: Geschichtswissen","talent":["TAL_33",4]},
+	{"id":10,"name":"Fachpublikationen: Götter & Kulte","talent":["TAL_34",4]},
+	{"id":11,"name":"Fachpublikationen: Kriegskunst","talent":["TAL_35",4]},
+	{"id":12,"name":"Fachpublikationen: Magiekunde","talent":["TAL_36",4]},
+	{"id":13,"name":"Fachpublikationen: Mechanik","talent":["TAL_37",4]},
+	{"id":14,"name":"Fachpublikationen: Rechnen","talent":["TAL_38",4]},
+	{"id":15,"name":"Fachpublikationen: Rechtskunde","talent":["TAL_39",4]},
+	{"id":16,"name":"Fachpublikationen: Sagen & Legenden","talent":["TAL_40",4]},
+	{"id":17,"name":"Fachpublikationen: Sphärenkunde","talent":["TAL_41",4]},
+	{"id":18,"name":"Fachpublikationen: Sternkunde","talent":["TAL_42",4]}
+]

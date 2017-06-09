@@ -303,8 +303,37 @@ class AttributeStoreStatic extends Store {
 		let value = 0;
 		switch (id) {
 			case 'SA_92':
+			case 'SA_378':
+			case 'SA_406':
+			case 'SA_457':
 				value = 2;
 				break;
+			case 'SA_369':
+			case 'SA_370':
+			case 'SA_371':
+			case 'SA_372':
+			case 'SA_373':
+			case 'SA_395':
+			case 'SA_396':
+			case 'SA_397':
+			case 'SA_398':
+			case 'SA_399':
+			case 'SA_470':
+			case 'SA_471':
+			case 'SA_472':
+			case 'SA_473':
+			case 'SA_474':
+				value = 1;
+				break;
+			case 'SA_379':
+				value = 4;
+				break;
+			case 'SA_380':
+				value = 8;
+				break;
+
+			default:
+				return 0;
 		}
 		return value * modifier;
 	}

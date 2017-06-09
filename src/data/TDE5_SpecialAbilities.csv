@@ -1,486 +1,502 @@
-﻿id;name;ap;max;sel;req;gr
-1;Analytiker;5;1;;"{""id"":""TAL_36"",""value"":4}";1
-2;Anführer;10;1;;"{""id"":""TAL_35"",""value"":4}";1
-3;Berufsgeheimnis;sel;;;;1
-4;Dokumentfälscher;5;1;;"{""id"":""TAL_54"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
-5;Eiserner Wille I;15;1;;;1
-6;Eiserner Wille II;15;1;;"{""id"":""SA_5"",""active"":true}";1
-7;Fächersprache;3;1;;"{""id"":""TAL_18"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
-8;Fallen entschärfen;5;1;;"{""id"":""TAL_37"",""value"":4}&{""id"":""TAL_57"",""value"":4}";1
-9;Falschspielen;5;1;;"{""id"":""TAL_31"",""value"":8}";1
-10;Fertigkeitsspezialisierung;sel;;;;1
-11;Fischer;3;1;;"{""id"":""TAL_26"",""value"":4}&{""id"":""TAL_13"",""value"":4}";1
-12;Füchsisch;3;1;;"{""id"":""TAL_19"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
-13;Geländekunde;15;;;;1
-14;Gildenrecht;2;1;;"{""id"":""TAL_39"",""value"":4}";1
-15;Glasbläserei;2;1;;"{""id"":""TAL_58"",""value"":4}";1
-16;Hehlerei;5;1;;"{""id"":""TAL_19"",""value"":8}&{""id"":""TAL_46"",""value"":4}";1
-17;Heraldik;2;1;;"{""id"":""TAL_18"",""value"":4}";1
-18;Instrumente bauen;2;1;;;1
-19;Jäger;5;1;;"{""id"":""TAL_24"",""value"":4}&{""id"":""TAL_20"",""value"":4}&{""id"":""TAL_13"",""value"":4}";1
-20;Kartographie;5;1;;"{""id"":""TAL_32"",""value"":8}&{""id"":""TAL_28"",""value"":4}&{""id"":""TAL_54"",""value"":4}";1
-21;Lippenlesen;10;1;;"{""id"":""TAL_10"",""value"":4}&{""id"":""DISADV_5"",""active"":false}";1
-22;Meister der Improvisation;10;1;;;1
-23;Ortskenntnis;2;;;;1
-24;Rosstäuscher;4;1;;"{""id"":""TAL_46"",""value"":4}&{""id"":""TAL_29"",""value"":8}";1
-25;Sammler;2;1;;"{""id"":""TAL_28"",""value"":4}&{""id"":""TAL_30"",""value"":4}";1
-26;Schmerzen unterdrücken;20;1;;"{""id"":""TAL_8"",""value"":4}";1
-27;Schnapsbrennerei;2;1;;"{""id"":""TAL_43"",""value"":4}&{""id"":""TAL_52"",""value"":4}";1
-28;Schrift;sel;;;"{""id"":""DISADV_5"",""active"":false}";1
-29;Schriftstellerei;2;;;;1
-30;Sprache;2;;;;1
-31;Tierstimmen imitieren;5;1;;"{""id"":""TAL_29"",""value"":4}";1
-32;Töpferei;2;1;;"{""id"":""TAL_58"",""value"":4}";1
-33;Wettervorhersage;2;1;;"{""id"":""TAL_30"",""value"":4}";1
-34;Zahlenmystik;2;1;;"{""id"":""TAL_38"",""value"":8}&{""id"":""TAL_40"",""value"":4}";1
-35;Attacke verbessern;5;1;;;2
-36;Ausweichen verbessern;5;1;;;2
-37;Eigenschaft verbessern;5;1;;;2
-38;Fernkampf verbessern;5;1;;;2
-39;Parade verbessern;5;1;;;2
-40;Wachsamkeit;10;1;;;2
-41;Aufmerksamkeit;10;1;;"{""id"":""ATTR_3"",""value"":13}";3
-42;Belastungsgewöhnung I;20;1;;"{""id"":""ATTR_7"",""value"":13}";3
-43;Belastungsgewöhnung II;35;1;;"{""id"":""ATTR_7"",""value"":15}&{""id"":""SA_42"",""active"":true}";3
-44;Beidhändiger Kampf I;20;1;;"{""id"":""ATTR_6"",""value"":13}";3
-45;Beidhändiger Kampf II;35;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_44"",""active"":true}";3
-46;Berittener Kampf;20;1;;"{""id"":""TAL_6"",""value"":10}";3
-47;Berittener Schütze;10;1;;"{""id"":""SA_46"",""active"":true}";3
-48;Einhändiger Kampf;10;1;;"{""id"":""ATTR_6"",""value"":13}";3
-49;Entwaffnen;40;1;;"{""id"":""ATTR_6"",""value"":15}";3
-50;Feindgespür;10;1;;"{""id"":""ATTR_3"",""value"":15}";3
-51;Finte I;15;1;;"{""id"":""ATTR_6"",""value"":13}";3
-52;Finte II;20;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_51"",""active"":true}";3
-53;Finte III;25;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_52"",""active"":true}";3
-54;Haltegriff;5;1;;;3
-55;Hammerschlag;25;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_80"",""active"":true}&{""id"":""SA_83"",""active"":true}";3
-56;Kampfreflexe I;10;1;;"{""id"":""ATTR_3"",""value"":13}";3
-57;Kampfreflexe II;15;1;;"{""id"":""ATTR_3"",""value"":15}&{""id"":""SA_56"",""active"":true}";3
-58;Kampfreflexe III;20;1;;"{""id"":""ATTR_3"",""value"":17}&{""id"":""SA_57"",""active"":true}";3
-59;Klingenfänger;10;1;;"{""id"":""ATTR_6"",""value"":13}";3
-60;Kreuzblock;10;1;;"{""id"":""ATTR_6"",""value"":13}";3
-61;Lanzenangriff;10;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SA_46"",""active"":true}";3
-62;Präziser Schuss/Wurf I;15;1;;"{""id"":""ATTR_3"",""value"":13}";3
-63;Präziser Schuss/Wurf II;20;1;;"{""id"":""ATTR_3"",""value"":15}&{""id"":""SA_62"",""active"":true}";3
-64;Präziser Schuss/Wurf III;25;1;;"{""id"":""ATTR_3"",""value"":17}&{""id"":""SA_63"",""active"":true}";3
-65;Präziser Stich I;15;1;;"{""id"":""ATTR_6"",""value"":13}";3
-66;Präziser Stich II;20;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_65"",""active"":true}";3
-67;Präziser Stich III;25;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_66"",""active"":true}";3
-68;Riposte;40;1;;"{""id"":""ATTR_6"",""value"":15}";3
-69;Rundumschlag I;25;1;;"{""id"":""ATTR_6"",""value"":15}";3
-70;Rundumschlag II;35;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_69"",""active"":true}";3
-71;Schildspalter;15;1;;"{""id"":""ATTR_8"",""value"":13}&{""id"":""SA_81"",""active"":true}";3
-72;Schnellladen;sel;3;1?CT_1?5&2?CT_2?20&3?CT_14?10&4?CT_11?5&5?CT_18?5&6?CT_19?5;"{""id"":""ATTR_5"",""value"":13}";3
-73;Schnellziehen;10;1;;"{""id"":""ATTR_5"",""value"":13}";3
-74;Sturmangriff;25;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SA_80"",""active"":true}&{""id"":""SA_81"",""active"":true}";3
-75;Todesstoß;30;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_67"",""active"":true}&{""id"":""SA_80"",""active"":true}";3
-76;Verbessertes Ausweichen I;15;1;;"{""id"":""TAL_4"",""value"":4}";3
-77;Verbessertes Ausweichen II;20;1;;"{""id"":""TAL_4"",""value"":8}&{""id"":""SA_76"",""active"":true}";3
-78;Verbessertes Ausweichen III;25;1;;"{""id"":""TAL_4"",""value"":12}&{""id"":""SA_77"",""active"":true}";3
-79;Verteidigungshaltung;10;1;;"{""id"":""ATTR_3"",""value"":13}";3
-80;Vorstoß;10;1;;"{""id"":""ATTR_6"",""value"":13}";3
-81;Wuchtschlag I;15;1;;"{""id"":""ATTR_8"",""value"":13}";3
-82;Wuchtschlag II;20;1;;"{""id"":""ATTR_8"",""value"":15}&{""id"":""SA_81"",""active"":true}";3
-83;Wuchtschlag III;25;1;;"{""id"":""ATTR_8"",""value"":17}&{""id"":""SA_82"",""active"":true}";3
-84;Wurf;10;1;;"{""id"":""ATTR_6"",""value"":13}&{""id"":""SA_54"",""active"":true}";3
-85;Zu Fall bringen;20;1;;"{""id"":""ATTR_8"",""value"":13}";3
-86;Tradition;sel;1;1?Gildenmagier?155&2?Hexe?135&3?Elf?125&4?Druide?125&5?Scharlatan?125&6?Zauberbarde?80&7?Zaubertänzer?75&8?Intuitiver Zauberer?50&9?Meistertalentierte?35&10?Qabalyamagier?165;"{""id"":""ADV_50"",""active"":true}";4
-87;Aura verbergen;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_1"",""value"":13}&{""id"":""ATTR_3"",""value"":13}";4
-88;Merkmalskenntnis;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""ADV_50"",""active"":true}";4
-89;Starke Zaubertricks;2;1;;"{""id"":""ADV_50"",""active"":true}";4
-90;Verbotene Pforten;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_1"",""value"":12}";4
-91;Zauberzeichen;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_5"",""value"":12}";4
-92;Bindung des Stabes;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";5
-93;Doppeltes Maß;5;1;;"{""id"":""SA_92"",""active"":true}";5
-94;Ewige Flamme;10;1;;"{""id"":""SA_92"",""active"":true}";5
-95;Flammenschwert;35;1;;"{""id"":""SA_94"",""active"":true}&{""id"":""SA_96"",""active"":true}";5
-96;Kraftfokus;30;1;;"{""id"":""SA_92"",""active"":true}";5
-97;Merkmalsfokus;35;;;"{""id"":""SA_96"",""active"":true}";5
-98;Seil des Adepten;10;1;;"{""id"":""SA_92"",""active"":true}";5
-99;Stab-Apport;15;1;;"{""id"":""SA_92"",""active"":true}";5
-100;Vertrautenbindung;20;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_18"",""active"":false}";6
-101;Flugsalbe;15;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_17"",""active"":false}";6
-102;Tradition;sel;1;1?Praioskirche?130&2?Rondrakirche?150&3?Boronkirche?130&4?Hesindekirche?130&5?Phexkirche?150&6?Perainekirche?110;"{""id"":""ADV_12"",""active"":true}";7
-103;Aspektkenntnis;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":2}&{""id"":""ADV_12"",""active"":true}";7
-104;Fokussierung;8;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":13}";7
-105;Stärke des Glaubens;10;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":15}";7
-106;Starke Segnungen;2;1;;"{""id"":""ADV_12"",""active"":true}";7
-107;Bann-/Schutzkreis gegen Elementargeister;5;1;;;8
-108;Bann-/Schutzkreis gegen Dschinne;15;1;;;8
-109;Bann-/Schutzkreis gegen niedere Dämonen;10;1;;;8
-110;Bann-/Schutzkreis gegen gehörnte Dämonen;15;1;;;8
-111;Abrichter;5;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_29""}";1
-112;Abrollen;8;1;;"{""id"":""TAL_4"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_4""}&{""id"":""DISADV_12"",""active"":false}";1
-113;Ackerbau;2;1;;"{""id"":""TAL_28"",""value"":4}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_28""}";1
-114;Anpeitscher;10;1;;"{""id"":""TAL_35"",""value"":4}";1
-115;Archivar;3;1;;"{""id"":""DISADV_5"",""active"":false}";1
-116;Athlet;20;1;;"{""id"":""TAL_4"",""value"":4}&{""id"":""TAL_5"",""value"":4}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_4""}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_5""}&{""id"":""DISADV_4"",""active"":false}&{""id"":""DISADV_12"",""active"":false}&{""id"":""DISADV_12"",""active"":false}&{""id"":""DISADV_51"",""active"":false,""sid"":1}&{""id"":""DISADV_51"",""active"":false,""sid"":3}&{""id"":""DISADV_51"",""active"":false,""sid"":4}";1
-117;Bauchreden;5;1;;"{""id"":""TAL_2"",""value"":8}&{""id"":""TAL_4"",""value"":4}";1
-118;Bildhauerei;2;1;;"{""id"":""TAL_58"",""value"":8}";1
-119;Bootsbauer;5;1;;"{""id"":""TAL_44"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
-120;Buchdrucker;3;1;;"{""id"":""TAL_43"",""value"":2}&{""id"":""TAL_51"",""value"":4}&{""id"":""TAL_54"",""value"":4}&{""id"":""TAL_59"",""value"":4}";1
-121;Diener;2;1;;"{""id"":""TAL_18"",""value"":4}";1
-122;Drohgebärden;10;1;;"{""id"":""TAL_17"",""value"":4}";1
-123;Ermutigender Gesang;10;1;;"{""id"":""TAL_9"",""value"":8}";1
-124;Faszinierender Gesang;10;1;;"{""id"":""TAL_9"",""value"":8}";1
-125;Feuerschlucker;5;1;;"{""id"":""TAL_2"",""value"":8}&{""id"":""TAL_4"",""value"":4}";1
-126;Freiklettern;6;1;;"{""id"":""TAL_3"",""value"":8}";1
-127;Gestählter Wille;5;1;;"{""id"":""TAL_23"",""value"":8}&{""id"":""DISADV_1"",""active"":false}";1
-128;Guter Gardist, böser Gardist;3;1;;"{""id"":""TAL_17"",""value"":8}&{""id"":""TAL_20"",""value"":4}&{""id"":""TAL_21"",""value"":2}";1
-129;Hauswirtschaft;8;1;;"{""id"":""TAL_46"",""value"":8}&{""id"":""TAL_38"",""value"":4}";1
-130;Iglubau;5;1;;"{""id"":""TAL_30"",""value"":8}&{""id"":""SA_13"",""active"":true,""sid"":2}";1
-131;Kalligraphie;2;1;;"{""id"":""TAL_54"",""value"":4}";1
-132;Kapellmeister;2;1;;"{""id"":""TAL_56"",""value"":8}&{""id"":""TAL_21"",""value"":4}";1
-133;Kohlezeichnungen;2;1;;"{""id"":""TAL_54"",""value"":4}";1
-134;Konditor;2;1;;"{""id"":""TAL_52"",""value"":4}";1
-135;Kristallzucht;2;1;;"{""id"":""TAL_58"",""value"":8}";1
-136;Kupferstich;2;1;;"{""id"":""TAL_52"",""value"":4}&{""id"":""TAL_55"",""value"":4}";1
-137;Kutschenbauer;5;1;;"{""id"":""TAL_45"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
-138;Leibdiener;3;1;;"{""id"":""TAL_18"",""value"":8}&{""id"":""TAL_20"",""value"":4}&{""id"":""SA_121"",""active"":true}";1
-139;Liebling der Massen;4;1;;"{""id"":""TAL_15"",""value"":8}&{""id"":""TAL_20"",""value"":8}";1
-140;Möbel herstellen;2;1;;"{""id"":""TAL_51"",""value"":4}";1
-141;Navigation;10;1;;"{""id"":""TAL_44"",""value"":8}&{""id"":""TAL_38"",""value"":8}&{""id"":""TAL_42"",""value"":8}";1
-142;Ölmalerei;2;1;;"{""id"":""TAL_54"",""value"":4}";1
-143;Opernsänger;2;1;;"{""id"":""TAL_9"",""value"":8}";1
-144;Orientierung unter Tage;3;1;;"{""id"":""TAL_27"",""value"":8}";1
-145;Provozieren;12;1;;"{""id"":""TAL_17"",""value"":8}&{""id"":""TAL_21"",""value"":8}";1
-146;Prunkkleidung herstellen;2;1;;"{""id"":""TAL_59"",""value"":8}";1
-147;Pyromantiker;5;1;;"{""id"":""TAL_43"",""value"":4}&{""id"":""TAL_2"",""value"":8}";1
-148;Rahjasutra-Kenntnisse;3;1;;"{""id"":""TAL_16"",""value"":4}&{""id"":""TAL_20"",""value"":4}";1
-149;Rüstungsbau;15;1;;"{""id"":[""TAL_51"",""TAL_53"",""TAL_55"",""TAL_59""],""value"":8}";1
-150;Schiffsbauer;10;1;;"{""id"":""TAL_44"",""value"":8}&{""id"":""TAL_51"",""value"":8}";1
-151;Schmuck herstellen;2;1;;"{""id"":[""TAL_51"",""TAL_53"",""TAL_55"",""TAL_58""],""value"":4}";1
-152;Schnellschreiber;2;1;;"{""id"":""SA_28"",""active"":true}&{""id"":""SA_30"",""active"":true}";1
-153;Seile herstellen;2;1;;"{""id"":""TAL_25"",""value"":4}";1
-154;Skifahren;4;1;;"{""id"":""TAL_4"",""value"":4}";1
-155;Smutje;3;1;;"{""id"":""TAL_52"",""value"":4}";1
-156;Stellmacherei;4;1;;"{""id"":""TAL_45"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
-157;Tätowierer;2;1;;"{""id"":""TAL_54"",""value"":4}";1
-158;Verführungskunst;5;1;;"{""id"":""TAL_16"",""value"":10}&{""id"":""TAL_18"",""value"":4}";1
-159;Viehzucht;2;1;;"{""id"":""TAL_29"",""value"":4}";1
-160;Waffenbau;12;1;;"{""id"":[""TAL_51"",""TAL_55"",""TAL_58""],""value"":8}";1
-161;Wandmalerei;2;1;;"{""id"":""TAL_54"",""value"":4}&{""id"":""TAL_58"",""value"":4}";1
-162;Empathie;10;1;;;2
-163;Fleischwunde;15;1;;;2
-164;Höhere Prophezeihung;25;1;;"{""id"":""SA_166"",""active"":true}";2
-165;Magiegespür;10;1;;;2
-166;Prophezeihung;5;1;;;2
-167;Armbrust überdrehen;5;1;;"{""id"":""DEX"",""value"":13}";3
-168;Auf Distanz halten I;15;1;;"{""id"":""AGI"",""value"":13}";3
-169;Auf Distanz halten II;20;1;;"{""id"":""AGI"",""value"":15}&{""id"":""SA_168"",""active"":true}";3
-170;Ballistischer Schuss;10;1;;"{""id"":""INT"",""value"":13}&{""id"":""DEX"",""value"":13}&{""id"":""SA_62"",""active"":true}";3
-171;Berittener Flugkampf;10;1;;"{""id"":""TAL_1"",""value"":10}&{""id"":""TAL_6"",""value"":10}";3
-172;Beschützer;20;1;;"{""id"":""AGI"",""value"":15}";3
-173;Betäubungsschlag;15;1;;"{""id"":""STR"",""value"":13}";3
-174;Blindkampf I;10;1;;"{""id"":""INT"",""value"":15}&{""id"":""TAL_10"",""value"":8}";3
-175;Blindkampf II;20;1;;"{""id"":""INT"",""value"":17}&{""id"":""TAL_10"",""value"":12}&{""id"":""SA_174"",""active"":true}";3
-176;Eisenhagel I;15;1;;"{""id"":""DEX"",""value"":15}&{""id"":""SA_72"",""active"":true,""sid"":""CT_14""}";3
-177;Eisenhagel II;20;1;;"{""id"":""DEX"",""value"":17}&{""id"":""SA_176"",""active"":true}";3
-178;Festnageln;20;1;;"{""id"":[""AGI"",""STR""],""value"":13}";3
-179;Gezielter Angriff;10;1;;"{""id"":""AGI"",""value"":13}";3
-180;Gezielter Schuss;10;1;;"{""id"":""DEX"",""value"":13}";3
-181;Herunterstoßen;12;1;;"{""id"":""STR"",""value"":13}";3
-182;Kampf im Wasser;8;1;;"{""id"":""AGI"",""value"":13}";3
-183;Kampfstil-Kombination;50;1;;;3
-184;Klingensturm;25;1;;"{""id"":""SA_48"",""active"":true}";3
-185;Meister der improvisierten Waffen;10;1;;"{""id"":""AGI"",""value"":13}&{""id"":""STR"",""value"":13}";3
-186;Meisterliches Ausweichen;15;1;;"{""id"":""INT"",""value"":13}&{""id"":""SA_77"",""active"":true}";3
-187;Meisterparade;25;1;;"{""id"":[""AGI"",""STR""],""value"":15}";3
-188;Pikenwall;10;1;;"{""id"":""AGI"",""value"":13}";3
-189;Scharfschütze I;15;1;;"{""id"":""INT"",""value"":15}&{""id"":""SA_62"",""active"":true}";3
-190;Scharfschütze II;20;1;;"{""id"":""INT"",""value"":15}&{""id"":""SA_63"",""active"":true}&{""id"":""SA_189"",""active"":true}";3
-191;Schwitzkasten;10;1;;"{""id"":""STR"",""value"":13}&{""id"":""SA_54"",""active"":true}";3
-192;Unterlaufen I;10;1;;"{""id"":""AGI"",""value"":13}";3
-193;Unterlaufen II;15;1;;"{""id"":""AGI"",""value"":15}&{""id"":""SA_192"",""active"":true}";3
-194;Verbessertes Unterlaufen;10;1;;"{""id"":""SA_192"",""active"":true}";3
-195;Verteilter Eisenhagel;10;1;;"{""id"":""SA_176"",""active"":true}";3
-196;Zweihändiger Reiterkampf;5;1;;"{""id"":""SA_46"",""active"":true}";3
-197;Adersin-Stil;15;1;;"{""id"":""AGI"",""value"":13}";9
-198;Baburin-Stil;10;1;;"{""id"":""INT"",""value"":13}";9
-199;Baliho-Stil;12;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_46"",""active"":true}";9
-200;Bornländisches Raufen;5;1;;"{""id"":[""AGI"",""STR""],""value"":13}";10
-201;Cendrasch-Stil;15;1;;"{""id"":""STR"",""value"":13}&{""id"":""RACE"",""value"":[12]}";9
-202;Dajin-Stil;15;1;;"{""id"":""COU"",""value"":13}&{""id"":""AGI"",""value"":13}";9
-203;Elenvina-Stil;15;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_2"",""active"":true}";9
-204;Fedorino-Stil;20;1;;"{""id"":""AGI"",""value"":13}";9
-205;Gladiatoren-Stil;5;1;;"{""id"":[""AGI"",""STR""],""value"":13}";10
-206;Hammerfaust-Stil;10;1;;"{""id"":""STR"",""value"":13}";10
-207;Hruruzat;12;1;;"{""id"":""AGI"",""value"":13}";10
-208;Hylailos-Stil;15;1;;"{""id"":""AGI"",""value"":13}";9
-209;Marwan Sahib-Stil;10;1;;"{""id"":""AGI"",""value"":13}";9
-210;Mengbilla-Stil;15;1;;"{""id"":""COU"",""value"":13}";9
-211;Mercenario-Stil;8;1;;"{""id"":""STR"",""value"":13}";10
-212;Prem-Stil;10;1;;"{""id"":""AGI"",""value"":13}&{""id"":""TAL_4"",""value"":4}&{""id"":""TAL_7"",""value"":4}";9
-213;Ritter des alten Wegs-Stil;12;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_46"",""active"":true}";9
-214;Rondras Trutz-Stil;10;1;;"{""id"":[""AGI"",""STR""],""value"":13}";9
-215;Unauer Schule;10;1;;"{""id"":""INT"",""value"":13}";10
-216;Zyklopäisches Ringen;10;1;;"{""id"":""STR"",""value"":13}";10
-217;Aufspießen;20;1;;"{""id"":[""AGI"",""STR""],""value"":15}&{""id"":""SA_85"",""active"":true}&{""id"":""SA_178"",""active"":true}&{""id"":[""SA_198""],""active"":true}";11
-218;Binden;25;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_197"",""SA_203"",""SA_204"",""SA_485""],""active"":true}";11
-219;Breschenangriff;15;1;;"{""id"":""SA_46"",""active"":true}&{""id"":[""SA_199""],""active"":true}";11
-220;Fahrender Schütze;5;1;;"{""id"":""TAL_45"",""value"":10}&{""id"":[""SA_198""],""active"":true}";11
-221;Frontalangriff;25;1;;"{""id"":""SA_46"",""active"":true}&{""id"":""SA_61"",""active"":true}&{""id"":[""SA_213""],""active"":true}";11
-222;Fußfeger;15;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_207"",""SA_215""],""active"":true}";11
-223;Haltegriff brechen;5;1;;"{""id"":[""SA_200"",""SA_205"",""SA_211"",""SA_216""],""active"":true}";11
-224;Handkantenschlag;10;1;;"{""id"":[""SA_207""],""active"":true}";11
-225;Hohe Klinge;15;1;;"{""id"":[""SA_202"",""SA_214""],""active"":true}";11
-226;Kopfstoß;5;1;;"{""id"":[""SA_200"",""SA_206"",""SA_211""],""active"":true}";11
-227;Mächtiger Lanzenangriff;5;1;;"{""id"":""SA_61"",""active"":true}&{""id"":[""SA_213""],""active"":true}";11
-228;Mächtiger Rundumschlag;10;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_69"",""active"":true}&{""id"":[""SA_201"",""SA_202"",""SA_208""],""active"":true}";11
-229;Meisterlicher Wurf;10;1;;"{""id"":""SA_84"",""active"":true}&{""id"":[""SA_206"",""SA_215"",""SA_216""],""active"":true}";11
-230;Schilddeckung;5;1;;"{""id"":[""SA_203"",""SA_208"",""SA_212""],""active"":true}";11
-231;Schildstoß;8;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_199"",""SA_213""],""active"":true}";11
-232;Schwinger;8;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_206""],""active"":true}";11
-233;Sprungangriff;20;1;;"{""id"":""AGI"",""value"":15}&{""id"":[""SA_208"",""SA_209"",""SA_210""],""active"":true}";11
-234;Sprungtritt;20;1;;"{""id"":[""SA_205"",""SA_207""],""active"":true}";11
-235;Tiefschlag;10;1;;"{""id"":[""SA_200"",""SA_205"",""SA_211""],""active"":true}";11
-236;Tod von Links;10;1;;"{""id"":[""SA_204""],""active"":true}";11
-237;Verkürzte Waffenführung;10;1;;"{""id"":[""SA_197""],""active"":true}";11
-238;Vorbeiziehen;15;1;;"{""id"":""AGI"",""value"":15}&{""id"":[""SA_204"",""SA_485""],""active"":true}";11
-239;Waffenwurf;5;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_203"",""SA_210""],""active"":true}";11
-240;Weiter Schwung;15;1;;"{""id"":[""SA_201"",""SA_202"",""SA_214""],""active"":true}";11
-241;Windmühle;25;1;;"{""id"":[""AGI"",""STR""],""value"":15}&{""id"":[""SA_197"",""SA_199"",""SA_209"",""SA_214"",""SA_485""],""active"":true}";11
-242;Wuchtiger Wurf;15;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_198"",""SA_209"",""SA_212""],""active"":true}";11
-243;Würgegriff;5;1;;"{""id"":""SA_191"",""active"":true}&{""id"":[""SA_215"",""SA_216""],""active"":true}";11
-244;Zertrümmern;5;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_69"",""active"":true}&{""id"":[""SA_201"",""SA_210"",""SA_212""],""active"":true}";11
-245;Befehl Flugangriff;12;1;;"{""id"":""TAL_1"",""value"":8}&{""id"":""SA_171"",""active"":true}";12
-246;Befehl Klammergriff;12;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
-247;Befehl Mächtiger Schlag;10;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
-248;Befehl Sichelangriff;10;1;;"{""id"":""TAL_45"",""value"":10}";12
-249;Befehl Trampeln;15;1;;"{""id"":""TAL_29"",""value"":12}&{""id"":""SA_46"",""active"":true}";12
-250;Befehl Überrennen;12;1;;"{""id"":""TAL_29"",""value"":12}&{""id"":""SA_46"",""active"":true}";12
-251;Abgeschwächter Zauber;5;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}";4
-252;Adaption (Zauber);5&10&15&20;2;SPELLS;"{""id"":""ADV_50"",""active"":true}";4
-253;Alchimieverstärkung;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""TAL_43"",""value"":12}";4
-254;Astrale Meditation;15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}";4
-255;Aurapanzer;12;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-256;Druidenrache;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}&{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_86"",""active"":true,""sid"":4}";4
-257;Eisen- und Stahlverzauberung;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SPELL_46"",""value"":14}&{""id"":""TAL_36"",""value"":10}&{""id"":""TAL_55"",""value"":8}";4
-258;Entschwörung (Dämonen);5;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_152"",""active"":true}";4
-259;Entschwörung (Elementare);5;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_131"",""active"":true}";4
-260;Entschwörung (Geister);5;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_129"",""active"":true}";4
-261;Exorzist I;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-262;Exorzist II;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}&{""id"":""SA_261"",""active"":true}";4
-263;Exorzist III;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}&{""id"":""SA_262"",""active"":true}";4
-264;Extrem starke Zaubertricks;3;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SA_89"",""active"":true}";4
-265;Fernzaubern;15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}&{""id"":""ATTR_2"",""value"":15}";4
-266;Gedankenschutz;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}&{""id"":""ATTR_1"",""value"":13}";4
-267;Improvisationszauberei (Formel);15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-268;Improvisationszauberei (Gesten);10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-269;Improvisiertes Ritual;5;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}";4
-270;Kleine Kraftkontrolle;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}";4
-271;Konzentrationsstärke;8;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}&{""id"":""ATTR_1"",""value"":13}";4
-272;Kraftkontrolle;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}&{""id"":""SA_270"",""active"":true}";4
-273;Lieblingszauber;3&6&9&12;1;SPELLS;"{""id"":""ADV_50"",""active"":true}";4
-274;Machtvolle Entschwörung (Dämonen);10;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_258"",""active"":true}";4
-275;Machtvolle Entschwörung (Elementare);10;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_259"",""active"":true}";4
-276;Machtvolle Entschwörung (Geister);10;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_260"",""active"":true}";4
-277;Magische Regeneration I;12;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-278;Magische Regeneration II;12;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":17}&{""id"":""SA_277"",""active"":true}";4
-279;Magischer Gedankenschutz;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}&{""id"":""ATTR_1"",""value"":13}";4
-280;Matrixkontrolle;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-281;Meisterliche Regeneration;10;1;;"{""id"":""ADV_50"",""active"":true}";4
-282;Meistertrick I;1;1;;"{""id"":""ADV_50"",""active"":true}";4
-283;Meistertrick II;1;1;;"{""id"":""SA_282"",""active"":true}";4
-284;Meistertrick III;1;1;;"{""id"":""SA_283"",""active"":true}";4
-285;Parallelzauberei;15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-286;Routinierte Zauberwiederholung;10;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13}&{""id"":""ATTR_2"",""value"":13}";4
-287;Vielfache Ladung;12;1;;"{""id"":""SPELL_46"",""value"":14}&{""id"":""TAL_36"",""value"":12}&{""id"":""TAL_40"",""value"":8}";4
-288;Zauber abbrechen;12;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-289;Zauber bereithalten;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":17}&{""id"":""SA_292"",""active"":true}";4
-290;Zauber bündeln I;15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}";4
-291;Zauber bündeln II;15;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15}&{""id"":""SA_290"",""active"":true}";4
-292;Zauber unterbrechen;20;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SA_288"",""active"":true}";4
-293;Zauberstil-Kombination;50;1;;;4
-294;Scholar der Akademie der Geistigen Kraft zu Fasar;25;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-295;Scholar der Akademie der Hohen Magie zu Punin;20;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-296;Scholar der Akademie der Verformungen zu Lowangen;12;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-297;Scholar der Akademie Schwert und Stab zu Gareth;15;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-298;Scholar der Halle der Antimagie zu Kuslik;15;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-299;Scholar der Halle der Erleuchtung zu Al´Anfa;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-300;Scholar der Khelbara ay Baburia;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-301;Scholar der Schule der Austreibung zu Perricum;12;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-302;Scholar der Schule der Hellsicht zu Thorwal;15;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-303;Scholar der Schule der Vierfachen Verwandlung zu Sinoda;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-304;Scholar der Schule des Direkten Weges zu Gerasim;15;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-305;Scholar der Schule des Seienden Scheins zu Zorgan;12;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-306;Scholar der Töchter Niobaras;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":10}";13
-307;Scholar des Alrik Dagabor;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-308;Scholar des Demirion Ophenos;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-309;Scholar des Hesindius Lichtblick;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-310;Scholar des Seminars der elfischen Verständigung und natürlichen Heilung zu Donnerbach;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-311;Scholar des Vadif sal Karim;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
-312;Artefaktanalytiker;15;1;;"{""id"":[""SA_295"",""SA_302""],""active"":true}";14
-313;Aufladung;10;1;;"{""id"":[""SA_299"",""SA_307""],""active"":true}";14
-314;Austreibung;5;1;;"{""id"":[""SA_301"",""SA_309""],""active"":true}";14
-315;Bewanderter Heilzauberer;25;1;;"{""id"":[""SA_300"",""SA_310""],""active"":true}";14
-316;Brillianter Telekinetiker;25;1;;"{""id"":""SA_304"",""active"":true}";14
-317;Destruktor;15;1;;"{""id"":[""SA_297"",""SA_299""],""active"":true}";14
-318;Eiserne Konzentrationsstärke;8;1;;"{""id"":[""SA_297"",""SA_298"",""SA_308""],""active"":true}";14
-319;Elfenfreund;15;1;;"{""id"":[""SA_296"",""SA_304"",""SA_310""],""active"":true}";14
-320;Erfahrener Antimagier;25;1;;"{""id"":[""SA_298"",""SA_301""],""active"":true}";14
-321;Erweiterter Gedankenschutz;12;1;;"{""id"":[""SA_294"",""SA_298"",""SA_299""],""active"":true}";14
-322;Geistzauberer;10;1;;"{""id"":""SA_294"",""active"":true}";14
-323;Harmoniezauberei;20;1;;"{""id"":[""SA_302"",""SA_304"",""SA_311""],""active"":true}";14
-324;Hervorragender Illusionist;25;1;;"{""id"":""SA_305"",""active"":true}";14
-325;Illusionäre Undurchschaubarkeit;20;1;;"{""id"":""SA_305"",""active"":true}";14
-326;Kriegszauberer;20;1;;"{""id"":""SA_297"",""active"":true}";14
-327;Kundiger Sphärologe;25;1;;"{""id"":""SA_295"",""active"":true}";14
-328;Langanhaltende Illusion;15;1;;"{""id"":""SA_305"",""active"":true}";14
-329;Machtvolle Verbotene Pforten;8;1;;"{""id"":[""SA_307"",""SA_308""],""active"":true}";14
-330;Matrixzauberei;25;1;;"{""id"":[""SA_295"",""SA_309"",""SA_311""],""active"":true}";14
-331;Meisterliches Auraverbergen;10;1;;"{""id"":""SA_306"",""active"":true}";14
-332;Mitverwandlung;10;1;;"{""id"":[""SA_296"",""SA_303""],""active"":true}";14
-333;Qabalya-Magie;15;1;;"{""id"":""SA_306"",""active"":true}";14
-334;Selbstkontrolle;20;1;;"{""id"":[""SA_300"",""SA_301"",""SA_307""],""active"":true}";14
-335;Selbstverzauberer;10;1;;"{""id"":""SA_303"",""active"":true}";14
-336;Tierflüsterer;8;1;;"{""id"":""SA_309"",""active"":true}";14
-337;Überragender Dämonologe;25;1;;"{""id"":""SA_308"",""active"":true}";14
-338;Unübertroffener Verwandler;25;1;;"{""id"":[""SA_296"",""SA_303""],""active"":true}";14
-339;Urtulamidische Heilmagie;15;1;;"{""id"":""SA_300"",""active"":true}";14
-340;Verständigungszauberer;10;1;;"{""id"":""SA_310"",""active"":true}";14
-341;Vollendeter Elementarist;25;1;;"{""id"":""SA_311"",""active"":true}";14
-342;Vollkommener Beherrscher;25;1;;"{""id"":""SA_294"",""active"":true}";14
-343;Vortrefflicher Hellseher;25;1;;"{""id"":[""SA_302"",""SA_306""],""active"":true}";14
-344;Astraltransfer;10;1;;"{""id"":""SA_92"",""active"":true}";5
-345;Astralentzug;15;1;;"{""id"":""SA_344"",""active"":true}";5
-346;Astralraub;20;1;;"{""id"":""SA_345"",""active"":true}";5
-347;Bannstab des Adepten;12;1;;"{""id"":""SA_92"",""active"":true}";5
-348;Bannstab des Magus;20;1;;"{""id"":""SA_347"",""active"":true}";5
-349;Druckwelle;15;1;;"{""id"":""SA_364"",""active"":true}";5
-350;Energiestrahl;15;1;;"{""id"":""SA_92"",""active"":true}";5
-351;Halbes Maß;3;1;;"{""id"":""SA_92"",""active"":true}";5
-352;Hammer des Adepten;5;1;;"{""id"":""SA_92"",""active"":true}";5
-353;Hammer des Magus;10;1;;"{""id"":""SA_352"",""active"":true}";5
-354;Heilschlaf;8;1;;"{""id"":""SA_92"",""active"":true}&{""id"":""TAL_50"",""value"":10}";5
-355;Machtvolle Stabzauber I;3;1;;"{""id"":""SA_92"",""active"":true}";5
-356;Machtvolle Stabzauber II;3;1;;"{""id"":""SA_355"",""active"":true}";5
-357;Machtvolle Stabzauber III;3;1;;"{""id"":""SA_356"",""active"":true}";5
-358;Machtvolle Stabzauber IV;3;1;;"{""id"":""SA_357"",""active"":true}";5
-359;Modifikationsfokus;10;1;;"{""id"":""SA_96"",""active"":true}";5
-360;Seil des Magus;15;1;;"{""id"":""SA_98"",""active"":true}";5
-361;Seilpeitsche;15;1;;"{""id"":""SA_360"",""active"":true}";5
-362;Seilschlange;10;1;;"{""id"":""SA_361"",""active"":true}";5
-363;Siegelbrecher;10;1;;"{""id"":""SA_92"",""active"":true}";5
-364;Stabbohrer;8;1;;"{""id"":""SA_99"",""active"":true}";5
-365;Stabexplosion;20;1;;"{""id"":""SA_92"",""active"":true}";5
-366;Stabfixierung;10;1;;"{""id"":""SA_99"",""active"":true}";5
-367;Telekineseschlag;15;1;;"{""id"":""SA_353"",""active"":true}";5
-368;Tierwandlung;sel;2;;"{""id"":""SA_92"",""active"":true}&{""id"":""TAL_29"",""value"":10}";5
-369;Volumenerweiterung des Zauberstabs I;5;1;;"{""id"":""SA_92"",""active"":true}";5
-370;Volumenerweiterung des Zauberstabs II;5;1;;"{""id"":""SA_369"",""active"":true}";5
-371;Volumenerweiterung des Zauberstabs III;5;1;;"{""id"":""SA_370"",""active"":true}";5
-372;Volumenerweiterung des Zauberstabs IV;5;1;;"{""id"":""SA_371"",""active"":true}";5
-373;Volumenerweiterung des Zauberstabs V;5;1;;"{""id"":""SA_372"",""active"":true}";5
-374;Zauberspeicher des Adepten;20;1;;"{""id"":""SA_97"",""active"":true}";5
-375;Bannschwert des Adepten;10;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
-376;Bannschwert des Magus;15;1;;"{""id"":""SA_375"",""active"":true}";15
-377;Bannschwert-Apport;15;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
-378;Bindung des Banndolchs;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
-379;Bindung des Bannschwerts;20;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
-380;Bindung des Bannzweihänders;35;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
-381;Fokus der Austreibung;15;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
-382;Klinge wider Untote;20;1;;"{""id"":""SA_376"",""active"":true}";15
-383;Klinge wider Geister;20;1;;"{""id"":""SA_376"",""active"":true}";15
-384;Klinge wider Dämonen;20;1;;"{""id"":""SA_376"",""active"":true}";15
-385;Klinge wider Elementare;20;1;;"{""id"":""SA_376"",""active"":true}";15
-386;Klinge wider Feen;20;1;;"{""id"":""SA_376"",""active"":true}";15
-387;Klinge wider Chimären;20;1;;"{""id"":""SA_376"",""active"":true}";15
-388;Klinge wider Daimonide;20;1;;"{""id"":""SA_376"",""active"":true}";15
-389;Klinge wider Golems;20;1;;"{""id"":""SA_376"",""active"":true}";15
-390;Machtvolle Bannschwertzauber I;3;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
-391;Machtvolle Bannschwertzauber II;3;1;;"{""id"":""SA_390"",""active"":true}";15
-392;Machtvolle Bannschwertzauber III;3;1;;"{""id"":""SA_391"",""active"":true}";15
-393;Machtvolle Bannschwertzauber IV;3;1;;"{""id"":""SA_392"",""active"":true}";15
-394;Verschwinde;20;1;;"{""id"":""SA_376"",""active"":true}";15
-395;Volumenerweiterung des Bannschwerts I;5;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
-396;Volumenerweiterung des Bannschwerts II;5;1;;"{""id"":""SA_395"",""active"":true}";15
-397;Volumenerweiterung des Bannschwerts III;5;1;;"{""id"":""SA_396"",""active"":true}";15
-398;Volumenerweiterung des Bannschwerts IV;5;1;;"{""id"":""SA_397"",""active"":true}";15
-399;Volumenerweiterung des Bannschwerts V;5;1;;"{""id"":""SA_398"",""active"":true}";15
-400;Bindung des Dolches;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":4}";16
-401;Dolch-Apport;15;1;;"{""id"":""SA_400"",""active"":true}";16
-402;Kraft aus der Erde;10;1;;"{""id"":""SA_400"",""active"":true}";16
-403;Sicht im Dunkeln;10;1;;"{""id"":""SA_400"",""active"":true}";16
-404;Wegweiser;5;1;;"{""id"":""SA_400"",""active"":true}";16
-405;Bann des Übernatürlichen;5;1;;"{""id"":""SA_406"",""active"":true}";17
-406;Bindung des Zauberinstruments;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":6}";17
-407;Brechender Fels;10;1;;"{""id"":""SA_406"",""active"":true}";17
-408;Emotionsübernahme;8;1;;"{""id"":""SA_406"",""active"":true}";17
-409;Fokus der Aufmerksamkeit;20;1;;"{""id"":""SA_406"",""active"":true}";17
-410;Hilferuf;10;1;;"{""id"":""SA_406"",""active"":true}";17
-411;Klangillusion;5;1;;"{""id"":""SA_406"",""active"":true}";17
-412;Langanhaltender Rhythmus;10;1;;"{""id"":""SA_406"",""active"":true}";17
-413;Machtvolle Instrumentenzauber I;3;1;;"{""id"":""SA_406"",""active"":true}";17
-414;Machtvolle Instrumentenzauber II;3;1;;"{""id"":""SA_413"",""active"":true}";17
-415;Machtvolle Instrumentenzauber III;3;1;;"{""id"":""SA_414"",""active"":true}";17
-416;Machtvolle Instrumentenzauber IV;3;1;;"{""id"":""SA_415"",""active"":true}";17
-417;Ohrenbetäubender Klang;15;1;;"{""id"":""SA_406"",""active"":true}";17
-418;Störgeräusch;15;1;;"{""id"":""SA_406"",""active"":true}";17
-419;Viele Instrumente;5;1;;"{""id"":""SA_406"",""active"":true}";17
-420;Volumenerweiterung des Zauberinstruments I;5;1;;"{""id"":""SA_406"",""active"":true}";17
-421;Volumenerweiterung des Zauberinstruments II;5;1;;"{""id"":""SA_420"",""active"":true}";17
-422;Volumenerweiterung des Zauberinstruments III;5;1;;"{""id"":""SA_421"",""active"":true}";17
-423;Volumenerweiterung des Zauberinstruments IV;5;1;;"{""id"":""SA_422"",""active"":true}";17
-424;Volumenerweiterung des Zauberinstruments V;5;1;;"{""id"":""SA_423"",""active"":true}";17
-425;Weiter Klang;15;1;;"{""id"":""SA_406"",""active"":true}";17
-426;Zauberinstrument-Apport;15;1;;"{""id"":""SA_406"",""active"":true}";17
-427;Zerspringendes Glas;5;1;;"{""id"":""SA_406"",""active"":true}";17
-428;Zugabe;5;1;;"{""id"":""SA_406"",""active"":true}";17
-429;Besitzanspruch;5;1;;"{""id"":""SA_430"",""active"":true}";18
-430;Bindung der Zauberkleidung;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}";18
-431;Diebsgewand;8;1;;"{""id"":""SA_430"",""active"":true}";18
-432;Faszinierende Kleidung;15;1;;"{""id"":""SA_430"",""active"":true}";18
-433;Fesselnde Gewandung;5;1;;"{""id"":""SA_429"",""active"":true}";18
-434;Fokus der Begierde;20;1;;"{""id"":""SA_430"",""active"":true}";18
-435;Gefühlsübernahme;5;1;;"{""id"":""SA_430"",""active"":true}";18
-436;Gewand der Beeinflussung;12;1;;"{""id"":""SA_430"",""active"":true}";18
-437;Gewand der Heilung;12;1;;"{""id"":""SA_430"",""active"":true}";18
-438;Gewand der Täuschung;20;1;;"{""id"":""SA_430"",""active"":true}";18
-439;Langer Tanz;10;1;;"{""id"":""SA_430"",""active"":true}";18
-440;Machtvolle Gewandzauber I;3;1;;"{""id"":""SA_430"",""active"":true}";18
-441;Machtvolle Gewandzauber II;3;1;;"{""id"":""SA_441"",""active"":true}";18
-442;Machtvolle Gewandzauber III;3;1;;"{""id"":""SA_442"",""active"":true}";18
-443;Machtvolle Gewandzauber IV;3;1;;"{""id"":""SA_443"",""active"":true}";18
-444;Schmutzabweisend;5;1;;"{""id"":""SA_430"",""active"":true}";18
-445;Schutzgewand I;12;1;;"{""id"":""SA_430"",""active"":true}";18
-446;Schutzgewand II;12;1;;"{""id"":""SA_445"",""active"":true}";18
-447;Verführerische Gewandung;8;1;;"{""id"":""SA_430"",""active"":true}";18
-448;Volumenerweiterung der Zauberkleidung I;5;1;;"{""id"":""SA_430"",""active"":true}";18
-449;Volumenerweiterung der Zauberkleidung II;5;1;;"{""id"":""SA_448"",""active"":true}";18
-450;Volumenerweiterung der Zauberkleidung III;5;1;;"{""id"":""SA_449"",""active"":true}";18
-451;Volumenerweiterung der Zauberkleidung IV;5;1;;"{""id"":""SA_450"",""active"":true}";18
-452;Volumenerweiterung der Zauberkleidung V;5;1;;"{""id"":""SA_451"",""active"":true}";18
-453;Wandelbare Kleidung;10;1;;"{""id"":""SA_430"",""active"":true}";18
-454;Zauberkleidung-Apport;15;1;;"{""id"":""SA_430"",""active"":true}";18
-455;Aufnahme;15;1;;"{""id"":""SA_457"",""active"":true}";19
-456;Bilderspiel;12;1;;"{""id"":""SA_457"",""active"":true}";19
-457;Bindung der Zauberkugel;10;1;;"{""id"":""SA_86"",""active"":true,""sid"":5}";19
-458;Brennglas;8;1;;"{""id"":""SA_457"",""active"":true}";19
-459;Illusionsspeicher;20;1;;"{""id"":""SA_457"",""active"":true}";19
-460;Kommunikation;15;1;;"{""id"":""SA_457"",""active"":true}";19
-461;Kugel des Hellsehers;12;1;;"{""id"":""SA_457"",""active"":true}";19
-462;Kugel des Illusionisten;10;1;;"{""id"":""SA_457"",""active"":true}";19
-463;Machtvolle Kugelzauber I;3;1;;"{""id"":""SA_457"",""active"":true}";19
-464;Machtvolle Kugelzauber II;3;1;;"{""id"":""SA_463"",""active"":true}";19
-465;Machtvolle Kugelzauber III;3;1;;"{""id"":""SA_464"",""active"":true}";19
-466;Machtvolle Kugelzauber IV;3;1;;"{""id"":""SA_465"",""active"":true}";19
-467;Magischer Schutzwall;10;1;;"{""id"":""SA_457"",""active"":true}";19
-468;Prisma;5;1;;"{""id"":""SA_457"",""active"":true}";19
-469;Störfeld;8;1;;"{""id"":""SA_457"",""active"":true}";19
-470;Volumenerweiterung der Kugel I;5;1;;"{""id"":""SA_457"",""active"":true}";19
-471;Volumenerweiterung der Kugel II;5;1;;"{""id"":""SA_470"",""active"":true}";19
-472;Volumenerweiterung der Kugel III;5;1;;"{""id"":""SA_471"",""active"":true}";19
-473;Volumenerweiterung der Kugel IV;5;1;;"{""id"":""SA_472"",""active"":true}";19
-474;Volumenerweiterung der Kugel V;5;1;;"{""id"":""SA_473"",""active"":true}";19
-475;Wachendes Auge;10;1;;"{""id"":""SA_457"",""active"":true}";19
-476;Warnendes Leuchten;12;1;;"{""id"":""SA_457"",""active"":true}";19
-477;Zauberkugel-Apport;15;1;;"{""id"":""SA_457"",""active"":true}";19
-478;Steckenverzauberung;5;1;;"{""id"":""SA_86"",""active"":true,""sid"":5}";20
-479;Funkenregen;10;1;;"{""id"":""SA_478"",""active"":true}";20
-480;Leuchtfeuer;10;1;;"{""id"":""SA_479"",""active"":true}";20
-481;Ewige Flamme;10;1;;"{""id"":""SA_478"",""active"":true}";20
-482;Halbes Maß;3;1;;"{""id"":""SA_478"",""active"":true}";20
-483;Seil des Adepten;10;1;;"{""id"":""SA_478"",""active"":true}";20
-484;Variante;sel;;;;4
-485;Alter Adersin-Stil;15;1;;"{""id"":""AGI"",""value"":13}";9
+﻿id;name;ap;tiers;max;sel;req;gr
+1;Analytiker;5;;1;;"{""id"":""TAL_36"",""value"":4}";1
+2;Anführer;10;;1;;"{""id"":""TAL_35"",""value"":4}";1
+3;Berufsgeheimnis;sel;;;;;1
+4;Dokumentfälscher;5;;1;;"{""id"":""TAL_54"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
+5;Eiserner Wille I;15;;1;;;1
+6;Eiserner Wille II;15;;1;;"{""id"":""SA_5"",""active"":true}";1
+7;Fächersprache;3;;1;;"{""id"":""TAL_18"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
+8;Fallen entschärfen;5;;1;;"{""id"":""TAL_37"",""value"":4}&{""id"":""TAL_57"",""value"":4}";1
+9;Falschspielen;5;;1;;"{""id"":""TAL_31"",""value"":8}";1
+10;Fertigkeitsspezialisierung;sel;;;;;1
+11;Fischer;3;;1;;"{""id"":""TAL_26"",""value"":4}&{""id"":""TAL_13"",""value"":4}";1
+12;Füchsisch;3;;1;;"{""id"":""TAL_19"",""value"":8}&{""id"":""DISADV_5"",""active"":false}";1
+13;Geländekunde;15;;;;;1
+14;Gildenrecht;2;;1;;"{""id"":""TAL_39"",""value"":4}";1
+15;Glasbläserei;2;;1;;"{""id"":""TAL_58"",""value"":4}";1
+16;Hehlerei;5;;1;;"{""id"":""TAL_19"",""value"":8}&{""id"":""TAL_46"",""value"":4}";1
+17;Heraldik;2;;1;;"{""id"":""TAL_18"",""value"":4}";1
+18;Instrumente bauen;2;;1;;;1
+19;Jäger;5;;1;;"{""id"":""TAL_24"",""value"":4}&{""id"":""TAL_20"",""value"":4}&{""id"":""TAL_13"",""value"":4}";1
+20;Kartographie;5;;1;;"{""id"":""TAL_32"",""value"":8}&{""id"":""TAL_28"",""value"":4}&{""id"":""TAL_54"",""value"":4}";1
+21;Lippenlesen;10;;1;;"{""id"":""TAL_10"",""value"":4}&{""id"":""DISADV_5"",""active"":false}";1
+22;Meister der Improvisation;10;;1;;;1
+23;Ortskenntnis;2;;;;;1
+24;Rosstäuscher;4;;1;;"{""id"":""TAL_46"",""value"":4}&{""id"":""TAL_29"",""value"":8}";1
+25;Sammler;2;;1;;"{""id"":""TAL_28"",""value"":4}&{""id"":""TAL_30"",""value"":4}";1
+26;Schmerzen unterdrücken;20;;1;;"{""id"":""TAL_8"",""value"":4}";1
+27;Schnapsbrennerei;2;;1;;"{""id"":""TAL_43"",""value"":4}&{""id"":""TAL_52"",""value"":4}";1
+28;Schrift;sel;;;;"{""id"":""DISADV_5"",""active"":false}";1
+29;Schriftstellerei;2;;;;;1
+30;Sprache;2;;;;;1
+31;Tierstimmen imitieren;5;;1;;"{""id"":""TAL_29"",""value"":4}";1
+32;Töpferei;2;;1;;"{""id"":""TAL_58"",""value"":4}";1
+33;Wettervorhersage;2;;1;;"{""id"":""TAL_30"",""value"":4}";1
+34;Zahlenmystik;2;;1;;"{""id"":""TAL_38"",""value"":8}&{""id"":""TAL_40"",""value"":4}";1
+35;Attacke verbessern;5;;1;;;2
+36;Ausweichen verbessern;5;;1;;;2
+37;Eigenschaft verbessern;5;;1;;;2
+38;Fernkampf verbessern;5;;1;;;2
+39;Parade verbessern;5;;1;;;2
+40;Wachsamkeit;10;;1;;;2
+41;Aufmerksamkeit;10;;1;;"{""id"":""ATTR_3"",""value"":13}";3
+42;Belastungsgewöhnung I;20;;1;;"{""id"":""ATTR_7"",""value"":13}";3
+43;Belastungsgewöhnung II;35;;1;;"{""id"":""ATTR_7"",""value"":15}&{""id"":""SA_42"",""active"":true}";3
+44;Beidhändiger Kampf I;20;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+45;Beidhändiger Kampf II;35;;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_44"",""active"":true}";3
+46;Berittener Kampf;20;;1;;"{""id"":""TAL_6"",""value"":10}";3
+47;Berittener Schütze;10;;1;;"{""id"":""SA_46"",""active"":true}";3
+48;Einhändiger Kampf;10;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+49;Entwaffnen;40;;1;;"{""id"":""ATTR_6"",""value"":15}";3
+50;Feindgespür;10;;1;;"{""id"":""ATTR_3"",""value"":15}";3
+51;Finte I;15;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+52;Finte II;20;;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_51"",""active"":true}";3
+53;Finte III;25;;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_52"",""active"":true}";3
+54;Haltegriff;5;;1;;;3
+55;Hammerschlag;25;;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_80"",""active"":true}&{""id"":""SA_83"",""active"":true}";3
+56;Kampfreflexe I;10;;1;;"{""id"":""ATTR_3"",""value"":13}";3
+57;Kampfreflexe II;15;;1;;"{""id"":""ATTR_3"",""value"":15}&{""id"":""SA_56"",""active"":true}";3
+58;Kampfreflexe III;20;;1;;"{""id"":""ATTR_3"",""value"":17}&{""id"":""SA_57"",""active"":true}";3
+59;Klingenfänger;10;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+60;Kreuzblock;10;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+61;Lanzenangriff;10;;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SA_46"",""active"":true}";3
+62;Präziser Schuss/Wurf I;15;;1;;"{""id"":""ATTR_3"",""value"":13}";3
+63;Präziser Schuss/Wurf II;20;;1;;"{""id"":""ATTR_3"",""value"":15}&{""id"":""SA_62"",""active"":true}";3
+64;Präziser Schuss/Wurf III;25;;1;;"{""id"":""ATTR_3"",""value"":17}&{""id"":""SA_63"",""active"":true}";3
+65;Präziser Stich I;15;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+66;Präziser Stich II;20;;1;;"{""id"":""ATTR_6"",""value"":15}&{""id"":""SA_65"",""active"":true}";3
+67;Präziser Stich III;25;;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_66"",""active"":true}";3
+68;Riposte;40;;1;;"{""id"":""ATTR_6"",""value"":15}";3
+69;Rundumschlag I;25;;1;;"{""id"":""ATTR_6"",""value"":15}";3
+70;Rundumschlag II;35;;1;;"{""id"":""ATTR_6"",""value"":17}&{""id"":""SA_69"",""active"":true}";3
+71;Schildspalter;15;;1;;"{""id"":""ATTR_8"",""value"":13}&{""id"":""SA_81"",""active"":true}";3
+72;Schnellladen;sel;;3;1?CT_1?5&2?CT_2?20&3?CT_14?10&4?CT_11?5&5?CT_18?5&6?CT_19?5;"{""id"":""ATTR_5"",""value"":13}";3
+73;Schnellziehen;10;;1;;"{""id"":""ATTR_5"",""value"":13}";3
+74;Sturmangriff;25;;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SA_80"",""active"":true}&{""id"":""SA_81"",""active"":true}";3
+75;Todesstoß;30;;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_67"",""active"":true}&{""id"":""SA_80"",""active"":true}";3
+76;Verbessertes Ausweichen I;15;;1;;"{""id"":""TAL_4"",""value"":4}";3
+77;Verbessertes Ausweichen II;20;;1;;"{""id"":""TAL_4"",""value"":8}&{""id"":""SA_76"",""active"":true}";3
+78;Verbessertes Ausweichen III;25;;1;;"{""id"":""TAL_4"",""value"":12}&{""id"":""SA_77"",""active"":true}";3
+79;Verteidigungshaltung;10;;1;;"{""id"":""ATTR_3"",""value"":13}";3
+80;Vorstoß;10;;1;;"{""id"":""ATTR_6"",""value"":13}";3
+81;Wuchtschlag I;15;;1;;"{""id"":""ATTR_8"",""value"":13}";3
+82;Wuchtschlag II;20;;1;;"{""id"":""ATTR_8"",""value"":15}&{""id"":""SA_81"",""active"":true}";3
+83;Wuchtschlag III;25;;1;;"{""id"":""ATTR_8"",""value"":17}&{""id"":""SA_82"",""active"":true}";3
+84;Wurf;10;;1;;"{""id"":""ATTR_6"",""value"":13}&{""id"":""SA_54"",""active"":true}";3
+85;Zu Fall bringen;20;;1;;"{""id"":""ATTR_8"",""value"":13}";3
+86;Tradition;sel;;1;1?Gildenmagier?155&2?Hexe?135&3?Elf?125&4?Druide?125&5?Scharlatan?125&6?Zauberbarde?80&7?Zaubertänzer?75&8?Intuitiver Zauberer?50&9?Meistertalentierte?35&10?Qabalyamagier?165;"{""id"":""ADV_50"",""active"":true}";4
+87;Aura verbergen;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_1"",""value"":13}&{""id"":""ATTR_3"",""value"":13}";4
+88;Merkmalskenntnis;;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""ADV_50"",""active"":true}";4
+89;Starke Zaubertricks;2;;1;;"{""id"":""ADV_50"",""active"":true}";4
+90;Verbotene Pforten;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_1"",""value"":12}";4
+91;Zauberzeichen;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_5"",""value"":12}";4
+92;Bindung des Stabes;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";5
+93;Doppeltes Maß;5;;1;;"{""id"":""SA_92"",""active"":true}";5
+94;Ewige Flamme;10;;1;;"{""id"":""SA_92"",""active"":true}";5
+95;Flammenschwert;35;;1;;"{""id"":""SA_94"",""active"":true}&{""id"":""SA_96"",""active"":true}";5
+96;Kraftfokus;30;;1;;"{""id"":""SA_92"",""active"":true}";5
+97;Merkmalsfokus;35;;;;"{""id"":""SA_96"",""active"":true}";5
+98;Seil des Adepten;10;;1;;"{""id"":""SA_92"",""active"":true}";5
+99;Stab-Apport;15;;1;;"{""id"":""SA_92"",""active"":true}";5
+100;Vertrautenbindung;20;;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_18"",""active"":false}";6
+101;Flugsalbe;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_17"",""active"":false}";6
+102;Tradition;sel;;1;1?Praioskirche?130&2?Rondrakirche?150&3?Boronkirche?130&4?Hesindekirche?130&5?Phexkirche?150&6?Perainekirche?110;"{""id"":""ADV_12"",""active"":true}";7
+103;Aspektkenntnis;;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":2}&{""id"":""ADV_12"",""active"":true}";7
+104;Fokussierung;8;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":13}";7
+105;Stärke des Glaubens;10;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":15}";7
+106;Starke Segnungen;2;;1;;"{""id"":""ADV_12"",""active"":true}";7
+107;Bann-/Schutzkreis gegen Elementargeister;5;;1;;;8
+108;Bann-/Schutzkreis gegen Dschinne;15;;1;;;8
+109;Bann-/Schutzkreis gegen niedere Dämonen;10;;1;;;8
+110;Bann-/Schutzkreis gegen gehörnte Dämonen;15;;1;;;8
+111;Abrichter;5;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_29""}";1
+112;Abrollen;8;;1;;"{""id"":""TAL_4"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_4""}&{""id"":""DISADV_12"",""active"":false}";1
+113;Ackerbau;2;;1;;"{""id"":""TAL_28"",""value"":4}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_28""}";1
+114;Anpeitscher;10;;1;;"{""id"":""TAL_35"",""value"":4}";1
+115;Archivar;3;;1;;"{""id"":""DISADV_5"",""active"":false}";1
+116;Athlet;20;;1;;"{""id"":""TAL_4"",""value"":4}&{""id"":""TAL_5"",""value"":4}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_4""}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_5""}&{""id"":""DISADV_4"",""active"":false}&{""id"":""DISADV_12"",""active"":false}&{""id"":""DISADV_12"",""active"":false}&{""id"":""DISADV_51"",""active"":false,""sid"":1}&{""id"":""DISADV_51"",""active"":false,""sid"":3}&{""id"":""DISADV_51"",""active"":false,""sid"":4}";1
+117;Bauchreden;5;;1;;"{""id"":""TAL_2"",""value"":8}&{""id"":""TAL_4"",""value"":4}";1
+118;Bildhauerei;2;;1;;"{""id"":""TAL_58"",""value"":8}";1
+119;Bootsbauer;5;;1;;"{""id"":""TAL_44"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
+120;Buchdrucker;3;;1;;"{""id"":""TAL_43"",""value"":2}&{""id"":""TAL_51"",""value"":4}&{""id"":""TAL_54"",""value"":4}&{""id"":""TAL_59"",""value"":4}";1
+121;Diener;2;;1;;"{""id"":""TAL_18"",""value"":4}";1
+122;Drohgebärden;10;;1;;"{""id"":""TAL_17"",""value"":4}";1
+123;Ermutigender Gesang;10;;1;;"{""id"":""TAL_9"",""value"":8}";1
+124;Faszinierender Gesang;10;;1;;"{""id"":""TAL_9"",""value"":8}";1
+125;Feuerschlucker;5;;1;;"{""id"":""TAL_2"",""value"":8}&{""id"":""TAL_4"",""value"":4}";1
+126;Freiklettern;6;;1;;"{""id"":""TAL_3"",""value"":8}";1
+127;Gestählter Wille;5;;1;;"{""id"":""TAL_23"",""value"":8}&{""id"":""DISADV_1"",""active"":false}";1
+128;Guter Gardist, böser Gardist;3;;1;;"{""id"":""TAL_17"",""value"":8}&{""id"":""TAL_20"",""value"":4}&{""id"":""TAL_21"",""value"":2}";1
+129;Hauswirtschaft;8;;1;;"{""id"":""TAL_46"",""value"":8}&{""id"":""TAL_38"",""value"":4}";1
+130;Iglubau;5;;1;;"{""id"":""TAL_30"",""value"":8}&{""id"":""SA_13"",""active"":true,""sid"":2}";1
+131;Kalligraphie;2;;1;;"{""id"":""TAL_54"",""value"":4}";1
+132;Kapellmeister;2;;1;;"{""id"":""TAL_56"",""value"":8}&{""id"":""TAL_21"",""value"":4}";1
+133;Kohlezeichnungen;2;;1;;"{""id"":""TAL_54"",""value"":4}";1
+134;Konditor;2;;1;;"{""id"":""TAL_52"",""value"":4}";1
+135;Kristallzucht;2;;1;;"{""id"":""TAL_58"",""value"":8}";1
+136;Kupferstich;2;;1;;"{""id"":""TAL_52"",""value"":4}&{""id"":""TAL_55"",""value"":4}";1
+137;Kutschenbauer;5;;1;;"{""id"":""TAL_45"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
+138;Leibdiener;3;;1;;"{""id"":""TAL_18"",""value"":8}&{""id"":""TAL_20"",""value"":4}&{""id"":""SA_121"",""active"":true}";1
+139;Liebling der Massen;4;;1;;"{""id"":""TAL_15"",""value"":8}&{""id"":""TAL_20"",""value"":8}";1
+140;Möbel herstellen;2;;1;;"{""id"":""TAL_51"",""value"":4}";1
+141;Navigation;10;;1;;"{""id"":""TAL_44"",""value"":8}&{""id"":""TAL_38"",""value"":8}&{""id"":""TAL_42"",""value"":8}";1
+142;Ölmalerei;2;;1;;"{""id"":""TAL_54"",""value"":4}";1
+143;Opernsänger;2;;1;;"{""id"":""TAL_9"",""value"":8}";1
+144;Orientierung unter Tage;3;;1;;"{""id"":""TAL_27"",""value"":8}";1
+145;Provozieren;12;;1;;"{""id"":""TAL_17"",""value"":8}&{""id"":""TAL_21"",""value"":8}";1
+146;Prunkkleidung herstellen;2;;1;;"{""id"":""TAL_59"",""value"":8}";1
+147;Pyromantiker;5;;1;;"{""id"":""TAL_43"",""value"":4}&{""id"":""TAL_2"",""value"":8}";1
+148;Rahjasutra-Kenntnisse;3;;1;;"{""id"":""TAL_16"",""value"":4}&{""id"":""TAL_20"",""value"":4}";1
+149;Rüstungsbau;15;;1;;"{""id"":[""TAL_51"",""TAL_53"",""TAL_55"",""TAL_59""],""value"":8}";1
+150;Schiffsbauer;10;;1;;"{""id"":""TAL_44"",""value"":8}&{""id"":""TAL_51"",""value"":8}";1
+151;Schmuck herstellen;2;;1;;"{""id"":[""TAL_51"",""TAL_53"",""TAL_55"",""TAL_58""],""value"":4}";1
+152;Schnellschreiber;2;;1;;"{""id"":""SA_28"",""active"":true}&{""id"":""SA_30"",""active"":true}";1
+153;Seile herstellen;2;;1;;"{""id"":""TAL_25"",""value"":4}";1
+154;Skifahren;4;;1;;"{""id"":""TAL_4"",""value"":4}";1
+155;Smutje;3;;1;;"{""id"":""TAL_52"",""value"":4}";1
+156;Stellmacherei;4;;1;;"{""id"":""TAL_45"",""value"":4}&{""id"":""TAL_51"",""value"":8}";1
+157;Tätowierer;2;;1;;"{""id"":""TAL_54"",""value"":4}";1
+158;Verführungskunst;5;;1;;"{""id"":""TAL_16"",""value"":10}&{""id"":""TAL_18"",""value"":4}";1
+159;Viehzucht;2;;1;;"{""id"":""TAL_29"",""value"":4}";1
+160;Waffenbau;12;;1;;"{""id"":[""TAL_51"",""TAL_55"",""TAL_58""],""value"":8}";1
+161;Wandmalerei;2;;1;;"{""id"":""TAL_54"",""value"":4}&{""id"":""TAL_58"",""value"":4}";1
+162;Empathie;10;;1;;;2
+163;Fleischwunde;15;;1;;;2
+164;Höhere Prophezeihung;25;;1;;"{""id"":""SA_166"",""active"":true}";2
+165;Magiegespür;10;;1;;;2
+166;Prophezeihung;5;;1;;;2
+167;Armbrust überdrehen;5;;1;;"{""id"":""DEX"",""value"":13}";3
+168;Auf Distanz halten I;15;;1;;"{""id"":""AGI"",""value"":13}";3
+169;Auf Distanz halten II;20;;1;;"{""id"":""AGI"",""value"":15}&{""id"":""SA_168"",""active"":true}";3
+170;Ballistischer Schuss;10;;1;;"{""id"":""INT"",""value"":13}&{""id"":""DEX"",""value"":13}&{""id"":""SA_62"",""active"":true}";3
+171;Berittener Flugkampf;10;;1;;"{""id"":""TAL_1"",""value"":10}&{""id"":""TAL_6"",""value"":10}";3
+172;Beschützer;20;;1;;"{""id"":""AGI"",""value"":15}";3
+173;Betäubungsschlag;15;;1;;"{""id"":""STR"",""value"":13}";3
+174;Blindkampf I;10;;1;;"{""id"":""INT"",""value"":15}&{""id"":""TAL_10"",""value"":8}";3
+175;Blindkampf II;20;;1;;"{""id"":""INT"",""value"":17}&{""id"":""TAL_10"",""value"":12}&{""id"":""SA_174"",""active"":true}";3
+176;Eisenhagel I;15;;1;;"{""id"":""DEX"",""value"":15}&{""id"":""SA_72"",""active"":true,""sid"":""CT_14""}";3
+177;Eisenhagel II;20;;1;;"{""id"":""DEX"",""value"":17}&{""id"":""SA_176"",""active"":true}";3
+178;Festnageln;20;;1;;"{""id"":[""AGI"",""STR""],""value"":13}";3
+179;Gezielter Angriff;10;;1;;"{""id"":""AGI"",""value"":13}";3
+180;Gezielter Schuss;10;;1;;"{""id"":""DEX"",""value"":13}";3
+181;Herunterstoßen;12;;1;;"{""id"":""STR"",""value"":13}";3
+182;Kampf im Wasser;8;;1;;"{""id"":""AGI"",""value"":13}";3
+183;Kampfstil-Kombination;50;;1;;;3
+184;Klingensturm;25;;1;;"{""id"":""SA_48"",""active"":true}";3
+185;Meister der improvisierten Waffen;10;;1;;"{""id"":""AGI"",""value"":13}&{""id"":""STR"",""value"":13}";3
+186;Meisterliches Ausweichen;15;;1;;"{""id"":""INT"",""value"":13}&{""id"":""SA_77"",""active"":true}";3
+187;Meisterparade;25;;1;;"{""id"":[""AGI"",""STR""],""value"":15}";3
+188;Pikenwall;10;;1;;"{""id"":""AGI"",""value"":13}";3
+189;Scharfschütze I;15;;1;;"{""id"":""INT"",""value"":15}&{""id"":""SA_62"",""active"":true}";3
+190;Scharfschütze II;20;;1;;"{""id"":""INT"",""value"":15}&{""id"":""SA_63"",""active"":true}&{""id"":""SA_189"",""active"":true}";3
+191;Schwitzkasten;10;;1;;"{""id"":""STR"",""value"":13}&{""id"":""SA_54"",""active"":true}";3
+192;Unterlaufen I;10;;1;;"{""id"":""AGI"",""value"":13}";3
+193;Unterlaufen II;15;;1;;"{""id"":""AGI"",""value"":15}&{""id"":""SA_192"",""active"":true}";3
+194;Verbessertes Unterlaufen;10;;1;;"{""id"":""SA_192"",""active"":true}";3
+195;Verteilter Eisenhagel;10;;1;;"{""id"":""SA_176"",""active"":true}";3
+196;Zweihändiger Reiterkampf;5;;1;;"{""id"":""SA_46"",""active"":true}";3
+197;Adersin-Stil;15;;1;;"{""id"":""AGI"",""value"":13}";9
+198;Baburin-Stil;10;;1;;"{""id"":""INT"",""value"":13}";9
+199;Baliho-Stil;12;;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_46"",""active"":true}";9
+200;Bornländisches Raufen;5;;1;;"{""id"":[""AGI"",""STR""],""value"":13}";10
+201;Cendrasch-Stil;15;;1;;"{""id"":""STR"",""value"":13}&{""id"":""RACE"",""value"":[12]}";9
+202;Dajin-Stil;15;;1;;"{""id"":""COU"",""value"":13}&{""id"":""AGI"",""value"":13}";9
+203;Elenvina-Stil;15;;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_2"",""active"":true}";9
+204;Fedorino-Stil;20;;1;;"{""id"":""AGI"",""value"":13}";9
+205;Gladiatoren-Stil;5;;1;;"{""id"":[""AGI"",""STR""],""value"":13}";10
+206;Hammerfaust-Stil;10;;1;;"{""id"":""STR"",""value"":13}";10
+207;Hruruzat;12;;1;;"{""id"":""AGI"",""value"":13}";10
+208;Hylailos-Stil;15;;1;;"{""id"":""AGI"",""value"":13}";9
+209;Marwan Sahib-Stil;10;;1;;"{""id"":""AGI"",""value"":13}";9
+210;Mengbilla-Stil;15;;1;;"{""id"":""COU"",""value"":13}";9
+211;Mercenario-Stil;8;;1;;"{""id"":""STR"",""value"":13}";10
+212;Prem-Stil;10;;1;;"{""id"":""AGI"",""value"":13}&{""id"":""TAL_4"",""value"":4}&{""id"":""TAL_7"",""value"":4}";9
+213;Ritter des alten Wegs-Stil;12;;1;;"{""id"":""COU"",""value"":13}&{""id"":""SA_46"",""active"":true}";9
+214;Rondras Trutz-Stil;10;;1;;"{""id"":[""AGI"",""STR""],""value"":13}";9
+215;Unauer Schule;10;;1;;"{""id"":""INT"",""value"":13}";10
+216;Zyklopäisches Ringen;10;;1;;"{""id"":""STR"",""value"":13}";10
+217;Aufspießen;20;;1;;"{""id"":[""AGI"",""STR""],""value"":15}&{""id"":""SA_85"",""active"":true}&{""id"":""SA_178"",""active"":true}&{""id"":[""SA_198""],""active"":true}";11
+218;Binden;25;;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_197"",""SA_203"",""SA_204"",""SA_485""],""active"":true}";11
+219;Breschenangriff;15;;1;;"{""id"":""SA_46"",""active"":true}&{""id"":[""SA_199""],""active"":true}";11
+220;Fahrender Schütze;5;;1;;"{""id"":""TAL_45"",""value"":10}&{""id"":[""SA_198""],""active"":true}";11
+221;Frontalangriff;25;;1;;"{""id"":""SA_46"",""active"":true}&{""id"":""SA_61"",""active"":true}&{""id"":[""SA_213""],""active"":true}";11
+222;Fußfeger;15;;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_207"",""SA_215""],""active"":true}";11
+223;Haltegriff brechen;5;;1;;"{""id"":[""SA_200"",""SA_205"",""SA_211"",""SA_216""],""active"":true}";11
+224;Handkantenschlag;10;;1;;"{""id"":[""SA_207""],""active"":true}";11
+225;Hohe Klinge;15;;1;;"{""id"":[""SA_202"",""SA_214""],""active"":true}";11
+226;Kopfstoß;5;;1;;"{""id"":[""SA_200"",""SA_206"",""SA_211""],""active"":true}";11
+227;Mächtiger Lanzenangriff;5;;1;;"{""id"":""SA_61"",""active"":true}&{""id"":[""SA_213""],""active"":true}";11
+228;Mächtiger Rundumschlag;10;;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_69"",""active"":true}&{""id"":[""SA_201"",""SA_202"",""SA_208""],""active"":true}";11
+229;Meisterlicher Wurf;10;;1;;"{""id"":""SA_84"",""active"":true}&{""id"":[""SA_206"",""SA_215"",""SA_216""],""active"":true}";11
+230;Schilddeckung;5;;1;;"{""id"":[""SA_203"",""SA_208"",""SA_212""],""active"":true}";11
+231;Schildstoß;8;;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_199"",""SA_213""],""active"":true}";11
+232;Schwinger;8;;1;;"{""id"":""STR"",""value"":13}&{""id"":[""SA_206""],""active"":true}";11
+233;Sprungangriff;20;;1;;"{""id"":""AGI"",""value"":15}&{""id"":[""SA_208"",""SA_209"",""SA_210""],""active"":true}";11
+234;Sprungtritt;20;;1;;"{""id"":[""SA_205"",""SA_207""],""active"":true}";11
+235;Tiefschlag;10;;1;;"{""id"":[""SA_200"",""SA_205"",""SA_211""],""active"":true}";11
+236;Tod von Links;10;;1;;"{""id"":[""SA_204""],""active"":true}";11
+237;Verkürzte Waffenführung;10;;1;;"{""id"":[""SA_197""],""active"":true}";11
+238;Vorbeiziehen;15;;1;;"{""id"":""AGI"",""value"":15}&{""id"":[""SA_204"",""SA_485""],""active"":true}";11
+239;Waffenwurf;5;;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_203"",""SA_210""],""active"":true}";11
+240;Weiter Schwung;15;;1;;"{""id"":[""SA_201"",""SA_202"",""SA_214""],""active"":true}";11
+241;Windmühle;25;;1;;"{""id"":[""AGI"",""STR""],""value"":15}&{""id"":[""SA_197"",""SA_199"",""SA_209"",""SA_214"",""SA_485""],""active"":true}";11
+242;Wuchtiger Wurf;15;;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_198"",""SA_209"",""SA_212""],""active"":true}";11
+243;Würgegriff;5;;1;;"{""id"":""SA_191"",""active"":true}&{""id"":[""SA_215"",""SA_216""],""active"":true}";11
+244;Zertrümmern;5;;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_69"",""active"":true}&{""id"":[""SA_201"",""SA_210"",""SA_212""],""active"":true}";11
+245;Befehl Flugangriff;12;;1;;"{""id"":""TAL_1"",""value"":8}&{""id"":""SA_171"",""active"":true}";12
+246;Befehl Klammergriff;12;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
+247;Befehl Mächtiger Schlag;10;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
+248;Befehl Sichelangriff;10;;1;;"{""id"":""TAL_45"",""value"":10}";12
+249;Befehl Trampeln;15;;1;;"{""id"":""TAL_29"",""value"":12}&{""id"":""SA_46"",""active"":true}";12
+250;Befehl Überrennen;12;;1;;"{""id"":""TAL_29"",""value"":12}&{""id"":""SA_46"",""active"":true}";12
+251;Abgeschwächter Zauber;5;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}";4
+252;Adaption (Zauber);5&10&15&20;;2;SPELLS;"{""id"":""ADV_50"",""active"":true}";4
+253;Alchimieverstärkung;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""TAL_43"",""value"":12}";4
+254;Astrale Meditation;15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}";4
+255;Aurapanzer;12;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+256;Druidenrache;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_86"",""active"":true,""sid"":4}";4
+257;Eisen- und Stahlverzauberung;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SPELL_46"",""value"":14}&{""id"":""TAL_36"",""value"":10}&{""id"":""TAL_55"",""value"":8}";4
+258;Entschwörung (Dämonen);5;;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_152"",""active"":true}";4
+259;Entschwörung (Elementare);5;;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_131"",""active"":true}";4
+260;Entschwörung (Geister);5;;1;;"{""id"":""ATTR_1"",""value"":13}&{""id"":""SPELL_129"",""active"":true}";4
+261;Exorzist I;10;;1;1?Dämonen&2?Geister&3?Elementare;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+262;Exorzist II;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""SA_261"",""active"":true}";4
+263;Exorzist III;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""SA_262"",""active"":true}";4
+264;Extrem starke Zaubertricks;3;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SA_89"",""active"":true}";4
+265;Fernzaubern;15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}&{""id"":""ATTR_2"",""value"":15}";4
+266;Gedankenschutz;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}&{""id"":""ATTR_1"",""value"":13}";4
+267;Improvisationszauberei (Formel);15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+268;Improvisationszauberei (Gesten);10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+269;Improvisiertes Ritual;5;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}";4
+270;Kleine Kraftkontrolle;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}";4
+271;Konzentrationsstärke;8;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}&{""id"":""ATTR_1"",""value"":13}";4
+272;Kraftkontrolle;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""SA_270"",""active"":true}";4
+273;Lieblingszauber;3&6&9&12;;1;SPELLS;"{""id"":""ADV_50"",""active"":true}";4
+274;Machtvolle Entschwörung (Dämonen);10;;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_258"",""active"":true}";4
+275;Machtvolle Entschwörung (Elementare);10;;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_259"",""active"":true}";4
+276;Machtvolle Entschwörung (Geister);10;;1;;"{""id"":""ATTR_1"",""value"":15}&{""id"":""SA_260"",""active"":true}";4
+277;Magische Regeneration I;12;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+278;Magische Regeneration II;12;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":17,""type"":1}&{""id"":""SA_277"",""active"":true}";4
+279;Magischer Gedankenschutz;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}&{""id"":""ATTR_1"",""value"":13}";4
+280;Matrixkontrolle;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+281;Meisterliche Regeneration;10;;1;;"{""id"":""ADV_50"",""active"":true}";4
+282;Meistertrick I;1;;1;CANTRIPS;"{""id"":""ADV_50"",""active"":true}";4
+283;Meistertrick II;1;;1;;"{""id"":""SA_282"",""active"":true}";4
+284;Meistertrick III;1;;1;;"{""id"":""SA_283"",""active"":true}";4
+285;Parallelzauberei;15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+286;Routinierte Zauberwiederholung;10;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":13,""type"":1}&{""id"":""ATTR_2"",""value"":13}";4
+287;Vielfache Ladung;12;;1;;"{""id"":""SPELL_46"",""value"":14}&{""id"":""TAL_36"",""value"":12}&{""id"":""TAL_40"",""value"":8}";4
+288;Zauber abbrechen;12;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+289;Zauber bereithalten;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":17,""type"":1}&{""id"":""SA_292"",""active"":true}";4
+290;Zauber bündeln I;15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}";4
+291;Zauber bündeln II;15;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""ATTR_PRIMARY"",""value"":15,""type"":1}&{""id"":""SA_290"",""active"":true}";4
+292;Zauber unterbrechen;20;;1;;"{""id"":""ADV_50"",""active"":true}&{""id"":""SA_288"",""active"":true}";4
+293;Zauberstil-Kombination;50;;1;;;4
+294;Scholar der Akademie der Geistigen Kraft zu Fasar;25;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+295;Scholar der Akademie der Hohen Magie zu Punin;20;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+296;Scholar der Akademie der Verformungen zu Lowangen;12;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+297;Scholar der Akademie Schwert und Stab zu Gareth;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+298;Scholar der Halle der Antimagie zu Kuslik;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+299;Scholar der Halle der Erleuchtung zu Al´Anfa;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+300;Scholar der Khelbara ay Baburia;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+301;Scholar der Schule der Austreibung zu Perricum;12;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+302;Scholar der Schule der Hellsicht zu Thorwal;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+303;Scholar der Schule der Vierfachen Verwandlung zu Sinoda;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+304;Scholar der Schule des Direkten Weges zu Gerasim;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+305;Scholar der Schule des Seienden Scheins zu Zorgan;12;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+306;Scholar der Töchter Niobaras;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":10}";13
+307;Scholar des Alrik Dagabor;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+308;Scholar des Demirion Ophenos;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+309;Scholar des Hesindius Lichtblick;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+310;Scholar des Seminars der elfischen Verständigung und natürlichen Heilung zu Donnerbach;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+311;Scholar des Vadif sal Karim;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":1}";13
+312;Artefaktanalytiker;15;;1;;"{""id"":[""SA_295"",""SA_302""],""active"":true}";14
+313;Aufladung;10;;1;;"{""id"":[""SA_299"",""SA_307""],""active"":true}";14
+314;Austreibung;5;;1;;"{""id"":[""SA_301"",""SA_309""],""active"":true}";14
+315;Bewanderter Heilzauberer;25;;1;;"{""id"":[""SA_300"",""SA_310""],""active"":true}";14
+316;Brillianter Telekinetiker;25;;1;;"{""id"":""SA_304"",""active"":true}";14
+317;Destruktor;15;;1;;"{""id"":[""SA_297"",""SA_299""],""active"":true}";14
+318;Eiserne Konzentrationsstärke;8;;1;;"{""id"":[""SA_297"",""SA_298"",""SA_308""],""active"":true}";14
+319;Elfenfreund;15;;1;;"{""id"":[""SA_296"",""SA_304"",""SA_310""],""active"":true}";14
+320;Erfahrener Antimagier;25;;1;;"{""id"":[""SA_298"",""SA_301""],""active"":true}";14
+321;Erweiterter Gedankenschutz;12;;1;;"{""id"":[""SA_294"",""SA_298"",""SA_299""],""active"":true}";14
+322;Geistzauberer;10;;1;;"{""id"":""SA_294"",""active"":true}";14
+323;Harmoniezauberei;20;;1;;"{""id"":[""SA_302"",""SA_304"",""SA_311""],""active"":true}";14
+324;Hervorragender Illusionist;25;;1;;"{""id"":""SA_305"",""active"":true}";14
+325;Illusionäre Undurchschaubarkeit;20;;1;;"{""id"":""SA_305"",""active"":true}";14
+326;Kriegszauberer;20;;1;;"{""id"":""SA_297"",""active"":true}";14
+327;Kundiger Sphärologe;25;;1;;"{""id"":""SA_295"",""active"":true}";14
+328;Langanhaltende Illusion;15;;1;;"{""id"":""SA_305"",""active"":true}";14
+329;Machtvolle Verbotene Pforten;8;;1;;"{""id"":[""SA_307"",""SA_308""],""active"":true}";14
+330;Matrixzauberei;25;;1;;"{""id"":[""SA_295"",""SA_309"",""SA_311""],""active"":true}";14
+331;Meisterliches Auraverbergen;10;;1;;"{""id"":""SA_306"",""active"":true}";14
+332;Mitverwandlung;10;;1;;"{""id"":[""SA_296"",""SA_303""],""active"":true}";14
+333;Qabalya-Magie;15;;1;;"{""id"":""SA_306"",""active"":true}";14
+334;Selbstkontrolle;20;;1;;"{""id"":[""SA_300"",""SA_301"",""SA_307""],""active"":true}";14
+335;Selbstverzauberer;10;;1;;"{""id"":""SA_303"",""active"":true}";14
+336;Tierflüsterer;8;;1;;"{""id"":""SA_309"",""active"":true}";14
+337;Überragender Dämonologe;25;;1;;"{""id"":""SA_308"",""active"":true}";14
+338;Unübertroffener Verwandler;25;;1;;"{""id"":[""SA_296"",""SA_303""],""active"":true}";14
+339;Urtulamidische Heilmagie;15;;1;;"{""id"":""SA_300"",""active"":true}";14
+340;Verständigungszauberer;10;;1;;"{""id"":""SA_310"",""active"":true}";14
+341;Vollendeter Elementarist;25;;1;;"{""id"":""SA_311"",""active"":true}";14
+342;Vollkommener Beherrscher;25;;1;;"{""id"":""SA_294"",""active"":true}";14
+343;Vortrefflicher Hellseher;25;;1;;"{""id"":[""SA_302"",""SA_306""],""active"":true}";14
+344;Astraltransfer;10;;1;;"{""id"":""SA_92"",""active"":true}";5
+345;Astralentzug;15;;1;;"{""id"":""SA_344"",""active"":true}";5
+346;Astralraub;20;;1;;"{""id"":""SA_345"",""active"":true}";5
+347;Bannstab des Adepten;12;;1;;"{""id"":""SA_92"",""active"":true}";5
+348;Bannstab des Magus;20;;1;;"{""id"":""SA_347"",""active"":true}";5
+349;Druckwelle;15;;1;;"{""id"":""SA_364"",""active"":true}";5
+350;Energiestrahl;15;;1;;"{""id"":""SA_92"",""active"":true}";5
+351;Halbes Maß;3;;1;;"{""id"":""SA_92"",""active"":true}";5
+352;Hammer des Adepten;5;;1;;"{""id"":""SA_92"",""active"":true}";5
+353;Hammer des Magus;10;;1;;"{""id"":""SA_352"",""active"":true}";5
+354;Heilschlaf;8;;1;;"{""id"":""SA_92"",""active"":true}&{""id"":""TAL_50"",""value"":10}";5
+355;Machtvolle Stabzauber I;3;;1;;"{""id"":""SA_92"",""active"":true}";5
+356;Machtvolle Stabzauber II;3;;1;;"{""id"":""SA_355"",""active"":true}";5
+357;Machtvolle Stabzauber III;3;;1;;"{""id"":""SA_356"",""active"":true}";5
+358;Machtvolle Stabzauber IV;3;;1;;"{""id"":""SA_357"",""active"":true}";5
+359;Modifikationsfokus;10;;1;;"{""id"":""SA_96"",""active"":true}";5
+360;Seil des Magus;15;;1;;"{""id"":""SA_98"",""active"":true}";5
+361;Seilpeitsche;15;;1;;"{""id"":""SA_360"",""active"":true}";5
+362;Seilschlange;10;;1;;"{""id"":""SA_361"",""active"":true}";5
+363;Siegelbrecher;10;;1;;"{""id"":""SA_92"",""active"":true}";5
+364;Stabbohrer;8;;1;;"{""id"":""SA_99"",""active"":true}";5
+365;Stabexplosion;20;;1;;"{""id"":""SA_92"",""active"":true}";5
+366;Stabfixierung;10;;1;;"{""id"":""SA_99"",""active"":true}";5
+367;Telekineseschlag;15;;1;;"{""id"":""SA_353"",""active"":true}";5
+368;Tierwandlung;sel;;2;;"{""id"":""SA_92"",""active"":true}&{""id"":""TAL_29"",""value"":10}";5
+369;Volumenerweiterung des Zauberstabs I;5;;1;;"{""id"":""SA_92"",""active"":true}";5
+370;Volumenerweiterung des Zauberstabs II;5;;1;;"{""id"":""SA_369"",""active"":true}";5
+371;Volumenerweiterung des Zauberstabs III;5;;1;;"{""id"":""SA_370"",""active"":true}";5
+372;Volumenerweiterung des Zauberstabs IV;5;;1;;"{""id"":""SA_371"",""active"":true}";5
+373;Volumenerweiterung des Zauberstabs V;5;;1;;"{""id"":""SA_372"",""active"":true}";5
+374;Zauberspeicher des Adepten;20;;1;;"{""id"":""SA_97"",""active"":true}";5
+375;Bannschwert des Adepten;10;;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
+376;Bannschwert des Magus;15;;1;;"{""id"":""SA_375"",""active"":true}";15
+377;Bannschwert-Apport;15;;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
+378;Bindung des Banndolchs;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
+379;Bindung des Bannschwerts;20;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
+380;Bindung des Bannzweihänders;35;;1;;"{""id"":""SA_86"",""active"":true,""sid"":[1,10]}";15
+381;Fokus der Austreibung;15;;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
+382;Klinge wider Untote;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+383;Klinge wider Geister;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+384;Klinge wider Dämonen;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+385;Klinge wider Elementare;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+386;Klinge wider Feen;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+387;Klinge wider Chimären;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+388;Klinge wider Daimonide;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+389;Klinge wider Golems;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+390;Machtvolle Bannschwertzauber I;3;;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
+391;Machtvolle Bannschwertzauber II;3;;1;;"{""id"":""SA_390"",""active"":true}";15
+392;Machtvolle Bannschwertzauber III;3;;1;;"{""id"":""SA_391"",""active"":true}";15
+393;Machtvolle Bannschwertzauber IV;3;;1;;"{""id"":""SA_392"",""active"":true}";15
+394;Verschwinde;20;;1;;"{""id"":""SA_376"",""active"":true}";15
+395;Volumenerweiterung des Bannschwerts I;5;;1;;"{""id"":[""SA_378"",""SA_379"",""SA_380""],""active"":true}";15
+396;Volumenerweiterung des Bannschwerts II;5;;1;;"{""id"":""SA_395"",""active"":true}";15
+397;Volumenerweiterung des Bannschwerts III;5;;1;;"{""id"":""SA_396"",""active"":true}";15
+398;Volumenerweiterung des Bannschwerts IV;5;;1;;"{""id"":""SA_397"",""active"":true}";15
+399;Volumenerweiterung des Bannschwerts V;5;;1;;"{""id"":""SA_398"",""active"":true}";15
+400;Bindung des Dolches;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":4}";16
+401;Dolch-Apport;15;;1;;"{""id"":""SA_400"",""active"":true}";16
+402;Kraft aus der Erde;10;;1;;"{""id"":""SA_400"",""active"":true}";16
+403;Sicht im Dunkeln;10;;1;;"{""id"":""SA_400"",""active"":true}";16
+404;Wegweiser;5;;1;;"{""id"":""SA_400"",""active"":true}";16
+405;Bann des Übernatürlichen;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+406;Bindung des Zauberinstruments;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":6}";17
+407;Brechender Fels;10;;1;;"{""id"":""SA_406"",""active"":true}";17
+408;Emotionsübernahme;8;;1;;"{""id"":""SA_406"",""active"":true}";17
+409;Fokus der Aufmerksamkeit;20;;1;;"{""id"":""SA_406"",""active"":true}";17
+410;Hilferuf;10;;1;;"{""id"":""SA_406"",""active"":true}";17
+411;Klangillusion;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+412;Langanhaltender Rhythmus;10;;1;;"{""id"":""SA_406"",""active"":true}";17
+413;Machtvolle Instrumentenzauber I;3;;1;;"{""id"":""SA_406"",""active"":true}";17
+414;Machtvolle Instrumentenzauber II;3;;1;;"{""id"":""SA_413"",""active"":true}";17
+415;Machtvolle Instrumentenzauber III;3;;1;;"{""id"":""SA_414"",""active"":true}";17
+416;Machtvolle Instrumentenzauber IV;3;;1;;"{""id"":""SA_415"",""active"":true}";17
+417;Ohrenbetäubender Klang;15;;1;;"{""id"":""SA_406"",""active"":true}";17
+418;Störgeräusch;15;;1;;"{""id"":""SA_406"",""active"":true}";17
+419;Viele Instrumente;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+420;Volumenerweiterung des Zauberinstruments I;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+421;Volumenerweiterung des Zauberinstruments II;5;;1;;"{""id"":""SA_420"",""active"":true}";17
+422;Volumenerweiterung des Zauberinstruments III;5;;1;;"{""id"":""SA_421"",""active"":true}";17
+423;Volumenerweiterung des Zauberinstruments IV;5;;1;;"{""id"":""SA_422"",""active"":true}";17
+424;Volumenerweiterung des Zauberinstruments V;5;;1;;"{""id"":""SA_423"",""active"":true}";17
+425;Weiter Klang;15;;1;;"{""id"":""SA_406"",""active"":true}";17
+426;Zauberinstrument-Apport;15;;1;;"{""id"":""SA_406"",""active"":true}";17
+427;Zerspringendes Glas;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+428;Zugabe;5;;1;;"{""id"":""SA_406"",""active"":true}";17
+429;Besitzanspruch;5;;1;;"{""id"":""SA_430"",""active"":true}";18
+430;Bindung der Zauberkleidung;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":7}";18
+431;Diebsgewand;8;;1;;"{""id"":""SA_430"",""active"":true}";18
+432;Faszinierende Kleidung;15;;1;;"{""id"":""SA_430"",""active"":true}";18
+433;Fesselnde Gewandung;5;;1;;"{""id"":""SA_429"",""active"":true}";18
+434;Fokus der Begierde;20;;1;;"{""id"":""SA_430"",""active"":true}";18
+435;Gefühlsübernahme;5;;1;;"{""id"":""SA_430"",""active"":true}";18
+436;Gewand der Beeinflussung;12;;1;;"{""id"":""SA_430"",""active"":true}";18
+437;Gewand der Heilung;12;;1;;"{""id"":""SA_430"",""active"":true}";18
+438;Gewand der Täuschung;20;;1;;"{""id"":""SA_430"",""active"":true}";18
+439;Langer Tanz;10;;1;;"{""id"":""SA_430"",""active"":true}";18
+440;Machtvolle Gewandzauber I;3;;1;;"{""id"":""SA_430"",""active"":true}";18
+441;Machtvolle Gewandzauber II;3;;1;;"{""id"":""SA_441"",""active"":true}";18
+442;Machtvolle Gewandzauber III;3;;1;;"{""id"":""SA_442"",""active"":true}";18
+443;Machtvolle Gewandzauber IV;3;;1;;"{""id"":""SA_443"",""active"":true}";18
+444;Schmutzabweisend;5;;1;;"{""id"":""SA_430"",""active"":true}";18
+445;Schutzgewand I;12;;1;;"{""id"":""SA_430"",""active"":true}";18
+446;Schutzgewand II;12;;1;;"{""id"":""SA_445"",""active"":true}";18
+447;Verführerische Gewandung;8;;1;;"{""id"":""SA_430"",""active"":true}";18
+448;Volumenerweiterung der Zauberkleidung I;5;;1;;"{""id"":""SA_430"",""active"":true}";18
+449;Volumenerweiterung der Zauberkleidung II;5;;1;;"{""id"":""SA_448"",""active"":true}";18
+450;Volumenerweiterung der Zauberkleidung III;5;;1;;"{""id"":""SA_449"",""active"":true}";18
+451;Volumenerweiterung der Zauberkleidung IV;5;;1;;"{""id"":""SA_450"",""active"":true}";18
+452;Volumenerweiterung der Zauberkleidung V;5;;1;;"{""id"":""SA_451"",""active"":true}";18
+453;Wandelbare Kleidung;10;;1;;"{""id"":""SA_430"",""active"":true}";18
+454;Zauberkleidung-Apport;15;;1;;"{""id"":""SA_430"",""active"":true}";18
+455;Aufnahme;15;;1;;"{""id"":""SA_457"",""active"":true}";19
+456;Bilderspiel;12;;1;;"{""id"":""SA_457"",""active"":true}";19
+457;Bindung der Zauberkugel;10;;1;;"{""id"":""SA_86"",""active"":true,""sid"":5}";19
+458;Brennglas;8;;1;;"{""id"":""SA_457"",""active"":true}";19
+459;Illusionsspeicher;20;;1;;"{""id"":""SA_457"",""active"":true}";19
+460;Kommunikation;15;;1;;"{""id"":""SA_457"",""active"":true}";19
+461;Kugel des Hellsehers;12;;1;;"{""id"":""SA_457"",""active"":true}";19
+462;Kugel des Illusionisten;10;;1;;"{""id"":""SA_457"",""active"":true}";19
+463;Machtvolle Kugelzauber I;3;;1;;"{""id"":""SA_457"",""active"":true}";19
+464;Machtvolle Kugelzauber II;3;;1;;"{""id"":""SA_463"",""active"":true}";19
+465;Machtvolle Kugelzauber III;3;;1;;"{""id"":""SA_464"",""active"":true}";19
+466;Machtvolle Kugelzauber IV;3;;1;;"{""id"":""SA_465"",""active"":true}";19
+467;Magischer Schutzwall;10;;1;;"{""id"":""SA_457"",""active"":true}";19
+468;Prisma;5;;1;;"{""id"":""SA_457"",""active"":true}";19
+469;Störfeld;8;;1;;"{""id"":""SA_457"",""active"":true}";19
+470;Volumenerweiterung der Kugel I;5;;1;;"{""id"":""SA_457"",""active"":true}";19
+471;Volumenerweiterung der Kugel II;5;;1;;"{""id"":""SA_470"",""active"":true}";19
+472;Volumenerweiterung der Kugel III;5;;1;;"{""id"":""SA_471"",""active"":true}";19
+473;Volumenerweiterung der Kugel IV;5;;1;;"{""id"":""SA_472"",""active"":true}";19
+474;Volumenerweiterung der Kugel V;5;;1;;"{""id"":""SA_473"",""active"":true}";19
+475;Wachendes Auge;10;;1;;"{""id"":""SA_457"",""active"":true}";19
+476;Warnendes Leuchten;12;;1;;"{""id"":""SA_457"",""active"":true}";19
+477;Zauberkugel-Apport;15;;1;;"{""id"":""SA_457"",""active"":true}";19
+478;Steckenverzauberung;5;;1;;"{""id"":""SA_86"",""active"":true,""sid"":5}";20
+479;Funkenregen;10;;1;;"{""id"":""SA_478"",""active"":true}";20
+480;Leuchtfeuer;10;;1;;"{""id"":""SA_479"",""active"":true}";20
+481;Ewige Flamme;10;;1;;"{""id"":""SA_478"",""active"":true}";20
+482;Halbes Maß;3;;1;;"{""id"":""SA_478"",""active"":true}";20
+483;Seil des Adepten;10;;1;;"{""id"":""SA_478"",""active"":true}";20
+484;Variante;sel;;;;;4
+485;Alter Adersin-Stil;15;;1;;"{""id"":""AGI"",""value"":13}";9
+486;Gift melken (Land- und Lufttiere);5;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""TAL_47"",""value"":4}";
+487;Gift melken (Wassertiere);5;;1;;"{""id"":""TAL_26"",""value"":8}&{""id"":""TAL_47"",""value"":4}";
+488;Unterwasserkampf;0;;1;;"{""id"":""ADV_71"",""active"":true}";3
+489;Heraldikspezialist;2;;1;;"{""id"":""SA_17"",""active"":true}";1
+490;Namensschmeichler;8;;1;;;1
+491;Kampftrinker;2;4;1;;"{""id"":""DISADV_71"",""active"":false}";1
+492;Backpfeifen-Sturm;2;;1;;"{""id"":""AGI"",""value"":13}&{""id"":""SA_54"",""active"":true}";21
+493;Durch die Wand;1;;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_54"",""active"":true}";21
+494;Hose Herunterziehen/Hemd Hochziehen;1;;1;;"{""id"":[""DEX"",""AGI""],""value"":13}";21
+495;Kneipen-Blutgrätsche;3;;1;;"{""id"":""AGI"",""value"":13}&{""id"":""TAL_4"",""value"":8}";21
+496;Kneipen-Geschossabwehr;2;;1;;"{""id"":""DEX"",""value"":13}";21
+497;Kneipen-Kopfstoß;1;;1;;;21
+498;Köpfe Aneinanderschlagen;3;;1;;"{""id"":""STR"",""value"":13}";21
+499;Schlag auf den Kopf;1;;1;;"{""id"":""STR"",""value"":15}";21
+500;Tür gegen den Kopf Knallen;3;;1;;"{""id"":""STR"",""value"":13}&{""id"":""SA_54"",""active"":true}";21
+501;Deichbauer;2;;1;;"{""id"":""TAL_58"",""value"":4}";1

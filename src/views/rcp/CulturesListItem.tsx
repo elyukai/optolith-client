@@ -31,7 +31,10 @@ export class CulturesListItem extends React.Component<Props, undefined> {
 						showDetails && (
 							<div className="details">
 								{
-									culture.talents.map(talent => `${get(talent[0]).name} +${talent[1]}`).sort().join(', ')
+									culture.talents.map(talent => {
+										const entry = get(talent[0]);
+										return entry && `${entry.name} +${talent[1]}`;
+									}).sort().join(', ')
 								}
 							</div>
 						)

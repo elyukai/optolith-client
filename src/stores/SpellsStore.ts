@@ -1,11 +1,14 @@
+import { last } from 'lodash';
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { UndoTriggerActions } from '../actions/HistoryActions';
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction, SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
-import { CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
-import { getSids } from '../utils/ActivatableUtils';
+import { AdvantageInstance, CantripInstance, DisadvantageInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
+import { getSids, isActive } from '../utils/ActivatableUtils';
+import { validate } from '../utils/RequirementUtils';
+import { isOwnTradition } from '../utils/SpellUtils';
 import { ELStore } from './ELStore';
 import { get, getAllByCategory, ListStore } from './ListStore';
 import { PhaseStore } from './PhaseStore';
@@ -63,6 +66,51 @@ class SpellsStoreStatic extends Store {
 		return getAllByCategory(this.category) as SpellInstance[];
 	}
 
+	getAllForView() {
+		const tradition = get('SA_86') as SpecialAbilityInstance;
+		const allEntries = getAllByCategory(Categories.CANTRIPS, Categories.SPELLS) as (CantripInstance | SpellInstance)[];
+		const areMaxUnfamiliar = this.areMaxUnfamiliar();
+		const lastTraditionId = last(getSids(tradition));
+		if (lastTraditionId === 8) {
+			const activeSpells = this.getActiveSpellsNumber(allEntries);
+			let maxSpells = 3;
+			const bonusEntry = get('ADV_58') as AdvantageInstance;
+			const penaltyEntry = get('DISADV_59') as DisadvantageInstance;
+			if (isActive(bonusEntry)) {
+				const tier = bonusEntry.active[0].tier;
+				if (tier) {
+					maxSpells += tier;
+				}
+			}
+			else if (isActive(penaltyEntry)) {
+				const tier = penaltyEntry.active[0].tier;
+				if (tier) {
+					maxSpells += tier;
+				}
+			}
+			return allEntries.filter(entry => {
+				return entry.category === Categories.CANTRIPS || entry.gr === 1 && activeSpells <= maxSpells && (entry.active === true || validate(entry.reqs, entry.id) && (isOwnTradition(entry) || !areMaxUnfamiliar));
+			});
+		}
+		else if (lastTraditionId === 6 || lastTraditionId === 7) {
+			return allEntries.filter(entry => {
+				return entry.category === Categories.CANTRIPS || entry.gr > 2 && isOwnTradition(entry) && validate(entry.reqs, entry.id);
+			});
+		}
+		return allEntries.filter(entry => {
+			return entry.category === Categories.CANTRIPS || entry.active === true || validate(entry.reqs, entry.id) && (isOwnTradition(entry) || entry.gr < 3 && !areMaxUnfamiliar);
+		});
+	}
+
+	getActiveSpellsNumber(list: (CantripInstance | SpellInstance)[] = getAllByCategory(Categories.SPELLS) as SpellInstance[]) {
+		return list.reduce((n, entry) => {
+			if (entry.category === Categories.SPELLS && entry.value > 0) {
+				return n + 1;
+			}
+			return n;
+		}, 0);
+	}
+
 	getAllCantrips() {
 		return getAllByCategory(Categories.CANTRIPS) as CantripInstance[];
 	}
@@ -102,30 +150,21 @@ class SpellsStoreStatic extends Store {
 
 	areMaxUnfamiliar() {
 		const phase = PhaseStore.get() < 3;
+		if (!phase) {
+			return false;
+		}
 		const max = ELStore.getStart().maxUnfamiliarSpells;
 		const SA_86 = get('SA_86') as SpecialAbilityInstance;
-		const unfamiliarSpells = this.getAll().filter(e => {
+		const unfamiliarSpells = this.getAll().reduce((n, e) => {
 			const unknownTradition = !e.tradition.some(e => e === 1 || e === (getSids(SA_86)[0] as number) + 1);
-			return unknownTradition && e.gr < 3 && e.active;
-		});
-		return phase && unfamiliarSpells.length >= max;
+			return unknownTradition && e.gr < 3 && e.active ? n + 1 : n;
+		}, 0);
+		return unfamiliarSpells >= max;
 	}
 
 	isActivationDisabled() {
 		const maxSpellsLiturgies = ELStore.getStart().maxSpellsLiturgies;
 		return PhaseStore.get() < 3 && this.getAll().filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
-	}
-
-	getGroupNames() {
-		return ['Spruch', 'Ritual', 'Fluch', 'Lied'];
-	}
-
-	getPropertyNames() {
-		return ['Antimagie', 'Dämonisch', 'Einfluss', 'Elementar', 'Heilung', 'Hellsicht', 'Illusion', 'Sphären', 'Objekt', 'Telekinese', 'Verwandlung'];
-	}
-
-	getTraditionNames() {
-		return ['Allgemein', 'Gildenmagier', 'Hexen', 'Elfen', 'Druiden', 'Scharlatane', 'Zauberbarden', 'Zaubertänzer', 'Intuitive Zauberer', 'Meistertalentierte', 'Qabalyamagier', 'Kristallomanten', 'Geoden', 'Alchimisten', 'Schelme'];
 	}
 
 	getSortOrder() {

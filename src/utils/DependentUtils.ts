@@ -1,28 +1,30 @@
 import { isEqual } from 'lodash';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
-import { ActivatableInstance, AttributeInstance, CantripInstance, DependencyObject, RequirementObject, SkillOptionalDependency, SpellInstance, ToListById } from '../types/data.d';
-import { AbilityInstance } from '../types/data.d';
-import { convertId } from './AttributeUtils';
+import { ActivatableInstance, AttributeInstance, BlessingInstance, CantripInstance, SpellInstance } from '../types/data.d';
+import { AbilityInstanceExtended, AllRequirementObjects } from '../types/data.d';
+import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
+import { isCultureRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
 
-type RequiringInstance = ActivatableInstance | SpellInstance | CantripInstance;
+type RequiringInstance = ActivatableInstance | SpellInstance | CantripInstance | BlessingInstance;
+export type AdditionalRequirements = ActivatableInstance | SpellInstance | CantripInstance | BlessingInstance;
 
-function addDependencyToArray<T>(array: T[], add: T): T[] {
+function addToArray<T>(array: T[], add: T): T[] {
 	return [ ...array, add ];
 }
 
-function removeDependencyFromArray<T>(array: T[], index: number): T[] {
+function removeFromArray<T>(array: T[], index: number): T[] {
 	array.splice(index, 1);
 	return [ ...array ];
 }
 
-function addDependency(obj: AbilityInstance, add: any): AbilityInstance {
+function addDependency(obj: AbilityInstanceExtended, add: any): AbilityInstanceExtended {
 	return {
 		...obj,
-		dependencies: addDependencyToArray(obj.dependencies, add),
+		dependencies: addToArray(obj.dependencies, add),
 	};
 }
 
-function removeDependency<D>(obj: AbilityInstance, remove: D): AbilityInstance {
+function removeDependency<D>(obj: AbilityInstanceExtended, remove: D): AbilityInstanceExtended {
 	let index;
 	if (typeof remove === 'object') {
 		index = (obj.dependencies as D[]).findIndex(e => isEqual(remove, e));
@@ -33,75 +35,86 @@ function removeDependency<D>(obj: AbilityInstance, remove: D): AbilityInstance {
 	if (index > -1) {
 		return {
 			...obj,
-			dependencies: removeDependencyFromArray(obj.dependencies as D[], index),
-		} as AbilityInstance;
+			dependencies: removeFromArray(obj.dependencies as D[], index),
+		} as AbilityInstanceExtended;
 	}
 	else {
 		return obj;
 	}
 }
 
-function getInstance<T extends AbilityInstance>(instances: ToListById<AbilityInstance>, id: string) {
-	return (instances.hasOwnProperty(id) ? instances[id] : get(id)) as T;
+function getInstance<T extends AbilityInstanceExtended>(instances: Map<string, AbilityInstanceExtended>, id: string) {
+	return (instances.has(id) ? instances.get(id) : get(id)) as T;
 }
 
-export function addDependencies(obj: RequiringInstance, adds: RequirementObject[] = [], sel?: string): ToListById<AbilityInstance> {
+/**
+ * Adds dependencies to all required entries to ensure rule validity. The returned Map needs to be merged into the main Map in ListStore.
+ * @param obj The entry of which requirements you want to add dependencies for.
+ * @param adds Additional (computed) requirements that are not included in the static requirements.
+ * @param sel The SID from the current selection.
+ */
+export function addDependencies(obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
 	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances: ToListById<AbilityInstance> = {
-		[obj.id]: obj,
-	};
+	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
 
 	allReqs.forEach(req => {
-		if (req !== 'RCP' && req.id !== 'RACE') {
-			const { active, value, sid, sid2, type } = req;
-			let id: string | string[] | undefined = req.id;
-			if (id === 'auto_req' || sid === 'GR') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = convertId(getPrimaryAttrID(type as 1 | 2));
+		if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
+			if (isRequiringPrimaryAttribute(req)) {
+				const { type, value } = req;
+				const id = getPrimaryAttrID(type);
 				if (id) {
 					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					instances[id] = addDependency(requiredAbility, value);
+					instances.set(id, addDependency(requiredAbility, value));
 				}
 			}
-			else {
+			else if (isRequiringIncreasable(req)) {
+				const { id, value } = req;
 				if (Array.isArray(id)) {
-					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = { active, origin: obj.id };
-					}
-					else if (value) {
-						add = { value, origin: obj.id };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
-					}
+					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const id = convertId(e);
-						const requiredAbility = getInstance(instances, id);
+						const requiredAbility = getInstance(instances, e);
 						if (requiredAbility) {
-							instances[id] = addDependency(requiredAbility, add);
+							instances.set(e, addDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = active;
-					}
-					else if (value) {
-						add = value;
-					}
-					else if (Array.isArray(sid)) {
-						add = { active, sid };
+					const requiredAbility = getInstance(instances, id);
+					instances.set(id, addDependency(requiredAbility, value));
+				}
+			}
+			else {
+				const { id, active, sid, sid2 } = req;
+				if (sid !== 'GR') {
+					if (Array.isArray(id)) {
+						let add: ActiveOptionalDependency = { origin: obj.id };
+						if (Object.keys(req).length === 2 && typeof active === 'boolean') {
+							add = { active, ...add };
+						}
+						else {
+							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
+						}
+						id.forEach(e => {
+							const requiredAbility = getInstance(instances, e);
+							if (requiredAbility) {
+								instances.set(e, addDependency(requiredAbility, add));
+							}
+						});
 					}
 					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+						let add: boolean | ActiveDependency;
+						if (Object.keys(req).length === 2 && typeof active === 'boolean') {
+							add = active;
+						}
+						else if (Array.isArray(sid)) {
+							add = { active, sid };
+						}
+						else {
+							add = { sid: sid === 'sel' ? sel : sid, sid2 };
+						}
+						const requiredAbility = getInstance(instances, id);
+						instances.set(id, addDependency(requiredAbility, add));
 					}
-					id = convertId(id);
-					const requiredAbility = getInstance(instances, id);
-					instances[id] = addDependency(requiredAbility, add);
 				}
 			}
 		}
@@ -109,67 +122,77 @@ export function addDependencies(obj: RequiringInstance, adds: RequirementObject[
 	return instances;
 }
 
-export function removeDependencies(obj: RequiringInstance, adds: RequirementObject[] = [], sel?: string): ToListById<AbilityInstance> {
+/**
+ * Removes dependencies from all required entries to ensure rule validity.
+ * @param obj The entry of which requirements you want to remove dependencies from.
+ * @param adds Additional (computed) requirements that are not included in the static requirements.
+ * @param sel The SID from the current selection.
+ */
+export function removeDependencies(obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
 	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances: ToListById<AbilityInstance> = {
-		[obj.id]: obj,
-	};
+	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
 
 	allReqs.forEach(req => {
-		if (req !== 'RCP' && req.id !== 'RACE') {
-			const { active, value, sid, sid2, type } = req;
-			let id: string | string[] | undefined = req.id;
-			if (id === 'auto_req' || sid === 'GR') {
-				return;
-			}
-			if (id === 'ATTR_PRIMARY') {
-				id = convertId(getPrimaryAttrID(type as 1 | 2));
+		if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
+			if (isRequiringPrimaryAttribute(req)) {
+				const { type, value } = req;
+				const id = getPrimaryAttrID(type);
 				if (id) {
 					const requiredAbility = getInstance<AttributeInstance>(instances, id);
-					instances[id] = removeDependency(requiredAbility, value);
+					instances.set(id, removeDependency(requiredAbility, value));
 				}
 			}
-			else {
+			else if (isRequiringIncreasable(req)) {
+				const { id, value } = req;
 				if (Array.isArray(id)) {
-					let add: SkillOptionalDependency | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = { active, origin: obj.id };
-					}
-					else if (value) {
-						add = { value, origin: obj.id };
-					}
-					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2, origin: obj.id };
-					}
+					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const id = convertId(e);
-						const requiredAbility = getInstance(instances, id);
+						const requiredAbility = getInstance(instances, e);
 						if (requiredAbility) {
-							instances[id] = removeDependency(requiredAbility, add);
+							instances.set(e, removeDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					let add: boolean | number | DependencyObject;
-					if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-						add = active;
-					}
-					else if (value) {
-						add = value;
-					}
-					else if (Array.isArray(sid)) {
-						add = { active, sid };
+					const requiredAbility = getInstance(instances, id);
+					instances.set(id, removeDependency(requiredAbility, value));
+				}
+			}
+			else {
+				const { id, active, sid, sid2 } = req;
+				if (sid !== 'GR') {
+					if (Array.isArray(id)) {
+						let add: ActiveOptionalDependency = { origin: obj.id };
+						if (Object.keys(req).length === 2 && typeof active === 'boolean') {
+							add = { active, ...add };
+						}
+						else {
+							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
+						}
+						id.forEach(e => {
+							const requiredAbility = getInstance(instances, e);
+							if (requiredAbility) {
+								instances.set(e, removeDependency(requiredAbility, add));
+							}
+						});
 					}
 					else {
-						add = { sid: sid === 'sel' ? sel : (sid as string | number | undefined), sid2 };
+						let add: boolean | ActiveDependency;
+						if (Object.keys(req).length === 2 && typeof active === 'boolean') {
+							add = active;
+						}
+						else if (Array.isArray(sid)) {
+							add = { active, sid };
+						}
+						else {
+							add = { sid: sid === 'sel' ? sel : sid, sid2 };
+						}
+						const requiredAbility = getInstance(instances, id);
+						instances.set(id, removeDependency(requiredAbility, add));
 					}
-					id = convertId(id);
-					const requiredAbility = getInstance(instances, id);
-					instances[id] = removeDependency(requiredAbility, add);
 				}
 			}
 		}
 	});
-
 	return instances;
 }

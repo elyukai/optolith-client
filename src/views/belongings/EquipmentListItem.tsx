@@ -55,11 +55,11 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 						<tbody>
 							<tr>
 								<td>{translate('equipment.view.list.weight')}</td>
-								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
+								<td>{weight && `${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.price')}</td>
-								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
+								<td>{price && `${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
 							</tr>
 						</tbody>
 					</table>}
@@ -67,7 +67,12 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 						<tbody>
 							<tr>
 								<td>{translate('equipment.view.list.combattechnique')}</td>
-								<td>{combatTechnique && get(combatTechnique).name}</td>
+								<td>
+									{(() => {
+										const entry = combatTechnique && get(combatTechnique);
+										return entry && entry.name;
+									})()}
+								</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.damage')}</td>
@@ -87,7 +92,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.weight')}</td>
-								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
+								<td>{weight && `${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.length')}</td>
@@ -95,7 +100,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.price')}</td>
-								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
+								<td>{price && `${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
 							</tr>
 						</tbody>
 					</table> : null}
@@ -103,7 +108,12 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 						<tbody>
 							<tr>
 								<td>{translate('equipment.view.list.combattechnique')}</td>
-								<td>{combatTechnique && get(combatTechnique).name}</td>
+								<td>
+									{(() => {
+										const entry = combatTechnique && get(combatTechnique);
+										return entry && entry.name;
+									})()}
+								</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.damage')}</td>
@@ -123,7 +133,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.weight')}</td>
-								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
+								<td>{weight && `${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.length')}</td>
@@ -131,7 +141,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.price')}</td>
-								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
+								<td>{price && `${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
 							</tr>
 						</tbody>
 					</table> : null}
@@ -147,11 +157,11 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.weight')}</td>
-								<td>{localizeNumber(localizeWeight(weight))} {translate('equipment.view.list.weightunit')}</td>
+								<td>{weight && `${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.price')}</td>
-								<td>{localizeNumber(price)} {translate('equipment.view.list.priceunit')}</td>
+								<td>{price && `${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
 							</tr>
 						</tbody>
 					</table> : null}
