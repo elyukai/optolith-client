@@ -176,10 +176,15 @@ class EquipmentStoreStatic extends Store {
 		const items = this.getAll();
 		const armorZones = this.getAllArmorZones();
 
-		const itemsResult = items.reduce((n, i) => ({
-			price: i.price && !i.forArmorZoneOnly ? n.price + i.price : n.price,
-			weight:  i.weight && i.gr !== 4 ? n.weight + i.weight : n.weight
-		}), { price: 0, weight: 0 });
+		const itemsResult = items.reduce((n, i) => {
+			const { amount = 1, forArmorZoneOnly, gr, price, weight } = i;
+			const finalPrice = typeof price === 'number' && amount * price;
+			const finalWeight = typeof weight === 'number' && amount * weight;
+			return {
+				price: finalPrice && !forArmorZoneOnly ? n.price + finalPrice : n.price,
+				weight: finalWeight && gr !== 4 ? n.weight + finalWeight : n.weight
+			};
+		}, { price: 0, weight: 0 });
 
 		const armorZonesResult = armorZones.reduce((n, i) => {
 			const headArmor = this.getZoneArmor(i.head);

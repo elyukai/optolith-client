@@ -1,4 +1,4 @@
-import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemovePermanentAEPointAction, RemovePermanentKPPointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, RemoveAttributePointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { UndoTriggerActions } from '../actions/HistoryActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
@@ -12,7 +12,7 @@ import { get, getAllByCategory, ListStore } from './ListStore';
 import { RequirementsStore } from './RequirementsStore';
 import { Store } from './Store';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | UndoTriggerActions | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction | SetSelectionsAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | UndoTriggerActions | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointAction | AddLostAEPointsAction | AddLostKPPointAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | SetSelectionsAction;
 type ids = 'LP' | 'AE' | 'KP';
 
 class AttributeStoreStatic extends Store {
@@ -41,14 +41,6 @@ class AttributeStoreStatic extends Store {
 					case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 						break;
 
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
-						this.changePermanentArcaneEnergyBySpecialAbility(action.payload.id, true);
-						break;
-
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
-						this.changePermanentArcaneEnergyBySpecialAbility(action.payload.id);
-						break;
-
 					case ActionTypes.ADD_LIFE_POINT:
 						this.removeLifePoint();
 						break;
@@ -61,27 +53,49 @@ class AttributeStoreStatic extends Store {
 						this.removeKarmaPoint();
 						break;
 
-					case ActionTypes.REDEEM_AE_POINT:
-						this.removeRedeemedAEPoint();
+					case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
+						this.removeBoughtBackAEPoint();
 						break;
 
-					case ActionTypes.REDEEM_KP_POINT:
-						this.removeRedeemedKPPoint();
+					case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
+						this.removeBoughtBackKPPoint();
 						break;
 
-					case ActionTypes.REMOVE_REDEEMED_AE_POINT:
-						this.redeemAEPoint();
+					case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
+						this.addBoughtBackAEPoint();
 						break;
 
-					case ActionTypes.REMOVE_REDEEMED_KP_POINT:
-						this.redeemKPPoint();
+					case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
+						this.addBoughtBackKPPoint();
 						break;
 
-					case ActionTypes.REMOVE_PERMANENT_AE_POINTS:
+					case ActionTypes.ADD_LOST_AE_POINT:
+						this.removeLostAEPoint();
+						break;
+
+					case ActionTypes.ADD_LOST_KP_POINT:
+						this.removeLostKPPoint();
+						break;
+
+					case ActionTypes.REMOVE_LOST_AE_POINT:
+						this.addLostAEPoint();
+						if (action.cost !== 0) {
+							this.addBoughtBackAEPoint();
+						}
+						break;
+
+					case ActionTypes.REMOVE_LOST_KP_POINT:
+						this.addLostKPPoint();
+						if (action.cost !== 0) {
+							this.addBoughtBackKPPoint();
+						}
+						break;
+
+					case ActionTypes.ADD_LOST_AE_POINTS:
 						this.addPermanentAEPoints(action.payload.value);
 						break;
 
-					case ActionTypes.REMOVE_PERMANENT_KP_POINTS:
+					case ActionTypes.ADD_LOST_KP_POINTS:
 						this.addPermanentKPPoints(action.payload.value);
 						break;
 
@@ -126,52 +140,64 @@ class AttributeStoreStatic extends Store {
 						}
 						break;
 
-					case ActionTypes.REDEEM_AE_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						if (RequirementsStore.isValid()) {
-							this.redeemAEPoint();
+							this.addBoughtBackAEPoint();
 						}
 						break;
 
-					case ActionTypes.REDEEM_KP_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						if (RequirementsStore.isValid()) {
-							this.redeemKPPoint();
+							this.addBoughtBackKPPoint();
 						}
 						break;
 
-					case ActionTypes.REMOVE_REDEEMED_AE_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						if (RequirementsStore.isValid()) {
-							this.removeRedeemedAEPoint();
+							this.removeBoughtBackAEPoint();
 						}
 						break;
 
-					case ActionTypes.REMOVE_REDEEMED_KP_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						if (RequirementsStore.isValid()) {
-							this.removeRedeemedKPPoint();
+							this.removeBoughtBackKPPoint();
 						}
 						break;
 
-					case ActionTypes.REMOVE_PERMANENT_AE_POINTS:
+					case ActionTypes.ADD_LOST_AE_POINT:
+						this.addLostAEPoint();
+						break;
+
+					case ActionTypes.ADD_LOST_KP_POINT:
+						this.addLostKPPoint();
+						break;
+
+					case ActionTypes.REMOVE_LOST_AE_POINT:
+						if (this.permanentArcaneEnergy.lost === this.permanentArcaneEnergy.redeemed) {
+							this.removeBoughtBackAEPoint();
+						}
+						this.removeLostAEPoint();
+						break;
+
+					case ActionTypes.REMOVE_LOST_KP_POINT:
+						if (this.permanentKarmaPoints.lost === this.permanentKarmaPoints.redeemed) {
+							this.removeBoughtBackKPPoint();
+						}
+						this.removeLostKPPoint();
+						break;
+
+					case ActionTypes.ADD_LOST_AE_POINTS:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						this.removePermanentAEPoints(action.payload.value);
 						break;
 
-					case ActionTypes.REMOVE_PERMANENT_KP_POINTS:
+					case ActionTypes.ADD_LOST_KP_POINTS:
 						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 						this.removePermanentKPPoints(action.payload.value);
-						break;
-
-					case ActionTypes.ACTIVATE_SPECIALABILITY:
-						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
-						this.changePermanentArcaneEnergyBySpecialAbility(action.payload.id);
-						break;
-
-					case ActionTypes.DEACTIVATE_SPECIALABILITY:
-						AppDispatcher.waitFor([HistoryStore.dispatchToken]);
-						this.changePermanentArcaneEnergyBySpecialAbility(action.payload.id, true);
 						break;
 
 					default:
@@ -219,13 +245,6 @@ class AttributeStoreStatic extends Store {
 		};
 	}
 
-	getPermanentRedeemedChangeAmount(id: string) {
-		const value = this.getChangePermanentArcaneEnergyBySpecialAbilityAmount(id, true);
-		const { redeemed, lost } = this.permanentArcaneEnergy;
-		const balance = lost + value;
-		return redeemed > balance ? redeemed - balance : 0;
-	}
-
 	private addLifePoint() {
 		this.addedLifePoints++;
 	}
@@ -250,19 +269,19 @@ class AttributeStoreStatic extends Store {
 		this.addedKarmaPoints--;
 	}
 
-	private redeemAEPoint() {
+	private addBoughtBackAEPoint() {
 		this.permanentArcaneEnergy.redeemed++;
 	}
 
-	private redeemKPPoint() {
+	private addBoughtBackKPPoint() {
 		this.permanentKarmaPoints.redeemed++;
 	}
 
-	private removeRedeemedAEPoint() {
+	private removeBoughtBackAEPoint() {
 		this.permanentArcaneEnergy.redeemed--;
 	}
 
-	private removeRedeemedKPPoint() {
+	private removeBoughtBackKPPoint() {
 		this.permanentKarmaPoints.redeemed--;
 	}
 
@@ -272,6 +291,22 @@ class AttributeStoreStatic extends Store {
 
 	private removePermanentKPPoints(value: number) {
 		this.permanentKarmaPoints.lost += value;
+	}
+
+	private addLostAEPoint() {
+		this.permanentArcaneEnergy.lost++;
+	}
+
+	private addLostKPPoint() {
+		this.permanentKarmaPoints.lost++;
+	}
+
+	private removeLostAEPoint() {
+		this.permanentArcaneEnergy.lost--;
+	}
+
+	private removeLostKPPoint() {
+		this.permanentKarmaPoints.lost--;
 	}
 
 	private addPermanentAEPoints(value: number) {
@@ -296,55 +331,6 @@ class AttributeStoreStatic extends Store {
 		this.addedKarmaPoints = obj.kp;
 		this.permanentArcaneEnergy = obj.permanentAE;
 		this.permanentKarmaPoints = obj.permanentKP;
-	}
-
-	private getChangePermanentArcaneEnergyBySpecialAbilityAmount = (id: string, negative: boolean = false) => {
-		const modifier = negative ? -1 : 1;
-		let value = 0;
-		switch (id) {
-			case 'SA_92':
-			case 'SA_378':
-			case 'SA_406':
-			case 'SA_457':
-				value = 2;
-				break;
-			case 'SA_369':
-			case 'SA_370':
-			case 'SA_371':
-			case 'SA_372':
-			case 'SA_373':
-			case 'SA_395':
-			case 'SA_396':
-			case 'SA_397':
-			case 'SA_398':
-			case 'SA_399':
-			case 'SA_470':
-			case 'SA_471':
-			case 'SA_472':
-			case 'SA_473':
-			case 'SA_474':
-				value = 1;
-				break;
-			case 'SA_379':
-				value = 4;
-				break;
-			case 'SA_380':
-				value = 8;
-				break;
-
-			default:
-				return 0;
-		}
-		return value * modifier;
-	}
-
-	private changePermanentArcaneEnergyBySpecialAbility = (id: string, negative: boolean = false) => {
-		const value = this.getChangePermanentArcaneEnergyBySpecialAbilityAmount(id, negative);
-		this.permanentArcaneEnergy.lost += value;
-		const { redeemed, lost } = this.permanentArcaneEnergy;
-		if (redeemed > lost) {
-			this.permanentArcaneEnergy.redeemed = lost;
-		}
 	}
 
 	private assign() {

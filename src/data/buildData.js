@@ -296,6 +296,7 @@ function iterateSpells(array) {
 		delete obj.name;
 		obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
 		obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
+		obj.subtrad = obj.subtrad ? obj.subtrad.split('&').map(e => Number.parseInt(e)) : [];
 		obj.req = convertRequirements(obj.req);
 		list[obj.id] = obj;
 	}

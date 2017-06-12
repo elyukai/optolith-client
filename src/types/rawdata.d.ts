@@ -201,6 +201,7 @@ export interface RawSpell {
 	mod?: "SPI" | "TOU";
 	skt: number;
 	trad: number[];
+	subtrad: number[];
 	merk: number;
 	gr: number;
 	req: Reusable.AllRequirementTypes[];

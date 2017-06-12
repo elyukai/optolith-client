@@ -20,7 +20,7 @@ export class SelectionsCurses extends React.Component<Props, undefined> {
 
 		return (
 			<div className="curses list">
-				<h4>{translate('rcpselections.labels.cursestotaling')} {apTotal} AP ({apLeft} AP {translate('rcpselections.labels.left')})</h4>
+				<h4>{translate('rcpselections.labels.curses', apTotal, apLeft)}</h4>
 				{
 					list.map(obj => {
 						const { id, name } = obj;

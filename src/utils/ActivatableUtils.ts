@@ -1,6 +1,7 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { get, getAllByCategoryGroup } from '../stores/ListStore';
-import { AbilityInstanceExtended, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SpecialAbilityInstance } from '../types/data.d';
+import { ActiveObjectName } from '../types/activatables';
+import { AbilityInstanceExtended, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
 import { isRequiringActivatable, validate, validateObject } from './RequirementUtils';
@@ -226,7 +227,7 @@ export function activate(obj: ActivatableInstance, { sel, sel2, input, tier }: A
 
 		default:
 			if (sel) {
-				active = { sid: (obj.input && input) || sel };
+				active = { sid: (obj.input && input) || sel, sid2: sel2 };
 			}
 			else if (input && obj.active.filter(e => e.sid === input).length === 0) {
 				active = { sid: input };
@@ -310,4 +311,92 @@ export function getGroupIndex(obj: ActivatableInstance): 0 | 1 | 2 {
 	const isBlessed = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && isRequiringActivatable(e) && !!e.active);
 	const isMagical = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && isRequiringActivatable(e) && !!e.active);
 	return isBlessed ? 2 : isMagical ? 1 : 0;
+}
+
+export function getSecondSidMap(entry: ActivatableInstance): Map<string, (string | number)[]> {
+	return entry.active.reduce((map, obj) => {
+		const { sid, sid2 } = obj as { sid: string; sid2: string | number };
+		const current = map.get(sid);
+		if (current) {
+			return map.set(sid, [...current, sid2]);
+		}
+		return map.set(sid, [sid2]);
+	}, new Map<string, (number | string)[]>());
+}
+
+export function getActiveSelection(entry: ActivatableInstance, index: number): ActiveObjectName | undefined {
+	const { active, id, input, sel } = entry;
+	const { sid, sid2, ...other } = active[index];
+	let finalName;
+	switch (id) {
+		case 'ADV_4':
+		case 'ADV_16':
+		case 'ADV_17':
+		case 'ADV_47':
+		case 'DISADV_48':
+		case 'SA_252':
+		case 'SA_273': {
+			const { name } = (get(sid as string)) as SkillishInstance;
+			finalName = name;
+			break;
+		}
+		case 'ADV_32':
+		case 'DISADV_1':
+		case 'DISADV_24':
+		case 'DISADV_34':
+		case 'DISADV_36':
+		case 'DISADV_45':
+		case 'DISADV_50':
+			finalName = typeof sid === 'number' ? getSelectionName(entry, sid) : sid;
+			break;
+		case 'ADV_68': {
+			const selectionItem = getSelectionItem(entry, sid);
+			finalName = selectionItem && `${sid2} (${selectionItem.name})`;
+			break;
+		}
+		case 'DISADV_33': {
+			const selectionItem = getSelectionItem(entry, sid);
+			if ([7, 8].includes(sid as number)) {
+				finalName = `${selectionItem && selectionItem.name}: ${sid2}`;
+			} else {
+				finalName = selectionItem && selectionItem.name;
+			}
+			break;
+		}
+		case 'SA_10': {
+			const skill = get(sid as string) as TalentInstance;
+			let name;
+			if (typeof sid2 === 'string') {
+				name = sid2;
+			}
+			else {
+				const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
+				if (typeof selectedApplication === 'undefined') {
+					return;
+				}
+				name = selectedApplication.name;
+			}
+			finalName = `${skill.name}: ${name}`;
+			break;
+		}
+		case 'SA_484': {
+			const selectionItem = getSelectionItem(entry, sid) as (SelectionObject & { target: string; }) | undefined;
+			finalName = selectionItem && `${(get(selectionItem.target) as SpellInstance).name}: ${selectionItem.name}`;
+			break;
+		}
+
+		default:
+			if (typeof input === 'string') {
+				finalName = sid as string;
+			}
+			else if (Array.isArray(sel)) {
+				finalName = getSelectionName(entry, sid);
+			}
+			break;
+	}
+
+	if (typeof finalName === 'string') {
+		return { name: finalName, ...other };
+	}
+	return;
 }

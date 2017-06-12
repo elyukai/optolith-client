@@ -93,9 +93,14 @@ class SpellsStoreStatic extends Store {
 			});
 		}
 		else if (lastTraditionId === 6 || lastTraditionId === 7) {
-			return allEntries.filter(entry => {
-				return entry.category === Categories.CANTRIPS || entry.gr > 2 && isOwnTradition(entry) && validate(entry.reqs, entry.id);
-			});
+			const tradition = get('SA_86') as SpecialAbilityInstance;
+			const subtradition = last(tradition.active).sid2;
+			if (typeof subtradition === 'number') {
+				return allEntries.filter(entry => {
+					return entry.category === Categories.CANTRIPS || entry.subtradition.includes(subtradition);
+				});
+			}
+			return [];
 		}
 		return allEntries.filter(entry => {
 			return entry.category === Categories.CANTRIPS || entry.active === true || validate(entry.reqs, entry.id) && (isOwnTradition(entry) || entry.gr < 3 && !areMaxUnfamiliar);

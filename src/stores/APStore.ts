@@ -1,4 +1,4 @@
-import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, RemoveAttributePointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
 import { SelectCultureAction } from '../actions/CultureActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
@@ -25,7 +25,7 @@ import { RaceStore } from './RaceStore';
 import { RequirementsStore } from './RequirementsStore';
 import { Store } from './Store';
 
-type Action = LoadHeroAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | RedeemAEPointAction | RedeemKPPointAction;
+type Action = LoadHeroAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | CreateHeroAction | SetSelectionsAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointsAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | AddLostAEPointAction | AddLostKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction;
 
 class APStoreStatic extends Store {
 	private total = 0;
@@ -78,10 +78,12 @@ class APStoreStatic extends Store {
 					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 					case ActionTypes.REMOVE_SPELL_POINT:
 					case ActionTypes.REMOVE_LITURGY_POINT:
-					case ActionTypes.REDEEM_AE_POINT:
-					case ActionTypes.REDEEM_KP_POINT:
-					case ActionTypes.REMOVE_REDEEMED_AE_POINT:
-					case ActionTypes.REMOVE_REDEEMED_KP_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
+					case ActionTypes.REMOVE_LOST_AE_POINT:
+					case ActionTypes.REMOVE_LOST_KP_POINT:
 						if (RequirementsStore.isValid()) {
 							this.spend(RequirementsStore.getCurrentCost());
 						}

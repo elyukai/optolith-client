@@ -53,61 +53,93 @@ export const addKarmaPoint = () => AppDispatcher.dispatch<AddKarmaPointAction>({
 	type: ActionTypes.ADD_KARMA_POINT
 });
 
-export interface RedeemAEPointAction extends Action {
-	type: ActionTypes.REDEEM_AE_POINT;
+export interface AddBoughtBackAEPointAction extends Action {
+	type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT;
 }
 
-export const redeemAEPoint = () => AppDispatcher.dispatch<RedeemAEPointAction>({
-	type: ActionTypes.REDEEM_AE_POINT
+export const addBoughtBackAEPoint = () => AppDispatcher.dispatch<AddBoughtBackAEPointAction>({
+	type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
 });
 
-export interface RemoveRedeemedAEPointAction extends Action {
-	type: ActionTypes.REMOVE_REDEEMED_AE_POINT;
+export interface RemoveBoughtBackAEPointAction extends Action {
+	type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT;
 }
 
-export const removeRedeemedAEPoint = () => AppDispatcher.dispatch<RemoveRedeemedAEPointAction>({
-	type: ActionTypes.REMOVE_REDEEMED_AE_POINT
+export const removeBoughtBackAEPoint = () => AppDispatcher.dispatch<RemoveBoughtBackAEPointAction>({
+	type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT
 });
 
-export interface RemovePermanentAEPointAction extends Action {
-	type: ActionTypes.REMOVE_PERMANENT_AE_POINTS;
+export interface AddLostAEPointAction extends Action {
+	type: ActionTypes.ADD_LOST_AE_POINT;
+}
+
+export const addLostAEPoint = () => AppDispatcher.dispatch<AddLostAEPointAction>({
+	type: ActionTypes.ADD_LOST_AE_POINT
+});
+
+export interface RemoveLostAEPointAction extends Action {
+	type: ActionTypes.REMOVE_LOST_AE_POINT;
+}
+
+export const removeLostAEPoint = () => AppDispatcher.dispatch<RemoveLostAEPointAction>({
+	type: ActionTypes.REMOVE_LOST_AE_POINT
+});
+
+export interface AddLostAEPointsAction extends Action {
+	type: ActionTypes.ADD_LOST_AE_POINTS;
 	payload: {
 		value: number;
 	};
 }
 
-export const removePermanentAEPoint = (value: number) => AppDispatcher.dispatch<RemovePermanentAEPointAction>({
-	type: ActionTypes.REMOVE_PERMANENT_AE_POINTS,
+export const addLostAEPoints = (value: number) => AppDispatcher.dispatch<AddLostAEPointsAction>({
+	type: ActionTypes.ADD_LOST_AE_POINTS,
 	payload: {
 		value
 	}
 });
 
-export interface RedeemKPPointAction extends Action {
-	type: ActionTypes.REDEEM_KP_POINT;
+export interface AddBoughtBackKPPointAction extends Action {
+	type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT;
 }
 
-export const redeemKPPoint = () => AppDispatcher.dispatch<RedeemKPPointAction>({
-	type: ActionTypes.REDEEM_KP_POINT
+export const addBoughtBackKPPoint = () => AppDispatcher.dispatch<AddBoughtBackKPPointAction>({
+	type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
 });
 
-export interface RemoveRedeemedKPPointAction extends Action {
-	type: ActionTypes.REMOVE_REDEEMED_KP_POINT;
+export interface RemoveBoughtBackKPPointAction extends Action {
+	type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT;
 }
 
-export const removeRedeemedKPPoint = () => AppDispatcher.dispatch<RemoveRedeemedKPPointAction>({
-	type: ActionTypes.REMOVE_REDEEMED_KP_POINT
+export const removeBoughtBackKPPoint = () => AppDispatcher.dispatch<RemoveBoughtBackKPPointAction>({
+	type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT
 });
 
-export interface RemovePermanentKPPointAction extends Action {
-	type: ActionTypes.REMOVE_PERMANENT_KP_POINTS;
+export interface AddLostKPPointAction extends Action {
+	type: ActionTypes.ADD_LOST_KP_POINT;
+}
+
+export const addLostKPPoint = () => AppDispatcher.dispatch<AddLostKPPointAction>({
+	type: ActionTypes.ADD_LOST_KP_POINT
+});
+
+export interface RemoveLostKPPointAction extends Action {
+	type: ActionTypes.REMOVE_LOST_KP_POINT;
+}
+
+export const removeLostKPPoint = () => AppDispatcher.dispatch<RemoveLostKPPointAction>({
+	type: ActionTypes.REMOVE_LOST_KP_POINT
+});
+
+export interface AddLostKPPointsAction extends Action {
+	type: ActionTypes.ADD_LOST_KP_POINTS;
 	payload: {
 		value: number;
 	};
 }
 
-export const removePermanentKPPoint = (value: number) => AppDispatcher.dispatch<RemovePermanentKPPointAction>({
-	type: ActionTypes.REMOVE_PERMANENT_KP_POINTS,
+export const addLostKPPoints = (value: number) => AppDispatcher.dispatch<AddLostKPPointsAction>({
+	type: ActionTypes.ADD_LOST_KP_POINTS,
 	payload: {
 		value
 	}

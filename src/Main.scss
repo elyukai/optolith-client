@@ -57,6 +57,12 @@ p {
 	}
 }
 
+.smallcaps {
+	font: bold 13px/1 Alegreya SC;
+	text-transform: uppercase;
+	color: $color2;
+}
+
 @import "components/Aside";
 @import "components/Avatar";
 @import "components/AvatarChange";

@@ -54,11 +54,21 @@
 			}
 		}
 	}
-	
-	&.disabled {
+
+	&.disabled, &.btn-primary.disabled {
 		> div {
 			background: none;
 			line-height: 24px;
+			color: $color11;
+		}
+
+		&:hover {
+			background: none;
+
+			> div {
+				background-image: none;
+				color: $color11;
+			}
 		}
 	}
 }

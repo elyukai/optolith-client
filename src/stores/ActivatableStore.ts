@@ -1,7 +1,7 @@
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
-import { getDSids, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
+import { getDSids, getSecondSidMap, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
 import { sort } from '../utils/ListUtils';
 import { validate } from '../utils/RequirementUtils';
@@ -136,12 +136,19 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 					case 'SA_10': {
 						const counter = (get(id) as Data.SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
 						const skill = get(sid as string) as Data.TalentInstance;
-						const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
-						if (typeof selectedApplication === 'undefined') {
-							return;
+						let name;
+						if (typeof sid2 === 'string') {
+							name = sid2;
+						}
+						else {
+							const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
+							if (typeof selectedApplication === 'undefined') {
+								return;
+							}
+							name = selectedApplication.name;
 						}
 						currentCost = skill.ic * counter;
-						add = `${skill.name}: ${typeof sid2 === 'number' ? selectedApplication.name : sid2}`;
+						add = `${skill.name}: ${name}`;
 						break;
 					}
 					case 'SA_30':
@@ -155,6 +162,20 @@ export function getActiveForView(category: Categories.ACTIVATABLE): Data.ActiveV
 						const selectionItem = getSelectionItem(a, sid);
 						add = selectionItem && selectionItem.name;
 						currentCost = selectionItem && selectionItem.cost as number;
+						if (typeof add === 'string' && sid === 9 && typeof sid2 === 'string') {
+							const entry = get(sid2) as Data.TalentInstance;
+							if (entry) {
+								add += `: ${entry.name}`;
+							}
+						}
+						else if (typeof add === 'string' && sid === 6) {
+							const musictraditionIds = [1, 2, 3];
+							add += `: ${translate('musictraditions')[musictraditionIds.findIndex(e => e === sid2)]}`;
+						}
+						else if (typeof add === 'string' && sid === 7) {
+							const dancetraditionIds = [4, 5, 6, 7];
+							add += `: ${translate('dancetraditions')[dancetraditionIds.findIndex(e => e === sid2)]}`;
+						}
 						break;
 					}
 					case 'SA_102': {
@@ -362,19 +383,9 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 					break;
 				}
 				case 'SA_10': {
-					const counter = active.reduce((map, obj) => {
-						const sid = obj.sid as string;
-						const sid2 = obj.sid2 as string | number;
-						if (map.has(sid)) {
-							map.set(sid, [ ...(map.get(sid) as Array<number | string>), sid2]);
-						}
-						else {
-							map.set(sid, [ sid2 ]);
-						}
-						return map;
-					}, new Map<string, Array<number | string>>());
+					const counter = getSecondSidMap(a);
 					type Sel = Array<Data.SelectionObject & { applications?: Data.Application[]; applicationsInput?: string }>;
-					const sel = (a.sel as Sel).filter(e => {
+					const filtered = (a.sel as Sel).filter(e => {
 						const id = e.id as string;
 						if (getDSids(a).includes(id)) {
 							return false;
@@ -383,10 +394,9 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 							const arr = counter.get(id);
 							return arr && arr.length < 3 && (get(id) as Data.TalentInstance).value >= 6 * (arr.length + 1);
 						}
-						else {
-							return (get(id) as Data.TalentInstance).value >= 6;
-						}
-					}).map(e => {
+						return (get(id) as Data.TalentInstance).value >= 6;
+					});
+					const mapped = filtered.map(e => {
 						const id = e.id as string;
 						const arr = counter.get(id);
 						if (arr) {
@@ -396,7 +406,8 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 							return !arr || !arr.includes(n.id);
 						});
 						return e;
-					}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					});
+					const sel = sort(mapped);
 					if (sel.length > 0) {
 						finalEntries.push({ id, name, sel, cost, gr });
 					}
@@ -428,7 +439,7 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 					const { adv, disadv } = APStore.getForDisAdv();
 					const sel = a.sel && sort(a.sel.filter(e => e.id < 6 && e.id > 9 || adv[1] <= 25 && disadv[1] <= 25));
 					if (Array.isArray(sel) && sel.length > 0) {
-						finalEntries.push({ id, name, sel, cost, tiers: 3, gr });
+						finalEntries.push({ id, name, sel, cost, gr });
 					}
 					break;
 				}

@@ -17,25 +17,25 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 		<div className="permanent">
 			{ typeof AE.value === 'number' ? (
 				<AttributesPermanentListItem
+					id="AE"
 					label={translate('attributes.pae.short')}
 					name={translate('attributes.pae.name')}
-					redeemed={AE.permanentRedeemed}
+					boughtBack={AE.permanentRedeemed}
 					lost={AE.permanentLost}
-					redeem={AttributesActions.redeemAEPoint}
-					removeRedeemed={AttributesActions.removeRedeemedAEPoint}
-					removePermanent={AttributesActions.removePermanentAEPoint}
+					addBoughtBack={AttributesActions.addBoughtBackAEPoint}
+					addLost={AttributesActions.addLostAEPoint}
 					phase={phase}
 					/>
 			) : <div className="placeholder"></div> }
 			{ typeof KP.value === 'number' && (
 				<AttributesPermanentListItem
+					id="KP"
 					label={translate('attributes.pkp.short')}
 					name={translate('attributes.pkp.name')}
-					redeemed={KP.permanentRedeemed}
+					boughtBack={KP.permanentRedeemed}
 					lost={KP.permanentLost}
-					redeem={AttributesActions.redeemKPPoint}
-					removeRedeemed={AttributesActions.removeRedeemedKPPoint}
-					removePermanent={AttributesActions.removePermanentKPPoint}
+					addBoughtBack={AttributesActions.addBoughtBackKPPoint}
+					addLost={AttributesActions.addLostKPPoint}
 					phase={phase}
 					/>
 			) }

@@ -1,4 +1,4 @@
-import { AddArcaneEnergyPointAction, AddAttributePointAction, AddKarmaPointAction, AddLifePointAction, RedeemAEPointAction, RedeemKPPointAction, RemoveAttributePointAction, RemovePermanentAEPointAction, RemovePermanentKPPointAction, RemoveRedeemedAEPointAction, RemoveRedeemedKPPointAction } from '../actions/AttributesActions';
+import { AddArcaneEnergyPointAction, AddAttributePointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointsAction, AddLostKPPointsAction, RemoveAttributePointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
@@ -25,7 +25,7 @@ import { CombatTechniquesStore } from './CombatTechniquesStore';
 import { get } from './ListStore';
 import { Store } from './Store';
 
-type Action = ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | AddArcaneEnergyPointAction | AddAttributePointAction | AddKarmaPointAction | AddLifePointAction | RedeemAEPointAction | RedeemKPPointAction | RemoveAttributePointAction | RemovePermanentAEPointAction | RemovePermanentKPPointAction | RemoveRedeemedAEPointAction | RemoveRedeemedKPPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | AddTalentPointAction | RemoveTalentPointAction;
+type Action = ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | AddArcaneEnergyPointAction | AddAttributePointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointsAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | AddTalentPointAction | RemoveTalentPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction;
 
 class RequirementsStoreStatic extends Store {
 	readonly dispatchToken: string;
@@ -90,9 +90,8 @@ class RequirementsStoreStatic extends Store {
 						const obj = get(action.payload.id) as Data.ActivatableInstance;
 						this.updateOwnRequirements(ActivatableUtils.isDeactivatable(obj, obj.active[action.payload.index].sid));
 						const id = action.payload.id;
-						const redeemedPointsChange = AttributeStore.getPermanentRedeemedChangeAmount(id);
 						const reducedCombatTechnique = CombatTechniquesStore.getValueChange(id);
-						this.updateCost(-action.payload.cost - redeemedPointsChange * 2 - reducedCombatTechnique * 2, true);
+						this.updateCost(-action.payload.cost - reducedCombatTechnique * 2, true);
 						break;
 					}
 
@@ -162,17 +161,31 @@ class RequirementsStoreStatic extends Store {
 						break;
 					}
 
-					case ActionTypes.REDEEM_AE_POINT:
-					case ActionTypes.REDEEM_KP_POINT: {
+					case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_KP_POINT: {
 						this.updateOwnRequirements(true);
 						this.updateCost(2);
 						break;
 					}
 
-					case ActionTypes.REMOVE_REDEEMED_AE_POINT:
-					case ActionTypes.REMOVE_REDEEMED_KP_POINT: {
+					case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT: {
 						this.updateOwnRequirements(true);
 						this.updateCost(-2, true);
+						break;
+					}
+
+					case ActionTypes.REMOVE_LOST_AE_POINT: {
+						const { lost, redeemed } = AttributeStore.getAddEnergies().permanentAE;
+						this.updateOwnRequirements(true);
+						this.updateCost(lost <= redeemed ? -2 : 0, true);
+						break;
+					}
+
+					case ActionTypes.REMOVE_LOST_KP_POINT: {
+						const { lost, redeemed } = AttributeStore.getAddEnergies().permanentKP;
+						this.updateOwnRequirements(true);
+						this.updateCost(lost <= redeemed ? -2 : 0, true);
 						break;
 					}
 

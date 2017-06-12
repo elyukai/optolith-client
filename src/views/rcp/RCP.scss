@@ -78,21 +78,14 @@
 		}
 	}
 
-	.list.curses {
+	.list.curses, .list.skills {
 		> div {
 			display: flex;
 			align-items: center;
+			height: 32px;
 
 			&:hover {
 				background: #1e2328;
-			}
-
-			> .checkbox {
-				flex: 1 1 100%;
-
-				&:hover {
-					background: none;
-				}
 			}
 
 			> span {
@@ -105,6 +98,27 @@
 				font-size: 16px;
 				flex: none;
 				margin-left: 4px;
+				height: 24px;
+			}
+		}
+	}
+
+	.list.curses {
+		> div {
+			> .checkbox {
+				flex: 1 1 100%;
+
+				&:hover {
+					background: none;
+				}
+			}
+		}
+	}
+
+	.list.skills {
+		> div {
+			> .skillname {
+				flex: 1 1 100%;
 			}
 		}
 	}

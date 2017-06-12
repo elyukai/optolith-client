@@ -642,6 +642,13 @@ class ListStoreStatic extends Store {
 			skillRatingList.set(key, value);
 		});
 
+		selections.skills.forEach((value, key) => {
+			const skill = this.get(key) as Data.TalentInstance;
+			if (skill !== undefined) {
+				addToSkillRatingList(key, value / skill.ic);
+			}
+		});
+
 		// Apply:
 
 		skillRatingList.forEach((value, key) => this.addSR(key, value));

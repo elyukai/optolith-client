@@ -11,7 +11,8 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListS
 import { ProfessionStore } from '../../stores/ProfessionStore';
 import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { RaceStore } from '../../stores/RaceStore';
-import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SpecialAbilityInstance, SpecialisationSelection, SpellInstance } from '../../types/data.d';
+import { TalentsStore } from '../../stores/TalentsStore';
+import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
 import { sortByName } from '../../utils/ListUtils';
@@ -19,6 +20,7 @@ import { SelectionsCantrips } from './SelectionsCantrips';
 import { SelectionsCt } from './SelectionsCt';
 import { SelectionsCurses } from './SelectionsCurses';
 import { SelectionsLangLitc } from './SelectionsLangLitc';
+import { SelectionsSkills } from './SelectionsSkills';
 import { SelectionsTalentSpec } from './SelectionsTalentSpec';
 
 interface Props {
@@ -36,6 +38,7 @@ interface State {
 	combatTechniquesSecond: Set<string>;
 	curses: Map<string, number>;
 	langLitc: Map<string, number>;
+	skills: Map<string, number>;
 	spec: [number | null, string];
 	specTalentId?: string;
 }
@@ -51,6 +54,7 @@ export class Selections extends React.Component<Props, State> {
 		lang: 0,
 		langLitc: new Map<string, number>(),
 		litc: 0,
+		skills: new Map<string, number>(),
 		spec: [null, ''] as [number | null, string],
 		specTalentId: undefined,
 		useCulturePackage: false,
@@ -126,6 +130,30 @@ export class Selections extends React.Component<Props, State> {
 		}
 		this.setState({ spec } as State);
 	}
+	addSkillPoint = (id: string) => {
+		const skills = this.state.skills;
+		const current = skills.get(id);
+		const ic = (get(id) as TalentInstance).ic;
+		if (current) {
+			skills.set(id, current + ic);
+		}
+		else {
+			skills.set(id, ic);
+		}
+		this.setState({ skills } as State);
+	}
+	removeSkillPoint = (id: string) => {
+		const skills = this.state.skills;
+		const current = skills.get(id);
+		const ic = (get(id) as TalentInstance).ic;
+		if (current && current === ic) {
+			skills.delete(id);
+		}
+		else if (current) {
+			skills.set(id, current - ic);
+		}
+		this.setState({ skills } as State);
+	}
 
 	assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
 		ProfessionActions.setSelections({
@@ -152,6 +180,7 @@ export class Selections extends React.Component<Props, State> {
 			lang,
 			langLitc,
 			litc,
+			skills,
 			spec,
 			specTalentId,
 			useCulturePackage,
@@ -323,6 +352,26 @@ export class Selections extends React.Component<Props, State> {
 			);
 		}
 
+		let skillsElement;
+		let skillsApLeft = 0;
+
+		if (professionSelections.has('SKILLS')) {
+			const { gr, value } = professionSelections.get('SKILLS') as SkillsSelection;
+			const list = TalentsStore.getAll().filter(e => gr === undefined || gr === e.gr);
+			skillsApLeft = [...skills.values()].reduce((n, e) => n - e, value);
+			skillsElement = (
+				<SelectionsSkills
+					active={skills}
+					add={this.addSkillPoint}
+					gr={gr}
+					left={skillsApLeft}
+					list={list}
+					remove={this.removeSkillPoint}
+					value={value}
+					/>
+			);
+		}
+
 		return (
 			<Slidein isOpen close={close}>
 				<Scroll>
@@ -374,6 +423,7 @@ export class Selections extends React.Component<Props, State> {
 					{combatTechniqueSecondElement}
 					{cursesElement}
 					{cantripsElement}
+					{skillsElement}
 					<BorderButton
 						label={translate('rcpselections.actions.complete')}
 						primary
@@ -385,7 +435,8 @@ export class Selections extends React.Component<Props, State> {
 							(professionSelections.has('LANGUAGES_SCRIPTS') && langLitcApLeft !== 0) ||
 							(professionSelections.has('CURSES') && cursesApLeft !== 0) ||
 							(professionSelections.has('COMBAT_TECHNIQUES') && combattech.size !== (professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).amount) ||
-							(professionSelections.has('CANTRIPS') && cantrips.size !== (professionSelections.get('CANTRIPS') as CantripsSelection).amount)
+							(professionSelections.has('CANTRIPS') && cantrips.size !== (professionSelections.get('CANTRIPS') as CantripsSelection).amount) ||
+							(professionSelections.has('SKILLS') && skillsApLeft > 0)
 						}
 						onClick={this.assignRCPEntries.bind(null, professionSelections)}
 						/>

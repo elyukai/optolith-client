@@ -130,3 +130,58 @@
 		font-style: italic;
 	}
 }
+
+#permanent-points-editor {
+	.modal-header {
+		padding: 16px 0;
+
+		.modal-header-inner {
+			font-size: 16px;
+			text-align: center;
+		}
+	}
+
+	.main {
+		display: flex;
+	}
+
+	.column {
+		flex: 1 1 50%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		padding-bottom: 10px;
+
+		&:last-child {
+			margin-left: 1px;
+
+			&::before {
+				content: "";
+				position: absolute;
+				height: 100%;
+				width: 1px;
+				background: $color12;
+				left: -1px;
+			}
+		}
+	}
+
+	.value {
+		font: bold 40px/1 Alegreya;
+		color: $color1;
+	}
+
+	.description {
+		margin: 20px 0;
+	}
+
+	.buttons {
+		display: flex;
+
+		.remove {
+			margin-left: 20px;
+		}
+	}
+}

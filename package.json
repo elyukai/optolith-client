@@ -58,5 +58,6 @@
     "setup": "electron-installer-windows --src dist/tdeheroes-win32-x64/ --dest dist/installers/tdeheroes-win32-x64/ --config installerconfig.json",
     "test": "jest"
   },
-  "repository": {}
+  "repository": {},
+  "false": {}
 }

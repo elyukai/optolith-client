@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Dialog } from '../../components/Dialog';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
+import { isInteger } from '../../utils/RegexUtils';
 
 export interface AttributesRemovePermanentProps {
 	node?: HTMLDivElement;
@@ -27,7 +28,7 @@ export class AttributesRemovePermanent extends React.Component<AttributesRemoveP
 		return (
 			<Dialog id="overview-add-ap" title="Permanenter Verlust" node={this.props.node} buttons={[
 				{
-					disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) < 1,
+					disabled: !isInteger(this.state.value),
 					label: 'Hinzufügen',
 					onClick: this.remove,
 				},

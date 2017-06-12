@@ -191,7 +191,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		const validWeight = regexFloatEmpty.test(weight);
 
 		const validMelee = [validATMod, validDamageDiceNumber, validDamageFlat, validDamageThreshold, validLength, validNumber, validPAMod, validPrice, validStabilityMod, validStructurePoints, validWeight, typeof combatTechnique === 'string', typeof reach === 'number'];
-		const validRanged = [validATMod, validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPAMod, validPrice, validRange1, validRange2, validRange3, validStabilityMod, validWeight, typeof combatTechnique === 'string'];
+		const validRanged = [validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPrice, validRange1, validRange2, validRange3, validStabilityMod, validWeight, typeof combatTechnique === 'string'];
 		const validArmor = [validENC, validINIMod, validMOVMod, validNumber, validPrice, validPRO, validStabilityMod, validWeight, typeof armorType === 'number'];
 		const validOther = [validNumber, validPrice, validStructurePoints, validWeight];
 

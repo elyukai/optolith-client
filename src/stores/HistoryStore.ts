@@ -138,8 +138,7 @@ class HistoryStoreStatic extends Store {
 							const instance = get(id) as ActivatableInstance;
 							const index = action.payload.index;
 							const newValue = instance.active[index];
-							let cost = RequirementsStore.getCurrentCost();
-							cost -= AttributeStore.getPermanentRedeemedChangeAmount(action.payload.id) * 2;
+							const cost = RequirementsStore.getCurrentCost();
 							this.add(action.type, cost, { id, activeObject: newValue, index });
 						}
 						break;
@@ -159,37 +158,31 @@ class HistoryStoreStatic extends Store {
 						this.add(action.type, 0, action.payload, { value: APStore.getTotal()});
 						break;
 
-					case ActionTypes.REDEEM_AE_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
+					case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
 						if (RequirementsStore.isValid()) {
 							this.add(action.type, RequirementsStore.getCurrentCost());
 						}
 						break;
 
-					case ActionTypes.REDEEM_KP_POINT:
+					case ActionTypes.ADD_LOST_AE_POINT:
+					case ActionTypes.ADD_LOST_KP_POINT:
+					case ActionTypes.REMOVE_LOST_AE_POINT:
+					case ActionTypes.REMOVE_LOST_KP_POINT:
 						if (RequirementsStore.isValid()) {
-							this.add(action.type, RequirementsStore.getCurrentCost());
+							this.add(action.type);
 						}
 						break;
 
-					case ActionTypes.REMOVE_REDEEMED_AE_POINT:
-						if (RequirementsStore.isValid()) {
-							this.add(action.type, RequirementsStore.getCurrentCost());
-						}
-						break;
-
-					case ActionTypes.REMOVE_REDEEMED_KP_POINT:
-						if (RequirementsStore.isValid()) {
-							this.add(action.type, RequirementsStore.getCurrentCost());
-						}
-						break;
-
-					case ActionTypes.REMOVE_PERMANENT_AE_POINTS: {
+					case ActionTypes.ADD_LOST_AE_POINTS: {
 						const oldValue = AttributeStore.getAddEnergies().permanentAE.lost;
 						this.add(action.type, RequirementsStore.getCurrentCost(), action.payload, { value: oldValue });
 						break;
 					}
 
-					case ActionTypes.REMOVE_PERMANENT_KP_POINTS: {
+					case ActionTypes.ADD_LOST_AE_POINTS: {
 						const oldValue = AttributeStore.getAddEnergies().permanentKP.lost;
 						this.add(action.type, RequirementsStore.getCurrentCost(), action.payload, { value: oldValue });
 						break;

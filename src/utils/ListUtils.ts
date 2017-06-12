@@ -17,7 +17,7 @@ interface PlainNameData extends Data {
 }
 
 interface NameBySexData extends Data {
-	name: {
+	name: string | {
 		m: string;
 		f: string;
 	};
@@ -36,7 +36,7 @@ let SEX: 'm' | 'f';
 export function filterSex(list: NameBySexData[], filterText: string, addProperty?: string): NameBySexData[] {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
-		return list.filter(obj => obj.name[SEX].toLowerCase().match(filterText) && (!addProperty || (obj[addProperty] as string).toLowerCase().match(filterText)));
+		return list.filter(obj => (typeof obj.name === 'object' ? obj.name[SEX] : obj.name).toLowerCase().match(filterText) && (!addProperty || (typeof obj[addProperty] === 'object' ? obj[addProperty][SEX] as string : obj.name as string).toLowerCase().match(filterText)));
 	}
 	return list;
 }
@@ -44,8 +44,8 @@ export function filterSex(list: NameBySexData[], filterText: string, addProperty
 export const sortByName = (a: PlainNameData, b: PlainNameData) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
 
 export const sortByNameSex = (a: NameBySexData, b: NameBySexData) => {
-	const an = a.name[SEX] || a.name;
-	const bn = b.name[SEX] || b.name;
+	const an = typeof a.name === 'object' ? a.name[SEX] : a.name;
+	const bn = typeof b.name === 'object' ? b.name[SEX] : b.name;
 	return an < bn ? -1 : an > bn ? 1 : 0;
 };
 
