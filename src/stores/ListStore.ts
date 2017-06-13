@@ -12,6 +12,7 @@ import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/Talent
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
+import { HistoryStore } from '../stores/HistoryStore';
 import * as Data from '../types/data.d';
 import { RawLocaleList, RawTables } from '../types/rawdata.d';
 import * as Reusable from '../types/reusable.d';
@@ -46,7 +47,7 @@ class ListStoreStatic extends Store {
 
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
 			AppDispatcher.waitFor([RequirementsStore.dispatchToken]);
-			if (action.undo) {
+			if (action.undo === true) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_SPELL:
 						this.deactivateSpell(action.payload.id);
@@ -78,9 +79,12 @@ class ListStoreStatic extends Store {
 					}
 
 					case ActionTypes.SET_DISADV_TIER:
-					case ActionTypes.SET_SPECIALABILITY_TIER:
-						this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
+					case ActionTypes.SET_SPECIALABILITY_TIER: {
+						const { id, index } = action.payload;
+						const { tier } = action.prevState;
+						this.updateTier(id, index, tier);
 						break;
+					}
 
 					case ActionTypes.ADD_ATTRIBUTE_POINT:
 					case ActionTypes.ADD_TALENT_POINT:
@@ -155,6 +159,7 @@ class ListStoreStatic extends Store {
 					case ActionTypes.DEACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_SPECIALABILITY:
 						if (RequirementsStore.isValid()) {
+							AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 							this.deactivateActivatable(action.payload.id, action.payload.index);
 						}
 						break;
@@ -162,6 +167,7 @@ class ListStoreStatic extends Store {
 					case ActionTypes.SET_DISADV_TIER:
 					case ActionTypes.SET_SPECIALABILITY_TIER:
 						if (RequirementsStore.isValid()) {
+							AppDispatcher.waitFor([HistoryStore.dispatchToken]);
 							this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
 						}
 						break;
@@ -375,27 +381,37 @@ class ListStoreStatic extends Store {
 	}
 
 	private undoActivatableActivation(id: string, index?: number, active?: Data.ActiveObject) {
-		if (index && active) {
+		if (typeof index === 'number' && active !== undefined) {
+			const target = this.byId.get(id) as Data.ActivatableInstance;
 			const adds = [];
-			let sid;
+			let sel;
 			switch (id) {
 				case 'ADV_4':
 				case 'ADV_16':
 				case 'DISADV_48':
-					sid = active.sid as string;
+					sel = active.sid as string;
 					break;
 				case 'SA_10':
 					adds.push({ id: active.sid as string, value: (this.byId.get(id) as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
 					break;
+				case 'SA_97':
+					adds.push({ id: 'SA_88', active: true, sid: active.sid });
+					break;
+				case 'SA_484': {
+					const selectionItem = ActivatableUtils.getSelectionItem(target, active.sid) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
+					adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+					break;
+				}
 			}
-			(this.byId.get(id) as Data.ActivatableInstance).active.splice(index, 1);
-			this.mergeIntoList(DependentUtils.removeDependencies(this.byId.get(id) as Data.ActivatableInstance, adds, sid));
+			target.active.splice(index, 1);
+			this.mergeIntoList(DependentUtils.removeDependencies(target, adds, sel));
 		}
 	}
 
 	private undoActivatableDeactivation(id: string, index: number, active?: Data.ActiveObject) {
-		if (active) {
-			(this.byId.get(id) as Data.ActivatableInstance).active.splice(index, 0, active);
+		if (active !== undefined) {
+			const target = this.byId.get(id) as Data.ActivatableInstance;
+			target.active.splice(index, 0, active);
 			const adds = [];
 			let sid;
 			switch (id) {
@@ -404,11 +420,21 @@ class ListStoreStatic extends Store {
 				case 'DISADV_48':
 					sid = active.sid as string;
 					break;
-				case 'SA_10':
-					adds.push({ id: active.sid as string, value: (this.byId.get(id) as Data.ActivatableInstance).active.filter(e => e.sid === active.sid).length * 6 });
+				case 'SA_10': {
+					const value = target.active.filter(e => e.sid === active.sid).length * 6;
+					adds.push({ id: active.sid as string, value });
 					break;
+				}
+				case 'SA_97':
+					adds.push({ id: 'SA_88', active: true, sid: active.sid });
+					break;
+				case 'SA_484': {
+					const selectionItem = ActivatableUtils.getSelectionItem(target, active.sid) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
+					adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+					break;
+				}
 			}
-			DependentUtils.addDependencies(this.byId.get(id) as Data.ActivatableInstance, adds, sid);
+			this.mergeIntoList(DependentUtils.addDependencies(target, adds, sid));
 		}
 	}
 

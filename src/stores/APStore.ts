@@ -44,6 +44,12 @@ class APStoreStatic extends Store {
 						this.total -= action.payload.amount;
 						break;
 
+					case ActionTypes.ACTIVATE_DISADV:
+					case ActionTypes.SET_DISADV_TIER:
+					case ActionTypes.DEACTIVATE_DISADV:
+						this.spendDisadv(action.payload.id, RequirementsStore.getCurrentCost(), RequirementsStore.getDisAdvDetails());
+						break;
+
 					default:
 						this.spend(RequirementsStore.getCurrentCost());
 						break;

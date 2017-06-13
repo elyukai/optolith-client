@@ -158,25 +158,26 @@ const AppDispatcher = new __WEBPACK_IMPORTED_MODULE_0_flux__["Dispatcher"]();
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__constants_Categories__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_AttributeUtils__ = __webpack_require__(100);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils_CombatTechniqueUtils__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__ = __webpack_require__(101);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils_ICUtils__ = __webpack_require__(127);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__ = __webpack_require__(182);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_init__ = __webpack_require__(189);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils_LiturgyUtils__ = __webpack_require__(103);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_RequirementUtils__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__ = __webpack_require__(69);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__utils_TalentUtils__ = __webpack_require__(104);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__CultureStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__ELStore__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__LocaleStore__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__ProfessionStore__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__RaceStore__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__RequirementsStore__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__Store__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils_AttributeUtils__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils_CombatTechniqueUtils__ = __webpack_require__(64);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__utils_ICUtils__ = __webpack_require__(127);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__ = __webpack_require__(182);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils_init__ = __webpack_require__(189);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_LiturgyUtils__ = __webpack_require__(103);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_RequirementUtils__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__ = __webpack_require__(69);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__utils_TalentUtils__ = __webpack_require__(104);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__CultureStore__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ELStore__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__LocaleStore__ = __webpack_require__(49);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__ProfessionStore__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__ProfessionVariantStore__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__RaceStore__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__RequirementsStore__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__Store__ = __webpack_require__(7);
 
 
 
@@ -200,13 +201,14 @@ const AppDispatcher = new __WEBPACK_IMPORTED_MODULE_0_flux__["Dispatcher"]();
 
 
 
-class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store */] {
+
+class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_23__Store__["a" /* Store */] {
     constructor() {
         super();
         this.byId = new Map();
         this.dispatchToken = __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].register((action) => {
-            __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].dispatchToken]);
-            if (action.undo) {
+            __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].dispatchToken]);
+            if (action.undo === true) {
                 switch (action.type) {
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["z" /* ACTIVATE_SPELL */]:
                         this.deactivateSpell(action.payload.id);
@@ -232,9 +234,12 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                         break;
                     }
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
-                    case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["G" /* SET_SPECIALABILITY_TIER */]:
-                        this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
+                    case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["G" /* SET_SPECIALABILITY_TIER */]: {
+                        const { id, index } = action.payload;
+                        const { tier } = action.prevState;
+                        this.updateTier(id, index, tier);
                         break;
+                    }
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["H" /* ADD_ATTRIBUTE_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["I" /* ADD_TALENT_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["J" /* ADD_COMBATTECHNIQUE_POINT */]:
@@ -269,40 +274,42 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                         this.clear();
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["z" /* ACTIVATE_SPELL */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.activateSpell(action.payload.id);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["s" /* ACTIVATE_LITURGY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.activate(action.payload.id);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["A" /* DEACTIVATE_SPELL */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.deactivateSpell(action.payload.id);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["t" /* DEACTIVATE_LITURGY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.deactivate(action.payload.id);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["C" /* ACTIVATE_SPECIALABILITY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.activateActivatable(action.payload.id, action.payload);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["E" /* DEACTIVATE_SPECIALABILITY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__["a" /* HistoryStore */].dispatchToken]);
                             this.deactivateActivatable(action.payload.id, action.payload.index);
                         }
                         break;
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["G" /* SET_SPECIALABILITY_TIER */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__["a" /* HistoryStore */].dispatchToken]);
                             this.updateTier(action.payload.id, action.payload.index, action.payload.tier);
                         }
                         break;
@@ -311,7 +318,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["J" /* ADD_COMBATTECHNIQUE_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["K" /* ADD_SPELL_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["u" /* ADD_LITURGY_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.addPoint(action.payload.id);
                         }
                         break;
@@ -320,7 +327,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["N" /* REMOVE_COMBATTECHNIQUE_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["O" /* REMOVE_SPELL_POINT */]:
                     case __WEBPACK_IMPORTED_MODULE_1__constants_ActionTypes__["v" /* REMOVE_LITURGY_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_21__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                        if (__WEBPACK_IMPORTED_MODULE_22__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
                             this.removePoint(action.payload.id);
                         }
                         break;
@@ -333,7 +340,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
         });
     }
     get(id) {
-        return this.byId.get(__WEBPACK_IMPORTED_MODULE_5__utils_AttributeUtils__["a" /* convertId */](id));
+        return this.byId.get(__WEBPACK_IMPORTED_MODULE_6__utils_AttributeUtils__["a" /* convertId */](id));
     }
     getObjByCategory(...categories) {
         return new Map([...this.byId].filter(e => categories.includes(e[1].category)));
@@ -348,10 +355,10 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
         return [...this.byId.values()].filter(e => category === e.category && gr.includes(e.gr));
     }
     getPrimaryAttrID(type) {
-        return __WEBPACK_IMPORTED_MODULE_5__utils_AttributeUtils__["b" /* getPrimaryAttributeId */](type);
+        return __WEBPACK_IMPORTED_MODULE_6__utils_AttributeUtils__["b" /* getPrimaryAttributeId */](type);
     }
     getPrimaryAttr(type) {
-        const id = __WEBPACK_IMPORTED_MODULE_5__utils_AttributeUtils__["b" /* getPrimaryAttributeId */](type);
+        const id = __WEBPACK_IMPORTED_MODULE_6__utils_AttributeUtils__["b" /* getPrimaryAttributeId */](type);
         if (id) {
             return get(id);
         }
@@ -359,7 +366,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
     }
     getCostListForProfessionDependencies(reqs) {
         const totalCost = reqs.map(req => {
-            if (__WEBPACK_IMPORTED_MODULE_12__utils_RequirementUtils__["a" /* isRequiringIncreasable */](req)) {
+            if (__WEBPACK_IMPORTED_MODULE_13__utils_RequirementUtils__["a" /* isRequiringIncreasable */](req)) {
                 const { id, value } = req;
                 if (typeof id === 'string') {
                     const obj = get(id);
@@ -367,14 +374,14 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                         case __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["h" /* ATTRIBUTES */]: {
                             if (typeof value === 'number') {
                                 this.byId.set(id, Object.assign({}, obj, { value }));
-                                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils_ICUtils__["a" /* getIncreaseRangeAP */])(5, 8, value);
+                                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__utils_ICUtils__["a" /* getIncreaseRangeAP */])(5, 8, value);
                             }
                             return 0;
                         }
                         case __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["n" /* TALENTS */]: {
                             if (typeof value === 'number') {
                                 this.byId.set(id, Object.assign({}, obj, { value }));
-                                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils_ICUtils__["a" /* getIncreaseRangeAP */])(obj.ic, obj.value, value);
+                                return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__utils_ICUtils__["a" /* getIncreaseRangeAP */])(obj.ic, obj.value, value);
                             }
                             return 0;
                         }
@@ -390,7 +397,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                     const checkIfActive = (e) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0_lodash__["isEqual"])(activeObject, e);
                     if (!obj.active.find(checkIfActive)) {
                         this.byId.get(id).active.push(activeObject);
-                        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](obj));
+                        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](obj));
                         if (obj.tiers && tier) {
                             cost = obj.cost * tier;
                         }
@@ -401,8 +408,8 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                             cost = obj.cost;
                         }
                         if (cost && (obj.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["e" /* ADVANTAGES */] || obj.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["f" /* DISADVANTAGES */])) {
-                            const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && __WEBPACK_IMPORTED_MODULE_12__utils_RequirementUtils__["b" /* isRequiringActivatable */](e) && e.active);
-                            const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && __WEBPACK_IMPORTED_MODULE_12__utils_RequirementUtils__["b" /* isRequiringActivatable */](e) && e.active);
+                            const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && __WEBPACK_IMPORTED_MODULE_13__utils_RequirementUtils__["b" /* isRequiringActivatable */](e) && e.active);
+                            const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && __WEBPACK_IMPORTED_MODULE_13__utils_RequirementUtils__["b" /* isRequiringActivatable */](e) && e.active);
                             const index = isKar ? 2 : isMag ? 1 : 0;
                             cost = {
                                 adv: [0, 0, 0],
@@ -432,13 +439,13 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
     }
     getSpareAPForCombatTechniques() {
         const allCombatTechniques = this.getAllByCategory(__WEBPACK_IMPORTED_MODULE_2__constants_Categories__["i" /* COMBAT_TECHNIQUES */]);
-        const maxCombatTechniqueRating = __WEBPACK_IMPORTED_MODULE_16__ELStore__["a" /* ELStore */].getStart().maxCombatTechniqueRating;
+        const maxCombatTechniqueRating = __WEBPACK_IMPORTED_MODULE_17__ELStore__["a" /* ELStore */].getStart().maxCombatTechniqueRating;
         const valueTooHigh = allCombatTechniques.filter(e => e.value > maxCombatTechniqueRating);
         valueTooHigh.forEach(e => {
-            this.byId.set(e.id, __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__["a" /* set */](e, maxCombatTechniqueRating));
+            this.byId.set(e.id, __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__["a" /* set */](e, maxCombatTechniqueRating));
         });
         return valueTooHigh.reduce((ap, instance) => {
-            return ap + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__utils_ICUtils__["a" /* getIncreaseRangeAP */])(instance.ic, maxCombatTechniqueRating, instance.value);
+            return ap + __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__utils_ICUtils__["a" /* getIncreaseRangeAP */])(instance.ic, maxCombatTechniqueRating, instance.value);
         }, 0);
     }
     activate(id) {
@@ -451,12 +458,12 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                 this.activateCantrip(id);
             }
             else {
-                this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["a" /* activate */](entry));
+                this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["a" /* activate */](entry));
             }
         }
     }
     activateCantrip(id) {
-        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["b" /* activateCantrip */](this.byId.get(id)));
+        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["b" /* activateCantrip */](this.byId.get(id)));
     }
     deactivate(id) {
         this.byId.get(id).active = false;
@@ -468,46 +475,56 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                 this.deactivateCantrip(id);
             }
             else {
-                this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["c" /* deactivate */](entry));
+                this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["c" /* deactivate */](entry));
             }
         }
     }
     deactivateCantrip(id) {
-        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["d" /* deactivateCantrip */](this.byId.get(id)));
+        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["d" /* deactivateCantrip */](this.byId.get(id)));
     }
     addPoint(id) {
-        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__["b" /* addPoint */](this.byId.get(id)));
+        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__["b" /* addPoint */](this.byId.get(id)));
     }
     removePoint(id) {
-        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__["c" /* removePoint */](this.byId.get(id)));
+        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__["c" /* removePoint */](this.byId.get(id)));
     }
     setValue(id, value) {
-        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__["a" /* set */](this.byId.get(id), value));
+        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__["a" /* set */](this.byId.get(id), value));
     }
     addSR(id, value) {
-        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_9__utils_IncreasableUtils__["d" /* add */](this.byId.get(id), value));
+        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_10__utils_IncreasableUtils__["d" /* add */](this.byId.get(id), value));
     }
     undoActivatableActivation(id, index, active) {
-        if (index && active) {
+        if (typeof index === 'number' && active !== undefined) {
+            const target = this.byId.get(id);
             const adds = [];
-            let sid;
+            let sel;
             switch (id) {
                 case 'ADV_4':
                 case 'ADV_16':
                 case 'DISADV_48':
-                    sid = active.sid;
+                    sel = active.sid;
                     break;
                 case 'SA_10':
                     adds.push({ id: active.sid, value: this.byId.get(id).active.filter(e => e.sid === active.sid).length * 6 });
                     break;
+                case 'SA_97':
+                    adds.push({ id: 'SA_88', active: true, sid: active.sid });
+                    break;
+                case 'SA_484': {
+                    const selectionItem = __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["a" /* getSelectionItem */](target, active.sid);
+                    adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+                    break;
+                }
             }
-            this.byId.get(id).active.splice(index, 1);
-            this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["b" /* removeDependencies */](this.byId.get(id), adds, sid));
+            target.active.splice(index, 1);
+            this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["b" /* removeDependencies */](target, adds, sel));
         }
     }
     undoActivatableDeactivation(id, index, active) {
-        if (active) {
-            this.byId.get(id).active.splice(index, 0, active);
+        if (active !== undefined) {
+            const target = this.byId.get(id);
+            target.active.splice(index, 0, active);
             const adds = [];
             let sid;
             switch (id) {
@@ -516,33 +533,43 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                 case 'DISADV_48':
                     sid = active.sid;
                     break;
-                case 'SA_10':
-                    adds.push({ id: active.sid, value: this.byId.get(id).active.filter(e => e.sid === active.sid).length * 6 });
+                case 'SA_10': {
+                    const value = target.active.filter(e => e.sid === active.sid).length * 6;
+                    adds.push({ id: active.sid, value });
                     break;
+                }
+                case 'SA_97':
+                    adds.push({ id: 'SA_88', active: true, sid: active.sid });
+                    break;
+                case 'SA_484': {
+                    const selectionItem = __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["a" /* getSelectionItem */](target, active.sid);
+                    adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+                    break;
+                }
             }
-            __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id), adds, sid);
+            this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](target, adds, sid));
         }
     }
     activateActivatable(id, args) {
-        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* activate */](this.byId.get(id), args));
+        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["b" /* activate */](this.byId.get(id), args));
     }
     deactivateActivatable(id, index) {
-        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["b" /* deactivate */](this.byId.get(id), index));
+        this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["c" /* deactivate */](this.byId.get(id), index));
         if (id === 'SA_125') {
             this.setValue('CT_17', 6);
         }
     }
     updateTier(id, index, tier) {
-        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["c" /* setTier */](this.byId.get(id), index, tier));
+        this.byId.set(id, __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["d" /* setTier */](this.byId.get(id), index, tier));
     }
     mergeIntoList(list) {
         this.byId = new Map([...this.byId, ...list]);
     }
     init(data, locales) {
-        __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_17__LocaleStore__["a" /* LocaleStore */].dispatchToken]);
-        const locale = __WEBPACK_IMPORTED_MODULE_17__LocaleStore__["a" /* LocaleStore */].getLocale();
+        __WEBPACK_IMPORTED_MODULE_3__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_18__LocaleStore__["a" /* LocaleStore */].dispatchToken]);
+        const locale = __WEBPACK_IMPORTED_MODULE_18__LocaleStore__["a" /* LocaleStore */].getLocale();
         if (locale) {
-            this.byId = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_10__utils_init__["a" /* init */])(data, locales[locale]);
+            this.byId = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_11__utils_init__["a" /* init */])(data, locales[locale]);
         }
     }
     updateAll({ attr, talents, ct, spells, blessings, cantrips, liturgies, activatable }) {
@@ -560,7 +587,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
             const value = activateSkills[id];
             const entry = this.byId.get(id);
             if (entry && entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["l" /* SPELLS */]) {
-                const list = __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](Object.assign({}, entry, { active: true, value }));
+                const list = __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](Object.assign({}, entry, { active: true, value }));
                 this.mergeIntoList(list);
             }
             else if (entry && entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["j" /* LITURGIES */]) {
@@ -571,7 +598,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
         activateBlessingsLiturgies.forEach(id => {
             const entry = this.byId.get(id);
             if (entry && (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["k" /* BLESSINGS */] || entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["m" /* CANTRIPS */])) {
-                const list = __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](Object.assign({}, entry, { active: true }));
+                const list = __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](Object.assign({}, entry, { active: true }));
                 this.mergeIntoList(list);
             }
         });
@@ -583,7 +610,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                 case 'ADV_16':
                 case 'DISADV_48':
                     values.forEach(p => {
-                        const list = __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id), [], p.sid);
+                        const list = __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id), [], p.sid);
                         this.mergeIntoList(list);
                     });
                     break;
@@ -599,7 +626,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                                 counter.set(p.sid, 1);
                             }
                             const addRequire = { id: p.sid, value: counter.get(p.sid) * 6 };
-                            const list = __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id), [addRequire]);
+                            const list = __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id), [addRequire]);
                             this.mergeIntoList(list);
                         }
                     });
@@ -607,17 +634,17 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                 }
                 default:
                     values.forEach(() => {
-                        const list = __WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id));
+                        const list = __WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](this.byId.get(id));
                         this.mergeIntoList(list);
                     });
             }
         });
     }
     assignRCP(selections) {
-        const race = __WEBPACK_IMPORTED_MODULE_20__RaceStore__["a" /* RaceStore */].getCurrent();
-        const culture = __WEBPACK_IMPORTED_MODULE_15__CultureStore__["a" /* CultureStore */].getCurrent();
-        const profession = __WEBPACK_IMPORTED_MODULE_18__ProfessionStore__["a" /* ProfessionStore */].getCurrent();
-        const professionVariant = __WEBPACK_IMPORTED_MODULE_19__ProfessionVariantStore__["a" /* ProfessionVariantStore */].getCurrent();
+        const race = __WEBPACK_IMPORTED_MODULE_21__RaceStore__["a" /* RaceStore */].getCurrent();
+        const culture = __WEBPACK_IMPORTED_MODULE_16__CultureStore__["a" /* CultureStore */].getCurrent();
+        const profession = __WEBPACK_IMPORTED_MODULE_19__ProfessionStore__["a" /* ProfessionStore */].getCurrent();
+        const professionVariant = __WEBPACK_IMPORTED_MODULE_20__ProfessionVariantStore__["a" /* ProfessionVariantStore */].getCurrent();
         const skillRatingList = new Map();
         const addToSkillRatingList = (id, value) => {
             const currentValue = skillRatingList.get(id);
@@ -752,7 +779,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                     break;
                 case 'SA_484': {
                     obj.active.push({ sid: sid });
-                    const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](obj, sid);
+                    const selectionItem = __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["a" /* getSelectionItem */](obj, sid);
                     add.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
                     break;
                 }
@@ -762,7 +789,7 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
                     }
                     break;
             }
-            this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_7__utils_DependentUtils__["a" /* addDependencies */](obj, add));
+            this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_8__utils_DependentUtils__["a" /* addDependencies */](obj, add));
         });
         const SA_28 = this.byId.get('SA_28');
         const SA_30 = this.byId.get('SA_30');
@@ -773,28 +800,28 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_22__Store__["a" /* Store
         this.byId = new Map([...this.byId].map((e) => {
             const entry = e[1];
             if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["h" /* ATTRIBUTES */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_5__utils_AttributeUtils__["c" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_6__utils_AttributeUtils__["c" /* reset */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["i" /* COMBAT_TECHNIQUES */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_6__utils_CombatTechniqueUtils__["a" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_7__utils_CombatTechniqueUtils__["a" /* reset */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["j" /* LITURGIES */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_11__utils_LiturgyUtils__["a" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_12__utils_LiturgyUtils__["a" /* reset */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["l" /* SPELLS */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["e" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["e" /* reset */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["k" /* BLESSINGS */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_11__utils_LiturgyUtils__["b" /* resetBlessing */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_12__utils_LiturgyUtils__["b" /* resetBlessing */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["m" /* CANTRIPS */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_13__utils_SpellUtils__["f" /* resetCantrip */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["f" /* resetCantrip */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["n" /* TALENTS */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_14__utils_TalentUtils__["a" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_15__utils_TalentUtils__["a" /* reset */](entry)];
             }
             else if (entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["e" /* ADVANTAGES */] || entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["f" /* DISADVANTAGES */] || entry.category === __WEBPACK_IMPORTED_MODULE_2__constants_Categories__["g" /* SPECIAL_ABILITIES */]) {
-                return [e[0], __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["e" /* reset */](entry)];
+                return [e[0], __WEBPACK_IMPORTED_MODULE_5__utils_ActivatableUtils__["e" /* reset */](entry)];
             }
             return e;
         }));
@@ -1668,7 +1695,7 @@ function __generator(thisArg, body) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Button__ = __webpack_require__(120);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Text__ = __webpack_require__(47);
 /* harmony export (immutable) */ __webpack_exports__["a"] = BorderButton;
 
 
@@ -1722,12 +1749,12 @@ function Scroll(props) {
 /* harmony export (immutable) */ __webpack_exports__["i"] = isDeactivatable;
 /* harmony export (immutable) */ __webpack_exports__["f"] = getSids;
 /* harmony export (immutable) */ __webpack_exports__["m"] = getDSids;
-/* harmony export (immutable) */ __webpack_exports__["d"] = getSelectionItem;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getSelectionItem;
 /* harmony export (immutable) */ __webpack_exports__["l"] = getSelectionName;
 /* unused harmony export getSelectionNameAndCost */
-/* harmony export (immutable) */ __webpack_exports__["a"] = activate;
-/* harmony export (immutable) */ __webpack_exports__["b"] = deactivate;
-/* harmony export (immutable) */ __webpack_exports__["c"] = setTier;
+/* harmony export (immutable) */ __webpack_exports__["b"] = activate;
+/* harmony export (immutable) */ __webpack_exports__["c"] = deactivate;
+/* harmony export (immutable) */ __webpack_exports__["d"] = setTier;
 /* harmony export (immutable) */ __webpack_exports__["e"] = reset;
 /* harmony export (immutable) */ __webpack_exports__["k"] = getFullName;
 /* harmony export (immutable) */ __webpack_exports__["j"] = getGroupIndex;
@@ -2319,7 +2346,7 @@ function IconButton(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Activate__ = __webpack_require__(116);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Icon__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Text__ = __webpack_require__(47);
 /* harmony export (immutable) */ __webpack_exports__["a"] = Checkbox;
 
 
@@ -2504,6 +2531,11 @@ class APStoreStatic extends __WEBPACK_IMPORTED_MODULE_11__Store__["a" /* Store *
                     case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_5" /* ADD_ADVENTURE_POINTS */]:
                         this.total -= action.payload.amount;
                         break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
+                        this.spendDisadv(action.payload.id, __WEBPACK_IMPORTED_MODULE_10__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), __WEBPACK_IMPORTED_MODULE_10__RequirementsStore__["a" /* RequirementsStore */].getDisAdvDetails());
+                        break;
                     default:
                         this.spend(__WEBPACK_IMPORTED_MODULE_10__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost());
                         break;
@@ -2674,7 +2706,7 @@ class APStoreStatic extends __WEBPACK_IMPORTED_MODULE_11__Store__["a" /* Store *
         if (selections.buyLiteracy) {
             const culture = __WEBPACK_IMPORTED_MODULE_4__CultureStore__["a" /* CultureStore */].getCurrent();
             const id = culture.scripts.length > 1 ? selections.litc : culture.scripts[0];
-            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__["d" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])('SA_28'), id);
+            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__["a" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])('SA_28'), id);
             this.spent += selectionItem && selectionItem.cost || 0;
         }
         const race = __WEBPACK_IMPORTED_MODULE_9__RaceStore__["a" /* RaceStore */].getCurrent();
@@ -4011,7 +4043,7 @@ function getActiveForView(category) {
                     }
                     case 'ADV_28':
                     case 'ADV_29': {
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && selectionItem.name;
                         currentCost = selectionItem && selectionItem.cost;
                         break;
@@ -4030,7 +4062,7 @@ function getActiveForView(category) {
                         break;
                     }
                     case 'ADV_68': {
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && `${sid2} (${selectionItem.name})`;
                         currentCost = selectionItem && selectionItem.cost;
                         break;
@@ -4044,7 +4076,7 @@ function getActiveForView(category) {
                         break;
                     }
                     case 'DISADV_33': {
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
                             currentCost = 0;
                         }
@@ -4065,7 +4097,7 @@ function getActiveForView(category) {
                         break;
                     case 'DISADV_37':
                     case 'DISADV_51': {
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && selectionItem.name;
                         currentCost = selectionItem && selectionItem.cost;
                         break;
@@ -4103,7 +4135,7 @@ function getActiveForView(category) {
                         if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__ListStore__["b" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_1__constants_Categories__["l" /* SPELLS */]).some(e => e.active)) {
                             disabled = true;
                         }
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && selectionItem.name;
                         currentCost = selectionItem && selectionItem.cost;
                         if (typeof add === 'string' && sid === 9 && typeof sid2 === 'string') {
@@ -4126,7 +4158,7 @@ function getActiveForView(category) {
                         if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__ListStore__["b" /* getAllByCategory */])(__WEBPACK_IMPORTED_MODULE_1__constants_Categories__["j" /* LITURGIES */]).some(e => e.active)) {
                             disabled = true;
                         }
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && selectionItem.name;
                         currentCost = selectionItem && selectionItem.cost;
                         break;
@@ -4144,7 +4176,7 @@ function getActiveForView(category) {
                         break;
                     }
                     case 'SA_484': {
-                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                        const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                         add = selectionItem && `${__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_8__ListStore__["c" /* get */])(selectionItem.target).name}: ${selectionItem.name}`;
                         currentCost = selectionItem && selectionItem.cost;
                         break;
@@ -4154,7 +4186,7 @@ function getActiveForView(category) {
                             add = sid;
                         }
                         else if (Array.isArray(sel) && cost === 'sel') {
-                            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, sid);
+                            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, sid);
                             add = selectionItem && selectionItem.name;
                             currentCost = selectionItem && selectionItem.cost;
                         }
@@ -4433,8 +4465,8 @@ function getDeactiveForView(category) {
                 case 'SA_368': {
                     let sel = a.sel;
                     if (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["g" /* isActive */])(a)) {
-                        const selectedPath = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, a.active[0].sid).gr;
-                        const lastTier = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["d" /* getSelectionItem */])(a, a.active[a.active.length - 1].sid).tier;
+                        const selectedPath = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, a.active[0].sid).gr;
+                        const lastTier = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__utils_ActivatableUtils__["a" /* getSelectionItem */])(a, a.active[a.active.length - 1].sid).tier;
                         sel = sel.filter(e => e.gr === selectedPath && e.tier === lastTier + 1);
                     }
                     else {
@@ -4482,7 +4514,7 @@ function getDeactiveForView(category) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_Categories__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__RequirementsStore__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Store__ = __webpack_require__(7);
@@ -4773,7 +4805,7 @@ const AttributeStore = new AttributeStoreStatic();
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_path__ = __webpack_require__(309);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_path___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_path__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_FileActions__ = __webpack_require__(151);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_ConfigStore__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_DisAdvStore__ = __webpack_require__(97);
@@ -5120,6 +5152,278 @@ class Slidein extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__APStore__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__AttributeStore__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CultureStore__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ELStore__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ListStore__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ProfessionStore__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ProfessionVariantStore__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__RaceStore__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Store__ = __webpack_require__(7);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class HistoryStoreStatic extends __WEBPACK_IMPORTED_MODULE_13__Store__["a" /* Store */] {
+    constructor() {
+        super();
+        this.history = [];
+        this.lastSaveIndex = -1;
+        this.dispatchToken = __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].register((action) => {
+            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].dispatchToken]);
+            if (action.undo && HistoryStore.isUndoAvailable()) {
+                this.history.splice(this.history.length - 1, 1);
+            }
+            else {
+                switch (action.type) {
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_25" /* RECEIVE_HERO_DATA */]:
+                        this.clear();
+                        this.updateAll(action.payload.data.history);
+                        this.resetSaveIndex();
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["x" /* ASSIGN_RCP_OPTIONS */]:
+                        this.assignRCP(action.payload);
+                        this.resetSaveIndex();
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["y" /* END_HERO_CREATION */]:
+                        this.resetSaveIndex();
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["f" /* CREATE_HERO */]:
+                        this.clear();
+                        this.resetSaveIndex();
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_26" /* SAVE_HERO */]:
+                        this.resetSaveIndex();
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["z" /* ACTIVATE_SPELL */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["s" /* ACTIVATE_LITURGY */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["A" /* DEACTIVATE_SPELL */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["t" /* DEACTIVATE_LITURGY */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, action.payload);
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["H" /* ADD_ATTRIBUTE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["I" /* ADD_TALENT_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["J" /* ADD_COMBATTECHNIQUE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["K" /* ADD_SPELL_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["u" /* ADD_LITURGY_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
+                            const id = action.payload.id;
+                            const oldValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id).value;
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, action.payload, { value: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_6" /* ADD_ARCANE_ENERGY_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
+                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('AE').add;
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, {}, { value: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_7" /* ADD_KARMA_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
+                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('KP').add;
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, {}, { value: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_8" /* ADD_LIFE_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
+                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('LP').add;
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, {}, { value: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["L" /* REMOVE_ATTRIBUTE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["M" /* REMOVE_TALENT_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["N" /* REMOVE_COMBATTECHNIQUE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["O" /* REMOVE_SPELL_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["v" /* REMOVE_LITURGY_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
+                            const id = action.payload.id;
+                            const oldValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id).value;
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, action.payload, { value: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["C" /* ACTIVATE_SPECIALABILITY */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
+                            const id = action.payload.id;
+                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
+                            const index = instance.active.length - 1;
+                            const newValue = instance.active[index];
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, { id, activeObject: newValue, index });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["E" /* DEACTIVATE_SPECIALABILITY */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            const id = action.payload.id;
+                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
+                            const index = action.payload.index;
+                            const newValue = instance.active[index];
+                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
+                            this.add(action.type, cost, { id, activeObject: newValue, index });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["G" /* SET_SPECIALABILITY_TIER */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(action.payload.id);
+                            const oldValue = instance.active[action.payload.index].tier;
+                            this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { tier: oldValue });
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_5" /* ADD_ADVENTURE_POINTS */]:
+                        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_4__APStore__["a" /* APStore */].dispatchToken]);
+                        this.add(action.type, 0, action.payload, { value: __WEBPACK_IMPORTED_MODULE_4__APStore__["a" /* APStore */].getTotal() });
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_9" /* ADD_BOUGHT_BACK_AE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_10" /* ADD_BOUGHT_BACK_KP_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_11" /* REMOVE_BOUGHT_BACK_AE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_12" /* REMOVE_BOUGHT_BACK_KP_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost());
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_21" /* ADD_LOST_AE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_22" /* ADD_LOST_KP_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_13" /* REMOVE_LOST_AE_POINT */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_14" /* REMOVE_LOST_KP_POINT */]:
+                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
+                            this.add(action.type);
+                        }
+                        break;
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_23" /* ADD_LOST_AE_POINTS */]: {
+                        const oldValue = __WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].getAddEnergies().permanentAE.lost;
+                        this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { value: oldValue });
+                        break;
+                    }
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_23" /* ADD_LOST_AE_POINTS */]: {
+                        const oldValue = __WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].getAddEnergies().permanentKP.lost;
+                        this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { value: oldValue });
+                        break;
+                    }
+                    default:
+                        return true;
+                }
+            }
+            this.emitChange();
+            return true;
+        });
+    }
+    get(index) {
+        return this.history[index];
+    }
+    getAll() {
+        return this.history;
+    }
+    isUndoAvailable() {
+        return this.lastSaveIndex < this.history.length - 1;
+    }
+    getUndo() {
+        const lastIndex = this.history.length - 1;
+        if (this.lastSaveIndex < lastIndex) {
+            return this.history[this.history.length - 1];
+        }
+        return undefined;
+    }
+    add(type, cost = 0, payload = {}, prevState = {}) {
+        this.history.push({
+            type,
+            cost,
+            payload,
+            prevState,
+        });
+    }
+    clear() {
+        this.history = [];
+    }
+    resetSaveIndex() {
+        this.lastSaveIndex = this.history.length - 1;
+    }
+    updateAll(array) {
+        this.history = array;
+        this.lastSaveIndex = this.history.length - 1;
+    }
+    assignRCP(selections) {
+        const el = __WEBPACK_IMPORTED_MODULE_7__ELStore__["a" /* ELStore */].getStart();
+        this.add('SELECT_EXPERIENCE_LEVEL', -el.ap, { id: el.id });
+        const race = __WEBPACK_IMPORTED_MODULE_11__RaceStore__["a" /* RaceStore */].getCurrent();
+        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_15" /* SELECT_RACE */], race.ap, { id: race.id });
+        const culture = __WEBPACK_IMPORTED_MODULE_6__CultureStore__["a" /* CultureStore */].getCurrent();
+        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_16" /* SELECT_CULTURE */], culture.ap, { id: culture.id });
+        const profession = __WEBPACK_IMPORTED_MODULE_9__ProfessionStore__["a" /* ProfessionStore */].getCurrent();
+        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_17" /* SELECT_PROFESSION */], profession.ap, { id: profession.id });
+        const professionVariant = __WEBPACK_IMPORTED_MODULE_10__ProfessionVariantStore__["a" /* ProfessionVariantStore */].getCurrent();
+        if (professionVariant) {
+            this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_18" /* SELECT_PROFESSION_VARIANT */], professionVariant.ap, { id: professionVariant.id });
+        }
+        const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = selections;
+        this.add('SELECT_ATTRIBUTE_MOD', 0, { id: attrSel });
+        this.add('PURCHASE_CULTURE_PACKAGE', 0, { buy: useCulturePackage });
+        if (lang !== 0) {
+            this.add('SELECT_MOTHER_TONGUE', 0, { id: lang });
+        }
+        this.add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
+        if (spec) {
+            this.add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
+        }
+        if (litc !== 0) {
+            this.add('SELECT_MAIN_LITERACY', 0, { id: litc });
+        }
+        if (cantrips.size > 0) {
+            this.add('SELECT_CANTRIPS', 0, { list: Array.from(cantrips) });
+        }
+        if (combattech.size > 0) {
+            this.add('SELECT_COMBAT_TECHNIQUES', 0, { list: Array.from(combattech) });
+        }
+        if (curses.size > 0) {
+            this.add('SELECT_CURSES', 0, { list: Array.from(curses) });
+        }
+        if (langLitc.size > 0) {
+            this.add('SELECT_LANGUAGES_AND_LITERACIES', 0, { list: Array.from(langLitc) });
+        }
+    }
+}
+const HistoryStore = new HistoryStoreStatic();
+/* harmony export (immutable) */ __webpack_exports__["a"] = HistoryStore;
+
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Store__ = __webpack_require__(7);
@@ -5402,7 +5706,7 @@ const ProfileStore = new ProfileStoreStatic();
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5429,7 +5733,7 @@ function AvatarWrapper(props) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5447,7 +5751,7 @@ function ListItemGroup(props) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5476,7 +5780,7 @@ class SubTabs extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5499,7 +5803,7 @@ class Text extends __WEBPACK_IMPORTED_MODULE_2_react__["Component"] {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5595,279 +5899,6 @@ const CombatTechniquesStore = new CombatTechniquesStoreStatic();
 
 
 /***/ }),
-/* 48 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__APStore__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__AttributeStore__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__CultureStore__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ELStore__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ListStore__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ProfessionStore__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__RaceStore__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Store__ = __webpack_require__(7);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class HistoryStoreStatic extends __WEBPACK_IMPORTED_MODULE_13__Store__["a" /* Store */] {
-    constructor() {
-        super();
-        this.history = [];
-        this.lastSaveIndex = -1;
-        this.dispatchToken = __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].register((action) => {
-            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].dispatchToken]);
-            if (action.undo && HistoryStore.isUndoAvailable()) {
-                this.history.splice(this.history.length - 1, 1);
-            }
-            else {
-                switch (action.type) {
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_25" /* RECEIVE_HERO_DATA */]:
-                        this.clear();
-                        this.updateAll(action.payload.data.history);
-                        this.resetSaveIndex();
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["x" /* ASSIGN_RCP_OPTIONS */]:
-                        this.assignRCP(action.payload);
-                        this.resetSaveIndex();
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["y" /* END_HERO_CREATION */]:
-                        this.resetSaveIndex();
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["f" /* CREATE_HERO */]:
-                        this.clear();
-                        this.resetSaveIndex();
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_26" /* SAVE_HERO */]:
-                        this.resetSaveIndex();
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["z" /* ACTIVATE_SPELL */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["s" /* ACTIVATE_LITURGY */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["A" /* DEACTIVATE_SPELL */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["t" /* DEACTIVATE_LITURGY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, action.payload);
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["H" /* ADD_ATTRIBUTE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["I" /* ADD_TALENT_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["J" /* ADD_COMBATTECHNIQUE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["K" /* ADD_SPELL_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["u" /* ADD_LITURGY_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
-                            const id = action.payload.id;
-                            const oldValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id).value;
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, action.payload, { value: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_6" /* ADD_ARCANE_ENERGY_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
-                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('AE').add;
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, {}, { value: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_7" /* ADD_KARMA_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
-                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('KP').add;
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, {}, { value: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_8" /* ADD_LIFE_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].dispatchToken]);
-                            const oldValue = __WEBPACK_IMPORTED_MODULE_3__utils_secondaryAttributes__["a" /* get */]('LP').add;
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, {}, { value: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["L" /* REMOVE_ATTRIBUTE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["M" /* REMOVE_TALENT_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["N" /* REMOVE_COMBATTECHNIQUE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["O" /* REMOVE_SPELL_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["v" /* REMOVE_LITURGY_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
-                            const id = action.payload.id;
-                            const oldValue = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id).value;
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, action.payload, { value: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["C" /* ACTIVATE_SPECIALABILITY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
-                            const id = action.payload.id;
-                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                            const index = instance.active.length - 1;
-                            const newValue = instance.active[index];
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, { id, activeObject: newValue, index });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["E" /* DEACTIVATE_SPECIALABILITY */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            const id = action.payload.id;
-                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                            const index = action.payload.index;
-                            const newValue = instance.active[index];
-                            const cost = __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost();
-                            this.add(action.type, cost, { id, activeObject: newValue, index });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["G" /* SET_SPECIALABILITY_TIER */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_8__ListStore__["a" /* ListStore */].dispatchToken]);
-                            const instance = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(action.payload.id);
-                            const oldValue = instance.active[action.payload.index].tier;
-                            this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { tier: oldValue });
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_5" /* ADD_ADVENTURE_POINTS */]:
-                        __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__["a" /* AppDispatcher */].waitFor([__WEBPACK_IMPORTED_MODULE_4__APStore__["a" /* APStore */].dispatchToken]);
-                        this.add(action.type, 0, action.payload, { value: __WEBPACK_IMPORTED_MODULE_4__APStore__["a" /* APStore */].getTotal() });
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_9" /* ADD_BOUGHT_BACK_AE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_10" /* ADD_BOUGHT_BACK_KP_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_11" /* REMOVE_BOUGHT_BACK_AE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_12" /* REMOVE_BOUGHT_BACK_KP_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost());
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_21" /* ADD_LOST_AE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_22" /* ADD_LOST_KP_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_13" /* REMOVE_LOST_AE_POINT */]:
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_14" /* REMOVE_LOST_KP_POINT */]:
-                        if (__WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].isValid()) {
-                            this.add(action.type);
-                        }
-                        break;
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_23" /* ADD_LOST_AE_POINTS */]: {
-                        const oldValue = __WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].getAddEnergies().permanentAE.lost;
-                        this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { value: oldValue });
-                        break;
-                    }
-                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_23" /* ADD_LOST_AE_POINTS */]: {
-                        const oldValue = __WEBPACK_IMPORTED_MODULE_5__AttributeStore__["a" /* AttributeStore */].getAddEnergies().permanentKP.lost;
-                        this.add(action.type, __WEBPACK_IMPORTED_MODULE_12__RequirementsStore__["a" /* RequirementsStore */].getCurrentCost(), action.payload, { value: oldValue });
-                        break;
-                    }
-                    default:
-                        return true;
-                }
-            }
-            this.emitChange();
-            return true;
-        });
-    }
-    get(index) {
-        return this.history[index];
-    }
-    getAll() {
-        return this.history;
-    }
-    isUndoAvailable() {
-        return this.lastSaveIndex < this.history.length - 1;
-    }
-    getUndo() {
-        const lastIndex = this.history.length - 1;
-        if (this.lastSaveIndex < lastIndex) {
-            return this.history[this.history.length - 1];
-        }
-        return undefined;
-    }
-    add(type, cost = 0, payload = {}, prevState = {}) {
-        this.history.push({
-            type,
-            cost,
-            payload,
-            prevState,
-        });
-    }
-    clear() {
-        this.history = [];
-    }
-    resetSaveIndex() {
-        this.lastSaveIndex = this.history.length - 1;
-    }
-    updateAll(array) {
-        this.history = array;
-        this.lastSaveIndex = this.history.length - 1;
-    }
-    assignRCP(selections) {
-        const el = __WEBPACK_IMPORTED_MODULE_7__ELStore__["a" /* ELStore */].getStart();
-        this.add('SELECT_EXPERIENCE_LEVEL', -el.ap, { id: el.id });
-        const race = __WEBPACK_IMPORTED_MODULE_11__RaceStore__["a" /* RaceStore */].getCurrent();
-        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_15" /* SELECT_RACE */], race.ap, { id: race.id });
-        const culture = __WEBPACK_IMPORTED_MODULE_6__CultureStore__["a" /* CultureStore */].getCurrent();
-        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_16" /* SELECT_CULTURE */], culture.ap, { id: culture.id });
-        const profession = __WEBPACK_IMPORTED_MODULE_9__ProfessionStore__["a" /* ProfessionStore */].getCurrent();
-        this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_17" /* SELECT_PROFESSION */], profession.ap, { id: profession.id });
-        const professionVariant = __WEBPACK_IMPORTED_MODULE_10__ProfessionVariantStore__["a" /* ProfessionVariantStore */].getCurrent();
-        if (professionVariant) {
-            this.add(__WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["_18" /* SELECT_PROFESSION_VARIANT */], professionVariant.ap, { id: professionVariant.id });
-        }
-        const { attrSel, useCulturePackage, lang, buyLiteracy, litc, cantrips, combattech, curses, langLitc, spec } = selections;
-        this.add('SELECT_ATTRIBUTE_MOD', 0, { id: attrSel });
-        this.add('PURCHASE_CULTURE_PACKAGE', 0, { buy: useCulturePackage });
-        if (lang !== 0) {
-            this.add('SELECT_MOTHER_TONGUE', 0, { id: lang });
-        }
-        this.add('PURCHASE_MAIN_SCRIPT', 0, { buy: buyLiteracy });
-        if (spec) {
-            this.add('SELECT_SKILL_SPECIALISATION', 0, { id: spec });
-        }
-        if (litc !== 0) {
-            this.add('SELECT_MAIN_LITERACY', 0, { id: litc });
-        }
-        if (cantrips.size > 0) {
-            this.add('SELECT_CANTRIPS', 0, { list: Array.from(cantrips) });
-        }
-        if (combattech.size > 0) {
-            this.add('SELECT_COMBAT_TECHNIQUES', 0, { list: Array.from(combattech) });
-        }
-        if (curses.size > 0) {
-            this.add('SELECT_CURSES', 0, { list: Array.from(curses) });
-        }
-        if (langLitc.size > 0) {
-            this.add('SELECT_LANGUAGES_AND_LITERACIES', 0, { list: Array.from(langLitc) });
-        }
-    }
-}
-const HistoryStore = new HistoryStoreStatic();
-/* harmony export (immutable) */ __webpack_exports__["a"] = HistoryStore;
-
-
-
-/***/ }),
 /* 49 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -5956,7 +5987,7 @@ function getLocale() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ProfessionStore__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ActivatableUtils__ = __webpack_require__(13);
 /* harmony export (immutable) */ __webpack_exports__["d"] = validateObject;
@@ -6984,7 +7015,7 @@ const TalentsStore = new TalentsStoreStatic();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_ELStore__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_PhaseStore__ = __webpack_require__(21);
@@ -24754,7 +24785,7 @@ function VerticalList(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_TalentUtils__ = __webpack_require__(104);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__APStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__AttributeStore__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__Store__ = __webpack_require__(7);
 
@@ -24783,9 +24814,19 @@ class RequirementsStoreStatic extends __WEBPACK_IMPORTED_MODULE_17__Store__["a" 
         this.disadv = [true, 0];
         this.validOwnRequirements = false;
         this.dispatchToken = __WEBPACK_IMPORTED_MODULE_2__dispatcher_AppDispatcher__["a" /* AppDispatcher */].register((action) => {
-            if (action.undo) {
-                this.updateOwnRequirements(true);
-                this.updateCost(-action.cost, true);
+            if (action.undo && action.cost) {
+                switch (action.type) {
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
+                        this.updateOwnRequirements(true);
+                        this.updateDisAdvCost(action.payload.id, -action.cost);
+                        break;
+                    default:
+                        this.updateOwnRequirements(true);
+                        this.updateCost(-action.cost, true);
+                        break;
+                }
             }
             else {
                 switch (action.type) {
@@ -25403,7 +25444,7 @@ const switchProfessionsExpansionVisibilityFilter = () => __WEBPACK_IMPORTED_MODU
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__dispatcher_AppDispatcher__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_RaceStore__ = __webpack_require__(18);
 
 
@@ -25882,6 +25923,7 @@ class DisAdvStoreStatic extends __WEBPACK_IMPORTED_MODULE_3__Store__["a" /* Stor
                 switch (action.type) {
                     case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["B" /* ACTIVATE_DISADV */]:
                     case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["D" /* DEACTIVATE_DISADV */]:
+                    case __WEBPACK_IMPORTED_MODULE_0__constants_ActionTypes__["F" /* SET_DISADV_TIER */]:
                         break;
                     default:
                         return true;
@@ -27518,7 +27560,7 @@ function Avatar(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_I18n__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BorderButton__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Dialog__ = __webpack_require__(33);
 
@@ -27688,7 +27730,7 @@ function NumberBox(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Text__ = __webpack_require__(47);
 /* harmony export (immutable) */ __webpack_exports__["a"] = Tab;
 
 
@@ -27902,7 +27944,7 @@ class ArmorZonesEditor extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Label__ = __webpack_require__(90);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TextField__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_EquipmentStore__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_ItemUtils__ = __webpack_require__(183);
@@ -28620,7 +28662,7 @@ function CombatSheetStates() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_TextBox__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_CombatTechniqueUtils__ = __webpack_require__(64);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_I18n__ = __webpack_require__(1);
@@ -31308,7 +31350,7 @@ const receiveImportedHero = (data) => __WEBPACK_IMPORTED_MODULE_1__dispatcher_Ap
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher_AppDispatcher__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony export (immutable) */ __webpack_exports__["a"] = undoLastAction;
 
 
@@ -31881,7 +31923,7 @@ const switchRatingVisibility = () => __WEBPACK_IMPORTED_MODULE_1__dispatcher_App
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ListItem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ListItemButtons__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ListItemName__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ListItemSelections__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ListItemSeparator__ = __webpack_require__(39);
@@ -31975,7 +32017,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
             case 'ADV_28':
             case 'ADV_29': {
                 const item = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](item, selected);
+                const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* getSelectionItem */](item, selected);
                 currentCost = selectionItem && selectionItem.cost;
                 break;
             }
@@ -32020,7 +32062,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                 args.sel = selected;
                 args.input = inputText;
                 const item = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](item, selected);
+                const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* getSelectionItem */](item, selected);
                 currentCost = selectionItem && selectionItem.cost;
                 break;
             case 'DISADV_33':
@@ -32031,7 +32073,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                     if ([7, 8].includes(selected)) {
                         args.input = inputText;
                         const item = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                        const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](item, selected);
+                        const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* getSelectionItem */](item, selected);
                         currentCost = selectionItem && selectionItem.cost;
                         disab = false;
                     }
@@ -32042,7 +32084,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
                 }
                 else if (typeof selected === 'number') {
                     const item = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-                    const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](item, selected);
+                    const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* getSelectionItem */](item, selected);
                     currentCost = selectionItem && selectionItem.cost;
                 }
                 args.sel = selected;
@@ -32117,7 +32159,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
         if (selected !== undefined && cost === 'sel' && currentCost === undefined) {
             const sid = typeof selected === 'string' ? Number.parseInt(selected) : selected;
             const item = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])(id);
-            const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["d" /* getSelectionItem */](item, sid);
+            const selectionItem = __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__["a" /* getSelectionItem */](item, sid);
             currentCost = selectionItem && selectionItem.cost;
         }
         if (category === __WEBPACK_IMPORTED_MODULE_1__constants_Categories__["f" /* DISADVANTAGES */] && currentCost) {
@@ -32202,7 +32244,7 @@ class ActivatableAddListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Compon
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ListItem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ListItemButtons__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ListItemName__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ListItemSelections__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ListItemSeparator__ = __webpack_require__(39);
@@ -32399,7 +32441,7 @@ function ListPlaceholder() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Icon__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Text__ = __webpack_require__(47);
 /* harmony export (immutable) */ __webpack_exports__["a"] = Loader;
 
 
@@ -32552,7 +32594,7 @@ function Plain(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__Activate__ = __webpack_require__(116);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Icon__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Text__ = __webpack_require__(47);
 /* harmony export (immutable) */ __webpack_exports__["a"] = RadioButton;
 
 
@@ -32612,9 +32654,9 @@ function ApTooltip(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_APStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_AuthStore__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ELStore__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_PhaseStore__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__TitleBarForGroup__ = __webpack_require__(177);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__TitleBarForHero__ = __webpack_require__(178);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__TitleBarForMain__ = __webpack_require__(179);
@@ -32704,7 +32746,7 @@ function TitleBarBackArrow() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_LocationActions__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_ELStore__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__utils_alert__ = __webpack_require__(70);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__utils_confirm__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__utils_FileAPIUtils__ = __webpack_require__(37);
@@ -32776,7 +32818,7 @@ function TitleBarDrag(props) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_createOverlay__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__BorderButton__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__IconButton__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Text__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Settings__ = __webpack_require__(92);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__TitleBarBack__ = __webpack_require__(125);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__TitleBarLeft__ = __webpack_require__(93);
@@ -32829,10 +32871,10 @@ class TitleBarForGroup extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_HerolistActions__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_HistoryActions__ = __webpack_require__(152);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_createOverlay__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__BorderButton__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__IconButton__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Text__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Text__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__TooltipToggle__ = __webpack_require__(77);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ApTooltip__ = __webpack_require__(172);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Settings__ = __webpack_require__(92);
@@ -33569,18 +33611,18 @@ function dice(sides) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__stores_ActivatableStore__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__stores_APStore__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_AttributeStore__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__stores_ELStore__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__stores_EquipmentStore__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_HerolistStore__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_LiturgiesStore__ = __webpack_require__(61);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_PetsStore__ = __webpack_require__(98);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_PhaseStore__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_RulesStore__ = __webpack_require__(80);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_SpellsStore__ = __webpack_require__(62);
@@ -33821,7 +33863,7 @@ function Route(props) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Imprint__ = __webpack_require__(192);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ThirdPartyLicenses__ = __webpack_require__(194);
@@ -35142,7 +35184,7 @@ class ArmorZonesListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ArmorZones__ = __webpack_require__(208);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Equipment__ = __webpack_require__(211);
@@ -35359,7 +35401,7 @@ class Equipment extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ListItem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_ListItemButtons__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ListItemName__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemSeparator__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TooltipToggle__ = __webpack_require__(77);
@@ -35545,7 +35587,7 @@ class EquipmentListItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"]
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_AvatarChange__ = __webpack_require__(118);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_BorderButton__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Slidein__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_TextField__ = __webpack_require__(8);
@@ -35737,7 +35779,7 @@ class Pets extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ListItem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_ListItemButtons__ = __webpack_require__(38);
@@ -35924,7 +35966,7 @@ class Advantages extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Advantages__ = __webpack_require__(216);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Disadvantages__ = __webpack_require__(218);
@@ -36222,10 +36264,10 @@ class HeroCreation extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_ELStore__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__stores_HerolistStore__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__stores_ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__utils_confirm__ = __webpack_require__(107);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__utils_createOverlay__ = __webpack_require__(22);
@@ -36371,7 +36413,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_progress_arc___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_progress_arc__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_HerolistActions__ = __webpack_require__(57);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions_LocationActions__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_IconButton__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ListItem__ = __webpack_require__(28);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemButtons__ = __webpack_require__(38);
@@ -36380,7 +36422,7 @@ class Herolist extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_VerticalList__ = __webpack_require__(78);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_ELStore__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__stores_HerolistStore__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_HistoryStore__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__stores_HistoryStore__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__utils_calcEL__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__utils_confirm__ = __webpack_require__(107);
@@ -36520,7 +36562,7 @@ class HerolistItem extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Intro__ = __webpack_require__(224);
 
@@ -36622,7 +36664,7 @@ function AttributeModsListItem(props) {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_LabelBox__ = __webpack_require__(75);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_TextBox__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__stores_EquipmentStore__ = __webpack_require__(24);
@@ -37334,7 +37376,7 @@ function LiturgiesSheetTraditionsAspects() {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__stores_ELStore__ = __webpack_require__(9);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_FileAPIUtils__ = __webpack_require__(37);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_I18n__ = __webpack_require__(1);
@@ -37668,7 +37710,7 @@ class OptionalRules extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions_ProfileActions__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_AvatarChange__ = __webpack_require__(118);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_AvatarWrapper__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_AvatarWrapper__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_BorderButton__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_EditText__ = __webpack_require__(165);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_IconButton__ = __webpack_require__(16);
@@ -37682,7 +37724,7 @@ class OptionalRules extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__stores_PhaseStore__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__stores_ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__stores_ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__utils_calcEL__ = __webpack_require__(106);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__utils_createOverlay__ = __webpack_require__(22);
@@ -37959,7 +38001,7 @@ class OverviewPersonalData extends __WEBPACK_IMPORTED_MODULE_0_react__["Componen
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_PhaseStore__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__OptionalRules__ = __webpack_require__(241);
@@ -38360,7 +38402,7 @@ class SkillsSheet extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 function SkillsSheetLanguages() {
     const SA_30 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__stores_ListStore__["c" /* get */])('SA_30');
     const languages = SA_30.active.map(({ sid, tier = 0 }) => {
-        const { id, name } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__["d" /* getSelectionItem */])(SA_30, sid) || { id: 0, name: 'MISSING' };
+        const { id, name } = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__utils_ActivatableUtils__["a" /* getSelectionItem */])(SA_30, sid) || { id: 0, name: 'MISSING' };
         return ({ id, name, tier });
     }).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
     return (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_1__components_TextBox__["a" /* TextBox */], { label: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4__utils_I18n__["a" /* translate */])('charactersheet.gamestats.languages.title') },
@@ -38888,7 +38930,7 @@ class CulturesListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_ProfessionStore__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_ProfessionVariantStore__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_ProfileStore__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_ProfileStore__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_I18n__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__utils_ListUtils__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ProfessionsListItem__ = __webpack_require__(262);
@@ -39070,7 +39112,7 @@ class ProfessionsListItem extends __WEBPACK_IMPORTED_MODULE_1_react__["Component
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_CultureStore__ = __webpack_require__(20);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_RaceStore__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_I18n__ = __webpack_require__(1);
@@ -39471,7 +39513,7 @@ class Selections extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
         }
         let buyScriptElement;
         if (culture.scripts.length > 0) {
-            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["d" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_28'), culture.scripts[0]);
+            const selectionItem = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["a" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_28'), culture.scripts[0]);
             buyScriptElement = (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_3__components_Checkbox__["a" /* Checkbox */], { checked: buyLiteracy, onClick: this.changeLiteracy, disabled: langLitc.size > 0 },
                 __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_15__utils_I18n__["a" /* translate */])('rcpselections.labels.buyscript'),
                 !selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`));
@@ -39567,12 +39609,12 @@ class Selections extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
                     culture.ap,
                     " AP)"),
                 selectLang && (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Dropdown__["a" /* Dropdown */], { hint: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_15__utils_I18n__["a" /* translate */])('rcpselections.labels.selectnativetongue'), value: lang, onChange: this.changeLang, options: culture.languages.map(e => {
-                        const lang = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["d" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_30'), e);
+                        const lang = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["a" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_30'), e);
                         return { id: e, name: `${lang && lang.name}` };
                     }), disabled: langLitc.size > 0 })),
                 buyScriptElement,
                 selectLitc ? (__WEBPACK_IMPORTED_MODULE_0_react__["createElement"](__WEBPACK_IMPORTED_MODULE_4__components_Dropdown__["a" /* Dropdown */], { hint: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_15__utils_I18n__["a" /* translate */])('rcpselections.labels.selectscript'), value: litc, onChange: this.changeLitc, options: culture.scripts.map(e => {
-                        const lit = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["d" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_28'), e);
+                        const lit = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_14__utils_ActivatableUtils__["a" /* getSelectionItem */])(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_9__stores_ListStore__["c" /* get */])('SA_28'), e);
                         return { id: e, name: `${lit && lit.name} (${lit && lit.cost} AP)` };
                     }), disabled: !buyLiteracy || langLitc.size > 0 })) : null,
                 __WEBPACK_IMPORTED_MODULE_10__stores_ProfessionStore__["a" /* ProfessionStore */].getCurrentId() !== 'P_0' && __WEBPACK_IMPORTED_MODULE_0_react__["createElement"]("h3", null, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_15__utils_I18n__["a" /* translate */])('titlebar.tabs.profession')),
@@ -39857,13 +39899,13 @@ class SelectionsTalentSpec extends __WEBPACK_IMPORTED_MODULE_0_react__["Componen
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__actions_CombatTechniquesActions__ = __webpack_require__(150);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_List__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Options__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_Page__ = __webpack_require__(31);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_RadioButtonGroup__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Scroll__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_TextField__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_CombatTechniquesStore__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__stores_CombatTechniquesStore__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__stores_PhaseStore__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__utils_CombatTechniqueUtils__ = __webpack_require__(64);
@@ -39954,7 +39996,7 @@ class CombatTechniques extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Checkbox__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_List__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ListItem__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_ListItemName__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Options__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Page__ = __webpack_require__(31);
@@ -40133,7 +40175,7 @@ class Liturgies extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_SubTabs__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__stores_ListStore__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__stores_SpecialAbilitiesStore__ = __webpack_require__(99);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utils_ActivatableUtils__ = __webpack_require__(13);
@@ -40351,7 +40393,7 @@ class SpecialAbilities extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] 
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_Checkbox__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_List__ = __webpack_require__(27);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ListItem__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_ListItemName__ = __webpack_require__(29);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Options__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_Page__ = __webpack_require__(31);
@@ -40537,7 +40579,7 @@ class Spells extends __WEBPACK_IMPORTED_MODULE_0_react__["Component"] {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Aside__ = __webpack_require__(88);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Checkbox__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_List__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ListItemGroup__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ListItemGroup__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_Markdown__ = __webpack_require__(122);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_Options__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_Page__ = __webpack_require__(31);

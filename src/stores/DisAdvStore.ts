@@ -20,6 +20,7 @@ class DisAdvStoreStatic extends Store {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_DISADV:
 					case ActionTypes.DEACTIVATE_DISADV:
+					case ActionTypes.SET_DISADV_TIER:
 						break;
 
 					default:

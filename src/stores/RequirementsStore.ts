@@ -37,9 +37,20 @@ class RequirementsStoreStatic extends Store {
 	constructor() {
 		super();
 		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			if (action.undo) {
-				this.updateOwnRequirements(true);
-				this.updateCost(-action.cost!, true);
+			if (action.undo && action.cost) {
+				switch (action.type) {
+					case ActionTypes.ACTIVATE_DISADV:
+					case ActionTypes.DEACTIVATE_DISADV:
+					case ActionTypes.SET_DISADV_TIER:
+						this.updateOwnRequirements(true);
+						this.updateDisAdvCost(action.payload.id, -action.cost);
+						break;
+
+					default:
+						this.updateOwnRequirements(true);
+						this.updateCost(-action.cost, true);
+						break;
+				}
 			}
 			else {
 				switch (action.type) {

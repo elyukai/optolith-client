@@ -146,7 +146,6 @@ class HistoryStoreStatic extends Store {
 					case ActionTypes.SET_DISADV_TIER:
 					case ActionTypes.SET_SPECIALABILITY_TIER:
 						if (RequirementsStore.isValid()) {
-							AppDispatcher.waitFor([ListStore.dispatchToken]);
 							const instance = get(action.payload.id) as ActivatableInstance;
 							const oldValue = instance.active[action.payload.index].tier;
 							this.add(action.type, RequirementsStore.getCurrentCost(), action.payload, { tier: oldValue });
