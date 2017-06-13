@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
+import { ELStore } from '../../stores/ELStore';
 import { AttributeInstance, ExperienceLevel } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
 import { AttributeCalc } from './AttributeCalc';
@@ -21,7 +22,7 @@ export function Attributes(props: AttributesProps) {
 		<section id="attribute">
 			<div className="page">
 				<Scroll>
-					<div className="counter">{translate('attributes.view.attributetotal')}: {sum}</div>
+					<div className="counter">{translate('attributes.view.attributetotal')}: {sum}{phase === 2 && ` / ${ELStore.getStart().maxTotalAttributeValues}`}</div>
 					<AttributeList
 						attributes={attributes}
 						phase={phase}
