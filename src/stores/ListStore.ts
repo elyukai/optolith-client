@@ -325,17 +325,21 @@ class ListStoreStatic extends Store {
 	}
 
 	private activate(id: string) {
-		(this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = true;
+		const entry = this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance;
+		if (entry) {
+			this.byId.set(id, {...entry, active: true});
+		}
 	}
 
 	private activateSpell(id: string) {
-		const entry = this.byId.get(id);
+		const entry = this.byId.get(id) as Data.SpellInstance | Data.CantripInstance;
 		if (entry) {
 			if (entry.category === Categories.CANTRIPS) {
 				this.activateCantrip(id);
 			}
 			else {
-				this.mergeIntoList(SpellUtils.activate(entry as Data.SpellInstance));
+				const newList = SpellUtils.activate(entry);
+				this.mergeIntoList(newList);
 			}
 		}
 	}
@@ -345,7 +349,10 @@ class ListStoreStatic extends Store {
 	}
 
 	private deactivate(id: string) {
-		(this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance).active = false;
+		const entry = this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance;
+		if (entry) {
+			this.byId.set(id, {...entry, active: false});
+		}
 	}
 
 	private deactivateSpell(id: string) {

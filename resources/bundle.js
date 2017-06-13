@@ -449,7 +449,10 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_23__Store__["a" /* Store
         }, 0);
     }
     activate(id) {
-        this.byId.get(id).active = true;
+        const entry = this.byId.get(id);
+        if (entry) {
+            this.byId.set(id, Object.assign({}, entry, { active: true }));
+        }
     }
     activateSpell(id) {
         const entry = this.byId.get(id);
@@ -458,7 +461,8 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_23__Store__["a" /* Store
                 this.activateCantrip(id);
             }
             else {
-                this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["a" /* activate */](entry));
+                const newList = __WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["a" /* activate */](entry);
+                this.mergeIntoList(newList);
             }
         }
     }
@@ -466,7 +470,10 @@ class ListStoreStatic extends __WEBPACK_IMPORTED_MODULE_23__Store__["a" /* Store
         this.mergeIntoList(__WEBPACK_IMPORTED_MODULE_14__utils_SpellUtils__["b" /* activateCantrip */](this.byId.get(id)));
     }
     deactivate(id) {
-        this.byId.get(id).active = false;
+        const entry = this.byId.get(id);
+        if (entry) {
+            this.byId.set(id, Object.assign({}, entry, { active: false }));
+        }
     }
     deactivateSpell(id) {
         const entry = this.byId.get(id);
@@ -24364,16 +24371,16 @@ function isDecreasable(obj) {
     return true;
 }
 function activate(obj) {
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["a" /* addDependencies */])(Object.assign({ active: true }, obj));
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["a" /* addDependencies */])(Object.assign({}, obj, { active: true }));
 }
 function activateCantrip(obj) {
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["a" /* addDependencies */])(Object.assign({ active: true }, obj));
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["a" /* addDependencies */])(Object.assign({}, obj, { active: true }));
 }
 function deactivate(obj) {
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["b" /* removeDependencies */])(Object.assign({ active: false }, obj));
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["b" /* removeDependencies */])(Object.assign({}, obj, { active: false }));
 }
 function deactivateCantrip(obj) {
-    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["b" /* removeDependencies */])(Object.assign({ active: false }, obj));
+    return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_5__DependentUtils__["b" /* removeDependencies */])(Object.assign({}, obj, { active: false }));
 }
 function reset(obj) {
     return Object.assign({}, obj, { active: false, dependencies: [], value: 0 });

@@ -39,19 +39,19 @@ export function isDecreasable(obj: SpellInstance): boolean {
 }
 
 export function activate(obj: SpellInstance): Map<string, AbilityInstanceExtended> {
-	return addDependencies({ active: true, ...obj });
+	return addDependencies({...obj, active: true});
 }
 
 export function activateCantrip(obj: CantripInstance): Map<string, AbilityInstanceExtended> {
-	return addDependencies({ active: true, ...obj });
+	return addDependencies({...obj, active: true});
 }
 
 export function deactivate(obj: SpellInstance): Map<string, AbilityInstanceExtended> {
-	return removeDependencies({ active: false, ...obj });
+	return removeDependencies({...obj, active: false});
 }
 
 export function deactivateCantrip(obj: CantripInstance): Map<string, AbilityInstanceExtended> {
-	return removeDependencies({ active: false, ...obj });
+	return removeDependencies({...obj, active: false});
 }
 
 export function reset(obj: SpellInstance): SpellInstance {
