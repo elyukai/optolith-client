@@ -26927,7 +26927,7 @@ function reset(obj) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = convertHero;
-const currentVersion = '0.48.0';
+const currentVersion = '0.48.1';
 /* harmony export (immutable) */ __webpack_exports__["b"] = currentVersion;
 
 function convertHero(hero) {
