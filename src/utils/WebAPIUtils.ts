@@ -226,9 +226,12 @@ export async function getHeroes(): Promise<void> {
 }
 
 export function requestHero(id: string) {
-	ServerActions.receiveHeroData({
-		...HerolistStore.get(id)
-	});
+	const hero = HerolistStore.get(id);
+	if (hero !== undefined) {
+		ServerActions.receiveHeroData({
+			...hero
+		});
+	}
 }
 
 // async loadHero(id): Promise<void> {

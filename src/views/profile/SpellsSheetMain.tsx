@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { get } from '../../stores/ListStore';

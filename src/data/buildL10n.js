@@ -287,7 +287,7 @@ module.exports = function buildL10n(locale) {
 		ui
 	};
 
-	writeFile(`resources/locales/${locale}.json`, JSON.stringify(result), (err) => {
+	writeFile(`app/locales/${locale}.json`, JSON.stringify(result), (err) => {
 		if (err) throw err;
 		console.log(`L10n JSON for ${locale} created.`);
 	});

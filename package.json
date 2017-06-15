@@ -5,7 +5,7 @@
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
   "author": "Lukas Obermann",
   "license": "GPL-3.0",
-  "main": "resources/main.js",
+  "main": "app/main.js",
   "copyright": "Dieses Produkt wurde unter Lizenz erstellt. Das Schwarze Auge und sein Logo sowie Aventuria, Dere, Myranor, Riesland, Tharun und Uthuria und ihre Logos sind eingetragene Marken von Significant GbR in Deutschland, den U.S.A. und anderen Ländern. Ulisses Spiele und sein Logo sind eingetragene Marken der Ulisses Medien und Spiele Distribution GmbH. Dieses Werk enthält Material, das durch Ulisses Spiele und/oder andere Autoren urheberrechtlich geschützt ist. Solches Material wird mit Erlaubnis im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS verwendet. Alle anderen Originalmaterialien in diesem Werk sind Copyright (c) 2017-Gegenwart von Lukas Obermann und werden im Rahmen der Vereinbarung über Gemeinschaftsinhalte für SCRIPTORIUM AVENTURIS veröffentlicht.",
   "directories": {
     "test": "test"
@@ -20,7 +20,6 @@
     "react-markdown": "^2.5.0",
     "react-perfect-scrollbar": "^0.1.5",
     "react-progress-arc": "^1.0.7",
-    "react-router": "^3.0.2",
     "semver": "^5.3.0",
     "tslib": "^1.5.0"
   },
@@ -32,24 +31,13 @@
     "@types/node-sass": "^3.10.32",
     "@types/react": "^0.14.57",
     "@types/react-dom": "^0.14.23",
-    "@types/rollup": "^0.41.0",
     "@types/semver": "^5.3.31",
-    "awesome-typescript-loader": "^3.0.3",
     "electron": "^1.7.1",
-    "electron-builder": "^17.9.0",
     "electron-packager": "^8.7.0",
-    "extract-text-webpack-plugin": "^2.0.0-rc.3",
     "jest": "^19.0.2",
     "node-sass": "^4.5.3",
-    "react-addons-test-utils": "^15.4.2",
-    "react-test-renderer": "^15.4.2",
-    "rollup": "^0.42.0",
-    "rollup-plugin-typescript": "^0.8.1",
-    "rollup-plugin-typescript2": "^0.4.3",
     "ts-jest": "^19.0.0",
-    "typescript": "^2.3.3",
-    "webpack": "^2.2.1",
-    "webpack-dev-server": "^1.16.3"
+    "typescript": "^2.4.0"
   },
   "scripts": {
     "start": "./node_modules/.bin/electron .",

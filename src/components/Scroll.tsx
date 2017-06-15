@@ -1,7 +1,7 @@
 // import { PerfectScrollbar } from 'react-perfect-scrollbar';
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import GeminiScrollbar = require('react-gemini-scrollbar');
 
 export interface ScrollProps {
 	children?: React.ReactNode;

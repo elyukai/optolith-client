@@ -215,7 +215,7 @@ export function getMOV(): SecondaryAttribute {
 }
 
 export function getWS(): SecondaryAttribute {
-	const base = Math.floor(COU().value / 2);
+	const base = Math.floor(CON().value / 2);
 	let value = base;
 	if (isActive(get('DISADV_54') as DisadvantageInstance)) {
 		value++;

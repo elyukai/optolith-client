@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ArmorZonesInstance, ItemInstance } from '../types/data.d';
+import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance } from '../types/data.d';
 
 export interface AddItemAction extends Action {
 	type: ActionTypes.ADD_ITEM;
@@ -19,11 +19,11 @@ export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemA
 export interface AddArmorZonesAction extends Action {
 	type: ActionTypes.ADD_ARMOR_ZONES;
 	payload: {
-		data: ArmorZonesInstance;
+		data: ArmorZonesEditorInstance;
 	};
 }
 
-export const addArmorZonesToList = (data: ArmorZonesInstance) => AppDispatcher.dispatch<AddArmorZonesAction>({
+export const addArmorZonesToList = (data: ArmorZonesEditorInstance) => AppDispatcher.dispatch<AddArmorZonesAction>({
 	type: ActionTypes.ADD_ARMOR_ZONES,
 	payload: {
 		data

@@ -1,4 +1,4 @@
-import { lt } from 'semver';
+// import { lt } from 'semver';
 import { Hero } from '../types/data.d';
 
 export const currentVersion = '0.48.1';

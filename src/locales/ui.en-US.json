@@ -555,6 +555,8 @@
 	"fileapi.error.message.printcharactersheettopdf": "The PDF could not be saved. Check if in case you overwrite an old file this file is not opened in any other application. You can not overwrite the file if it is opened! If it is still not working, please report this issue!",
 	"fileapi.error.message.printcharactersheettopdfpreparation": "The PDF could not be generated. Please try again. If it is still not working, please report this issue!",
 	"fileapi.error.message.importhero": "The file could not be loaded.",
+	"fileapi.allsaved": "All saved",
+	"fileapi.everythingelsesaved": "Everything else saved",
 	"emptylist": "It seems like you did not add anything to this list. Do not let it be as empty as the Starless Sky and add new elements via the button on the left!",
 	"musictraditions": ["Ceoladir", "Derwish", "Sangara"],
 	"dancetraditions": ["Hazaqi", "Marjuna", "Rahkisa", "Sharisad"]

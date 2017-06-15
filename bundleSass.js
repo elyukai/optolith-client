@@ -8,7 +8,7 @@ sass.render({
 	if (err) {
 		throw new Error('SCSS render error!');
 	}
-	writeFile('resources/bundle.css', result.css, (err) => {
+	writeFile('app/main.css', result.css, (err) => {
 		if (err) {
 			throw new Error('CSS writing error!');
 		}

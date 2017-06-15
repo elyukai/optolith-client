@@ -4,6 +4,7 @@ import { HerolistStore } from '../stores/HerolistStore';
 import { Hero, HeroForSave } from '../types/data.d';
 import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
+import { translate } from '../utils/I18n';
 // import * as WebAPIUtils from '../utils/WebAPIUtils';
 
 // export interface RequestHerolistAction extends Action {
@@ -84,6 +85,7 @@ export const loadHero = (id: string) => {
 
 export const save = () => {
 	saveAll();
+	alert(translate('fileapi.allsaved'));
 };
 
 export interface SaveHeroAction extends Action {

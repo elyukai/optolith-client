@@ -555,6 +555,8 @@
 	"fileapi.error.message.printcharactersheettopdf": "Beim Speichern der PDF ist ein Fehler aufgetreten. Überprüfe, ob, wenn du hiermit eine alte PDF überschreibst, du diese alte PDF nicht irgendwo geöffnet hast, denn solange sie geöffnet ist, kann sie nicht überschrieben werden! Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler!",
 	"fileapi.error.message.printcharactersheettopdfpreparation": "Bei der Generierung der PDF ist ein Fehler aufgetreten. Versuche es noch einmal. Falls es immer noch nicht gelingen sollte, informiere bitte die Entwickler!",
 	"fileapi.error.message.importhero": "Bei der Laden der Datei ist ein Fehler aufgetreten.",
+	"fileapi.allsaved": "Alles gespeichert",
+	"fileapi.everythingelsesaved": "Alles andere gespeichert",
 	"emptylist": "Es scheint als hättest du hier noch nichts ausgewählt. Lass diese Liste nicht so leer wie die Sternenleere und füge neue Elemente über den Button links hinzu!",
 	"musictraditions": ["Ceoladir", "Derwisch", "Sangara"],
 	"dancetraditions": ["Hazaqi", "Marjuna", "Rahkisa", "Sharisad"]

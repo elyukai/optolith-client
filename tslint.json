@@ -62,7 +62,7 @@
 		"indent": [true, "tabs"],
 		"max-classes-per-file": [true, 1],
 		"no-default-export": true,
-		"no-require-imports": true,
+		// "no-require-imports": true,
 		// "object-literal-sort-keys": true,
 		"prefer-const": true,
 

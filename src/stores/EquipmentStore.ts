@@ -3,8 +3,9 @@ import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ArmorZonesInstance, Hero, ItemInstance } from '../types/data.d';
+import { ArmorZonesEditorInstance, ArmorZonesInstance, Hero, ItemInstance, ToListById } from '../types/data.d';
 import { RawItem, RawLocale } from '../types/rawdata.d';
+import { getNewId } from '../utils/IDUtils';
 import { initItem } from '../utils/InitUtils';
 import { LocaleStore } from './LocaleStore';
 import { Store } from './Store';
@@ -12,12 +13,9 @@ import { Store } from './Store';
 type Action = AddItemAction | RemoveItemAction | SetItemAction | SetItemsSortOrderAction | LoadHeroAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | SetArmorZonesAction | CreateHeroAction;
 
 class EquipmentStoreStatic extends Store {
-	private itemsById: { [id: string]: ItemInstance } = {};
-	private items: string[] = [];
-	private itemTemplatesById: { [id: string]: ItemInstance } = {};
-	private itemTemplates: string[] = [];
-	private armorZonesById: { [id: string]: ArmorZonesInstance } = {};
-	private armorZones: string[] = [];
+	private items = new Map<string, ItemInstance>();
+	private itemTemplates = new Map<string, ItemInstance>();
+	private armorZones = new Map<string, ArmorZonesInstance>();
 	private sortOrder = 'name';
 	private purse = {
 		d: '0',
@@ -61,7 +59,7 @@ class EquipmentStoreStatic extends Store {
 					break;
 
 				case ActionTypes.ADD_ITEM:
-					this.addItem(action.payload.data, 'ITEM_' + (this.items[this.items.length - 1] ? this.items[this.items.length - 1].split('_')[1] + 1 : 1));
+					this.addItem(action.payload.data, this.getNewItemId());
 					break;
 
 				case ActionTypes.SET_ITEM:
@@ -73,7 +71,7 @@ class EquipmentStoreStatic extends Store {
 					break;
 
 				case ActionTypes.ADD_ARMOR_ZONES:
-					this.addArmorZones(action.payload.data, 'ARMORZONES_' + (this.armorZones[this.armorZones.length - 1] ? this.armorZones[this.armorZones.length - 1].split('_')[1] + 1 : 1));
+					this.addArmorZones(action.payload.data, this.getNewArmorZoneId());
 					break;
 
 				case ActionTypes.SET_ARMOR_ZONES:
@@ -97,35 +95,51 @@ class EquipmentStoreStatic extends Store {
 	}
 
 	get(id: string) {
-		return this.itemsById[id];
+		return this.items.get(id);
 	}
 
 	getArmorZones(id: string) {
-		return this.armorZonesById[id];
+		return this.armorZones.get(id);
 	}
 
 	getAll() {
-		return this.items.map(e => this.itemsById[e]);
+		return [...this.items.values()];
 	}
 
 	getAllById() {
-		return this.itemsById;
+		return this.items;
+	}
+
+	getAllForSave() {
+		const obj: ToListById<ItemInstance> = {};
+		for (const [id, item] of this.items) {
+			obj[id] = item;
+		}
+		return obj;
 	}
 
 	getTemplate(id: string) {
-		return this.itemTemplatesById[id];
+		return this.itemTemplates.get(id);
 	}
 
 	getAllTemplates() {
-		return this.itemTemplates.map(e => this.itemTemplatesById[e]);
+		return [...this.itemTemplates.values()];
 	}
 
 	getAllArmorZones() {
-		return this.armorZones.map(e => this.armorZonesById[e]);
+		return [...this.armorZones.values()];
 	}
 
 	getAllArmorZonesById() {
-		return this.armorZonesById;
+		return this.armorZones;
+	}
+
+	getAllArmorZonesForSave() {
+		const obj: ToListById<ArmorZonesInstance> = {};
+		for (const [id, item] of this.armorZones) {
+			obj[id] = item;
+		}
+		return obj;
 	}
 
 	getSortOrder() {
@@ -213,10 +227,9 @@ class EquipmentStoreStatic extends Store {
 	private init(raw: { [id: string]: RawItem }, rawlocale: RawLocale) {
 		for (const id in raw) {
 			if (raw.hasOwnProperty(id)) {
-				const result = initItem({ ...raw[id], amount: 1, isTemplateLocked: true }, rawlocale.items);
+				const result = initItem(raw[id], rawlocale.items);
 				if (result) {
-					this.itemTemplatesById[id] = result;
-					this.itemTemplates.push(id);
+					this.itemTemplates.set(id, {...result, amount: 1, isTemplateLocked: true});
 				}
 			}
 		}
@@ -226,14 +239,12 @@ class EquipmentStoreStatic extends Store {
 		const { belongings: { items, purse, armorZones } } = hero;
 		for (const id in items) {
 			if (items.hasOwnProperty(id)) {
-				this.itemsById[id] = items[id];
-				this.items.push(id);
+				this.items.set(id, items[id]);
 			}
 		}
 		for (const id in armorZones) {
 			if (armorZones.hasOwnProperty(id)) {
-				this.armorZonesById[id] = armorZones[id];
-				this.armorZones.push(id);
+				this.armorZones.set(id, armorZones[id]);
 			}
 		}
 		this.purse = purse;
@@ -244,25 +255,16 @@ class EquipmentStoreStatic extends Store {
 	}
 
 	private addItem(raw: ItemInstance, id: string) {
-		this.itemsById[id] = { ...raw, id };
-		this.items.push(id);
+		this.items.set(id, { ...raw, id });
 	}
 
 	private saveItem(id: string, item: ItemInstance) {
-		this.itemsById[id] = item;
+		this.items.set(id, item);
 	}
 
 	private removeItem(id: string) {
-		delete this.itemsById[id];
-		this.items.some((e, i) => {
-			if (e === id) {
-				this.items.splice(i, 1);
-				return true;
-			}
-			return false;
-		});
-		this.armorZones.forEach(e => {
-			const obj = this.armorZonesById[e];
+		this.items.delete(id);
+		this.armorZones.forEach(obj => {
 			if (obj.head === id) {
 				obj.head = undefined;
 			}
@@ -281,34 +283,35 @@ class EquipmentStoreStatic extends Store {
 			if (obj.rightLeg === id) {
 				obj.rightLeg = undefined;
 			}
+			if (obj.head === id || obj.torso === id || obj.leftArm === id || obj.rightArm === id || obj.leftLeg === id || obj.rightLeg === id) {
+				this.saveArmorZones(obj.id, obj);
+			}
 		});
 	}
 
-	private addArmorZones(raw: ArmorZonesInstance, id: string) {
-		this.armorZonesById[id] = { ...raw, id };
-		this.armorZones.push(id);
+	private addArmorZones(raw: ArmorZonesEditorInstance, id: string) {
+		this.armorZones.set(id, { ...raw, id });
 	}
 
 	private saveArmorZones(id: string, item: ArmorZonesInstance) {
-		this.armorZonesById[id] = item;
+		this.armorZones.set(id, item);
 	}
 
 	private removeArmorZones(id: string) {
-		delete this.armorZonesById[id];
-		this.armorZones.some((e, i) => {
-			if (e === id) {
-				this.armorZones.splice(i, 1);
-				return true;
-			}
-			return false;
-		});
+		this.armorZones.delete(id);
 	}
 
 	private clear() {
-		this.armorZones = [];
-		this.armorZonesById = {};
-		this.items = [];
-		this.itemsById = {};
+		this.items.clear();
+		this.armorZones.clear();
+	}
+
+	private getNewItemId() {
+		return `ITEM_${getNewId([...this.items.keys()])}`;
+	}
+
+	private getNewArmorZoneId() {
+		return `ARMORZONES_${getNewId([...this.armorZones.keys()])}`;
 	}
 }
 

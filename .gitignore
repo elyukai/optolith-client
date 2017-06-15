@@ -6,3 +6,4 @@ npm-debug.log*
 ~$TDE5.xlsx
 /dist/
 .rpt2_cache/
+app/**/*.js

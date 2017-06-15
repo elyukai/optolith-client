@@ -15,7 +15,7 @@ export interface ArmorZonesEditorProps {
 }
 
 export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps, ArmorZonesEditorInstance> {
-	state = { name: '', ...this.props.item };
+	state: ArmorZonesEditorInstance = { name: '', ...this.props.item };
 
 	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as ArmorZonesEditorInstance);
 	changeHead = (id?: string) => this.setState({ head: id } as ArmorZonesEditorInstance);
@@ -35,7 +35,10 @@ export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps, Arm
 		EquipmentActions.addArmorZonesToList(this.state);
 	}
 	saveItem = () => {
-		EquipmentActions.setArmorZones(this.state.id, this.state);
+		const { id } = this.state;
+		if (typeof id === 'string') {
+			EquipmentActions.setArmorZones(id, this.state as ArmorZonesInstance);
+		}
 	}
 
 	render() {

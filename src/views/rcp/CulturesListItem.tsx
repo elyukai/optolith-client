@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 import * as CultureActions from '../../actions/CultureActions';
 import { BorderButton } from '../../components/BorderButton';

@@ -53,7 +53,7 @@ export class OptionalRules extends React.Component<{}, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Aventurische Magie I"
 						disabled
@@ -77,7 +77,7 @@ export class OptionalRules extends React.Component<{}, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Die Streitenden Königreiche"
 						disabled
@@ -89,7 +89,7 @@ export class OptionalRules extends React.Component<{}, State> {
 						disabled
 						/>
 					<Checkbox
-						checked={false}
+						checked
 						onClick={this.changeCheckboxTrap}
 						label="Kneipen &amp; Tavernen"
 						disabled

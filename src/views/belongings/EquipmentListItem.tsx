@@ -30,9 +30,11 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 	render() {
 
 		const { add, data } = this.props;
-		const { isTemplateLocked, template, where } = data;
-		const item = isTemplateLocked ? { ...EquipmentStore.getTemplate(template!), where } : data;
-		const { gr, name, amount, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties } = item;
+		const { isTemplateLocked, template, where, amount } = data;
+		const activeTemplate = EquipmentStore.getTemplate(template!);
+		const item = isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount } : data;
+		const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties } = item;
+		const ammunitionTemplate = typeof ammunition === 'string' && EquipmentStore.getTemplate(ammunition);
 
 		const numberValue = amount > 1 ? amount : null;
 
@@ -53,14 +55,14 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 					{gr === 3 && <p className="ammunition">{translate('equipment.view.list.ammunitionsubtitle')}</p>}
 					{ ![1, 2, 4].includes(gr) && <table className="melee">
 						<tbody>
-							<tr>
+							{weight && <tr>
 								<td>{translate('equipment.view.list.weight')}</td>
-								<td>{weight && `${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
-							</tr>
-							<tr>
+								<td>{`${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
+							</tr>}
+							{price && <tr>
 								<td>{translate('equipment.view.list.price')}</td>
-								<td>{price && `${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
-							</tr>
+								<td>{`${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
+							</tr>}
 						</tbody>
 					</table>}
 					{ gr === 1 ? <table className="melee">
@@ -129,7 +131,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.ammunition')}</td>
-								<td>{(ammunition ? EquipmentStore.getTemplate(ammunition) : { name: translate('options.none')} ).name}</td>
+								<td>{(ammunitionTemplate || { name: translate('options.none')} ).name}</td>
 							</tr>
 							<tr>
 								<td>{translate('equipment.view.list.weight')}</td>
@@ -184,7 +186,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 					</ListItem>
 				) : (
 					<ListItem>
-						<ListItemName name={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
+						<ListItemName name={`${numberValue && numberValue + 'x '}${name}`} />
 						<ListItemSeparator />
 						<ListItemGroup list={translate('equipment.view.groups')} index={gr} />
 						<ListItemButtons>

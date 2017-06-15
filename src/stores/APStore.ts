@@ -259,8 +259,8 @@ class APStoreStatic extends Store {
 				}
 				else {
 					a.total += b.total;
-					a.adv = a.adv.map((e, i) => e + b.adv[i]);
-					a.disadv = a.disadv.map((e, i) => e + b.disadv[i]);
+					a.adv = a.adv.map((e, i) => e + b.adv[i]) as [number, number, number];
+					a.disadv = a.disadv.map((e, i) => e + b.disadv[i]) as [number, number, number];
 				}
 				return a;
 			};
@@ -283,7 +283,7 @@ class APStoreStatic extends Store {
 			const spareAP = ListStore.getSpareAPForCombatTechniques();
 
 			this.spent += apCosts.total - spareAP;
-			this.spentForAdvantages = this.spentForAdvantages.map((e, i) => e + apCosts.adv[i]);
+			this.spentForAdvantages = this.spentForAdvantages.map((e, i) => e + apCosts.adv[i]) as [number, number, number];
 			this.spentForDisadvantages = apCosts.disadv;
 		}
 	}

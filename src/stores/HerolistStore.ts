@@ -5,6 +5,7 @@ import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { Hero, HeroForSave, User } from '../types/data.d';
 import { RawHero, RawHerolist } from '../types/rawdata.d';
 import * as FileAPIUtils from '../utils/FileAPIUtils';
+import { translate } from '../utils/I18n';
 import * as VersionUtils from '../utils/VersionUtils';
 import { Store } from './Store';
 
@@ -93,12 +94,12 @@ class HerolistStoreStatic extends Store {
 	getForSave(id: string) {
 		const hero = this.heroes.get(id);
 		if (hero) {
-			const { player: playerId, ...rest } = hero;
+			const { player: playerId, dateCreated, dateModified, ...rest } = hero;
 			return {
-				...hero,
+				...rest,
 				id,
-				dateCreated: rest.dateCreated.toJSON(),
-				dateModified: rest.dateModified.toJSON(),
+				dateCreated: dateCreated.toJSON(),
+				dateModified: dateModified.toJSON(),
 				player: playerId ? this.users.get(playerId) : undefined
 			};
 		}
@@ -146,7 +147,8 @@ class HerolistStoreStatic extends Store {
 			this.heroes.set(id, {
 				...data,
 				id,
-				player: oldData && oldData.player
+				player: oldData && oldData.player,
+				dateModified: new Date()
 			});
 		}
 		else {
@@ -160,6 +162,7 @@ class HerolistStoreStatic extends Store {
 			this.currentId = newId;
 		}
 		FileAPIUtils.saveAll();
+		alert(translate('fileapi.allsaved'));
 	}
 
 	private deleteHero(id: string) {
@@ -196,7 +199,7 @@ class HerolistStoreStatic extends Store {
 
 	private getNewId() {
 		const newIdNumber = Date.now().valueOf();
-		return `HI_${newIdNumber}`;
+		return `H_${newIdNumber}`;
 	}
 }
 

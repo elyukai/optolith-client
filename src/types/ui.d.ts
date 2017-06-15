@@ -555,6 +555,8 @@ export interface UIMessages {
 	"fileapi.error.message.printcharactersheettopdf": string;
 	"fileapi.error.message.printcharactersheettopdfpreparation": string;
 	"fileapi.error.message.importhero": string;
+	"fileapi.allsaved": string;
+	"fileapi.everythingelsesaved": string;
 	"emptylist": string;
 	"musictraditions": string[];
 	"dancetraditions": string[];

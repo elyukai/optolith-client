@@ -26,9 +26,12 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		super(props);
 		let tempState = this.props.item;
 		if (tempState) {
-			if (tempState.isTemplateLocked) {
+			if (tempState.isTemplateLocked === true && typeof tempState.template === 'string') {
 				const { id, where, loss } = tempState;
-				tempState = { ...EquipmentStore.getTemplate(tempState.template!), id, where, loss };
+				const template = EquipmentStore.getTemplate(tempState.template);
+				if (template !== undefined) {
+					tempState = { ...template, id, where, loss };
+				}
 			}
 			this.state = convertToEdit(tempState);
 		}
@@ -126,14 +129,18 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	applyTemplate = () => {
 		if (typeof this.state.template === 'string') {
-			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id, isTemplateLocked: false };
-			this.setState(convertToEdit(template));
+			const template = EquipmentStore.getTemplate(this.state.template);
+			if (template !== undefined) {
+				this.setState(convertToEdit({ ...template, id: this.state.id, isTemplateLocked: false }));
+			}
 		}
 	}
 	lockTemplate = () => {
 		if (typeof this.state.template === 'string') {
-			const template = { ...EquipmentStore.getTemplate(this.state.template), id: this.state.id };
-			this.setState(convertToEdit(template));
+			const template = EquipmentStore.getTemplate(this.state.template);
+			if (template !== undefined) {
+				this.setState(convertToEdit({ ...template, id: this.state.id }));
+			}
 		}
 	}
 	unlockTemplate = () => this.setState({ isTemplateLocked: false } as ItemEditorInstance);

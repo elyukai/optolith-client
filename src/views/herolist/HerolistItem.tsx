@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ProgressArc from 'react-progress-arc';
+import ProgressArc = require('react-progress-arc');
 import * as HerolistActions from '../../actions/HerolistActions';
 import * as LocationActions from '../../actions/LocationActions';
 import { AvatarWrapper } from '../../components/AvatarWrapper';

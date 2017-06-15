@@ -1,6 +1,6 @@
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import GeminiScrollbar = require('react-gemini-scrollbar');
 import { Label } from './Label';
 
 export interface DropdownProps {

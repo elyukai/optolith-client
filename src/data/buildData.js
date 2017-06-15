@@ -502,7 +502,7 @@ const result = {
 	items
 };
 
-writeFile('resources/data.json', JSON.stringify(result), (err) => {
+writeFile('app/data.json', JSON.stringify(result), (err) => {
 	if (err) throw err;
 	console.log('Data JSON created.');
 });

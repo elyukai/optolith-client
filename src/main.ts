@@ -1,16 +1,15 @@
-const { app, BrowserWindow } = require('electron');
+import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import * as url from 'url';
 
-const path = require('path');
-const url = require('url');
-
-let mainWindow;
+let mainWindow: Electron.BrowserWindow | null | undefined;
 
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 720,
 		resizable: false,
-		icon: path.join(app.getAppPath(), 'resources', 'favicon.png'),
+		icon: path.join(app.getAppPath(), 'app', 'favicon.png'),
 		frame: false,
 		center: true,
 		title: 'DSA5 Heldentool',
@@ -32,10 +31,10 @@ function createWindow() {
 	// mainWindow.webContents.openDevTools();
 
 	mainWindow.once('ready-to-show', () => {
-		mainWindow.show();
-	})
+		mainWindow!.show();
+	});
 
-	mainWindow.on('closed', function () {
+	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
 }
@@ -44,13 +43,13 @@ app.setAppUserModelId('lukasobermann.tdeheroes');
 
 app.on('ready', createWindow);
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
 });
 
-app.on('activate', function () {
+app.on('activate', () => {
 	if (mainWindow === null) {
 		createWindow();
 	}

@@ -58,7 +58,7 @@ export async function loadInitialData() {
 	let config: Config;
 	const locales: ToListById<RawLocale> = {};
 	try {
-		const result = await readFile(join(root, 'resources', 'data.json'));
+		const result = await readFile(join(root, 'app', 'data.json'));
 		tables = JSON.parse(result);
 	}
 	catch (error) {
@@ -80,9 +80,9 @@ export async function loadInitialData() {
 		heroes = {};
 	}
 	try {
-		const result = await readDir(join(root, 'resources', 'locales'));
+		const result = await readDir(join(root, 'app', 'locales'));
 		for (const file of result) {
-			const locale = await readFile(join(root, 'resources', 'locales', file));
+			const locale = await readFile(join(root, 'app', 'locales', file));
 			locales[file.split('.')[0]] = JSON.parse(locale);
 		}
 	}
@@ -175,7 +175,6 @@ export async function saveHero(id: string) {
 export function saveAll() {
 	saveConfig();
 	saveAllHeroes();
-	alert('Alles gespeichert');
 }
 
 export async function printToPDF() {

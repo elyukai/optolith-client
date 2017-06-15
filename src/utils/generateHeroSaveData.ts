@@ -24,7 +24,7 @@ export function generateHeroSaveData(): HeroForSave {
 	const obj: HeroForSave = {
 		clientVersion: currentVersion,
 		dateCreated: ProfileStore.getDateCreated(),
-		dateModified: new Date(),
+		dateModified: ProfileStore.getDateModified(),
 		id: HerolistStore.getCurrentId(),
 		phase: PhaseStore.get(),
 		name: ProfileStore.getName(),
@@ -47,8 +47,8 @@ export function generateHeroSaveData(): HeroForSave {
 		blessings: LiturgiesStore.getBlessingsForSave(),
 		belongings: {
 			equipment: {},
-			items: EquipmentStore.getAllById(),
-			armorZones: EquipmentStore.getAllArmorZonesById(),
+			items: EquipmentStore.getAllForSave(),
+			armorZones: EquipmentStore.getAllArmorZonesForSave(),
 			pet: {},
 			purse: EquipmentStore.getPurse(),
 		},

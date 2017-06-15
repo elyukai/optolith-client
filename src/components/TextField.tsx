@@ -1,5 +1,5 @@
 // import { TextareaAutosize } from 'react-textarea-autosize';
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
 import { Label } from './Label';
