@@ -1,9 +1,11 @@
+import { existsSync } from 'fs';
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, DeleteHeroAction, DuplicateHeroAction, LoadHeroAction, SaveHeroAction, SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { AppDispatcher } from '../dispatcher/AppDispatcher';
 import { Hero, HeroForSave, User } from '../types/data.d';
 import { RawHero, RawHerolist } from '../types/rawdata.d';
+import { alert } from '../utils/alert';
 import * as FileAPIUtils from '../utils/FileAPIUtils';
 import { translate } from '../utils/I18n';
 import * as VersionUtils from '../utils/VersionUtils';
@@ -171,12 +173,13 @@ class HerolistStoreStatic extends Store {
 
 	private importHero(hero: RawHero) {
 		const newId = this.getNewId();
-		const { player, ...other } = hero;
+		const { player, avatar, ...other } = hero;
 		const finalHero: Hero = {
 			...other,
 			id: newId,
 			dateCreated: new Date(hero.dateCreated),
 			dateModified: new Date(hero.dateModified),
+			avatar: avatar && existsSync(avatar.replace(/file:[\\\/]+/, '')) ? avatar : undefined
 		};
 		if (player) {
 			finalHero.player = player.id;

@@ -3,6 +3,7 @@ import { get } from '../stores/ListStore';
 import { PhaseStore } from '../stores/PhaseStore';
 import { SpellsStore } from '../stores/SpellsStore';
 import { AbilityInstanceExtended, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
+import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
 import { addDependencies, removeDependencies } from './DependentUtils';
 
@@ -17,7 +18,8 @@ export function isIncreasable(obj: SpellInstance): boolean {
 
 	if (PhaseStore.get() < 3) {
 		max = ELStore.getStart().maxSkillRating;
-	} else {
+	}
+	else {
 		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
 		max = Math.max(...checkValues) + 2;
 	}
@@ -30,12 +32,28 @@ export function isIncreasable(obj: SpellInstance): boolean {
 }
 
 export function isDecreasable(obj: SpellInstance): boolean {
+	const dependencies = obj.dependencies.map(e => {
+		if (typeof e === 'object') {
+			const target = get(e.origin) as SpecialAbilityInstance;
+			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
+			if (req) {
+				const resultOfAll = (req.id as string[]).map(id => (get(id) as SpellInstance).value >= e.value);
+				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
+			}
+			return 0;
+		}
+		return e;
+	});
+
+	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
+
 	if ((get('SA_88') as SpecialAbilityInstance).active.includes(obj.property)) {
 		const counter = SpellsStore.getPropertyCounter();
 
-		return !(counter.get(obj.property) <= 3 && obj.value <= 10 && obj.gr !== 5);
+		return !(counter.get(obj.property) <= 3 && obj.value <= 10 && obj.gr !== 5) && valid;
 	}
-	return true;
+
+	return valid;
 }
 
 export function activate(obj: SpellInstance): Map<string, AbilityInstanceExtended> {

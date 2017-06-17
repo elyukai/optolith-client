@@ -2,6 +2,7 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { HerolistStore } from '../stores/HerolistStore';
 import { Hero, HeroForSave } from '../types/data.d';
+import { alert } from '../utils/alert';
 import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { translate } from '../utils/I18n';

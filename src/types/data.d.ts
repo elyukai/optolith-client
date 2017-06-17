@@ -706,7 +706,7 @@ export interface SecondaryAttribute {
 	short: string;
 	name: string;
 	calc: string;
-	base?: number;
+	base: number;
 	add?: number;
 	mod?: number;
 	value: number | string;

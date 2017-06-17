@@ -417,7 +417,7 @@
 	"view.uncommoninculture": "Untypisch",
 	"combattechniques.view.groups": ["Nahkampf", "Fernkampf"],
 	"actions.addtolist": "Hinzufügen",
-	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Magisch (Stab)", "Magisch (Hexe)", "Geweiht", "Magisch (Bann-/Schutzkreis)", "Kampfstil (bewaffnet)", "Kampfstil (unbewaffnet)", "Kampf (erweitert)", "Befehl", "Zauberstil", "Magisch (Erweitert)", "Magisch (Bannschwert)", "Magisch (Dolch)", "Magisch (Instrument)", "Magisch (Gewand)", "Magisch (Kugel)", "Magisch (Stecken)", "Kampf (Prügel)"],
+	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Magisch (Stab)", "Magisch (Hexe)", "Geweiht", "Magisch (Bann-/Schutzkreis)", "Kampfstil (bewaffnet)", "Kampfstil (unbewaffnet)", "Kampf (erweitert)", "Befehl", "Zauberstil", "Magisch (Erweitert)", "Magisch (Bannschwert)", "Magisch (Dolch)", "Magisch (Instrument)", "Magisch (Gewand)", "Magisch (Kugel)", "Magisch (Stecken)", "Kampf (Prügel)", "Magisch (Ahnenzeichen)"],
 	"spells.view.groups": ["Spruch", "Ritual", "Fluch", "Lied", "Zaubermelodie", "Zaubertanz"],
 	"spells.view.cantrip": "Trick",
 	"spells.view.properties": ["Antimagie", "Dämonisch", "Einfluss", "Elementar", "Heilung", "Hellsicht", "Illusion", "Sphären", "Objekt", "Telekinese", "Verwandlung"],

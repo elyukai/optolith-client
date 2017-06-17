@@ -98,6 +98,16 @@ class EquipmentStoreStatic extends Store {
 		return this.items.get(id);
 	}
 
+	/**
+	 * Inserts the template properties if a template is locked.
+	 * @param item The original item instance.
+	 */
+	getFullItem(item: ItemInstance) {
+		const { isTemplateLocked, template, where, amount, id } = item;
+		const activeTemplate = typeof template === 'string' && this.getTemplate(template);
+		return isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount, id } : item;
+	}
+
 	getArmorZones(id: string) {
 		return this.armorZones.get(id);
 	}

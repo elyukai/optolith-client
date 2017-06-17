@@ -145,7 +145,7 @@ export class Equipment extends React.Component<{}, State> {
 				<Scroll>
 					<List>
 						{
-							list.map(obj => <EquipmentListItem key={obj.id} data={obj} />)
+							list.map(obj => <EquipmentListItem key={obj.id} data={EquipmentStore.getFullItem(obj)} />)
 						}
 					</List>
 				</Scroll>

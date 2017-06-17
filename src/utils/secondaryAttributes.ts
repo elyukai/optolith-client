@@ -199,17 +199,22 @@ export function getINI(): SecondaryAttribute {
 }
 
 export function getMOV(): SecondaryAttribute {
-	const base = RaceStore.getCurrent()!.mov;
-	let value = base;
-	if ((get('DISADV_51') as DisadvantageInstance).active.includes(3)) {
-		value = Math.round(value / 2);
+	let base = RaceStore.getCurrent()!.mov;
+	let mod = 0;
+	if (isActive(get('ADV_9') as AdvantageInstance)) {
+		mod = 1;
 	}
+	if ((get('DISADV_51') as DisadvantageInstance).active.includes(3)) {
+		base = Math.round(base / 2);
+	}
+	const value = base + mod;
 	return {
 		calc: translate('secondaryattributes.mov.calc'),
 		id: 'MOV',
 		name: translate('secondaryattributes.mov.name'),
 		short: translate('secondaryattributes.mov.short'),
 		base,
+		mod,
 		value
 	};
 }

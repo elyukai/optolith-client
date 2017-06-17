@@ -13,14 +13,15 @@ import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
 const rowCreator = (e: ItemInstance | undefined, i: number) => {
-	if (e) {
+	if (e !== undefined) {
+		const data = EquipmentStore.getFullItem(e);
 		return (
-			<tr key={e.id}>
-				<td className="name">{e.name}</td>
-				<td className="amount">{e.amount > 1 && e.amount}</td>
-				<td className="price">{e.price > 0 && localizeNumber(e.price)}</td>
-				<td className="weight">{e.weight && e.weight > 0 && localizeNumber(localizeWeight(e.weight))}</td>
-				<td className="where">{e.where}</td>
+			<tr key={data.id}>
+				<td className="name">{data.name}</td>
+				<td className="amount">{data.amount > 1 && data.amount}</td>
+				<td className="price">{data.price > 0 && localizeNumber(data.price)}</td>
+				<td className="weight">{data.weight && data.weight > 0 && localizeNumber(localizeWeight(data.weight))}</td>
+				<td className="where">{data.where}</td>
 			</tr>
 		);
 	}
@@ -40,7 +41,7 @@ const rowCreator = (e: ItemInstance | undefined, i: number) => {
 export function BelongingsSheet() {
 	const { value } = get('STR') as AttributeInstance;
 	const { d, s, h, k } = EquipmentStore.getPurse();
-	const items = sort(EquipmentStore.getAll(), EquipmentStore.getSortOrder()) as ItemInstance[];
+	const items = sort(EquipmentStore.getAll(), EquipmentStore.getSortOrder(), translate('equipment.view.groups')) as ItemInstance[];
 	const firstColumn = Array.from({ length: 66 }) as Array<ItemInstance | undefined>;
 	firstColumn.splice(0, Math.min(items.length, 66), ...items);
 	const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));

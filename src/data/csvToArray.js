@@ -8,7 +8,7 @@ module.exports = function csvToArray(csv) {
 	if (splittedLines[splittedLines.length - 1].length === 1) {
 		splittedLines.pop();
 	}
-	const columnTypes = new Map(header.map((e, i) => [e, splittedLines.every(l => /^[\d.,\-]*$/.test(l[i]))]));
+	const columnTypes = new Map(header.map((e, i) => [e, splittedLines.every(l => /^-?[\d.,]*$/.test(l[i]))]));
 	const final = splittedLines.map(l => {
 		const newObj = {};
 		l.forEach((c, i) => {
@@ -16,7 +16,7 @@ module.exports = function csvToArray(csv) {
 				const column = header[i];
 				const columnType = columnTypes.get(column);
 				if (columnType === true) {
-					newObj[column] = Number.parseFloat(c);
+					newObj[column] = Number.parseFloat(c.replace(/\,/, '.'));
 				}
 				else {
 					let string = c.replace(/""/g, '"');

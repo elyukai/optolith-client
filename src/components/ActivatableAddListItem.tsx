@@ -108,6 +108,7 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 				const item = get(id) as ActivatableInstance;
 				const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
 				currentCost = selectionItem && selectionItem.cost;
+				args.sel = selected;
 				break;
 			}
 			case 'DISADV_1':

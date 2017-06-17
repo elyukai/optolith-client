@@ -16,12 +16,15 @@ export function isIncreasable(obj: LiturgyInstance): boolean {
 
 	if (PhaseStore.get() < 3) {
 		max = ELStore.getStart().maxSkillRating;
-	} else {
+	}
+	else {
 		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
 		max = Math.max(...checkValues) + 2;
 	}
 
-	if (!(get('SA_103') as SpecialAbilityInstance).active.includes(obj.aspects)) {
+	const tradition = get('SA_102') as SpecialAbilityInstance;
+	const aspectKnowledge = get('SA_103') as SpecialAbilityInstance;
+	if (!getSids(aspectKnowledge).some(e => obj.aspects.includes(e as number)) && !getSids(tradition).includes(13)) {
 		max = Math.min(14, max);
 	}
 

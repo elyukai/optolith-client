@@ -322,7 +322,7 @@ function iterateChants(array) {
 		delete obj.name;
 		obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
 		obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
-		obj.aspc = obj.aspc.split('&').map(e => Number.parseInt(e));
+		obj.aspc = obj.aspc ? obj.aspc.split('&').map(e => Number.parseInt(e)) : [];
 		obj.req = obj.req ? obj.req.split('&').map(e => e === 'RCP' ? 'RCP' : JSON.parse(e)) : [];
 		list[obj.id] = obj;
 	}

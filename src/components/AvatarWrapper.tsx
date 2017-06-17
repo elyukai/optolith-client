@@ -1,4 +1,5 @@
 import * as classNames from 'classnames';
+import { existsSync } from 'fs';
 import * as React from 'react';
 import { Avatar } from './Avatar';
 
@@ -13,10 +14,11 @@ export interface AvatarWrapperProps {
 export function AvatarWrapper(props: AvatarWrapperProps) {
 	const { children, img, onClick, src } = props;
 	let { className } = props;
+	const validPath = typeof src === 'string' && src.length > 0 && existsSync(src.replace(/file:[\\\/]+/, ''));
 
 	className = classNames(className, {
 		'avatar-wrapper': true,
-		'no-avatar': !src
+		'no-avatar': !validPath
 	});
 
 	return (

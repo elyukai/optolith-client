@@ -28,15 +28,11 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 	add = () => EquipmentActions.addToList(this.props.data);
 
 	render() {
-
 		const { add, data } = this.props;
-		const { isTemplateLocked, template, where, amount } = data;
-		const activeTemplate = EquipmentStore.getTemplate(template!);
-		const item = isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount } : data;
-		const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties } = item;
+		const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties, amount } = data;
 		const ammunitionTemplate = typeof ammunition === 'string' && EquipmentStore.getTemplate(ammunition);
 
-		const numberValue = amount > 1 ? amount : null;
+		const numberValue = amount > 1 ? amount : undefined;
 
 		const addPenaltiesArr = [];
 
@@ -55,11 +51,11 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 					{gr === 3 && <p className="ammunition">{translate('equipment.view.list.ammunitionsubtitle')}</p>}
 					{ ![1, 2, 4].includes(gr) && <table className="melee">
 						<tbody>
-							{weight && <tr>
+							{typeof weight === 'number' && weight > 0 && <tr>
 								<td>{translate('equipment.view.list.weight')}</td>
 								<td>{`${localizeNumber(localizeWeight(weight))} ${translate('equipment.view.list.weightunit')}`}</td>
 							</tr>}
-							{price && <tr>
+							{typeof price === 'number' && price > 0 && <tr>
 								<td>{translate('equipment.view.list.price')}</td>
 								<td>{`${localizeNumber(price)} ${translate('equipment.view.list.priceunit')}`}</td>
 							</tr>}
@@ -186,7 +182,7 @@ export class EquipmentListItem extends React.Component<Props, undefined> {
 					</ListItem>
 				) : (
 					<ListItem>
-						<ListItemName name={`${numberValue && numberValue + 'x '}${name}`} />
+						<ListItemName name={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
 						<ListItemSeparator />
 						<ListItemGroup list={translate('equipment.view.groups')} index={gr} />
 						<ListItemButtons>
