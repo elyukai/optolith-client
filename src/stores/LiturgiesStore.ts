@@ -104,14 +104,6 @@ class LiturgiesStoreStatic extends Store {
 		return PhaseStore.get() < 3 && this.getAll().filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
 	}
 
-	getGroupNames() {
-		return ['Liturgie', 'Zeremonie', 'Segnung'];
-	}
-
-	getAspectNames() {
-		return ['Allgemein', 'Antimagie', 'Ordnung', 'Schild', 'Sturm', 'Tod', 'Traum', 'Magie', 'Wissen', 'Handel', 'Schatten', 'Heilung', 'Landwirtschaft'];
-	}
-
 	getSortOrder() {
 		return this.sortOrder;
 	}

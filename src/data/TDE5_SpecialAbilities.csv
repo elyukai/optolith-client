@@ -100,15 +100,15 @@
 99;Stab-Apport;15;;1;;"{""id"":""SA_92"",""active"":true}";5
 100;Vertrautenbindung;20;;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_18"",""active"":false}";6
 101;Flugsalbe;15;;1;;"{""id"":""SA_86"",""active"":true,""sid"":2}&{""id"":""DISADV_17"",""active"":false}";6
-102;Tradition;sel;;1;1?Praioskirche?130&2?Rondrakirche?150&3?Boronkirche?130&4?Hesindekirche?130&5?Phexkirche?150&6?Perainekirche?110;"{""id"":""ADV_12"",""active"":true}";7
-103;Aspektkenntnis;;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":2}&{""id"":""ADV_12"",""active"":true}";7
+102;Tradition;sel;;1;1?Praioskirche?130&2?Rondrakirche?150&3?Boronkirche?130&4?Hesindekirche?130&5?Phexkirche?150&6?Perainekirche?110&7?Efferdkirche?130&8?Traviakirche?110&9?Firunkirche?140&10?Tsakirche?140&11?Ingerimmkirche?125&12?Rahjakirche?125&13?Namenloser Kult?150&14?Aveskirche?110&15?Ifirnkirche?105&16?Korkirche?130&17?Nanduskirche?130&18?Swafnirkirche?115;"{""id"":""ADV_12"",""active"":true}";7
+103;Aspektkenntnis;;;3;;"{""id"":""ATTR_PRIMARY"",""value"":15,""type"":2}&{""id"":""ADV_12"",""active"":true}&{""id"":""SA_103"",""active"":false,""sid"":13}";7
 104;Fokussierung;8;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":13}";7
 105;Stärke des Glaubens;10;;1;;"{""id"":""ADV_12"",""active"":true}&{""id"":""ATTR_1"",""value"":15}";7
 106;Starke Segnungen;2;;1;;"{""id"":""ADV_12"",""active"":true}";7
-107;Bann-/Schutzkreis gegen Elementargeister;5;;1;;;8
-108;Bann-/Schutzkreis gegen Dschinne;15;;1;;;8
-109;Bann-/Schutzkreis gegen niedere Dämonen;10;;1;;;8
-110;Bann-/Schutzkreis gegen gehörnte Dämonen;15;;1;;;8
+107;Bann-/Schutzkreis gegen Elementargeister;5;;1;;"{""id"":""SA_91"",""active"":true}";8
+108;Bann-/Schutzkreis gegen Dschinne;15;;1;;"{""id"":""SA_91"",""active"":true}";8
+109;Bann-/Schutzkreis gegen niedere Dämonen;10;;1;;"{""id"":""SA_91"",""active"":true}";8
+110;Bann-/Schutzkreis gegen gehörnte Dämonen;15;;1;;"{""id"":""SA_91"",""active"":true}";8
 111;Abrichter;5;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_29""}";1
 112;Abrollen;8;;1;;"{""id"":""TAL_4"",""value"":8}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_4""}&{""id"":""DISADV_12"",""active"":false}";1
 113;Ackerbau;2;;1;;"{""id"":""TAL_28"",""value"":4}&{""id"":""DISADV_48"",""active"":false,""sid"":""TAL_28""}";1
@@ -242,7 +242,7 @@
 241;Windmühle;25;;1;;"{""id"":[""AGI"",""STR""],""value"":15}&{""id"":[""SA_197"",""SA_199"",""SA_209"",""SA_214"",""SA_485""],""active"":true}";11
 242;Wuchtiger Wurf;15;;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_198"",""SA_209"",""SA_212""],""active"":true}";11
 243;Würgegriff;5;;1;;"{""id"":""SA_191"",""active"":true}&{""id"":[""SA_215"",""SA_216""],""active"":true}";11
-244;Zertrümmern;5;;1;;"{""id"":""STR"",""value"":15}&{""id"":""SA_69"",""active"":true}&{""id"":[""SA_201"",""SA_210"",""SA_212""],""active"":true}";11
+244;Zertrümmern;5;;1;;"{""id"":""STR"",""value"":15}&{""id"":[""SA_201"",""SA_210"",""SA_212""],""active"":true}";11
 245;Befehl Flugangriff;12;;1;;"{""id"":""TAL_1"",""value"":8}&{""id"":""SA_171"",""active"":true}";12
 246;Befehl Klammergriff;12;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
 247;Befehl Mächtiger Schlag;10;;1;;"{""id"":""TAL_29"",""value"":8}&{""id"":""SA_46"",""active"":true}";12
@@ -500,3 +500,12 @@
 499;Schlag auf den Kopf;1;;1;;"{""id"":""STR"",""value"":15}";21
 500;Tür gegen den Kopf Knallen;3;;1;;"{""id"":""STR"",""value"":13}&{""id"":""SA_54"",""active"":true}";21
 501;Deichbauer;2;;1;;"{""id"":""TAL_58"",""value"":4}";1
+502;Diebesschreck;4;;1;;"{""id"":""SA_91"",""active"":true}";22
+503;Feinstes Leder;4;;1;;"{""id"":""SA_91"",""active"":true}";22
+504;Fischreichtum;3;;1;;"{""id"":""SA_91"",""active"":true}";22
+505;Harter Kern;2;;1;;"{""id"":""SA_91"",""active"":true}";22
+506;Leicht wie eine Feder;3;;1;;"{""id"":""SA_91"",""active"":true}";22
+507;Namensbogen;8;;1;;"{""id"":""SA_91"",""active"":true}";22
+508;Schutz wider Pfeilhagel;8;;1;;"{""id"":""SA_91"",""active"":true}";22
+509;Windfang;8;;1;;"{""id"":""SA_91"",""active"":true}";22
+510;Zeichen der Angst;8;;1;;"{""id"":""SA_91"",""active"":true}";22

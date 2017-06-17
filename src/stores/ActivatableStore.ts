@@ -1,9 +1,11 @@
+import { last } from 'lodash';
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import { getDSids, getSecondSidMap, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
 import { sort } from '../utils/ListUtils';
+import { getTraditionOfAspect } from '../utils/LiturgyUtils';
 import { validate } from '../utils/RequirementUtils';
 import { APStore } from './APStore';
 import { ELStore } from './ELStore';
@@ -473,8 +475,7 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 				case 'SA_103': {
 					const liturgiesAbove10 = (getAllByCategory(Categories.LITURGIES) as Data.LiturgyInstance[]).filter(e => e.value >= 10);
 					const counter = liturgiesAbove10.reduce((map, obj) => {
-						const aspect = obj.aspects;
-						aspect.forEach(e => {
+						obj.aspects.forEach(e => {
 							if (map.has(e)) {
 								map.set(e, map.get(e)! + 1);
 							}
@@ -484,7 +485,8 @@ export function getDeactiveForView(category: Categories.ACTIVATABLE): Data.Deact
 						});
 						return map;
 					}, new Map<number, number>());
-					const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					const activeTradition = last(getSids(get('SA_102') as Data.SpecialAbilityInstance));
+					const sel = sort(a.sel!.filter(e => getTraditionOfAspect(e.id as number) === activeTradition && counter.get(e.id as number)! >= 3 && !getSids(a).includes(e.id) && !getDSids(a).includes(e.id)));
 					if (sel.length > 0) {
 						const apArr = [15, 25, 45];
 						const cost = apArr[active.length];

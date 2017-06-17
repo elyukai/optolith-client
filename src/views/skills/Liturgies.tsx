@@ -1,3 +1,4 @@
+import { last } from 'lodash';
 import * as React from 'react';
 import * as ConfigActions from '../../actions/ConfigActions';
 import * as LiturgiesActions from '../../actions/LiturgiesActions';
@@ -15,12 +16,14 @@ import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { ConfigStore } from '../../stores/ConfigStore';
+import { get } from '../../stores/ListStore';
 import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { PhaseStore } from '../../stores/PhaseStore';
-import { BlessingInstance, InputTextEvent, LiturgyInstance } from '../../types/data.d';
+import { BlessingInstance, InputTextEvent, LiturgyInstance, SpecialAbilityInstance } from '../../types/data.d';
+import { getSids } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
 import { filterAndSort } from '../../utils/ListUtils';
-import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
+import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
 
 interface State {
@@ -69,10 +72,10 @@ export class Liturgies extends React.Component<{}, State> {
 
 	render() {
 		const { addChantsDisabled, enableActiveItemHints, filterText, filterTextSlidein, phase, showAddSlidein, sortOrder, liturgies } = this.state;
+		const traditionId = last(getSids(get('SA_102') as SpecialAbilityInstance));
 
 		const sortArray = [
 			{ name: translate('options.sortorder.alphabetically'), value: 'name' },
-			{ name: translate('options.sortorder.aspect'), value: 'aspect' },
 			{ name: translate('options.sortorder.group'), value: 'group' },
 			{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
 		];
@@ -126,7 +129,7 @@ export class Liturgies extends React.Component<{}, State> {
 
 									const { name } = obj;
 
-									const aspc = obj.aspects.map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
+									const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 									if (obj.category === Categories.BLESSINGS) {
 										return (
@@ -193,7 +196,7 @@ export class Liturgies extends React.Component<{}, State> {
 
 								const name = obj.name;
 
-								const aspc = obj.aspects.map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
+								const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => translate('liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 								if (obj.category === Categories.BLESSINGS) {
 									return (

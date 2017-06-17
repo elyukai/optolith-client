@@ -2,7 +2,7 @@ import { ELStore } from '../stores/ELStore';
 import { get } from '../stores/ListStore';
 import { LiturgiesStore } from '../stores/LiturgiesStore';
 import { PhaseStore } from '../stores/PhaseStore';
-import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
+import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
 export function isOwnTradition(obj: LiturgyInstance | BlessingInstance): boolean {
@@ -55,4 +55,25 @@ export function resetBlessing(obj: BlessingInstance): BlessingInstance {
 		active: false,
 		dependencies: []
 	};
+}
+
+const traditionsByAspect: ToListById<number> = { 1: 1, 2: 2, 3: 2, 4: 3, 5: 3, 6: 4, 7: 4, 8: 5, 9: 5, 10: 6, 11: 6, 12: 7, 13: 7, 14: 8, 15: 8, 16: 9, 17: 9, 18: 10, 19: 10, 20: 11, 21: 11, 22: 12, 23: 12, 24: 13, 25: 13, 26: 15, 27: 15, 28: 16, 29: 16, 30: 17, 31: 17, 32: 18, 33: 18, 34: 19, 35: 19 };
+
+/**
+ * Returns the tradition id used by chants. To get the tradition SId for the actual special ability, you have to decrease the return value by 1.
+ * @param aspectId The id used for chants or Aspect Knowledge.
+ */
+export function getTraditionOfAspect(aspectId: number): number {
+	return traditionsByAspect[aspectId];
+}
+
+const aspectsByTradition: ToListById<number[]> = { 1: [1], 2: [2, 3], 3: [4, 5], 4: [6, 7], 5: [8, 9], 6: [10, 11], 7: [12, 13], 8: [14, 15], 9: [16, 17], 10: [18, 19], 11: [20, 21], 12: [22, 23], 13: [24, 25], 14: [], 15: [26, 27], 16: [28, 29], 17: [30, 31], 18: [32, 33], 19: [34, 35] };
+
+/**
+ * Return the aspect ids used for chants and Aspect Knowledge.
+ * @param traditionId The id used by chants. If you only have the SId from the actual special ability, you have to increase the value by 1.
+ */
+export function getAspectsOfTradition(traditionId: number): number[] {
+	const add = traditionId > 1 ? [1] : [];
+	return [...add, ...aspectsByTradition[traditionId]];
 }

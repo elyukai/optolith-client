@@ -7,6 +7,7 @@ import { AttributeInstance, LiturgyInstance, SpecialAbilityInstance } from '../.
 import { getSids } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
 import { sort } from '../../utils/ListUtils';
+import { getAspectsOfTradition } from '../../utils/LiturgyUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
 
 interface Props {
@@ -33,8 +34,8 @@ export function LiturgiesSheetMain(props: Props) {
 				}
 			}).join('/');
 			const traditionId = getSids(get('SA_102') as SpecialAbilityInstance)[0];
-			const aspectIds = e.aspects.filter(e => e === 1 || Math.round((e - 1) / 2) === traditionId);
-			const aspects = aspectIds.map(e => LiturgiesStore.getAspectNames()[e - 1]);
+			const aspectIds = e.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e));
+			const aspects = aspectIds.map(e => translate('liturgies.view.aspects')[e - 1]).sort();
 
 			return (
 				<tr key={e.id}>

@@ -424,7 +424,7 @@
 	"spells.view.traditions": ["Allgemein", "Gildenmagier", "Hexen", "Elfen", "Druiden", "Scharlatane", "Zauberbarden", "Zaubertänzer", "Intuitive Zauberer", "Meistertalentierte", "Qabalyamagier", "Kristallomanten", "Geoden", "Alchimisten", "Schelme"],
 	"liturgies.view.groups": ["Liturgie", "Zeremonie"],
 	"liturgies.view.blessing": "Segnung",
-	"liturgies.view.aspects": ["Allgemein", "Antimagie", "Ordnung", "Schild", "Sturm", "Tod", "Traum", "Magie", "Wissen", "Handel", "Schatten", "Heilung", "Landwirtschaft"],
+	"liturgies.view.aspects": ["Allgemein", "Antimagie", "Ordnung", "Schild", "Sturm", "Tod", "Traum", "Magie", "Wissen", "Handel", "Schatten", "Heilung", "Landwirtschaft", "Wind", "Wogen", "Freundschaft", "Heim", "Jagd", "Kälte", "Freiheit", "Wandel", "Feuer", "Handwerk", "Ekstase", "Harmonie", "Reise", "Schicksal", "Hilfsbereitschaft", "Natur", "Guter Kampf", "Gutes Gold", "Bildung", "Erkenntnis", "Kraft", "Tapferkeit"],
 	"equipment.actions.create": "Erstellen",
 	"equipment.view.purse": "Geldbeutel",
 	"equipment.view.ducates": "D",
