@@ -47,7 +47,7 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 		if (tier && tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			const min = phase === 3 ? tier : Math.max(1, minTier);
 			const max = Math.min(tiers, maxTier);
-			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + 1) }));
+			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
 			if (id === 'SA_30' && (tier === 4 || phase < 3)) {
 				array.push({ id: 4, name: 'MS' });
 			}
@@ -59,7 +59,8 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 						onChange={this.handleSelectTier}
 						options={array} />
 				);
-			} else {
+			}
+			else {
 				addSpecial = ' ' + array[0].name;
 			}
 			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier;

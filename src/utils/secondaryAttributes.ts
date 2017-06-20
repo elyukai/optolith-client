@@ -174,13 +174,24 @@ export function getTOU(): SecondaryAttribute {
 
 export function getDO(): SecondaryAttribute {
 	const base = Math.round(AGI().value / 2);
-	const value = base;
+	let mod = 0;
+	if (isActive(get('SA_78') as DisadvantageInstance)) {
+		mod += 3;
+	}
+	else if (isActive(get('SA_77') as DisadvantageInstance)) {
+		mod += 2;
+	}
+	else if (isActive(get('SA_76') as DisadvantageInstance)) {
+		mod += 1;
+	}
+	const value = base + mod;
 	return {
 		calc: translate('secondaryattributes.do.calc'),
 		id: 'DO',
 		name: translate('secondaryattributes.do.name'),
 		short: translate('secondaryattributes.do.short'),
 		base,
+		mod,
 		value
 	};
 }

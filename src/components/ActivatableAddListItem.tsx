@@ -277,7 +277,7 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 		if (typeof tiers === 'number') {
 			const min = Math.max(1, minTier);
 			const max = Math.min(tiers, maxTier);
-			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + 1) }));
+			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
 			tierElement = (
 				<Dropdown
 					className="tiers"

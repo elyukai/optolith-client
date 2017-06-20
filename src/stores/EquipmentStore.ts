@@ -83,6 +83,7 @@ class EquipmentStoreStatic extends Store {
 					break;
 
 				case ActionTypes.LOAD_HERO:
+					this.clear();
 					this.updateAll(action.payload.data);
 					break;
 

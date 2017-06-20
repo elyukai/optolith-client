@@ -395,7 +395,7 @@ function iterateEquipment(array) {
 			price,
 			weight,
 			where: ''
-		}
+		};
 
 		if (typeof imp === 'number') {
 			result.imp = imp;
@@ -415,7 +415,7 @@ function iterateEquipment(array) {
 		if (gr === 1 || imp === 1) {
 			result = Object.assign(result, {
 				at: typeof at === 'number' ? at : 0,
-				pa: typeof pa === 'number' ? at : 0,
+				pa: typeof pa === 'number' ? pa : 0,
 				reach: typeof re === 'number' ? re : 0,
 				length: typeof length === 'number' ? length : 0,
 				isParryingWeapon: !!pryw,
