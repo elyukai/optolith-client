@@ -19,7 +19,7 @@ import { PhaseStore } from '../../stores/PhaseStore';
 import { SpellsStore } from '../../stores/SpellsStore';
 import { CantripInstance, InputTextEvent, SpellInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
 

@@ -13,7 +13,7 @@ import { PhaseStore } from '../../stores/PhaseStore';
 import { AttributeInstance, CombatTechniqueInstance, InputTextEvent } from '../../types/data.d';
 import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { SkillListItem } from './SkillListItem';
 
 interface State {

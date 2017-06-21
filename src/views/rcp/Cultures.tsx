@@ -9,7 +9,7 @@ import { CultureStore } from '../../stores/CultureStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { CultureInstance, InputTextEvent } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { CulturesListItem } from './CulturesListItem';
 
 interface Props {

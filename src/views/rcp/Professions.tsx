@@ -12,7 +12,7 @@ import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
 import { InputTextEvent, ProfessionInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { Selections } from './Selections';
 

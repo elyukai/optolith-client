@@ -16,7 +16,7 @@ import { AdvantageInstance, ArmorZonesInstance, AttributeInstance, DisadvantageI
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
 import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { ArmorZonesEditor } from './ArmorZonesEditor';
 import { ArmorZonesListItem } from './ArmorZonesListItem';
 

@@ -6,7 +6,7 @@ import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
 import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 interface Props {
 	age?: string;

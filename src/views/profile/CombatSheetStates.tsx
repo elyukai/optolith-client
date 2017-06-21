@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 export function CombatSheetStates() {
 	const conditions = sort([

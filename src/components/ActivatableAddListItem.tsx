@@ -5,7 +5,7 @@ import { TalentsStore } from '../stores/TalentsStore';
 import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
-import { sort } from '../utils/ListUtils';
+import { sort } from '../utils/FilterSortUtils';
 import { getRoman } from '../utils/roman';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';

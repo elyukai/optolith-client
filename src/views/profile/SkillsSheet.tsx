@@ -7,7 +7,7 @@ import { SheetStore } from '../../stores/SheetStore';
 import { TalentsStore } from '../../stores/TalentsStore';
 import { AttributeInstance, TalentInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';

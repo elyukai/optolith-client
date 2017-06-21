@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { translate } from '../utils/I18n';
-import { sort as sortList } from '../utils/ListUtils';
+import { sort as sortList } from '../utils/FilterSortUtils';
 import { RadioButtonGroup } from './RadioButtonGroup';
 
 export type SortNames = 'name' | 'group' | 'groupname' | 'where' | 'cost' | 'ap' | 'ic' | 'property' | 'aspect';

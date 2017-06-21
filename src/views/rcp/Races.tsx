@@ -7,7 +7,7 @@ import { TextField } from '../../components/TextField';
 import { RaceStore } from '../../stores/RaceStore';
 import { InputTextEvent, RaceInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { RacesListItem } from './RacesListItem';
 
 interface Props {

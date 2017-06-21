@@ -6,7 +6,7 @@ import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { AttributeInstance, LiturgyInstance, SpecialAbilityInstance } from '../../types/data.d';
 import { getSids } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 import { getAspectsOfTradition } from '../../utils/LiturgyUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
 

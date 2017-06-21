@@ -5,7 +5,7 @@ import { get } from '../../stores/ListStore';
 import { AttributeInstance } from '../../types/data.d';
 import { getAt, getPa } from '../../utils/CombatTechniqueUtils';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 export function CombatSheetTechniques() {
 	return (

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
-import { filterAndSort } from '../utils/ListUtils';
+import { filterAndSort } from '../utils/FilterSortUtils';
 import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
 import { List } from './List';
 import { ListPlaceholder } from './ListPlaceholder';

@@ -17,7 +17,7 @@ import { PhaseStore } from '../../stores/PhaseStore';
 import { TalentsStore } from '../../stores/TalentsStore';
 import { AttributeInstance, CultureInstance, InputTextEvent, TalentInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
 

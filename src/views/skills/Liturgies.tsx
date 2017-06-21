@@ -22,7 +22,7 @@ import { PhaseStore } from '../../stores/PhaseStore';
 import { BlessingInstance, InputTextEvent, LiturgyInstance, SpecialAbilityInstance } from '../../types/data.d';
 import { getSids } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 export function LiturgiesSheetBlessings() {
 	return (

@@ -6,7 +6,7 @@ import { TextField } from '../../components/TextField';
 import { EquipmentStore } from '../../stores/EquipmentStore';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, InputTextEvent } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 export interface ArmorZonesEditorProps {
 	create?: boolean;

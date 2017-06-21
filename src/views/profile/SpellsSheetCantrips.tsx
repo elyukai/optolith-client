@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { SpellsStore } from '../../stores/SpellsStore';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 
 export function SpellsSheetCantrips() {
 	return (

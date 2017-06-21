@@ -4,7 +4,7 @@ import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import { getDSids, getSecondSidMap, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
 import { translate } from '../utils/I18n';
-import { sort } from '../utils/ListUtils';
+import { sort } from '../utils/FilterSortUtils';
 import { getTraditionOfAspect } from '../utils/LiturgyUtils';
 import { validate } from '../utils/RequirementUtils';
 import { APStore } from './APStore';

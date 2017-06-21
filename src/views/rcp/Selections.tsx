@@ -15,7 +15,7 @@ import { TalentsStore } from '../../stores/TalentsStore';
 import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { translate } from '../../utils/I18n';
-import { sortByName } from '../../utils/ListUtils';
+import { sortByName } from '../../utils/FilterSortUtils';
 import { SelectionsCantrips } from './SelectionsCantrips';
 import { SelectionsCt } from './SelectionsCt';
 import { SelectionsCurses } from './SelectionsCurses';

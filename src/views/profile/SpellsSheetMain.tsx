@@ -5,7 +5,7 @@ import { get } from '../../stores/ListStore';
 import { SpellsStore } from '../../stores/SpellsStore';
 import { AttributeInstance, SpellInstance } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
 import { isOwnTradition } from '../../utils/SpellUtils';
 

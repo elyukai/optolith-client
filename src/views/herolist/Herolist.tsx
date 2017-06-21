@@ -24,7 +24,7 @@ import { confirm } from '../../utils/confirm';
 import { createOverlay } from '../../utils/createOverlay';
 import { importHero } from '../../utils/FileAPIUtils';
 import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/ListUtils';
+import { filterAndSort } from '../../utils/FilterSortUtils';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 

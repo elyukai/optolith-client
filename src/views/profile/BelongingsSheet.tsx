@@ -7,7 +7,7 @@ import { get } from '../../stores/ListStore';
 import { PetsStore } from '../../stores/PetsStore';
 import { AttributeInstance, ItemInstance } from '../../types/data.d';
 import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
-import { sort } from '../../utils/ListUtils';
+import { sort } from '../../utils/FilterSortUtils';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';

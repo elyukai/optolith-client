@@ -18,7 +18,7 @@ import { AdvantageInstance, AttributeInstance, DisadvantageInstance, InputTextEv
 import { isActive } from '../../utils/ActivatableUtils';
 import { createOverlay } from '../../utils/createOverlay';
 import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
-import { filterAndSort, sortByName } from '../../utils/ListUtils';
+import { filterAndSort, sortByName } from '../../utils/FilterSortUtils';
 import { EquipmentListItem } from './EquipmentListItem';
 import { ItemEditor } from './ItemEditor';
 
