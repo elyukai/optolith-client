@@ -15,6 +15,15 @@ export const addPoint = (id: string) => AppDispatcher.dispatch<AddCombatTechniqu
 	}
 });
 
+export function _addPoint(id: string): AddCombatTechniquePointAction {
+	return {
+		type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
+		payload: {
+			id
+		}
+	};
+}
+
 export interface RemoveCombatTechniquePointAction extends Action {
 	type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT;
 	payload: {
@@ -29,6 +38,15 @@ export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveCombatTe
 	}
 });
 
+export function _removePoint(id: string): RemoveCombatTechniquePointAction {
+	return {
+		type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT,
+		payload: {
+			id
+		}
+	};
+}
+
 export interface SetCombatTechniquesSortOrderAction extends Action {
 	type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER;
 	payload: {
@@ -42,3 +60,12 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetCom
 		sortOrder
 	}
 });
+
+export function _setSortOrder(sortOrder: string): SetCombatTechniquesSortOrderAction {
+	return {
+		type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}

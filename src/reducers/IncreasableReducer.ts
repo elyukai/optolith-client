@@ -7,105 +7,59 @@ import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 import { alert } from '../utils/alert';
-import { mergeIntoList } from '../utils/ListUtils';
+import { addDependencies, removeDependencies } from '../utils/DependentUtils';
+import { mergeIntoList, setListItem } from '../utils/ListUtils';
 import * as SpellUtils from '../utils/SpellUtils';
 
 type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
 
-export interface IncreasableState {
-	list: Map<string, Data.Instance>;
-}
-
-export function IncreasableReducer({ list = new Map()}: IncreasableState, action: Action) {
+export function IncreasableReducer(state = new Map<string, Data.Instance>(), action: Action) {
 	switch (action.type) {
 		case ActionTypes.ACTIVATE_SPELL: {
 			const { id } = action.payload;
-			const entry = list.get(id);
-			if (entry) {
-				return list.set(id, {...entry, active: true});
-			}
-			alert('Error', 'IncreasableReducer ACTIVATE_SPELL error: Entry not found');
-			return list;
+			const entry = state.get(id) as Data.SpellInstance | Data.CantripInstance;
+			return mergeIntoList(state, addDependencies(state, {...entry, active: true}));
 		}
 
 		case ActionTypes.ACTIVATE_LITURGY: {
 			const { id } = action.payload;
-			const entry = list.get(id);
-			if (entry) {
-				return list.set(id, {...entry, active: true});
-			}
-			alert('Error', 'IncreasableReducer ACTIVATE_SPELL error: Entry not found');
-			return list;
+			const entry = state.get(id) as Data.LiturgyInstance | Data.BlessingInstance;
+			return setListItem(state, id, {...entry, active: true});
 		}
 
-		case ActionTypes.DEACTIVATE_SPELL:
-				this.deactivateSpell(action.payload.id);
-			break;
+		case ActionTypes.DEACTIVATE_SPELL: {
+			const { id } = action.payload;
+			const entry = state.get(id) as Data.SpellInstance | Data.CantripInstance;
+			return mergeIntoList(state, removeDependencies(state, {...entry, active: false}));
+		}
 
-		case ActionTypes.DEACTIVATE_LITURGY:
-				this.deactivate(action.payload.id);
-			break;
+		case ActionTypes.DEACTIVATE_LITURGY: {
+			const { id } = action.payload;
+			const entry = state.get(id) as Data.LiturgyInstance | Data.BlessingInstance;
+			return setListItem(state, id, {...entry, active: false});
+		}
 
 		case ActionTypes.ADD_ATTRIBUTE_POINT:
 		case ActionTypes.ADD_TALENT_POINT:
 		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
 		case ActionTypes.ADD_SPELL_POINT:
-		case ActionTypes.ADD_LITURGY_POINT:
-				this.addPoint(action.payload.id);
-			break;
+		case ActionTypes.ADD_LITURGY_POINT: {
+			const { id } = action.payload;
+			const entry = state.get(id) as Data.IncreasableInstance;
+			return setListItem(state, id, {...entry, value: entry.value + 1});
+		}
 
 		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
 		case ActionTypes.REMOVE_TALENT_POINT:
 		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
 		case ActionTypes.REMOVE_SPELL_POINT:
-		case ActionTypes.REMOVE_LITURGY_POINT:
-				this.removePoint(action.payload.id);
-			break;
+		case ActionTypes.REMOVE_LITURGY_POINT: {
+			const { id } = action.payload;
+			const entry = state.get(id) as Data.IncreasableInstance;
+			return setListItem(state, id, {...entry, value: entry.value - 1});
+		}
 
 		default:
-			return list;
+			return state;
 	}
 }
-
-	private activate(id: string) {
-		const entry = this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance;
-		if (entry) {
-			this.byId.set(id, {...entry, active: true});
-		}
-	}
-
-	private activateSpell(id: string) {
-		const entry = this.byId.get(id) as Data.SpellInstance | Data.CantripInstance;
-		if (entry) {
-			if (entry.category === Categories.CANTRIPS) {
-				this.activateCantrip(id);
-			}
-			else {
-				const newList = SpellUtils.activate(entry);
-				this.mergeIntoList(newList);
-			}
-		}
-	}
-
-	private activateCantrip(id: string) {
-		this.mergeIntoList(SpellUtils.activateCantrip(this.byId.get(id) as Data.CantripInstance));
-	}
-
-	private deactivate(id: string) {
-		const entry = this.byId.get(id) as Data.LiturgyInstance | Data.SpellInstance | Data.CantripInstance | Data.BlessingInstance;
-		if (entry) {
-			this.byId.set(id, {...entry, active: false});
-		}
-	}
-
-	private deactivateSpell(id: string) {
-		const entry = this.byId.get(id);
-		if (entry) {
-			if (entry.category === Categories.CANTRIPS) {
-				this.deactivateCantrip(id);
-			}
-			else {
-				this.mergeIntoList(SpellUtils.deactivate(entry as Data.SpellInstance));
-			}
-		}
-	}

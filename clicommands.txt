@@ -1,1 +1,4 @@
 tsc node_modules/react-gemini-scrollbar/src/index.jsx --outDir node_modules/react-gemini-scrollbar/dist --allowJs --jsx React
+
+const (_\w+) = (\(.*\)) => AppDispatcher\.dispatch<(\w+)>\(
+function $1$2 {\n\treturn

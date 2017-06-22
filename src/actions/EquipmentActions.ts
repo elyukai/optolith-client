@@ -16,6 +16,15 @@ export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemA
 	}
 });
 
+export function _addToList(data: ItemInstance): AddItemAction {
+	return {
+		type: ActionTypes.ADD_ITEM,
+		payload: {
+			data
+		}
+	};
+}
+
 export interface AddArmorZonesAction extends Action {
 	type: ActionTypes.ADD_ARMOR_ZONES;
 	payload: {
@@ -29,6 +38,15 @@ export const addArmorZonesToList = (data: ArmorZonesEditorInstance) => AppDispat
 		data
 	}
 });
+
+export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AddArmorZonesAction {
+	return {
+		type: ActionTypes.ADD_ARMOR_ZONES,
+		payload: {
+			data
+		}
+	};
+}
 
 export interface SetItemAction extends Action {
 	type: ActionTypes.SET_ITEM;
@@ -46,6 +64,16 @@ export const set = (id: string, data: ItemInstance) => AppDispatcher.dispatch<Se
 	}
 });
 
+export function _set(id: string, data: ItemInstance): SetItemAction {
+	return {
+		type: ActionTypes.SET_ITEM,
+		payload: {
+			id,
+			data
+		}
+	};
+}
+
 export interface SetArmorZonesAction extends Action {
 	type: ActionTypes.SET_ARMOR_ZONES;
 	payload: {
@@ -62,6 +90,16 @@ export const setArmorZones = (id: string, data: ArmorZonesInstance) => AppDispat
 	}
 });
 
+export function _setArmorZones(id: string, data: ArmorZonesInstance): SetArmorZonesAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES,
+		payload: {
+			id,
+			data
+		}
+	};
+}
+
 export interface RemoveItemAction extends Action {
 	type: ActionTypes.REMOVE_ITEM;
 	payload: {
@@ -75,6 +113,15 @@ export const removeFromList = (id: string) => AppDispatcher.dispatch<RemoveItemA
 		id
 	}
 });
+
+export function _removeFromList(id: string): RemoveItemAction {
+	return {
+		type: ActionTypes.REMOVE_ITEM,
+		payload: {
+			id
+		}
+	};
+}
 
 export interface RemoveArmorZonesAction extends Action {
 	type: ActionTypes.REMOVE_ARMOR_ZONES;
@@ -90,6 +137,15 @@ export const removeArmorZonesFromList = (id: string) => AppDispatcher.dispatch<R
 	}
 });
 
+export function _removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
+	return {
+		type: ActionTypes.REMOVE_ARMOR_ZONES,
+		payload: {
+			id
+		}
+	};
+}
+
 export interface SetItemsSortOrderAction extends Action {
 	type: ActionTypes.SET_ITEMS_SORT_ORDER;
 	payload: {
@@ -103,6 +159,15 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetIte
 		sortOrder
 	}
 });
+
+export function _setSortOrder(sortOrder: string): SetItemsSortOrderAction {
+	return {
+		type: ActionTypes.SET_ITEMS_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}
 
 export interface SetDucatesAction extends Action {
 	type: ActionTypes.SET_DUCATES;
@@ -118,6 +183,15 @@ export const setDucates = (value: string) => AppDispatcher.dispatch<SetDucatesAc
 	}
 });
 
+export function _setDucates(value: string): SetDucatesAction {
+	return {
+		type: ActionTypes.SET_DUCATES,
+		payload: {
+			value
+		}
+	};
+}
+
 export interface SetSilverthalersAction extends Action {
 	type: ActionTypes.SET_SILVERTHALERS;
 	payload: {
@@ -131,6 +205,15 @@ export const setSilverthalers = (value: string) => AppDispatcher.dispatch<SetSil
 		value
 	}
 });
+
+export function _setSilverthalers(value: string): SetSilverthalersAction {
+	return {
+		type: ActionTypes.SET_SILVERTHALERS,
+		payload: {
+			value
+		}
+	};
+}
 
 export interface SetHellersAction extends Action {
 	type: ActionTypes.SET_HELLERS;
@@ -146,6 +229,15 @@ export const setHellers = (value: string) => AppDispatcher.dispatch<SetHellersAc
 	}
 });
 
+export function _setHellers(value: string): SetHellersAction {
+	return {
+		type: ActionTypes.SET_HELLERS,
+		payload: {
+			value
+		}
+	};
+}
+
 export interface SetKreutzersAction extends Action {
 	type: ActionTypes.SET_KREUTZERS;
 	payload: {
@@ -159,3 +251,12 @@ export const setKreutzers = (value: string) => AppDispatcher.dispatch<SetKreutze
 		value
 	}
 });
+
+export function _setKreutzers(value: string): SetKreutzersAction {
+	return {
+		type: ActionTypes.SET_KREUTZERS,
+		payload: {
+			value
+		}
+	};
+}

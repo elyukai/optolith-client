@@ -15,6 +15,15 @@ export const selectCulture = (id: string) => AppDispatcher.dispatch<SelectCultur
 	}
 });
 
+export function _selectCulture(id: string) {
+	return {
+		type: ActionTypes.SELECT_CULTURE,
+		payload: {
+			id
+		}
+	};
+}
+
 export interface SetCulturesSortOrderAction extends Action {
 	type: ActionTypes.SET_CULTURES_SORT_ORDER;
 	payload: {
@@ -28,6 +37,15 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetCul
 		sortOrder
 	}
 });
+
+export function _setSortOrder(sortOrder: string) {
+	return {
+		type: ActionTypes.SET_CULTURES_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}
 
 export interface SetCulturesVisibilityFilterAction extends Action {
 	type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER;
@@ -43,6 +61,15 @@ export const setVisibilityFilter = (filter: string) => AppDispatcher.dispatch<Se
 	}
 });
 
+export function _setVisibilityFilter(filter: string) {
+	return {
+		type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER,
+		payload: {
+			filter
+		}
+	};
+}
+
 export interface SwitchCultureValueVisibilityAction extends Action {
 	type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY;
 }
@@ -50,3 +77,9 @@ export interface SwitchCultureValueVisibilityAction extends Action {
 export const switchValueVisibilityFilter = () => AppDispatcher.dispatch<SwitchCultureValueVisibilityAction>({
 	type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY
 });
+
+export function _switchValueVisibilityFilter() {
+	return {
+		type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY
+	};
+}

@@ -1,7 +1,7 @@
 import { isEqual } from 'lodash';
 import { get, getPrimaryAttrID } from '../stores/ListStore';
 import { ActivatableInstance, AttributeInstance, BlessingInstance, CantripInstance, SpellInstance } from '../types/data.d';
-import { AbilityInstanceExtended, AllRequirementObjects } from '../types/data.d';
+import { AbilityInstanceExtended, AllInstancesList, AllRequirementObjects } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
 import { isCultureRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
 
@@ -43,17 +43,18 @@ function removeDependency<D>(obj: AbilityInstanceExtended, remove: D): AbilityIn
 	}
 }
 
-function getInstance<T extends AbilityInstanceExtended>(instances: Map<string, AbilityInstanceExtended>, id: string) {
-	return (instances.has(id) ? instances.get(id) : get(id)) as T;
+function getInstance<T extends AbilityInstanceExtended>(all: AllInstancesList, updated: Map<string, AbilityInstanceExtended>, id: string) {
+	return (updated.has(id) ? updated.get(id) : all.get(id)) as T;
 }
 
 /**
  * Adds dependencies to all required entries to ensure rule validity. The returned Map needs to be merged into the main Map in ListStore.
+ * @param list All entries available for dependencies.
  * @param obj The entry of which requirements you want to add dependencies for.
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function addDependencies(obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
+export function addDependencies(list: AllInstancesList, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
 	const allReqs = [ ...obj.reqs, ...adds ];
 	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
 
@@ -63,7 +64,7 @@ export function addDependencies(obj: RequiringInstance, adds: AllRequirementObje
 				const { type, value } = req;
 				const id = getPrimaryAttrID(type);
 				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(instances, id);
+					const requiredAbility = getInstance<AttributeInstance>(list, instances, id);
 					instances.set(id, addDependency(requiredAbility, value));
 				}
 			}
@@ -72,14 +73,14 @@ export function addDependencies(obj: RequiringInstance, adds: AllRequirementObje
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const requiredAbility = getInstance(instances, e);
+						const requiredAbility = getInstance(list, instances, e);
 						if (requiredAbility) {
 							instances.set(e, addDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					const requiredAbility = getInstance(instances, id);
+					const requiredAbility = getInstance(list, instances, id);
 					instances.set(id, addDependency(requiredAbility, value));
 				}
 			}
@@ -95,7 +96,7 @@ export function addDependencies(obj: RequiringInstance, adds: AllRequirementObje
 							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
 						}
 						id.forEach(e => {
-							const requiredAbility = getInstance(instances, e);
+							const requiredAbility = getInstance(list, instances, e);
 							if (requiredAbility) {
 								instances.set(e, addDependency(requiredAbility, add));
 							}
@@ -112,7 +113,7 @@ export function addDependencies(obj: RequiringInstance, adds: AllRequirementObje
 						else {
 							add = { sid: sid === 'sel' ? sel : sid, sid2 };
 						}
-						const requiredAbility = getInstance(instances, id);
+						const requiredAbility = getInstance(list, instances, id);
 						instances.set(id, addDependency(requiredAbility, add));
 					}
 				}
@@ -128,7 +129,7 @@ export function addDependencies(obj: RequiringInstance, adds: AllRequirementObje
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function removeDependencies(obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
+export function removeDependencies(list: AllInstancesList, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
 	const allReqs = [ ...obj.reqs, ...adds ];
 	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
 
@@ -138,7 +139,7 @@ export function removeDependencies(obj: RequiringInstance, adds: AllRequirementO
 				const { type, value } = req;
 				const id = getPrimaryAttrID(type);
 				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(instances, id);
+					const requiredAbility = getInstance<AttributeInstance>(list, instances, id);
 					instances.set(id, removeDependency(requiredAbility, value));
 				}
 			}
@@ -147,14 +148,14 @@ export function removeDependencies(obj: RequiringInstance, adds: AllRequirementO
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const requiredAbility = getInstance(instances, e);
+						const requiredAbility = getInstance(list, instances, e);
 						if (requiredAbility) {
 							instances.set(e, removeDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					const requiredAbility = getInstance(instances, id);
+					const requiredAbility = getInstance(list, instances, id);
 					instances.set(id, removeDependency(requiredAbility, value));
 				}
 			}
@@ -170,7 +171,7 @@ export function removeDependencies(obj: RequiringInstance, adds: AllRequirementO
 							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
 						}
 						id.forEach(e => {
-							const requiredAbility = getInstance(instances, e);
+							const requiredAbility = getInstance(list, instances, e);
 							if (requiredAbility) {
 								instances.set(e, removeDependency(requiredAbility, add));
 							}
@@ -187,7 +188,7 @@ export function removeDependencies(obj: RequiringInstance, adds: AllRequirementO
 						else {
 							add = { sid: sid === 'sel' ? sel : sid, sid2 };
 						}
-						const requiredAbility = getInstance(instances, id);
+						const requiredAbility = getInstance(list, instances, id);
 						instances.set(id, removeDependency(requiredAbility, add));
 					}
 				}

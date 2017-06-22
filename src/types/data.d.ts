@@ -694,6 +694,7 @@ export type AbilityInstanceInInit = ActivatableInstanceInInit | IncreasableInsta
 export type ActivatableInstance = AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance;
 export type ActivatableInstanceInInit = AdvantageInstanceInInit | DisadvantageInstanceInInit | SpecialAbilityInstanceInInit;
 export type IncreasableInstance = AttributeInstance | TalentInstance | CombatTechniqueInstance | SpellInstance | LiturgyInstance;
+export type AllInstancesList = Map<string, Instance>;
 
 export type IncreasableNonactiveInstance = AttributeInstance | TalentInstance | CombatTechniqueInstance;
 export type SkillInstance = SpellInstance | LiturgyInstance | TalentInstance;
