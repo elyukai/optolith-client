@@ -12,9 +12,16 @@ declare global {
 
 import * as React from 'react';
 import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { store } from './stores/AppStore';
 import { loadInitialData } from './utils/FileAPIUtils';
 import { Router } from './views/Router';
 
-render( <Router />, document.querySelector('#bodywrapper') );
+render(
+	<Provider store={store}>
+		<Router />
+	</Provider>,
+	document.querySelector('#bodywrapper')
+);
 
 loadInitialData();

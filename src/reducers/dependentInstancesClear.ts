@@ -1,8 +1,8 @@
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 
-export function clear(list: Data.AllInstancesList) {
-	return new Map([...list].map((e): [string, Data.Instance] => {
+export function dependentInstancesClear(state: Data.AllInstancesList) {
+	return new Map([...state].map((e): [string, Data.Instance] => {
 		const [id, entry] = e;
 		if (entry.category === Categories.ATTRIBUTES) {
 			return [id, {...entry, dependencies: [], value: 8, mod: 0}];

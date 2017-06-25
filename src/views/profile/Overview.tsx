@@ -18,7 +18,7 @@ import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
 import { ProfileStore } from '../../stores/ProfileStore';
 import { RaceStore } from '../../stores/RaceStore';
 import { ActiveViewObject } from '../../types/data.d';
-import { calcEL } from '../../utils/calcEL';
+import { getExperienceLevelId } from '../../utils/calcEL';
 import { createOverlay } from '../../utils/createOverlay';
 import { translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
@@ -117,7 +117,7 @@ export class Overview extends React.Component<{}, State> {
 		const isOwnProfession = professionId === 'P_0';
 		const isProfessionUndefined = professionId === null;
 
-		const currentEL = calcEL(ap);
+		const currentEL = getExperienceLevelId(ap);
 
 		const nameElement = editName ? (
 			<EditText

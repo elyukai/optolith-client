@@ -1,4 +1,7 @@
+import { AdventurePointsState } from '../reducers/adventurePoints';
 import { IncreasableInstance } from '../types/data.d';
+import { validate } from './APUtils';
+import { getDecreaseAP, getIncreaseAP } from './ICUtils';
 
 export function set(obj: IncreasableInstance, value: number): IncreasableInstance {
 	return ({ ...obj, value });
@@ -18,4 +21,16 @@ export function addPoint(obj: IncreasableInstance): IncreasableInstance {
 
 export function removePoint(obj: IncreasableInstance): IncreasableInstance {
 	return ({ ...obj, value: obj.value - 1 });
+}
+
+export function getIncreaseCost(obj: IncreasableInstance, ap: AdventurePointsState): number | undefined {
+	const { ic, value } = obj;
+	const cost = getIncreaseAP(ic, value);
+	const validCost = validate(cost, ap);
+	return !validCost ? undefined : cost;
+}
+
+export function getDecreaseCost(obj: IncreasableInstance): number {
+	const { ic, value } = obj;
+	return getDecreaseAP(ic, value);
 }

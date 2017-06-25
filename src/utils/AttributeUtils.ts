@@ -1,35 +1,38 @@
 import { last } from 'lodash';
-import { APStore } from '../stores/APStore';
-import { AttributeStore } from '../stores/AttributeStore';
-import { ELStore } from '../stores/ELStore';
-import { get } from '../stores/ListStore';
-import { PhaseStore } from '../stores/PhaseStore';
-import { RulesStore } from '../stores/RulesStore';
+import { ATTRIBUTES } from '../constants/Categories';
+import { CurrentHeroState } from '../reducers/currentHero';
+import { DependentInstancesState, get, getAllByCategory } from '../reducers/dependentInstances';
+import { getStart } from '../reducers/el';
 import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import { calcEL } from '../utils/calcEL';
+import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 
-export function isIncreasable(obj: AttributeInstance): boolean {
-	if (PhaseStore.get() < 3) {
-		const max = AttributeStore.getSum() >= ELStore.getStart().maxTotalAttributeValues ? 0 : ELStore.getStart().maxAttributeValue + obj.mod;
+export function getSum(list: AttributeInstance[]): number {
+	return list.reduce((n, e) => n + e.value, 0);
+}
+
+export function isIncreasable(state: CurrentHeroState, obj: AttributeInstance): boolean {
+	if (state.phase < 3) {
+		const attributes = getAllByCategory(state.dependent, ATTRIBUTES) as AttributeInstance[];
+		const el = getStart(state.el);
+		const max = getSum(attributes) >= el.maxTotalAttributeValues ? 0 : el.maxAttributeValue + obj.mod;
 		return obj.value < max;
 	}
-	else if (RulesStore.getAttributeValueLimit()) {
-		const currentAp = APStore.getTotal();
-		const currentElId = calcEL(currentAp);
-		const currentEl = ELStore.get(currentElId);
-		return obj.value < currentEl.maxAttributeValue + 2;
+	else if (state.rules.attributeValueLimit === true) {
+		const currentElId = getExperienceLevelIdByAp(state.el.all, state.ap.total);
+		const currentEl = state.el.all.get(currentElId);
+		return typeof currentEl === 'object' && obj.value < currentEl.maxAttributeValue + 2;
 	}
 	return true;
 }
 
-export function isDecreasable(obj: AttributeInstance): boolean {
+export function isDecreasable(state: CurrentHeroState, obj: AttributeInstance): boolean {
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
-			const target = get(e.origin) as SpecialAbilityInstance;
+			const target = get(state.dependent, e.origin) as SpecialAbilityInstance;
 			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
 			if (req) {
-				const resultOfAll = (req.id as string[]).map(id => (get(id) as TalentInstance).value >= e.value);
+				const resultOfAll = (req.id as string[]).map(id => (get(state.dependent, id) as TalentInstance).value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
 			}
 			return 0;
@@ -73,9 +76,9 @@ export function convertId<T extends string | undefined>(id: T): T {
 	}
 }
 
-export function getPrimaryAttributeId(type: 1 | 2) {
+export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 2) {
 	if (type === 1) {
-		const tradition = get('SA_86') as SpecialAbilityInstance;
+		const tradition = get(state, 'SA_86') as SpecialAbilityInstance;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 1:
 			case 4:
@@ -91,7 +94,7 @@ export function getPrimaryAttributeId(type: 1 | 2) {
 		}
 	}
 	else if (type === 2) {
-		const tradition = get('SA_102') as SpecialAbilityInstance;
+		const tradition = get(state, 'SA_102') as SpecialAbilityInstance;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 2:
 			case 3:

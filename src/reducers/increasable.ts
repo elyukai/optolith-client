@@ -4,16 +4,13 @@ import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, 
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
-import { alert } from '../utils/alert';
 import { addDependencies, removeDependencies } from '../utils/DependentUtils';
 import { mergeIntoList, setListItem } from '../utils/ListUtils';
-import * as SpellUtils from '../utils/SpellUtils';
 
 type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
 
-export function IncreasableReducer(state = new Map<string, Data.Instance>(), action: Action) {
+export function increasable(state: Data.AllInstancesList, action: Action): Data.AllInstancesList {
 	switch (action.type) {
 		case ActionTypes.ACTIVATE_SPELL: {
 			const { id } = action.payload;

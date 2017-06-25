@@ -1,9 +1,8 @@
-import { LocaleStore } from '../stores/LocaleStore';
-import { UILocale } from '../types/data.d';
+import * as I18n from '../selectors/I18n';
+import { UIMessages } from '../types/ui.d';
 
-export function translate<T extends keyof UILocale>(key: T, ...params: (string | number)[]): UILocale[T] {
-	const messages = LocaleStore.getMessages();
-	const message = messages[key];
+export function translate<T extends keyof UIMessages>(key: T, ...params: (string | number)[]): UIMessages[T] {
+	const message = I18n.getMessages()[key];
 	if (params.length > 0 && typeof message === 'string') {
 		return message.replace(/\{(\d+)\}/g, (_, p1) => {
 			const param = params[Number.parseInt(p1)];
@@ -14,11 +13,11 @@ export function translate<T extends keyof UILocale>(key: T, ...params: (string |
 }
 
 export function getLocale() {
-	return LocaleStore.getLocale();
+	return I18n.getLocale();
 }
 
 export function localizeNumber(number: number) {
-	const locale = LocaleStore.getLocale() || LocaleStore.getSystemLocale();
+	const locale = I18n.getLocale();
 	return number.toLocaleString(locale);
 }
 
@@ -30,7 +29,7 @@ export function dotToComma(number: number) {
  * If the selected language is English centimeters it will be converted to inches.
  */
 export function localizeSize(number?: number): number {
-	const locale = LocaleStore.getLocale();
+	const locale = I18n.getLocale();
 	if (typeof number !== 'number') {
 		return 0;
 	}
@@ -45,7 +44,7 @@ export function localizeSize(number?: number): number {
  * If the selected language is English kilograms will be converted to pounds.
  */
 export function localizeWeight(number?: number): number {
-	const locale = LocaleStore.getLocale();
+	const locale = I18n.getLocale();
 	if (typeof number !== 'number') {
 		return 0;
 	}

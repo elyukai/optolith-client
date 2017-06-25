@@ -1,24 +1,24 @@
 import * as React from 'react';
-import { getAll } from '../../utils/secondaryAttributes';
+import { SecondaryAttribute } from '../../types/data.d';
 import { AttributeCalcItem } from './AttributeCalcItem';
 
 export interface AttributesCalcProps {
+	derived: SecondaryAttribute[];
 	phase: number;
+	addLifePoint(): void;
+	addArcaneEnergyPoint(): void;
+	addKarmaPoint(): void;
 }
 
 export function AttributeCalc(props: AttributesCalcProps) {
-	const { phase } = props;
-
-	const calculated = getAll();
-
 	return (
 		<div className="calculated">
 			{
-				calculated.map(attribute => (
+				props.derived.map(attribute => (
 					<AttributeCalcItem
+						{...props}
 						key={attribute.id}
 						attribute={attribute}
-						phase={phase}
 						/>
 				))
 			}

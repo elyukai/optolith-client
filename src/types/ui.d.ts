@@ -560,4 +560,6 @@ export interface UIMessages {
 	"emptylist": string;
 	"musictraditions": string[];
 	"dancetraditions": string[];
+	"notenoughap.title": string;
+	"notenoughap.content": string;
 }

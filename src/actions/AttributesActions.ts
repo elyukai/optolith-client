@@ -1,8 +1,13 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+import { get } from '../reducers/dependentInstances';
+import { store } from '../stores/AppStore';
+import { AttributeInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
-import { isDecreasable, isIncreasable } from '../utils/AttributeUtils';
+import { validate } from '../utils/APUtils';
+import { translate } from '../utils/I18n';
 import { getIncreaseAP } from '../utils/ICUtils';
+import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
 export interface AddAttributePointAction extends Action {
 	type: ActionTypes.ADD_ATTRIBUTE_POINT;
@@ -21,15 +26,10 @@ export const addPoint = (id: string) => AppDispatcher.dispatch<AddAttributePoint
 });
 
 export function _addPoint(id: string): AddAttributePointAction | undefined {
-	const cost = getIncreaseAP();
-	const validIncrease = isIncreasable();
-	const validCost = getIncreaseAP();
-	if (!validCost) {
-		alert('Zu wenig AP', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
-		return;
-	}
-	else if (!validIncrease) {
-		alert('', 'Du benötigst mehr AP als du momentan zur Verfügung hast!');
+	const state = store.getState();
+	const cost = getIncreaseCost(get(state.currentHero.dependent, id) as AttributeInstance, state.currentHero.ap);
+	if (!cost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
 		return;
 	}
 	return {
@@ -45,64 +45,117 @@ export interface RemoveAttributePointAction extends Action {
 	type: ActionTypes.REMOVE_ATTRIBUTE_POINT;
 	payload: {
 		id: string;
+		cost: number;
 	};
 }
 
 export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveAttributePointAction>({
 	type: ActionTypes.REMOVE_ATTRIBUTE_POINT,
 	payload: {
-		id
+		id,
+		cost: 0
 	}
 });
 
 export function _removePoint(id: string): RemoveAttributePointAction {
+	const state = store.getState();
+	const cost = getDecreaseCost(get(state.currentHero.dependent, id) as AttributeInstance);
 	return {
 		type: ActionTypes.REMOVE_ATTRIBUTE_POINT,
 		payload: {
-			id
+			id,
+			cost
 		}
 	};
 }
 
 export interface AddLifePointAction extends Action {
 	type: ActionTypes.ADD_LIFE_POINT;
+	payload: {
+		cost: number;
+	};
 }
 
 export const addLifePoint = () => AppDispatcher.dispatch<AddLifePointAction>({
-	type: ActionTypes.ADD_LIFE_POINT
+	type: ActionTypes.ADD_LIFE_POINT,
+	payload: {
+		cost: 0
+	}
 });
 
-export function _addLifePoint(): AddLifePointAction {
+export function _addLifePoint(): AddLifePointAction | undefined {
+	const state = store.getState();
+	const cost = getIncreaseAP(4, state.currentHero.energies.addedLifePoints);
+	const validCost = validate(cost, state.currentHero.ap);
+	if (!validCost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
+		return;
+	}
 	return {
-		type: ActionTypes.ADD_LIFE_POINT
+		type: ActionTypes.ADD_LIFE_POINT,
+		payload: {
+			cost
+		}
 	};
 }
 
 export interface AddArcaneEnergyPointAction extends Action {
 	type: ActionTypes.ADD_ARCANE_ENERGY_POINT;
+	payload: {
+		cost: number;
+	};
 }
 
 export const addArcaneEnergyPoint = () => AppDispatcher.dispatch<AddArcaneEnergyPointAction>({
-	type: ActionTypes.ADD_ARCANE_ENERGY_POINT
+	type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
+	payload: {
+		cost: 0
+	}
 });
 
-export function _addArcaneEnergyPoint(): AddArcaneEnergyPointAction {
+export function _addArcaneEnergyPoint(): AddArcaneEnergyPointAction | undefined {
+	const state = store.getState();
+	const cost = getIncreaseAP(4, state.currentHero.energies.addedArcaneEnergy);
+	const validCost = validate(cost, state.currentHero.ap);
+	if (!validCost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
+		return;
+	}
 	return {
-		type: ActionTypes.ADD_ARCANE_ENERGY_POINT
+		type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
+		payload: {
+			cost
+		}
 	};
 }
 
 export interface AddKarmaPointAction extends Action {
 	type: ActionTypes.ADD_KARMA_POINT;
+	payload: {
+		cost: number;
+	};
 }
 
 export const addKarmaPoint = () => AppDispatcher.dispatch<AddKarmaPointAction>({
-	type: ActionTypes.ADD_KARMA_POINT
+	type: ActionTypes.ADD_KARMA_POINT,
+	payload: {
+		cost: 0
+	}
 });
 
-export function _addKarmaPoint(): AddKarmaPointAction {
+export function _addKarmaPoint(): AddKarmaPointAction | undefined {
+	const state = store.getState();
+	const cost = getIncreaseAP(4, state.currentHero.energies.addedKarmaPoints);
+	const validCost = validate(cost, state.currentHero.ap);
+	if (!validCost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
+		return;
+	}
 	return {
-		type: ActionTypes.ADD_KARMA_POINT
+		type: ActionTypes.ADD_KARMA_POINT,
+		payload: {
+			cost
+		}
 	};
 }
 
@@ -114,7 +167,13 @@ export const addBoughtBackAEPoint = () => AppDispatcher.dispatch<AddBoughtBackAE
 	type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
 });
 
-export function _addBoughtBackAEPoint(): AddBoughtBackAEPointAction {
+export function _addBoughtBackAEPoint(): AddBoughtBackAEPointAction | undefined {
+	const state = store.getState();
+	const validCost = validate(2, state.currentHero.ap);
+	if (!validCost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
+		return;
+	}
 	return {
 		type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
 	};
@@ -193,7 +252,13 @@ export const addBoughtBackKPPoint = () => AppDispatcher.dispatch<AddBoughtBackKP
 	type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
 });
 
-export function _addBoughtBackKPPoint(): AddBoughtBackKPPointAction {
+export function _addBoughtBackKPPoint(): AddBoughtBackKPPointAction | undefined {
+	const state = store.getState();
+	const validCost = validate(2, state.currentHero.ap);
+	if (!validCost) {
+		alert(translate('notenoughap.title'), translate('notenoughap.content'));
+		return;
+	}
 	return {
 		type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
 	};

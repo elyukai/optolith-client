@@ -1,39 +1,92 @@
-import * as React from 'react';
-import { AttributeStore } from '../../stores/AttributeStore';
-import { ELStore } from '../../stores/ELStore';
-import { PhaseStore } from '../../stores/PhaseStore';
-import { AttributeInstance, ExperienceLevel } from '../../types/data.d';
+import { connect, Dispatch } from 'react-redux';
+import * as AttributesActions from '../../actions/AttributesActions';
+import { ATTRIBUTES } from '../../constants/Categories';
+import { AppState } from '../../reducers/app';
+import { getAllByCategory } from '../../reducers/dependentInstances';
+import { getStart } from '../../reducers/el';
+import { AttributeInstance } from '../../types/data.d';
+import { getSum } from '../../utils/AttributeUtils';
+import { getAll } from '../../utils/derivedCharacteristics';
 import { Attributes } from './Attributes';
 
-export interface State {
-	attributes: AttributeInstance[];
-	el: ExperienceLevel;
-	phase: number;
-}
-
-export class AttributesController extends React.Component<{}, State> {
-	state = {
-		attributes: AttributeStore.getAll(),
-		el: ELStore.getStart(),
-		phase: PhaseStore.get(),
+function mapStateToProps(state: AppState) {
+	const { currentHero } = state;
+	const attributes = getAllByCategory(currentHero.dependent, ATTRIBUTES) as AttributeInstance[];
+	return {
+		attributes,
+		el: getStart(currentHero.el),
+		phase: currentHero.phase,
+		derived: getAll(state.currentHero),
+		sum: getSum(attributes)
 	};
-
-	_updateAttributeStore = () => this.setState({ attributes: AttributeStore.getAll() } as State);
-	_updatePhaseStore = () => this.setState({ phase: PhaseStore.get() } as State);
-
-	componentDidMount() {
-		AttributeStore.addChangeListener(this._updateAttributeStore);
-		PhaseStore.addChangeListener(this._updatePhaseStore );
-	}
-
-	componentWillUnmount() {
-		AttributeStore.removeChangeListener(this._updateAttributeStore);
-		PhaseStore.removeChangeListener(this._updatePhaseStore );
-	}
-
-	render() {
-		return (
-			<Attributes {...this.state} />
-		);
-	}
 }
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+	return {
+		addPoint: (id: string) => {
+			const action = AttributesActions._addPoint(id);
+			if (action) {
+				dispatch(action);
+			}
+		},
+		removePoint: (id: string) => {
+			dispatch(AttributesActions._removePoint(id));
+		},
+		addLifePoint: () => {
+			const action = AttributesActions._addLifePoint();
+			if (action) {
+				dispatch(action);
+			}
+		},
+		addArcaneEnergyPoint: () => {
+			const action = AttributesActions._addArcaneEnergyPoint();
+			if (action) {
+				dispatch(action);
+			}
+		},
+		addKarmaPoint: () => {
+			const action = AttributesActions._addKarmaPoint();
+			if (action) {
+				dispatch(action);
+			}
+		},
+		addBoughtBackAEPoint: () => {
+			const action = AttributesActions._addBoughtBackAEPoint();
+			if (action) {
+				dispatch(action);
+			}
+		},
+		removeBoughtBackAEPoint: () => {
+			dispatch(AttributesActions._removeBoughtBackAEPoint());
+		},
+		addLostAEPoint: () => {
+			dispatch(AttributesActions._addLostAEPoint());
+		},
+		removeLostAEPoint: () => {
+			dispatch(AttributesActions._removeLostAEPoint());
+		},
+		addLostAEPoints: (value: number) => {
+			dispatch(AttributesActions._addLostAEPoints(value));
+		},
+		addBoughtBackKPPoint: () => {
+			const action = AttributesActions._addBoughtBackKPPoint();
+			if (action) {
+				dispatch(action);
+			}
+		},
+		removeBoughtBackKPPoint: () => {
+			dispatch(AttributesActions._removeBoughtBackKPPoint());
+		},
+		addLostKPPoint: () => {
+			dispatch(AttributesActions._addLostKPPoint());
+		},
+		removeLostKPPoint: () => {
+			dispatch(AttributesActions._removeLostKPPoint());
+		},
+		addLostKPPoints: (value: number) => {
+			dispatch(AttributesActions._addLostKPPoints(value));
+		}
+	};
+}
+
+export const AttributesController = connect(mapStateToProps, mapDispatchToProps)(Attributes);

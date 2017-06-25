@@ -1,38 +1,37 @@
 import * as Categories from '../constants/Categories';
-import { CultureStore } from '../stores/CultureStore';
-import { get, getAllByCategoryGroup, getPrimaryAttrID } from '../stores/ListStore';
-import { ProfessionStore } from '../stores/ProfessionStore';
-import { ProfileStore } from '../stores/ProfileStore';
-import { RaceStore } from '../stores/RaceStore';
-import { ActivatableInstance, AllRequirementObjects, AllRequirements, IncreasableInstance, Instance } from '../types/data.d';
+import { CurrentHeroState } from '../reducers/currentHero';
+import { DependentInstancesState, get, getAllByCategoryGroup } from '../reducers/dependentInstances';
+import { ActivatableInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
+import { getPrimaryAttributeId } from './AttributeUtils';
 
 /**
  * Checks if the requirement is fulfilled.
+ * @param state The current hero data.
  * @param req A requirement object.
  * @param sourceId The id of the entry the requirement object belongs to.
  */
-export function validateObject(req: AllRequirements, sourceId: string): boolean {
+export function validateObject(state: CurrentHeroState, req: AllRequirements, sourceId: string): boolean {
 	if (req === 'RCP') {
 		const array = [];
-		const currentRace = RaceStore.getCurrent();
-		const currentCulture = CultureStore.getCurrent();
-		const currentProfession = ProfessionStore.getCurrent();
+		const currentRace = typeof state.rcp.race === 'string' && get(state.dependent, state.rcp.race) as RaceInstance;
+		const currentCulture = typeof state.rcp.culture === 'string' && get(state.dependent, state.rcp.culture) as CultureInstance;
+		const currentProfession = typeof state.rcp.profession === 'string' && get(state.dependent, state.rcp.profession) as ProfessionInstance;
 
-		if (typeof currentRace !== 'undefined') {
+		if (typeof currentRace === 'object') {
 			array.push(...currentRace.importantAdvantages);
 			array.push(...currentRace.importantDisadvantages);
 			array.push(...currentRace.typicalAdvantages);
 			array.push(...currentRace.typicalDisadvantages);
 		}
 
-		if (typeof currentCulture !== 'undefined') {
+		if (typeof currentCulture === 'object') {
 			array.push(...currentCulture.typicalAdvantages);
 			array.push(...currentCulture.typicalDisadvantages);
 		}
 
-		if (typeof currentProfession !== 'undefined') {
+		if (typeof currentProfession === 'object') {
 			array.push(...currentProfession.typicalAdvantages);
 			array.push(...currentProfession.typicalDisadvantages);
 		}
@@ -40,45 +39,45 @@ export function validateObject(req: AllRequirements, sourceId: string): boolean 
 		return array.includes(sourceId);
 	}
 	else if (isSexRequirement(req)) {
-		return ProfileStore.getSex() === req.value;
+		return state.profile.sex === req.value;
 	}
 	else if (isRaceRequirement(req)) {
-		const race = RaceStore.getCurrentID();
+		const race = state.rcp.race;
 		if (Array.isArray(req.value)) {
-			return !!race && req.value.map(e => `R_${e}`).includes(race);
+			return typeof race === 'string' && req.value.map(e => `R_${e}`).includes(race);
 		}
-		return !!race && race === `R_${req.value}`;
+		return typeof race === 'string' && race === `R_${req.value}`;
 	}
 	else if (isCultureRequirement(req)) {
-		const culture = CultureStore.getCurrentID();
+		const culture = state.rcp.culture;
 		if (Array.isArray(req.value)) {
-			return !!culture && req.value.map(e => `C_${e}`).includes(culture);
+			return typeof culture === 'string' && req.value.map(e => `C_${e}`).includes(culture);
 		}
-		return !!culture && culture === `C_${req.value}`;
+		return typeof culture === 'string' && culture === `C_${req.value}`;
 	}
 	else if (isRequiringPrimaryAttribute(req)) {
-		const id = getPrimaryAttrID(req.type);
+		const id = getPrimaryAttributeId(state.dependent, req.type);
 		if (typeof id === 'string') {
-			const entry = get(id);
+			const entry = get(state.dependent, id);
 			if (isIncreasableInstance(entry)) {
 				return entry.value >= req.value;
 			}
 		}
 		return false;
 	}
-	else if (isRequiringIncreasable(req)) {
+	else if (isRequiringIncreasable(state.dependent, req)) {
 		if (Array.isArray(req.id)) {
-			const resultOfAll = req.id.map(e => validateObject({ ...req, id: e }, sourceId));
+			const resultOfAll = req.id.map(e => validateObject(state, { ...req, id: e }, sourceId));
 			return resultOfAll.includes(true);
 		}
-		const entry = get(req.id);
+		const entry = get(state.dependent, req.id);
 		if (isIncreasableInstance(entry)) {
 			return entry.value >= req.value;
 		}
 	}
 	else {
 		if (Array.isArray(req.id)) {
-			const resultOfAll = req.id.map(e => validateObject({ ...req, id: e }, sourceId));
+			const resultOfAll = req.id.map(e => validateObject(state, { ...req, id: e }, sourceId));
 			return resultOfAll.includes(true);
 		}
 		if (req.sid === 'sel') {
@@ -86,15 +85,15 @@ export function validateObject(req: AllRequirements, sourceId: string): boolean 
 		}
 		if (req.sid === 'GR') {
 			const gr = req.sid2 as number;
-			const arr = getAllByCategoryGroup(Categories.TALENTS, gr).map(e => e.id);
-			for (const e of getSids(get(req.id) as ActivatableInstance)) {
+			const arr = getAllByCategoryGroup(state.dependent, Categories.TALENTS, gr).map(e => e.id);
+			for (const e of getSids(get(state.dependent, req.id) as ActivatableInstance)) {
 				if (arr.includes(e as string)) {
 					return false;
 				}
 			}
 			return true;
 		}
-		const entry = get(req.id);
+		const entry = get(state.dependent, req.id);
 		if (isActivatableInstance(entry)) {
 			if (req.sid) {
 				if (Array.isArray(req.sid)) {
@@ -111,11 +110,12 @@ export function validateObject(req: AllRequirements, sourceId: string): boolean 
 
 /**
  * Checks if all requirements are fulfilled.
+ * @param state The current hero data.
  * @param requirements An array of requirement objects.
  * @param sourceId The id of the entry the requirement objects belong to.
  */
-export function validate(requirements: AllRequirements[], sourceId: string): boolean {
-	return requirements.every(e => validateObject(e, sourceId));
+export function validate(state: CurrentHeroState, requirements: AllRequirements[], sourceId: string): boolean {
+	return requirements.every(e => validateObject(state, e, sourceId));
 }
 
 export function isSexRequirement(req: AllRequirementObjects): req is SexRequirement {
@@ -130,25 +130,25 @@ export function isCultureRequirement(req: AllRequirementObjects): req is Culture
 	return req.id === 'CULTURE';
 }
 
-export function isRequiringIncreasable(req: AllRequirementObjects): req is RequiresIncreasableObject {
+export function isRequiringIncreasable(state: DependentInstancesState, req: AllRequirementObjects): req is RequiresIncreasableObject {
 	if (Array.isArray(req.id)) {
 		return req.hasOwnProperty('value') && req.id.every(e => {
-			const entry = get(e);
+			const entry = get(state, e);
 			return isIncreasableInstance(entry);
 		});
 	}
-	const entry = get(req.id);
+	const entry = get(state, req.id);
 	return req.hasOwnProperty('value') && isIncreasableInstance(entry);
 }
 
-export function isRequiringActivatable(req: AllRequirementObjects): req is RequiresActivatableObject {
+export function isRequiringActivatable(state: DependentInstancesState, req: AllRequirementObjects): req is RequiresActivatableObject {
 	if (Array.isArray(req.id)) {
 		return req.hasOwnProperty('active') && req.id.every(e => {
-			const entry = get(e);
+			const entry = get(state, e);
 			return isActivatableInstance(entry);
 		});
 	}
-	const entry = get(req.id);
+	const entry = get(state, req.id);
 	return req.hasOwnProperty('active') && isActivatableInstance(entry);
 }
 

@@ -1,25 +1,34 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+import { store } from '../stores/AppStore';
+import { getDiffCost } from '../utils/RCPUtils';
 
 export interface SelectCultureAction extends Action {
 	type: ActionTypes.SELECT_CULTURE;
 	payload: {
 		id: string;
+		cost: number;
 	};
 }
 
 export const selectCulture = (id: string) => AppDispatcher.dispatch<SelectCultureAction>({
 	type: ActionTypes.SELECT_CULTURE,
 	payload: {
-		id
+		id,
+		cost: 0
 	}
 });
 
-export function _selectCulture(id: string) {
+export function _selectCulture(id: string): SelectCultureAction {
+	const { dependent, rcp: { profession, professionVariant } } = store.getState().currentHero;
+	const professionDiff = getDiffCost(dependent, profession);
+	const professionVariantDiff = getDiffCost(dependent, professionVariant);
+	const cost = (professionDiff + professionVariantDiff) * -1;
 	return {
 		type: ActionTypes.SELECT_CULTURE,
 		payload: {
-			id
+			id,
+			cost
 		}
 	};
 }
@@ -38,7 +47,7 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetCul
 	}
 });
 
-export function _setSortOrder(sortOrder: string) {
+export function _setSortOrder(sortOrder: string): SetCulturesSortOrderAction {
 	return {
 		type: ActionTypes.SET_CULTURES_SORT_ORDER,
 		payload: {
@@ -61,7 +70,7 @@ export const setVisibilityFilter = (filter: string) => AppDispatcher.dispatch<Se
 	}
 });
 
-export function _setVisibilityFilter(filter: string) {
+export function _setVisibilityFilter(filter: string): SetCulturesVisibilityFilterAction {
 	return {
 		type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER,
 		payload: {
@@ -78,7 +87,7 @@ export const switchValueVisibilityFilter = () => AppDispatcher.dispatch<SwitchCu
 	type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY
 });
 
-export function _switchValueVisibilityFilter() {
+export function _switchValueVisibilityFilter(): SwitchCultureValueVisibilityAction {
 	return {
 		type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY
 	};

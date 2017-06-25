@@ -559,5 +559,7 @@
 	"fileapi.everythingelsesaved": "Alles andere gespeichert",
 	"emptylist": "Es scheint als hättest du hier noch nichts ausgewählt. Lass diese Liste nicht so leer wie die Sternenleere und füge neue Elemente über den Button links hinzu!",
 	"musictraditions": ["Ceoladir", "Derwisch", "Sangara"],
-	"dancetraditions": ["Hazaqi", "Marjuna", "Rahkisa", "Sharisad"]
+	"dancetraditions": ["Hazaqi", "Marjuna", "Rahkisa", "Sharisad"],
+	"notenoughap.title": "Zu wenig AP",
+	"notenoughap.content": "Du benötigst mehr AP als du momentan zur Verfügung hast!"
 }

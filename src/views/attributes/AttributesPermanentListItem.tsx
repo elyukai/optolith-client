@@ -15,10 +15,20 @@ export interface AttributesPermanentListItemProps {
 	phase: number;
 	addBoughtBack(): void;
 	addLost(value: number): void;
+	addBoughtBackAEPoint(): void;
+	removeBoughtBackAEPoint(): void;
+	addLostAEPoint(): void;
+	removeLostAEPoint(): void;
+	addLostAEPoints(value: number): void;
+	addBoughtBackKPPoint(): void;
+	removeBoughtBackKPPoint(): void;
+	addLostKPPoint(): void;
+	removeLostKPPoint(): void;
+	addLostKPPoints(value: number): void;
 }
 
 export function AttributesPermanentListItem(props: AttributesPermanentListItemProps) {
-	const { id, label, name, phase, addBoughtBack, addLost, boughtBack, lost } = props;
+	const { id, label, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = props;
 	const available = lost - boughtBack;
 
 	return (
@@ -38,7 +48,7 @@ export function AttributesPermanentListItem(props: AttributesPermanentListItemPr
 				<IconButton
 					className="edit"
 					icon="&#xE254;"
-					onClick={() => createOverlay(<PermanentPoints id={id} />)}
+					onClick={() => createOverlay(<PermanentPoints {...other} id={id} />)}
 					/>
 			)}
 			{phase === 3 && (

@@ -1,26 +1,28 @@
 import * as React from 'react';
-import * as AttributeActions from '../../actions/AttributesActions';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
-import { SecondaryAttribute } from '../../types/data.d'
-import { translate } from '../../utils/I18n';;
+import { SecondaryAttribute } from '../../types/data.d';
+import { translate } from '../../utils/I18n';
 import { AttributeBorder } from './AttributeBorder';
 
 export interface AttributeCalcItemProps {
 	attribute: SecondaryAttribute;
 	phase: number;
+	addLifePoint(): void;
+	addArcaneEnergyPoint(): void;
+	addKarmaPoint(): void;
 }
 
 export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {}> {
 	addMaxEnergyPoint = () => {
 		if (this.props.attribute.id === 'LP') {
-			AttributeActions.addLifePoint();
+			this.props.addLifePoint();
 		}
 		else if (this.props.attribute.id === 'AE') {
-			AttributeActions.addArcaneEnergyPoint();
+			this.props.addArcaneEnergyPoint();
 		}
 		else if (this.props.attribute.id === 'KP') {
-			AttributeActions.addKarmaPoint();
+			this.props.addKarmaPoint();
 		}
 	}
 

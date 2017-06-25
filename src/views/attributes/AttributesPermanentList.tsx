@@ -1,42 +1,51 @@
 import * as React from 'react';
-import * as AttributesActions from '../../actions/AttributesActions';
+import { EnergyWithLoss, SecondaryAttribute } from '../../types/data.d';
 import { translate } from '../../utils/I18n';
-import { getAE, getKP } from '../../utils/secondaryAttributes';
 import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 
 export interface AttributesPermanentListProps {
+	derived: SecondaryAttribute[];
 	phase: number;
+	addBoughtBackAEPoint(): void;
+	removeBoughtBackAEPoint(): void;
+	addLostAEPoint(): void;
+	removeLostAEPoint(): void;
+	addLostAEPoints(value: number): void;
+	addBoughtBackKPPoint(): void;
+	removeBoughtBackKPPoint(): void;
+	addLostKPPoint(): void;
+	removeLostKPPoint(): void;
+	addLostKPPoints(value: number): void;
 }
 
 export function AttributesPermanentList(props: AttributesPermanentListProps) {
-	const { phase } = props;
-	const AE = getAE();
-	const KP = getKP();
+	const AE = props.derived.find(e => e.id === 'AE') as EnergyWithLoss | undefined;
+	const KP = props.derived.find(e => e.id === 'KP') as EnergyWithLoss | undefined;
 
 	return (
 		<div className="permanent">
-			{ typeof AE.value === 'number' ? (
+			{ AE !== undefined && typeof AE.value === 'number' ? (
 				<AttributesPermanentListItem
+					{...props}
 					id="AE"
 					label={translate('attributes.pae.short')}
 					name={translate('attributes.pae.name')}
 					boughtBack={AE.permanentRedeemed}
 					lost={AE.permanentLost}
-					addBoughtBack={AttributesActions.addBoughtBackAEPoint}
-					addLost={AttributesActions.addLostAEPoint}
-					phase={phase}
+					addBoughtBack={props.addBoughtBackAEPoint}
+					addLost={props.addLostAEPoints}
 					/>
 			) : <div className="placeholder"></div> }
-			{ typeof KP.value === 'number' && (
+			{ KP !== undefined && typeof KP.value === 'number' && (
 				<AttributesPermanentListItem
+					{...props}
 					id="KP"
 					label={translate('attributes.pkp.short')}
 					name={translate('attributes.pkp.name')}
 					boughtBack={KP.permanentRedeemed}
 					lost={KP.permanentLost}
-					addBoughtBack={AttributesActions.addBoughtBackKPPoint}
-					addLost={AttributesActions.addLostKPPoint}
-					phase={phase}
+					addBoughtBack={props.addBoughtBackKPPoint}
+					addLost={props.addLostKPPoints}
 					/>
 			) }
 		</div>
