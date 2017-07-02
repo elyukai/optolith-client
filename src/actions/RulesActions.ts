@@ -1,7 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 
-export interface SetHigherParadeValuesAction extends Action {
+export interface SetHigherParadeValuesAction {
 	type: ActionTypes.SET_HIGHER_PARADE_VALUES;
 	payload: {
 		value: number;
@@ -15,10 +14,25 @@ export const setHigherParadeValues = (value: number) => AppDispatcher.dispatch<S
 	},
 });
 
-export interface SwitchAttributeValueLimitAction extends Action {
+export function _setHigherParadeValues(value: number): SetHigherParadeValuesAction {
+	return {
+		type: ActionTypes.SET_HIGHER_PARADE_VALUES,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SwitchAttributeValueLimitAction {
 	type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT;
 }
 
 export const switchAttributeValueLimit = () => AppDispatcher.dispatch<SwitchAttributeValueLimitAction>({
 	type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT,
 });
+
+export function _switchAttributeValueLimit(): SwitchAttributeValueLimitAction {
+	return {
+		type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT
+	};
+}

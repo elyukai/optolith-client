@@ -1,8 +1,0 @@
-[
-	{"id":1,"name":"Chamäleon","cost":15,"gr":1,"tier":1},
-	{"id":2,"name":"Speikobra","cost":20,"gr":1,"tier":2},
-	{"id":3,"name":"Eichhörnchen","cost":10,"gr":2,"tier":1},
-	{"id":4,"name":"Bieber","cost":15,"gr":2,"tier":2},
-	{"id":5,"name":"Taube","cost":15,"gr":3,"tier":1},
-	{"id":6,"name":"Rabe","cost":20,"gr":3,"tier":2}
-]

@@ -1,10 +1,18 @@
+import { existsSync } from 'fs';
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+import { getSystemLocale } from '../selectors/I18n';
+import { Hero, User } from '../types/data.d';
 import { Raw, RawHero } from '../types/rawdata.d';
+import { getNewIdByDate } from '../utils/IDUtils';
+import { convertHero } from '../utils/VersionUtils';
 
-export interface ReceiveInitialDataAction extends Action {
+interface ReceiveInitialDataActionPayload extends Raw {
+	defaultLocale: string;
+}
+
+export interface ReceiveInitialDataAction {
 	type: ActionTypes.RECEIVE_INITIAL_DATA;
-	payload: Raw;
+	payload: ReceiveInitialDataActionPayload;
 }
 
 export const receiveInitialData = (payload: Raw) => AppDispatcher.dispatch<ReceiveInitialDataAction>({
@@ -12,10 +20,21 @@ export const receiveInitialData = (payload: Raw) => AppDispatcher.dispatch<Recei
 	payload
 });
 
-export interface ReceiveImportedHeroAction extends Action {
+export function _receiveInitialData(payload: Raw): ReceiveInitialDataAction {
+	return {
+		type: ActionTypes.RECEIVE_INITIAL_DATA,
+		payload: {
+			...payload,
+			defaultLocale: getSystemLocale()
+		}
+	};
+}
+
+export interface ReceiveImportedHeroAction {
 	type: ActionTypes.RECEIVE_IMPORTED_HERO;
 	payload: {
-		data: RawHero;
+		data: Hero;
+		player?: User;
 	};
 }
 
@@ -25,3 +44,22 @@ export const receiveImportedHero = (data: RawHero) => AppDispatcher.dispatch<Rec
 		data
 	}
 });
+
+export function _receiveImportedHero(raw: RawHero): ReceiveImportedHeroAction {
+	const newId = `H_${getNewIdByDate()}`;
+	const { player, avatar, dateCreated, dateModified, ...other } = raw;
+	const data: Hero = convertHero({
+		...other,
+		id: newId,
+		dateCreated: new Date(dateCreated),
+		dateModified: new Date(dateModified),
+		avatar: avatar && existsSync(avatar.replace(/file:[\\\/]+/, '')) ? avatar : undefined
+	});
+	return {
+		type: ActionTypes.RECEIVE_IMPORTED_HERO,
+		payload: {
+			data,
+			player
+		}
+	};
+}

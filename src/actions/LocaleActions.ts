@@ -1,10 +1,11 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+import { getSystemLocale } from '../selectors/I18n';
 
-export interface SetLocaleAction extends Action {
+export interface SetLocaleAction {
 	type: ActionTypes.SET_LOCALE;
 	payload: {
-		locale?: string;
+		locale: string;
+		localeType: 'default' | 'set';
 	};
 }
 
@@ -14,3 +15,14 @@ export const setLocale = (locale?: string) => AppDispatcher.dispatch<SetLocaleAc
 		locale
 	}
 });
+
+export function _setLocale(locale?: string): SetLocaleAction {
+	const localeType = !locale ? 'default' : 'set';
+	return {
+		type: ActionTypes.SET_LOCALE,
+		payload: {
+			locale: locale || getSystemLocale(),
+			localeType
+		}
+	};
+}

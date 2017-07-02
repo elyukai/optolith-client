@@ -1,4 +1,5 @@
 const { readFileSync, writeFile } = require('fs');
+const xlsx = require('xlsx');
 const { splitList } = require('./buildUtils');
 const csvToArray = require('./csvToArray');
 
@@ -236,30 +237,35 @@ function iterateEquipmentL10n(array) {
 }
 
 module.exports = function buildL10n(locale) {
-	const books = iterateBooksL10n(csvToArray(readFileSync(`src/data/TDE5_Books_${locale}.csv`, 'utf8')));
-	const el = iterateExperienceLevelsL10n(csvToArray(readFileSync(`src/data/TDE5_ExperienceLevels_${locale}.csv`, 'utf8')));
-	const races = iterateRacesL10n(csvToArray(readFileSync(`src/data/TDE5_Races_${locale}.csv`, 'utf8')));
-	const cultures = iterateCulturesL10n(csvToArray(readFileSync(`src/data/TDE5_Cultures_${locale}.csv`, 'utf8')));
-	const professions = iterateProfessionsL10n(csvToArray(readFileSync(`src/data/TDE5_Professions_${locale}.csv`, 'utf8')));
-	const professionvariants = iterateProfessionVariantsL10n(csvToArray(readFileSync(`src/data/TDE5_ProfessionVariants_${locale}.csv`, 'utf8')));
-	const advantages = iterateActivatablesL10n(csvToArray(readFileSync(`src/data/TDE5_Advantages_${locale}.csv`, 'utf8')), 'adv');
-	const disadvantages = iterateActivatablesL10n(csvToArray(readFileSync(`src/data/TDE5_Disadvantages_${locale}.csv`, 'utf8')), 'disadv');
-	const specialabilities = iterateActivatablesL10n(csvToArray(readFileSync(`src/data/TDE5_SpecialAbilities_${locale}.csv`, 'utf8')), 'special');
-	const tradeSecrets = iterateSpecialAbilitiesTradeSecretsL10n(csvToArray(readFileSync(`src/data/TDE5_SpecialAbilities_TradeSecrets_${locale}.csv`, 'utf8')));
-	const scripts = iterateSpecialAbilitiesScriptsL10n(csvToArray(readFileSync(`src/data/TDE5_SpecialAbilities_Scripts_${locale}.csv`, 'utf8')));
-	const languages = iterateSpecialAbilitiesLanguagesL10n(csvToArray(readFileSync(`src/data/TDE5_SpecialAbilities_Languages_${locale}.csv`, 'utf8')));
+	const file = xlsx.readFile(`src/data/TDE5_${locale}.xlsx`);
+	const allWorksheets = file.SheetNames.reduce((m, name) => {
+		return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';', blankrows: false }));
+	}, new Map());
+
+	const books = iterateBooksL10n(csvToArray(allWorksheets.get('BOOKS')));
+	const el = iterateExperienceLevelsL10n(csvToArray(allWorksheets.get('EXPERIENCE_LEVELS')));
+	const races = iterateRacesL10n(csvToArray(allWorksheets.get('RACES')));
+	const cultures = iterateCulturesL10n(csvToArray(allWorksheets.get('CULTURES')));
+	const professions = iterateProfessionsL10n(csvToArray(allWorksheets.get('PROFESSIONS')));
+	const professionvariants = iterateProfessionVariantsL10n(csvToArray(allWorksheets.get('PROFESSION_VARIANTS')));
+	const advantages = iterateActivatablesL10n(csvToArray(allWorksheets.get('ADVANTAGES')), 'adv');
+	const disadvantages = iterateActivatablesL10n(csvToArray(allWorksheets.get('DISADVANTAGES')), 'disadv');
+	const specialabilities = iterateActivatablesL10n(csvToArray(allWorksheets.get('SPECIAL_ABILITIES')), 'special');
+	const tradeSecrets = iterateSpecialAbilitiesTradeSecretsL10n(csvToArray(allWorksheets.get('TradeSecr')));
+	const scripts = iterateSpecialAbilitiesScriptsL10n(csvToArray(allWorksheets.get('Scripts')));
+	const languages = iterateSpecialAbilitiesLanguagesL10n(csvToArray(allWorksheets.get('Languages')));
 	if (locale === 'de-DE') {
-		const spellExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(readFileSync(`src/data/TDE5_SpecialAbilities_SpellX_${locale}.csv`, 'utf8')));
+		const spellExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('SpellX')));
 		specialabilities.SA_484.sel = spellExtensions;
 	}
-	const attributes = iterateAttributesL10n(csvToArray(readFileSync(`src/data/TDE5_Attributes_${locale}.csv`, 'utf8')));
-	const talents = iterateSkillsL10n(csvToArray(readFileSync(`src/data/TDE5_Skills_${locale}.csv`, 'utf8')));
-	const combattech = iterateCombatTechniquesL10n(csvToArray(readFileSync(`src/data/TDE5_CombatTechniques_${locale}.csv`, 'utf8')));
-	const spells = iterateSpellsL10n(csvToArray(readFileSync(`src/data/TDE5_Spells_${locale}.csv`, 'utf8')));
-	const cantrips = iterateCantripsL10n(csvToArray(readFileSync(`src/data/TDE5_Cantrips_${locale}.csv`, 'utf8')));
-	const liturgies = iterateChantsL10n(csvToArray(readFileSync(`src/data/TDE5_Chants_${locale}.csv`, 'utf8')));
-	const blessings = iterateBlessingsL10n(csvToArray(readFileSync(`src/data/TDE5_Blessings_${locale}.csv`, 'utf8')));
-	const items = iterateEquipmentL10n(csvToArray(readFileSync(`src/data/TDE5_Items_${locale}.csv`, 'utf8')));
+	const attributes = iterateAttributesL10n(csvToArray(allWorksheets.get('ATTRIBUTES')));
+	const talents = iterateSkillsL10n(csvToArray(allWorksheets.get('SKILLS')));
+	const combattech = iterateCombatTechniquesL10n(csvToArray(allWorksheets.get('COMBAT_TECHNIQUES')));
+	const spells = iterateSpellsL10n(csvToArray(allWorksheets.get('SPELLS')));
+	const cantrips = iterateCantripsL10n(csvToArray(allWorksheets.get('CANTRIPS')));
+	const liturgies = iterateChantsL10n(csvToArray(allWorksheets.get('CHANTS')));
+	const blessings = iterateBlessingsL10n(csvToArray(allWorksheets.get('BLESSINGS')));
+	const items = iterateEquipmentL10n(csvToArray(allWorksheets.get('EQUIPMENT')));
 	const ui = JSON.parse(readFileSync(`src/locales/ui.${locale}.json`, 'utf8'));
 
 	specialabilities.SA_3.sel = tradeSecrets;

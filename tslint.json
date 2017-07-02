@@ -17,7 +17,7 @@
 		// 	}
 		// ],
 		// "no-any": true,
-		"no-empty-interface": true,
+		// "no-empty-interface": true,
 		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
 		"no-non-null-assertion": {
 			"severity": "warning"

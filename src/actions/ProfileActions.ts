@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { ProfileStore } from '../stores/ProfileStore';
-import { RaceStore } from '../stores/RaceStore';
+import { get } from '../reducers/dependentInstances';
+import { store } from '../stores/AppStore';
+import { RaceInstance } from '../types/data.d';
+import * as RCPUtils from '../utils/RCPUtils';
 
-export interface SetHeroNameAction extends Action {
+export interface SetHeroNameAction {
 	type: ActionTypes.SET_HERO_NAME;
 	payload: {
 		name: string;
@@ -17,7 +18,16 @@ export const setHeroName = (name: string) => AppDispatcher.dispatch<SetHeroNameA
 	},
 });
 
-export interface SetCustomProfessionNameAction extends Action {
+export function _setHeroName(name: string): SetHeroNameAction {
+	return {
+		type: ActionTypes.SET_HERO_NAME,
+		payload: {
+			name
+		}
+	};
+}
+
+export interface SetCustomProfessionNameAction {
 	type: ActionTypes.SET_CUSTOM_PROFESSION_NAME;
 	payload: {
 		name: string;
@@ -31,7 +41,16 @@ export const setCustomProfessionName = (name: string) => AppDispatcher.dispatch<
 	},
 });
 
-export interface SetHeroAvatarAction extends Action {
+export function _setCustomProfessionName(name: string): SetCustomProfessionNameAction {
+	return {
+		type: ActionTypes.SET_CUSTOM_PROFESSION_NAME,
+		payload: {
+			name
+		}
+	};
+}
+
+export interface SetHeroAvatarAction {
 	type: ActionTypes.SET_HERO_AVATAR;
 	payload: {
 		url: string;
@@ -47,7 +66,16 @@ export const setHeroAvatar = (path: string) => {
 	});
 };
 
-export interface SetFamilyAction extends Action {
+export function _setHeroAvatar(path: string): SetHeroAvatarAction {
+	return {
+		type: ActionTypes.SET_HERO_AVATAR,
+		payload: {
+			url: path
+		}
+	};
+}
+
+export interface SetFamilyAction {
 	type: ActionTypes.SET_FAMILY;
 	payload: {
 		family: string;
@@ -57,11 +85,20 @@ export interface SetFamilyAction extends Action {
 export const setFamily = (family: string) => AppDispatcher.dispatch<SetFamilyAction>({
 	type: ActionTypes.SET_FAMILY,
 	payload: {
-		family,
-	},
+		family
+	}
 });
 
-export interface SetPlaceOfBirthAction extends Action {
+export function _setFamily(family: string): SetFamilyAction {
+	return {
+		type: ActionTypes.SET_FAMILY,
+		payload: {
+			family,
+		},
+	};
+}
+
+export interface SetPlaceOfBirthAction {
 	type: ActionTypes.SET_PLACEOFBIRTH;
 	payload: {
 		placeofbirth: string;
@@ -75,7 +112,16 @@ export const setPlaceOfBirth = (placeofbirth: string) => AppDispatcher.dispatch<
 	},
 });
 
-export interface SetDateOfBirthAction extends Action {
+export function _setPlaceOfBirth(placeofbirth: string): SetPlaceOfBirthAction {
+	return {
+		type: ActionTypes.SET_PLACEOFBIRTH,
+		payload: {
+			placeofbirth
+		}
+	};
+}
+
+export interface SetDateOfBirthAction {
 	type: ActionTypes.SET_DATEOFBIRTH;
 	payload: {
 		dateofbirth: string;
@@ -89,7 +135,16 @@ export const setDateOfBirth = (dateofbirth: string) => AppDispatcher.dispatch<Se
 	},
 });
 
-export interface SetAgeAction extends Action {
+export function _setDateOfBirth(dateofbirth: string): SetDateOfBirthAction {
+	return {
+		type: ActionTypes.SET_DATEOFBIRTH,
+		payload: {
+			dateofbirth
+		}
+	};
+}
+
+export interface SetAgeAction {
 	type: ActionTypes.SET_AGE;
 	payload: {
 		age: string;
@@ -103,7 +158,16 @@ export const setAge = (age: string) => AppDispatcher.dispatch<SetAgeAction>({
 	},
 });
 
-export interface SetHairColorAction extends Action {
+export function _setAge(age: string): SetAgeAction {
+	return {
+		type: ActionTypes.SET_AGE,
+		payload: {
+			age
+		}
+	};
+}
+
+export interface SetHairColorAction {
 	type: ActionTypes.SET_HAIRCOLOR;
 	payload: {
 		haircolor: number;
@@ -117,7 +181,16 @@ export const setHairColor = (haircolor: number) => AppDispatcher.dispatch<SetHai
 	},
 });
 
-export interface SetEyeColorAction extends Action {
+export function _setHairColor(haircolor: number): SetHairColorAction {
+	return {
+		type: ActionTypes.SET_HAIRCOLOR,
+		payload: {
+			haircolor
+		}
+	};
+}
+
+export interface SetEyeColorAction {
 	type: ActionTypes.SET_EYECOLOR;
 	payload: {
 		eyecolor: number;
@@ -131,7 +204,16 @@ export const setEyeColor = (eyecolor: number) => AppDispatcher.dispatch<SetEyeCo
 	},
 });
 
-export interface SetSizeAction extends Action {
+export function _setEyeColor(eyecolor: number): SetEyeColorAction {
+	return {
+		type: ActionTypes.SET_EYECOLOR,
+		payload: {
+			eyecolor
+		}
+	};
+}
+
+export interface SetSizeAction {
 	type: ActionTypes.SET_SIZE;
 	payload: {
 		size: string;
@@ -145,7 +227,16 @@ export const setSize = (size: string) => AppDispatcher.dispatch<SetSizeAction>({
 	},
 });
 
-export interface SetWeightAction extends Action {
+export function _setSize(size: string): SetSizeAction {
+	return {
+		type: ActionTypes.SET_SIZE,
+		payload: {
+			size
+		}
+	};
+}
+
+export interface SetWeightAction {
 	type: ActionTypes.SET_WEIGHT;
 	payload: {
 		size?: string;
@@ -161,6 +252,16 @@ export const setWeight = (weight: string, size?: string) => AppDispatcher.dispat
 	},
 });
 
+export function _setWeight(weight: string, size?: string): SetWeightAction {
+	return {
+		type: ActionTypes.SET_WEIGHT,
+		payload: {
+			size,
+			weight
+		}
+	};
+}
+
 export const rerollHairColor = () => {
 	const race = RaceStore.getCurrent();
 	if (typeof race !== 'undefined') {
@@ -168,6 +269,16 @@ export const rerollHairColor = () => {
 		setHairColor(hairColor);
 	}
 };
+
+export function _rerollHairColor(): SetHairColorAction | undefined {
+	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
+	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+	if (typeof race !== 'undefined') {
+		const hairColor = RCPUtils.rerollHairColor(race);
+		return _setHairColor(hairColor);
+	}
+	return;
+}
 
 export const rerollEyeColor = () => {
 	const race = RaceStore.getCurrent();
@@ -177,6 +288,16 @@ export const rerollEyeColor = () => {
 	}
 };
 
+export function _rerollEyeColor(): SetEyeColorAction | undefined {
+	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
+	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+	if (typeof race !== 'undefined') {
+		const eyeColor = RCPUtils.rerollEyeColor(race);
+		return _setEyeColor(eyeColor);
+	}
+	return;
+}
+
 export const rerollSize = () => {
 	const race = RaceStore.getCurrent();
 	if (typeof race !== 'undefined') {
@@ -184,6 +305,16 @@ export const rerollSize = () => {
 		setSize(size);
 	}
 };
+
+export function _rerollSize(): SetSizeAction | undefined {
+	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
+	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+	if (typeof race !== 'undefined') {
+		const size = RCPUtils.rerollSize(race);
+		return _setSize(size);
+	}
+	return;
+}
 
 export const rerollWeight = () => {
 	const race = RaceStore.getCurrent();
@@ -193,7 +324,17 @@ export const rerollWeight = () => {
 	}
 };
 
-export interface SetTitleAction extends Action {
+export function _rerollWeight(): SetWeightAction | undefined {
+	const { dependent, profile: { size: prevSize }, rcp: { race: raceId }} = store.getState().currentHero.present;
+	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+	if (typeof race !== 'undefined') {
+		const [ weight, size ] = RCPUtils.rerollWeight(race, prevSize);
+		return _setWeight(weight, size);
+	}
+	return;
+}
+
+export interface SetTitleAction {
 	type: ActionTypes.SET_TITLE;
 	payload: {
 		title: string;
@@ -207,7 +348,16 @@ export const setTitle = (title: string) => AppDispatcher.dispatch<SetTitleAction
 	},
 });
 
-export interface SetSocialStatusAction extends Action {
+export function _setTitle(title: string): SetTitleAction {
+	return {
+		type: ActionTypes.SET_TITLE,
+		payload: {
+			title
+		}
+	};
+}
+
+export interface SetSocialStatusAction {
 	type: ActionTypes.SET_SOCIALSTATUS;
 	payload: {
 		socialstatus: number;
@@ -221,7 +371,16 @@ export const setSocialStatus = (socialstatus: number) => AppDispatcher.dispatch<
 	},
 });
 
-export interface SetCharacteristicsAction extends Action {
+export function _setSocialStatus(socialstatus: number): SetSocialStatusAction {
+	return {
+		type: ActionTypes.SET_SOCIALSTATUS,
+		payload: {
+			socialstatus
+		}
+	};
+}
+
+export interface SetCharacteristicsAction {
 	type: ActionTypes.SET_CHARACTERISTICS;
 	payload: {
 		characteristics: string;
@@ -235,7 +394,16 @@ export const setCharacteristics = (characteristics: string) => AppDispatcher.dis
 	},
 });
 
-export interface SetOtherInfoAction extends Action {
+export function _setCharacteristics(characteristics: string): SetCharacteristicsAction {
+	return {
+		type: ActionTypes.SET_CHARACTERISTICS,
+		payload: {
+			characteristics
+		}
+	};
+}
+
+export interface SetOtherInfoAction {
 	type: ActionTypes.SET_OTHERINFO;
 	payload: {
 		otherinfo: string;
@@ -248,6 +416,15 @@ export const setOtherInfo = (otherinfo: string) => AppDispatcher.dispatch<SetOth
 		otherinfo,
 	},
 });
+
+export function _setOtherInfo(otherinfo: string): SetOtherInfoAction {
+	return {
+		type: ActionTypes.SET_OTHERINFO,
+		payload: {
+			otherinfo
+		}
+	};
+}
 
 export interface SetCultureAreaKnowledge extends Action {
 	type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE;
@@ -263,7 +440,16 @@ export const setCultureAreaKnowledge = (cultureAreaKnowledge: string) => AppDisp
 	},
 });
 
-export interface EndHeroCreationAction extends Action {
+export function _setCultureAreaKnowledge(cultureAreaKnowledge: string): SetCultureAreaKnowledge {
+	return {
+		type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE,
+		payload: {
+			cultureAreaKnowledge
+		}
+	};
+}
+
+export interface EndHeroCreationAction {
 	type: ActionTypes.END_HERO_CREATION;
 }
 
@@ -271,7 +457,13 @@ export const endHeroCreation = () => AppDispatcher.dispatch<EndHeroCreationActio
 	type: ActionTypes.END_HERO_CREATION,
 });
 
-export interface AddAdventurePointsAction extends Action {
+export function _endHeroCreation(): EndHeroCreationAction {
+	return {
+		type: ActionTypes.END_HERO_CREATION
+	};
+}
+
+export interface AddAdventurePointsAction {
 	type: ActionTypes.ADD_ADVENTURE_POINTS;
 	payload: {
 		amount: number;
@@ -284,3 +476,12 @@ export const addAdventurePoints = (amount: number) => AppDispatcher.dispatch<Add
 		amount,
 	},
 });
+
+export function _addAdventurePoints(amount: number): AddAdventurePointsAction {
+	return {
+		type: ActionTypes.ADD_ADVENTURE_POINTS,
+		payload: {
+			amount
+		}
+	};
+}

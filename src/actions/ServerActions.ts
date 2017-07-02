@@ -3,7 +3,7 @@ import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { Hero } from '../types/data.d';
 import { RawHerolist, RawTables } from '../types/rawdata.d';
 
-export interface ReceiveDataTablesAction extends Action {
+export interface ReceiveDataTablesAction {
 	type: ActionTypes.RECEIVE_DATA_TABLES;
 	payload: {
 		data: RawTables;
@@ -17,7 +17,7 @@ export const receiveDataTables = (data: RawTables) => AppDispatcher.dispatch<Rec
 	}
 });
 
-export interface ReceiveHerolistAction extends Action {
+export interface ReceiveHerolistAction {
 	type: ActionTypes.RECEIVE_HEROLIST;
 	payload: {
 		heroes: RawHerolist;
@@ -31,7 +31,7 @@ export const receiveHerolist = (heroes: RawHerolist) => AppDispatcher.dispatch<R
 	}
 });
 
-export interface ReceiveRegistrationAction extends Action {
+export interface ReceiveRegistrationAction {
 	type: ActionTypes.RECEIVE_REGISTRATION;
 }
 
@@ -39,7 +39,7 @@ export const receiveRegistration = () => AppDispatcher.dispatch<ReceiveRegistrat
 	type: ActionTypes.RECEIVE_REGISTRATION
 });
 
-export interface ReceiveHeroDataAction extends Action {
+export interface ReceiveHeroDataAction {
 	type: ActionTypes.RECEIVE_HERO_DATA;
 	payload: {
 		data: Hero;
@@ -53,11 +53,11 @@ export const receiveHeroData = (data: Hero) => AppDispatcher.dispatch<ReceiveHer
 	}
 });
 
-export interface RequestHeroAvatarAction extends Action {
+export interface RequestHeroAvatarAction {
 	type: ActionTypes.REQUEST_HERO_AVATAR;
 }
 
-export interface ReceiveHeroAvatarAction extends Action {
+export interface ReceiveHeroAvatarAction {
 	type: ActionTypes.RECEIVE_HERO_AVATAR;
 	payload: {
 		url: string;
@@ -71,7 +71,7 @@ export const receiveHeroAvatar = (url: string) => AppDispatcher.dispatch<Receive
 	}
 });
 
-export interface ReceiveLoginAction extends Action {
+export interface ReceiveLoginAction {
 	type: ActionTypes.RECEIVE_LOGIN;
 	payload: {
 		name: string;
@@ -93,7 +93,7 @@ export const receiveLogin = (name: string, displayName: string, email: string, s
 	}
 });
 
-export interface ReceiveLogoutAction extends Action {
+export interface ReceiveLogoutAction {
 	type: ActionTypes.RECEIVE_LOGOUT;
 }
 
@@ -101,7 +101,7 @@ export const receiveLogout = () => AppDispatcher.dispatch<ReceiveLogoutAction>({
 	type: ActionTypes.RECEIVE_LOGOUT
 });
 
-export interface ReceiveNewUsernameAction extends Action {
+export interface ReceiveNewUsernameAction {
 	type: ActionTypes.RECEIVE_NEW_USERNAME;
 	payload: {
 		name: string;
@@ -115,7 +115,7 @@ export const receiveNewUsername = (name: string) => AppDispatcher.dispatch<Recei
 	}
 });
 
-export interface ReceiveNewPasswordAction extends Action {
+export interface ReceiveNewPasswordAction {
 	type: ActionTypes.RECEIVE_NEW_PASSWORD;
 }
 
@@ -123,7 +123,7 @@ export const receiveNewPassword = () => AppDispatcher.dispatch<ReceiveNewPasswor
 	type: ActionTypes.RECEIVE_NEW_PASSWORD
 });
 
-export interface ReceiveNewDisplayNameAction extends Action {
+export interface ReceiveNewDisplayNameAction {
 	type: ActionTypes.RECEIVE_NEW_DISPLAY_NAME;
 	payload: {
 		name: string;
@@ -137,7 +137,7 @@ export const receiveNewDisplayName = (name: string) => AppDispatcher.dispatch<Re
 	}
 });
 
-export interface ReceiveUserDeletionAction extends Action {
+export interface ReceiveUserDeletionAction {
 	type: ActionTypes.RECEIVE_USER_DELETION;
 }
 
@@ -145,7 +145,7 @@ export const receiveUserDeletion = () => AppDispatcher.dispatch<ReceiveUserDelet
 	type: ActionTypes.RECEIVE_USER_DELETION
 });
 
-export interface ReceivePasswordResetAction extends Action {
+export interface ReceivePasswordResetAction {
 	type: ActionTypes.RECEIVE_PASSWORD_RESET;
 }
 
@@ -153,7 +153,7 @@ export const receivePasswordReset = () => AppDispatcher.dispatch<ReceivePassword
 	type: ActionTypes.RECEIVE_PASSWORD_RESET
 });
 
-export interface ReceiveUsernameAction extends Action {
+export interface ReceiveUsernameAction {
 	type: ActionTypes.RECEIVE_USERNAME;
 }
 
@@ -161,7 +161,7 @@ export const receiveUsername = () => AppDispatcher.dispatch<ReceiveUsernameActio
 	type: ActionTypes.RECEIVE_USERNAME
 });
 
-export interface ReceiveAccountActivationEmailAction extends Action {
+export interface ReceiveAccountActivationEmailAction {
 	type: ActionTypes.RECEIVE_ACCOUNT_ACTIVATION_EMAIL;
 }
 
@@ -169,6 +169,6 @@ export const receiveAccountActivationEmail = () => AppDispatcher.dispatch<Receiv
 	type: ActionTypes.RECEIVE_ACCOUNT_ACTIVATION_EMAIL
 });
 
-export interface RequestFailedAction extends Action {
+export interface RequestFailedAction {
 	type: ActionTypes.REQUEST_FAILED;
 }

@@ -1,14 +1,14 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
-import { HerolistStore } from '../stores/HerolistStore';
-import { Hero, HeroForSave } from '../types/data.d';
+import { store } from '../stores/AppStore';
+import { Hero } from '../types/data.d';
 import { alert } from '../utils/alert';
 import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { translate } from '../utils/I18n';
+import { getNewIdByDate } from '../utils/IDUtils';
 // import * as WebAPIUtils from '../utils/WebAPIUtils';
 
-// export interface RequestHerolistAction extends Action {
+// export interface RequestHerolistAction {
 // 	type: ActionTypes.REQUEST_HEROLIST;
 // }
 
@@ -19,7 +19,7 @@ import { translate } from '../utils/I18n';
 // 	});
 // };
 
-export interface SetHerolistSortOrderAction extends Action {
+export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -33,7 +33,16 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetHer
 	}
 });
 
-export interface SetHerolistVisibilityFilterAction extends Action {
+export function _setSortOrder(sortOrder: string): SetHerolistSortOrderAction {
+	return{
+		type: ActionTypes.SET_HEROLIST_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}
+
+export interface SetHerolistVisibilityFilterAction {
 	type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER;
 	payload: {
 		filterOption: string;
@@ -47,7 +56,16 @@ export const setVisibilityFilter = (filterOption: string) => AppDispatcher.dispa
 	}
 });
 
-export interface CreateHeroAction extends Action {
+export function _setVisibilityFilter(filterOption: string): SetHerolistVisibilityFilterAction {
+	return{
+		type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
+		payload: {
+			filterOption
+		}
+	};
+}
+
+export interface CreateHeroAction {
 	type: ActionTypes.CREATE_HERO;
 	payload: {
 		name: string;
@@ -65,7 +83,18 @@ export const createHero = (name: string, sex: 'm' | 'f', el: string) => AppDispa
 	}
 });
 
-export interface LoadHeroAction extends Action {
+export function _createHero(name: string, sex: 'm' | 'f', el: string): CreateHeroAction {
+	return{
+		type: ActionTypes.CREATE_HERO,
+		payload: {
+			name,
+			sex,
+			el
+		}
+	};
+}
+
+export interface LoadHeroAction {
 	type: ActionTypes.LOAD_HERO;
 	payload: {
 		data: Hero;
@@ -73,7 +102,7 @@ export interface LoadHeroAction extends Action {
 }
 
 export const loadHero = (id: string) => {
-	const data = HerolistStore.get(id);
+	const data = store.getState().herolist.heroes.get(id);
 	if (data) {
 		AppDispatcher.dispatch<LoadHeroAction>({
 			type: ActionTypes.LOAD_HERO,
@@ -84,20 +113,33 @@ export const loadHero = (id: string) => {
 	}
 };
 
+export function _loadHero(id: string): LoadHeroAction | undefined {
+	const data = store.getState().herolist.heroes.get(id);
+	if (data) {
+		return {
+			type: ActionTypes.LOAD_HERO,
+			payload: {
+				data
+			}
+		};
+	}
+	return;
+}
+
 export const save = () => {
 	saveAll();
 	alert(translate('fileapi.allsaved'));
 };
 
-export interface SaveHeroAction extends Action {
+export interface SaveHeroAction {
 	type: ActionTypes.SAVE_HERO;
 	payload: {
-		data: HeroForSave;
+		data: Hero;
 	};
 }
 
 export const saveHero = () => {
-	const data = generateHeroSaveData();
+	const data = generateHeroSaveData(store.getState());
 	AppDispatcher.dispatch<SaveHeroAction>({
 		type: ActionTypes.SAVE_HERO,
 		payload: {
@@ -106,7 +148,23 @@ export const saveHero = () => {
 	});
 };
 
-export interface DeleteHeroAction extends Action {
+export function _saveHero(): SaveHeroAction {
+	const { id, dateCreated, dateModified, ...other } = generateHeroSaveData(store.getState());
+	const data = {
+		...other,
+		id: id || `H_${getNewIdByDate()}`,
+		dateCreated: dateCreated || new Date(),
+		dateModified: new Date()
+	};
+	return {
+		type: ActionTypes.SAVE_HERO,
+		payload: {
+			data
+		}
+	};
+}
+
+export interface DeleteHeroAction {
 	type: ActionTypes.DELETE_HERO;
 	payload: {
 		id: string;
@@ -122,10 +180,20 @@ export const deleteHero = (id: string) => {
 	});
 };
 
-export interface DuplicateHeroAction extends Action {
+export function _deleteHero(id: string): DeleteHeroAction {
+	return {
+		type: ActionTypes.DELETE_HERO,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface DuplicateHeroAction {
 	type: ActionTypes.DUPLICATE_HERO;
 	payload: {
 		id: string;
+		newId: string;
 	};
 }
 
@@ -138,11 +206,22 @@ export const duplicateHero = (id: string) => {
 	});
 };
 
-// export interface RequestHeroSaveAction extends Action {
+export function _duplicateHero(id: string): DuplicateHeroAction {
+	const newId = `H_${getNewIdByDate()}`;
+	return {
+		type: ActionTypes.DUPLICATE_HERO,
+		payload: {
+			id,
+			newId
+		}
+	};
+}
+
+// export interface RequestHeroSaveAction {
 // 	type: ActionTypes.REQUEST_HERO_SAVE;
 // }
 
-// export interface ReceiveHeroSaveAction extends Action {
+// export interface ReceiveHeroSaveAction {
 // 	type: ActionTypes.RECEIVE_HERO_SAVE;
 // }
 

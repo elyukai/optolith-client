@@ -1,7 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 
-export interface SwitchEnableActiveItemHintsAction extends Action {
+export interface SwitchEnableActiveItemHintsAction {
 	type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS;
 }
 

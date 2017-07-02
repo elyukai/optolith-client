@@ -15,12 +15,23 @@ export function validate(cost: number, ap: AdventurePointsState): boolean {
 	return true;
 }
 
-export function checkDisAdvantages(state: DependentInstancesState, cost: number, index: number, target: number[], spent: number, total: number, add: boolean): [boolean, boolean, boolean] {
-	const absCost = add ? cost : -cost;
+/**
+ * Checks if there are enough AP available and if the restrictions for advantages/disadvantages will be met.
+ * @param cost The AP value you want to check.
+ * @param ap The current AP state.
+ * @param state The list of dependent instances.
+ * @param isMagicalOrBlessed If the the advantage/disadvantage is magical or blessed.
+ * @param isDisadvantage If the entry is a disadvantage.
+ */
+export function validateDisAdvantages(cost: number, ap: AdventurePointsState, state: DependentInstancesState, isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean; }, isDisadvantage: boolean): [boolean, boolean, boolean] {
+	const { isBlessed, isMagical } = isMagicalOrBlessed;
+	const index = isBlessed ? 2 : isMagical ? 1 : 0;
+	const target = isDisadvantage ? ap.disadv : ap.adv;
 	const smallMax = getAdvantagesDisadvantagesSubMax(state, index);
-	const subValid = index > 0 ? target[index] + absCost <= smallMax : true;
-	const mainValid = target[0] + absCost <= 80;
-	const totalValid = spent + cost <= total;
+	const equalizedCost = isDisadvantage ? cost * -1 : cost;
+	const subValid = index > 0 ? target[index] + equalizedCost <= smallMax : true;
+	const mainValid = target[0] + equalizedCost <= 80;
+	const totalValid = cost <= getLeft(ap);
 
 	return [ totalValid, mainValid, subValid ];
 }

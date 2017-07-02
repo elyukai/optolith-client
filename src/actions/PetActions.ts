@@ -1,8 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { PetInstance } from '../types/data.d';
 
-export interface AddPetAction extends Action {
+export interface AddPetAction {
 	type: ActionTypes.ADD_PET;
 	payload: {
 		data: PetInstance;
@@ -16,7 +15,16 @@ export const addToList = (data: PetInstance) => AppDispatcher.dispatch<AddPetAct
 	}
 });
 
-export interface SetPetAction extends Action {
+export function _addToList(data: PetInstance): AddPetAction {
+	return {
+		type: ActionTypes.ADD_PET,
+		payload: {
+			data
+		}
+	};
+}
+
+export interface SetPetAction {
 	type: ActionTypes.SET_PET;
 	payload: {
 		id: string;
@@ -32,7 +40,17 @@ export const set = (id: string, data: PetInstance) => AppDispatcher.dispatch<Set
 	}
 });
 
-export interface RemovePetAction extends Action {
+export function _set(id: string, data: PetInstance): SetPetAction {
+	return {
+		type: ActionTypes.SET_PET,
+		payload: {
+			id,
+			data
+		}
+	};
+}
+
+export interface RemovePetAction {
 	type: ActionTypes.REMOVE_PET;
 	payload: {
 		id: string;
@@ -46,7 +64,16 @@ export const removeFromList = (id: string) => AppDispatcher.dispatch<RemovePetAc
 	}
 });
 
-export interface SetPetsSortOrderAction extends Action {
+export function _removeFromList(id: string): RemovePetAction {
+	return {
+		type: ActionTypes.REMOVE_PET,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetPetsSortOrderAction {
 	type: ActionTypes.SET_PETS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -59,3 +86,12 @@ export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetPet
 		sortOrder
 	}
 });
+
+export function _setSortOrder(sortOrder: string): SetPetsSortOrderAction {
+	return {
+		type: ActionTypes.SET_PETS_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}

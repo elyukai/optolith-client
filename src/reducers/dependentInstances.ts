@@ -6,7 +6,6 @@ import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, Remove
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Category, CategoryWithGroups } from '../constants/Categories';
-import { store } from '../stores/AppStore';
 import * as Data from '../types/data.d';
 import { dependentInstancesClear } from './dependentInstancesClear';
 import { increasable } from './increasable';

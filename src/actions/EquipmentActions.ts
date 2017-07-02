@@ -1,10 +1,12 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
+import { store } from '../stores/AppStore';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance } from '../types/data.d';
+import { getNewId } from '../utils/IDUtils';
 
-export interface AddItemAction extends Action {
+export interface AddItemAction {
 	type: ActionTypes.ADD_ITEM;
 	payload: {
+		id: string;
 		data: ItemInstance;
 	};
 }
@@ -17,17 +19,21 @@ export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemA
 });
 
 export function _addToList(data: ItemInstance): AddItemAction {
+	const { items } = store.getState().currentHero.present.equipment;
+	const id = `ITEM_${getNewId([...items.keys()])}`;
 	return {
 		type: ActionTypes.ADD_ITEM,
 		payload: {
+			id,
 			data
 		}
 	};
 }
 
-export interface AddArmorZonesAction extends Action {
+export interface AddArmorZonesAction {
 	type: ActionTypes.ADD_ARMOR_ZONES;
 	payload: {
+		id: string;
 		data: ArmorZonesEditorInstance;
 	};
 }
@@ -40,15 +46,18 @@ export const addArmorZonesToList = (data: ArmorZonesEditorInstance) => AppDispat
 });
 
 export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AddArmorZonesAction {
+	const { items } = store.getState().currentHero.present.equipment;
+	const id = `ARMORZONES_${getNewId([...items.keys()])}`;
 	return {
 		type: ActionTypes.ADD_ARMOR_ZONES,
 		payload: {
+			id,
 			data
 		}
 	};
 }
 
-export interface SetItemAction extends Action {
+export interface SetItemAction {
 	type: ActionTypes.SET_ITEM;
 	payload: {
 		id: string;
@@ -74,7 +83,7 @@ export function _set(id: string, data: ItemInstance): SetItemAction {
 	};
 }
 
-export interface SetArmorZonesAction extends Action {
+export interface SetArmorZonesAction {
 	type: ActionTypes.SET_ARMOR_ZONES;
 	payload: {
 		id: string;
@@ -100,7 +109,7 @@ export function _setArmorZones(id: string, data: ArmorZonesInstance): SetArmorZo
 	};
 }
 
-export interface RemoveItemAction extends Action {
+export interface RemoveItemAction {
 	type: ActionTypes.REMOVE_ITEM;
 	payload: {
 		id: string;
@@ -123,7 +132,7 @@ export function _removeFromList(id: string): RemoveItemAction {
 	};
 }
 
-export interface RemoveArmorZonesAction extends Action {
+export interface RemoveArmorZonesAction {
 	type: ActionTypes.REMOVE_ARMOR_ZONES;
 	payload: {
 		id: string;
@@ -146,7 +155,7 @@ export function _removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
 	};
 }
 
-export interface SetItemsSortOrderAction extends Action {
+export interface SetItemsSortOrderAction {
 	type: ActionTypes.SET_ITEMS_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -169,7 +178,7 @@ export function _setSortOrder(sortOrder: string): SetItemsSortOrderAction {
 	};
 }
 
-export interface SetDucatesAction extends Action {
+export interface SetDucatesAction {
 	type: ActionTypes.SET_DUCATES;
 	payload: {
 		value: string;
@@ -192,7 +201,7 @@ export function _setDucates(value: string): SetDucatesAction {
 	};
 }
 
-export interface SetSilverthalersAction extends Action {
+export interface SetSilverthalersAction {
 	type: ActionTypes.SET_SILVERTHALERS;
 	payload: {
 		value: string;
@@ -215,7 +224,7 @@ export function _setSilverthalers(value: string): SetSilverthalersAction {
 	};
 }
 
-export interface SetHellersAction extends Action {
+export interface SetHellersAction {
 	type: ActionTypes.SET_HELLERS;
 	payload: {
 		value: string;
@@ -238,7 +247,7 @@ export function _setHellers(value: string): SetHellersAction {
 	};
 }
 
-export interface SetKreutzersAction extends Action {
+export interface SetKreutzersAction {
 	type: ActionTypes.SET_KREUTZERS;
 	payload: {
 		value: string;

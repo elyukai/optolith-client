@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { get } from '../reducers/dependentInstances';
 import { store } from '../stores/AppStore';
 import { CombatTechniqueInstance } from '../types/data.d';
@@ -7,7 +6,7 @@ import { alert } from '../utils/alert';
 import { translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
-export interface AddCombatTechniquePointAction extends Action {
+export interface AddCombatTechniquePointAction {
 	type: ActionTypes.ADD_COMBATTECHNIQUE_POINT;
 	payload: {
 		id: string;
@@ -25,7 +24,7 @@ export const addPoint = (id: string) => AppDispatcher.dispatch<AddCombatTechniqu
 
 export function _addPoint(id: string): AddCombatTechniquePointAction | undefined {
 	const state = store.getState();
-	const cost = getIncreaseCost(get(state.currentHero.dependent, id) as CombatTechniqueInstance, state.currentHero.ap);
+	const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as CombatTechniqueInstance, state.currentHero.present.ap);
 	if (!cost) {
 		alert(translate('notenoughap.title'), translate('notenoughap.content'));
 		return;
@@ -39,7 +38,7 @@ export function _addPoint(id: string): AddCombatTechniquePointAction | undefined
 	};
 }
 
-export interface RemoveCombatTechniquePointAction extends Action {
+export interface RemoveCombatTechniquePointAction {
 	type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT;
 	payload: {
 		id: string;
@@ -57,7 +56,7 @@ export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveCombatTe
 
 export function _removePoint(id: string): RemoveCombatTechniquePointAction {
 	const state = store.getState();
-	const cost = getDecreaseCost(get(state.currentHero.dependent, id) as CombatTechniqueInstance);
+	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as CombatTechniqueInstance);
 	return {
 		type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT,
 		payload: {
@@ -67,7 +66,7 @@ export function _removePoint(id: string): RemoveCombatTechniquePointAction {
 	};
 }
 
-export interface SetCombatTechniquesSortOrderAction extends Action {
+export interface SetCombatTechniquesSortOrderAction {
 	type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER;
 	payload: {
 		sortOrder: string;

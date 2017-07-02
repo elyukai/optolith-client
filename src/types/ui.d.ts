@@ -562,4 +562,14 @@ export interface UIMessages {
 	"dancetraditions": string[];
 	"notenoughap.title": string;
 	"notenoughap.content": string;
+	"reachedaplimit.title": string;
+	"reachedaplimit.content": string;
+	"reachedaplimit.advantages": string;
+	"reachedaplimit.disadvantages": string;
+	"reachedcategoryaplimit.title": string;
+	"reachedcategoryaplimit.content": string;
+	"reachedcategoryaplimit.magicaladvantages": string;
+	"reachedcategoryaplimit.blessedadvantages": string;
+	"reachedcategoryaplimit.magicaldisadvantages": string;
+	"reachedcategoryaplimit.blesseddisadvantages": string;
 }

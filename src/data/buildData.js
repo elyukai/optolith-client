@@ -1,4 +1,5 @@
 const { readFile, readFileSync, writeFile } = require('fs');
+const xlsx = require('xlsx');
 const { convertRequirements, splitList } = require('./buildUtils');
 const csvToArray = require('./csvToArray');
 
@@ -253,6 +254,24 @@ function iterateActivatables(array, type) {
 	return list;
 }
 
+function iterateDisadvantagesPrinciples(array) {
+	const list = [];
+	for (const obj of array) {
+		delete obj.name;
+		list.push(obj);
+	}
+	return list;
+}
+
+function iterateDisadvantagesObligations(array) {
+	const list = [];
+	for (const obj of array) {
+		delete obj.name;
+		list.push(obj);
+	}
+	return list;
+}
+
 function iterateAttributes(array) {
 	const list = {};
 	for (const obj of array) {
@@ -352,6 +371,26 @@ function iterateSpecialAbilitiesTradeSecrets(array) {
 	return list;
 }
 
+function iterateSpecialAbilitiesAnimalTransform(array) {
+	const list = [];
+	for (const obj of array) {
+		delete obj.name;
+		list.push(obj);
+	}
+	return list;
+}
+
+function iterateSpecialAbilitiesWriting(array) {
+	const list = [];
+	for (const obj of array) {
+		delete obj.name;
+		obj.talent = obj.talent.split('?');
+		obj.talent[1] = Number.parseInt(obj.talent[1]);
+		list.push(obj);
+	}
+	return list;
+}
+
 function iterateSpecialAbilitiesScripts(array) {
 	const list = [];
 	for (const obj of array) {
@@ -447,31 +486,36 @@ function iterateEquipment(array) {
 	return list;
 }
 
-const books = iterateBooks(csvToArray(readFileSync('src/data/TDE5_Books.csv', 'utf8')));
-const el = iterateExperienceLevels(csvToArray(readFileSync('src/data/TDE5_ExperienceLevels.csv', 'utf8')));
-const races = iterateRaces(csvToArray(readFileSync('src/data/TDE5_Races.csv', 'utf8')));
-const cultures = iterateCultures(csvToArray(readFileSync('src/data/TDE5_Cultures.csv', 'utf8')));
-const professions = iterateProfessions(csvToArray(readFileSync('src/data/TDE5_Professions.csv', 'utf8')));
-const professionvariants = iterateProfessionVariants(csvToArray(readFileSync('src/data/TDE5_ProfessionVariants.csv', 'utf8')));
-const advantages = iterateActivatables(csvToArray(readFileSync('src/data/TDE5_Advantages.csv', 'utf8')), 'adv');
-const disadvantages = iterateActivatables(csvToArray(readFileSync('src/data/TDE5_Disadvantages.csv', 'utf8')), 'disadv');
-const principles = JSON.parse(readFileSync('src/data/TDE5_Disadvantages_34.json', 'utf8'));
-const obligations = JSON.parse(readFileSync('src/data/TDE5_Disadvantages_50.json', 'utf8'));
-const specialabilities = iterateActivatables(csvToArray(readFileSync('src/data/TDE5_SpecialAbilities.csv', 'utf8')), 'special');
-const tradeSecrets = iterateSpecialAbilitiesTradeSecrets(csvToArray(readFileSync('src/data/TDE5_SpecialAbilities_TradeSecrets.csv', 'utf8')));
-const scripts = iterateSpecialAbilitiesScripts(csvToArray(readFileSync('src/data/TDE5_SpecialAbilities_Scripts.csv', 'utf8')));
-const writing = JSON.parse(readFileSync('src/data/TDE5_SpecialAbilities_29.json', 'utf8'));
-const languages = iterateSpecialAbilitiesLanguages(csvToArray(readFileSync('src/data/TDE5_SpecialAbilities_Languages.csv', 'utf8')));
-const animalTransformation = JSON.parse(readFileSync('src/data/TDE5_SpecialAbilities_368.json', 'utf8'));
-const spellExtensions = iterateSpecialAbilitiesSpellExtensions(csvToArray(readFileSync('src/data/TDE5_SpecialAbilities_SpellX.csv', 'utf8')));
-const attributes = iterateAttributes(csvToArray(readFileSync('src/data/TDE5_Attributes.csv', 'utf8')));
-const talents = iterateSkills(csvToArray(readFileSync('src/data/TDE5_Skills.csv', 'utf8')));
-const combattech = iterateCombatTechniques(csvToArray(readFileSync('src/data/TDE5_CombatTechniques.csv', 'utf8')));
-const spells = iterateSpells(csvToArray(readFileSync('src/data/TDE5_Spells.csv', 'utf8')));
-const cantrips = iterateCantrips(csvToArray(readFileSync('src/data/TDE5_Cantrips.csv', 'utf8')));
-const liturgies = iterateChants(csvToArray(readFileSync('src/data/TDE5_Chants.csv', 'utf8')));
-const blessings = iterateBlessings(csvToArray(readFileSync('src/data/TDE5_Blessings.csv', 'utf8')));
-const items = iterateEquipment(csvToArray(readFileSync('src/data/TDE5_Items.csv', 'utf8')));
+const file = xlsx.readFile('src/data/TDE5.xlsx');
+const allWorksheets = file.SheetNames.reduce((m, name) => {
+	return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';', blankrows: false }));
+}, new Map());
+
+const books = iterateBooks(csvToArray(allWorksheets.get('BOOKS')));
+const el = iterateExperienceLevels(csvToArray(allWorksheets.get('EXPERIENCE_LEVELS')));
+const races = iterateRaces(csvToArray(allWorksheets.get('RACES')));
+const cultures = iterateCultures(csvToArray(allWorksheets.get('CULTURES')));
+const professions = iterateProfessions(csvToArray(allWorksheets.get('PROFESSIONS')));
+const professionvariants = iterateProfessionVariants(csvToArray(allWorksheets.get('PROFESSION_VARIANTS')));
+const advantages = iterateActivatables(csvToArray(allWorksheets.get('ADVANTAGES')), 'adv');
+const disadvantages = iterateActivatables(csvToArray(allWorksheets.get('DISADVANTAGES')), 'disadv');
+const principles = iterateDisadvantagesPrinciples(csvToArray(allWorksheets.get('Principles')));
+const obligations = iterateDisadvantagesObligations(csvToArray(allWorksheets.get('Obligations')));
+const specialabilities = iterateActivatables(csvToArray(allWorksheets.get('SPECIAL_ABILITIES')), 'special');
+const tradeSecrets = iterateSpecialAbilitiesTradeSecrets(csvToArray(allWorksheets.get('TradeSecr')));
+const scripts = iterateSpecialAbilitiesScripts(csvToArray(allWorksheets.get('Scripts')));
+const writing = iterateSpecialAbilitiesWriting(csvToArray(allWorksheets.get('Writing')));
+const languages = iterateSpecialAbilitiesLanguages(csvToArray(allWorksheets.get('Languages')));
+const animalTransformation = iterateSpecialAbilitiesAnimalTransform(csvToArray(allWorksheets.get('AnimalTrans')));
+const spellExtensions = iterateSpecialAbilitiesSpellExtensions(csvToArray(allWorksheets.get('SpellX')));
+const attributes = iterateAttributes(csvToArray(allWorksheets.get('ATTRIBUTES')));
+const talents = iterateSkills(csvToArray(allWorksheets.get('SKILLS')));
+const combattech = iterateCombatTechniques(csvToArray(allWorksheets.get('COMBAT_TECHNIQUES')));
+const spells = iterateSpells(csvToArray(allWorksheets.get('SPELLS')));
+const cantrips = iterateCantrips(csvToArray(allWorksheets.get('CANTRIPS')));
+const liturgies = iterateChants(csvToArray(allWorksheets.get('CHANTS')));
+const blessings = iterateBlessings(csvToArray(allWorksheets.get('BLESSINGS')));
+const items = iterateEquipment(csvToArray(allWorksheets.get('EQUIPMENT')));
 
 disadvantages.DISADV_34.sel = principles;
 disadvantages.DISADV_50.sel = obligations;

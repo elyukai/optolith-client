@@ -7,7 +7,11 @@ export function getMessages() {
 }
 
 export function getLocale() {
-	return store.getState().locale.id || getSystemLocale();
+	return getLocaleSetting() || getSystemLocale();
+}
+
+export function getLocaleSetting() {
+	return store.getState().locale.id;
 }
 
 export function getSystemLocale() {

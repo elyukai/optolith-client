@@ -11,11 +11,11 @@ import { Attributes } from './Attributes';
 
 function mapStateToProps(state: AppState) {
 	const { currentHero } = state;
-	const attributes = getAllByCategory(currentHero.dependent, ATTRIBUTES) as AttributeInstance[];
+	const attributes = getAllByCategory(currentHero.present.dependent, ATTRIBUTES) as AttributeInstance[];
 	return {
 		attributes,
-		el: getStart(currentHero.el),
-		phase: currentHero.phase,
+		el: getStart(currentHero.present.el),
+		phase: currentHero.present.phase,
 		derived: getAll(state.currentHero),
 		sum: getSum(attributes)
 	};

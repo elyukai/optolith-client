@@ -82,6 +82,11 @@ export type LOAD_HERO = 'LOAD_HERO';
 export const DUPLICATE_HERO = 'DUPLICATE_HERO';
 export type DUPLICATE_HERO = 'DUPLICATE_HERO';
 
+export type UNDO = 'UNDO';
+export const UNDO = 'UNDO';
+export type REDO = 'REDO';
+export const REDO = 'REDO';
+
 export const REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
 export type REQUEST_HERO_DATA = 'REQUEST_HERO_DATA';
 export const RECEIVE_HERO_DATA = 'RECEIVE_HERO_DATA';

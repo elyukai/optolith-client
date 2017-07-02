@@ -310,10 +310,13 @@ export function getFullName(obj: string | ActiveViewObject): string {
 	return name;
 }
 
-export function getGroupIndex(state: DependentInstancesState, obj: ActivatableInstance): 0 | 1 | 2 {
+export function isMagicalOrBlessed(state: DependentInstancesState, obj: ActivatableInstance) {
 	const isBlessed = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && isRequiringActivatable(state, e) && !!e.active);
 	const isMagical = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && isRequiringActivatable(state, e) && !!e.active);
-	return isBlessed ? 2 : isMagical ? 1 : 0;
+	return {
+		isBlessed,
+		isMagical
+	};
 }
 
 export function getSecondSidMap(entry: ActivatableInstance): Map<string, (string | number)[]> {

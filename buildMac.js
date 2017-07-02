@@ -1,4 +1,5 @@
 const packager = require('electron-packager');
+const { sep } = require('path');
 
 const options = {
 	dir: '.',

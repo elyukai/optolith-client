@@ -1,5 +1,4 @@
-import { LocaleStore } from '../stores/LocaleStore';
-import { translate } from './I18n';
+import { getLocale, translate } from './I18n';
 
 interface Data {
 	ap?: number;
@@ -42,12 +41,12 @@ export function filterSex(list: NameBySexData[], filterText: string, addProperty
 	return list;
 }
 
-export const sortByName = (a: PlainNameData, b: PlainNameData) => a.name.localeCompare(b.name, LocaleStore.getLocale());
+export const sortByName = (a: PlainNameData, b: PlainNameData) => a.name.localeCompare(b.name, getLocale());
 
 export const sortByNameSex = (a: NameBySexData, b: NameBySexData) => {
 	const an = typeof a.name === 'object' ? a.name[SEX] : a.name;
 	const bn = typeof b.name === 'object' ? b.name[SEX] : b.name;
-	return an.localeCompare(bn, LocaleStore.getLocale());
+	return an.localeCompare(bn, getLocale());
 };
 
 export const sortByCost = (a: PlainNameData, b: PlainNameData) => a.ap! < b.ap! ? -1 : a.ap! > b.ap! ? 1 : sortByName(a, b);
@@ -72,7 +71,7 @@ let GROUPS: string[];
 export const sortByGroupName = (a: PlainNameData, b: PlainNameData) => {
 	const agr = GROUPS[a.gr! - 1];
 	const bgr = GROUPS[b.gr! - 1];
-	return agr.localeCompare(bgr, LocaleStore.getLocale()) || sortByName(a, b);
+	return agr.localeCompare(bgr, getLocale()) || sortByName(a, b);
 };
 
 export const sortByIC = (a: PlainNameData, b: PlainNameData) => a.ic! < b.ic! ? -1 : a.ic! > b.ic! ? 1 : sortByName(a, b);
@@ -92,7 +91,7 @@ export const sortByPrice = (a: PlainNameData, b: PlainNameData) => a.price! < b.
 
 export const sortByWeight = (a: PlainNameData, b: PlainNameData) => a.weight! < b.weight! ? -1 : a.weight! > b.weight! ? 1 : sortByName(a, b);
 
-export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where!.localeCompare(b.where!, LocaleStore.getLocale()) || sortByName(a, b);
+export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where!.localeCompare(b.where!, getLocale()) || sortByName(a, b);
 
 export function sort<T extends PlainNameData>(list: T[], sortOrder: string = 'name', option?: string[]): T[] {
 	if (Array.isArray(option)) {

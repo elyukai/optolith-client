@@ -561,5 +561,15 @@
 	"musictraditions": ["Ceoladir", "Derwish", "Sangara"],
 	"dancetraditions": ["Hazaqi", "Marjuna", "Rahkisa", "Sharisad"],
 	"notenoughap.title": "Not enough AP",
-	"notenoughap.content": "You need more AP than currently available!"
+	"notenoughap.content": "You need more AP than currently available!",
+	"reachedaplimit.title": "Reached limit for {0}",
+	"reachedaplimit.content": "You can not spent more than 80 AP for {0}!",
+	"reachedaplimit.advantages": "advantages",
+	"reachedaplimit.disadvantages": "disadvantages",
+	"reachedcategoryaplimit.title": "Reached limit for {0}",
+	"reachedcategoryaplimit.content": "You can not spent more than {0} AP for {1}!",
+	"reachedcategoryaplimit.magicaladvantages": "magical advantages",
+	"reachedcategoryaplimit.blessedadvantages": "blessed advantages",
+	"reachedcategoryaplimit.magicaldisadvantages": "magical disadvantages",
+	"reachedcategoryaplimit.blesseddisadvantages": "blessed disadvantages"
 }

@@ -1,9 +1,8 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { store } from '../stores/AppStore';
 import { getDiffCost } from '../utils/RCPUtils';
 
-export interface SelectCultureAction extends Action {
+export interface SelectCultureAction {
 	type: ActionTypes.SELECT_CULTURE;
 	payload: {
 		id: string;
@@ -20,10 +19,10 @@ export const selectCulture = (id: string) => AppDispatcher.dispatch<SelectCultur
 });
 
 export function _selectCulture(id: string): SelectCultureAction {
-	const { dependent, rcp: { profession, professionVariant } } = store.getState().currentHero;
+	const { dependent, rcp: { profession, professionVariant } } = store.getState().currentHero.present;
 	const professionDiff = getDiffCost(dependent, profession);
 	const professionVariantDiff = getDiffCost(dependent, professionVariant);
-	const cost = (professionDiff + professionVariantDiff) * -1;
+	const cost = professionDiff + professionVariantDiff;
 	return {
 		type: ActionTypes.SELECT_CULTURE,
 		payload: {
@@ -33,7 +32,7 @@ export function _selectCulture(id: string): SelectCultureAction {
 	};
 }
 
-export interface SetCulturesSortOrderAction extends Action {
+export interface SetCulturesSortOrderAction {
 	type: ActionTypes.SET_CULTURES_SORT_ORDER;
 	payload: {
 		sortOrder: string;
@@ -56,7 +55,7 @@ export function _setSortOrder(sortOrder: string): SetCulturesSortOrderAction {
 	};
 }
 
-export interface SetCulturesVisibilityFilterAction extends Action {
+export interface SetCulturesVisibilityFilterAction {
 	type: ActionTypes.SET_CULTURES_VISIBILITY_FILTER;
 	payload: {
 		filter: string;
@@ -79,7 +78,7 @@ export function _setVisibilityFilter(filter: string): SetCulturesVisibilityFilte
 	};
 }
 
-export interface SwitchCultureValueVisibilityAction extends Action {
+export interface SwitchCultureValueVisibilityAction {
 	type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY;
 }
 

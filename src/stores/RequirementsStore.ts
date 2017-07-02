@@ -283,7 +283,7 @@ class RequirementsStoreStatic extends Store {
 			const { adv, disadv, spent, total } = APStore.getAll();
 			const add = entry.category === Categories.ADVANTAGES;
 			const target = () => add ? adv : disadv;
-			const index = ActivatableUtils.getGroupIndex(entry);
+			const index = ActivatableUtils.isMagicalOrBlessed(entry);
 
 			const validDisAdv = checkDisAdvantages(cost, index, target(), spent, total, add);
 

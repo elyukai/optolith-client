@@ -3,19 +3,17 @@ import * as Categories from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import { getDSids, getSecondSidMap, getSelectionItem, getSelectionName, getSids, isActivatable, isActive, isDeactivatable } from '../utils/ActivatableUtils';
-import { translate } from '../utils/I18n';
 import { sort } from '../utils/FilterSortUtils';
+import { translate } from '../utils/I18n';
 import { getTraditionOfAspect } from '../utils/LiturgyUtils';
 import { validate } from '../utils/RequirementUtils';
-import { APStore } from './APStore';
-import { ELStore } from './ELStore';
-import { get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './ListStore';
+import { DependentInstancesState, get, getAllByCategory, getAllByCategoryGroup, getObjByCategory } from './dependentInstances';
 
-export function getForSave(): { [id: string]: Data.ActiveObject[] } {
+export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
 	const allEntries = [
-		...getAllByCategory(Categories.ADVANTAGES) as Data.AdvantageInstance[],
-		...getAllByCategory(Categories.DISADVANTAGES) as Data.DisadvantageInstance[],
-		...getAllByCategory(Categories.SPECIAL_ABILITIES) as Data.SpecialAbilityInstance[],
+		...getAllByCategory(state, Categories.ADVANTAGES) as Data.AdvantageInstance[],
+		...getAllByCategory(state, Categories.DISADVANTAGES) as Data.DisadvantageInstance[],
+		...getAllByCategory(state, Categories.SPECIAL_ABILITIES) as Data.SpecialAbilityInstance[],
 	];
 	return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
 }

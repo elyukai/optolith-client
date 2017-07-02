@@ -69,8 +69,6 @@ export interface HeroBase {
 	readonly belongings: {
 		items: ToListById<ItemInstance>;
 		armorZones: ToListById<ArmorZonesInstance>;
-		equipment: object;
-		pet: object;
 		purse: {
 			d: string;
 			s: string;
@@ -79,12 +77,11 @@ export interface HeroBase {
 		};
 	};
 	readonly rules: Rules;
-	readonly history: HistoryObject[];
 	readonly pets: ToListById<PetInstance>;
 }
 
 export interface Hero extends HeroBase {
-	readonly id?: string;
+	readonly id: string;
 	readonly dateCreated: Date;
 	readonly dateModified: Date;
 	player?: string;
@@ -92,8 +89,8 @@ export interface Hero extends HeroBase {
 
 export interface HeroForSave extends HeroBase {
 	id?: string;
-	dateCreated: Date;
-	dateModified: Date;
+	dateCreated?: Date;
+	dateModified?: Date;
 }
 
 export interface User {

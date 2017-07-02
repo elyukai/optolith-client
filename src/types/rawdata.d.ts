@@ -1,5 +1,6 @@
 import * as Data from './data.d';
 import * as Reusable from './reusable.d';
+import * as UI from './ui.d';
 
 export interface RawHero extends Data.HeroBase {
 	readonly id: string;
@@ -315,7 +316,7 @@ export interface RawTables {
 }
 
 export interface RawLocale {
-	ui: Data.UILocale;
+	ui: UI.UIMessages;
 	el: Data.ToListById<RawExperienceLevelLocale>;
 	attributes: Data.ToListById<RawAttributeLocale>;
 	races: Data.ToListById<RawRaceLocale>;

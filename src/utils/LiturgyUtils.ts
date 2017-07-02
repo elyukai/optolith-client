@@ -1,29 +1,30 @@
-import { ELStore } from '../stores/ELStore';
-import { get } from '../stores/ListStore';
-import { LiturgiesStore } from '../stores/LiturgiesStore';
-import { PhaseStore } from '../stores/PhaseStore';
+import { LITURGIES } from '../constants/Categories';
+import { CurrentHeroState } from '../reducers/currentHero';
+import { DependentInstancesState, get, getAllByCategory } from '../reducers/dependentInstances';
+import { getStart } from '../reducers/el';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
-export function isOwnTradition(obj: LiturgyInstance | BlessingInstance): boolean {
-	const SA = get('SA_102') as SpecialAbilityInstance;
+export function isOwnTradition(state: DependentInstancesState, obj: LiturgyInstance | BlessingInstance): boolean {
+	const SA = get(state, 'SA_102') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
 
-export function isIncreasable(obj: LiturgyInstance): boolean {
+export function isIncreasable(state: CurrentHeroState, obj: LiturgyInstance): boolean {
+	const { dependent } = state;
 	let max = 0;
-	const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
+	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
 
-	if (PhaseStore.get() < 3) {
-		max = ELStore.getStart().maxSkillRating;
+	if (state.phase < 3) {
+		max = getStart(state.el).maxSkillRating;
 	}
 	else {
-		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
+		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(dependent, attr) as AttributeInstance).value);
 		max = Math.max(...checkValues) + 2;
 	}
 
-	const tradition = get('SA_102') as SpecialAbilityInstance;
-	const aspectKnowledge = get('SA_103') as SpecialAbilityInstance;
+	const tradition = get(dependent, 'SA_102') as SpecialAbilityInstance;
+	const aspectKnowledge = get(dependent, 'SA_103') as SpecialAbilityInstance;
 	if (!getSids(aspectKnowledge).some(e => obj.aspects.includes(e as number)) && !getSids(tradition).includes(13)) {
 		max = Math.min(14, max);
 	}
@@ -31,13 +32,36 @@ export function isIncreasable(obj: LiturgyInstance): boolean {
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(obj: LiturgyInstance): boolean {
-	if ((get('SA_103') as SpecialAbilityInstance).active.includes(obj.aspects)) {
-		const counter = LiturgiesStore.getAspectCounter();
-
-		return !(counter.get(obj.aspects) <= 3 && obj.value <= 10 && obj.gr !== 5);
+export function isDecreasable(state: CurrentHeroState, obj: LiturgyInstance): boolean {
+	const { dependent } = state;
+	const activeAspectKnowledge = getSids(get(dependent, 'SA_103') as SpecialAbilityInstance);
+	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {
+		const counter = getAspectCounter(dependent);
+		const countedLowestWithProperty = obj.aspects.reduce((n, aspect) => {
+			const counted = counter.get(aspect);
+			if (activeAspectKnowledge.includes(aspect) && typeof counted === 'number') {
+				return Math.min(counted, n);
+			}
+			return n;
+		}, 4);
+		return !(countedLowestWithProperty <= 3 && obj.value <= 10 && obj.gr !== 5);
 	}
 	return true;
+}
+
+export function getAspectCounter(state: DependentInstancesState) {
+	return (getAllByCategory(state, LITURGIES) as LiturgyInstance[]).filter(e => e.value >= 10).reduce((a, b) => {
+		for (const aspect of b.aspects) {
+			const existing = a.get(aspect);
+			if (typeof existing === 'number') {
+				a.set(aspect, existing + 1);
+			}
+			else {
+				a.set(aspect, 1);
+			}
+		}
+		return a;
+	}, new Map<number, number>());
 }
 
 export function reset(obj: LiturgyInstance): LiturgyInstance {
