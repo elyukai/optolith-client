@@ -1,12 +1,11 @@
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
-import { get } from '../stores/ListStore';
 import { TalentsStore } from '../stores/TalentsStore';
-import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import { translate } from '../utils/I18n';
 import { sort } from '../utils/FilterSortUtils';
-import { getRoman } from '../utils/roman';
+import { translate } from '../utils/I18n';
+import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -25,6 +24,7 @@ interface Props {
 	isUntypical?: boolean;
 	hideGroup?: boolean;
 	addToList(args: ActivateArgs): void;
+	get(id: string): Instance | undefined;
 }
 
 interface State {
@@ -70,10 +70,9 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 	}
 
 	render() {
-		const { item, isImportant, isTypical, isUntypical, hideGroup } = this.props;
-		const { id, name, cost, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
+		const { get, item, isImportant, isTypical, isUntypical, hideGroup } = this.props;
+		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
-		const { category, gr } = get(id) as ActivatableInstance;
 		const { input: inputText, selected, selected2, selectedTier } = this.state;
 		let sel2: SelectionObject[] | undefined;
 

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { EnergyWithLoss, SecondaryAttribute } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
 import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 
 export interface AttributesPermanentListProps {
 	derived: SecondaryAttribute[];
+	locale: UIMessages;
 	phase: number;
 	addBoughtBackAEPoint(): void;
 	removeBoughtBackAEPoint(): void;
@@ -28,8 +30,8 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 				<AttributesPermanentListItem
 					{...props}
 					id="AE"
-					label={translate('attributes.pae.short')}
-					name={translate('attributes.pae.name')}
+					label={_translate(props.locale, 'attributes.pae.short')}
+					name={_translate(props.locale, 'attributes.pae.name')}
 					boughtBack={AE.permanentRedeemed}
 					lost={AE.permanentLost}
 					addBoughtBack={props.addBoughtBackAEPoint}
@@ -40,8 +42,8 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 				<AttributesPermanentListItem
 					{...props}
 					id="KP"
-					label={translate('attributes.pkp.short')}
-					name={translate('attributes.pkp.name')}
+					label={_translate(props.locale, 'attributes.pkp.short')}
+					name={_translate(props.locale, 'attributes.pkp.name')}
 					boughtBack={KP.permanentRedeemed}
 					lost={KP.permanentLost}
 					addBoughtBack={props.addBoughtBackKPPoint}

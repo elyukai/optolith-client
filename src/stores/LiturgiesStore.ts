@@ -3,7 +3,7 @@ import { UndoTriggerActions } from '../actions/HistoryActions';
 import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction, SetLiturgiesSortOrderAction } from '../actions/LiturgiesActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { BlessingInstance, LiturgyInstance } from '../types/data.d';
 import { ELStore } from './ELStore';
 import { getAllByCategory, ListStore } from './ListStore';
@@ -16,47 +16,6 @@ class LiturgiesStoreStatic extends Store {
 	private readonly category = Categories.LITURGIES;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			if (action.undo) {
-				switch (action.type) {
-					case ActionTypes.ACTIVATE_LITURGY:
-					case ActionTypes.DEACTIVATE_LITURGY:
-					case ActionTypes.ADD_LITURGY_POINT:
-					case ActionTypes.REMOVE_LITURGY_POINT:
-						break;
-
-					default:
-						return true;
-				}
-			}
-			else {
-				switch (action.type) {
-					case ActionTypes.RECEIVE_INITIAL_DATA:
-						this.updateSortOrder(action.payload.config.liturgiesSortOrder);
-						break;
-
-					case ActionTypes.ACTIVATE_LITURGY:
-					case ActionTypes.DEACTIVATE_LITURGY:
-					case ActionTypes.ADD_LITURGY_POINT:
-					case ActionTypes.REMOVE_LITURGY_POINT:
-						break;
-
-					case ActionTypes.SET_LITURGIES_SORT_ORDER:
-						this.updateSortOrder(action.payload.sortOrder);
-						break;
-
-					default:
-						return true;
-				}
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		return getAllByCategory(this.category) as LiturgyInstance[];

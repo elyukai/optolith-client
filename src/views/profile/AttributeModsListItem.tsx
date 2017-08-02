@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { AttributeInstance } from '../../types/data.d';
+import { Attribute } from '../../types/view.d';
 
-export function AttributeModsListItem(props: AttributeInstance) {
+export function AttributeModsListItem(props: Attribute) {
 	const { id, short, value } = props;
 	return (
 		<tr className={id}>

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as CombatTechniquesActions from '../../actions/CombatTechniquesActions';
 import { List } from '../../components/List';
 import { ListItemGroup } from '../../components/ListItemGroup';
 import { Options } from '../../components/Options';
@@ -7,66 +6,64 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { CombatTechniquesStore } from '../../stores/CombatTechniquesStore';
-import { get } from '../../stores/ListStore';
-import { PhaseStore } from '../../stores/PhaseStore';
-import { AttributeInstance, CombatTechniqueInstance, InputTextEvent } from '../../types/data.d';
+import { CurrentHeroInstanceState } from '../../reducers/currentHero';
+import { AttributeInstance, CombatTechniqueInstance, InputTextEvent, Instance, SecondaryAttribute } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
 import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
-import { translate } from '../../utils/I18n';
+import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSort } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 import { SkillListItem } from './SkillListItem';
 
-interface State {
-	combattechniques: CombatTechniqueInstance[];
-	filterText: string;
-	phase: number;
-	sortOrder: string;
+export interface CombatTechniquesOwnProps {
+	locale: UIMessages;
 }
 
-export class CombatTechniques extends React.Component<{}, State> {
+export interface CombatTechniquesStateProps {
+	currentHero: CurrentHeroInstanceState;
+	list: CombatTechniqueInstance[];
+	phase: number;
+	sortOrder: string;
+	get(id: string): Instance | undefined;
+	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
+}
+
+export interface CombatTechniquesDispatchProps {
+	setSortOrder(sortOrder: string): void;
+	addPoint(id: string): void;
+	removePoint(id: string): void;
+}
+
+export type CombatTechniquesProps = CombatTechniquesStateProps & CombatTechniquesDispatchProps & CombatTechniquesOwnProps;
+
+export interface CombatTechniquesState {
+	filterText: string;
+}
+
+export class CombatTechniques extends React.Component<CombatTechniquesProps, CombatTechniquesState> {
 	state = {
-		combattechniques: CombatTechniquesStore.getAll(),
-		filterText: '',
-		phase: PhaseStore.get(),
-		sortOrder: CombatTechniquesStore.getSortOrder(),
+		filterText: ''
 	};
 
-	_updateCombatTechniquesStore = () => {
-		this.setState({
-			combattechniques: CombatTechniquesStore.getAll(),
-			sortOrder: CombatTechniquesStore.getSortOrder(),
-		} as State);
-	}
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => CombatTechniquesActions.setSortOrder(option);
-	addPoint = (id: string) => CombatTechniquesActions.addPoint(id);
-	removePoint = (id: string) => CombatTechniquesActions.removePoint(id);
-
-	componentDidMount() {
-		CombatTechniquesStore.addChangeListener(this._updateCombatTechniquesStore );
-	}
-
-	componentWillUnmount() {
-		CombatTechniquesStore.removeChangeListener(this._updateCombatTechniquesStore );
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
 
 	render() {
-		const { combattechniques, filterText, phase, sortOrder } = this.state;
+		const { addPoint, currentHero, get, getDerivedCharacteristic, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
+		const { filterText } = this.state;
 
-		const list = filterAndSort(combattechniques, filterText, sortOrder);
+		const list = filterAndSort(rawlist, filterText, sortOrder);
 
 		return (
 			<Page id="combattechniques">
 				<Options>
-					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
-						onClick={this.sort}
+						onClick={setSortOrder}
 						array={[
-							{ name: translate('options.sortorder.alphabetically'), value: 'name' },
-							{ name: translate('options.sortorder.group'), value: 'group' },
-							{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
+							{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
+							{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
+							{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 						]}
 						/>
 				</Options>
@@ -84,18 +81,20 @@ export class CombatTechniques extends React.Component<{}, State> {
 										sr={obj.value}
 										ic={obj.ic}
 										checkDisabled
-										addPoint={this.addPoint.bind(null, obj.id)}
-										addDisabled={!isIncreasable(obj)}
-										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!isDecreasable(obj)}
+										addPoint={addPoint.bind(null, obj.id)}
+										addDisabled={!isIncreasable(currentHero, obj)}
+										removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!isDecreasable(currentHero, obj)}
 										addValues={[
 											{ className: primaryClassName, value: primary },
-											{ className: 'at', value: getAt(obj) },
+											{ className: 'at', value: getAt(currentHero.dependent, obj) },
 											{ className: 'atpa' },
-											{ className: 'pa', value: getPa(obj) },
+											{ className: 'pa', value: getPa(currentHero.dependent, obj) },
 										]}
+										get={get}
+										getDerivedCharacteristic={getDerivedCharacteristic}
 										>
-										<ListItemGroup list={translate('combattechniques.view.groups')} index={obj.gr} />
+										<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
 									</SkillListItem>
 								);
 							})

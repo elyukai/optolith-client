@@ -1,181 +1,175 @@
 import * as React from 'react';
-import * as ProfileActions from '../../actions/ProfileActions';
 import { Dropdown } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
+import { ProfileState } from '../../reducers/profile';
 import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { UIMessages } from '../../types/ui.d';
 import { sort } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 
-interface Props {
-	age?: string;
-	characteristics?: string;
-	culture: CultureInstance;
-	cultureAreaKnowledge?: string;
-	dateofbirth?: string;
-	eyecolor?: number;
+export interface OverviewPersonalDataOwnProps {
+	culture: CultureInstance | undefined;
 	eyecolorTags: string[];
-	family?: string;
-	haircolor?: number;
 	haircolorTags: string[];
-	otherinfo?: string;
-	placeofbirth?: string;
-	race: RaceInstance;
-	size?: string;
-	socialstatus?: number;
+	locale: UIMessages;
+	profile: ProfileState;
+	race: RaceInstance | undefined;
 	socialstatusTags: string[];
-	title?: string;
-	weight?: string;
 }
 
-export class OverviewPersonalData extends React.Component<Props, undefined> {
-	changeFamily = (e: InputTextEvent) => ProfileActions.setFamily(e.target.value as string);
-	changePlaceOfBirth = (e: InputTextEvent) => ProfileActions.setPlaceOfBirth(e.target.value as string);
-	changeDateOfBirth = (e: InputTextEvent) => ProfileActions.setDateOfBirth(e.target.value as string);
-	changeAge = (e: InputTextEvent) => ProfileActions.setAge(e.target.value as string);
-	changeHaircolor = (result: number) => ProfileActions.setHairColor(result);
-	changeEyecolor = (result: number) => ProfileActions.setEyeColor(result);
-	changeSize = (e: InputTextEvent) => ProfileActions.setSize(e.target.value as string);
-	changeWeight = (e: InputTextEvent) => ProfileActions.setWeight(e.target.value as string);
-	changeTitle = (e: InputTextEvent) => ProfileActions.setTitle(e.target.value as string);
-	changeSocialStatus = (result: number) => ProfileActions.setSocialStatus(result);
-	changeCharacteristics = (e: InputTextEvent) => ProfileActions.setCharacteristics(e.target.value as string);
-	changeOtherInfo = (e: InputTextEvent) => ProfileActions.setOtherInfo(e.target.value as string);
-	changeCultureAreaKnowledge = (e: InputTextEvent) => ProfileActions.setCultureAreaKnowledge(e.target.value as string);
+export interface OverviewPersonalDataDispatchProps {
+	changeFamily(event: InputTextEvent): void;
+	changePlaceOfBirth(event: InputTextEvent): void;
+	changeDateOfBirth(event: InputTextEvent): void;
+	changeAge(event: InputTextEvent): void;
+	changeHaircolor(result: number): void;
+	changeEyecolor(result: number): void;
+	changeSize(event: InputTextEvent): void;
+	changeWeight(event: InputTextEvent): void;
+	changeTitle(event: InputTextEvent): void;
+	changeSocialStatus(result: number): void;
+	changeCharacteristics(event: InputTextEvent): void;
+	changeOtherInfo(event: InputTextEvent): void;
+	changeCultureAreaKnowledge(event: InputTextEvent): void;
+	rerollHair(): void;
+	rerollEyes(): void;
+	rerollSize(): void;
+	rerollWeight(): void;
+}
 
-	rerollHair = () => ProfileActions.rerollHairColor();
-	rerollEyes = () => ProfileActions.rerollEyeColor();
-	rerollSize = () => ProfileActions.rerollSize();
-	rerollWeight = () => ProfileActions.rerollWeight();
+export type OverviewPersonalDataProps = OverviewPersonalDataDispatchProps & OverviewPersonalDataOwnProps;
 
-	render() {
-		const {
+export function OverviewPersonalData(props: OverviewPersonalDataProps) {
+	const {
+		culture,
+		eyecolorTags,
+		haircolorTags,
+		locale,
+		profile: {
 			age = '',
 			characteristics = '',
-			culture,
 			cultureAreaKnowledge,
 			eyecolor,
-			eyecolorTags,
 			dateofbirth = '',
 			family = '',
 			haircolor,
-			haircolorTags,
 			otherinfo = '',
 			placeofbirth = '',
-			race,
 			size = '',
 			socialstatus,
-			socialstatusTags,
 			title = '',
 			weight = ''
-		} = this.props;
+		},
+		race,
+		socialstatusTags
+	} = props;
 
-		const hairArr = race ? sort(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id))) : [];
-		const eyesArr = race ? sort(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id))) : [];
-		const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
+	const hairArr = race ? sort(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id))) : [];
+	const eyesArr = race ? sort(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id))) : [];
+	const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
 
-		return (
-			<div className="personal-data">
-				<div>
-					<TextField
-						label={translate('personaldata.family')}
-						value={family}
-						onChange={this.changeFamily}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.placeofbirth')}
-						value={placeofbirth}
-						onChange={this.changePlaceOfBirth}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.dateofbirth')}
-						value={dateofbirth}
-						onChange={this.changeDateOfBirth}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.age')}
-						value={age}
-						onChange={this.changeAge}
-						/>
-				</div>
-				<InputButtonGroup className="reroll">
-					<Dropdown
-						label={translate('personaldata.haircolor')}
-						value={haircolor}
-						onChange={this.changeHaircolor}
-						options={hairArr}
-						/>
-					<IconButton icon="&#xEB40;" onClick={this.rerollHair} />
-				</InputButtonGroup>
-				<InputButtonGroup className="reroll">
-					<Dropdown
-						label={translate('personaldata.eyecolor')}
-						value={eyecolor}
-						onChange={this.changeEyecolor}
-						options={eyesArr}
-						/>
-					<IconButton icon="&#xEB40;" onClick={this.rerollEyes} />
-				</InputButtonGroup>
-				<InputButtonGroup className="reroll">
-					<TextField
-						label={translate('personaldata.size')}
-						value={size}
-						onChange={this.changeSize}
-						/>
-					<IconButton icon="&#xEB40;" onClick={this.rerollSize} />
-				</InputButtonGroup>
-				<InputButtonGroup className="reroll">
-					<TextField
-						label={translate('personaldata.weight')}
-						value={weight}
-						onChange={this.changeWeight}
-						/>
-					<IconButton icon="&#xEB40;" onClick={this.rerollWeight} />
-				</InputButtonGroup>
-				<div>
-					<TextField
-						label={translate('personaldata.title')}
-						value={title}
-						onChange={this.changeTitle}
-						/>
-				</div>
-				<div>
-					<Dropdown
-						label={translate('personaldata.socialstatus')}
-						value={socialstatus}
-						onChange={this.changeSocialStatus}
-						options={socialArr}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.characteristics')}
-						value={characteristics}
-						onChange={this.changeCharacteristics}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.otherinfo')}
-						value={otherinfo}
-						onChange={this.changeOtherInfo}
-						/>
-				</div>
-				<div>
-					<TextField
-						label={translate('personaldata.cultureareaknowledge')}
-						value={cultureAreaKnowledge}
-						onChange={this.changeCultureAreaKnowledge}
-						/>
-				</div>
+	return (
+		<div className="personal-data">
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.family')}
+					value={family}
+					onChange={props.changeFamily}
+					/>
 			</div>
-		);
-	}
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.placeofbirth')}
+					value={placeofbirth}
+					onChange={props.changePlaceOfBirth}
+					/>
+			</div>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.dateofbirth')}
+					value={dateofbirth}
+					onChange={props.changeDateOfBirth}
+					/>
+			</div>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.age')}
+					value={age}
+					onChange={props.changeAge}
+					/>
+			</div>
+			<InputButtonGroup className="reroll">
+				<Dropdown
+					label={_translate(locale, 'personaldata.haircolor')}
+					value={haircolor}
+					onChange={props.changeHaircolor}
+					options={hairArr}
+					/>
+				<IconButton icon="&#xEB40;" onClick={props.rerollHair} />
+			</InputButtonGroup>
+			<InputButtonGroup className="reroll">
+				<Dropdown
+					label={_translate(locale, 'personaldata.eyecolor')}
+					value={eyecolor}
+					onChange={props.changeEyecolor}
+					options={eyesArr}
+					/>
+				<IconButton icon="&#xEB40;" onClick={props.rerollEyes} />
+			</InputButtonGroup>
+			<InputButtonGroup className="reroll">
+				<TextField
+					label={_translate(locale, 'personaldata.size')}
+					value={size}
+					onChange={props.changeSize}
+					/>
+				<IconButton icon="&#xEB40;" onClick={props.rerollSize} />
+			</InputButtonGroup>
+			<InputButtonGroup className="reroll">
+				<TextField
+					label={_translate(locale, 'personaldata.weight')}
+					value={weight}
+					onChange={props.changeWeight}
+					/>
+				<IconButton icon="&#xEB40;" onClick={props.rerollWeight} />
+			</InputButtonGroup>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.title')}
+					value={title}
+					onChange={props.changeTitle}
+					/>
+			</div>
+			<div>
+				<Dropdown
+					label={_translate(locale, 'personaldata.socialstatus')}
+					value={socialstatus}
+					onChange={props.changeSocialStatus}
+					options={socialArr}
+					/>
+			</div>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.characteristics')}
+					value={characteristics}
+					onChange={props.changeCharacteristics}
+					/>
+			</div>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.otherinfo')}
+					value={otherinfo}
+					onChange={props.changeOtherInfo}
+					/>
+			</div>
+			<div>
+				<TextField
+					label={_translate(locale, 'personaldata.cultureareaknowledge')}
+					value={cultureAreaKnowledge}
+					onChange={props.changeCultureAreaKnowledge}
+					/>
+			</div>
+		</div>
+	);
 }

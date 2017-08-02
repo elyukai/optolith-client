@@ -1,10 +1,10 @@
-import { CurrentHeroState } from '../reducers/currentHero';
-import { get } from '../reducers/dependentInstances';
-import { getStart } from '../reducers/el';
-import { AdvantageInstance, AttributeInstance, CultureInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { get } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
+import { AdvantageInstance, AttributeInstance, CultureInstance, RequirementObject, SpecialAbilityInstance, TalentInstance, ToListById } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
 
-export function isIncreasable(state: CurrentHeroState, obj: TalentInstance): boolean {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {
 	const { dependent } = state;
 	let max = 0;
 	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
@@ -19,7 +19,7 @@ export function isIncreasable(state: CurrentHeroState, obj: TalentInstance): boo
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(state: CurrentHeroState, obj: TalentInstance): boolean {
+export function isDecreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {
 	const { dependent } = state;
 	const SA_18_REQ = isActive(get(dependent, 'SA_18') as SpecialAbilityInstance) && (get(dependent, 'TAL_51') as TalentInstance).value + (get(dependent, 'TAL_55') as TalentInstance).value < 12;
 
@@ -39,14 +39,12 @@ export function isDecreasable(state: CurrentHeroState, obj: TalentInstance): boo
 	return (['TAL_51', 'TAL_55'].includes(obj.id) && SA_18_REQ) || obj.value > Math.max(0, ...dependencies);
 }
 
-export function isTyp(state: CurrentHeroState, obj: TalentInstance): boolean {
-	const culture = typeof state.rcp.culture === 'string' && get(state.dependent, state.rcp.culture) as CultureInstance;
-	return typeof culture === 'object' && culture.typicalTalents.includes(obj.id);
+export function isTyp(rating: ToListById<string>, obj: TalentInstance): boolean {
+	return rating[obj.id] === 'TYP';
 }
 
-export function isUntyp(state: CurrentHeroState, obj: TalentInstance): boolean {
-	const culture = typeof state.rcp.culture === 'string' && get(state.dependent, state.rcp.culture) as CultureInstance;
-	return typeof culture === 'object' && culture.untypicalTalents.includes(obj.id);
+export function isUntyp(rating: ToListById<string>, obj: TalentInstance): boolean {
+	return rating[obj.id] === 'UNTYP';
 }
 
 export function reset(obj: TalentInstance): TalentInstance {
@@ -55,4 +53,15 @@ export function reset(obj: TalentInstance): TalentInstance {
 		dependencies: [],
 		value: 0,
 	};
+}
+
+export function getRoutineValue(sr: number, attributeValues: number[]): [number, boolean] | undefined {
+	if (sr > 0 ) {
+		const lessAttrPoints = attributeValues.map(e => e < 13 ? 13 - e : 0).reduce((a, b) => a + b, 0);
+		const flatRoutineLevel = Math.floor((sr - 1) / 3);
+		const checkMod = flatRoutineLevel * -1 + 3;
+		const dependentCheckMod = checkMod + lessAttrPoints;
+		return dependentCheckMod < 4 ? [ dependentCheckMod, lessAttrPoints > 0 ] as [number, boolean] : undefined;
+	}
+	return;
 }

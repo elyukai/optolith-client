@@ -2,7 +2,7 @@ import { AddArmorZonesAction, AddItemAction, RemoveArmorZonesAction, RemoveItemA
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { ArmorZonesInstance, ItemInstance, ToListById } from '../types/data.d';
+import { ArmorZonesInstance, ItemInstance } from '../types/data.d';
 import { mergeIntoList, removeListItem, setListItem } from '../utils/ListUtils';
 
 type Action = AddItemAction | RemoveItemAction | SetItemAction | LoadHeroAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | SetArmorZonesAction | CreateHeroAction;
@@ -11,12 +11,14 @@ export interface EquipmentState {
 	items: Map<string, ItemInstance>;
 	itemTemplates: Map<string, ItemInstance>;
 	armorZones: Map<string, ArmorZonesInstance>;
-	purse: {
-		d: string;
-		h: string;
-		k: string;
-		s: string;
-	};
+	purse: Purse;
+}
+
+export interface Purse {
+	d: string;
+	h: string;
+	k: string;
+	s: string;
 }
 
 const initialState: EquipmentState = {
@@ -33,9 +35,6 @@ const initialState: EquipmentState = {
 
 export function equipment(state: EquipmentState = initialState, action: Action): EquipmentState {
 	switch (action.type) {
-		case ActionTypes.RECEIVE_INITIAL_DATA:
-			throw new Error();
-
 		case ActionTypes.CREATE_HERO:
 			return clear();
 
@@ -61,7 +60,7 @@ export function equipment(state: EquipmentState = initialState, action: Action):
 			const { id } = action.payload;
 			return {
 				...state,
-				items: removeListItem(state.items, action.payload.id),
+				items: removeListItem(state.items, id),
 				armorZones: mergeIntoList(state.armorZones, new Map([...state.armorZones].filter(([_, obj]) => {
 					return obj.head === id || obj.torso === id || obj.leftArm === id || obj.rightArm === id || obj.leftLeg === id || obj.rightLeg === id;
 				}).map(([key, obj]): [string, ArmorZonesInstance] => {
@@ -134,22 +133,5 @@ function clear(): EquipmentState {
 			k: '0',
 			s: '0'
 		}
-	};
-}
-
-export function getForSave(state: EquipmentState) {
-	const { armorZones, items, purse } = state;
-	const itemsObj: ToListById<ItemInstance> = {};
-	for (const [id, item] of items) {
-		itemsObj[id] = item;
-	}
-	const armorZonesObj: ToListById<ArmorZonesInstance> = {};
-	for (const [id, item] of armorZones) {
-		armorZonesObj[id] = item;
-	}
-	return {
-		items: itemsObj,
-		armorZones: armorZonesObj,
-		purse
 	};
 }

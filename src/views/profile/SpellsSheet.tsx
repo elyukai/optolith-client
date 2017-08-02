@@ -1,67 +1,62 @@
 import * as React from 'react';
-import * as SheetActions from '../../actions/SheetActions';
 import { Checkbox } from '../../components/Checkbox';
-import { SheetStore } from '../../stores/SheetStore';
-import { translate } from '../../utils/I18n';
-import { getAE } from '../../utils/secondaryAttributes';
+import { ActiveViewObject, CantripInstance, SecondaryAttribute } from '../../types/data.d';
+import { Attribute, Spell, UIMessages } from '../../types/view.d';
+import { _translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 import { SpellsSheetCantrips } from './SpellsSheetCantrips';
-import { SpellsSheetMain } from './SpellsSheetMain';
 import { SpellsSheetSpecialAbilities } from './SpellsSheetSpecialAbilities';
+import { SpellsSheetSpells } from './SpellsSheetSpells';
 import { SpellsSheetTraditionsProperties } from './SpellsSheetTraditionsProperties';
 
-interface State {
+export interface SpellsSheetProps {
+	attributes: Attribute[];
+	cantrips: CantripInstance[];
 	checkAttributeValueVisibility: boolean;
+	derivedCharacteristics: SecondaryAttribute[];
+	locale: UIMessages;
+	magicalPrimary: string;
+	magicalSpecialAbilities: ActiveViewObject[];
+	magicalTradition: string;
+	properties: string[];
+	spells: Spell[];
+	switchAttributeValueVisibility(): void;
 }
 
-export class SpellsSheet extends React.Component<{}, State> {
-	state = SheetStore.getAllForSpellsSheet();
+export function SpellsSheet(props: SpellsSheetProps) {
+	const { checkAttributeValueVisibility, derivedCharacteristics, locale, switchAttributeValueVisibility } = props;
+	const addHeader = [
+		{ id: 'AE_MAX', short: _translate(locale, 'charactersheet.spells.headers.aemax'), value: derivedCharacteristics.find(e => e.id === 'AE')!.value },
+		{ id: 'AE_CURRENT', short: _translate(locale, 'charactersheet.spells.headers.aecurrent') },
+	];
 
-	componentDidMount() {
-		SheetStore.addChangeListener(this.updateSheetStore);
-	}
-
-	componentWillUnmount() {
-		SheetStore.removeChangeListener(this.updateSheetStore);
-	}
-
-	render() {
-		const addHeader = [
-			{ id: 'AE_MAX', short: translate('charactersheet.spells.headers.aemax'), value: getAE().value },
-			{ id: 'AE_CURRENT', short: translate('charactersheet.spells.headers.aecurrent') },
-		];
-
-		return (
-			<SheetWrapper>
-				<SheetOptions>
-					<Checkbox
-						checked={this.state.checkAttributeValueVisibility}
-						onClick={this.switchAttributeValueVisibility}
-						>
-						{translate('charactersheet.options.showattributevalues')}
-					</Checkbox>
-				</SheetOptions>
-				<Sheet id="spells-sheet" title={translate('charactersheet.spells.title')} addHeaderInfo={addHeader}>
-					<div className="all">
-						<SpellsSheetMain attributeValueVisibility={this.state.checkAttributeValueVisibility} />
-						<AttributeMods />
-						<SpellsSheetTraditionsProperties />
-						<SpellsSheetSpecialAbilities />
-						<SpellsSheetCantrips />
-					</div>
-				</Sheet>
-			</SheetWrapper>
-		);
-	}
-
-	private switchAttributeValueVisibility = () => {
-		SheetActions.switchAttributeValueVisibility();
-	}
-
-	private updateSheetStore = () => {
-		this.setState(SheetStore.getAllForSpellsSheet());
-	}
+	return (
+		<SheetWrapper>
+			<SheetOptions>
+				<Checkbox
+					checked={checkAttributeValueVisibility}
+					onClick={switchAttributeValueVisibility}
+					>
+					{_translate(locale, 'charactersheet.options.showattributevalues')}
+				</Checkbox>
+			</SheetOptions>
+			<Sheet
+				{...props}
+				id="spells-sheet"
+				title={_translate(locale, 'charactersheet.spells.title')}
+				addHeaderInfo={addHeader}
+				>
+				<div className="all">
+					<SpellsSheetSpells {...props} />
+					<AttributeMods {...props} />
+					<SpellsSheetTraditionsProperties {...props} />
+					<SpellsSheetSpecialAbilities {...props} />
+					<SpellsSheetCantrips {...props} />
+				</div>
+			</Sheet>
+		</SheetWrapper>
+	);
 }

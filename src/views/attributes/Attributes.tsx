@@ -1,17 +1,26 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, ExperienceLevel, SecondaryAttribute } from '../../types/data.d';
-import { getSum } from '../../utils/AttributeUtils';
-import { translate } from '../../utils/I18n';
+import { SecondaryAttribute } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { AttributeWithRequirements } from '../../types/view.d';
+import { _translate } from '../../utils/I18n';
 import { AttributeCalc } from './AttributeCalc';
 import { AttributeList } from './AttributeList';
 import { AttributesPermanentList } from './AttributesPermanentList';
 
-export interface AttributesProps {
-	attributes: AttributeInstance[];
+export interface AttributesOwnProps {
+	locale: UIMessages;
+}
+
+export interface AttributesStateProps {
+	attributes: AttributeWithRequirements[];
 	derived: SecondaryAttribute[];
-	el: ExperienceLevel;
 	phase: number;
+	maxTotalAttributeValues: number;
+	sum: number;
+}
+
+export interface AttributesDispatchProps {
 	addPoint(id: string): void;
 	removePoint(id: string): void;
 	addLifePoint(): void;
@@ -29,20 +38,20 @@ export interface AttributesProps {
 	addLostKPPoints(value: number): void;
 }
 
-export function Attributes(props: AttributesProps) {
-	const { attributes, el, phase } = props;
+export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps;
 
-	const sum = getSum(attributes);
+export function Attributes(props: AttributesProps) {
+	const { locale, phase, maxTotalAttributeValues, sum } = props;
 
 	return (
 		<section id="attribute">
 			<div className="page">
 				<Scroll>
-					<div className="counter">{translate('attributes.view.attributetotal')}: {sum}{phase === 2 && ` / ${el.maxTotalAttributeValues}`}</div>
+					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{phase === 2 && ` / ${maxTotalAttributeValues}`}</div>
 					<AttributeList {...props} />
 					<div className="secondary">
-						<AttributeCalc {...props} />
-						<AttributesPermanentList {...props} />
+						<AttributeCalc {...props} locale={locale} />
+						<AttributesPermanentList {...props} locale={locale} />
 					</div>
 				</Scroll>
 			</div>

@@ -1,59 +1,129 @@
 import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
-import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
-import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { ActivateBlessingAction, ActivateLiturgyAction, AddLiturgyPointAction, DeactivateBlessingAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateCantripAction, ActivateSpellAction, AddSpellPointAction, DeactivateCantripAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
 import { addDependencies, removeDependencies } from '../utils/DependentUtils';
-import { mergeIntoList, setListItem } from '../utils/ListUtils';
+import { mergeIntoState, setStateItem } from '../utils/ListUtils';
+import { DependentInstancesState } from './dependentInstances';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | ActivateCantripAction | DeactivateCantripAction | ActivateBlessingAction | DeactivateBlessingAction;
 
-export function increasable(state: Data.AllInstancesList, action: Action): Data.AllInstancesList {
+export function increasable(state: DependentInstancesState, action: Action): DependentInstancesState {
 	switch (action.type) {
 		case ActionTypes.ACTIVATE_SPELL: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.SpellInstance | Data.CantripInstance;
-			return mergeIntoList(state, addDependencies(state, {...entry, active: true}));
+			const entry = state.spells.get(id)!;
+			return mergeIntoState(state, addDependencies(state, {...entry, active: true}));
+		}
+
+		case ActionTypes.ACTIVATE_CANTRIP: {
+			const { id } = action.payload;
+			const entry = state.cantrips.get(id)!;
+			return mergeIntoState(state, addDependencies(state, {...entry, active: true}));
 		}
 
 		case ActionTypes.ACTIVATE_LITURGY: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.LiturgyInstance | Data.BlessingInstance;
-			return setListItem(state, id, {...entry, active: true});
+			const entry = state.liturgies.get(id)!;
+			return setStateItem(state, id, {...entry, active: true});
+		}
+
+		case ActionTypes.ACTIVATE_BLESSING: {
+			const { id } = action.payload;
+			const entry = state.blessings.get(id)!;
+			return setStateItem(state, id, {...entry, active: true});
+		}
+
+		case ActionTypes.ACTIVATE_LITURGY: {
+			const { id } = action.payload;
+			const entry = state.liturgies.get(id)!;
+			return setStateItem(state, id, {...entry, active: true});
 		}
 
 		case ActionTypes.DEACTIVATE_SPELL: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.SpellInstance | Data.CantripInstance;
-			return mergeIntoList(state, removeDependencies(state, {...entry, active: false}));
+			const entry = state.spells.get(id);
+			return mergeIntoState(state, removeDependencies(state, {...entry!, active: false}));
+		}
+
+		case ActionTypes.DEACTIVATE_CANTRIP: {
+			const { id } = action.payload;
+			const entry = state.cantrips.get(id);
+			return mergeIntoState(state, removeDependencies(state, {...entry!, active: false}));
 		}
 
 		case ActionTypes.DEACTIVATE_LITURGY: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.LiturgyInstance | Data.BlessingInstance;
-			return setListItem(state, id, {...entry, active: false});
+			const entry = state.liturgies.get(id)!;
+			return setStateItem(state, id, {...entry, active: false});
 		}
 
-		case ActionTypes.ADD_ATTRIBUTE_POINT:
-		case ActionTypes.ADD_TALENT_POINT:
-		case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-		case ActionTypes.ADD_SPELL_POINT:
+		case ActionTypes.DEACTIVATE_BLESSING: {
+			const { id } = action.payload;
+			const entry = state.blessings.get(id)!;
+			return setStateItem(state, id, {...entry, active: false});
+		}
+
+		case ActionTypes.ADD_ATTRIBUTE_POINT: {
+			const { id } = action.payload;
+			const entry = state.attributes.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value + 1});
+		}
+
+		case ActionTypes.ADD_TALENT_POINT: {
+			const { id } = action.payload;
+			const entry = state.talents.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value + 1});
+		}
+
+		case ActionTypes.ADD_COMBATTECHNIQUE_POINT: {
+			const { id } = action.payload;
+			const entry = state.combatTechniques.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value + 1});
+		}
+
+		case ActionTypes.ADD_SPELL_POINT: {
+			const { id } = action.payload;
+			const entry = state.spells.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value + 1});
+		}
+
 		case ActionTypes.ADD_LITURGY_POINT: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.IncreasableInstance;
-			return setListItem(state, id, {...entry, value: entry.value + 1});
+			const entry = state.liturgies.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value + 1});
 		}
 
-		case ActionTypes.REMOVE_ATTRIBUTE_POINT:
-		case ActionTypes.REMOVE_TALENT_POINT:
-		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-		case ActionTypes.REMOVE_SPELL_POINT:
+		case ActionTypes.REMOVE_ATTRIBUTE_POINT: {
+			const { id } = action.payload;
+			const entry = state.attributes.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value - 1});
+		}
+
+		case ActionTypes.REMOVE_TALENT_POINT: {
+			const { id } = action.payload;
+			const entry = state.talents.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value - 1});
+		}
+
+		case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT: {
+			const { id } = action.payload;
+			const entry = state.combatTechniques.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value - 1});
+		}
+
+		case ActionTypes.REMOVE_SPELL_POINT: {
+			const { id } = action.payload;
+			const entry = state.spells.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value - 1});
+		}
+
 		case ActionTypes.REMOVE_LITURGY_POINT: {
 			const { id } = action.payload;
-			const entry = state.get(id) as Data.IncreasableInstance;
-			return setListItem(state, id, {...entry, value: entry.value - 1});
+			const entry = state.liturgies.get(id)!;
+			return setStateItem(state, id, {...entry, value: entry.value - 1});
 		}
 
 		default:

@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import GeminiScrollbar = require('react-gemini-scrollbar');
 import { Label } from './Label';
+import { Scroll } from './Scroll';
 
 export interface DropdownProps {
 	className?: string;
@@ -9,7 +9,7 @@ export interface DropdownProps {
 	fullWidth?: boolean;
 	hint?: string;
 	label?: string;
-	options: Array<{ id?: number | string; name: string; }>;
+	options: Array<{ id?: number | string; name: string | undefined; }>;
 	required?: boolean;
 	value?: boolean | string | number;
 	onChange?(option?: number | string): void;
@@ -81,7 +81,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 		const downElement = (
 			<div style={{ height: style }} className="down">
 				<div style={{ height: (style - 2) }}>
-					<GeminiScrollbar>
+					<Scroll noInnerElement>
 						{
 							options.map(option => {
 								const classNameInner = classNames(option.id === value && 'active');
@@ -92,7 +92,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 								);
 							})
 						}
-					</GeminiScrollbar>
+					</Scroll>
 				</div>
 			</div>
 		);

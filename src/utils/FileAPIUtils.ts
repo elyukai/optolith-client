@@ -4,9 +4,10 @@ import { join } from 'path';
 import * as FileActions from '../actions/FileActions';
 import { store } from '../stores/AppStore';
 import { ToListById } from '../types/data.d';
+import { UIMessages } from '../types/ui.d';
 import { Config, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { alert } from './alert';
-import { translate } from './I18n';
+import { translate, _translate } from './I18n';
 
 function getAppDataPath() {
 	return remote.app.getPath('userData');
@@ -51,6 +52,7 @@ export async function loadInitialData() {
 	catch (error) {
 		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadtables')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 		tables = { advantages: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadvantages: {}, el: {}, items: {}, liturgies: {}, professionvariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
+		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readFile(join(appPath, 'config.json'));
@@ -58,6 +60,7 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		config = initialConfig;
+		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readFile(join(appPath, 'heroes.json'));
@@ -65,6 +68,7 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		heroes = {};
+		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readDir(join(root, 'app', 'locales'));
@@ -75,64 +79,37 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadl10ns')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		return Promise.reject(new Error(error));
 	}
-	const initialData = {
+	return {
 		config,
 		heroes,
 		tables,
 		locales
 	};
-	FileActions.receiveInitialData(initialData);
 }
 
-export function saveConfig() {
+export function saveConfig(data: string, locale: UIMessages) {
 	const dataPath = getAppDataPath();
 	const path = join(dataPath, 'config.json');
-	const data: Config = {
-		herolistSortOrder: HerolistStore.getSortOrder(),
-		herolistVisibilityFilter: HerolistStore.getView(),
-		racesSortOrder: RaceStore.getSortOrder(),
-		racesValueVisibility: RaceStore.areValuesVisible(),
-		culturesSortOrder: CultureStore.getSortOrder(),
-		culturesVisibilityFilter: CultureStore.areAllVisible(),
-		culturesValueVisibility: CultureStore.areValuesVisible(),
-		professionsSortOrder: ProfessionStore.getSortOrder(),
-		professionsVisibilityFilter: ProfessionStore.getVisibilityFilter(),
-		professionsGroupVisibilityFilter: ProfessionStore.getGroupVisibilityFilter(),
-		professionsFromExpansionsVisibility: ProfessionStore.getExpansionVisibilityFilter(),
-		advantagesDisadvantagesCultureRatingVisibility: DisAdvStore.getRating(),
-		talentsSortOrder: TalentsStore.getSortOrder(),
-		talentsCultureRatingVisibility: TalentsStore.isRatingVisible(),
-		combatTechniquesSortOrder: CombatTechniquesStore.getSortOrder(),
-		specialAbilitiesSortOrder: SpecialAbilitiesStore.getSortOrder(),
-		spellsSortOrder: SpellsStore.getSortOrder(),
-		spellsUnfamiliarVisibility: false,
-		liturgiesSortOrder: LiturgiesStore.getSortOrder(),
-		equipmentSortOrder: EquipmentStore.getSortOrder(),
-		equipmentGroupVisibilityFilter: 1,
-		...SheetStore.getForSave(),
-		enableActiveItemHints: ConfigStore.getActiveItemHintsVisibility(),
-		locale: LocaleStore.getForSave()
-	};
 
 	try {
-		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
+		fs.writeFileSync(path, data, { encoding: 'utf8' });
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.saveconfig')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.saveconfig')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
-export function saveAllHeroes() {
+export function saveAllHeroes(data: string, locale: UIMessages) {
 	const dataPath = getAppDataPath();
 	const path = join(dataPath, 'heroes.json');
-	const data = HerolistStore.getAllForSave();
 
 	try {
-		fs.writeFileSync(path, JSON.stringify(data), { encoding: 'utf8' });
+		fs.writeFileSync(path, data, { encoding: 'utf8' });
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.saveheroes')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.saveheroes')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -216,6 +193,16 @@ export function readFile(path: string, encoding: string = 'utf8') {
 	});
 }
 
+export async function readFileContent(path: string, encoding: string = 'utf8') {
+	try {
+		return await readFile(path, encoding);
+	}
+	catch (error) {
+		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.importhero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		return;
+	}
+}
+
 export function readDir(path: string) {
 	return new Promise<string[]>((resolve, reject) => {
 		fs.readdir(path, (error, data) => {
@@ -261,10 +248,24 @@ export function windowPrintToPDF(window: Electron.BrowserWindow, options: Electr
 /**
  * Shows a native save dialog.
  */
-export function showSaveDialog(window: Electron.BrowserWindow, options: Electron.SaveDialogOptions) {
+export function showSaveDialog(options: Electron.SaveDialogOptions, window: Electron.BrowserWindow = remote.getCurrentWindow()) {
 	return new Promise<string | undefined>(resolve => {
 		remote.dialog.showSaveDialog(window, options, filename => {
 			resolve(filename);
+		});
+	});
+}
+
+/**
+ * Shows a native open dialog.
+ */
+export function showOpenDialog(options: Electron.OpenDialogOptions, window: Electron.BrowserWindow = remote.getCurrentWindow()) {
+	return new Promise<string[] | undefined>((resolve, reject) => {
+		remote.dialog.showOpenDialog(window, options, filenames => {
+			if (filenames) {
+				resolve(filenames);
+			}
+			reject();
 		});
 	});
 }

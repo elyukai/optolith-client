@@ -5,7 +5,9 @@ import { Dialog } from '../components/Dialog';
 import { close } from '../utils/createOverlay';
 import { createOverlay } from './createOverlay';
 
-export function alert(title: string, expand?: (() => void) | string, buttons: BorderButtonProps[] = [{ label: 'OK', autoWidth: true }]): void {
+export function alert(title: string | undefined, callback?: () => void): void;
+export function alert(title: string | undefined, content?: string, buttons?: BorderButtonProps[]): void;
+export function alert(title: string | undefined, expand?: (() => void) | string, buttons: BorderButtonProps[] = [{ label: 'OK', autoWidth: true }]): void {
 	let className;
 	let content;
 	if (typeof expand !== 'string') {

@@ -1,5 +1,5 @@
 // import * as ActionTypes from '../constants/ActionTypes';
-// import { AppDispatcher } from '../dispatcher/AppDispatcher';
+//
 import { Store } from './Store';
 
 class GroupsStoreStatic extends Store {

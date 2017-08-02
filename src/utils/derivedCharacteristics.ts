@@ -1,22 +1,22 @@
 import { last } from 'lodash';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { get } from '../reducers/dependentInstances';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../types/data.d';
-import { isActive } from './ActivatableUtils';
+import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
 import { getLocale, translate } from './I18n';
 
-const PRIMARY = (state: CurrentHeroState, id: string) => get(state.dependent, id) as AttributeInstance;
-const COU = (state: CurrentHeroState) => get(state.dependent, 'COU') as AttributeInstance;
-const SGC = (state: CurrentHeroState) => get(state.dependent, 'SGC') as AttributeInstance;
-const INT = (state: CurrentHeroState) => get(state.dependent, 'INT') as AttributeInstance;
-const AGI = (state: CurrentHeroState) => get(state.dependent, 'AGI') as AttributeInstance;
-const CON = (state: CurrentHeroState) => get(state.dependent, 'CON') as AttributeInstance;
-const STR = (state: CurrentHeroState) => get(state.dependent, 'STR') as AttributeInstance;
+const PRIMARY = (state: CurrentHeroInstanceState, id: string) => get(state.dependent, id) as AttributeInstance;
+const COU = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_1') as AttributeInstance;
+const SGC = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_2') as AttributeInstance;
+const INT = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_3') as AttributeInstance;
+const AGI = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_6') as AttributeInstance;
+const CON = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_7') as AttributeInstance;
+const STR = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_8') as AttributeInstance;
 
-type ids = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WS';
+export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WS';
 
-export function getLP(state: CurrentHeroState): Energy {
+export function getLP(state: CurrentHeroInstanceState): Energy {
 	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).lp + CON(state).value * 2;
 	let mod = 0;
 	const add = state.energies.addedLifePoints;
@@ -43,7 +43,7 @@ export function getLP(state: CurrentHeroState): Energy {
 	};
 }
 
-export function getAE(state: CurrentHeroState): EnergyWithLoss {
+export function getAE(state: CurrentHeroInstanceState): EnergyWithLoss {
 	const lastTradition = last((get(state.dependent, 'SA_86') as SpecialAbilityInstance).active);
 	const primary = getPrimaryAttributeId(state.dependent, 1);
 	let base = 0;
@@ -93,7 +93,7 @@ export function getAE(state: CurrentHeroState): EnergyWithLoss {
 	};
 }
 
-export function getKP(state: CurrentHeroState): EnergyWithLoss {
+export function getKP(state: CurrentHeroInstanceState): EnergyWithLoss {
 	const primary = getPrimaryAttributeId(state.dependent, 2);
 	let base = 0;
 	let mod = 0;
@@ -132,7 +132,7 @@ export function getKP(state: CurrentHeroState): EnergyWithLoss {
 	};
 }
 
-export function getSPI(state: CurrentHeroState): SecondaryAttribute {
+export function getSPI(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).spi + Math.round((COU(state).value + SGC(state).value + INT(state).value) / 6);
 	let mod = 0;
 	const increaseObject = isActive(get(state.dependent, 'ADV_26') as AdvantageInstance);
@@ -155,7 +155,7 @@ export function getSPI(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-export function getTOU(state: CurrentHeroState): SecondaryAttribute {
+export function getTOU(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).tou + Math.round((CON(state).value * 2 + STR(state).value) / 6);
 	let mod = 0;
 	const increaseObject = isActive(get(state.dependent, 'ADV_27') as AdvantageInstance);
@@ -178,7 +178,7 @@ export function getTOU(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-export function getDO(state: CurrentHeroState): SecondaryAttribute {
+export function getDO(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.round(AGI(state).value / 2);
 	let mod = 0;
 	if (isActive(get(state.dependent, 'SA_78') as DisadvantageInstance)) {
@@ -202,9 +202,18 @@ export function getDO(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-export function getINI(state: CurrentHeroState): SecondaryAttribute {
+export function getINI(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.round((COU(state).value + AGI(state).value) / 2);
-	const value = base;
+	let value = base;
+	if (isActive(get(state.dependent, 'SA_58') as SpecialAbilityInstance)) {
+		value += 3;
+	}
+	else if (isActive(get(state.dependent, 'SA_57') as SpecialAbilityInstance)) {
+		value += 2;
+	}
+	else if (isActive(get(state.dependent, 'SA_56') as SpecialAbilityInstance)) {
+		value += 1;
+	}
 	return {
 		calc: translate('secondaryattributes.ini.calc'),
 		id: 'INI',
@@ -215,13 +224,13 @@ export function getINI(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-export function getMOV(state: CurrentHeroState): SecondaryAttribute {
+export function getMOV(state: CurrentHeroInstanceState): SecondaryAttribute {
 	let base = (get(state.dependent, state.rcp.race!) as RaceInstance).mov;
 	let mod = 0;
 	if (isActive(get(state.dependent, 'ADV_9') as AdvantageInstance)) {
 		mod = 1;
 	}
-	if ((get(state.dependent, 'DISADV_51') as DisadvantageInstance).active.includes(3)) {
+	if (getSids(get(state.dependent, 'DISADV_51') as DisadvantageInstance).includes(3)) {
 		base = Math.round(base / 2);
 	}
 	const value = base + mod;
@@ -236,7 +245,7 @@ export function getMOV(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-export function getWS(state: CurrentHeroState): SecondaryAttribute {
+export function getWS(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.floor(CON(state).value / 2);
 	let value = base;
 	if (isActive(get(state.dependent, 'DISADV_54') as DisadvantageInstance)) {
@@ -255,7 +264,7 @@ export function getWS(state: CurrentHeroState): SecondaryAttribute {
 	};
 }
 
-function _get(state: CurrentHeroState, id: ids): SecondaryAttribute {
+function _get(state: CurrentHeroInstanceState, id: DCIds): SecondaryAttribute {
 	switch (id) {
 		case 'LP':
 			return getLP(state);
@@ -280,7 +289,7 @@ function _get(state: CurrentHeroState, id: ids): SecondaryAttribute {
 
 export { _get as get };
 
-export function getAll(state: CurrentHeroState): SecondaryAttribute[] {
+export function getAll(state: CurrentHeroInstanceState): SecondaryAttribute[] {
 	const locale = getLocale();
 	if (locale === 'de-DE') {
 		return [

@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { Action, AppDispatcher } from '../dispatcher/AppDispatcher';
 import { Hero } from '../types/data.d';
 import { RawHerolist, RawTables } from '../types/rawdata.d';
 

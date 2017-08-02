@@ -19,9 +19,9 @@
 		// "no-any": true,
 		// "no-empty-interface": true,
 		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
-		"no-non-null-assertion": {
-			"severity": "warning"
-		},
+		// "no-non-null-assertion": {
+		// 	"severity": "warning"
+		// },
 		// "no-reference": true,
 		"no-var-requires": true,
 		"only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],

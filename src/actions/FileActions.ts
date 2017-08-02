@@ -1,8 +1,11 @@
 import { existsSync } from 'fs';
+import { Dispatch } from 'redux';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getSystemLocale } from '../selectors/I18n';
+import { AsyncAction } from '../stores/AppStore';
 import { Hero, User } from '../types/data.d';
 import { Raw, RawHero } from '../types/rawdata.d';
+import { loadInitialData } from '../utils/FileAPIUtils';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { convertHero } from '../utils/VersionUtils';
 
@@ -27,6 +30,18 @@ export function _receiveInitialData(payload: Raw): ReceiveInitialDataAction {
 			...payload,
 			defaultLocale: getSystemLocale()
 		}
+	};
+}
+
+export function requestInitialData(): AsyncAction {
+	return dispatch => {
+		loadInitialData()
+			.then(result => {
+				dispatch(_receiveInitialData(result));
+			})
+			.catch(err => {
+				console.error(err);
+			});
 	};
 }
 

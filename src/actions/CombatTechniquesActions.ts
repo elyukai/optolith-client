@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { store } from '../stores/AppStore';
 import { CombatTechniqueInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
@@ -13,14 +13,6 @@ export interface AddCombatTechniquePointAction {
 		cost: number;
 	};
 }
-
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddCombatTechniquePointAction>({
-	type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
-	payload: {
-		id,
-		cost: 0
-	}
-});
 
 export function _addPoint(id: string): AddCombatTechniquePointAction | undefined {
 	const state = store.getState();
@@ -46,14 +38,6 @@ export interface RemoveCombatTechniquePointAction {
 	};
 }
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveCombatTechniquePointAction>({
-	type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT,
-	payload: {
-		id,
-		cost: 0
-	}
-});
-
 export function _removePoint(id: string): RemoveCombatTechniquePointAction {
 	const state = store.getState();
 	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as CombatTechniqueInstance);
@@ -72,13 +56,6 @@ export interface SetCombatTechniquesSortOrderAction {
 		sortOrder: string;
 	};
 }
-
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetCombatTechniquesSortOrderAction>({
-	type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
 
 export function _setSortOrder(sortOrder: string): SetCombatTechniquesSortOrderAction {
 	return {

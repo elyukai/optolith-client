@@ -1,4 +1,5 @@
-import { DependentInstancesState, get } from '../reducers/dependentInstances';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../types/data.d';
 import { dice } from './dice';
 

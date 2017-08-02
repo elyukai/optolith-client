@@ -1,8 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { LITURGIES } from '../constants/Categories';
-import { get } from '../reducers/dependentInstances';
-import { store } from '../stores/AppStore';
-import { BlessingInstance, LiturgyInstance } from '../types/data.d';
+import { get } from '../selectors/liturgiesSelectors';
+import { AsyncAction } from '../stores/AppStore';
 import { alert } from '../utils/alert';
 import { validate } from '../utils/APUtils';
 import { translate } from '../utils/I18n';
@@ -17,28 +15,46 @@ export interface ActivateLiturgyAction {
 	};
 }
 
-export const addToList = (id: string) => AppDispatcher.dispatch<ActivateLiturgyAction>({
-	type: ActionTypes.ACTIVATE_LITURGY,
-	payload: {
-		id
-	}
-});
-
-export function _addToList(id: string): ActivateLiturgyAction | undefined {
-	const state = store.getState();
-	const entry = get(state.currentHero.present.dependent, id) as LiturgyInstance | BlessingInstance;
-	const cost = entry.category === LITURGIES ? getIncreaseAP(entry.ic) : 1;
-	const validCost = validate(cost, state.currentHero.present.ap);
-	if (!validCost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ACTIVATE_LITURGY,
-		payload: {
-			id,
-			cost
+export function _addToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.liturgies, id)!;
+		const cost = getIncreaseAP(entry.ic);
+		const validCost = validate(cost, state.currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_LITURGY,
+			payload: {
+				id,
+				cost
+			}
+		} as ActivateLiturgyAction);
+	};
+}
+
+export interface ActivateBlessingAction {
+	type: ActionTypes.ACTIVATE_BLESSING;
+	payload: {
+		id: string;
+	};
+}
+
+export function _addBlessingToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(1, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_BLESSING,
+			payload: {
+				id
+			}
+		} as ActivateBlessingAction);
 	};
 }
 
@@ -50,22 +66,33 @@ export interface DeactivateLiturgyAction {
 	};
 }
 
-export const removeFromList = (id: string) => AppDispatcher.dispatch<DeactivateLiturgyAction>({
-	type: ActionTypes.DEACTIVATE_LITURGY,
-	payload: {
-		id
-	}
-});
+export function _removeFromList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.liturgies, id)!;
+		const cost = getDecreaseAP(entry.ic);
+		dispatch({
+			type: ActionTypes.DEACTIVATE_LITURGY,
+			payload: {
+				id,
+				cost
+			}
+		} as DeactivateLiturgyAction);
+	};
+}
 
-export function _removeFromList(id: string): DeactivateLiturgyAction {
-	const state = store.getState();
-	const entry = get(state.currentHero.present.dependent, id) as LiturgyInstance | BlessingInstance;
-	const cost = entry.category === LITURGIES ? getDecreaseAP(entry.ic) : 1;
+export interface DeactivateBlessingAction {
+	type: ActionTypes.DEACTIVATE_BLESSING;
+	payload: {
+		id: string;
+	};
+}
+
+export function _removeBlessingFromList(id: string): DeactivateBlessingAction {
 	return {
-		type: ActionTypes.DEACTIVATE_LITURGY,
+		type: ActionTypes.DEACTIVATE_BLESSING,
 		payload: {
-			id,
-			cost
+			id
 		}
 	};
 }
@@ -78,26 +105,21 @@ export interface AddLiturgyPointAction {
 	};
 }
 
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddLiturgyPointAction>({
-	type: ActionTypes.ADD_LITURGY_POINT,
-	payload: {
-		id
-	}
-});
-
-export function _addPoint(id: string): AddLiturgyPointAction | undefined {
-	const state = store.getState();
-	const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as LiturgyInstance, state.currentHero.present.ap);
-	if (!cost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ADD_LITURGY_POINT,
-		payload: {
-			id,
-			cost
+export function _addPoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent.liturgies, id)!, state.currentHero.present.ap);
+		if (!cost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.ADD_LITURGY_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as AddLiturgyPointAction);
 	};
 }
 
@@ -109,22 +131,17 @@ export interface RemoveLiturgyPointAction {
 	};
 }
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveLiturgyPointAction>({
-	type: ActionTypes.REMOVE_LITURGY_POINT,
-	payload: {
-		id
-	}
-});
-
-export function _removePoint(id: string): RemoveLiturgyPointAction {
-	const state = store.getState();
-	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as LiturgyInstance);
-	return {
-		type: ActionTypes.REMOVE_LITURGY_POINT,
-		payload: {
-			id,
-			cost
-		}
+export function _removePoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseCost(get(state.currentHero.present.dependent.liturgies, id)!);
+		dispatch({
+			type: ActionTypes.REMOVE_LITURGY_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as RemoveLiturgyPointAction);
 	};
 }
 
@@ -134,13 +151,6 @@ export interface SetLiturgiesSortOrderAction {
 		sortOrder: string;
 	};
 }
-
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetLiturgiesSortOrderAction>({
-	type: ActionTypes.SET_LITURGIES_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
 
 export function _setSortOrder(sortOrder: string): SetLiturgiesSortOrderAction {
 	return {

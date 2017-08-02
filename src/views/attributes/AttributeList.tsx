@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { AttributeInstance, ExperienceLevel } from '../../types/data.d';
+import { AttributeWithRequirements } from '../../types/view.d';
 import { AttributeListItem } from './AttributeListItem';
 
 export interface AttributeListProps {
-	attributes: AttributeInstance[];
-	el: ExperienceLevel;
+	attributes: AttributeWithRequirements[];
 	phase: number;
 	addPoint(id: string): void;
 	removePoint(id: string): void;

@@ -13,15 +13,15 @@ declare global {
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { requestInitialData } from './actions/FileActions';
+import { AppContainer } from './containers/App';
 import { store } from './stores/AppStore';
-import { loadInitialData } from './utils/FileAPIUtils';
-import { Router } from './views/Router';
+
+store.dispatch(requestInitialData());
 
 render(
 	<Provider store={store}>
-		<Router />
+		<AppContainer />
 	</Provider>,
 	document.querySelector('#bodywrapper')
 );
-
-loadInitialData();

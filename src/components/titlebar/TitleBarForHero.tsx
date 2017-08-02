@@ -1,9 +1,9 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import * as HerolistActions from '../../actions/HerolistActions';
-import * as HistoryActions from '../../actions/HistoryActions';
-import { AdventurePoints, UILocale } from '../../types/data.d';
+import { CurrentHeroInstanceState } from '../../reducers/currentHero';
+import { UIMessages } from '../../types/ui.d';
 import { createOverlay } from '../../utils/createOverlay';
+import { _translate } from '../../utils/I18n';
 import { AvatarWrapper } from '../AvatarWrapper';
 import { BorderButton } from '../BorderButton';
 import { IconButton } from '../IconButton';
@@ -18,82 +18,96 @@ import { TitleBarTabs } from './TitleBarTabs';
 import { TitleBarWrapper } from './TitleBarWrapper';
 
 export interface TitleBarForHeroProps {
-	ap: AdventurePoints;
-	avatar?: string;
 	currentTab: string;
+	hero: CurrentHeroInstanceState;
+	isRedoAvailable: boolean;
 	isUndoAvailable: boolean;
-	locale: UILocale;
-	phase: number;
+	locale?: UIMessages;
+	localeString?: string;
+	localeType: 'default' | 'set';
+	undo(): void;
+	redo(): void;
+	saveHero(): void;
+	setLocale(id?: string): void;
+	setSection(id: string): void;
+	setTab(id: string): void;
 }
 
-export class TitleBarForHero extends React.Component<TitleBarForHeroProps, object> {
-	saveHero = () => HerolistActions.saveHero();
-	undo = () => HistoryActions.undoLastAction();
-	toggleDevtools = () => remote.getCurrentWindow().webContents.toggleDevTools();
-	showSettings = () => createOverlay(<Settings />);
+export function TitleBarForHero(props: TitleBarForHeroProps) {
+	const { currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, redo, saveHero, undo, setLocale, setSection, setTab } = props;
+	const { total, spent } = ap;
 
-	render() {
-		const { ap, avatar, currentTab, isUndoAvailable, locale, phase } = this.props;
-		const { total, spent } = ap;
+	const tabs = [
+		{ label: _translate(locale, 'titlebar.tabs.profile'), tag: 'profile' }
+	];
 
-		const tabs = [
-			{ label: locale['titlebar.tabs.profile'], tag: 'profile' }
-		];
-
-		if (phase === 1) {
-			tabs.push(
-				{ label: locale['titlebar.tabs.racecultureprofession'], tag: 'rcp' }
-			);
-		}
-		else if (phase === 2) {
-			tabs.push(
-				{ label: locale['titlebar.tabs.attributes'], tag: 'attributes' },
-				{ label: locale['titlebar.tabs.advantagesdisadvantages'], tag: 'disadv' },
-				{ label: locale['titlebar.tabs.skills'], tag: 'skills' }
-			);
-		}
-		else {
-			tabs.push(
-				{ label: locale['titlebar.tabs.attributes'], tag: 'attributes' },
-				{ label: locale['titlebar.tabs.skills'], tag: 'skills' },
-				{ label: locale['titlebar.tabs.belongings'], tag: 'belongings' }
-			);
-		}
-
-		return (
-			<TitleBarWrapper>
-				<TitleBarLeft>
-					<TitleBarBack />
-					<AvatarWrapper src={avatar} />
-					<TitleBarTabs active={currentTab} tabs={tabs} />
-				</TitleBarLeft>
-				<TitleBarRight>
-					<TooltipToggle
-						position="bottom"
-						margin={12}
-						content={<ApTooltip ap={ap} locale={locale} />}
-						>
-						<Text className="collected-ap">{total - spent} {locale['titlebar.view.adventurepoints']}</Text>
-					</TooltipToggle>
-					<IconButton
-						icon="&#xE166;"
-						onClick={this.undo}
-						disabled={!isUndoAvailable}
-						/>
-					<BorderButton
-						label={locale['actions.save']}
-						onClick={this.saveHero}
-						/>
-					<IconButton
-						icon="&#xE8B8;"
-						onClick={this.showSettings}
-						/>
-					<IconButton
-						icon="&#xE868;"
-						onClick={this.toggleDevtools}
-						/>
-				</TitleBarRight>
-			</TitleBarWrapper>
+	if (phase === 1) {
+		tabs.push(
+			{ label: _translate(locale, 'titlebar.tabs.racecultureprofession'), tag: 'rcp' }
 		);
 	}
+	else if (phase === 2) {
+		tabs.push(
+			{ label: _translate(locale, 'titlebar.tabs.attributes'), tag: 'attributes' },
+			{ label: _translate(locale, 'titlebar.tabs.advantagesdisadvantages'), tag: 'disadv' },
+			{ label: _translate(locale, 'titlebar.tabs.skills'), tag: 'skills' },
+			{ label: _translate(locale, 'titlebar.tabs.belongings'), tag: 'belongings' }
+		);
+	}
+	else {
+		tabs.push(
+			{ label: _translate(locale, 'titlebar.tabs.attributes'), tag: 'attributes' },
+			{ label: _translate(locale, 'titlebar.tabs.skills'), tag: 'skills' },
+			{ label: _translate(locale, 'titlebar.tabs.belongings'), tag: 'belongings' }
+		);
+	}
+
+	return (
+		<TitleBarWrapper>
+			<TitleBarLeft>
+				<TitleBarBack setSection={setSection} />
+				<AvatarWrapper src={avatar} />
+				<TitleBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
+			</TitleBarLeft>
+			<TitleBarRight>
+				<TooltipToggle
+					position="bottom"
+					margin={12}
+					content={<ApTooltip ap={ap} dependent={dependent} locale={locale} />}
+					>
+					<Text className="collected-ap">{total - spent} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
+				</TooltipToggle>
+				<IconButton
+					icon="&#xE166;"
+					onClick={undo}
+					disabled={!isUndoAvailable}
+					/>
+				<IconButton
+					icon="&#xE15A;"
+					onClick={redo}
+					disabled={!isRedoAvailable}
+					/>
+				<BorderButton
+					label={_translate(locale, 'actions.save')}
+					onClick={saveHero}
+					/>
+				<IconButton
+					icon="&#xE8B8;"
+					onClick={showSettings.bind(null, locale, setLocale)}
+					/>
+				<IconButton
+					icon="&#xE868;"
+					onClick={toggleDevtools}
+					/>
+			</TitleBarRight>
+		</TitleBarWrapper>
+	);
+}
+
+function showSettings(locale: UIMessages | undefined, setLocale: (id?: string) => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} />);
+}
+
+function toggleDevtools() {
+	remote.getCurrentWindow().webContents.toggleDevTools();
 }

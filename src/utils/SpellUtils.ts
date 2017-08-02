@@ -1,7 +1,8 @@
 import { SPELLS } from '../constants/Categories';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategory } from '../reducers/dependentInstances';
-import { getStart } from '../reducers/el';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { AbilityInstanceExtended, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
@@ -12,7 +13,7 @@ export function isOwnTradition(state: DependentInstancesState, obj: SpellInstanc
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
 
-export function isIncreasable(state: CurrentHeroState, obj: SpellInstance): boolean {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: SpellInstance): boolean {
 	const { dependent } = state;
 	let max = 0;
 	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
@@ -25,14 +26,14 @@ export function isIncreasable(state: CurrentHeroState, obj: SpellInstance): bool
 		max = Math.max(...checkValues) + 2;
 	}
 
-	if (!(get(dependent, 'SA_88') as SpecialAbilityInstance).active.includes(obj.property)) {
+	if (!getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
 		max = Math.min(14, max);
 	}
 
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(state: CurrentHeroState, obj: SpellInstance): boolean {
+export function isDecreasable(state: CurrentHeroInstanceState, obj: SpellInstance): boolean {
 	const { dependent } = state;
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e === 'object') {

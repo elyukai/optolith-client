@@ -3,7 +3,7 @@ import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SelectRaceAction, SetRacesSortOrderAction, SwitchRaceValueVisibilityAction } from '../actions/RaceActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { APStore } from '../stores/APStore';
 import { RaceInstance } from '../types/data.d';
 import { dice } from '../utils/dice';
@@ -20,44 +20,6 @@ class RaceStoreStatic extends Store {
 	readonly dispatchToken: string;
 	readonly hairColors = ['blauschwarz', 'blond', 'braun', 'dunkelblond', 'dunkelbraun', 'goldblond', 'grau', 'hellblond', 'hellbraun', 'kupferrot', 'mittelblond', 'mittelbraun', 'rot', 'rotblond', 'schneeweiß', 'schwarz', 'silbern', 'weißblond', 'dunkelgrau', 'hellgrau', 'salzweiß', 'silberweiß', 'feuerrot'];
 	readonly eyeColors = ['amethystviolett', 'bernsteinfarben', 'blau', 'braun', 'dunkelbraun', 'dunkelviolett', 'eisgrau', 'goldgesprenkelt', 'grau', 'graublau', 'grün', 'hellbraun', 'rubinrot', 'saphirblau', 'schwarz', 'schwarzbraun', 'silbergrau', 'smaragdgrün'];
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.sortOrder = action.payload.config.racesSortOrder;
-					this.valueVisibility = action.payload.config.racesValueVisibility;
-					break;
-
-				case ActionTypes.LOAD_HERO:
-					this.updateCurrentID(action.payload.data.r);
-					break;
-
-				case ActionTypes.CREATE_HERO:
-					this.updateCurrentID();
-					break;
-
-				case ActionTypes.SELECT_RACE:
-					AppDispatcher.waitFor([APStore.dispatchToken]);
-					this.updateCurrentID(action.payload.id);
-					break;
-
-				case ActionTypes.SET_RACES_SORT_ORDER:
-					this.updateSortOrder(action.payload.sortOrder);
-					break;
-
-				case ActionTypes.SWITCH_RACE_VALUE_VISIBILITY:
-					this.updateDetails();
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		return getAllByCategory(this.category) as RaceInstance[];

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
 import { translate } from '../utils/I18n';
-import { getRoman } from '../utils/roman';
+import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';

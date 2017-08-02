@@ -5,7 +5,7 @@ import { SelectProfessionAction, SetProfessionsGroupVisibilityFilterAction, SetP
 import { SelectRaceAction } from '../actions/RaceActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { APStore } from '../stores/APStore';
 import { ELStore } from '../stores/ELStore';
 import { ProfessionInstance } from '../types/data.d';
@@ -23,56 +23,6 @@ class ProfessionStoreStatic extends Store {
 	private groupVisibilityFilter = 0;
 	private expansionVisibilityFilter = false;
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.sortOrder = action.payload.config.professionsSortOrder;
-					this.visibilityFilter = action.payload.config.professionsVisibilityFilter;
-					this.groupVisibilityFilter = action.payload.config.professionsGroupVisibilityFilter;
-					this.expansionVisibilityFilter = action.payload.config.professionsFromExpansionsVisibility;
-					break;
-
-				case ActionTypes.LOAD_HERO:
-					this.updateCurrentID(action.payload.data.p);
-					break;
-
-				case ActionTypes.CREATE_HERO:
-				case ActionTypes.SELECT_RACE:
-				case ActionTypes.SELECT_CULTURE:
-					this.updateCurrentID(undefined);
-					break;
-
-				case ActionTypes.SELECT_PROFESSION:
-					AppDispatcher.waitFor([APStore.dispatchToken]);
-					this.updateCurrentID(action.payload.id);
-					break;
-
-				case ActionTypes.SET_PROFESSIONS_SORT_ORDER:
-					this.updateSortOrder(action.payload.sortOrder);
-					break;
-
-				case ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER:
-					this.updateVisibilityFilter(action.payload.filter);
-					break;
-
-				case ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER:
-					this.updateGroupVisibilityFilter(action.payload.filter);
-					break;
-
-				case ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER:
-					this.updateExpansionVisibilityFilter();
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		return getAllByCategory(this.category) as ProfessionInstance[];

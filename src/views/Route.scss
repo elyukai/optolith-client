@@ -5,7 +5,7 @@ main {
 
 section {
 	@extend %max-size-relative;
-	padding-top: $titlebar-height;
+	padding-top: $titlebar-height + 32px;
 	z-index: 0;
 	overflow: hidden;
 	background: url("images/background.jpg") center/cover $background2;

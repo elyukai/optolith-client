@@ -147,6 +147,12 @@ export function save() {
 	});
 }
 
+export function _save() {
+	return {
+		type: ActionTypes.INGAME_SAVE
+	};
+}
+
 export function switchOption(option: boolean) {
 	AppDispatcher.dispatch({
 		type: ActionTypes.INGAME_SWITCH_OPTION,

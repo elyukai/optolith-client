@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
+import { UIMessages } from '../../types/ui.d';
 import { createOverlay } from '../../utils/createOverlay';
-import { translate } from '../../utils/I18n';
+import { _translate } from '../../utils/I18n';
 import { AttributeBorder } from './AttributeBorder';
 import { AttributesRemovePermanent } from './AttributesRemovePermanent';
 import { PermanentPoints } from './PermanentPoints';
 
 export interface AttributesPermanentListItemProps {
+	locale: UIMessages;
 	id: 'AE' | 'KP';
 	label: string;
 	name: string;
@@ -28,7 +30,7 @@ export interface AttributesPermanentListItemProps {
 }
 
 export function AttributesPermanentListItem(props: AttributesPermanentListItemProps) {
-	const { id, label, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = props;
+	const { id, label, locale, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = props;
 	const available = lost - boughtBack;
 
 	return (
@@ -38,8 +40,8 @@ export function AttributesPermanentListItem(props: AttributesPermanentListItemPr
 			tooltip={<div className="calc-attr-overlay">
 				<h4><span>{name}</span><span>{available}</span></h4>
 				<p>
-					{translate('attributes.tooltips.losttotal')}: {lost}<br/>
-					{translate('attributes.tooltips.boughtback')}: {boughtBack}
+					{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
+					{_translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
 				</p>
 			</div>}
 			tooltipMargin={7}
@@ -48,14 +50,14 @@ export function AttributesPermanentListItem(props: AttributesPermanentListItemPr
 				<IconButton
 					className="edit"
 					icon="&#xE254;"
-					onClick={() => createOverlay(<PermanentPoints {...other} id={id} />)}
+					onClick={() => createOverlay(<PermanentPoints {...other} id={id} locale={locale} />)}
 					/>
 			)}
 			{phase === 3 && (
 				<IconButton
 					className="add"
 					icon="&#xE318;"
-					onClick={() => createOverlay(<AttributesRemovePermanent remove={addLost} />)}
+					onClick={() => createOverlay(<AttributesRemovePermanent remove={addLost} locale={locale} />)}
 					disabled={available > 0}
 					/>
 			)}

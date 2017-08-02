@@ -9,7 +9,7 @@ export interface BorderButtonProps {
 	disabled?: boolean;
 	flat?: boolean;
 	fullWidth?: boolean;
-	label: string;
+	label: string | undefined;
 	primary?: boolean;
 	onClick?(): void;
 }

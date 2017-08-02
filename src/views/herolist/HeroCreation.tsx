@@ -1,14 +1,16 @@
 import * as React from 'react';
-import * as HerolistActions from '../../actions/HerolistActions';
 import { Dialog } from '../../components/Dialog';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { ELStore } from '../../stores/ELStore';
-import { InputTextEvent } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { ExperienceLevel, InputTextEvent } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
 
 interface Props {
 	node?: HTMLDivElement;
+	locale: UIMessages | undefined;
+	elList: ExperienceLevel[];
+	createHero: (name: string, sex: 'm' | 'f', el: string) => void;
 }
 
 interface State {
@@ -28,27 +30,28 @@ export class HeroCreation extends React.Component<Props, State> {
 	create = () => {
 		const { name, gender, el } = this.state;
 		if (name.length > 0 && gender && el) {
-			HerolistActions.createHero(name, gender, el);
+			this.props.createHero(name, gender, el);
 		}
 	}
 
 	render() {
-		const experienceLevels = Object.keys(ELStore.getAll()).map(e => {
-			const { id, name, ap } = ELStore.get(e);
+		const { elList, locale } = this.props;
+		const experienceLevels = elList.map(e => {
+			const { id, name, ap } = e;
 			return { id, name: `${name} (${ap} AP)` };
 		});
 
 		return (
-			<Dialog id="herocreation" title={translate('herocreation.title')} node={this.props.node} buttons={[
+			<Dialog id="herocreation" title={_translate(locale, 'herocreation.title')} node={this.props.node} buttons={[
 				{
 					disabled: this.state.name === '' || !this.state.gender || !this.state.el,
-					label: translate('herocreation.actions.start'),
+					label: _translate(locale, 'herocreation.actions.start'),
 					onClick: this.create,
 					primary: true,
 				},
 			]}>
 				<TextField
-					hint={translate('herocreation.options.nameofhero')}
+					hint={_translate(locale, 'herocreation.options.nameofhero')}
 					value={this.state.name}
 					onChange={this.changeName}
 					fullWidth
@@ -57,14 +60,14 @@ export class HeroCreation extends React.Component<Props, State> {
 				<Dropdown
 					value={this.state.gender}
 					onChange={this.changeGender}
-					options={[{id: 'm', name: translate('herocreation.options.selectsex.male')}, {id: 'f', name: translate('herocreation.options.selectsex.female')}]}
-					hint={translate('herocreation.options.selectsex')}
+					options={[{id: 'm', name: _translate(locale, 'herocreation.options.selectsex.male')}, {id: 'f', name: _translate(locale, 'herocreation.options.selectsex.female')}]}
+					hint={_translate(locale, 'herocreation.options.selectsex')}
 					fullWidth />
 				<Dropdown
 					value={this.state.el}
 					onChange={this.changeEL}
 					options={experienceLevels}
-					hint={translate('herocreation.options.selectexperiencelevel')}
+					hint={_translate(locale, 'herocreation.options.selectexperiencelevel')}
 					fullWidth />
 			</Dialog>
 		);

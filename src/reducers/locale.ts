@@ -28,6 +28,7 @@ export function locale(state: LocaleState = initialState, action: Action): Local
 
 		case ActionTypes.SET_LOCALE:
 			return {
+				...state,
 				type: action.payload.localeType,
 				id: action.payload.localeType === 'set' ? action.payload.locale : undefined
 			};

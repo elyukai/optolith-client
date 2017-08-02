@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { AttributeStore } from '../../stores/AttributeStore';
-import { AttributeInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { Attribute, UIMessages } from '../../types/view.d';
+import { _translate } from '../../utils/I18n';
 import { AttributeModsListItem } from './AttributeModsListItem';
 
-export function AttributeMods() {
-	const attributes: AttributeInstance[] = AttributeStore.getAll();
+export interface AttributeModsProps {
+	attributes: Attribute[];
+	locale: UIMessages;
+}
+
+export function AttributeMods(props: AttributeModsProps) {
 	return (
-		<TextBox className="attribute-mods" label={translate('charactersheet.attributemodifiers.title')}>
+		<TextBox className="attribute-mods" label={_translate(props.locale, 'charactersheet.attributemodifiers.title')}>
 			<table>
 				<thead>
 					<tr>
@@ -23,7 +26,7 @@ export function AttributeMods() {
 					</tr>
 				</thead>
 				<tbody>
-					{attributes.map(obj => <AttributeModsListItem {...obj} key={obj.id} />)}
+					{props.attributes.map(obj => <AttributeModsListItem {...obj} key={obj.id} />)}
 				</tbody>
 			</table>
 		</TextBox>

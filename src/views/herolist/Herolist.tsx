@@ -1,7 +1,4 @@
-import { remote } from 'electron';
 import * as React from 'react';
-import * as HerolistActions from '../../actions/HerolistActions';
-import { setSection } from '../../actions/LocationActions';
 import { BorderButton } from '../../components/BorderButton';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
@@ -10,96 +7,85 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { APStore } from '../../stores/APStore';
-import { CultureStore } from '../../stores/CultureStore';
-import { ELStore } from '../../stores/ELStore';
-import { HerolistStore } from '../../stores/HerolistStore';
-import { HistoryStore } from '../../stores/HistoryStore';
-import { ProfessionStore } from '../../stores/ProfessionStore';
-import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
-import { ProfileStore } from '../../stores/ProfileStore';
-import { RaceStore } from '../../stores/RaceStore';
-import { Hero, InputTextEvent } from '../../types/data.d';
-import { confirm } from '../../utils/confirm';
-import { createOverlay } from '../../utils/createOverlay';
-import { importHero } from '../../utils/FileAPIUtils';
-import { translate } from '../../utils/I18n';
+import { CurrentHeroInstanceState } from '../../reducers/currentHero';
+import { Hero, InputTextEvent, User } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
 import { filterAndSort } from '../../utils/FilterSortUtils';
-import { HeroCreation } from './HeroCreation';
+import { _translate } from '../../utils/I18n';
 import { HerolistItem } from './HerolistItem';
 
-interface State {
-	list: Hero[];
-	filterText: string;
-	view: string;
-	sortOrder: string;
-	file: File | undefined;
+export interface HerolistOwnProps {
+	locale: UIMessages;
 }
 
-export class Herolist extends React.Component<{}, State> {
+export interface HerolistStateProps {
+	currentHero: CurrentHeroInstanceState;
+	currentHeroId: string | undefined;
+	list: Hero[];
+	users: Map<string, User>;
+	visibilityFilter: string;
+	sortOrder: string;
+}
 
+export interface HerolistDispatchProps {
+	loadHero(id?: string): void;
+	showHero(): void;
+	saveHeroAsJSON(id?: string): void;
+	deleteHero(id?: string): void;
+	duplicateHero(id?: string): void;
+	showHeroCreation(): void;
+	importHero(): void;
+	setSortOrder(id: string): void;
+	setVisibilityFilter(id: string): void;
+}
+
+export type HerolistProps = HerolistStateProps & HerolistDispatchProps & HerolistOwnProps;
+
+export interface HerolistState {
+	filterText: string;
+}
+
+export class Herolist extends React.Component<HerolistProps, HerolistState> {
 	state = {
-		file: undefined,
 		filterText: '',
-		list: HerolistStore.getAll(),
-		sortOrder: HerolistStore.getSortOrder(),
-		view: HerolistStore.getView(),
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => HerolistActions.setSortOrder(option);
-	changeView = (option: string) => HerolistActions.setVisibilityFilter(option);
-	showHeroCreation = () => {
-		const safeToLoad = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
-		if (safeToLoad) {
-			createOverlay(<HeroCreation />);
-		}
-		else {
-			confirm(translate('heroes.warnings.unsavedactions.title'), translate('heroes.warnings.unsavedactions.text'), true).then(result => {
-				if (result === true) {
-					createOverlay(<HeroCreation />);
-				}
-				else {
-					setSection('hero');
-				}
-			});
-		}
-	}
-	importHero = () => {
-		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-			filters: [{ name: 'JSON', extensions: ['json'] }]
-		}, fileNames => {
-			if (fileNames) {
-				const fileName = fileNames[0];
-				const splitted = fileName.split('.');
-				if (splitted[splitted.length - 1] === 'json') {
-					importHero(fileName);
-				}
-			}
-		});
-	}
-
-	componentDidMount() {
-		HerolistStore.addChangeListener(this.updateHerolistStore);
-	}
-
-	componentWillUnmount() {
-		HerolistStore.removeChangeListener(this.updateHerolistStore);
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as HerolistState);
 
 	render() {
-		const { filterText, list: rawList, sortOrder, view } = this.state;
+		const {
+			currentHero: {
+				ap,
+				dependent,
+				el: { all, startId },
+				profile: { avatar, professionName, sex },
+				rcp: { culture, profession, professionVariant, race }
+			},
+			currentHeroId,
+			importHero,
+			list: rawList,
+			locale,
+			setSortOrder,
+			setVisibilityFilter,
+			showHeroCreation,
+			sortOrder,
+			users,
+			visibilityFilter,
+			...other
+		} = this.props;
+		const { filterText } = this.state;
 
 		const list = filterAndSort(rawList.filter(e => {
-			if (view === 'own') {
+			if (visibilityFilter === 'own') {
 				return !e.player;
 			}
-			else if (view === 'shared') {
+			else if (visibilityFilter === 'shared') {
 				return !!e.player;
 			}
 			return true;
 		}), filterText, sortOrder).map(hero => (
 			<HerolistItem
+				{...other}
 				key={hero.id}
 				id={hero.id}
 				name={hero.name}
@@ -107,11 +93,14 @@ export class Herolist extends React.Component<{}, State> {
 				avatar={hero.avatar}
 				c={hero.c}
 				p={hero.p}
-				player={typeof hero.player === 'string' ? HerolistStore.getUser(hero.player) : undefined}
+				player={typeof hero.player === 'string' ? users.get(hero.player) : undefined}
 				pv={hero.pv}
 				r={hero.r}
 				sex={hero.sex}
 				professionName={hero.professionName}
+				dependent={dependent}
+				els={all}
+				currentHeroId={currentHeroId}
 				/>
 		));
 
@@ -120,52 +109,55 @@ export class Herolist extends React.Component<{}, State> {
 				<Page>
 					<Options>
 						<TextField
-							hint={translate('options.filtertext')}
+							hint={_translate(locale, 'options.filtertext')}
 							value={filterText}
 							onChange={this.filter}
 							fullWidth
 							/>
 						<Dropdown
-							value={view}
-							onChange={this.changeView}
+							value={visibilityFilter}
+							onChange={setVisibilityFilter}
 							options={[
-								{ id: 'all', name: translate('heroes.options.filter.all') },
-								{ id: 'own', name: translate('heroes.options.filter.own') },
-								{ id: 'shared', name: translate('heroes.options.filter.shared') },
+								{ id: 'all', name: _translate(locale, 'heroes.options.filter.all') },
+								{ id: 'own', name: _translate(locale, 'heroes.options.filter.own') },
+								{ id: 'shared', name: _translate(locale, 'heroes.options.filter.shared') },
 							]}
 							fullWidth
 							/>
 						<RadioButtonGroup
 							active={sortOrder}
-							onClick={this.sort}
+							onClick={setSortOrder}
 							array={[
 								{
-									name: translate('options.sortorder.alphabetically'),
+									name: _translate(locale, 'options.sortorder.alphabetically'),
 									value: 'name',
 								},
 								{
-									name: translate('options.sortorder.ap'),
+									name: _translate(locale, 'options.sortorder.ap'),
 									value: 'ap',
 								},
 							]}
 							/>
-						<BorderButton label={translate('heroes.actions.create')} onClick={this.showHeroCreation} primary />
-						<BorderButton label={translate('heroes.actions.import')} onClick={this.importHero} />
+						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={showHeroCreation} primary />
+						<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
 					</Options>
 					<Scroll>
 						<List>
 							{
-								HerolistStore.getCurrentId() === undefined && ELStore.getStartID() !== 'EL_0' && (
+								currentHeroId === undefined && startId !== undefined && (
 									<HerolistItem
-										avatar={ProfileStore.getAvatar()}
-										name={translate('heroes.view.unsavedhero.title')}
-										ap={APStore.getAll()}
-										r={RaceStore.getCurrentID()}
-										c={CultureStore.getCurrentID()}
-										p={ProfessionStore.getCurrentId()}
-										pv={ProfessionVariantStore.getCurrentID()}
-										sex={ProfileStore.getSex()}
-										professionName={ProfileStore.getCustomProfessionName()}
+										{...other}
+										avatar={avatar}
+										name={_translate(locale, 'heroes.view.unsavedhero.title')}
+										ap={ap}
+										r={race}
+										c={culture}
+										p={profession}
+										pv={professionVariant}
+										sex={sex}
+										professionName={professionName}
+										dependent={dependent}
+										els={all}
 										/>
 								)
 							}
@@ -175,13 +167,5 @@ export class Herolist extends React.Component<{}, State> {
 				</Page>
 			</section>
 		);
-	}
-
-	private updateHerolistStore = () => {
-		this.setState({
-			list: HerolistStore.getAll(),
-			sortOrder: HerolistStore.getSortOrder(),
-			view: HerolistStore.getView(),
-		} as State);
 	}
 }

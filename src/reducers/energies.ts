@@ -79,12 +79,6 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 			};
 		}
 
-		case ActionTypes.ASSIGN_RCP_OPTIONS:
-			if (ActivatableUtils.isActive(get('SA_92') as SpecialAbilityInstance)) {
-				this.permanentArcaneEnergy.lost += 2;
-			}
-			return state;
-
 		case ActionTypes.ADD_LIFE_POINT:
 			return { ...state, addedLifePoints: state.addedLifePoints + 1 };
 
@@ -154,7 +148,7 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				...state,
 				permanentArcaneEnergy: {
 					redeemed: lost === redeemed ? redeemed - 1 : redeemed,
-					lost: lost + 1
+					lost: lost - 1
 				}
 			};
 		}
@@ -165,7 +159,7 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				...state,
 				permanentKarmaPoints: {
 					redeemed: lost === redeemed ? redeemed - 1 : redeemed,
-					lost: lost + 1
+					lost: lost - 1
 				}
 			};
 		}

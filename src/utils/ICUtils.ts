@@ -23,6 +23,18 @@ export function getIncreaseRangeAP(ic: number, fromValue: number, toValue: numbe
 }
 
 /**
+ * Returns the AP cost for the given value range (decreasing value).
+ * @param ic The improvement cost. Ranges from 1 = A to 5 = E.
+ * @param fromValue The previous value.
+ * @param toValue The target value to which you want to get the accumulated AP cost for.
+ */
+export function getDecreaseRangeAP(ic: number, fromValue: number, toValue: number): number {
+	return Array.from({ length: fromValue - toValue }).reduce<number>((cost, _, i) => {
+		return cost + getDecreaseAP(ic, fromValue - i);
+	}, 0);
+}
+
+/**
  * Returns the AP cost for the next decrease.
  * @param ic The improvement cost. Ranges from 1 = A to 5 = E.
  * @param fromValue The value that should be decreased.
@@ -50,4 +62,12 @@ function getEImprovementCost(value?: number): number {
 		return 15;
 	}
 	return (value - 13) * 15;
+}
+
+/**
+ * Returns the string representing the IC id.
+ * @param icId
+ */
+export function getICName(icId: number) {
+	return ['A', 'B', 'C', 'D'][icId - 1];
 }

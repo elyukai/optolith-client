@@ -1,40 +1,38 @@
 import * as React from 'react';
+import { AttributesContainer } from '../containers/Attributes';
+import { HerolistContainer } from '../containers/Herolist';
+import { ProfileContainer } from '../containers/Profile';
+import { SkillsContainer } from '../containers/Skills';
+import { UIMessages } from '../types/ui';
 import { About } from './about/About';
-import { Account } from './account/Account';
-import { AttributesController } from './attributes/AttributesController';
 import { Belongings } from './belongings/Belongings';
-import { DisAdv } from './disadv/DisAdv';
+import { AdvantagesDisadvantages } from './disadv/DisAdv';
 import { Grouplist } from './grouplist/Grouplist';
-import { Herolist } from './herolist/Herolist';
-import { Home } from './home/Home';
 // import { Master } from './master/Master';
-import { Profile } from './profile/Profile';
 import { RCP } from './rcp/RCP';
-import { Skills } from './skills/Skills';
 
 export interface RouteProps {
 	id: string;
+	locale: UIMessages;
 }
 
-type TabId = 'home' | 'herolist' | 'grouplist' | 'account' | 'about' | 'rcp' | 'profile' | 'attributes' | 'disadv' | 'skills' | 'belongings';
-
 export function Route(props: RouteProps) {
+	const { id, locale } = props;
+
 	const VIEWS = {
-		home: <Home />,
-		herolist: <Herolist />,
+		herolist: <HerolistContainer locale={locale} />,
 		grouplist: <Grouplist />,
-		account: <Account />,
-		about: <About />,
+		about: <About locale={locale} />,
 
 		rcp: <RCP />,
-		profile: <Profile />,
-		attributes: <AttributesController />,
-		disadv: <DisAdv />,
-		skills: <Skills />,
+		profile: <ProfileContainer locale={locale} />,
+		attributes: <AttributesContainer locale={locale} />,
+		disadv: <AdvantagesDisadvantages locale={locale} />,
+		skills: <SkillsContainer locale={locale} />,
 		belongings: <Belongings />
 
 		// master: <Master />
 	};
 
-	return VIEWS[props.id as TabId] || null;
+	return VIEWS[id as keyof typeof VIEWS] || null;
 }

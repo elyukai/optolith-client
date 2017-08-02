@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { setTab } from '../../actions/LocationActions';
 import { Tab, TabBaseProps } from '../Tab';
 
 export interface TitleBarTabProps extends TabBaseProps {
@@ -9,10 +8,11 @@ export interface TitleBarTabProps extends TabBaseProps {
 export interface TitleBarTabsProps {
 	active: string;
 	tabs: TitleBarTabProps[];
+	setTab(id: string): void;
 }
 
 export class TitleBarTabs extends React.Component<TitleBarTabsProps, {}> {
-	handleClick = (tab: string) => setTab(tab);
+	handleClick = (tab: string) => this.props.setTab(tab);
 
 	render() {
 		const { active, tabs } = this.props;

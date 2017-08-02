@@ -3,17 +3,17 @@ import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from 
 import { SelectCultureAction } from '../actions/CultureActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { LoadHeroAction } from '../actions/HerolistActions';
-import { ActivateLiturgyAction, AddLiturgyPointAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
+import { ActivateBlessingAction, ActivateLiturgyAction, AddLiturgyPointAction, DeactivateBlessingAction, DeactivateLiturgyAction, RemoveLiturgyPointAction } from '../actions/LiturgiesActions';
 import { SelectProfessionAction, SetSelectionsAction } from '../actions/ProfessionActions';
 import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActions';
 import { AddAdventurePointsAction } from '../actions/ProfileActions';
 import { SelectRaceAction } from '../actions/RaceActions';
 import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
-import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
+import { ActivateCantripAction, ActivateSpellAction, AddSpellPointAction, DeactivateCantripAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = LoadHeroAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SetSelectionsAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointsAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | AddLostAEPointAction | AddLostKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction;
+type Action = LoadHeroAction | ActivateSpellAction | ActivateLiturgyAction | DeactivateSpellAction | DeactivateLiturgyAction | AddAttributePointAction | AddTalentPointAction | AddCombatTechniquePointAction | AddSpellPointAction | AddLiturgyPointAction | AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | RemoveAttributePointAction | RemoveTalentPointAction | RemoveCombatTechniquePointAction | RemoveSpellPointAction | RemoveLiturgyPointAction | ActivateDisAdvAction | SetDisAdvTierAction | DeactivateDisAdvAction | ActivateSpecialAbilityAction | SetSpecialAbilityTierAction | DeactivateSpecialAbilityAction | AddAdventurePointsAction | SelectRaceAction | SelectCultureAction | SelectProfessionAction | SelectProfessionVariantAction | SetSelectionsAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointsAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | AddLostAEPointAction | AddLostKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | ActivateCantripAction | DeactivateCantripAction | ActivateBlessingAction | DeactivateBlessingAction;
 
 export interface DisAdvAdventurePoints extends Array<number> {
 	/**
@@ -77,6 +77,14 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 		case ActionTypes.SELECT_PROFESSION_VARIANT:
 			return { ...state, spent: state.spent + action.payload.cost };
 
+		case ActionTypes.ACTIVATE_CANTRIP:
+		case ActionTypes.ACTIVATE_BLESSING:
+			return { ...state, spent: state.spent + 1};
+
+		case ActionTypes.DEACTIVATE_CANTRIP:
+		case ActionTypes.DEACTIVATE_BLESSING:
+			return { ...state, spent: state.spent - 1};
+
 		case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
 		case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
 			return { ...state, spent: state.spent + 2 };
@@ -117,65 +125,7 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 		case ActionTypes.ADD_ADVENTURE_POINTS:
 			return { ...state, spent: state.total + action.payload.amount };
 
-		case ActionTypes.ASSIGN_RCP_OPTIONS: {
-			const selections = action.payload;
-			if (selections.useCulturePackage === true) {
-				this.spent += CultureStore.getCurrent()!.ap;
-			}
-
-			if (selections.buyLiteracy) {
-				const culture = CultureStore.getCurrent();
-				const id = culture!.scripts.length > 1 ? selections.litc : culture!.scripts[0];
-				const selectionItem = getSelectionItem(get('SA_28') as SpecialAbilityInstance, id);
-				this.spent += selectionItem && selectionItem.cost || 0;
-			}
-
-			const race = RaceStore.getCurrent();
-			this.spentForAdvantages = race!.automaticAdvantagesCost;
-
-			const p = ProfessionStore.getCurrent();
-			if (p && p.id !== 'P_0') {
-				const reducer = (a: ProfessionDependencyCost, b: number | ProfessionDependencyCost): ProfessionDependencyCost => {
-					if (typeof b === 'number') {
-						a.total += b;
-					}
-					else {
-						a.total += b.total;
-						a.adv = a.adv.map((e, i) => e + b.adv[i]) as [number, number, number];
-						a.disadv = a.disadv.map((e, i) => e + b.disadv[i]) as [number, number, number];
-					}
-					return a;
-				};
-
-				const initialValue: ProfessionDependencyCost = {
-					adv: [0, 0, 0],
-					disadv: [0, 0, 0],
-					total: 0,
-				};
-
-				const requires = [ ...p.requires ];
-				const pv = ProfessionVariantStore.getCurrent();
-
-				if (pv) {
-					requires.push(...pv.requires);
-				}
-
-				const apCostsList = ListStore.getCostListForProfessionDependencies(p.requires);
-				const apCosts = apCostsList.reduce<ProfessionDependencyCost>(reducer, initialValue);
-				const spareAP = ListStore.getSpareAPForCombatTechniques();
-
-				this.spent += apCosts.total - spareAP;
-				this.spentForAdvantages = this.spentForAdvantages.map((e, i) => e + apCosts.adv[i]) as [number, number, number];
-				this.spentForDisadvantages = apCosts.disadv;
-			}
-			return state;
-		}
-
 		default:
 			return state;
 	}
-}
-
-export function getLeft(state: AdventurePointsState) {
-	return state.total - state.spent;
 }

@@ -6,11 +6,11 @@ sass.render({
 	outputStyle: 'compressed'
 }, (err, result) => {
 	if (err) {
-		throw new Error('SCSS render error!');
+		throw err;
 	}
 	writeFile('app/main.css', result.css, (err) => {
 		if (err) {
-			throw new Error('CSS writing error!');
+			throw err;
 		}
 		console.log('SCSS successfully bundled!');
 	})

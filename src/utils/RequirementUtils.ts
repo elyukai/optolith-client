@@ -1,6 +1,7 @@
 import * as Categories from '../constants/Categories';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategoryGroup } from '../reducers/dependentInstances';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { ActivatableInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
@@ -12,7 +13,7 @@ import { getPrimaryAttributeId } from './AttributeUtils';
  * @param req A requirement object.
  * @param sourceId The id of the entry the requirement object belongs to.
  */
-export function validateObject(state: CurrentHeroState, req: AllRequirements, sourceId: string): boolean {
+export function validateObject(state: CurrentHeroInstanceState, req: AllRequirements, sourceId: string): boolean {
 	if (req === 'RCP') {
 		const array = [];
 		const currentRace = typeof state.rcp.race === 'string' && get(state.dependent, state.rcp.race) as RaceInstance;
@@ -114,7 +115,7 @@ export function validateObject(state: CurrentHeroState, req: AllRequirements, so
  * @param requirements An array of requirement objects.
  * @param sourceId The id of the entry the requirement objects belong to.
  */
-export function validate(state: CurrentHeroState, requirements: AllRequirements[], sourceId: string): boolean {
+export function validate(state: CurrentHeroInstanceState, requirements: AllRequirements[], sourceId: string): boolean {
 	return requirements.every(e => validateObject(state, e, sourceId));
 }
 

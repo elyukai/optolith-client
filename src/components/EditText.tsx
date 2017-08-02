@@ -7,21 +7,21 @@ import { TextField } from './TextField';
 export interface EditTextProps {
 	autoFocus?: boolean;
 	className?: string;
-	text: string;
+	text: string | undefined;
 	cancel(): void;
 	submit(text: string): void;
 }
 
-interface EditTextState {
+export interface EditTextState {
 	text: string;
 }
 
 export class EditText extends React.Component<EditTextProps, EditTextState> {
 	state = {
-		text: this.props.text,
+		text: this.props.text || '',
 	};
 
-	submit = () => this.props.submit(this.state.text);
+	submit = () => this.state.text && this.props.submit(this.state.text);
 
 	handleEnter = (event: InputKeyEvent) => {
 		if (event.charCode === 13 && this.state.text) {

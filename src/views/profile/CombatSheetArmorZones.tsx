@@ -1,54 +1,50 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { EquipmentStore } from '../../stores/EquipmentStore';
-import { ArmorZonesInstance } from '../../types/data.d';
+import { ArmorZone, UIMessages } from '../../types/view.d';
+import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 
-export function CombatSheetArmorZones() {
-	const items = EquipmentStore.getAllArmorZones();
-	const list = ([undefined, undefined, undefined, undefined] as Array<ArmorZonesInstance | undefined>);
-	list.splice(0, Math.min(items.length, 4), ...items);
+export interface CombatSheetArmorZonesProps {
+	armorZones: ArmorZone[];
+	locale: UIMessages;
+}
+
+export function CombatSheetArmorZones(props: CombatSheetArmorZonesProps) {
+	const { armorZones, locale } = props;
+	const list = ([undefined, undefined, undefined, undefined] as Array<ArmorZone | undefined>);
+	list.splice(0, Math.min(armorZones.length, 4), ...armorZones);
 	return (
-		<TextBox label="Rüstungen" className="armor armor-zones">
+		<TextBox label={_translate(locale, 'charactersheet.combat.armor.title')} className="armor armor-zones">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">Rüstung</th>
-						<th className="zone">Ko</th>
-						<th className="zone">To</th>
-						<th className="zone">lA</th>
-						<th className="zone">rA</th>
-						<th className="zone">lB</th>
-						<th className="zone">rB</th>
-						<th className="enc">BE</th>
-						<th className="add-penalties">GS/INI</th>
-						<th className="weight">Gewicht</th>
+						<th className="name">{_translate(locale, 'charactersheet.combat.headers.armor')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.head')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.torso')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.leftarm')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.rightarm')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.leftleg')}</th>
+						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.rightleg')}</th>
+						<th className="enc">{_translate(locale, 'charactersheet.combat.headers.enc')}</th>
+						<th className="add-penalties">{_translate(locale, 'charactersheet.combat.headers.addpenalties')}</th>
+						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
 					{
 						list.map((e, i) => {
 							if (e) {
-								const { pro, weight } = EquipmentStore.getProtectionAndWeight(e);
-								const protectionTier = Math.ceil(pro / 14);
-								const enc = EquipmentStore.getEncumbranceZoneTiers()[protectionTier];
-								const headArmor = EquipmentStore.getZoneArmor(e.head);
-								const torsoArmor = EquipmentStore.getZoneArmor(e.torso);
-								const leftArmArmor = EquipmentStore.getZoneArmor(e.leftArm);
-								const rightArmArmor = EquipmentStore.getZoneArmor(e.rightArm);
-								const leftLegArmor = EquipmentStore.getZoneArmor(e.leftLeg);
-								const rightLegArmor = EquipmentStore.getZoneArmor(e.rightLeg);
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
-										<td className="zone">{headArmor && headArmor.pro}</td>
-										<td className="zone">{torsoArmor && torsoArmor.pro}</td>
-										<td className="zone">{leftArmArmor && leftArmArmor.pro}</td>
-										<td className="zone">{rightArmArmor && rightArmArmor.pro}</td>
-										<td className="zone">{leftLegArmor && leftLegArmor.pro}</td>
-										<td className="zone">{rightLegArmor && rightLegArmor.pro}</td>
-										<td className="enc">{enc}</td>
-										<td className="add-penalties">{[1, 3, 5].includes(protectionTier) ? '-1/-1' : '-'}</td>
-										<td className="weight">{Math.floor(weight * 100) / 100} Stn</td>
+										<td className="zone">{e.head}</td>
+										<td className="zone">{e.torso}</td>
+										<td className="zone">{e.leftArm}</td>
+										<td className="zone">{e.rightArm}</td>
+										<td className="zone">{e.leftLeg}</td>
+										<td className="zone">{e.rightLeg}</td>
+										<td className="enc">{e.enc}</td>
+										<td className="add-penalties">{e.addPenalties ? '-1/-1' : '-'}</td>
+										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

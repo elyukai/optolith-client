@@ -1,15 +1,21 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { SpellsStore } from '../../stores/SpellsStore';
-import { translate } from '../../utils/I18n';
-import { sort } from '../../utils/FilterSortUtils';
+import { CantripInstance, UIMessages } from '../../types/data.d';
+import { sortByLocaleName } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 
-export function SpellsSheetCantrips() {
+export interface SpellsSheetCantripsProps {
+	cantrips: CantripInstance[];
+	locale: UIMessages;
+}
+
+export function SpellsSheetCantrips(props: SpellsSheetCantripsProps) {
+	const { cantrips, locale } = props;
 	return (
-		<TextBox label={translate('charactersheet.spells.cantrips.title')} className="cantrips activatable-list">
+		<TextBox label={_translate(locale, 'charactersheet.spells.cantrips.title')} className="cantrips activatable-list">
 			<div className="list">
 				{
-					sort(SpellsStore.getAllCantrips().filter(e => e.active)).map(e => e.name).join(', ')
+					sortByLocaleName(cantrips, locale.id).map(e => e.name).join(', ')
 				}
 			</div>
 		</TextBox>

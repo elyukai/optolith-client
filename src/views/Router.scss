@@ -13,3 +13,11 @@ html, body, #bodywrapper, #body {
 	font: 14px/23px Alegreya;
 	border: 1px solid $color12;
 }
+
+.error-message {
+	align-self: center;
+	color: $c2;
+	white-space: pre-wrap;
+	font: 500 18px/20px Alegreya Sans;
+	padding-left: 36px;
+}

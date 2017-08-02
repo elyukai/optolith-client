@@ -1,26 +1,39 @@
 import { app, BrowserWindow } from 'electron';
+import windowStateKeeper = require('electron-window-state');
 import * as path from 'path';
 import * as url from 'url';
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
 
 function createWindow() {
+	const mainWindowState = windowStateKeeper({
+		defaultHeight: 720,
+		defaultWidth: 1280,
+		file: 'window.json'
+	});
+
 	mainWindow = new BrowserWindow({
-		width: 1280,
-		height: 720,
-		resizable: false,
+		x: mainWindowState.x,
+		y: mainWindowState.y,
+		height: mainWindowState.height,
+		width: mainWindowState.width,
+		minHeight: 720,
+		minWidth: 1280,
+		resizable: true,
 		icon: path.join(app.getAppPath(), 'app', 'favicon.png'),
 		frame: false,
 		center: true,
-		title: 'DSA5 Heldentool',
+		title: 'TDE Heroes',
 		titleBarStyle: 'hidden',
 		acceptFirstMouse: true,
-		backgroundColor: '#010a13',
+		backgroundColor: '#000000',
 		// webPreferences: {
 		// 	devTools: false
 		// },
 		show: false
 	});
+
+	mainWindowState.manage(mainWindow);
 
 	mainWindow.loadURL(url.format({
 		pathname: path.join(__dirname, 'index.html'),
@@ -32,6 +45,9 @@ function createWindow() {
 
 	mainWindow.once('ready-to-show', () => {
 		mainWindow!.show();
+		if (mainWindowState.isMaximized) {
+			mainWindow!.maximize();
+		}
 	});
 
 	mainWindow.on('closed', () => {

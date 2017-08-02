@@ -1,7 +1,7 @@
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { ExperienceLevel, ToListById } from '../types/data.d';
 import { RawExperienceLevel, RawExperienceLevelLocale } from '../types/rawdata.d';
 import { initExperienceLevel } from '../utils/InitUtils';
@@ -15,31 +15,6 @@ class ELStoreStatic extends Store {
 	private allIds: string[];
 	private start = 'EL_0';
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.CREATE_HERO:
-					this.update(action.payload.el);
-					break;
-
-				case ActionTypes.LOAD_HERO:
-					this.update(action.payload.data.el);
-					break;
-
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					AppDispatcher.waitFor([LocaleStore.dispatchToken]);
-					this.init(action.payload.tables.el, action.payload.locales[LocaleStore.getLocale()!].el);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	get(id: string) {
 		return this.byId[id];

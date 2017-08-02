@@ -1,17 +1,20 @@
 import { remote } from 'electron';
+import { AppState } from '../reducers/app';
 import { store } from '../stores/AppStore';
-import { UIMessages } from '../types/ui.d';
+import { UIMessages } from '../types/data.d';
 
-export function getMessages() {
-	return store.getState().locale.messages || {} as UIMessages;
+export const getLocaleId = (state: AppState) => state.locale.id;
+
+export function getMessages(state = store.getState()) {
+	return state.locale.messages || {} as UIMessages;
 }
 
-export function getLocale() {
-	return getLocaleSetting() || getSystemLocale();
+export function getLocale(state = store.getState()) {
+	return getLocaleSetting(state) || getSystemLocale();
 }
 
-export function getLocaleSetting() {
-	return store.getState().locale.id;
+export function getLocaleSetting(state = store.getState()) {
+	return state.locale.id;
 }
 
 export function getSystemLocale() {

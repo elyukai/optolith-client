@@ -5,7 +5,7 @@ import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActio
 import { SelectRaceAction } from '../actions/RaceActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { ProfessionVariantInstance } from '../types/data.d';
 import { validate } from '../utils/RequirementUtils';
 import { APStore } from './APStore';
@@ -19,34 +19,6 @@ class ProfessionVariantStoreStatic extends Store {
 	private readonly category = Categories.PROFESSION_VARIANTS;
 	readonly dispatchToken: string;
 	private currentId?: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.LOAD_HERO:
-					this.updateCurrentID(action.payload.data.pv);
-					break;
-
-				case ActionTypes.CREATE_HERO:
-				case ActionTypes.SELECT_RACE:
-				case ActionTypes.SELECT_CULTURE:
-				case ActionTypes.SELECT_PROFESSION:
-					this.updateCurrentID(undefined);
-					break;
-
-				case ActionTypes.SELECT_PROFESSION_VARIANT:
-					AppDispatcher.waitFor([APStore.dispatchToken]);
-					this.updateCurrentID(action.payload.id);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		return getAllByCategory(this.category) as ProfessionVariantInstance[];

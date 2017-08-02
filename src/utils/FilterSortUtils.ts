@@ -162,3 +162,80 @@ export function filterAndSort<T>(list: T[], filterText: string, sortOrder?: stri
 	}
 	return sort(filter(list as any, filterText), sortOrder) as any;
 }
+
+export function sortByLocaleName<T extends { name: string; [key: string]: any; }>(list: T[], locale: string) {
+	return list.sort((a, b) => a.name.localeCompare(b.name, locale));
+}
+
+interface BaseObject {
+	name: any;
+	[key: string]: any;
+}
+
+interface SortOption<O> {
+	key: keyof O;
+	mapToIndex?: string[];
+	reverse?: boolean;
+	sex?: string;
+}
+
+export function sortObjects<T extends BaseObject>(list: T[], sortOptions: (keyof T | SortOption<T>)[] = ['name'], locale: string) {
+	const sortFunctions: ((a: T, b: T) => number)[] = [];
+	const isSortOptionObject = (option: keyof T | SortOption<T>): option is SortOption<T> => typeof option === 'object';
+
+	for (const option of sortOptions) {
+		if (isSortOptionObject(option)) {
+			const { key, mapToIndex, reverse, sex } = option;
+			const propertyType = typeof list[0][key];
+			if (reverse === true) {
+				if (propertyType === 'object' && sex !== undefined) {
+					sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale) * -1);
+				}
+				else if (propertyType === 'string') {
+					sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale) * -1);
+				}
+				else if (propertyType === 'number' && mapToIndex !== undefined) {
+					sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale) * -1);
+				}
+				else if (propertyType === 'number') {
+					sortFunctions.push((a: T, b: T) => (b[key] as number) - (a[key] as number));
+				}
+			}
+			else if (propertyType === 'object' && sex !== undefined) {
+				sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale));
+			}
+			else if (propertyType === 'string') {
+				sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale));
+			}
+			else if (propertyType === 'number' && mapToIndex !== undefined) {
+				sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale));
+			}
+			else if (propertyType === 'number') {
+				sortFunctions.push((a: T, b: T) => (a[key] as number) - (b[key] as number));
+			}
+		}
+		else {
+			const propertyType = typeof list[0][option];
+			if (propertyType === 'string') {
+				sortFunctions.push((a: T, b: T) => (a[option] as string).localeCompare(b[option], locale));
+			}
+			else if (propertyType === 'number') {
+				sortFunctions.push((a: T, b: T) => (a[option] as number) - (b[option] as number));
+			}
+		}
+	}
+
+	return list.sort((a, b) => {
+		for (const compare of sortFunctions) {
+			const result = compare(a, b);
+			if (result !== 0) {
+				return result;
+			}
+		}
+		return 0;
+	});
+}
+
+export function sortStrings(list: string[], locale: string) {
+	return list.sort((a, b) => a.localeCompare(b, locale));
+}

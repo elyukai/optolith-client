@@ -1,13 +1,15 @@
-.titlebar {
+.navbar {
 	position: absolute;
 	width: 100%;
 	z-index: 800;
+	margin-top: 32px;
 }
 
-.titlebar-inner {
+.navbar-inner {
 	height: $titlebar-height;
 	width: 100%;
 	display: flex;
 	position: relative;
 	// background: linear-gradient(to bottom, transparentize($background2, .5) 0%, transparentize($background2, 1) 100%);
+	border-bottom: 1px solid $c1t;
 }

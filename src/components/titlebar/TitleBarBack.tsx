@@ -1,11 +1,14 @@
 import * as React from 'react';
-import * as LocationActions from '../../actions/LocationActions';
 import { TitleBarBackArrow } from './TitleBarBackArrow';
 
-export function TitleBarBack() {
+export interface TitleBarBackProps {
+	setSection(id: string): void;
+}
+
+export function TitleBarBack(props: TitleBarBackProps) {
 	return (
 		<div className="titlebar-back">
-			<div className="titlebar-back-inner" onClick={() => LocationActions.setSection('main')}>
+			<div className="titlebar-back-inner" onClick={props.setSection.bind(null, 'main')}>
 				<TitleBarBackArrow />
 			</div>
 		</div>

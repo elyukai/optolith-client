@@ -1,18 +1,26 @@
 import * as React from 'react';
+import { Attribute, UIMessages } from '../../types/view.d';
 import { HeaderValue, SheetHeader } from './SheetHeader';
 
 export interface SheetProps {
+	addHeaderInfo?: HeaderValue[];
+	attributes: Attribute[];
 	children?: React.ReactNode;
 	id: string;
+	locale: UIMessages;
 	title: string;
-	addHeaderInfo?: HeaderValue[];
 }
 
 export function Sheet(props: SheetProps) {
-	const { children, id, title, addHeaderInfo } = props;
+	const { addHeaderInfo, attributes, children, id, locale, title } = props;
 	return (
 		<div className="sheet" id={id}>
-			<SheetHeader title={title} add={addHeaderInfo} />
+			<SheetHeader
+				title={title}
+				add={addHeaderInfo}
+				attributes={attributes}
+				locale={locale}
+				/>
 			{children}
 		</div>
 	);

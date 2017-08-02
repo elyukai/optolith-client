@@ -1,7 +1,8 @@
 import { LITURGIES } from '../constants/Categories';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategory } from '../reducers/dependentInstances';
-import { getStart } from '../reducers/el';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
@@ -10,7 +11,7 @@ export function isOwnTradition(state: DependentInstancesState, obj: LiturgyInsta
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
 
-export function isIncreasable(state: CurrentHeroState, obj: LiturgyInstance): boolean {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
 	const { dependent } = state;
 	let max = 0;
 	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
@@ -32,7 +33,7 @@ export function isIncreasable(state: CurrentHeroState, obj: LiturgyInstance): bo
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(state: CurrentHeroState, obj: LiturgyInstance): boolean {
+export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
 	const { dependent } = state;
 	const activeAspectKnowledge = getSids(get(dependent, 'SA_103') as SpecialAbilityInstance);
 	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {

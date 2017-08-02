@@ -1,10 +1,10 @@
 import * as activatable from '../reducers/activatable';
 import { AppState } from '../reducers/app';
-import { getForSave as getEquipmentForSave } from '../reducers/equipment';
-import { getForSave as getPetsForSave } from '../reducers/pets';
 import * as attributes from '../selectors/attributes';
 import * as chants from '../selectors/chants';
 import * as combatTechniques from '../selectors/combatTechniques';
+import { getForSave as getEquipmentForSave } from '../selectors/equipmentSelectors';
+import { getForSave as getPetsForSave } from '../selectors/petsSelectors';
 import * as skills from '../selectors/skills';
 import * as spells from '../selectors/spells';
 import { HeroForSave } from '../types/data.d';
@@ -12,7 +12,7 @@ import { currentVersion } from '../utils/VersionUtils';
 
 export function generateHeroSaveData(state: AppState): HeroForSave {
 	const {
-		currentHero: {
+		currentHero: { present: {
 			ap,
 			dependent,
 			el,
@@ -30,7 +30,7 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 				...pers
 			},
 			rules
-		},
+		}},
 		herolist: {
 			currentId
 		}

@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { DISADVANTAGES } from '../constants/Categories';
-import { get } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { store } from '../stores/AppStore';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { isMagicalOrBlessed } from '../utils/ActivatableUtils';
@@ -18,11 +18,6 @@ export interface ActivateDisAdvAction {
 	type: ActionTypes.ACTIVATE_DISADV;
 	payload: ActivateArgsWithEntryType;
 }
-
-export const addToList = (args: UndoExtendedActivateArgs) => AppDispatcher.dispatch<ActivateDisAdvAction>({
-	type: ActionTypes.ACTIVATE_DISADV,
-	payload: args
-});
 
 export function _addToList(args: ActivateArgs): ActivateDisAdvAction | undefined {
 	const { ap, dependent } = store.getState().currentHero.present;
@@ -69,18 +64,14 @@ export interface DeactivateDisAdvAction {
 	payload: DeactivateArgsWithEntryType;
 }
 
-export const removeFromList = (args: UndoExtendedDeactivateArgs) => AppDispatcher.dispatch<DeactivateDisAdvAction>({
-	type: ActionTypes.DEACTIVATE_DISADV,
-	payload: args
-});
-
 export function _removeFromList(args: DeactivateArgs): DeactivateDisAdvAction | undefined {
 	const { ap, dependent } = store.getState().currentHero.present;
 	const { id, cost } = args;
+	const negativeCost = cost * -1; // the entry should be removed
 	const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 	const entryType = isMagicalOrBlessed(dependent, entry);
 	const isDisadvantage = entry.category === DISADVANTAGES;
-	const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
+	const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
 	if (!validCost[0]) {
 		alert(translate('notenoughap.title'), translate('notenoughap.content'));
 		return;
@@ -100,6 +91,7 @@ export function _removeFromList(args: DeactivateArgs): DeactivateDisAdvAction | 
 		type: ActionTypes.DEACTIVATE_DISADV,
 		payload: {
 			...args,
+			cost: negativeCost,
 			...entryType,
 			isDisadvantage
 		}
@@ -118,16 +110,6 @@ export interface SetDisAdvTierAction {
 		isDisadvantage: boolean;
 	};
 }
-
-export const setTier = (id: string, index: number, tier: number, cost: number) => AppDispatcher.dispatch<SetDisAdvTierAction>({
-	type: ActionTypes.SET_DISADV_TIER,
-	payload: {
-		id,
-		tier,
-		cost,
-		index
-	}
-});
 
 export function _setTier(id: string, index: number, tier: number, cost: number): SetDisAdvTierAction | undefined {
 	const { ap, dependent } = store.getState().currentHero.present;
@@ -166,10 +148,6 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 export interface SwitchDisAdvRatingVisibilityAction {
 	type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY;
 }
-
-export const switchRatingVisibility = () => AppDispatcher.dispatch<SwitchDisAdvRatingVisibilityAction>({
-	type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
-});
 
 export function _switchRatingVisibility(): SwitchDisAdvRatingVisibilityAction {
 	return {

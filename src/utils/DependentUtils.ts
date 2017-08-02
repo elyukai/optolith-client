@@ -1,9 +1,11 @@
 import { isEqual } from 'lodash';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { ActivatableInstance, AttributeInstance, BlessingInstance, CantripInstance, SpellInstance } from '../types/data.d';
+import { getLatest } from '../selectors/dependentInstancesSelectors';
+import { ActivatableInstance, AttributeInstance, BlessingInstance, CantripInstance, SpellInstance, ToOptionalKeys } from '../types/data.d';
 import { AbilityInstanceExtended, AllRequirementObjects } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
 import { getPrimaryAttributeId } from './AttributeUtils';
+import { setNewStateItem } from './ListUtils';
 import { isCultureRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
 
 type RequiringInstance = ActivatableInstance | SpellInstance | CantripInstance | BlessingInstance;
@@ -44,10 +46,6 @@ function removeDependency<D>(obj: AbilityInstanceExtended, remove: D): AbilityIn
 	}
 }
 
-function getInstance<T extends AbilityInstanceExtended>(state: DependentInstancesState, updated: Map<string, AbilityInstanceExtended>, id: string) {
-	return (updated.has(id) ? updated.get(id) : state.get(id)) as T;
-}
-
 /**
  * Adds dependencies to all required entries to ensure rule validity. The returned Map needs to be merged into the main Map in ListStore.
  * @param state All entries available for dependencies.
@@ -55,9 +53,9 @@ function getInstance<T extends AbilityInstanceExtended>(state: DependentInstance
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function addDependencies(state: DependentInstancesState, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
+export function addDependencies(state: DependentInstancesState, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): ToOptionalKeys<DependentInstancesState> {
 	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
+	let instances = setNewStateItem({}, obj.id, obj);
 
 	allReqs.forEach(req => {
 		if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
@@ -65,8 +63,8 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
 				const { type, value } = req;
 				const id = getPrimaryAttributeId(state, type);
 				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(state, instances, id);
-					instances.set(id, addDependency(requiredAbility, value));
+					const requiredAbility = getLatest(state, instances, id) as AttributeInstance;
+					instances = setNewStateItem(instances, id, addDependency(requiredAbility, value));
 				}
 			}
 			else if (isRequiringIncreasable(state, req)) {
@@ -74,15 +72,15 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const requiredAbility = getInstance(state, instances, e);
+						const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
 						if (requiredAbility) {
-							instances.set(e, addDependency(requiredAbility, add));
+							instances = setNewStateItem(instances, e, addDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					const requiredAbility = getInstance(state, instances, id);
-					instances.set(id, addDependency(requiredAbility, value));
+					const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
+					instances = setNewStateItem(instances, id, addDependency(requiredAbility, value));
 				}
 			}
 			else {
@@ -97,9 +95,9 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
 							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
 						}
 						id.forEach(e => {
-							const requiredAbility = getInstance(state, instances, e);
+							const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
 							if (requiredAbility) {
-								instances.set(e, addDependency(requiredAbility, add));
+								instances = setNewStateItem(instances, e, addDependency(requiredAbility, add));
 							}
 						});
 					}
@@ -114,8 +112,8 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
 						else {
 							add = { sid: sid === 'sel' ? sel : sid, sid2 };
 						}
-						const requiredAbility = getInstance(state, instances, id);
-						instances.set(id, addDependency(requiredAbility, add));
+						const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
+						instances = setNewStateItem(instances, id, addDependency(requiredAbility, add));
 					}
 				}
 			}
@@ -130,9 +128,9 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function removeDependencies(state: DependentInstancesState, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): Map<string, AbilityInstanceExtended> {
+export function removeDependencies(state: DependentInstancesState, obj: RequiringInstance, adds: AllRequirementObjects[] = [], sel?: string): ToOptionalKeys<DependentInstancesState> {
 	const allReqs = [ ...obj.reqs, ...adds ];
-	const instances = new Map<string, AbilityInstanceExtended>().set(obj.id, obj);
+	let instances = setNewStateItem({}, obj.id, obj);
 
 	allReqs.forEach(req => {
 		if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
@@ -140,8 +138,8 @@ export function removeDependencies(state: DependentInstancesState, obj: Requirin
 				const { type, value } = req;
 				const id = getPrimaryAttributeId(state, type);
 				if (id) {
-					const requiredAbility = getInstance<AttributeInstance>(state, instances, id);
-					instances.set(id, removeDependency(requiredAbility, value));
+					const requiredAbility = getLatest(state, instances, id) as AttributeInstance;
+					instances = setNewStateItem(instances, id, removeDependency(requiredAbility, value));
 				}
 			}
 			else if (isRequiringIncreasable(state, req)) {
@@ -149,15 +147,15 @@ export function removeDependencies(state: DependentInstancesState, obj: Requirin
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };
 					id.forEach(e => {
-						const requiredAbility = getInstance(state, instances, e);
+						const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
 						if (requiredAbility) {
-							instances.set(e, removeDependency(requiredAbility, add));
+							instances = setNewStateItem(instances, e, removeDependency(requiredAbility, add));
 						}
 					});
 				}
 				else {
-					const requiredAbility = getInstance(state, instances, id);
-					instances.set(id, removeDependency(requiredAbility, value));
+					const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
+					instances = setNewStateItem(instances, id, removeDependency(requiredAbility, value));
 				}
 			}
 			else {
@@ -172,9 +170,9 @@ export function removeDependencies(state: DependentInstancesState, obj: Requirin
 							add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
 						}
 						id.forEach(e => {
-							const requiredAbility = getInstance(state, instances, e);
+							const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
 							if (requiredAbility) {
-								instances.set(e, removeDependency(requiredAbility, add));
+								instances = setNewStateItem(instances, e, removeDependency(requiredAbility, add));
 							}
 						});
 					}
@@ -189,8 +187,8 @@ export function removeDependencies(state: DependentInstancesState, obj: Requirin
 						else {
 							add = { sid: sid === 'sel' ? sel : sid, sid2 };
 						}
-						const requiredAbility = getInstance(state, instances, id);
-						instances.set(id, removeDependency(requiredAbility, add));
+						const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
+						instances = setNewStateItem(instances, id, removeDependency(requiredAbility, add));
 					}
 				}
 			}

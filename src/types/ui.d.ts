@@ -1,4 +1,5 @@
 export interface UIMessages {
+	"id": string;
 	"titlebar.tabs.home": string;
 	"titlebar.tabs.homeintro": string;
 	"titlebar.tabs.news": string;
@@ -12,6 +13,7 @@ export interface UIMessages {
 	"titlebar.tabs.thirdpartylicenses": string;
 	"titlebar.tabs.profile": string;
 	"titlebar.tabs.profileoverview": string;
+	"titlebar.tabs.personaldata": string;
 	"titlebar.tabs.charactersheet": string;
 	"titlebar.tabs.rules": string;
 	"titlebar.tabs.racecultureprofession": string;
@@ -67,6 +69,8 @@ export interface UIMessages {
 	"heroes.view.unsavedhero.title": string;
 	"heroes.warnings.unsavedactions.title": string;
 	"heroes.warnings.unsavedactions.text": string;
+	"heroes.warnings.delete.title": string;
+	"heroes.warnings.delete.message": string;
 	"herocreation.title": string;
 	"herocreation.actions.start": string;
 	"herocreation.options.nameofhero": string;
@@ -75,6 +79,7 @@ export interface UIMessages {
 	"herocreation.options.selectsex.female": string;
 	"herocreation.options.selectexperiencelevel": string;
 	"imprint.title": string;
+	"imprint.emailhint": string;
 	"profileoverview.view.male": string;
 	"profileoverview.view.female": string;
 	"profileoverview.view.editprofessionname": string;
@@ -140,6 +145,7 @@ export interface UIMessages {
 	"charactersheet.main.advantages": string;
 	"charactersheet.main.disadvantages": string;
 	"charactersheet.main.generalspecialabilites": string;
+	"charactersheet.main.generalspecialabilites.areaknowledge": string;
 	"charactersheet.main.fatepoints": string;
 	"charactersheet.main.headers.value": string;
 	"charactersheet.main.headers.bonuspenalty": string;
@@ -228,9 +234,17 @@ export interface UIMessages {
 	"charactersheet.combat.headers.enc": string;
 	"charactersheet.combat.headers.addpenalties": string;
 	"charactersheet.combat.headers.where": string;
+	"charactersheet.combat.headers.head": string;
+	"charactersheet.combat.headers.torso": string;
+	"charactersheet.combat.headers.leftarm": string;
+	"charactersheet.combat.headers.rightarm": string;
+	"charactersheet.combat.headers.leftleg": string;
+	"charactersheet.combat.headers.rightleg": string;
 	"charactersheet.combat.shieldparryingweapon.title": string;
 	"charactersheet.combat.headers.shieldparryingweapon": string;
 	"charactersheet.combat.headers.structurepoints": string;
+	"charactersheet.combat.content.dice": string;
+	"charactersheet.combat.content.actions": string;
 	"charactersheet.combat.combatspecialabilities.title": string;
 	"charactersheet.combat.conditionsstates.conditions": string;
 	"charactersheet.combat.conditionsstates.conditions.animosity": string;
@@ -572,4 +586,9 @@ export interface UIMessages {
 	"reachedcategoryaplimit.blessedadvantages": string;
 	"reachedcategoryaplimit.magicaldisadvantages": string;
 	"reachedcategoryaplimit.blesseddisadvantages": string;
+	"modal.actions.add": string;
+	"modal.actions.remove": string;
+	"modal.actions.cancel": string;
+	"removepermanentenergypoints.title": string;
+	"removepermanentenergypoints.inputhint": string;
 }

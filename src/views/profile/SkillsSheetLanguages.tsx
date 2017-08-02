@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { get } from '../../stores/ListStore';
-import { SpecialAbilityInstance } from '../../types/data.d';
+import { SpecialAbilityInstance, UIMessages } from '../../types/data.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
-import { translate } from '../../utils/I18n';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
+import { getRoman } from '../../utils/NumberUtils';
 
-export function SkillsSheetLanguages() {
-	const SA_30 = get('SA_30') as SpecialAbilityInstance;
-	const languages = SA_30.active.map(({ sid, tier = 0 }) => {
-		const { id, name } = getSelectionItem(SA_30, sid) || { id: 0, name: 'MISSING'};
+export interface SkillsSheetLanguagesProps {
+	languagesInstance: SpecialAbilityInstance;
+	locale: UIMessages;
+}
+
+export function SkillsSheetLanguages(props: SkillsSheetLanguagesProps) {
+	const { languagesInstance, locale } = props;
+	const languages = sortObjects(languagesInstance.active.map(({ sid, tier = 0 }) => {
+		const { id, name } = getSelectionItem(languagesInstance, sid) || { id: 0, name: 'MISSING'};
 		return ({ id, name, tier });
-	}).sort((a, b) => a.tier < b.tier ? 1 : a.tier > b.tier ? -1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+	}), [{ key: 'tier', reverse: true }, 'name'], locale.id);
 
 	return (
-		<TextBox label={translate('charactersheet.gamestats.languages.title')}>
+		<TextBox label={_translate(locale, 'charactersheet.gamestats.languages.title')}>
 			<table className="languages-list">
 				<tbody>
 					{languages.map(e => <tr key={`lang-${e.id}`}>
 						<td>{e.name}</td>
-						<td>{e.tier === 4 ? translate('charactersheet.gamestats.languages.native') : e.tier}</td>
+						<td>{e.tier === 4 ? _translate(locale, 'charactersheet.gamestats.languages.native') : getRoman(e.tier)}</td>
 					</tr>)}
 				</tbody>
 			</table>

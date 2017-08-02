@@ -1,8 +1,10 @@
+import { last } from 'lodash';
 import * as React from 'react';
 import { ActiveViewObject } from '../../types/data.d';
+import { getRoman } from '../../utils/NumberUtils';
 
 interface Props {
-	list: Array<ActiveViewObject | string>;
+	list: (ActiveViewObject | string)[];
 }
 
 interface EnhancedReduce {
@@ -12,7 +14,7 @@ interface EnhancedReduce {
 
 function findTier(name: string) {
 	const parts = name.split(' ');
-	if (parts[parts.length - 1].match(/[IVX]+/)) {
+	if (parts[parts.length - 1].match(/[IVX]+$/)) {
 		const tier = parts.pop()!;
 		return [parts.join(' '), tier] as [string, string];
 	}
@@ -26,13 +28,12 @@ export function ActivatableTextList(props: Props) {
 		}
 		const { tiers, id, tier } = obj;
 		let { name } = obj;
-		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			if (id === 'SA_30' && tier === 4) {
 				name += ` MS`;
 			}
 			else {
-				name += ` ${roman[(tier as number) - 1]}`;
+				name += ` ${getRoman(tier!)}`;
 			}
 		}
 
@@ -66,6 +67,21 @@ export function ActivatableTextList(props: Props) {
 					previousLowerTier: false
 				};
 			}
+		}
+		const prevElement = last(previous.final);
+		if (prevElement && prevElement.split(' (')[0] === current.split(' (')[0] && /\(.+\)(?: [IVX]+)?$/.test(prevElement)) {
+			const prevElementSplitted = prevElement.split(/\)/);
+			const optionalTier = prevElementSplitted.pop() || '';
+			const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;
+			const currentSplitted = current.split(/\(/);
+			const continuing = currentSplitted.slice(1).join('(').replace(/\)((?: [IVX]+)?)$/, '$1)');
+
+			const other = previous.final.slice(0, -1);
+
+			return {
+				...previous,
+				final: [ ...other, `${beginning}, ${continuing}` ]
+			};
 		}
 		return {
 			final: [ ...previous.final, current ],

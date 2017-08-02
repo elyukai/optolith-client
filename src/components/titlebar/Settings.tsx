@@ -1,66 +1,61 @@
 import * as React from 'react';
-import { setLocale } from '../../actions/LocaleActions';
-import { LocaleStore } from '../../stores/LocaleStore';
+import { store } from '../../stores/AppStore';
+import { UIMessages } from '../../types/ui.d';
 import { saveConfig } from '../../utils/FileAPIUtils';
-import { translate } from '../../utils/I18n';
+import { _translate } from '../../utils/I18n';
 import { Dialog } from '../Dialog';
 import { Dropdown } from '../Dropdown';
 
 export interface SettingsProps {
+	locale?: UIMessages;
 	node?: HTMLDivElement;
+	setLocale(id?: string): void;
 }
 
 export interface SettingsState {
-	locale?: string;
-	localeType: string;
+	localeString?: string;
+	localeType: 'default' | 'set';
 }
 
 export class Settings extends React.Component<SettingsProps, SettingsState> {
-	state = {
-		locale: LocaleStore.getLocale(),
-		localeType: LocaleStore.getLocaleType()
-	};
+	unsubscribe: () => void;
 
 	componentDidMount() {
-		LocaleStore.addChangeListener(this.updateLocaleStore);
+		this.unsubscribe = store.subscribe(() => {
+			const { id, type } = store.getState().locale;
+			this.setState({
+				localeString: id,
+				localeType: type
+			});
+		});
 	}
 
 	componentWillUnmount() {
-		LocaleStore.removeChangeListener(this.updateLocaleStore);
-	}
-
-	selectLocale = (id?: string) => {
-		setLocale(id);
+		this.unsubscribe();
 	}
 
 	render() {
-		const { locale, localeType } = this.state;
+		const { locale, node, setLocale } = this.props;
+		const { localeString, localeType } = this.state;
 
 		return (
 			<Dialog
 				id="settings"
-				title={translate('settings.title')}
-				node={this.props.node}
-				buttons={[{label: translate('settings.actions.close'), onClick: saveConfig }]}
+				title={_translate(locale, 'settings.title')}
+				node={node}
+				buttons={[{label: _translate(locale, 'settings.actions.close'), onClick: saveConfig }]}
 				>
 				<Dropdown
 					options={[
-						{name: translate('settings.options.defaultlanguage')},
+						{name: _translate(locale, 'settings.options.defaultlanguage')},
 						{id: 'de-DE', name: 'Deutsch (Deutschland)'},
 						{id: 'en-US', name: 'English (United States)'}
 					]}
-					value={localeType === 'default' ? undefined : locale}
-					label={translate('settings.options.language')}
-					onChange={this.selectLocale}
+					value={localeType === 'default' ? undefined : localeString}
+					label={_translate(locale, 'settings.options.language')}
+					onChange={setLocale}
 					/>
 			</Dialog>
 		);
-	}
-
-	private updateLocaleStore = () => {
-		this.setState({
-			locale: LocaleStore.getLocale(),
-			localeType: LocaleStore.getLocaleType()
-		} as SettingsState);
 	}
 }

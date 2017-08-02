@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { store } from '../stores/AppStore';
 import { TalentInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
@@ -13,13 +13,6 @@ export interface AddTalentPointAction {
 		cost: number;
 	};
 }
-
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddTalentPointAction>({
-	type: ActionTypes.ADD_TALENT_POINT,
-	payload: {
-		id
-	}
-});
 
 export function _addPoint(id: string): AddTalentPointAction | undefined {
 	const state = store.getState();
@@ -45,13 +38,6 @@ export interface RemoveTalentPointAction {
 	};
 }
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveTalentPointAction>({
-	type: ActionTypes.REMOVE_TALENT_POINT,
-	payload: {
-		id
-	}
-});
-
 export function _removePoint(id: string): RemoveTalentPointAction {
 	const state = store.getState();
 	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance);
@@ -71,13 +57,6 @@ export interface SetTalentsSortOrderAction {
 	};
 }
 
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetTalentsSortOrderAction>({
-	type: ActionTypes.SET_TALENTS_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
-
 export function _setSortOrder(sortOrder: string): SetTalentsSortOrderAction {
 	return {
 		type: ActionTypes.SET_TALENTS_SORT_ORDER,
@@ -90,10 +69,6 @@ export function _setSortOrder(sortOrder: string): SetTalentsSortOrderAction {
 export interface SwitchTalentRatingVisibilityAction {
 	type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY;
 }
-
-export const switchRatingVisibility = () => AppDispatcher.dispatch<SwitchTalentRatingVisibilityAction>({
-	type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY
-});
 
 export function _switchRatingVisibility(): SwitchTalentRatingVisibilityAction {
 	return {

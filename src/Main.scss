@@ -95,6 +95,7 @@ p {
 @import "components/TextField";
 @import "components/InputButtonGroup";
 @import "components/titlebar/TitleBar";
+@import "components/TitleBar";
 @import "components/ToolBar";
 @import "components/TooltipToggle";
 @import "components/VerticalList";
@@ -102,10 +103,8 @@ p {
 @import "views/Router";
 @import "views/Route";
 @import "views/about/About";
-@import "views/account/Account";
 @import "views/attributes/Attribute";
 @import "views/herolist/Herolist";
-@import "views/home/Home";
 @import "views/belongings/Belongings";
 @import "views/belongings/Pets";
 @import "views/master/Master";

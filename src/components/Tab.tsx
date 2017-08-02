@@ -6,7 +6,7 @@ export interface TabBaseProps {
 	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
-	label: string;
+	label: string | undefined;
 }
 
 export interface TabProps extends TabBaseProps {

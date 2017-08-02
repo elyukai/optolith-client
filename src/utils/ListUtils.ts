@@ -1,5 +1,10 @@
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { ToOptionalKeys } from '../types/data.d';
+import { AbilityInstanceExtended } from '../types/data.d';
+import { getStateKeyById } from './IDUtils';
+
 /**
- * Merges a Map into another Map. Returns a new Map.
+ * Merges a Map into another Map. Returns a new Map if the second map has entries.
  * @param oldList The old Map.
  * @param newList The new/updated Map.
  */
@@ -29,4 +34,53 @@ export function removeListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey)
 	const newlist = new Map(list);
 	newlist.delete(key);
 	return newlist;
+}
+
+export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToOptionalKeys<DependentInstancesState>, id: string, item: T) {
+	const key = getStateKeyById(id);
+	if (key) {
+		let slice = newstate[key] as Map<string, T> | undefined;
+		if (slice) {
+			slice = setListItem(slice, id, item);
+		}
+		else {
+			slice = new Map().set(id, item);
+		}
+		return {
+			...newstate,
+			[key]: slice
+		};
+	}
+	return newstate;
+}
+
+export function setStateItem<T extends AbilityInstanceExtended>(newstate: DependentInstancesState, id: string, item: T) {
+	const key = getStateKeyById(id);
+	if (key) {
+		return {
+			...newstate,
+			[key]: setListItem(newstate[key] as Map<string, T>, id, item)
+		};
+	}
+	return newstate;
+}
+
+export function mergeIntoState(oldstate: DependentInstancesState, newstate: ToOptionalKeys<DependentInstancesState>): DependentInstancesState {
+	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
+
+	type D = DependentInstancesState;
+
+	const total = { ...oldstate };
+	for (const key of keys) {
+		total[key] = mergeIntoStateSlice<keyof D>(total[key], newstate[key]);
+	}
+
+	return total;
+}
+
+function mergeIntoStateSlice<T extends keyof DependentInstancesState>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+	if (newslice) {
+		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+	}
+	return oldslice;
 }

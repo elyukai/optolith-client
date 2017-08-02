@@ -5,9 +5,8 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { get } from '../../stores/ListStore';
-import { AttributeInstance } from '../../types/data.d';
-import * as secondaryAttributes from '../../utils/secondaryAttributes';
+import { AttributeInstance, Instance, SecondaryAttribute } from '../../types/data.d';
+import { DCIds } from '../../utils/derivedCharacteristics';
 
 export interface SkillListItemProps {
 	activateDisabled?: boolean;
@@ -32,6 +31,8 @@ export interface SkillListItemProps {
 	addPoint?(): void;
 	removePoint?(): void;
 	selectForInfo?(id: string): void;
+	get?(id: string): Instance | undefined;
+	getDerivedCharacteristic?(id: DCIds): SecondaryAttribute;
 }
 
 export class SkillListItem extends React.Component<SkillListItemProps, {}> {
@@ -47,7 +48,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 	}
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, get, getDerivedCharacteristic, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -61,10 +62,10 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 		if (!checkDisabled) {
 			if (check) {
 				check.forEach((attr, index) => values.push(
-					<div key={attr + index} className={'check ' + attr}>{(get(attr) as AttributeInstance).short}</div>
+					<div key={attr + index} className={'check ' + attr}>{get && (get(attr) as AttributeInstance).short}</div>
 				));
-				if (checkmod) {
-					values.push(<div key="mod" className="check mod">+{secondaryAttributes.get(checkmod).short}</div>);
+				if (checkmod && getDerivedCharacteristic) {
+					values.push(<div key="mod" className="check mod">+{getDerivedCharacteristic(checkmod).short}</div>);
 				}
 			}
 		}

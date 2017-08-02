@@ -2,6 +2,23 @@ import * as DetailedData from './detaileddata.d';
 import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
 
+export interface InstanceByCategory {
+	'ADVANTAGES': AdvantageInstance;
+	'ATTRIBUTES': AttributeInstance;
+	'BLESSINGS': BlessingInstance;
+	'CANTRIPS': CantripInstance;
+	'COMBAT_TECHNIQUES': CombatTechniqueInstance;
+	'CULTURES': CultureInstance;
+	'DISADVANTAGES': DisadvantageInstance;
+	'LITURGIES': LiturgyInstance;
+	'PROFESSIONS': ProfessionInstance;
+	'PROFESSION_VARIANTS': ProfessionVariantInstance;
+	'RACES': RaceInstance;
+	'SPECIAL_ABILITIES': SpecialAbilityInstance;
+	'SPELLS': SpellInstance;
+	'TALENTS': TalentInstance;
+}
+
 export interface AdventurePoints {
 	total: number;
 	spent: number;
@@ -9,27 +26,30 @@ export interface AdventurePoints {
 	disadv: [number, number, number];
 }
 
-export type ToListById<T> = {
+export interface ToListById<T> {
 	[id: string]: T;
-};
+}
 
 export type ToOptionalKeys<T> = {
 	[K in keyof T]?: T[K];
 };
 
-export interface HeroBase {
-	readonly clientVersion: string;
-	readonly phase: number;
+export interface HeroBaseForHerolist {
 	readonly name: string;
 	readonly avatar?: string;
 	readonly ap: AdventurePoints;
-	readonly el: string;
 	readonly r: string;
 	readonly c: string;
 	readonly p: string;
 	professionName?: string;
 	readonly pv?: string;
 	readonly sex: 'm' | 'f';
+}
+
+export interface HeroBase extends HeroBaseForHerolist {
+	readonly clientVersion: string;
+	readonly phase: number;
+	readonly el: string;
 	readonly pers: {
 		family?: string;
 		placeofbirth?: string;
@@ -77,7 +97,7 @@ export interface HeroBase {
 		};
 	};
 	readonly rules: Rules;
-	readonly pets: ToListById<PetInstance>;
+	readonly pets?: ToListById<PetInstance>;
 }
 
 export interface Hero extends HeroBase {
@@ -288,6 +308,7 @@ export interface ActiveViewObject {
 	disabled: boolean;
 	index: number;
 	gr?: number;
+	instance: ActivatableInstance;
 }
 
 export interface DeactiveViewObject {
@@ -300,6 +321,7 @@ export interface DeactiveViewObject {
 	maxTier?: number;
 	sel?: SelectionObject[];
 	gr?: number;
+	instance: ActivatableInstance;
 }
 
 export type SetTierObject = ActiveObject;
@@ -465,6 +487,11 @@ export interface AttributeInstance {
 	dependencies: AttributeInstanceDependency[];
 	mod: number;
 	value: number;
+}
+
+export interface AttributeInstanceDerived extends AttributeInstance {
+	isDecreasable: boolean;
+	isIncreasable: boolean;
 }
 
 export type CombatTechniqueInstanceDependency = number;
@@ -696,8 +723,9 @@ export type AllInstancesList = Map<string, Instance>;
 export type IncreasableNonactiveInstance = AttributeInstance | TalentInstance | CombatTechniqueInstance;
 export type SkillInstance = SpellInstance | LiturgyInstance | TalentInstance;
 export type SkillishInstance = SpellInstance | LiturgyInstance | TalentInstance | CombatTechniqueInstance;
-export type ActivatableSkillishInstance = SpellInstance | LiturgyInstance | CantripInstance | BlessingInstance;
+export type ActivatableSkillInstance = SpellInstance | LiturgyInstance;
 export type CantripBlessingInstances = CantripInstance | BlessingInstance;
+export type ActivatableSkillishInstance = ActivatableSkillInstance | CantripBlessingInstances;
 
 export interface SecondaryAttribute {
 	id: string;
@@ -861,4 +889,4 @@ export interface PetEditorInstance extends PetBaseInstance {
 	pa: string;
 }
 
-export { UIMessages as UILocale } from './ui.d';
+export { UIMessages } from './ui.d';

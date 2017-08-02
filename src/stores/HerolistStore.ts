@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, DeleteHeroAction, DuplicateHeroAction, LoadHeroAction, SaveHeroAction, SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { Hero, HeroForSave, User } from '../types/data.d';
 import { RawHero, RawHerolist } from '../types/rawdata.d';
 import { alert } from '../utils/alert';
@@ -20,54 +20,6 @@ class HerolistStoreStatic extends Store {
 	private sortOrder = 'name';
 	private view = 'all';
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.CREATE_HERO:
-					this.currentId = undefined;
-					break;
-
-				case ActionTypes.LOAD_HERO:
-					this.currentId = action.payload.data.id;
-					break;
-
-				case ActionTypes.SAVE_HERO:
-					this.saveHero(action.payload.data);
-					break;
-
-				case ActionTypes.DELETE_HERO:
-					this.deleteHero(action.payload.id);
-					break;
-
-				case ActionTypes.SET_HEROLIST_SORT_ORDER:
-					this.updateSortOrder(action.payload.sortOrder);
-					break;
-
-				case ActionTypes.SET_HEROLIST_VISIBILITY_FILTER:
-					this.updateView(action.payload.filterOption);
-					break;
-
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.updateHeroes(action.payload.heroes);
-					break;
-
-				case ActionTypes.RECEIVE_IMPORTED_HERO:
-					this.importHero(action.payload.data);
-					break;
-
-				case ActionTypes.DUPLICATE_HERO:
-					this.duplicateHero(action.payload.id);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	get(id: string) {
 		return this.heroes.get(id);

@@ -1,8 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { SPELLS } from '../constants/Categories';
-import { get } from '../reducers/dependentInstances';
-import { store } from '../stores/AppStore';
-import { CantripInstance, SpellInstance } from '../types/data.d';
+import { get } from '../selectors/spellsSelectors';
+import { AsyncAction } from '../stores/AppStore';
 import { alert } from '../utils/alert';
 import { validate } from '../utils/APUtils';
 import { translate } from '../utils/I18n';
@@ -17,28 +15,46 @@ export interface ActivateSpellAction {
 	};
 }
 
-export const addToList = (id: string) => AppDispatcher.dispatch<ActivateSpellAction>({
-	type: ActionTypes.ACTIVATE_SPELL,
-	payload: {
-		id
-	}
-});
-
-export function _addToList(id: string): ActivateSpellAction | undefined {
-	const state = store.getState();
-	const entry = get(state.currentHero.present.dependent, id) as SpellInstance | CantripInstance;
-	const cost = entry.category === SPELLS ? getIncreaseAP(entry.ic) : 1;
-	const validCost = validate(cost, state.currentHero.present.ap);
-	if (!validCost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ACTIVATE_SPELL,
-		payload: {
-			id,
-			cost
+export function _addToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const cost = getIncreaseAP(entry.ic);
+		const validCost = validate(cost, state.currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_SPELL,
+			payload: {
+				id,
+				cost
+			}
+		} as ActivateSpellAction);
+	};
+}
+
+export interface ActivateCantripAction {
+	type: ActionTypes.ACTIVATE_CANTRIP;
+	payload: {
+		id: string;
+	};
+}
+
+export function _addCantripToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(1, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_CANTRIP,
+			payload: {
+				id
+			}
+		} as ActivateCantripAction);
 	};
 }
 
@@ -50,22 +66,33 @@ export interface DeactivateSpellAction {
 	};
 }
 
-export const removeFromList = (id: string) => AppDispatcher.dispatch<DeactivateSpellAction>({
-	type: ActionTypes.DEACTIVATE_SPELL,
-	payload: {
-		id
-	}
-});
+export function _removeFromList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const cost = getDecreaseAP(entry.ic);
+		dispatch({
+			type: ActionTypes.DEACTIVATE_SPELL,
+			payload: {
+				id,
+				cost
+			}
+		} as DeactivateSpellAction);
+	};
+}
 
-export function _removeFromList(id: string): DeactivateSpellAction {
-	const state = store.getState();
-	const entry = get(state.currentHero.present.dependent, id) as SpellInstance | CantripInstance;
-	const cost = entry.category === SPELLS ? getDecreaseAP(entry.ic) : 1;
+export interface DeactivateCantripAction {
+	type: ActionTypes.DEACTIVATE_CANTRIP;
+	payload: {
+		id: string;
+	};
+}
+
+export function _removeCantripFromList(id: string): DeactivateCantripAction {
 	return {
-		type: ActionTypes.DEACTIVATE_SPELL,
+		type: ActionTypes.DEACTIVATE_CANTRIP,
 		payload: {
-			id,
-			cost
+			id
 		}
 	};
 }
@@ -78,26 +105,21 @@ export interface AddSpellPointAction {
 	};
 }
 
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddSpellPointAction>({
-	type: ActionTypes.ADD_SPELL_POINT,
-	payload: {
-		id
-	}
-});
-
-export function _addPoint(id: string): AddSpellPointAction | undefined {
-	const state = store.getState();
-	const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as SpellInstance, state.currentHero.present.ap);
-	if (!cost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ADD_SPELL_POINT,
-		payload: {
-			id,
-			cost
+export function _addPoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap);
+		if (!cost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.ADD_SPELL_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as AddSpellPointAction);
 	};
 }
 
@@ -109,22 +131,17 @@ export interface RemoveSpellPointAction {
 	};
 }
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveSpellPointAction>({
-	type: ActionTypes.REMOVE_SPELL_POINT,
-	payload: {
-		id
-	}
-});
-
-export function _removePoint(id: string): RemoveSpellPointAction {
-	const state = store.getState();
-	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as SpellInstance);
-	return {
-		type: ActionTypes.REMOVE_SPELL_POINT,
-		payload: {
-			id,
-			cost
-		}
+export function _removePoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseCost(get(state.currentHero.present.dependent.spells, id)!);
+		dispatch({
+			type: ActionTypes.REMOVE_SPELL_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as RemoveSpellPointAction);
 	};
 }
 
@@ -134,13 +151,6 @@ export interface SetSpellsSortOrderAction {
 		sortOrder: string;
 	};
 }
-
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetSpellsSortOrderAction>({
-	type: ActionTypes.SET_SPELLS_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
 
 export function _setSortOrder(sortOrder: string): SetSpellsSortOrderAction {
 	return {

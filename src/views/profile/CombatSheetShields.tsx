@@ -1,41 +1,43 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { EquipmentStore } from '../../stores/EquipmentStore';
-import { get } from '../../stores/ListStore';
-import { CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
-import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
-import { getRoman } from '../../utils/roman';
+import { ShieldOrParryingWeapon, UIMessages } from '../../types/view.d';
+import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { getRoman, sign } from '../../utils/NumberUtils';
 
-export function CombatSheetShields() {
-	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
-	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
-	list.splice(0, Math.min(items.length, 4), ...items);
+export interface CombatSheetShieldsProps {
+	locale: UIMessages;
+	shieldsAndParryingWeapons: ShieldOrParryingWeapon[];
+}
+
+export function CombatSheetShields(props: CombatSheetShieldsProps) {
+	const { locale, shieldsAndParryingWeapons } = props;
+	const list = ([undefined, undefined, undefined, undefined] as Array<ShieldOrParryingWeapon | undefined>);
+	list.splice(0, Math.min(shieldsAndParryingWeapons.length, 4), ...shieldsAndParryingWeapons);
 	return (
-		<TextBox label={translate('charactersheet.combat.shieldparryingweapon.title')} className="shields">
+		<TextBox label={_translate(locale, 'charactersheet.combat.shieldparryingweapon.title')} className="shields">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{translate('charactersheet.combat.headers.shieldparryingweapon')}</th>
-						<th className="str">{translate('charactersheet.combat.headers.structurepoints')}</th>
-						<th className="bf">{translate('charactersheet.combat.headers.bf')}</th>
-						<th className="loss">{translate('charactersheet.combat.headers.loss')}</th>
-						<th className="mod">{translate('charactersheet.combat.headers.atpamod')}</th>
-						<th className="weight">{translate('charactersheet.combat.headers.weight')}</th>
+						<th className="name">{_translate(locale, 'charactersheet.combat.headers.shieldparryingweapon')}</th>
+						<th className="str">{_translate(locale, 'charactersheet.combat.headers.structurepoints')}</th>
+						<th className="bf">{_translate(locale, 'charactersheet.combat.headers.bf')}</th>
+						<th className="loss">{_translate(locale, 'charactersheet.combat.headers.loss')}</th>
+						<th className="mod">{_translate(locale, 'charactersheet.combat.headers.atpamod')}</th>
+						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
 					{
 						list.map((e, i) => {
 							if (e) {
-								const combatTechnique = get(e.combatTechnique!) as CombatTechniqueInstance;
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
 										<td className="str">{e.stp}</td>
-										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
+										<td className="bf">{e.bf}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
-										<td className="mod">{e.at && e.at > 0 && '+'}{e.at}/{e.pa && e.pa > 0 && '+'}{e.pa}</td>
-										<td className="weight">{localizeNumber(localizeWeight(e.weight))} {translate('charactersheet.combat.headers.weightunit')}</td>
+										<td className="mod">{e.atMod && sign(e.atMod)}/{e.paMod && sign(e.paMod)}</td>
+										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

@@ -22,14 +22,7 @@ export function el(state: ELState = initialState, action: Action): ELState {
 		case ActionTypes.LOAD_HERO:
 			return { ...state, startId: action.payload.data.el };
 
-		case ActionTypes.RECEIVE_INITIAL_DATA:
-			throw new Error();
-
 		default:
 			return state;
 	}
-}
-
-export function getStart(state: ELState): ExperienceLevel {
-	return state.all.get(state.startId!)!;
 }

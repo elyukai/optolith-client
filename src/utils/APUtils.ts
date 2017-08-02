@@ -1,6 +1,8 @@
 import { last } from 'lodash';
-import { AdventurePointsState, getLeft } from '../reducers/adventurePoints';
-import { DependentInstancesState, get } from '../reducers/dependentInstances';
+import { AdventurePointsState } from '../reducers/adventurePoints';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { getLeft } from '../selectors/adventurePointsSelectors';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { SpecialAbilityInstance } from '../types/data.d';
 
 /**

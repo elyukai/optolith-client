@@ -1,8 +1,9 @@
 import { last } from 'lodash';
 import { ATTRIBUTES } from '../constants/Categories';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategory } from '../reducers/dependentInstances';
-import { getStart } from '../reducers/el';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
@@ -11,7 +12,7 @@ export function getSum(list: AttributeInstance[]): number {
 	return list.reduce((n, e) => n + e.value, 0);
 }
 
-export function isIncreasable(state: CurrentHeroState, obj: AttributeInstance): boolean {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: AttributeInstance): boolean {
 	if (state.phase < 3) {
 		const attributes = getAllByCategory(state.dependent, ATTRIBUTES) as AttributeInstance[];
 		const el = getStart(state.el);
@@ -26,7 +27,7 @@ export function isIncreasable(state: CurrentHeroState, obj: AttributeInstance): 
 	return true;
 }
 
-export function isDecreasable(state: CurrentHeroState, obj: AttributeInstance): boolean {
+export function isDecreasable(state: CurrentHeroInstanceState, obj: AttributeInstance): boolean {
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
 			const target = get(state.dependent, e.origin) as SpecialAbilityInstance;
@@ -78,7 +79,7 @@ export function convertId<T extends string | undefined>(id: T): T {
 
 export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 2) {
 	if (type === 1) {
-		const tradition = get(state, 'SA_86') as SpecialAbilityInstance;
+		const tradition = state.specialAbilities.get('SA_86')!;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 1:
 			case 4:
@@ -94,7 +95,7 @@ export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 
 		}
 	}
 	else if (type === 2) {
-		const tradition = get(state, 'SA_102') as SpecialAbilityInstance;
+		const tradition = state.specialAbilities.get('SA_102')!;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 2:
 			case 3:

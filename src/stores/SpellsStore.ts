@@ -4,7 +4,7 @@ import { UndoTriggerActions } from '../actions/HistoryActions';
 import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, RemoveSpellPointAction, SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { AdvantageInstance, CantripInstance, DisadvantageInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { getSids, isActive } from '../utils/ActivatableUtils';
 import { validate } from '../utils/RequirementUtils';
@@ -20,47 +20,6 @@ class SpellsStoreStatic extends Store {
 	private readonly category = Categories.SPELLS;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			if (action.undo) {
-				switch (action.type) {
-					case ActionTypes.ACTIVATE_SPELL:
-					case ActionTypes.DEACTIVATE_SPELL:
-					case ActionTypes.ADD_SPELL_POINT:
-					case ActionTypes.REMOVE_SPELL_POINT:
-						break;
-
-					default:
-						return true;
-				}
-			}
-			else {
-				switch (action.type) {
-					case ActionTypes.RECEIVE_INITIAL_DATA:
-						this.updateSortOrder(action.payload.config.spellsSortOrder);
-						break;
-
-					case ActionTypes.ACTIVATE_SPELL:
-					case ActionTypes.DEACTIVATE_SPELL:
-					case ActionTypes.ADD_SPELL_POINT:
-					case ActionTypes.REMOVE_SPELL_POINT:
-						break;
-
-					case ActionTypes.SET_SPELLS_SORT_ORDER:
-						this.updateSortOrder(action.payload.sortOrder);
-						break;
-
-					default:
-						return true;
-				}
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		return getAllByCategory(this.category) as SpellInstance[];

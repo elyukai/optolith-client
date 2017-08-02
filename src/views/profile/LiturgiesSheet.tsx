@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as SheetActions from '../../actions/SheetActions';
 import { Checkbox } from '../../components/Checkbox';
 import { SheetStore } from '../../stores/SheetStore';
-import { translate } from '../../utils/I18n';
+import { _translate } from '../../utils/I18n';
 import { getKP } from '../../utils/secondaryAttributes';
 import { AttributeMods } from './AttributeMods';
 import { LiturgiesSheetBlessings } from './LiturgiesSheetBlessings';
@@ -30,8 +30,8 @@ export class LiturgiesSheet extends React.Component<{}, State> {
 
 	render() {
 		const addHeader = [
-			{ id: 'KP_MAX', short: translate('charactersheet.chants.headers.kpmax'), value: getKP().value },
-			{ id: 'KP_CURRENT', short: translate('charactersheet.chants.headers.kpcurrent') },
+			{ id: 'KP_MAX', short: _translate(locale, 'charactersheet.chants.headers.kpmax'), value: getKP().value },
+			{ id: 'KP_CURRENT', short: _translate(locale, 'charactersheet.chants.headers.kpcurrent') },
 		];
 
 		return (
@@ -41,10 +41,10 @@ export class LiturgiesSheet extends React.Component<{}, State> {
 						checked={this.state.checkAttributeValueVisibility}
 						onClick={this.switchAttributeValueVisibility}
 						>
-						{translate('charactersheet.options.showattributevalues')}
+						{_translate(locale, 'charactersheet.options.showattributevalues')}
 					</Checkbox>
 				</SheetOptions>
-				<Sheet id="liturgies-sheet" title={translate('charactersheet.chants.title')} addHeaderInfo={addHeader}>
+				<Sheet id="liturgies-sheet" title={_translate(locale, 'charactersheet.chants.title')} addHeaderInfo={addHeader}>
 					<div className="all">
 						<LiturgiesSheetMain attributeValueVisibility={this.state.checkAttributeValueVisibility} />
 						<AttributeMods />

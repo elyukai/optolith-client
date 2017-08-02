@@ -2,7 +2,7 @@ import { AddArmorZonesAction, AddItemAction, RemoveArmorZonesAction, RemoveItemA
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { ArmorZonesEditorInstance, ArmorZonesInstance, Hero, ItemInstance, ToListById } from '../types/data.d';
 import { RawItem, RawLocale } from '../types/rawdata.d';
 import { getNewId } from '../utils/IDUtils';
@@ -24,76 +24,6 @@ class EquipmentStoreStatic extends Store {
 		s: '0',
 	};
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.updateSortOrder(action.payload.config.equipmentSortOrder);
-					this.init(action.payload.tables.items, action.payload.locales[LocaleStore.getLocale()!]);
-					break;
-
-				case ActionTypes.CREATE_HERO:
-					this.clear();
-					break;
-
-				case ActionTypes.SET_ITEMS_SORT_ORDER:
-					this.sortOrder = action.payload.sortOrder;
-					break;
-
-				case ActionTypes.SET_DUCATES:
-					this.purse.d = action.payload.value;
-					break;
-
-				case ActionTypes.SET_SILVERTHALERS:
-					this.purse.s = action.payload.value;
-					break;
-
-				case ActionTypes.SET_HELLERS:
-					this.purse.h = action.payload.value;
-					break;
-
-				case ActionTypes.SET_KREUTZERS:
-					this.purse.k = action.payload.value;
-					break;
-
-				case ActionTypes.ADD_ITEM:
-					this.addItem(action.payload.data, this.getNewItemId());
-					break;
-
-				case ActionTypes.SET_ITEM:
-					this.saveItem(action.payload.id, action.payload.data);
-					break;
-
-				case ActionTypes.REMOVE_ITEM:
-					this.removeItem(action.payload.id);
-					break;
-
-				case ActionTypes.ADD_ARMOR_ZONES:
-					this.addArmorZones(action.payload.data, this.getNewArmorZoneId());
-					break;
-
-				case ActionTypes.SET_ARMOR_ZONES:
-					this.saveArmorZones(action.payload.id, action.payload.data);
-					break;
-
-				case ActionTypes.REMOVE_ARMOR_ZONES:
-					this.removeArmorZones(action.payload.id);
-					break;
-
-				case ActionTypes.LOAD_HERO:
-					this.clear();
-					this.updateAll(action.payload.data);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	get(id: string) {
 		return this.items.get(id);

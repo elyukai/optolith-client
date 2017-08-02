@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { store } from '../stores/AppStore';
 import { AttributeInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
@@ -15,14 +15,6 @@ export interface AddAttributePointAction {
 		cost: number;
 	};
 }
-
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddAttributePointAction>({
-	type: ActionTypes.ADD_ATTRIBUTE_POINT,
-	payload: {
-		id,
-		cost: 0
-	}
-});
 
 export function _addPoint(id: string): AddAttributePointAction | undefined {
 	const state = store.getState();
@@ -48,14 +40,6 @@ export interface RemoveAttributePointAction {
 	};
 }
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveAttributePointAction>({
-	type: ActionTypes.REMOVE_ATTRIBUTE_POINT,
-	payload: {
-		id,
-		cost: 0
-	}
-});
-
 export function _removePoint(id: string): RemoveAttributePointAction {
 	const state = store.getState();
 	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance);
@@ -74,13 +58,6 @@ export interface AddLifePointAction {
 		cost: number;
 	};
 }
-
-export const addLifePoint = () => AppDispatcher.dispatch<AddLifePointAction>({
-	type: ActionTypes.ADD_LIFE_POINT,
-	payload: {
-		cost: 0
-	}
-});
 
 export function _addLifePoint(): AddLifePointAction | undefined {
 	const state = store.getState();
@@ -105,13 +82,6 @@ export interface AddArcaneEnergyPointAction {
 	};
 }
 
-export const addArcaneEnergyPoint = () => AppDispatcher.dispatch<AddArcaneEnergyPointAction>({
-	type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
-	payload: {
-		cost: 0
-	}
-});
-
 export function _addArcaneEnergyPoint(): AddArcaneEnergyPointAction | undefined {
 	const state = store.getState();
 	const cost = getIncreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
@@ -135,13 +105,6 @@ export interface AddKarmaPointAction {
 	};
 }
 
-export const addKarmaPoint = () => AppDispatcher.dispatch<AddKarmaPointAction>({
-	type: ActionTypes.ADD_KARMA_POINT,
-	payload: {
-		cost: 0
-	}
-});
-
 export function _addKarmaPoint(): AddKarmaPointAction | undefined {
 	const state = store.getState();
 	const cost = getIncreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
@@ -162,10 +125,6 @@ export interface AddBoughtBackAEPointAction {
 	type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT;
 }
 
-export const addBoughtBackAEPoint = () => AppDispatcher.dispatch<AddBoughtBackAEPointAction>({
-	type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
-});
-
 export function _addBoughtBackAEPoint(): AddBoughtBackAEPointAction | undefined {
 	const state = store.getState();
 	const validCost = validate(2, state.currentHero.present.ap);
@@ -182,10 +141,6 @@ export interface RemoveBoughtBackAEPointAction {
 	type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT;
 }
 
-export const removeBoughtBackAEPoint = () => AppDispatcher.dispatch<RemoveBoughtBackAEPointAction>({
-	type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT
-});
-
 export function _removeBoughtBackAEPoint(): RemoveBoughtBackAEPointAction {
 	return {
 		type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT
@@ -195,10 +150,6 @@ export function _removeBoughtBackAEPoint(): RemoveBoughtBackAEPointAction {
 export interface AddLostAEPointAction {
 	type: ActionTypes.ADD_LOST_AE_POINT;
 }
-
-export const addLostAEPoint = () => AppDispatcher.dispatch<AddLostAEPointAction>({
-	type: ActionTypes.ADD_LOST_AE_POINT
-});
 
 export function _addLostAEPoint(): AddLostAEPointAction {
 	return {
@@ -212,10 +163,6 @@ export interface RemoveLostAEPointAction {
 		cost: number;
 	};
 }
-
-export const removeLostAEPoint = () => AppDispatcher.dispatch<RemoveLostAEPointAction>({
-	type: ActionTypes.REMOVE_LOST_AE_POINT
-});
 
 export function _removeLostAEPoint(): RemoveLostAEPointAction {
 	const { lost, redeemed } = store.getState().currentHero.present.energies.permanentArcaneEnergy;
@@ -234,13 +181,6 @@ export interface AddLostAEPointsAction {
 	};
 }
 
-export const addLostAEPoints = (value: number) => AppDispatcher.dispatch<AddLostAEPointsAction>({
-	type: ActionTypes.ADD_LOST_AE_POINTS,
-	payload: {
-		value
-	}
-});
-
 export function _addLostAEPoints(value: number): AddLostAEPointsAction {
 	return {
 		type: ActionTypes.ADD_LOST_AE_POINTS,
@@ -253,10 +193,6 @@ export function _addLostAEPoints(value: number): AddLostAEPointsAction {
 export interface AddBoughtBackKPPointAction {
 	type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT;
 }
-
-export const addBoughtBackKPPoint = () => AppDispatcher.dispatch<AddBoughtBackKPPointAction>({
-	type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
-});
 
 export function _addBoughtBackKPPoint(): AddBoughtBackKPPointAction | undefined {
 	const state = store.getState();
@@ -274,10 +210,6 @@ export interface RemoveBoughtBackKPPointAction {
 	type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT;
 }
 
-export const removeBoughtBackKPPoint = () => AppDispatcher.dispatch<RemoveBoughtBackKPPointAction>({
-	type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT
-});
-
 export function _removeBoughtBackKPPoint(): RemoveBoughtBackKPPointAction {
 	return {
 		type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT
@@ -287,10 +219,6 @@ export function _removeBoughtBackKPPoint(): RemoveBoughtBackKPPointAction {
 export interface AddLostKPPointAction {
 	type: ActionTypes.ADD_LOST_KP_POINT;
 }
-
-export const addLostKPPoint = () => AppDispatcher.dispatch<AddLostKPPointAction>({
-	type: ActionTypes.ADD_LOST_KP_POINT
-});
 
 export function _addLostKPPoint(): AddLostKPPointAction {
 	return {
@@ -304,10 +232,6 @@ export interface RemoveLostKPPointAction {
 		cost: number;
 	};
 }
-
-export const removeLostKPPoint = () => AppDispatcher.dispatch<RemoveLostKPPointAction>({
-	type: ActionTypes.REMOVE_LOST_KP_POINT
-});
 
 export function _removeLostKPPoint(): RemoveLostKPPointAction {
 	const { lost, redeemed } = store.getState().currentHero.present.energies.permanentArcaneEnergy;
@@ -325,13 +249,6 @@ export interface AddLostKPPointsAction {
 		value: number;
 	};
 }
-
-export const addLostKPPoints = (value: number) => AppDispatcher.dispatch<AddLostKPPointsAction>({
-	type: ActionTypes.ADD_LOST_KP_POINTS,
-	payload: {
-		value
-	}
-});
 
 export function _addLostKPPoints(value: number): AddLostKPPointsAction {
 	return {

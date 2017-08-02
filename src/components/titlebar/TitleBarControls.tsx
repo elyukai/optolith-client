@@ -1,30 +1,29 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import { setSection } from '../../actions/LocationActions';
-import { ELStore } from '../../stores/ELStore';
-import { HistoryStore } from '../../stores/HistoryStore';
+import { ELState } from '../../reducers/el';
+import { UIMessages } from '../../types/ui.d';
 import { alert } from '../../utils/alert';
 import { confirm } from '../../utils/confirm';
 import { saveAll } from '../../utils/FileAPIUtils';
-import { translate } from '../../utils/I18n';
+import { _translate } from '../../utils/I18n';
 
 function minimize() {
 	remote.getCurrentWindow().minimize();
 }
 
-function close() {
-	const safeToExit = ELStore.getStartID() === 'EL_0' || !HistoryStore.isUndoAvailable();
+function close(locale: UIMessages | undefined, setSection: (id: string) => void, el: ELState, isUndoAvailable: boolean) {
+	const safeToExit = typeof el.startId === 'string' || !isUndoAvailable;
 	if (safeToExit) {
 		saveAll();
-		alert(translate('fileapi.allsaved'), () => {
+		alert(_translate(locale, 'fileapi.allsaved'), () => {
 			remote.getCurrentWindow().close();
 		});
 	}
 	else {
-		confirm(translate('heroes.warnings.unsavedactions.title'), translate('heroes.warnings.unsavedactions.text'), true).then(result => {
+		confirm(_translate(locale, 'heroes.warnings.unsavedactions.title'), _translate(locale, 'heroes.warnings.unsavedactions.text'), true).then(result => {
 			if (result === true) {
 				saveAll();
-				alert(translate('fileapi.everythingelsesaved'), () => {
+				alert(_translate(locale, 'fileapi.everythingelsesaved'), () => {
 					remote.getCurrentWindow().close();
 				});
 			}
@@ -35,11 +34,19 @@ function close() {
 	}
 }
 
-export function TitleBarControls() {
+export interface TitleBarControlsProps {
+	el: ELState;
+	isUndoAvailable: boolean;
+	locale?: UIMessages;
+	setSection(id: string): void;
+}
+
+export function TitleBarControls(props: TitleBarControlsProps) {
+	const { el, isUndoAvailable, locale, setSection } = props;
 	return (
 		<div className="titlebar-controls">
 			<div className="titlebar-controls-btn" onClick={minimize}>&#xE15B;</div>
-			<div className="titlebar-controls-btn" onClick={close}>&#xE5CD;</div>
+			<div className="titlebar-controls-btn" onClick={close.bind(null, locale, setSection, el, isUndoAvailable)}>&#xE5CD;</div>
 		</div>
 	);
 }

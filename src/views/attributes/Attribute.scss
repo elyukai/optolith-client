@@ -1,16 +1,4 @@
 #attribute {
-	.page::before {
-		position: absolute;
-		@include calc(width, "100% - 70px");
-		height: 1px;
-		content: "";
-		background: $color10;
-		// background: #3a322b;
-		// background: #1f282d;
-		top: 0;
-		left: 35px;
-	}
-
 	.scroll-inner {
 		display: flex;
 		flex-direction: column;

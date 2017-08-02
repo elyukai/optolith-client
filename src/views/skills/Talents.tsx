@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as TalentsActions from '../../actions/TalentsActions';
 import { Aside } from '../../components/Aside';
 import { Checkbox } from '../../components/Checkbox';
 import { List } from '../../components/List';
@@ -11,73 +10,75 @@ import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { CultureStore } from '../../stores/CultureStore';
-import { get } from '../../stores/ListStore';
-import { PhaseStore } from '../../stores/PhaseStore';
-import { TalentsStore } from '../../stores/TalentsStore';
-import { AttributeInstance, CultureInstance, InputTextEvent, TalentInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { CurrentHeroInstanceState } from '../../reducers/currentHero';
+import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSort } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
 
-export interface TalentsState {
-	currentCulture: CultureInstance;
-	filterText: string;
-	infoId?: string;
-	phase: number;
-	sortOrder: string;
-	talentRating: boolean;
-	talents: TalentInstance[];
+export interface TalentsOwnProps {
+	locale: UIMessages;
 }
 
-export class Talents extends React.Component<{}, TalentsState> {
+export interface TalentsStateProps {
+	currentHero: CurrentHeroInstanceState;
+	list: TalentInstance[];
+	phase: number;
+	sortOrder: string;
+	ratingVisibility: boolean;
+	talentRating: ToListById<string>;
+	get(id: string): Instance | undefined;
+	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
+}
+
+export interface TalentsDispatchProps {
+	setSortOrder(sortOrder: string): void;
+	switchRatingVisibility(): void;
+	addPoint(id: string): void;
+	removePoint(id: string): void;
+}
+
+export type TalentsProps = TalentsStateProps & TalentsDispatchProps & TalentsOwnProps;
+
+export interface TalentsState {
+	filterText: string;
+	infoId?: string;
+}
+
+export class Talents extends React.Component<TalentsProps, TalentsState> {
 	state: TalentsState = {
-		currentCulture: CultureStore.getCurrent()!,
-		filterText: '',
-		phase: PhaseStore.get(),
-		sortOrder: TalentsStore.getSortOrder(),
-		talentRating: TalentsStore.isRatingVisible(),
-		talents: TalentsStore.getAll(),
+		filterText: ''
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as TalentsState);
-	sort = (option: string) => TalentsActions.setSortOrder(option);
-	changeTalentRating = () => TalentsActions.switchRatingVisibility();
-	addPoint = (id: string) => TalentsActions.addPoint(id);
-	removePoint = (id: string) => TalentsActions.removePoint(id);
 	showInfo = (id: string) => this.setState({ infoId: id } as TalentsState);
 
-	componentDidMount() {
-		TalentsStore.addChangeListener(this.updateTalentsStore);
-	}
-
-	componentWillUnmount() {
-		TalentsStore.removeChangeListener(this.updateTalentsStore);
-	}
-
 	render() {
-		const { filterText, infoId, phase, sortOrder, talentRating, talents } = this.state;
+		const { addPoint, currentHero, get, getDerivedCharacteristic, locale, phase, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
+		const { filterText, infoId } = this.state;
 
 		const info = infoId && get(infoId) as TalentInstance;
 
-		const list = filterAndSort(talents, filterText, sortOrder);
+		const list = filterAndSort(rawlist, filterText, sortOrder);
 
 		return (
 			<Page id="talents">
 				<Options>
-					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
-						onClick={this.sort}
+						onClick={setSortOrder}
 						array={[
-							{ name: translate('options.sortorder.alphabetically'), value: 'name' },
-							{ name: translate('options.sortorder.group'), value: 'group' },
-							{ name: translate('options.sortorder.improvementcost'), value: 'ic' }
+							{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
+							{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
+							{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 						]}
 						/>
-					<Checkbox checked={talentRating} onClick={this.changeTalentRating}>{translate('skills.options.commoninculture')}</Checkbox>
-					{talentRating && <RecommendedReference/>}
+					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{_translate(locale, 'skills.options.commoninculture')}</Checkbox>
+					{ratingVisibility && <RecommendedReference/>}
 				</Options>
 				<Scroll>
 					<List>
@@ -88,20 +89,22 @@ export class Talents extends React.Component<{}, TalentsState> {
 									<SkillListItem
 										key={obj.id}
 										id={obj.id}
-										typ={talentRating && isTyp(obj)}
-										untyp={talentRating && isUntyp(obj)}
+										typ={ratingVisibility && isTyp(talentRating, obj)}
+										untyp={ratingVisibility && isUntyp(talentRating, obj)}
 										name={obj.name}
 										sr={obj.value}
 										check={obj.check}
 										ic={obj.ic}
-										addPoint={this.addPoint.bind(null, obj.id)}
-										addDisabled={!isIncreasable(obj)}
-										removePoint={phase < 3 ? this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!isDecreasable(obj)}
+										addPoint={addPoint.bind(null, obj.id)}
+										addDisabled={!isIncreasable(currentHero, obj)}
+										removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!isDecreasable(currentHero, obj)}
 										insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
 										selectForInfo={this.showInfo}
+										get={get}
+										getDerivedCharacteristic={getDerivedCharacteristic}
 										>
-										<ListItemGroup list={translate('skills.view.groups')} index={obj.gr} />
+										<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />
 									</SkillListItem>
 								);
 							})
@@ -134,21 +137,21 @@ export class Talents extends React.Component<{}, TalentsState> {
 										<div className="routine">{routineSign}{Array.isArray(routine) ? routine[0] : '-'}{routineOptional}</div>
 									</div>
 									<p className="rule">
-										<span>{translate('info.applications')}</span>
+										<span>{_translate(locale, 'info.applications')}</span>
 										<span>{info.applications && info.applications.map(e => e.name).sort().join(', ')}{info
 											.applications && info.applicationsInput && ', '}{info.applicationsInput}</span>
 									</p>
 									<p className="enc">
-										<span>{translate('info.encumbrance')}</span>
-										<span>{info.encumbrance === 'true' ? translate('charactersheet.gamestats.skills.enc.yes') : info.encumbrance === 'false' ? translate('charactersheet.gamestats.skills.enc.no') : translate('charactersheet.gamestats.skills.enc.maybe')}</span>
+										<span>{_translate(locale, 'info.encumbrance')}</span>
+										<span>{info.encumbrance === 'true' ? _translate(locale, 'charactersheet.gamestats.skills.enc.yes') : info.encumbrance === 'false' ? _translate(locale, 'charactersheet.gamestats.skills.enc.no') : _translate(locale, 'charactersheet.gamestats.skills.enc.maybe')}</span>
 									</p>
-									{info.tools && <Markdown source={`**${translate('info.tools')}:** ${info.tools}`} className="note" />}
-									{info.quality && <Markdown source={`**${translate('info.quality')}:** ${info.quality}`} className="note" />}
-									{info.failed && <Markdown source={`**${translate('info.failedcheck')}:** ${info.failed}`} className="note" />}
-									{info.critical && <Markdown source={`**${translate('info.criticalsuccess')}:** ${info.critical}`} className="note" />}
-									{info.botch && <Markdown source={`**${translate('info.botch')}:** ${info.botch}`} className="note" />}
+									{info.tools && <Markdown source={`**${_translate(locale, 'info.tools')}:** ${info.tools}`} className="note" />}
+									{info.quality && <Markdown source={`**${_translate(locale, 'info.quality')}:** ${info.quality}`} className="note" />}
+									{info.failed && <Markdown source={`**${_translate(locale, 'info.failedcheck')}:** ${info.failed}`} className="note" />}
+									{info.critical && <Markdown source={`**${_translate(locale, 'info.criticalsuccess')}:** ${info.critical}`} className="note" />}
+									{info.botch && <Markdown source={`**${_translate(locale, 'info.botch')}:** ${info.botch}`} className="note" />}
 									<p className="ic">
-										<span>{translate('info.improvementcost')}</span>
+										<span>{_translate(locale, 'info.improvementcost')}</span>
 										<span>{['A', 'B', 'C', 'D'][info.ic - 1]}</span>
 									</p>
 								</div>
@@ -162,13 +165,5 @@ export class Talents extends React.Component<{}, TalentsState> {
 				</Aside>
 			</Page>
 		);
-	}
-
-	private updateTalentsStore = () => {
-		this.setState({
-			sortOrder: TalentsStore.getSortOrder(),
-			talentRating: TalentsStore.isRatingVisible(),
-			talents: TalentsStore.getAll(),
-		} as TalentsState);
 	}
 }

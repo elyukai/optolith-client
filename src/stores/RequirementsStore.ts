@@ -7,7 +7,7 @@ import { ActivateSpellAction, AddSpellPointAction, DeactivateSpellAction, Remove
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import * as Data from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { alert } from '../utils/alert';
@@ -36,7 +36,7 @@ class RequirementsStoreStatic extends Store {
 
 	constructor() {
 		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
+		this.dispatchToken = ((action: Action) => {
 			if (action.undo && action.cost) {
 				switch (action.type) {
 					case ActionTypes.ACTIVATE_DISADV:

@@ -1,0 +1,70 @@
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
+import * as SheetActions from '../actions/SheetActions';
+import { AppState } from '../reducers/app';
+import { getAdvantagesForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet, getSpecialAbilities } from '../selectors/activatableSelectors';
+import { getAp } from '../selectors/adventurePointsSelectors';
+import { getForSheet as getAttributesForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
+import { getForSheet as getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
+import { getPresent } from '../selectors/currentHeroSelectors';
+import { getElState, getStart } from '../selectors/elSelectors';
+import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getPurse, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getPet } from '../selectors/petsSelectors';
+import { getProfile } from '../selectors/profileSelectors';
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
+import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
+import { getTalents } from '../selectors/talentsSelectors';
+import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
+import { getAll } from '../utils/derivedCharacteristics';
+import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/profile/Sheets';
+
+function mapStateToProps(state: AppState) {
+	return {
+		advantagesActive: getAdvantagesForSheet(state),
+		ap: getAp(state),
+		armors: getArmors(state),
+		armorZones: getArmorZones(state),
+		attributes: getAttributesForSheet(state),
+		checkAttributeValueVisibility: getSheetCheckAttributeValueVisibility(state),
+		combatSpecialAbilities: getCombatSpecialAbilitiesForSheet(state),
+		combatTechniques: getCombatTechniquesForSheet(state),
+		culture: getCurrentCulture(state),
+		derivedCharacteristics: getAll(getPresent(state)),
+		disadvantagesActive: getDisadvantagesForSheet(state),
+		el: getStart(getElState(state)),
+		fatePointsModifier: getFatePointsModifier(state),
+		generalsaActive: getGeneralSpecialAbilitiesForSheet(state),
+		meleeWeapons: getMeleeWeapons(state),
+		rangedWeapons: getRangedWeapons(state),
+		profession: getCurrentProfession(state),
+		professionVariant: getCurrentProfessionVariant(state),
+		profile: getProfile(state),
+		race: getCurrentRace(state),
+		shieldsAndParryingWeapons: getShieldsAndParryingWeapons(state),
+		talents: [...getTalents(state).values()],
+		items: getAllItems(state),
+		pet: getPet(state),
+		purse: getPurse(state),
+		totalPrice: getTotalPrice(state),
+		totalWeight: getTotalWeight(state),
+		languagesInstance: mapGetToSlice(getSpecialAbilities, 'SA_30')(state)!,
+		scriptsInstance: mapGetToSlice(getSpecialAbilities, 'SA_28')(state)!,
+		cantrips: getCantripsForSheet(state),
+		magicalPrimary: getPrimaryMagicalAttributeForSheet(state),
+		magicalSpecialAbilities: getMagicalSpecialAbilitiesForSheet(state),
+		magicalTradition: getMagicalTraditionForSheet(state),
+		properties: getPropertyKnowledgesForSheet(state),
+		spells: getSpellsForSheet(state),
+	};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
+	return {
+		switchAttributeValueVisibility() {
+			dispatch(SheetActions._switchAttributeValueVisibility());
+		}
+	};
+}
+
+export const SheetsContainer = connect<SheetsStateProps, SheetsDispatchProps, SheetsOwnProps>(mapStateToProps, mapDispatchToProps)(Sheets);

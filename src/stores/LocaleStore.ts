@@ -2,7 +2,7 @@ import { remote } from 'electron';
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { SetLocaleAction } from '../actions/LocaleActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { ToListById, UILocale } from '../types/data.d';
 import { RawLocale } from '../types/rawdata.d';
 import { alert } from '../utils/alert';
@@ -15,29 +15,6 @@ class LocaleStoreStatic extends Store {
 	private type: string;
 	private messages: UILocale;
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.RECEIVE_INITIAL_DATA:
-					this.updateLocale(action.payload.config.locale);
-					this.updateLocaleSetting(action.payload.config.locale);
-					this.setLocales(action.payload.locales);
-					break;
-
-				case ActionTypes.SET_LOCALE:
-					this.updateLocale(action.payload.locale);
-					this.updateLocaleSetting(action.payload.locale);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getMessages() {
 		return this.messages || {};

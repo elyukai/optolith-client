@@ -1,6 +1,7 @@
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategoryGroup } from '../reducers/dependentInstances';
-import { getStart } from '../reducers/el';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
 
@@ -23,7 +24,7 @@ export function getPa(state: DependentInstancesState, obj: CombatTechniqueInstan
 	return obj.gr === 2 || obj.id === 'CT_6' || obj.id === 'CT_8' ? undefined : Math.round(obj.value / 2) + mod;
 }
 
-export function isIncreasable(state: CurrentHeroState, obj: CombatTechniqueInstance): boolean {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: CombatTechniqueInstance): boolean {
 	let max = 0;
 	const bonus = getSids(get(state.dependent, 'ADV_17') as AdvantageInstance).includes(obj.id) ? 1 : 0;
 
@@ -37,7 +38,7 @@ export function isIncreasable(state: CurrentHeroState, obj: CombatTechniqueInsta
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(state: CurrentHeroState, obj: CombatTechniqueInstance): boolean {
+export function isDecreasable(state: CurrentHeroInstanceState, obj: CombatTechniqueInstance): boolean {
 	const SA_19_REQ = (get(state.dependent, 'SA_19') as SpecialAbilityInstance).active.length > 0 && (getAllByCategoryGroup(state.dependent, obj.category, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length === 1;
 
 	return (SA_19_REQ && obj.value > 10 && obj.gr === 2) || obj.value > Math.max(6, ...(obj.dependencies));

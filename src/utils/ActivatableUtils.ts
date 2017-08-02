@@ -1,12 +1,13 @@
 import { SPECIAL_ABILITIES } from '../constants/Categories';
-import { CurrentHeroState } from '../reducers/currentHero';
-import { DependentInstancesState, get, getAllByCategoryGroup } from '../reducers/dependentInstances';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { ActiveObjectName } from '../types/activatables';
-import { AbilityInstanceExtended, ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../types/data.d';
+import { ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
+import { getRoman } from './NumberUtils';
 import { isRequiringActivatable, validate, validateObject } from './RequirementUtils';
-import { getRoman } from './roman';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
 	return obj.max !== 1;
@@ -19,12 +20,12 @@ export function isActive(obj?: ActivatableInstance): boolean {
 	return obj.active.length > 0;
 }
 
-export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance): boolean {
+export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance): boolean {
 	const { dependent } = state;
 	if (obj.category === SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
 		const combinationSA = get(dependent, 'SA_183') as SpecialAbilityInstance;
 		if (!combinationSA) {
-			const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
+			const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
 			const totalActive = allStyles.filter(e => isActive(e)).length;
 			if (totalActive >= 1) {
 				return false;
@@ -33,7 +34,7 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 		else {
 			const combinationAvailable = isActive(combinationSA);
 			if (combinationAvailable) {
-				const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
+				const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
 				const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr);
 				const totalActive = allStyles.filter(e => isActive(e)).length;
 				const equalTypeStyleActive = allEqualTypeStyles.filter(e => isActive(e)).length;
@@ -42,7 +43,7 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 				}
 			}
 			else {
-				const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
+				const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr);
 				if (allEqualTypeStyles.find(e => isActive(e))) {
 					return false;
 				}
@@ -52,7 +53,7 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 	if (obj.category === SPECIAL_ABILITIES && obj.gr === 13) {
 		const combinationSA = get(dependent, 'SA_293') as SpecialAbilityInstance;
 		if (!combinationSA) {
-			const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+			const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
 			const totalActive = allStyles.filter(e => isActive(e)).length;
 			if (totalActive >= 1) {
 				return false;
@@ -61,14 +62,14 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 		else {
 			const combinationAvailable = isActive(combinationSA);
 			if (combinationAvailable) {
-				const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+				const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
 				const totalActive = allStyles.filter(e => isActive(e)).length;
 				if (totalActive >= 2) {
 					return false;
 				}
 			}
 			else {
-				const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr) as SpecialAbilityInstance[];
+				const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr);
 				if (allEqualTypeStyles.find(e => isActive(e))) {
 					return false;
 				}
@@ -76,14 +77,14 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 		}
 	}
 	else if (obj.id === 'SA_183') {
-		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
+		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
 		const isOneActive = allStyles.find(e => isActive(e));
 		if (!isOneActive) {
 			return false;
 		}
 	}
 	else if (obj.id === 'SA_293') {
-		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
 		const isOneActive = allStyles.find(e => isActive(e));
 		if (!isOneActive) {
 			return false;
@@ -92,10 +93,10 @@ export function isActivatable(state: CurrentHeroState, obj: ActivatableInstance)
 	return validate(state, obj.reqs, obj.id);
 }
 
-export function isDeactivatable(state: CurrentHeroState, obj: ActivatableInstance, sid?: string | number): boolean {
+export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid?: string | number): boolean {
 	const { dependent } = state;
 	if (obj.id === 'SA_183') {
-		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10) as SpecialAbilityInstance[];
+		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
 		const allArmedStyles = allStyles.filter(e => e.gr === 9);
 		const allUnarmedStyles = allStyles.filter(e => e.gr === 10);
 		const totalActive = allStyles.filter(e => isActive(e)).length;
@@ -106,7 +107,7 @@ export function isDeactivatable(state: CurrentHeroState, obj: ActivatableInstanc
 		}
 	}
 	else if (obj.id === 'SA_293') {
-		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13) as SpecialAbilityInstance[];
+		const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
 		const totalActive = allStyles.filter(e => isActive(e)).length;
 		if (totalActive >= 2) {
 			return false;
@@ -165,7 +166,7 @@ export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | 
 	return undefined;
 }
 
-export function activate(state: DependentInstancesState, obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): Map<string, AbilityInstanceExtended> {
+export function activate(state: DependentInstancesState, obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): ToOptionalKeys<DependentInstancesState> {
 	const adds: AllRequirementTypes[] = [];
 	let active: ActiveObject | undefined;
 	let sidNew;
@@ -244,12 +245,12 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
 			break;
 	}
 	if (active) {
-		obj.active.push(active);
+		return DependentUtils.addDependencies(state, {...obj, active: [...obj.active, active]}, adds, sidNew);
 	}
-	return DependentUtils.addDependencies(state, obj, adds, sidNew);
+	return state;
 }
 
-export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): Map<string, AbilityInstanceExtended> {
+export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): ToOptionalKeys<DependentInstancesState> {
 	const adds: AllRequirementTypes[] = [];
 	const sid = obj.active[index].sid;
 	let sidOld;
@@ -271,8 +272,7 @@ export function deactivate(state: DependentInstancesState, obj: ActivatableInsta
 			break;
 		}
 	}
-	obj.active.splice(index, 1);
-	return DependentUtils.removeDependencies(state, obj, adds, sidOld);
+	return DependentUtils.removeDependencies(state, {...obj, active: [...obj.active.slice(0, index), ...obj.active.slice(index + 1)]}, adds, sidOld);
 }
 
 export function setTier(obj: ActivatableInstance, index: number, tier: number): ActivatableInstance {

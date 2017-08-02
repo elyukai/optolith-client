@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dialog } from '../components/Dialog';
 import { createOverlay } from './createOverlay';
 
-export function confirm(title: string, content?: string, yesno?: boolean): Promise<boolean> {
+export function confirm(title: string | undefined, content?: string, yesno?: boolean): Promise<boolean> {
 	return new Promise<boolean>(resolve => {
 		const accept = () => resolve(true);
 		const decline = () => resolve(false);

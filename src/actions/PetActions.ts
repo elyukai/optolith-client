@@ -1,9 +1,12 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { store } from '../stores/AppStore';
 import { PetInstance } from '../types/data.d';
+import { getNewId } from '../utils/IDUtils';
 
 export interface AddPetAction {
 	type: ActionTypes.ADD_PET;
 	payload: {
+		id: string;
 		data: PetInstance;
 	};
 }
@@ -16,9 +19,12 @@ export const addToList = (data: PetInstance) => AppDispatcher.dispatch<AddPetAct
 });
 
 export function _addToList(data: PetInstance): AddPetAction {
+	const { pets } = store.getState().currentHero.present;
+	const id = `ITEM_${getNewId([...pets.keys()])}`;
 	return {
 		type: ActionTypes.ADD_PET,
 		payload: {
+			id,
 			data
 		}
 	};

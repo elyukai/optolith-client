@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { translate } from '../../utils/I18n';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-export function SkillsSheetQualityLevels() {
+export interface SkillsSheetQualityLevelsProps {
+	locale: UIMessages;
+}
+
+export function SkillsSheetQualityLevels({ locale }: SkillsSheetQualityLevelsProps) {
 	return (
-		<TextBox className="quality-levels" label={translate('charactersheet.gamestats.qualitylevels.title')}>
+		<TextBox className="quality-levels" label={_translate(locale, 'charactersheet.gamestats.qualitylevels.title')}>
 			<table>
 				<thead>
 					<tr>
-						<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.skillpoints')}</div></th>
-						<th><div>{translate('charactersheet.gamestats.qualitylevels.headers.qualitylevel')}</div></th>
+						<th><div>{_translate(locale, 'charactersheet.gamestats.qualitylevels.headers.skillpoints')}</div></th>
+						<th><div>{_translate(locale, 'charactersheet.gamestats.qualitylevels.headers.qualitylevel')}</div></th>
 					</tr>
 				</thead>
 				<tbody>

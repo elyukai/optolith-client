@@ -1,51 +1,51 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { EquipmentStore } from '../../stores/EquipmentStore';
-import { get } from '../../stores/ListStore';
-import { CombatTechniqueInstance, ItemInstance } from '../../types/data.d';
-import { getAt } from '../../utils/CombatTechniqueUtils';
-import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
-import { getRoman } from '../../utils/roman';
+import { RangedWeapon, UIMessages } from '../../types/view.d';
+import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { getRoman, signNull } from '../../utils/NumberUtils';
 
-export function CombatSheetRangedWeapons() {
-	const items = EquipmentStore.getAll().filter(e => e.gr === 2);
-	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
-	list.splice(0, Math.min(items.length, 4), ...items);
+export interface CombatSheetRangedWeaponProps {
+	locale: UIMessages;
+	rangedWeapons: RangedWeapon[];
+}
+
+export function CombatSheetRangedWeapons(props: CombatSheetRangedWeaponProps) {
+	const { locale, rangedWeapons } = props;
+	const list = ([undefined, undefined, undefined, undefined] as Array<RangedWeapon | undefined>);
+	list.splice(0, Math.min(rangedWeapons.length, 4), ...rangedWeapons);
 	return (
-		<TextBox label={translate('charactersheet.combat.rangedcombatweapons.title')} className="melee-weapons">
+		<TextBox label={_translate(locale, 'charactersheet.combat.rangedcombatweapons.title')} className="melee-weapons">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{translate('charactersheet.combat.headers.weapon')}</th>
-						<th className="combat-technique">{translate('charactersheet.combat.headers.combattechnique')}</th>
-						<th className="reload-time">{translate('charactersheet.combat.headers.reloadtime')}</th>
-						<th className="damage">{translate('charactersheet.combat.headers.dp')}</th>
-						<th className="ammunition">{translate('charactersheet.combat.headers.ammunition')}</th>
-						<th className="range">{translate('charactersheet.combat.headers.rangebrackets')}</th>
-						<th className="bf">{translate('charactersheet.combat.headers.bf')}</th>
-						<th className="loss">{translate('charactersheet.combat.headers.loss')}</th>
-						<th className="ranged">{translate('charactersheet.combat.headers.rangedcombat')}</th>
-						<th className="weight">{translate('charactersheet.combat.headers.weight')}</th>
+						<th className="name">{_translate(locale, 'charactersheet.combat.headers.weapon')}</th>
+						<th className="combat-technique">{_translate(locale, 'charactersheet.combat.headers.combattechnique')}</th>
+						<th className="reload-time">{_translate(locale, 'charactersheet.combat.headers.reloadtime')}</th>
+						<th className="damage">{_translate(locale, 'charactersheet.combat.headers.dp')}</th>
+						<th className="ammunition">{_translate(locale, 'charactersheet.combat.headers.ammunition')}</th>
+						<th className="range">{_translate(locale, 'charactersheet.combat.headers.rangebrackets')}</th>
+						<th className="bf">{_translate(locale, 'charactersheet.combat.headers.bf')}</th>
+						<th className="loss">{_translate(locale, 'charactersheet.combat.headers.loss')}</th>
+						<th className="ranged">{_translate(locale, 'charactersheet.combat.headers.rangedcombat')}</th>
+						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
 					{
 						list.map((e, i) => {
 							if (e) {
-								const combatTechnique = get(e.combatTechnique!) as CombatTechniqueInstance;
-								const ammunition = EquipmentStore.getTemplate(e.ammunition!);
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
-										<td className="combat-technique">{combatTechnique.name}</td>
-										<td className="reload-time">{e.reloadTime} Akt.</td>
-										<td className="damage">{e.damageDiceNumber}W{e.damageDiceSides}{e.damageFlat && e.damageFlat > 0 && '+'}{e.damageFlat !== 0 && e.damageFlat}</td>
-										<td className="ammunition">{ammunition && ammunition.name}</td>
+										<td className="combat-technique">{e.combatTechnique}</td>
+										<td className="reload-time">{e.reloadTime} {_translate(locale, 'charactersheet.combat.content.actions')}</td>
+										<td className="damage">{e.damageDiceNumber}{_translate(locale, 'charactersheet.combat.content.dice')}{e.damageDiceSides}{e.damageFlat && signNull(e.damageFlat)}</td>
+										<td className="ammunition">{e.ammunition}</td>
 										<td className="range">{e.range && e.range.join('/')}</td>
-										<td className="bf">{combatTechnique.bf + (e.stabilityMod || 0)}</td>
+										<td className="bf">{e.bf}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
-										<td className="ranged">{getAt(combatTechnique)}</td>
-										<td className="weight">{localizeNumber(localizeWeight(e.weight))} {translate('charactersheet.combat.headers.weightunit')}</td>
+										<td className="ranged">{e.at}</td>
+										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

@@ -361,7 +361,7 @@ export interface Config {
 	equipmentGroupVisibilityFilter: number;
 	sheetCheckAttributeValueVisibility?: boolean;
 	enableActiveItemHints: boolean;
-	locale?: string;
+	locale: string | undefined;
 }
 
 export interface Raw {

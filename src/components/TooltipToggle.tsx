@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { findDOMNode } from 'react-dom';
 import { close, createOverlay } from '../utils/createOverlay';
 import { Overlay } from './Overlay';
 
@@ -10,8 +9,7 @@ export interface TooltipToggleProps {
 }
 
 export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
-	triggerRef: Element;
-	node?: HTMLDivElement;
+	node?: HTMLElement;
 
 	componentWillUnmount() {
 		if (this.node) {
@@ -19,9 +17,9 @@ export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
 		}
 	}
 
-	open = () => {
+	open = (event: React.MouseEvent<HTMLElement>) => {
 		const { content, margin, position = 'top' } = this.props;
-		this.node = createOverlay(<Overlay className="tooltip" position={position} trigger={this.triggerRef} margin={margin}>
+		this.node = createOverlay(<Overlay className="tooltip" position={position} trigger={event.currentTarget} margin={margin}>
 			{content}
 		</Overlay>);
 	}
@@ -37,15 +35,7 @@ export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
 		const { children } = this.props;
 		return React.cloneElement(React.Children.only(children), {
 			onMouseOver: this.open,
-			onMouseOut: this.close,
-			ref: (node: Element) => {
-				if (node !== null && node.nodeType !== 1) {
-					this.triggerRef = findDOMNode(node);
-				}
-				else {
-					this.triggerRef = node;
-				}
-			}
+			onMouseOut: this.close
 		});
 	}
 }

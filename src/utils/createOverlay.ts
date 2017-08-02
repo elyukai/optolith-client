@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-export function close(node: HTMLDivElement): boolean {
+export function close(node: HTMLElement): boolean {
 	unmountComponentAtNode(node);
 	document.body.removeChild(node);
 	return true;
 }
 
-export function createDialogNode(): HTMLDivElement {
+export function createDialogNode(): HTMLElement {
 	const node = document.createElement('div');
 	document.body.appendChild(node);
 	return node;
 }
 
-export function createOverlay(element: JSX.Element): HTMLDivElement {
+export function createOverlay(element: JSX.Element): HTMLElement {
 	const node = createDialogNode();
-	render( React.cloneElement(element, { node }), node );
+	render(React.cloneElement(element, { node }), node);
 	return node;
 }

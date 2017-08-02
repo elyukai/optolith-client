@@ -3,7 +3,7 @@ import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { UndoTriggerActions } from '../actions/HistoryActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { AttributeInstance, CombatTechniqueInstance, SpecialAbilityInstance } from '../types/data.d';
 import { isActive } from '../utils/ActivatableUtils';
 import { get, getAllByCategory, ListStore } from './ListStore';
@@ -15,43 +15,6 @@ class CombatTechniquesStoreStatic extends Store {
 	private readonly category = Categories.COMBAT_TECHNIQUES;
 	private sortOrder = 'name';
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			AppDispatcher.waitFor([ListStore.dispatchToken]);
-			if (action.undo) {
-				switch (action.type) {
-					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-						break;
-
-					default:
-						return true;
-				}
-			}
-			else {
-				switch (action.type) {
-					case ActionTypes.RECEIVE_INITIAL_DATA:
-						this.updateSortOrder(action.payload.config.combatTechniquesSortOrder);
-						break;
-
-					case ActionTypes.ADD_COMBATTECHNIQUE_POINT:
-					case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
-						break;
-
-					case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
-						this.updateSortOrder(action.payload.sortOrder);
-						break;
-
-					default:
-						return true;
-				}
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	getAll() {
 		const allEntries = getAllByCategory(this.category) as CombatTechniqueInstance[];

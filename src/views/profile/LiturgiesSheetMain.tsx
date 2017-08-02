@@ -5,7 +5,7 @@ import { get } from '../../stores/ListStore';
 import { LiturgiesStore } from '../../stores/LiturgiesStore';
 import { AttributeInstance, LiturgyInstance, SpecialAbilityInstance } from '../../types/data.d';
 import { getSids } from '../../utils/ActivatableUtils';
-import { translate } from '../../utils/I18n';
+import { _translate } from '../../utils/I18n';
 import { sort } from '../../utils/FilterSortUtils';
 import { getAspectsOfTradition } from '../../utils/LiturgyUtils';
 import { get as getSec } from '../../utils/secondaryAttributes';
@@ -35,7 +35,7 @@ export function LiturgiesSheetMain(props: Props) {
 			}).join('/');
 			const traditionId = getSids(get('SA_102') as SpecialAbilityInstance)[0];
 			const aspectIds = e.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e));
-			const aspects = aspectIds.map(e => translate('liturgies.view.aspects')[e - 1]).sort();
+			const aspects = aspectIds.map(e => _translate(locale, 'liturgies.view.aspects')[e - 1]).sort();
 
 			return (
 				<tr key={e.id}>
@@ -73,21 +73,21 @@ export function LiturgiesSheetMain(props: Props) {
 	};
 
 	return (
-		<TextBox label={translate('charactersheet.chants.chantslist.title')} className="skill-list">
+		<TextBox label={_translate(locale, 'charactersheet.chants.chantslist.title')} className="skill-list">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{translate('charactersheet.chants.chantslist.headers.liturgyceremony')}</th>
-						<th className="check">{translate('charactersheet.chants.chantslist.headers.check')}</th>
-						<th className="value">{translate('charactersheet.chants.chantslist.headers.sr')}</th>
-						<th className="cost">{translate('charactersheet.chants.chantslist.headers.cost')}</th>
-						<th className="cast-time">{translate('charactersheet.chants.chantslist.headers.castingtime')}</th>
-						<th className="range">{translate('charactersheet.chants.chantslist.headers.range')}</th>
-						<th className="duration">{translate('charactersheet.chants.chantslist.headers.duration')}</th>
-						<th className="aspect">{translate('charactersheet.chants.chantslist.headers.property')}</th>
-						<th className="ic">{translate('charactersheet.chants.chantslist.headers.ic')}</th>
-						<th className="effect">{translate('charactersheet.chants.chantslist.headers.effect')}</th>
-						<th className="ref">{translate('charactersheet.chants.chantslist.headers.page')}</th>
+						<th className="name">{_translate(locale, 'charactersheet.chants.chantslist.headers.liturgyceremony')}</th>
+						<th className="check">{_translate(locale, 'charactersheet.chants.chantslist.headers.check')}</th>
+						<th className="value">{_translate(locale, 'charactersheet.chants.chantslist.headers.sr')}</th>
+						<th className="cost">{_translate(locale, 'charactersheet.chants.chantslist.headers.cost')}</th>
+						<th className="cast-time">{_translate(locale, 'charactersheet.chants.chantslist.headers.castingtime')}</th>
+						<th className="range">{_translate(locale, 'charactersheet.chants.chantslist.headers.range')}</th>
+						<th className="duration">{_translate(locale, 'charactersheet.chants.chantslist.headers.duration')}</th>
+						<th className="aspect">{_translate(locale, 'charactersheet.chants.chantslist.headers.property')}</th>
+						<th className="ic">{_translate(locale, 'charactersheet.chants.chantslist.headers.ic')}</th>
+						<th className="effect">{_translate(locale, 'charactersheet.chants.chantslist.headers.effect')}</th>
+						<th className="ref">{_translate(locale, 'charactersheet.chants.chantslist.headers.page')}</th>
 					</tr>
 				</thead>
 				<tbody>

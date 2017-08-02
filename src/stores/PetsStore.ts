@@ -1,7 +1,7 @@
 import { LoadHeroAction } from '../actions/HerolistActions';
 import { AddPetAction, RemovePetAction, SetPetAction, SetPetsSortOrderAction } from '../actions/PetActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppDispatcher } from '../dispatcher/AppDispatcher';
+
 import { PetInstance, ToListById } from '../types/data.d';
 import { Store } from './Store';
 
@@ -11,34 +11,6 @@ class PetsStoreStatic extends Store {
 	private petsById: { [id: string]: PetInstance } = {};
 	private pets: string[] = [];
 	readonly dispatchToken: string;
-
-	constructor() {
-		super();
-		this.dispatchToken = AppDispatcher.register((action: Action) => {
-			switch (action.type) {
-				case ActionTypes.LOAD_HERO:
-					this.updateAll(action.payload.data.pets);
-					break;
-
-				case ActionTypes.ADD_PET:
-					this.addPet(action.payload.data, `PET_${this.pets[this.pets.length - 1] ? this.pets[this.pets.length - 1].split('_')[1] + 1 : 1}`);
-					break;
-
-				case ActionTypes.SET_PET:
-					this.savePet(action.payload.id, action.payload.data);
-					break;
-
-				case ActionTypes.REMOVE_PET:
-					this.removePet(action.payload.id);
-					break;
-
-				default:
-					return true;
-			}
-			this.emitChange();
-			return true;
-		});
-	}
 
 	get(id: string) {
 		return this.petsById[id];
