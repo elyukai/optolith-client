@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance } from '../types/data.d';
 import { getNewId } from '../utils/IDUtils';
 
@@ -11,22 +11,17 @@ export interface AddItemAction {
 	};
 }
 
-export const addToList = (data: ItemInstance) => AppDispatcher.dispatch<AddItemAction>({
-	type: ActionTypes.ADD_ITEM,
-	payload: {
-		data
-	}
-});
-
-export function _addToList(data: ItemInstance): AddItemAction {
-	const { items } = store.getState().currentHero.present.equipment;
-	const id = `ITEM_${getNewId([...items.keys()])}`;
-	return {
-		type: ActionTypes.ADD_ITEM,
-		payload: {
-			id,
-			data
-		}
+export function _addToList(data: ItemInstance): AsyncAction {
+	return (dispatch, getState) => {
+		const { items } = getState().currentHero.present.equipment;
+		const id = `ITEM_${getNewId([...items.keys()])}`;
+		dispatch({
+			type: ActionTypes.ADD_ITEM,
+			payload: {
+				id,
+				data
+			}
+		} as AddItemAction);
 	};
 }
 
@@ -38,22 +33,17 @@ export interface AddArmorZonesAction {
 	};
 }
 
-export const addArmorZonesToList = (data: ArmorZonesEditorInstance) => AppDispatcher.dispatch<AddArmorZonesAction>({
-	type: ActionTypes.ADD_ARMOR_ZONES,
-	payload: {
-		data
-	}
-});
-
-export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AddArmorZonesAction {
-	const { items } = store.getState().currentHero.present.equipment;
-	const id = `ARMORZONES_${getNewId([...items.keys()])}`;
-	return {
-		type: ActionTypes.ADD_ARMOR_ZONES,
-		payload: {
-			id,
-			data
-		}
+export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AsyncAction {
+	return (dispatch, getState) => {
+		const { items } = getState().currentHero.present.equipment;
+		const id = `ARMORZONES_${getNewId([...items.keys()])}`;
+		dispatch({
+			type: ActionTypes.ADD_ARMOR_ZONES,
+			payload: {
+				id,
+				data
+			}
+		} as AddArmorZonesAction);
 	};
 }
 
@@ -64,14 +54,6 @@ export interface SetItemAction {
 		data: ItemInstance;
 	};
 }
-
-export const set = (id: string, data: ItemInstance) => AppDispatcher.dispatch<SetItemAction>({
-	type: ActionTypes.SET_ITEM,
-	payload: {
-		id,
-		data
-	}
-});
 
 export function _set(id: string, data: ItemInstance): SetItemAction {
 	return {
@@ -91,14 +73,6 @@ export interface SetArmorZonesAction {
 	};
 }
 
-export const setArmorZones = (id: string, data: ArmorZonesInstance) => AppDispatcher.dispatch<SetArmorZonesAction>({
-	type: ActionTypes.SET_ARMOR_ZONES,
-	payload: {
-		id,
-		data
-	}
-});
-
 export function _setArmorZones(id: string, data: ArmorZonesInstance): SetArmorZonesAction {
 	return {
 		type: ActionTypes.SET_ARMOR_ZONES,
@@ -116,13 +90,6 @@ export interface RemoveItemAction {
 	};
 }
 
-export const removeFromList = (id: string) => AppDispatcher.dispatch<RemoveItemAction>({
-	type: ActionTypes.REMOVE_ITEM,
-	payload: {
-		id
-	}
-});
-
 export function _removeFromList(id: string): RemoveItemAction {
 	return {
 		type: ActionTypes.REMOVE_ITEM,
@@ -138,13 +105,6 @@ export interface RemoveArmorZonesAction {
 		id: string;
 	};
 }
-
-export const removeArmorZonesFromList = (id: string) => AppDispatcher.dispatch<RemoveArmorZonesAction>({
-	type: ActionTypes.REMOVE_ARMOR_ZONES,
-	payload: {
-		id
-	}
-});
 
 export function _removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
 	return {
@@ -162,13 +122,6 @@ export interface SetItemsSortOrderAction {
 	};
 }
 
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetItemsSortOrderAction>({
-	type: ActionTypes.SET_ITEMS_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
-
 export function _setSortOrder(sortOrder: string): SetItemsSortOrderAction {
 	return {
 		type: ActionTypes.SET_ITEMS_SORT_ORDER,
@@ -184,13 +137,6 @@ export interface SetDucatesAction {
 		value: string;
 	};
 }
-
-export const setDucates = (value: string) => AppDispatcher.dispatch<SetDucatesAction>({
-	type: ActionTypes.SET_DUCATES,
-	payload: {
-		value
-	}
-});
 
 export function _setDucates(value: string): SetDucatesAction {
 	return {
@@ -208,13 +154,6 @@ export interface SetSilverthalersAction {
 	};
 }
 
-export const setSilverthalers = (value: string) => AppDispatcher.dispatch<SetSilverthalersAction>({
-	type: ActionTypes.SET_SILVERTHALERS,
-	payload: {
-		value
-	}
-});
-
 export function _setSilverthalers(value: string): SetSilverthalersAction {
 	return {
 		type: ActionTypes.SET_SILVERTHALERS,
@@ -231,13 +170,6 @@ export interface SetHellersAction {
 	};
 }
 
-export const setHellers = (value: string) => AppDispatcher.dispatch<SetHellersAction>({
-	type: ActionTypes.SET_HELLERS,
-	payload: {
-		value
-	}
-});
-
 export function _setHellers(value: string): SetHellersAction {
 	return {
 		type: ActionTypes.SET_HELLERS,
@@ -253,13 +185,6 @@ export interface SetKreutzersAction {
 		value: string;
 	};
 }
-
-export const setKreutzers = (value: string) => AppDispatcher.dispatch<SetKreutzersAction>({
-	type: ActionTypes.SET_KREUTZERS,
-	payload: {
-		value
-	}
-});
 
 export function _setKreutzers(value: string): SetKreutzersAction {
 	return {

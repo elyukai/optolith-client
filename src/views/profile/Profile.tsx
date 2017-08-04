@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
 import { PersonalDataContainer } from '../../containers/PersonalData';
+import { RulesContainer } from '../../containers/Rules';
 import { SheetsContainer } from '../../containers/Sheets';
-import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
-import { OptionalRules } from './OptionalRules';
+import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface ProfileOwnProps {
 	locale: UIMessages;
@@ -43,7 +42,7 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
 				element = <SheetsContainer locale={locale} />;
 				break;
 			case 'optionalRules':
-				element = <OptionalRules />;
+				element = <RulesContainer locale={locale} />;
 				break;
 		}
 

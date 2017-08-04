@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as EquipmentActions from '../../actions/EquipmentActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog } from '../../components/Dialog';
 import { Dropdown } from '../../components/Dropdown';
@@ -7,9 +6,8 @@ import { Hr } from '../../components/Hr';
 import { IconButton } from '../../components/IconButton';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
-import { CombatTechniquesStore } from '../../stores/CombatTechniquesStore';
-import { EquipmentStore } from '../../stores/EquipmentStore';
 import { InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
+import { CombatTechnique } from '../../types/view.d';
 import { translate } from '../../utils/I18n';
 import { convertToEdit, convertToSave } from '../../utils/ItemUtils';
 
@@ -17,6 +15,10 @@ interface Props {
 	create?: boolean;
 	item?: ItemInstance;
 	node?: HTMLDivElement;
+	combatTechniques: CombatTechnique[];
+	templates: ItemInstance[];
+	addToList(data: ItemInstance): void;
+	set(id: string, data: ItemInstance): void;
 }
 
 export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
@@ -24,15 +26,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	constructor(props: Props) {
 		super(props);
-		let tempState = this.props.item;
+		const tempState = this.props.item;
 		if (tempState) {
-			if (tempState.isTemplateLocked === true && typeof tempState.template === 'string') {
-				const { id, where, loss, amount } = tempState;
-				const template = EquipmentStore.getTemplate(tempState.template);
-				if (template !== undefined) {
-					tempState = { ...template, id, where, loss, amount, isTemplateLocked: true };
-				}
-			}
 			this.state = convertToEdit(tempState);
 		}
 		else {
@@ -127,9 +122,11 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		this.setState({ armorType: id } as ItemEditorInstance);
 	}
 
+	getTemplate = (id: string) => this.props.templates.find(e => e.id === id);
+
 	applyTemplate = () => {
 		if (typeof this.state.template === 'string') {
-			const template = EquipmentStore.getTemplate(this.state.template);
+			const template = this.getTemplate(this.state.template);
 			const { id, where, loss, amount } = this.state;
 			if (template !== undefined) {
 				this.setState({...convertToEdit(template), id, where, loss, amount, isTemplateLocked: false});
@@ -138,7 +135,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	}
 	lockTemplate = () => {
 		if (typeof this.state.template === 'string') {
-			const template = EquipmentStore.getTemplate(this.state.template);
+			const template = this.getTemplate(this.state.template);
 			const { id, where, loss, amount } = this.state;
 			if (template !== undefined) {
 				this.setState({...convertToEdit(template), id, where, loss, amount, isTemplateLocked: true});
@@ -149,15 +146,15 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 
 	addItem = () => {
 		const itemToAdd = convertToSave(this.state);
-		EquipmentActions.addToList(itemToAdd);
+		this.props.addToList(itemToAdd);
 	}
 	saveItem = () => {
 		const itemToAdd = convertToSave(this.state);
-		EquipmentActions.set(this.state.id, itemToAdd);
+		this.props.set(this.state.id, itemToAdd);
 	}
 
 	render() {
-		const { create, node } = this.props;
+		const { combatTechniques, create, node, templates } = this.props;
 		const { movMod, iniMod, addPenalties, armorType, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
 
 		const GROUPS_SELECTION = translate('equipment.view.groups').map((e, i) => ({ id: i + 1, name: e }));
@@ -166,8 +163,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 			{ id: 2, name: translate('equipment.view.groups')[1] }
 		];
 		// const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
-		const TEMPLATES = [{name: translate('options.none')} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{name: translate('options.none')} as { id?: string; name: string; }].concat(EquipmentStore.getAllTemplates().filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+		const TEMPLATES = [{name: translate('options.none')} as { id?: string; name: string; }].concat(templates.map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+		const AMMUNITION = [{name: translate('options.none')} as { id?: string; name: string; }].concat(templates.filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
 		const armorTypes = translate('equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e }));
 
 		const dice = [2, 3, 6].map((e, i) => ({ id: e, name: translate('equipment.view.dice')[i] }));
@@ -327,7 +324,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							label={translate('itemeditor.options.combattechnique')}
 							hint={translate('options.none')}
 							value={combatTechnique}
-							options={CombatTechniquesStore.getAll().filter(e => e.gr === 1).map(({ id, name }) => ({ id, name }))}
+							options={combatTechniques.filter(e => e.gr === 1).map(({ id, name }) => ({ id, name }))}
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							required
@@ -456,7 +453,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							label={translate('itemeditor.options.combattechnique')}
 							hint={translate('options.none')}
 							value={combatTechnique}
-							options={CombatTechniquesStore.getAll().filter(e => e.gr === 2).map(({ id, name }) => ({ id, name }))}
+							options={combatTechniques.filter(e => e.gr === 2).map(({ id, name }) => ({ id, name }))}
 							onChange={this.changeCombatTechnique}
 							disabled={locked}
 							required

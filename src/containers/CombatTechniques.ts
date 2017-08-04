@@ -2,7 +2,7 @@ import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
 import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import { AppState } from '../reducers/app';
-import { getCombatTechniques } from '../selectors/combatTechniquesSelectors';
+import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
@@ -13,7 +13,7 @@ import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnPro
 function mapStateToProps(state: AppState) {
 	return {
 		currentHero: getPresent(state),
-		list: [...getCombatTechniques(state).values()],
+		list: getAllCombatTechniques(state),
 		phase: getPhase(state),
 		sortOrder: getCombatTechniquesSortOrder(state),
 		get(id: string) {

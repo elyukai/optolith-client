@@ -54,6 +54,12 @@ export interface SheetsStateProps {
 	magicalTradition: string;
 	properties: string[];
 	spells: View.Spell[];
+	aspects: string[];
+	blessedPrimary: string;
+	blessedSpecialAbilities: Data.ActiveViewObject[];
+	blessedTradition: string;
+	blessings: Data.BlessingInstance[];
+	liturgies: View.Liturgy[];
 }
 
 export interface SheetsDispatchProps {

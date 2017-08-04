@@ -6,10 +6,9 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { AttributeInstance, CombatTechniqueInstance, InputTextEvent, Instance, SecondaryAttribute } from '../../types/data.d';
+import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { getAt, getPa, isDecreasable, isIncreasable } from '../../utils/CombatTechniqueUtils';
+import { CombatTechniqueWithRequirements } from '../../types/view.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSort } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -20,8 +19,7 @@ export interface CombatTechniquesOwnProps {
 }
 
 export interface CombatTechniquesStateProps {
-	currentHero: CurrentHeroInstanceState;
-	list: CombatTechniqueInstance[];
+	list: CombatTechniqueWithRequirements[];
 	phase: number;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
@@ -48,7 +46,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
 
 	render() {
-		const { addPoint, currentHero, get, getDerivedCharacteristic, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
+		const { addPoint, get, getDerivedCharacteristic, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
 		const { filterText } = this.state;
 
 		const list = filterAndSort(rawlist, filterText, sortOrder);
@@ -82,14 +80,14 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 										ic={obj.ic}
 										checkDisabled
 										addPoint={addPoint.bind(null, obj.id)}
-										addDisabled={!isIncreasable(currentHero, obj)}
+										addDisabled={obj.value >= obj.max}
 										removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!isDecreasable(currentHero, obj)}
+										removeDisabled={obj.value <= obj.min}
 										addValues={[
 											{ className: primaryClassName, value: primary },
-											{ className: 'at', value: getAt(currentHero.dependent, obj) },
+											{ className: 'at', value: obj.at },
 											{ className: 'atpa' },
-											{ className: 'pa', value: getPa(currentHero.dependent, obj) },
+											{ className: 'pa', value: obj.pa || '-' },
 										]}
 										get={get}
 										getDerivedCharacteristic={getDerivedCharacteristic}

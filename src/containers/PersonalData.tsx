@@ -33,7 +33,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>) {
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnProps) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
@@ -53,7 +53,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(ProfileActions._endHeroCreation());
 		},
 		showApAdd() {
-			createOverlay(<OverviewAddAP />);
+			createOverlay(<OverviewAddAP addAdventurePoints={(ap: number) => dispatch(ProfileActions._addAdventurePoints(ap))} locale={props.locale} />);
 		},
 		changeFamily(e: InputTextEvent) {
 			dispatch(ProfileActions._setFamily(e.target.value as string));

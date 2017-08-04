@@ -65,6 +65,22 @@ export function getFullItem(items: Map<string, ItemInstance>, templates: Map<str
 	return templates.get(id)!;
 }
 
+export const getTemplates = createSelector(
+	getItemTemplatesState,
+	templates => [...templates.values()]
+);
+
+export const getItems = createSelector(
+	getItemsState,
+	getItemTemplatesState,
+	(items, templates) => [...items.values()].map(e => getFullItem(items, templates, e.id))
+);
+
+export const getArmorZoneInstances = createSelector(
+	getArmorZonesState,
+	armorZones => [...armorZones.values()]
+);
+
 export const getAllItems = createSelector(
 	getItemsState,
 	getArmorZonesState,

@@ -28,5 +28,5 @@ const en_US = ["General", "Guild Mages", "Witches", "Elves", "Druids"]
 
 ```ts
 const de_DE = ["Antimagie", "Dämonisch", "Einfluss", "Elementar", "Heilung", "Hellsicht", "Illusion", "Sphären", "Objekt", "Telekinese", "Verwandlung"]
-const en_US = ["Anti-Magic", "Demonic", "Influence", "Elemental", "Healing", "Clairvoyance", "Illusion", "Spheres", "Objekt", "Telekinesis", "Transformation"]
+const en_US = ["Anti-Magic", "Demonic", "Influence", "Elemental", "Healing", "Clairvoyance", "Illusion", "Spheres", "Object", "Telekinesis", "Transformation"]
 ```

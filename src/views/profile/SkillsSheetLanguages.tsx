@@ -16,7 +16,7 @@ export function SkillsSheetLanguages(props: SkillsSheetLanguagesProps) {
 	const languages = sortObjects(languagesInstance.active.map(({ sid, tier = 0 }) => {
 		const { id, name } = getSelectionItem(languagesInstance, sid) || { id: 0, name: 'MISSING'};
 		return ({ id, name, tier });
-	}), [{ key: 'tier', reverse: true }, 'name'], locale.id);
+	}), locale.id, [{ key: 'tier', reverse: true }, 'name']);
 
 	return (
 		<TextBox label={_translate(locale, 'charactersheet.gamestats.languages.title')}>

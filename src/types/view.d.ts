@@ -18,12 +18,13 @@ export interface CombatTechnique {
 	value: number;
 	primary: string[];
 	ic: number;
+	gr: number;
 	at: number;
 	pa?: number;
 }
 
-export interface CombatTechniqueWithRequirements {
-	max?: number;
+export interface CombatTechniqueWithRequirements extends CombatTechnique {
+	max: number;
 	min: number;
 }
 
@@ -34,6 +35,7 @@ export interface Liturgy {
 	check: [string, string, string];
 	checkmod?: 'SPI' | 'TOU';
 	ic: number;
+	aspects: number[];
 }
 
 export interface Spell {

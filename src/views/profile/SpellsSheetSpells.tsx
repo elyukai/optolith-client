@@ -16,7 +16,7 @@ export interface SpellsSheetSpellsProps {
 
 export function SpellsSheetSpells(props: SpellsSheetSpellsProps) {
 	const { attributes, checkAttributeValueVisibility, derivedCharacteristics, locale, spells } = props;
-	const sortedSpells = sortObjects(spells, ['name'], locale.id);
+	const sortedSpells = sortObjects(spells, locale.id);
 	const list = Array<Spell | undefined>(21).fill(undefined);
 	list.splice(0, Math.min(sortedSpells.length, 21), ...sortedSpells);
 

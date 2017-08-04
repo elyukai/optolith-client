@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { AttributesContainer } from '../containers/Attributes';
+import { BelongingsContainer } from '../containers/Belongings';
 import { HerolistContainer } from '../containers/Herolist';
 import { ProfileContainer } from '../containers/Profile';
 import { SkillsContainer } from '../containers/Skills';
 import { UIMessages } from '../types/ui';
 import { About } from './about/About';
-import { Belongings } from './belongings/Belongings';
 import { AdvantagesDisadvantages } from './disadv/DisAdv';
 import { Grouplist } from './grouplist/Grouplist';
 // import { Master } from './master/Master';
@@ -29,7 +29,7 @@ export function Route(props: RouteProps) {
 		attributes: <AttributesContainer locale={locale} />,
 		disadv: <AdvantagesDisadvantages locale={locale} />,
 		skills: <SkillsContainer locale={locale} />,
-		belongings: <Belongings />
+		belongings: <BelongingsContainer locale={locale} />
 
 		// master: <Master />
 	};

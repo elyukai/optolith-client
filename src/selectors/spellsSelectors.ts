@@ -7,9 +7,8 @@ import { AdvantageInstance, CantripInstance, DisadvantageInstance, SpecialAbilit
 import { Spell } from '../types/view.d';
 import { getSids, isActive } from '../utils/ActivatableUtils';
 import { validate } from '../utils/RequirementUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isOwnTradition } from '../utils/SpellUtils';
-import { getAdv, getDisadv, getSpecialAbilities, getSpecialAbility } from './activatableSelectors';
+import { getAdv, getDisadv, getSpecialAbility } from './activatableSelectors';
 import { getPresent } from './currentHeroSelectors';
 import { getAllByCategory, getDependent } from './dependentInstancesSelectors';
 import { getElState, getStart } from './elSelectors';
@@ -123,7 +122,6 @@ export const getCantripsForSheet = createSelector(
 export const getSpellsForSheet = createSelector(
 	getSpellsState,
 	getDependent,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
 	(spells, dependent) => {
 		const array: Spell[] = [];
 		for (const [id, entry] of spells) {

@@ -1,67 +1,62 @@
 import * as React from 'react';
-import * as SheetActions from '../../actions/SheetActions';
 import { Checkbox } from '../../components/Checkbox';
-import { SheetStore } from '../../stores/SheetStore';
+import { ActiveViewObject, BlessingInstance, SecondaryAttribute } from '../../types/data.d';
+import { Attribute, Liturgy, UIMessages } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
-import { getKP } from '../../utils/secondaryAttributes';
 import { AttributeMods } from './AttributeMods';
 import { LiturgiesSheetBlessings } from './LiturgiesSheetBlessings';
-import { LiturgiesSheetMain } from './LiturgiesSheetMain';
+import { LiturgiesSheetLiturgies } from './LiturgiesSheetLiturgies';
 import { LiturgiesSheetSpecialAbilities } from './LiturgiesSheetSpecialAbilities';
 import { LiturgiesSheetTraditionsAspects } from './LiturgiesSheetTraditionsAspects';
 import { Sheet } from './Sheet';
 import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
-interface State {
+export interface LiturgiesSheetProps {
+	aspects: string[];
+	attributes: Attribute[];
+	blessedPrimary: string;
+	blessedSpecialAbilities: ActiveViewObject[];
+	blessedTradition: string;
+	blessings: BlessingInstance[];
 	checkAttributeValueVisibility: boolean;
+	derivedCharacteristics: SecondaryAttribute[];
+	liturgies: Liturgy[];
+	locale: UIMessages;
+	switchAttributeValueVisibility(): void;
 }
 
-export class LiturgiesSheet extends React.Component<{}, State> {
-	state = SheetStore.getAllForSpellsSheet();
+export function LiturgiesSheet(props: LiturgiesSheetProps) {
+	const { checkAttributeValueVisibility, derivedCharacteristics, locale, switchAttributeValueVisibility } = props;
+	const addHeader = [
+		{ id: 'KP_MAX', short: _translate(locale, 'charactersheet.chants.headers.kpmax'), value: derivedCharacteristics.find(e => e.id === 'KP')!.value },
+		{ id: 'KP_CURRENT', short: _translate(locale, 'charactersheet.chants.headers.kpcurrent') },
+	];
 
-	componentDidMount() {
-		SheetStore.addChangeListener(this.updateSheetStore);
-	}
-
-	componentWillUnmount() {
-		SheetStore.removeChangeListener(this.updateSheetStore);
-	}
-
-	render() {
-		const addHeader = [
-			{ id: 'KP_MAX', short: _translate(locale, 'charactersheet.chants.headers.kpmax'), value: getKP().value },
-			{ id: 'KP_CURRENT', short: _translate(locale, 'charactersheet.chants.headers.kpcurrent') },
-		];
-
-		return (
-			<SheetWrapper>
-				<SheetOptions>
-					<Checkbox
-						checked={this.state.checkAttributeValueVisibility}
-						onClick={this.switchAttributeValueVisibility}
-						>
-						{_translate(locale, 'charactersheet.options.showattributevalues')}
-					</Checkbox>
-				</SheetOptions>
-				<Sheet id="liturgies-sheet" title={_translate(locale, 'charactersheet.chants.title')} addHeaderInfo={addHeader}>
-					<div className="all">
-						<LiturgiesSheetMain attributeValueVisibility={this.state.checkAttributeValueVisibility} />
-						<AttributeMods />
-						<LiturgiesSheetTraditionsAspects />
-						<LiturgiesSheetSpecialAbilities />
-						<LiturgiesSheetBlessings />
-					</div>
-				</Sheet>
-			</SheetWrapper>
-		);
-	}
-
-	private switchAttributeValueVisibility = () => {
-		SheetActions.switchAttributeValueVisibility();
-	}
-
-	private updateSheetStore = () => {
-		this.setState(SheetStore.getAllForSpellsSheet());
-	}
+	return (
+		<SheetWrapper>
+			<SheetOptions>
+				<Checkbox
+					checked={checkAttributeValueVisibility}
+					onClick={switchAttributeValueVisibility}
+					>
+					{_translate(locale, 'charactersheet.options.showattributevalues')}
+				</Checkbox>
+			</SheetOptions>
+			<Sheet
+				{...props}
+				id="liturgies-sheet"
+				title={_translate(locale, 'charactersheet.chants.title')}
+				addHeaderInfo={addHeader}
+				>
+				<div className="all">
+					<LiturgiesSheetLiturgies {...props} />
+					<AttributeMods {...props} />
+					<LiturgiesSheetTraditionsAspects {...props} />
+					<LiturgiesSheetSpecialAbilities {...props} />
+					<LiturgiesSheetBlessings {...props} />
+				</div>
+			</Sheet>
+		</SheetWrapper>
+	);
 }

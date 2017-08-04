@@ -111,7 +111,15 @@ export const getPrimaryMagicalAttributeForSheet = createSelector(
 	[ mapGetToSlice(getSpecialAbilities, 'SA_86'), getAttributes ],
 	(tradition, attributes) => {
 		const id = getPrimaryAttributeId(tradition!);
-		return attributes.get(id!)!.short;
+		return (id && attributes.get(id)!.short)!;
+	}
+);
+
+export const getPrimaryBlessedAttributeForSheet = createSelector(
+	[ mapGetToSlice(getSpecialAbilities, 'SA_102'), getAttributes ],
+	(tradition, attributes) => {
+		const id = getPrimaryAttributeId(tradition!);
+		return (id && attributes.get(id)!.short)!;
 	}
 );
 
@@ -151,3 +159,10 @@ export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance 
 	}
 	return;
 }
+
+export const getCarryingCapacity = createSelector(
+	mapGetToSlice(getAttributes, 'ATTR_8'),
+	strength => {
+		return strength!.value * 2;
+	}
+);

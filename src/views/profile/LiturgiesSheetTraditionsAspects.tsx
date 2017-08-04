@@ -1,32 +1,29 @@
 import * as React from 'react';
-import { get, getPrimaryAttr } from '../../stores/ListStore';
-import { AttributeInstance, SpecialAbilityInstance } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-export function LiturgiesSheetTraditionsAspects() {
-	const SA_103 = get('SA_103') as SpecialAbilityInstance;
-	const activeAspects = SA_103.active.map(e => e.sid);
-	const activeAspectNames = activeAspects.map(sid => SA_103.sel!.find(e => e.id === sid)!.name).join(', ');
+export interface LiturgiesSheetTraditionsAspectsProps {
+	aspects: string[];
+	blessedPrimary: string;
+	blessedTradition: string;
+	locale: UIMessages;
+}
 
-	const SA_102 = get('SA_102') as SpecialAbilityInstance;
-	const activeTraditions = SA_102.active.map(e => e.sid);
-	const activeTraditionNames = activeTraditions.map(sid => SA_102.sel!.find(e => e.id === sid)!.name).join(', ');
-
-	const primary = getPrimaryAttr(2) as AttributeInstance;
+export function LiturgiesSheetTraditionsAspects(props: LiturgiesSheetTraditionsAspectsProps) {
+	const { aspects, blessedPrimary, blessedTradition, locale } = props;
 
 	return (
 		<div className="tradition-aspects">
 			<div className="primary">
 				<span className="label">{_translate(locale, 'charactersheet.chants.traditionsaspects.labels.primaryattribute')}</span>
-				<span className="value">{primary && primary.short}</span>
+				<span className="value">{blessedPrimary}</span>
 			</div>
 			<div className="aspects">
 				<span className="label">{_translate(locale, 'charactersheet.chants.traditionsaspects.labels.aspects')}</span>
-				<span className="value">{activeAspectNames}</span>
+				<span className="value">{aspects.join(', ')}</span>
 			</div>
 			<div className="tradition">
 				<span className="label">{_translate(locale, 'charactersheet.chants.traditionsaspects.labels.tradition')}</span>
-				<span className="value">{activeTraditionNames}</span>
+				<span className="value">{blessedTradition}</span>
 			</div>
 		</div>
 	);

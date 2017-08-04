@@ -1,34 +1,36 @@
 import * as React from 'react';
-import * as PetActions from '../../actions/PetActions';
 import { BorderButton } from '../../components/BorderButton';
 import { List } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { PetsStore } from '../../stores/PetsStore';
-import { InputTextEvent, PetEditorInstance, PetInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
-import { convertToEdit, convertToSave, getNewInstance } from '../../utils/PetUtils';
+import { InputTextEvent, PetEditorInstance, PetInstance, UIMessages } from '../../types/data.d';
+import { _translate } from '../../utils/I18n';
+import { convertToEdit, getNewInstance } from '../../utils/PetUtils';
 import { PetEditor } from './PetEditor';
 import { PetsListItem } from './PetsListItem';
 
-export interface PetsState {
-	editorInstance?: PetEditorInstance;
+export interface PetsOwnProps {
+	locale: UIMessages;
+}
+
+export interface PetsStateProps {
 	pets: PetInstance[];
 }
 
-export class Pets extends React.Component<{}, PetsState> {
-	state: PetsState = {
-		pets: PetsStore.getAll()
-	};
+export interface PetsDispatchProps {
+	savePet(instance: PetEditorInstance | undefined): void;
+	deletePet(id: string): void;
+}
 
-	componentDidMount() {
-		PetsStore.addChangeListener(this.updatePetsStore);
-	}
+export type PetsProps = PetsStateProps & PetsDispatchProps & PetsOwnProps;
 
-	componentWillUnmount() {
-		PetsStore.removeChangeListener(this.updatePetsStore);
-	}
+export interface PetsState {
+	editorInstance?: PetEditorInstance;
+}
+
+export class Pets extends React.Component<PetsProps, PetsState> {
+	state: PetsState = {};
 
 	setEditorField = (data: PetEditorInstance) => {
 		this.setState({ editorInstance: { ...this.state.editorInstance, ...data }} as PetsState);
@@ -66,31 +68,19 @@ export class Pets extends React.Component<{}, PetsState> {
 	setNotes = (event: InputTextEvent) => this.setEditorField({ notes: event.target.value } as PetEditorInstance);
 
 	addPet = () => this.setState({ editorInstance: getNewInstance() } as PetsState);
-	editPet = (id: string) => this.setState({ editorInstance: convertToEdit(PetsStore.get(id)) } as PetsState);
-	savePet = () => {
-		const instance = this.state.editorInstance;
-		if (instance) {
-			if (typeof instance.id !== 'string') {
-				PetActions.addToList(convertToSave(instance));
-			}
-			else {
-				PetActions.set(instance.id, convertToSave(instance));
-			}
-		}
-	}
-	deletePet = (id: string) => {
-			PetActions.removeFromList(id);
-	}
+	editPet = (id: string) => this.setState({ editorInstance: convertToEdit(this.props.pets.find(e => e.id === id)!) } as PetsState);
 	hideAddSlidein = () => this.setState({ editorInstance: undefined } as PetsState);
 
 	render() {
-		const { pets, editorInstance } = this.state;
+		const { deletePet, locale, pets, savePet } = this.props;
+		const { editorInstance } = this.state;
 
 		return (
 			<Page id="pets">
 				<PetEditor
 					data={editorInstance}
 					hideSlidein={this.hideAddSlidein}
+					locale={locale}
 					setAvatar={this.setAvatar}
 					setName={this.setName}
 					setSize={this.setSize}
@@ -121,11 +111,11 @@ export class Pets extends React.Component<{}, PetsState> {
 					setTalents={this.setTalents}
 					setSkills={this.setSkills}
 					setNotes={this.setNotes}
-					save={this.savePet}
+					save={() => savePet(this.state.editorInstance)}
 					/>
 				{pets.length === 0 && <Options>
 					<BorderButton
-						label={translate('actions.addtolist')}
+						label={_translate(locale, 'actions.addtolist')}
 						onClick={this.addPet}
 						/>
 				</Options>}
@@ -136,18 +126,12 @@ export class Pets extends React.Component<{}, PetsState> {
 								{...e}
 								key={e.id}
 								editPet={this.editPet}
-								deletePet={this.deletePet}
+								deletePet={deletePet}
 								/>
 						))}
 					</List>
 				</Scroll>
 			</Page>
 		);
-	}
-
-	private updatePetsStore = () => {
-		this.setState({
-			pets: PetsStore.getAll(),
-		} as PetsState);
 	}
 }

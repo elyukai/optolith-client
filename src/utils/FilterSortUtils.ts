@@ -1,3 +1,4 @@
+import { first } from 'lodash';
 import { getLocale, translate } from './I18n';
 
 interface Data {
@@ -172,55 +173,58 @@ interface BaseObject {
 	[key: string]: any;
 }
 
-interface SortOption<O> {
-	key: keyof O;
+interface SortOption<T> {
+	key: keyof T;
 	mapToIndex?: string[];
 	reverse?: boolean;
 	sex?: string;
 }
 
-export function sortObjects<T extends BaseObject>(list: T[], sortOptions: (keyof T | SortOption<T>)[] = ['name'], locale: string) {
+export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: (keyof T | SortOption<T>)[] = ['name']) {
 	const sortFunctions: ((a: T, b: T) => number)[] = [];
 	const isSortOptionObject = (option: keyof T | SortOption<T>): option is SortOption<T> => typeof option === 'object';
+	const firstItem = first(list);
 
-	for (const option of sortOptions) {
-		if (isSortOptionObject(option)) {
-			const { key, mapToIndex, reverse, sex } = option;
-			const propertyType = typeof list[0][key];
-			if (reverse === true) {
-				if (propertyType === 'object' && sex !== undefined) {
-					sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale) * -1);
+	if (firstItem) {
+		for (const option of sortOptions) {
+			if (isSortOptionObject(option)) {
+				const { key, mapToIndex, reverse, sex } = option;
+				const propertyType = typeof firstItem[key];
+				if (reverse === true) {
+					if (propertyType === 'object' && sex !== undefined) {
+						sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale) * -1);
+					}
+					else if (propertyType === 'string') {
+						sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale) * -1);
+					}
+					else if (propertyType === 'number' && mapToIndex !== undefined) {
+						sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale) * -1);
+					}
+					else if (propertyType === 'number') {
+						sortFunctions.push((a: T, b: T) => (b[key] as number) - (a[key] as number));
+					}
+				}
+				else if (propertyType === 'object' && sex !== undefined) {
+					sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale));
 				}
 				else if (propertyType === 'string') {
-					sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale) * -1);
+					sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale));
 				}
 				else if (propertyType === 'number' && mapToIndex !== undefined) {
-					sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale) * -1);
+					sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale));
 				}
 				else if (propertyType === 'number') {
-					sortFunctions.push((a: T, b: T) => (b[key] as number) - (a[key] as number));
+					sortFunctions.push((a: T, b: T) => (a[key] as number) - (b[key] as number));
 				}
 			}
-			else if (propertyType === 'object' && sex !== undefined) {
-				sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale));
-			}
-			else if (propertyType === 'string') {
-				sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale));
-			}
-			else if (propertyType === 'number' && mapToIndex !== undefined) {
-				sortFunctions.push((a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale));
-			}
-			else if (propertyType === 'number') {
-				sortFunctions.push((a: T, b: T) => (a[key] as number) - (b[key] as number));
-			}
-		}
-		else {
-			const propertyType = typeof list[0][option];
-			if (propertyType === 'string') {
-				sortFunctions.push((a: T, b: T) => (a[option] as string).localeCompare(b[option], locale));
-			}
-			else if (propertyType === 'number') {
-				sortFunctions.push((a: T, b: T) => (a[option] as number) - (b[option] as number));
+			else {
+				const propertyType = typeof firstItem[option];
+				if (propertyType === 'string') {
+					sortFunctions.push((a: T, b: T) => (a[option] as string).localeCompare(b[option], locale));
+				}
+				else if (propertyType === 'number') {
+					sortFunctions.push((a: T, b: T) => (a[option] as number) - (b[option] as number));
+				}
 			}
 		}
 	}
@@ -236,6 +240,70 @@ export function sortObjects<T extends BaseObject>(list: T[], sortOptions: (keyof
 	});
 }
 
+interface FilterOptions<T> {
+	addProperty?: keyof T;
+	keyOfName?: string;
+}
+
+export function filterObjects<T extends BaseObject>(list: T[], filterText: string, options: FilterOptions<T> = {}) {
+	const { addProperty, keyOfName } = options;
+	if (filterText !== '') {
+		filterText = filterText.toLowerCase();
+		if (addProperty) {
+			return list.filter(obj => {
+				if (typeof obj.name === 'string') {
+					return obj.name.toLowerCase().match(filterText) && (obj[addProperty] as string).toLowerCase().match(filterText);
+				}
+				else if (typeof obj.name === 'object' && keyOfName) {
+					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) && (obj[addProperty] as string).toLowerCase().match(filterText);
+				}
+				return true;
+			});
+		}
+		return list.filter(obj => {
+			if (typeof obj.name === 'string') {
+				return obj.name.toLowerCase().match(filterText);
+			}
+			else if (typeof obj.name === 'object' && keyOfName) {
+				return (obj.name[keyOfName] as string).toLowerCase().match(filterText);
+			}
+			return true;
+		});
+	}
+	return list;
+}
+
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: (keyof T | SortOption<T>)[]): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, filterOptions: FilterOptions<T>): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: (keyof T | SortOption<T>)[], filterOptions: FilterOptions<T>): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOrFilterOptions?: (keyof T | SortOption<T>)[] | FilterOptions<T>, filterOptions?: FilterOptions<T>): T[] {
+	let sortOptionsFinal: (keyof T | SortOption<T>)[] | undefined;
+	let filterOptionsFinal: FilterOptions<T> | undefined;
+	if (Array.isArray(sortOrFilterOptions)) {
+		sortOptionsFinal = sortOrFilterOptions;
+	}
+	else if (typeof sortOrFilterOptions === 'object') {
+		filterOptionsFinal = sortOrFilterOptions;
+	}
+	if (filterOptions && !filterOptionsFinal) {
+		filterOptionsFinal = filterOptions;
+	}
+	return sortObjects(filterObjects(list, filterText, filterOptionsFinal), locale, sortOptionsFinal);
+}
+
 export function sortStrings(list: string[], locale: string) {
 	return list.sort((a, b) => a.localeCompare(b, locale));
+}
+
+export function filterStrings(list: string[], filterText: string) {
+	if (filterText !== '') {
+		filterText = filterText.toLowerCase();
+		return list.filter(e => e.toLowerCase().match(filterText));
+	}
+	return list;
+}
+
+export function filterAndSortStrings(list: string[], locale: string, filterText: string) {
+	return sortStrings(filterStrings(list, filterText), locale);
 }

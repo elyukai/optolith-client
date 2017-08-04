@@ -663,6 +663,13 @@ export const getMagicalSpecialAbilitiesForSheet = createSelector(
 	}
 );
 
+export const getBlessedSpecialAbilitiesForSheet = createSelector(
+	[ getSpecialAbilitiesForSheet ],
+	specialAbilities => {
+		return specialAbilities.filter(e => [7].includes(e.gr!));
+	}
+);
+
 export const getFatePointsModifier = createSelector(
 	[ mapGetToSlice(getAdvantagesState, 'ADV_14'), mapGetToSlice(getDisadvantagesState, 'DISADV_31') ],
 	(luck, badLuck) => {
@@ -686,4 +693,27 @@ export const getMagicalTraditionForSheet = createSelector(
 export const getPropertyKnowledgesForSheet = createSelector(
 	[ mapGetToSlice(getSpecialAbilities, 'SA_88') ],
 	propertyKnowledge => getSids(propertyKnowledge!).map(e => getSelectionName(propertyKnowledge!, e)!)
+);
+
+export const getBlessedTraditionForSheet = createSelector(
+	[ mapGetToSlice(getSpecialAbilities, 'SA_102') ],
+	tradition =>  getSelectionName(tradition!, last(getSids(tradition!)))!
+);
+
+export const getAspectKnowledgesForSheet = createSelector(
+	[ mapGetToSlice(getSpecialAbilities, 'SA_103') ],
+	aspectKnowledge => getSids(aspectKnowledge!).map(e => getSelectionName(aspectKnowledge!, e)!)
+);
+
+export const getInitialStartingWealth = createSelector(
+	[ mapGetToSlice(getAdvantagesState, 'ADV_36'), mapGetToSlice(getDisadvantagesState, 'DISADV_2') ],
+	(rich, poor) => {
+		if (rich && isActive(rich)) {
+			return 750 + rich.active[0]!.tier! * 250;
+		}
+		else if (poor && isActive(poor)) {
+			return 750 - poor.active[0]!.tier! * 250;
+		}
+		return 750;
+	}
 );

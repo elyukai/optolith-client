@@ -1,12 +1,13 @@
 import * as React from 'react';
-import * as ProfileActions from '../../actions/ProfileActions';
 import { Dialog } from '../../components/Dialog';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { _translate, UIMessages } from '../../utils/I18n';
 
 interface Props {
 	node?: HTMLDivElement;
+	locale: UIMessages;
+	addAdventurePoints(ap: number): void;
 }
 
 interface State {
@@ -19,10 +20,10 @@ export class OverviewAddAP extends React.Component<Props, State> {
 	};
 
 	onChange = (event: InputTextEvent) => this.setState({ value: event.target.value } as State);
-	addAP = () => ProfileActions.addAdventurePoints(Number.parseInt(this.state.value));
+	addAP = () => this.props.addAdventurePoints(Number.parseInt(this.state.value));
 
 	render() {
-
+		const { locale } = this.props;
 		const { value } = this.state;
 
 		return (

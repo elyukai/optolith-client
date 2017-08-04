@@ -1,15 +1,25 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { getLocale, translate } from '../../utils/I18n';
-import { ArmorZones } from './ArmorZones';
-import { Equipment } from './Equipment';
-import { Pets } from './Pets';
+import { ArmorZonesContainer } from '../../containers/ArmorZones';
+import { EquipmentContainer } from '../../containers/Equipment';
+import { PetsContainer } from '../../containers/Pets';
+import { _translate, UIMessages } from '../../utils/I18n';
+
+export interface BelongingsOwnProps {
+	locale: UIMessages;
+}
+
+export interface BelongingsStateProps {}
+
+export interface BelongingsDispatchProps {}
+
+export type BelongingsProps = BelongingsStateProps & BelongingsDispatchProps & BelongingsOwnProps;
 
 export interface BelongingsState {
 	tab: string;
 }
 
-export class Belongings extends React.Component<{}, BelongingsState> {
+export class Belongings extends React.Component<BelongingsProps, BelongingsState> {
 	state = {
 		tab: 'equipment',
 	};
@@ -17,33 +27,36 @@ export class Belongings extends React.Component<{}, BelongingsState> {
 	handleClick = (tab: string) => this.setState({ tab });
 
 	render() {
+		const { locale } = this.props;
+		const { tab } = this.state;
+
 		let element;
 
-		switch (this.state.tab) {
+		switch (tab) {
 			case 'equipment':
-				element = <Equipment />;
+				element = <EquipmentContainer locale={locale} />;
 				break;
 			case 'armorzones':
-				element = <ArmorZones />;
+				element = <ArmorZonesContainer locale={locale} />;
 				break;
 			case 'pets':
-				element = <Pets />;
+				element = <PetsContainer locale={locale} />;
 				break;
 		}
 
 		const tabs = [
 			{
 				id: 'equipment',
-				label: translate('titlebar.tabs.equipment')
+				label: _translate(locale, 'titlebar.tabs.equipment')
 			},
 			{
 				id: 'armorzones',
-				label: translate('titlebar.tabs.zonearmor'),
-				disabled: getLocale() !== 'de-DE'
+				label: _translate(locale, 'titlebar.tabs.zonearmor'),
+				disabled: locale.id !== 'de-DE'
 			},
 			{
 				id: 'pets',
-				label: translate('titlebar.tabs.pets')
+				label: _translate(locale, 'titlebar.tabs.pets')
 			},
 		];
 
@@ -51,7 +64,7 @@ export class Belongings extends React.Component<{}, BelongingsState> {
 			<section id="items">
 				<SubTabs
 					tabs={tabs}
-					active={this.state.tab}
+					active={tab}
 					onClick={this.handleClick}
 					/>
 				{element}

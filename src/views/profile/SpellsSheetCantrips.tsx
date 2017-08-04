@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { CantripInstance, UIMessages } from '../../types/data.d';
-import { sortByLocaleName } from '../../utils/FilterSortUtils';
+import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 
 export interface SpellsSheetCantripsProps {
@@ -15,7 +15,7 @@ export function SpellsSheetCantrips(props: SpellsSheetCantripsProps) {
 		<TextBox label={_translate(locale, 'charactersheet.spells.cantrips.title')} className="cantrips activatable-list">
 			<div className="list">
 				{
-					sortByLocaleName(cantrips, locale.id).map(e => e.name).join(', ')
+					sortStrings(cantrips.map(e => e.name), locale.id).join(', ')
 				}
 			</div>
 		</TextBox>

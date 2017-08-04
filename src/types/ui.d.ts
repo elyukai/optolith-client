@@ -530,6 +530,14 @@ export interface UIMessages {
 	"pet.type": string;
 	"pet.apspent": string;
 	"pet.totalap": string;
+	"pet.cou": string;
+	"pet.sgc": string;
+	"pet.int": string;
+	"pet.cha": string;
+	"pet.dex": string;
+	"pet.agi": string;
+	"pet.con": string;
+	"pet.str": string;
 	"pet.ap": string;
 	"pet.lp": string;
 	"pet.ae": string;

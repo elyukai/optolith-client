@@ -17,3 +17,8 @@ export const getPet = createSelector(
 	getPetsState,
 	pets => [...pets.values()][0]
 );
+
+export const getPets = createSelector(
+	getPetsState,
+	pets => [...pets.values()]
+);
