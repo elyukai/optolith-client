@@ -380,9 +380,9 @@ export class Selections extends React.Component<Props, State> {
 						hint={translate('rcpselections.labels.selectattributeadjustment')}
 						value={attrSel}
 						onChange={this.changeAttrSel}
-						options={race.attributeSelection[1].map(e => {
+						options={race.attributeAdjustmentsSelection[1].map(e => {
 							const attr = get(e);
-							const value = race.attributeSelection[0];
+							const value = race.attributeAdjustmentsSelection[0];
 							return attr ? { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` } : { id: e, name: '...' };
 						})} />
 					<h3>{translate('titlebar.tabs.culture')}</h3>

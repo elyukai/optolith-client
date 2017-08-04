@@ -8,7 +8,7 @@ import { TitleBarForMain } from './TitleBarForMain';
 export interface TitleBarProps {
 	currentSection: string;
 	currentTab: string;
-	locale?: UIMessages;
+	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
 	hero: CurrentHeroInstanceState;
@@ -16,6 +16,7 @@ export interface TitleBarProps {
 	isUndoAvailable: boolean;
 	undo(): void;
 	redo(): void;
+	saveConfig(): void;
 	saveHero(): void;
 	saveHeroes(): void;
 	saveGroup(): void;

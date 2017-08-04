@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { DISADVANTAGES } from '../constants/Categories';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { isMagicalOrBlessed } from '../utils/ActivatableUtils';
 import { alert } from '../utils/alert';
@@ -19,37 +19,39 @@ export interface ActivateDisAdvAction {
 	payload: ActivateArgsWithEntryType;
 }
 
-export function _addToList(args: ActivateArgs): ActivateDisAdvAction | undefined {
-	const { ap, dependent } = store.getState().currentHero.present;
-	const { id, cost, ...other } = args;
-	const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-	const entryType = isMagicalOrBlessed(dependent, entry);
-	const isDisadvantage = entry.category === DISADVANTAGES;
-	const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
-	if (!validCost[0]) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	else if (!validCost[1]) {
-		const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-		alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
-		return;
-	}
-	else if (!validCost[2]) {
-		const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
-		const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-		alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
-		return;
-	}
-	return {
-		type: ActionTypes.ACTIVATE_DISADV,
-		payload: {
-			id,
-			cost,
-			...other,
-			...entryType,
-			isDisadvantage
+export function _addToList(args: ActivateArgs): AsyncAction {
+	return (dispatch, getState) => {
+		const { ap, dependent } = getState().currentHero.present;
+		const { id, cost, ...other } = args;
+		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
+		const entryType = isMagicalOrBlessed(dependent, entry);
+		const isDisadvantage = entry.category === DISADVANTAGES;
+		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
+		if (!validCost[0]) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		else if (!validCost[1]) {
+			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
+			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			return;
+		}
+		else if (!validCost[2]) {
+			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
+			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_DISADV,
+			payload: {
+				id,
+				cost,
+				...other,
+				...entryType,
+				isDisadvantage
+			}
+		} as ActivateDisAdvAction);
 	};
 }
 
@@ -64,37 +66,39 @@ export interface DeactivateDisAdvAction {
 	payload: DeactivateArgsWithEntryType;
 }
 
-export function _removeFromList(args: DeactivateArgs): DeactivateDisAdvAction | undefined {
-	const { ap, dependent } = store.getState().currentHero.present;
-	const { id, cost } = args;
-	const negativeCost = cost * -1; // the entry should be removed
-	const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-	const entryType = isMagicalOrBlessed(dependent, entry);
-	const isDisadvantage = entry.category === DISADVANTAGES;
-	const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
-	if (!validCost[0]) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	else if (!validCost[1]) {
-		const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-		alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
-		return;
-	}
-	else if (!validCost[2]) {
-		const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
-		const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-		alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
-		return;
-	}
-	return {
-		type: ActionTypes.DEACTIVATE_DISADV,
-		payload: {
-			...args,
-			cost: negativeCost,
-			...entryType,
-			isDisadvantage
+export function _removeFromList(args: DeactivateArgs): AsyncAction {
+	return (dispatch, getState) => {
+		const { ap, dependent } = getState().currentHero.present;
+		const { id, cost } = args;
+		const negativeCost = cost * -1; // the entry should be removed
+		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
+		const entryType = isMagicalOrBlessed(dependent, entry);
+		const isDisadvantage = entry.category === DISADVANTAGES;
+		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
+		if (!validCost[0]) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		else if (!validCost[1]) {
+			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
+			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			return;
+		}
+		else if (!validCost[2]) {
+			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
+			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.DEACTIVATE_DISADV,
+			payload: {
+				...args,
+				cost: negativeCost,
+				...entryType,
+				isDisadvantage
+			}
+		} as DeactivateDisAdvAction);
 	};
 }
 
@@ -111,37 +115,39 @@ export interface SetDisAdvTierAction {
 	};
 }
 
-export function _setTier(id: string, index: number, tier: number, cost: number): SetDisAdvTierAction | undefined {
-	const { ap, dependent } = store.getState().currentHero.present;
-	const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-	const entryType = isMagicalOrBlessed(dependent, entry);
-	const isDisadvantage = entry.category === DISADVANTAGES;
-	const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
-	if (!validCost[0]) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	else if (!validCost[1]) {
-		const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-		alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
-		return;
-	}
-	else if (!validCost[2]) {
-		const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
-		const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-		alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
-		return;
-	}
-	return {
-		type: ActionTypes.SET_DISADV_TIER,
-		payload: {
-			id,
-			tier,
-			cost,
-			index,
-			...entryType,
-			isDisadvantage
+export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
+	return (dispatch, getState) => {
+		const { ap, dependent } = getState().currentHero.present;
+		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
+		const entryType = isMagicalOrBlessed(dependent, entry);
+		const isDisadvantage = entry.category === DISADVANTAGES;
+		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
+		if (!validCost[0]) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		else if (!validCost[1]) {
+			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
+			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			return;
+		}
+		else if (!validCost[2]) {
+			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
+			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.SET_DISADV_TIER,
+			payload: {
+				id,
+				tier,
+				cost,
+				index,
+				...entryType,
+				isDisadvantage
+			}
+		} as SetDisAdvTierAction);
 	};
 }
 

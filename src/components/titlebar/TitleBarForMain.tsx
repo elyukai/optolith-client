@@ -13,9 +13,10 @@ import { TitleBarWrapper } from './TitleBarWrapper';
 
 export interface TitleBarForMainProps {
 	currentTab: string;
-	locale?: UIMessages;
+	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
+	saveConfig(): void;
 	saveHeroes(): void;
 	setLocale(id?: string): void;
 	setTab(id: string): void;
@@ -81,8 +82,8 @@ export function TitleBarForMain(props: TitleBarForMainProps) {
 	);*/
 }
 
-function showSettings(locale: UIMessages | undefined, setLocale: (id?: string) => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} />);
+function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} />);
 }
 
 function toggleDevtools() {

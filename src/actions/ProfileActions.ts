@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { RaceInstance } from '../types/data.d';
 import * as RCPUtils from '../utils/RCPUtils';
 
@@ -182,44 +182,52 @@ export function _setWeight(weight: string, size?: string): SetWeightAction {
 	};
 }
 
-export function _rerollHairColor(): SetHairColorAction | undefined {
-	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
-	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
-	if (typeof race !== 'undefined') {
-		const hairColor = RCPUtils.rerollHairColor(race);
-		return _setHairColor(hairColor);
-	}
-	return;
+export function _rerollHairColor(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const hairColor = RCPUtils.rerollHairColor(race);
+			dispatch(_setHairColor(hairColor));
+		}
+		return;
+	};
 }
 
-export function _rerollEyeColor(): SetEyeColorAction | undefined {
-	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
-	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
-	if (typeof race !== 'undefined') {
-		const eyeColor = RCPUtils.rerollEyeColor(race);
-		return _setEyeColor(eyeColor);
-	}
-	return;
+export function _rerollEyeColor(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const eyeColor = RCPUtils.rerollEyeColor(race);
+			dispatch(_setEyeColor(eyeColor));
+		}
+		return;
+	};
 }
 
-export function _rerollSize(): SetSizeAction | undefined {
-	const { dependent, rcp: { race: raceId }} = store.getState().currentHero.present;
-	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
-	if (typeof race !== 'undefined') {
-		const size = RCPUtils.rerollSize(race);
-		return _setSize(size);
-	}
-	return;
+export function _rerollSize(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const size = RCPUtils.rerollSize(race);
+			dispatch(_setSize(size));
+		}
+		return;
+	};
 }
 
-export function _rerollWeight(): SetWeightAction | undefined {
-	const { dependent, profile: { size: prevSize }, rcp: { race: raceId }} = store.getState().currentHero.present;
-	const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
-	if (typeof race !== 'undefined') {
-		const [ weight, size ] = RCPUtils.rerollWeight(race, prevSize);
-		return _setWeight(weight, size);
-	}
-	return;
+export function _rerollWeight(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, profile: { size: prevSize }, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const [ weight, size ] = RCPUtils.rerollWeight(race, prevSize);
+			dispatch(_setWeight(weight, size));
+		}
+		return;
+	};
 }
 
 export interface SetTitleAction {

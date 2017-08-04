@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { Category, CategoryWithGroups } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { InstanceByCategory, ToOptionalKeys } from '../types/data.d';
+import { Instance, InstanceByCategory, ToOptionalKeys } from '../types/data.d';
 import { getStateKeyByCategory, getStateKeyById } from '../utils/IDUtils';
 
 export const getDependent = (state: AppState) => state.currentHero.present.dependent;
@@ -28,6 +28,10 @@ export function getx(state: AppState) {
 
 export function getLatest(state: DependentInstancesState, newstate: ToOptionalKeys<DependentInstancesState>, id: string) {
 	return get(newstate, id) || get(state, id);
+}
+
+export function getLatestFromSlice<T extends Instance>(state: Map<string, T>, newstate: Map<string, T> | undefined, id: string) {
+	return newstate && newstate.has(id) ? newstate.get(id) : state.get(id);
 }
 
 export function getAllByCategory<T extends Category>(state: DependentInstancesState, ...categories: T[]) {

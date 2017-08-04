@@ -21,10 +21,10 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
 		const currentProfession = typeof state.rcp.profession === 'string' && get(state.dependent, state.rcp.profession) as ProfessionInstance;
 
 		if (typeof currentRace === 'object') {
-			array.push(...currentRace.importantAdvantages);
-			array.push(...currentRace.importantDisadvantages);
-			array.push(...currentRace.typicalAdvantages);
-			array.push(...currentRace.typicalDisadvantages);
+			array.push(...currentRace.stronglyRecommendedAdvantages);
+			array.push(...currentRace.stronglyRecommendedDisadvantages);
+			array.push(...currentRace.commonAdvantages);
+			array.push(...currentRace.commonDisadvantages);
 		}
 
 		if (typeof currentCulture === 'object') {

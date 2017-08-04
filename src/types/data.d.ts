@@ -126,22 +126,34 @@ export interface RaceInstance {
 	readonly spi: number;
 	readonly tou: number;
 	readonly mov: number;
-	readonly attributes: [number, string][];
-	readonly attributeSelection: [number, string[]];
-	readonly typicalCultures: string[];
-	readonly autoAdvantages: string[];
+	readonly attributeAdjustments: [number, string][];
+	readonly attributeAdjustmentsSelection: [number, string[]];
+	readonly attributeAdjustmentsText: string;
+	readonly commonCultures: string[];
+	readonly automaticAdvantages: string[];
 	readonly automaticAdvantagesCost: [number, number, number];
-	readonly importantAdvantages: string[];
-	readonly importantDisadvantages: string[];
-	readonly typicalAdvantages: string[];
-	readonly typicalDisadvantages: string[];
-	readonly untypicalAdvantages: string[];
-	readonly untypicalDisadvantages: string[];
+	readonly automaticAdvantagesText: string;
+	readonly stronglyRecommendedAdvantages: string[];
+	readonly stronglyRecommendedAdvantagesText: string;
+	readonly stronglyRecommendedDisadvantages: string[];
+	readonly stronglyRecommendedDisadvantagesText: string;
+	readonly commonAdvantages: string[];
+	readonly commonAdvantagesText: string;
+	readonly commonDisadvantages: string[];
+	readonly commonDisadvantagesText: string;
+	readonly uncommonAdvantages: string[];
+	readonly uncommonAdvantagesText: string;
+	readonly uncommonDisadvantages: string[];
+	readonly uncommonDisadvantagesText: string;
 	readonly hairColors: number[];
 	readonly eyeColors: number[];
 	readonly size: (number | [number, number])[];
 	readonly weight: (number | [number, number])[];
 	readonly category: Categories.RACES;
+	readonly src: {
+		id: string;
+		page?: number;
+	};
 }
 
 export interface TypicalProfessionObject {

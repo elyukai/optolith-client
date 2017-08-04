@@ -54,7 +54,7 @@ export class Cultures extends React.Component<Props, State> {
 
 		const currentRace = RaceStore.getCurrent();
 
-		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace!.typicalCultures.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace!.commonCultures.includes(e.id)), filterText, sortOrder);
 
 		return (
 			<div className="page" id="cultures">

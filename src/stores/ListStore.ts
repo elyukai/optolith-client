@@ -404,12 +404,12 @@ class ListStoreStatic extends Store {
 		// Race selections:
 
 		if (race) {
-			race.attributes.forEach(e => {
+			race.attributeAdjustments.forEach(e => {
 				const [ mod, id ] = e;
 				(this.byId.get(id) as Data.AttributeInstance).mod += mod;
 			});
-			race.autoAdvantages.forEach(e => activatable.add({ id: e, active: true }));
-			(this.byId.get(selections.attrSel) as Data.AttributeInstance).mod = race.attributeSelection[0];
+			race.automaticAdvantages.forEach(e => activatable.add({ id: e, active: true }));
+			(this.byId.get(selections.attrSel) as Data.AttributeInstance).mod = race.attributeAdjustmentsSelection[0];
 		}
 
 		// Culture selections:

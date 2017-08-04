@@ -24,6 +24,7 @@ export interface AppDispatchProps {
 	setTab(id: string): void;
 	undo(): void;
 	redo(): void;
+	saveConfig(): void;
 	saveHero(): void;
 	saveHeroes(): void;
 	saveGroup(): void;

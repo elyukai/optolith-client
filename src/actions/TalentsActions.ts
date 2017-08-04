@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { TalentInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
 import { translate } from '../utils/I18n';
@@ -14,19 +14,21 @@ export interface AddTalentPointAction {
 	};
 }
 
-export function _addPoint(id: string): AddTalentPointAction | undefined {
-	const state = store.getState();
-	const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance, state.currentHero.present.ap);
-	if (!cost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ADD_TALENT_POINT,
-		payload: {
-			id,
-			cost
+export function _addPoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance, state.currentHero.present.ap);
+		if (!cost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.ADD_TALENT_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as AddTalentPointAction);
 	};
 }
 
@@ -38,15 +40,16 @@ export interface RemoveTalentPointAction {
 	};
 }
 
-export function _removePoint(id: string): RemoveTalentPointAction {
-	const state = store.getState();
-	const cost = getDecreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance);
-	return {
-		type: ActionTypes.REMOVE_TALENT_POINT,
-		payload: {
-			id,
-			cost
-		}
+export function _removePoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const cost = getDecreaseCost(get(getState().currentHero.present.dependent, id) as TalentInstance);
+		dispatch({
+			type: ActionTypes.REMOVE_TALENT_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as RemoveTalentPointAction);
 	};
 }
 

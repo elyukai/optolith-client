@@ -33,11 +33,21 @@ export interface RawRace {
 	eyes: number[];
 	size: (number | [number, number])[];
 	weight: (number | [number, number])[];
+	src: string;
 }
 
 export interface RawRaceLocale {
 	id: string;
 	name: string;
+	attributeAdjustments: string;
+	automaticAdvantages: string;
+	stronglyRecommendedAdvantages: string;
+	stronglyRecommendedDisadvantages: string;
+	commonAdvantages: string;
+	commonDisadvantages: string;
+	uncommonAdvantages: string;
+	uncommonDisadvantages: string;
+	src: number;
 }
 
 export interface RawCulture {
@@ -361,7 +371,7 @@ export interface Config {
 	equipmentGroupVisibilityFilter: number;
 	sheetCheckAttributeValueVisibility?: boolean;
 	enableActiveItemHints: boolean;
-	locale: string | undefined;
+	locale?: string;
 }
 
 export interface Raw {

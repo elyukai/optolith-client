@@ -5,7 +5,6 @@ import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { getActiveForView, getDeactiveForView } from '../selectors/activatableSelectors';
-import { getAp } from '../selectors/adventurePointsSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';

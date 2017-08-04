@@ -1,13 +1,10 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
 import { join } from 'path';
-import * as FileActions from '../actions/FileActions';
-import { store } from '../stores/AppStore';
 import { ToListById } from '../types/data.d';
-import { UIMessages } from '../types/ui.d';
-import { Config, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
+import { Config, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { alert } from './alert';
-import { translate, _translate } from './I18n';
+import { _translate, UIMessages } from './I18n';
 
 function getAppDataPath() {
 	return remote.app.getPath('userData');
@@ -50,7 +47,7 @@ export async function loadInitialData() {
 		tables = JSON.parse(result);
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadtables')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert('Error', `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`);
 		tables = { advantages: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadvantages: {}, el: {}, items: {}, liturgies: {}, professionvariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
 		return Promise.reject(new Error(error));
 	}
@@ -78,7 +75,7 @@ export async function loadInitialData() {
 		}
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.loadl10ns')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert('Error', `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`);
 		return Promise.reject(new Error(error));
 	}
 	return {
@@ -113,12 +110,10 @@ export function saveAllHeroes(data: string, locale: UIMessages) {
 	}
 }
 
-export async function saveHero(id: string) {
-	const currentWindow = remote.getCurrentWindow();
-	const data = HerolistStore.getForSave(id);
+export async function exportHero(data: RawHero, locale: UIMessages) {
 	if (data) {
-		const filename = await showSaveDialog(currentWindow, {
-			title: translate('fileapi.exporthero.title'),
+		const filename = await showSaveDialog({
+			title: _translate(locale, 'fileapi.exporthero.title'),
 			filters: [
 				{name: 'JSON', extensions: ['json']},
 			],
@@ -127,30 +122,29 @@ export async function saveHero(id: string) {
 		if (filename) {
 			try {
 				await writeFile(filename, JSON.stringify(data));
-				alert(translate('fileapi.exporthero.success'));
+				alert(_translate(locale, 'fileapi.exporthero.success'));
 			}
 			catch (error) {
-				alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.exporthero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+				alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.exporthero')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 			}
 		}
 	}
 }
 
-export function saveAll() {
-	saveConfig();
-	saveAllHeroes();
+export function saveAll(config: string, heroes: string, locale: UIMessages) {
+	saveConfig(config, locale);
+	saveAllHeroes(heroes, locale);
 }
 
-export async function printToPDF() {
-	const currentWindow = remote.getCurrentWindow();
+export async function printToPDF(locale: UIMessages) {
 	try {
-		const data = await windowPrintToPDF(currentWindow, {
+		const data = await windowPrintToPDF({
 			marginsType: 1,
 			pageSize: 'A4',
 			printBackground: true,
 		});
-		const filename = await showSaveDialog(currentWindow, {
-			title: translate('fileapi.printcharactersheettopdf.title'),
+		const filename = await showSaveDialog({
+			title: _translate(locale, 'fileapi.printcharactersheettopdf.title'),
 			filters: [
 				{name: 'PDF', extensions: ['pdf']},
 			],
@@ -158,25 +152,36 @@ export async function printToPDF() {
 		if (filename) {
 			try {
 				await writeFile(filename, data);
-				alert(translate('fileapi.printcharactersheettopdf.success'));
+				alert(_translate(locale, 'fileapi.printcharactersheettopdf.success'));
 			}
 			catch (error) {
-				alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.printcharactersheettopdf')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+				alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.printcharactersheettopdf')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 			}
 		}
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.printcharactersheettopdfpreparation')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.printcharactersheettopdfpreparation')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
-export async function importHero(path: string) {
+export async function importHero(locale: UIMessages) {
 	try {
-		const result = await readFile(path);
-		FileActions.receiveImportedHero(JSON.parse(result));
+		const fileNames = await showOpenDialog({
+			filters: [{ name: 'JSON', extensions: ['json'] }]
+		});
+		if (fileNames) {
+			const fileName = fileNames[0];
+			const splitted = fileName.split('.');
+			if (splitted[splitted.length - 1] === 'json') {
+				const fileContent = await readFileContent(fileName, locale);
+				if (typeof fileContent === 'string') {
+					return JSON.parse(fileContent);
+				}
+			}
+		}
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.importhero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.importhero')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 	}
 }
 
@@ -193,12 +198,12 @@ export function readFile(path: string, encoding: string = 'utf8') {
 	});
 }
 
-export async function readFileContent(path: string, encoding: string = 'utf8') {
+export async function readFileContent(path: string, locale: UIMessages, encoding: string = 'utf8') {
 	try {
 		return await readFile(path, encoding);
 	}
 	catch (error) {
-		alert(translate('fileapi.error.title'), `${translate('fileapi.error.message.importhero')} (${translate('fileapi.error.message.code')}: ${JSON.stringify(error)})`);
+		alert(_translate(locale, 'fileapi.error.title'), `${_translate(locale, 'fileapi.error.message.importhero')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
 		return;
 	}
 }
@@ -232,7 +237,7 @@ export function writeFile(path: string, data: any) {
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
-export function windowPrintToPDF(window: Electron.BrowserWindow, options: Electron.PrintToPDFOptions) {
+export function windowPrintToPDF(options: Electron.PrintToPDFOptions, window: Electron.BrowserWindow = remote.getCurrentWindow()) {
 	return new Promise<Buffer>((resolve, reject) => {
 		window.webContents.printToPDF(options, (error, data) => {
 			if (error) {
@@ -268,4 +273,8 @@ export function showOpenDialog(options: Electron.OpenDialogOptions, window: Elec
 			reject();
 		});
 	});
+}
+
+export function getSystemLocale() {
+	return remote.app.getLocale().match(/^de/) ? 'de-DE' : 'en-US';
 }

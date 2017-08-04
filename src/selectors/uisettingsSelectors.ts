@@ -1,5 +1,6 @@
 import { AppState } from '../reducers/app';
 
+export const getUISettingsState = (state: AppState) => state.ui.settings;
 export const getHerolistSortOrder = (state: AppState) => state.ui.settings.herolistSortOrder;
 export const getHerolistVisibilityFilter = (state: AppState) => state.ui.settings.herolistVisibilityFilter;
 export const getRacesSortOrder = (state: AppState) => state.ui.settings.racesSortOrder;

@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as ActionTypes from '../constants/ActionTypes';
-import { AppState } from '../reducers/app';
-import { getForSave } from '../selectors/herolistSelectors';
-import { AsyncAction, store } from '../stores/AppStore';
-import { Hero } from '../types/data.d';
+import { getHeroesForSave } from '../selectors/herolistSelectors';
+import { getLocaleId } from '../selectors/localeSelectors';
+import { getUISettingsState } from '../selectors/uisettingsSelectors';
+import { AsyncAction } from '../stores/AppStore';
+import { Hero, UIMessages } from '../types/data.d';
+import { Config } from '../types/rawdata.d';
 import { alert } from '../utils/alert';
 import { confirm } from '../utils/confirm';
 import { createOverlay } from '../utils/createOverlay';
-import { readFileContent, saveAll, showOpenDialog, showSaveDialog, writeFile } from '../utils/FileAPIUtils';
+import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { HeroCreation } from '../views/herolist/HeroCreation';
-import { _receiveImportedHero } from './FileActions';
+import { requestHeroExport } from './FileActions';
 import { _setSection } from './LocationActions';
 
 export interface SetHerolistSortOrderAction {
@@ -74,17 +76,19 @@ export interface LoadHeroAction {
 	};
 }
 
-export function _loadHero(id: string): LoadHeroAction | undefined {
-	const data = store.getState().herolist.heroes.get(id);
-	if (data) {
-		return {
-			type: ActionTypes.LOAD_HERO,
-			payload: {
-				data
-			}
-		};
-	}
-	return;
+export function _loadHero(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const data = getState().herolist.heroes.get(id);
+		if (data) {
+			dispatch({
+				type: ActionTypes.LOAD_HERO,
+				payload: {
+					data
+				}
+			} as LoadHeroAction);
+		}
+		return;
+	};
 }
 
 export function loadHeroValidate(id: string): AsyncAction {
@@ -112,10 +116,15 @@ export function loadHeroValidate(id: string): AsyncAction {
 	};
 }
 
-export function saveHeroes(): AsyncAction {
+export function saveHeroes(locale: UIMessages): AsyncAction {
 	return (_, getState) => {
-		saveAll();
-		alert(_translate(getState().locale.messages, 'fileapi.allsaved'));
+		const state = getState();
+		const config: Config = {
+			...getUISettingsState(state),
+			locale: getLocaleId(state)
+		};
+		saveAll(JSON.stringify(config), JSON.stringify(getHeroesForSave(state)), locale);
+		alert(_translate(locale, 'fileapi.allsaved'));
 	};
 }
 
@@ -126,38 +135,40 @@ export interface SaveHeroAction {
 	};
 }
 
-export function _saveHero(): SaveHeroAction {
-	const {
-		id = `H_${getNewIdByDate()}`,
-		dateCreated = new Date(),
-		dateModified,
-		...other
-	} = generateHeroSaveData(store.getState());
-	const data = {
-		...other,
-		id,
-		dateCreated,
-		dateModified: new Date()
-	};
-	return {
-		type: ActionTypes.SAVE_HERO,
-		payload: {
-			data
-		}
+export function _saveHero(): AsyncAction {
+	return (dispatch, getState) => {
+		const {
+			id = `H_${getNewIdByDate()}`,
+			dateCreated = new Date(),
+			dateModified,
+			...other
+		} = generateHeroSaveData(getState());
+		const data = {
+			...other,
+			id,
+			dateCreated,
+			dateModified: new Date()
+		};
+		dispatch({
+			type: ActionTypes.SAVE_HERO,
+			payload: {
+				data
+			}
+		} as SaveHeroAction);
 	};
 }
 
-export function exportHeroValidate(id: string): AsyncAction {
+export function exportHeroValidate(id: string, locale: UIMessages): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const { currentHero: { past, present: { el: { startId }} }, locale: { messages }} = state;
 		if ((past.length === 0 || !startId)) {
-			exportHero(state, id);
+			requestHeroExport(id, locale);
 		}
 		else {
 			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
 				if (result === true) {
-					exportHero(state, id);
+					requestHeroExport(id, locale);
 				}
 				else {
 					dispatch(_setSection('hero'));
@@ -165,29 +176,6 @@ export function exportHeroValidate(id: string): AsyncAction {
 			});
 		}
 	};
-}
-
-async function exportHero(state: AppState, id: string) {
-	const { herolist, locale: { messages }} = state;
-	const data = getForSave(herolist, id);
-	if (data) {
-		const filename = await showSaveDialog({
-			title: _translate(messages, 'fileapi.exporthero.title'),
-			filters: [
-				{name: 'JSON', extensions: ['json']},
-			],
-			defaultPath: data.name.replace(/\//, '\/')
-		});
-		if (filename) {
-			try {
-				await writeFile(filename, JSON.stringify(data));
-				alert(_translate(messages, 'fileapi.exporthero.success'));
-			}
-			catch (error) {
-				alert(_translate(messages, 'fileapi.error.title'), `${_translate(messages, 'fileapi.error.message.exporthero')} (${_translate(messages, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`);
-			}
-		}
-	}
 }
 
 export function deleteHeroValidate(id: string | undefined): AsyncAction {
@@ -260,24 +248,6 @@ export function showHeroCreation(): AsyncAction {
 					dispatch(_setSection('hero'));
 				}
 			});
-		}
-	};
-}
-
-export function importHero(): AsyncAction {
-	return async dispatch => {
-		const fileNames = await showOpenDialog({
-			filters: [{ name: 'JSON', extensions: ['json'] }]
-		});
-		if (fileNames) {
-			const fileName = fileNames[0];
-			const splitted = fileName.split('.');
-			if (splitted[splitted.length - 1] === 'json') {
-				const fileContent = await readFileContent(fileName);
-				if (typeof fileContent === 'string') {
-					dispatch(_receiveImportedHero(JSON.parse(fileContent)));
-				}
-			}
 		}
 	};
 }

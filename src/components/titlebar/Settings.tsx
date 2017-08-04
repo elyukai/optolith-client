@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { store } from '../../stores/AppStore';
 import { UIMessages } from '../../types/ui.d';
-import { saveConfig } from '../../utils/FileAPIUtils';
 import { _translate } from '../../utils/I18n';
 import { Dialog } from '../Dialog';
 import { Dropdown } from '../Dropdown';
 
 export interface SettingsProps {
-	locale?: UIMessages;
+	locale: UIMessages;
 	node?: HTMLDivElement;
+	saveConfig(): void;
 	setLocale(id?: string): void;
 }
 
@@ -35,7 +35,7 @@ export class Settings extends React.Component<SettingsProps, SettingsState> {
 	}
 
 	render() {
-		const { locale, node, setLocale } = this.props;
+		const { locale, node, setLocale, saveConfig } = this.props;
 		const { localeString, localeType } = this.state;
 
 		return (

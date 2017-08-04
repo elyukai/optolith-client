@@ -1,5 +1,6 @@
 import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
+import * as FileActions from '../actions/FileActions';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as LocationActions from '../actions/LocationActions';
 import { AppState } from '../reducers/app';
@@ -19,7 +20,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>) {
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: HerolistOwnProps) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
@@ -31,7 +32,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		saveHeroAsJSON(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.exportHeroValidate(id));
+				dispatch(HerolistActions.exportHeroValidate(id, props.locale));
 			}
 		},
 		deleteHero(id?: string) {
@@ -48,7 +49,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(HerolistActions.showHeroCreation());
 		},
 		importHero() {
-			dispatch(HerolistActions.importHero());
+			dispatch(FileActions.requestHeroImport(props.locale));
 		},
 		setSortOrder(id: string) {
 			dispatch(HerolistActions._setSortOrder(id));

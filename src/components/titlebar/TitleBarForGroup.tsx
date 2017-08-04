@@ -13,10 +13,11 @@ import { TitleBarRight } from './TitleBarRight';
 import { TitleBarWrapper } from './TitleBarWrapper';
 
 export interface TitleBarForGroupProps {
-	locale?: UIMessages;
+	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
 	groupName: string;
+	saveConfig(): void;
 	saveGroup(): void;
 	setLocale(id?: string): void;
 	setSection(id: string): void;
@@ -48,8 +49,8 @@ export function TitleBarForGroup(props: TitleBarForGroupProps) {
 	);
 }
 
-function showSettings(locale: UIMessages | undefined, setLocale: (id?: string) => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} />);
+function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} />);
 }
 
 function toggleDevtools() {

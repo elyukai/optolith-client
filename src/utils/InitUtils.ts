@@ -20,32 +20,55 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
 	const { id } = raw;
 	const localeObject = locale[id];
 	if (localeObject) {
-		const { name } = localeObject;
-		const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
+		const {
+			attributeAdjustments: attributeAdjustmentsText,
+			automaticAdvantages: automaticAdvantagesText,
+			commonAdvantages: commonAdvantagesText,
+			commonDisadvantages: commonDisadvantagesText,
+			name,
+			src: page,
+			stronglyRecommendedAdvantages: stronglyRecommendedAdvantagesText,
+			stronglyRecommendedDisadvantages: stronglyRecommendedDisadvantagesText,
+			uncommonAdvantages: uncommonAdvantagesText,
+			uncommonDisadvantages: uncommonDisadvantagesText
+		} = localeObject;
+		const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: bookId, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
 		return {
 			ap,
-			attributeSelection: [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)],
-			attributes: attr.map<[number, string]>(e => [e[0], `ATTR_${e[1]}`]),
-			autoAdvantages: auto_adv.map(e => `ADV_${e}`),
+			attributeAdjustments: attr.map<[number, string]>(e => [e[0], `ATTR_${e[1]}`]),
+			attributeAdjustmentsSelection: [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)],
+			attributeAdjustmentsText,
+			automaticAdvantages: auto_adv.map(e => `ADV_${e}`),
 			automaticAdvantagesCost: autoAdvCost,
+			automaticAdvantagesText,
 			category: Categories.RACES,
 			eyeColors: eyes,
 			hairColors: hair,
 			id,
-			importantAdvantages: imp_adv.map(e => `ADV_${e}`),
-			importantDisadvantages: imp_dadv.map(e => `DISADV_${e}`),
+			stronglyRecommendedAdvantages: imp_adv.map(e => `ADV_${e}`),
+			stronglyRecommendedAdvantagesText,
+			stronglyRecommendedDisadvantages: imp_dadv.map(e => `DISADV_${e}`),
+			stronglyRecommendedDisadvantagesText,
 			lp: le,
 			mov: gs,
 			name,
 			size,
 			spi: sk,
 			tou: zk,
-			typicalAdvantages: typ_adv.map(e => `ADV_${e}`),
-			typicalCultures: typ_cultures.map(e => `C_${e}`),
-			typicalDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
-			untypicalAdvantages: untyp_adv.map(e => `ADV_${e}`),
-			untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+			commonAdvantages: typ_adv.map(e => `ADV_${e}`),
+			commonAdvantagesText,
+			commonCultures: typ_cultures.map(e => `C_${e}`),
+			commonDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
+			commonDisadvantagesText,
+			uncommonAdvantages: untyp_adv.map(e => `ADV_${e}`),
+			uncommonAdvantagesText,
+			uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+			uncommonDisadvantagesText,
 			weight,
+			src: {
+				id: bookId,
+				page
+			}
 		};
 	}
 	return;
@@ -400,12 +423,13 @@ export function initItem(raw: RawItem, locale: ToListById<RawItemLocale>): ItemI
 	const localeObject = locale[id];
 	if (localeObject) {
 		const { name } = localeObject;
-		const { addPenalties, ...other } = raw;
+		const { addPenalties, imp, ...other } = raw;
 		return {
 			...other,
 			name,
 			addPenalties,
 			amount: 1,
+			improvisedWeaponGroup: imp,
 			isTemplateLocked: true
 		};
 	}

@@ -1,6 +1,7 @@
+import { uniq } from 'lodash';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { ToOptionalKeys } from '../types/data.d';
-import { AbilityInstanceExtended } from '../types/data.d';
+import { AbilityInstanceExtended, Instance } from '../types/data.d';
 import { getStateKeyById } from './IDUtils';
 
 /**
@@ -54,7 +55,7 @@ export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToO
 	return newstate;
 }
 
-export function setStateItem<T extends AbilityInstanceExtended>(newstate: DependentInstancesState, id: string, item: T) {
+export function setStateItem<T extends Instance>(newstate: DependentInstancesState, id: string, item: T) {
 	const key = getStateKeyById(id);
 	if (key) {
 		return {
@@ -78,9 +79,32 @@ export function mergeIntoState(oldstate: DependentInstancesState, newstate: ToOp
 	return total;
 }
 
+export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
+	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
+
+	type D = DependentInstancesState;
+
+	const total = { ...oldstate };
+	for (const key of keys) {
+		total[key] = mergeIntoOptionalStateSlice<keyof D>(total[key], newstate[key]);
+	}
+
+	return total;
+}
+
 function mergeIntoStateSlice<T extends keyof DependentInstancesState>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
 	if (newslice) {
 		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+	}
+	return oldslice;
+}
+
+function mergeIntoOptionalStateSlice<T extends keyof DependentInstancesState>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+	if (newslice && oldslice) {
+		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+	}
+	else if (newslice) {
+		return newslice;
 	}
 	return oldslice;
 }

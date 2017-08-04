@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { alert } from '../utils/alert';
 import { validate } from '../utils/APUtils';
@@ -10,15 +10,17 @@ export interface ActivateSpecialAbilityAction {
 	payload: UndoExtendedActivateArgs;
 }
 
-export function _addToList(args: ActivateArgs): ActivateSpecialAbilityAction | undefined {
-	const validCost = validate(args.cost, store.getState().currentHero.present.ap);
-	if (!validCost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.ACTIVATE_SPECIALABILITY,
-		payload: args
+export function _addToList(args: ActivateArgs): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(args.cost, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_SPECIALABILITY,
+			payload: args
+		} as ActivateSpecialAbilityAction);
 	};
 }
 
@@ -47,20 +49,22 @@ export interface SetSpecialAbilityTierAction {
 	};
 }
 
-export function _setTier(id: string, index: number, tier: number, cost: number): SetSpecialAbilityTierAction | undefined {
-	const validCost = validate(cost, store.getState().currentHero.present.ap);
-	if (!validCost) {
-		alert(translate('notenoughap.title'), translate('notenoughap.content'));
-		return;
-	}
-	return {
-		type: ActionTypes.SET_SPECIALABILITY_TIER,
-		payload: {
-			id,
-			tier,
-			cost,
-			index
+export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(cost, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
 		}
+		dispatch({
+			type: ActionTypes.SET_SPECIALABILITY_TIER,
+			payload: {
+				id,
+				tier,
+				cost,
+				index
+			}
+		} as SetSpecialAbilityTierAction);
 	};
 }
 

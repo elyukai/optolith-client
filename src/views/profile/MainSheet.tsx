@@ -55,7 +55,7 @@ export function MainSheet(props: MainSheetProps) {
 				<BorderButton
 					className="print-document"
 					label={_translate(locale, 'charactersheet.actions.printtopdf')}
-					onClick={printToPDF}
+					onClick={() => printToPDF(locale)}
 					fullWidth
 					/>
 			</SheetOptions>

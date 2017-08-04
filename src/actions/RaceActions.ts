@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../stores/AppStore';
 import { getDiffCost } from '../utils/RCPUtils';
 
 export interface SelectRaceAction {
@@ -10,25 +10,20 @@ export interface SelectRaceAction {
 	};
 }
 
-export const selectRace = (id: string) => AppDispatcher.dispatch<SelectRaceAction>({
-	type: ActionTypes.SELECT_RACE,
-	payload: {
-		id
-	}
-});
-
-export function _selectRace(id: string): SelectRaceAction {
-	const { dependent, rcp: { profession, professionVariant, race } } = store.getState().currentHero.present;
-	const raceDiff = getDiffCost(dependent, race, id);
-	const professionDiff = getDiffCost(dependent, profession);
-	const professionVariantDiff = getDiffCost(dependent, professionVariant);
-	const cost = raceDiff + professionDiff + professionVariantDiff;
-	return {
-		type: ActionTypes.SELECT_RACE,
-		payload: {
-			id,
-			cost
-		}
+export function _selectRace(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { profession, professionVariant, race } } = getState().currentHero.present;
+		const raceDiff = getDiffCost(dependent, race, id);
+		const professionDiff = getDiffCost(dependent, profession);
+		const professionVariantDiff = getDiffCost(dependent, professionVariant);
+		const cost = raceDiff + professionDiff + professionVariantDiff;
+		dispatch({
+			type: ActionTypes.SELECT_RACE,
+			payload: {
+				id,
+				cost
+			}
+		} as SelectRaceAction);
 	};
 }
 
@@ -38,13 +33,6 @@ export interface SetRacesSortOrderAction {
 		sortOrder: string;
 	};
 }
-
-export const setRacesSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetRacesSortOrderAction>({
-	type: ActionTypes.SET_RACES_SORT_ORDER,
-	payload: {
-		sortOrder
-	}
-});
 
 export function _setRacesSortOrder(sortOrder: string): SetRacesSortOrderAction {
 	return {
@@ -58,10 +46,6 @@ export function _setRacesSortOrder(sortOrder: string): SetRacesSortOrderAction {
 export interface SwitchRaceValueVisibilityAction {
 	type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY;
 }
-
-export const switchRaceValueVisibilityFilter = () => AppDispatcher.dispatch<SwitchRaceValueVisibilityAction>({
-	type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY
-});
 
 export function _switchRaceValueVisibilityFilter(): SwitchRaceValueVisibilityAction {
 	return {

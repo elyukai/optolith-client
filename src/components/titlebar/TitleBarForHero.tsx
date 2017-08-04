@@ -22,11 +22,12 @@ export interface TitleBarForHeroProps {
 	hero: CurrentHeroInstanceState;
 	isRedoAvailable: boolean;
 	isUndoAvailable: boolean;
-	locale?: UIMessages;
+	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
 	undo(): void;
 	redo(): void;
+	saveConfig(): void;
 	saveHero(): void;
 	setLocale(id?: string): void;
 	setSection(id: string): void;
@@ -104,8 +105,8 @@ export function TitleBarForHero(props: TitleBarForHeroProps) {
 	);
 }
 
-function showSettings(locale: UIMessages | undefined, setLocale: (id?: string) => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} />);
+function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} />);
 }
 
 function toggleDevtools() {

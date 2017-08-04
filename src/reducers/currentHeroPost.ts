@@ -11,9 +11,10 @@ import { getSelectionItem, isActive } from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { getDecreaseRangeAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { add } from '../utils/IncreasableUtils';
-import { mergeIntoList } from '../utils/ListUtils';
+import { mergeIntoOptionalState, mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
 import { CurrentHeroInstanceState } from './currentHero';
+import { DependentInstancesState } from './dependentInstances';
 
 type Action = CreateHeroAction | SetSelectionsAction;
 
@@ -56,12 +57,12 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 			// Race selections:
 
 			if (typeof race === 'object') {
-				race.attributes.forEach(e => {
+				race.attributeAdjustments.forEach(e => {
 					const [ mod, id ] = e;
 					(get(dependent, id) as Data.AttributeInstance).mod += mod;
 				});
-				race.autoAdvantages.forEach(e => activatable.add({ id: e, active: true }));
-				(get(dependent, action.payload.attrSel) as Data.AttributeInstance).mod = race.attributeSelection[0];
+				race.automaticAdvantages.forEach(e => activatable.add({ id: e, active: true }));
+				(get(dependent, action.payload.attrSel) as Data.AttributeInstance).mod = race.attributeAdjustmentsSelection[0];
 			}
 
 			// Culture selections:
@@ -176,14 +177,17 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 			// Apply:
 
-			let newlist = new Map<string, Data.Instance>();
+			let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
 
 			for (const [id, value] of skillRatingList) {
-				newlist.set(id, add(getLatest(dependent, newlist, id) as Data.IncreasableInstance, value));
+				newlist = setNewStateItem(newlist, id, add(getLatest(dependent, newlist, id) as Data.IncreasableInstance, value));
 			}
 
 			for (const id of skillActivateList) {
-				newlist.set(id, { ...getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance, active: true });
+				newlist = setNewStateItem(newlist, id, {
+					...getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance,
+					active: true
+				});
 			}
 
 			for (const req of activatable) {
@@ -214,23 +218,23 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 						break;
 				}
 				if (obj) {
-					newlist = mergeIntoList(newlist, DependentUtils.addDependencies(dependent, obj, add));
+					newlist = mergeIntoOptionalState(newlist, DependentUtils.addDependencies(dependent, obj, add));
 				}
 			}
 
 			const SA_28 = getLatest(dependent, newlist, 'SA_28') as Data.SpecialAbilityInstance;
 			const SA_30 = getLatest(dependent, newlist, 'SA_30') as Data.SpecialAbilityInstance;
 
-			newlist.set('SA_28', {
+			newlist = setNewStateItem(newlist, 'SA_28', {
 				...SA_28,
 				active: [ ...SA_28.active, ...Array.from(scripts.values(), sid => ({ sid }))]
 			});
-			newlist.set('SA_30', {
+			newlist = setNewStateItem(newlist, 'SA_30', {
 				...SA_30,
 				active: [ ...SA_30.active, ...Array.from(languages.entries(), ([sid, tier]) => ({ sid, tier }))]
 			});
 
-			newlist = mergeIntoList(dependent, newlist);
+			let fulllist = mergeIntoState(dependent, newlist);
 
 			// AP
 
@@ -251,7 +255,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 				if (action.payload.buyLiteracy) {
 					const id = culture.scripts.length > 1 ? action.payload.litc : culture.scripts[0];
-					const selectionItem = getSelectionItem(get(newlist, 'SA_28') as Data.SpecialAbilityInstance, id);
+					const selectionItem = getSelectionItem(get(fulllist, 'SA_28') as Data.SpecialAbilityInstance, id);
 					ap.spent += selectionItem && selectionItem.cost || 0;
 				}
 
@@ -268,18 +272,18 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 						if (RequirementUtils.isRequiringIncreasable(dependent, req)) {
 							const { id, value } = req;
 							if (typeof id === 'string') {
-								const obj = get(newlist, id) as Data.AttributeInstance | Data.TalentInstance;
+								const obj = get(fulllist, id) as Data.AttributeInstance | Data.TalentInstance;
 								switch (obj.category) {
 									case Categories.ATTRIBUTES: {
 										if (typeof value === 'number') {
-											newlist.set(id, { ...obj, value });
+											fulllist = setStateItem(fulllist, id, { ...obj, value });
 											return { ...final, spent: final.spent + getIncreaseRangeAP(5, 8, value)};
 										}
 										return final;
 									}
 									case Categories.TALENTS: {
 										if (typeof value === 'number') {
-											newlist.set(id, { ...obj, value });
+											fulllist = setStateItem(fulllist, id, { ...obj, value });
 											return { ...final, spent: final.spent + getIncreaseRangeAP(obj.ic, obj.value, value)};
 										}
 										return final;
@@ -290,15 +294,15 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 						else {
 							const { id, sid, sid2, tier } = req;
 							if (typeof id === 'string') {
-								const obj = get(newlist, id) as Data.ActivatableInstance & { tiers?: number };
+								const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
 								let cost;
 								const activeObject = { sid: sid as string | number | undefined, sid2, tier };
 
 								const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
 								if (!obj.active.find(checkIfActive)) {
-									(get(newlist, id as string) as Data.ActivatableInstance).active.push(activeObject);
-									newlist = mergeIntoList(newlist, DependentUtils.addDependencies(newlist, obj));
+									(get(fulllist, id as string) as Data.ActivatableInstance).active.push(activeObject);
+									fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, obj));
 									if (obj.tiers && tier) {
 										cost = (obj.cost as number) * tier;
 									}
@@ -351,7 +355,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 					// Lower Combat Techniques with a too high CTR
 
-					const allCombatTechniques = getAllByCategory(newlist, Categories.COMBAT_TECHNIQUES) as Data.CombatTechniqueInstance[];
+					const allCombatTechniques = getAllByCategory(fulllist, Categories.COMBAT_TECHNIQUES) as Data.CombatTechniqueInstance[];
 					const maxCombatTechniqueRating = getStart(el).maxCombatTechniqueRating;
 					const valueTooHigh = allCombatTechniques.filter(e => e.value > maxCombatTechniqueRating);
 
@@ -360,14 +364,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 					}, 0);
 
 					for (const combatTechnique of valueTooHigh) {
-						newlist.set(combatTechnique.id, { ...combatTechnique, value: maxCombatTechniqueRating });
+						fulllist = setStateItem(fulllist, combatTechnique.id, { ...combatTechnique, value: maxCombatTechniqueRating });
 					}
 
 					if (rcp.profession === 'P_0') {
 						professionName = 'Eigene Profession';
 					}
 
-					if (isActive(get(newlist, 'SA_92') as Data.SpecialAbilityInstance)) {
+					if (isActive(get(fulllist, 'SA_92') as Data.SpecialAbilityInstance)) {
 						permanentArcaneEnergyLoss += 2;
 					}
 				}

@@ -1,5 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 
+const AppDispatcher = { dispatch(obj: any) { return obj; }};
+
 export function load() {
 	AppDispatcher.dispatch({
 		type: ActionTypes.LOAD_RAW_INGAME_DATA
