@@ -1,4 +1,3 @@
-import { uniq } from 'lodash';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { ToOptionalKeys } from '../types/data.d';
 import { AbilityInstanceExtended, Instance } from '../types/data.d';

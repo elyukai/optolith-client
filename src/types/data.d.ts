@@ -19,6 +19,8 @@ export interface InstanceByCategory {
 	'TALENTS': TalentInstance;
 }
 
+export type InstanceWithGroups = CombatTechniqueInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance;
+
 export interface AdventurePoints {
 	total: number;
 	spent: number;
@@ -152,16 +154,16 @@ export interface RaceInstance {
 	readonly category: Categories.RACES;
 	readonly src: {
 		id: string;
-		page?: number;
+		page: number;
 	};
 }
 
-export interface TypicalProfessionObject {
+export interface CommonProfessionObject {
 	list: (string | number)[];
 	reverse: boolean;
 }
 
-export type TypicalProfession = boolean | TypicalProfessionObject;
+export type CommonProfession = boolean | CommonProfessionObject;
 
 export interface CultureInstance {
 	readonly id: string;
@@ -170,7 +172,7 @@ export interface CultureInstance {
 	readonly languages: number[];
 	readonly scripts: number[];
 	readonly socialTiers: number[];
-	readonly typicalProfessions: TypicalProfession[];
+	readonly typicalProfessions: CommonProfession[];
 	readonly typicalAdvantages: string[];
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];

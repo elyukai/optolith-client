@@ -1,74 +1,70 @@
 import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
-import { CultureStore } from '../../stores/CultureStore';
-import { RaceStore } from '../../stores/RaceStore';
-import { translate } from '../../utils/I18n';
-import { Cultures } from './Cultures';
-import { Professions } from './Professions';
-import { Races } from './Races';
+import { CulturesContainer } from '../../containers/Cultures';
+import { ProfessionsContainer } from '../../containers/Professions';
+import { RacesContainer } from '../../containers/Races';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-interface State {
-	cultureID?: string;
-	raceID?: string;
+export interface RCPOwnProps {
+	locale: UIMessages;
+}
+
+export interface RCPStateProps {
+	currentCultureId?: string;
+	currentRaceId?: string;
+}
+
+export interface RCPDispatchProps {}
+
+export type RCPProps = RCPStateProps & RCPDispatchProps & RCPOwnProps;
+
+export interface RCPState {
 	tab: string;
 }
 
-export class RCP extends React.Component<{}, State> {
+export class RCP extends React.Component<RCPProps, RCPState> {
 	state = {
-		cultureID: CultureStore.getCurrentID(),
-		raceID: RaceStore.getCurrentID(),
 		tab: 'race',
 	};
 
-	_updateCultureStore = () => this.setState({ cultureID: CultureStore.getCurrentID() } as State);
-	_updateRaceStore = () => this.setState({ raceID: RaceStore.getCurrentID() } as State);
-
-	handleClick = (tab: string) => this.setState({ tab } as State);
-
-	componentDidMount() {
-		CultureStore.addChangeListener(this._updateCultureStore);
-		RaceStore.addChangeListener(this._updateRaceStore);
-	}
-
-	componentWillUnmount() {
-		CultureStore.removeChangeListener(this._updateCultureStore);
-		RaceStore.removeChangeListener(this._updateRaceStore);
-	}
+	handleClick = (tab: string) => this.setState({ tab } as RCPState);
+	switchToCultures = () => this.setState({ tab: 'culture' } as RCPState);
+	switchToProfessions = () => this.setState({ tab: 'profession' } as RCPState);
 
 	render() {
+		const { currentCultureId, currentRaceId, locale } = this.props;
+
 		let element;
 
 		switch (this.state.tab) {
 			case 'race':
-				element = <Races changeTab={this.handleClick} />;
+				element = <RacesContainer switchToCultures={this.switchToCultures} locale={locale} />;
 				break;
 			case 'culture':
-				element = <Cultures changeTab={this.handleClick} />;
+				element = <CulturesContainer switchToProfessions={this.switchToProfessions} locale={locale} />;
 				break;
 			case 'profession':
-				element = <Professions />;
+				element = <ProfessionsContainer locale={locale} />;
 				break;
 		}
-
-		const { raceID, cultureID } = this.state;
 
 		const tabs = [
 			{
 				id: 'race',
-				label: translate('titlebar.tabs.race'),
+				label: _translate(locale, 'titlebar.tabs.race'),
 			},
 		];
 
-		if (raceID) {
+		if (currentRaceId) {
 			tabs.push({
 				id: 'culture',
-				label: translate('titlebar.tabs.culture'),
+				label: _translate(locale, 'titlebar.tabs.culture'),
 			});
 		}
-		if (cultureID) {
+		if (currentCultureId) {
 			tabs.push({
 				id: 'profession',
-				label: translate('titlebar.tabs.profession'),
+				label: _translate(locale, 'titlebar.tabs.profession'),
 			});
 		}
 

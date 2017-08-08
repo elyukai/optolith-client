@@ -1,103 +1,87 @@
 import * as React from 'react';
-import * as CultureActions from '../../actions/CultureActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
+import { List } from '../../components/List';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { CultureStore } from '../../stores/CultureStore';
-import { RaceStore } from '../../stores/RaceStore';
-import { CultureInstance, InputTextEvent } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { InputTextEvent } from '../../types/data.d';
+import { Culture, UIMessages } from '../../types/view.d';
 import { filterAndSort } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 import { CulturesListItem } from './CulturesListItem';
 
-interface Props {
-	changeTab(tab: string): void;
+export interface CulturesOwnProps {
+	locale: UIMessages;
+	switchToProfessions(): void;
 }
 
-interface State {
-	cultures: CultureInstance[];
-	currentID?: string;
-	filterText: string;
+export interface CulturesStateProps {
+	areValuesVisible: boolean;
+	commonCultures?: string[];
+	cultures: Culture[];
+	currentId?: string;
 	sortOrder: string;
-	showDetails: boolean;
 	visibilityFilter: string;
 }
 
-export class Cultures extends React.Component<Props, State> {
+export interface CulturesDispatchProps {
+	selectCulture(id: string): void;
+	setSortOrder(sortOrder: string): void;
+	setVisibilityFilter(option: string): void;
+	switchValueVisibilityFilter(): void;
+}
+
+export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps;
+
+export interface CulturesState {
+	filterText: string;
+}
+
+export class Cultures extends React.Component<CulturesProps, CulturesState> {
 	state = {
-		cultures: CultureStore.getAll(),
-		currentID: CultureStore.getCurrentID(),
-		filterText: '',
-		showDetails: CultureStore.areValuesVisible(),
-		sortOrder: CultureStore.getSortOrder(),
-		visibilityFilter: CultureStore.areAllVisible(),
+		filterText: ''
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => CultureActions.setSortOrder(option);
-	changeTab = () => this.props.changeTab('profession');
-	changeValueVisibility = () => CultureActions.switchValueVisibilityFilter();
-	changeView = (view: string) => CultureActions.setVisibilityFilter(view);
-
-	componentDidMount() {
-		CultureStore.addChangeListener(this.updateCultureStore);
-	}
-
-	componentWillUnmount() {
-		CultureStore.removeChangeListener(this.updateCultureStore);
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CulturesState);
 
 	render() {
-		const { currentID, filterText, cultures, visibilityFilter, showDetails, sortOrder } = this.state;
+		const { areValuesVisible, commonCultures, cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, switchValueVisibilityFilter, visibilityFilter } = this.props;
+		const { filterText } = this.state;
 
-		const currentRace = RaceStore.getCurrent();
-
-		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || currentRace!.commonCultures.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || commonCultures!.includes(e.id)), filterText, sortOrder);
 
 		return (
 			<div className="page" id="cultures">
 				<div className="options">
-					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibilityFilter}
-						onChange={this.changeView}
-						options={[{ id: 'all', name: translate('cultures.options.allcultures') }, { id: 'common', name: translate('cultures.options.commoncultures') }]}
+						onChange={setVisibilityFilter}
+						options={[{ id: 'all', name: _translate(locale, 'cultures.options.allcultures') }, { id: 'common', name: _translate(locale, 'cultures.options.commoncultures') }]}
 						fullWidth
 						/>
 					<SortOptions
 						sortOrder={sortOrder}
-						sort={this.sort}
+						sort={setSortOrder}
 						options={['name', 'cost']}
 						/>
-					<Checkbox checked={showDetails} onClick={this.changeValueVisibility}>{translate('cultures.options.showculturalpackagevalues')}</Checkbox>
+					<Checkbox checked={areValuesVisible} onClick={switchValueVisibilityFilter}>{_translate(locale, 'cultures.options.showculturalpackagevalues')}</Checkbox>
 				</div>
-				<Scroll className="list">
-					<ul>
+				<Scroll>
+					<List>
 						{
-							list.map(culture => <CulturesListItem
-								key={culture.id}
-								changeTab={this.props.changeTab.bind(null, 'profession')}
-								currentID={currentID}
-								culture={culture}
-								showDetails={showDetails}
-								/>,
+							list.map(culture =>
+								<CulturesListItem
+									{...this.props}
+									key={culture.id}
+									culture={culture}
+									/>
 							)
 						}
-					</ul>
+					</List>
 				</Scroll>
 			</div>
 		);
-	}
-
-	private updateCultureStore = () => {
-		this.setState({
-			cultures: CultureStore.getAll(),
-			currentID: CultureStore.getCurrentID(),
-			showDetails: CultureStore.areValuesVisible(),
-			sortOrder: CultureStore.getSortOrder(),
-			visibilityFilter: CultureStore.areAllVisible(),
-		} as State);
 	}
 }

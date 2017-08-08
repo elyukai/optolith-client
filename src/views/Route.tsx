@@ -3,13 +3,13 @@ import { AttributesContainer } from '../containers/Attributes';
 import { BelongingsContainer } from '../containers/Belongings';
 import { HerolistContainer } from '../containers/Herolist';
 import { ProfileContainer } from '../containers/Profile';
+import { RCPContainer } from '../containers/RCP';
 import { SkillsContainer } from '../containers/Skills';
 import { UIMessages } from '../types/ui';
 import { About } from './about/About';
 import { AdvantagesDisadvantages } from './disadv/DisAdv';
 import { Grouplist } from './grouplist/Grouplist';
 // import { Master } from './master/Master';
-import { RCP } from './rcp/RCP';
 
 export interface RouteProps {
 	id: string;
@@ -24,7 +24,7 @@ export function Route(props: RouteProps) {
 		grouplist: <Grouplist />,
 		about: <About locale={locale} />,
 
-		rcp: <RCP />,
+		rcp: <RCPContainer locale={locale} />,
 		profile: <ProfileContainer locale={locale} />,
 		attributes: <AttributesContainer locale={locale} />,
 		disadv: <AdvantagesDisadvantages locale={locale} />,

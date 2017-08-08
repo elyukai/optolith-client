@@ -12,7 +12,7 @@ ul.list-wrapper {
 		align-items: center;
 		padding: 9px 8px 8px;
 
-		&:hover{
+		&:hover {
 			.values {
 				$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
 
@@ -40,6 +40,7 @@ ul.list-wrapper {
 				border-style: solid;
 				border-color: transparent;
 				pointer-events: none;
+				z-index: 7;
 			}
 
 			.avatar-wrapper h2 {
@@ -60,6 +61,22 @@ ul.list-wrapper {
 				top: -30px;
 				left: calc(50% - 6px);
 			}
+		}
+
+		&.active::after {
+			position: absolute;
+			left: -11px;
+			top: 0;
+			width: calc(100% + 5px);
+			height: calc(100% - 1px);
+			content: "";
+			border-image: linear-gradient(to right, #fabe0a 0%, transparentize(#fabe0a, .75) 100%);
+			border-image-slice: 1;
+			border-width: 1px 0 1px 6px;
+			border-style: solid;
+			border-color: transparent;
+			pointer-events: none;
+			z-index: 8;
 		}
 
 		.avatar-wrapper {

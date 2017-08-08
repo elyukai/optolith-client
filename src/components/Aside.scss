@@ -29,7 +29,6 @@ aside {
 		flex: 1 1 100%;
 	}
 
-
 	.aside-header {
 		display: flex;
 		flex-direction: column;
@@ -56,7 +55,7 @@ aside {
 		}
 	}
 
-	.aside-header p:last-child {
+	.aside-header p:nth-child(2) {
 		margin-bottom: 0;
 	}
 
@@ -77,7 +76,7 @@ aside {
 				white-space: nowrap;
 			}
 
-			p:last-child {
+			p:nth-child(2) {
 				color: $color2;
 				margin-left: 10px;
 				font-family: Alegreya Sans;

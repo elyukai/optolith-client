@@ -1,21 +1,15 @@
 import * as React from 'react';
-import * as ProfessionActions from '../../actions/ProfessionActions';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
-import * as Categories from '../../constants/Categories';
-import { CultureStore } from '../../stores/CultureStore';
-import { get, getAllByCategory, getAllByCategoryGroup } from '../../stores/ListStore';
-import { ProfessionStore } from '../../stores/ProfessionStore';
-import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
-import { RaceStore } from '../../stores/RaceStore';
-import { TalentsStore } from '../../stores/TalentsStore';
-import { CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { getAllByGroupFromSlice } from '../../selectors/dependentInstancesSelectors';
+import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CultureInstance, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionInstance, ProfessionSelection, ProfessionSelectionIds, ProfessionVariantInstance, RaceInstance, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { UIMessages } from '../../types/view.d';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
-import { translate } from '../../utils/I18n';
-import { sortByName } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 import { SelectionsCantrips } from './SelectionsCantrips';
 import { SelectionsCt } from './SelectionsCt';
 import { SelectionsCurses } from './SelectionsCurses';
@@ -23,11 +17,31 @@ import { SelectionsLangLitc } from './SelectionsLangLitc';
 import { SelectionsSkills } from './SelectionsSkills';
 import { SelectionsTalentSpec } from './SelectionsTalentSpec';
 
-interface Props {
+export interface SelectionsOwnProps {
+	locale: UIMessages;
 	close(): void;
 }
 
-interface State {
+export interface SelectionsStateProps {
+	attributes: Map<string, AttributeInstance>;
+	cantrips: Map<string, CantripInstance>;
+	combatTechniques: Map<string, CombatTechniqueInstance>;
+	currentRace: RaceInstance;
+	currentCulture: CultureInstance;
+	currentProfession: ProfessionInstance;
+	currentProfessionVariant: ProfessionVariantInstance | undefined;
+	skills: Map<string, TalentInstance>;
+	spells: Map<string, SpellInstance>;
+	specialAbilities: Map<string, SpecialAbilityInstance>;
+}
+
+export interface SelectionsDispatchProps {
+	setSelections(selections: SelectionsInterface): void;
+}
+
+export type SelectionsProps = SelectionsStateProps & SelectionsDispatchProps & SelectionsOwnProps;
+
+export interface SelectionsState {
 	attrSel: string;
 	useCulturePackage: boolean;
 	lang: number;
@@ -43,7 +57,7 @@ interface State {
 	specTalentId?: string;
 }
 
-export class Selections extends React.Component<Props, State> {
+export class Selections extends React.Component<SelectionsProps, SelectionsState> {
 	state = {
 		attrSel: 'ATTR_0',
 		buyLiteracy: false,
@@ -60,32 +74,32 @@ export class Selections extends React.Component<Props, State> {
 		useCulturePackage: false,
 	};
 
-	changeAttrSel = (option: string) => this.setState({ attrSel: option } as State);
-	changeCulturePackage = () => this.setState({ useCulturePackage: !this.state.useCulturePackage } as State);
-	changeLang = (option: number) => this.setState({ lang: option } as State);
-	changeLiteracy = () => this.setState({ buyLiteracy: !this.state.buyLiteracy } as State);
-	changeLitc = (option: number) => this.setState({ litc: option } as State);
+	changeAttrSel = (option: string) => this.setState({ attrSel: option } as SelectionsState);
+	changeCulturePackage = () => this.setState({ useCulturePackage: !this.state.useCulturePackage } as SelectionsState);
+	changeLang = (option: number) => this.setState({ lang: option } as SelectionsState);
+	changeLiteracy = () => this.setState({ buyLiteracy: !this.state.buyLiteracy } as SelectionsState);
+	changeLitc = (option: number) => this.setState({ litc: option } as SelectionsState);
 
 	changeCantrip = (id: string) => {
 		const cantrips = this.state.cantrips;
 		if (!cantrips.delete(id)) {
 			cantrips.add(id);
 		}
-		this.setState({ cantrips } as State);
+		this.setState({ cantrips } as SelectionsState);
 	}
 	changeCombattech = (id: string) => {
 		const combattech = this.state.combattech;
 		if (!combattech.delete(id)) {
 			combattech.add(id);
 		}
-		this.setState({ combattech } as State);
+		this.setState({ combattech } as SelectionsState);
 	}
 	changeSecondCombatTechniques = (id: string) => {
 		const combattech = this.state.combatTechniquesSecond;
 		if (!combattech.delete(id)) {
 			combattech.add(id);
 		}
-		this.setState({ combatTechniquesSecond: combattech } as State);
+		this.setState({ combatTechniquesSecond: combattech } as SelectionsState);
 	}
 	changeCurse = (id: string, option: 'add' | 'remove') => {
 		const { curses } = this.state;
@@ -101,7 +115,7 @@ export class Selections extends React.Component<Props, State> {
 					curses.set(id, 0);
 				}
 		}
-		this.setState({ curses } as State);
+		this.setState({ curses } as SelectionsState);
 	}
 	changeLangLitc = (id: string, ap: number) => {
 		const langLitc = this.state.langLitc;
@@ -115,10 +129,10 @@ export class Selections extends React.Component<Props, State> {
 		} else {
 			langLitc.set(id, ap);
 		}
-		this.setState({ langLitc } as State);
+		this.setState({ langLitc } as SelectionsState);
 	}
 	changeSpecId = (id: string) => {
-		this.setState({ specTalentId: id, spec: [null, ''] } as State);
+		this.setState({ specTalentId: id, spec: [null, ''] } as SelectionsState);
 	}
 	changeSpec = (value: number | string) => {
 		const spec = this.state.spec;
@@ -128,35 +142,35 @@ export class Selections extends React.Component<Props, State> {
 		else {
 			spec[1] = value;
 		}
-		this.setState({ spec } as State);
+		this.setState({ spec } as SelectionsState);
 	}
 	addSkillPoint = (id: string) => {
 		const skills = this.state.skills;
 		const current = skills.get(id);
-		const ic = (get(id) as TalentInstance).ic;
+		const ic = this.props.skills.get(id)!.ic;
 		if (current) {
 			skills.set(id, current + ic);
 		}
 		else {
 			skills.set(id, ic);
 		}
-		this.setState({ skills } as State);
+		this.setState({ skills } as SelectionsState);
 	}
 	removeSkillPoint = (id: string) => {
 		const skills = this.state.skills;
 		const current = skills.get(id);
-		const ic = (get(id) as TalentInstance).ic;
+		const ic = this.props.skills.get(id)!.ic;
 		if (current && current === ic) {
 			skills.delete(id);
 		}
 		else if (current) {
 			skills.set(id, current - ic);
 		}
-		this.setState({ skills } as State);
+		this.setState({ skills } as SelectionsState);
 	}
 
 	assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
-		ProfessionActions.setSelections({
+		this.props.setSelections({
 			...this.state,
 			map: selMap,
 			spec: this.state.spec[1] ? this.state.spec[1] : this.state.spec[0]!,
@@ -164,12 +178,20 @@ export class Selections extends React.Component<Props, State> {
 	}
 
 	render() {
-		const race = RaceStore.getCurrent()!;
-		const culture = CultureStore.getCurrent()!;
-		const profession = ProfessionStore.getCurrent()!;
-		const professionVariant = ProfessionVariantStore.getCurrent();
-
-		const { close } = this.props;
+		const {
+			attributes,
+			cantrips: cantripsState,
+			close,
+			combatTechniques,
+			currentCulture,
+			currentProfession,
+			currentProfessionVariant,
+			currentRace,
+			locale,
+			skills: skillsState,
+			specialAbilities,
+			spells
+		} = this.props;
 		const {
 			attrSel,
 			buyLiteracy,
@@ -186,19 +208,19 @@ export class Selections extends React.Component<Props, State> {
 			useCulturePackage,
 		} = this.state;
 
-		const selectLang = culture.languages.length > 1;
-		const selectLitc = culture.scripts.length > 1;
+		const selectLang = currentCulture.languages.length > 1;
+		const selectLitc = currentCulture.scripts.length > 1;
 
 		const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection>();
 
-		if (![undefined, 'P_0'].includes(ProfessionStore.getCurrentId())) {
-			profession.selections.forEach(e => {
+		if (currentProfession.id !== 'P_0') {
+			currentProfession.selections.forEach(e => {
 				professionSelections.set(e.id, e);
 			});
 		}
 
-		if (professionVariant) {
-			professionVariant.selections.forEach(e => {
+		if (currentProfessionVariant) {
+			currentProfessionVariant.selections.forEach(e => {
 				if (e.id === 'COMBAT_TECHNIQUES' && e.active === false) {
 					professionSelections.delete(e.id);
 				}
@@ -210,11 +232,11 @@ export class Selections extends React.Component<Props, State> {
 
 		let buyScriptElement;
 
-		if (culture.scripts.length > 0) {
-			const selectionItem = getSelectionItem(get('SA_28') as SpecialAbilityInstance, culture.scripts[0]);
+		if (currentCulture.scripts.length > 0) {
+			const selectionItem = getSelectionItem(specialAbilities.get('SA_28')!, currentCulture.scripts[0]);
 			buyScriptElement = (
 				<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
-					{translate('rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
+					{_translate(locale, 'rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
 				</Checkbox>
 			);
 		}
@@ -226,11 +248,11 @@ export class Selections extends React.Component<Props, State> {
 			const active = langLitc;
 			const { value } = professionSelections.get('LANGUAGES_SCRIPTS') as LanguagesScriptsSelection;
 
-			const SA_28 = get('SA_28') as SpecialAbilityInstance;
-			const SA_30 = get('SA_30') as SpecialAbilityInstance;
+			const SA_28 = specialAbilities.get('SA_28')!;
+			const SA_30 = specialAbilities.get('SA_30')!;
 
-			const scripts: ScriptsSelectionListItem[] = [];
-			const languages: LanguagesSelectionListItem[] = [];
+			let scripts: ScriptsSelectionListItem[] = [];
+			let languages: LanguagesSelectionListItem[] = [];
 
 			const scriptsList = SA_28.sel!;
 			const languagesList = SA_30.sel!;
@@ -239,19 +261,19 @@ export class Selections extends React.Component<Props, State> {
 				const sid = e.id as number;
 				const cost = scriptsList[sid - 1].cost!;
 				const name = scriptsList[sid - 1].name;
-				const native = buyLiteracy && ((!selectLitc && sid === culture.scripts[0]) || (selectLitc && sid === litc));
+				const native = buyLiteracy && ((!selectLitc && sid === currentCulture.scripts[0]) || (selectLitc && sid === litc));
 				scripts.push({ id: `LITC_${sid}`, name, cost, native });
 			});
 
 			languagesList.forEach(e => {
 				const sid = e.id as number;
 				const name = languagesList[sid - 1].name;
-				const native = (!selectLang && sid === culture.languages[0]) || (selectLang && sid === lang);
+				const native = (!selectLang && sid === currentCulture.languages[0]) || (selectLang && sid === lang);
 				languages.push({ id: `LANG_${sid}`, name, native });
 			});
 
-			scripts.sort(sortByName);
-			languages.sort(sortByName);
+			scripts = sortObjects(scripts, locale.id);
+			languages = sortObjects(languages, locale.id);
 
 			langLitcApLeft = value - Array.from(active.values()).reduce((a, b) => a + b, 0);
 
@@ -263,6 +285,7 @@ export class Selections extends React.Component<Props, State> {
 					apTotal={value}
 					apLeft={langLitcApLeft}
 					change={this.changeLangLitc}
+					locale={locale}
 					/>
 			);
 		}
@@ -274,13 +297,22 @@ export class Selections extends React.Component<Props, State> {
 			const active = curses;
 			const { value } = professionSelections.get('CURSES') as CursesSelection;
 
-			const list = getAllByCategoryGroup(Categories.SPELLS, 3) as SpellInstance[];
+			const list = getAllByGroupFromSlice(spells, 3);
 
 			list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 
 			cursesApLeft = value - (active.size + Array.from(active.values()).reduce((a, b) => a + b, 0)) * 2;
 
-			cursesElement = <SelectionsCurses list={list} active={active} apTotal={value} apLeft={cursesApLeft} change={this.changeCurse} />;
+			cursesElement =
+				<SelectionsCurses
+					list={list}
+					active={active}
+					apTotal={value}
+					apLeft={cursesApLeft}
+					change={this.changeCurse}
+					locale={locale}
+					/>
+			;
 		}
 
 		let ctElement = null;
@@ -289,7 +321,7 @@ export class Selections extends React.Component<Props, State> {
 			const active = combattech;
 			const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection;
 
-			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+			const rawList = [...combatTechniques.values()];
 			const list = rawList.filter(e => sid.includes(e.id));
 
 			ctElement = (
@@ -300,6 +332,7 @@ export class Selections extends React.Component<Props, State> {
 					amount={amount}
 					disabled={combatTechniquesSecond}
 					change={this.changeCombattech}
+					locale={locale}
 					/>
 			);
 		}
@@ -310,7 +343,7 @@ export class Selections extends React.Component<Props, State> {
 			const active = combatTechniquesSecond;
 			const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSecondSelection;
 
-			const rawList = getAllByCategory(Categories.COMBAT_TECHNIQUES) as CombatTechniqueInstance[];
+			const rawList = [...combatTechniques.values()];
 			const list = rawList.filter(e => sid.includes(e.id));
 
 			combatTechniqueSecondElement = (
@@ -321,6 +354,7 @@ export class Selections extends React.Component<Props, State> {
 					amount={amount}
 					disabled={combattech}
 					change={this.changeCombattech}
+					locale={locale}
 					/>
 			);
 		}
@@ -331,10 +365,18 @@ export class Selections extends React.Component<Props, State> {
 			const active = cantrips;
 			const { amount, sid } = professionSelections.get('CANTRIPS') as CantripsSelection;
 
-			const rawList = getAllByCategory(Categories.CANTRIPS) as CantripInstance[];
+			const rawList = [...cantripsState.values()];
 			const list = rawList.filter(e => sid.includes(e.id));
 
-			cantripsElement = <SelectionsCantrips list={list} active={active} num={amount} change={this.changeCantrip} />;
+			cantripsElement =
+				<SelectionsCantrips
+					list={list}
+					active={active}
+					num={amount}
+					change={this.changeCantrip}
+					locale={locale}
+					/>
+			;
 		}
 
 		let specElement = null;
@@ -348,6 +390,8 @@ export class Selections extends React.Component<Props, State> {
 					activeId={specTalentId}
 					change={this.changeSpec}
 					changeId={this.changeSpecId}
+					locale={locale}
+					skills={skillsState}
 					/>
 			);
 		}
@@ -357,7 +401,7 @@ export class Selections extends React.Component<Props, State> {
 
 		if (professionSelections.has('SKILLS')) {
 			const { gr, value } = professionSelections.get('SKILLS') as SkillsSelection;
-			const list = TalentsStore.getAll().filter(e => gr === undefined || gr === e.gr);
+			const list = [...skillsState.values()].filter(e => gr === undefined || gr === e.gr);
 			skillsApLeft = [...skills.values()].reduce((n, e) => n - e, value);
 			skillsElement = (
 				<SelectionsSkills
@@ -368,6 +412,7 @@ export class Selections extends React.Component<Props, State> {
 					list={list}
 					remove={this.removeSkillPoint}
 					value={value}
+					locale={locale}
 					/>
 			);
 		}
@@ -375,28 +420,28 @@ export class Selections extends React.Component<Props, State> {
 		return (
 			<Slidein isOpen close={close}>
 				<Scroll>
-					<h3>{translate('titlebar.tabs.race')}</h3>
+					<h3>{_translate(locale, 'titlebar.tabs.race')}</h3>
 					<Dropdown
-						hint={translate('rcpselections.labels.selectattributeadjustment')}
+						hint={_translate(locale, 'rcpselections.labels.selectattributeadjustment')}
 						value={attrSel}
 						onChange={this.changeAttrSel}
-						options={race.attributeAdjustmentsSelection[1].map(e => {
-							const attr = get(e);
-							const value = race.attributeAdjustmentsSelection[0];
+						options={currentRace.attributeAdjustmentsSelection[1].map(e => {
+							const attr = attributes.get(e);
+							const value = currentRace.attributeAdjustmentsSelection[0];
 							return attr ? { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` } : { id: e, name: '...' };
 						})} />
-					<h3>{translate('titlebar.tabs.culture')}</h3>
+					<h3>{_translate(locale, 'titlebar.tabs.culture')}</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-						{translate('rcpselections.labels.buyculturalpackage')} ({culture.ap} AP)
+						{_translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.ap} AP)
 					</Checkbox>
 					{
 						selectLang && (
 							<Dropdown
-								hint={translate('rcpselections.labels.selectnativetongue')}
+								hint={_translate(locale, 'rcpselections.labels.selectnativetongue')}
 								value={lang}
 								onChange={this.changeLang}
-								options={culture.languages.map(e => {
-									const lang = getSelectionItem(get('SA_30') as SpecialAbilityInstance, e);
+								options={currentCulture.languages.map(e => {
+									const lang = getSelectionItem(specialAbilities.get('SA_30')!, e);
 									return { id: e, name: `${lang && lang.name}` };
 								})}
 								disabled={langLitc.size > 0} />
@@ -406,17 +451,17 @@ export class Selections extends React.Component<Props, State> {
 					{
 						selectLitc ? (
 							<Dropdown
-								hint={translate('rcpselections.labels.selectscript')}
+								hint={_translate(locale, 'rcpselections.labels.selectscript')}
 								value={litc}
 								onChange={this.changeLitc}
-								options={culture.scripts.map(e => {
-									const lit = getSelectionItem(get('SA_28') as SpecialAbilityInstance, e);
+								options={currentCulture.scripts.map(e => {
+									const lit = getSelectionItem(specialAbilities.get('SA_28')!, e);
 									return { id: e, name: `${lit && lit.name} (${lit && lit.cost} AP)` };
 								})}
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					{ProfessionStore.getCurrentId() !== 'P_0' && <h3>{translate('titlebar.tabs.profession')}</h3>}
+					{currentProfession.id !== 'P_0' && <h3>{_translate(locale, 'titlebar.tabs.profession')}</h3>}
 					{specElement}
 					{langLitcElement}
 					{ctElement}
@@ -425,7 +470,7 @@ export class Selections extends React.Component<Props, State> {
 					{cantripsElement}
 					{skillsElement}
 					<BorderButton
-						label={translate('rcpselections.actions.complete')}
+						label={_translate(locale, 'rcpselections.actions.complete')}
 						primary
 						disabled={
 							attrSel === 'ATTR_0' ||

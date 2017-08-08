@@ -488,7 +488,7 @@ function iterateEquipment(array) {
 
 const file = xlsx.readFile('src/data/TDE5.xlsx');
 const allWorksheets = file.SheetNames.reduce((m, name) => {
-	return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';', blankrows: false }));
+	return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';;', blankrows: false }));
 }, new Map());
 
 const books = iterateBooks(csvToArray(allWorksheets.get('BOOKS')));

@@ -1,62 +1,57 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
-import * as CultureActions from '../../actions/CultureActions';
 import { BorderButton } from '../../components/BorderButton';
-import { get } from '../../stores/ListStore';
-import { CultureInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { ListItem } from '../../components/ListItem';
+import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
+import { Culture, UIMessages } from '../../types/view.d';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 
-interface Props {
-	currentID?: string;
-	culture: CultureInstance;
-	showDetails: boolean;
-	changeTab(): void;
+export interface CulturesListItemProps {
+	areValuesVisible: boolean;
+	currentId?: string;
+	culture: Culture;
+	locale: UIMessages;
+	selectCulture(id: string): void;
+	switchToProfessions(): void;
 }
 
-export class CulturesListItem extends React.Component<Props, undefined> {
-	selectCulture = () => CultureActions.selectCulture(this.props.culture.id);
+export function CulturesListItem(props: CulturesListItemProps) {
+	const { areValuesVisible, currentId, culture, locale, selectCulture, switchToProfessions } = props;
 
-	render() {
-		const { changeTab, currentID, culture, showDetails } = this.props;
-
-		return (
-			<li
-				className={classNames({
-					'active': culture.id === currentID,
-				})}
-				>
-				<div className="left">
-					<h2>{culture.name}{showDetails && ` (${culture.ap} AP)`}</h2>
-					{
-						showDetails && (
-							<div className="details">
-								{
-									culture.talents.map(talent => {
-										const entry = get(talent[0]);
-										return entry && `${entry.name} +${talent[1]}`;
-									}).sort().join(', ')
-								}
-							</div>
-						)
-					}
-				</div>
-				<div className="right">
-					{
-						culture.id === currentID ? (
-							<BorderButton
-								label={translate('rcp.actions.next')}
-								onClick={changeTab}
-								primary
-								/>
-						) : (
-							<BorderButton
-								label={translate('rcp.actions.select')}
-								onClick={this.selectCulture}
-								/>
-						)
-					}
-				</div>
-			</li>
-		);
-	}
+	return (
+		<ListItem active={culture.id === currentId}>
+			<ListItemName name={`${culture.name}${areValuesVisible ? ` (${culture.culturalPackageAp} AP)` : ''}`} large>
+				{
+					areValuesVisible && (
+						<div className="details">
+							{
+								sortObjects(culture.culturalPackageSkills, locale.id).map(skill => {
+									return `${skill.name} +${skill.value}`;
+								}).join(', ')
+							}
+						</div>
+					)
+				}
+			</ListItemName>
+			<ListItemSeparator />
+			<ListItemButtons>
+				{
+					culture.id === currentId ? (
+						<BorderButton
+							label={_translate(locale, 'rcp.actions.next')}
+							onClick={switchToProfessions}
+							primary
+							/>
+					) : (
+						<BorderButton
+							label={_translate(locale, 'rcp.actions.select')}
+							onClick={() => selectCulture(culture.id)}
+							/>
+					)
+				}
+			</ListItemButtons>
+		</ListItem>
+	);
 }

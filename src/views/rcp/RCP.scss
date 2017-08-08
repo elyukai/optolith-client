@@ -2,43 +2,15 @@
 	background-image: url("images/rcp.png");
 	background-color: #010c0a;
 
-	ul {
-		margin: 0;
-		padding: 1px 0;
-		list-style: none;
-
-		&.professions {
-			li {
-				h2 {
-					padding: 5px 0 0;
-				}
-
-				h3 {
-					font: 500 13px/15px Alegreya Sans SC;
-					color: #878683;
-					text-transform: uppercase;
-					margin-top: 0;
-					margin-bottom: 7px;
-				}
-			}
-		}
+	p.profession-subtitle {
+		font: 500 13px/15px Alegreya Sans SC;
+		color: #878683;
+		text-transform: uppercase;
+		margin-top: 2px;
+		margin-bottom: 4px;
 	}
 
 	li {
-		position: relative;
-		padding: 11px;
-		display: flex;
-		align-items: center;
-
-		> .left {
-			flex: 1 1 100%;
-		}
-
-		> .right {
-			flex: 0 0 auto;
-			margin-left: 11px;
-		}
-
 		h2 {
 			line-height: 22px;
 			margin-bottom: 5px;
@@ -52,16 +24,10 @@
 			}
 		}
 
-		&:not(:first-child) {
-			border-top: 1px solid transparentize(white, .925);
-		}
-
 		&.active {
 			.btn {
 				min-width: 140px;
 			}
-
-			@extend %yellow-border;
 		}
 	}
 }

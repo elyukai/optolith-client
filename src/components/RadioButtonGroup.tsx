@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { RadioButton } from './RadioButton';
 
-export interface Option {
+type OptionValue = string | number | undefined;
+
+export interface Option<T extends OptionValue> {
 	className?: string;
 	disabled?: boolean;
 	name: string;
-	value?: string | number;
+	value: T;
 }
 
-export interface RadioButtonGroupProps {
-	active?: number | string;
-	array: Option[];
+export interface RadioButtonGroupProps<T extends OptionValue> {
+	active: T;
+	array: Option<T>[];
 	disabled?: boolean;
 	onClick: (option?: string | number) => void;
 }
 
-export function RadioButtonGroup(props: RadioButtonGroupProps) {
+export function RadioButtonGroup<T extends OptionValue>(props: RadioButtonGroupProps<T>) {
 	const { active, array, disabled, onClick } = props;
 
 	return (

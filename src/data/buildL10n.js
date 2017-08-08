@@ -24,6 +24,7 @@ function iterateRacesL10n(array) {
 	const list = {};
 	for (let obj of array) {
 		obj.id = `R_${obj.id}`;
+		obj.attributeAdjustments = (obj.attributeAdjustments || '').replace(/^"(.+)"$/, '$1');
 		list[obj.id] = obj;
 	}
 	return list;
@@ -43,11 +44,15 @@ function iterateProfessionsL10n(array) {
 	for (let obj of array) {
 		obj.id = `P_${obj.id}`;
 
-		const isNameEqual = obj.name === obj.name_f && obj.subname === obj.subname_f || !obj.name_f && !obj.subname_f || !obj.name && !obj.subname;
+		const isNameEqual = obj.name === obj.name_f;
+		const isSubNameEqual = obj.subname === obj.subname_f;
 
-		obj.name = isNameEqual ? obj.name : { m: obj.name, f: obj.name_f };
+		obj.name = isNameEqual || !obj.name_f || !obj.name ? obj.name : { m: obj.name, f: obj.name_f };
 		delete obj.name_f;
-		obj.subname = isNameEqual ? obj.subname : { m: obj.subname, f: obj.subname_f };
+		obj.subname = isSubNameEqual || !obj.subname_f || !obj.subname ? obj.subname : { m: obj.subname, f: obj.subname_f };
+		if (obj.subname === '') {
+			delete obj.subname;
+		}
 		delete obj.subname_f;
 
 		obj.req = obj.req ? obj.req.split('&').map(e => JSON.parse(e)) : [];
@@ -239,7 +244,7 @@ function iterateEquipmentL10n(array) {
 module.exports = function buildL10n(locale) {
 	const file = xlsx.readFile(`src/data/TDE5_${locale}.xlsx`);
 	const allWorksheets = file.SheetNames.reduce((m, name) => {
-		return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';', blankrows: false }));
+		return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';;', blankrows: false }));
 	}, new Map());
 
 	const books = iterateBooksL10n(csvToArray(allWorksheets.get('BOOKS')));

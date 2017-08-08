@@ -24,7 +24,7 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const { ap, dependent } = getState().currentHero.present;
 		const { id, cost, ...other } = args;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-		const entryType = isMagicalOrBlessed(dependent, entry);
+		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {
@@ -72,7 +72,7 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const { id, cost } = args;
 		const negativeCost = cost * -1; // the entry should be removed
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-		const entryType = isMagicalOrBlessed(dependent, entry);
+		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {
@@ -119,7 +119,7 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 	return (dispatch, getState) => {
 		const { ap, dependent } = getState().currentHero.present;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-		const entryType = isMagicalOrBlessed(dependent, entry);
+		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {

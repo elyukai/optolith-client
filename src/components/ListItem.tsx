@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface ListItemProps {
+	active?: boolean;
 	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
@@ -14,9 +15,10 @@ export interface ListItemProps {
 
 export class ListItem extends React.Component<ListItemProps, {}> {
 	render() {
-		const { children, className, disabled, important, insertTopMargin, noIncrease, recommended, unrecommended, ...other } = this.props;
+		const { active, children, className, disabled, important, insertTopMargin, noIncrease, recommended, unrecommended, ...other } = this.props;
 		return (
 			<li {...other} className={classNames(className, {
+				'active': active,
 				'imp': important,
 				'typ': recommended,
 				'untyp': unrecommended,

@@ -1,146 +1,108 @@
 import * as React from 'react';
-import * as ProfessionActions from '../../actions/ProfessionActions';
-import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
+import { List } from '../../components/List';
+import { Options } from '../../components/Options';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { CultureStore } from '../../stores/CultureStore';
-import { ProfessionStore } from '../../stores/ProfessionStore';
-import { ProfessionVariantStore } from '../../stores/ProfessionVariantStore';
-import { ProfileStore } from '../../stores/ProfileStore';
-import { InputTextEvent, ProfessionInstance } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { SelectionsContainer } from '../../containers/RCPSelections';
+import { InputTextEvent } from '../../types/data.d';
+import { Profession, UIMessages } from '../../types/view.d';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 import { ProfessionsListItem } from './ProfessionsListItem';
-import { Selections } from './Selections';
 
-interface State {
-	professions: ProfessionInstance[];
-	currentID?: string;
-	currentVID?: string;
-	filterText: string;
-	sortOrder: string;
-	showAddSlidein: boolean;
-	visibility: string;
-	groupVisibility: number;
-	extensionVisibility: boolean;
+export interface ProfessionsOwnProps {
+	locale: UIMessages;
 }
 
-export class Professions extends React.Component<{}, State> {
+export interface ProfessionsStateProps {
+	currentProfessionId?: string;
+	currentProfessionVariantId?: string;
+	extensionVisibilityFilter: boolean;
+	groupVisibilityFilter: number;
+	professions: Profession[];
+	sortOrder: string;
+	sex: 'm' | 'f';
+	visibilityFilter: string;
+}
+
+export interface ProfessionsDispatchProps {
+	selectProfession(id: string): void;
+	selectProfessionVariant(id: string): void;
+	setGroupVisibilityFilter(): void;
+	setSortOrder(sortOrder: string): void;
+	setVisibilityFilter(): void;
+	switchExpansionVisibilityFilter(): void;
+}
+
+export type ProfessionsProps = ProfessionsStateProps & ProfessionsDispatchProps & ProfessionsOwnProps;
+
+export interface ProfessionsState {
+	filterText: string;
+	showAddSlidein: boolean;
+}
+
+export class Professions extends React.Component<ProfessionsProps, ProfessionsState> {
 	state = {
-		currentID: ProfessionStore.getCurrentId(),
-		currentVID: ProfessionVariantStore.getCurrentID(),
 		filterText: '',
-		professions: ProfessionStore.getAllValid(),
-		showAddSlidein: false,
-		sortOrder: ProfessionStore.getSortOrder(),
-		visibility: ProfessionStore.getVisibilityFilter(),
-		groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
-		extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
+		showAddSlidein: false
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => ProfessionActions.setProfessionsSortOrder(option);
-	changeView = (view: string) => ProfessionActions.setProfessionsVisibilityFilter(view);
-	changeGroupVisibility = (id: number) => ProfessionActions.setProfessionsGroupVisibilityFilter(id);
-	switchExtensionVisibility = () => ProfessionActions.switchProfessionsExpansionVisibilityFilter();
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-
-	selectProfessionVariant = (id?: string) => ProfessionVariantActions.selectProfessionVariant(id);
-
-	componentDidMount() {
-		ProfessionStore.addChangeListener(this.updateProfessionStore);
-		ProfessionVariantStore.addChangeListener(this.updateProfessionVariantStore);
-	}
-
-	componentWillUnmount() {
-		ProfessionStore.removeChangeListener(this.updateProfessionStore);
-		ProfessionVariantStore.removeChangeListener(this.updateProfessionVariantStore);
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as ProfessionsState);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as ProfessionsState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false } as ProfessionsState);
 
 	render() {
+		const { extensionVisibilityFilter, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, switchExpansionVisibilityFilter, visibilityFilter } = this.props;
+		const { filterText, showAddSlidein } = this.state;
 
-		const { currentID, currentVID, filterText, professions, showAddSlidein, visibility, groupVisibility, extensionVisibility, sortOrder } = this.state;
-
-		const currentCulture = CultureStore.getCurrent();
-
-		const sex = ProfileStore.getSex();
-
-		const list = filterAndSort(professions.filter(e => {
-			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
-			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
-			const extensionVisible = visibility === 'all' || (e.src.id === 'US25001' ? commonVisible : extensionVisibility);
-			if (e.id === 'P_17') {
-				console.log(typicalList, commonVisible, groupVisible, extensionVisible, groupVisible && extensionVisible);
-			}
-			return groupVisible && extensionVisible;
-		}), filterText, sortOrder, sex);
+		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }] : [{ key: 'name', keyOfProperty: sex }], { addProperty: 'subname', keyOfName: sex });
 
 		return (
 			<div className="page" id="professions">
 				{
-					showAddSlidein ? <Selections close={this.hideAddSlidein} /> : null
+					showAddSlidein && <SelectionsContainer close={this.hideAddSlidein} locale={locale} />
 				}
-				<div className="options">
-					<TextField hint={translate('options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+				<Options>
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
-						value={visibility}
-						onChange={this.changeView}
-						options={[{id: 'all', name: translate('professions.options.allprofessions')}, {id: 'common', name: translate('professions.options.commonprofessions')}]}
+						value={visibilityFilter}
+						onChange={setVisibilityFilter}
+						options={[{id: 'all', name: _translate(locale, 'professions.options.allprofessions')}, {id: 'common', name: _translate(locale, 'professions.options.commonprofessions')}]}
 						fullWidth
 						/>
 					<Dropdown
-						value={groupVisibility}
-						onChange={this.changeGroupVisibility}
-						options={[{id: 0, name: translate('professions.options.allprofessiongroups')}, {id: 1, name: translate('professions.options.mundaneprofessions')}, {id: 2, name: translate('professions.options.magicalprofessions')}, {id: 3, name: translate('professions.options.blessedprofessions')}]}
+						value={groupVisibilityFilter}
+						onChange={setGroupVisibilityFilter}
+						options={[{id: 0, name: _translate(locale, 'professions.options.allprofessiongroups')}, {id: 1, name: _translate(locale, 'professions.options.mundaneprofessions')}, {id: 2, name: _translate(locale, 'professions.options.magicalprofessions')}, {id: 3, name: _translate(locale, 'professions.options.blessedprofessions')}]}
 						fullWidth
 						/>
 					<SortOptions
 						sortOrder={sortOrder}
-						sort={this.sort}
+						sort={setSortOrder}
 						options={['name', 'cost']}
 						/>
-					<Checkbox checked={extensionVisibility} onClick={this.switchExtensionVisibility}>
-						{translate('professions.options.alwaysshowprofessionsfromextensions')}
+					<Checkbox checked={extensionVisibilityFilter} onClick={switchExpansionVisibilityFilter}>
+						{_translate(locale, 'professions.options.alwaysshowprofessionsfromextensions')}
 					</Checkbox>
-				</div>
-				<Scroll className="list">
-					<ul className="professions">
+				</Options>
+				<Scroll>
+					<List>
 						{
-							list.map(profession => <ProfessionsListItem
+							list.map(profession =>
+							<ProfessionsListItem
+								{...this.props}
 								key={profession.id}
 								showAddSlidein={this.showAddSlidein}
-								currentID={currentID}
-								currentVID={currentVID}
 								profession={profession}
-								sex={sex}
-								/>,
+								/>
 							)
 						}
-					</ul>
+					</List>
 				</Scroll>
 			</div>
 		);
-	}
-
-	private updateProfessionStore = () => {
-		this.setState({
-			currentID: ProfessionStore.getCurrentId(),
-			professions: ProfessionStore.getAllValid(),
-			sortOrder: ProfessionStore.getSortOrder(),
-			visibility: ProfessionStore.getVisibilityFilter(),
-			groupVisibility: ProfessionStore.getGroupVisibilityFilter(),
-			extensionVisibility: ProfessionStore.getExpansionVisibilityFilter()
-		} as State);
-	}
-
-	private updateProfessionVariantStore = () => {
-		this.setState({
-			currentVID: ProfessionVariantStore.getCurrentID(),
-		} as State);
 	}
 }

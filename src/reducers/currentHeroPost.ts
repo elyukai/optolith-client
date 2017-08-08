@@ -10,7 +10,6 @@ import * as Reusable from '../types/reusable.d';
 import { getSelectionItem, isActive } from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { getDecreaseRangeAP, getIncreaseRangeAP } from '../utils/ICUtils';
-import { add } from '../utils/IncreasableUtils';
 import { mergeIntoOptionalState, mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
 import { CurrentHeroInstanceState } from './currentHero';
@@ -180,7 +179,10 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 			let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
 
 			for (const [id, value] of skillRatingList) {
-				newlist = setNewStateItem(newlist, id, add(getLatest(dependent, newlist, id) as Data.IncreasableInstance, value));
+				newlist = setNewStateItem(newlist, id, {
+					...getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance,
+					value
+				});
 			}
 
 			for (const id of skillActivateList) {
@@ -269,7 +271,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 					// Assign profession requirements
 
 					ap = requires.reduce((final, req) => {
-						if (RequirementUtils.isRequiringIncreasable(dependent, req)) {
+						if (RequirementUtils.isRequiringIncreasable(req)) {
 							const { id, value } = req;
 							if (typeof id === 'string') {
 								const obj = get(fulllist, id) as Data.AttributeInstance | Data.TalentInstance;
@@ -313,8 +315,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 										cost = obj.cost as number;
 									}
 									if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
-										const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(dependent, e) && e.active);
-										const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(dependent, e) && e.active);
+										const isKar = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
+										const isMag = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
 										const index = isKar ? 2 : isMag ? 1 : 0;
 
 										cost = {
@@ -379,7 +381,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 			return {
 				...state,
-				dependent,
+				dependent: fulllist,
 				ap: {
 					...state.ap,
 					...ap

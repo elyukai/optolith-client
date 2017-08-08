@@ -175,9 +175,9 @@ interface BaseObject {
 
 interface SortOption<T> {
 	key: keyof T;
+	keyOfProperty?: string;
 	mapToIndex?: string[];
 	reverse?: boolean;
-	sex?: string;
 }
 
 export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: (keyof T | SortOption<T>)[] = ['name']) {
@@ -188,11 +188,11 @@ export function sortObjects<T extends BaseObject>(list: T[], locale: string, sor
 	if (firstItem) {
 		for (const option of sortOptions) {
 			if (isSortOptionObject(option)) {
-				const { key, mapToIndex, reverse, sex } = option;
+				const { key, mapToIndex, reverse, keyOfProperty } = option;
 				const propertyType = typeof firstItem[key];
 				if (reverse === true) {
-					if (propertyType === 'object' && sex !== undefined) {
-						sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale) * -1);
+					if (keyOfProperty !== undefined) {
+						sortFunctions.push((a: T, b: T) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale) * -1);
 					}
 					else if (propertyType === 'string') {
 						sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale) * -1);
@@ -204,8 +204,8 @@ export function sortObjects<T extends BaseObject>(list: T[], locale: string, sor
 						sortFunctions.push((a: T, b: T) => (b[key] as number) - (a[key] as number));
 					}
 				}
-				else if (propertyType === 'object' && sex !== undefined) {
-					sortFunctions.push((a: T, b: T) => (a[key][sex] as string).localeCompare(b[key][sex], locale));
+				else if (keyOfProperty !== undefined) {
+					sortFunctions.push((a: T, b: T) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale));
 				}
 				else if (propertyType === 'string') {
 					sortFunctions.push((a: T, b: T) => (a[key] as string).localeCompare(b[key], locale));
@@ -251,11 +251,23 @@ export function filterObjects<T extends BaseObject>(list: T[], filterText: strin
 		filterText = filterText.toLowerCase();
 		if (addProperty) {
 			return list.filter(obj => {
-				if (typeof obj.name === 'string') {
-					return obj.name.toLowerCase().match(filterText) && (obj[addProperty] as string).toLowerCase().match(filterText);
+				if (typeof obj.name === 'object' && typeof obj[addProperty] === 'object' && keyOfName) {
+					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().match(filterText);
+				}
+				else if (typeof obj.name === 'object' && typeof obj[addProperty] === 'string' && keyOfName) {
+					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) || (obj[addProperty] as string).toLowerCase().match(filterText);
+				}
+				else if (typeof obj.name === 'string' && typeof obj[addProperty] === 'object' && keyOfName) {
+					return obj.name.toLowerCase().match(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().match(filterText);
+				}
+				else if (typeof obj.name === 'string' && typeof obj[addProperty] === 'string') {
+					return obj.name.toLowerCase().match(filterText) || (obj[addProperty] as string).toLowerCase().match(filterText);
 				}
 				else if (typeof obj.name === 'object' && keyOfName) {
-					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) && (obj[addProperty] as string).toLowerCase().match(filterText);
+					return (obj.name[keyOfName] as string).toLowerCase().match(filterText);
+				}
+				else if (typeof obj.name === 'string') {
+					return obj.name.toLowerCase().match(filterText);
 				}
 				return true;
 			});

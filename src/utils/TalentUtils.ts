@@ -1,7 +1,7 @@
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
-import { AdvantageInstance, AttributeInstance, CultureInstance, RequirementObject, SpecialAbilityInstance, TalentInstance, ToListById } from '../types/data.d';
+import { AdvantageInstance, AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance, ToListById } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
 
 export function isIncreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {

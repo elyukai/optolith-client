@@ -67,7 +67,7 @@ export function addDependencies(state: DependentInstancesState, obj: RequiringIn
 					instances = setNewStateItem(instances, id, addDependency(requiredAbility, value));
 				}
 			}
-			else if (isRequiringIncreasable(state, req)) {
+			else if (isRequiringIncreasable(req)) {
 				const { id, value } = req;
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };
@@ -142,7 +142,7 @@ export function removeDependencies(state: DependentInstancesState, obj: Requirin
 					instances = setNewStateItem(instances, id, removeDependency(requiredAbility, value));
 				}
 			}
-			else if (isRequiringIncreasable(state, req)) {
+			else if (isRequiringIncreasable(req)) {
 				const { id, value } = req;
 				if (Array.isArray(id)) {
 					const add: ValueOptionalDependency = { value, origin: obj.id };

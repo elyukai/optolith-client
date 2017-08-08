@@ -1,11 +1,11 @@
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { ActivatableInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
+import { getCategoryById } from './IDUtils';
 
 /**
  * Checks if the requirement is fulfilled.
@@ -66,7 +66,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
 		}
 		return false;
 	}
-	else if (isRequiringIncreasable(state.dependent, req)) {
+	else if (isRequiringIncreasable(req)) {
 		if (Array.isArray(req.id)) {
 			const resultOfAll = req.id.map(e => validateObject(state, { ...req, id: e }, sourceId));
 			return resultOfAll.includes(true);
@@ -119,6 +119,31 @@ export function validate(state: CurrentHeroInstanceState, requirements: AllRequi
 	return requirements.every(e => validateObject(state, e, sourceId));
 }
 
+/**
+ * Checks if all profession prerequisites are fulfilled.
+ * @param prerequisites An array of prerequisite objects.
+ */
+export function validateProfession(prerequisites: (CultureRequirement | RaceRequirement | SexRequirement)[], race?: string, culture?: string, sex?: 'm' | 'f'): boolean {
+	return prerequisites.every(req => {
+		if (isSexRequirement(req)) {
+			return sex === req.value;
+		}
+		else if (isRaceRequirement(req)) {
+			if (Array.isArray(req.value)) {
+				return typeof race === 'string' && req.value.map(e => `R_${e}`).includes(race);
+			}
+			return typeof race === 'string' && race === `R_${req.value}`;
+		}
+		else if (isCultureRequirement(req)) {
+			if (Array.isArray(req.value)) {
+				return typeof culture === 'string' && req.value.map(e => `C_${e}`).includes(culture);
+			}
+			return typeof culture === 'string' && culture === `C_${req.value}`;
+		}
+		return false;
+	});
+}
+
 export function isSexRequirement(req: AllRequirementObjects): req is SexRequirement {
 	return req.id === 'SEX';
 }
@@ -131,26 +156,28 @@ export function isCultureRequirement(req: AllRequirementObjects): req is Culture
 	return req.id === 'CULTURE';
 }
 
-export function isRequiringIncreasable(state: DependentInstancesState, req: AllRequirementObjects): req is RequiresIncreasableObject {
+export function isRequiringIncreasable(req: AllRequirementObjects): req is RequiresIncreasableObject {
+	const categories = [Categories.ATTRIBUTES, Categories.COMBAT_TECHNIQUES, Categories.LITURGIES, Categories.SPELLS, Categories.TALENTS];
 	if (Array.isArray(req.id)) {
 		return req.hasOwnProperty('value') && req.id.every(e => {
-			const entry = get(state, e);
-			return isIncreasableInstance(entry);
+			const category = getCategoryById(e);
+			return !!category && categories.includes(category);
 		});
 	}
-	const entry = get(state, req.id);
-	return req.hasOwnProperty('value') && isIncreasableInstance(entry);
+	const category = getCategoryById(req.id);
+	return req.hasOwnProperty('value') && !!category && categories.includes(category);
 }
 
-export function isRequiringActivatable(state: DependentInstancesState, req: AllRequirementObjects): req is RequiresActivatableObject {
+export function isRequiringActivatable(req: AllRequirementObjects): req is RequiresActivatableObject {
+	const categories = [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES];
 	if (Array.isArray(req.id)) {
 		return req.hasOwnProperty('active') && req.id.every(e => {
-			const entry = get(state, e);
-			return isActivatableInstance(entry);
+			const category = getCategoryById(e);
+			return !!category && categories.includes(category);
 		});
 	}
-	const entry = get(state, req.id);
-	return req.hasOwnProperty('active') && isActivatableInstance(entry);
+	const category = getCategoryById(req.id);
+	return req.hasOwnProperty('active') && !!category && categories.includes(category);
 }
 
 export function isRequiringPrimaryAttribute(req: AllRequirementObjects): req is RequiresPrimaryAttribute {

@@ -3,10 +3,9 @@ import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
-import { AbilityInstanceExtended, AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
+import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
-import { addDependencies, removeDependencies } from './DependentUtils';
 
 export function isOwnTradition(state: DependentInstancesState, obj: SpellInstance | CantripInstance): boolean {
 	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
@@ -70,22 +69,6 @@ export function getPropertyCounter(state: DependentInstancesState) {
 		}
 		return a;
 	}, new Map<number, number>());
-}
-
-export function activate(state: DependentInstancesState, obj: SpellInstance): Map<string, AbilityInstanceExtended> {
-	return addDependencies(state, {...obj, active: true});
-}
-
-export function activateCantrip(state: DependentInstancesState, obj: CantripInstance): Map<string, AbilityInstanceExtended> {
-	return addDependencies(state, {...obj, active: true});
-}
-
-export function deactivate(state: DependentInstancesState, obj: SpellInstance): Map<string, AbilityInstanceExtended> {
-	return removeDependencies(state, {...obj, active: false});
-}
-
-export function deactivateCantrip(state: DependentInstancesState, obj: CantripInstance): Map<string, AbilityInstanceExtended> {
-	return removeDependencies(state, {...obj, active: false});
 }
 
 export function reset(obj: SpellInstance): SpellInstance {

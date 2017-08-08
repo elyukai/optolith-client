@@ -310,9 +310,9 @@ export function getFullName(obj: string | ActiveViewObject): string {
 	return name;
 }
 
-export function isMagicalOrBlessed(state: DependentInstancesState, obj: ActivatableInstance) {
-	const isBlessed = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && isRequiringActivatable(state, e) && !!e.active);
-	const isMagical = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && isRequiringActivatable(state, e) && !!e.active);
+export function isMagicalOrBlessed(obj: ActivatableInstance) {
+	const isBlessed = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_12' && isRequiringActivatable(e) && !!e.active);
+	const isMagical = obj.reqs.some(e => e !== 'RCP' && e.id === 'ADV_50' && isRequiringActivatable(e) && !!e.active);
 	return {
 		isBlessed,
 		isMagical

@@ -1,5 +1,67 @@
 export { UIMessages } from './ui.d';
 
+export interface Race {
+	id: string;
+	name: string;
+	ap: number;
+	lp: number;
+	spi: number;
+	tou: number;
+	mov: number;
+	attributeAdjustments: string;
+	commonCultures: string[];
+	automaticAdvantages: string;
+	stronglyRecommendedAdvantages: string;
+	stronglyRecommendedDisadvantages: string;
+	commonAdvantages: string;
+	commonDisadvantages: string;
+	uncommonAdvantages: string;
+	uncommonDisadvantages: string;
+	src: {
+		id: string;
+		page: number;
+	};
+}
+
+export interface Increasable {
+	name: string;
+	value: number;
+}
+
+export interface Culture {
+	id: string;
+	name: string;
+	culturalPackageAp: number;
+	culturalPackageSkills: Increasable[];
+}
+
+export interface NameBySex {
+	m: string;
+	f: string;
+}
+
+export interface Profession {
+	id: string;
+	name: string | NameBySex;
+	subname?: string | NameBySex;
+	ap: number;
+	combatTechniques: Increasable[];
+	physicalSkills: Increasable[];
+	socialSkills: Increasable[];
+	natureSkills: Increasable[];
+	knowledgeSkills: Increasable[];
+	craftSkills: Increasable[];
+	variants: ProfessionVariant[];
+}
+
+export interface ProfessionVariant {
+	id: string;
+	name: string | NameBySex;
+	ap: number;
+	combatTechniques: Increasable[];
+	skills: Increasable[];
+}
+
 export interface Attribute {
 	id: string;
 	name: string;

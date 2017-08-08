@@ -49,7 +49,6 @@ export async function loadInitialData() {
 	catch (error) {
 		alert('Error', `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`);
 		tables = { advantages: {}, attributes: {}, blessings: {}, cantrips: {}, combattech: {}, cultures: {}, disadvantages: {}, el: {}, items: {}, liturgies: {}, professionvariants: {}, professions: {}, races: {}, specialabilities: {}, spells: {}, talents: {}};
-		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readFile(join(appPath, 'config.json'));
@@ -57,7 +56,6 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		config = initialConfig;
-		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readFile(join(appPath, 'heroes.json'));
@@ -65,7 +63,6 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		heroes = {};
-		return Promise.reject(new Error(error));
 	}
 	try {
 		const result = await readDir(join(root, 'app', 'locales'));
@@ -76,7 +73,6 @@ export async function loadInitialData() {
 	}
 	catch (error) {
 		alert('Error', `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`);
-		return Promise.reject(new Error(error));
 	}
 	return {
 		config,

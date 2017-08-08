@@ -56,7 +56,7 @@ export interface RawCulture {
 	lang: number[];
 	literacy: number[];
 	social: number[];
-	typ_prof: Data.TypicalProfession[];
+	typ_prof: Data.CommonProfession[];
 	typ_adv: string[];
 	typ_dadv: string[];
 	untyp_adv: string[];
