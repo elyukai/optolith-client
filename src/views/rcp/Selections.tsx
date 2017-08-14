@@ -258,18 +258,25 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			const languagesList = SA_30.sel!;
 
 			scriptsList.forEach(e => {
-				const sid = e.id as number;
-				const cost = scriptsList[sid - 1].cost!;
-				const name = scriptsList[sid - 1].name;
-				const native = buyLiteracy && ((!selectLitc && sid === currentCulture.scripts[0]) || (selectLitc && sid === litc));
-				scripts.push({ id: `LITC_${sid}`, name, cost, native });
+				const { id } = e;
+				const obj = getSelectionItem(SA_28, id);
+				if (typeof obj === 'object') {
+					const { name, cost } = obj;
+					if (typeof cost === 'number') {
+						const native = buyLiteracy && ((!selectLitc && id === currentCulture.scripts[0]) || id === litc);
+						scripts.push({ id: `LITC_${id}`, name, cost, native });
+					}
+				}
 			});
 
 			languagesList.forEach(e => {
-				const sid = e.id as number;
-				const name = languagesList[sid - 1].name;
-				const native = (!selectLang && sid === currentCulture.languages[0]) || (selectLang && sid === lang);
-				languages.push({ id: `LANG_${sid}`, name, native });
+				const { id } = e;
+				const obj = getSelectionItem(SA_30, id);
+				if (typeof obj === 'object') {
+					const { name } = obj;
+					const native = (selectLang === false && id === currentCulture.languages[0]) || id === lang;
+					languages.push({ id: `LANG_${id}`, name, native });
+				}
 			});
 
 			scripts = sortObjects(scripts, locale.id);

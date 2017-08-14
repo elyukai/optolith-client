@@ -9,8 +9,9 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { get } from '../../selectors/dependentInstancesSelectors';
-import { ExperienceLevel, ProfessionInstance, User } from '../../types/data.d';
+import { ExperienceLevel, ProfessionInstance, UIMessages, User } from '../../types/data.d';
 import { getExperienceLevelIdByAp, getHigherExperienceLevelId } from '../../utils/ELUtils';
+import { _translate } from '../../utils/I18n';
 import { getRoman } from '../../utils/NumberUtils';
 
 export interface HerolistItemProps {
@@ -31,6 +32,7 @@ export interface HerolistItemProps {
 	r?: string;
 	professionName?: string;
 	sex?: 'm' | 'f';
+	locale: UIMessages;
 	loadHero(id?: string): void;
 	saveHeroAsJSON(id?: string): void;
 	showHero(): void;
@@ -39,7 +41,7 @@ export interface HerolistItemProps {
 }
 
 export function HerolistItem(props: HerolistItemProps) {
-	const { player, id, currentHeroId, dependent, name, avatar, ap: { spent: apSpent, total: apTotal }, els, r, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
+	const { player, id, currentHeroId, dependent, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, els, r, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
 	const elId = getExperienceLevelIdByAp(els, apTotal);
 	const el = els.get(elId);
 	const elnext = els.get(getHigherExperienceLevelId(elId));
@@ -63,7 +65,7 @@ export function HerolistItem(props: HerolistItemProps) {
 			<span className="profession">
 				{(() => {
 					if (p === 'P_0') {
-						return professionName;
+						return professionName || _translate(locale, 'professions.ownprofession');
 					}
 					let { name, subname } = p && get(dependent, p) as ProfessionInstance || { name: '', subname: undefined };
 					if (typeof name === 'object' && sex) {
@@ -96,9 +98,9 @@ export function HerolistItem(props: HerolistItemProps) {
 			</ListItemName>
 			<ListItemSeparator/>
 			<ListItemButtons>
-				{id && <IconButton icon="&#xE14D;" onClick={duplicateHero} />}
-				{id && <IconButton icon="&#xE80D;" onClick={saveHeroAsJSON} />}
-				{id && <IconButton icon="&#xE872;" onClick={deleteHero} />}
+				{id && <IconButton icon="&#xE14D;" onClick={duplicateHero.bind(null, id)} />}
+				{id && <IconButton icon="&#xE80D;" onClick={saveHeroAsJSON.bind(null, id)} />}
+				{id && <IconButton icon="&#xE872;" onClick={deleteHero.bind(null, id)} />}
 				{(() => isOpen ? (
 					<IconButton icon="&#xE89E;" onClick={showHero} />
 				) : (

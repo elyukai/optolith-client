@@ -41,12 +41,18 @@ export const getSum = createSelector(
 );
 
 export const getForView = createSelector(
-	[ getAttributes, getSum, getStartEl, getCurrentEl, getPhase, getAttributeValueLimit, getSpecialAbilities, getTalents ],
-	(attributes, sum, startEl, currentEl, phase, attributeValueLimit, specialAbilities, talents) => {
+	getAttributes,
+	getStartEl,
+	getCurrentEl,
+	getPhase,
+	getAttributeValueLimit,
+	getSpecialAbilities,
+	getTalents,
+	(attributes, startEl, currentEl, phase, attributeValueLimit, specialAbilities, talents) => {
 		const array: AttributeWithRequirements[] = [];
 		for (const [id, entry] of attributes) {
 			const { mod, name, short, value, dependencies } = entry;
-			const max = getMax(sum, startEl, currentEl, phase, mod, attributeValueLimit);
+			const max = getMax(startEl, currentEl, phase, mod, attributeValueLimit);
 			const min = getMin(dependencies, specialAbilities, talents);
 			array.push({
 				id,
@@ -78,9 +84,9 @@ export const getForSheet = createSelector(
 	}
 );
 
-function getMax(sum: number, startEl: ExperienceLevel, currentEl: ExperienceLevel | undefined, phase: number, mod: number, attributeValueLimit: boolean): number | undefined {
+function getMax(startEl: ExperienceLevel, currentEl: ExperienceLevel | undefined, phase: number, mod: number, attributeValueLimit: boolean): number | undefined {
 	if (phase < 3) {
-		return sum >= startEl.maxTotalAttributeValues ? 0 : startEl.maxAttributeValue + mod;
+		return startEl.maxAttributeValue + mod;
 	}
 	else if (attributeValueLimit === true) {
 		return currentEl && currentEl.maxAttributeValue + 2;

@@ -1,7 +1,7 @@
 import { last } from 'lodash';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { AdvantageInstance, AttributeInstance, DisadvantageInstance, Energy, EnergyWithLoss, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../types/data.d';
+import { AttributeInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
 import { getLocale, translate } from './I18n';
@@ -17,11 +17,11 @@ const STR = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_8') 
 export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WS';
 
 export function getLP(state: CurrentHeroInstanceState): Energy {
-	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).lp + CON(state).value * 2;
+	const base = state.dependent.races.get(state.rcp.race!)!.lp + CON(state).value * 2;
 	let mod = 0;
 	const add = state.energies.addedLifePoints;
-	const increaseObject = (get(state.dependent, 'ADV_25') as AdvantageInstance).active[0];
-	const decreaseObject = (get(state.dependent, 'DISADV_28') as DisadvantageInstance).active[0];
+	const increaseObject = state.dependent.advantages.get('ADV_25')!.active[0];
+	const decreaseObject = state.dependent.disadvantages.get('DISADV_28')!.active[0];
 	if (increaseObject) {
 		mod += increaseObject.tier!;
 	}
@@ -44,7 +44,7 @@ export function getLP(state: CurrentHeroInstanceState): Energy {
 }
 
 export function getAE(state: CurrentHeroInstanceState): EnergyWithLoss {
-	const lastTradition = last((get(state.dependent, 'SA_86') as SpecialAbilityInstance).active);
+	const lastTradition = last(state.dependent.specialAbilities.get('SA_86')!.active);
 	const primary = getPrimaryAttributeId(state.dependent, 1);
 	let base = 0;
 	let mod = 0;
@@ -65,18 +65,18 @@ export function getAE(state: CurrentHeroInstanceState): EnergyWithLoss {
 	if (maxAdd > 0) {
 		base = 20 + maxAdd;
 	}
-	else if (isActive(get(state.dependent, 'ADV_50') as AdvantageInstance) && typeof lastTradition === 'number') {
+	else if (isActive(state.dependent.advantages.get('ADV_50')) && typeof lastTradition === 'number') {
 		base = 20;
 	}
-	const increaseObject = (get(state.dependent, 'ADV_23') as AdvantageInstance).active[0];
-	const decreaseObject = (get(state.dependent, 'DISADV_26') as DisadvantageInstance).active[0];
+	const increaseObject = state.dependent.advantages.get('ADV_23')!.active[0];
+	const decreaseObject = state.dependent.disadvantages.get('DISADV_26')!.active[0];
 	if (increaseObject && increaseObject.tier) {
 		mod += increaseObject.tier;
 	}
 	else if (decreaseObject && decreaseObject.tier) {
 		mod -= decreaseObject.tier;
 	}
-	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
+	const value = base > 0 ? base + mod + add + permanentRedeemed - permanentLost : undefined;
 	return {
 		add,
 		base,
@@ -107,15 +107,15 @@ export function getKP(state: CurrentHeroInstanceState): EnergyWithLoss {
 	if (primary) {
 		base = 20 + PRIMARY(state, primary).value;
 	}
-	const increaseObject = (get(state.dependent, 'ADV_24') as AdvantageInstance).active[0];
-	const decreaseObject = (get(state.dependent, 'DISADV_27') as DisadvantageInstance).active[0];
+	const increaseObject = state.dependent.advantages.get('ADV_24')!.active[0];
+	const decreaseObject = state.dependent.disadvantages.get('DISADV_27')!.active[0];
 	if (increaseObject && increaseObject.tier) {
 		mod += increaseObject.tier;
 	}
 	else if (decreaseObject && decreaseObject.tier) {
 		mod -= decreaseObject.tier;
 	}
-	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : '-';
+	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : undefined;
 	return {
 		add,
 		base,
@@ -133,10 +133,10 @@ export function getKP(state: CurrentHeroInstanceState): EnergyWithLoss {
 }
 
 export function getSPI(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).spi + Math.round((COU(state).value + SGC(state).value + INT(state).value) / 6);
+	const base = state.dependent.races.get(state.rcp.race!)!.spi + Math.round((COU(state).value + SGC(state).value + INT(state).value) / 6);
 	let mod = 0;
-	const increaseObject = isActive(get(state.dependent, 'ADV_26') as AdvantageInstance);
-	const decreaseObject = isActive(get(state.dependent, 'DISADV_29') as DisadvantageInstance);
+	const increaseObject = isActive(state.dependent.advantages.get('ADV_26'));
+	const decreaseObject = isActive(state.dependent.disadvantages.get('DISADV_29'));
 	if (increaseObject) {
 		mod++;
 	}
@@ -156,10 +156,10 @@ export function getSPI(state: CurrentHeroInstanceState): SecondaryAttribute {
 }
 
 export function getTOU(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = (get(state.dependent, state.rcp.race!) as RaceInstance).tou + Math.round((CON(state).value * 2 + STR(state).value) / 6);
+	const base = state.dependent.races.get(state.rcp.race!)!.tou + Math.round((CON(state).value * 2 + STR(state).value) / 6);
 	let mod = 0;
-	const increaseObject = isActive(get(state.dependent, 'ADV_27') as AdvantageInstance);
-	const decreaseObject = isActive(get(state.dependent, 'DISADV_30') as DisadvantageInstance);
+	const increaseObject = isActive(state.dependent.advantages.get('ADV_27'));
+	const decreaseObject = isActive(state.dependent.disadvantages.get('DISADV_30'));
 	if (increaseObject) {
 		mod++;
 	}
@@ -181,13 +181,13 @@ export function getTOU(state: CurrentHeroInstanceState): SecondaryAttribute {
 export function getDO(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.round(AGI(state).value / 2);
 	let mod = 0;
-	if (isActive(get(state.dependent, 'SA_78') as DisadvantageInstance)) {
+	if (isActive(state.dependent.specialAbilities.get('SA_78'))) {
 		mod += 3;
 	}
-	else if (isActive(get(state.dependent, 'SA_77') as DisadvantageInstance)) {
+	else if (isActive(state.dependent.specialAbilities.get('SA_77'))) {
 		mod += 2;
 	}
-	else if (isActive(get(state.dependent, 'SA_76') as DisadvantageInstance)) {
+	else if (isActive(state.dependent.specialAbilities.get('SA_76'))) {
 		mod += 1;
 	}
 	const value = base + mod;
@@ -204,33 +204,35 @@ export function getDO(state: CurrentHeroInstanceState): SecondaryAttribute {
 
 export function getINI(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.round((COU(state).value + AGI(state).value) / 2);
-	let value = base;
-	if (isActive(get(state.dependent, 'SA_58') as SpecialAbilityInstance)) {
-		value += 3;
+	let mod = 0;
+	if (isActive(state.dependent.specialAbilities.get('SA_58'))) {
+		mod += 3;
 	}
-	else if (isActive(get(state.dependent, 'SA_57') as SpecialAbilityInstance)) {
-		value += 2;
+	else if (isActive(state.dependent.specialAbilities.get('SA_57'))) {
+		mod += 2;
 	}
-	else if (isActive(get(state.dependent, 'SA_56') as SpecialAbilityInstance)) {
-		value += 1;
+	else if (isActive(state.dependent.specialAbilities.get('SA_56'))) {
+		mod += 1;
 	}
+	const value = base + mod;
 	return {
 		calc: translate('secondaryattributes.ini.calc'),
 		id: 'INI',
 		name: translate('secondaryattributes.ini.name'),
 		short: translate('secondaryattributes.ini.short'),
 		base,
+		mod,
 		value
 	};
 }
 
 export function getMOV(state: CurrentHeroInstanceState): SecondaryAttribute {
-	let base = (get(state.dependent, state.rcp.race!) as RaceInstance).mov;
+	let base = state.dependent.races.get(state.rcp.race!)!.mov;
 	let mod = 0;
-	if (isActive(get(state.dependent, 'ADV_9') as AdvantageInstance)) {
+	if (isActive(state.dependent.advantages.get('ADV_9'))) {
 		mod = 1;
 	}
-	if (getSids(get(state.dependent, 'DISADV_51') as DisadvantageInstance).includes(3)) {
+	if (getSids(state.dependent.disadvantages.get('DISADV_51')!).includes(3)) {
 		base = Math.round(base / 2);
 	}
 	const value = base + mod;
@@ -248,10 +250,10 @@ export function getMOV(state: CurrentHeroInstanceState): SecondaryAttribute {
 export function getWS(state: CurrentHeroInstanceState): SecondaryAttribute {
 	const base = Math.floor(CON(state).value / 2);
 	let value = base;
-	if (isActive(get(state.dependent, 'DISADV_54') as DisadvantageInstance)) {
+	if (isActive(state.dependent.disadvantages.get('DISADV_54'))) {
 		value++;
 	}
-	else if (isActive(get(state.dependent, 'DISADV_56') as DisadvantageInstance)) {
+	else if (isActive(state.dependent.disadvantages.get('DISADV_56'))) {
 		value++;
 	}
 	return {

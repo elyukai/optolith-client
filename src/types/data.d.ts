@@ -749,7 +749,7 @@ export interface SecondaryAttribute {
 	base: number;
 	add?: number;
 	mod?: number;
-	value: number | string;
+	value: number | undefined;
 	maxAdd?: number;
 	currentAdd?: number;
 	permanentLost?: number;

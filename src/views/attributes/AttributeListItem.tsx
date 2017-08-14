@@ -7,13 +7,15 @@ import { AttributeBorder } from './AttributeBorder';
 export interface AttributeListItemProps {
 	attribute: AttributeWithRequirements;
 	phase: number;
+	maxTotalAttributeValues: number;
+	sum: number;
 	addPoint(id: string): void;
 	removePoint(id: string): void;
 }
 
 export class AttributeListItem extends React.Component<AttributeListItemProps, {}> {
 	render() {
-		const { attribute, phase } = this.props;
+		const { attribute, maxTotalAttributeValues, phase, sum } = this.props;
 		const { id, short, name, value, max, min } = attribute;
 
 		const valueHeader = phase === 2 ? `${value} / ${max}` : value;
@@ -29,7 +31,7 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
 					className="add"
 					icon="&#xE145;"
 					onClick={this.props.addPoint.bind(null, id)}
-					disabled={max ? value >= max : undefined}
+					disabled={phase === 2 && sum >= maxTotalAttributeValues || typeof max === 'number' && value >= max}
 					/>
 				{phase === 2 &&
 					<IconButton

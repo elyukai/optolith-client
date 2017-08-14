@@ -46,16 +46,16 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(HistoryActions.redo());
 		},
 		saveConfig: () => {
-			dispatch(HerolistActions._saveHero());
+			dispatch(PlatformActions.requestConfigSave());
 		},
 		saveHero: () => {
-			dispatch(PlatformActions.requestConfigSave());
+			dispatch(HerolistActions._saveHero());
 		},
 		saveHeroes: () => {
 			dispatch(((dispatch, getState) => {
 				const locale = getMessages(getState());
 				if (locale) {
-					dispatch(HerolistActions.saveHeroes(locale));
+					dispatch(HerolistActions.saveHeroes());
 				}
 			}) as AsyncAction);
 		},

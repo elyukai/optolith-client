@@ -3,7 +3,7 @@ import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { get, getAllByCategory, getLatest } from '../selectors/dependentInstancesSelectors';
+import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
@@ -178,29 +178,33 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 			let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
 
+			const addValue = (instance: Data.SkillishInstance, value: number): Data.SkillishInstance => ({
+				...instance,
+				value: instance.value + value
+			});
+
 			for (const [id, value] of skillRatingList) {
-				newlist = setNewStateItem(newlist, id, {
-					...getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance,
-					value
-				});
+				newlist = setNewStateItem(newlist, id, addValue(getLatest(dependent, newlist, id) as Data.SkillishInstance, value));
 			}
 
+			const activate = (instance: Data.ActivatableSkillishInstance): Data.ActivatableSkillishInstance => ({
+				...instance,
+				active: true
+			});
+
 			for (const id of skillActivateList) {
-				newlist = setNewStateItem(newlist, id, {
-					...getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance,
-					active: true
-				});
+				newlist = setNewStateItem(newlist, id, activate(getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance));
 			}
 
 			for (const req of activatable) {
 				const { id, sid, sid2, tier } = req;
-				const entry = get(dependent, id as string) as Data.ActivatableInstance;
+				const entry = getLatest(dependent, newlist, id as string) as Data.ActivatableInstance;
 				let obj;
 				const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
 				switch (id) {
 					case 'SA_10':
 						obj = {...entry, active: [...entry.active, { sid: sid as string, sid2 }]};
-						add.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + 1) * 6 });
+						add.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
 						break;
 					case 'SA_97':
 						obj = {...entry, active: [...entry.active, { sid: sid as string }]};
@@ -220,7 +224,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 						break;
 				}
 				if (obj) {
-					newlist = mergeIntoOptionalState(newlist, DependentUtils.addDependencies(dependent, obj, add));
+					newlist = mergeIntoOptionalState(newlist, DependentUtils.addDependencies(mergeIntoState(dependent, newlist), obj, add));
 				}
 			}
 
@@ -357,9 +361,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
 					// Lower Combat Techniques with a too high CTR
 
-					const allCombatTechniques = getAllByCategory(fulllist, Categories.COMBAT_TECHNIQUES) as Data.CombatTechniqueInstance[];
 					const maxCombatTechniqueRating = getStart(el).maxCombatTechniqueRating;
-					const valueTooHigh = allCombatTechniques.filter(e => e.value > maxCombatTechniqueRating);
+					const valueTooHigh = [...fulllist.combatTechniques.values()].filter(e => e.value > maxCombatTechniqueRating);
 
 					ap.spent += valueTooHigh.reduce<number>((ap, instance) => {
 						return ap + getDecreaseRangeAP(instance.ic, instance.value, maxCombatTechniqueRating);

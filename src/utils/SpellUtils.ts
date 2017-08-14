@@ -1,7 +1,6 @@
-import { SPELLS } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/requirements.d';
@@ -50,16 +49,16 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: SpellInstanc
 	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
 
 	if (getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
-		const counter = getPropertyCounter(dependent);
+		const counter = getPropertyCounter(dependent.spells);
 		const countedWithProperty = counter.get(obj.property);
-		return !(countedWithProperty && countedWithProperty <= 3 && obj.value <= 10 && obj.gr !== 5) && valid;
+		return (obj.value !== 10 || typeof countedWithProperty === 'number' && countedWithProperty > 3) && valid;
 	}
 
 	return valid;
 }
 
-export function getPropertyCounter(state: DependentInstancesState) {
-	return (getAllByCategory(state, SPELLS) as SpellInstance[]).filter(e => e.value >= 10).reduce((a, b) => {
+export function getPropertyCounter(spells: Map<string, SpellInstance>) {
+	return [...spells.values()].filter(e => e.value >= 10).reduce((a, b) => {
 		const existing = a.get(b.property);
 		if (typeof existing === 'number') {
 			a.set(b.property, existing + 1);

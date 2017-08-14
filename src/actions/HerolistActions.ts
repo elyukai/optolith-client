@@ -1,21 +1,18 @@
 import * as React from 'react';
 import * as ActionTypes from '../constants/ActionTypes';
-import { getHeroesForSave } from '../selectors/herolistSelectors';
-import { getLocaleId } from '../selectors/localeSelectors';
-import { getUISettingsState } from '../selectors/uisettingsSelectors';
+import { getMessages } from '../selectors/localeSelectors';
 import { AsyncAction } from '../stores/AppStore';
 import { Hero, UIMessages } from '../types/data.d';
-import { Config } from '../types/rawdata.d';
 import { alert } from '../utils/alert';
 import { confirm } from '../utils/confirm';
 import { createOverlay } from '../utils/createOverlay';
-import { saveAll } from '../utils/FileAPIUtils';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { HeroCreation } from '../views/herolist/HeroCreation';
 import { requestHeroExport } from './FileActions';
 import { _setSection } from './LocationActions';
+import { requestSaveAll } from './PlatformActions';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -116,15 +113,13 @@ export function loadHeroValidate(id: string): AsyncAction {
 	};
 }
 
-export function saveHeroes(locale: UIMessages): AsyncAction {
-	return (_, getState) => {
-		const state = getState();
-		const config: Config = {
-			...getUISettingsState(state),
-			locale: getLocaleId(state)
-		};
-		saveAll(JSON.stringify(config), JSON.stringify(getHeroesForSave(state)), locale);
-		alert(_translate(locale, 'fileapi.allsaved'));
+export function saveHeroes(): AsyncAction {
+	return (dispatch, getState) => {
+		const messages = getMessages(getState());
+		if (messages) {
+			dispatch(requestSaveAll());
+			alert(_translate(messages, 'fileapi.allsaved'));
+		}
 	};
 }
 
@@ -155,26 +150,13 @@ export function _saveHero(): AsyncAction {
 				data
 			}
 		} as SaveHeroAction);
+		dispatch(saveHeroes());
 	};
 }
 
 export function exportHeroValidate(id: string, locale: UIMessages): AsyncAction {
-	return (dispatch, getState) => {
-		const state = getState();
-		const { currentHero: { past, present: { el: { startId }} }, locale: { messages }} = state;
-		if ((past.length === 0 || !startId)) {
-			requestHeroExport(id, locale);
-		}
-		else {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
-				if (result === true) {
-					requestHeroExport(id, locale);
-				}
-				else {
-					dispatch(_setSection('hero'));
-				}
-			});
-		}
+	return dispatch => {
+		dispatch(requestHeroExport(id, locale));
 	};
 }
 
@@ -230,13 +212,13 @@ export function _duplicateHero(id: string): DuplicateHeroAction {
 export function showHeroCreation(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const { currentHero: { past, present: { el: { all, startId }} }, locale: { messages }} = state;
+		const { currentHero: { past, present: { el: { all, startId }} }, herolist: { currentId }, locale: { messages }} = state;
 		const props = {
 			createHero: (name: string, sex: 'm' | 'f', el: string) => dispatch(_createHero(name, sex, el)),
 			elList: [...all.values()],
 			locale: messages
 		};
-		if ((past.length === 0 || !startId)) {
+		if (typeof startId !== 'string' || typeof startId === 'string' && typeof currentId === 'string' && past.length === 0) {
 			createOverlay(React.createElement(HeroCreation, props));
 		}
 		else {

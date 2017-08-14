@@ -42,4 +42,4 @@ const currentHeroSlices = combineReducers<CurrentHeroInstanceState>({
 	rules
 });
 
-export const currentHero = undo(reduceReducers(currentHeroSlices, currentHeroPost), [ActionTypes.RECEIVE_INITIAL_DATA, ActionTypes.CREATE_HERO, ActionTypes.LOAD_HERO]);
+export const currentHero = undo(reduceReducers(currentHeroSlices, currentHeroPost), [ActionTypes.RECEIVE_INITIAL_DATA, ActionTypes.CREATE_HERO, ActionTypes.LOAD_HERO, ActionTypes.ASSIGN_RCP_OPTIONS, ActionTypes.SAVE_HERO]);

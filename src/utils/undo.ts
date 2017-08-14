@@ -47,6 +47,13 @@ export function undo<S>(reducer: (state: S | undefined, action: Action) => S, re
 			default: {
 				const newPresent = reducer(present, action);
 				if (present === newPresent) {
+					if (resetActionTypes && resetActionTypes.includes(action.type)) {
+						return {
+							past: [],
+							present,
+							future: []
+						};
+					}
 					return state;
 				}
 				if (resetActionTypes && resetActionTypes.includes(action.type)) {

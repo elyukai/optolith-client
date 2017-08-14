@@ -40,7 +40,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				purchased={attributes[1].currentAdd}
 				subLabel={_translate(locale, 'charactersheet.main.subheaders.permanent')}
 				subArray={[attributes[1].permanentLost!, attributes[1].permanentRedeemed!]}
-				empty={attributes[1].value === '-'}
+				empty={typeof attributes[1].value !== 'number'}
 				/>
 			<MainSheetAttributesItem
 				label={attributes[2].name}
@@ -51,7 +51,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				purchased={attributes[2].currentAdd}
 				subLabel={_translate(locale, 'charactersheet.main.subheaders.permanent')}
 				subArray={[attributes[2].permanentLost!, attributes[2].permanentRedeemed!]}
-				empty={typeof attributes[2].value === 'string'}
+				empty={typeof attributes[2].value !== 'number'}
 				/>
 			<MainSheetAttributesItem
 				label={attributes[3].name}
@@ -76,12 +76,14 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				calc={attributes[5].calc}
 				base={attributes[5].base}
 				max={attributes[5].value}
+				add={attributes[5].mod}
 				/>
 			<MainSheetAttributesItem
 				label={attributes[6].name}
 				calc={attributes[6].calc}
 				base={attributes[6].base}
 				max={attributes[6].value}
+				add={attributes[6].mod}
 				/>
 			<MainSheetAttributesItem
 				label={attributes[7].name}

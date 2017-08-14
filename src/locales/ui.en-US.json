@@ -416,6 +416,7 @@
 	"rcpselections.labels.languagesandliteracytotaling": "Languages and Literacy totaling",
 	"rcpselections.labels.left": "left",
 	"rcpselections.labels.applicationforskillspecialization": "Application for Skill Specialization",
+	"rcpselections.labels.skillapplicationseparator": "or",
 	"rcpselections.labels.skillgroups": ["Skills", "Physical Skills", "Social Skills", "Nature Skills", "Knowledge Skills", "Craft Skills"],
 	"rcpselections.labels.skills": "{0} für insgesamt {1} AP ({2} AP übrig)",
 	"rcpselections.actions.complete": "Complete",

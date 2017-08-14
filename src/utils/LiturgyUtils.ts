@@ -1,7 +1,6 @@
-import { LITURGIES } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { getSids } from './ActivatableUtils';
@@ -37,7 +36,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 	const { dependent } = state;
 	const activeAspectKnowledge = getSids(get(dependent, 'SA_103') as SpecialAbilityInstance);
 	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {
-		const counter = getAspectCounter(dependent);
+		const counter = getAspectCounter(dependent.liturgies);
 		const countedLowestWithProperty = obj.aspects.reduce((n, aspect) => {
 			const counted = counter.get(aspect);
 			if (activeAspectKnowledge.includes(aspect) && typeof counted === 'number') {
@@ -45,13 +44,13 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 			}
 			return n;
 		}, 4);
-		return !(countedLowestWithProperty <= 3 && obj.value <= 10 && obj.gr !== 5);
+		return obj.value !== 10 || countedLowestWithProperty > 3;
 	}
 	return true;
 }
 
-export function getAspectCounter(state: DependentInstancesState) {
-	return (getAllByCategory(state, LITURGIES) as LiturgyInstance[]).filter(e => e.value >= 10).reduce((a, b) => {
+export function getAspectCounter(liturgies: Map<string, LiturgyInstance>) {
+	return [...liturgies.values()].filter(e => e.value >= 10).reduce((a, b) => {
 		for (const aspect of b.aspects) {
 			const existing = a.get(aspect);
 			if (typeof existing === 'number') {

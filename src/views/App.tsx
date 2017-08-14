@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Scroll } from '../components/Scroll';
 import { TitleBar as TitleBarNew } from '../components/TitleBar';
 import { TitleBar } from '../components/titlebar/TitleBar';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
@@ -57,12 +58,12 @@ export class App extends React.Component<AppProps, AppState> {
 
 		if (hasError) {
 			return <div id="body">
-				<div className="error-message">
+				<Scroll className="error-message">
 					<h4>Error</h4>
 					<p>{hasError.error.stack}</p>
 					<h4>Component Stack</h4>
 					<p>{hasError.info.componentStack}</p>
-				</div>
+				</Scroll>
 			</div>;
 		}
 

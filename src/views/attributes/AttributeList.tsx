@@ -5,6 +5,8 @@ import { AttributeListItem } from './AttributeListItem';
 export interface AttributeListProps {
 	attributes: AttributeWithRequirements[];
 	phase: number;
+	maxTotalAttributeValues: number;
+	sum: number;
 	addPoint(id: string): void;
 	removePoint(id: string): void;
 }

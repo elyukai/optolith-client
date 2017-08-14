@@ -15,9 +15,11 @@ html, body, #bodywrapper, #body {
 }
 
 .error-message {
-	align-self: center;
 	color: $c2;
 	white-space: pre-wrap;
 	font: 500 18px/20px Alegreya Sans;
-	padding-left: 36px;
+
+	.scroll-inner {
+		padding: 36px 36px 36px 0;
+	}
 }

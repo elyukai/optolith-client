@@ -18,6 +18,10 @@ export interface SettingsState {
 }
 
 export class Settings extends React.Component<SettingsProps, SettingsState> {
+	state: SettingsState = {
+		localeType: 'default'
+	};
+
 	unsubscribe: () => void;
 
 	componentDidMount() {

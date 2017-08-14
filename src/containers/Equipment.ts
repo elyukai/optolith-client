@@ -8,12 +8,14 @@ import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getAttributes } from '../selectors/stateSelectors';
 import { getEquipmentSortOrder } from '../selectors/uisettingsSelectors';
 import { ItemInstance } from '../types/data.d';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
 
 function mapStateToProps(state: AppState) {
 	return {
+		attributes: getAttributes(state),
 		combatTechniques: getAllCombatTechniques(state),
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),

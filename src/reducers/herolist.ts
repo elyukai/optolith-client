@@ -28,10 +28,14 @@ export function herolist(state: HerolistState = initialState, action: Action): H
 
 		case ActionTypes.SAVE_HERO: {
 			const { id, ...other } = action.payload.data;
-			return { ...state, heroes: setListItem(state.heroes, id, {
-				...other,
-				id
-			})};
+			return {
+				...state,
+				currentId: id,
+				heroes: setListItem(state.heroes, id, {
+					...other,
+					id
+				})
+			};
 		}
 
 		case ActionTypes.DELETE_HERO: {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
+import { Application, InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
 import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface SelectionsTalentSpecProps {
@@ -17,28 +17,31 @@ export interface SelectionsTalentSpecProps {
 export function SelectionsTalentSpec(props: SelectionsTalentSpecProps) {
 	const { active, activeId, change, changeId, locale, options: { sid }, skills } = props;
 
-	let talent;
+	let skillList: TalentInstance[] | undefined;
+	let applicationList: Application[] | undefined;
+	let talent: TalentInstance | undefined;
 	let name;
-	let list;
 	let input;
-	if (Array.isArray(sid) && !activeId) {
-		list = sid.map(e => skills.get(e)!);
-		name = list.map(e => e.name).join(' oder ');
-	}
-	else {
+	if (!Array.isArray(sid) || activeId !== undefined) {
 		talent = skills.get(Array.isArray(sid) ? activeId! : sid)!;
-		name = talent.name;
-		list = talent.applications;
+		applicationList = talent.applications;
 		input = talent.applicationsInput;
 	}
+	if (Array.isArray(sid)) {
+		skillList = sid.map(e => skills.get(e)!);
+		name = skillList.map(e => e.name).join(` ${_translate(locale, 'rcpselections.labels.applicationforskillspecialization')} `);
+	}
+	else if (talent !== undefined) {
+		name = talent.name;
+	}
 
-	const selectTalentElement = Array.isArray(sid) && (
+	const selectTalentElement = Array.isArray(skillList) && (
 		<div>
 			<Dropdown
 				className="talents"
-				value={activeId || ''}
+				value={activeId}
 				onChange={changeId}
-				options={list!}
+				options={skillList}
 				/>
 		</div>
 	);
@@ -46,24 +49,24 @@ export function SelectionsTalentSpec(props: SelectionsTalentSpecProps) {
 	const selectionElement = talent && (
 		<div>
 			{
-				list ? (
+				Array.isArray(applicationList) && (
 					<Dropdown
 						className="tiers"
 						value={active[0] || 0}
 						onChange={change}
-						options={list}
+						options={applicationList}
 						disabled={active[1] !== ''}
 						/>
-				) : null
+				)
 			}
 			{
-				input !== null ? (
+				typeof input === 'string' && (
 					<TextField
 						hint={input}
 						value={active[1]}
 						onChange={(event: InputTextEvent) => change(event.target.value)}
 						/>
-				) : null
+				)
 			}
 		</div>
 	);

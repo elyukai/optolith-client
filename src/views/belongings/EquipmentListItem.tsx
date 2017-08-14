@@ -6,16 +6,16 @@ import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
-import { EquipmentStore } from '../../stores/EquipmentStore';
-import { get } from '../../stores/ListStore';
-import { AttributeInstance, CombatTechniqueInstance, ItemInstance, UIMessages } from '../../types/data.d';
+import { AttributeInstance, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
+import { sign, signNull } from '../../utils/NumberUtils';
 import { ItemEditor } from './ItemEditor';
 
 export interface EquipmentListItemProps {
 	add?: boolean;
+	attributes: Map<string, AttributeInstance>;
 	combatTechniques: CombatTechnique[];
 	data: ItemInstance;
 	locale: UIMessages;
@@ -26,9 +26,9 @@ export interface EquipmentListItemProps {
 }
 
 export function EquipmentListItem(props: EquipmentListItemProps) {
-	const { add, addToList, data, deleteItem, locale } = props;
+	const { add, addToList, attributes, combatTechniques, data, deleteItem, locale, templates } = props;
 	const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties, amount } = data;
-	const ammunitionTemplate = typeof ammunition === 'string' && EquipmentStore.getTemplate(ammunition);
+	const ammunitionTemplate = typeof ammunition === 'string' && templates.find(e => e.id === ammunition);
 
 	const numberValue = amount > 1 ? amount : undefined;
 
@@ -65,22 +65,22 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 							<td>{_translate(locale, 'equipment.view.list.combattechnique')}</td>
 							<td>
 								{(() => {
-									const entry = combatTechnique && get(combatTechnique);
+									const entry = combatTechnique && combatTechniques.find(e => e.id === combatTechnique);
 									return entry && entry.name;
 								})()}
 							</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.damage')}</td>
-							<td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && damageFlat > 0 && '+'}{damageFlat !== 0 && damageFlat}</td>
+							<td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && signNull(damageFlat)}</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.primaryattributedamagethreshold')}</td>
-							<td>{combatTechnique && (get(combatTechnique) as CombatTechniqueInstance).primary.map(attr => (get(attr) as AttributeInstance).short).join('/')} {damageBonus}</td>
+							<td>{combatTechnique && combatTechniques.find(e => e.id === combatTechnique)!.primary.map(attr => attributes.get(attr)!.short).join('/')} {damageBonus}</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.atpamod')}</td>
-							<td>{at && at > 0 ? '+' : null}{at}/{pa && pa > 0 ? '+' : null}{pa}</td>
+							<td>{at && sign(at)}/{pa && sign(pa)}</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.reach')}</td>
@@ -106,14 +106,14 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 							<td>{_translate(locale, 'equipment.view.list.combattechnique')}</td>
 							<td>
 								{(() => {
-									const entry = combatTechnique && get(combatTechnique);
+									const entry = combatTechnique && combatTechniques.find(e => e.id === combatTechnique);
 									return entry && entry.name;
 								})()}
 							</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.damage')}</td>
-							<td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && damageFlat > 0 && '+'}{damageFlat !== 0 && damageFlat}</td>
+							<td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && signNull(damageFlat)}</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.reloadtime')}</td>

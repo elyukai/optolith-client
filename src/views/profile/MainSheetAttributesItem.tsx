@@ -7,7 +7,7 @@ export interface MainSheetAttributesItemProps {
 	empty?: boolean;
 	label: string;
 	base: number;
-	max: number | string;
+	max: number | undefined;
 	purchased?: number;
 	subArray?: number[];
 	subLabel?: string;
@@ -38,7 +38,7 @@ export function MainSheetAttributesItem(props: MainSheetAttributesItemProps) {
 					>
 					{ purchased === undefined ? '\uE14B' : empty ? '-' : purchased}
 				</div>
-				<div className="max">{max}</div>
+				<div className="max">{empty ? '-' : max}</div>
 				{
 					subArray && subArray.map(
 						(value, index) => <div key={label + index} className="sub">{empty ? '-' : value}</div>,

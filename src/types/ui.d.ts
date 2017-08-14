@@ -416,6 +416,7 @@ export interface UIMessages {
 	"rcpselections.labels.languagesandliteracytotaling": string;
 	"rcpselections.labels.left": string;
 	"rcpselections.labels.applicationforskillspecialization": string;
+	"rcpselections.labels.skillapplicationseparator": string;
 	"rcpselections.labels.skillgroups": string[];
 	"rcpselections.labels.skills": string;
 	"rcpselections.actions.complete": string;

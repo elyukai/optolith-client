@@ -416,6 +416,7 @@
 	"rcpselections.labels.languagesandliteracytotaling": "Sprachen und Schriften für insgesamt",
 	"rcpselections.labels.left": "übrig",
 	"rcpselections.labels.applicationforskillspecialization": "Anwendungsgebiet für Talentspezialisierung",
+	"rcpselections.labels.skillapplicationseparator": "oder",
 	"rcpselections.labels.skillgroups": ["Talente", "Körpertalente", "Gesellschaftstalente", "Naturtalente", "Wissenstalente", "Handwerkstalente"],
 	"rcpselections.labels.skills": "{0} für insgesamt {1} AP ({2} AP übrig)",
 	"rcpselections.actions.complete": "Fertigstellen",

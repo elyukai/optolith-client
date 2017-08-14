@@ -10,7 +10,7 @@ import { TextField } from '../../components/TextField';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { Hero, InputTextEvent, User } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { HerolistItem } from './HerolistItem';
 
@@ -75,7 +75,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 		} = this.props;
 		const { filterText } = this.state;
 
-		const list = filterAndSort(rawList.filter(e => {
+		const list = filterAndSortObjects(rawList.filter(e => {
 			if (visibilityFilter === 'own') {
 				return !e.player;
 			}
@@ -83,7 +83,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				return !!e.player;
 			}
 			return true;
-		}), filterText, sortOrder).map(hero => (
+		}), locale.id, filterText, sortOrder === 'ap' ? [{ key: hero => hero.ap.total, reverse: true }, 'name'] : ['name']).map(hero => (
 			<HerolistItem
 				{...other}
 				key={hero.id}
@@ -101,6 +101,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				dependent={dependent}
 				els={all}
 				currentHeroId={currentHeroId}
+				locale={locale}
 				/>
 		));
 
@@ -158,6 +159,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 										professionName={professionName}
 										dependent={dependent}
 										els={all}
+										locale={locale}
 										/>
 								)
 							}

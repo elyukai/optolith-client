@@ -10,7 +10,7 @@ import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { Purse } from '../../reducers/equipment';
-import { InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
+import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { filterAndSortObjects, sortObjects } from '../../utils/FilterSortUtils';
@@ -23,6 +23,7 @@ export interface EquipmentOwnProps {
 }
 
 export interface EquipmentStateProps {
+	attributes: Map<string, AttributeInstance>;
 	combatTechniques: CombatTechnique[];
 	carryingCapacity: number;
 	initialStartingWealth: number;

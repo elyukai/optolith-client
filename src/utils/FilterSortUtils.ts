@@ -174,7 +174,7 @@ interface BaseObject {
 }
 
 interface SortOption<T> {
-	key: keyof T;
+	key: keyof T | ((object: T) => any);
 	keyOfProperty?: string;
 	mapToIndex?: string[];
 	reverse?: boolean;
@@ -189,9 +189,17 @@ export function sortObjects<T extends BaseObject>(list: T[], locale: string, sor
 		for (const option of sortOptions) {
 			if (isSortOptionObject(option)) {
 				const { key, mapToIndex, reverse, keyOfProperty } = option;
-				const propertyType = typeof firstItem[key];
+				const propertyType = typeof key === 'function' ? typeof (key as (object: T) => any)(firstItem) : typeof firstItem[key];
 				if (reverse === true) {
-					if (keyOfProperty !== undefined) {
+					if (typeof key === 'function') {
+						if (propertyType === 'string') {
+							sortFunctions.push((a: T, b: T) => ((key as (object: T) => any)(a) as string).localeCompare((key as (object: T) => any)(b), locale) * -1);
+						}
+						else if (propertyType === 'number') {
+							sortFunctions.push((a: T, b: T) => ((key as (object: T) => any)(b) as number) - ((key as (object: T) => any)(a) as number));
+						}
+					}
+					else if (keyOfProperty !== undefined) {
 						sortFunctions.push((a: T, b: T) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale) * -1);
 					}
 					else if (propertyType === 'string') {
@@ -202,6 +210,14 @@ export function sortObjects<T extends BaseObject>(list: T[], locale: string, sor
 					}
 					else if (propertyType === 'number') {
 						sortFunctions.push((a: T, b: T) => (b[key] as number) - (a[key] as number));
+					}
+				}
+				else if (typeof key === 'function') {
+					if (propertyType === 'string') {
+						sortFunctions.push((a: T, b: T) => ((key as (object: T) => any)(a) as string).localeCompare((key as (object: T) => any)(b), locale));
+					}
+					else if (propertyType === 'number') {
+						sortFunctions.push((a: T, b: T) => ((key as (object: T) => any)(a) as number) - ((key as (object: T) => any)(b) as number));
 					}
 				}
 				else if (keyOfProperty !== undefined) {

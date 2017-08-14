@@ -3,7 +3,7 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import { AdvantageInstanceInInit, DisadvantageInstanceInInit, InstanceInInit, SelectionObject, SkillishInstance, SpecialAbilityInstanceInInit, ToListById } from '../types/data.d';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import { _translate } from '../utils/I18n';
-import { getStateKeyById } from '../utils/IDUtils';
+import { getStateKeyByCategory } from '../utils/IDUtils';
 import * as InitUtils from '../utils/InitUtils';
 
 type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
@@ -90,7 +90,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 
 	function getSelectionCategories(source: SelectionObject[]) {
 		const rawNames = source.reduce<SkillishInstance[]>((arr, e) => {
-			const key = getStateKeyById(e.id as Categories.Category);
+			const key = getStateKeyByCategory(e.id as Categories.Category);
 			if (key) {
 				return [...arr, ...list[key].values()] as SkillishInstance[];
 			}

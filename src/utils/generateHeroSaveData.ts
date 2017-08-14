@@ -5,7 +5,7 @@ import * as combatTechniques from '../selectors/combatTechniquesSelectors';
 import { getForSave as getEquipmentForSave } from '../selectors/equipmentSelectors';
 import * as liturgies from '../selectors/liturgiesSelectors';
 import { getForSave as getPetsForSave } from '../selectors/petsSelectors';
-import * as spells from '../selectors/spellsSelectors';
+import { getCantripsForSave, getSpellsForSave} from '../selectors/spellsSelectors';
 import { getTalentsForSave } from '../selectors/talentsSelectors';
 import { HeroForSave } from '../types/data.d';
 import { currentVersion } from '../utils/VersionUtils';
@@ -56,8 +56,8 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 		activatable: activatable.getForSave(dependent),
 		talents: getTalentsForSave(state),
 		ct: combatTechniques.getForSave(state),
-		spells: spells.getForSave(dependent),
-		cantrips: spells.getCantripsForSave(dependent),
+		spells: getSpellsForSave(state),
+		cantrips: getCantripsForSave(state),
 		liturgies: liturgies.getForSave(dependent),
 		blessings: liturgies.getBlessingsForSave(dependent),
 		belongings: getEquipmentForSave(equipment),

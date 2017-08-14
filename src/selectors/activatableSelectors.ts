@@ -197,6 +197,12 @@ export function getActiveForView(state: CurrentHeroInstanceState, category: Cate
 						}
 						break;
 					}
+					case 'SA_88': {
+						const apArr = [10, 20, 40];
+						currentCost = apArr[active.length - 1];
+						add = getSelectionName(a, sid);
+						break;
+					}
 					case 'SA_102': {
 						if ((getAllByCategory(dependent, Categories.LITURGIES) as Data.LiturgyInstance[]).some(e => e.active)) {
 							disabled = true;
@@ -204,6 +210,12 @@ export function getActiveForView(state: CurrentHeroInstanceState, category: Cate
 						const selectionItem = getSelectionItem(a, sid);
 						add = selectionItem && selectionItem.name;
 						currentCost = selectionItem && selectionItem.cost as number;
+						break;
+					}
+					case 'SA_103': {
+						const apArr = [15, 25, 45];
+						currentCost = apArr[active.length - 1];
+						add = getSelectionName(a, sid);
 						break;
 					}
 					case 'SA_252': {
@@ -471,7 +483,7 @@ export function getDeactiveForView(state: CurrentHeroInstanceState, category: Ca
 					break;
 				}
 				case 'SA_88': {
-					const spellsAbove10 = (getAllByCategory(dependent, Categories.SPELLS) as Data.SpellInstance[]).filter(e => e.value >= 10);
+					const spellsAbove10 = [...dependent.spells.values()].filter(e => e.value >= 10);
 					const counter = spellsAbove10.reduce((map, obj) => {
 						const property = obj.property;
 						if (map.has(property)) {
@@ -483,7 +495,10 @@ export function getDeactiveForView(state: CurrentHeroInstanceState, category: Ca
 						return map;
 					}, new Map<number, number>());
 					const activeIds = getSids(a);
-					const sel = a.sel!.filter(e => counter.get(e.id as number)! >= 3 && !activeIds.includes(e.id) && !getDSids(a).includes(e.id)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+					const sel = a.sel!.filter(e => {
+						const spellsAbove10WithProperty = counter.get(e.id as number);
+						return spellsAbove10WithProperty && spellsAbove10WithProperty >= 3 && !activeIds.includes(e.id) && !getDSids(a).includes(e.id);
+					}).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 					if (sel.length > 0) {
 						const apArr = [10, 20, 40];
 						const cost = apArr[active.length];
@@ -500,7 +515,7 @@ export function getDeactiveForView(state: CurrentHeroInstanceState, category: Ca
 					break;
 				}
 				case 'SA_103': {
-					const liturgiesAbove10 = (getAllByCategory(dependent, Categories.LITURGIES) as Data.LiturgyInstance[]).filter(e => e.value >= 10);
+					const liturgiesAbove10 = [...dependent.liturgies.values()].filter(e => e.value >= 10);
 					const counter = liturgiesAbove10.reduce((map, obj) => {
 						obj.aspects.forEach(e => {
 							if (map.has(e)) {
