@@ -1,7 +1,7 @@
-const romanNumbers = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const romanNumbers = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII'];
 
 /**
- * Converts a number (max 10) to a Roman number.
+ * Converts a number to a Roman number.
  * @param number The number that shall be returned as a Roman number.
  * @param index If the number parameter is the index of the number and not the actual number. Default is false.
  */

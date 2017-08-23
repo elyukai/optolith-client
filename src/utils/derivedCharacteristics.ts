@@ -56,16 +56,16 @@ export function getAE(state: CurrentHeroInstanceState): EnergyWithLoss {
 			redeemed: permanentRedeemed
 		}
 	} = state.energies;
-	if (primary && (lastTradition === 6 || lastTradition === 7)) {
+	if (primary !== undefined && lastTradition !== undefined && (lastTradition.sid === 6 || lastTradition.sid === 7)) {
 		maxAdd = Math.round(PRIMARY(state, primary).value / 2);
 	}
-	else if (primary) {
+	else if (primary !== undefined) {
 		maxAdd = PRIMARY(state, primary).value;
 	}
 	if (maxAdd > 0) {
 		base = 20 + maxAdd;
 	}
-	else if (isActive(state.dependent.advantages.get('ADV_50')) && typeof lastTradition === 'number') {
+	else if (lastTradition !== undefined) {
 		base = 20;
 	}
 	const increaseObject = state.dependent.advantages.get('ADV_23')!.active[0];

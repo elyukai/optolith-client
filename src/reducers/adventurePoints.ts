@@ -123,7 +123,7 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 		}
 
 		case ActionTypes.ADD_ADVENTURE_POINTS:
-			return { ...state, spent: state.total + action.payload.amount };
+			return { ...state, total: state.total + action.payload.amount };
 
 		default:
 			return state;

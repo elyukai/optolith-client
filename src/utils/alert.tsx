@@ -22,7 +22,6 @@ export function alert(title: string | undefined, expand?: (() => void) | string,
 	);
 	if (typeof expand !== 'string') {
 		remote.globalShortcut.register('Enter', () => {
-			remote.globalShortcut.unregister('Enter');
 			close(node);
 			if (typeof expand === 'function') {
 				expand();

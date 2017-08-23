@@ -4,11 +4,86 @@
 }
 
 @media only print {
-	html, body, #bodywrapper, #body {
+	html, body, #bodywrapper, #body, section {
 		background: none;
 	}
 
 	html, body, #bodywrapper, #body, .page {
+		overflow: auto;
+		@include size(auto);
+	}
+
+	#body {
+		display: block;
+		border: none;
+		background: white;
+	}
+
+	.titlebar, .navbar, .subtabs {
+		display: none;
+	}
+
+	section {
+		padding: 0;
+		display: block;
+	}
+
+	.page {
+		padding: 0;
+		flex: unset;
+		display: block;
+
+		.sheet-wrapper {
+			margin: 0;
+		}
+
+		.sheet-options, .options, .print-document {
+			display: none;
+		}
+	}
+
+	.scroll.sheet-wrapper {
+		overflow: auto !important;
+		flex: unset;
+
+		.scroll-view {
+			overflow: auto !important;
+			height: auto !important;
+			width: auto !important;
+			position: relative !important;
+			margin: 0 !important;
+		}
+
+		.track {
+			display: none;
+		}
+	}
+
+	.scroll.sheet-wrapper .scroll-inner {
+		padding: 0;
+
+		.sheet {
+			margin: 0;
+			height: 296mm;
+			-webkit-print-color-adjust: exact;
+
+			&:not(:last-child) {
+				page-break-after: always;
+			}
+
+			&:last-child {
+				page-break-after: avoid;
+			}
+		}
+	}
+}
+
+html.print {
+	&, body, #bodywrapper, #body {
+		background: none;
+	}
+
+	&, body, #bodywrapper, #body, .page {
 		overflow: auto;
 		@include size(auto);
 	}
@@ -22,7 +97,7 @@
 		border: none;
 	}
 
-	.titlebar, .titlebar-drag, .subtabs {
+	.titlebar, .navbar, .subtabs {
 		display: none;
 	}
 
@@ -45,27 +120,29 @@
 		}
 	}
 
-	.scroll-sheet-wrapper.scroll.gm-scrollbar-container {
-		overflow: auto;
+	.scroll.sheet-wrapper {
+		overflow: auto !important;
 		flex: unset;
 
-		.gm-scroll-view {
-			overflow: auto;
+		.scroll-view {
+			overflow: auto !important;
 			height: auto !important;
 			width: auto !important;
+			position: relative !important;
+			margin: 0 !important;
 		}
 
-		.gm-scrollbar {
+		.track {
 			display: none;
 		}
 	}
 
-	.scroll-inner {
-		padding: 0 !important;
+	.scroll.sheet-wrapper .scroll-inner {
+		padding: 0;
 
 		.sheet {
-			margin-top: 0 !important;
-			height: 296mm !important;
+			margin-top: 0;
+			height: 296mm;
 			-webkit-print-color-adjust: exact;
 
 			&:not(:last-child) {
