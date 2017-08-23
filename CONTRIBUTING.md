@@ -7,6 +7,8 @@ Es gibt ein paar Richtlinien fürs Helfen beim Coden:
 - Der **develop**-Branch ist der Arbeitsbranch. Codeänderungen - also Pull Requests - führen meistens darauf zurück.
 - Der Masterbranch wird nur für Releases verwendet (das aber erst, nachdem die Beta fertig ist). Diese bekommen dann auch ihre eigenen temporären Branches, bei denen nur noch Bugfixes einfließen dürfen.
 - Es ließ sich nicht einstellen, daher hier noch einmal schriftlich: Ich möchte jede Pull Request, die als Zielbranch **master**, **develop** oder einen von mir erstellten Branch hat, reviewen.
+- Bitte schreibt nach Möglichkeit JSDoc Texte für neue Funktionen. Ich bin auch dabei, dass für alte Funktionen nachzuholen. Es ist jetzt nicht essenziell, wäre aber zum Verständnis besser! :)
+- Solange #1 (Use Redux instead of Flux) noch aktiv ist, solltet ihr von dem **electron-redux**-Branch abbranchen, so ihr denn in dieser Repo arbeitet.
 
 Ich habe das jetzt einfach etwas direkter formuliert, da ich bei solchen Geschichten ungern um den heißen Brei herum rede! ;)
 
