@@ -13,3 +13,5 @@ Es gibt ein paar Richtlinien fürs Helfen beim Coden:
 Ich habe das jetzt einfach etwas direkter formuliert, da ich bei solchen Geschichten ungern um den heißen Brei herum rede! ;)
 
 An dieser Stelle auch Vielen Dank an alle Helfer!
+
+P.S.: Ich sollte an dieser Stelle noch erwähnen, dass ich bis jetzt noch keine Erfahrung gesammelt habe, was kollaboratives Coden angeht. Ich bin auch bis zuletzt nicht davon ausgegangen, dass ich mal nicht der einzige sein werde, der an diesem Projekt arbeiten würde. Es mag daher sein, dass ihr Dateien findet, die etwas älter sind. Ich hoffe trotzdem, dass ihr euch zurechtfindet, da ich momentan nicht die Zeit habe, um alles durchzugehen (man kann ja schon am Switch zu Redux sehen, wie lange alles gedauert hat und wie viel Zeit ich entsprechend hatte). Erstellt bei Fragen/Unklarheiten einfach einen Issue! :)
