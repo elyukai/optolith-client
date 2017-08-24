@@ -115,7 +115,7 @@ function iterateProfessions(array) {
 		obj.req = obj.req ? obj.req.split('&').map(e => JSON.parse(e)) : [];
 		obj.sel = obj.sel ? obj.sel.split('&').map(e => {
 			const obj = JSON.parse(e);
-			if (obj.id === 'COMBAT_TECHNIQUES') {
+			if (obj.id === 'COMBAT_TECHNIQUES' || obj.id === 'COMBAT_TECHNIQUES_SECOND') {
 				obj.sid = obj.sid.map(e => `CT_${e}`);
 			}
 			else if (obj.id === 'CANTRIPS') {

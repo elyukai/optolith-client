@@ -360,8 +360,9 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 					value={value}
 					amount={amount}
 					disabled={combattech}
-					change={this.changeCombattech}
+					change={this.changeSecondCombatTechniques}
 					locale={locale}
+					second
 					/>
 			);
 		}
