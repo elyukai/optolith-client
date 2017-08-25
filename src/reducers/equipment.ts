@@ -36,7 +36,7 @@ const initialState: EquipmentState = {
 export function equipment(state: EquipmentState = initialState, action: Action): EquipmentState {
 	switch (action.type) {
 		case ActionTypes.CREATE_HERO:
-			return clear();
+			return clear(state);
 
 		case ActionTypes.SET_DUCATES:
 			return { ...state, purse: { ...state.purse, d: action.payload.value } };
@@ -122,10 +122,10 @@ export function equipment(state: EquipmentState = initialState, action: Action):
 	}
 }
 
-function clear(): EquipmentState {
+function clear(state: EquipmentState): EquipmentState {
 	return {
+		...state,
 		items: new Map(),
-		itemTemplates: new Map(),
 		armorZones: new Map(),
 		purse: {
 			d: '0',
