@@ -74,7 +74,7 @@ export class App extends React.Component<AppProps, AppState> {
 		return (
 			<div id="body">
 				<TitleBarNew {...other}/>
-				<TitleBar currentSection={section} currentTab={tab} locale={locale} {...other} />
+				<TitleBar {...other} currentSection={section} currentTab={tab} locale={locale} />
 				<Route id={tab} locale={locale} />
 			</div>
 		);

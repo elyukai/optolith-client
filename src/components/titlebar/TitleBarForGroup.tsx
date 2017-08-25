@@ -24,7 +24,7 @@ export interface TitleBarForGroupProps {
 }
 
 export function TitleBarForGroup(props: TitleBarForGroupProps) {
-	const { groupName, locale, saveGroup, setLocale, setSection } = props;
+	const { groupName, locale, saveConfig, saveGroup, setLocale, setSection } = props;
 	return (
 		<TitleBarWrapper>
 			<TitleBarLeft>
@@ -38,7 +38,7 @@ export function TitleBarForGroup(props: TitleBarForGroupProps) {
 					/>
 				<IconButton
 					icon="&#xE8B8;"
-					onClick={showSettings.bind(null, locale, setLocale)}
+					onClick={() => showSettings(locale, setLocale, saveConfig)}
 					/>
 				<IconButton
 					icon="&#xE868;"

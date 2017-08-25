@@ -18,9 +18,14 @@ export interface SettingsState {
 }
 
 export class Settings extends React.Component<SettingsProps, SettingsState> {
-	state: SettingsState = {
-		localeType: 'default'
-	};
+	constructor() {
+		super();
+		const { id, type } = store.getState().locale;
+		this.state = {
+			localeString: id,
+			localeType: type
+		};
+	}
 
 	unsubscribe: () => void;
 

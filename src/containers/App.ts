@@ -33,25 +33,25 @@ function mapStateToProps(state: AppState) {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
-		setSection: (id: 'main' | 'hero' | 'group') => {
+		setSection(id: 'main' | 'hero' | 'group') {
 			dispatch(LocationActions._setSection(id));
 		},
-		setTab: (id: string) => {
+		setTab(id: string) {
 			dispatch(LocationActions._setTab(id));
 		},
-		undo: () => {
+		undo() {
 			dispatch(HistoryActions.undo());
 		},
-		redo: () => {
+		redo() {
 			dispatch(HistoryActions.redo());
 		},
-		saveConfig: () => {
+		saveConfig() {
 			dispatch(PlatformActions.requestConfigSave());
 		},
-		saveHero: () => {
+		saveHero() {
 			dispatch(HerolistActions._saveHero());
 		},
-		saveHeroes: () => {
+		saveHeroes() {
 			dispatch(((dispatch, getState) => {
 				const locale = getMessages(getState());
 				if (locale) {
@@ -59,22 +59,22 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 				}
 			}) as AsyncAction);
 		},
-		saveGroup: () => {
+		saveGroup() {
 			dispatch(InGameActions._save());
 		},
-		setLocale: (id?: string) => {
+		setLocale(id?: string) {
 			dispatch(LocaleActions._setLocale(id));
 		},
-		minimize: () => {
+		minimize() {
 			remote.getCurrentWindow().minimize();
 		},
-		maximize: () => {
+		maximize() {
 			remote.getCurrentWindow().maximize();
 		},
-		restore: () => {
+		restore() {
 			remote.getCurrentWindow().unmaximize();
 		},
-		close: () => {
+		close() {
 			dispatch(((dispatch, getState) => {
 				const state = getState();
 				const safeToExit = !getUndoAvailability(state);

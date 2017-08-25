@@ -12,8 +12,7 @@ export function DialogButtons(props: DialogButtonsProps) {
 	const { list, onClickDefault } = props;
 
 	const buttons = Array.isArray(list) && list.length > 0 ? list.map(e => {
-		e.onClick = onClickDefault && onClickDefault.bind(null, e.onClick);
-		return <BorderButton {...e} key={e.label} />;
+		return <BorderButton {...e} onClick={onClickDefault ? onClickDefault.bind(null, e.onClick) : e.onClick} key={e.label} />;
 	}) : [];
 
 	return (

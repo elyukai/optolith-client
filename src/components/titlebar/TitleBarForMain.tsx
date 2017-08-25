@@ -23,7 +23,7 @@ export interface TitleBarForMainProps {
 }
 
 export function TitleBarForMain(props: TitleBarForMainProps) {
-	const { currentTab, locale, saveHeroes, setLocale, setTab } = props;
+	const { currentTab, locale, saveConfig, saveHeroes, setLocale, setTab } = props;
 
 	const tabs: TitleBarTabProps[] = [
 		{ label: _translate(locale, 'titlebar.tabs.heroes'), tag: 'herolist' },
@@ -44,7 +44,7 @@ export function TitleBarForMain(props: TitleBarForMainProps) {
 					/>}
 				<IconButton
 					icon="&#xE8B8;"
-					onClick={showSettings.bind(null, locale, setLocale)}
+					onClick={() => showSettings(locale, setLocale, saveConfig)}
 					/>
 				<IconButton
 					icon="&#xE868;"

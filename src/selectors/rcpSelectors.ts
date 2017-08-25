@@ -69,6 +69,8 @@ export const getAllRaces = createSelector(
 				uncommonDisadvantagesText
 			} = race;
 
+			const filteredCultures = commonCultures.filter(e => cultures.has(e)).map(e => cultures.get(e)!.name);
+
 			list.push({
 				id,
 				name,
@@ -78,7 +80,7 @@ export const getAllRaces = createSelector(
 				tou,
 				mov,
 				attributeAdjustments: attributeAdjustmentsText,
-				commonCultures: commonCultures.map(e => cultures.get(e)!.name),
+				commonCultures: filteredCultures,
 				automaticAdvantages: automaticAdvantagesText,
 				stronglyRecommendedAdvantages: stronglyRecommendedAdvantagesText,
 				stronglyRecommendedDisadvantages: stronglyRecommendedDisadvantagesText,
@@ -180,7 +182,7 @@ export const getAllProfessions = createSelector(
 				skills[gr - 1].push({ name, value });
 			}
 
-			const filteredVariants = variants.map(v => professionVariants.get(v)!).filter(filterProfession);
+			const filteredVariants = variants.filter(e => professionVariants.has(e)).map(v => professionVariants.get(v)!).filter(filterProfession);
 
 			list.push({
 				id,
