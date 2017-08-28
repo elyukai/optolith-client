@@ -101,18 +101,18 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 			let finalCost = cost;
 
 			if (['DISADV_17', 'DISADV_18'].includes(id)) {
-				finalCost -= -10;
+				finalCost += 10;
 			}
 
 			const addState = isDisadvantage ? [...state.disadv] as DisAdvAdventurePoints : [...state.adv] as DisAdvAdventurePoints;
 
 			if (isBlessed) {
-				addState[2] += Math.abs(cost);
+				addState[2] += isDisadvantage ? -cost : cost;
 			}
 			else if (isMagical) {
-				addState[1] += Math.abs(cost);
+				addState[1] += isDisadvantage ? -cost : cost;
 			}
-			addState[0] += Math.abs(cost);
+			addState[0] += isDisadvantage ? -cost : cost;
 
 			return {
 				...state,

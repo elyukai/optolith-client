@@ -23,20 +23,11 @@
 		"target": "es2017"
 	},
 	"include": [
-		"src/actions/**/*",
-		"src/components/**/*",
-		"src/constants/**/*",
-		"src/containers/**/*",
-		"src/dispatcher/**/*",
-		"src/reducers/**/*",
-		"src/selectors/**/*",
-		"src/stores/**/*",
-		"src/types/**/*",
-		"src/utils/**/*",
-		"src/views/**/*",
+		"src/**/*",
 		"src/*"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"src/data/*"
 	]
 }
