@@ -20,7 +20,7 @@ function createWindow() {
 		minHeight: 720,
 		minWidth: 1280,
 		resizable: true,
-		icon: path.join(app.getAppPath(), 'app', 'favicon.png'),
+		icon: path.join(app.getAppPath(), 'app', 'icon.png'),
 		frame: false,
 		center: true,
 		title: 'TDE Heroes',
