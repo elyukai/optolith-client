@@ -27,6 +27,15 @@ export class RCP extends React.Component<RCPProps, RCPState> {
 		tab: 'race',
 	};
 
+	componentWillReceiveProps(nextProps: RCPProps) {
+		if (nextProps.currentCultureId === undefined && this.state.tab === 'profession') {
+			this.setState(() => ({ tab: 'culture' }));
+		}
+		if (nextProps.currentRaceId === undefined && this.state.tab === 'culture') {
+			this.setState(() => ({ tab: 'race' }));
+		}
+	}
+
 	handleClick = (tab: string) => this.setState({ tab } as RCPState);
 	switchToCultures = () => this.setState({ tab: 'culture' } as RCPState);
 	switchToProfessions = () => this.setState({ tab: 'profession' } as RCPState);

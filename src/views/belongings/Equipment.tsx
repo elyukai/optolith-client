@@ -98,13 +98,17 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
 		const list = filterAndSortObjects(items, locale.id, filterText, sortOptionArrays[sortOrder as keyof typeof sortOptionArrays]);
 
-		const filterTemplates = (e: ItemInstance): boolean => {
+		const filterTemplatesByIsActiveAndInGroup = (e: ItemInstance): boolean => {
 			const isGroup = e.gr === filterGroupSlidein;
 			const isNotInList = !items.find(item => item.template === e.template && item.isTemplateLocked);
 			return isGroup && isNotInList;
 		};
 
-		const templateList = filterAndSortObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplates) : templates, locale.id, filterTextSlidein);
+		const filterTemplatesByIsActive = (e: ItemInstance): boolean => {
+			return !items.find(item => item.template === e.template && item.isTemplateLocked);
+		};
+
+		const templateList = filterAndSortObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive), locale.id, filterTextSlidein);
 
 		return (
 			<Page id="equipment">
