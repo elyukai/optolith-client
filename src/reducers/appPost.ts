@@ -30,7 +30,7 @@ export function appPost(state: AppState, action: Action, previousState: AppState
 							...state.currentHero.present.equipment,
 							itemTemplates: new Map(Object.entries(action.payload.tables.items).map(([key, obj]) => {
 								return [key, initItem(obj, action.payload.locales[getLocale(state)].items)] as [string, ItemInstance];
-							}).filter(e => e))
+							}).filter(e => e[1]))
 						}
 					}
 				}

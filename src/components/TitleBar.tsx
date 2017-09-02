@@ -40,10 +40,10 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
 
 		return (
 			<TitleBarWrapper>
-				<TitleBarButton icon="&#xE15B;" onClick={minimize} />
-				{!isMaximized && <TitleBarButton icon="&#xE5D0;" onClick={maximize} />}
-				{isMaximized && <TitleBarButton icon="&#xE5D1;" onClick={restore} />}
-				<TitleBarButton icon="&#xE5CD;" onClick={close} className="close" />
+				<TitleBarButton icon="&#xE903;" onClick={minimize} />
+				{!isMaximized && <TitleBarButton icon="&#xE901;" onClick={maximize} />}
+				{isMaximized && <TitleBarButton icon="&#xE902;" onClick={restore} />}
+				<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
 			</TitleBarWrapper>
 		);
 	}

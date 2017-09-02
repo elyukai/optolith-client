@@ -73,7 +73,8 @@ export class App extends React.Component<AppProps, AppState> {
 
 		return (
 			<div id="body">
-				<TitleBarNew {...other}/>
+				<div className="background-image"></div>
+				<TitleBarNew {...other} />
 				<TitleBar {...other} currentSection={section} currentTab={tab} locale={locale} />
 				<Route id={tab} locale={locale} />
 			</div>

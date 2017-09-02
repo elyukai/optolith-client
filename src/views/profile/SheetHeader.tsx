@@ -25,7 +25,7 @@ export function SheetHeader(props: SheetHeaderProps) {
 			<div className="sheet-title">
 				<h1>{_translate(locale, 'charactersheet.title')}</h1>
 				<p>{title}</p>
-				<img src="images/logo.svg" alt="" />
+				<img src="images/icon.svg" alt="" />
 			</div>
 			<div className="sheet-attributes">
 				{

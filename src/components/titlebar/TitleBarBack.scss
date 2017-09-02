@@ -3,14 +3,14 @@
 	display: flex;
 	position: relative;
 	margin-left: 35px;
+	margin-right: 12px;
 	width: 40px;
 	align-items: center;
-	padding-left: 4px;
 
 	+ div {
 		margin-left: 28px;
 	}
-		
+
 	&:after {
 		position: absolute;
 		height: 50px;
@@ -18,26 +18,17 @@
 		content: "";
 		background: #3c3732;
 		top: ($titlebar-height - 50px) / 2;
-		right: -1px;
+		right: -13px;
 	}
 
 	> div {
-		@include size(19px);
-	}
-
-	svg {
-		transform: rotate(45deg);
-
-		path {
-			fill: #c89b3c;
-		}
+		@include size(32px);
+		font: 32px TDE Heroes;
+		color: $c2;
 
 		&:hover {
 			cursor: pointer;
-
-			path {
-				fill: #f1e6d4;
-			}
+			color: $c3;
 		}
 	}
 }
