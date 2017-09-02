@@ -1,41 +1,55 @@
 import * as React from 'react';
-import * as AttributesActions from '../../actions/AttributesActions';
-import { getAE, getKP } from '../../utils/secondaryAttributes';
-import AttributesPermanentListItem from './AttributesPermanentListItem';
+import { EnergyWithLoss, SecondaryAttribute } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
+import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 
-interface Props {
+export interface AttributesPermanentListProps {
+	derived: SecondaryAttribute[];
+	locale: UIMessages;
 	phase: number;
+	addBoughtBackAEPoint(): void;
+	removeBoughtBackAEPoint(): void;
+	addLostAEPoint(): void;
+	removeLostAEPoint(): void;
+	addLostAEPoints(value: number): void;
+	addBoughtBackKPPoint(): void;
+	removeBoughtBackKPPoint(): void;
+	addLostKPPoint(): void;
+	removeLostKPPoint(): void;
+	addLostKPPoints(value: number): void;
 }
 
-export default class AttributesPermanentList extends React.Component<Props, undefined> {
-	render() {
-		const { phase } = this.props;
-		const AE = getAE();
-		const KP = getKP();
+export function AttributesPermanentList(props: AttributesPermanentListProps) {
+	const AE = props.derived.find(e => e.id === 'AE') as EnergyWithLoss | undefined;
+	const KP = props.derived.find(e => e.id === 'KP') as EnergyWithLoss | undefined;
 
-		return (
-			<div className="permanent">
-				{ typeof AE.value === 'number' ? (
-					<AttributesPermanentListItem
-						redeemed={AE.permanentRedeemed}
-						lost={AE.permanentLost}
-						redeem={AttributesActions.redeemAEPoint}
-						removeRedeemed={AttributesActions.removeRedeemedAEPoint}
-						removePermanent={AttributesActions.removePermanentAEPoint}
-						phase={phase}
-						/>
-				) : <div className="placeholder"></div> }
-				{ typeof KP.value === 'number' ? (
-					<AttributesPermanentListItem
-						redeemed={KP.permanentRedeemed}
-						lost={KP.permanentLost}
-						redeem={AttributesActions.redeemKPPoint}
-						removeRedeemed={AttributesActions.removeRedeemedKPPoint}
-						removePermanent={AttributesActions.removePermanentKPPoint}
-						phase={phase}
-						/>
-				) : null }
-			</div>
-		);
-	}
+	return (
+		<div className="permanent">
+			{ AE !== undefined && typeof AE.value === 'number' ? (
+				<AttributesPermanentListItem
+					{...props}
+					id="AE"
+					label={_translate(props.locale, 'attributes.pae.short')}
+					name={_translate(props.locale, 'attributes.pae.name')}
+					boughtBack={AE.permanentRedeemed}
+					lost={AE.permanentLost}
+					addBoughtBack={props.addBoughtBackAEPoint}
+					addLost={props.addLostAEPoints}
+					/>
+			) : <div className="placeholder"></div> }
+			{ KP !== undefined && typeof KP.value === 'number' && (
+				<AttributesPermanentListItem
+					{...props}
+					id="KP"
+					label={_translate(props.locale, 'attributes.pkp.short')}
+					name={_translate(props.locale, 'attributes.pkp.name')}
+					boughtBack={KP.permanentRedeemed}
+					lost={KP.permanentLost}
+					addBoughtBack={props.addBoughtBackKPPoint}
+					addLost={props.addLostKPPoints}
+					/>
+			) }
+		</div>
+	);
 }

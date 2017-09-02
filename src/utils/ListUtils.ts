@@ -1,151 +1,109 @@
-import SpellsStore from '../stores/SpellsStore';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { ToOptionalKeys } from '../types/data.d';
+import { AbilityInstanceExtended, Instance } from '../types/data.d';
+import { getStateKeyById } from './IDUtils';
 
-interface Data {
-	ap?: number;
-	gr?: number;
-	ic?: number;
-	property?: number;
-	aspect?: number[];
-	price?: number;
-	weight?: number;
-	where?: string;
-	[id: string]: any;
+/**
+ * Merges a Map into another Map. Returns a new Map if the second map has entries.
+ * @param oldList The old Map.
+ * @param newList The new/updated Map.
+ */
+export function mergeIntoList<TKey, TValue>(oldList: Map<TKey, TValue>, newList: Map<TKey, TValue>) {
+	if (newList.size === 0) {
+		return oldList;
+	}
+	return new Map([...oldList, ...newList]);
 }
 
-interface PlainNameData extends Data {
-	name: string;
+/**
+ * Sets an item of a Map and returns a new Map.
+ * @param list The current Map.
+ * @param key The key of the entry.
+ * @param value The entry itself.
+ */
+export function setListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey, value: TValue) {
+	return new Map(list).set(key, value);
 }
 
-interface NameBySexData extends Data {
-	name: {
-		m: string;
-		f: string;
-	};
+/**
+ * Removes an item from a Map and returns a new Map.
+ * @param list The current Map.
+ * @param key The key of the entry.
+ */
+export function removeListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey) {
+	const newlist = new Map(list);
+	newlist.delete(key);
+	return newlist;
 }
 
-export const filter = (list: PlainNameData[], filterText: string, addProperty?: string): PlainNameData[] => {
-	if (filterText !== '') {
-		filterText = filterText.toLowerCase();
-		return list.filter(obj => obj.name.toLowerCase().match(filterText) && (!addProperty || (obj[addProperty] as string).toLowerCase().match(filterText)));
+export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToOptionalKeys<DependentInstancesState>, id: string, item: T) {
+	const key = getStateKeyById(id);
+	if (key) {
+		let slice = newstate[key] as Map<string, T> | undefined;
+		if (slice) {
+			slice = setListItem(slice, id, item);
+		}
+		else {
+			slice = new Map().set(id, item);
+		}
+		return {
+			...newstate,
+			[key]: slice
+		};
 	}
-	return list;
-};
+	return newstate;
+}
 
-let SEX: 'm' | 'f';
-
-export const filterSex = (list: NameBySexData[], filterText: string, addProperty?: string): NameBySexData[] => {
-	if (filterText !== '') {
-		filterText = filterText.toLowerCase();
-		return list.filter(obj => obj.name[SEX].toLowerCase().match(filterText) && (!addProperty || (obj[addProperty] as string).toLowerCase().match(filterText)));
+export function setStateItem<T extends Instance>(newstate: DependentInstancesState, id: string, item: T) {
+	const key = getStateKeyById(id);
+	if (key) {
+		return {
+			...newstate,
+			[key]: setListItem(newstate[key] as Map<string, T>, id, item)
+		};
 	}
-	return list;
-};
+	return newstate;
+}
 
-export const sortByName = (a: PlainNameData, b: PlainNameData) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+export function mergeIntoState(oldstate: DependentInstancesState, newstate: ToOptionalKeys<DependentInstancesState>): DependentInstancesState {
+	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
 
+	type D = DependentInstancesState;
 
-export const sortByNameSex = (a: NameBySexData, b: NameBySexData) => {
-	const an = a.name[SEX] || a.name;
-	const bn = b.name[SEX] || b.name;
-	return an < bn ? -1 : an > bn ? 1 : 0;
-};
-
-export const sortByCost = (a: PlainNameData, b: PlainNameData) => a.ap! < b.ap! ? -1 : a.ap! > b.ap! ? 1 : sortByName(a, b);
-
-export const sortByCostSex = (a: NameBySexData, b: NameBySexData) => a.ap! < b.ap! ? -1 : a.ap! > b.ap! ? 1 : sortByNameSex(a, b);
-
-export const sortByGroup = (a: PlainNameData, b: PlainNameData) => a.gr! < b.gr! ? -1 : a.gr! > b.gr! ? 1 : sortByName(a, b);
-
-let GROUPS: string[];
-
-export const sortByGroupName = (a: PlainNameData, b: PlainNameData) => {
-	const agr = GROUPS[a.gr! - 1];
-	const bgr = GROUPS[b.gr! - 1];
-	return agr < bgr ? -1 : agr > bgr ? 1 : sortByName(a, b);
-};
-
-export const sortByIC = (a: PlainNameData, b: PlainNameData) => a.ic! < b.ic! ? -1 : a.ic! > b.ic! ? 1 : sortByName(a, b);
-
-export const sortByProperty = (a: PlainNameData, b: PlainNameData) => {
-	const PROPERTIES = SpellsStore.getPropertyNames();
-	const ap = PROPERTIES[a.property! - 1];
-	const bp = PROPERTIES[b.property! - 1];
-	return ap < bp ? -1 : ap > bp ? 1 : sortByName(a, b);
-};
-
-export const sortByAspect = (a: PlainNameData, b: PlainNameData) => {
-	return a.aspect! < b.aspect! ? -1 : a.aspect! > b.aspect! ? 1 : sortByName(a, b);
-};
-
-export const sortByPrice = (a: PlainNameData, b: PlainNameData) => a.price! < b.price! ? -1 : a.price! > b.price! ? 1 : sortByName(a, b);
-
-export const sortByWeight = (a: PlainNameData, b: PlainNameData) => a.weight! < b.weight! ? -1 : a.weight! > b.weight! ? 1 : sortByName(a, b);
-
-export const sortByWhere = (a: PlainNameData, b: PlainNameData) => a.where! < b.where! ? -1 : a.where! > b.where! ? 1 : sortByName(a, b);
-
-export const sort = (list: PlainNameData[], sortOrder: string): PlainNameData[] => {
-	let sort;
-	switch (sortOrder) {
-		case 'name':
-			sort = sortByName;
-			break;
-		case 'cost':
-			sort = sortByCost;
-			break;
-		case 'group':
-			sort = sortByGroup;
-			break;
-		case 'groupname':
-			sort = sortByGroupName;
-			break;
-		case 'ic':
-			sort = sortByIC;
-			break;
-		case 'property':
-			sort = sortByProperty;
-			break;
-		case 'aspect':
-			sort = sortByAspect;
-			break;
-		case 'price':
-			sort = sortByPrice;
-			break;
-		case 'weight':
-			sort = sortByWeight;
-			break;
-		case 'where':
-			sort = sortByWhere;
-			break;
-
-		default:
-			return list;
+	const total = { ...oldstate };
+	for (const key of keys) {
+		total[key] = mergeIntoStateSlice<keyof D>(total[key], newstate[key]);
 	}
-	return list.sort(sort);
-};
 
-export const sortSex = (list: NameBySexData[], sortOrder: string): NameBySexData[] => {
-	let sort;
-	switch (sortOrder) {
-		case 'name':
-			sort = sortByNameSex;
-			break;
-		case 'cost':
-			sort = sortByCostSex;
-			break;
+	return total;
+}
 
-		default:
-			return list;
-	}
-	return list.sort(sort);
-};
+export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
+	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
 
-export const filterAndSort = <T>(list: T[], filterText: string, sortOrder: string, option?: string[] | 'm' | 'f'): T[] => {
-	if (Array.isArray(option)) {
-		GROUPS = option;
+	type D = DependentInstancesState;
+
+	const total = { ...oldstate };
+	for (const key of keys) {
+		total[key] = mergeIntoOptionalStateSlice<keyof D>(total[key], newstate[key]);
 	}
-	else if (typeof option === 'string') {
-		SEX = option;
-		return sortSex(filterSex(list as any, filterText), sortOrder) as any;
+
+	return total;
+}
+
+function mergeIntoStateSlice<T extends keyof DependentInstancesState>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+	if (newslice) {
+		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
 	}
-	return sort(filter(list as any, filterText), sortOrder) as any;
-};
+	return oldslice;
+}
+
+function mergeIntoOptionalStateSlice<T extends keyof DependentInstancesState>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+	if (newslice && oldslice) {
+		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+	}
+	else if (newslice) {
+		return newslice;
+	}
+	return oldslice;
+}

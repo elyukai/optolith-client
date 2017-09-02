@@ -1,19 +1,15 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 
-export default class Icon extends React.Component<any, any> {
+export interface IconProps {
+	className?: string;
+	[id: string]: any;
+}
 
-	static defaultProps = {
-		className: 'icon'
-	};
+export function Icon(props: IconProps) {
+	const { className, ...other } = props;
 
-	render() {
-
-		const { children, ...other } = this.props;
-
-		return (
-			<div {...other}>
-				{children}
-			</div>
-		);
-	}
+	return (
+		<div className={classNames('icon', className)} {...other} />
+	);
 }

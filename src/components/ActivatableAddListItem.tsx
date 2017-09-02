@@ -1,84 +1,81 @@
-import classNames from 'classnames';
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
-import { get } from '../stores/ListStore';
-import SpecialAbilitiesStore from '../stores/SpecialAbilitiesStore';
-import Dropdown from './Dropdown';
-import IconButton from './IconButton';
-import TextField from './TextField';
+import { getSkills } from '../selectors/stateSelectors';
+import { store } from '../stores/AppStore';
+import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance, UIMessages } from '../types/data.d';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { sortObjects } from '../utils/FilterSortUtils';
+import { translate } from '../utils/I18n';
+import { getRoman } from '../utils/NumberUtils';
+import { Dropdown } from './Dropdown';
+import { IconButton } from './IconButton';
+import { ListItem } from './ListItem';
+import { ListItemButtons } from './ListItemButtons';
+import { ListItemGroup } from './ListItemGroup';
+import { ListItemName } from './ListItemName';
+import { ListItemSelections } from './ListItemSelections';
+import { ListItemSeparator } from './ListItemSeparator';
+import { ListItemValues } from './ListItemValues';
+import { TextField } from './TextField';
 
-interface AddObject {
-	id: string;
-	cost?: number;
-	sel?: string | number;
-	sel2?: string | number;
-	input?: string;
-	tier?: number;
-}
-
-interface Props {
-	item: ActivatableInstance;
+export interface ActivatableAddListItemProps {
+	item: DeactiveViewObject;
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
+	hideGroup?: boolean;
+	locale: UIMessages;
 	addToList(args: ActivateArgs): void;
+	get(id: string): Instance | undefined;
 }
 
-interface State {
-	selected: string | number;
-	selected2: string | number;
-	selectedTier: number;
-	input: string;
-	input2: string;
+export interface ActivatableAddListItemState {
+	selected?: string | number;
+	selected2?: string | number;
+	selectedTier?: number;
+	input?: string;
+	input2?: string;
 }
 
-const specialAbilityGroupNames = SpecialAbilitiesStore.getGroupNames();
-
-export default class ActivatableAddListItem extends React.Component<Props, State> {
-	state: State = {
-		input: '',
-		input2: '',
-		selected: '',
-		selected2: '',
-		selectedTier: 0,
-	};
+export class ActivatableAddListItem extends React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
+	state: ActivatableAddListItemState = {};
 
 	handleSelect = (selected: string | number) => {
 		if (this.state.selected2) {
-			this.setState({ selected, selected2: '' } as State);
+			this.setState({ selected, selected2: undefined } as ActivatableAddListItemState);
 		}
 		else {
-			this.setState({ selected } as State);
+			this.setState({ selected } as ActivatableAddListItemState);
 		}
 	}
-	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
+	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as ActivatableAddListItemState);
 	handleSelectTier = (selectedTier: number) => {
 		if (['DISADV_34', 'DISADV_50'].includes(this.props.item.id)) {
-			this.setState({ selectedTier, selected: '' } as State);
+			this.setState({ selectedTier, selected: undefined } as ActivatableAddListItemState);
 		} else {
-			this.setState({ selectedTier } as State);
+			this.setState({ selectedTier } as ActivatableAddListItemState);
 		}
 	}
-	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value } as State);
-	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value } as State);
+	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value || undefined } as ActivatableAddListItemState);
+	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value || undefined } as ActivatableAddListItemState);
 	addToList = (args: ActivateArgs) => {
 		this.props.addToList(args);
-		if (this.state.selected !== '' || this.state.selectedTier !== 0 || this.state.input !== '') {
+		if (this.state.selected !== undefined || this.state.selectedTier !== undefined || this.state.input !== undefined) {
 			this.setState({
-				input: '',
-				input2: '',
-				selected: '',
-				selected2: '',
-				selectedTier: 0,
-			} as State);
+				input: undefined,
+				input2: undefined,
+				selected: undefined,
+				selected2: undefined,
+				selectedTier: undefined
+			} as ActivatableAddListItemState);
 		}
 	}
 
 	render() {
-		const { item, isImportant, isTypical, isUntypical } = this.props;
-		const { id, name, cost, sel, tiers } = item as ActivatableInstance & { tiers?: number; };
+		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale } = this.props;
+		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
-		const { category, gr } = get(id) as ActivatableInstance & { gr?: number; };
+		const { input: inputText, selected, selected2, selectedTier } = this.state;
 		let sel2: SelectionObject[] | undefined;
 
 		const args: ActivateArgs = { id, cost: 0 };
@@ -89,7 +86,7 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		let selectElement;
 		let selectElement2;
 		let selectElementDisabled = false;
-		if (['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id) && this.state.input) {
+		if (['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id) && inputText) {
 			selectElementDisabled = true;
 		}
 		let inputElement;
@@ -100,132 +97,174 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			case 'ADV_17':
 			case 'ADV_47':
 			case 'DISADV_48':
-				if (this.state.selected !== '') {
-					currentCost = (cost as number[])[(get(this.state.selected as string) as CombatTechniqueInstance | LiturgyInstance | SpellInstance | TalentInstance).ic - 1];
+			case 'SA_252':
+			case 'SA_273':
+				if (typeof selected === 'string') {
+					currentCost = (cost as number[])[(get(selected) as SkillishInstance).ic - 1];
 				}
-				args.sel = this.state.selected;
+				args.sel = selected;
 				break;
 			case 'ADV_28':
-			case 'ADV_29':
-				currentCost = typeof this.state.selected === 'number' ? (get(id) as AdvantageInstance).sel[this.state.selected as number - 1].cost : '';
+			case 'ADV_29': {
+				const item = get(id) as ActivatableInstance;
+				const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
+				currentCost = selectionItem && selectionItem.cost;
+				args.sel = selected;
 				break;
+			}
 			case 'DISADV_1':
-				if (this.state.selectedTier > 0) {
-					currentCost = (cost as number) * this.state.selectedTier;
+				if (typeof selectedTier === 'number') {
+					currentCost = (cost as number) * selectedTier;
 				}
-				if (this.state.selected === '' && this.state.input === '') {
+				if (typeof selected === 'string' && typeof inputText === 'string') {
 					disabled = true;
 				}
-				args.sel = this.state.selected;
-				args.input = this.state.input;
-				args.tier = this.state.selectedTier;
+				args.sel = selected;
+				args.input = inputText;
+				args.tier = selectedTier;
 				break;
 			case 'DISADV_34':
 			case 'DISADV_50': {
-				if (this.state.selectedTier > 0) {
+				if (typeof selectedTier === 'number') {
 					const maxCurrentTier = (get(id) as DisadvantageInstance).active.reduce((a, b) => (b.tier as number) > a ? (b.tier as number) : a, 0);
-					currentCost = maxCurrentTier >= this.state.selectedTier ? 0 : (cost as number) * (this.state.selectedTier - maxCurrentTier);
+					currentCost = maxCurrentTier >= selectedTier ? 0 : (cost as number) * (selectedTier - maxCurrentTier);
 				}
 				const currentSelIDs = new Set((get(id) as DisadvantageInstance).active.map(e => e.sid));
-				const newSel = (sel as Array<SelectionObject & { tier: number; }>).filter(e => this.state.selectedTier === e.tier && !currentSelIDs.has(e.id));
+				const newSel = (sel as Array<SelectionObject & { tier: number; }>).filter(e => selectedTier === e.tier && !currentSelIDs.has(e.id));
 				selectElement = (
 					<Dropdown
-						value={this.state.selected}
+						value={selected}
 						onChange={this.handleSelect}
 						options={newSel}
-						disabled={this.state.selectedTier === 0 || selectElementDisabled} />
+						disabled={selectedTier === 0 || selectElementDisabled} />
 				);
-				if (this.state.selected === '' && this.state.input === '') {
+				if (typeof selected === 'string' && typeof inputText === 'string') {
 					disabled = true;
 				}
-				args.sel = this.state.selected;
-				args.input = this.state.input;
-				args.tier = this.state.selectedTier;
+				args.sel = selected;
+				args.input = inputText;
+				args.tier = selectedTier;
 				break;
 			}
 			case 'ADV_32':
 			case 'DISADV_24':
-				if (this.state.selected === '' && this.state.input === '') {
+				if (typeof selected === 'string' && typeof inputText === 'string') {
 					disabled = true;
 				}
-				args.sel = this.state.selected;
-				args.input = this.state.input;
+				args.sel = selected;
+				args.input = inputText;
 				currentCost = cost as number;
+				break;
+			case 'ADV_68':
+				args.sel = selected;
+				args.input = inputText;
+				const item = get(id) as ActivatableInstance;
+				const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
+				currentCost = selectionItem && selectionItem.cost;
 				break;
 			case 'DISADV_33':
 			case 'DISADV_37':
 			case 'DISADV_51':
 				if (id === 'DISADV_33') {
 					let disab = true;
-					if ([7, 8].includes(this.state.selected as number)) {
-						args.input = this.state.input;
-						currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1].cost;
+					if ([7, 8].includes(selected as number)) {
+						args.input = inputText;
+						const item = get(id) as ActivatableInstance;
+						const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
+						currentCost = selectionItem && selectionItem.cost;
 						disab = false;
 					}
 					inputElement = (
 						<TextField
-							value={this.state.input}
+							value={inputText}
 							onChange={this.handleInput}
 							disabled={disab} />
 					);
 				}
-				if (this.state.selected === 7 && (get(id) as DisadvantageInstance).active.filter(e => e.sid === 7).length > 0) {
+				if (selected === 7 && (get(id) as DisadvantageInstance).active.find(e => e.sid === 7) !== undefined) {
 					currentCost = 0;
-				} else if (this.state.selected !== '') {
-					currentCost = (get(id) as DisadvantageInstance).sel[this.state.selected as number - 1].cost;
 				}
-				args.sel = this.state.selected;
+				else if (typeof selected === 'number') {
+					const item = get(id) as ActivatableInstance;
+					const selectionItem = ActivatableUtils.getSelectionItem(item, selected);
+					currentCost = selectionItem && selectionItem.cost;
+				}
+				args.sel = selected;
 				break;
 			case 'DISADV_36':
 			case 'DISADV_45':
-				if (this.state.selected === '' && this.state.input === '') {
+				if (typeof selected === 'string' && typeof inputText === 'string') {
 					disabled = true;
 				}
 				currentCost = id === 'DISADV_36' && (get(id) as DisadvantageInstance).active.length > 2 ? 0 : cost as number;
-				args.sel = this.state.selected;
-				args.input = this.state.input;
+				args.sel = selected;
+				args.input = inputText;
 				break;
 			case 'SA_10':
-				type Sel = Array<SelectionObject & { specialisation: string[] | null; specialisationInput: string | null }>;
-				if (this.state.selected !== '') {
-					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).filter(e => e.id === this.state.selected)[0];
-					currentCost = o.cost;
-					sel2 = o.specialisation ? o.specialisation.map((e, id) => ({ id: id + 1, name: e })) : undefined;
-					input = o.specialisationInput;
+				type Sel = Array<SelectionObject & TalentInstance>;
+				if (typeof selected === 'string') {
+					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
+					if (o) {
+						currentCost = o.cost;
+						sel2 = o.applications;
+						input = o.applicationsInput;
+					}
 				}
-				args.sel = this.state.selected;
-				args.sel2 = this.state.selected2;
-				args.input = this.state.input;
+				args.sel = selected;
+				args.sel2 = selected2;
+				args.input = inputText;
 				break;
 			case 'SA_30':
-				args.sel = this.state.selected;
-				args.tier = this.state.selectedTier;
-				if (this.state.selected !== '' && this.state.selectedTier !== 0) {
-					currentCost = this.state.selectedTier === 4 ? 0 : (cost as number) * this.state.selectedTier;
+				args.sel = selected;
+				args.tier = selectedTier;
+				if (typeof selected === 'number' && typeof selectedTier === 'number') {
+					currentCost = selectedTier === 4 ? 0 : (cost as number) * selectedTier;
+				}
+				break;
+			case 'SA_86':
+				args.sel = selected;
+				args.sel2 = selected2;
+				if (selected === 9) {
+					sel2 = sortObjects([...getSkills(store.getState()).values()], locale.id);
+				}
+				else if (selected === 6) {
+					const musictraditionIds = [1, 2, 3];
+					sel2 = musictraditionIds.map((id, index) => ({ id, name: translate('musictraditions')[index]}));
+				}
+				else if (selected === 7) {
+					const dancetraditionIds = [4, 5, 6, 7];
+					sel2 = dancetraditionIds.map((id, index) => ({ id, name: translate('dancetraditions')[index]}));
 				}
 				break;
 			default:
 				if (cost === 'sel') {
-					if (this.state.selected !== '') {
-						const selected = typeof this.state.selected === 'string' ? Number.parseInt(this.state.selected) : this.state.selected;
-						currentCost = (get(id) as AdvantageInstance | DisadvantageInstance | SpecialAbilityInstance).sel[selected - 1].cost;
-					}
-					args.sel = this.state.selected;
-				} else if (sel !== undefined && sel.length > 0) {
-					args.sel = this.state.selected;
+					args.sel = selected;
+				}
+				else if (sel !== undefined && sel.length > 0) {
+					args.sel = selected;
 					currentCost = cost as number;
-				} else if (tiers !== undefined && tiers !== null) {
-					if (this.state.selectedTier > 0) {
-						currentCost = (cost as number) * this.state.selectedTier;
+				}
+				else if (tiers && typeof selectedTier === 'number') {
+					if (selectedTier > 0) {
+						currentCost = (cost as number) * selectedTier;
 					}
-					args.tier = this.state.selectedTier;
-				} else if (input !== undefined && input !== null) {
-					args.input = this.state.input;
+					args.tier = selectedTier;
+				}
+				else if (input) {
+					args.input = inputText;
 					currentCost = cost as number;
-				} else {
+				}
+				else {
 					currentCost = cost as number;
 				}
 				break;
+		}
+
+		if (selected !== undefined && cost === 'sel' && currentCost === undefined) {
+			const sid = typeof selected === 'string' ? Number.parseInt(selected) : selected;
+			const item = get(id) as ActivatableInstance;
+			const selectionItem = ActivatableUtils.getSelectionItem(item, sid);
+			currentCost = selectionItem && selectionItem.cost;
 		}
 
 		if (category === Categories.DISADVANTAGES && currentCost) {
@@ -236,63 +275,76 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 			args.cost = currentCost;
 		}
 
-		const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-		if (tiers) {
-			const array = Array.from(Array(tiers).keys()).map(e => ({ id: e + 1, name: roman[e] }));
+		if (typeof tiers === 'number') {
+			const min = Math.max(1, minTier);
+			const max = Math.min(tiers, maxTier);
+			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
 			tierElement = (
 				<Dropdown
 					className="tiers"
-					value={this.state.selectedTier}
+					value={selectedTier}
 					onChange={this.handleSelectTier}
 					options={array} />
 			);
-			if (this.state.selectedTier === 0) {
+			if (selectedTier === undefined) {
 				disabled = true;
 			}
 		}
 
-		if (sel && sel.length > 0 && !['DISADV_34', 'DISADV_50'].includes(id)) {
+		if (Array.isArray(sel) && sel.length > 0 && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			selectElement = (
 				<Dropdown
-					value={this.state.selected}
+					value={selected}
 					onChange={this.handleSelect}
 					options={sel}
 					disabled={selectElementDisabled} />
 			);
 		}
 
-		if (sel && this.state.selected === '' && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
+		if (Array.isArray(sel) && selected === undefined && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
 			disabled = true;
 		}
 
-		if (input && !['ADV_28', 'ADV_29'].includes(id)) {
+		if (typeof input === 'string' && !['ADV_28', 'ADV_29'].includes(id)) {
 			inputElement = (
 				<TextField
 					hint={input}
-					value={this.state.input}
+					value={inputText}
 					onChange={this.handleInput} />
 			);
-			if (!this.state.input && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
+			if (inputText === undefined && !['ADV_32', 'DISADV_1', 'DISADV_24', 'DISADV_34', 'DISADV_36', 'DISADV_45', 'DISADV_50'].includes(id)) {
 				disabled = true;
 			}
 		}
 
-		if (id === 'SA_10' && sel2) {
+		if (id === 'SA_10') {
 			inputElement = (
 				<TextField
-					hint={input === null ? '' : input}
-					value={this.state.input}
+					hint={!input ? '' : input}
+					value={inputText}
 					onChange={this.handleInput}
-					disabled={input === null} />
+					disabled={!input} />
 			);
-			selectElement2 = (
+			selectElement2 = Array.isArray(sel2) && (
 				<Dropdown
-					value={this.state.selected2}
+					value={selected2}
 					onChange={this.handleSelect2}
 					options={sel2}
-					disabled={sel2.length === 0 || this.state.input !== '' || this.state.selected === ''} />
+					disabled={sel2.length === 0 || inputText !== undefined || selected === undefined} />
 			);
-			if (this.state.selected2 === '' && this.state.input === '') {
+			if (selected2 === undefined && inputText === undefined) {
+				disabled = true;
+			}
+		}
+		else if (Array.isArray(sel2)) {
+			selectElement2 = (
+				<Dropdown
+					value={selected2}
+					onChange={this.handleSelect2}
+					options={sel2}
+					disabled={sel2.length === 0 || selected === undefined} />
+			);
+			if (selected2 === undefined) {
 				disabled = true;
 			}
 		}
@@ -307,34 +359,25 @@ export default class ActivatableAddListItem extends React.Component<Props, State
 		}
 
 		return (
-			<div
-				className={classNames({
-					'imp': isImportant,
-					'list-item': true,
-					'typ': isTypical,
-					'untyp': isUntypical,
-				})}
-				>
-				<div className="name">
-					<p className="title">{name}</p>
-				</div>
-				<div className="selections">
+			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
+				<ListItemName name={name} />
+				<ListItemSelections>
 					{tierElement1}
 					{selectElement}
 					{selectElement2}
 					{inputElement}
 					{tierElement2}
-				</div>
-				<div className="hr"></div>
-				{gr ? <div className="group">{specialAbilityGroupNames[gr - 1]}</div> : undefined}
-				<div className="values">
+				</ListItemSelections>
+				<ListItemSeparator/>
+				{!hideGroup && <ListItemGroup list={translate('specialabilities.view.groups')} index={gr} />}
+				<ListItemValues>
 					<div className="cost">{currentCost}</div>
-				</div>
-				<div className="btns">
+				</ListItemValues>
+				<ListItemButtons>
 					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
 					<IconButton icon="&#xE88F;" flat disabled />
-				</div>
-			</div>
+				</ListItemButtons>
+			</ListItem>
 		);
 	}
 }

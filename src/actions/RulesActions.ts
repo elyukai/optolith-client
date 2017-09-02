@@ -1,9 +1,27 @@
-import { SET_HIGHER_PARADE_VALUES } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
 
-export const setHigherParadeValues = (value: number) => AppDispatcher.dispatch<SetHigherParadeValuesAction>({
-	type: SET_HIGHER_PARADE_VALUES,
+export interface SetHigherParadeValuesAction {
+	type: ActionTypes.SET_HIGHER_PARADE_VALUES;
 	payload: {
-		value
-	}
-});
+		value: number;
+	};
+}
+
+export function _setHigherParadeValues(value: number): SetHigherParadeValuesAction {
+	return {
+		type: ActionTypes.SET_HIGHER_PARADE_VALUES,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SwitchAttributeValueLimitAction {
+	type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT;
+}
+
+export function _switchAttributeValueLimit(): SwitchAttributeValueLimitAction {
+	return {
+		type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT
+	};
+}

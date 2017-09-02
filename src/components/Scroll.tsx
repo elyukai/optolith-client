@@ -1,28 +1,29 @@
-// import PerfectScrollbar from 'react-perfect-scrollbar';
+import * as classNames from 'classnames';
 import * as React from 'react';
-import classNames from 'classnames';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import Scrollbars from 'react-custom-scrollbars';
 
-interface Props {
+export interface ScrollProps {
+	children?: React.ReactNode;
 	className?: string;
+	noInnerElement?: boolean;
 }
 
-export default class Scroll extends React.Component<Props, undefined> {
+export class Scroll extends React.Component<ScrollProps> {
 	render() {
-		const { className, ...other } = this.props;
+		const { className, children, noInnerElement, ...other } = this.props;
 		return (
-			<GeminiScrollbar className={classNames('scroll-' + className, 'scroll')}>
-				<div {...other} className="scroll-inner">
-					{this.props.children}
-				</div>
-			</GeminiScrollbar>
+			<Scrollbars
+				className={classNames(className, 'scroll')}
+				renderThumbHorizontal={props => <div {...props} className="thumb thumb-horizontal"></div>}
+				renderThumbVertical={props => <div {...props} className="thumb thumb-vertical"></div>}
+				renderTrackHorizontal={props => <div {...props} style={{ ...props.style, height: 11 }} className="track track-horizontal"></div>}
+				renderTrackVertical={props => <div {...props} style={{ ...props.style, width: 11 }} className="track track-vertical"></div>}
+				renderView={props => <div {...props} className="scroll-view"></div>}
+				>
+				{!noInnerElement ? <div {...other} className="scroll-inner">
+					{children}
+				</div> : children}
+			</Scrollbars>
 		);
-		// return (
-		// 	<PerfectScrollbar option={{ theme: 'tde' }}>
-		// 		<div {...other} className={className}>
-		// 			{this.props.children}
-		// 		</div>
-		// 	</PerfectScrollbar>
-		// );
 	}
 }

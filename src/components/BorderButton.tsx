@@ -1,14 +1,20 @@
 import * as React from 'react';
-import Button from './Button';
-import Text from './Text';
+import { Button } from './Button';
+import { Text } from './Text';
 
-interface Props {
+export interface BorderButtonProps {
+	autoWidth?: boolean;
 	children?: React.ReactNode;
-	label: string;
-	[propType: string]: any;
+	className?: string;
+	disabled?: boolean;
+	flat?: boolean;
+	fullWidth?: boolean;
+	label: string | undefined;
+	primary?: boolean;
+	onClick?(): void;
 }
 
-export default (props: Props) => {
+export function BorderButton(props: BorderButtonProps) {
 	const { children, label, ...other } = props;
 
 	return (
@@ -16,4 +22,4 @@ export default (props: Props) => {
 			<Text>{label || children}</Text>
 		</Button>
 	);
-};
+}

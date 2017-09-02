@@ -1,28 +1,98 @@
-import { ASSIGN_RCP_OPTIONS, SELECT_PROFESSION, SET_PROFESSIONS_SORT_ORDER, SET_PROFESSIONS_VISIBILITY_FILTER } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { AsyncAction } from '../stores/AppStore';
+import { Selections } from '../types/data.d';
+import { getDiffCost } from '../utils/RCPUtils';
 
-export const selectProfession = (id: string) => AppDispatcher.dispatch<SelectProfessionAction>({
-	type: SELECT_PROFESSION,
+export interface SelectProfessionAction {
+	type: ActionTypes.SELECT_PROFESSION;
 	payload: {
-		id
-	}
-});
+		id: string;
+		cost: number;
+	};
+}
 
-export const setSelections = (selections: Selections) => AppDispatcher.dispatch<SetSelectionsAction>({
-	type: ASSIGN_RCP_OPTIONS,
-	payload: selections
-});
+export function _selectProfession(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { profession, professionVariant } } = getState().currentHero.present;
+		const professionDiff = getDiffCost(dependent, profession, id);
+		const professionVariantDiff = getDiffCost(dependent, professionVariant);
+		const cost = professionDiff + professionVariantDiff;
+		dispatch({
+			type: ActionTypes.SELECT_PROFESSION,
+			payload: {
+				id,
+				cost
+			}
+		} as SelectProfessionAction);
+	};
+}
 
-export const setProfessionsSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetProfessionsSortOrderAction>({
-	type: SET_PROFESSIONS_SORT_ORDER,
+export interface SetSelectionsAction {
+	type: ActionTypes.ASSIGN_RCP_OPTIONS;
+	payload: Selections;
+}
+
+export function _setSelections(selections: Selections): SetSelectionsAction {
+	return {
+		type: ActionTypes.ASSIGN_RCP_OPTIONS,
+		payload: selections
+	};
+}
+
+export interface SetProfessionsSortOrderAction {
+	type: ActionTypes.SET_PROFESSIONS_SORT_ORDER;
 	payload: {
-		sortOrder
-	}
-});
+		sortOrder: string;
+	};
+}
 
-export const setProfessionsVisibilityFilter = (filter: string) => AppDispatcher.dispatch<SetProfessionsVisibilityFilterAction>({
-	type: SET_PROFESSIONS_VISIBILITY_FILTER,
+export function _setProfessionsSortOrder(sortOrder: string): SetProfessionsSortOrderAction {
+	return {
+		type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}
+
+export interface SetProfessionsVisibilityFilterAction {
+	type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER;
 	payload: {
-		filter
-	}
-});
+		filter: string;
+	};
+}
+
+export function _setProfessionsVisibilityFilter(filter: string): SetProfessionsVisibilityFilterAction {
+	return {
+		type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER,
+		payload: {
+			filter
+		}
+	};
+}
+
+export interface SetProfessionsGroupVisibilityFilterAction {
+	type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER;
+	payload: {
+		filter: number;
+	};
+}
+
+export function _setProfessionsGroupVisibilityFilter(filter: number): SetProfessionsGroupVisibilityFilterAction {
+	return {
+		type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER,
+		payload: {
+			filter
+		}
+	};
+}
+
+export interface SwitchProfessionsExpansionVisibilityFilterAction {
+	type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER;
+}
+
+export function _switchProfessionsExpansionVisibilityFilter(): SwitchProfessionsExpansionVisibilityFilterAction {
+	return {
+		type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER
+	};
+}

@@ -4,3 +4,6 @@ npm-debug.log*
 .vscode/
 /data/
 ~$TDE5.xlsx
+/dist/
+.rpt2_cache/
+app/**/*.js

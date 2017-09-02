@@ -1,83 +1,58 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import { get } from '../../stores/ListStore';
-import SpellsStore from '../../stores/SpellsStore';
-import { sort } from '../../utils/ListUtils';
-import { isOwnTradition } from '../../utils/SpellUtils';
+import { TextBox } from '../../components/TextBox';
+import { SecondaryAttribute } from '../../types/data.d';
+import { Attribute, Spell, UIMessages } from '../../types/view.d';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
+import { SpellsSheetSpellsTableRow } from './SpellsSheetSpellsTableRow';
 
-export default () => {
-	const filtered = SpellsStore.getAll().filter(e => e.active && e.gr !== 5);
-	const spells = sort(filtered, SpellsStore.getSortOrder()) as SpellInstance[];
-	const list = Array(21).fill(undefined) as Array<SpellInstance | undefined>;
-	list.splice(0, Math.min(spells.length, 21), ...spells);
-	const PROPERTIES = SpellsStore.getPropertyNames();
-	const TRADITIONS = SpellsStore.getTraditionNames();
+export interface SpellsSheetSpellsProps {
+	attributes: Attribute[];
+	checkAttributeValueVisibility: boolean;
+	derivedCharacteristics: SecondaryAttribute[];
+	locale: UIMessages;
+	spells: Spell[];
+}
+
+export function SpellsSheetSpells(props: SpellsSheetSpellsProps) {
+	const { attributes, checkAttributeValueVisibility, derivedCharacteristics, locale, spells } = props;
+	const sortedSpells = sortObjects(spells, locale.id);
+	const list = Array<Spell | undefined>(21).fill(undefined);
+	list.splice(0, Math.min(sortedSpells.length, 21), ...sortedSpells);
 
 	return (
-		<TextBox label="Zauber &amp; Rituale" className="skill-list">
+		<TextBox label={_translate(locale, 'charactersheet.spells.spellslist.title')} className="skill-list">
 			<table>
 				<thead>
-					<td className="name">Zauber/Ritual</td>
-					<td className="check">Probe</td>
-					<td className="value">Fw</td>
-					<td className="cost">Kosten</td>
-					<td className="cast-time">Zauber&shy;dauer</td>
-					<td className="range">Reich&shy;weite</td>
-					<td className="duration">Wirkungs&shy;dauer</td>
-					<td className="property">Merkmal</td>
-					<td className="ic">Sf.</td>
-					<td className="effect">Wirkung</td>
-					<td className="ref">S.</td>
+					<tr>
+						<th className="name">{_translate(locale, 'charactersheet.spells.spellslist.headers.spellritual')}</th>
+						<th className="check">{_translate(locale, 'charactersheet.spells.spellslist.headers.check')}</th>
+						<th className="value">{_translate(locale, 'charactersheet.spells.spellslist.headers.sr')}</th>
+						<th className="cost">{_translate(locale, 'charactersheet.spells.spellslist.headers.cost')}</th>
+						<th className="cast-time">{_translate(locale, 'charactersheet.spells.spellslist.headers.castingtime')}</th>
+						<th className="range">{_translate(locale, 'charactersheet.spells.spellslist.headers.range')}</th>
+						<th className="duration">{_translate(locale, 'charactersheet.spells.spellslist.headers.duration')}</th>
+						<th className="property">{_translate(locale, 'charactersheet.spells.spellslist.headers.property')}</th>
+						<th className="ic">{_translate(locale, 'charactersheet.spells.spellslist.headers.ic')}</th>
+						<th className="effect">{_translate(locale, 'charactersheet.spells.spellslist.headers.effect')}</th>
+						<th className="ref">{_translate(locale, 'charactersheet.spells.spellslist.headers.page')}</th>
+					</tr>
 				</thead>
 				<tbody>
 					{
-						list.map((e, i) => {
-							if (e) {
-								const rawCheck = e.check;
-								const checkmod = rawCheck.splice(3)[0];
-								const check = rawCheck.map(attr => (get(attr) as AttributeInstance).short).join('/');
-								let name = e.name;
-								if (!isOwnTradition(e)) {
-									name += ` (${e.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
-								}
-								return (
-									<tr key={e.id}>
-										<td className="name">{name}</td>
-										<td className={classNames('check', checkmod && 'mod')}>{check}{checkmod ? ` (+${checkmod})` : null}</td>
-										<td className="value">{e.value}</td>
-										<td className="cost"></td>
-										<td className="cast-time"></td>
-										<td className="range"></td>
-										<td className="duration"></td>
-										<td className="property">{PROPERTIES[e.property - 1]}</td>
-										<td className="ic">{['A', 'B', 'C', 'D'][e.ic - 1]}</td>
-										<td className="effect"></td>
-										<td className="ref"></td>
-									</tr>
-								);
-							}
-							else {
-								return (
-									<tr key={`undefined${i}`}>
-										<td className="name"></td>
-										<td className="check"></td>
-										<td className="value"></td>
-										<td className="cost"></td>
-										<td className="cast-time"></td>
-										<td className="range"></td>
-										<td className="duration"></td>
-										<td className="property"></td>
-										<td className="ic"></td>
-										<td className="effect"></td>
-										<td className="ref"></td>
-									</tr>
-								);
-							}
-						})
+						list.map((e, i) =>
+							<SpellsSheetSpellsTableRow
+								key={e ? e.id : `u${i}`}
+								attributes={attributes}
+								checkAttributeValueVisibility={checkAttributeValueVisibility}
+								derivedCharacteristics={derivedCharacteristics}
+								locale={locale}
+								spell={e}
+								/>
+						)
 					}
 				</tbody>
 			</table>
 		</TextBox>
 	);
-};
+}

@@ -29,12 +29,12 @@
 					left: 43px;
 				}
 			}
-			
+
 			&.no-avatar {
 				border-width: 4px;
 			}
 		}
-		
+
 		.avatar::after {
 			position: absolute;
 			top: 39px;
@@ -61,27 +61,25 @@
 			}
 
 			> h1, > div.change-name {
-				display: flex;
 				height: $size;
-				align-items: center;
-
-				> div.textfield {
-					margin: 0;
-				}
-
-				> div.btn {
-					margin-left: 11px;
-					letter-spacing: 0;
-				}
 			}
 
 			> div:not(.change-name) {
 				margin: 4px 0 0;
-				
+
 				span:last-child {
 					font-weight: 500;
 				}
 			}
+		}
+	}
+
+	.main-profile-actions {
+		display: flex;
+		margin-top: 20px;
+
+		> div {
+			margin: 0 10px 0 0;
 		}
 	}
 

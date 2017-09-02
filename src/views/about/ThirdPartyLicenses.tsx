@@ -1,15 +1,22 @@
 import * as React from 'react';
-import Scroll from '../../components/Scroll';
-import VersionUtils from '../../utils/VersionUtils';
+import { Scroll } from '../../components/Scroll';
+import { currentVersion } from '../../utils/VersionUtils';
 
-export default () => {
-	const version = VersionUtils.get();
+export function ThirdPartyLicenses() {
 	return (
 		<div className="page" id="third-party-software">
 			<Scroll className="text">
-				<h2>TDE5 Heroes Browser Client v{version}</h2>
-				Third Party Software
+				<h2>TDE5 Heroes Client v{currentVersion}</h2>
+				Third Party Software and Content Licenses
 				<div className="third-party-software-body">
+					This product was created under a license. Das Schwarze Auge and its logo as well as Aventuria, Dere, Myranor, Riesland, Tharun and Uthuria and their logos are trademarks of Significant GbR. The title and contents of this book are protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in retrieval systems or transmitted, in any form or by any means, whether electronic, mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems.<br/>
+					<br/>
+					This publication includes material that is protected under copyright laws by Ulisses Spiele and/or other authors. Such material is used under the Community Content Agreement for the SCRIPTORIUM AVENTURIS.<br/>
+					<br/>
+					All other original materials in this work is copyright 2017-present by Lukas Obermann and published under the Community Content Agreement for the SCRIPTORIUM AVENTURIS.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
 					Alegreya font<br/>
 					Copyright (c) 2011, Juan Pablo del Peral (juan@huertatipografica.com.ar),<br/>
 					with Reserved Font Names "Alegreya" "Alegreya SC"<br/>
@@ -58,57 +65,19 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
-					babel<br/>
-					MIT License
-					<br/>
-					Copyright (c) 2014-2016 Sebastian McKenzie (sebmck@gmail.com)<br/>
-					<br/>
-					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
-					<br/>
-					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
-					<br/>
-					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
-					<br/>
-					------------------------------------------------------------<br/>
-					<br/>
-					browserify<br/>
-					Some pieces from builtins/ taken from node core under this license:<br/>
-					<br/>
-					----<br/>
-					<br/>
-					Copyright Joyent, Inc. and other Node contributors.<br/>
-					<br/>
-					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
-					<br/>
-					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
-					<br/>
-					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
-					<br/>
-					----<br/>
-					<br/>
-					buffer_ieee754.js has this license in it:<br/>
-					<br/>
-					----<br/>
-					<br/>
-					Copyright (c) 2008-2015, Fair Oaks Labs, Inc.<br/>
-					All rights reserved.<br/>
-					<br/>
-					Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<br/>
-					<br/>
-					* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.<br/>
-					<br/>
-					* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.<br/>
-					<br/>
-					* Neither the name of Fair Oaks Labs, Inc. nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.<br/>
-					<br/>
-					THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br/>
-					<br/>
-					Modifications to writeIEEE754 to support negative zeroes made by Brian White<br/>
-					<br/>
-					------------------------------------------------------------<br/>
-					<br/>
 					classnames<br/>
 					Copyright (c) 2016 Jed Watson<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					electron<br/>
+					Copyright (c) 2015 Mathias Buus-Madsen, Max Ogden and contributors<br/>
 					<br/>
 					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 					<br/>
@@ -131,20 +100,32 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
-					Flux<br/>
-					For Flux software<br/>
+					lodash<br/>
+					Copyright JS Foundation and other contributors &lt;https://js.foundation/&gt;<br/>
 					<br/>
-					Copyright (c) 2014-2015, Facebook, Inc. All rights reserved.<br/>
+					Based on Underscore.js, copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors &lt;http://underscorejs.org/&gt;<br/>
 					<br/>
-					Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<br/>
+					This software consists of voluntary contributions made by many individuals. For exact contribution history, see the revision history available at https://github.com/lodash/lodash<br/>
 					<br/>
-					* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.<br/>
+					The following license applies to all parts of this software except as documented below:<br/>
 					<br/>
-					* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.<br/>
+					====<br/>
 					<br/>
-					* Neither the name Facebook nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 					<br/>
-					THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					====<br/>
+					<br/>
+					Copyright and related rights for sample code are waived via CC0. Sample code is defined as all source code displayed within the prose of the documentation.<br/>
+					<br/>
+					CC0: http://creativecommons.org/publicdomain/zero/1.0/<br/>
+					<br/>
+					====<br/>
+					<br/>
+					Files located in the node_modules and vendor directories are externally maintained libraries used by this software which have their own licenses; we recommend you read them, as their terms may differ from the terms above.<br/>
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
@@ -220,6 +201,17 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
+					node-sass<br/>
+					Copyright (c) 2013-2016 Andrew Nesbitt<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
 					React<br/>
 					For React software<br/>
 					<br/>
@@ -240,10 +232,36 @@ export default () => {
 					<br/>
 					------------------------------------------------------------<br/>
 					<br/>
-					react-gemini-scrollbar<br/>
+					react-custom-scrollbars<br/>
 					The MIT License (MIT)<br/>
 					<br/>
-					Copyright (c) Noel Delgado {'<pixelia.me@gmail.com>'} (pixelia.me)<br/>
+					Copyright (c) 2015 react-custom-scrollbars<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					react-markdown<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2015 Espen Hovlandsdal<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					react-portal<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2016 Vojtech Miksu<br/>
 					<br/>
 					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
 					<br/>
@@ -262,9 +280,92 @@ export default () => {
 					<br/>
 					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
 					<br/>
-					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					React Redux<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2015-present Dan Abramov<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					Redux<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2015-present Dan Abramov<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					Redux Thunk<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2015 Dan Abramov<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					Reselect<br/>
+					The MIT License (MIT)<br/>
+					<br/>
+					Copyright (c) 2015-2016 Reselect Contributors<br/>
+					<br/>
+					Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br/>
+					<br/>
+					The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					semver<br/>
+					The ISC License<br/>
+					<br/>
+					Copyright (c) Isaac Z. Schlueter and Contributors<br/>
+					<br/>
+					Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.<br/>
+					<br/>
+					THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					tslib<br/>
+					Copyright (c) Microsoft Corporation. All rights reserved.<br/>
+					Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0<br/>
+					<br/>
+					THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABLITY OR NON-INFRINGEMENT.<br/>
+					<br/>
+					See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.<br/>
+					<br/>
+					------------------------------------------------------------<br/>
+					<br/>
+					typescript<br/>
+					Copyright (c) Microsoft Corporation. All rights reserved.<br/>
+					Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0<br/>
+					<br/>
+					THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABLITY OR NON-INFRINGEMENT.<br/>
+					<br/>
+					See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
 				</div>
 			</Scroll>
 		</div>
 	);
-};
+}

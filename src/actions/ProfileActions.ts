@@ -1,157 +1,337 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import ProfileStore from '../stores/ProfileStore';
-import RaceStore from '../stores/RaceStore';
+import { get } from '../selectors/dependentInstancesSelectors';
+import { AsyncAction } from '../stores/AppStore';
+import { RaceInstance } from '../types/data.d';
+import * as RCPUtils from '../utils/RCPUtils';
 
-export const setHeroName = (name: string) => AppDispatcher.dispatch<SetHeroNameAction>({
-	type: ActionTypes.SET_HERO_NAME,
+export interface SetHeroNameAction {
+	type: ActionTypes.SET_HERO_NAME;
 	payload: {
-		name,
-	},
-});
+		name: string;
+	};
+}
 
-export const setHeroAvatar = (source: string | File) => {
-	if (typeof source === 'string') {
-		AppDispatcher.dispatch<SetHeroAvatarAction>({
-			type: ActionTypes.SET_HERO_AVATAR,
-			payload: {
-				url: source,
-			},
-		});
-	}
-	// else {
-	// 	WebAPIUtils.changeHeroAvatar(source);
-	// }
-};
-	// changeAvatar({ source, extern, file }) {
-	// 	if (source === 'ext') {
-	// 		AppDispatcher.dispatch({
-	// 			type: ActionTypes.UPDATE_HERO_AVATAR,
-	// 			url: extern
-	// 		});
-	// 	} else {
-	// 		WebAPIUtils.changeHeroAvatar(source, file);
-	// 	}
-	// },
+export function _setHeroName(name: string): SetHeroNameAction {
+	return {
+		type: ActionTypes.SET_HERO_NAME,
+		payload: {
+			name
+		}
+	};
+}
 
-export const setFamily = (family: string) => AppDispatcher.dispatch<SetFamilyAction>({
-	type: ActionTypes.SET_FAMILY,
+export interface SetCustomProfessionNameAction {
+	type: ActionTypes.SET_CUSTOM_PROFESSION_NAME;
 	payload: {
-		family,
-	},
-});
+		name: string;
+	};
+}
 
-export const setPlaceOfBirth = (placeofbirth: string) => AppDispatcher.dispatch<SetPlaceOfBirthAction>({
-	type: ActionTypes.SET_PLACEOFBIRTH,
+export function _setCustomProfessionName(name: string): SetCustomProfessionNameAction {
+	return {
+		type: ActionTypes.SET_CUSTOM_PROFESSION_NAME,
+		payload: {
+			name
+		}
+	};
+}
+
+export interface SetHeroAvatarAction {
+	type: ActionTypes.SET_HERO_AVATAR;
 	payload: {
-		placeofbirth,
-	},
-});
+		url: string;
+	};
+}
 
-export const setDateOfBirth = (dateofbirth: string) => AppDispatcher.dispatch<SetDateOfBirthAction>({
-	type: ActionTypes.SET_DATEOFBIRTH,
+export function _setHeroAvatar(path: string): SetHeroAvatarAction {
+	return {
+		type: ActionTypes.SET_HERO_AVATAR,
+		payload: {
+			url: path
+		}
+	};
+}
+
+export interface SetFamilyAction {
+	type: ActionTypes.SET_FAMILY;
 	payload: {
-		dateofbirth,
-	},
-});
+		family: string;
+	};
+}
 
-export const setAge = (age: string) => AppDispatcher.dispatch<SetAgeAction>({
-	type: ActionTypes.SET_AGE,
+export function _setFamily(family: string): SetFamilyAction {
+	return {
+		type: ActionTypes.SET_FAMILY,
+		payload: {
+			family,
+		},
+	};
+}
+
+export interface SetPlaceOfBirthAction {
+	type: ActionTypes.SET_PLACEOFBIRTH;
 	payload: {
-		age,
-	},
-});
+		placeofbirth: string;
+	};
+}
 
-export const setHairColor = (haircolor: number) => AppDispatcher.dispatch<SetHairColorAction>({
-	type: ActionTypes.SET_HAIRCOLOR,
+export function _setPlaceOfBirth(placeofbirth: string): SetPlaceOfBirthAction {
+	return {
+		type: ActionTypes.SET_PLACEOFBIRTH,
+		payload: {
+			placeofbirth
+		}
+	};
+}
+
+export interface SetDateOfBirthAction {
+	type: ActionTypes.SET_DATEOFBIRTH;
 	payload: {
-		haircolor,
-	},
-});
+		dateofbirth: string;
+	};
+}
 
-export const setEyeColor = (eyecolor: number) => AppDispatcher.dispatch<SetEyeColorAction>({
-	type: ActionTypes.SET_EYECOLOR,
+export function _setDateOfBirth(dateofbirth: string): SetDateOfBirthAction {
+	return {
+		type: ActionTypes.SET_DATEOFBIRTH,
+		payload: {
+			dateofbirth
+		}
+	};
+}
+
+export interface SetAgeAction {
+	type: ActionTypes.SET_AGE;
 	payload: {
-		eyecolor,
-	},
-});
+		age: string;
+	};
+}
 
-export const setSize = (size: string) => AppDispatcher.dispatch<SetSizeAction>({
-	type: ActionTypes.SET_SIZE,
+export function _setAge(age: string): SetAgeAction {
+	return {
+		type: ActionTypes.SET_AGE,
+		payload: {
+			age
+		}
+	};
+}
+
+export interface SetHairColorAction {
+	type: ActionTypes.SET_HAIRCOLOR;
 	payload: {
-		size,
-	},
-});
+		haircolor: number;
+	};
+}
 
-export const setWeight = (weight: string, size?: string) => AppDispatcher.dispatch<SetWeightAction>({
-	type: ActionTypes.SET_WEIGHT,
+export function _setHairColor(haircolor: number): SetHairColorAction {
+	return {
+		type: ActionTypes.SET_HAIRCOLOR,
+		payload: {
+			haircolor
+		}
+	};
+}
+
+export interface SetEyeColorAction {
+	type: ActionTypes.SET_EYECOLOR;
 	payload: {
-		size,
-		weight,
-	},
-});
+		eyecolor: number;
+	};
+}
 
-export const rerollHairColor = () => {
-	const race = RaceStore.getCurrent()!;
-	const hairColor = RaceStore.rerollHairColor(race);
-	setHairColor(hairColor);
-};
+export function _setEyeColor(eyecolor: number): SetEyeColorAction {
+	return {
+		type: ActionTypes.SET_EYECOLOR,
+		payload: {
+			eyecolor
+		}
+	};
+}
 
-export const rerollEyeColor = () => {
-	const race = RaceStore.getCurrent()!;
-	const eyeColor = RaceStore.rerollEyeColor(race);
-	setEyeColor(eyeColor);
-};
-
-export const rerollSize = () => {
-	const race = RaceStore.getCurrent()!;
-	const size = RaceStore.rerollSize(race);
-	setSize(size);
-};
-
-export const rerollWeight = () => {
-	const race = RaceStore.getCurrent()!;
-	const [ weight, size ] = RaceStore.rerollWeight(race, ProfileStore.getSize());
-	setWeight(weight, size);
-};
-
-export const setTitle = (title: string) => AppDispatcher.dispatch<SetTitleAction>({
-	type: ActionTypes.SET_TITLE,
+export interface SetSizeAction {
+	type: ActionTypes.SET_SIZE;
 	payload: {
-		title,
-	},
-});
+		size: string;
+	};
+}
 
-export const setSocialStatus = (socialstatus: number) => AppDispatcher.dispatch<SetSocialStatusAction>({
-	type: ActionTypes.SET_SOCIALSTATUS,
+export function _setSize(size: string): SetSizeAction {
+	return {
+		type: ActionTypes.SET_SIZE,
+		payload: {
+			size
+		}
+	};
+}
+
+export interface SetWeightAction {
+	type: ActionTypes.SET_WEIGHT;
 	payload: {
-		socialstatus,
-	},
-});
+		size?: string;
+		weight: string;
+	};
+}
 
-export const setCharacteristics = (characteristics: string) => AppDispatcher.dispatch<SetCharacteristicsAction>({
-	type: ActionTypes.SET_CHARACTERISTICS,
+export function _setWeight(weight: string, size?: string): SetWeightAction {
+	return {
+		type: ActionTypes.SET_WEIGHT,
+		payload: {
+			size,
+			weight
+		}
+	};
+}
+
+export function _rerollHairColor(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const hairColor = RCPUtils.rerollHairColor(race);
+			dispatch(_setHairColor(hairColor));
+		}
+		return;
+	};
+}
+
+export function _rerollEyeColor(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const eyeColor = RCPUtils.rerollEyeColor(race);
+			dispatch(_setEyeColor(eyeColor));
+		}
+		return;
+	};
+}
+
+export function _rerollSize(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const size = RCPUtils.rerollSize(race);
+			dispatch(_setSize(size));
+		}
+		return;
+	};
+}
+
+export function _rerollWeight(): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, profile: { size: prevSize }, rcp: { race: raceId }} = getState().currentHero.present;
+		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		if (typeof race !== 'undefined') {
+			const [ weight, size ] = RCPUtils.rerollWeight(race, prevSize);
+			dispatch(_setWeight(weight, size));
+		}
+		return;
+	};
+}
+
+export interface SetTitleAction {
+	type: ActionTypes.SET_TITLE;
 	payload: {
-		characteristics,
-	},
-});
+		title: string;
+	};
+}
 
-export const setOtherInfo = (otherinfo: string) => AppDispatcher.dispatch<SetOtherInfoAction>({
-	type: ActionTypes.SET_OTHERINFO,
+export function _setTitle(title: string): SetTitleAction {
+	return {
+		type: ActionTypes.SET_TITLE,
+		payload: {
+			title
+		}
+	};
+}
+
+export interface SetSocialStatusAction {
+	type: ActionTypes.SET_SOCIALSTATUS;
 	payload: {
-		otherinfo,
-	},
-});
+		socialstatus: number;
+	};
+}
 
-export const endHeroCreation = () => AppDispatcher.dispatch<EndHeroCreationAction>({
-	type: ActionTypes.END_HERO_CREATION,
-});
+export function _setSocialStatus(socialstatus: number): SetSocialStatusAction {
+	return {
+		type: ActionTypes.SET_SOCIALSTATUS,
+		payload: {
+			socialstatus
+		}
+	};
+}
 
-export const deleteHero = () => console.error('REQUEST missing');
-
-export const addAdventurePoints = (amount: number) => AppDispatcher.dispatch<AddAdventurePointsAction>({
-	type: ActionTypes.ADD_ADVENTURE_POINTS,
+export interface SetCharacteristicsAction {
+	type: ActionTypes.SET_CHARACTERISTICS;
 	payload: {
-		amount,
-	},
-});
+		characteristics: string;
+	};
+}
+
+export function _setCharacteristics(characteristics: string): SetCharacteristicsAction {
+	return {
+		type: ActionTypes.SET_CHARACTERISTICS,
+		payload: {
+			characteristics
+		}
+	};
+}
+
+export interface SetOtherInfoAction {
+	type: ActionTypes.SET_OTHERINFO;
+	payload: {
+		otherinfo: string;
+	};
+}
+
+export function _setOtherInfo(otherinfo: string): SetOtherInfoAction {
+	return {
+		type: ActionTypes.SET_OTHERINFO,
+		payload: {
+			otherinfo
+		}
+	};
+}
+
+export interface SetCultureAreaKnowledge {
+	type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE;
+	payload: {
+		cultureAreaKnowledge: string;
+	};
+}
+
+export function _setCultureAreaKnowledge(cultureAreaKnowledge: string): SetCultureAreaKnowledge {
+	return {
+		type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE,
+		payload: {
+			cultureAreaKnowledge
+		}
+	};
+}
+
+export interface EndHeroCreationAction {
+	type: ActionTypes.END_HERO_CREATION;
+}
+
+export function _endHeroCreation(): EndHeroCreationAction {
+	return {
+		type: ActionTypes.END_HERO_CREATION
+	};
+}
+
+export interface AddAdventurePointsAction {
+	type: ActionTypes.ADD_ADVENTURE_POINTS;
+	payload: {
+		amount: number;
+	};
+}
+
+export function _addAdventurePoints(amount: number): AddAdventurePointsAction {
+	return {
+		type: ActionTypes.ADD_ADVENTURE_POINTS,
+		payload: {
+			amount
+		}
+	};
+}

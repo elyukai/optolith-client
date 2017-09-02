@@ -1,1 +1,3 @@
-export default (sides: number): number => Math.floor(Math.random() * sides) + 1;
+export function dice(sides: number): number {
+	return Math.floor(Math.random() * sides) + 1;
+}

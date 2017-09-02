@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class InGameTableIni extends Component {
-	
+export class InGameTableIni extends Component {
+
 	static propTypes = {
 		fighters: PropTypes.array.isRequired,
 		iniArray: PropTypes.array.isRequired,
@@ -10,7 +10,7 @@ export default class InGameTableIni extends Component {
 		status: PropTypes.array.isRequired,
 		usedPhases: PropTypes.array.isRequired
 	};
-	
+
 	render() {
 		return (
 			<div className="ingame-table-ini">
@@ -23,7 +23,7 @@ export default class InGameTableIni extends Component {
 					<tbody>
 						{
 							this.props.fighters.map(fighter => {
-								
+
 								const className = classNames(fighter.deac && 'deac', fighter.type == 'f' && 'enemy');
 
 								const indicatorElement = this.props.status[1] == fighter.init || this.props.status[1] == fighter.init - 8 ? (

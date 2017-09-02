@@ -1,40 +1,44 @@
 import * as React from 'react';
-import Checkbox from '../../components/Checkbox';
+import { Checkbox } from '../../components/Checkbox';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-interface Props {
+export interface SelectionsCtProps {
 	active: Set<string>;
+	disabled?: Set<string>;
 	amount: number;
-	change: (id: string) => void;
-	list: {
+	list: Array<{
 		id: string;
 		name: string;
-	}[];
-	num: number;
+	}>;
+	locale: UIMessages;
+	value: number;
+	second?: boolean;
+	change(id: string): void;
 }
 
-export default class SelectionsCt extends React.Component<Props, undefined> {
-	render() {
-		const nums = ['Eine', 'Zwei'];
+export function SelectionsCt(props: SelectionsCtProps) {
+	const { active, amount, change, disabled, list, locale, value, second } = props;
 
-		const { active, amount, change, list, num } = this.props;
+	const amountTags = [_translate(locale, 'rcpselections.labels.one'), _translate(locale, 'rcpselections.labels.two')];
 
-		return (
-			<div className="ct list">
-				<h4>{nums[num - 1]} der folgenden Kampftechniken {6 + amount}</h4>
-				{
-					list.map(obj => {
-						const { id, name } = obj;
-						return (
-							<Checkbox
-								key={id}
-								checked={active.has(id)}
-								disabled={!active.has(id) && active.size >= num}
-								label={name}
-								onClick={change.bind(null, id)} />
-						);
-					})
-				}
-			</div>
-		);
-	}
+	const text = second ? _translate(locale, 'rcpselections.labels.more') : _translate(locale, 'rcpselections.labels.ofthefollowingcombattechniques');
+
+	return (
+		<div className="ct list">
+			<h4>{amountTags[amount - 1]} {text} {6 + value}</h4>
+			{
+				list.map(obj => {
+					const { id, name } = obj;
+					return (
+						<Checkbox
+							key={id}
+							checked={active.has(id)}
+							disabled={!active.has(id) && active.size >= amount || disabled && disabled.has(id)}
+							label={name}
+							onClick={change.bind(null, id)} />
+					);
+				})
+			}
+		</div>
+	);
 }

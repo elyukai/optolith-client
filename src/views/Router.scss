@@ -8,8 +8,26 @@ html, body, #bodywrapper, #body {
 
 #body {
 	cursor: default;
-	background: $background1;
+	background: $c4;
 	display: flex;
 	font: 14px/23px Alegreya;
-	border: 1px solid $color12;
+	border: 1px solid $c1t;
+}
+
+.background-image {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: url("images/background.svg") center/cover;
+	opacity: .1;
+}
+
+.error-message {
+	color: $c2;
+	white-space: pre-wrap;
+	font: 500 18px/20px Alegreya Sans;
+
+	.scroll-inner {
+		padding: 36px 36px 36px 0;
+	}
 }

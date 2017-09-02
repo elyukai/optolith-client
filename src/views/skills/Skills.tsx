@@ -1,92 +1,87 @@
-import { get } from '../../stores/ListStore';
 import * as React from 'react';
-import CombatTechniques from './CombatTechniques';
-import Liturgies from './Liturgies';
-import SpecialAbilities from './SpecialAbilities';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
-import Spells from './Spells';
-import SubTabs from '../../components/SubTabs';
-import Talents from './Talents';
+import { SubTabs } from '../../components/SubTabs';
+import { CombatTechniquesContainer } from '../../containers/CombatTechniques';
+import { LiturgiesContainer } from '../../containers/Liturgies';
+import { SpecialAbilitiesContainer } from '../../containers/SpecialAbilities';
+import { SpellsContainer } from '../../containers/Spells';
+import { TalentsContainer } from '../../containers/Talents';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
 
-interface State {
-	tab: string;
+export interface SkillsOwnProps {
+	locale: UIMessages;
+}
+
+export interface SkillsStateProps {
 	showChants: boolean;
 	showSpells: boolean;
 }
 
-export default class Skills extends React.Component<undefined, State> {
+export interface SkillsDispatchProps {}
 
+export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps;
+
+export interface SkillsState {
+	tab: string;
+}
+
+export class Skills extends React.Component<SkillsProps, SkillsState> {
 	state = {
-		tab: 'talents',
-		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
+		tab: 'talents'
 	};
 
-	_updateSpecialAbilitiesStore = () => this.setState({
-		showSpells: (get('SA_86') as SpecialAbilityInstance).active.length > 0,
-		showChants: (get('SA_102') as SpecialAbilityInstance).active.length > 0
-	} as State)
-
-	handleClick = (tab: string) => this.setState({ tab } as State);
-
-	componentDidMount() {
-		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
-	}
-
-	componentWillUnmount() {
-		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
-	}
+	handleClick = (tab: string) => this.setState({ tab } as SkillsState);
 
 	render() {
-
-		const { showChants, showSpells, tab } = this.state;
+		const { locale, showChants, showSpells } = this.props;
+		const { tab } = this.state;
 
 		let skillElement;
 
 		switch (tab) {
 			case 'talents':
-				skillElement = <Talents />;
+				skillElement = <TalentsContainer locale={locale} />;
 				break;
 			case 'combat':
-				skillElement = <CombatTechniques />;
+				skillElement = <CombatTechniquesContainer locale={locale} />;
 				break;
 			case 'spells':
-				skillElement = <Spells />;
+				skillElement = <SpellsContainer locale={locale} />;
 				break;
-			case 'liturgies':
-				skillElement = <Liturgies />;
+			case 'chants':
+				skillElement = <LiturgiesContainer locale={locale} />;
 				break;
 			case 'special':
-				skillElement = <SpecialAbilities />;
+				skillElement = <SpecialAbilitiesContainer locale={locale} />;
 				break;
 		}
 
 		const tabs = [
 			{
-				label: 'Talente',
-				tag: 'talents'
+				id: 'talents',
+				label: _translate(locale, 'titlebar.tabs.talents'),
 			},
 			{
-				label: 'Kampftechniken',
-				tag: 'combat'
+				id: 'combat',
+				label: _translate(locale, 'titlebar.tabs.combattechniques'),
 			},
 			{
-				label: 'Sonderfertigkeiten',
-				tag: 'special'
-			}
+				id: 'special',
+				label: _translate(locale, 'titlebar.tabs.specialabilities'),
+			},
 		];
 
 		if (showSpells) {
 			tabs.push({
-				label: 'Zauber',
-				tag: 'spells'
+				id: 'spells',
+				label: _translate(locale, 'titlebar.tabs.spells'),
 			});
 		}
 
 		if (showChants) {
 			tabs.push({
-				label: 'Liturgien',
-				tag: 'liturgies'
+				id: 'chants',
+				label: _translate(locale, 'titlebar.tabs.liturgies'),
 			});
 		}
 

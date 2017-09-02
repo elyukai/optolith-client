@@ -1,0 +1,60 @@
+import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
+import * as ConfigActions from '../actions/ConfigActions';
+import * as SpellsActions from '../actions/SpellsActions';
+import { AppState } from '../reducers/app';
+import { getPresent } from '../selectors/currentHeroSelectors';
+import { get, getDependent } from '../selectors/dependentInstancesSelectors';
+import { getPhase } from '../selectors/phaseSelectors';
+import { getAllForView, isActivationDisabled } from '../selectors/spellsSelectors';
+import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
+import { DCIds, get as getDerivedCharacteristic } from '../utils/derivedCharacteristics';
+import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/skills/Spells';
+
+function mapStateToProps(state: AppState) {
+	return {
+		addSpellsDisabled: isActivationDisabled(state),
+		currentHero: getPresent(state),
+		enableActiveItemHints: getEnableActiveItemHints(state),
+		list: getAllForView(state),
+		phase: getPhase(state),
+		sortOrder: getSpellsSortOrder(state),
+		get(id: string) {
+			return get(getDependent(state), id);
+		},
+		getDerivedCharacteristic(id: DCIds) {
+			return getDerivedCharacteristic(getPresent(state), id);
+		},
+	};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
+	return {
+		addPoint(id: string) {
+			dispatch(SpellsActions._addPoint(id));
+		},
+		addToList(id: string) {
+			dispatch(SpellsActions._addToList(id));
+		},
+		addCantripToList(id: string) {
+			dispatch(SpellsActions._addCantripToList(id));
+		},
+		removePoint(id: string) {
+			dispatch(SpellsActions._removePoint(id));
+		},
+		removeFromList(id: string) {
+			dispatch(SpellsActions._removeFromList(id));
+		},
+		removeCantripFromList(id: string) {
+			dispatch(SpellsActions._removeCantripFromList(id));
+		},
+		setSortOrder(sortOrder: string) {
+			dispatch(SpellsActions._setSortOrder(sortOrder));
+		},
+		switchActiveItemHints() {
+			dispatch(ConfigActions._switchEnableActiveItemHints());
+		}
+	};
+}
+
+export const SpellsContainer = connect<SpellsStateProps, SpellsDispatchProps, SpellsOwnProps>(mapStateToProps, mapDispatchToProps)(Spells);

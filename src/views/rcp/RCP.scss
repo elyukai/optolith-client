@@ -2,43 +2,15 @@
 	background-image: url("images/rcp.png");
 	background-color: #010c0a;
 
-	ul {
-		margin: 0;
-		padding: 1px 0;
-		list-style: none;
-
-		&.professions {
-			li {
-				h2 {
-					padding: 5px 0 0;
-				}
-
-				h3 {
-					font: 500 13px/15px Alegreya Sans SC;
-					color: #878683;
-					text-transform: uppercase;
-					margin-top: 0;
-					margin-bottom: 7px;
-				}
-			}
-		}
+	p.profession-subtitle {
+		font: 500 13px/15px Alegreya Sans SC;
+		color: #878683;
+		text-transform: uppercase;
+		margin-top: 2px;
+		margin-bottom: 4px;
 	}
 
 	li {
-		position: relative;
-		padding: 11px;
-		display: flex;
-		align-items: center;
-
-		> .left {
-			flex: 1 1 100%;
-		}
-
-		> .right {
-			flex: 0 0 auto;
-			margin-left: 11px;
-		}
-
 		h2 {
 			line-height: 22px;
 			margin-bottom: 5px;
@@ -52,16 +24,10 @@
 			}
 		}
 
-		&:not(:first-child) {
-			border-top: 1px solid transparentize(white, .925);
-		}
-
 		&.active {
 			.btn {
 				min-width: 140px;
 			}
-			
-			@extend %yellow-border;
 		}
 	}
 }
@@ -78,21 +44,14 @@
 		}
 	}
 
-	.list.curses {
+	.list.curses, .list.skills {
 		> div {
 			display: flex;
 			align-items: center;
+			height: 32px;
 
 			&:hover {
 				background: #1e2328;
-			}
-
-			> .checkbox {
-				flex: 1 1 100%;
-
-				&:hover {
-					background: none;
-				}
 			}
 
 			> span {
@@ -105,6 +64,27 @@
 				font-size: 16px;
 				flex: none;
 				margin-left: 4px;
+				height: 24px;
+			}
+		}
+	}
+
+	.list.curses {
+		> div {
+			> .checkbox {
+				flex: 1 1 100%;
+
+				&:hover {
+					background: none;
+				}
+			}
+		}
+	}
+
+	.list.skills {
+		> div {
+			> .skillname {
+				flex: 1 1 100%;
 			}
 		}
 	}
@@ -116,48 +96,63 @@
 			}
 		}
 
-		> div {
+		.languages-scripts {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 
-			&:hover {
-				background: #1e2328;
-			}
-
-			> .checkbox {
+			> div {
 				flex: 1 1 100%;
 
-				&:hover {
-					background: none;
-				}
-			}
+				> div {
+					display: flex;
+					align-items: center;
 
-			> .dropdown {
-				margin: 0;
-				line-height: 26px;
+					&:not(.disabled):hover {
+						background: #1e2328;
+					}
 
-				> div > div {
-					&.value {
-						height: 28px;
+					> .checkbox {
+						flex: 1 1 100%;
 
-						&::before {
-							top: 9px;
+						&:hover {
+							background: none;
+						}
+					}
+
+					> .dropdown {
+						flex: none;
+						margin: 0;
+						line-height: 26px;
+						width: 60px;
+
+						> div > div {
+							&.value {
+								height: 28px;
+
+								&::before {
+									top: 9px;
+								}
+
+								&::after {
+									bottom: 9px;
+								}
+							}
 						}
 
-						&::after {
-							bottom: 9px;
+						&.bottom > div > .down {
+							top: 28px;
+						}
+
+						&.top > div > .down {
+							bottom: 28px;
 						}
 					}
 				}
-
-				&.bottom > div > .down {
-					top: 28px;
-				}
-
-				&.top > div > .down {
-					bottom: 28px;
-				}
 			}
+		}
+
+		.scripts {
+			margin-left: 20px;
 		}
 	}
 

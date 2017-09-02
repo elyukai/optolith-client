@@ -2,15 +2,8 @@
 	// background-image: url("images/backgroundTalents.jpg");
 }
 
-#talents {
-	tr {
-		@extend %tr-typ;
-		@extend %tr-untyp;
-	}
-}
-
 #spells, #liturgies {
-	.list-item {
+	li {
 		.values {
 			width: 252px;
 		}
@@ -36,20 +29,8 @@
 		}
 	}
 
-	.slidein .list-item .values {
+	.slidein li .values {
 		width: 208px;
-	}
-}
-
-#specialabilities {
-	tbody {
-		tr {
-			@extend %large-tr;
-
-			td.ap:last-child {
-				padding-right: 11px;
-			}
-		}
 	}
 }
 

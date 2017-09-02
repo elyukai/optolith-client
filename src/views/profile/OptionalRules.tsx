@@ -1,56 +1,119 @@
 import * as React from 'react';
-import * as RulesActions from '../../actions/RulesActions';
-import Checkbox from '../../components/Checkbox';
-import Dropdown from '../../components/Dropdown';
-import Scroll from '../../components/Scroll';
-import RulesStore from '../../stores/RulesStore';
+import { Checkbox } from '../../components/Checkbox';
+import { Dropdown } from '../../components/Dropdown';
+import { Scroll } from '../../components/Scroll';
+import { RulesState } from '../../reducers/rules';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-interface State {
-	higherParadeValues: number;
+export interface OptionalRulesOwnProps {
+	locale: UIMessages;
 }
 
-export default class ProfileOverview extends React.Component<undefined, State> {
+export interface OptionalRulesStateProps {
+	rules: RulesState;
+}
 
-	state = RulesStore.getAll();
+export interface OptionalRulesDispatchProps {
+	changeAttributeValueLimit(): void;
+	changeHigherParadeValues(id: number): void;
+}
 
-	_updateRulesStore = () => this.setState(RulesStore.getAll());
+export type OptionalRulesProps = OptionalRulesStateProps & OptionalRulesDispatchProps & OptionalRulesOwnProps;
 
-	componentDidMount() {
-		RulesStore.addChangeListener(this._updateRulesStore );
-	}
+export function OptionalRules(props: OptionalRulesProps) {
+	const { changeAttributeValueLimit, changeHigherParadeValues, locale, rules: { attributeValueLimit, higherParadeValues } } = props;
+	const changeCheckboxTrap = () => undefined;
 
-	componentWillUnmount() {
-		RulesStore.removeChangeListener(this._updateRulesStore );
-	}
-
-	render() {
-		const { higherParadeValues } = this.state;
-
-		return (
-			<div className="page" id="optional-rules">
-				<Scroll>
-					<div className="options">
-						<Checkbox
-							checked={higherParadeValues > 0}
-							onClick={() => RulesActions.setHigherParadeValues(higherParadeValues > 0 ? 0 : 2)}
-							label="Höhere Verteidigungswerte"
-							>
-						</Checkbox>
-						<Dropdown
-							options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
-							value={higherParadeValues}
-							onChange={(id: number) => RulesActions.setHigherParadeValues(id)}
-							disabled={higherParadeValues === 0}
-							/>
-					</div>
+	return (
+		<div className="page" id="optional-rules">
+			<Scroll>
+				<h3>{_translate(locale, 'rules.rulebase')}</h3>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Regelwerk"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Aventurisches Bestiarium"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Aventurisches Kompendium"
+					disabled
+					/>
+				<Checkbox
+					checked={false}
+					onClick={changeCheckboxTrap}
+					label="Aventurisches Götterwirken"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Aventurische Magie I"
+					disabled
+					/>
+				<Checkbox
+					checked={false}
+					onClick={changeCheckboxTrap}
+					label="Aventurische Magie II"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Aventurische Namen"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Aventurische Rüstkammer"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Die Streitenden Königreiche"
+					disabled
+					/>
+				<Checkbox
+					checked={false}
+					onClick={changeCheckboxTrap}
+					label="Die Siebenwindküste"
+					disabled
+					/>
+				<Checkbox
+					checked
+					onClick={changeCheckboxTrap}
+					label="Kneipen &amp; Tavernen"
+					disabled
+					/>
+				<h3>{_translate(locale, 'rules.optionalrules')}</h3>
+				<div className="extended">
 					<Checkbox
-						checked={false}
-						onClick={() => null}
-						label="Eigenschaftsobergrenze"
-						disabled
+						checked={higherParadeValues > 0}
+						onClick={() => changeHigherParadeValues(higherParadeValues > 0 ? 0 : 2)}
+						label={_translate(locale, 'rules.optionalrules.higherdefensestats')}
 						/>
-				</Scroll>
-			</div>
-		);
-	}
+					<Dropdown
+						options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
+						value={higherParadeValues}
+						onChange={changeHigherParadeValues}
+						disabled={higherParadeValues === 0}
+						/>
+				</div>
+				<Checkbox
+					checked={attributeValueLimit}
+					onClick={changeAttributeValueLimit}
+					label={_translate(locale, 'rules.optionalrules.maximumattributescores')}
+					/>
+			</Scroll>
+		</div>
+	);
 }

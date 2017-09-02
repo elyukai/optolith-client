@@ -1,8 +1,9 @@
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
-import TooltipToggle from '../../components/TooltipToggle';
+import { TooltipToggle } from '../../components/TooltipToggle';
 
-interface Props {
+export interface AttributeBorderProps {
+	children?: React.ReactNode;
 	className?: string;
 	label?: string;
 	tooltip?: JSX.Element;
@@ -10,25 +11,22 @@ interface Props {
 	value: number | string;
 }
 
-export default class AttributeBorder extends React.Component<Props, undefined> {
-	render() {
+export function AttributeBorder(props: AttributeBorderProps) {
+	const { children, className, label, tooltip, tooltipMargin, value } = props;
 
-		const className = classNames( 'attr', this.props.className );
+	const valueElement = tooltip ? (
+		<TooltipToggle content={tooltip} margin={tooltipMargin}>
+			<div className="value"><div className="value-inner"><div>{value}</div></div></div>
+		</TooltipToggle>
+	) : (
+		<div className="value"><div className="value-inner"><div>{value}</div></div></div>
+	);
 
-		const valueElement = this.props.tooltip ? (
-			<TooltipToggle content={this.props.tooltip} margin={this.props.tooltipMargin}>
-				<div className="value"><div className="value-inner"><div>{this.props.value}</div></div></div>
-			</TooltipToggle>
-		) : (
-			<div className="value"><div className="value-inner"><div>{this.props.value}</div></div></div>
-		);
-
-		return (
-			<div className={className}>
-				<div className="short">{this.props.label}</div>
-				{valueElement}
-				{this.props.children}
-			</div>
-		);
-	}
+	return (
+		<div className={classNames('attr', className)}>
+			<div className="short">{label}</div>
+			{valueElement}
+			{children}
+		</div>
+	);
 }

@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+
+const AppDispatcher = { dispatch(obj: any) { return obj; }};
 
 export function load() {
 	AppDispatcher.dispatch({
@@ -146,6 +147,12 @@ export function save() {
 	AppDispatcher.dispatch({
 		type: ActionTypes.INGAME_SAVE
 	});
+}
+
+export function _save() {
+	return {
+		type: ActionTypes.INGAME_SAVE
+	};
 }
 
 export function switchOption(option: boolean) {

@@ -1,13 +1,24 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import LiturgiesStore from '../../stores/LiturgiesStore';
+import { TextBox } from '../../components/TextBox';
+import { BlessingInstance, UIMessages } from '../../types/data.d';
+import { sortStrings } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 
-export default () => (
-	<TextBox label="Segnungen" className="blessings activatable-list">
-		<div className="list">
-			{
-				LiturgiesStore.getAll().filter(e => e.active && e.gr === 3).map(e => e.name).join(', ')
-			}
-		</div>
-	</TextBox>
-);
+export interface LiturgiesSheetBlessingsProps {
+	blessings: BlessingInstance[];
+	locale: UIMessages;
+}
+
+
+export function LiturgiesSheetBlessings(props: LiturgiesSheetBlessingsProps) {
+	const { blessings, locale } = props;
+	return (
+		<TextBox label={_translate(locale, 'charactersheet.chants.blessings.title')} className="blessings activatable-list">
+			<div className="list">
+				{
+					sortStrings(blessings.map(e => e.name), locale.id).join(', ')
+				}
+			</div>
+		</TextBox>
+	);
+}

@@ -20,11 +20,11 @@
 			}
 		}
 
-		thead td {
+		th {
 			text-align: center;
 		}
 
-		tbody td {
+		td {
 			font-weight: 400;
 
 			&.name, &.where {
@@ -34,7 +34,7 @@
 			}
 		}
 
-		td {
+		th, td {
 			&:nth-child(2n) {
 				background: rgba(0, 0, 0, 0.1);
 			}
@@ -170,6 +170,70 @@
 	}
 
 	.pet {
+		.textbox {
+			width: 100%;
+		}
 
+		.row {
+			display: flex;
+			margin-top: 2mm;
+
+			div {
+				flex: 1 1 100%;
+				display: flex;
+
+				span {
+					flex: 1 1 100%;
+				}
+			}
+
+			.name, .size, .type {
+				.label {
+					flex: none;
+				}
+			}
+
+			.lp, .ae {
+				flex-grow: 1.5;
+			}
+
+			.attack, .dp, .reach {
+				flex-grow: 2;
+			}
+		}
+
+		.pet-content {
+			display: flex;
+		}
+
+		.left {
+			flex: 1 1 100%;
+		}
+
+		.right {
+			margin-left: 12mm;
+			flex: none;
+
+			.avatar-wrapper {
+				border: 0.3mm solid black;
+				background: none;
+				padding: 0;
+				@include size(24mm);
+			}
+
+			.avatar-wrapper, .avatar {
+				border-radius: 0;
+			}
+		}
+
+		.label {
+			font: bold 11px/3.8mm Alegreya;
+			letter-spacing: 0;
+			padding-right: 2mm;
+		}
+
+		.value {
+			font: 500 11px/4mm Alegreya Sans;
+		}
 	}
 }

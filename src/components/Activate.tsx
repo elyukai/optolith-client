@@ -1,27 +1,28 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
-import classNames from 'classnames';
 
-interface Props {
+export interface ActivateProps {
 	active: boolean;
 	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
-	onClick: () => void;
-	value?: string | number | null;
+	value?: string | number;
+	onClick(value?: string | number): void;
 }
 
-export default (props: Props) => {
-	const { active, disabled, children, onClick, value, ...other } = props;
-	let { className } = props;
+export function Activate(props: ActivateProps) {
+	const { active, className, disabled, onClick, value, ...other } = props;
 
-	className = classNames(className, {
-		'active': active,
-		'disabled': disabled
-	});
+	const onClickEval = disabled ? undefined : () => onClick(value);
 
 	return (
-		<div {...other} className={className} onClick={disabled ? undefined : onClick.bind(null, value)}>
-			{children}
-		</div>
+		<div
+			{...other}
+			className={classNames(className, {
+				'active': active,
+				'disabled': disabled
+			})}
+			onClick={onClickEval}
+			/>
 	);
 }

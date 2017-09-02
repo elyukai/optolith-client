@@ -1,112 +1,82 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import * as ProfessionActions from '../../actions/ProfessionActions';
-import * as ProfessionVariantActions from '../../actions/ProfessionVariantActions';
-import BorderButton from '../../components/BorderButton';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import CultureStore from '../../stores/CultureStore';
-import ProfessionVariantStore from '../../stores/ProfessionVariantStore';
-import ProfileStore from '../../stores/ProfileStore';
+import { BorderButton } from '../../components/BorderButton';
+import { ListItem } from '../../components/ListItem';
+import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Profession, UIMessages } from '../../types/view.d';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
 
-interface Props {
-	currentID: string | null;
-	currentVID: string | null;
-	profession: ProfessionInstance;
+export interface ProfessionsListItemProps {
+	currentProfessionId?: string;
+	currentProfessionVariantId?: string;
+	locale: UIMessages;
+	profession: Profession;
 	sex: 'm' | 'f';
+	selectProfession(id: string): void;
+	selectProfessionVariant(id: string): void;
 	showAddSlidein(): void;
 }
 
-export default class ProfessionsListItem extends React.Component<Props, undefined> {
-	selectProfession = () => ProfessionActions.selectProfession(this.props.profession.id);
-	selectProfessionVariant = (id: string | null) => ProfessionVariantActions.selectProfessionVariant(id);
+export function ProfessionsListItem(props: ProfessionsListItemProps) {
+	const { showAddSlidein, currentProfessionId, currentProfessionVariantId, locale, profession, selectProfession, selectProfessionVariant, sex } = props;
 
-	render() {
-
-		const { showAddSlidein, currentID, currentVID, profession, sex } = this.props;
-
-		let variants;
-		if (profession.id === currentID && profession.variants.length > 0) {
-			const allVariants = ProfessionVariantStore.getAll().filter(e => {
-				if (profession.variants.includes(e.id)) {
-					if (e.dependencies !== null) {
-						return e.dependencies.every(req => {
-							if (req.id === 'CULTURE') {
-								const cultureID = CultureStore.getCurrentID() as string;
-								return (req.value as string[]).includes(cultureID);
-							} else if (req.id === 'SEX') {
-								const sex = ProfileStore.getSex();
-								return sex === req.value;
-							}
-							return false;
-						});
-					}
-					return true;
-				}
-				return false;
-			});
-			if (allVariants.length > 0) {
-				const variantList: Array<{ name: string; value: string | null; }> = allVariants.map(e => {
-					const { ap, id } = e;
-					let { name } = e;
-					if (typeof name === 'object') {
-						name = name[sex];
-					}
-					return {
-						name: `${name} (${profession.ap + ap} AP)`,
-						value: id,
-					};
-				});
-				variantList.splice(0, 0, {
-					name: 'Keine Variante',
-					value: null,
-				});
-				variants = (
-					<RadioButtonGroup
-						active={currentVID}
-						onClick={this.selectProfessionVariant}
-						array={variantList}
-						/>
-				);
+	const variants: { name: string; value: string | undefined }[] = [
+		{ name: _translate(locale, 'professions.options.novariant'), value: undefined },
+		...sortObjects(profession.variants.map(e => {
+			const { ap, id } = e;
+			let { name } = e;
+			if (typeof name === 'object') {
+				name = name[sex];
 			}
-		}
+			return {
+				name: `${name} (${profession.ap + ap} AP)`,
+				value: id,
+			};
+		}), locale.id)
+	];
 
-		let { name, subname } = profession;
+	let { name, subname } = profession;
 
-		if (typeof name === 'object') {
-			name = name[sex];
-		}
-		if (typeof subname === 'object') {
-			subname = subname[sex];
-		}
-
-		return (
-			<li
-				className={classNames({
-					'active': profession.id === currentID,
-				})}
-				>
-				<div className="left">
-					<h2>{name} ({profession.ap} AP)</h2>
-					{subname ? <h3>{subname}</h3> : null}
-					{variants}
-				</div>
-				<div className="right">
-					{
-						profession.id === currentID ? (
-							<BorderButton
-								label="Weiter"
-								onClick={showAddSlidein}
-								primary
-								/>
-						) : (
-							<BorderButton
-								label="Auswählen"
-								onClick={this.selectProfession}
-								/>
-						)
-					}
-				</div>
-			</li>
-		);
+	if (typeof name === 'object') {
+		name = name[sex];
 	}
+	if (typeof subname === 'object') {
+		subname = subname[sex];
+	}
+
+	return (
+		<ListItem active={profession.id === currentProfessionId}>
+			<ListItemName name={`${name} (${profession.ap} AP)`} large>
+				{subname && <p className="profession-subtitle">{subname}</p>}
+				{variants.length > 1 &&
+					<RadioButtonGroup
+						active={profession.id === currentProfessionId ? currentProfessionVariantId : ''}
+						onClick={selectProfessionVariant}
+						array={variants}
+						disabled={profession.id !== currentProfessionId}
+						/>
+				}
+			</ListItemName>
+			<ListItemSeparator />
+			<ListItemButtons>
+				{
+					profession.id === currentProfessionId ? (
+						<BorderButton
+							label={_translate(locale, 'rcp.actions.next')}
+							onClick={showAddSlidein}
+							primary
+							/>
+					) : (
+						<BorderButton
+							label={_translate(locale, 'rcp.actions.select')}
+							onClick={() => selectProfession(profession.id)}
+							/>
+					)
+				}
+			</ListItemButtons>
+		</ListItem>
+	);
 }

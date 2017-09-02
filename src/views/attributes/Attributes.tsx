@@ -1,34 +1,60 @@
 import * as React from 'react';
-import Scroll from '../../components/Scroll';
-import AttributeCalc from './AttributeCalc';
-import AttributeList from './AttributeList';
-import AttributesPermanentList from './AttributesPermanentList';
+import { Scroll } from '../../components/Scroll';
+import { SecondaryAttribute } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { AttributeWithRequirements } from '../../types/view.d';
+import { _translate } from '../../utils/I18n';
+import { AttributeCalc } from './AttributeCalc';
+import { AttributeList } from './AttributeList';
+import { AttributesPermanentList } from './AttributesPermanentList';
 
-interface Props {
-	attributes: AttributeInstance[];
-	el: ExperienceLevel;
+export interface AttributesOwnProps {
+	locale: UIMessages;
+}
+
+export interface AttributesStateProps {
+	attributes: AttributeWithRequirements[];
+	derived: SecondaryAttribute[];
 	phase: number;
+	maxTotalAttributeValues: number;
 	sum: number;
 }
 
-export default class Attribute extends React.Component<Props, undefined> {
-	render() {
-		const { el, sum, ...other } = this.props;
+export interface AttributesDispatchProps {
+	addPoint(id: string): void;
+	removePoint(id: string): void;
+	addLifePoint(): void;
+	addArcaneEnergyPoint(): void;
+	addKarmaPoint(): void;
+	addBoughtBackAEPoint(): void;
+	removeBoughtBackAEPoint(): void;
+	addLostAEPoint(): void;
+	removeLostAEPoint(): void;
+	addLostAEPoints(value: number): void;
+	addBoughtBackKPPoint(): void;
+	removeBoughtBackKPPoint(): void;
+	addLostKPPoint(): void;
+	removeLostKPPoint(): void;
+	addLostKPPoints(value: number): void;
+}
 
-		const sumMax = sum >= el.maxTotalAttributeValues;
-		const max = el.maxAttributeValue;
+export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps;
 
-		return (
-			<section id="attribute">
-				<div className="page">
-					<Scroll>
-						<div className="counter">Punkte in Eigenschaften: {sum}</div>
-						<AttributeList {...other} max={max} sumMax={sumMax} />
-						<AttributeCalc {...other} />
-						<AttributesPermanentList phase={other.phase} />
-					</Scroll>
-				</div>
-			</section>
-		);
-	}
+export function Attributes(props: AttributesProps) {
+	const { locale, phase, maxTotalAttributeValues, sum } = props;
+
+	return (
+		<section id="attribute">
+			<div className="page">
+				<Scroll>
+					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{phase === 2 && ` / ${maxTotalAttributeValues}`}</div>
+					<AttributeList {...props} />
+					<div className="secondary">
+						<AttributeCalc {...props} locale={locale} />
+						<AttributesPermanentList {...props} locale={locale} />
+					</div>
+				</Scroll>
+			</div>
+		</section>
+	);
 }

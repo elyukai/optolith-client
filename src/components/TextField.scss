@@ -4,7 +4,7 @@
 	margin: 10px 0;
 	position: relative;
 	font: 500 13px/30px "Alegreya Sans";
-	
+
 	.textfield-hint {
 		width: 100%;
 		height: 32px;
@@ -12,7 +12,7 @@
 		pointer-events: none;
 		position: absolute;
 		color: #a09b8c;
-		
+
 		&.hide {
 			visibility: hidden;
 		}
@@ -31,7 +31,7 @@
 		display: block;
 		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.45) inset;
 		outline: 0 none;
-		
+
 		&:focus, &:active {
 			// color: #f1e6d4;
 			background: linear-gradient(to bottom, #11161c 0%, #1c2328 100%);
@@ -39,14 +39,14 @@
 			border-image-slice: 1;
 		}
 	}
-	
+
 	&.fullWidth {
 		width: auto;
 	}
 
 	&.disabled {
 		pointer-events: none;
-	
+
 		.textfield-hint {
 			color: #31353a;
 		}
@@ -60,6 +60,17 @@
 			background: none;
 			color: #31353a;
 			box-shadow: none;
+		}
+	}
+
+	&.invalid:not(.disabled) {
+		label {
+			color: $unrecommended1;
+		}
+
+		input, textarea {
+			border: 1px solid $unrecommended2;
+			color: $unrecommended1;
 		}
 	}
 

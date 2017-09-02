@@ -1,10 +1,10 @@
-// import TextareaAutosize from 'react-textarea-autosize';
+// import { TextareaAutosize } from 'react-textarea-autosize';
+import * as classNames from 'classnames';
 import * as React from 'react';
-import classNames from 'classnames';
-import Label from './Label';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
+import { Label } from './Label';
 
-interface Props {
+export interface TextFieldProps {
 	autoFocus?: boolean;
 	className?: string;
 	countCurrent?: number;
@@ -18,28 +18,24 @@ interface Props {
 	onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 	type?: string;
 	value?: string | number;
+	valid?: boolean;
 }
 
-export default class TextField extends React.Component<Props, undefined> {
-	static defaultProps = {
-		multiLine: false,
-		type: 'text'
-	};
-
+export class TextField extends React.Component<TextFieldProps, {}> {
 	inputRef: HTMLInputElement;
 
 	componentDidMount() {
 		if (this.props.autoFocus) {
-			ReactDOM.findDOMNode<HTMLInputElement>(this.inputRef).focus();
+			findDOMNode<HTMLInputElement>(this.inputRef).focus();
 		}
 	}
 
 	render() {
-		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type, value } = this.props;
+		const { className, countCurrent, countMax, disabled, fullWidth, hint, label, onChange, onKeyDown, type = 'text', valid, value = '' } = this.props;
 
-		const hintElement = hint ? (
+		const hintElement = hint && (
 			<div className={classNames('textfield-hint', value && 'hide')}>{hint}</div>
-		) : null;
+		);
 
 		// const inputElement = this.props.multiLine ? (
 		// 	<TextareaAutosize
@@ -59,14 +55,19 @@ export default class TextField extends React.Component<Props, undefined> {
 			/>
 		);
 
-		const counterTextElement = countMax ? (
+		const counterTextElement = countMax && (
 			<div>{countCurrent} / {countMax}</div>
-		) : null;
+		);
 
 		return (
-			<div className={classNames(className, { textfield: true, fullWidth, disabled })}>
+			<div className={classNames(className, {
+				textfield: true,
+				fullWidth,
+				disabled,
+				invalid: valid === false
+			})}>
 				{hintElement}
-				<Label text={label} />
+				{label && <Label text={label} />}
 				{inputElement}
 				{counterTextElement}
 			</div>

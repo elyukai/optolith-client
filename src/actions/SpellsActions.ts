@@ -1,37 +1,162 @@
-import { ACTIVATE_SPELL, DEACTIVATE_SPELL, ADD_SPELL_POINT, REMOVE_SPELL_POINT, SET_SPELLS_SORT_ORDER } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { get } from '../selectors/spellsSelectors';
+import { AsyncAction } from '../stores/AppStore';
+import { alert } from '../utils/alert';
+import { validate } from '../utils/APUtils';
+import { translate } from '../utils/I18n';
+import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
+import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
-export const addToList = (id: string) => AppDispatcher.dispatch<ActivateSpellAction>({
-	type: ACTIVATE_SPELL,
+export interface ActivateSpellAction {
+	type: ActionTypes.ACTIVATE_SPELL;
 	payload: {
-		id
-	}
-});
+		id: string;
+		cost: number;
+	};
+}
 
-export const removeFromList = (id: string) => AppDispatcher.dispatch<DeactivateSpellAction>({
-	type: DEACTIVATE_SPELL,
-	payload: {
-		id
-	}
-});
+export function _addToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const cost = getIncreaseAP(entry.ic);
+		const validCost = validate(cost, state.currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_SPELL,
+			payload: {
+				id,
+				cost
+			}
+		} as ActivateSpellAction);
+	};
+}
 
-export const addPoint = (id: string) => AppDispatcher.dispatch<AddSpellPointAction>({
-	type: ADD_SPELL_POINT,
+export interface ActivateCantripAction {
+	type: ActionTypes.ACTIVATE_CANTRIP;
 	payload: {
-		id
-	}
-});
+		id: string;
+	};
+}
 
-export const removePoint = (id: string) => AppDispatcher.dispatch<RemoveSpellPointAction>({
-	type: REMOVE_SPELL_POINT,
-	payload: {
-		id
-	}
-});
+export function _addCantripToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(1, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_CANTRIP,
+			payload: {
+				id
+			}
+		} as ActivateCantripAction);
+	};
+}
 
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetSpellsSortOrderAction>({
-	type: SET_SPELLS_SORT_ORDER,
+export interface DeactivateSpellAction {
+	type: ActionTypes.DEACTIVATE_SPELL;
 	payload: {
-		sortOrder
-	}
-});
+		id: string;
+		cost: number;
+	};
+}
+
+export function _removeFromList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const cost = getDecreaseAP(entry.ic);
+		dispatch({
+			type: ActionTypes.DEACTIVATE_SPELL,
+			payload: {
+				id,
+				cost
+			}
+		} as DeactivateSpellAction);
+	};
+}
+
+export interface DeactivateCantripAction {
+	type: ActionTypes.DEACTIVATE_CANTRIP;
+	payload: {
+		id: string;
+	};
+}
+
+export function _removeCantripFromList(id: string): DeactivateCantripAction {
+	return {
+		type: ActionTypes.DEACTIVATE_CANTRIP,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface AddSpellPointAction {
+	type: ActionTypes.ADD_SPELL_POINT;
+	payload: {
+		id: string;
+		cost: number;
+	};
+}
+
+export function _addPoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap);
+		if (!cost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ADD_SPELL_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as AddSpellPointAction);
+	};
+}
+
+export interface RemoveSpellPointAction {
+	type: ActionTypes.REMOVE_SPELL_POINT;
+	payload: {
+		id: string;
+		cost: number;
+	};
+}
+
+export function _removePoint(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseCost(get(state.currentHero.present.dependent.spells, id)!);
+		dispatch({
+			type: ActionTypes.REMOVE_SPELL_POINT,
+			payload: {
+				id,
+				cost
+			}
+		} as RemoveSpellPointAction);
+	};
+}
+
+export interface SetSpellsSortOrderAction {
+	type: ActionTypes.SET_SPELLS_SORT_ORDER;
+	payload: {
+		sortOrder: string;
+	};
+}
+
+export function _setSortOrder(sortOrder: string): SetSpellsSortOrderAction {
+	return {
+		type: ActionTypes.SET_SPELLS_SORT_ORDER,
+		payload: {
+			sortOrder
+		}
+	};
+}

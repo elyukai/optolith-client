@@ -1,29 +1,85 @@
-import { ACTIVATE_SPECIALABILITY, DEACTIVATE_SPECIALABILITY, SET_SPECIALABILITY_TIER, SET_SPECIALABILITIES_SORT_ORDER } from '../constants/ActionTypes';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import * as ActionTypes from '../constants/ActionTypes';
+import { AsyncAction } from '../stores/AppStore';
+import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
+import { alert } from '../utils/alert';
+import { validate } from '../utils/APUtils';
+import { translate } from '../utils/I18n';
 
-export const addToList = (args: ActivateArgs) => AppDispatcher.dispatch<ActivateSpecialAbilityAction>({
-	type: ACTIVATE_SPECIALABILITY,
-	payload: args
-});
+export interface ActivateSpecialAbilityAction {
+	type: ActionTypes.ACTIVATE_SPECIALABILITY;
+	payload: UndoExtendedActivateArgs;
+}
 
-export const removeFromList = (args: DeactivateArgs) => AppDispatcher.dispatch<DeactivateSpecialAbilityAction>({
-	type: DEACTIVATE_SPECIALABILITY,
-	payload: args
-});
+export function _addToList(args: ActivateArgs): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(args.cost, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.ACTIVATE_SPECIALABILITY,
+			payload: args
+		} as ActivateSpecialAbilityAction);
+	};
+}
 
-export const setTier = (id: string, index: number, tier: number, cost: number) => AppDispatcher.dispatch<SetSpecialAbilityTierAction>({
-	type: SET_SPECIALABILITY_TIER,
+export interface DeactivateSpecialAbilityAction {
+	type: ActionTypes.DEACTIVATE_SPECIALABILITY;
+	payload: UndoExtendedDeactivateArgs;
+}
+
+export function _removeFromList(args: DeactivateArgs): DeactivateSpecialAbilityAction {
+	return {
+		type: ActionTypes.DEACTIVATE_SPECIALABILITY,
+		payload: {
+			...args,
+			cost: args.cost * -1 // the entry should be removed
+		}
+	};
+}
+
+export interface SetSpecialAbilityTierAction {
+	type: ActionTypes.SET_SPECIALABILITY_TIER;
 	payload: {
-		id,
-		tier,
-		cost,
-		index
-	}
-});
+		id: string;
+		index: number;
+		tier: number;
+		cost: number;
+	};
+}
 
-export const setSortOrder = (sortOrder: string) => AppDispatcher.dispatch<SetSpecialAbilitiesSortOrderAction>({
-	type: SET_SPECIALABILITIES_SORT_ORDER,
+export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
+	return (dispatch, getState) => {
+		const validCost = validate(cost, getState().currentHero.present.ap);
+		if (!validCost) {
+			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			return;
+		}
+		dispatch({
+			type: ActionTypes.SET_SPECIALABILITY_TIER,
+			payload: {
+				id,
+				tier,
+				cost,
+				index
+			}
+		} as SetSpecialAbilityTierAction);
+	};
+}
+
+export interface SetSpecialAbilitiesSortOrderAction {
+	type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER;
 	payload: {
-		sortOrder
-	}
-});
+		sortOrder: string;
+	};
+}
+
+export function _setSortOrder(sortOrder: string): SetSpecialAbilitiesSortOrderAction {
+	return {
+		type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
+		payload: {
+			sortOrder,
+		},
+	};
+}

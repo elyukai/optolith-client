@@ -1,5 +1,5 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import Store from './Store';
+
+import { Store } from './Store';
 import * as ActionTypes from '../constants/ActionTypes';
 
 let _fighters = [];
@@ -388,7 +388,7 @@ class InGameStoreStatic extends Store {
 
 }
 
-const InGameStore = new InGameStoreStatic((action) => {
+export const InGameStore = new InGameStoreStatic((action) => {
 
 	// switch( payload.type ) {
 
@@ -494,5 +494,3 @@ const InGameStore = new InGameStoreStatic((action) => {
 	return true;
 
 });
-
-export default InGameStore;

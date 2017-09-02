@@ -35,7 +35,7 @@
 		background-color: transparentize(#f60, .75);
 	}
 
-	td {
+	th, td {
 		width: 9mm;
 		border-style: solid;
 		border-color: #c8c8c8;
@@ -48,15 +48,15 @@
 		}
 	}
 
-	td:nth-child(2n) {
+	th:nth-child(2n), td:nth-child(2n) {
 		background: rgba(0, 0, 0, 0.1);
 	}
 
-	thead td {
+	th {
 		text-align: center;
 	}
 
-	tbody td {
+	td {
 		padding: 0 1mm;
 
 		&:not(.name) {

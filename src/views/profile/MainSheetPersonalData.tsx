@@ -1,92 +1,84 @@
 import * as React from 'react';
-import Avatar from '../../components/Avatar';
-import LabelBox from '../../components/LabelBox';
-import Plain from '../../components/Plain';
+import { Avatar } from '../../components/Avatar';
+import { LabelBox } from '../../components/LabelBox';
+import { Plain } from '../../components/Plain';
+import { ProfileState } from '../../reducers/profile';
+import { CultureInstance, ExperienceLevel, ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
 
 export interface MainSheetPersonalDataProps {
 	ap: {
 		spent: number;
 		total: number;
 	};
-	culture: CultureInstance;
-	el: string;
+	culture: CultureInstance | undefined;
+	el: ExperienceLevel;
 	eyecolorTags: string[];
 	haircolorTags: string[];
-	profession: ProfessionInstance;
+	locale: UIMessages;
+	profession: ProfessionInstance | undefined;
 	professionVariant?: ProfessionVariantInstance;
-	profile: {
-		name: string;
-		sex: 'm' | 'f';
-		avatar: string;
-		family: string;
-		placeofbirth: string;
-		dateofbirth: string;
-		age: string;
-		haircolor: number;
-		eyecolor: number;
-		size: string;
-		weight: string;
-		title: string;
-		socialstatus: number;
-		characteristics: string;
-		otherinfo: string;
-	};
-	race: RaceInstance;
+	profile: ProfileState;
+	race: RaceInstance | undefined;
 	socialstatusTags: string[];
 }
 
-export default (props: MainSheetPersonalDataProps) => {
-	const { ap, culture, el, eyecolorTags, haircolorTags, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar }, race, socialstatusTags } = props;
+export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
+	const { ap, culture, el, eyecolorTags, haircolorTags, locale, profession, professionVariant, profile: { name, family, placeofbirth, dateofbirth, age, sex, size, weight, haircolor, eyecolor, title, socialstatus, characteristics, otherinfo, avatar, professionName: ownProfessionName }, race, socialstatusTags } = props;
 
-	const raceName = race.name;
-	const cultureName = culture.name;
+	const raceName = race && race.name;
+	const cultureName = culture && culture.name;
 	const professionName = (() => {
-		let { name, subname } = profession || { name: 'Loading...', subname: null };
-		if (typeof name === 'object') {
+		if (profession && profession.id === 'P_0') {
+			return ownProfessionName;
+		}
+		let { name, subname } = profession || { name: '', subname: undefined };
+		if (typeof name === 'object' && sex) {
 			name = name[sex];
 		}
-		if (typeof subname === 'object') {
+		if (typeof subname === 'object' && sex) {
 			subname = subname[sex];
 		}
-		let { name: vname } = professionVariant || { name: 'Loading...' };
-		if (typeof vname === 'object') {
+		let { name: vname } = professionVariant || { name: '' };
+		if (typeof vname === 'object' && sex) {
 			vname = vname[sex];
 		}
 		return name + (subname ? ` (${subname})` : professionVariant ? ` (${vname})` : '');
 	})();
 
-	const haircolorName = haircolorTags[haircolor - 1];
-	const eyecolorName = eyecolorTags[eyecolor - 1];
-	const socialstatusName = socialstatusTags[socialstatus - 1];
+	const haircolorName = haircolor && haircolorTags[haircolor - 1];
+	const eyecolorName = eyecolor && eyecolorTags[eyecolor - 1];
+	const socialstatusName = socialstatus && socialstatusTags[socialstatus - 1];
 
 	return (
 		<div className="upper">
 			<div className="info">
-				<Plain className="name" label="Name" value={name} />
-				<Plain className="family" label="Familie" value={family} />
-				<Plain className="placeofbirth" label="Geburtsort" value={placeofbirth} />
-				<Plain className="dateofbirth" label="Geburtsdatum" value={dateofbirth} />
-				<Plain className="age" label="Alter" value={age} />
-				<Plain className="sex" label="Geschlecht" value={sex} />
-				<Plain className="race" label="Spezies" value={raceName} />
-				<Plain className="size" label="Größe" value={size} />
-				<Plain className="weight" label="Gewicht" value={weight} />
-				<Plain className="haircolor" label="Haarfarbe" value={haircolorName} />
-				<Plain className="eyecolor" label="Augenfarbe" value={eyecolorName} />
-				<Plain className="culture" label="Kultur" value={cultureName} />
-				<Plain className="socialstatus" label="Sozialstatus" value={socialstatusName} />
-				<Plain className="profession" label="Profession" value={professionName} />
-				<Plain className="title" label="Titel" value={title} />
-				<Plain className="characteristics" label="Charakteristika" value={characteristics} />
-				<Plain className="otherinfo" label="Sonstiges" value={otherinfo} />
+				<Plain className="name" label={_translate(locale, 'charactersheet.main.heroname')} value={name} />
+				<Plain className="family" label={_translate(locale, 'charactersheet.main.family')} value={family} />
+				<Plain className="placeofbirth" label={_translate(locale, 'charactersheet.main.placeofbirth')} value={placeofbirth} />
+				<Plain className="dateofbirth" label={_translate(locale, 'charactersheet.main.dateofbirth')} value={dateofbirth} />
+				<Plain className="age" label={_translate(locale, 'charactersheet.main.age')} value={age} />
+				<Plain className="sex" label={_translate(locale, 'charactersheet.main.sex')} value={sex} />
+				<Plain className="race" label={_translate(locale, 'charactersheet.main.race')} value={raceName} />
+				<Plain className="size" label={_translate(locale, 'charactersheet.main.size')} value={size} />
+				<Plain className="weight" label={_translate(locale, 'charactersheet.main.weight')} value={weight} />
+				<Plain className="haircolor" label={_translate(locale, 'charactersheet.main.haircolor')} value={haircolorName} />
+				<Plain className="eyecolor" label={_translate(locale, 'charactersheet.main.eyecolor')} value={eyecolorName} />
+				<Plain className="culture" label={_translate(locale, 'charactersheet.main.culture')} value={cultureName} />
+				<Plain className="socialstatus" label={_translate(locale, 'charactersheet.main.socialstatus')} value={socialstatusName} />
+				<Plain className="profession" label={_translate(locale, 'charactersheet.main.profession')} value={professionName} />
+				<Plain className="title" label={_translate(locale, 'charactersheet.main.herotitle')} value={title} />
+				<Plain className="characteristics" label={_translate(locale, 'charactersheet.main.characteristics')} value={characteristics} />
+				<Plain className="otherinfo" label={_translate(locale, 'charactersheet.main.otherinfo')} value={otherinfo} />
 			</div>
 			<div className="ap-portrait">
-				<LabelBox className="el" label="Erfahrungsgrad" value={el} />
-				<LabelBox className="ap-total" label="AP gesamt" value={ap.total} />
-				<LabelBox className="portrait" label="Porträt/Wappen"><Avatar src={avatar} img /></LabelBox>
-				<LabelBox className="ap-available" label="AP verfügbar" value={ap.total - ap.spent} />
-				<LabelBox className="ap-used" label="AP ausgegeben" value={ap.spent} />
+				<LabelBox className="el" label={_translate(locale, 'charactersheet.main.experiencelevel')} value={el.name} />
+				<LabelBox className="ap-total" label={_translate(locale, 'charactersheet.main.totalap')} value={ap.total} />
+				<LabelBox className="portrait" label={_translate(locale, 'charactersheet.main.avatar')}><Avatar src={avatar} img /></LabelBox>
+				<LabelBox className="ap-available" label={_translate(locale, 'charactersheet.main.apcollected')} value={ap.total - ap.spent} />
+				<LabelBox className="ap-used" label={_translate(locale, 'charactersheet.main.apspent')} value={ap.spent} />
 			</div>
 		</div>
 	);
-};
+}

@@ -1,35 +1,46 @@
 import * as React from 'react';
-import * as AttributesActions from '../../actions/AttributesActions';
-import IconButton from '../../components/IconButton';
-import NumberBox from '../../components/NumberBox';
-import { isDecreasable, isIncreasable } from '../../utils/AttributeUtils';
-import AttributeBorder from './AttributeBorder';
+import { IconButton } from '../../components/IconButton';
+import { NumberBox } from '../../components/NumberBox';
+import { AttributeWithRequirements } from '../../types/view.d';
+import { AttributeBorder } from './AttributeBorder';
 
-interface Props {
-	attribute: AttributeInstance;
+export interface AttributeListItemProps {
+	attribute: AttributeWithRequirements;
 	phase: number;
+	maxTotalAttributeValues: number;
+	sum: number;
+	addPoint(id: string): void;
+	removePoint(id: string): void;
 }
 
-export default class AttributeListItem extends React.Component<Props, undefined> {
-	addPoint = () => AttributesActions.addPoint(this.props.attribute.id);
-	removePoint = () => AttributesActions.removePoint(this.props.attribute.id);
-
+export class AttributeListItem extends React.Component<AttributeListItemProps, {}> {
 	render() {
+		const { attribute, maxTotalAttributeValues, phase, sum } = this.props;
+		const { id, short, name, value, max, min } = attribute;
 
-		const { attribute, phase } = this.props;
-		const { id, short, name, value, mod } = attribute;
-
-		const valueHeader = phase === 2 ? `${value} / ${14 + mod}` : value;
+		const valueHeader = phase === 2 ? `${value} / ${max}` : value;
 
 		return (
 			<AttributeBorder className={id} label={short} value={value} tooltip={<div className="calc-attr-overlay">
 					<h4><span>{name}</span><span>{valueHeader}</span></h4>
 				</div>} tooltipMargin={11}>
-				{ phase === 2 ? <NumberBox max={14 + mod} /> : null }
-				<IconButton className="add" icon="&#xE145;" onClick={this.addPoint} disabled={!isIncreasable(attribute)} />
-				{ phase === 2 ? (
-					<IconButton className="remove" icon="&#xE15B;" onClick={this.removePoint} disabled={!isDecreasable(attribute)} />
-				) : null }
+				{phase === 2 &&
+					<NumberBox max={max || 0} />
+				}
+				<IconButton
+					className="add"
+					icon="&#xE145;"
+					onClick={this.props.addPoint.bind(null, id)}
+					disabled={phase === 2 && sum >= maxTotalAttributeValues || typeof max === 'number' && value >= max}
+					/>
+				{phase === 2 &&
+					<IconButton
+						className="remove"
+						icon="&#xE15B;"
+						onClick={this.props.removePoint.bind(null, id)}
+						disabled={value <= min}
+						/>
+				}
 			</AttributeBorder>
 		);
 	}

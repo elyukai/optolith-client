@@ -1,22 +1,24 @@
+import * as classNames from 'classnames';
+import { existsSync } from 'fs';
 import * as React from 'react';
-import Avatar from './Avatar';
-import classNames from 'classnames';
+import { Avatar } from './Avatar';
 
-interface Props {
+export interface AvatarWrapperProps {
 	className?: string;
 	children?: React.ReactNode;
 	img?: boolean;
-	onClick?: (e: React.MouseEvent<any>) => void;
-	src: string;
+	src?: string;
+	onClick?(): void;
 }
 
-export default (props: Props) => {
+export function AvatarWrapper(props: AvatarWrapperProps) {
 	const { children, img, onClick, src } = props;
 	let { className } = props;
+	const validPath = typeof src === 'string' && src.length > 0 && existsSync(src.replace(/file:[\\\/]+/, ''));
 
 	className = classNames(className, {
 		'avatar-wrapper': true,
-		'no-avatar': !src
+		'no-avatar': !validPath
 	});
 
 	return (
@@ -25,4 +27,4 @@ export default (props: Props) => {
 			<Avatar img={img} src={src} hasWrapper />
 		</div>
 	);
-};
+}

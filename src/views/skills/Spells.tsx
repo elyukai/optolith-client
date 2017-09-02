@@ -1,131 +1,158 @@
 import * as React from 'react';
-import * as SpellsActions from '../../actions/SpellsActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import PhaseStore from '../../stores/PhaseStore';
-import SpellsStore from '../../stores/SpellsStore';
-import { filterAndSort } from '../../utils/ListUtils';
-import { isActivatable, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
-import SkillListItem from './SkillListItem';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { List } from '../../components/List';
+import { ListItem } from '../../components/ListItem';
+import { ListItemGroup } from '../../components/ListItemGroup';
+import { ListItemName } from '../../components/ListItemName';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import * as Categories from '../../constants/Categories';
+import { CurrentHeroInstanceState } from '../../reducers/currentHero';
+import { CantripInstance, InputTextEvent, Instance, SecondaryAttribute, SpellInstance } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { DCIds } from '../../utils/derivedCharacteristics';
+import { filterAndSort } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
+import { SkillListItem } from './SkillListItem';
 
-interface State {
-	addSpellsDisabled: boolean;
-	areMaxUnfamiliar: boolean;
-	filterText: string;
-	phase: number;
-	showAddSlidein: boolean;
-	sortOrder: string;
-	spells: SpellInstance[];
+export interface SpellsOwnProps {
+	locale: UIMessages;
 }
 
-export default class Spells extends React.Component<undefined, State> {
+export interface SpellsStateProps {
+	addSpellsDisabled: boolean;
+	currentHero: CurrentHeroInstanceState;
+	enableActiveItemHints: boolean;
+	list: (SpellInstance | CantripInstance)[];
+	phase: number;
+	sortOrder: string;
+	get(id: string): Instance | undefined;
+	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
+}
 
+export interface SpellsDispatchProps {
+	setSortOrder(sortOrder: string): void;
+	switchActiveItemHints(): void;
+	addPoint(id: string): void;
+	addToList(id: string): void;
+	addCantripToList(id: string): void;
+	removePoint(id: string): void;
+	removeFromList(id: string): void;
+	removeCantripFromList(id: string): void;
+}
+
+export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps;
+
+export interface SpellsState {
+	filterText: string;
+	filterTextSlidein: string;
+	showAddSlidein: boolean;
+}
+
+export class Spells extends React.Component<SpellsProps, SpellsState> {
 	state = {
-		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
 		filterText: '',
-		phase: PhaseStore.get(),
-		showAddSlidein: false,
-		sortOrder: SpellsStore.getSortOrder(),
-		spells: SpellsStore.getAll(),
+		filterTextSlidein: '',
+		showAddSlidein: false
 	};
 
-	_updateSpellsStore = () => this.setState({
-		addSpellsDisabled: SpellsStore.isActivationDisabled(),
-		areMaxUnfamiliar: SpellsStore.areMaxUnfamiliar(),
-		sortOrder: SpellsStore.getSortOrder(),
-		spells: SpellsStore.getAll(),
-	} as State);
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => SpellsActions.setSortOrder(option);
-	addToList = (id: string) => SpellsActions.addToList(id);
-	addPoint = (id: string) => SpellsActions.addPoint(id);
-	removeFromList = (id: string) => SpellsActions.removeFromList(id);
-	removePoint = (id: string) => SpellsActions.removePoint(id);
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-
-	componentDidMount() {
-		SpellsStore.addChangeListener(this._updateSpellsStore );
-	}
-
-	componentWillUnmount() {
-		SpellsStore.removeChangeListener(this._updateSpellsStore );
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpellsState);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpellsState);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpellsState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpellsState);
 
 	render() {
-		const GROUPS = SpellsStore.getGroupNames();
-		const PROPERTIES = SpellsStore.getPropertyNames();
-		const TRADITIONS = SpellsStore.getTraditionNames();
-
-		const { addSpellsDisabled, areMaxUnfamiliar, filterText, phase, showAddSlidein, sortOrder, spells } = this.state;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, getDerivedCharacteristic, list, locale, phase, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
-			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'group' },
-			{ name: 'Nach Merkmal', value: 'property' },
-			{ name: 'Nach Steigerungsfaktor', value: 'ic' },
+			{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
+			{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
+			{ name: _translate(locale, 'options.sortorder.property'), value: 'property' },
+			{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 		];
 
-		const list = filterAndSort(spells, filterText, sortOrder);
-
-		const listActive: SpellInstance[] = [];
-		const listDeactive: SpellInstance[] = [];
+		const listActive: (SpellInstance | CantripInstance)[] = [];
+		const listDeactive: (SpellInstance | CantripInstance)[] = [];
 
 		list.forEach(e => {
 			if (e.active) {
 				listActive.push(e);
-			}
-			else if (isActivatable(e)) {
-				if (!isOwnTradition(e)) {
-					if (e.gr < 2 && !areMaxUnfamiliar) {
-						listDeactive.push(e);
-					}
-				}
-				else {
+				if (enableActiveItemHints === true) {
 					listDeactive.push(e);
 				}
 			}
+			else {
+				listDeactive.push(e);
+			}
 		});
 
+		const sortedActiveList = filterAndSort(listActive, filterText, sortOrder);
+		const sortedDeactiveList = filterAndSort(listDeactive, filterTextSlidein, sortOrder);
+
 		return (
-			<div className="page" id="spells">
+			<Page id="spells">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<Options>
+						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
-							onClick={this.sort}
+							onClick={setSortOrder}
 							array={sortArray}
 							/>
-						<Checkbox
-							checked={true}
-							onClick={() => undefined}
-							disabled
-							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+					</Options>
+					<Scroll>
+						<List>
 							{
-								listDeactive.map(obj => {
-									const [ a, b, c, checkmod ] = obj.check;
-									const check = [ a, b, c ];
+								sortedDeactiveList.map((obj, index, array) => {
+									const prevObj = array[index - 1];
 
-									let name = obj.name;
-									if (!isOwnTradition(obj)) {
-										name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+									let extendName = '';
+									if (!isOwnTradition(currentHero.dependent, obj)) {
+										extendName += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 									}
 
-									const add = obj.gr === 5 ? {} : {
-										check,
-										checkmod,
-										ic: obj.ic,
-									};
+									if (obj.active === true) {
+										const { id, name } = obj;
+										const extendedName = name + extendName;
+										return (
+											<ListItem key={id} disabled>
+												<ListItemName name={extendedName} />
+											</ListItem>
+										);
+									}
+
+									const name = obj.name + extendName;
+
+									if (obj.category === Categories.CANTRIPS) {
+										return (
+											<SkillListItem
+												key={obj.id}
+												id={obj.id}
+												name={name}
+												isNotActive
+												activate={addCantripToList.bind(null, obj.id)}
+												addFillElement
+												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
+												get={get}
+												getDerivedCharacteristic={getDerivedCharacteristic}
+												>
+												<ListItemGroup>
+													{_translate(locale, 'spells.view.properties')[obj.property - 1]}
+													{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.cantrip')}` : null}
+												</ListItemGroup>
+											</SkillListItem>
+										);
+									}
+
+									const { check, checkmod, ic } = obj;
 
 									return (
 										<SkillListItem
@@ -133,50 +160,80 @@ export default class Spells extends React.Component<undefined, State> {
 											id={obj.id}
 											name={name}
 											isNotActive
-											activate={this.addToList.bind(null, obj.id)}
+											activate={addToList.bind(null, obj.id)}
 											activateDisabled={addSpellsDisabled && obj.gr < 3}
 											addFillElement
-											{...add}
+											check={check}
+											checkmod={checkmod}
+											ic={ic}
+											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
+											get={get}
+											getDerivedCharacteristic={getDerivedCharacteristic}
 											>
-											<div className="property">{PROPERTIES[obj.property - 1]}</div>
+											<ListItemGroup>
+												{_translate(locale, 'spells.view.properties')[obj.property - 1]}
+												{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : null}
+											</ListItemGroup>
 										</SkillListItem>
 									);
 								})
 							}
-						</div>
+						</List>
 					</Scroll>
 				</Slidein>
-				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+				<Options>
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
-						onClick={this.sort}
+						onClick={setSortOrder}
 						array={sortArray}
 						/>
 					<BorderButton
-						label="Hinzufügen"
+						label={_translate(locale, 'actions.addtolist')}
 						onClick={this.showAddSlidein}
 						/>
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
+				</Options>
+				<Scroll>
+					<List>
 						{
-							listActive.map(obj => {
-								const [ a1, a2, a3, checkmod ] = obj.check;
-								const check = [ a1, a2, a3 ];
+							sortedActiveList.map((obj, index, array) => {
+								const prevObj = array[index - 1];
 
 								let name = obj.name;
-								if (!isOwnTradition(obj)) {
-									name += ` (${obj.tradition.map(e => TRADITIONS[e - 1]).sort().join(', ')})`;
+								if (!isOwnTradition(currentHero.dependent, obj)) {
+									name += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 								}
 
-								const other = obj.gr === 5 ? {} : {
-									addDisabled: !isIncreasable(obj),
-									addPoint: this.addPoint.bind(null, obj.id),
+								if (obj.category === Categories.CANTRIPS) {
+									return (
+										<SkillListItem
+											key={obj.id}
+											id={obj.id}
+											name={name}
+											removePoint={phase < 3 ? removeCantripFromList.bind(null, obj.id) : undefined}
+											addFillElement
+											noIncrease
+											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
+											get={get}
+											getDerivedCharacteristic={getDerivedCharacteristic}
+											>
+											<ListItemGroup>
+												{_translate(locale, 'spells.view.properties')[obj.property - 1]}
+												{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.cantrip')}` : null}
+											</ListItemGroup>
+										</SkillListItem>
+									);
+								}
+
+								const { check, checkmod, ic, value } = obj;
+
+								const other = {
+									addDisabled: !isIncreasable(currentHero, obj),
+									addPoint: addPoint.bind(null, obj.id),
 									check,
 									checkmod,
-									ic: obj.ic,
-									sr: obj.value,
+									ic,
+									sr: value,
 								};
 
 								return (
@@ -184,22 +241,24 @@ export default class Spells extends React.Component<undefined, State> {
 										key={obj.id}
 										id={obj.id}
 										name={name}
-										removePoint={phase < 3 ? obj.gr === 5 || obj.value === 0 ? this.removeFromList.bind(null, obj.id) : this.removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!isDecreasable(obj)}
+										removePoint={phase < 3 ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
+										removeDisabled={!isDecreasable(currentHero, obj)}
 										addFillElement
-										noIncrease={obj.gr === 5}
+										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
+										get={get}
+										getDerivedCharacteristic={getDerivedCharacteristic}
 										{...other} >
-										<div className="property">
-											{PROPERTIES[obj.property - 1]}
-											{sortOrder === 'group' ? ` / ${GROUPS[obj.gr - 1]}` : null}
-										</div>
+										<ListItemGroup>
+											{_translate(locale, 'spells.view.properties')[obj.property - 1]}
+											{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : null}
+										</ListItemGroup>
 									</SkillListItem>
 								);
 							})
 						}
-					</div>
+					</List>
 				</Scroll>
-			</div>
+			</Page>
 		);
 	}
 }

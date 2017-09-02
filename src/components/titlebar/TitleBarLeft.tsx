@@ -1,13 +1,13 @@
-import { Component } from 'react';
 import * as React from 'react';
 
-export default class TitleBarLeft extends Component<any, any> {
+export interface TitleBarLeftProps {
+	children?: React.ReactNode;
+}
 
-	render() {
-		return (
-			<div className="titlebar-left">
-				{this.props.children}
-			</div>
-		);
-	}
+export function TitleBarLeft(props: TitleBarLeftProps) {
+	return (
+		<div className="titlebar-left">
+			{props.children}
+		</div>
+	);
 }

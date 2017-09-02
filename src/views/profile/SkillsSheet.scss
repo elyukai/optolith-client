@@ -15,15 +15,15 @@
 			width: 50%;
 		}
 
-		table:first-child tbody tr td:last-child {
+		table:first-child td:last-child {
 			border-right: 0.3mm solid grey;
 		}
 
-		thead td {
+		th {
 			text-align: center;
 		}
 
-		tbody td {
+		td {
 			&.check, &.enc, &.ic, &.sr, &.routine {
 				text-align: center;
 			}
@@ -43,13 +43,14 @@
 			&.check, &.enc, &.ic {
 				font: 8px/1 Alegreya SC;
 			}
+
 		}
 
-		tbody tr.group td {
+		tr.group td {
 			font-weight: bold;
 		}
 
-		td {
+		th, td {
 			&.ic {
 				width: 4.5mm;
 			}
@@ -58,12 +59,16 @@
 				width: 3mm;
 			}
 
-			&.name, &.check, &.enc, &.sr, &.comment {
+			&.name, &.enc, &.sr, &.comment {
 				padding: 0 1mm;
 			}
 
+			&.check {
+				width: 16mm;
+			}
+
 			&.comment {
-				width: 28mm;
+				width: 26mm;
 			}
 
 			&:nth-child(2n) {
@@ -118,19 +123,20 @@
 			width: auto;
 		}
 
-		thead div {
+		th div {
 			word-wrap: break-word;
+			white-space: pre;
 		}
 
-		td {
+		th, td {
 			text-align: center;
 		}
 
-		td:nth-child(2n) {
+		th:nth-child(2n), td:nth-child(2n) {
 			background: rgba(0, 0, 0, 0.1);
 		}
 
-		tbody td {
+		td {
 			padding: 0 1mm;
 		}
 	}
@@ -158,11 +164,11 @@
 			letter-spacing: 0;
 		}
 
-		thead td {
+		th {
 			height: 8mm;
 		}
 
-		td {
+		th, td {
 			width: 11mm;
 
 			&:nth-child(2) {
@@ -190,11 +196,11 @@
 			margin-bottom: 4mm;
 		}
 
-		thead td {
+		th {
 			height: 10mm;
 		}
 
-		td {
+		th, td {
 			width: 18mm;
 		}
 	}

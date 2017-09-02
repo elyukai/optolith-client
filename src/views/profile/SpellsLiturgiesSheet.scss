@@ -1,13 +1,12 @@
-
-#spells .AE_MAX, #liturgies .KP_MAX {
+#spells-sheet .AE_MAX, #liturgies-sheet .KP_MAX {
 	width: 28mm;
 }
 
-#spells .AE_CURRENT, #liturgies .KP_CURRENT {
+#spells-sheet .AE_CURRENT, #liturgies-sheet .KP_CURRENT {
 	width: 92mm;
 }
 
-#spells, #liturgies {
+#spells-sheet, #liturgies-sheet {
 	.all {
 		flex-wrap: wrap;
 		align-content: space-between;
@@ -22,7 +21,7 @@
 			margin-bottom: 1mm;
 		}
 
-		thead td {
+		th {
 			text-align: center;
 
 			&.check, &.cost, &.cast-time, &.range, &.duration, &.property, &.aspect {
@@ -32,7 +31,7 @@
 			}
 		}
 
-		tbody td {
+		td {
 			&:not(.name):not(.effect) {
 				text-align: center;
 			}
@@ -54,7 +53,7 @@
 			}
 		}
 
-		td {
+		th, td {
 			&:nth-child(2n+1) {
 				background: rgba(0, 0, 0, 0.1);
 			}

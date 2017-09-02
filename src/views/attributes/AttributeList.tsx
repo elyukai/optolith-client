@@ -1,23 +1,23 @@
 import * as React from 'react';
-import AttributeListItem from './AttributeListItem';
+import { AttributeWithRequirements } from '../../types/view.d';
+import { AttributeListItem } from './AttributeListItem';
 
-interface Props {
-	attributes: AttributeInstance[];
-	max: number;
+export interface AttributeListProps {
+	attributes: AttributeWithRequirements[];
 	phase: number;
-	sumMax: boolean;
+	maxTotalAttributeValues: number;
+	sum: number;
+	addPoint(id: string): void;
+	removePoint(id: string): void;
 }
 
-export default class AttributeList extends React.Component<Props, undefined> {
-	render() {
-		const { attributes, ...other } = this.props;
-
-		return (
-			<div className="main">
-				{
-					attributes.map(attribute => <AttributeListItem {...other} key={attribute.id} attribute={attribute} />)
-				}
-			</div>
-		);
-	}
+export function AttributeList(props: AttributeListProps) {
+	const { attributes, ...other } = props;
+	return (
+		<div className="main">
+			{
+				attributes.map(attribute => <AttributeListItem {...other} key={attribute.id} attribute={attribute} />)
+			}
+		</div>
+	);
 }

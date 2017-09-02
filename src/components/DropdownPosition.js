@@ -1,8 +1,8 @@
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import { GeminiScrollbar } from 'react-gemini-scrollbar';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class DropdownPosition extends Component {
+export class DropdownPosition extends Component {
 
 	static propTypes = {
 		dropElement: PropTypes.element,

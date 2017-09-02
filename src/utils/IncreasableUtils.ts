@@ -1,9 +1,36 @@
-export const set = (obj: IncreasableInstance, value: number): IncreasableInstance => ({ ...obj, value });
+import { AdventurePointsState } from '../reducers/adventurePoints';
+import { IncreasableInstance } from '../types/data.d';
+import { validate } from './APUtils';
+import { getDecreaseAP, getIncreaseAP } from './ICUtils';
 
-export const add = (obj: IncreasableInstance, value: number): IncreasableInstance => ({ ...obj, value: obj.value + value });
+export function set(obj: IncreasableInstance, value: number): IncreasableInstance {
+	return ({ ...obj, value });
+}
 
-export const remove = (obj: IncreasableInstance, value: number): IncreasableInstance => ({ ...obj, value: obj.value - value });
+export function add(obj: IncreasableInstance, value: number): IncreasableInstance {
+	return ({ ...obj, value: obj.value + value });
+}
 
-export const addPoint = (obj: IncreasableInstance): IncreasableInstance => ({ ...obj, value: obj.value + 1 });
+export function remove(obj: IncreasableInstance, value: number): IncreasableInstance {
+	return ({ ...obj, value: obj.value - value });
+}
 
-export const removePoint = (obj: IncreasableInstance): IncreasableInstance => ({ ...obj, value: obj.value - 1 });
+export function addPoint(obj: IncreasableInstance): IncreasableInstance {
+	return ({ ...obj, value: obj.value + 1 });
+}
+
+export function removePoint(obj: IncreasableInstance): IncreasableInstance {
+	return ({ ...obj, value: obj.value - 1 });
+}
+
+export function getIncreaseCost(obj: IncreasableInstance, ap: AdventurePointsState): number | undefined {
+	const { ic, value } = obj;
+	const cost = getIncreaseAP(ic, value);
+	const validCost = validate(cost, ap);
+	return !validCost ? undefined : cost;
+}
+
+export function getDecreaseCost(obj: IncreasableInstance): number {
+	const { ic, value } = obj;
+	return getDecreaseAP(ic, value);
+}

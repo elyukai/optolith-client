@@ -1,91 +1,106 @@
 import * as React from 'react';
-import * as DisAdvActions from '../../actions/DisAdvActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import * as Categories from '../../constants/Categories';
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import CultureStore from '../../stores/CultureStore';
-import DisAdvStore from '../../stores/DisAdvStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import RaceStore from '../../stores/RaceStore';
-import DisAdvList from './DisAdvList';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RecommendedReference } from '../../components/RecommendedReference';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import { AdventurePointsState } from '../../reducers/adventurePoints';
+import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
+import { ActiveList } from './ActiveList';
+import { DeactiveList } from './DeactiveList';
 
-interface State {
-	filterText: string;
-	showRating: boolean;
-	disadvActive: ActiveViewObject[];
-	disadvDeactive: DisadvantageInstance[];
-	showAddSlidein: boolean;
-	race: RaceInstance;
-	culture: CultureInstance;
-	profession: ProfessionInstance;
+export interface DisadvantagesOwnProps {
+	locale: UIMessages;
 }
 
-export default class Disadvantages extends React.Component<undefined, State> {
+export interface DisadvantagesStateProps {
+	activeList: ActiveViewObject[];
+	ap: AdventurePointsState;
+	deactiveList: DeactiveViewObject[];
+	enableActiveItemHints: boolean;
+	magicalMax: number;
+	rating: ToListById<string>;
+	showRating: boolean;
+	get(id: string): Instance | undefined;
+}
+
+export interface DisadvantagesDispatchProps {
+	switchActiveItemHints(): void;
+	switchRatingVisibility(): void;
+	addToList(args: ActivateArgs): void;
+	removeFromList(args: DeactivateArgs): void;
+	setTier(id: string, index: number, tier: number, cost: number): void;
+}
+
+export type DisadvantagesProps = DisadvantagesStateProps & DisadvantagesDispatchProps & DisadvantagesOwnProps;
+
+export interface DisadvantagesState {
+	filterText: string;
+	filterTextSlidein: string;
+	showAddSlidein: boolean;
+}
+
+export class Disadvantages extends React.Component<DisadvantagesProps, DisadvantagesState> {
 	state = {
-		culture: CultureStore.getCurrent()!,
-		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
 		filterText: '',
-		profession: ProfessionStore.getCurrent()!,
-		race: RaceStore.getCurrent()!,
-		showAddSlidein: false,
-		showRating: DisAdvStore.getRating(),
+		filterTextSlidein: '',
+		showAddSlidein: false
 	};
 
-	_updateDisAdvStore = () => this.setState({
-		disadvActive: ActivatableStore.getActiveForView(Categories.DISADVANTAGES),
-		disadvDeactive: ActivatableStore.getDeactiveForView(Categories.DISADVANTAGES),
-		showRating: DisAdvStore.getRating(),
-	} as State)
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	changeRating = () => DisAdvActions.switchRatingVisibility();
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-
-	componentDidMount() {
-		DisAdvStore.addChangeListener(this._updateDisAdvStore );
-	}
-
-	componentWillUnmount() {
-		DisAdvStore.removeChangeListener(this._updateDisAdvStore );
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as DisadvantagesState);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as DisadvantagesState);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as DisadvantagesState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as DisadvantagesState);
 
 	render() {
-
-		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP' } = {};
-		const { race, culture, profession } = this.state;
-
-		const IMP = 'IMP';
-		const TYP = 'TYP';
-		const UNTYP = 'UNTYP';
-
-		race.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		race.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		culture.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		culture.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		profession.typicalDisadvantages.forEach(e => { rating[e] = TYP; });
-		profession.untypicalDisadvantages.forEach(e => { rating[e] = UNTYP; });
-		race.importantDisadvantages.forEach(e => { rating[e[0]] = IMP; });
+		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, removeFromList, setTier, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
+		const { filterText, filterTextSlidein } = this.state;
 
 		return (
-			<div className="page" id="advantages">
+			<Page id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
-						<Checkbox checked={this.state.showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
-					</div>
-					<DisAdvList list={this.state.disadvDeactive} type="DISADV" rating={rating} showRating={this.state.showRating} phase={2} />
+					<Options>
+						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'disadvantages.options.common')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<p>
+							{_translate(locale, 'titlebar.adventurepoints.disadvantages', ap.disadv[0], 80)}<br/>
+							{ap.disadv[1] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesmagic', ap.disadv[1], magicalMax)}
+							{ap.disadv[1] > 0 && ap.disadv[2] > 0 && <br/>}
+							{ap.disadv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesblessed', ap.disadv[2], 50)}
+						</p>
+						{showRating && <RecommendedReference/>}
+					</Options>
+					<DeactiveList
+						activeList={enableActiveItemHints ? activeList : undefined}
+						filterText={filterTextSlidein}
+						list={deactiveList}
+						locale={locale}
+						rating={rating}
+						showRating={showRating}
+						get={get}
+						addToList={addToList}
+						/>
 				</Slidein>
-				<div className="options">
-					<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-				</div>
-				<DisAdvList list={this.state.disadvActive} type="DISADV" rating={rating} showRating={this.state.showRating} active phase={2} />
-			</div>
+				<Options>
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'disadvantages.options.common')}</Checkbox>
+					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+					{showRating && <RecommendedReference/>}
+				</Options>
+				<ActiveList
+					filterText={filterText}
+					list={activeList}
+					rating={rating}
+					showRating={showRating}
+					removeFromList={removeFromList}
+					setTier={setTier}
+					/>
+			</Page>
 		);
 	}
 }

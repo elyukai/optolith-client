@@ -1,63 +1,50 @@
-import classNames from 'classnames';
+import * as classNames from 'classnames';
 import * as React from 'react';
 
-export interface MainSheetAttributesItem {
+export interface MainSheetAttributesItemProps {
 	add?: number;
 	calc: string;
 	empty?: boolean;
 	label: string;
-	max?: number;
+	base: number;
+	max: number | undefined;
 	purchased?: number;
 	subArray?: number[];
 	subLabel?: string;
-	value: number | string;
 }
 
-export default (props: MainSheetAttributesItem) => {
-	const { add = 0, value, purchased, max } = props;
-	let final;
-	if (typeof value === 'string') {
-		final = '-';
-	}
-	else {
-		final = value + add;
-		if (purchased) {
-			final += purchased;
-		}
-		if (max) {
-			final += max;
-		}
-	}
+export function MainSheetAttributesItem(props: MainSheetAttributesItemProps) {
+	const { add = 0, base, calc, empty, label, purchased, max, subArray, subLabel } = props;
 
 	return (
 		<div>
 			<div className="label">
-				<h3>{props.label}</h3>
-				<span className="calc">{props.calc}</span>
+				<h3>{label}</h3>
+				<span className="calc">{calc}</span>
 				{
-					props.subLabel ? (
-						<span className="sub">{props.subLabel}:</span>
+					subLabel ? (
+						<span className="sub">{subLabel}:</span>
 					) : null
 				}
 			</div>
 			<div className="values">
-				<div className="base">{props.empty ? '-' : props.value}</div>
-				<div className="add">{props.empty ? '-' : props.add}</div>
+				<div className="base">{empty ? '-' : base}</div>
+				<div className="add">{empty ? '-' : add}</div>
 				<div
 					className={classNames({
-						'blocked': props.purchased === null,
+						'blocked': purchased === undefined,
 						'purchased': true,
 					})}
 					>
-					{ props.purchased === null ? '\uE14B' : props.empty ? '-' : props.purchased}
+					{ purchased === undefined ? '\uE14B' : empty ? '-' : purchased}
 				</div>
-				<div className="max">{final}</div>
+				<div className="max">{empty ? '-' : max}</div>
 				{
-					props.subArray ? props.subArray.map(
-						(value, index) => <div key={props.label + index} className="sub">{props.empty ? '-' : value}</div>,
-					) : null
+					subArray && subArray.map(
+						(value, index) => <div key={label + index} className="sub">{empty ? '-' : value}</div>,
+					)
 				}
 			</div>
 		</div>
 	);
-};
+}

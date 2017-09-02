@@ -1,4 +1,4 @@
-#item-editor {
+#item-editor, #armor-zones-editor {
 	.modal-container {
 		// width: 820px;
 		width: 400px;
@@ -46,6 +46,7 @@
 
 						> label {
 							position: absolute;
+							top: 0;
 
 							+ div:nth-child(2) {
 								margin-left: 0;
@@ -55,10 +56,21 @@
 						> div:not(:first-child)  {
 							margin-left: 10px;
 						}
+
+						&.armor-add {
+							flex: 1 1 auto;
+						}
+
+						&.armor-loss-container {
+							.stabilitymod {
+								flex: none;
+								width: 57px;
+							}
+						}
 					}
 
 					> div {
-						&.number, &.btn {
+						&.number, &.btn, &.loss, &.weapon-loss {
 							flex: none;
 						}
 
@@ -66,17 +78,29 @@
 							width: 60px;
 						}
 
+						&.loss {
+							width: 57px;
+						}
+
+						&.weapon-loss {
+							width: 76px;
+						}
+
 						&.btn {
 							margin-left: 10px;
 						}
 
-						&.where {
+						&.where, &.combattechnique {
 							flex-grow: 2;
+						}
+
+						&.improvised-weapon {
+							padding-right: 0;
 						}
 					}
 
 					> div.container > div {
-						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
+						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc, &.loss, &.mov, &.ini {
 							flex: none;
 						}
 
@@ -84,9 +108,15 @@
 							width: 65px;
 						}
 
-						&.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
-							width: 40px;
+						&.mov, &.ini {
+							width: 57px;
+						}
 
+						&.damage-dice-number, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
+							width: 40px;
+						}
+
+						&.damage-dice-number, &.damage-dice-sides, &.damage-flat, &.at, &.pa, &.range1, &.range2, &.range3, &.pro, &.enc {
 							input {
 								text-align: center;
 							}

@@ -1,84 +1,58 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import { get } from '../../stores/ListStore';
-import LiturgiesStore from '../../stores/LiturgiesStore';
-import { getSids } from '../../utils/ActivatableUtils';
-import { sort } from '../../utils/ListUtils';
-import { isOwnTradition } from '../../utils/LiturgyUtils';
+import { TextBox } from '../../components/TextBox';
+import { SecondaryAttribute } from '../../types/data.d';
+import { Attribute, Liturgy, UIMessages } from '../../types/view.d';
+import { sortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
+import { LiturgiesSheetLiturgiesTableRow } from './LiturgiesSheetLiturgiesTableRow';
 
-const rowIterator = (e: LiturgyInstance, i: number) => {
-	if (e) {
-		const rawCheck = e.check;
-		const checkmod = rawCheck.splice(3)[0];
-		const check = rawCheck.map(attr => (get(attr) as AttributeInstance).short).join('/');
-		const traditionId = getSids(get('SA_102') as SpecialAbilityInstance)[0];
-		const aspectIds = e.aspects.filter(e => e === 1 || Math.round((e - 1) / 2) === traditionId);
-		const aspects = aspectIds.map(e => LiturgiesStore.getAspectNames()[e - 1]);
+export interface LiturgiesSheetLiturgiesProps {
+	attributes: Attribute[];
+	checkAttributeValueVisibility: boolean;
+	derivedCharacteristics: SecondaryAttribute[];
+	liturgies: Liturgy[];
+	locale: UIMessages;
+}
 
-		return (
-			<tr key={e.id}>
-				<td className="name">{e.name}</td>
-				<td className={classNames('check', checkmod && 'mod')}>{check}{checkmod ? ` (+${checkmod})` : null}</td>
-				<td className="value">{e.value}</td>
-				<td className="cost"></td>
-				<td className="cast-time"></td>
-				<td className="range"></td>
-				<td className="duration"></td>
-				<td className={classNames('aspect', checkmod && 'multi')}>{aspects.join(', ')}</td>
-				<td className="ic">{['A', 'B', 'C', 'D'][e.ic - 1]}</td>
-				<td className="effect"></td>
-				<td className="ref"></td>
-			</tr>
-		);
-	}
-	else {
-		return (
-			<tr key={`undefined${i}`}>
-				<td className="name"></td>
-				<td className="check"></td>
-				<td className="value"></td>
-				<td className="cost"></td>
-				<td className="cast-time"></td>
-				<td className="range"></td>
-				<td className="duration"></td>
-				<td className="aspect"></td>
-				<td className="ic"></td>
-				<td className="effect"></td>
-				<td className="ref"></td>
-			</tr>
-		);
-	}
-};
-
-export default () => {
-	const filtered = LiturgiesStore.getAll().filter(e => e.active && e.gr !== 3 && isOwnTradition(e));
-	const liturgies = sort(filtered, LiturgiesStore.getSortOrder()) as LiturgyInstance[];
-	const list = Array(21).fill(undefined) as Array<LiturgyInstance | undefined>;
-	list.splice(0, Math.min(liturgies.length, 21), ...liturgies);
+export function LiturgiesSheetLiturgies(props: LiturgiesSheetLiturgiesProps) {
+	const { attributes, checkAttributeValueVisibility, derivedCharacteristics, liturgies, locale } = props;
+	const sortedLiturgies = sortObjects(liturgies, locale.id);
+	const list = Array<Liturgy | undefined>(21).fill(undefined);
+	list.splice(0, Math.min(sortedLiturgies.length, 21), ...sortedLiturgies);
 
 	return (
-		<TextBox label="Liturgien &amp; Zeremonien" className="skill-list">
+		<TextBox label={_translate(locale, 'charactersheet.chants.chantslist.title')} className="skill-list">
 			<table>
 				<thead>
-					<td className="name">Liturgie/Zeremonie</td>
-					<td className="check">Probe</td>
-					<td className="value">Fw</td>
-					<td className="cost">Kosten</td>
-					<td className="cast-time">Liturgie&shy;dauer</td>
-					<td className="range">Reich&shy;weite</td>
-					<td className="duration">Wirkungs&shy;dauer</td>
-					<td className="aspect">Aspekt</td>
-					<td className="ic">Sf.</td>
-					<td className="effect">Wirkung</td>
-					<td className="ref">S.</td>
+					<tr>
+						<th className="name">{_translate(locale, 'charactersheet.chants.chantslist.headers.liturgyceremony')}</th>
+						<th className="check">{_translate(locale, 'charactersheet.chants.chantslist.headers.check')}</th>
+						<th className="value">{_translate(locale, 'charactersheet.chants.chantslist.headers.sr')}</th>
+						<th className="cost">{_translate(locale, 'charactersheet.chants.chantslist.headers.cost')}</th>
+						<th className="cast-time">{_translate(locale, 'charactersheet.chants.chantslist.headers.castingtime')}</th>
+						<th className="range">{_translate(locale, 'charactersheet.chants.chantslist.headers.range')}</th>
+						<th className="duration">{_translate(locale, 'charactersheet.chants.chantslist.headers.duration')}</th>
+						<th className="aspect">{_translate(locale, 'charactersheet.chants.chantslist.headers.property')}</th>
+						<th className="ic">{_translate(locale, 'charactersheet.chants.chantslist.headers.ic')}</th>
+						<th className="effect">{_translate(locale, 'charactersheet.chants.chantslist.headers.effect')}</th>
+						<th className="ref">{_translate(locale, 'charactersheet.chants.chantslist.headers.page')}</th>
+					</tr>
 				</thead>
 				<tbody>
 					{
-						list.map(rowIterator)
+						list.map((e, i) =>
+							<LiturgiesSheetLiturgiesTableRow
+								key={e ? e.id : `u${i}`}
+								attributes={attributes}
+								checkAttributeValueVisibility={checkAttributeValueVisibility}
+								derivedCharacteristics={derivedCharacteristics}
+								liturgy={e}
+								locale={locale}
+								/>
+						)
 					}
 				</tbody>
 			</table>
 		</TextBox>
 	);
-};
+}

@@ -1,73 +1,79 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import CultureStore from '../../stores/CultureStore';
-import RaceStore from '../../stores/RaceStore';
-import Cultures from './Cultures';
-import Professions from './Professions';
-import Races from './Races';
+import { SubTabs } from '../../components/SubTabs';
+import { CulturesContainer } from '../../containers/Cultures';
+import { ProfessionsContainer } from '../../containers/Professions';
+import { RacesContainer } from '../../containers/Races';
+import { _translate, UIMessages } from '../../utils/I18n';
 
-interface State {
-	cultureID: string | null;
-	raceID: string | null;
+export interface RCPOwnProps {
+	locale: UIMessages;
+}
+
+export interface RCPStateProps {
+	currentCultureId?: string;
+	currentRaceId?: string;
+}
+
+export interface RCPDispatchProps {}
+
+export type RCPProps = RCPStateProps & RCPDispatchProps & RCPOwnProps;
+
+export interface RCPState {
 	tab: string;
 }
 
-export default class RCP extends React.Component<undefined, State> {
+export class RCP extends React.Component<RCPProps, RCPState> {
 	state = {
-		cultureID: CultureStore.getCurrentID(),
-		raceID: RaceStore.getCurrentID(),
 		tab: 'race',
 	};
 
-	_updateCultureStore = () => this.setState({ cultureID: CultureStore.getCurrentID() } as State);
-	_updateRaceStore = () => this.setState({ raceID: RaceStore.getCurrentID() } as State);
-
-	handleClick = (tab: string) => this.setState({ tab } as State);
-
-	componentDidMount() {
-		CultureStore.addChangeListener(this._updateCultureStore);
-		RaceStore.addChangeListener(this._updateRaceStore);
+	componentWillReceiveProps(nextProps: RCPProps) {
+		if (nextProps.currentCultureId === undefined && this.state.tab === 'profession') {
+			this.setState(() => ({ tab: 'culture' }));
+		}
+		if (nextProps.currentRaceId === undefined && this.state.tab === 'culture') {
+			this.setState(() => ({ tab: 'race' }));
+		}
 	}
 
-	componentWillUnmount() {
-		CultureStore.removeChangeListener(this._updateCultureStore);
-		RaceStore.removeChangeListener(this._updateRaceStore);
-	}
+	handleClick = (tab: string) => this.setState({ tab } as RCPState);
+	switchToCultures = () => this.setState({ tab: 'culture' } as RCPState);
+	switchToProfessions = () => this.setState({ tab: 'profession' } as RCPState);
 
 	render() {
+		const { currentCultureId, currentRaceId, locale } = this.props;
+
 		let element;
 
 		switch (this.state.tab) {
 			case 'race':
-				element = <Races changeTab={this.handleClick} />;
+				element = <RacesContainer switchToCultures={this.switchToCultures} locale={locale} />;
 				break;
 			case 'culture':
-				element = <Cultures changeTab={this.handleClick} />;
+				element = <CulturesContainer switchToProfessions={this.switchToProfessions} locale={locale} />;
 				break;
 			case 'profession':
-				element = <Professions />;
+				element = <ProfessionsContainer locale={locale} />;
 				break;
 		}
-
-		const { raceID, cultureID } = this.state;
 
 		const tabs = [
 			{
-				label: 'Spezies',
-				tag: 'race',
+				id: 'race',
+				label: _translate(locale, 'titlebar.tabs.race'),
 			},
 		];
 
-		if (raceID) {
+		if (currentRaceId) {
 			tabs.push({
-				label: 'Kultur',
-				tag: 'culture',
+				id: 'culture',
+				label: _translate(locale, 'titlebar.tabs.culture'),
 			});
 		}
-		if (cultureID) {
+		if (currentCultureId) {
 			tabs.push({
-				label: 'Profession',
-				tag: 'profession',
+				id: 'profession',
+				label: _translate(locale, 'titlebar.tabs.profession'),
 			});
 		}
 

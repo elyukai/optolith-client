@@ -1,117 +1,111 @@
 import * as React from 'react';
-import * as SpecialAbilitiesActions from '../../actions/SpecialAbilitiesActions';
-import ActivatableAddListItem from '../../components/ActivatableAddListItem';
-import ActivatableRemoveListItem from '../../components/ActivatableRemoveListItem';
-import BorderButton from '../../components/BorderButton';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import * as Categories from '../../constants/Categories';
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import PhaseStore from '../../stores/PhaseStore';
-import SpecialAbilitiesStore from '../../stores/SpecialAbilitiesStore';
-import { filterAndSort } from '../../utils/ListUtils';
+import { ActivatableAddList } from '../../components/ActivatableAddList';
+import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
 
-interface State {
-	saActive: ActiveViewObject[];
-	saDeactive: SpecialAbilityInstance[];
-	filterText: string;
-	sortOrder: string;
+export interface SpecialAbilitiesOwnProps {
+	locale: UIMessages;
+}
+
+export interface SpecialAbilitiesStateProps {
+	activeList: ActiveViewObject[];
+	deactiveList: DeactiveViewObject[];
+	enableActiveItemHints: boolean;
 	phase: number;
+	sortOrder: string;
+	get(id: string): Instance | undefined;
+}
+
+export interface SpecialAbilitiesDispatchProps {
+	setSortOrder(sortOrder: string): void;
+	switchActiveItemHints(): void;
+	addToList(args: ActivateArgs): void;
+	removeFromList(args: DeactivateArgs): void;
+	setTier(id: string, index: number, tier: number, cost: number): void;
+}
+
+export type SpecialAbilitiesProps = SpecialAbilitiesStateProps & SpecialAbilitiesDispatchProps & SpecialAbilitiesOwnProps;
+
+export interface SpecialAbilitiesState {
+	filterText: string;
+	filterTextSlidein: string;
 	showAddSlidein: boolean;
 }
 
-export default class SpecialAbilities extends React.Component<any, State> {
+export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
 	state = {
 		filterText: '',
-		phase: PhaseStore.get(),
-		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
-		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
-		showAddSlidein: false,
-		sortOrder: SpecialAbilitiesStore.getSortOrder(),
+		filterTextSlidein: '',
+		showAddSlidein: false
 	};
 
-	_updateSpecialAbilitiesStore = () => this.setState({
-		saActive: ActivatableStore.getActiveForView(Categories.SPECIAL_ABILITIES),
-		saDeactive: ActivatableStore.getDeactiveForView(Categories.SPECIAL_ABILITIES),
-		sortOrder: SpecialAbilitiesStore.getSortOrder(),
-	} as State);
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => SpecialAbilitiesActions.setSortOrder(option);
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-
-	componentDidMount() {
-		SpecialAbilitiesStore.addChangeListener(this._updateSpecialAbilitiesStore );
-	}
-
-	componentWillUnmount() {
-		SpecialAbilitiesStore.removeChangeListener(this._updateSpecialAbilitiesStore );
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpecialAbilitiesState);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpecialAbilitiesState);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpecialAbilitiesState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpecialAbilitiesState);
 
 	render() {
-		const { filterText, phase, saActive, saDeactive, showAddSlidein, sortOrder } = this.state;
+		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, phase, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints } = this.props;
+		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
-			{ name: 'Alphabetisch', value: 'name' },
-			{ name: 'Nach Gruppe', value: 'group' },
+			{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
+			{ name: _translate(locale, 'options.sortorder.group'), value: 'groupname' }
 		];
 
-		const listActive = filterAndSort(saActive, filterText, sortOrder);
-		const listDeactive = filterAndSort(saDeactive, filterText, sortOrder);
+		const groupNames = _translate(locale, 'specialabilities.view.groups');
 
 		return (
-			<div className="page" id="specialabilities">
+			<Page id="specialabilities">
 				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+					<Options>
+						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
-							onClick={this.sort}
+							onClick={setSortOrder}
 							array={sortArray}
 							/>
-					</div>
-					<Scroll className="list">
-						<div className="list-wrapper">
-							{
-								listDeactive.map((sa, index) => (
-									<ActivatableAddListItem
-										key={`SA_DEACTIVE_${index}`}
-										item={sa}
-										addToList={SpecialAbilitiesActions.addToList}
-										/>
-								))
-							}
-						</div>
-					</Scroll>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+					</Options>
+					<ActivatableAddList
+						activeList={enableActiveItemHints ? activeList : undefined}
+						addToList={addToList}
+						filterText={filterTextSlidein}
+						groupNames={groupNames}
+						list={deactiveList}
+						locale={locale}
+						sortOrder={sortOrder}
+						get={get}
+						/>
 				</Slidein>
-				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
+				<Options>
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
-						onClick={this.sort}
+						onClick={setSortOrder}
 						array={sortArray}
 						/>
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-				</div>
-				<Scroll className="list">
-					<div className="list-wrapper">
-						{
-							listActive.map((sa, index) => (
-								<ActivatableRemoveListItem
-									key={`SA_ACTIVE_${index}`}
-									item={sa}
-									phase={phase}
-									removeFromList={SpecialAbilitiesActions.removeFromList}
-									setTier={SpecialAbilitiesActions.setTier}
-									/>
-							))
-						}
-					</div>
-				</Scroll>
-			</div>
+					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+				</Options>
+				<ActivatableRemoveList
+					filterText={filterText}
+					groupNames={groupNames}
+					list={activeList}
+					phase={phase}
+					removeFromList={removeFromList}
+					setTier={setTier}
+					sortOrder={sortOrder}
+					/>
+			</Page>
 		);
 	}
 }

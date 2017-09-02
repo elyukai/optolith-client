@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { Attribute } from '../../types/view.d';
 
-export default (props: AttributeInstance) => {
+export function AttributeModsListItem(props: Attribute) {
 	const { id, short, value } = props;
 	return (
 		<tr className={id}>
@@ -14,4 +15,4 @@ export default (props: AttributeInstance) => {
 			<td>{value + 3}</td>
 		</tr>
 	);
-};
+}

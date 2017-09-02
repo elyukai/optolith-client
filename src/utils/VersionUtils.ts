@@ -1,27 +1,17 @@
-class VersionStoreStatic {
-	private major = 1;
-	private minor = 0;
-	private patch = 0;
-	private version = [ this.major, this.minor, this.patch ];
+// import { lt } from 'semver';
+import { Hero } from '../types/data.d';
 
-	get() {
-		return this.version.join('.');
-	}
+export const currentVersion = '0.49.3';
 
-	isLower(version: string) {
-		const versionArray = version.split('.').map(e => parseInt(e));
-		if (versionArray[0] < this.version[0]) {
-			return true;
-		} else if (versionArray[1] < this.version[1]) {
-			return true;
-		} else if (versionArray[2] < this.version[2]) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+export function convertHero(hero: Hero) {
+	const entry = { ...hero };
+	// if (lt(entry.clientVersion, '0.48.0')) {
+	// 	for (const id in entry.activatable) {
+	// 		if (entry.activatable.hasOwnProperty(id)) {
+
+	// 		}
+	// 	}
+	// 	entry.clientVersion = '0.48.0';
+	// }
+	return entry;
 }
-
-const VersionStore = new VersionStoreStatic();
-
-export default VersionStore;

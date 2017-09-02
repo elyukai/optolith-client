@@ -31,7 +31,7 @@
 		position: relative;
 		background: #010a13;
 		border-top: 2px solid #785a28;
-		@include calc(height, '100% - ' + $titlebar-height);
+		@include calc(height, '100% - ' + ($titlebar-height + 32px));
 		width: 100%;
 		bottom: -100%;
 		right: 0;

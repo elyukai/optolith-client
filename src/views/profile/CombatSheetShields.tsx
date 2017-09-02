@@ -1,19 +1,30 @@
 import * as React from 'react';
-import TextBox from '../../components/TextBox';
-import EquipmentStore from '../../stores/EquipmentStore';
+import { TextBox } from '../../components/TextBox';
+import { ShieldOrParryingWeapon, UIMessages } from '../../types/view.d';
+import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { getRoman, sign } from '../../utils/NumberUtils';
 
-export default () => {
-	const items = EquipmentStore.getAll().filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
-	const list = ([undefined, undefined, undefined, undefined] as Array<ItemInstance | undefined>);
-	list.splice(0, Math.min(items.length, 4), ...items);
+export interface CombatSheetShieldsProps {
+	locale: UIMessages;
+	shieldsAndParryingWeapons: ShieldOrParryingWeapon[];
+}
+
+export function CombatSheetShields(props: CombatSheetShieldsProps) {
+	const { locale, shieldsAndParryingWeapons } = props;
+	const list = ([undefined, undefined, undefined, undefined] as Array<ShieldOrParryingWeapon | undefined>);
+	list.splice(0, Math.min(shieldsAndParryingWeapons.length, 4), ...shieldsAndParryingWeapons);
 	return (
-		<TextBox label="Schild/Parierwaffe" className="shields">
+		<TextBox label={_translate(locale, 'charactersheet.combat.shieldparryingweapon.title')} className="shields">
 			<table>
 				<thead>
-					<td className="name">Schild/Parierwaffe</td>
-					<td className="stp">Strukturp.</td>
-					<td className="mod">AT/PA Mod.</td>
-					<td className="weight">Gewicht</td>
+					<tr>
+						<th className="name">{_translate(locale, 'charactersheet.combat.headers.shieldparryingweapon')}</th>
+						<th className="str">{_translate(locale, 'charactersheet.combat.headers.structurepoints')}</th>
+						<th className="bf">{_translate(locale, 'charactersheet.combat.headers.bf')}</th>
+						<th className="loss">{_translate(locale, 'charactersheet.combat.headers.loss')}</th>
+						<th className="mod">{_translate(locale, 'charactersheet.combat.headers.atpamod')}</th>
+						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
+					</tr>
 				</thead>
 				<tbody>
 					{
@@ -22,9 +33,11 @@ export default () => {
 								return (
 									<tr key={e.id}>
 										<td className="name">{e.name}</td>
-										<td className="stp">{e.stp}</td>
-										<td className="mod">{e.at > 0 && '+'}{e.at}/{e.pa > 0 && '+'}{e.pa}</td>
-										<td className="weight">{e.weight} Stn</td>
+										<td className="str">{e.stp}</td>
+										<td className="bf">{e.bf}</td>
+										<td className="loss">{e.loss && getRoman(e.loss)}</td>
+										<td className="mod">{e.atMod && sign(e.atMod)}/{e.paMod && sign(e.paMod)}</td>
+										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}
@@ -32,7 +45,9 @@ export default () => {
 								return (
 									<tr key={`undefined${i}`}>
 										<td className="name"></td>
-										<td className="stp"></td>
+										<td className="str"></td>
+										<td className="bf"></td>
+										<td className="loss"></td>
 										<td className="mod"></td>
 										<td className="weight"></td>
 									</tr>
@@ -44,4 +59,4 @@ export default () => {
 			</table>
 		</TextBox>
 	);
-};
+}

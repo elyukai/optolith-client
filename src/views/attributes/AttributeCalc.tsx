@@ -1,29 +1,29 @@
 import * as React from 'react';
-import secondaryAttributes from '../../utils/secondaryAttributes';
-import AttributeCalcItem from './AttributeCalcItem';
+import { SecondaryAttribute } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { AttributeCalcItem } from './AttributeCalcItem';
 
-interface Props {
+export interface AttributesCalcProps {
+	derived: SecondaryAttribute[];
+	locale: UIMessages;
 	phase: number;
+	addLifePoint(): void;
+	addArcaneEnergyPoint(): void;
+	addKarmaPoint(): void;
 }
 
-export default class AttributeCalc extends React.Component<Props, undefined> {
-	render() {
-		const { phase } = this.props;
-
-		const calculated = secondaryAttributes();
-
-		return (
-			<div className="calculated">
-				{
-					calculated.map(attribute => (
-						<AttributeCalcItem
-							key={attribute.id}
-							attribute={attribute}
-							phase={phase}
-							/>
-					))
-				}
-			</div>
-		);
-	}
+export function AttributeCalc(props: AttributesCalcProps) {
+	return (
+		<div className="calculated">
+			{
+				props.derived.map(attribute => (
+					<AttributeCalcItem
+						{...props}
+						key={attribute.id}
+						attribute={attribute}
+						/>
+				))
+			}
+		</div>
+	);
 }

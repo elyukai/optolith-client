@@ -1,31 +1,29 @@
 import * as React from 'react';
-import Tab from './Tab';
+import { SubTab } from '../types/data.d';
+import { Tab } from './Tab';
 
-interface TabProps {
-	label: string;
-	tag: string;
-	disabled?: boolean;
-}
-
-interface Props {
+export interface SubtabsProps {
 	active: string;
-	onClick: (tab: string) => void;
-	tabs: TabProps[];
+	tabs: SubTab[];
+	onClick(tab: string): void;
 }
 
-export default class Subtabs extends React.Component<Props, undefined> {
+export class SubTabs extends React.Component<SubtabsProps, {}> {
+	setTab = (tab: string) => this.props.onClick(tab);
+
 	render() {
 		return (
 			<div className="subtabs">
 				{
 					this.props.tabs.map((tab, index) => {
-						const { tag, ...other } = tab;
+						const { id, ...other } = tab;
+						const set = () => this.setTab(id);
 						return (
 							<Tab
 								key={'subtab-' + index}
 								{...other}
-								active={this.props.active === tag}
-								onClick={this.props.onClick.bind(null, tag)}
+								active={this.props.active === id}
+								onClick={set}
 								/>
 						);
 					})

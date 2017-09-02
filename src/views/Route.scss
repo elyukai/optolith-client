@@ -5,14 +5,14 @@ main {
 
 section {
 	@extend %max-size-relative;
-	padding-top: $titlebar-height;
+	padding-top: $titlebar-height + 32px;
 	z-index: 0;
 	overflow: hidden;
-	background: url("images/background.jpg") center/cover $background2;
+	// background: url("images/background.jpg") center/cover $background2;
 	display: flex;
 	flex-direction: column;
 
-	.scroll:not(.scroll-aside) {
+	.scroll {
 		flex: 1 1 100%;
 
 		.scroll-inner {
@@ -23,33 +23,6 @@ section {
 
 .subtabs {
 	flex: none;
-}
-
-.page {
-	flex: 1 1 auto;
-	padding: 8px 0 0;
-	font: 14px/22px Alegreya Sans;
-	letter-spacing: 0.025em;
-	color: $color2;
-	display: flex;
-	flex-wrap: nowrap;
-	position: relative;
-	overflow: hidden;
-	height: 100%;
-
-	> .options {
-		flex: 1 0 auto;
-		width: 200px;
-		margin-left: 35px;
-
-		.radiobutton-group, .btn {
-			width: 100%;
-		}
-
-		.btn {
-			margin-top: 10px;
-		}
-	}
 }
 
 .scroll-aside {

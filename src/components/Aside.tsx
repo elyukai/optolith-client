@@ -1,5 +1,7 @@
 import * as React from 'react';
 
-export default (props: any) => (
-	<aside {...props} />
-);
+export function Aside(props: any) {
+	return (
+		<aside {...props} />
+	);
+}

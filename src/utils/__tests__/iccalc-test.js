@@ -1,6 +1,6 @@
 jest.mock('../../stores/APStore');
 
-import APStore from '../../stores/APStore';
+import { APStore } from '../../stores/APStore';
 import iccalc, { getIC } from '../iccalc';
 
 describe('iccalc', () => {

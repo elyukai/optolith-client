@@ -1,35 +1,37 @@
 import * as React from 'react';
-import SubTabs from '../../components/SubTabs';
-import Imprint from './Imprint';
-import ThirdPartyLicenses from './ThirdPartyLicenses';
-import TOU from './TOU';
+import { SubTabs } from '../../components/SubTabs';
+import { UIMessages } from '../../types/ui';
+import { _translate } from '../../utils/I18n';
+import { Imprint } from './Imprint';
+import { ThirdPartyLicenses } from './ThirdPartyLicenses';
 
-interface State {
+export interface AboutProps {
+	locale: UIMessages;
+}
+
+export interface AboutState {
 	tab: string;
 }
 
-export default class About extends React.Component<undefined, State> {
+export class About extends React.Component<AboutProps, AboutState> {
 	state = {
 		tab: 'imprint',
 	};
 
-	handleClick = (tab: string) => this.setState({ tab });
+	handleClick = (tab: string) => this.setState({ tab } as AboutState);
 
 	render() {
-
+		const { locale } = this.props;
 		const { tab } = this.state;
 
 		let element;
 
 		switch (tab) {
 			case 'imprint':
-				element = <Imprint />;
+				element = <Imprint locale={locale} />;
 				break;
 			case 'thirdPartyLicenses':
 				element = <ThirdPartyLicenses />;
-				break;
-			case 'tou':
-				element = <TOU />;
 				break;
 		}
 
@@ -38,17 +40,18 @@ export default class About extends React.Component<undefined, State> {
 				<SubTabs
 					tabs={[
 						{
-							label: 'Impressum',
-							tag: 'imprint',
+							id: 'imprint',
+							label: _translate(locale, 'titlebar.tabs.imprint'),
 						},
 						{
-							label: 'Haftungsausschluss',
-							tag: 'tou',
+							id: 'thirdPartyLicenses',
+							label: _translate(locale, 'titlebar.tabs.thirdpartylicenses'),
 						},
 						{
-							label: 'Third-party licenses',
-							tag: 'thirdPartyLicenses',
-						}
+							id: 'lastchanges',
+							label: _translate(locale, 'titlebar.tabs.lastchanges'),
+							disabled: true
+						},
 					]}
 					active={this.state.tab}
 					onClick={this.handleClick} />
@@ -57,3 +60,4 @@ export default class About extends React.Component<undefined, State> {
 		);
 	}
 }
+

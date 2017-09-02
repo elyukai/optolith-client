@@ -1,13 +1,12 @@
 import * as React from 'react';
-import * as LocationActions from '../../actions/LocationActions';
-import BorderButton from '../../components/BorderButton';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
+import { BorderButton } from '../../components/BorderButton';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { InputTextEvent } from '../../types/data.d';
 
-export default class Grouplist extends React.Component<undefined, undefined> {
+export class Grouplist extends React.Component<{}, undefined> {
 
 	filter = (event: InputTextEvent) => event.target.value;
-	openGroup = () => LocationActions.setSection('group');
 
 	render() {
 		return (
@@ -18,7 +17,7 @@ export default class Grouplist extends React.Component<undefined, undefined> {
 						<BorderButton label="Erstellen" disabled />
 					</div>
 					<Scroll className="list">
-						<BorderButton label="Gruppe laden" onClick={this.openGroup} />
+						<BorderButton label="Gruppe laden" />
 					</Scroll>
 				</div>
 			</section>

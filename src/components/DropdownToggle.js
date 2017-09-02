@@ -1,9 +1,9 @@
-import DropdownPosition from './DropdownPosition';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import { DropdownPosition } from './DropdownPosition';
+import { GeminiScrollbar } from 'react-gemini-scrollbar';
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class Dropdown extends Component {
+export class Dropdown extends Component {
 
 	static propTypes = {
 		className: PropTypes.any,
@@ -51,7 +51,7 @@ export default class Dropdown extends Component {
 		window.addEventListener('mousedown', this.outsideClick, false);
 		window.addEventListener('ontouchstart', this.outsideClick, false);
 	}
-	
+
 	componentWillUnmount() {
 		window.removeEventListener('mousedown', this.outsideClick, false);
 		window.removeEventListener('ontouchstart', this.outsideClick, false);
@@ -66,7 +66,7 @@ export default class Dropdown extends Component {
 		) : this.props.children;
 
 		const style = this.state.isOpen ? (this.props.options.length < 6 ? this.props.options.length * 33 + 1 : 166) : 0;
-		
+
 		const current = this.props.options.filter(arr => arr[1] == this.props.value);
 		const valueText = current.length === 0 ? (this.props.hint ? this.props.hint : '') : current[0][0];
 

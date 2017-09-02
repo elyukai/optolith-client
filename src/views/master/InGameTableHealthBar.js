@@ -1,18 +1,18 @@
 import React, { Component, PropTypes } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class InGameTableHealthBar extends Component {
-	
+export class InGameTableHealthBar extends Component {
+
 	static propTypes = {
 		current: PropTypes.number.isRequired,
 		max: PropTypes.number.isRequired,
 		type: PropTypes.string.isRequired
 	};
-	
+
 	render() {
-		
+
 		const className = classNames( 'bar', `bar-${this.props.type}`, this.props.current > 0 && 'active', this.props.type == 'le' && this.props.max <= 0 && 'no-le');
-		
+
 		return (
 			<div className={className}>
 				<div className="bar-inner">

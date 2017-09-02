@@ -1,10 +1,21 @@
-import AppDispatcher from '../dispatcher/AppDispatcher';
-import HistoryStore from '../stores/HistoryStore';
+import * as ActionTypes from '../constants/ActionTypes';
 
-export function undoLastAction() {
-	const lastAction = HistoryStore.getUndo() as DefaultAction;
-	if (lastAction) {
-		lastAction.undo = true;
-		AppDispatcher.dispatch(lastAction);
-	}
+export interface UndoAction {
+	type: ActionTypes.UNDO;
+}
+
+export function undo(): UndoAction {
+	return {
+		type: ActionTypes.UNDO
+	};
+}
+
+export interface RedoAction {
+	type: ActionTypes.REDO;
+}
+
+export function redo(): RedoAction {
+	return {
+		type: ActionTypes.REDO
+	};
 }

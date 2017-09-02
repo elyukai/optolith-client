@@ -1,20 +1,25 @@
-import classNames from 'classnames';
 import * as React from 'react';
-import IconButton from '../../components/IconButton';
-import { get } from '../../stores/ListStore';
-import createOverlay from '../../utils/createOverlay';
-import SkillInfo from './SkillInfo';
+import { IconButton } from '../../components/IconButton';
+import { ListItem } from '../../components/ListItem';
+import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
+import { ListItemValues } from '../../components/ListItemValues';
+import { AttributeInstance, Instance, SecondaryAttribute } from '../../types/data.d';
+import { DCIds } from '../../utils/derivedCharacteristics';
 
-interface Props {
+export interface SkillListItemProps {
 	activateDisabled?: boolean;
 	addDisabled?: boolean;
 	addFillElement?: boolean;
 	addValues?: Array<{ className: string; value?: string | number }>;
 	check?: string[];
 	checkDisabled?: boolean;
-	checkmod?: string;
+	checkmod?: 'SPI' | 'TOU';
+	children?: React.ReactNode;
 	ic?: number;
 	id: string;
+	insertTopMargin?: boolean;
 	isNotActive?: boolean;
 	name: string;
 	noIncrease?: boolean;
@@ -25,24 +30,25 @@ interface Props {
 	activate?(): void;
 	addPoint?(): void;
 	removePoint?(): void;
+	selectForInfo?(id: string): void;
+	get?(id: string): Instance | undefined;
+	getDerivedCharacteristic?(id: DCIds): SecondaryAttribute;
 }
 
-export default class SkillListItem extends React.Component<Props, undefined> {
-	showInfo = () => createOverlay(<SkillInfo id={this.props.id} />);
+export class SkillListItem extends React.Component<SkillListItemProps, {}> {
+	showInfo = () => {
+		const { selectForInfo } = this.props;
+		if (selectForInfo) {
+			selectForInfo(this.props.id);
+		}
+	}
+
+	shouldComponentUpdate(nextProps: SkillListItemProps) {
+		return this.props.sr !== nextProps.sr || this.props.children !== nextProps.children;
+	}
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease } = this.props;
-
-		const className = classNames({
-			'list-item': true,
-			'no-increase': noIncrease,
-			'typ': typ,
-			'untyp': untyp,
-		});
-
-		// const groupElement = group ? (
-		// 	<p className="group">{group}</p>
-		// ) : null;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, get, getDerivedCharacteristic, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -56,16 +62,15 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		if (!checkDisabled) {
 			if (check) {
 				check.forEach((attr, index) => values.push(
-					<div key={attr + index} className={'check ' + attr}>{(get(attr) as AttributeInstance).short}</div>
+					<div key={attr + index} className={'check ' + attr}>{get && (get(attr) as AttributeInstance).short}</div>
 				));
-				if (checkmod) {
-					values.push(<div key="mod" className="check mod">+{checkmod}</div>);
+				if (checkmod && getDerivedCharacteristic) {
+					values.push(<div key="mod" className="check mod">+{getDerivedCharacteristic(checkmod).short}</div>);
 				}
 			}
 		}
 
 		const COMP = ['A', 'B', 'C', 'D', 'E'];
-
 
 		if (addFillElement) {
 			values.push(<div key="fill" className="fill"></div>);
@@ -78,11 +83,11 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 		values.push(...addValues.map(e => <div key={e.className} className={e.className}>{e.value}</div>));
 
 		const btnElement = isNotActive ? (
-			<div className="btns">
+			<ListItemButtons>
 				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} flat />
-			</div>
+			</ListItemButtons>
 		) : (
-			<div className="btns">
+			<ListItemButtons>
 				{ addPoint ? <IconButton icon="&#xE145;" onClick={addPoint} disabled={addDisabled} flat /> : null }
 				{ removePoint ? (
 					<IconButton
@@ -92,22 +97,20 @@ export default class SkillListItem extends React.Component<Props, undefined> {
 						flat
 						/>
 				) : null }
-				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled />
-			</div>
+				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled={!selectForInfo} />
+			</ListItemButtons>
 		);
 
 		return (
-			<div className={className}>
-				<div className="name">
-					<p className="title">{name}</p>
-				</div>
-				<div className="hr"></div>
+			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp} insertTopMargin={insertTopMargin}>
+				<ListItemName name={name} />
+				<ListItemSeparator />
 				{children}
-				<div className="values">
+				<ListItemValues>
 					{values}
-				</div>
+				</ListItemValues>
 				{btnElement}
-			</div>
+			</ListItem>
 		);
 	}
 }

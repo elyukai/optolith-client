@@ -1,17 +1,6 @@
 @import "ItemEditor";
 
-#equipment {
-	tbody {
-		td:last-child {
-			padding-right: 11px;
-		}
-
-		td.inc > .btn {
-			height: 32px;
-			padding: 2px;
-		}
-	}
-
+#equipment, #armor-zones {
 	.purse {
 		display: flex;
 		flex-direction: column;
@@ -40,7 +29,17 @@
 		}
 	}
 
-	.list-item .type {
+	.total-points {
+		display: flex;
+		flex-direction: column;
+
+		h4 {
+			flex: 1 0 100%;
+			justify-content: center;
+		}
+	}
+
+	li .group {
 		margin-left: 4px;
 		margin-right: 12px;
 	}

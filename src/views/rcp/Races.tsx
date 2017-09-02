@@ -1,87 +1,76 @@
 import * as React from 'react';
-import * as RaceActions from '../../actions/RaceActions';
-import Checkbox from '../../components/Checkbox';
-import RadioButtonGroup from '../../components/RadioButtonGroup';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import RaceStore from '../../stores/RaceStore';
-import { filterAndSort } from '../../utils/ListUtils';
-import RacesListItem from './RacesListItem';
+import { Checkbox } from '../../components/Checkbox';
+import { List } from '../../components/List';
+import { Scroll } from '../../components/Scroll';
+import { SortOptions } from '../../components/SortOptions';
+import { TextField } from '../../components/TextField';
+import { InputTextEvent } from '../../types/data.d';
+import { Race, UIMessages } from '../../types/view.d';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
+import { _translate } from '../../utils/I18n';
+import { RacesInfo } from './RacesInfo';
+import { RacesListItem } from './RacesListItem';
 
-interface Props {
-	changeTab(tab: string): void;
+export interface RacesOwnProps {
+	locale: UIMessages;
+	switchToCultures(): void;
 }
 
-interface State {
-	races: RaceInstance[];
-	currentID: string | null;
-	filterText: string;
-	sortOrder: string;
+export interface RacesStateProps {
 	areValuesVisible: boolean;
+	currentId?: string;
+	races: Race[];
+	sortOrder: string;
 }
 
-export default class Races extends React.Component<Props, State> {
+export interface RacesDispatchProps {
+	selectRace(id: string): void;
+	setSortOrder(sortOrder: string): void;
+	switchValueVisibilityFilter(): void;
+}
+
+export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps;
+
+export interface RacesState {
+	filterText: string;
+}
+
+export class Races extends React.Component<RacesProps, RacesState> {
 	state = {
-		areValuesVisible: RaceStore.areValuesVisible(),
-		currentID: RaceStore.getCurrentID(),
-		filterText: '',
-		races: RaceStore.getAll(),
-		sortOrder: RaceStore.getSortOrder(),
+		filterText: ''
 	};
 
-	_updateRaceStore = () => this.setState({
-		areValuesVisible: RaceStore.areValuesVisible(),
-		currentID: RaceStore.getCurrentID(),
-		races: RaceStore.getAll(),
-		sortOrder: RaceStore.getSortOrder(),
-	} as State);
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	sort = (option: string) => RaceActions.setRacesSortOrder(option);
-	changeValueVisibility = () => RaceActions.switchRaceValueVisibilityFilter();
-
-	componentDidMount() {
-		RaceStore.addChangeListener(this._updateRaceStore);
-	}
-
-	componentWillUnmount() {
-		RaceStore.removeChangeListener(this._updateRaceStore);
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as RacesState);
+	sort = (option: string) => this.props.setSortOrder(option);
+	changeValueVisibility = () => this.props.switchValueVisibilityFilter();
 
 	render() {
+		const { areValuesVisible, locale, races, setSortOrder, sortOrder } = this.props;
+		const { filterText } = this.state;
 
-		const { currentID, filterText, races, areValuesVisible, sortOrder } = this.state;
-
-		const list = filterAndSort(races, filterText, sortOrder);
+		const list = filterAndSortObjects(races, locale.id, filterText, sortOrder === 'cost' ? ['ap', 'name'] : ['name']);
 
 		return (
 			<div className="page" id="races">
 				<div className="options">
-					<TextField hint="Suchen" value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={this.sort}
-						array={[
-							{ name: 'Alphabetisch', value: 'name' },
-							{ name: 'Nach Kosten', value: 'cost' },
-						]}
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={setSortOrder}
+						options={['name', 'cost']}
 						/>
-					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>Werte anzeigen</Checkbox>
+					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{_translate(locale, 'races.options.showvalues')}</Checkbox>
 				</div>
-				<Scroll className="list">
-					<ul>
+				<Scroll>
+					<List>
 						{
-							list.map(race => <RacesListItem
-								key={race.id}
-								changeTab={this.props.changeTab.bind(null, 'culture')}
-								currentID={currentID}
-								race={race}
-								showDetails={areValuesVisible}
-								/>,
+							list.map(race =>
+								<RacesListItem {...this.props} key={race.id} race={race} />
 							)
 						}
-					</ul>
+					</List>
 				</Scroll>
+				<RacesInfo {...this.props} />
 			</div>
 		);
 	}

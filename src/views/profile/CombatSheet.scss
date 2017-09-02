@@ -1,4 +1,4 @@
-#combat-sheet {
+#combat-sheet, #combat-sheet-zones {
 	.textbox {
 		flex-wrap: wrap;
 
@@ -21,7 +21,7 @@
 			flex: 1 1 auto;
 		}
 
-		tbody td {
+		td {
 			&.name, &.value {
 				font: 500 11px/1 Alegreya Sans;
 			}
@@ -43,7 +43,7 @@
 			}
 		}
 
-		td {
+		th, td {
 			&.primary, &.ic, &.value, &.at, &.pa {
 				text-align: center;
 			}
@@ -96,7 +96,7 @@
 		.life-points-first, .life-points-second {
 			.labelbox {
 				flex-direction: column-reverse;
-				align-items: left;
+				align-items: flex-start;
 
 				.box {
 					width: 100%;
@@ -171,23 +171,50 @@
 			width: 102mm;
 		}
 
-		thead td {
+		th {
 			text-align: center;
 		}
 
-		.shields tbody td {
-			&.mod {
-				font: bold 11px/1 Alegreya Sans;
+		.shields {
+			td {
+				&.mod {
+					font: bold 11px/1 Alegreya Sans;
+				}
+			}
+
+			th, td {
+				&.name {
+					width: 28mm;
+					max-width: 28mm;
+				}
 			}
 		}
 
-		.armor td {
+		.armor th, .armor td {
 			&.weight {
 				width: auto;
 			}
+
+			&.loss {
+				background: rgba(0, 0, 0, 0.1);
+			}
 		}
 
-		tbody td {
+		td.zone + .zone {
+			border-left: 0.3mm solid grey;
+		}
+
+		.armor-zones {
+			.enc, .weight {
+				background: rgba(0, 0, 0, 0.1);
+			}
+
+			.add-penalties {
+				background: transparent;
+			}
+		}
+
+		td {
 			&.at, &.pa, &.damage, &.ranged, &.pro, &.enc, &.add-penalties {
 				font: bold 11px/1 Alegreya Sans;
 			}
@@ -196,38 +223,37 @@
 				border-right: 0.3mm solid grey;
 			}
 
-			&.name, &.combat-technique, &.where, &.damage-bonus, &.mod, &.reach, &.range, &.weight, &.reload-time, &.ammunition, &.stp {
+			&.name, &.combat-technique, &.where, &.damage-bonus, &.mod, &.reach, &.range, &.weight, &.reload-time, &.ammunition, &.str {
 				font: 400 11px/1 Alegreya Sans;
-			}
-		}
-
-		td {
-			&:not(.name):not(.combat-technique) {
-				text-align: center;
-			}
-
-			&.at, &.pa {
-				width: 12mm;
-			}
-
-			&.at-mod, &.pa-mod {
-				width: 10mm;
-			}
-
-			&.pro, &.enc {
-				width: 8mm;
-			}
-
-			&.damage-bonus, &.damage, &.reach, &.range, &.ranged, &.weight, &.reload-time {
-				width: 20mm;
-			}
-
-			&.ammunition, &.where {
-				width: 24mm;
 			}
 
 			&.name, &.combat-technique {
 				padding: 0 1mm;
+			}
+		}
+
+		th, td {
+			&:not(.name):not(.combat-technique) {
+				text-align: center;
+			}
+
+			&.at-mod, &.pa-mod, &.at, &.pa, &.bf, &.loss, &.pro, &.enc, &.str, &.st {
+				width: 8mm;
+			}
+
+			&.damage-bonus, &.damage, &.reload-time {
+				width: 22mm;
+			}
+
+			&.reach, &.range, &.ranged, &.weight, &.ammunition {
+				width: 16mm;
+			}
+
+			&.zone {
+				width: 4mm;
+			}
+
+			&.name, &.combat-technique {
 				width: 34mm;
 			}
 
@@ -238,7 +264,7 @@
 				white-space: nowrap;
 			}
 
-			&.name, &.damage-bonus, &.mod, &.at, &.pa, &.reload-time, &.range, &.ammunition, &.add-penalties, &.where {
+			&.name, &.damage-bonus, &.mod, &.at, &.pa, &.reload-time, &.ranged, &.ammunition, &.add-penalties, &.where, &.bf {
 				background: rgba(0, 0, 0, 0.1);
 			}
 		}
@@ -262,7 +288,8 @@
 			}
 
 			&.status-effects {
-				width: 24.5mm;
+				max-width: 24.5mm;
+				flex: 1 1 100%;
 			}
 
 			> div, > header {

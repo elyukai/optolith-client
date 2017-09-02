@@ -1,96 +1,88 @@
-import ELStore from '../stores/ELStore';
-import { get } from '../stores/ListStore';
-import PhaseStore from '../stores/PhaseStore';
-import SpellsStore from '../stores/SpellsStore';
+import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
+import { get } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
+import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
+import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
 
-export const isOwnTradition = (obj: SpellInstance): boolean => {
-	const SA = get('SA_86') as SpecialAbilityInstance;
+export function isOwnTradition(state: DependentInstancesState, obj: SpellInstance | CantripInstance): boolean {
+	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
-};
+}
 
-export const isIncreasable = (obj: SpellInstance): boolean => {
+export function isIncreasable(state: CurrentHeroInstanceState, obj: SpellInstance): boolean {
+	const { dependent } = state;
 	let max = 0;
-	const bonus = (get('ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
+	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
 
-	if (PhaseStore.get() < 3) {
-		max = ELStore.getStart().maxSkillRating;
-	} else {
-		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(attr) as AttributeInstance).value);
+	if (state.phase < 3) {
+		max = getStart(state.el).maxSkillRating;
+	}
+	else {
+		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(dependent, attr) as AttributeInstance).value);
 		max = Math.max(...checkValues) + 2;
 	}
 
-	if (!(get('SA_88') as SpecialAbilityInstance).active.includes(obj.property)) {
+	if (!getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
 		max = Math.min(14, max);
 	}
 
 	return obj.value < max + bonus;
-};
+}
 
-export const isDecreasable = (obj: SpellInstance): boolean => {
-	switch (obj.id) {
-		case 'SPELL_28': {
-			const SPELL_48 = get('SPELL_48') as SpellInstance;
-			if (SPELL_48.active) {
-				return obj.value > 10;
+export function isDecreasable(state: CurrentHeroInstanceState, obj: SpellInstance): boolean {
+	const { dependent } = state;
+	const dependencies = obj.dependencies.map(e => {
+		if (typeof e === 'object') {
+			const target = get(dependent, e.origin) as SpecialAbilityInstance;
+			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
+			if (req) {
+				const resultOfAll = (req.id as string[]).map(id => (get(dependent, id) as SpellInstance).value >= e.value);
+				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
 			}
-			break;
+			return 0;
 		}
-		case 'SPELL_48': {
-			const SPELL_47 = get('SPELL_47') as SpellInstance;
-			if (SPELL_47.active) {
-				return obj.value > 12;
-			}
-			break;
-		}
-		case 'SPELL_22': {
-			const SPELL_50 = get('SPELL_50') as SpellInstance;
-			if (SPELL_50.active) {
-				return obj.value > 10;
-			}
-			break;
-		}
-		case 'SPELL_50': {
-			const SPELL_49 = get('SPELL_49') as SpellInstance;
-			if (SPELL_49.active) {
-				return obj.value > 12;
-			}
-			break;
-		}
+		return e;
+	});
+
+	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
+
+	if (getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
+		const counter = getPropertyCounter(dependent.spells);
+		const countedWithProperty = counter.get(obj.property);
+		return (obj.value !== 10 || typeof countedWithProperty === 'number' && countedWithProperty > 3) && valid;
 	}
-	if ((get('SA_88') as SpecialAbilityInstance).active.includes(obj.property)) {
-		const counter = SpellsStore.getPropertyCounter();
 
-		return !(counter.get(obj.property) <= 3 && obj.value <= 10 && obj.gr !== 5);
-	}
-	return true;
-};
+	return valid;
+}
 
-export const isActivatable = (obj: SpellInstance): boolean => {
-	switch (obj.id) {
-		case 'SPELL_48': {
-			const SPELL_28 = get('SPELL_28') as SpellInstance;
-			return SPELL_28.active && SPELL_28.value >= 10;
+export function getPropertyCounter(spells: Map<string, SpellInstance>) {
+	return [...spells.values()].filter(e => e.value >= 10).reduce((a, b) => {
+		const existing = a.get(b.property);
+		if (typeof existing === 'number') {
+			a.set(b.property, existing + 1);
 		}
-		case 'SPELL_47': {
-			const SPELL_48 = get('SPELL_48') as SpellInstance;
-			return SPELL_48.active && SPELL_48.value >= 12;
+		else {
+			a.set(b.property, 1);
 		}
-		case 'SPELL_50': {
-			const SPELL_22 = get('SPELL_22') as SpellInstance;
-			return SPELL_22.active && SPELL_22.value >= 10;
-		}
-		case 'SPELL_49': {
-			const SPELL_50 = get('SPELL_50') as SpellInstance;
-			return SPELL_50.active && SPELL_50.value >= 12;
-		}
-	}
-	return true;
-};
+		return a;
+	}, new Map<number, number>());
+}
 
-export const reset = (obj: SpellInstance): SpellInstance => ({
-	...obj,
-	active: false,
-	dependencies: [],
-	value: 0,
-});
+export function reset(obj: SpellInstance): SpellInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: [],
+		value: 0
+	};
+}
+
+export function resetCantrip(obj: CantripInstance): CantripInstance {
+	return {
+		...obj,
+		active: false,
+		dependencies: []
+	};
+}

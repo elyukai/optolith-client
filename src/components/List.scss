@@ -1,0 +1,402 @@
+ul.list-wrapper {
+	display: flex;
+	flex-direction: column;
+	padding: 0 0 1px 0;
+	margin: 0;
+	list-style: none;
+
+	li {
+		flex: none;
+		position: relative;
+		display: flex;
+		align-items: center;
+		padding: 9px 8px 8px;
+
+		&:hover {
+			.values {
+				$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+
+				@for $i from 1 through 8 {
+					.ATTR_#{$i} {
+						border-color: map-get($map: $colors, $key: $i);
+					}
+				}
+
+				.ATTR_6_8 {
+					border-color: $attr6 $attr8 $attr8 $attr6;
+				}
+			}
+
+			&::after {
+				position: absolute;
+				left: -11px;
+				top: 0;
+				width: calc(100% + 5px);
+				height: calc(100% - 1px);
+				content: "";
+				border-image: linear-gradient(to right, $color14 0%, transparentize($color14, .75) 100%);
+				border-image-slice: 1;
+				border-width: 1px 0 1px 6px;
+				border-style: solid;
+				border-color: transparent;
+				pointer-events: none;
+				z-index: 7;
+			}
+
+			.avatar-wrapper h2 {
+				visibility: visible;
+			}
+		}
+
+		&.top-margin {
+			margin-top: 48px;
+
+			&::before {
+				display: block;
+				position: absolute;
+				content: "";
+				@include size(12px);
+				border: 1px solid $color12;
+				transform: rotate(45deg);
+				top: -30px;
+				left: calc(50% - 6px);
+			}
+		}
+
+		&.active::after {
+			position: absolute;
+			left: -11px;
+			top: 0;
+			width: calc(100% + 5px);
+			height: calc(100% - 1px);
+			content: "";
+			border-image: linear-gradient(to right, #fabe0a 0%, transparentize(#fabe0a, .75) 100%);
+			border-image-slice: 1;
+			border-width: 1px 0 1px 6px;
+			border-style: solid;
+			border-color: transparent;
+			pointer-events: none;
+			z-index: 8;
+		}
+
+		.avatar-wrapper {
+			$size: 55px;
+			$padding: 2px;
+			margin-right: 14px;
+			z-index: 1;
+			flex: none;
+			@include size($size);
+
+			> div {
+				@include size($size - $padding * 2);
+				border-radius: 50%;
+			}
+
+			h2 {
+				position: absolute;
+				text-align: center;
+				line-height: $size - $padding * 2;
+				font-size: 21px;
+				visibility: hidden;
+				background: rgba(0, 0, 0, .75);
+				border-radius: 50%;
+				@include size($size - $padding * 2);
+			}
+		}
+
+		.name {
+			flex: 0 1 auto;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			overflow: hidden;
+
+			&.large {
+				p.title {
+					font: bold 18px/28px Alegreya;
+					letter-spacing: 0.05em;
+					text-transform: uppercase;
+					height: 28px;
+					display: flex;
+
+					span:not(.add) {
+						margin: 20px 0 0;
+						flex: 0 1 auto;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						padding: 0;
+						color: $color1;
+					}
+
+					.add {
+						padding-left: 20px;
+						font-size: 16px;
+						color: $color4;
+						flex: none;
+					}
+				}
+			}
+		}
+
+		p {
+			font: 500 12px/16px Alegreya Sans;
+			letter-spacing: 0.05em;
+			margin-top: 2px;
+
+			&.title {
+				height: 16px;
+				font: 500 15px/16px Alegreya Sans;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				text-transform: none;
+				color: $color1;
+				margin: 0;
+			}
+		}
+
+		.group {
+			margin-left: 4px;
+			margin-right: 12px;
+		}
+
+		.hr {
+			border-width: 1px 0 0;
+			background-color: $color12;
+			flex: 1 1 auto;
+			height: 1px;
+			margin: 0 10px;
+			min-width: 20px;
+		}
+
+		.selections {
+			flex: none;
+			display: flex;
+
+			> div {
+				flex: none;
+				margin: 0 0 0 10px;
+
+				&.dropdown, &.textfield {
+					width: 200px;
+				}
+
+				&.dropdown.tiers {
+					width: 65px;
+				}
+			}
+		}
+
+		.values {
+			flex: none;
+			display: flex;
+			align-items: center;
+
+			> div {
+				height: 32px;
+				width: 32px;
+				margin-right: 8px;
+				border: 2px solid $color12;
+				font: 500 12px/28px Alegreya Sans SC;
+				text-align: center;
+			}
+
+			.sr {
+				font-size: 15px;
+				color: $color1;
+			}
+
+			.ic {
+				margin-left: 4px;
+				color: $color2;
+			}
+
+			.sr, .ic, .cost {
+				border-width: 1px;
+				margin-right: 12px;
+				line-height: 30px;
+			}
+
+			.ATTR_6_8 {
+				font-size: 8px;
+			}
+
+			.atpa {
+				width: 8px;
+				height: 2px;
+				background-color: $color12;
+				flex: none;
+				margin: 0 0 0 -8px;
+				border: none;
+			}
+
+			.fill {
+				width: auto;
+				height: 1px;
+				margin: 0;
+				border: none;
+				flex: 1 1 auto;
+			}
+		}
+
+		.btns {
+			flex: none;
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+
+			.btn {
+				flex: none;
+
+				&:not(.btn-flat):not(:first-child) {
+					margin-left: 5px;
+				}
+			}
+		}
+
+		&.imp {
+			.group {
+				color: #c89c3d;
+			}
+
+			.values > div {
+				border-color: #c89c3d;
+			}
+
+			p.title, .values .sr {
+				color: #fabe0a;
+			}
+		}
+
+		&.typ {
+			.group {
+				color: #005177;
+			}
+
+			.values > div {
+				border-color: #005177;
+			}
+
+			p.title, .values .sr {
+				color: #0acbe6;
+			}
+		}
+
+		&.untyp {
+			.group {
+				color: #aa1b32;
+			}
+
+			.values > div {
+				border-color: #aa1b32;
+			}
+
+			p.title, .values .sr {
+				color: #ff2345;
+			}
+		}
+
+		&.disabled {
+			pointer-events: none;
+
+			p.title {
+				color: $color4;
+				height: 32px;
+				line-height: 32px;
+			}
+		}
+
+		&.placeholder {
+			pointer-events: none;
+
+			p.title {
+				position: relative;
+
+				&:after {
+					position: absolute;
+					display: block;
+					content: "";
+					left: 0;
+					height: 15px;
+					border-radius: 2px;
+					background: $color12;
+					width: 100%;
+				}
+			}
+
+			.placeholder-text {
+				display: inline-block;
+				height: 10px;
+				border-radius: 2px;
+				background: $color12;
+				margin: 10px 0;
+			}
+
+			&:first-child {
+				p.title {
+					width: 148px;
+				}
+
+				.placeholder-text {
+					width: 12px;
+				}
+			}
+
+			&:nth-child(2) {
+				opacity: .8;
+
+				p.title {
+					width: 111px;
+				}
+
+				.placeholder-text {
+					width: 4px;
+				}
+			}
+
+			&:nth-child(3) {
+				opacity: .6;
+
+				p.title {
+					width: 200px;
+				}
+
+				.placeholder-text {
+					width: 6px;
+				}
+			}
+
+			&:nth-child(4) {
+				opacity: .4;
+
+				p.title {
+					width: 138px;
+				}
+
+				.placeholder-text {
+					width: 13px;
+				}
+			}
+
+			&:nth-child(5) {
+				opacity: .2;
+
+				p.title {
+					width: 222px;
+				}
+
+				.placeholder-text {
+					width: 3px;
+				}
+			}
+		}
+	}
+
+	.placeholder-message {
+		width: 300px;
+		text-align: center;
+		align-self: center;
+		margin-top: -50px;
+	}
+}

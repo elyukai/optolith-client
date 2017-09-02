@@ -1,43 +1,38 @@
 import * as React from 'react';
-import About from './about/About';
-import Account from './account/Account';
-import Attribute from './attributes/AttributesController';
-import Belongings from './belongings/Belongings';
-import DisAdv from './disadv/DisAdv';
-import Grouplist from './grouplist/Grouplist';
-import Herolist from './herolist/Herolist';
-import Home from './home/Home';
-// import Master from './master/Master';
-import Profile from './profile/Profile';
-import RCP  from './rcp/RCP';
-import Skills from './skills/Skills';
+import { AttributesContainer } from '../containers/Attributes';
+import { BelongingsContainer } from '../containers/Belongings';
+import { HerolistContainer } from '../containers/Herolist';
+import { ProfileContainer } from '../containers/Profile';
+import { RCPContainer } from '../containers/RCP';
+import { SkillsContainer } from '../containers/Skills';
+import { UIMessages } from '../types/ui';
+import { About } from './about/About';
+import { AdvantagesDisadvantages } from './disadv/DisAdv';
+import { Grouplist } from './grouplist/Grouplist';
+// import { Master } from './master/Master';
 
-interface Props {
+export interface RouteProps {
 	id: string;
+	locale: UIMessages;
 }
 
-type TabId = 'home' | 'herolist' | 'grouplist' | 'account' | 'about' | 'rcp' | 'profile' | 'attributes' | 'disadv' | 'skills' | 'belongings';
+export function Route(props: RouteProps) {
+	const { id, locale } = props;
 
-export default class Route extends React.Component<Props, undefined> {
-	render() {
+	const VIEWS = {
+		herolist: <HerolistContainer locale={locale} />,
+		grouplist: <Grouplist />,
+		about: <About locale={locale} />,
 
-		const VIEWS = {
-			home: <Home />,
-			herolist: <Herolist />,
-			grouplist: <Grouplist />,
-			account: <Account />,
-			about: <About />,
+		rcp: <RCPContainer locale={locale} />,
+		profile: <ProfileContainer locale={locale} />,
+		attributes: <AttributesContainer locale={locale} />,
+		disadv: <AdvantagesDisadvantages locale={locale} />,
+		skills: <SkillsContainer locale={locale} />,
+		belongings: <BelongingsContainer locale={locale} />
 
-			rcp: <RCP />,
-			profile: <Profile />,
-			attributes: <Attribute />,
-			disadv: <DisAdv />,
-			skills: <Skills />,
-			belongings: <Belongings />
+		// master: <Master />
+	};
 
-			// master: <Master />
-		};
-
-		return VIEWS[this.props.id as TabId] || null;
-	}
+	return VIEWS[id as keyof typeof VIEWS] || null;
 }

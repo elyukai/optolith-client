@@ -1,46 +1,49 @@
 import * as React from 'react';
-import * as ProfileActions from '../../actions/ProfileActions';
-import Dialog from '../../components/Dialog';
-import TextField from '../../components/TextField';
+import { Dialog } from '../../components/Dialog';
+import { TextField } from '../../components/TextField';
+import { InputTextEvent } from '../../types/data.d';
+import { _translate, UIMessages } from '../../utils/I18n';
 
 interface Props {
 	node?: HTMLDivElement;
+	locale: UIMessages;
+	addAdventurePoints(ap: number): void;
 }
 
 interface State {
 	value: string;
 }
 
-export default class OverviewAddAP extends React.Component<Props, State> {
+export class OverviewAddAP extends React.Component<Props, State> {
 	state = {
 		value: '',
 	};
 
 	onChange = (event: InputTextEvent) => this.setState({ value: event.target.value } as State);
-	addAP = () => ProfileActions.addAdventurePoints(Number.parseInt(this.state.value));
+	addAP = () => this.props.addAdventurePoints(Number.parseInt(this.state.value));
 
 	render() {
-
+		const { locale } = this.props;
 		const { value } = this.state;
 
 		return (
 			<Dialog
 				id="overview-add-ap"
-				title="AP hinzufügen"
+				title={_translate(locale, 'addadventurepoints.title')}
 				node={this.props.node}
 				buttons={[
 					{
-						disabled: value === '' || !Number.isInteger(Number.parseInt(value)) || Number.parseInt(value) > 1,
-						label: 'Hinzufügen',
+						disabled: !/^\d+$/.test(value) || Number.parseInt(value) < 1,
+						label: _translate(locale, 'addadventurepoints.actions.add'),
 						onClick: this.addAP,
 					},
 					{
-						label: 'Abbrechen',
+						label: _translate(locale, 'addadventurepoints.actions.cancel'),
 					},
 				]}
 				>
 				<TextField
-					hint="Abenteuerpunkte"
+					hint={_translate(locale, 'addadventurepoints.options.adventurepoints')}
 					value={value}
 					onChange={this.onChange}
 					fullWidth

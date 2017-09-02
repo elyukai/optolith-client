@@ -1,23 +1,17 @@
 import * as React from 'react';
-import Button from './Button';
-import Icon from './Icon';
+import { Button, ButtonProps } from './Button';
+import { Icon } from './Icon';
 
-interface Props {
-	onClick?: () => void;
+export interface IconButtonProps extends ButtonProps {
 	icon: string;
-	flat?: boolean;
-	[id: string]: any;
 }
 
-export default class IconButton extends React.Component<Props, undefined> {
-	render() {
+export function IconButton(props: IconButtonProps) {
+	const { icon, ...other } = props;
 
-		const { icon, ...other } = this.props;
-
-		return (
-			<Button {...other} round>
-				<Icon>{icon}</Icon>
-			</Button>
-		);
-	}
+	return (
+		<Button {...other} round>
+			<Icon>{icon}</Icon>
+		</Button>
+	);
 }

@@ -1,93 +1,106 @@
 import * as React from 'react';
-import * as DisAdvActions from '../../actions/DisAdvActions';
-import BorderButton from '../../components/BorderButton';
-import Checkbox from '../../components/Checkbox';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
-import * as Categories from '../../constants/Categories';
-import * as ActivatableStore from '../../stores/ActivatableStore';
-import CultureStore from '../../stores/CultureStore';
-import DisAdvStore from '../../stores/DisAdvStore';
-import ProfessionStore from '../../stores/ProfessionStore';
-import RaceStore from '../../stores/RaceStore';
-import DisAdvList from './DisAdvList';
+import { BorderButton } from '../../components/BorderButton';
+import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
+import { RecommendedReference } from '../../components/RecommendedReference';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
+import { AdventurePointsState } from '../../reducers/adventurePoints';
+import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
+import { UIMessages } from '../../types/ui.d';
+import { _translate } from '../../utils/I18n';
+import { ActiveList } from './ActiveList';
+import { DeactiveList } from './DeactiveList';
 
-interface State {
-	filterText: string;
-	showRating: boolean;
-	advActive: ActiveViewObject[];
-	advDeactive: AdvantageInstance[];
-	showAddSlidein: boolean;
-	race: RaceInstance;
-	culture: CultureInstance;
-	profession: ProfessionInstance;
+export interface AdvantagesOwnProps {
+	locale: UIMessages;
 }
 
-export default class Advantages extends React.Component<undefined, State> {
+export interface AdvantagesStateProps {
+	activeList: ActiveViewObject[];
+	ap: AdventurePointsState;
+	deactiveList: DeactiveViewObject[];
+	enableActiveItemHints: boolean;
+	magicalMax: number;
+	rating: ToListById<string>;
+	showRating: boolean;
+	get(id: string): Instance | undefined;
+}
+
+export interface AdvantagesDispatchProps {
+	switchActiveItemHints(): void;
+	switchRatingVisibility(): void;
+	addToList(args: ActivateArgs): void;
+	removeFromList(args: DeactivateArgs): void;
+	setTier(id: string, index: number, tier: number, cost: number): void;
+}
+
+export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & AdvantagesOwnProps;
+
+export interface AdvantagesState {
+	filterText: string;
+	filterTextSlidein: string;
+	showAddSlidein: boolean;
+}
+
+export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
 	state = {
-		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
-		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
-		culture: CultureStore.getCurrent()!,
 		filterText: '',
-		profession: ProfessionStore.getCurrent()!,
-		race: RaceStore.getCurrent()!,
-		showAddSlidein: false,
-		showRating: DisAdvStore.getRating(),
+		filterTextSlidein: '',
+		showAddSlidein: false
 	};
 
-	_updateDisAdvStore = () => this.setState({
-		advActive: ActivatableStore.getActiveForView(Categories.ADVANTAGES),
-		advDeactive: ActivatableStore.getDeactiveForView(Categories.ADVANTAGES),
-		showRating: DisAdvStore.getRating(),
-	} as State)
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as State);
-	changeRating = () => DisAdvActions.switchRatingVisibility();
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as State);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false } as State);
-
-	componentDidMount() {
-		DisAdvStore.addChangeListener(this._updateDisAdvStore );
-	}
-
-	componentWillUnmount() {
-		DisAdvStore.removeChangeListener(this._updateDisAdvStore );
-	}
+	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as AdvantagesState);
+	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as AdvantagesState);
+	showAddSlidein = () => this.setState({ showAddSlidein: true } as AdvantagesState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as AdvantagesState);
 
 	render() {
-
-		const rating: { [id: string]: 'IMP' | 'TYP' | 'UNTYP'} = {};
-		const { culture, profession, race, showRating } = this.state;
-
-		const IMP = 'IMP';
-		const TYP = 'TYP';
-		const UNTYP = 'UNTYP';
-
-		if (showRating) {
-			race.typicalAdvantages.forEach(e => { rating[e] = TYP; });
-			race.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
-			culture.typicalAdvantages.forEach(e => { rating[e] = TYP; });
-			culture.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
-			profession.typicalAdvantages.forEach(e => { rating[e] = TYP; });
-			profession.untypicalAdvantages.forEach(e => { rating[e] = UNTYP; });
-			race.importantAdvantages.forEach(e => { rating[e[0]] = IMP; });
-		}
+		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, removeFromList, setTier, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
+		const { filterText, filterTextSlidein } = this.state;
 
 		return (
-			<div className="page" id="advantages">
+			<Page id="advantages">
 				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
-					<div className="options">
-						<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
-						<Checkbox checked={showRating} onClick={this.changeRating}>Wertung durch Spezies, Kultur und Profession anzeigen</Checkbox>
-					</div>
-					<DisAdvList list={this.state.advDeactive} type="ADV" rating={rating} showRating={this.state.showRating} phase={2} />
+					<Options>
+						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<p>
+							{_translate(locale, 'titlebar.adventurepoints.advantages', ap.adv[0], 80)}<br/>
+							{ap.adv[1] > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesmagic', ap.adv[1], magicalMax)}
+							{ap.adv[1] > 0 && ap.adv[2] > 0 && <br/>}
+							{ap.adv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesblessed', ap.adv[2], 50)}
+						</p>
+						{showRating && <RecommendedReference/>}
+					</Options>
+					<DeactiveList
+						activeList={enableActiveItemHints ? activeList : undefined}
+						filterText={filterTextSlidein}
+						list={deactiveList}
+						locale={locale}
+						rating={rating}
+						showRating={showRating}
+						get={get}
+						addToList={addToList}
+						/>
 				</Slidein>
-				<div className="options">
-					<TextField hint="Suchen" value={this.state.filterText} onChange={this.filter} fullWidth />
-					<BorderButton label="Hinzufügen" onClick={this.showAddSlidein} />
-				</div>
-				<DisAdvList list={this.state.advActive} type="ADV" rating={rating} showRating={showRating} active phase={2} />
-			</div>
+				<Options>
+					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
+					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+					{showRating && <RecommendedReference/>}
+				</Options>
+				<ActiveList
+					filterText={filterText}
+					list={activeList}
+					rating={rating}
+					showRating={showRating}
+					removeFromList={removeFromList}
+					setTier={setTier}
+					/>
+			</Page>
 		);
 	}
 }
