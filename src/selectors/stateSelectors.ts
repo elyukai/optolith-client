@@ -25,3 +25,5 @@ export const getCurrentRaceId = (state: AppState) => state.currentHero.present.r
 export const getCurrentCultureId = (state: AppState) => state.currentHero.present.rcp.culture;
 export const getCurrentProfessionId = (state: AppState) => state.currentHero.present.rcp.profession;
 export const getCurrentProfessionVariantId = (state: AppState) => state.currentHero.present.rcp.professionVariant;
+
+export const getPhase = (state: AppState) => state.currentHero.present.phase;

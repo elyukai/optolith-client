@@ -1,14 +1,16 @@
 import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { RedoAction, UndoAction } from '../actions/HistoryActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getLocale } from '../selectors/I18n';
+import { getCurrentTab, getPhase } from '../selectors/stateSelectors';
 import { ExperienceLevel, ItemInstance } from '../types/data.d';
 import { init } from '../utils/init';
 import { initExperienceLevel, initItem } from '../utils/InitUtils';
 import { AppState } from './app';
 
-type Action = ReceiveInitialDataAction;
+type Action = ReceiveInitialDataAction | RedoAction | UndoAction;
 
-export function appPost(state: AppState, action: Action): AppState {
+export function appPost(state: AppState, action: Action, previousState: AppState): AppState {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_INITIAL_DATA: {
 			return {
@@ -33,6 +35,38 @@ export function appPost(state: AppState, action: Action): AppState {
 					}
 				}
 			};
+		}
+
+		case ActionTypes.UNDO: {
+			if (getPhase(previousState) === 3 && getPhase(state) === 2 && getCurrentTab(state) === 'belongings') {
+				return {
+					ui: {
+						location: {
+							tab: 'profile',
+							...state.ui.location
+						},
+						...state.ui
+					},
+					...state
+				};
+			}
+			return state;
+		}
+
+		case ActionTypes.REDO: {
+			if (getPhase(previousState) === 2 && getPhase(state) === 3 && getCurrentTab(state) === 'disadv') {
+				return {
+					ui: {
+						location: {
+							tab: 'profile',
+							...state.ui.location
+						},
+						...state.ui
+					},
+					...state
+				};
+			}
+			return state;
 		}
 
 		default:
