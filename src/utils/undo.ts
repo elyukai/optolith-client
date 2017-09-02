@@ -11,7 +11,7 @@ export interface UndoState<S> {
 export function undo<S>(reducer: (state: S | undefined, action: Action) => S, resetActionTypes?: string[]): (state: UndoState<S>, action: Action) => UndoState<S> {
 	const initialState: UndoState<S> = {
 		past: [],
-		present: reducer(undefined, {}),
+		present: reducer(undefined, {} as Action),
 		future: []
 	};
 

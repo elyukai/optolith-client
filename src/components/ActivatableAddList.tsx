@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance } from '../types/data.d';
+import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessages } from '../types/data.d';
 import { getFullName } from '../utils/ActivatableUtils';
 import { filterAndSort } from '../utils/FilterSortUtils';
 import { ActivatableAddListItem } from './ActivatableAddListItem';
@@ -10,12 +10,13 @@ import { Scroll } from './Scroll';
 
 type CombinedList = Array<DeactiveViewObject & { active: false } | ActiveViewObject & { active: true }>;
 
-interface Props {
+export interface ActivatableAddListProps {
 	activeList?: ActiveViewObject[];
 	filterText?: string;
 	groupNames?: string[];
 	hideGroup?: boolean;
 	list: DeactiveViewObject[];
+	locale: UIMessages;
 	rating?: { [id: string]: string };
 	showRating?: boolean;
 	sortOrder?: string;
@@ -23,8 +24,8 @@ interface Props {
 	get(id: string): Instance | undefined;
 }
 
-export function ActivatableAddList(props: Props) {
-	const { activeList, addToList, filterText = '', get, groupNames, hideGroup, list, rating, showRating, sortOrder = 'name' } = props;
+export function ActivatableAddList(props: ActivatableAddListProps) {
+	const { activeList, filterText = '', groupNames, list, rating, showRating, sortOrder = 'name' } = props;
 
 	const combinedList: CombinedList = list.map<DeactiveViewObject & { active: false }>(e => {
 		return {
@@ -58,14 +59,12 @@ export function ActivatableAddList(props: Props) {
 					}
 					return (
 						<ActivatableAddListItem
+							{...props}
 							key={item.id}
 							item={item}
-							addToList={addToList}
 							isImportant={showRating && rating && rating[item.id] === 'IMP'}
 							isTypical={showRating && rating && rating[item.id] === 'TYP'}
 							isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
-							hideGroup={hideGroup}
-							get={get}
 							/>
 					);
 				})}

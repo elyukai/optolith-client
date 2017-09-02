@@ -121,6 +121,35 @@ export const getPrimaryMagicalAttributeForSheet = createSelector(
 	}
 );
 
+export const getPrimaryMagicalAttribute = createSelector(
+	[ mapGetToSlice(getSpecialAbilities, 'SA_86'), getAttributes ],
+	(tradition, attributes) => {
+		return tradition && ActivatableUtils.getSids(tradition).reduce<AttributeInstance | undefined>((highestAttribute, sid) => {
+			let attribute;
+			switch (sid) {
+				case 1:
+				case 4:
+				case 10:
+					attribute = attributes.get('ATTR_2');
+					break;
+				case 3:
+					attribute = attributes.get('ATTR_3');
+					break;
+				case 2:
+				case 5:
+				case 6:
+				case 7:
+					attribute = attributes.get('ATTR_4');
+					break;
+			}
+			if (attribute && (!highestAttribute || highestAttribute.value < attribute.value)) {
+				return attribute;
+			}
+			return;
+		}, undefined);
+	}
+);
+
 export const getPrimaryBlessedAttributeForSheet = createSelector(
 	[ mapGetToSlice(getSpecialAbilities, 'SA_102'), getAttributes ],
 	(tradition, attributes) => {

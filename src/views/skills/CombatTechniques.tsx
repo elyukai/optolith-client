@@ -87,7 +87,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											{ className: primaryClassName, value: primary },
 											{ className: 'at', value: obj.at },
 											{ className: 'atpa' },
-											{ className: 'pa', value: obj.pa || '-' },
+											{ className: 'pa', value: obj.pa || '--' },
 										]}
 										get={get}
 										getDerivedCharacteristic={getDerivedCharacteristic}

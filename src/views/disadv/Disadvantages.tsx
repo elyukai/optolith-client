@@ -79,6 +79,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						activeList={enableActiveItemHints ? activeList : undefined}
 						filterText={filterTextSlidein}
 						list={deactiveList}
+						locale={locale}
 						rating={rating}
 						showRating={showRating}
 						get={get}

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as Categories from '../constants/Categories';
-import { TalentsStore } from '../stores/TalentsStore';
-import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
+import { getSkills } from '../selectors/stateSelectors';
+import { store } from '../stores/AppStore';
+import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance, UIMessages } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import { sort } from '../utils/FilterSortUtils';
+import { sortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
@@ -17,17 +18,18 @@ import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 import { TextField } from './TextField';
 
-interface Props {
+export interface ActivatableAddListItemProps {
 	item: DeactiveViewObject;
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
 	hideGroup?: boolean;
+	locale: UIMessages;
 	addToList(args: ActivateArgs): void;
 	get(id: string): Instance | undefined;
 }
 
-interface State {
+export interface ActivatableAddListItemState {
 	selected?: string | number;
 	selected2?: string | number;
 	selectedTier?: number;
@@ -35,27 +37,27 @@ interface State {
 	input2?: string;
 }
 
-export class ActivatableAddListItem extends React.Component<Props, State> {
-	state: State = {};
+export class ActivatableAddListItem extends React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
+	state: ActivatableAddListItemState = {};
 
 	handleSelect = (selected: string | number) => {
 		if (this.state.selected2) {
-			this.setState({ selected, selected2: undefined } as State);
+			this.setState({ selected, selected2: undefined } as ActivatableAddListItemState);
 		}
 		else {
-			this.setState({ selected } as State);
+			this.setState({ selected } as ActivatableAddListItemState);
 		}
 	}
-	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as State);
+	handleSelect2 = (selected2: string | number) => this.setState({ selected2 } as ActivatableAddListItemState);
 	handleSelectTier = (selectedTier: number) => {
 		if (['DISADV_34', 'DISADV_50'].includes(this.props.item.id)) {
-			this.setState({ selectedTier, selected: undefined } as State);
+			this.setState({ selectedTier, selected: undefined } as ActivatableAddListItemState);
 		} else {
-			this.setState({ selectedTier } as State);
+			this.setState({ selectedTier } as ActivatableAddListItemState);
 		}
 	}
-	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value || undefined } as State);
-	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value || undefined } as State);
+	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value || undefined } as ActivatableAddListItemState);
+	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value || undefined } as ActivatableAddListItemState);
 	addToList = (args: ActivateArgs) => {
 		this.props.addToList(args);
 		if (this.state.selected !== undefined || this.state.selectedTier !== undefined || this.state.input !== undefined) {
@@ -65,12 +67,12 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 				selected: undefined,
 				selected2: undefined,
 				selectedTier: undefined
-			} as State);
+			} as ActivatableAddListItemState);
 		}
 	}
 
 	render() {
-		const { get, item, isImportant, isTypical, isUntypical, hideGroup } = this.props;
+		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale } = this.props;
 		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
 		const { input: inputText, selected, selected2, selectedTier } = this.state;
@@ -223,7 +225,7 @@ export class ActivatableAddListItem extends React.Component<Props, State> {
 				args.sel = selected;
 				args.sel2 = selected2;
 				if (selected === 9) {
-					sel2 = sort(TalentsStore.getAll());
+					sel2 = sortObjects([...getSkills(store.getState()).values()], locale.id);
 				}
 				else if (selected === 6) {
 					const musictraditionIds = [1, 2, 3];

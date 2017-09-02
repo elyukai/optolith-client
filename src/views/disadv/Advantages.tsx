@@ -79,6 +79,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 						activeList={enableActiveItemHints ? activeList : undefined}
 						filterText={filterTextSlidein}
 						list={deactiveList}
+						locale={locale}
 						rating={rating}
 						showRating={showRating}
 						get={get}
