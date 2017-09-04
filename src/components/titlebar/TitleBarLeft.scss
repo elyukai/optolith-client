@@ -5,30 +5,21 @@
 	align-items: stretch;
 
 	> div {
-		&:first-child {
-			&:not(.titlebar-tabs), &.titlebar-tabs > div:first-child {
-				margin-left: 40px;
-			}
-		}
+		margin-left: 24px;
 
 		&.avatar-wrapper {
 			flex-shrink: 0;
 			align-self: center;
 			@include size($avatar-height);
 
-			+ div {
-				margin-left: 24px;
-			}
-
 			> div.avatar {
 				@include size($avatar-height - 4px);
 			}
 		}
-		
+
 		&.text {
 			color: #f1e6d4;
 			text-transform: uppercase;
-			margin-left: 24px;
 			letter-spacing: 0.1em;
 		}
 	}

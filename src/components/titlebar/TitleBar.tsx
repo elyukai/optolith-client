@@ -5,7 +5,7 @@ import { TitleBarForGroup } from './TitleBarForGroup';
 import { TitleBarForHero } from './TitleBarForHero';
 import { TitleBarForMain } from './TitleBarForMain';
 
-export interface TitleBarProps {
+export interface NavigationBarProps {
 	currentSection: string;
 	currentTab: string;
 	locale: UIMessages;
@@ -25,7 +25,7 @@ export interface TitleBarProps {
 	setTab(id: string): void;
 }
 
-export function TitleBar(props: TitleBarProps) {
+export function NavigationBar(props: NavigationBarProps) {
 	const { currentSection, currentTab, locale, localeString, localeType, hero, isRedoAvailable, isUndoAvailable, ...other } = props;
 
 	if (currentSection === 'main') {

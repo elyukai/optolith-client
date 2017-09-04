@@ -2,19 +2,8 @@
 	flex: 1 0 auto;
 	display: flex;
 	position: relative;
-	margin: 0 35px;
+	margin: 0 24px;
 	align-items: center;
-
-	// &:before {
-	// 	display: block;
-	// 	position: absolute;
-	// 	height: 44px;
-	// 	width: 1px;
-	// 	content: "";
-	// 	background: #3a322b;
-	// 	top: ($titlebar-height - 44px) / 2;
-	// 	left: 0;
-	// }
 
 	> .titlebar-tabs {
 		margin: 0 24px;
@@ -31,7 +20,7 @@
 		font: bold 15px/32px Alegreya SC;
 		height: 32px;
 		letter-spacing: 0.1em;
-		margin: 0 11px 0 35px;
+		margin: 0 11px 0 24px;
 		position: relative;
 		text-transform: uppercase;
 	}

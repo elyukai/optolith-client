@@ -2,24 +2,8 @@
 	flex: 1 0 auto;
 	display: flex;
 	position: relative;
-	margin-left: 35px;
-	margin-right: 12px;
-	width: 40px;
+	width: 32px;
 	align-items: center;
-
-	+ div {
-		margin-left: 28px;
-	}
-
-	&:after {
-		position: absolute;
-		height: 50px;
-		width: 1px;
-		content: "";
-		background: #3c3732;
-		top: ($titlebar-height - 50px) / 2;
-		right: -13px;
-	}
 
 	> div {
 		@include size(32px);

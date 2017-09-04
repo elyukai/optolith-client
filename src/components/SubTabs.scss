@@ -1,57 +1,67 @@
 .subtabs {
 	width: 100%;
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	position: relative;
-	height: 42px;
-	padding: 10px 0;
+	height: 32px;
+
+	&::after {
+		position: absolute;
+		content: "";
+		width: 100%;
+		height: 1px;
+		background: $c1t;
+		bottom: 0;
+		z-index: 799;
+	}
 
 	> .tab {
-		font: bold 13px/21px Alegreya SC;
+		font: bold 13px/32px Alegreya SC;
 		flex: 0 1 auto;
 		letter-spacing: 0.1em;
-		margin-left: 35px;
+		margin-left: 20px;
 		text-transform: uppercase;
 		position: relative;
-		color: #cdbe91;
+		color: $c2;
 		min-width: 0;
+		padding: 0 10px;
+		z-index: 800;
 
 		&:hover {
-			color: #f1e6d4;
+			color: $c3;
 			cursor: pointer;
 		}
 
 		&:active, &:focus {
-			color: #c89b3c;
+			color: $c5;
 			cursor: pointer;
 		}
 
 		&:last-child {
-			margin-right: 35px;
+			margin-right: 20px;
 		}
 
 		&.active {
 			pointer-events: none;
-			color: #f1e6d4;
+			color: $c3;
 
 			&:after {
 				position: absolute;
 				content: "";
-				width: 4px;
-				height: 4px;
-				bottom: -3px;
+				width: auto;
+				height: 2px;
+				bottom: 0;
 				left: 0;
 				right: 0;
 				margin: 0 auto;
-				border: 1px solid #cdbe91;
-				border-color: transparent #cdbe91 #cdbe91 transparent;
-				transform: rotate(45deg);
+				background: $c2;
 			}
 		}
 
 		&.disabled {
 			pointer-events: none;
-			color: #797974;
+			color: $c1t;
 		}
 
 		div {

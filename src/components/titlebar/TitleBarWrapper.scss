@@ -10,6 +10,18 @@
 	width: 100%;
 	display: flex;
 	position: relative;
-	// background: linear-gradient(to bottom, transparentize($background2, .5) 0%, transparentize($background2, 1) 100%);
-	border-bottom: 1px solid $c1t;
+
+	> div {
+		z-index: 800;
+	}
+
+	&::after {
+		position: absolute;
+		content: "";
+		width: 100%;
+		height: 1px;
+		background: $c1t;
+		bottom: 0;
+		z-index: 799;
+	}
 }

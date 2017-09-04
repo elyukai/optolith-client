@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Scroll } from '../components/Scroll';
-import { TitleBar as TitleBarNew } from '../components/TitleBar';
-import { TitleBar } from '../components/titlebar/TitleBar';
+import { TitleBar } from '../components/TitleBar';
+import { NavigationBar } from '../components/titlebar/TitleBar';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { UIMessages } from '../types/ui.d';
 import { Route } from './Route';
@@ -74,8 +74,8 @@ export class App extends React.Component<AppProps, AppState> {
 		return (
 			<div id="body">
 				<div className="background-image"></div>
-				<TitleBarNew {...other} />
-				<TitleBar {...other} currentSection={section} currentTab={tab} locale={locale} />
+				<TitleBar {...other} />
+				<NavigationBar {...other} currentSection={section} currentTab={tab} locale={locale} />
 				<Route id={tab} locale={locale} />
 			</div>
 		);

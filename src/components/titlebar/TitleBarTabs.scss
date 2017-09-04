@@ -2,55 +2,56 @@
 	flex: 1 1 100%;
 	overflow: hidden;
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	align-self: stretch;
 
 	.tab {
-		font: bold 15px/18px Alegreya SC;
+		font: bold 15px/#{$titlebar-height} Alegreya SC;
+		// font: bold 18px/#{$titlebar-height} Alegreya SC;
 		flex: 0 1 auto;
 		letter-spacing: 0.1em;
-		margin-left: 35px;
+		margin-left: 20px;
 		text-transform: uppercase;
-		position: relative;
-		color: #cdbe91;
+		color: $c2;
 		min-width: 0;
+		// padding: 0 10px;
+		position: relative;
 
 		&:first-child {
 			margin-left: 0;
 		}
 
 		&:hover {
-			color: #f1e6d4;
+			color: $c3;
 			cursor: pointer;
 		}
 
 		&:active, &:focus {
-			color: #c89b3c;
+			color: $c5;
 			cursor: pointer;
 		}
 
 		&.active {
 			pointer-events: none;
-			color: #f1e6d4;
+			color: $c3;
 
 			&::after {
 				position: absolute;
 				content: "";
-				width: 4px;
-				height: 4px;
-				bottom: -4px;
+				width: auto;
+				height: 3px;
+				bottom: 0;
 				left: 0;
 				right: 0;
 				margin: 0 auto;
-				border: 1px solid #cdbe91;
-				border-color: transparent #cdbe91 #cdbe91 transparent;
-				transform: rotate(45deg);
+				background: $c2;
 			}
 		}
 
 		&.disabled {
 			pointer-events: none;
-			color: transparentize(#878683, .2);
+			color: $c1t;
 		}
 
 		div {
