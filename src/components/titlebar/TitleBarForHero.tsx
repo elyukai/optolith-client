@@ -32,10 +32,11 @@ export interface TitleBarForHeroProps {
 	setLocale(id?: string): void;
 	setSection(id: string): void;
 	setTab(id: string): void;
+	setTheme(id: string): void;
 }
 
 export function TitleBarForHero(props: TitleBarForHeroProps) {
-	const { currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, redo, saveConfig, saveHero, undo, setLocale, setSection, setTab } = props;
+	const { currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, redo, saveConfig, saveHero, undo, setLocale, setSection, setTab, setTheme } = props;
 	const { total, spent } = ap;
 
 	const tabs = [
@@ -94,7 +95,7 @@ export function TitleBarForHero(props: TitleBarForHeroProps) {
 					/>
 				<IconButton
 					icon="&#xE8B8;"
-					onClick={() => showSettings(locale, setLocale, saveConfig)}
+					onClick={() => showSettings(locale, setLocale, saveConfig, setTheme)}
 					/>
 				<IconButton
 					icon="&#xE868;"
@@ -105,8 +106,8 @@ export function TitleBarForHero(props: TitleBarForHeroProps) {
 	);
 }
 
-function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} />);
+function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void, setTheme: (id: string) => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} setTheme={setTheme} />);
 }
 
 function toggleDevtools() {

@@ -14,6 +14,10 @@ html, body, #bodywrapper, #body {
 	border: 1px solid $c1t;
 }
 
+#body.theme-light {
+	background: $c6;
+}
+
 .background-image {
 	position: absolute;
 	width: 100%;

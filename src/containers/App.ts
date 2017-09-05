@@ -1,6 +1,7 @@
 import { remote } from 'electron';
 import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
+import * as ConfigActions from '../actions/ConfigActions';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as HistoryActions from '../actions/HistoryActions';
 import * as InGameActions from '../actions/InGameActions';
@@ -10,6 +11,7 @@ import * as PlatformActions from '../actions/PlatformActions';
 import { AppState } from '../reducers/app';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getMessages } from '../selectors/localeSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../stores/AppStore';
 import { alert } from '../utils/alert';
 import { confirm } from '../utils/confirm';
@@ -21,6 +23,7 @@ function mapStateToProps(state: AppState) {
 	return {
 		isRedoAvailable: getRedoAvailability(state),
 		isUndoAvailable: getUndoAvailability(state),
+		theme: getTheme(state),
 		hero: present,
 		locale: locale.messages,
 		localeString: locale.id,
@@ -38,6 +41,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setTab(id: string) {
 			dispatch(LocationActions._setTab(id));
+		},
+		setTheme(theme: string) {
+			dispatch(ConfigActions.setTheme(theme));
 		},
 		undo() {
 			dispatch(HistoryActions.undo());

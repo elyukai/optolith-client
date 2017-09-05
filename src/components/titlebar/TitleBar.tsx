@@ -23,6 +23,7 @@ export interface NavigationBarProps {
 	setLocale(id?: string): void;
 	setSection(id: string): void;
 	setTab(id: string): void;
+	setTheme(id: string): void;
 }
 
 export function NavigationBar(props: NavigationBarProps) {

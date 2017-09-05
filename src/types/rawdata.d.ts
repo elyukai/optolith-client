@@ -372,6 +372,7 @@ export interface Config {
 	sheetCheckAttributeValueVisibility?: boolean;
 	enableActiveItemHints: boolean;
 	locale?: string;
+	theme?: string;
 }
 
 export interface Raw {

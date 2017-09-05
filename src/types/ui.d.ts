@@ -115,6 +115,9 @@ export interface UIMessages {
 	"settings.title": string;
 	"settings.options.language": string;
 	"settings.options.defaultlanguage": string;
+	"settings.options.theme": string;
+	"settings.options.themedark": string;
+	"settings.options.themelight": string;
 	"settings.actions.close": string;
 	"charactersheet.title": string;
 	"charactersheet.actions.printtopdf": string;

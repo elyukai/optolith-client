@@ -21,10 +21,11 @@ export interface TitleBarForGroupProps {
 	saveGroup(): void;
 	setLocale(id?: string): void;
 	setSection(id: string): void;
+	setTheme(id: string): void;
 }
 
 export function TitleBarForGroup(props: TitleBarForGroupProps) {
-	const { groupName, locale, saveConfig, saveGroup, setLocale, setSection } = props;
+	const { groupName, locale, saveConfig, saveGroup, setLocale, setSection, setTheme } = props;
 	return (
 		<TitleBarWrapper>
 			<TitleBarLeft>
@@ -38,7 +39,7 @@ export function TitleBarForGroup(props: TitleBarForGroupProps) {
 					/>
 				<IconButton
 					icon="&#xE8B8;"
-					onClick={() => showSettings(locale, setLocale, saveConfig)}
+					onClick={() => showSettings(locale, setLocale, saveConfig, setTheme)}
 					/>
 				<IconButton
 					icon="&#xE868;"
@@ -49,8 +50,8 @@ export function TitleBarForGroup(props: TitleBarForGroupProps) {
 	);
 }
 
-function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} />);
+function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void, setTheme: (id: string) => void) {
+	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} setTheme={setTheme} />);
 }
 
 function toggleDevtools() {

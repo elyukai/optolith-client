@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface ButtonProps {
+	active?: boolean;
 	autoWidth?: boolean;
 	children?: React.ReactNode;
 	className?: string;
@@ -15,7 +16,7 @@ export interface ButtonProps {
 }
 
 export function Button(props: ButtonProps) {
-	const { autoWidth, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = props;
+	const { active, autoWidth, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = props;
 	let { className } = props;
 
 	className = classNames(className, {
@@ -26,7 +27,8 @@ export function Button(props: ButtonProps) {
 		'btn-flat': flat,
 		'autoWidth': autoWidth,
 		'fullWidth': fullWidth,
-		'disabled': disabled
+		'disabled': disabled,
+		'active': active
 	});
 
 	return (

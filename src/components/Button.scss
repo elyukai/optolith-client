@@ -1,18 +1,29 @@
 .btn {
 	height: 32px;
-	color: #c8aa6e;
+	color: $c2;
 	text-align: center;
 	overflow: hidden;
+	border: 1px solid $c2;
 
 	&:hover, &:active {
 		cursor: pointer;
 	}
 
 	&.disabled {
-		border: 2px solid #31353a;
+		border-color: $c1t;
 		background: none;
-		color: #31353a;
+		color: $c1t;
 		pointer-events: none;
+	}
+
+	&.active {
+		background: $c2;
+		color: $c4;
+		pointer-events: none;
+
+		&:hover {
+			border-color: $c2;
+		}
 	}
 
 	&.autoWidth {

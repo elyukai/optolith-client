@@ -20,12 +20,11 @@
 		font: bold 13px/32px Alegreya SC;
 		flex: 0 1 auto;
 		letter-spacing: 0.1em;
-		margin-left: 20px;
+		margin: 0 20px;
 		text-transform: uppercase;
 		position: relative;
 		color: $c2;
 		min-width: 0;
-		padding: 0 10px;
 		z-index: 800;
 
 		&:hover {
@@ -69,5 +68,19 @@
 			overflow: hidden;
 			white-space: nowrap;
 		}
+	}
+}
+
+.theme-light .subtabs .tab {
+	&:hover {
+		color: $c7;
+	}
+
+	&:active, &:focus {
+		color: $c5;
+	}
+
+	&.active {
+		color: $c7;
 	}
 }

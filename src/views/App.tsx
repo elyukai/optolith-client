@@ -18,11 +18,13 @@ export interface AppStateProps {
 	platform: string;
 	section: string;
 	tab: string;
+	theme: string;
 }
 
 export interface AppDispatchProps {
 	setSection(id: string): void;
 	setTab(id: string): void;
+	setTheme(id: string): void;
 	undo(): void;
 	redo(): void;
 	saveConfig(): void;
@@ -53,11 +55,11 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, section, tab, ...other } = this.props;
+		const { locale, section, tab, theme, ...other } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {
-			return <div id="body">
+			return <div id="body" className={`theme-${theme}`}>
 				<Scroll className="error-message">
 					<h4>Error</h4>
 					<p>{hasError.error.stack}</p>
@@ -68,11 +70,11 @@ export class App extends React.Component<AppProps, AppState> {
 		}
 
 		if (!locale) {
-			return <div id="body"></div>;
+			return <div id="body" className={`theme-${theme}`}></div>;
 		}
 
 		return (
-			<div id="body">
+			<div id="body" className={`theme-${theme}`}>
 				<div className="background-image"></div>
 				<TitleBar {...other} />
 				<NavigationBar {...other} currentSection={section} currentTab={tab} locale={locale} />

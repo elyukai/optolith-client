@@ -24,3 +24,4 @@ export const getEquipmentSortOrder = (state: AppState) => state.ui.settings.equi
 export const getEquipmentGroupVisibilityFilter = (state: AppState) => state.ui.settings.equipmentGroupVisibilityFilter;
 export const getEnableActiveItemHints = (state: AppState) => state.ui.settings.enableActiveItemHints;
 export const getSheetCheckAttributeValueVisibility = (state: AppState) => state.ui.settings.sheetCheckAttributeValueVisibility;
+export const getTheme = (state: AppState) => state.ui.settings.theme;

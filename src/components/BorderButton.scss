@@ -1,38 +1,26 @@
-.btn, input[type="submit"] {
+.btn {
 	text-align: center;
-	background-color: #1a1a1a;
-	padding: 3px 16px 6px;
-	// padding: 3px 14px 6px;
-	letter-spacing: 0.05em;
-	border: 2px solid transparent;
-	border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%) 1 1 1 1;
+	padding: 0 16px;
+	letter-spacing: 0.1em;
 	display: inline-block;
-	box-shadow: 0 0 2px black inset, 0 0 2px black;
-	font: 400 17px/19px "Alegreya SC";
-	text-transform: lowercase;
-	color: #c8a86f;
-	margin-top: 22px;
+	font: bold 13px/30px "Alegreya SC";
+	text-transform: uppercase;
 	min-width: 140px;
+	text-decoration: none;
 
 	&:hover, &:active {
-		background-image: linear-gradient(to bottom, transparentize(#c89b3c, 1) 50%, transparentize(#c89b3c, .75) 100%);
 		cursor: pointer;
 	}
 
 	&:hover {
-		border-image: linear-gradient(to bottom, #f0e6d2 0%, #c89b3c 100%) 1 1 1 1;
-		color: #f0e6d2;
+		border-color: $c3;
+		color: $c3;
 	}
 
 	&:active {
-		border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%) 1 1 1 1;
-		color: #5c5b57;
+		border-color: $c5;
+		color: $c5;
 	}
-}
-
-.btn {
-	margin-top: 0;
-	text-decoration: none;
 
 	&.btn-primary {
 		border-image: linear-gradient(to bottom, #0abdb7 0%, #0abdb7 60%, #0c4550 100%) 1 1 1 1;
@@ -61,18 +49,16 @@
 	&.fullWidth {
 		display: block;
 	}
+}
 
-	&.disabled, &.btn-primary.disabled {
-		border-image: none;
-		box-shadow: none;
-		color: $color11;
+.theme-light .btn {
+	&:hover {
+		border-color: $c7;
+		color: $c7;
+	}
 
-		&:hover {
-			border-image: none;
-			color: $color11;
-			text-shadow: none;
-			box-shadow: none;
-			background-image: none;
-		}
+	&:active {
+		border-color: $c5;
+		color: $c5;
 	}
 }

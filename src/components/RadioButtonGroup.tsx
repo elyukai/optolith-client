@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RadioButton } from './RadioButton';
 
-type OptionValue = string | number | undefined;
+export type OptionValue = string | number | undefined;
 
 export interface Option<T extends OptionValue> {
 	className?: string;
@@ -14,7 +14,7 @@ export interface RadioButtonGroupProps<T extends OptionValue> {
 	active: T;
 	array: Option<T>[];
 	disabled?: boolean;
-	onClick: (option?: string | number) => void;
+	onClick(option?: T): void;
 }
 
 export function RadioButtonGroup<T extends OptionValue>(props: RadioButtonGroupProps<T>) {
