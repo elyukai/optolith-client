@@ -1,6 +1,5 @@
 import { remote } from 'electron';
 import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as HistoryActions from '../actions/HistoryActions';
@@ -34,7 +33,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>) {
+function mapDispatchToProps(dispatch: Dispatch<any>) {
 	return {
 		setSection(id: 'main' | 'hero' | 'group') {
 			dispatch(LocationActions._setSection(id));
@@ -56,14 +55,6 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		saveHero() {
 			dispatch(HerolistActions._saveHero());
-		},
-		saveHeroes() {
-			dispatch(((dispatch, getState) => {
-				const locale = getMessages(getState());
-				if (locale) {
-					dispatch(HerolistActions.saveHeroes());
-				}
-			}) as AsyncAction);
 		},
 		saveGroup() {
 			dispatch(InGameActions._save());

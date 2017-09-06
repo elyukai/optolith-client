@@ -12,7 +12,7 @@ import { getNewIdByDate } from '../utils/IDUtils';
 import { HeroCreation } from '../views/herolist/HeroCreation';
 import { requestHeroExport } from './FileActions';
 import { _setSection } from './LocationActions';
-import { requestSaveAll } from './PlatformActions';
+import { requestHeroesSave, requestSaveAll } from './PlatformActions';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -168,6 +168,7 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
 			confirm(_translate(messages, 'heroes.warnings.delete.title', hero.name), _translate(messages, 'heroes.warnings.delete.message'), true).then(result => {
 				if (result === true) {
 					dispatch(_deleteHero(id));
+					dispatch(requestHeroesSave());
 				}
 			});
 		}

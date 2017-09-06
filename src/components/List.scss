@@ -27,20 +27,26 @@ ul.list-wrapper {
 				}
 			}
 
-			&::after {
+			&::before, &::after {
 				position: absolute;
-				left: -11px;
-				top: 0;
-				width: calc(100% + 5px);
-				height: calc(100% - 1px);
 				content: "";
-				border-image: linear-gradient(to right, $color14 0%, transparentize($color14, .75) 100%);
-				border-image-slice: 1;
-				border-width: 1px 0 1px 6px;
+				top: 0;
+				width: 40%;
+				height: calc(100% - 1px);
 				border-style: solid;
-				border-color: transparent;
+				border-color: $c2;
 				pointer-events: none;
 				z-index: 7;
+			}
+
+			&::before {
+				left: -5px;
+				border-width: 1px 0 1px 1px;
+			}
+
+			&::after {
+				right: -5px;
+				border-width: 1px 1px 1px 0;
 			}
 
 			.avatar-wrapper h2 {

@@ -10,31 +10,41 @@
 	}
 
 	.thumb {
-		background: #1e2328;
 		position: relative;
 		display: block;
 		width: 0;
 		height: 0;
 		cursor: pointer;
-		border-radius: 5.5px;
 		border: 3px solid transparent;
 		background-clip: padding-box;
+		overflow: hidden;
 
-		&:active {
-			background-color: #463714;
+		&:active div {
+			border-color: $c5;
+			background-color: $c5;
+		}
+
+		div {
+			width: 100%;
+			height: 100%;
+			border: 1px solid $c1t;
 		}
 	}
 
 	&:hover {
 		.thumb {
-			background-color: #785a28;
-
-			&:hover {
-				background-color: #cdbe91;
+			div {
+				border-color: $c2;
 			}
 
-			&:active {
-				background-color: #463714;
+			&:hover div {
+				border-color: $c2;
+				background-color: $c2;
+			}
+
+			&:active div {
+				border-color: $c5;
+				background-color: $c5;
 			}
 		}
 	}

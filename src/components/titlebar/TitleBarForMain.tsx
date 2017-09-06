@@ -3,7 +3,6 @@ import * as React from 'react';
 import { UIMessages } from '../../types/ui.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { _translate } from '../../utils/I18n';
-import { BorderButton } from '../BorderButton';
 import { IconButton } from '../IconButton';
 import { Settings } from './Settings';
 import { TitleBarLeft } from './TitleBarLeft';
@@ -17,14 +16,13 @@ export interface TitleBarForMainProps {
 	localeString?: string;
 	localeType: 'default' | 'set';
 	saveConfig(): void;
-	saveHeroes(): void;
 	setLocale(id?: string): void;
 	setTab(id: string): void;
 	setTheme(id: string): void;
 }
 
 export function TitleBarForMain(props: TitleBarForMainProps) {
-	const { currentTab, locale, saveConfig, saveHeroes, setLocale, setTab, setTheme } = props;
+	const { currentTab, locale, saveConfig, setLocale, setTab, setTheme } = props;
 
 	const tabs: TitleBarTabProps[] = [
 		{ label: _translate(locale, 'titlebar.tabs.heroes'), tag: 'herolist' },
@@ -39,12 +37,9 @@ export function TitleBarForMain(props: TitleBarForMainProps) {
 				<TitleBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
 			</TitleBarLeft>
 			<TitleBarRight>
-				{currentTab === 'herolist' && <BorderButton
-					label={_translate(locale, 'actions.save')}
-					onClick={saveHeroes}
-					/>}
 				<IconButton
-					icon="&#xE8B8;"
+					className="test"
+					icon="&#xE909;"
 					onClick={() => showSettings(locale, setLocale, saveConfig, setTheme)}
 					/>
 				<IconButton

@@ -14,8 +14,8 @@ export class Scroll extends React.Component<ScrollProps> {
 		return (
 			<Scrollbars
 				className={classNames(className, 'scroll')}
-				renderThumbHorizontal={props => <div {...props} className="thumb thumb-horizontal"></div>}
-				renderThumbVertical={props => <div {...props} className="thumb thumb-vertical"></div>}
+				renderThumbHorizontal={props => <div {...props} className="thumb thumb-horizontal"><div></div></div>}
+				renderThumbVertical={props => <div {...props} className="thumb thumb-vertical"><div></div></div>}
 				renderTrackHorizontal={props => <div {...props} style={{ ...props.style, height: 11 }} className="track track-horizontal"></div>}
 				renderTrackVertical={props => <div {...props} style={{ ...props.style, width: 11 }} className="track track-vertical"></div>}
 				renderView={props => <div {...props} className="scroll-view"></div>}

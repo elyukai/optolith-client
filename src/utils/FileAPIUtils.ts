@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
-import { join } from 'path';
+import { extname, join } from 'path';
 import { ToListById } from '../types/data.d';
 import { Config, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { alert } from './alert';
@@ -167,8 +167,7 @@ export async function importHero(locale: UIMessages) {
 		});
 		if (fileNames) {
 			const fileName = fileNames[0];
-			const splitted = fileName.split('.');
-			if (splitted[splitted.length - 1] === 'json') {
+			if (extname(fileName) === '.json') {
 				const fileContent = await readFileContent(fileName, locale);
 				if (typeof fileContent === 'string') {
 					return JSON.parse(fileContent);
@@ -261,12 +260,12 @@ export function showSaveDialog(options: Electron.SaveDialogOptions, window: Elec
  * Shows a native open dialog.
  */
 export function showOpenDialog(options: Electron.OpenDialogOptions, window: Electron.BrowserWindow = remote.getCurrentWindow()) {
-	return new Promise<string[] | undefined>((resolve, reject) => {
+	return new Promise<string[] | undefined>(resolve => {
 		remote.dialog.showOpenDialog(window, options, filenames => {
 			if (filenames) {
 				resolve(filenames);
 			}
-			reject();
+			resolve();
 		});
 	});
 }
