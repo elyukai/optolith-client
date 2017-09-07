@@ -66,7 +66,7 @@
 					height: 32px;
 					padding: 0 11px;
 					line-height: 12px;
-					color: #ccbe91;
+					color: $c8;
 					position: relative;
 					display: flex;
 					flex-wrap: wrap;
@@ -74,13 +74,14 @@
 
 					&:not(:last-child) {
 						height: 33px;
-						border-bottom: 1px solid #1f282d;
+						border-bottom: 1px solid $c1t;
 					}
 
 					&:hover {
 						cursor: pointer;
-						color: #f1e6d4;
-						background: #1c2328;
+						color: $c3;
+						background: $c1t;
+						border-color: transparent;
 					}
 
 					&.active {
@@ -93,10 +94,14 @@
 							height: 4px;
 							border-width: 0 0 1px 1px;
 							border-style: solid;
-							border-color: #f1e6d4;
+							border-color: $c3;
 							transform: rotate(-45deg);
 						}
 					}
+				}
+
+				.scroll-active .scroll-view > div.active:after {
+					right: 22px;
 				}
 			}
 		}
@@ -179,14 +184,28 @@
 }
 
 .theme-light .dropdown {
-	> div > .value {
-		color: $c9;
+	> div {
+		> .value {
+			color: $c9;
 
-		&:hover {
-			color: $c7;
-			border-color: $c7;
+			&:hover {
+				color: $c7;
+				border-color: $c7;
 
-			&::before, &::after {
+				&::before, &::after {
+					border-color: $c7;
+				}
+			}
+		}
+
+		> .down > div .scroll-view > div {
+			color: $c9;
+
+			&:hover {
+				color: $c7;
+			}
+
+			&.active:after {
 				border-color: $c7;
 			}
 		}

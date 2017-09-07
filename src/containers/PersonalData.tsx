@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
 import { AvatarChange } from '../components/AvatarChange';

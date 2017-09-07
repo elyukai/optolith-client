@@ -81,7 +81,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 		const downElement = (
 			<div style={{ height: style }} className="down">
 				<div style={{ height: (style - 2) }}>
-					<Scroll noInnerElement>
+					<Scroll noInnerElement className={options.length > 5 ? 'scroll-active' : ''}>
 						{
 							options.map(option => {
 								const classNameInner = classNames(option.id === value && 'active');
