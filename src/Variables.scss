@@ -24,14 +24,21 @@ $color15: #242328;
 $color16: #2b2f34;
 $color17: #7a7b76;
 
+// separator:
 $c1: #4a4a4a;
 $c1t: rgba(74, 74, 74, .3);
+// accent color:
 $c2: #826a3e;
-$c3: #f7f4ed;
-$c4: #111;
 $c5: #5d4517;
-$c6: #f0f0f0;
-$c7: black;
+// background:
+$c4: #111; // dark $c6
+$c6: #f0f0f0; // light $c4
+// headings:
+$c3: #f7f4ed; // dark $c7
+$c7: black; // light $c3
+// text:
+$c8: #7f7f7f; // dark $c9
+$c9: #3c3c3c; // light $c8
 
 $link-color1: #0080b9;
 $link-color2: #52abd1;

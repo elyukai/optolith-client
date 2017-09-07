@@ -1,7 +1,7 @@
 .vertical-list {
 	> span:not(:last-child)::after {
 		content: '';
-		background: $color4;
+		background: $c1t;
 		border-radius: 50%;
 		@include size(4px);
 		display: inline-block;

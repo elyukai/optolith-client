@@ -1,5 +1,4 @@
 import * as React from 'react';
-import ProgressArc = require('react-progress-arc');
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
@@ -12,7 +11,6 @@ import { get } from '../../selectors/dependentInstancesSelectors';
 import { ExperienceLevel, ProfessionInstance, UIMessages, User } from '../../types/data.d';
 import { getExperienceLevelIdByAp, getHigherExperienceLevelId } from '../../utils/ELUtils';
 import { _translate } from '../../utils/I18n';
-import { getRoman } from '../../utils/NumberUtils';
 
 export interface HerolistItemProps {
 	currentHeroId?: string;
@@ -89,10 +87,7 @@ export function HerolistItem(props: HerolistItemProps) {
 
 	return (
 		<ListItem>
-			<ProgressArc completed={elProgress} diameter={63} strokeWidth={4} />
-			<AvatarWrapper src={avatar}>
-				<h2>{getRoman(Number.parseInt(elId.split(/_/)[1]))}</h2>
-			</AvatarWrapper>
+			<AvatarWrapper src={avatar} />
 			<ListItemName name={name} addName={player && player.displayName} large>
 				{rcpElement}
 			</ListItemName>

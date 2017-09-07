@@ -11,7 +11,8 @@
 		padding: 1px 12px;
 		pointer-events: none;
 		position: absolute;
-		color: #a09b8c;
+		color: $c2;
+		margin-top: -32px;
 
 		&.hide {
 			visibility: hidden;
@@ -21,22 +22,22 @@
 	input, textarea {
 		width: 100%;
 		height: 32px;
-		border: 1px solid #524018;
-		// background: #000307;
-		background: #11161c;
+		border: 1px solid $c2;
 		padding: 0 11px;
 		margin: 0;
-		color: #f0e6d2;
-		font: 500 13px/30px "Alegreya Sans";
+		color: $c3;
+		font: 500 13px/30px Alegreya Sans;
 		display: block;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.45) inset;
 		outline: 0 none;
+		background: none;
 
-		&:focus, &:active {
-			// color: #f1e6d4;
-			background: linear-gradient(to bottom, #11161c 0%, #1c2328 100%);
-			border-image: linear-gradient(to bottom, #524018 0%, #ccbe91 100%);
-			border-image-slice: 1;
+		&:hover, &:focus, &:active {
+			color: $c3;
+			border-color: $c3;
+
+			+ .textfield-hint {
+				color: $c3;
+			}
 		}
 	}
 
@@ -48,18 +49,16 @@
 		pointer-events: none;
 
 		.textfield-hint {
-			color: #31353a;
+			color: $c1t;
 		}
 
 		label {
-			color: #31353a;
+			color: $c1t;
 		}
 
 		input, textarea {
-			border: 1px solid #2b2f34;
-			background: none;
-			color: #31353a;
-			box-shadow: none;
+			border-color: $c1t;
+			color: $c1t;
 		}
 	}
 
@@ -97,4 +96,30 @@
 //			transform: scaleX(1);
 //		}
 //	}
+}
+
+.theme-light .textfield {
+	input, textarea {
+		color: $c7;
+
+		&:hover, &:focus, &:active {
+			color: $c7;
+			border-color: $c7;
+
+			+ .textfield-hint {
+				color: $c7;
+			}
+		}
+	}
+
+	// &.invalid:not(.disabled) {
+	// 	label {
+	// 		color: $unrecommended1;
+	// 	}
+
+	// 	input, textarea {
+	// 		border: 1px solid $unrecommended2;
+	// 		color: $unrecommended1;
+	// 	}
+	// }
 }

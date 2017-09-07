@@ -57,3 +57,9 @@
 		}
 	}
 }
+
+.theme-light .segmented-controls-list .btn:hover {
+	&::before, &::after {
+		background: $c7;
+	}
+}

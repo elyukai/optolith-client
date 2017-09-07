@@ -5,18 +5,19 @@ main {
 
 section {
 	@extend %max-size-relative;
-	padding-top: $titlebar-height + 32px;
+	padding-top: $titlebar-height + 31px;
 	z-index: 0;
 	overflow: hidden;
 	// background: url("images/background.jpg") center/cover $background2;
 	display: flex;
 	flex-direction: column;
 
-	.scroll {
+	> .page > .scroll {
 		flex: 1 1 100%;
+		margin-left: 24px;
 
 		.scroll-inner {
-			padding: 0 35px 22px;
+			padding: 24px 24px 24px 0;
 		}
 	}
 }

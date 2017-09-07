@@ -1,19 +1,20 @@
 import * as React from 'react';
-import { Dialog } from '../../components/Dialog';
+import { Dialog, DialogProps } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
+import { SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
 import { ExperienceLevel, InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 
-interface Props {
-	node?: HTMLDivElement;
-	locale: UIMessages | undefined;
-	elList: ExperienceLevel[];
-	createHero: (name: string, sex: 'm' | 'f', el: string) => void;
+export interface Props extends DialogProps {
+	locale: UIMessages;
+	elList: Map<string, ExperienceLevel>;
+	close(): void;
+	createHero(name: string, sex: 'm' | 'f', el: string): void;
 }
 
-interface State {
+export interface State {
 	name: string;
 	gender?: 'm' | 'f';
 	el?: string;
@@ -33,16 +34,20 @@ export class HeroCreation extends React.Component<Props, State> {
 			this.props.createHero(name, gender, el);
 		}
 	}
+	close = () => {
+		this.props.close();
+		this.setState({ name: '', gender: undefined, el: undefined });
+	}
 
 	render() {
-		const { elList, locale } = this.props;
-		const experienceLevels = elList.map(e => {
+		const { elList, locale, ...other } = this.props;
+		const experienceLevels = [...elList.values()].map(e => {
 			const { id, name, ap } = e;
 			return { id, name: `${name} (${ap} AP)` };
 		});
 
 		return (
-			<Dialog id="herocreation" title={_translate(locale, 'herocreation.title')} node={this.props.node} buttons={[
+			<Dialog {...other} id="herocreation" title={_translate(locale, 'herocreation.title')} close={this.close} buttons={[
 				{
 					disabled: this.state.name === '' || !this.state.gender || !this.state.el,
 					label: _translate(locale, 'herocreation.actions.start'),
@@ -57,18 +62,18 @@ export class HeroCreation extends React.Component<Props, State> {
 					fullWidth
 					autoFocus
 					/>
-				<Dropdown
-					value={this.state.gender}
-					onChange={this.changeGender}
-					options={[{id: 'm', name: _translate(locale, 'herocreation.options.selectsex.male')}, {id: 'f', name: _translate(locale, 'herocreation.options.selectsex.female')}]}
-					hint={_translate(locale, 'herocreation.options.selectsex')}
-					fullWidth />
+				<SegmentedControls
+					active={this.state.gender}
+					onClick={this.changeGender}
+					options={[{value: 'm', name: _translate(locale, 'herocreation.options.selectsex.male')}, {value: 'f', name: _translate(locale, 'herocreation.options.selectsex.female')}]}
+					/>
 				<Dropdown
 					value={this.state.el}
 					onChange={this.changeEL}
 					options={experienceLevels}
 					hint={_translate(locale, 'herocreation.options.selectexperiencelevel')}
-					fullWidth />
+					fullWidth
+					/>
 			</Dialog>
 		);
 	}

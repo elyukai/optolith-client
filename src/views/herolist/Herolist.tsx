@@ -4,14 +4,16 @@ import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
+import { Portal } from '../../components/Portal';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { Hero, InputTextEvent, User } from '../../types/data.d';
+import { ExperienceLevel, Hero, InputTextEvent, User } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 
 export interface HerolistOwnProps {
@@ -21,6 +23,7 @@ export interface HerolistOwnProps {
 export interface HerolistStateProps {
 	currentHero: CurrentHeroInstanceState;
 	currentHeroId: string | undefined;
+	elList: Map<string, ExperienceLevel>;
 	list: Hero[];
 	users: Map<string, User>;
 	visibilityFilter: string;
@@ -33,7 +36,7 @@ export interface HerolistDispatchProps {
 	saveHeroAsJSON(id?: string): void;
 	deleteHero(id?: string): void;
 	duplicateHero(id?: string): void;
-	showHeroCreation(): void;
+	createHero(name: string, sex: 'm' | 'f', el: string): void;
 	importHero(): void;
 	setSortOrder(id: string): void;
 	setVisibilityFilter(id: string): void;
@@ -43,14 +46,18 @@ export type HerolistProps = HerolistStateProps & HerolistDispatchProps & Herolis
 
 export interface HerolistState {
 	filterText: string;
+	showHeroCreation: boolean;
 }
 
 export class Herolist extends React.Component<HerolistProps, HerolistState> {
 	state = {
 		filterText: '',
+		showHeroCreation: false
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as HerolistState);
+	showHeroCreation = () => this.setState(() => ({ showHeroCreation: true } as HerolistState));
+	closeHeroCreation = () => this.setState(() => ({ showHeroCreation: false } as HerolistState));
 
 	render() {
 		const {
@@ -67,7 +74,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 			locale,
 			setSortOrder,
 			setVisibilityFilter,
-			showHeroCreation,
 			sortOrder,
 			users,
 			visibilityFilter,
@@ -139,7 +145,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 								},
 							]}
 							/>
-						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={showHeroCreation} primary />
+						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={this.showHeroCreation} primary />
 						<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
 					</Options>
 					<Scroll>
@@ -167,6 +173,11 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 						</List>
 					</Scroll>
 				</Page>
+				<HeroCreation
+					{...this.props}
+					close={this.closeHeroCreation}
+					isOpened={this.state.showHeroCreation}
+					/>
 			</section>
 		);
 	}

@@ -1,12 +1,15 @@
 .page {
 	flex: 1 1 auto;
-	padding: 8px 0 0;
 	font: 14px/22px Alegreya Sans;
 	letter-spacing: 0.025em;
-	color: $color2;
+	color: $c8;
 	display: flex;
 	flex-wrap: nowrap;
 	position: relative;
 	overflow: hidden;
 	height: 100%;
+}
+
+.theme-light .page {
+	color: $c9;
 }

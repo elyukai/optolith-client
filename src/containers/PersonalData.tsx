@@ -33,7 +33,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<any>, props: PersonalDataOwnProps) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnPr
 			}
 		},
 		showImageUpload() {
-			createOverlay(<AvatarChange setPath={ProfileActions._setHeroAvatar} />);
+			createOverlay(<AvatarChange setPath={(path: string) => dispatch(ProfileActions._setHeroAvatar(path))} />);
 		},
 		setHeroName(name: string) {
 			dispatch(ProfileActions._setHeroName(name));

@@ -66,9 +66,9 @@ export class TextField extends React.Component<TextFieldProps, {}> {
 				disabled,
 				invalid: valid === false
 			})}>
-				{hintElement}
 				{label && <Label text={label} />}
 				{inputElement}
+				{hintElement}
 				{counterTextElement}
 			</div>
 		);

@@ -7,7 +7,7 @@ $modal-padding: 24px;
 	left: 0;
 	right: 0;
 	display: flex;
-	background: rgba(0, 0, 0, 0.4);
+	background: transparentize($c4, .4);
 	z-index: 10000;
 	justify-content: center;
 	align-items: center;
@@ -15,8 +15,8 @@ $modal-padding: 24px;
 	.modal-container {
 		width: 380px;
 		height: auto;
-		background: #010a13;
-		border: 1px solid #785a28;
+		background: $c4;
+		border: 1px solid $c2;
 		position: relative;
 
 		&:before, &:after {
@@ -26,7 +26,7 @@ $modal-padding: 24px;
 			@include calc(width, '100% - 10px');
 			height: 2px;
 			left: 4px;
-			background: #785a28;
+			background: $c2;
 		}
 
 		&:before {
@@ -43,15 +43,15 @@ $modal-padding: 24px;
 			display: block;
 			position: absolute;
 			border-radius: 50%;
-			background: #010a13;
-			border: 1px solid #785a28;
+			background: $c4;
+			border: 1px solid $c2;
 			right: -18px;
 			top: -18px;
 
 			> div {
-				border: 1.5px solid #bda36c;
+				border: 1.5px solid $c2;
 				border-radius: 50%;
-				color: #bda36c;
+				color: $c2;
 				margin: 2px;
 				font: 16px/27px Material;
 				text-align: center;
@@ -61,7 +61,7 @@ $modal-padding: 24px;
 				cursor: pointer;
 
 				> div {
-					color: #f1e6d4;
+					color: $c3;
 				}
 			}
 		}
@@ -71,7 +71,7 @@ $modal-padding: 24px;
 
 			.modal-header-inner {
 				font: bold 20px/24px Alegreya SC;
-				color: #f1e6d4;
+				color: $c3;
 				letter-spacing: 0.1em;
 				text-transform: uppercase;
 			}
@@ -82,7 +82,7 @@ $modal-padding: 24px;
 			@include calc(height, "100% - 77px");
 
 			.modal-content-inner {
-				color: #878683;
+				color: $c8;
 				font: 11px/16px "Source Sans Pro";
 				letter-spacing: 0.05em;
 				padding: 0 $modal-padding 55px;
@@ -123,7 +123,7 @@ $modal-padding: 24px;
 			bottom: -1px;
 
 			> .dialog-buttons-inner {
-				background: #010a13;
+				background: $c4;
 				position: relative;
 				padding: 0 1px;
 
@@ -138,7 +138,7 @@ $modal-padding: 24px;
 						height: 11px;
 						width: 1px;
 						bottom: 0;
-						background: #785a28;
+						background: $c2;
 					}
 
 					&:first-child:before {
@@ -167,6 +167,34 @@ $modal-padding: 24px;
 
 		.modal-content {
 			display: none;
+		}
+	}
+}
+
+.theme-light.modal-backdrop {
+	background: transparentize($c6, .4);
+
+	.modal-container {
+		background: $c6;
+
+		.modal-close {
+			background: $c6;
+
+			&:hover > div {
+				color: $c7;
+			}
+		}
+
+		.modal-header .modal-header-inner {
+			color: $c7;
+		}
+
+		.modal-content .modal-content-inner {
+			color: $c9;
+		}
+
+		.dialog-buttons > .dialog-buttons-inner {
+			background: $c6;
 		}
 	}
 }
