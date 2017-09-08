@@ -4,7 +4,6 @@ import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
-import { Portal } from '../../components/Portal';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
@@ -64,7 +63,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 			currentHero: {
 				ap,
 				dependent,
-				el: { all, startId },
+				el: { startId },
 				profile: { avatar, professionName, sex },
 				rcp: { culture, profession, professionVariant, race }
 			},
@@ -105,7 +104,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				sex={hero.sex}
 				professionName={hero.professionName}
 				dependent={dependent}
-				els={all}
 				currentHeroId={currentHeroId}
 				locale={locale}
 				/>
@@ -164,7 +162,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 										sex={sex}
 										professionName={professionName}
 										dependent={dependent}
-										els={all}
 										locale={locale}
 										/>
 								)

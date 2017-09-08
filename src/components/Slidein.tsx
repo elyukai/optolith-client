@@ -1,32 +1,29 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { Portal } from './Portal';
 
 export interface SlideinProps {
-	close: () => void;
-	isOpen: boolean;
+	isOpened: boolean;
+	close(): void;
 }
 
 export class Slidein extends React.Component<SlideinProps, {}> {
 	shouldComponentUpdate(nextProps: SlideinProps) {
-		return nextProps.isOpen !== this.props.isOpen || this.props.isOpen === true;
+		return nextProps.isOpened !== this.props.isOpened || this.props.isOpened === true;
 	}
 
 	render() {
-		const { children, close, isOpen } = this.props;
-		const className = classNames('slidein-backdrop', { 'slidein-open': isOpen });
+		const { children, close, ...other } = this.props;
+		const className = classNames('slidein-backdrop');
 		return (
-			<div className={className}>
+			<Portal {...other} className={className}>
 				<div className="slidein">
 					<div className="slidein-close" onClick={close}><div>&#xE5CD;</div></div>
-						{
-							isOpen ? (
-								<div className="slidein-content">
-									{children}
-								</div>
-							) : null
-						}
+						<div className="slidein-content">
+							{children}
+						</div>
 				</div>
-			</div>
+			</Portal>
 		);
 	}
 }

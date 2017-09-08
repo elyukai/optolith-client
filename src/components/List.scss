@@ -52,17 +52,16 @@ ul.list-wrapper {
 
 		&.top-margin {
 			margin-top: 48px;
+		}
 
-			&::before {
-				display: block;
-				position: absolute;
-				content: "";
-				@include size(12px);
-				border: 1px solid $c1t;
-				transform: rotate(45deg);
-				top: -30px;
-				left: calc(50% - 6px);
-			}
+		> .separator {
+			position: absolute;
+			@include size(12px);
+			border: 1px solid $c1t;
+			transform: rotate(45deg);
+			top: -30px;
+			left: calc(50% - 6px);
+			pointer-events: none;
 		}
 
 		&.active {
@@ -402,5 +401,9 @@ ul.list-wrapper {
 
 	p.title {
 		color: $c7;
+	}
+
+	&.disabled p.title {
+		color: $c1t;
 	}
 }

@@ -62,7 +62,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 
 		return (
 			<Page id="advantages">
-				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>

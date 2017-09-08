@@ -1,7 +1,3 @@
-#skills {
-	// background-image: url("images/backgroundTalents.jpg");
-}
-
 #spells, #liturgies {
 	li {
 		.values {
@@ -17,7 +13,7 @@
 		}
 
 		.fill {
-			background-color: $color12;
+			background-color: $c1t;
 
 			&:first-child {
 				margin-right: 12px;

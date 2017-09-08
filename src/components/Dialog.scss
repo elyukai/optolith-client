@@ -2,10 +2,10 @@ $modal-padding: 24px;
 
 .modal-backdrop {
 	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	top: 1px;
+	bottom: 1px;
+	left: 1px;
+	right: 1px;
 	display: flex;
 	background: transparentize($c4, .4);
 	z-index: 10000;

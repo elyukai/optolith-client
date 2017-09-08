@@ -11,13 +11,17 @@
 			height: 32px;
 			padding: 0 22px 0 11px;
 			margin: 0;
-			color: $c8;
+			color: $c3;
 			display: block;
 			position: relative;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			border: 1px solid $c2;
+
+			&.hint {
+				color: $c2;
+			}
 
 			&:hover {
 				cursor: pointer;
@@ -186,7 +190,11 @@
 .theme-light .dropdown {
 	> div {
 		> .value {
-			color: $c9;
+			color: $c7;
+
+			&.hint {
+				color: $c2;
+			}
 
 			&:hover {
 				color: $c7;

@@ -98,7 +98,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 		return (
 			<Page id="spells">
-				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup

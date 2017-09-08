@@ -4,53 +4,40 @@
 
 .slidein-backdrop {
 	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	// right: ($pane-width + 1px);
-	display: none;
+	top: 1px;
+	bottom: 1px;
+	left: 1px;
+	right: 1px;
+	display: flex;
 	justify-content: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
-	background: transparent;
-	pointer-events: none;
-	z-index: 900;
-
-	&.slidein-open {
-		pointer-events: all;
-		display: flex;
-		// background: rgba(0, 0, 0, 0.25);
-
-		> .slidein {
-			bottom: 0;
-		}
-	}
+	background: transparentize($c4, .2);
+	z-index: 1100;
 
 	.slidein {
 		position: relative;
-		background: #010a13;
-		border-top: 2px solid #785a28;
-		@include calc(height, '100% - ' + ($titlebar-height + 32px));
+		background: $c4;
+		border-top: 1px solid $c2;
+		height: calc(100% - #{$titlebar-height + 30px});
 		width: 100%;
-		bottom: -100%;
+		bottom: 0;
 		right: 0;
-		color: #a1a1a1;
+		color: $c8;
 		font: 13px/14px "Source Sans Pro";
 		letter-spacing: 0.03em;
 
-		&:before {
+		&::before {
 			position: absolute;
 			display: block;
 			content: "";
-			@include calc(width, '100% + 22px');
-			height: 0;
-			border-color: #010a13 transparent #785a28;
-			border-style: solid;
-			border-width: 2px 0 1px;
-			top: 0;
-			left: 0;
-			z-index: 999;
+			width: calc(100% - 10px);
+			height: 3px;
+			border: 1px solid $c2;
+			top: -5px;
+			left: 4px;
+			right: 4px;
+			z-index: 1099;
 		}
 
 		.slidein-close {
@@ -59,26 +46,43 @@
 			display: block;
 			position: absolute;
 			border-radius: 50%;
-			background: #010a13;
-			border: 1px solid #785a28;
-			right: 20px;
-			top: -15px;
-			z-index: 1000;
+			background: $c4;
+			border: 1px solid $c2;
+			right: 24px;
+			top: -21px;
+			z-index: 1100;
+
+			&::before {
+				display: block;
+				position: absolute;
+				content: "";
+				height: 11px;
+				width: 44px;
+				top: 11px;
+				right: -6px;
+				border: 1px solid $c2;
+				z-index: 1099;
+			}
 
 			> div {
-				border: 2px solid #bda36c;
+				border: 2px solid $c2;
 				border-radius: 50%;
-				color: #bda36c;
+				color: $c2;
 				margin: 2px;
 				font: 18px/26px Material;
 				text-align: center;
+				background: $c4;
+				position: absolute;
+				z-index: 1100;
+				width: 30px;
 			}
 
 			&:hover {
 				cursor: pointer;
 
 				> div {
-					color: white;
+					border-color: $c3;
+					color: $c3;
 				}
 			}
 		}
@@ -94,23 +98,12 @@
 			// 	z-index: 22;
 			// }
 
-			.scroll {
+			> .scroll {
 				flex: 1 1 100%;
+				margin-left: 24px;
 
 				.scroll-inner {
-					padding: 22px 35px !important;
-				}
-			}
-
-			> .options {
-				flex: 1 0 auto;
-				width: 200px;
-				margin-left: 35px;
-				padding-top: 22px;
-				// padding-top: 45px;
-
-				.radiobutton-group {
-					width: 100%;
+					padding: 24px 24px 24px 0;
 				}
 			}
 
@@ -192,6 +185,30 @@
 				font-size: 13px;
 				letter-spacing: 0.075em;
 				line-height: 40px;
+			}
+		}
+	}
+}
+
+.theme-light {
+	&.slidein-backdrop {
+		background: transparentize($c6, .2);
+	}
+
+	.slidein {
+		background: $c6;
+		color: $c9;
+
+		.slidein-close {
+			background: $c6;
+
+			> div {
+				background: $c6;
+			}
+
+			&:hover > div {
+				border-color: $c7;
+				color: $c7;
 			}
 		}
 	}

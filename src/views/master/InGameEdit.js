@@ -28,7 +28,7 @@ export class InGameEdit extends Component {
 
 	render() {
 		return (
-			<Slidein isOpen={this.props.editIndex > -1} close={this.closeEdit}>
+			<Slidein isOpened={this.props.editIndex > -1} close={this.closeEdit}>
 				{
 					this.props.editIndex > -1 ? (
 						<div className="edit-inner">

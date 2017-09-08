@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
 import { ActiveViewObject, BlessingInstance, SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Liturgy, UIMessages } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
@@ -9,7 +10,6 @@ import { LiturgiesSheetLiturgies } from './LiturgiesSheetLiturgies';
 import { LiturgiesSheetSpecialAbilities } from './LiturgiesSheetSpecialAbilities';
 import { LiturgiesSheetTraditionsAspects } from './LiturgiesSheetTraditionsAspects';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
 export interface LiturgiesSheetProps {
@@ -35,14 +35,14 @@ export function LiturgiesSheet(props: LiturgiesSheetProps) {
 
 	return (
 		<SheetWrapper>
-			<SheetOptions>
+			<Options>
 				<Checkbox
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
 					{_translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
-			</SheetOptions>
+			</Options>
 			<Sheet
 				{...props}
 				id="liturgies-sheet"

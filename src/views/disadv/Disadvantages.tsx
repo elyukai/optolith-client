@@ -62,7 +62,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 
 		return (
 			<Page id="advantages">
-				<Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'disadvantages.options.common')}</Checkbox>

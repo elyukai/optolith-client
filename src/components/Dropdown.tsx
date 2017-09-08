@@ -118,7 +118,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 					onTouchEnd={this.insideBlur}
 					>
 					{position === 'top' && isOpen ? downElement : placeholder}
-					<div onClick={this.switch} className="value">{valueText}</div>
+					<div onClick={this.switch} className={classNames('value', !current && 'hint')}>{valueText}</div>
 					{position === 'bottom' && isOpen ? downElement : placeholder}
 				</div>
 			</div>

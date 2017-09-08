@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
+import { Options } from '../../components/Options';
 import { TextBox } from '../../components/TextBox';
 import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { ProfileState } from '../../reducers/profile';
@@ -12,7 +13,6 @@ import { ActivatableTextList } from './ActivatableTextList';
 import { MainSheetAttributes } from './MainSheetAttributes';
 import { MainSheetPersonalData } from './MainSheetPersonalData';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
 export interface MainSheetProps {
@@ -51,14 +51,14 @@ export function MainSheet(props: MainSheetProps) {
 	} = props;
 	return (
 		<SheetWrapper>
-			<SheetOptions>
+			<Options>
 				<BorderButton
 					className="print-document"
 					label={_translate(locale, 'charactersheet.actions.printtopdf')}
 					onClick={() => printToPDF(locale)}
 					fullWidth
 					/>
-			</SheetOptions>
+			</Options>
 			<Sheet
 				id="main-sheet"
 				title={_translate(locale, 'charactersheet.main.title')}

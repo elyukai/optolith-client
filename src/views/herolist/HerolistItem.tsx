@@ -8,8 +8,7 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { get } from '../../selectors/dependentInstancesSelectors';
-import { ExperienceLevel, ProfessionInstance, UIMessages, User } from '../../types/data.d';
-import { getExperienceLevelIdByAp, getHigherExperienceLevelId } from '../../utils/ELUtils';
+import { ProfessionInstance, UIMessages, User } from '../../types/data.d';
 import { _translate } from '../../utils/I18n';
 
 export interface HerolistItemProps {
@@ -22,7 +21,6 @@ export interface HerolistItemProps {
 		total: number;
 	};
 	avatar?: string;
-	els: Map<string, ExperienceLevel>;
 	c?: string;
 	p?: string;
 	player?: User;
@@ -39,11 +37,7 @@ export interface HerolistItemProps {
 }
 
 export function HerolistItem(props: HerolistItemProps) {
-	const { player, id, currentHeroId, dependent, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, els, r, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
-	const elId = getExperienceLevelIdByAp(els, apTotal);
-	const el = els.get(elId);
-	const elnext = els.get(getHigherExperienceLevelId(elId));
-	const elProgress = elnext === undefined || el === undefined ? 1 : ((apTotal - el.ap) / (elnext.ap - el.ap));
+	const { player, id, currentHeroId, dependent, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, r, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
 	const isOpen = id === currentHeroId;
 
 	const rcpElement = id !== null && (

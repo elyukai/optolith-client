@@ -56,7 +56,7 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 		const { data, hideSlidein, locale, setActions, setAe, setAgility, setAt, setAttack, setCharisma, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes } = this.props;
 
 		return (
-			<Slidein isOpen={!!data} close={hideSlidein}>
+			<Slidein isOpened={!!data} close={hideSlidein}>
 				{data && <div className="pet-edit">
 					<div className="left">
 						<AvatarWrapper src={data.avatar} onClick={this.showAvatarChange} />

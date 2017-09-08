@@ -1,8 +1,9 @@
 #sheets {
-	flex-flow: column nowrap;
-
-	> .options {
-		margin-bottom: 11px;
+	.options {
+		margin-left: 0;
+		margin-right: 24px;
+		padding-top: 0;
+		flex: none;
 	}
 
 	.scroll-inner {
@@ -24,17 +25,15 @@ table {
 
 .sheet-wrapper {
 	display: flex;
-	margin-top: 30px;
+
+	&:not(:first-child) {
+		margin-top: 24px;
+	}
 }
 
 .sheet-options {
 	flex: none;
-	width: 200px;
-	margin-right: 35px;
-
-	&:last-child {
-		margin-bottom: 30px;
-	}
+	margin-right: 24px;
 }
 
 .sheet {

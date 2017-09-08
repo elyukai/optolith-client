@@ -100,7 +100,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 		return (
 			<Page id="liturgies">
-				<Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup

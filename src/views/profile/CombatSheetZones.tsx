@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Options } from '../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../types/data.d';
 import { ArmorZone, Attribute, CombatTechnique, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon, UIMessages } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
@@ -11,7 +12,6 @@ import { CombatSheetSpecialAbilities } from './CombatSheetSpecialAbilities';
 import { CombatSheetStates } from './CombatSheetStates';
 import { CombatSheetTechniques } from './CombatSheetTechniques';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
 export interface CombatSheetZonesProps {
@@ -35,7 +35,7 @@ export function CombatSheetZones(props: CombatSheetZonesProps) {
 
 	return (
 		<SheetWrapper>
-			<SheetOptions/>
+			<Options/>
 			<Sheet
 				id="combat-sheet-zones"
 				title={_translate(locale, 'charactersheet.combat.title')}

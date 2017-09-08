@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { LabelBox } from '../../components/LabelBox';
+import { Options } from '../../components/Options';
 import { TextBox } from '../../components/TextBox';
 import { Purse } from '../../reducers/equipment';
 import { PetInstance } from '../../types/data.d';
@@ -9,7 +10,6 @@ import { sortByLocaleName } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { BelongingsSheetTableRow } from './BelongingsSheetTableRow';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 
 export interface BelongingsSheetProps {
@@ -32,7 +32,7 @@ export function BelongingsSheet(props: BelongingsSheetProps) {
 
 	return (
 		<SheetWrapper>
-			<SheetOptions/>
+			<Options/>
 			<Sheet
 				id="belongings"
 				title={_translate(locale, 'charactersheet.belongings.title')}

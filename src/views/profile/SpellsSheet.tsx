@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
 import { ActiveViewObject, CantripInstance, SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Spell, UIMessages } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 import { SpellsSheetCantrips } from './SpellsSheetCantrips';
 import { SpellsSheetSpecialAbilities } from './SpellsSheetSpecialAbilities';
@@ -35,14 +35,14 @@ export function SpellsSheet(props: SpellsSheetProps) {
 
 	return (
 		<SheetWrapper>
-			<SheetOptions>
+			<Options>
 				<Checkbox
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
 					{_translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
-			</SheetOptions>
+			</Options>
 			<Sheet
 				{...props}
 				id="spells-sheet"

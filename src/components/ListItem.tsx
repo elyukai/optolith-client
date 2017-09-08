@@ -26,6 +26,7 @@ export class ListItem extends React.Component<ListItemProps, {}> {
 				'top-margin': insertTopMargin,
 				disabled
 			})}>
+				{insertTopMargin && <div className="separator"></div>}
 				{children}
 			</li>
 		);

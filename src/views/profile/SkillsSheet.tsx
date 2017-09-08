@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
+import { Options } from '../../components/Options';
 import { SpecialAbilityInstance, TalentInstance, UIMessages } from '../../types/data.d';
 import { Attribute } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
-import { SheetOptions } from './SheetOptions';
 import { SheetWrapper } from './SheetWrapper';
 import { SkillsSheetLanguages } from './SkillsSheetLanguages';
 import { SkillsSheetQualityLevels } from './SkillsSheetQualityLevels';
@@ -27,14 +27,14 @@ export function SkillsSheet(props: SkillsSheetProps) {
 	const { attributes, checkAttributeValueVisibility, languagesInstance, locale, scriptsInstance, switchAttributeValueVisibility, talents } = props;
 	return (
 		<SheetWrapper>
-			<SheetOptions>
+			<Options>
 				<Checkbox
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
 					{_translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
-			</SheetOptions>
+			</Options>
 			<Sheet
 				id="skills-sheet"
 				title={_translate(locale, 'charactersheet.gamestats.title')}

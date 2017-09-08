@@ -14,6 +14,11 @@
 		background: none;
 		color: $c1t;
 		pointer-events: none;
+
+		&:hover {
+			border-color: $c1t;
+			color: $c1t;
+		}
 	}
 
 	&.active {
