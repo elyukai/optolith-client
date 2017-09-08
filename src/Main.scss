@@ -95,7 +95,6 @@ p {
 @import "components/SubTabs";
 @import "components/TextField";
 @import "components/InputButtonGroup";
-@import "components/titlebar/TitleBar";
 @import "components/TitleBar";
 @import "components/TooltipToggle";
 @import "components/VerticalList";
@@ -115,6 +114,7 @@ p {
 @import "views/master/InGameTableIni";
 @import "views/master/InGameTableLeft";
 @import "views/master/InGameTableRight";
+@import "views/navigationbar/NavigationBar";
 @import "views/profile/Profile";
 @import "views/profile/CombatSheet";
 @import "views/profile/BelongingsSheet";

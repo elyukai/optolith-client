@@ -49,6 +49,7 @@ export interface UIMessages {
 	"options.filtertext": string;
 	"options.sortorder.alphabetically": string;
 	"options.sortorder.ap": string;
+	"options.sortorder.datemodified": string;
 	"options.sortorder.group": string;
 	"options.sortorder.improvementcost": string;
 	"options.sortorder.property": string;

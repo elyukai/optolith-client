@@ -88,7 +88,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				return !!e.player;
 			}
 			return true;
-		}), locale.id, filterText, sortOrder === 'ap' ? [{ key: hero => hero.ap.total, reverse: true }, 'name'] : ['name']).map(hero => (
+		}), locale.id, filterText, sortOrder === 'datemodified' ? [{ key: hero => hero.dateModified.valueOf(), reverse: true }, 'name'] : ['name']).map(hero => (
 			<HerolistItem
 				{...other}
 				key={hero.id}
@@ -138,8 +138,8 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 									value: 'name',
 								},
 								{
-									name: _translate(locale, 'options.sortorder.ap'),
-									value: 'ap',
+									name: _translate(locale, 'options.sortorder.datemodified'),
+									value: 'datemodified',
 								},
 							]}
 							/>

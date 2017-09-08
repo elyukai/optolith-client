@@ -2,6 +2,10 @@ import { AppState } from '../reducers/app';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
+export const getLocaleMessages = (state: AppState) => state.locale.messages;
+export const getLocaleId = (state: AppState) => state.locale.id;
+export const getLocaleType = (state: AppState) => state.locale.type;
+
 export const getCurrentHeroPresent = (state: AppState) => state.currentHero.present;
 
 export const getAdvantages = (state: AppState) => state.currentHero.present.dependent.advantages;

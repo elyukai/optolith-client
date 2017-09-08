@@ -52,6 +52,10 @@
 		.text {
 			color: $c3;
 		}
+
+		&:hover {
+			background: none;
+		}
 	}
 
 	&.disabled {
@@ -76,8 +80,17 @@
 		flex: 0 100%;
 		color: $c2;
 		font: 400 12px/20px Alegreya Sans;
-		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		padding-left: 11px;
+	}
+}
+
+.theme-light .radio {
+	&:hover .text, &.active .text {
+		color: $c7;
+	}
+
+	&.disabled .text {
+		color: $c1t;
 	}
 }

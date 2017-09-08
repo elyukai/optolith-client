@@ -1,23 +1,22 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { AvatarWrapper } from '../../components/AvatarWrapper';
+import { BorderButton } from '../../components/BorderButton';
+import { IconButton } from '../../components/IconButton';
+import { Text } from '../../components/Text';
+import { TooltipToggle } from '../../components/TooltipToggle';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { UIMessages } from '../../types/ui.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { _translate } from '../../utils/I18n';
-import { AvatarWrapper } from '../AvatarWrapper';
-import { BorderButton } from '../BorderButton';
-import { IconButton } from '../IconButton';
-import { Text } from '../Text';
-import { TooltipToggle } from '../TooltipToggle';
 import { ApTooltip } from './ApTooltip';
+import { NavigationBarBack } from './NavigationBarBack';
+import { NavigationBarLeft } from './NavigationBarLeft';
+import { NavigationBarRight } from './NavigationBarRight';
+import { NavigationBarTabs } from './NavigationBarTabs';
+import { NavigationBarWrapper } from './NavigationBarWrapper';
 import { Settings } from './Settings';
-import { TitleBarBack } from './TitleBarBack';
-import { TitleBarLeft } from './TitleBarLeft';
-import { TitleBarRight } from './TitleBarRight';
-import { TitleBarTabs } from './TitleBarTabs';
-import { TitleBarWrapper } from './TitleBarWrapper';
 
-export interface TitleBarForHeroProps {
+export interface NavigationBarForHeroProps {
 	currentTab: string;
 	hero: CurrentHeroInstanceState;
 	isRedoAvailable: boolean;
@@ -25,6 +24,10 @@ export interface TitleBarForHeroProps {
 	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
+	showSettings?: boolean;
+	theme: string;
+	closeSettings(): void;
+	openSettings(): void;
 	undo(): void;
 	redo(): void;
 	saveConfig(): void;
@@ -35,8 +38,8 @@ export interface TitleBarForHeroProps {
 	setTheme(id: string): void;
 }
 
-export function TitleBarForHero(props: TitleBarForHeroProps) {
-	const { currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, redo, saveConfig, saveHero, undo, setLocale, setSection, setTab, setTheme } = props;
+export function NavigationBarForHero(props: NavigationBarForHeroProps) {
+	const { closeSettings, currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, openSettings, redo, saveHero, undo, setSection, setTab } = props;
 	const { total, spent } = ap;
 
 	const tabs = [
@@ -65,13 +68,13 @@ export function TitleBarForHero(props: TitleBarForHeroProps) {
 	}
 
 	return (
-		<TitleBarWrapper>
-			<TitleBarLeft>
-				<TitleBarBack setSection={setSection} />
+		<NavigationBarWrapper>
+			<NavigationBarLeft>
+				<NavigationBarBack setSection={setSection} />
 				<AvatarWrapper src={avatar} />
-				<TitleBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
-			</TitleBarLeft>
-			<TitleBarRight>
+				<NavigationBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
+			</NavigationBarLeft>
+			<NavigationBarRight>
 				<TooltipToggle
 					position="bottom"
 					margin={12}
@@ -95,19 +98,16 @@ export function TitleBarForHero(props: TitleBarForHeroProps) {
 					/>
 				<IconButton
 					icon="&#xE8B8;"
-					onClick={() => showSettings(locale, setLocale, saveConfig, setTheme)}
+					onClick={openSettings}
 					/>
+				<Settings {...props} close={closeSettings} />
 				<IconButton
 					icon="&#xE868;"
 					onClick={toggleDevtools}
 					/>
-			</TitleBarRight>
-		</TitleBarWrapper>
+			</NavigationBarRight>
+		</NavigationBarWrapper>
 	);
-}
-
-function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void, setTheme: (id: string) => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} setTheme={setTheme} />);
 }
 
 function toggleDevtools() {

@@ -1,4 +1,4 @@
-.titlebar-back {
+.navigationbar-back {
 	flex: 1 0 auto;
 	display: flex;
 	position: relative;
@@ -17,6 +17,6 @@
 	}
 }
 
-.theme-light .titlebar-back > div:hover {
+.theme-light .navigationbar-back > div:hover {
 	color: $c7;
 }

@@ -1,11 +1,11 @@
-.titlebar-right {
+.navigationbar-right {
 	flex: 1 0 auto;
 	display: flex;
 	position: relative;
 	margin: 0 24px;
 	align-items: center;
 
-	> .titlebar-tabs {
+	> .navigationbar-tabs {
 		margin: 0 24px;
 	}
 
@@ -15,7 +15,7 @@
 	}
 
 	.collected-ap {
-		color: #a19b8f;
+		color: $c8;
 		flex: 1 0 auto;
 		font: bold 15px/32px Alegreya SC;
 		height: 32px;
@@ -30,4 +30,8 @@
 	p > span {
 		display: block;
 	}
+}
+
+.theme-light .navigationbar-right .collected-ap {
+	color: $c9;
 }

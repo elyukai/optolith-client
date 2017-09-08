@@ -1,37 +1,20 @@
 import * as React from 'react';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
-import { NavigationBar } from '../components/titlebar/TitleBar';
-import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { NavigationBarContainer } from '../containers/NavigationBar';
 import { UIMessages } from '../types/ui.d';
 import { Route } from './Route';
 
 export interface AppOwnProps {}
 
 export interface AppStateProps {
-	hero: CurrentHeroInstanceState;
-	isRedoAvailable: boolean;
-	isUndoAvailable: boolean;
+	currentTab: string;
 	locale?: UIMessages;
-	localeString?: string;
-	localeType: 'default' | 'set';
 	platform: string;
-	section: string;
-	tab: string;
 	theme: string;
 }
 
 export interface AppDispatchProps {
-	setSection(id: string): void;
-	setTab(id: string): void;
-	setTheme(id: string): void;
-	undo(): void;
-	redo(): void;
-	saveConfig(): void;
-	saveHero(): void;
-	saveHeroes(): void;
-	saveGroup(): void;
-	setLocale(id?: string): void;
 	minimize(): void;
 	maximize(): void;
 	restore(): void;
@@ -55,7 +38,7 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, section, tab, theme, ...other } = this.props;
+		const { locale, currentTab, theme, ...other } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {
@@ -77,8 +60,8 @@ export class App extends React.Component<AppProps, AppState> {
 			<div id="body" className={`theme-${theme}`}>
 				<div className="background-image"></div>
 				<TitleBar {...other} />
-				<NavigationBar {...other} currentSection={section} currentTab={tab} locale={locale} />
-				<Route id={tab} locale={locale} />
+				<NavigationBarContainer locale={locale} />
+				<Route id={currentTab} locale={locale} />
 			</div>
 		);
 	}

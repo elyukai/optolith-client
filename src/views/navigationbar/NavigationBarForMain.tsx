@@ -1,30 +1,33 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { IconButton } from '../../components/IconButton';
 import { UIMessages } from '../../types/ui.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { _translate } from '../../utils/I18n';
-import { IconButton } from '../IconButton';
+import { NavigationBarLeft } from './NavigationBarLeft';
+import { NavigationBarRight } from './NavigationBarRight';
+import { NavigationBarTabProps, NavigationBarTabs } from './NavigationBarTabs';
+import { NavigationBarWrapper } from './NavigationBarWrapper';
 import { Settings } from './Settings';
-import { TitleBarLeft } from './TitleBarLeft';
-import { TitleBarRight } from './TitleBarRight';
-import { TitleBarTabProps, TitleBarTabs } from './TitleBarTabs';
-import { TitleBarWrapper } from './TitleBarWrapper';
 
-export interface TitleBarForMainProps {
+export interface NavigationBarForMainProps {
 	currentTab: string;
 	locale: UIMessages;
 	localeString?: string;
 	localeType: 'default' | 'set';
+	showSettings?: boolean;
+	theme: string;
+	closeSettings(): void;
+	openSettings(): void;
 	saveConfig(): void;
 	setLocale(id?: string): void;
 	setTab(id: string): void;
 	setTheme(id: string): void;
 }
 
-export function TitleBarForMain(props: TitleBarForMainProps) {
-	const { currentTab, locale, saveConfig, setLocale, setTab, setTheme } = props;
+export function NavigationBarForMain(props: NavigationBarForMainProps) {
+	const { closeSettings, currentTab, locale, openSettings, setTab } = props;
 
-	const tabs: TitleBarTabProps[] = [
+	const tabs: NavigationBarTabProps[] = [
 		{ label: _translate(locale, 'titlebar.tabs.heroes'), tag: 'herolist' },
 		{ label: _translate(locale, 'titlebar.tabs.groups'), tag: 'grouplist', disabled: true },
 		{ label: _translate(locale, 'titlebar.tabs.wiki'), tag: 'wiki', disabled: true },
@@ -32,22 +35,23 @@ export function TitleBarForMain(props: TitleBarForMainProps) {
 	];
 
 	return (
-		<TitleBarWrapper>
-			<TitleBarLeft>
-				<TitleBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
-			</TitleBarLeft>
-			<TitleBarRight>
+		<NavigationBarWrapper>
+			<NavigationBarLeft>
+				<NavigationBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
+			</NavigationBarLeft>
+			<NavigationBarRight>
 				<IconButton
 					className="test"
 					icon="&#xE909;"
-					onClick={() => showSettings(locale, setLocale, saveConfig, setTheme)}
+					onClick={openSettings}
 					/>
+				<Settings {...props} close={closeSettings} />
 				<IconButton
 					icon="&#xE868;"
 					onClick={toggleDevtools}
 					/>
-			</TitleBarRight>
-		</TitleBarWrapper>
+			</NavigationBarRight>
+		</NavigationBarWrapper>
 	);
 				/*<TitleBarTabs active={currentTab} tabs={[
 					{ label: account.name, tag: 'account', disabled: true },
@@ -76,10 +80,6 @@ export function TitleBarForMain(props: TitleBarForMainProps) {
 			</TitleBarRight>
 		</TitleBarWrapper>
 	);*/
-}
-
-function showSettings(locale: UIMessages, setLocale: (id?: string) => void, saveConfig: () => void, setTheme: (id: string) => void) {
-	createOverlay(<Settings locale={locale} setLocale={setLocale} saveConfig={saveConfig} setTheme={setTheme} />);
 }
 
 function toggleDevtools() {

@@ -49,6 +49,7 @@
 	"options.filtertext": "Suchen",
 	"options.sortorder.alphabetically": "Alphabetisch",
 	"options.sortorder.ap": "AP",
+	"options.sortorder.datemodified": "Nach Änderungsdatum",
 	"options.sortorder.group": "Nach Gruppe",
 	"options.sortorder.improvementcost": "Nach Steigerungsfaktor",
 	"options.sortorder.property": "Nach Merkmal",

@@ -1,23 +1,24 @@
 import * as React from 'react';
+import { Dialog } from '../../components/DialogNew';
+import { Dropdown } from '../../components/Dropdown';
+import { SegmentedControls } from '../../components/SegmentedControls';
 import { store } from '../../stores/AppStore';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
-import { Dialog } from '../Dialog';
-import { Dropdown } from '../Dropdown';
-import { SegmentedControls } from '../SegmentedControls';
 
 export interface SettingsProps {
 	locale: UIMessages;
-	node?: HTMLDivElement;
+	localeString?: string;
+	localeType: 'default' | 'set';
+	showSettings?: boolean;
+	theme: string;
+	close(): void;
 	saveConfig(): void;
 	setLocale(id?: string): void;
 	setTheme(id: string): void;
 }
 
 export interface SettingsState {
-	localeString?: string;
-	localeType: 'default' | 'set';
-	theme: string;
 }
 
 export class Settings extends React.Component<SettingsProps, SettingsState> {
@@ -49,15 +50,15 @@ export class Settings extends React.Component<SettingsProps, SettingsState> {
 	}
 
 	render() {
-		const { locale, node, setLocale, setTheme, saveConfig } = this.props;
-		const { localeString, localeType, theme } = this.state;
+		const { close, locale, localeString, localeType, setLocale, setTheme, saveConfig, showSettings, theme } = this.props;
 
 		return (
 			<Dialog
 				id="settings"
 				title={_translate(locale, 'settings.title')}
-				node={node}
 				buttons={[{label: _translate(locale, 'settings.actions.close'), onClick: saveConfig }]}
+				close={close}
+				isOpened={showSettings}
 				>
 				<Dropdown
 					options={[

@@ -1,4 +1,4 @@
-.titlebar-left {
+.navigationbar-left {
 	flex: 1 1 100%;
 	overflow: hidden;
 	display: flex;
@@ -16,9 +16,13 @@
 		}
 
 		&.text {
-			color: #f1e6d4;
+			color: $c3;
 			text-transform: uppercase;
 			letter-spacing: 0.1em;
 		}
 	}
+}
+
+.theme-light .navigationbar-left > div.text {
+	color: $c7;
 }

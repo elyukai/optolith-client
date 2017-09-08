@@ -1,4 +1,4 @@
-.titlebar-tabs {
+.navigationbar-tabs {
 	flex: 1 1 100%;
 	overflow: hidden;
 	display: flex;
@@ -62,7 +62,7 @@
 	}
 }
 
-.theme-light .titlebar-tabs .tab {
+.theme-light .navigationbar-tabs .tab {
 	&:hover {
 		color: $c7;
 	}
