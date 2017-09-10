@@ -1,27 +1,29 @@
 import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
 import * as ProfessionActions from '../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../actions/ProfessionVariantActions';
 import { AppState } from '../reducers/app';
 import { getAllProfessions, getCurrentProfessionId, getCurrentProfessionVariantId } from '../selectors/rcpSelectors';
-import { getSex } from '../selectors/stateSelectors';
+import { getCantrips, getLiturgicalChants, getSex, getSpells } from '../selectors/stateSelectors';
 import { getProfessionsFromExpansionsVisibility, getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../views/rcp/Professions';
 
 function mapStateToProps(state: AppState) {
 	return {
+		cantrips: getCantrips(state),
 		currentProfessionId: getCurrentProfessionId(state),
 		currentProfessionVariantId: getCurrentProfessionVariantId(state),
 		extensionVisibilityFilter: getProfessionsFromExpansionsVisibility(state),
 		groupVisibilityFilter: getProfessionsGroupVisibilityFilter(state),
+		liturgicalChants: getLiturgicalChants(state),
 		professions: getAllProfessions(state),
 		sex: getSex(state)!,
 		sortOrder: getProfessionsSortOrder(state),
+		spells: getSpells(state),
 		visibilityFilter: getProfessionsVisibilityFilter(state),
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>) {
+function mapDispatchToProps(dispatch: Dispatch<any>) {
 	return {
 		selectProfession(id: string) {
 			dispatch(ProfessionActions._selectProfession(id));

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { RangedWeapon, UIMessages } from '../../types/view.d';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
@@ -36,7 +37,9 @@ export function CombatSheetRangedWeapons(props: CombatSheetRangedWeaponProps) {
 							if (e) {
 								return (
 									<tr key={e.id}>
-										<td className="name">{e.name}</td>
+										<td className="name">
+											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
+										</td>
 										<td className="combat-technique">{e.combatTechnique}</td>
 										<td className="reload-time">{e.reloadTime} {_translate(locale, 'charactersheet.combat.content.actions')}</td>
 										<td className="damage">{e.damageDiceNumber}{_translate(locale, 'charactersheet.combat.content.dice')}{e.damageDiceSides}{e.damageFlat && signNull(e.damageFlat)}</td>

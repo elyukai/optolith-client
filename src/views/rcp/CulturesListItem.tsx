@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { BorderButton } from '../../components/BorderButton';
+import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { Culture, UIMessages } from '../../types/view.d';
-import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
 
 export interface CulturesListItemProps {
 	areValuesVisible: boolean;
@@ -18,39 +16,23 @@ export interface CulturesListItemProps {
 }
 
 export function CulturesListItem(props: CulturesListItemProps) {
-	const { areValuesVisible, currentId, culture, locale, selectCulture, switchToProfessions } = props;
+	const { currentId, culture, selectCulture, switchToProfessions } = props;
 
 	return (
 		<ListItem active={culture.id === currentId}>
-			<ListItemName name={`${culture.name}${areValuesVisible ? ` (${culture.culturalPackageAp} AP)` : ''}`} large>
-				{
-					areValuesVisible && (
-						<div className="details">
-							{
-								sortObjects(culture.culturalPackageSkills, locale.id).map(skill => {
-									return `${skill.name} +${skill.value}`;
-								}).join(', ')
-							}
-						</div>
-					)
-				}
-			</ListItemName>
+			<ListItemName name={culture.name} />
 			<ListItemSeparator />
 			<ListItemButtons>
-				{
-					culture.id === currentId ? (
-						<BorderButton
-							label={_translate(locale, 'rcp.actions.next')}
-							onClick={switchToProfessions}
-							primary
-							/>
-					) : (
-						<BorderButton
-							label={_translate(locale, 'rcp.actions.select')}
-							onClick={() => selectCulture(culture.id)}
-							/>
-					)
-				}
+				<IconButton
+					icon="&#xE876;"
+					onClick={() => selectCulture(culture.id)}
+					disabled={culture.id === currentId}
+					/>
+				<IconButton
+					icon="&#xE5DD;"
+					onClick={switchToProfessions}
+					disabled={culture.id !== currentId}
+					/>
 			</ListItemButtons>
 		</ListItem>
 	);

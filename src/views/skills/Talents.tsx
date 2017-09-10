@@ -16,6 +16,7 @@ import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSort } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { getICName } from '../../utils/ICUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -113,15 +114,6 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 				</Scroll>
 				<Aside>
 					{info ? (() => {
-						const attrPoints = info.check.map(id => (get(id) as AttributeInstance).value);
-						const lessAttrPoints = attrPoints.map(e => e < 13 ? 13 - e : 0).reduce((a, b) => a + b, 0);
-						const flatRoutineLevel = Math.floor((info.value - 1) / 3);
-						const checkMod = flatRoutineLevel * -1 + 3;
-						const dependentCheckMod = checkMod + lessAttrPoints;
-						const routine = info.value > 0 ? dependentCheckMod < 4 ? [ dependentCheckMod, lessAttrPoints > 0 ] : false : false;
-						const routineSign = routine && routine[0] > 0 ? '+' : '';
-						const routineOptional = routine && routine[1] ? '!' : '';
-
 						return (
 							<Scroll>
 								<div className="info skill-info">
@@ -129,30 +121,27 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 										<p className="title">{info.name}</p>
 										<p className="sr">{info.value}</p>
 									</div>
-									<div className="test">
-										<div className={info.check[0]}>{(get(info.check[0]) as AttributeInstance).short}</div>
-										<div className={info.check[1]}>{(get(info.check[1]) as AttributeInstance).short}</div>
-										<div className={info.check[2]}>{(get(info.check[2]) as AttributeInstance).short}</div>
-										<div className="hr"></div>
-										<div className="routine">{routineSign}{Array.isArray(routine) ? routine[0] : '-'}{routineOptional}</div>
-									</div>
-									<p className="rule">
+									<p>
+										<span>{_translate(locale, 'info.check')}</span>
+										<span>{info.check.map(e => (get(e) as AttributeInstance).short).join('/')}</span>
+									</p>
+									<p>
 										<span>{_translate(locale, 'info.applications')}</span>
 										<span>{info.applications && info.applications.map(e => e.name).sort().join(', ')}{info
 											.applications && info.applicationsInput && ', '}{info.applicationsInput}</span>
 									</p>
-									<p className="enc">
+									<p>
 										<span>{_translate(locale, 'info.encumbrance')}</span>
 										<span>{info.encumbrance === 'true' ? _translate(locale, 'charactersheet.gamestats.skills.enc.yes') : info.encumbrance === 'false' ? _translate(locale, 'charactersheet.gamestats.skills.enc.no') : _translate(locale, 'charactersheet.gamestats.skills.enc.maybe')}</span>
 									</p>
-									{info.tools && <Markdown source={`**${_translate(locale, 'info.tools')}:** ${info.tools}`} className="note" />}
-									{info.quality && <Markdown source={`**${_translate(locale, 'info.quality')}:** ${info.quality}`} className="note" />}
-									{info.failed && <Markdown source={`**${_translate(locale, 'info.failedcheck')}:** ${info.failed}`} className="note" />}
-									{info.critical && <Markdown source={`**${_translate(locale, 'info.criticalsuccess')}:** ${info.critical}`} className="note" />}
-									{info.botch && <Markdown source={`**${_translate(locale, 'info.botch')}:** ${info.botch}`} className="note" />}
-									<p className="ic">
+									{info.tools && <Markdown source={`**${_translate(locale, 'info.tools')}:** ${info.tools}`} />}
+									{info.quality && <Markdown source={`**${_translate(locale, 'info.quality')}:** ${info.quality}`} />}
+									{info.failed && <Markdown source={`**${_translate(locale, 'info.failedcheck')}:** ${info.failed}`} />}
+									{info.critical && <Markdown source={`**${_translate(locale, 'info.criticalsuccess')}:** ${info.critical}`} />}
+									{info.botch && <Markdown source={`**${_translate(locale, 'info.botch')}:** ${info.botch}`} />}
+									<p>
 										<span>{_translate(locale, 'info.improvementcost')}</span>
-										<span>{['A', 'B', 'C', 'D'][info.ic - 1]}</span>
+										<span>{getICName(info.ic)}</span>
 									</p>
 								</div>
 							</Scroll>

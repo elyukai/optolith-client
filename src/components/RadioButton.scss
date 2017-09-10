@@ -3,6 +3,7 @@
 	height: 32px;
 	padding: 6px 11px 6px 0;
 	margin: 0 1px;
+	align-items: flex-start;
 
 	&:hover {
 		background: $c1t;
@@ -14,6 +15,14 @@
 		// 		border-image-slice: 1;
 		// 	}
 		// }
+
+		.icon .border {
+			border-color: $c3;
+		}
+
+		.icon .dot {
+			background: $c3;
+		}
 
 		.text {
 			color: $c3;
@@ -55,6 +64,14 @@
 
 		&:hover {
 			background: none;
+
+			.icon .border {
+				border-color: $c2;
+			}
+
+			.icon .dot {
+				background: $c2;
+			}
 		}
 	}
 
@@ -79,7 +96,7 @@
 	.text {
 		flex: 0 100%;
 		color: $c2;
-		font: 400 12px/20px Alegreya Sans;
+		font: 500 12px/20px Alegreya Sans;
 		letter-spacing: 0.05em;
 		padding-left: 11px;
 	}
@@ -88,6 +105,24 @@
 .theme-light .radio {
 	&:hover .text, &.active .text {
 		color: $c7;
+	}
+
+	&:hover .icon .border {
+		border-color: $c7;
+	}
+
+	&:hover .icon .dot {
+		background: $c7;
+	}
+
+	&.active:hover {
+		.icon .border {
+			border-color: $c2;
+		}
+
+		.icon .dot {
+			background: $c2;
+		}
 	}
 
 	&.disabled .text {

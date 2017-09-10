@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 
 export interface TextBoxProps {
 	children?: React.ReactNode;
@@ -13,7 +14,11 @@ export function TextBox(props: TextBoxProps) {
 		return (
 			<div className={classNames('textbox', className)}>
 				<h3>{label}</h3>
-				{value ? <div>{value}</div> : children}
+				{value ? <div>
+					<Textfit max={16} min={8}>
+						{value}
+					</Textfit>
+				</div> : children}
 			</div>
 		);
 }

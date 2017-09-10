@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Aside } from '../../components/Aside';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
@@ -7,17 +8,22 @@ import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelections';
-import { InputTextEvent } from '../../types/data.d';
+import { CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { ProfessionsInfo } from './ProfessionsInfo';
 import { ProfessionsListItem } from './ProfessionsListItem';
+import { ProfessionVariants } from './ProfessionVariants';
 
 export interface ProfessionsOwnProps {
 	locale: UIMessages;
 }
 
 export interface ProfessionsStateProps {
+	cantrips: SMap<CantripInstance>;
+	liturgicalChants: SMap<LiturgyInstance>;
+	spells: SMap<SpellInstance>;
 	currentProfessionId?: string;
 	currentProfessionVariantId?: string;
 	extensionVisibilityFilter: boolean;
@@ -102,6 +108,10 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 						}
 					</List>
 				</Scroll>
+				<Aside>
+					<ProfessionVariants {...this.props} />
+					<ProfessionsInfo {...this.props} />
+				</Aside>
 			</div>
 		);
 	}

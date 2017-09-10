@@ -23,18 +23,22 @@ $modal-padding: 24px;
 			position: absolute;
 			display: block;
 			content: "";
-			@include calc(width, '100% - 10px');
-			height: 2px;
-			left: 4px;
-			background: $c2;
+			border: 1px solid $c2;
+			pointer-events: none;
 		}
 
 		&:before {
 			top: -5px;
+			width: calc(100% - 8px);
+			height: calc(100% + 8px);
+			left: 3px;
 		}
 
 		&:after {
-			bottom: -5px;
+			left: -5px;
+			width: calc(100% + 8px);
+			height: calc(100% - 8px);
+			top: 3px;
 		}
 
 		.modal-close {
@@ -45,22 +49,50 @@ $modal-padding: 24px;
 			border-radius: 50%;
 			background: $c4;
 			border: 1px solid $c2;
-			right: -18px;
-			top: -18px;
+			right: -21px;
+			top: -21px;
+			z-index: 1100;
+
+			&::before, &::after {
+				display: block;
+				position: absolute;
+				content: "";
+				border: 1px solid $c2;
+				z-index: 1099;
+			}
+
+			&::before {
+				height: 11px;
+				width: 22px;
+				top: 11px;
+				right: 16px;
+			}
+
+			&::after {
+				height: 22px;
+				width: 11px;
+				top: 16px;
+				right: 11px;
+			}
 
 			> div {
-				border: 1.5px solid $c2;
+				border: 2px solid $c2;
 				border-radius: 50%;
 				color: $c2;
 				margin: 2px;
-				font: 16px/27px Material;
+				font: 18px/26px Material;
 				text-align: center;
+				background: $c4;
+				position: absolute;
+				z-index: 1100;
+				width: 30px;
 			}
 
 			&:hover {
 				cursor: pointer;
 
 				> div {
+					border-color: $c3;
 					color: $c3;
 				}
 			}
@@ -125,21 +157,15 @@ $modal-padding: 24px;
 			> .dialog-buttons-inner {
 				background: $c4;
 				position: relative;
-				padding: 0 1px;
+				padding: 0 2px;
+				border-width: 0 1px;
+				border-style: solid;
+				border-color: $c2;
+				z-index: 10001;
 
 				> div {
 					box-shadow: 0 none;
 					margin: 0 1px;
-
-					&:first-child:before, &:last-child:after {
-						position: absolute;
-						display: block;
-						content: "";
-						height: 11px;
-						width: 1px;
-						bottom: 0;
-						background: $c2;
-					}
 
 					&:first-child:before {
 						left: -1px;
@@ -180,7 +206,12 @@ $modal-padding: 24px;
 		.modal-close {
 			background: $c6;
 
+			> div {
+				background: $c6;
+			}
+
 			&:hover > div {
+				border-color: $c7;
 				color: $c7;
 			}
 		}

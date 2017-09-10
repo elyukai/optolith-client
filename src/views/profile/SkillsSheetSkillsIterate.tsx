@@ -23,7 +23,6 @@ export function iterateList(talents: TalentInstance[], attributes: Attribute[], 
 		}).join('/');
 		const encString = encumbrance === 'true' ? _translate(locale, 'charactersheet.gamestats.skills.enc.yes') : encumbrance === 'false' ? _translate(locale, 'charactersheet.gamestats.skills.enc.no') : _translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
 		const routine = getRoutineValue(value, checkValues);
-		const routineMark = routine && routine[1] ? '!' : '';
 		return (
 			<tr key={id}>
 				<td className="name">{name}</td>
@@ -31,7 +30,7 @@ export function iterateList(talents: TalentInstance[], attributes: Attribute[], 
 				<td className="enc">{encString}</td>
 				<td className="ic">{getICName(ic)}</td>
 				<td className="sr">{value}</td>
-				<td className="routine">{routine && sign(routine[0])}{Array.isArray(routine) ? routine[0] : '-'}{routineMark}</td>
+				<td className="routine">{routine ? `${sign(routine[0])}${routine[1] ? '!' : ''}` : '-'}</td>
 				<td className="comment"></td>
 			</tr>
 		);

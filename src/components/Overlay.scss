@@ -1,25 +1,25 @@
 .overlay {
 	position: fixed;
-	border: 2px solid $color8;
-	background: $background2;
-	color: $color2;
-	box-shadow: 0 0 1px 2px transparentize(black, .6);
+	border: 1px solid $c2;
+	background: $c4;
+	color: $c8;
+	box-shadow: 0 0 24px transparentize($c4, .2);
 	z-index: 2000;
 
 	> div {
-		padding: 18px;
+		padding: 20px;
 	}
 
 	h4 {
 		font: bold 14px/18px Alegreya SC;
 		text-transform: uppercase;
-		color: $color1;
+		color: $c3;
 		display: flex;
 		justify-content: space-between;
 		letter-spacing: 0.07em;
 
 		span:last-child {
-			color: $color2;
+			color: $c1;
 		}
 	}
 
@@ -33,35 +33,36 @@
 		}
 	}
 
-	&.overlay-top {
-		&:after {
-			content: "";
-			position: absolute;
-			@include size(12px);
-			border-width: 2px;
-			border-style: solid;
-			border-color: transparent $color8 $color8 transparent;
-			background: $background2;
-			transform: rotate(45deg);
-			@include calc(left, "50% - 8px");
-			bottom: -8px;
-			pointer-events: none;
-		}
+	&.overlay-top::after, &.overlay-bottom::before {
+		content: "";
+		position: absolute;
+		@include size(12px);
+		border: 1px solid $c2;
+		background: $c4;
+		transform: rotate(45deg);
+		@include calc(left, "50% - 8px");
+		pointer-events: none;
 	}
 
-	&.overlay-bottom {
-		&:before {
-			content: "";
-			position: absolute;
-			@include size(12px);
-			border-width: 2px;
-			border-style: solid;
-			border-color: transparent $color8 $color8 transparent;
-			background: $background2;
-			transform: rotate(-135deg);
-			@include calc(left, "50% - 8px");
-			top: -8px;
-			pointer-events: none;
-		}
+	&.overlay-top::after {
+		bottom: -8px;
+	}
+
+	&.overlay-bottom::before {
+		top: -8px;
+	}
+}
+
+.theme-light .overlay {
+	background: $c4;
+	color: $c8;
+	box-shadow: 0 0 24px transparentize($c4, .2);
+
+	h4 {
+		color: $c3;
+	}
+
+	&.overlay-top::after, &.overlay-bottom::before {
+		background: $c4;
 	}
 }

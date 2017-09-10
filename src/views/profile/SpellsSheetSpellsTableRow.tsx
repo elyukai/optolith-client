@@ -1,5 +1,5 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Spell, UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
@@ -35,14 +35,20 @@ export function SpellsSheetSpellsTableRow(props: SpellsSheetSpellsTableRowProps)
 		const propertyNames = _translate(locale, 'spells.view.properties');
 		return (
 			<tr>
-				<td className="name">{name}</td>
-				<td className={classNames('check', checkmod && 'mod')}>{check}{checkmod && ` (+${derivedCharacteristics.find(e => e.id === checkmod)!.short})`}</td>
+				<td className="name">
+					<Textfit max={11} min={7} mode="single">{name}</Textfit>
+				</td>
+				<td className="check">
+					<Textfit max={11} min={7} mode="single">{check}{checkmod && ` (+${derivedCharacteristics.find(e => e.id === checkmod)!.short})`}</Textfit>
+				</td>
 				<td className="value">{value}</td>
 				<td className="cost"></td>
 				<td className="cast-time"></td>
 				<td className="range"></td>
 				<td className="duration"></td>
-				<td className="property">{propertyNames[property - 1]}</td>
+				<td className="property">
+					<Textfit max={11} min={7} mode="single">{propertyNames[property - 1]}</Textfit>
+				</td>
 				<td className="ic">{getICName(ic)}</td>
 				<td className="effect"></td>
 				<td className="ref"></td>

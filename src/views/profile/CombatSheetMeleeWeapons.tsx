@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { MeleeWeapon, UIMessages } from '../../types/view.d';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
@@ -38,7 +39,9 @@ export function CombatSheetMeleeWeapons(props: CombatSheetMeleeWeaponsProps) {
 							if (e) {
 								return (
 									<tr key={e.id}>
-										<td className="name">{e.name}</td>
+										<td className="name">
+											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
+										</td>
 										<td className="combat-technique">{e.combatTechnique}</td>
 										<td className="damage-bonus">{e.primary.join('/')} {e.primaryBonus}</td>
 										<td className="damage">{e.damageDiceNumber}{_translate(locale, 'charactersheet.combat.content.dice')}{e.damageDiceSides}{signNull(e.damageFlat)}</td>
@@ -48,7 +51,7 @@ export function CombatSheetMeleeWeapons(props: CombatSheetMeleeWeaponsProps) {
 										<td className="bf">{e.bf}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
 										<td className="at">{e.at}</td>
-										<td className="pa">{e.pa}</td>
+										<td className="pa">{e.pa || '--'}</td>
 										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);

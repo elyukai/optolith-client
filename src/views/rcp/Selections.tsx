@@ -426,7 +426,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		}
 
 		return (
-			<Slidein isOpened close={close}>
+			<Slidein isOpened close={close} className="rcp-selections">
 				<Scroll>
 					<h3>{_translate(locale, 'titlebar.tabs.race')}</h3>
 					<Dropdown

@@ -37,6 +37,7 @@ ul.list-wrapper {
 				border-color: $c2;
 				pointer-events: none;
 				z-index: 7;
+				transition: width 0.3s ease-in-out;
 			}
 
 			&::before {
@@ -69,21 +70,21 @@ ul.list-wrapper {
 				position: absolute;
 				content: "";
 				top: 0;
-				width: 40%;
+				width: 50%;
 				height: calc(100% - 1px);
 				border-style: solid;
-				border-color: #fabe0a;
+				border-color: $c2;
 				pointer-events: none;
-				z-index: 7;
+				z-index: 8;
 			}
 
 			&::before {
-				left: -5px;
+				left: 0;
 				border-width: 1px 0 1px 1px;
 			}
 
 			&::after {
-				right: -5px;
+				right: 0;
 				border-width: 1px 1px 1px 0;
 			}
 		}
@@ -401,6 +402,34 @@ ul.list-wrapper {
 
 	p.title {
 		color: $c7;
+	}
+
+	.values {
+		.sr {
+			color: $c7;
+		}
+
+		.ic {
+			color: $c9;
+		}
+	}
+
+	&.imp {
+		p.title, .values .sr {
+			color: #fabe0a;
+		}
+	}
+
+	&.typ {
+		p.title, .values .sr {
+			color: #0acbe6;
+		}
+	}
+
+	&.untyp {
+		p.title, .values .sr {
+			color: #ff2345;
+		}
 	}
 
 	&.disabled p.title {

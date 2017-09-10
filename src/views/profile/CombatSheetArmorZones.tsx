@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { ArmorZone, UIMessages } from '../../types/view.d';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
@@ -35,7 +36,9 @@ export function CombatSheetArmorZones(props: CombatSheetArmorZonesProps) {
 							if (e) {
 								return (
 									<tr key={e.id}>
-										<td className="name">{e.name}</td>
+										<td className="name">
+											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
+										</td>
 										<td className="zone">{e.head}</td>
 										<td className="zone">{e.torso}</td>
 										<td className="zone">{e.leftArm}</td>

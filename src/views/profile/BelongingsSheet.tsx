@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { LabelBox } from '../../components/LabelBox';
 import { Options } from '../../components/Options';
@@ -140,7 +141,9 @@ export function BelongingsSheet(props: BelongingsSheetProps) {
 								<div className="row pet-base">
 									<div className="name">
 										<span className="label">{_translate(locale, 'pet.name')}</span>
-										<span className="value">{pet && pet.name}</span>
+										<span className="value">
+											<Textfit max={11} min={7} mode="single">{pet && pet.name}</Textfit>
+										</span>
 									</div>
 									<div className="size">
 										<span className="label">{_translate(locale, 'pet.sizecategory')}</span>
@@ -246,24 +249,33 @@ export function BelongingsSheet(props: BelongingsSheetProps) {
 								<div className="row pet-actions">
 									<div className="actions">
 										<span className="label">{_translate(locale, 'pet.actions')}</span>
-										<span className="value">{pet && pet.actions}</span>
+										<span className="value">
+											<Textfit max={11} min={7} mode="single">{pet && pet.actions}</Textfit>
+										</span>
 									</div>
 								</div>
 								<div className="row pet-skills">
 									<div className="skills">
 										<span className="label">{_translate(locale, 'pet.skills')}</span>
-										<span className="value">{pet && pet.talents}</span>
+										<span className="value">
+											<Textfit max={11} min={7} mode="single">{pet && pet.talents}</Textfit>
+										</span>
 									</div>
 								</div>
 								<div className="row pet-specialabilities">
 									<div className="specialabilities">
 										<span className="label">{_translate(locale, 'pet.specialabilities')}</span>
-										<span className="value">{pet && pet.skills}</span>
+										<span className="value">
+											<Textfit max={11} min={7} mode="single">{pet && pet.skills}</Textfit>
+										</span>
 									</div>
 								</div>
 								<div className="row pet-notes">
 									<div className="notes">
 										<span className="label">{_translate(locale, 'pet.notes')}</span>
+										<span className="value">
+											<Textfit max={11} min={7} mode="single">{pet && pet.notes}</Textfit>
+										</span>
 										<span className="value">{pet && pet.notes}</span>
 									</div>
 								</div>

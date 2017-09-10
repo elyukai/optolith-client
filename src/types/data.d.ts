@@ -36,6 +36,8 @@ export type ToOptionalKeys<T> = {
 	[K in keyof T]?: T[K];
 };
 
+export type SMap<T> = Map<string, T>;
+
 export interface HeroBaseForHerolist {
 	readonly name: string;
 	readonly avatar?: string;
@@ -212,7 +214,6 @@ export interface CombatTechniquesSecondSelection {
 export interface CantripsSelection {
 	id: 'CANTRIPS';
 	amount: number;
-	value: number;
 	sid: string[];
 }
 

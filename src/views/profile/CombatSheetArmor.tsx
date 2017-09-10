@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { Armor, UIMessages } from '../../types/view.d';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
@@ -44,14 +45,18 @@ export function CombatSheetArmor(props: CombatSheetArmorProps) {
 
 								return (
 									<tr key={e.id}>
-										<td className="name">{e.name}</td>
+										<td className="name">
+											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
+										</td>
 										<td className="st">{e.st}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>
 										<td className="pro">{e.pro}</td>
 										<td className="enc">{e.enc}</td>
 										<td className="add-penalties">{addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}</td>
 										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
-										<td className="where">{e.where}</td>
+										<td className="where">
+											<Textfit max={11} min={7} mode="single">{e.where}</Textfit>
+										</td>
 									</tr>
 								);
 							}

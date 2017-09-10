@@ -58,7 +58,7 @@
 			width: 100%;
 			top: 32px;
 			left: 0;
-			z-index: 100;
+			z-index: 11000;
 			overflow: hidden;
 			height: 1px;
 			pointer-events: none;
@@ -137,14 +137,14 @@
 
 		> div {
 			> .value {
-				color: #2b2f34;
+				color: $c1t;
 				border-image: none;
-				border-color: #2b2f34;
+				border-color: $c1t;
 				box-shadow: none;
 				background: transparent;
 
 				&::before, &::after {
-					border-color: #2b2f34 #2b2f34 transparent transparent;
+					border-color: $c1t;
 				}
 			}
 		}

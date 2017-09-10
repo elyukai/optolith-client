@@ -43,6 +43,9 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 				const currentValue = skillRatingList.get(id);
 				if (currentValue) {
 					skillRatingList.set(id, currentValue + value);
+					if (skillRatingList.get(id) === 0) {
+						skillRatingList.delete(id);
+					}
 				}
 				else {
 					skillRatingList.set(id, value);

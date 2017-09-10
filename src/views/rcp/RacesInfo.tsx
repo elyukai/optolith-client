@@ -25,56 +25,56 @@ export function RacesInfo(props: RacesProps) {
 							<div className="race-header info-header">
 								<p className="title">{race.name}</p>
 							</div>
-							<p className="rule">
-								<span>{_translate(locale, 'races.info.apvalue')}</span>
+							<p>
+								<span>{_translate(locale, 'info.apvalue')}</span>
 								<span>{race.ap} {_translate(locale, 'aptext')}</span>
 							</p>
-							<p className="rule">
-								<span>{_translate(locale, 'races.info.lifepointbasevalue')}</span>
+							<p>
+								<span>{_translate(locale, 'info.lifepointbasevalue')}</span>
 								<span>{race.lp}</span>
 							</p>
-							<p className="rule">
-								<span>{_translate(locale, 'races.info.spiritbasevalue')}</span>
+							<p>
+								<span>{_translate(locale, 'info.spiritbasevalue')}</span>
 								<span>{race.spi}</span>
 							</p>
-							<p className="rule">
-								<span>{_translate(locale, 'races.info.toughnessbasevalue')}</span>
+							<p>
+								<span>{_translate(locale, 'info.toughnessbasevalue')}</span>
 								<span>{race.tou}</span>
 							</p>
-							<p className="rule">
-								<span>{_translate(locale, 'races.info.attributeadjustments')}</span>
+							<p>
+								<span>{_translate(locale, 'info.attributeadjustments')}</span>
 								<span>{race.attributeAdjustments}</span>
 							</p>
-							{race.automaticAdvantages && <p className="note">
-								<span>{_translate(locale, 'races.info.automaticadvantages')}</span>
+							{race.automaticAdvantages && <p>
+								<span>{_translate(locale, 'info.automaticadvantages')}</span>
 								<span>{race.automaticAdvantages}</span>
 							</p>}
-							{race.stronglyRecommendedAdvantages && <p className="note">
-								<span>{_translate(locale, 'races.info.stronglyrecommendedadvantages')}</span>
+							{race.stronglyRecommendedAdvantages && <p>
+								<span>{_translate(locale, 'info.stronglyrecommendedadvantages')}</span>
 								<span>{race.stronglyRecommendedAdvantages}</span>
 							</p>}
-							{race.stronglyRecommendedDisadvantages && <p className="note">
-								<span>{_translate(locale, 'races.info.stronglyrecommendeddisadvantages')}</span>
+							{race.stronglyRecommendedDisadvantages && <p>
+								<span>{_translate(locale, 'info.stronglyrecommendeddisadvantages')}</span>
 								<span>{race.stronglyRecommendedDisadvantages}</span>
 							</p>}
-							<p className="note">
-								<span>{_translate(locale, 'races.info.commoncultures')}</span>
+							<p>
+								<span>{_translate(locale, 'info.commoncultures')}</span>
 								<span>{sortStrings(race.commonCultures, locale.id).join(', ')}</span>
 							</p>
-							<p className="note">
-								<span>{_translate(locale, 'races.info.commonadvantages')}</span>
+							<p>
+								<span>{_translate(locale, 'info.commonadvantages')}</span>
 								<span>{race.commonAdvantages || _translate(locale, 'info.none')}</span>
 							</p>
-							<p className="note">
-								<span>{_translate(locale, 'races.info.commondisadvantages')}</span>
+							<p>
+								<span>{_translate(locale, 'info.commondisadvantages')}</span>
 								<span>{race.commonDisadvantages || _translate(locale, 'info.none')}</span>
 							</p>
-							<p className="note">
-								<span>{_translate(locale, 'races.info.uncommonadvantages')}</span>
+							<p>
+								<span>{_translate(locale, 'info.uncommonadvantages')}</span>
 								<span>{race.uncommonAdvantages || _translate(locale, 'info.none')}</span>
 							</p>
-							<p className="note">
-								<span>{_translate(locale, 'races.info.uncommondisadvantages')}</span>
+							<p>
+								<span>{_translate(locale, 'info.uncommondisadvantages')}</span>
 								<span>{race.uncommonDisadvantages || _translate(locale, 'info.none')}</span>
 							</p>
 						</div>

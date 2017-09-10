@@ -1,3 +1,5 @@
+import { ProfessionSelections } from './data.d';
+
 export { UIMessages } from './ui.d';
 
 export interface Race {
@@ -26,6 +28,13 @@ export interface Race {
 export interface Increasable {
 	name: string;
 	value: number;
+	previous?: number;
+}
+
+export interface IncreasableId {
+	id: string;
+	value: number;
+	previous?: number;
 }
 
 export interface Culture {
@@ -45,12 +54,16 @@ export interface Profession {
 	name: string | NameBySex;
 	subname?: string | NameBySex;
 	ap: number;
+	selections: ProfessionSelections;
 	combatTechniques: Increasable[];
 	physicalSkills: Increasable[];
 	socialSkills: Increasable[];
 	natureSkills: Increasable[];
 	knowledgeSkills: Increasable[];
 	craftSkills: Increasable[];
+	spells: IncreasableId[];
+	liturgicalChants: IncreasableId[];
+	blessings: string[];
 	variants: ProfessionVariant[];
 }
 

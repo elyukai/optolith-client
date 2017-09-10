@@ -9,6 +9,7 @@ import { InputTextEvent } from '../../types/data.d';
 import { Culture, UIMessages } from '../../types/view.d';
 import { filterAndSort } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { CulturesInfo } from './CulturesInfo';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {
@@ -81,6 +82,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						}
 					</List>
 				</Scroll>
+				<CulturesInfo {...this.props} />
 			</div>
 		);
 	}

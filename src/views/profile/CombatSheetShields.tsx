@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { ShieldOrParryingWeapon, UIMessages } from '../../types/view.d';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
@@ -32,7 +33,9 @@ export function CombatSheetShields(props: CombatSheetShieldsProps) {
 							if (e) {
 								return (
 									<tr key={e.id}>
-										<td className="name">{e.name}</td>
+										<td className="name">
+											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
+										</td>
 										<td className="str">{e.stp}</td>
 										<td className="bf">{e.bf}</td>
 										<td className="loss">{e.loss && getRoman(e.loss)}</td>

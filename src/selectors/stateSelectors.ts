@@ -14,6 +14,7 @@ export const getCantrips = (state: AppState) => state.currentHero.present.depend
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 export const getCultures = (state: AppState) => state.currentHero.present.dependent.cultures;
 export const getDisadvantages = (state: AppState) => state.currentHero.present.dependent.disadvantages;
+export const getLiturgicalChants = (state: AppState) => state.currentHero.present.dependent.liturgies;
 export const getProfessions = (state: AppState) => state.currentHero.present.dependent.professions;
 export const getProfessionVariants = (state: AppState) => state.currentHero.present.dependent.professionVariants;
 export const getRaces = (state: AppState) => state.currentHero.present.dependent.races;

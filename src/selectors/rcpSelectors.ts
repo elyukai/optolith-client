@@ -170,8 +170,12 @@ export const getAllProfessions = createSelector(
 				ap,
 				name,
 				subname,
+				selections,
 				combatTechniques,
 				talents,
+				spells,
+				liturgies,
+				blessings,
 				variants
 			} = profession;
 
@@ -189,20 +193,38 @@ export const getAllProfessions = createSelector(
 				name,
 				subname,
 				ap,
-				combatTechniques: combatTechniques.map(function mapCTs([id, value]) {return { name: combatTechniquesState.get(id)!.name, value }; }),
+				selections: selections.map(e => {
+					if (e.id === 'COMBAT_TECHNIQUES') {
+						return {
+							...e,
+							sid: e.sid.map(id => combatTechniquesState.get(id)!.name)
+						};
+					}
+					return e;
+				}),
+				combatTechniques: combatTechniques.map(([id, value]) => ({ name: combatTechniquesState.get(id)!.name, value })),
 				physicalSkills: skills[0],
 				socialSkills: skills[1],
 				natureSkills: skills[2],
 				knowledgeSkills: skills[3],
 				craftSkills: skills[4],
+				spells: spells.map(([id, value]) => ({ id, value })),
+				liturgicalChants: liturgies.map(([id, value]) => ({ id, value })),
+				blessings,
 				variants: filteredVariants.map(v => {
-					const { id, name, ap, combatTechniques, talents } = v;
+					const { id, name, ap, combatTechniques: combatTechniquesVariant, talents: talentsVariant } = v;
 					return {
 						id,
 						name,
 						ap,
-						combatTechniques: combatTechniques.map(([id, value]) => ({ name: combatTechniquesState.get(id)!.name, value })),
-						skills: talents.map(([id, value]) => ({ name: skillsState.get(id)!.name, value }))
+						combatTechniques: combatTechniquesVariant.map(([id, value]) => {
+							const previousObject = combatTechniques.find(e => e[0] === id);
+							return { name: combatTechniquesState.get(id)!.name, value, previous: previousObject && previousObject[1] };
+						}),
+						skills: talentsVariant.map(([id, value]) => {
+							const previousObject = talents.find(e => e[0] === id);
+							return { name: skillsState.get(id)!.name, value, previous: previousObject && previousObject[1] };
+						})
 					};
 				})
 			});
