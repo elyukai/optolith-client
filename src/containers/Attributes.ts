@@ -5,14 +5,14 @@ import { AppState } from '../reducers/app';
 import { getForView, getSum } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
-import { getAll } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
 function mapStateToProps(state: AppState) {
 	return {
 		attributes: getForView(state),
 		phase: getPhase(state),
-		derived: getAll(state.currentHero.present),
+		derived: getDerivedCharacteristics(state),
 		maxTotalAttributeValues: getStartEl(state).maxTotalAttributeValues,
 		sum: getSum(state)
 	};

@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { store } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { getDiffCost } from '../utils/RCPUtils';
 
 export interface SelectCultureAction {
@@ -10,17 +10,19 @@ export interface SelectCultureAction {
 	};
 }
 
-export function _selectCulture(id: string): SelectCultureAction {
-	const { dependent, rcp: { profession, professionVariant } } = store.getState().currentHero.present;
-	const professionDiff = getDiffCost(dependent, profession);
-	const professionVariantDiff = getDiffCost(dependent, professionVariant);
-	const cost = professionDiff + professionVariantDiff;
-	return {
-		type: ActionTypes.SELECT_CULTURE,
-		payload: {
-			id,
-			cost
-		}
+export function _selectCulture(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { profession, professionVariant } } = getState().currentHero.present;
+		const professionDiff = getDiffCost(dependent, profession);
+		const professionVariantDiff = getDiffCost(dependent, professionVariant);
+		const cost = professionDiff + professionVariantDiff;
+		dispatch({
+			type: ActionTypes.SELECT_CULTURE,
+			payload: {
+				id,
+				cost
+			}
+		} as SelectCultureAction);
 	};
 }
 

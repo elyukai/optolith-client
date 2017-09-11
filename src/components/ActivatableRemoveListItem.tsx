@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ActiveViewObject, DeactivateArgs } from '../types/data.d';
-import { translate } from '../utils/I18n';
+import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data.d';
+import { _translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
@@ -18,8 +18,9 @@ interface RemoveObject {
 	index: number;
 }
 
-interface Props {
+export interface ActivatableRemoveListItemProps {
 	item: ActiveViewObject;
+	locale: UIMessages;
 	phase?: number;
 	hideGroup?: boolean;
 	isImportant?: boolean;
@@ -29,7 +30,7 @@ interface Props {
 	removeFromList(args: DeactivateArgs): void;
 }
 
-export class ActivatableRemoveListItem extends React.Component<Props, undefined> {
+export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, tier, index, cost } = this.props.item;
 		const finalCost = (selectedTier - (tier as number)) * (cost as number);
@@ -38,7 +39,7 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical } = this.props;
+		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
 		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr } = item;
 		let { cost, name } = item;
 		let addSpecial = '';
@@ -79,7 +80,7 @@ export class ActivatableRemoveListItem extends React.Component<Props, undefined>
 					{tierElement}
 				</ListItemSelections>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={translate('specialabilities.view.groups')} index={gr} />}
+				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className="cost">{cost}</div>
 				</ListItemValues>

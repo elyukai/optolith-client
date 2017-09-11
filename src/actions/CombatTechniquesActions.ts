@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { getLocaleMessages } from '../selectors/stateSelectors';
+import { AsyncAction } from '../types/actions.d';
 import { CombatTechniqueInstance } from '../types/data.d';
 import { alert } from '../utils/alert';
-import { translate } from '../utils/I18n';
+import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
 export interface AddCombatTechniquePointAction {
@@ -19,7 +20,7 @@ export function _addPoint(id: string): AsyncAction {
 		const state = getState();
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as CombatTechniqueInstance, state.currentHero.present.ap);
 		if (!cost) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
 		}
 		dispatch({

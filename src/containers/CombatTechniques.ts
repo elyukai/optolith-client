@@ -7,21 +7,19 @@ import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
-import { DCIds, get as getDerivedCharacteristic } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';
 
 function mapStateToProps(state: AppState) {
 	return {
 		currentHero: getPresent(state),
+		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		list: getAllCombatTechniques(state),
 		phase: getPhase(state),
 		sortOrder: getCombatTechniquesSortOrder(state),
 		get(id: string) {
 			return get(getDependent(state), id);
-		},
-		getDerivedCharacteristic(id: DCIds) {
-			return getDerivedCharacteristic(getPresent(state), id);
-		},
+		}
 	};
 }
 

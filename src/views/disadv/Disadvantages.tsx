@@ -73,7 +73,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 							{ap.disadv[1] > 0 && ap.disadv[2] > 0 && <br/>}
 							{ap.disadv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesblessed', ap.disadv[2], 50)}
 						</p>
-						{showRating && <RecommendedReference/>}
+						{showRating && <RecommendedReference locale={locale} />}
 					</Options>
 					<DeactiveList
 						activeList={enableActiveItemHints ? activeList : undefined}
@@ -90,11 +90,12 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'disadvantages.options.common')}</Checkbox>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
-					{showRating && <RecommendedReference/>}
+					{showRating && <RecommendedReference locale={locale} />}
 				</Options>
 				<ActiveList
 					filterText={filterText}
 					list={activeList}
+					locale={locale}
 					rating={rating}
 					showRating={showRating}
 					removeFromList={removeFromList}

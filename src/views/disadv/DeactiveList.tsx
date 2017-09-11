@@ -15,9 +15,6 @@ export interface DeactiveListProps {
 
 export function DeactiveList(props: DeactiveListProps) {
 	return (
-		<ActivatableAddList
-			{...props}
-			hideGroup
-			/>
+		<ActivatableAddList {...props} hideGroup />
 	);
 }

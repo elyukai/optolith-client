@@ -5,11 +5,11 @@ import { AttributeInstance, ExperienceLevel, RequirementObject, SkillOptionalDep
 import { Attribute, AttributeWithRequirements } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getSpecialAbilities } from './activatableSelectors';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getEnergies } from './energiesSelectors';
 import { getPhase } from './phaseSelectors';
 import { getAttributeValueLimit } from './rulesSelectors';
+import { getSpecialAbilities } from './stateSelectors';
 import { getTalents } from './talentsSelectors';
 
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
@@ -122,7 +122,8 @@ export const getPrimaryMagicalAttributeForSheet = createSelector(
 );
 
 export const getPrimaryMagicalAttribute = createSelector(
-	[ mapGetToSlice(getSpecialAbilities, 'SA_86'), getAttributes ],
+	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	getAttributes,
 	(tradition, attributes) => {
 		return tradition && ActivatableUtils.getSids(tradition).reduce<AttributeInstance | undefined>((highestAttribute, sid) => {
 			let attribute;
@@ -150,12 +151,30 @@ export const getPrimaryMagicalAttribute = createSelector(
 	}
 );
 
-export const getPrimaryBlessedAttributeForSheet = createSelector(
-	[ mapGetToSlice(getSpecialAbilities, 'SA_102'), getAttributes ],
+export const getPrimaryBlessedAttribute = createSelector(
+	mapGetToSlice(getSpecialAbilities, 'SA_102'),
+	getAttributes,
 	(tradition, attributes) => {
-		const id = getPrimaryAttributeId(tradition!);
-		return (id && attributes.get(id)!.short)!;
+		if (tradition) {
+			switch (ActivatableUtils.getSids(tradition)[0]) {
+				case 2:
+				case 3:
+					return attributes.get('ATTR_1');
+				case 1:
+				case 4:
+					return attributes.get('ATTR_2');
+				case 5:
+				case 6:
+					return attributes.get('ATTR_3');
+			}
+		}
+		return;
 	}
+);
+
+export const getPrimaryBlessedAttributeForSheet = createSelector(
+	getPrimaryBlessedAttribute,
+	primary => primary && primary.short
 );
 
 export function getPrimaryAttributeId(specialAbilitiesState: Map<string, SpecialAbilityInstance>, type: 1 | 2): string | undefined;

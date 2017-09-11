@@ -7,12 +7,13 @@ import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
 import { getTalents, getTalentsRating } from '../selectors/talentsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
-import { DCIds, get as getDerivedCharacteristic } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Talents, TalentsDispatchProps, TalentsOwnProps, TalentsStateProps } from '../views/skills/Talents';
 
 function mapStateToProps(state: AppState) {
 	return {
 		currentHero: getPresent(state),
+		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		list: [...getTalents(state).values()],
 		phase: getPhase(state),
 		sortOrder: getTalentsSortOrder(state),
@@ -20,10 +21,7 @@ function mapStateToProps(state: AppState) {
 		talentRating: getTalentsRating(state),
 		get(id: string) {
 			return get(getDependent(state), id);
-		},
-		getDerivedCharacteristic(id: DCIds) {
-			return getDerivedCharacteristic(getPresent(state), id);
-		},
+		}
 	};
 }
 

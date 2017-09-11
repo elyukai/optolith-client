@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { AsyncAction } from '../stores/AppStore';
+import { getLocaleMessages } from '../selectors/stateSelectors';
+import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { alert } from '../utils/alert';
 import { validate } from '../utils/APUtils';
-import { translate } from '../utils/I18n';
+import { _translate } from '../utils/I18n';
 
 export interface ActivateSpecialAbilityAction {
 	type: ActionTypes.ACTIVATE_SPECIALABILITY;
@@ -12,9 +13,10 @@ export interface ActivateSpecialAbilityAction {
 
 export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
-		const validCost = validate(args.cost, getState().currentHero.present.ap);
+		const state = getState();
+		const validCost = validate(args.cost, state.currentHero.present.ap);
 		if (!validCost) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
 		}
 		dispatch({
@@ -51,9 +53,10 @@ export interface SetSpecialAbilityTierAction {
 
 export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
 	return (dispatch, getState) => {
-		const validCost = validate(cost, getState().currentHero.present.ap);
+		const state = getState();
+		const validCost = validate(cost, state.currentHero.present.ap);
 		if (!validCost) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
 		}
 		dispatch({

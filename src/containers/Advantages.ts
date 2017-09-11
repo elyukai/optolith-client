@@ -2,11 +2,9 @@ import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
-import { ADVANTAGES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { getActiveForView, getAdvantagesRating, getDeactiveForView } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getAdvantagesRating, getDeactiveAdvantages } from '../selectors/activatableSelectors';
 import { getAp } from '../selectors/adventurePointsSelectors';
-import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
@@ -15,9 +13,9 @@ import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStat
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getActiveForView(getPresent(state), ADVANTAGES),
+		activeList: getAdvantagesForSheet(state),
 		ap: getAp(state),
-		deactiveList: getDeactiveForView(getPresent(state), ADVANTAGES),
+		deactiveList: getDeactiveAdvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {
 			return get(getDependent(state), id);

@@ -7,12 +7,16 @@ import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
 import { getAllForView, isActivationDisabled } from '../selectors/spellsSelectors';
+import { getAttributes, getBooks } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
-import { DCIds, get as getDerivedCharacteristic } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/skills/Spells';
 
 function mapStateToProps(state: AppState) {
 	return {
+		attributes: getAttributes(state),
+		books: getBooks(state),
+		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		addSpellsDisabled: isActivationDisabled(state),
 		currentHero: getPresent(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
@@ -21,10 +25,7 @@ function mapStateToProps(state: AppState) {
 		sortOrder: getSpellsSortOrder(state),
 		get(id: string) {
 			return get(getDependent(state), id);
-		},
-		getDerivedCharacteristic(id: DCIds) {
-			return getDerivedCharacteristic(getPresent(state), id);
-		},
+		}
 	};
 }
 

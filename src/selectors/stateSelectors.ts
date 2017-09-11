@@ -5,6 +5,7 @@ export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 export const getLocaleMessages = (state: AppState) => state.locale.messages;
 export const getLocaleId = (state: AppState) => state.locale.id;
 export const getLocaleType = (state: AppState) => state.locale.type;
+export const getBooks = (state: AppState) => state.locale.books;
 
 export const getCurrentHeroPresent = (state: AppState) => state.currentHero.present;
 
@@ -30,5 +31,12 @@ export const getCurrentRaceId = (state: AppState) => state.currentHero.present.r
 export const getCurrentCultureId = (state: AppState) => state.currentHero.present.rcp.culture;
 export const getCurrentProfessionId = (state: AppState) => state.currentHero.present.rcp.profession;
 export const getCurrentProfessionVariantId = (state: AppState) => state.currentHero.present.rcp.professionVariant;
+
+export const getEnergies = (state: AppState) => state.currentHero.present.energies;
+export const getAddedLifePoints = (state: AppState) => state.currentHero.present.energies.addedLifePoints;
+export const getAddedArcaneEnergyPoints = (state: AppState) => state.currentHero.present.energies.addedArcaneEnergy;
+export const getAddedKarmaPoints = (state: AppState) => state.currentHero.present.energies.addedKarmaPoints;
+export const getPermanentArcaneEnergyPoints = (state: AppState) => state.currentHero.present.energies.permanentArcaneEnergy;
+export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.present.energies.permanentKarmaPoints;
 
 export const getPhase = (state: AppState) => state.currentHero.present.phase;

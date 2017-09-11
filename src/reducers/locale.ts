@@ -1,6 +1,7 @@
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { SetLocaleAction } from '../actions/LocaleActions';
 import * as ActionTypes from '../constants/ActionTypes';
+import { Book } from '../types/data.d';
 import { UIMessages } from '../types/ui.d';
 
 type Action = ReceiveInitialDataAction | SetLocaleAction;
@@ -9,10 +10,12 @@ export interface LocaleState {
 	id?: string;
 	type: 'default' | 'set';
 	messages?: UIMessages;
+	books: Map<string, Book>;
 }
 
 const initialState: LocaleState = {
-	type: 'default'
+	type: 'default',
+	books: new Map()
 };
 
 export function locale(state: LocaleState = initialState, action: Action): LocaleState {
@@ -20,6 +23,7 @@ export function locale(state: LocaleState = initialState, action: Action): Local
 		case ActionTypes.RECEIVE_INITIAL_DATA: {
 			const id = action.payload.config.locale || action.payload.defaultLocale;
 			return {
+				...state,
 				type: action.payload.config.locale ? 'set' : 'default',
 				id,
 				messages: action.payload.locales[id].ui

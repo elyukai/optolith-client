@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { UIMessages } from '../../types/ui.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { _translate } from '../../utils/I18n';
 import { AttributeBorder } from './AttributeBorder';
 import { AttributesRemovePermanent } from './AttributesRemovePermanent';
@@ -29,46 +28,79 @@ export interface AttributesPermanentListItemProps {
 	addLostKPPoints(value: number): void;
 }
 
-export function AttributesPermanentListItem(props: AttributesPermanentListItemProps) {
-	const { id, label, locale, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = props;
-	const available = lost - boughtBack;
+export interface AttributesPermanentListItemState {
+	isAddDialogOpened: boolean;
+	isEditDialogOpened: boolean;
+}
 
-	return (
-		<AttributeBorder
-			label={label}
-			value={available}
-			tooltip={<div className="calc-attr-overlay">
-				<h4><span>{name}</span><span>{available}</span></h4>
-				<p>
-					{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
-					{_translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
-				</p>
-			</div>}
-			tooltipMargin={7}
-			>
-			{phase === 2 && (
-				<IconButton
-					className="edit"
-					icon="&#xE254;"
-					onClick={() => createOverlay(<PermanentPoints {...other} id={id} locale={locale} />)}
+export class AttributesPermanentListItem extends React.Component<AttributesPermanentListItemProps, AttributesPermanentListItemState> {
+	state = {
+		isAddDialogOpened: false,
+		isEditDialogOpened: false
+	};
+
+	openEditDialog = () => this.setState(() => ({ isEditDialogOpened: true } as AttributesPermanentListItemState));
+	openAddDialog = () => this.setState(() => ({ isAddDialogOpened: true } as AttributesPermanentListItemState));
+	closeEditDialog = () => this.setState(() => ({ isEditDialogOpened: false } as AttributesPermanentListItemState));
+	closeAddDialog = () => this.setState(() => ({ isAddDialogOpened: false } as AttributesPermanentListItemState));
+
+	render() {
+		const { id, label, locale, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = this.props;
+		const { isAddDialogOpened, isEditDialogOpened } = this.state;
+		const available = lost - boughtBack;
+
+		return (
+			<AttributeBorder
+				label={label}
+				value={available}
+				tooltip={<div className="calc-attr-overlay">
+					<h4><span>{name}</span><span>{available}</span></h4>
+					<p>
+						{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
+						{_translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
+					</p>
+				</div>}
+				tooltipMargin={7}
+				>
+				{phase === 2 && (
+					<IconButton
+						className="edit"
+						icon="&#xE254;"
+						onClick={this.openEditDialog}
+						/>
+				)}
+				<PermanentPoints
+					{...other}
+					id={id}
+					locale={locale}
+					isOpened={isEditDialogOpened}
+					close={this.closeEditDialog}
+					permanentBoughtBack={boughtBack}
+					permanentSpent={lost}
 					/>
-			)}
-			{phase === 3 && (
-				<IconButton
-					className="add"
-					icon="&#xE318;"
-					onClick={() => createOverlay(<AttributesRemovePermanent remove={addLost} locale={locale} />)}
-					disabled={available > 0}
+				{phase === 3 && (
+					<IconButton
+						className="add"
+						icon="&#xE318;"
+						onClick={this.openAddDialog}
+						disabled={available > 0}
+						/>
+				)}
+				<AttributesRemovePermanent
+					remove={addLost}
+					locale={locale}
+					isOpened={isAddDialogOpened}
+					close={this.closeAddDialog}
 					/>
-			)}
-			{phase === 3 && (
-				<IconButton
-					className="remove"
-					icon="&#xE15B;"
-					onClick={addBoughtBack}
-					disabled={available <= 0}
-					/>
-			)}
-		</AttributeBorder>
-	);
+				{phase === 3 && (
+					<IconButton
+						className="remove"
+						icon="&#xE15B;"
+						onClick={addBoughtBack}
+						disabled={available <= 0}
+						/>
+				)}
+			</AttributeBorder>
+		);
+	}
 }

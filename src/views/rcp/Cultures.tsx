@@ -7,7 +7,7 @@ import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
 import { Culture, UIMessages } from '../../types/view.d';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { CulturesInfo } from './CulturesInfo';
 import { CulturesListItem } from './CulturesListItem';
@@ -50,7 +50,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 		const { areValuesVisible, commonCultures, cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, switchValueVisibilityFilter, visibilityFilter } = this.props;
 		const { filterText } = this.state;
 
-		const list = filterAndSort(cultures.filter(e => visibilityFilter === 'all' || commonCultures!.includes(e.id)), filterText, sortOrder);
+		const list = filterAndSortObjects(cultures.filter(e => visibilityFilter === 'all' || commonCultures!.includes(e.id)), locale.id, filterText, sortOrder === 'cost' ? ['culturalPackageAp', 'name'] : ['name']);
 
 		return (
 			<div className="page" id="cultures">
@@ -66,6 +66,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						sortOrder={sortOrder}
 						sort={setSortOrder}
 						options={['name', 'cost']}
+						locale={locale}
 						/>
 					<Checkbox checked={areValuesVisible} onClick={switchValueVisibilityFilter}>{_translate(locale, 'cultures.options.showculturalpackagevalues')}</Checkbox>
 				</div>

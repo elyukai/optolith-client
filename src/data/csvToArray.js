@@ -19,7 +19,7 @@ module.exports = function csvToArray(csv) {
 					newObj[column] = Number.parseFloat(c.replace(/\,/, '.'));
 				}
 				else {
-					let string = c.replace(/""/g, '"');
+					let string = c.replace(/""/g, '"').replace(/\\n/g, '\n\n');
 					if (/^".*\{.+\}.*"$/.test(string)) {
 						string = string.match(/^"(.+)"$/)[1];
 					}

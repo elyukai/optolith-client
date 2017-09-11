@@ -2,11 +2,10 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as SheetActions from '../actions/SheetActions';
 import { AppState } from '../reducers/app';
-import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet, getSpecialAbilities } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../selectors/activatableSelectors';
 import { getAp } from '../selectors/adventurePointsSelectors';
 import { getForSheet as getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
 import { getForSheet as getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
-import { getPresent } from '../selectors/currentHeroSelectors';
 import { getElState, getStart } from '../selectors/elSelectors';
 import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getPurse, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getBlessingsForSheet, getLiturgiesForSheet } from '../selectors/liturgiesSelectors';
@@ -14,9 +13,10 @@ import { getPet } from '../selectors/petsSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
+import { getSpecialAbilities } from '../selectors/stateSelectors';
 import { getTalents } from '../selectors/talentsSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
-import { getAll } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/profile/Sheets';
 
@@ -31,7 +31,7 @@ function mapStateToProps(state: AppState) {
 		combatSpecialAbilities: getCombatSpecialAbilitiesForSheet(state),
 		combatTechniques: getCombatTechniquesForSheet(state),
 		culture: getCurrentCulture(state),
-		derivedCharacteristics: getAll(getPresent(state)),
+		derivedCharacteristics: getDerivedCharacteristics(state),
 		disadvantagesActive: getDisadvantagesForSheet(state),
 		el: getStart(getElState(state)),
 		fatePointsModifier: getFatePointsModifier(state),

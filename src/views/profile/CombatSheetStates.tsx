@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { sort } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface CombatSheetStatesProps {
@@ -7,7 +7,7 @@ export interface CombatSheetStatesProps {
 }
 
 export function CombatSheetStates({ locale }: CombatSheetStatesProps) {
-	const conditions = sort([
+	const conditions = sortObjects([
 		{id: 1, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.animosity')},
 		{id: 2, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.encumbrance')},
 		{id: 3, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.intoxicated')},
@@ -17,8 +17,8 @@ export function CombatSheetStates({ locale }: CombatSheetStatesProps) {
 		{id: 7, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.paralysis')},
 		{id: 8, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.pain')},
 		{id: 9, name: _translate(locale, 'charactersheet.combat.conditionsstates.conditions.confusion')}
-	]);
-	const statesSecond = sort([
+	], locale.id);
+	const statesSecond = sortObjects([
 		{id: 1, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.immobilized')},
 		{id: 2, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.unconscious')},
 		{id: 3, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.blind')},
@@ -38,7 +38,7 @@ export function CombatSheetStates({ locale }: CombatSheetStatesProps) {
 		{id: 17, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.invisible')},
 		{id: 18, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.poisoned')},
 		{id: 19, name: _translate(locale, 'charactersheet.combat.conditionsstates.states.petrified')}
-	]);
+	], locale.id);
 	const statesFirst = statesSecond.splice(0, 9);
 	return (
 		<div className="status">

@@ -58,6 +58,7 @@ export class Races extends React.Component<RacesProps, RacesState> {
 						sortOrder={sortOrder}
 						sort={setSortOrder}
 						options={['name', 'cost']}
+						locale={locale}
 						/>
 					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{_translate(locale, 'races.options.showvalues')}</Checkbox>
 				</div>

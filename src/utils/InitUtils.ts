@@ -353,8 +353,8 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 	const { id } = raw;
 	const localeObject = locale[id];
 	if (localeObject) {
-		const { name } = localeObject;
-		const { id, check, gr, skt, merk, trad, subtrad, req, mod } = raw;
+		const { name, effect, castingtime, castingtimeShort, aecost, aecostShort, range, rangeShort, duration, durationShort, target, src: srcPages } = localeObject;
+		const { id, check, gr, skt, merk, trad, subtrad, req, mod, src: srcIds } = raw;
 		return {
 			active: false,
 			category: Categories.SPELLS,
@@ -369,7 +369,18 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
 			tradition: trad,
 			subtradition: subtrad,
 			value: 0,
-			reqs: req
+			reqs: req,
+			effect,
+			castingTime: castingtime,
+			castingTimeShort: castingtimeShort,
+			cost: aecost,
+			costShort: aecostShort,
+			range,
+			rangeShort,
+			duration,
+			durationShort,
+			target,
+			src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
 		};
 	}
 	return;

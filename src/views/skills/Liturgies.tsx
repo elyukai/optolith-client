@@ -16,7 +16,7 @@ import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { BlessingInstance, InputTextEvent, Instance, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
@@ -28,13 +28,13 @@ export interface LiturgiesOwnProps {
 export interface LiturgiesStateProps {
 	addChantsDisabled: boolean;
 	currentHero: CurrentHeroInstanceState;
+	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	enableActiveItemHints: boolean;
 	list: (BlessingInstance | LiturgyInstance)[];
 	phase: number;
 	sortOrder: string;
 	traditionId: number;
 	get(id: string): Instance | undefined;
-	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
 }
 
 export interface LiturgiesDispatchProps {
@@ -69,7 +69,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as LiturgiesState);
 
 	render() {
-		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, getDerivedCharacteristic, list, locale, phase, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
+		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, phase, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -95,12 +95,12 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 			}
 		});
 
-		const sortedActiveList = filterAndSort(listActive, filterText, sortOrder);
-		const sortedDeactiveList = filterAndSort(listDeactive, filterTextSlidein, sortOrder);
+		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
+		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
 
 		return (
 			<Page id="liturgies">
-				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="addings-liturgical-chants">
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
@@ -140,7 +140,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												addFillElement
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 												get={get}
-												getDerivedCharacteristic={getDerivedCharacteristic}
+												derivedCharacteristics={derivedCharacteristics}
 												>
 												<ListItemGroup>
 													{aspc}
@@ -164,7 +164,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 											get={get}
-											getDerivedCharacteristic={getDerivedCharacteristic}
+											derivedCharacteristics={derivedCharacteristics}
 											{...add}
 											>
 											<ListItemGroup>
@@ -211,7 +211,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											noIncrease
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 											get={get}
-											getDerivedCharacteristic={getDerivedCharacteristic}
+											derivedCharacteristics={derivedCharacteristics}
 											>
 											<ListItemGroup>
 												{aspc}
@@ -242,7 +242,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 										addFillElement
 										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 										get={get}
-										getDerivedCharacteristic={getDerivedCharacteristic}
+										derivedCharacteristics={derivedCharacteristics}
 										{...add}
 										>
 										<ListItemGroup>

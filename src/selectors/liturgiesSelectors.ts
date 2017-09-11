@@ -8,10 +8,10 @@ import { Liturgy } from '../types/view.d';
 import { getSids } from '../utils/ActivatableUtils';
 import { getAspectsOfTradition } from '../utils/LiturgyUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getSpecialAbilities } from './activatableSelectors';
 import { getAllByCategory, getDependent } from './dependentInstancesSelectors';
 import { getElState, getStart } from './elSelectors';
 import { getPhase } from './phaseSelectors';
+import { getSpecialAbilities } from './stateSelectors';
 
 export const get = (state: Map<string, LiturgyInstance>, id: string) => state.get(id);
 export { get as getLiturgy };

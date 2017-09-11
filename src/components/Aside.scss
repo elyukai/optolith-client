@@ -1,4 +1,4 @@
-section aside .scroll .scroll-inner {
+section aside .scroll .scroll-inner, .slidein aside .scroll .scroll-inner {
 	padding: 24px;
 }
 
@@ -65,7 +65,7 @@ aside {
 
 			p {
 				margin: 0;
-				font: bold 18px/22px Alegreya;
+				font: bold 18px/24px Alegreya;
 				color: $c3;
 				padding-left: 0;
 				text-indent: 0;
@@ -160,6 +160,18 @@ aside {
 						span:nth-child(2)::after {
 							content: ": ";
 						}
+					}
+				}
+			}
+
+			&.source {
+				margin-top: 22px;
+
+				span:first-child {
+					font-weight: 500;
+
+					&::after {
+						content: "";
 					}
 				}
 			}

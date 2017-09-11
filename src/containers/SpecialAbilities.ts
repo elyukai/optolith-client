@@ -2,10 +2,8 @@ import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
-import { SPECIAL_ABILITIES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { getActiveForView, getDeactiveForView } from '../selectors/activatableSelectors';
-import { getPresent } from '../selectors/currentHeroSelectors';
+import { getDeactiveSpecialAbilities, getSpecialAbilitiesForSheet } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
@@ -14,8 +12,8 @@ import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnPro
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getActiveForView(getPresent(state), SPECIAL_ABILITIES),
-		deactiveList: getDeactiveForView(getPresent(state), SPECIAL_ABILITIES),
+		activeList: getSpecialAbilitiesForSheet(state),
+		deactiveList: getDeactiveSpecialAbilities(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {
 			return get(getDependent(state), id);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { translate } from '../utils/I18n';
+import { _translate, UIMessages } from '../utils/I18n';
 import { IconButton } from './IconButton';
 import { List } from './List';
 import { ListItem } from './ListItem';
@@ -8,7 +8,11 @@ import { ListItemName } from './ListItemName';
 import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 
-export function ListPlaceholder() {
+export interface ListPlaceholderProps {
+	locale: UIMessages;
+}
+
+export function ListPlaceholder(props: ListPlaceholderProps) {
 	const placeholder = (
 		<ListItem className="placeholder">
 			<ListItemName name="" />
@@ -31,7 +35,7 @@ export function ListPlaceholder() {
 			{placeholder}
 			{placeholder}
 			<div className="placeholder-message">
-				{translate('emptylist')}
+				{_translate(props.locale, 'emptylist')}
 			</div>
 		</List>
 	);

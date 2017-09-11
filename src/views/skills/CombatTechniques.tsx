@@ -10,7 +10,7 @@ import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute } from 
 import { UIMessages } from '../../types/ui.d';
 import { CombatTechniqueWithRequirements } from '../../types/view.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { SkillListItem } from './SkillListItem';
 
@@ -19,11 +19,11 @@ export interface CombatTechniquesOwnProps {
 }
 
 export interface CombatTechniquesStateProps {
+	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: CombatTechniqueWithRequirements[];
 	phase: number;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
-	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
 }
 
 export interface CombatTechniquesDispatchProps {
@@ -46,10 +46,10 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
 
 	render() {
-		const { addPoint, get, getDerivedCharacteristic, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
+		const { addPoint, get, derivedCharacteristics, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
 		const { filterText } = this.state;
 
-		const list = filterAndSort(rawlist, filterText, sortOrder);
+		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
 
 		return (
 			<Page id="combattechniques">
@@ -90,7 +90,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											{ className: 'pa', value: obj.pa || '--' },
 										]}
 										get={get}
-										getDerivedCharacteristic={getDerivedCharacteristic}
+										derivedCharacteristics={derivedCharacteristics}
 										>
 										<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
 									</SkillListItem>

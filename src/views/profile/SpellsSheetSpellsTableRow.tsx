@@ -17,7 +17,7 @@ interface SpellsSheetSpellsTableRowProps {
 export function SpellsSheetSpellsTableRow(props: SpellsSheetSpellsTableRowProps) {
 	const { attributes, checkAttributeValueVisibility, derivedCharacteristics, locale, spell } = props;
 	if (spell) {
-		const { checkmod, ic, property, value } = spell;
+		const { checkmod, ic, property, value, castingTimeShort, costShort, durationShort, rangeShort } = spell;
 		const check = spell.check.map(attr => {
 			const attribute = attributes.find(e => e.id === attr)!;
 			if (checkAttributeValueVisibility === true) {
@@ -42,10 +42,10 @@ export function SpellsSheetSpellsTableRow(props: SpellsSheetSpellsTableRowProps)
 					<Textfit max={11} min={7} mode="single">{check}{checkmod && ` (+${derivedCharacteristics.find(e => e.id === checkmod)!.short})`}</Textfit>
 				</td>
 				<td className="value">{value}</td>
-				<td className="cost"></td>
-				<td className="cast-time"></td>
-				<td className="range"></td>
-				<td className="duration"></td>
+				<td className="cost"><Textfit max={11} min={7} mode="single">{costShort}</Textfit></td>
+				<td className="cast-time"><Textfit max={11} min={7} mode="single">{castingTimeShort}</Textfit></td>
+				<td className="range"><Textfit max={11} min={7} mode="single">{rangeShort}</Textfit></td>
+				<td className="duration"><Textfit max={11} min={7} mode="single">{durationShort}</Textfit></td>
 				<td className="property">
 					<Textfit max={11} min={7} mode="single">{propertyNames[property - 1]}</Textfit>
 				</td>

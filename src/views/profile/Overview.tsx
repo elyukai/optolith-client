@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { EditText } from '../../components/EditText';
@@ -30,7 +31,7 @@ export interface PersonalDataStateProps {
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
-	showImageUpload(): void;
+	setAvatar(path: string): void;
 	setHeroName(name: string): void;
 	setCustomProfessionName(name: string): void;
 	endCharacterCreation(): void;
@@ -42,14 +43,18 @@ export type PersonalDataProps = PersonalDataStateProps & PersonalDataDispatchPro
 export interface PersonalDataState {
 	editName: boolean;
 	editProfessionName: boolean;
+	isAvatarChangeOpened: boolean;
 }
 
 export class PersonalData extends React.Component<PersonalDataProps, PersonalDataState> {
 	state = {
 		editName: false,
-		editProfessionName: false
+		editProfessionName: false,
+		isAvatarChangeOpened: false
 	};
 
+	openAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: true } as PersonalDataState));
+	closeAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: false } as PersonalDataState));
 	changeName = (name: string) => {
 		this.props.setHeroName(name);
 		this.setState({ editName: false } as PersonalDataState);
@@ -78,7 +83,6 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			profile,
 			race,
 			showApAdd,
-			showImageUpload,
 			...other
 		} = this.props;
 
@@ -125,7 +129,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			<div className="page" id="overview">
 				<Scroll className="text">
 					<div className="title-wrapper">
-						<AvatarWrapper src={avatar} onClick={showImageUpload} />
+						<AvatarWrapper src={avatar} onClick={this.openAvatarChange} />
 						<div className="text-wrapper">
 							{nameElement}
 							{
@@ -239,6 +243,12 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 						)
 					}
 				</Scroll>
+				<AvatarChange
+					{...this.props}
+					setPath={this.props.setAvatar}
+					close={this.closeAvatarChange}
+					isOpened={this.state.isAvatarChangeOpened}
+					/>
 			</div>
 		);
 	}

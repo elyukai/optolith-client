@@ -13,9 +13,13 @@ declare global {
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import ReduxThunk from 'redux-thunk';
 import { requestInitialData } from './actions/FileActions';
 import { AppContainer } from './containers/App';
-import { store } from './stores/AppStore';
+import { app } from './reducers/app';
+
+const store = createStore(app, applyMiddleware(ReduxThunk));
 
 store.dispatch(requestInitialData());
 

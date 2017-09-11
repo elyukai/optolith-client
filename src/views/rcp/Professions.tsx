@@ -89,6 +89,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 						sortOrder={sortOrder}
 						sort={setSortOrder}
 						options={['name', 'cost']}
+						locale={locale}
 						/>
 					<Checkbox checked={extensionVisibilityFilter} onClick={switchExpansionVisibilityFilter}>
 						{_translate(locale, 'professions.options.alwaysshowprofessionsfromextensions')}

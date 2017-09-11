@@ -14,7 +14,7 @@ import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
@@ -26,13 +26,13 @@ export interface TalentsOwnProps {
 
 export interface TalentsStateProps {
 	currentHero: CurrentHeroInstanceState;
+	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: TalentInstance[];
 	phase: number;
 	sortOrder: string;
 	ratingVisibility: boolean;
 	talentRating: ToListById<string>;
 	get(id: string): Instance | undefined;
-	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
 }
 
 export interface TalentsDispatchProps {
@@ -58,12 +58,12 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as TalentsState);
 
 	render() {
-		const { addPoint, currentHero, get, getDerivedCharacteristic, locale, phase, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
+		const { addPoint, currentHero, get, derivedCharacteristics, locale, phase, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
 		const { filterText, infoId } = this.state;
 
 		const info = infoId && get(infoId) as TalentInstance;
 
-		const list = filterAndSort(rawlist, filterText, sortOrder);
+		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
 
 		return (
 			<Page id="talents">
@@ -79,7 +79,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 						]}
 						/>
 					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{_translate(locale, 'skills.options.commoninculture')}</Checkbox>
-					{ratingVisibility && <RecommendedReference/>}
+					{ratingVisibility && <RecommendedReference locale={locale} />}
 				</Options>
 				<Scroll>
 					<List>
@@ -103,7 +103,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 										insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
 										selectForInfo={this.showInfo}
 										get={get}
-										getDerivedCharacteristic={getDerivedCharacteristic}
+										derivedCharacteristics={derivedCharacteristics}
 										>
 										<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />
 									</SkillListItem>

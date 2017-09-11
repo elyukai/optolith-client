@@ -1,5 +1,6 @@
 import { remote } from 'electron';
 import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
 import * as LocationActions from '../actions/LocationActions';
 import * as PlatformActions from '../actions/PlatformActions';
 import { AppState } from '../reducers/app';
@@ -7,7 +8,7 @@ import { getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getMessages } from '../selectors/localeSelectors';
 import { getCurrentTab } from '../selectors/uilocationSelectors';
 import { getTheme } from '../selectors/uisettingsSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { alert } from '../utils/alert';
 import { confirm } from '../utils/confirm';
 import { _translate } from '../utils/I18n';
@@ -22,7 +23,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		minimize() {
 			remote.getCurrentWindow().minimize();

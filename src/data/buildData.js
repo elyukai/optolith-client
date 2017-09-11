@@ -317,6 +317,7 @@ function iterateSpells(array) {
 		obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
 		obj.subtrad = obj.subtrad ? obj.subtrad.split('&').map(e => Number.parseInt(e)) : [];
 		obj.req = convertRequirements(obj.req);
+		obj.src = obj.src ? obj.src.split('&') : [];
 		list[obj.id] = obj;
 	}
 	return list;

@@ -488,6 +488,15 @@ export interface UIMessages {
 	"spells.view.cantrip": string;
 	"spells.view.properties": string[];
 	"spells.view.traditions": string[];
+	"info.effect": string;
+	"info.castingtime": string;
+	"info.ritualtime": string;
+	"info.aecost": string;
+	"info.range": string;
+	"info.duration": string;
+	"info.targetcategory": string;
+	"info.property": string;
+	"info.traditions": string;
 	"liturgies.view.groups": string[];
 	"liturgies.view.blessing": string;
 	"liturgies.view.aspects": string[];

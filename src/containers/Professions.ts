@@ -1,4 +1,5 @@
 import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
 import * as ProfessionActions from '../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../actions/ProfessionVariantActions';
 import { AppState } from '../reducers/app';
@@ -23,7 +24,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		selectProfession(id: string) {
 			dispatch(ProfessionActions._selectProfession(id));

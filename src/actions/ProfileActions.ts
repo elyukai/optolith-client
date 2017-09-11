@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { RaceInstance } from '../types/data.d';
 import * as RCPUtils from '../utils/RCPUtils';
 

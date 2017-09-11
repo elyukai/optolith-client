@@ -2,7 +2,7 @@ import { existsSync } from 'fs';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getHeroForSave } from '../selectors/herolistSelectors';
 import { getSystemLocale } from '../selectors/I18n';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { Hero, UIMessages, User } from '../types/data.d';
 import { Raw, RawHero } from '../types/rawdata.d';
 import { exportHero, importHero, loadInitialData } from '../utils/FileAPIUtils';

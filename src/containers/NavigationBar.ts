@@ -1,4 +1,5 @@
 import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as HistoryActions from '../actions/HistoryActions';
@@ -26,7 +27,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setSection(id: 'main' | 'hero' | 'group') {
 			dispatch(LocationActions._setSection(id));

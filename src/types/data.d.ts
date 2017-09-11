@@ -28,6 +28,11 @@ export interface AdventurePoints {
 	disadv: [number, number, number];
 }
 
+export interface Book {
+	id: string;
+	name: string;
+}
+
 export interface ToListById<T> {
 	[id: string]: T;
 }
@@ -154,10 +159,12 @@ export interface RaceInstance {
 	readonly size: (number | [number, number])[];
 	readonly weight: (number | [number, number])[];
 	readonly category: Categories.RACES;
-	readonly src: {
-		id: string;
-		page: number;
-	};
+	readonly src: SourceLink;
+}
+
+export interface SourceLink {
+	id: string;
+	page: number;
 }
 
 export interface CommonProfessionObject {
@@ -568,6 +575,17 @@ export interface SpellInstance {
 	active: boolean;
 	dependencies: SpellInstanceDependency[];
 	value: number;
+	effect: string;
+	castingTime: string;
+	castingTimeShort: string;
+	cost: string;
+	costShort: string;
+	range: string;
+	rangeShort: string;
+	duration: string;
+	durationShort: string;
+	target: string;
+	src: SourceLink[];
 }
 
 export interface CantripInstance {
@@ -742,8 +760,8 @@ export type ActivatableSkillInstance = SpellInstance | LiturgyInstance;
 export type CantripBlessingInstances = CantripInstance | BlessingInstance;
 export type ActivatableSkillishInstance = ActivatableSkillInstance | CantripBlessingInstances;
 
-export interface SecondaryAttribute {
-	id: string;
+export interface SecondaryAttribute<I = string> {
+	id: I;
 	short: string;
 	name: string;
 	calc: string;
@@ -757,7 +775,7 @@ export interface SecondaryAttribute {
 	permanentRedeemed?: number;
 }
 
-export interface Energy extends SecondaryAttribute {
+export interface Energy<I = string> extends SecondaryAttribute<I> {
 	base: number;
 	add: number;
 	mod: number;
@@ -765,7 +783,7 @@ export interface Energy extends SecondaryAttribute {
 	currentAdd: number;
 }
 
-export interface EnergyWithLoss extends Energy {
+export interface EnergyWithLoss<I = string> extends Energy<I> {
 	permanentLost: number;
 	permanentRedeemed: number;
 }

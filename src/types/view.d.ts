@@ -1,4 +1,4 @@
-import { ProfessionSelections } from './data.d';
+import { ProfessionSelections, SourceLink } from './data.d';
 
 export { UIMessages } from './ui.d';
 
@@ -122,6 +122,17 @@ export interface Spell {
 	ic: number;
 	property: number;
 	traditions?: number[];
+	effect: string;
+	castingTime: string;
+	castingTimeShort: string;
+	cost: string;
+	costShort: string;
+	range: string;
+	rangeShort: string;
+	duration: string;
+	durationShort: string;
+	target: string;
+	src: SourceLink[];
 }
 
 export interface Item {

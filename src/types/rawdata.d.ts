@@ -216,11 +216,23 @@ export interface RawSpell {
 	merk: number;
 	gr: number;
 	req: Reusable.AllRequirementTypes[];
+	src: string[];
 }
 
 export interface RawSpellLocale {
 	id: string;
 	name: string;
+	effect: string;
+	castingtime: string;
+	castingtimeShort: string;
+	aecost: string;
+	aecostShort: string;
+	range: string;
+	rangeShort: string;
+	duration: string;
+	durationShort: string;
+	target: string;
+	src: number[];
 }
 
 export interface RawCantrip {
@@ -327,6 +339,7 @@ export interface RawTables {
 
 export interface RawLocale {
 	ui: UI.UIMessages;
+	books: Data.ToListById<Data.Book>;
 	el: Data.ToListById<RawExperienceLevelLocale>;
 	attributes: Data.ToListById<RawAttributeLocale>;
 	races: Data.ToListById<RawRaceLocale>;

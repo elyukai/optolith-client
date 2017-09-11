@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { PetEditorInstance, PetInstance } from '../types/data.d';
 import { getNewId } from '../utils/IDUtils';
 import { convertToSave } from '../utils/PetUtils';

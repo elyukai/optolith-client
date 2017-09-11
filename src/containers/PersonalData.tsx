@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
-import { AvatarChange } from '../components/AvatarChange';
-import * as Categories from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { getActiveForView } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
 import { getTotal } from '../selectors/adventurePointsSelectors';
-import { getPresent } from '../selectors/currentHeroSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
 import { getPhase } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
@@ -19,11 +17,11 @@ import { OverviewAddAP } from '../views/profile/OverviewAddAP';
 
 function mapStateToProps(state: AppState) {
 	return {
-		advantages: getActiveForView(getPresent(state), Categories.ADVANTAGES),
+		advantages: getAdvantagesForSheet(state),
 		apTotal: getTotal(state),
 		culture: getCurrentCulture(state),
 		currentEl: getCurrentEl(state),
-		disadvantages: getActiveForView(getPresent(state), Categories.DISADVANTAGES),
+		disadvantages: getDisadvantagesForSheet(state),
 		phase: getPhase(state),
 		profession: getCurrentProfession(state),
 		professionVariant: getCurrentProfessionVariant(state),
@@ -32,15 +30,15 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>, props: PersonalDataOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnProps) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
 				dispatch(HerolistActions.loadHeroValidate(id));
 			}
 		},
-		showImageUpload() {
-			createOverlay(<AvatarChange setPath={(path: string) => dispatch(ProfileActions._setHeroAvatar(path))} />);
+		setAvatar(path: string) {
+			dispatch(ProfileActions._setHeroAvatar(path));
 		},
 		setHeroName(name: string) {
 			dispatch(ProfileActions._setHeroName(name));

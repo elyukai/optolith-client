@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as Categories from '../constants/Categories';
+import { AppState } from '../reducers/app';
 import { getSkills } from '../selectors/stateSelectors';
-import { store } from '../stores/AppStore';
 import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance, UIMessages } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
-import { translate } from '../utils/I18n';
+import { _translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
@@ -18,7 +19,7 @@ import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 import { TextField } from './TextField';
 
-export interface ActivatableAddListItemProps {
+export interface ActivatableAddListItemOwnProps {
 	item: DeactiveViewObject;
 	isImportant?: boolean;
 	isTypical?: boolean;
@@ -28,6 +29,15 @@ export interface ActivatableAddListItemProps {
 	addToList(args: ActivateArgs): void;
 	get(id: string): Instance | undefined;
 }
+
+export interface ActivatableAddListItemStateProps {
+	skills: Map<string, TalentInstance>;
+}
+
+export interface ActivatableAddListItemDispatchProps {
+}
+
+export type ActivatableAddListItemProps = ActivatableAddListItemStateProps & ActivatableAddListItemDispatchProps & ActivatableAddListItemOwnProps;
 
 export interface ActivatableAddListItemState {
 	selected?: string | number;
@@ -72,7 +82,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 	}
 
 	render() {
-		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale } = this.props;
+		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills } = this.props;
 		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
 		const { input: inputText, selected, selected2, selectedTier } = this.state;
@@ -225,15 +235,15 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel = selected;
 				args.sel2 = selected2;
 				if (selected === 9) {
-					sel2 = sortObjects([...getSkills(store.getState()).values()], locale.id);
+					sel2 = sortObjects([...skills.values()], locale.id);
 				}
 				else if (selected === 6) {
 					const musictraditionIds = [1, 2, 3];
-					sel2 = musictraditionIds.map((id, index) => ({ id, name: translate('musictraditions')[index]}));
+					sel2 = musictraditionIds.map((id, index) => ({ id, name: _translate(locale, 'musictraditions')[index]}));
 				}
 				else if (selected === 7) {
 					const dancetraditionIds = [4, 5, 6, 7];
-					sel2 = dancetraditionIds.map((id, index) => ({ id, name: translate('dancetraditions')[index]}));
+					sel2 = dancetraditionIds.map((id, index) => ({ id, name: _translate(locale, 'dancetraditions')[index]}));
 				}
 				break;
 			default:
@@ -369,7 +379,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					{tierElement2}
 				</ListItemSelections>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={translate('specialabilities.view.groups')} index={gr} />}
+				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className="cost">{currentCost}</div>
 				</ListItemValues>
@@ -381,3 +391,12 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 		);
 	}
 }
+
+function mapStateToProps(state: AppState) {
+	return {
+		skills: getSkills(state)
+	};
+}
+
+
+export const ActivatableAddListItemContainer = connect<ActivatableAddListItemStateProps, ActivatableAddListItemDispatchProps, ActivatableAddListItemOwnProps>(mapStateToProps)(ActivatableAddListItem);

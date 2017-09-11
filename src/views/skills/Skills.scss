@@ -1,4 +1,4 @@
-#spells, #liturgies {
+#spells, #liturgies, .adding-spells, .adding-liturgical-chants {
 	li {
 		.values {
 			width: 252px;
@@ -24,7 +24,9 @@
 			}
 		}
 	}
+}
 
+.adding-spells, .adding-liturgical-chants {
 	.slidein li .values {
 		width: 208px;
 	}

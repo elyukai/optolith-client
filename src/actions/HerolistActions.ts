@@ -1,15 +1,12 @@
-import * as React from 'react';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getMessages } from '../selectors/localeSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { Hero, UIMessages } from '../types/data.d';
 import { alert } from '../utils/alert';
 import { confirm } from '../utils/confirm';
-import { createOverlay } from '../utils/createOverlay';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
-import { HeroCreation } from '../views/herolist/HeroCreation';
 import { requestHeroExport } from './FileActions';
 import { _setSection } from './LocationActions';
 import { requestHeroesSave, requestSaveAll } from './PlatformActions';
@@ -55,13 +52,35 @@ export interface CreateHeroAction {
 	};
 }
 
-export function _createHero(name: string, sex: 'm' | 'f', el: string): CreateHeroAction {
-	return {
-		type: ActionTypes.CREATE_HERO,
-		payload: {
-			name,
-			sex,
-			el
+export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { currentHero: { past, present: { el: { startId }} }, herolist: { currentId }, locale: { messages }} = getState();
+		if (typeof startId !== 'string' || typeof startId === 'string' && typeof currentId === 'string' && past.length === 0) {
+			dispatch({
+				type: ActionTypes.CREATE_HERO,
+				payload: {
+					name,
+					sex,
+					el
+				}
+			} as CreateHeroAction);
+		}
+		else {
+			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
+				if (result === true) {
+					dispatch({
+						type: ActionTypes.CREATE_HERO,
+						payload: {
+							name,
+							sex,
+							el
+						}
+					} as CreateHeroAction);
+				}
+				else {
+					dispatch(_setSection('hero'));
+				}
+			});
 		}
 	};
 }
@@ -206,31 +225,6 @@ export function _duplicateHero(id: string): DuplicateHeroAction {
 		payload: {
 			id,
 			newId
-		}
-	};
-}
-
-export function showHeroCreation(): AsyncAction {
-	return (dispatch, getState) => {
-		const state = getState();
-		const { currentHero: { past, present: { el: { all, startId }} }, herolist: { currentId }, locale: { messages }} = state;
-		const props = {
-			createHero: (name: string, sex: 'm' | 'f', el: string) => dispatch(_createHero(name, sex, el)),
-			elList: [...all.values()],
-			locale: messages
-		};
-		if (typeof startId !== 'string' || typeof startId === 'string' && typeof currentId === 'string' && past.length === 0) {
-			createOverlay(React.createElement(HeroCreation, props));
-		}
-		else {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
-				if (result === true) {
-					createOverlay(React.createElement(HeroCreation, props));
-				}
-				else {
-					dispatch(_setSection('hero'));
-				}
-			});
 		}
 	};
 }

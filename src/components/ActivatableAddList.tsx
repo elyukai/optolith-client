@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessages } from '../types/data.d';
 import { getFullName } from '../utils/ActivatableUtils';
-import { filterAndSort } from '../utils/FilterSortUtils';
-import { ActivatableAddListItem } from './ActivatableAddListItem';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { ActivatableAddListItemContainer } from './ActivatableAddListItem';
 import { List } from './List';
 import { ListItem } from './ListItem';
 import { ListItemName } from './ListItemName';
@@ -25,7 +25,7 @@ export interface ActivatableAddListProps {
 }
 
 export function ActivatableAddList(props: ActivatableAddListProps) {
-	const { activeList, filterText = '', groupNames, list, rating, showRating, sortOrder = 'name' } = props;
+	const { activeList, filterText = '', groupNames, list, locale, rating, showRating, sortOrder = 'name' } = props;
 
 	const combinedList: CombinedList = list.map<DeactiveViewObject & { active: false }>(e => {
 		return {
@@ -43,7 +43,7 @@ export function ActivatableAddList(props: ActivatableAddListProps) {
 		}));
 	}
 
-	const sortedList = filterAndSort(combinedList, filterText, sortOrder, groupNames);
+	const sortedList = filterAndSortObjects(combinedList, locale.id, filterText, sortOrder === 'group' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
 
 	return (
 		<Scroll>
@@ -58,7 +58,7 @@ export function ActivatableAddList(props: ActivatableAddListProps) {
 						);
 					}
 					return (
-						<ActivatableAddListItem
+						<ActivatableAddListItemContainer
 							{...props}
 							key={item.id}
 							item={item}

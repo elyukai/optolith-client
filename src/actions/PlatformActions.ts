@@ -1,7 +1,7 @@
 import { getHeroesForSave } from '../selectors/herolistSelectors';
 import { getLocaleId, getMessages } from '../selectors/localeSelectors';
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { Config } from '../types/rawdata.d';
 import * as FileAPIUtils from '../utils/FileAPIUtils';
 

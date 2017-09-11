@@ -12,13 +12,14 @@ import { getPhase } from '../selectors/phaseSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from '../utils/ActivatableUtils';
-import { DCIds, get as getDerivedCharacteristic } from '../utils/derivedCharacteristics';
+import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Liturgies, LiturgiesDispatchProps, LiturgiesOwnProps, LiturgiesStateProps } from '../views/skills/Liturgies';
 
 function mapStateToProps(state: AppState) {
 	return {
 		addChantsDisabled: isActivationDisabled(state),
 		currentHero: getPresent(state),
+		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		list: getAllByCategory(getDependent(state), LITURGIES, BLESSINGS) as (LiturgyInstance | BlessingInstance)[],
 		phase: getPhase(state),
@@ -26,10 +27,7 @@ function mapStateToProps(state: AppState) {
 		traditionId: last(getSids(get(getDependent(state), 'SA_102') as SpecialAbilityInstance)) as number,
 		get(id: string) {
 			return get(getDependent(state), id);
-		},
-		getDerivedCharacteristic(id: DCIds) {
-			return getDerivedCharacteristic(getPresent(state), id);
-		},
+		}
 	};
 }
 

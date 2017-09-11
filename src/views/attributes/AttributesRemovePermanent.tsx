@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { Dialog } from '../../components/Dialog';
+import { Dialog, DialogProps } from '../../components/DialogNew';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { isInteger } from '../../utils/RegexUtils';
 
-export interface AttributesRemovePermanentProps {
+export interface AttributesRemovePermanentProps extends DialogProps {
 	locale: UIMessages;
-	node?: HTMLDivElement;
 	remove(value: number): void;
 }
 
@@ -25,21 +24,26 @@ export class AttributesRemovePermanent extends React.Component<AttributesRemoveP
 	remove = () => this.props.remove(Number.parseInt(this.state.value));
 
 	render() {
+		const { locale, ...other } = this.props;
 		const { value } = this.state;
 
 		return (
-			<Dialog id="overview-add-ap" title={_translate(this.props.locale, 'removepermanentenergypoints.title')} node={this.props.node} buttons={[
-				{
-					disabled: !isInteger(this.state.value),
-					label: _translate(this.props.locale, 'modal.actions.remove'),
-					onClick: this.remove,
-				},
-				{
-					label: _translate(this.props.locale, 'modal.actions.cancel'),
-				},
-			]}>
+			<Dialog
+				{...other}
+				id="overview-add-ap"
+				title={_translate(locale, 'removepermanentenergypoints.title')}
+				buttons={[
+					{
+						disabled: !isInteger(this.state.value),
+						label: _translate(locale, 'modal.actions.remove'),
+						onClick: this.remove,
+					},
+					{
+						label: _translate(locale, 'modal.actions.cancel'),
+					},
+				]}>
 				<TextField
-					hint={_translate(this.props.locale, 'removepermanentenergypoints.inputhint')}
+					hint={_translate(locale, 'removepermanentenergypoints.inputhint')}
 					value={value}
 					onChange={this.onChange}
 					fullWidth

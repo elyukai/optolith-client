@@ -73,7 +73,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 							{ap.adv[1] > 0 && ap.adv[2] > 0 && <br/>}
 							{ap.adv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesblessed', ap.adv[2], 50)}
 						</p>
-						{showRating && <RecommendedReference/>}
+						{showRating && <RecommendedReference locale={locale} />}
 					</Options>
 					<DeactiveList
 						activeList={enableActiveItemHints ? activeList : undefined}
@@ -90,11 +90,12 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
-					{showRating && <RecommendedReference/>}
+					{showRating && <RecommendedReference locale={locale} />}
 				</Options>
 				<ActiveList
 					filterText={filterText}
 					list={activeList}
+					locale={locale}
 					rating={rating}
 					showRating={showRating}
 					removeFromList={removeFromList}

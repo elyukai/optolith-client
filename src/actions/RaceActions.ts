@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { getDiffCost } from '../utils/RCPUtils';
 
 export interface SelectRaceAction {

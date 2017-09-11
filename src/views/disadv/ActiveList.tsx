@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
-import { ActiveViewObject, DeactivateArgs } from '../../types/data.d';
+import { ActiveViewObject, DeactivateArgs, UIMessages } from '../../types/data.d';
 
 interface Props {
 	filterText: string;
 	list: ActiveViewObject[];
+	locale: UIMessages;
 	rating: { [id: string]: string };
 	showRating: boolean;
 	removeFromList(args: DeactivateArgs): void;
@@ -12,16 +13,7 @@ interface Props {
 }
 
 export function ActiveList(props: Props) {
-	const { filterText, list, rating, removeFromList, setTier, showRating } = props;
 	return (
-		<ActivatableRemoveList
-			filterText={filterText}
-			list={list}
-			setTier={setTier}
-			removeFromList={removeFromList}
-			rating={rating}
-			showRating={showRating}
-			hideGroup
-			/>
+		<ActivatableRemoveList {...props} hideGroup />
 	);
 }

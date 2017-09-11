@@ -13,19 +13,23 @@ import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { CantripInstance, InputTextEvent, Instance, SecondaryAttribute, SpellInstance } from '../../types/data.d';
+import { AttributeInstance, Book, CantripInstance, InputTextEvent, Instance, SecondaryAttribute, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSort } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
+import { SpellsInfo } from './SpellsInfo';
 
 export interface SpellsOwnProps {
 	locale: UIMessages;
 }
 
 export interface SpellsStateProps {
+	attributes: Map<string, AttributeInstance>;
+	books: Map<string, Book>;
+	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	addSpellsDisabled: boolean;
 	currentHero: CurrentHeroInstanceState;
 	enableActiveItemHints: boolean;
@@ -33,7 +37,6 @@ export interface SpellsStateProps {
 	phase: number;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
-	getDerivedCharacteristic(id: DCIds): SecondaryAttribute;
 }
 
 export interface SpellsDispatchProps {
@@ -53,22 +56,27 @@ export interface SpellsState {
 	filterText: string;
 	filterTextSlidein: string;
 	showAddSlidein: boolean;
+	currentId?: string;
+	currentSlideinId?: string;
 }
 
 export class Spells extends React.Component<SpellsProps, SpellsState> {
 	state = {
 		filterText: '',
 		filterTextSlidein: '',
-		showAddSlidein: false
+		showAddSlidein: false,
+		currentSlideinId: undefined
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpellsState);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpellsState);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpellsState);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpellsState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '', currentSlideinId: undefined } as SpellsState);
+	showInfo = (id: string) => this.setState({ currentId: id } as SpellsState);
+	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, getDerivedCharacteristic, list, locale, phase, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, phase, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -93,12 +101,12 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 			}
 		});
 
-		const sortedActiveList = filterAndSort(listActive, filterText, sortOrder);
-		const sortedDeactiveList = filterAndSort(listDeactive, filterTextSlidein, sortOrder);
+		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
+		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
 
 		return (
 			<Page id="spells">
-				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
+				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
@@ -142,7 +150,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												addFillElement
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 												get={get}
-												getDerivedCharacteristic={getDerivedCharacteristic}
+												derivedCharacteristics={derivedCharacteristics}
 												>
 												<ListItemGroup>
 													{_translate(locale, 'spells.view.properties')[obj.property - 1]}
@@ -168,7 +176,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											ic={ic}
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 											get={get}
-											getDerivedCharacteristic={getDerivedCharacteristic}
+											derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showSlideinInfo}
 											>
 											<ListItemGroup>
 												{_translate(locale, 'spells.view.properties')[obj.property - 1]}
@@ -180,6 +189,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 							}
 						</List>
 					</Scroll>
+					<SpellsInfo {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -215,7 +225,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											noIncrease
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 											get={get}
-											getDerivedCharacteristic={getDerivedCharacteristic}
+											derivedCharacteristics={derivedCharacteristics}
 											>
 											<ListItemGroup>
 												{_translate(locale, 'spells.view.properties')[obj.property - 1]}
@@ -246,7 +256,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 										addFillElement
 										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 										get={get}
-										getDerivedCharacteristic={getDerivedCharacteristic}
+										derivedCharacteristics={derivedCharacteristics}
+										selectForInfo={this.showInfo}
 										{...other} >
 										<ListItemGroup>
 											{_translate(locale, 'spells.view.properties')[obj.property - 1]}
@@ -258,6 +269,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						}
 					</List>
 				</Scroll>
+				<SpellsInfo {...this.props} {...this.state} />
 			</Page>
 		);
 	}

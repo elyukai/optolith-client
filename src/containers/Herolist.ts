@@ -1,4 +1,5 @@
 import { connect, Dispatch } from 'react-redux';
+import { Action } from 'redux';
 import * as FileActions from '../actions/FileActions';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as LocationActions from '../actions/LocationActions';
@@ -21,7 +22,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>, props: HerolistOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<Action>, props: HerolistOwnProps) {
 	return {
 		loadHero(id?: string) {
 			if (id) {

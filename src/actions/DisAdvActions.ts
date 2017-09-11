@@ -1,12 +1,13 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { DISADVANTAGES } from '../constants/Categories';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { AsyncAction } from '../stores/AppStore';
+import { getLocaleMessages } from '../selectors/stateSelectors';
+import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { isMagicalOrBlessed } from '../utils/ActivatableUtils';
 import { alert } from '../utils/alert';
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
-import { translate } from '../utils/I18n';
+import { _translate } from '../utils/I18n';
 
 interface ActivateArgsWithEntryType extends UndoExtendedActivateArgs {
 	isBlessed: boolean;
@@ -21,25 +22,31 @@ export interface ActivateDisAdvAction {
 
 export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
-		const { ap, dependent } = getState().currentHero.present;
+		const state = getState();
+		const locale = getLocaleMessages(state);
+		const { ap, dependent } = state.currentHero.present;
 		const { id, cost, ...other } = args;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;
 		}
 		else if (!validCost[1]) {
-			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			if (type) {
+				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+			}
 			return;
 		}
 		else if (!validCost[2]) {
-			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			if (type) {
+				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+			}
 			return;
 		}
 		dispatch({
@@ -68,7 +75,9 @@ export interface DeactivateDisAdvAction {
 
 export function _removeFromList(args: DeactivateArgs): AsyncAction {
 	return (dispatch, getState) => {
-		const { ap, dependent } = getState().currentHero.present;
+		const state = getState();
+		const locale = getLocaleMessages(state);
+		const { ap, dependent } = state.currentHero.present;
 		const { id, cost } = args;
 		const negativeCost = cost * -1; // the entry should be removed
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
@@ -76,18 +85,22 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;
 		}
 		else if (!validCost[1]) {
-			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			if (type) {
+				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+			}
 			return;
 		}
 		else if (!validCost[2]) {
-			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			if (type) {
+				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+			}
 			return;
 		}
 		dispatch({
@@ -117,24 +130,30 @@ export interface SetDisAdvTierAction {
 
 export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
 	return (dispatch, getState) => {
-		const { ap, dependent } = getState().currentHero.present;
+		const state = getState();
+		const locale = getLocaleMessages(state);
+		const { ap, dependent } = state.currentHero.present;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
 		if (!validCost[0]) {
-			alert(translate('notenoughap.title'), translate('notenoughap.content'));
+			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;
 		}
 		else if (!validCost[1]) {
-			const type = isDisadvantage ? translate('reachedaplimit.disadvantages') : translate('reachedaplimit.advantages');
-			alert(translate('reachedaplimit.title', type), translate('notenoughap.content', type));
+			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			if (type) {
+				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+			}
 			return;
 		}
 		else if (!validCost[2]) {
-			const type = isDisadvantage ? entryType.isBlessed ? translate('reachedcategoryaplimit.blesseddisadvantages') : translate('reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate('reachedcategoryaplimit.blessedadvantages') : translate('reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-			alert(translate('reachedcategoryaplimit.title', type), translate('reachedcategoryaplimit.content', ap, type));
+			if (type) {
+				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+			}
 			return;
 		}
 		dispatch({

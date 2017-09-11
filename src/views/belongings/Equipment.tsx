@@ -136,6 +136,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 						options={[ 'name', 'groupname', 'where' ]}
 						sortOrder={sortOrder}
 						sort={this.sort}
+						locale={locale}
 						/>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 					<BorderButton label={_translate(locale, 'equipment.actions.create')} onClick={this.showItemCreation} />

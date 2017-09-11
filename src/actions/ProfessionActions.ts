@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { AsyncAction } from '../stores/AppStore';
+import { AsyncAction } from '../types/actions.d';
 import { Selections } from '../types/data.d';
 import { getDiffCost } from '../utils/RCPUtils';
 

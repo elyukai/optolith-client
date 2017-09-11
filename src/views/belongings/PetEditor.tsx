@@ -5,7 +5,6 @@ import { BorderButton } from '../../components/BorderButton';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent, PetEditorInstance, UIMessages } from '../../types/data.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { _translate } from '../../utils/I18n';
 
 export interface PetEditorProps {
@@ -45,8 +44,18 @@ export interface PetEditorProps {
 	save(): void;
 }
 
-export class PetEditor extends React.Component<PetEditorProps, {}> {
-	showAvatarChange = () => createOverlay(<AvatarChange setPath={this.props.setAvatar} />);
+export interface PetEditorState {
+	isAvatarChangeOpened: boolean;
+}
+
+export class PetEditor extends React.Component<PetEditorProps, PetEditorState> {
+	state = {
+		isAvatarChangeOpened: false
+	};
+
+	openAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: true }));
+	closeAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: false }));
+
 	saveEdit = () => {
 		this.props.save();
 		this.props.hideSlidein();
@@ -59,7 +68,7 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 			<Slidein isOpened={!!data} close={hideSlidein}>
 				{data && <div className="pet-edit">
 					<div className="left">
-						<AvatarWrapper src={data.avatar} onClick={this.showAvatarChange} />
+						<AvatarWrapper src={data.avatar} onClick={this.openAvatarChange} />
 					</div>
 					<div className="right">
 						<div className="row">
@@ -109,6 +118,12 @@ export class PetEditor extends React.Component<PetEditorProps, {}> {
 							/>
 					</div>
 				</div>}
+				<AvatarChange
+					{...this.props}
+					setPath={this.props.setAvatar}
+					close={this.closeAvatarChange}
+					isOpened={this.state.isAvatarChangeOpened}
+					/>
 			</Slidein>
 		);
 	}

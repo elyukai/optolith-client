@@ -100,6 +100,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 					filterText={filterText}
 					groupNames={groupNames}
 					list={activeList}
+					locale={locale}
 					phase={phase}
 					removeFromList={removeFromList}
 					setTier={setTier}

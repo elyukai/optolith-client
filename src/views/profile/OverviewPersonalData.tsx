@@ -6,7 +6,7 @@ import { TextField } from '../../components/TextField';
 import { ProfileState } from '../../reducers/profile';
 import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { sort } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 
 export interface OverviewPersonalDataOwnProps {
@@ -66,8 +66,8 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 		socialstatusTags
 	} = props;
 
-	const hairArr = race ? sort(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id))) : [];
-	const eyesArr = race ? sort(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id))) : [];
+	const hairArr = race ? sortObjects(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)), locale.id) : [];
+	const eyesArr = race ? sortObjects(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id)), locale.id) : [];
 	const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
 
 	return (

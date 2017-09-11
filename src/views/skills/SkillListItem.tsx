@@ -17,6 +17,7 @@ export interface SkillListItemProps {
 	checkDisabled?: boolean;
 	checkmod?: 'SPI' | 'TOU';
 	children?: React.ReactNode;
+	derivedCharacteristics?: Map<DCIds, SecondaryAttribute>;
 	ic?: number;
 	id: string;
 	insertTopMargin?: boolean;
@@ -32,7 +33,6 @@ export interface SkillListItemProps {
 	removePoint?(): void;
 	selectForInfo?(id: string): void;
 	get?(id: string): Instance | undefined;
-	getDerivedCharacteristic?(id: DCIds): SecondaryAttribute;
 }
 
 export class SkillListItem extends React.Component<SkillListItemProps, {}> {
@@ -48,7 +48,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 	}
 
 	render() {
-		const { typ, untyp, name, sr, check, checkDisabled, checkmod, get, getDerivedCharacteristic, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
+		const { typ, untyp, name, sr, check, checkDisabled, checkmod, get, derivedCharacteristics, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -64,8 +64,11 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 				check.forEach((attr, index) => values.push(
 					<div key={attr + index} className={'check ' + attr}>{get && (get(attr) as AttributeInstance).short}</div>
 				));
-				if (checkmod && getDerivedCharacteristic) {
-					values.push(<div key="mod" className="check mod">+{getDerivedCharacteristic(checkmod).short}</div>);
+				if (checkmod && derivedCharacteristics) {
+					const characteristic = derivedCharacteristics.get(checkmod);
+					if (characteristic) {
+						values.push(<div key="mod" className="check mod">+{characteristic.short}</div>);
+					}
 				}
 			}
 		}
@@ -85,6 +88,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 		const btnElement = isNotActive ? (
 			<ListItemButtons>
 				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} flat />
+				{selectForInfo && <IconButton icon="&#xE88F;" flat onClick={this.showInfo} />}
 			</ListItemButtons>
 		) : (
 			<ListItemButtons>

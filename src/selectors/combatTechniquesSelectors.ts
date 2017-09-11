@@ -4,10 +4,10 @@ import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, Experien
 import { CombatTechnique, CombatTechniqueWithRequirements } from '../types/view.d';
 import { getSids } from '../utils/ActivatableUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getAdvantagesState, getSpecialAbilities } from './activatableSelectors';
 import { getAttributes, getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getPhase } from './phaseSelectors';
+import { getAdvantages, getSpecialAbilities } from './stateSelectors';
 
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 
@@ -49,7 +49,7 @@ export const getAllCombatTechniques = createSelector(
 	getCombatTechniques,
 	getAttributes,
 	mapGetToSlice(getSpecialAbilities, 'SA_19'),
-	mapGetToSlice(getAdvantagesState, 'ADV_17'),
+	mapGetToSlice(getAdvantages, 'ADV_17'),
 	getPhase,
 	getStartEl,
 	(combatTechniques, attributes, hunter, exceptionalCombatTechnique, phase, startEl) => {

@@ -1,40 +1,40 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import { translate } from '../utils/I18n';
+import { _translate, UIMessages } from '../utils/I18n';
 import { AvatarWrapper } from './AvatarWrapper';
 import { BorderButton } from './BorderButton';
-import { Dialog } from './Dialog';
+import { Dialog, DialogProps } from './DialogNew';
 
-interface Props {
-	node?: HTMLDivElement;
+export interface AvatarChangeProps extends DialogProps {
+	locale: UIMessages;
 	title?: string;
 	setPath(path: string): void;
 }
 
-interface State {
+export interface AvatarChangeState {
 	url: string;
 	fileValid: boolean;
 }
 
-export class AvatarChange extends React.Component<Props, State> {
+export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChangeState> {
 	state = {
 		fileValid: false,
 		url: ''
-	} as State;
+	} as AvatarChangeState;
 
 	selectFile = () => {
 		const extensions = ['jpeg', 'png', 'jpg'];
 		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-			filters: [{ name: translate('avatarchange.dialog.image'), extensions }]
+			filters: [{ name: _translate(this.props.locale, 'avatarchange.dialog.image'), extensions }]
 		}, fileNames => {
 			if (fileNames) {
 				const fileName = fileNames[0];
 				const splitted = fileName.split('.');
 				if (extensions.includes(splitted[splitted.length - 1])) {
-					this.setState({ fileValid: true, url: 'file://' + fileName.replace(/\\/g, '/') } as State);
+					this.setState({ fileValid: true, url: 'file://' + fileName.replace(/\\/g, '/') } as AvatarChangeState);
 				}
 				else {
-					this.setState({ fileValid: false, url: '' } as State);
+					this.setState({ fileValid: false, url: '' } as AvatarChangeState);
 				}
 			}
 		});
@@ -46,25 +46,25 @@ export class AvatarChange extends React.Component<Props, State> {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { locale, title } = this.props;
 		const { fileValid, url } = this.state;
 
 		return (
 			<Dialog
+				{...this.props}
 				id="avatar-change"
-				title={title || translate('avatarchange.title')}
-				node={this.props.node}
+				title={title || _translate(locale, 'avatarchange.title')}
 				buttons={[
 					{
 						disabled: fileValid === false || url === '',
-						label: translate('avatarchange.actions.change'),
+						label: _translate(locale, 'avatarchange.actions.change'),
 						onClick: this.load,
 					},
 				]}
 				>
-				<BorderButton label={translate('avatarchange.actions.selectfile')} onClick={this.selectFile} />
+				<BorderButton label={_translate(locale, 'avatarchange.actions.selectfile')} onClick={this.selectFile} />
 				{fileValid === true && url !== '' && <AvatarWrapper src={url} />}
-				{fileValid === false && url !== '' && <p>{translate('avatarchange.view.invalidfile')}</p>}
+				{fileValid === false && url !== '' && <p>{_translate(locale, 'avatarchange.view.invalidfile')}</p>}
 			</Dialog>
 		);
 	}

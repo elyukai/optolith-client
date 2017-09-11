@@ -1,319 +1,372 @@
 import { last } from 'lodash';
-import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { get } from '../selectors/dependentInstancesSelectors';
-import { AttributeInstance, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
+import { createSelector } from 'reselect';
+import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from '../selectors/attributeSelectors';
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getRaces, getSpecialAbilities } from '../selectors/stateSelectors';
+import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { getSids, isActive } from './ActivatableUtils';
-import { getPrimaryAttributeId } from './AttributeUtils';
-import { getLocale, translate } from './I18n';
+import { _translate } from './I18n';
+import { mapGetToSlice } from './SelectorsUtils';
 
-const PRIMARY = (state: CurrentHeroInstanceState, id: string) => get(state.dependent, id) as AttributeInstance;
-const COU = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_1') as AttributeInstance;
-const SGC = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_2') as AttributeInstance;
-const INT = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_3') as AttributeInstance;
-const AGI = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_6') as AttributeInstance;
-const CON = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_7') as AttributeInstance;
-const STR = (state: CurrentHeroInstanceState) => get(state.dependent, 'ATTR_8') as AttributeInstance;
+export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WT';
+export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 
-export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WS';
+export const getLP = createSelector(
+	getRaces,
+	getCurrentRaceId,
+	mapGetToSlice(getAttributes, 'ATTR_7'),
+	mapGetToSlice(getAdvantages, 'ADV_25'),
+	mapGetToSlice(getDisadvantages, 'DISADV_28'),
+	getAddedLifePoints,
+	getLocaleMessages,
+	(races, currentRaceId, CON, increase, decrease, add, locale) => {
+		const currentRace = currentRaceId && races.get(currentRaceId);
+		const base = currentRace && CON && currentRace.lp + CON.value * 2 || 0;
 
-export function getLP(state: CurrentHeroInstanceState): Energy {
-	const base = state.dependent.races.get(state.rcp.race!)!.lp + CON(state).value * 2;
-	let mod = 0;
-	const add = state.energies.addedLifePoints;
-	const increaseObject = state.dependent.advantages.get('ADV_25')!.active[0];
-	const decreaseObject = state.dependent.disadvantages.get('DISADV_28')!.active[0];
-	if (increaseObject) {
-		mod += increaseObject.tier!;
-	}
-	else if (decreaseObject) {
-		mod -= decreaseObject.tier!;
-	}
-	const value = base + mod + add;
-	return {
-		add,
-		base,
-		calc: translate('secondaryattributes.lp.calc'),
-		currentAdd: add,
-		id: 'LP',
-		maxAdd: CON(state).value,
-		mod,
-		name: translate('secondaryattributes.lp.name'),
-		short: translate('secondaryattributes.lp.short'),
-		value,
-	};
-}
-
-export function getAE(state: CurrentHeroInstanceState): EnergyWithLoss {
-	const lastTradition = last(state.dependent.specialAbilities.get('SA_86')!.active);
-	const primary = getPrimaryAttributeId(state.dependent, 1);
-	let base = 0;
-	let mod = 0;
-	let maxAdd = 0;
-	const {
-		addedArcaneEnergy: add,
-		permanentArcaneEnergy: {
-			lost: permanentLost,
-			redeemed: permanentRedeemed
+		let mod = 0;
+		const increaseObject = increase && increase.active[0];
+		const decreaseObject = decrease && decrease.active[0];
+		if (increaseObject && increaseObject.tier) {
+			mod += increaseObject.tier;
 		}
-	} = state.energies;
-	if (primary !== undefined && lastTradition !== undefined && (lastTradition.sid === 6 || lastTradition.sid === 7)) {
-		maxAdd = Math.round(PRIMARY(state, primary).value / 2);
-	}
-	else if (primary !== undefined) {
-		maxAdd = PRIMARY(state, primary).value;
-	}
-	if (maxAdd > 0) {
-		base = 20 + maxAdd;
-	}
-	else if (lastTradition !== undefined) {
-		base = 20;
-	}
-	const increaseObject = state.dependent.advantages.get('ADV_23')!.active[0];
-	const decreaseObject = state.dependent.disadvantages.get('DISADV_26')!.active[0];
-	if (increaseObject && increaseObject.tier) {
-		mod += increaseObject.tier;
-	}
-	else if (decreaseObject && decreaseObject.tier) {
-		mod -= decreaseObject.tier;
-	}
-	const value = base > 0 ? base + mod + add + permanentRedeemed - permanentLost : undefined;
-	return {
-		add,
-		base,
-		calc: translate('secondaryattributes.ae.calc'),
-		currentAdd: add,
-		id: 'AE',
-		maxAdd,
-		mod,
-		name: translate('secondaryattributes.ae.name'),
-		permanentLost,
-		permanentRedeemed,
-		short: translate('secondaryattributes.ae.short'),
-		value,
-	};
-}
-
-export function getKP(state: CurrentHeroInstanceState): EnergyWithLoss {
-	const primary = getPrimaryAttributeId(state.dependent, 2);
-	let base = 0;
-	let mod = 0;
-	const {
-		addedKarmaPoints: add,
-		permanentKarmaPoints: {
-			lost: permanentLost,
-			redeemed: permanentRedeemed
+		else if (decreaseObject && decreaseObject.tier) {
+			mod -= decreaseObject.tier;
 		}
-	} = state.energies;
-	if (primary) {
-		base = 20 + PRIMARY(state, primary).value;
+		const value = base + mod + add;
+		return {
+			add,
+			base,
+			calc: _translate(locale, 'secondaryattributes.lp.calc'),
+			currentAdd: add,
+			id: 'LP',
+			maxAdd: CON ? CON.value : 0,
+			mod,
+			name: _translate(locale, 'secondaryattributes.lp.name'),
+			short: _translate(locale, 'secondaryattributes.lp.short'),
+			value,
+		} as Energy<'LP'>;
 	}
-	const increaseObject = state.dependent.advantages.get('ADV_24')!.active[0];
-	const decreaseObject = state.dependent.disadvantages.get('DISADV_27')!.active[0];
-	if (increaseObject && increaseObject.tier) {
-		mod += increaseObject.tier;
-	}
-	else if (decreaseObject && decreaseObject.tier) {
-		mod -= decreaseObject.tier;
-	}
-	const value = primary ? base + mod + add + permanentRedeemed - permanentLost : undefined;
-	return {
-		add,
-		base,
-		calc: translate('secondaryattributes.kp.calc'),
-		currentAdd: add,
-		id: 'KP',
-		maxAdd: primary ? PRIMARY(state, primary).value : 0,
-		mod,
-		name: translate('secondaryattributes.kp.name'),
-		permanentLost,
-		permanentRedeemed,
-		short: translate('secondaryattributes.kp.short'),
-		value,
-	};
-}
+);
 
-export function getSPI(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = state.dependent.races.get(state.rcp.race!)!.spi + Math.round((COU(state).value + SGC(state).value + INT(state).value) / 6);
-	let mod = 0;
-	const increaseObject = isActive(state.dependent.advantages.get('ADV_26'));
-	const decreaseObject = isActive(state.dependent.disadvantages.get('DISADV_29'));
-	if (increaseObject) {
-		mod++;
-	}
-	else if (decreaseObject) {
-		mod--;
-	}
-	const value = base + mod;
-	return {
-		base,
-		calc: translate('secondaryattributes.spi.calc'),
-		id: 'SPI',
-		mod,
-		name: translate('secondaryattributes.spi.name'),
-		short: translate('secondaryattributes.spi.short'),
-		value,
-	};
-}
+export const getAE = createSelector(
+	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	getPrimaryMagicalAttribute,
+	getPermanentArcaneEnergyPoints,
+	mapGetToSlice(getAdvantages, 'ADV_23'),
+	mapGetToSlice(getDisadvantages, 'DISADV_26'),
+	getAddedArcaneEnergyPoints,
+	getLocaleMessages,
+	(tradition, primary, { lost, redeemed }, increase, decrease, add, locale) => {
+		const lastTradition = last(tradition!.active);
+		let base = 0;
+		let mod = 0;
+		let maxAdd = 0;
 
-export function getTOU(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = state.dependent.races.get(state.rcp.race!)!.tou + Math.round((CON(state).value * 2 + STR(state).value) / 6);
-	let mod = 0;
-	const increaseObject = isActive(state.dependent.advantages.get('ADV_27'));
-	const decreaseObject = isActive(state.dependent.disadvantages.get('DISADV_30'));
-	if (increaseObject) {
-		mod++;
+		if (primary !== undefined && lastTradition !== undefined && (lastTradition.sid === 6 || lastTradition.sid === 7)) {
+			maxAdd = Math.round(primary.value / 2);
+		}
+		else if (primary !== undefined) {
+			maxAdd = primary.value;
+		}
+		if (maxAdd > 0) {
+			base = 20 + maxAdd;
+		}
+		else if (lastTradition !== undefined) {
+			base = 20;
+		}
+		const increaseObject = increase && increase.active[0];
+		const decreaseObject = decrease && decrease.active[0];
+		if (increaseObject && increaseObject.tier) {
+			mod += increaseObject.tier;
+		}
+		else if (decreaseObject && decreaseObject.tier) {
+			mod -= decreaseObject.tier;
+		}
+		const value = base > 0 ? base + mod + add + redeemed - lost : undefined;
+		return {
+			add,
+			base,
+			calc: _translate(locale, 'secondaryattributes.ae.calc'),
+			currentAdd: add,
+			id: 'AE',
+			maxAdd,
+			mod,
+			name: _translate(locale, 'secondaryattributes.ae.name'),
+			permanentLost: lost,
+			permanentRedeemed: redeemed,
+			short: _translate(locale, 'secondaryattributes.ae.short'),
+			value,
+		} as EnergyWithLoss<'AE'>;
 	}
-	else if (decreaseObject) {
-		mod--;
-	}
-	const value = base + mod;
-	return {
-		base,
-		calc: translate('secondaryattributes.tou.calc'),
-		id: 'TOU',
-		mod,
-		name: translate('secondaryattributes.tou.name'),
-		short: translate('secondaryattributes.tou.short'),
-		value,
-	};
-}
+);
 
-export function getDO(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = Math.round(AGI(state).value / 2);
-	let mod = 0;
-	if (isActive(state.dependent.specialAbilities.get('SA_78'))) {
-		mod += 3;
-	}
-	else if (isActive(state.dependent.specialAbilities.get('SA_77'))) {
-		mod += 2;
-	}
-	else if (isActive(state.dependent.specialAbilities.get('SA_76'))) {
-		mod += 1;
-	}
-	const value = base + mod;
-	return {
-		calc: translate('secondaryattributes.do.calc'),
-		id: 'DO',
-		name: translate('secondaryattributes.do.name'),
-		short: translate('secondaryattributes.do.short'),
-		base,
-		mod,
-		value
-	};
-}
+export const getKP = createSelector(
+	getPrimaryBlessedAttribute,
+	getPermanentKarmaPoints,
+	mapGetToSlice(getAdvantages, 'ADV_24'),
+	mapGetToSlice(getDisadvantages, 'DISADV_27'),
+	getAddedKarmaPoints,
+	getLocaleMessages,
+	(primary, { lost, redeemed }, increase, decrease, add, locale) => {
+		let base = 0;
+		let mod = 0;
 
-export function getINI(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = Math.round((COU(state).value + AGI(state).value) / 2);
-	let mod = 0;
-	if (isActive(state.dependent.specialAbilities.get('SA_58'))) {
-		mod += 3;
+		if (primary) {
+			base = 20 + primary.value;
+		}
+		const increaseObject = increase && increase.active[0];
+		const decreaseObject = decrease && decrease.active[0];
+		if (increaseObject && increaseObject.tier) {
+			mod += increaseObject.tier;
+		}
+		else if (decreaseObject && decreaseObject.tier) {
+			mod -= decreaseObject.tier;
+		}
+		const value = base > 0 ? base + mod + add + redeemed - lost : undefined;
+		return {
+			add,
+			base,
+			calc: _translate(locale, 'secondaryattributes.kp.calc'),
+			currentAdd: add,
+			id: 'KP',
+			maxAdd: primary ? primary.value : 0,
+			mod,
+			name: _translate(locale, 'secondaryattributes.kp.name'),
+			permanentLost: lost,
+			permanentRedeemed: redeemed,
+			short: _translate(locale, 'secondaryattributes.kp.short'),
+			value,
+		} as EnergyWithLoss<'KP'>;
 	}
-	else if (isActive(state.dependent.specialAbilities.get('SA_57'))) {
-		mod += 2;
-	}
-	else if (isActive(state.dependent.specialAbilities.get('SA_56'))) {
-		mod += 1;
-	}
-	const value = base + mod;
-	return {
-		calc: translate('secondaryattributes.ini.calc'),
-		id: 'INI',
-		name: translate('secondaryattributes.ini.name'),
-		short: translate('secondaryattributes.ini.short'),
-		base,
-		mod,
-		value
-	};
-}
+);
 
-export function getMOV(state: CurrentHeroInstanceState): SecondaryAttribute {
-	let base = state.dependent.races.get(state.rcp.race!)!.mov;
-	let mod = 0;
-	if (isActive(state.dependent.advantages.get('ADV_9'))) {
-		mod = 1;
-	}
-	if (getSids(state.dependent.disadvantages.get('DISADV_51')!).includes(3)) {
-		base = Math.round(base / 2);
-	}
-	const value = base + mod;
-	return {
-		calc: translate('secondaryattributes.mov.calc'),
-		id: 'MOV',
-		name: translate('secondaryattributes.mov.name'),
-		short: translate('secondaryattributes.mov.short'),
-		base,
-		mod,
-		value
-	};
-}
+export const getSPI = createSelector(
+	getRaces,
+	getCurrentRaceId,
+	mapGetToSlice(getAttributes, 'ATTR_1'),
+	mapGetToSlice(getAttributes, 'ATTR_2'),
+	mapGetToSlice(getAttributes, 'ATTR_3'),
+	mapGetToSlice(getAdvantages, 'ADV_26'),
+	mapGetToSlice(getDisadvantages, 'DISADV_29'),
+	getLocaleMessages,
+	(races, currentRaceId, COU, SGC, INT, increase, decrease, locale) => {
+		const currentRace = currentRaceId && races.get(currentRaceId);
+		const base = currentRace && COU && SGC && INT && currentRace.spi + Math.round((COU.value + SGC.value + INT.value) / 6) || 0;
 
-export function getWS(state: CurrentHeroInstanceState): SecondaryAttribute {
-	const base = Math.floor(CON(state).value / 2);
-	let value = base;
-	if (isActive(state.dependent.disadvantages.get('DISADV_54'))) {
-		value++;
+		let mod = 0;
+		const increaseObject = isActive(increase);
+		const decreaseObject = isActive(decrease);
+		if (increaseObject) {
+			mod++;
+		}
+		else if (decreaseObject) {
+			mod--;
+		}
+		const value = base + mod;
+		return {
+			base,
+			calc: _translate(locale, 'secondaryattributes.spi.calc'),
+			id: 'SPI',
+			mod,
+			name: _translate(locale, 'secondaryattributes.spi.name'),
+			short: _translate(locale, 'secondaryattributes.spi.short'),
+			value,
+		} as SecondaryAttribute<'SPI'>;
 	}
-	else if (isActive(state.dependent.disadvantages.get('DISADV_56'))) {
-		value++;
-	}
-	return {
-		calc: translate('secondaryattributes.ws.calc'),
-		id: 'WS',
-		name: translate('secondaryattributes.ws.name'),
-		short: translate('secondaryattributes.ws.short'),
-		base,
-		value
-	};
-}
+);
 
-function _get(state: CurrentHeroInstanceState, id: DCIds): SecondaryAttribute {
-	switch (id) {
-		case 'LP':
-			return getLP(state);
-		case 'AE':
-			return getAE(state);
-		case 'KP':
-			return getKP(state);
-		case 'SPI':
-			return getSPI(state);
-		case 'TOU':
-			return getTOU(state);
-		case 'DO':
-			return getDO(state);
-		case 'INI':
-			return getINI(state);
-		case 'MOV':
-			return getMOV(state);
-		case 'WS':
-			return getWS(state);
-	}
-}
+export const getTOU = createSelector(
+	getRaces,
+	getCurrentRaceId,
+	mapGetToSlice(getAttributes, 'ATTR_7'),
+	mapGetToSlice(getAttributes, 'ATTR_8'),
+	mapGetToSlice(getAdvantages, 'ADV_27'),
+	mapGetToSlice(getDisadvantages, 'DISADV_30'),
+	getLocaleMessages,
+	(races, currentRaceId, CON, STR, increase, decrease, locale) => {
+		const currentRace = currentRaceId && races.get(currentRaceId);
+		const base = currentRace && CON && STR && currentRace.spi + Math.round((CON.value * 2 + STR.value) / 6) || 0;
 
-export { _get as get };
-
-export function getAll(state: CurrentHeroInstanceState): SecondaryAttribute[] {
-	const locale = getLocale();
-	if (locale === 'de-DE') {
-		return [
-			getLP(state),
-			getAE(state),
-			getKP(state),
-			getSPI(state),
-			getTOU(state),
-			getDO(state),
-			getINI(state),
-			getMOV(state),
-			getWS(state)
-		];
+		let mod = 0;
+		const increaseObject = isActive(increase);
+		const decreaseObject = isActive(decrease);
+		if (increaseObject) {
+			mod++;
+		}
+		else if (decreaseObject) {
+			mod--;
+		}
+		const value = base + mod;
+		return {
+			base,
+			calc: _translate(locale, 'secondaryattributes.tou.calc'),
+			id: 'TOU',
+			mod,
+			name: _translate(locale, 'secondaryattributes.tou.name'),
+			short: _translate(locale, 'secondaryattributes.tou.short'),
+			value,
+		} as SecondaryAttribute<'TOU'>;
 	}
-	return [
-		getLP(state),
-		getAE(state),
-		getKP(state),
-		getSPI(state),
-		getTOU(state),
-		getDO(state),
-		getINI(state),
-		getMOV(state)
-	];
-}
+);
+
+export const getDO = createSelector(
+	mapGetToSlice(getAttributes, 'ATTR_6'),
+	mapGetToSlice(getSpecialAbilities, 'SA_76'),
+	mapGetToSlice(getSpecialAbilities, 'SA_77'),
+	mapGetToSlice(getSpecialAbilities, 'SA_78'),
+	getLocaleMessages,
+	(AGI, improvedDodge1, improvedDodge2, improvedDodge3, locale) => {
+		const base = AGI && Math.round(AGI.value / 2) || 0;
+		let mod = 0;
+		if (isActive(improvedDodge3)) {
+			mod += 3;
+		}
+		else if (isActive(improvedDodge2)) {
+			mod += 2;
+		}
+		else if (isActive(improvedDodge1)) {
+			mod += 1;
+		}
+		const value = base + mod;
+		return {
+			calc: _translate(locale, 'secondaryattributes.do.calc'),
+			id: 'DO',
+			name: _translate(locale, 'secondaryattributes.do.name'),
+			short: _translate(locale, 'secondaryattributes.do.short'),
+			base,
+			mod,
+			value
+		} as SecondaryAttribute<'DO'>;
+	}
+);
+
+export const getINI = createSelector(
+	mapGetToSlice(getAttributes, 'ATTR_1'),
+	mapGetToSlice(getAttributes, 'ATTR_6'),
+	mapGetToSlice(getSpecialAbilities, 'SA_56'),
+	mapGetToSlice(getSpecialAbilities, 'SA_57'),
+	mapGetToSlice(getSpecialAbilities, 'SA_58'),
+	getLocaleMessages,
+	(COU, AGI, combatReflexes1, combatReflexes2, combatReflexes3, locale) => {
+		const base = COU && AGI && Math.round((COU.value + AGI.value) / 2) || 0;
+		let mod = 0;
+		if (isActive(combatReflexes3)) {
+			mod += 3;
+		}
+		else if (isActive(combatReflexes2)) {
+			mod += 2;
+		}
+		else if (isActive(combatReflexes1)) {
+			mod += 1;
+		}
+		const value = base + mod;
+		return {
+			calc: _translate(locale, 'secondaryattributes.ini.calc'),
+			id: 'INI',
+			name: _translate(locale, 'secondaryattributes.ini.name'),
+			short: _translate(locale, 'secondaryattributes.ini.short'),
+			base,
+			mod,
+			value
+		} as SecondaryAttribute<'INI'>;
+	}
+);
+
+export const getMOV = createSelector(
+	getRaces,
+	getCurrentRaceId,
+	mapGetToSlice(getAdvantages, 'ADV_27'),
+	mapGetToSlice(getDisadvantages, 'DISADV_30'),
+	getLocaleMessages,
+	(races, currentRaceId, nimble, maimed, locale) => {
+		const currentRace = currentRaceId && races.get(currentRaceId);
+		let base = currentRace && currentRace.mov || 0;
+
+		let mod = 0;
+		if (isActive(nimble)) {
+			mod = 1;
+		}
+		if (maimed && getSids(maimed).includes(3)) {
+			base = Math.round(base / 2);
+		}
+		const value = base + mod;
+		return {
+			calc: _translate(locale, 'secondaryattributes.mov.calc'),
+			id: 'MOV',
+			name: _translate(locale, 'secondaryattributes.mov.name'),
+			short: _translate(locale, 'secondaryattributes.mov.short'),
+			base,
+			mod,
+			value
+		} as SecondaryAttribute<'MOV'>;
+	}
+);
+
+export const getWT = createSelector(
+	mapGetToSlice(getAttributes, 'ATTR_7'),
+	mapGetToSlice(getAdvantages, 'ADV_54'),
+	mapGetToSlice(getDisadvantages, 'DISADV_56'),
+	getLocaleMessages,
+	(CON, increase, decrease, locale) => {
+		const base = CON && Math.floor(CON.value / 2) || 0;
+		let value = base;
+		if (isActive(increase)) {
+			value++;
+		}
+		else if (isActive(decrease)) {
+			value++;
+		}
+		return {
+			calc: _translate(locale, 'secondaryattributes.ws.calc'),
+			id: 'WT',
+			name: _translate(locale, 'secondaryattributes.ws.name'),
+			short: _translate(locale, 'secondaryattributes.ws.short'),
+			base,
+			value
+		} as SecondaryAttribute<'WT'>;
+	}
+);
+
+export const getDerivedCharacteristicsMap = createSelector(
+	getLP,
+	getAE,
+	getKP,
+	getSPI,
+	getTOU,
+	getDO,
+	getINI,
+	getMOV,
+	getWT,
+	getLocaleMessages,
+	(LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, locale) => {
+		if (locale && locale.id === 'de-DE') {
+			return new Map<DCIds, SecondaryAttribute>([
+				[LP.id, LP],
+				[AE.id, AE],
+				[KP.id, KP],
+				[SPI.id, SPI],
+				[TOU.id, TOU],
+				[DO.id, DO],
+				[INI.id, INI],
+				[MOV.id, MOV],
+				[WT.id, WT]
+			]);
+		}
+		return new Map<DCIdsWithoutWT, SecondaryAttribute>([
+			[LP.id, LP],
+			[AE.id, AE],
+			[KP.id, KP],
+			[SPI.id, SPI],
+			[TOU.id, TOU],
+			[DO.id, DO],
+			[INI.id, INI],
+			[MOV.id, MOV]
+		]);
+	}
+);
+
+export const getDerivedCharacteristics = createSelector(
+	getDerivedCharacteristicsMap,
+	state => {
+		return [...state.values()];
+	}
+);

@@ -2,11 +2,9 @@ import { connect, Dispatch } from 'react-redux';
 import { Action } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
-import { DISADVANTAGES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { getActiveForView, getAdvantagesRating, getDeactiveForView } from '../selectors/activatableSelectors';
+import { getDeactiveDisadvantages, getDisadvantagesForSheet, getDisadvantagesRating } from '../selectors/activatableSelectors';
 import { getAp } from '../selectors/adventurePointsSelectors';
-import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
@@ -15,15 +13,15 @@ import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, Disad
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getActiveForView(getPresent(state), DISADVANTAGES),
+		activeList: getDisadvantagesForSheet(state),
 		ap: getAp(state),
-		deactiveList: getDeactiveForView(getPresent(state), DISADVANTAGES),
+		deactiveList: getDeactiveDisadvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {
 			return get(getDependent(state), id);
 		},
 		magicalMax: getAdvantagesDisadvantagesSubMax(getDependent(state), 1),
-		rating: getAdvantagesRating(state),
+		rating: getDisadvantagesRating(state),
 		showRating: getAdvantagesDisadvantagesCultureRatingVisibility(state),
 	};
 }
