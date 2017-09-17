@@ -1,7 +1,7 @@
-const { readFileSync, writeFile } = require('fs');
-const xlsx = require('xlsx');
-const { splitList } = require('./buildUtils');
-const csvToArray = require('./csvToArray');
+import fs from 'fs';
+import xlsx from 'xlsx';
+import { splitList } from './buildUtils.mjs';
+import { csvToArray } from './csvToArray.mjs';
 
 function iterateBooksL10n(array) {
 	const list = {};
@@ -232,7 +232,7 @@ function iterateEquipmentL10n(array) {
 	for (let obj of array) {
 		const { id, name } = obj;
 
-		let result = {
+		const result = {
 			id: 'ITEMTPL_' + id,
 			name
 		};
@@ -242,7 +242,7 @@ function iterateEquipmentL10n(array) {
 	return list;
 }
 
-module.exports = function buildL10n(locale) {
+export function buildL10n(locale) {
 	const file = xlsx.readFile(`src/data/TDE5_${locale}.xlsx`);
 	const allWorksheets = file.SheetNames.reduce((m, name) => {
 		return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';;', blankrows: false }));
@@ -272,7 +272,7 @@ module.exports = function buildL10n(locale) {
 	const liturgies = iterateChantsL10n(csvToArray(allWorksheets.get('CHANTS')));
 	const blessings = iterateBlessingsL10n(csvToArray(allWorksheets.get('BLESSINGS')));
 	const items = iterateEquipmentL10n(csvToArray(allWorksheets.get('EQUIPMENT')));
-	const ui = JSON.parse(readFileSync(`src/locales/ui.${locale}.json`, 'utf8'));
+	const ui = JSON.parse(fs.readFileSync(`src/locales/ui.${locale}.json`, 'utf8'));
 
 	specialabilities.SA_3.sel = tradeSecrets;
 	specialabilities.SA_28.sel = scripts;
@@ -299,8 +299,10 @@ module.exports = function buildL10n(locale) {
 		ui
 	};
 
-	writeFile(`app/locales/${locale}.json`, JSON.stringify(result), (err) => {
-		if (err) throw err;
+	fs.writeFile(`app/locales/${locale}.json`, JSON.stringify(result), err => {
+		if (err) {
+			throw err;
+		}
 		console.log(`L10n JSON for ${locale} created.`);
 	});
 }

@@ -1,6 +1,5 @@
-module.exports = function csvToArray(csv) {
-	const isRN = /\r\n/.test(csv);
-	const lines = isRN ? csv.split(/\r\n/) : csv.split(/\n/);
+export function csvToArray(csv) {
+	const lines = csv.split(/\r?\n/);
 	const splittedLines = lines.map(e => e.split(/;;/));
 	const header = splittedLines.shift();
 	const idColumnIndex = header.findIndex(e => /id/.test(e));

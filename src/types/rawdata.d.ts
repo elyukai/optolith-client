@@ -74,6 +74,7 @@ export interface RawCultureLocale {
 export interface RawProfession {
 	id: string;
 	ap: number;
+	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
@@ -195,7 +196,7 @@ export interface RawSpecialAbility {
 	tiers?: number;
 	max?: number;
 	sel?: Data.SelectionObject[];
-	req: ('RCP' | Reusable.AllRequirementTypes)[];
+	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
 	gr: number;
 }
 

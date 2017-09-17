@@ -1,17 +1,12 @@
-// import { lt } from 'semver';
+import { lt } from 'semver';
 import { Hero } from '../types/data.d';
 
 export const currentVersion = '0.49.5';
 
 export function convertHero(hero: Hero) {
-	const entry = { ...hero };
-	// if (lt(entry.clientVersion, '0.48.0')) {
-	// 	for (const id in entry.activatable) {
-	// 		if (entry.activatable.hasOwnProperty(id)) {
-
-	// 		}
-	// 	}
-	// 	entry.clientVersion = '0.48.0';
-	// }
-	return entry;
+  const entry = { ...hero };
+  if (lt(entry.clientVersion, '0.48.5')) {
+    // entry.clientVersion = '0.48.5';
+  }
+  return entry;
 }

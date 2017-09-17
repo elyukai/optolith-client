@@ -15,13 +15,17 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 		case ActionTypes.ACTIVATE_SPELL: {
 			const { id } = action.payload;
 			const entry = state.spells.get(id)!;
-			return mergeIntoState(state, addDependencies(state, {...entry, active: true}));
+			const newObject = { ...entry, active: true };
+			const firstState = setStateItem(state, newObject.id, newObject);
+			return mergeIntoState(state, addDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.ACTIVATE_CANTRIP: {
 			const { id } = action.payload;
 			const entry = state.cantrips.get(id)!;
-			return mergeIntoState(state, addDependencies(state, {...entry, active: true}));
+			const newObject = { ...entry, active: true };
+			const firstState = setStateItem(state, newObject.id, newObject);
+			return mergeIntoState(state, addDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.ACTIVATE_LITURGY: {
@@ -44,14 +48,18 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 
 		case ActionTypes.DEACTIVATE_SPELL: {
 			const { id } = action.payload;
-			const entry = state.spells.get(id);
-			return mergeIntoState(state, removeDependencies(state, {...entry!, active: false}));
+			const entry = state.spells.get(id)!;
+			const newObject = { ...entry, active: false };
+			const firstState = setStateItem(state, newObject.id, newObject);
+			return mergeIntoState(state, removeDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.DEACTIVATE_CANTRIP: {
 			const { id } = action.payload;
-			const entry = state.cantrips.get(id);
-			return mergeIntoState(state, removeDependencies(state, {...entry!, active: false}));
+			const entry = state.cantrips.get(id)!;
+			const newObject = { ...entry, active: false };
+			const firstState = setStateItem(state, newObject.id, newObject);
+			return mergeIntoState(state, removeDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.DEACTIVATE_LITURGY: {

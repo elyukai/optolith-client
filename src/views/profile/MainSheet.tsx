@@ -56,7 +56,6 @@ export function MainSheet(props: MainSheetProps) {
 					className="print-document"
 					label={_translate(locale, 'charactersheet.actions.printtopdf')}
 					onClick={() => printToPDF(locale)}
-					fullWidth
 					/>
 			</Options>
 			<Sheet

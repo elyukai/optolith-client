@@ -1,14 +1,27 @@
+import classNames = require('classnames');
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { AppState } from '../reducers/app';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { close, createOverlay } from '../utils/createOverlay';
 import { Overlay } from './Overlay';
 
-export interface TooltipToggleProps {
+export interface TooltipToggleOwnProps {
 	content: React.ReactNode;
 	margin?: number;
 	position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
+export interface TooltipToggleStateProps {
+	theme: string;
+}
+
+export interface TooltipToggleDispatchProps {
+}
+
+export type TooltipToggleProps = TooltipToggleStateProps & TooltipToggleDispatchProps & TooltipToggleOwnProps;
+
+export class TooltipToggleWrapped extends React.Component<TooltipToggleProps, {}> {
 	node?: HTMLElement;
 
 	componentWillUnmount() {
@@ -18,8 +31,8 @@ export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
 	}
 
 	open = (event: React.MouseEvent<HTMLElement>) => {
-		const { content, margin, position = 'top' } = this.props;
-		this.node = createOverlay(<Overlay className="tooltip" position={position} trigger={event.currentTarget} margin={margin}>
+		const { content, margin, position = 'top', theme } = this.props;
+		this.node = createOverlay(<Overlay className={classNames('tooltip', `theme-${theme}`)} position={position} trigger={event.currentTarget} margin={margin}>
 			{content}
 		</Overlay>);
 	}
@@ -39,3 +52,12 @@ export class TooltipToggle extends React.Component<TooltipToggleProps, {}> {
 		});
 	}
 }
+
+function mapStateToProps(state: AppState) {
+	return {
+		theme: getTheme(state)
+	};
+}
+
+
+export const TooltipToggle = connect<TooltipToggleStateProps, TooltipToggleDispatchProps, TooltipToggleOwnProps>(mapStateToProps)(TooltipToggleWrapped);

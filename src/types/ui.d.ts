@@ -79,6 +79,14 @@ export interface UIMessages {
 	"herocreation.options.selectsex.male": string;
 	"herocreation.options.selectsex.female": string;
 	"herocreation.options.selectexperiencelevel": string;
+	"wiki.category.magic": string;
+	"wiki.category.spells": string;
+	"wiki.category.rituals": string;
+	"wiki.category.cantrips": string;
+	"wiki.category.curses": string;
+	"wiki.category.elvenmagicalsongs": string;
+	"wiki.category.magicalmelodies": string | undefined;
+	"wiki.category.magicaldances": string | undefined;
 	"imprint.title": string;
 	"imprint.emailhint": string;
 	"profileoverview.view.male": string;

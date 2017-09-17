@@ -4,7 +4,7 @@
 	background: $c4;
 	color: $c8;
 	box-shadow: 0 0 24px transparentize($c4, .2);
-	z-index: 2000;
+	z-index: 12000;
 
 	> div {
 		padding: 20px;
@@ -45,24 +45,24 @@
 	}
 
 	&.overlay-top::after {
-		bottom: -8px;
+		bottom: -7.5px;
 	}
 
 	&.overlay-bottom::before {
-		top: -8px;
+		top: -7.5px;
 	}
 }
 
-.theme-light .overlay {
-	background: $c4;
-	color: $c8;
-	box-shadow: 0 0 24px transparentize($c4, .2);
+.theme-light.overlay {
+	background: $c6;
+	color: $c9;
+	box-shadow: 0 0 24px transparentize($c6, .2);
 
 	h4 {
-		color: $c3;
+		color: $c7;
 	}
 
 	&.overlay-top::after, &.overlay-bottom::before {
-		background: $c4;
+		background: $c6;
 	}
 }

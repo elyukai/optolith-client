@@ -111,6 +111,10 @@
 		}
 	}
 
+	.track-horizontal {
+		display: none;
+	}
+
 	&.active {
 		> div {
 			> .value {

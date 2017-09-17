@@ -48,6 +48,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 	list.professions = iterate(professions, InitUtils.initProfession, rawlocale.professions);
 	const ownProfession = InitUtils.initProfession({
 		ap: 0,
+		apOfActivatables: 0,
 		chants: [],
 		combattech: [],
 		id: 'P_0',

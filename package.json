@@ -11,12 +11,13 @@
     "test": "test"
   },
   "dependencies": {
+    "@std/esm": "^0.9.2",
     "classnames": "^2.2.5",
     "electron-window-state": "^4.1.1",
     "lodash": "^4.17.4",
-    "react": "^16.0.0-rc.2",
+    "react": "^16.0.0-rc.3",
     "react-custom-scrollbars": "^4.1.2",
-    "react-dom": "^16.0.0-rc.2",
+    "react-dom": "^16.0.0-rc.3",
     "react-markdown": "^2.5.0",
     "react-portal": "^3.1.0",
     "react-progress-arc": "^1.0.7",
@@ -49,13 +50,13 @@
     "xlsx": "^0.10.9"
   },
   "scripts": {
-    "build": "node --harmony build.js",
-    "buildTest": "node --harmony build.js test",
+    "build": "node build.js",
+    "buildTest": "node build.js test",
     "bundle": "./node_modules/.bin/tsc",
-    "run": "./node_modules/.bin/electron .",
-    "bundle_l10ns": "node --harmony src/data/buildAllLocales.js",
-    "bundle_data": "node --harmony src/data/buildData.js",
-    "bundle_css": "node --harmony bundleSass.js"
+    "start": "./node_modules/.bin/electron .",
+    "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
+    "bundle_data": "node -r @std/esm src/data/buildData.mjs",
+    "bundle_css": "node -r @std/esm bundleSass.mjs"
   },
   "repository": {},
   "false": {}

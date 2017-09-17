@@ -5,6 +5,7 @@ import { HerolistContainer } from '../containers/Herolist';
 import { ProfileContainer } from '../containers/Profile';
 import { RCPContainer } from '../containers/RCP';
 import { SkillsContainer } from '../containers/Skills';
+import { WikiContainer } from '../containers/Wiki';
 import { UIMessages } from '../types/ui';
 import { About } from './about/About';
 import { AdvantagesDisadvantages } from './disadv/DisAdv';
@@ -22,6 +23,7 @@ export function Route(props: RouteProps) {
 	const VIEWS = {
 		herolist: <HerolistContainer locale={locale} />,
 		grouplist: <Grouplist />,
+		wiki: <WikiContainer locale={locale} />,
 		about: <About locale={locale} />,
 
 		rcp: <RCPContainer locale={locale} />,

@@ -5,6 +5,7 @@ import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
+import { getFlatPrerequisites } from './RequirementUtils';
 
 export function isOwnTradition(state: DependentInstancesState, obj: SpellInstance | CantripInstance): boolean {
 	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
@@ -36,7 +37,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: SpellInstanc
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e === 'object') {
 			const target = get(dependent, e.origin) as SpecialAbilityInstance;
-			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
+			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
 			if (req) {
 				const resultOfAll = (req.id as string[]).map(id => (get(dependent, id) as SpellInstance).value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;

@@ -25,8 +25,8 @@ $color16: #2b2f34;
 $color17: #7a7b76;
 
 // separator:
-$c1: #4a4a4a;
-$c1t: rgba(74, 74, 74, .3);
+$c1: #7a7a7a; // #4a4a4a
+$c1t: transparentize($c1, .86); // rgba(74, 74, 74, .3)
 // accent color:
 $c2: #826a3e;
 $c5: #5d4517;

@@ -4,6 +4,7 @@ import { AppState } from '../reducers/app';
 import { AttributeInstance, ExperienceLevel, RequirementObject, SkillOptionalDependency, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import { Attribute, AttributeWithRequirements } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { getFlatPrerequisites } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getEnergies } from './energiesSelectors';
@@ -98,7 +99,7 @@ function getMin(dependencies: (number | SkillOptionalDependency)[], specialAbili
 	return Math.max(8, ...dependencies.map(e => {
 		if (typeof e !== 'number') {
 			const target = specialAbilities.get(e.origin)!;
-			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
+			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
 			if (req) {
 				const resultOfAll = (req.id as string[]).map(id => talents.get(id)!.value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;

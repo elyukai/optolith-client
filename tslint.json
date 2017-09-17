@@ -59,7 +59,7 @@
 
 		// Maintainability
 		"eofline": true,
-		"indent": [true, "tabs"],
+		// "indent": [true, "spaces"],
 		"max-classes-per-file": [true, 1],
 		"no-default-export": true,
 		// "no-require-imports": true,
@@ -82,7 +82,7 @@
 		"one-line": [true, "check-open-brace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
 		"ordered-imports": [true],
-		"quotemark": [true, "single", "jsx-double", "avoid-escape"],
+		"quotemark": [true, "single", "jsx-double"],
 		"semicolon": [true, "always"],
 		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],
 		"whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]

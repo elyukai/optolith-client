@@ -3,6 +3,7 @@ import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance, ToListById } from '../types/data.d';
 import { isActive } from './ActivatableUtils';
+import { getFlatPrerequisites } from './RequirementUtils';
 
 export function isIncreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {
 	const { dependent } = state;
@@ -26,7 +27,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: TalentInstan
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
 			const target = get(dependent, e.origin) as SpecialAbilityInstance;
-			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
+			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
 			if (req) {
 				const resultOfAll = (req.id as string[]).map(id => (get(dependent, id) as TalentInstance).value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;

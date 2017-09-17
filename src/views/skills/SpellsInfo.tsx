@@ -124,6 +124,90 @@ export function SpellsInfo(props: SpellsInfoProps) {
 						</div>
 					</Scroll>
 				</Aside>;
+			case 3:
+				return <Aside>
+					<Scroll>
+						<div className="info spell-info">
+							<div className="spell-header info-header">
+								<p className="title">{spell.name}</p>
+							</div>
+							<p>
+								<span>{_translate(locale, 'info.check')}</span>
+								<span>{spell.check.map(e => attributes.get(e)!.short).join('/')}{spell.checkmod && ` (+${derivedCharacteristics.get(spell.checkmod)!.short})`}</span>
+							</p>
+							{spell.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${spell.effect}`} />}
+							<p>
+								<span>{_translate(locale, 'info.aecost')}</span>
+								<span>{spell.cost}</span>
+							</p>
+							<p>
+								<span>{_translate(locale, 'info.duration')}</span>
+								<span>{spell.duration}</span>
+							</p>
+							<p>
+								<span>{_translate(locale, 'info.property')}</span>
+								<span>{_translate(locale, 'spells.view.properties')[spell.property - 1]}</span>
+							</p>
+							<p className="source">
+								<span>{sortStrings(spell.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
+							</p>
+						</div>
+					</Scroll>
+				</Aside>;
+			case 4:
+				return <Aside>
+					<Scroll>
+						<div className="info spell-info">
+							<div className="spell-header info-header">
+								<p className="title">{spell.name}</p>
+							</div>
+							<p>
+								<span>{_translate(locale, 'info.check')}</span>
+								<span>{spell.check.map(e => attributes.get(e)!.short).join('/')}{spell.checkmod && ` (+${derivedCharacteristics.get(spell.checkmod)!.short})`}</span>
+							</p>
+							{spell.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${spell.effect}`} />}
+							<p className="source">
+								<span>{sortStrings(spell.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
+							</p>
+						</div>
+					</Scroll>
+				</Aside>;
+			case 5:
+				return <Aside>
+					<Scroll>
+						<div className="info spell-info">
+							<div className="spell-header info-header">
+								<p className="title">{spell.name}</p>
+							</div>
+							<p>
+								<span>{_translate(locale, 'info.check')}</span>
+								<span>{spell.check.map(e => attributes.get(e)!.short).join('/')}{spell.checkmod && ` (+${derivedCharacteristics.get(spell.checkmod)!.short})`}</span>
+							</p>
+							{spell.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${spell.effect}`} />}
+							<p className="source">
+								<span>{sortStrings(spell.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
+							</p>
+						</div>
+					</Scroll>
+				</Aside>;
+			case 6:
+				return <Aside>
+					<Scroll>
+						<div className="info spell-info">
+							<div className="spell-header info-header">
+								<p className="title">{spell.name}</p>
+							</div>
+							<p>
+								<span>{_translate(locale, 'info.check')}</span>
+								<span>{spell.check.map(e => attributes.get(e)!.short).join('/')}{spell.checkmod && ` (+${derivedCharacteristics.get(spell.checkmod)!.short})`}</span>
+							</p>
+							{spell.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${spell.effect}`} />}
+							<p className="source">
+								<span>{sortStrings(spell.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
+							</p>
+						</div>
+					</Scroll>
+				</Aside>;
 		}
 	}
 

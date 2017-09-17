@@ -2,6 +2,11 @@ import { AppState } from '../reducers/app';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
+export const getWikiFilter = (state: AppState) => state.ui.wiki.filter;
+export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
+export const getWikiCategory1 = (state: AppState) => state.ui.wiki.category1;
+export const getWikiCategory2 = (state: AppState) => state.ui.wiki.category2;
+
 export const getLocaleMessages = (state: AppState) => state.locale.messages;
 export const getLocaleId = (state: AppState) => state.locale.id;
 export const getLocaleType = (state: AppState) => state.locale.type;

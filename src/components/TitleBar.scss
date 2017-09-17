@@ -40,3 +40,7 @@
 		background: #e81123;
 	}
 }
+
+.theme-light .titlebar-btn:not(.close):hover {
+	color: $c7;
+}

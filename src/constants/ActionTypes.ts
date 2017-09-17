@@ -82,6 +82,15 @@ export type LOAD_HERO = 'LOAD_HERO';
 export const DUPLICATE_HERO = 'DUPLICATE_HERO';
 export type DUPLICATE_HERO = 'DUPLICATE_HERO';
 
+export type SET_WIKI_FILTER = 'SET_WIKI_FILTER';
+export const SET_WIKI_FILTER = 'SET_WIKI_FILTER';
+export type SET_WIKI_FILTER_ALL = 'SET_WIKI_FILTER_ALL';
+export const SET_WIKI_FILTER_ALL = 'SET_WIKI_FILTER_ALL';
+export type SET_WIKI_CATEGORY_1 = 'SET_WIKI_CATEGORY_1';
+export const SET_WIKI_CATEGORY_1 = 'SET_WIKI_CATEGORY_1';
+export type SET_WIKI_CATEGORY_2 = 'SET_WIKI_CATEGORY_2';
+export const SET_WIKI_CATEGORY_2 = 'SET_WIKI_CATEGORY_2';
+
 export type UNDO = 'UNDO';
 export const UNDO = 'UNDO';
 export type REDO = 'REDO';

@@ -272,6 +272,7 @@ export interface ProfessionInstance {
 	readonly name: string | ProfessionNameForSexes;
 	readonly subname?: string | ProfessionNameForSexes;
 	readonly ap: number;
+	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
@@ -466,7 +467,7 @@ interface ActivatableInstanceBaseInInit {
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly reqs: ('RCP' | Reusable.AllRequirementTypes)[];
+	readonly reqs: ('RCP' | Reusable.AllRequirementTypes)[] | Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>;
 	readonly tiers?: number;
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];

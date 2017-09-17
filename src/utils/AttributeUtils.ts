@@ -7,6 +7,7 @@ import { getStart } from '../selectors/elSelectors';
 import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
+import { getFlatPrerequisites } from './RequirementUtils';
 
 export function getSum(list: AttributeInstance[]): number {
 	return list.reduce((n, e) => n + e.value, 0);
@@ -31,7 +32,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: AttributeIns
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
 			const target = get(state.dependent, e.origin) as SpecialAbilityInstance;
-			const req = target.reqs.find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
+			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequirementObject | undefined;
 			if (req) {
 				const resultOfAll = (req.id as string[]).map(id => (get(state.dependent, id) as TalentInstance).value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
