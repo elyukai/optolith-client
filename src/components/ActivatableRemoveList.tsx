@@ -23,7 +23,7 @@ export interface ActivatableRemoveListProps {
 export function ActivatableRemoveList(props: ActivatableRemoveListProps) {
 	const { filterText = '', groupNames, hideGroup, list, locale, phase, rating, removeFromList, setTier, showRating, sortOrder = 'name' } = props;
 
-	const sortedList = filterAndSortObjects(list, locale.id, filterText, sortOrder === 'group' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
+	const sortedList = filterAndSortObjects(list, locale.id, filterText, sortOrder === 'groupname' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
 
 	return (
 		<Scroll>

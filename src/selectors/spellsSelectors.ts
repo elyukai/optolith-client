@@ -21,7 +21,7 @@ export const areMaxUnfamiliar = createSelector(
 	getPhase,
 	getSpells,
 	getElState,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	(phase, spells, el, tradition) => {
 		if (phase > 2) {
 			return false;
@@ -55,7 +55,7 @@ export const getAllForView = createSelector(
 	getCantrips,
 	areMaxUnfamiliar,
 	getPresent,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	mapGetToSlice(getAdvantages, 'ADV_58'),
 	mapGetToSlice(getDisadvantages, 'DISADV_59'),
 	(spells, cantrips, areMaxUnfamiliar, currentHero, tradition) => {
@@ -115,7 +115,7 @@ export const isActivationDisabled = createSelector(
 	getStartEl,
 	getPhase,
 	getActiveSpellsNumber,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	mapGetToSlice(getAdvantages, 'ADV_58'),
 	mapGetToSlice(getDisadvantages, 'DISADV_59'),
 	(startEl, phase, activeSpells, tradition, bonusEntry, penaltyEntry) => {
@@ -153,7 +153,7 @@ export const getCantripsForSheet = createSelector(
 
 export const getSpellsForSheet = createSelector(
 	getSpellsState,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	(spells, traditionSA) => {
 		const array: Spell[] = [];
 		for (const [id, entry] of spells) {

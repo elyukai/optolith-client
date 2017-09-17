@@ -135,7 +135,7 @@ export function dependentInstances(state = initialState, action: Action) {
               newstate = mergeIntoState(newstate, addDependencies(firstState, entry.reqs as Data.AllRequirements[], entry.id, p.sid as string));
             });
             break;
-          case 'SA_10': {
+          case 'SA_9': {
             const counter = new Map<string, number>();
             active.forEach(p => {
               if (typeof p.sid === 'string') {

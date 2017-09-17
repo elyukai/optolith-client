@@ -233,7 +233,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		let buyScriptElement;
 
 		if (currentCulture.scripts.length > 0) {
-			const selectionItem = getSelectionItem(specialAbilities.get('SA_28')!, currentCulture.scripts[0]);
+			const selectionItem = getSelectionItem(specialAbilities.get('SA_27')!, currentCulture.scripts[0]);
 			buyScriptElement = (
 				<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
 					{_translate(locale, 'rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
@@ -248,18 +248,18 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			const active = langLitc;
 			const { value } = professionSelections.get('LANGUAGES_SCRIPTS') as LanguagesScriptsSelection;
 
-			const SA_28 = specialAbilities.get('SA_28')!;
-			const SA_30 = specialAbilities.get('SA_30')!;
+			const SA_27 = specialAbilities.get('SA_27')!;
+			const SA_29 = specialAbilities.get('SA_29')!;
 
 			let scripts: ScriptsSelectionListItem[] = [];
 			let languages: LanguagesSelectionListItem[] = [];
 
-			const scriptsList = SA_28.sel!;
-			const languagesList = SA_30.sel!;
+			const scriptsList = SA_27.sel!;
+			const languagesList = SA_29.sel!;
 
 			scriptsList.forEach(e => {
 				const { id } = e;
-				const obj = getSelectionItem(SA_28, id);
+				const obj = getSelectionItem(SA_27, id);
 				if (typeof obj === 'object') {
 					const { name, cost } = obj;
 					if (typeof cost === 'number') {
@@ -271,7 +271,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 
 			languagesList.forEach(e => {
 				const { id } = e;
-				const obj = getSelectionItem(SA_30, id);
+				const obj = getSelectionItem(SA_29, id);
 				if (typeof obj === 'object') {
 					const { name } = obj;
 					const native = (selectLang === false && id === currentCulture.languages[0]) || id === lang;
@@ -449,7 +449,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 								value={lang}
 								onChange={this.changeLang}
 								options={currentCulture.languages.map(e => {
-									const lang = getSelectionItem(specialAbilities.get('SA_30')!, e);
+									const lang = getSelectionItem(specialAbilities.get('SA_29')!, e);
 									return { id: e, name: `${lang && lang.name}` };
 								})}
 								disabled={langLitc.size > 0} />
@@ -463,7 +463,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 								value={litc}
 								onChange={this.changeLitc}
 								options={currentCulture.scripts.map(e => {
-									const lit = getSelectionItem(specialAbilities.get('SA_28')!, e);
+									const lit = getSelectionItem(specialAbilities.get('SA_27')!, e);
 									return { id: e, name: `${lit && lit.name} (${lit && lit.cost} AP)` };
 								})}
 								disabled={!buyLiteracy || langLitc.size > 0} />

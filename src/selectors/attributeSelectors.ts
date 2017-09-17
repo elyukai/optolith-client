@@ -115,7 +115,7 @@ export function getMaxAttributeValueByID(attributes: Map<string, AttributeInstan
 }
 
 export const getPrimaryMagicalAttributeForSheet = createSelector(
-	[ mapGetToSlice(getSpecialAbilities, 'SA_86'), getAttributes ],
+	[ mapGetToSlice(getSpecialAbilities, 'SA_70'), getAttributes ],
 	(tradition, attributes) => {
 		const id = getPrimaryAttributeId(tradition!);
 		return (id && attributes.get(id)!.short)!;
@@ -123,7 +123,7 @@ export const getPrimaryMagicalAttributeForSheet = createSelector(
 );
 
 export const getPrimaryMagicalAttribute = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	getAttributes,
 	(tradition, attributes) => {
 		return tradition && ActivatableUtils.getSids(tradition).reduce<AttributeInstance | undefined>((highestAttribute, sid) => {
@@ -153,7 +153,7 @@ export const getPrimaryMagicalAttribute = createSelector(
 );
 
 export const getPrimaryBlessedAttribute = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_102'),
+	mapGetToSlice(getSpecialAbilities, 'SA_86'),
 	getAttributes,
 	(tradition, attributes) => {
 		if (tradition) {
@@ -182,9 +182,9 @@ export function getPrimaryAttributeId(specialAbilitiesState: Map<string, Special
 export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance): string | undefined;
 export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance | Map<string, SpecialAbilityInstance>, type?: 1 | 2): string | undefined {
 	const isInstance = (obj: SpecialAbilityInstance | Map<string, SpecialAbilityInstance>): obj is SpecialAbilityInstance => obj.hasOwnProperty('category');
-	const tradition = isInstance(traditionInstance) ? traditionInstance : traditionInstance.get(type === 1 ? 'SA_86' : 'SA_102')!;
+	const tradition = isInstance(traditionInstance) ? traditionInstance : traditionInstance.get(type === 1 ? 'SA_70' : 'SA_86')!;
 	const sid = last(ActivatableUtils.getSids(tradition));
-	if (tradition.id === 'SA_86') {
+	if (tradition.id === 'SA_70') {
 		switch (sid) {
 			case 1:
 			case 4:
@@ -199,7 +199,7 @@ export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance 
 				return 'ATTR_4';
 		}
 	}
-	else if (tradition.id === 'SA_102') {
+	else if (tradition.id === 'SA_86') {
 		switch (sid) {
 			case 2:
 			case 3:

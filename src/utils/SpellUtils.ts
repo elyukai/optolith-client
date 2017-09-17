@@ -8,7 +8,7 @@ import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
 
 export function isOwnTradition(state: DependentInstancesState, obj: SpellInstance | CantripInstance): boolean {
-	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
+	const SA = get(state, 'SA_70') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
 
@@ -25,7 +25,7 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: SpellInstanc
 		max = Math.max(...checkValues) + 2;
 	}
 
-	if (!getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
+	if (!getSids(get(dependent, 'SA_72') as SpecialAbilityInstance).includes(obj.property)) {
 		max = Math.min(14, max);
 	}
 
@@ -49,7 +49,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: SpellInstanc
 
 	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
 
-	if (getSids(get(dependent, 'SA_88') as SpecialAbilityInstance).includes(obj.property)) {
+	if (getSids(get(dependent, 'SA_72') as SpecialAbilityInstance).includes(obj.property)) {
 		const counter = getPropertyCounter(dependent.spells);
 		const countedWithProperty = counter.get(obj.property);
 		return (obj.value !== 10 || typeof countedWithProperty === 'number' && countedWithProperty > 3) && valid;

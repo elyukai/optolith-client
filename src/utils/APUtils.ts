@@ -46,7 +46,7 @@ export function validateDisAdvantages(cost: number, ap: AdventurePointsState, st
 export function getAdvantagesDisadvantagesSubMax(state: DependentInstancesState, index: number): number {
 	let max = 50;
 	if (index === 1) {
-		const traditionActive = last((get(state, 'SA_86') as SpecialAbilityInstance).active);
+		const traditionActive = last((get(state, 'SA_70') as SpecialAbilityInstance).active);
 		if (traditionActive && typeof traditionActive.sid === 'number' && traditionActive.sid >= 6 && traditionActive.sid <= 9) {
 			max = 25;
 		}

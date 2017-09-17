@@ -163,7 +163,7 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_10': {
+              case 'SA_9': {
                 const counter = (get(dependent, id) as Data.SpecialAbilityInstance).active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
                 const skill = get(dependent, sid as string) as Data.TalentInstance;
                 let name;
@@ -181,11 +181,11 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 add = `${skill.name}: ${name}`;
                 break;
               }
-              case 'SA_30':
+              case 'SA_29':
                 tiers = 3;
                 add = getSelectionName(a, sid);
                 break;
-              case 'SA_86': {
+              case 'SA_70': {
                 if ((getAllByCategory(dependent, Categories.SPELLS) as Data.SpellInstance[]).some(e => e.active)) {
                   disabled = true;
                 }
@@ -214,13 +214,13 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_88': {
+              case 'SA_72': {
                 const apArr = [10, 20, 40];
                 currentCost = apArr[active.length - 1];
                 add = getSelectionName(a, sid);
                 break;
               }
-              case 'SA_102': {
+              case 'SA_86': {
                 if ((getAllByCategory(dependent, Categories.LITURGIES) as Data.LiturgyInstance[]).some(e => e.active)) {
                   disabled = true;
                 }
@@ -229,25 +229,25 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 currentCost = selectionItem && selectionItem.cost as number;
                 break;
               }
-              case 'SA_103': {
+              case 'SA_87': {
                 const apArr = [15, 25, 45];
                 currentCost = apArr[active.length - 1];
                 add = getSelectionName(a, sid);
                 break;
               }
-              case 'SA_252': {
+              case 'SA_231': {
                 const { name, ic } = get(dependent, sid as string) as Data.SpellInstance;
                 add = name;
                 currentCost = (cost as number[])[ic - 1];
                 break;
               }
-              case 'SA_273': {
+              case 'SA_250': {
                 const { name, ic } = get(dependent, sid as string) as Data.SpellInstance;
                 add = name;
                 currentCost = (cost as number[])[ic - 1];
                 break;
               }
-              case 'SA_484': {
+              case 'SA_414': {
                 const selectionItem = getSelectionItem(a, sid) as (Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }) | undefined;
                 add = selectionItem && `${(get(dependent, selectionItem.target) as Data.SpellInstance).name}: ${selectionItem.name}`;
                 currentCost = selectionItem && selectionItem.cost;
@@ -340,7 +340,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
               case 'ADV_4':
               case 'ADV_17':
               case 'ADV_47':
-              case 'SA_273': {
+              case 'SA_250': {
                 const activeIds = getSids(a);
                 const sel = a.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(a).includes(e.id));
                 if (a.category === Categories.SPECIAL_ABILITIES) {
@@ -428,14 +428,14 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_18': {
+              case 'SA_17': {
                 const sum = (get(dependent, 'TAL_51') as Data.TalentInstance).value + (get(dependent, 'TAL_55') as Data.TalentInstance).value;
                 if (sum >= 12) {
                   finalEntries.push({ id, name, cost, gr, instance: entry });
                 }
                 break;
               }
-              case 'SA_19':
+              case 'SA_18':
                 if ((getAllByCategoryGroup(dependent, Categories.COMBAT_TECHNIQUES, 2) as Data.CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
                   finalEntries.push({ id, name, cost, gr, instance: entry });
                 }
@@ -448,7 +448,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_10': {
+              case 'SA_9': {
                 const counter = getSecondSidMap(a);
                 type Sel = Array<Data.SelectionObject & { applications?: Data.Application[]; applicationsInput?: string }>;
                 const filtered = (a.sel as Sel).filter(e => {
@@ -479,7 +479,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_29': {
+              case 'SA_28': {
                 type Sel = Array<Data.SelectionObject & { talent: [string, number]; }>;
                 const activeIds = getSids(a);
                 const sel = (a.sel as Sel).filter(e => {
@@ -495,14 +495,14 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_30': {
+              case 'SA_29': {
                 const sel = sortObjects(a.sel!.filter(e => active.every(n => n.sid !== e.id) && !getDSids(a).includes(e.id)), locale.id);
                 if (sel.length > 0) {
                   finalEntries.push({ id, name, sel, cost, tiers: 3, gr, instance: entry });
                 }
                 break;
               }
-              case 'SA_86': {
+              case 'SA_70': {
                 const { adv, disadv } = ap;
                 const sel = a.sel && sortObjects(a.sel.filter(e => e.id < 6 && e.id > 9 || adv[1] <= 25 && disadv[1] <= 25), locale.id);
                 if (Array.isArray(sel) && sel.length > 0) {
@@ -510,7 +510,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_88': {
+              case 'SA_72': {
                 const spellsAbove10 = [...dependent.spells.values()].filter(e => e.value >= 10);
                 const counter = spellsAbove10.reduce((map, obj) => {
                   const property = obj.property;
@@ -534,15 +534,15 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_97': {
+              case 'SA_81': {
                 const activeIds = getSids(a);
-                const sel = sortObjects(a.sel!.filter(e => getSids(get(dependent, 'SA_88') as Data.SpecialAbilityInstance).includes(e.id) && !activeIds.includes(e.id)), locale.id);
+                const sel = sortObjects(a.sel!.filter(e => getSids(get(dependent, 'SA_72') as Data.SpecialAbilityInstance).includes(e.id) && !activeIds.includes(e.id)), locale.id);
                 if (sel.length > 0) {
                   finalEntries.push({ id, name, sel, cost, gr, instance: entry });
                 }
                 break;
               }
-              case 'SA_103': {
+              case 'SA_87': {
                 const liturgiesAbove10 = [...dependent.liturgies.values()].filter(e => e.value >= 10);
                 const counter = liturgiesAbove10.reduce((map, obj) => {
                   obj.aspects.forEach(e => {
@@ -556,7 +556,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                   return map;
                 }, new Map<number, number>());
                 const activeIds = getSids(a);
-                const activeTradition = last(getSids(get(dependent, 'SA_102') as Data.SpecialAbilityInstance));
+                const activeTradition = last(getSids(get(dependent, 'SA_86') as Data.SpecialAbilityInstance));
                 const sel = sortObjects(a.sel!.filter(e => getTraditionOfAspect(e.id as number) === activeTradition && counter.get(e.id as number)! >= 3 && !activeIds.includes(e.id) && !getDSids(a).includes(e.id)), locale.id);
                 if (sel.length > 0) {
                   const apArr = [15, 25, 45];
@@ -565,7 +565,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_252': {
+              case 'SA_231': {
                 const activeIds = getSids(a);
                 const sel = a.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(a).includes(e.id) && (get(dependent, id) as Data.SpellInstance).value >= 10);
                 if (sel.length > 0) {
@@ -573,7 +573,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_368': {
+              case 'SA_338': {
                 type EnhancedSelectionObject = Data.SelectionObject & { gr: number; tier: number; };
                 let sel = a.sel as EnhancedSelectionObject[];
                 if (isActive(a)) {
@@ -589,7 +589,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_484': {
+              case 'SA_414': {
                 const activeIds = getSids(a);
                 const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[], target: string; tier: number; }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(a).includes(e.id) && (get(dependent, e.target) as Data.SpellInstance).value > e.tier * 4 + 4).map(e => {
                   const { name, target, ...other } = e;
@@ -738,22 +738,22 @@ export const getFatePointsModifier = createSelector(
 );
 
 export const getMagicalTraditionForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_86') ],
+  [ mapGetToSlice(getSpecialAbilities, 'SA_70') ],
   tradition =>  getSelectionName(tradition!, last(getSids(tradition!)))!
 );
 
 export const getPropertyKnowledgesForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_88') ],
+  [ mapGetToSlice(getSpecialAbilities, 'SA_72') ],
   propertyKnowledge => getSids(propertyKnowledge!).map(e => getSelectionName(propertyKnowledge!, e)!)
 );
 
 export const getBlessedTraditionForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_102') ],
+  [ mapGetToSlice(getSpecialAbilities, 'SA_86') ],
   tradition =>  getSelectionName(tradition!, last(getSids(tradition!)))!
 );
 
 export const getAspectKnowledgesForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_103') ],
+  [ mapGetToSlice(getSpecialAbilities, 'SA_87') ],
   aspectKnowledge => getSids(aspectKnowledge!).map(e => getSelectionName(aspectKnowledge!, e)!)
 );
 

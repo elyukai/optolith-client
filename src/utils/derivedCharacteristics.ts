@@ -48,7 +48,7 @@ export const getLP = createSelector(
 );
 
 export const getAE = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	getPrimaryMagicalAttribute,
 	getPermanentArcaneEnergyPoints,
 	mapGetToSlice(getAdvantages, 'ADV_23'),
@@ -210,21 +210,13 @@ export const getTOU = createSelector(
 
 export const getDO = createSelector(
 	mapGetToSlice(getAttributes, 'ATTR_6'),
-	mapGetToSlice(getSpecialAbilities, 'SA_76'),
-	mapGetToSlice(getSpecialAbilities, 'SA_77'),
-	mapGetToSlice(getSpecialAbilities, 'SA_78'),
+	mapGetToSlice(getSpecialAbilities, 'SA_64'),
 	getLocaleMessages,
-	(AGI, improvedDodge1, improvedDodge2, improvedDodge3, locale) => {
+	(AGI, improvedDodge, locale) => {
 		const base = AGI && Math.round(AGI.value / 2) || 0;
 		let mod = 0;
-		if (isActive(improvedDodge3)) {
-			mod += 3;
-		}
-		else if (isActive(improvedDodge2)) {
-			mod += 2;
-		}
-		else if (isActive(improvedDodge1)) {
-			mod += 1;
+		if (isActive(improvedDodge)) {
+			mod += improvedDodge && improvedDodge.active[0].tier || 0;
 		}
 		const value = base + mod;
 		return {
@@ -242,21 +234,13 @@ export const getDO = createSelector(
 export const getINI = createSelector(
 	mapGetToSlice(getAttributes, 'ATTR_1'),
 	mapGetToSlice(getAttributes, 'ATTR_6'),
-	mapGetToSlice(getSpecialAbilities, 'SA_56'),
-	mapGetToSlice(getSpecialAbilities, 'SA_57'),
-	mapGetToSlice(getSpecialAbilities, 'SA_58'),
+	mapGetToSlice(getSpecialAbilities, 'SA_51'),
 	getLocaleMessages,
-	(COU, AGI, combatReflexes1, combatReflexes2, combatReflexes3, locale) => {
+	(COU, AGI, combatReflexes, locale) => {
 		const base = COU && AGI && Math.round((COU.value + AGI.value) / 2) || 0;
 		let mod = 0;
-		if (isActive(combatReflexes3)) {
-			mod += 3;
-		}
-		else if (isActive(combatReflexes2)) {
-			mod += 2;
-		}
-		else if (isActive(combatReflexes1)) {
-			mod += 1;
+		if (isActive(combatReflexes)) {
+			mod += combatReflexes && combatReflexes.active[0].tier || 0;
 		}
 		const value = base + mod;
 		return {

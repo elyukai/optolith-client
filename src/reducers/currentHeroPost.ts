@@ -129,7 +129,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         const talentId = (action.payload.map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
         if (Array.isArray(talentId)) {
           activatable.add({
-            id: 'SA_10',
+            id: 'SA_9',
             active: true,
             sid: action.payload.specTalentId,
             sid2: action.payload.spec,
@@ -137,7 +137,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         }
         else {
           activatable.add({
-            id: 'SA_10',
+            id: 'SA_9',
             active: true,
             sid: talentId,
             sid2: action.payload.spec,
@@ -218,15 +218,15 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         let obj;
         const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
         switch (id) {
-          case 'SA_10':
+          case 'SA_9':
             obj = {...entry, active: [...entry.active, { sid: sid as string, sid2 }]};
             add.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
             break;
-          case 'SA_97':
+          case 'SA_81':
             obj = {...entry, active: [...entry.active, { sid: sid as string }]};
-            add.push({ id: 'SA_88', active: true, sid: sid as string });
+            add.push({ id: 'SA_72', active: true, sid: sid as string });
             break;
-          case 'SA_484': {
+          case 'SA_414': {
             obj = {...entry, active: [...entry.active, { sid: sid as string }]};
             const selectionItem = getSelectionItem(obj, sid as string) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
             add.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
@@ -246,16 +246,16 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         }
       }
 
-      const SA_28 = getLatest(dependent, newlist, 'SA_28') as Data.SpecialAbilityInstance;
-      const SA_30 = getLatest(dependent, newlist, 'SA_30') as Data.SpecialAbilityInstance;
+      const SA_27 = getLatest(dependent, newlist, 'SA_27') as Data.SpecialAbilityInstance;
+      const SA_29 = getLatest(dependent, newlist, 'SA_29') as Data.SpecialAbilityInstance;
 
-      newlist = setNewStateItem(newlist, 'SA_28', {
-        ...SA_28,
-        active: [ ...SA_28.active, ...Array.from(scripts.values(), sid => ({ sid }))]
+      newlist = setNewStateItem(newlist, 'SA_27', {
+        ...SA_27,
+        active: [ ...SA_27.active, ...Array.from(scripts.values(), sid => ({ sid }))]
       });
-      newlist = setNewStateItem(newlist, 'SA_30', {
-        ...SA_30,
-        active: [ ...SA_30.active, ...Array.from(languages.entries(), ([sid, tier]) => ({ sid, tier }))]
+      newlist = setNewStateItem(newlist, 'SA_29', {
+        ...SA_29,
+        active: [ ...SA_29.active, ...Array.from(languages.entries(), ([sid, tier]) => ({ sid, tier }))]
       });
 
       let fulllist = mergeIntoState(dependent, newlist);
@@ -275,7 +275,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
         if (action.payload.buyLiteracy) {
           const id = culture.scripts.length > 1 ? action.payload.litc : culture.scripts[0];
-          const selectionItem = getSelectionItem(get(fulllist, 'SA_28') as Data.SpecialAbilityInstance, id);
+          const selectionItem = getSelectionItem(get(fulllist, 'SA_27') as Data.SpecialAbilityInstance, id);
           ap.spent += selectionItem && selectionItem.cost || 0;
         }
 
@@ -391,7 +391,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             professionName = 'Eigene Profession';
           }
 
-          if (isActive(get(fulllist, 'SA_92') as Data.SpecialAbilityInstance)) {
+          if (isActive(get(fulllist, 'SA_76') as Data.SpecialAbilityInstance)) {
             permanentArcaneEnergyLoss += 2;
           }
         }

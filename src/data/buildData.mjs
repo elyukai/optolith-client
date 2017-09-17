@@ -249,7 +249,7 @@ function iterateActivatables(array, type) {
         return ee[2] ? { id, name: ee[1], cost: Number.parseInt(ee[2]) } : ee[1] ? { id, name: ee[1] } : { id };
       });
     }
-    else if (['SA_3', 'SA_28', 'SA_29', 'SA_30', 'SA_368', 'SA_484'].includes(newObj.id)) {
+    else if (['SA_3', 'SA_27', 'SA_28', 'SA_29', 'SA_338', 'SA_414'].includes(newObj.id)) {
       newObj.sel = true;
     }
     newObj.req = convertRequirements(obj.req);
@@ -525,11 +525,11 @@ const items = iterateEquipment(csvToArray(allWorksheets.get('EQUIPMENT')));
 disadvantages.DISADV_34.sel = principles;
 disadvantages.DISADV_50.sel = obligations;
 specialabilities.SA_3.sel = tradeSecrets;
-specialabilities.SA_28.sel = scripts;
-specialabilities.SA_29.sel = writing;
-specialabilities.SA_30.sel = languages;
-specialabilities.SA_368.sel = animalTransformation;
-specialabilities.SA_484.sel = spellExtensions;
+specialabilities.SA_27.sel = scripts;
+specialabilities.SA_28.sel = writing;
+specialabilities.SA_29.sel = languages;
+specialabilities.SA_338.sel = animalTransformation;
+specialabilities.SA_414.sel = spellExtensions;
 
 const result = {
   books,

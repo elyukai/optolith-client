@@ -43,7 +43,7 @@ export function ActivatableAddList(props: ActivatableAddListProps) {
 		}));
 	}
 
-	const sortedList = filterAndSortObjects(combinedList, locale.id, filterText, sortOrder === 'group' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
+	const sortedList = filterAndSortObjects(combinedList, locale.id, filterText, sortOrder === 'groupname' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
 
 	return (
 		<Scroll>
@@ -52,7 +52,7 @@ export function ActivatableAddList(props: ActivatableAddListProps) {
 					if (item.active === true) {
 						const name = getFullName(item);
 						return (
-							<ListItem key={name} disabled>
+							<ListItem key={`${item.id}_${item.index}`} disabled>
 								<ListItemName name={name} />
 							</ListItem>
 						);

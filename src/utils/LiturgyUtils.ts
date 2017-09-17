@@ -6,7 +6,7 @@ import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance
 import { getSids } from './ActivatableUtils';
 
 export function isOwnTradition(state: DependentInstancesState, obj: LiturgyInstance | BlessingInstance): boolean {
-	const SA = get(state, 'SA_102') as SpecialAbilityInstance;
+	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
 	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
 }
 
@@ -23,8 +23,8 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 		max = Math.max(...checkValues) + 2;
 	}
 
-	const tradition = get(dependent, 'SA_102') as SpecialAbilityInstance;
-	const aspectKnowledge = get(dependent, 'SA_103') as SpecialAbilityInstance;
+	const tradition = get(dependent, 'SA_86') as SpecialAbilityInstance;
+	const aspectKnowledge = get(dependent, 'SA_87') as SpecialAbilityInstance;
 	if (!getSids(aspectKnowledge).some(e => obj.aspects.includes(e as number)) && !getSids(tradition).includes(13)) {
 		max = Math.min(14, max);
 	}
@@ -34,7 +34,7 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 
 export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
 	const { dependent } = state;
-	const activeAspectKnowledge = getSids(get(dependent, 'SA_103') as SpecialAbilityInstance);
+	const activeAspectKnowledge = getSids(get(dependent, 'SA_87') as SpecialAbilityInstance);
 	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {
 		const counter = getAspectCounter(dependent.liturgies);
 		const countedLowestWithProperty = obj.aspects.reduce((n, aspect) => {

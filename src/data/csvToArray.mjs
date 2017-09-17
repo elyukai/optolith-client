@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 export function csvToArray(csv) {
 	const lines = csv.split(/\r?\n/);
 	const splittedLines = lines.map(e => e.split(/;;/));
@@ -7,7 +9,7 @@ export function csvToArray(csv) {
 	if (splittedLines[splittedLines.length - 1].length === 1) {
 		splittedLines.pop();
 	}
-	const columnTypes = new Map(header.map((e, i) => [e, splittedLines.every(l => /^-?[\d.,]*$/.test(l[i]))]));
+	const columnTypes = new Map(header.map((e, i) => [e, splittedLines.every(line => /^-?[\d.,]*$/.test(line[i]))]));
 	const final = splittedLines.map(l => {
 		const newObj = {};
 		l.forEach((c, i) => {

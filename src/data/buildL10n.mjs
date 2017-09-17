@@ -262,7 +262,7 @@ export function buildL10n(locale) {
 	const languages = iterateSpecialAbilitiesLanguagesL10n(csvToArray(allWorksheets.get('Languages')));
 	if (locale === 'de-DE') {
 		const spellExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('SpellX')));
-		specialabilities.SA_484.sel = spellExtensions;
+		specialabilities.SA_414.sel = spellExtensions;
 	}
 	const attributes = iterateAttributesL10n(csvToArray(allWorksheets.get('ATTRIBUTES')));
 	const talents = iterateSkillsL10n(csvToArray(allWorksheets.get('SKILLS')));
@@ -275,8 +275,8 @@ export function buildL10n(locale) {
 	const ui = JSON.parse(fs.readFileSync(`src/locales/ui.${locale}.json`, 'utf8'));
 
 	specialabilities.SA_3.sel = tradeSecrets;
-	specialabilities.SA_28.sel = scripts;
-	specialabilities.SA_30.sel = languages;
+	specialabilities.SA_27.sel = scripts;
+	specialabilities.SA_29.sel = languages;
 
 	const result = {
 		books,

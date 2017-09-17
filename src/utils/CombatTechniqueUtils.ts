@@ -39,9 +39,9 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: CombatTechni
 }
 
 export function isDecreasable(state: CurrentHeroInstanceState, obj: CombatTechniqueInstance): boolean {
-	const SA_19_REQ = (get(state.dependent, 'SA_19') as SpecialAbilityInstance).active.length > 0 && (getAllByCategoryGroup(state.dependent, obj.category, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length === 1;
+	const SA_18_REQ = (get(state.dependent, 'SA_18') as SpecialAbilityInstance).active.length > 0 && (getAllByCategoryGroup(state.dependent, obj.category, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length === 1;
 
-	return (SA_19_REQ && obj.value > 10 && obj.gr === 2) || obj.value > Math.max(6, ...(obj.dependencies));
+	return (SA_18_REQ && obj.value > 10 && obj.gr === 2) || obj.value > Math.max(6, ...(obj.dependencies));
 }
 
 export function reset(obj: CombatTechniqueInstance): CombatTechniqueInstance {

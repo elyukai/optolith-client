@@ -22,14 +22,14 @@ function findTier(name: string) {
 }
 
 export function ActivatableTextList(props: Props) {
-	const listToString = props.list.filter(obj => typeof obj === 'string' || !['SA_28', 'SA_30'].includes(obj.id)).map(obj => {
+	const listToString = props.list.filter(obj => typeof obj === 'string' || !['SA_27', 'SA_29'].includes(obj.id)).map(obj => {
 		if (typeof obj === 'string') {
 			return obj;
 		}
 		const { tiers, id, tier } = obj;
 		let { name } = obj;
 		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
-			if (id === 'SA_30' && tier === 4) {
+			if (id === 'SA_29' && tier === 4) {
 				name += ` MS`;
 			}
 			else {

@@ -80,7 +80,7 @@ export function convertId<T extends string | undefined>(id: T): T {
 
 export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 2) {
 	if (type === 1) {
-		const tradition = state.specialAbilities.get('SA_86')!;
+		const tradition = state.specialAbilities.get('SA_70')!;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 1:
 			case 4:
@@ -96,7 +96,7 @@ export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 
 		}
 	}
 	else if (type === 2) {
-		const tradition = state.specialAbilities.get('SA_102')!;
+		const tradition = state.specialAbilities.get('SA_86')!;
 		switch (last(ActivatableUtils.getSids(tradition))) {
 			case 2:
 			case 3:

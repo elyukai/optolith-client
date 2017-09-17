@@ -8,8 +8,8 @@ import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '.
 function mapStateToProps(state: AppState) {
 	const dependent = getDependent(state);
 	return {
-		showChants: isActive(get(dependent, 'SA_102') as SpecialAbilityInstance),
-		showSpells: isActive(get(dependent, 'SA_86') as SpecialAbilityInstance) && getSids(get(dependent, 'SA_86') as SpecialAbilityInstance)[0] !== 9,
+		showChants: isActive(get(dependent, 'SA_86') as SpecialAbilityInstance),
+		showSpells: isActive(get(dependent, 'SA_70') as SpecialAbilityInstance) && getSids(get(dependent, 'SA_70') as SpecialAbilityInstance)[0] !== 9,
 	};
 }
 

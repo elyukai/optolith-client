@@ -22,7 +22,7 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: TalentInstan
 
 export function isDecreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {
 	const { dependent } = state;
-	const SA_18_REQ = isActive(get(dependent, 'SA_18') as SpecialAbilityInstance) && (get(dependent, 'TAL_51') as TalentInstance).value + (get(dependent, 'TAL_55') as TalentInstance).value < 12;
+	const SA_17_REQ = isActive(get(dependent, 'SA_17') as SpecialAbilityInstance) && (get(dependent, 'TAL_51') as TalentInstance).value + (get(dependent, 'TAL_55') as TalentInstance).value < 12;
 
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e !== 'number') {
@@ -37,7 +37,7 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: TalentInstan
 		return e;
 	});
 
-	return (['TAL_51', 'TAL_55'].includes(obj.id) && SA_18_REQ) || obj.value > Math.max(0, ...dependencies);
+	return (['TAL_51', 'TAL_55'].includes(obj.id) && SA_17_REQ) || obj.value > Math.max(0, ...dependencies);
 }
 
 export function isTyp(rating: ToListById<string>, obj: TalentInstance): boolean {

@@ -117,20 +117,20 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 	}
 
 	for (const [id, obj] of list.specialAbilities as Map<string, SpecialAbilityInstanceInInit>) {
-		if (['SA_252', 'SA_273'].includes(id) && obj.sel) {
+		if (['SA_231', 'SA_250'].includes(id) && obj.sel) {
 			obj.sel = getSelectionCategories(obj.sel);
 		}
-		else if (id === 'SA_282' && obj.sel) {
+		else if (id === 'SA_258' && obj.sel) {
 			obj.sel = getSelectionCategories(obj.sel);
 		}
-		else if (id === 'SA_72') {
+		else if (id === 'SA_60') {
 			type SpecialAbility72Selection = Array<{ id: number; name: string; cost: number; }>;
 			obj.sel = (obj.sel as SpecialAbility72Selection).map(e => {
 				const entry = list.combatTechniques.get(e.name);
 				return { ...e, name: entry ? entry.name as string : '...' };
 			});
 		}
-		else if (id === 'SA_10') {
+		else if (id === 'SA_9') {
 			obj.sel = [...list.talents.values()].map(talent => {
 				const { id, name, ic, applications, applicationsInput } = talent;
 				return {

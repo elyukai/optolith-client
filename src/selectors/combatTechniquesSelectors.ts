@@ -48,7 +48,7 @@ export const getForSheet = createSelector(
 export const getAllCombatTechniques = createSelector(
 	getCombatTechniques,
 	getAttributes,
-	mapGetToSlice(getSpecialAbilities, 'SA_19'),
+	mapGetToSlice(getSpecialAbilities, 'SA_18'),
 	mapGetToSlice(getAdvantages, 'ADV_17'),
 	getPhase,
 	getStartEl,
@@ -99,11 +99,11 @@ function getMax(exceptionalCombatTechnique: AdvantageInstance | undefined, start
 }
 
 function getMin(hunter: SpecialAbilityInstance | undefined, combatTechniques: Map<string, CombatTechniqueInstance>, obj: CombatTechniqueInstance): number {
-	const SA_19_REQ = !!hunter && hunter.active.length > 0 && !![...combatTechniques.values()].find(e => e.gr === 2 && e.value >= 10);
+	const SA_18_REQ = !!hunter && hunter.active.length > 0 && !![...combatTechniques.values()].find(e => e.gr === 2 && e.value >= 10);
 
 	const maxArray = [6, ...obj.dependencies];
 
-	if (SA_19_REQ && obj.gr === 2) {
+	if (SA_18_REQ && obj.gr === 2) {
 		maxArray.push(10);
 	}
 

@@ -24,7 +24,7 @@ function mapStateToProps(state: AppState) {
 		list: getAllByCategory(getDependent(state), LITURGIES, BLESSINGS) as (LiturgyInstance | BlessingInstance)[],
 		phase: getPhase(state),
 		sortOrder: getLiturgiesSortOrder(state),
-		traditionId: last(getSids(get(getDependent(state), 'SA_102') as SpecialAbilityInstance)) as number,
+		traditionId: last(getSids(get(getDependent(state), 'SA_86') as SpecialAbilityInstance)) as number,
 		get(id: string) {
 			return get(getDependent(state), id);
 		}

@@ -107,8 +107,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			case 'ADV_17':
 			case 'ADV_47':
 			case 'DISADV_48':
-			case 'SA_252':
-			case 'SA_273':
+			case 'SA_231':
+			case 'SA_250':
 				if (typeof selected === 'string') {
 					currentCost = (cost as number[])[(get(selected) as SkillishInstance).ic - 1];
 				}
@@ -210,7 +210,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel = selected;
 				args.input = inputText;
 				break;
-			case 'SA_10':
+			case 'SA_9':
 				type Sel = Array<SelectionObject & TalentInstance>;
 				if (typeof selected === 'string') {
 					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
@@ -224,14 +224,14 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel2 = selected2;
 				args.input = inputText;
 				break;
-			case 'SA_30':
+			case 'SA_29':
 				args.sel = selected;
 				args.tier = selectedTier;
 				if (typeof selected === 'number' && typeof selectedTier === 'number') {
 					currentCost = selectedTier === 4 ? 0 : (cost as number) * selectedTier;
 				}
 				break;
-			case 'SA_86':
+			case 'SA_70':
 				args.sel = selected;
 				args.sel2 = selected2;
 				if (selected === 9) {
@@ -256,9 +256,17 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				}
 				else if (tiers && typeof selectedTier === 'number') {
 					if (selectedTier > 0) {
-						currentCost = (cost as number) * selectedTier;
+						if (Array.isArray(cost)) {
+							currentCost = cost.slice(0, selectedTier).reduce((a, b) => a + b, 0);
+						}
+						else if (typeof cost === 'number') {
+							currentCost = cost * selectedTier;
+						}
 					}
 					args.tier = selectedTier;
+				}
+				else if (tiers) {
+					currentCost = undefined;
 				}
 				else if (input) {
 					args.input = inputText;
@@ -327,7 +335,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			}
 		}
 
-		if (id === 'SA_10') {
+		if (id === 'SA_9') {
 			inputElement = (
 				<TextField
 					hint={!input ? '' : input}

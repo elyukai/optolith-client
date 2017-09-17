@@ -50,7 +50,7 @@ export const getBlessingsForSheet = createSelector(
 
 export const getLiturgiesForSheet = createSelector(
 	getLiturgiesState,
-	mapGetToSlice(getSpecialAbilities, 'SA_102'),
+	mapGetToSlice(getSpecialAbilities, 'SA_86'),
 	(liturgies, tradition) => {
 		const array: Liturgy[] = [];
 		for (const [id, entry] of liturgies) {

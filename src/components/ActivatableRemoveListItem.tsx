@@ -33,7 +33,10 @@ export interface ActivatableRemoveListItemProps {
 export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps, undefined> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, tier, index, cost } = this.props.item;
-		const finalCost = (selectedTier - (tier as number)) * (cost as number);
+		const lower = Math.min(selectedTier, tier!);
+		const higher = Math.max(selectedTier, tier!);
+		const diff = selectedTier - tier!;
+		const finalCost = Array.isArray(cost) ? cost.slice(lower, higher).reduce((a, b) => a + b, 0) * diff / Math.abs(diff) : diff * (cost as number);
 		this.props.setTier(id, index, selectedTier, finalCost);
 	}
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
@@ -49,7 +52,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 			const min = phase === 3 ? tier : Math.max(1, minTier);
 			const max = Math.min(tiers, maxTier);
 			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
-			if (id === 'SA_30' && (tier === 4 || phase < 3)) {
+			if (id === 'SA_29' && (tier === 4 || phase < 3)) {
 				array.push({ id: 4, name: 'MS' });
 			}
 			if (array.length > 1) {
@@ -64,7 +67,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 			else {
 				addSpecial = ' ' + array[0].name;
 			}
-			cost = tier === 4 && id === 'SA_30' ? 0 : (cost as number) * tier;
+			cost = tier === 4 && id === 'SA_29' ? 0 : Array.isArray(cost) ? cost.slice(0, tier).reduce((a, b) => a + b, 0) : (cost as number) * tier;
 		}
 
 		if (addSpecial !== '') {

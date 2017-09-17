@@ -22,7 +22,7 @@ export function activatable(state: DependentInstancesState, action: Action): Dep
     case ActionTypes.DEACTIVATE_SPECIALABILITY: {
       const { id, index } = action.payload;
       let newlist = mergeIntoState(state, deactivate(state, get(state, id) as Data.ActivatableInstance, index));
-      if (id === 'SA_125') {
+      if (id === 'SA_109') {
         newlist = setStateItem(newlist, 'CT_17', IncreasableUtils.set(get(state, 'CT_17') as Data.CombatTechniqueInstance, 6));
       }
       return newlist;

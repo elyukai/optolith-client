@@ -25,7 +25,7 @@ export function isActive(obj?: ActivatableInstance): boolean {
 export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance): boolean {
   const { dependent } = state;
   if (obj.category === SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
-    const combinationSA = get(dependent, 'SA_183') as SpecialAbilityInstance;
+    const combinationSA = get(dependent, 'SA_164') as SpecialAbilityInstance;
     if (!combinationSA) {
       const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
       const totalActive = allStyles.filter(e => isActive(e)).length;
@@ -53,7 +53,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
     }
   }
   if (obj.category === SPECIAL_ABILITIES && obj.gr === 13) {
-    const combinationSA = get(dependent, 'SA_293') as SpecialAbilityInstance;
+    const combinationSA = get(dependent, 'SA_266') as SpecialAbilityInstance;
     if (!combinationSA) {
       const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
       const totalActive = allStyles.filter(e => isActive(e)).length;
@@ -78,14 +78,14 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       }
     }
   }
-  else if (obj.id === 'SA_183') {
+  else if (obj.id === 'SA_164') {
     const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
     const isOneActive = allStyles.find(e => isActive(e));
     if (!isOneActive) {
       return false;
     }
   }
-  else if (obj.id === 'SA_293') {
+  else if (obj.id === 'SA_266') {
     const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
     const isOneActive = allStyles.find(e => isActive(e));
     if (!isOneActive) {
@@ -97,7 +97,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
 
 export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid?: string | number): boolean {
   const { dependent } = state;
-  if (obj.id === 'SA_183') {
+  if (obj.id === 'SA_164') {
     const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
     const allArmedStyles = allStyles.filter(e => e.gr === 9);
     const allUnarmedStyles = allStyles.filter(e => e.gr === 10);
@@ -108,7 +108,7 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
       return false;
     }
   }
-  else if (obj.id === 'SA_293') {
+  else if (obj.id === 'SA_266') {
     const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
     const totalActive = allStyles.filter(e => isActive(e)).length;
     if (totalActive >= 2) {
@@ -209,7 +209,7 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
         active = { sid: input };
       }
       break;
-    case 'SA_10':
+    case 'SA_9':
       if (!input) {
         active = { sid: sel, sid2: sel2 };
       } else if (obj.active.filter(e => e.sid === input).length === 0) {
@@ -217,14 +217,14 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
       }
       adds.push({ id: sel as string, value: (obj.active.filter(e => e.sid === sel).length + 1) * 6 });
       break;
-    case 'SA_30':
+    case 'SA_29':
       active = { sid: sel, tier };
       break;
-    case 'SA_97':
+    case 'SA_81':
       active = { sid: sel };
-      adds.push({ id: 'SA_88', active: true, sid: sel });
+      adds.push({ id: 'SA_72', active: true, sid: sel });
       break;
-    case 'SA_484': {
+    case 'SA_414': {
       active = { sid: sel };
       const selectionItem = getSelectionItem(obj, sel) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
       adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
@@ -264,13 +264,13 @@ export function deactivate(state: DependentInstancesState, obj: ActivatableInsta
     case 'DISADV_48':
       sidOld = sid as string;
       break;
-    case 'SA_10':
+    case 'SA_9':
       adds.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
       break;
-    case 'SA_97':
-      adds.push({ id: 'SA_88', active: true, sid });
+    case 'SA_81':
+      adds.push({ id: 'SA_72', active: true, sid });
       break;
-    case 'SA_484': {
+    case 'SA_414': {
       const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
       adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
       break;
@@ -315,7 +315,7 @@ export function getFullName(obj: string | ActiveViewObject): string {
   const { tiers, id, tier } = obj;
   let { name } = obj;
   if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
-    if (id === 'SA_30' && tier === 4) {
+    if (id === 'SA_29' && tier === 4) {
       name += ` MS`;
     }
     else {
@@ -355,8 +355,8 @@ export function getActiveSelection(state: DependentInstancesState, entry: Activa
     case 'ADV_17':
     case 'ADV_47':
     case 'DISADV_48':
-    case 'SA_252':
-    case 'SA_273': {
+    case 'SA_231':
+    case 'SA_250': {
       const { name } = (get(state, sid as string)) as SkillishInstance;
       finalName = name;
       break;
@@ -384,7 +384,7 @@ export function getActiveSelection(state: DependentInstancesState, entry: Activa
       }
       break;
     }
-    case 'SA_10': {
+    case 'SA_9': {
       const skill = get(state, sid as string) as TalentInstance;
       let name;
       if (typeof sid2 === 'string') {
@@ -400,7 +400,7 @@ export function getActiveSelection(state: DependentInstancesState, entry: Activa
       finalName = `${skill.name}: ${name}`;
       break;
     }
-    case 'SA_484': {
+    case 'SA_414': {
       const selectionItem = getSelectionItem(entry, sid) as (SelectionObject & { target: string; }) | undefined;
       finalName = selectionItem && `${(get(state, selectionItem.target) as SpellInstance).name}: ${selectionItem.name}`;
       break;
