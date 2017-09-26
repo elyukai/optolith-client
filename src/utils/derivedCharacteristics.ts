@@ -106,7 +106,8 @@ export const getKP = createSelector(
 	mapGetToSlice(getDisadvantages, 'DISADV_27'),
 	getAddedKarmaPoints,
 	getLocaleMessages,
-	(primary, { lost, redeemed }, increase, decrease, add, locale) => {
+	mapGetToSlice(getSpecialAbilities, 'SA_563'),
+	(primary, { lost, redeemed }, increase, decrease, add, locale, highConsecration) => {
 		let base = 0;
 		let mod = 0;
 
@@ -120,6 +121,9 @@ export const getKP = createSelector(
 		}
 		else if (decreaseObject && decreaseObject.tier) {
 			mod -= decreaseObject.tier;
+		}
+		if (highConsecration && isActive(highConsecration)) {
+			mod += highConsecration.active[0].tier! * 6;
 		}
 		const value = base > 0 ? base + mod + add + redeemed - lost : undefined;
 		return {

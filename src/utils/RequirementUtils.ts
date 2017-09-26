@@ -136,18 +136,25 @@ export function validate(state: CurrentHeroInstanceState, requirements: AllRequi
  * @param requirements A Map of tier prereqisite arrays.
  * @param sourceId The id of the entry the requirement objects belong to.
  */
-export function validateTier(state: CurrentHeroInstanceState, requirements: Map<number, AllRequirements[]>, sourceId: string): number | undefined {
+export function validateTier(state: CurrentHeroInstanceState, requirements: Map<number, AllRequirements[]>, dependencies: ActivatableInstanceDependency[], sourceId: string): number | undefined {
   const ascendingTiers = [...requirements].sort((a, b) => a[0] - b[0]);
   let validTier = 0;
+  let maxTier: number | undefined;
   for (const [tier, prerequisites] of ascendingTiers) {
     if (prerequisites.every(e => validateObject(state, e, sourceId))) {
       validTier = tier;
     }
     else {
-      return validTier;
+      maxTier = maxTier === undefined ? validTier : Math.min(maxTier, validTier);
+      break;
     }
   }
-  return;
+  for (const dependency of dependencies) {
+    if (typeof dependency === 'object' && dependency.active === false && typeof dependency.tier === 'number') {
+      maxTier = maxTier === undefined ? dependency.tier - 1 : Math.min(maxTier, dependency.tier - 1);
+    }
+  }
+  return maxTier;
 }
 
 /**
@@ -171,7 +178,7 @@ export function getFlatFirstTierPrerequisites(prerequisites: Map<number, AllRequ
  * @param dependencies The current instance dependencies.
  */
 export function getMinTier(dependencies: ActivatableInstanceDependency[]): number | undefined {
-  return dependencies.reduce<number | undefined>((min = 0, dependency) => typeof dependency === 'object' && typeof dependency.tier === 'number' && dependency.tier > min ? dependency.tier : min, undefined);
+  return dependencies.reduce<number | undefined>((min, dependency) => typeof dependency === 'object' && typeof dependency.tier === 'number' && dependency.tier > (min || 0) ? dependency.tier : min, undefined);
 }
 
 /**

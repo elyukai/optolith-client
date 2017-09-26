@@ -425,12 +425,15 @@ export interface UIMessages {
 	"info.prerequisites": string;
 	"info.specialabilities": string;
 	"info.specialabilitieslanguagesandliteracy": string;
+	"info.specialabilitiesspecialization": string;
+	"info.specialabilitiesspecializationseparator": string;
 	"info.specialabilitiescurses": string;
 	"info.combattechniques": string;
 	"info.combattechniquesselection": string;
 	"info.combattechniquesselectioncounter": string[];
 	"info.combattechniquessecondselection": string;
 	"info.skills": string;
+	"info.skillsselection": string;
 	"info.spells": string;
 	"info.spellscantrips": string;
 	"info.spellscantripscounter": string[];
@@ -505,6 +508,10 @@ export interface UIMessages {
 	"info.targetcategory": string;
 	"info.property": string;
 	"info.traditions": string;
+	"info.note": string;
+	"info.lengthoftime": string;
+	"info.skill": string;
+	"info.musictradition": string;
 	"liturgies.view.groups": string[];
 	"liturgies.view.blessing": string;
 	"liturgies.view.aspects": string[];

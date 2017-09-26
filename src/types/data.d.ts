@@ -159,7 +159,7 @@ export interface RaceInstance {
 	readonly size: (number | [number, number])[];
 	readonly weight: (number | [number, number])[];
 	readonly category: Categories.RACES;
-	readonly src: SourceLink;
+	readonly src: SourceLink[];
 }
 
 export interface SourceLink {
@@ -190,6 +190,20 @@ export interface CultureInstance {
 	readonly untypicalTalents: string[];
 	readonly talents: [string, number][];
 	readonly category: Categories.CULTURES;
+	readonly src: SourceLink[];
+	areaKnowledgeShort: string;
+	areaKnowledge: string;
+	commonMundaneProfessions: string;
+	commonMagicalProfessions: string;
+	commonBlessedProfessions: string;
+	commonAdvantages: string;
+	commonDisadvantages: string;
+	uncommonAdvantages: string;
+	uncommonDisadvantages: string;
+	/**
+	 * Markdown supported.
+	 */
+	commonNames: string;
 }
 
 export interface SpecialisationSelection {
@@ -293,16 +307,14 @@ export interface ProfessionInstance {
 	 * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the Twelve Gods" or "Fighter".
 	 */
 	readonly subgr: number;
-	readonly src: {
-		id: string;
-		page?: number;
-	};
+	readonly src: SourceLink[];
 }
 
 export interface ProfessionVariantInstance {
 	readonly id: string;
 	readonly name: string | ProfessionNameForSexes;
 	readonly ap: number;
+	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
@@ -311,6 +323,8 @@ export interface ProfessionVariantInstance {
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];
 	readonly liturgies: [string, number][];
+	precedingText?: string;
+	concludingText?: string;
 	readonly category: Categories.PROFESSION_VARIANTS;
 }
 
@@ -493,10 +507,26 @@ export interface DisadvantageInstance extends DisadvantageInstanceInInit {
 
 export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.SPECIAL_ABILITIES;
+	readonly extended?: (string | string[])[];
 }
 
 export interface SpecialAbilityInstance extends SpecialAbilityInstanceInInit {
 	readonly sel?: SelectionObject[];
+}
+
+export interface StyleDependency {
+	/**
+	 * The extended special ability or list of available special abilities.
+	 */
+	id: string | string[];
+	/**
+	 * If a ability meets a given id, the id, otherwise `undefined`.
+	 */
+	active?: string;
+	/**
+	 * The style's id.
+	 */
+	origin: string;
 }
 
 export type AttributeInstanceDependency = number | SkillOptionalDependency;
@@ -684,7 +714,7 @@ export interface ItemInstance extends ItemBaseInstance {
 	at?: number;
 	iniMod?: number;
 	movMod?: number;
-	damageBonus?: number;
+	damageBonus?: number | (number | undefined)[];
 	damageDiceNumber?: number;
 	damageFlat?: number;
 	enc?: number;
@@ -704,7 +734,7 @@ export interface ItemEditorInstance extends ItemBaseInstance {
 	at: string;
 	iniMod: string;
 	movMod: string;
-	damageBonus: string;
+	damageBonus: string | string[];
 	damageDiceNumber: string;
 	damageFlat: string;
 	enc: string;

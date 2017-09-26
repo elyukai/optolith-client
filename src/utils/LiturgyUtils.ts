@@ -3,7 +3,9 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
+import { RequiresIncreasableObject } from '../types/reusable.d';
 import { getSids } from './ActivatableUtils';
+import { getFlatPrerequisites } from './RequirementUtils';
 
 export function isOwnTradition(state: DependentInstancesState, obj: LiturgyInstance | BlessingInstance): boolean {
 	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
@@ -34,6 +36,21 @@ export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 
 export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
 	const { dependent } = state;
+	const dependencies = obj.dependencies.map(e => {
+		if (typeof e === 'object') {
+			const target = get(dependent, e.origin) as SpecialAbilityInstance;
+			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
+			if (req) {
+				const resultOfAll = (req.id as string[]).map(id => (get(dependent, id) as LiturgyInstance).value >= e.value);
+				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
+			}
+			return 0;
+		}
+		return e;
+	});
+
+	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
+
 	const activeAspectKnowledge = getSids(get(dependent, 'SA_87') as SpecialAbilityInstance);
 	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {
 		const counter = getAspectCounter(dependent.liturgies);
@@ -44,9 +61,9 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 			}
 			return n;
 		}, 4);
-		return obj.value !== 10 || countedLowestWithProperty > 3;
+		return (obj.value !== 10 || countedLowestWithProperty > 3) && valid;
 	}
-	return true;
+	return valid;
 }
 
 export function getAspectCounter(liturgies: Map<string, LiturgyInstance>) {

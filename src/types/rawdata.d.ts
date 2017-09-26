@@ -33,7 +33,7 @@ export interface RawRace {
 	eyes: number[];
 	size: (number | [number, number])[];
 	weight: (number | [number, number])[];
-	src: string;
+	src: string[];
 }
 
 export interface RawRaceLocale {
@@ -47,7 +47,7 @@ export interface RawRaceLocale {
 	commonDisadvantages: string;
 	uncommonAdvantages: string;
 	uncommonDisadvantages: string;
-	src: number;
+	src: number[];
 }
 
 export interface RawCulture {
@@ -64,11 +64,23 @@ export interface RawCulture {
 	typ_talents: string[];
 	untyp_talents: string[];
 	talents: [string, number][];
+	src: string[];
 }
 
 export interface RawCultureLocale {
 	id: string;
 	name: string;
+	areaKnowledgeShort: string;
+	areaKnowledge: string;
+	commonMundaneProfessions: string;
+	commonMagicalProfessions: string;
+	commonBlessedProfessions: string;
+	commonAdvantages: string;
+	commonDisadvantages: string;
+	uncommonAdvantages: string;
+	uncommonDisadvantages: string;
+	commonNames: string;
+	src: number[];
 }
 
 export interface RawProfession {
@@ -91,7 +103,7 @@ export interface RawProfession {
 	vars: string[];
 	gr: number;
 	sgr: number;
-	src: string;
+	src: string[];
 }
 
 export interface RawProfessionLocale {
@@ -99,12 +111,13 @@ export interface RawProfessionLocale {
 	name: string | { m: string, f: string };
 	subname?: string | { m: string, f: string };
 	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
-	src?: number;
+	src: number[];
 }
 
 export interface RawProfessionVariant {
 	id: string;
 	ap: number;
+	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
@@ -118,6 +131,8 @@ export interface RawProfessionVariant {
 export interface RawProfessionVariantLocale {
 	id: string;
 	name: string | { m: string, f: string };
+	precedingText?: string;
+	concludingText?: string;
 }
 
 export interface RawAdvantage {
@@ -282,7 +297,7 @@ export interface RawItem {
 	damageDiceNumber?: number;
 	damageDiceSides?: number;
 	damageFlat?: number;
-	damageBonus?: number;
+	damageBonus?: number | number[];
 	at?: number;
 	pa?: number;
 	reach?: number;

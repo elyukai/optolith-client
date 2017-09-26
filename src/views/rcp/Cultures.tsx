@@ -5,11 +5,11 @@ import { List } from '../../components/List';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Culture, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { CulturesInfo } from './CulturesInfo';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {
@@ -83,7 +83,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						}
 					</List>
 				</Scroll>
-				<CulturesInfo {...this.props} />
+				<WikiInfoContainer {...this.props} list={cultures} />
 			</div>
 		);
 	}

@@ -232,8 +232,14 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
     }
 
     default:
-      if (sel) {
+      if (sel && tier) {
+        active = { sid: (obj.input && input) || sel, sid2: sel2, tier };
+      }
+      else if (sel) {
         active = { sid: (obj.input && input) || sel, sid2: sel2 };
+      }
+      else if (input && obj.active.filter(e => e.sid === input).length === 0 && tier) {
+        active = { sid: input, tier };
       }
       else if (input && obj.active.filter(e => e.sid === input).length === 0) {
         active = { sid: input };
@@ -289,8 +295,8 @@ export function setTier(state: DependentInstancesState, obj: ActivatableInstance
 
   if (!Array.isArray(obj.reqs) && previousTier && previousTier !== tier) {
     const lower = Math.min(previousTier, tier);
-    const higher = Math.min(previousTier, tier);
-    const prerequisites = flatten(tier && [...obj.reqs].filter(e => e[0] <= higher && e[0] > lower).map(e => e[1]) || []);
+    const higher = Math.max(previousTier, tier);
+    const prerequisites = flatten(tier ? [...obj.reqs].filter(e => e[0] <= higher && e[0] > lower).map(e => e[1]) : []);
     if (previousTier > tier) {
       return DependentUtils.removeDependencies(firstState, prerequisites, obj.id);
     }

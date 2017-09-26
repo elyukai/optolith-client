@@ -1,22 +1,20 @@
 import * as React from 'react';
-import { Aside } from '../../components/Aside';
 import { Checkbox } from '../../components/Checkbox';
 import { List } from '../../components/List';
 import { ListItemGroup } from '../../components/ListItemGroup';
-import { Markdown } from '../../components/Markdown';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
+import { InputTextEvent, Instance, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { getICName } from '../../utils/ICUtils';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -60,8 +58,6 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 	render() {
 		const { addPoint, currentHero, get, derivedCharacteristics, locale, phase, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
 		const { filterText, infoId } = this.state;
-
-		const info = infoId && get(infoId) as TalentInstance;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
 
@@ -112,46 +108,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 						}
 					</List>
 				</Scroll>
-				<Aside>
-					{info ? (() => {
-						return (
-							<Scroll>
-								<div className="info skill-info">
-									<div className="skill-header info-header">
-										<p className="title">{info.name}</p>
-										<p className="sr">{info.value}</p>
-									</div>
-									<p>
-										<span>{_translate(locale, 'info.check')}</span>
-										<span>{info.check.map(e => (get(e) as AttributeInstance).short).join('/')}</span>
-									</p>
-									<p>
-										<span>{_translate(locale, 'info.applications')}</span>
-										<span>{info.applications && info.applications.map(e => e.name).sort().join(', ')}{info
-											.applications && info.applicationsInput && ', '}{info.applicationsInput}</span>
-									</p>
-									<p>
-										<span>{_translate(locale, 'info.encumbrance')}</span>
-										<span>{info.encumbrance === 'true' ? _translate(locale, 'charactersheet.gamestats.skills.enc.yes') : info.encumbrance === 'false' ? _translate(locale, 'charactersheet.gamestats.skills.enc.no') : _translate(locale, 'charactersheet.gamestats.skills.enc.maybe')}</span>
-									</p>
-									{info.tools && <Markdown source={`**${_translate(locale, 'info.tools')}:** ${info.tools}`} />}
-									{info.quality && <Markdown source={`**${_translate(locale, 'info.quality')}:** ${info.quality}`} />}
-									{info.failed && <Markdown source={`**${_translate(locale, 'info.failedcheck')}:** ${info.failed}`} />}
-									{info.critical && <Markdown source={`**${_translate(locale, 'info.criticalsuccess')}:** ${info.critical}`} />}
-									{info.botch && <Markdown source={`**${_translate(locale, 'info.botch')}:** ${info.botch}`} />}
-									<p>
-										<span>{_translate(locale, 'info.improvementcost')}</span>
-										<span>{getICName(info.ic)}</span>
-									</p>
-								</div>
-							</Scroll>
-						);
-					})() : (
-						<div className="info-placeholder">
-							&#xE88F;
-						</div>
-					)}
-				</Aside>
+				<WikiInfoContainer {...this.props} currentId={infoId}/>
 			</Page>
 		);
 	}

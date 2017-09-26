@@ -109,6 +109,11 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			case 'DISADV_48':
 			case 'SA_231':
 			case 'SA_250':
+			case 'SA_569':
+			case 'SA_472':
+			case 'SA_473':
+			case 'SA_531':
+			case 'SA_533':
 				if (typeof selected === 'string') {
 					currentCost = (cost as number[])[(get(selected) as SkillishInstance).ic - 1];
 				}
@@ -239,22 +244,29 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				}
 				else if (selected === 6) {
 					const musictraditionIds = [1, 2, 3];
-					sel2 = musictraditionIds.map((id, index) => ({ id, name: _translate(locale, 'musictraditions')[index]}));
+					sel2 = musictraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
 				}
 				else if (selected === 7) {
 					const dancetraditionIds = [4, 5, 6, 7];
-					sel2 = dancetraditionIds.map((id, index) => ({ id, name: _translate(locale, 'dancetraditions')[index]}));
+					sel2 = dancetraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
 				}
 				break;
+			case 'SA_9':
+				type Sel = Array<SelectionObject & TalentInstance>;
+				if (typeof selected === 'string') {
+					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
+					if (o) {
+						currentCost = o.cost;
+						sel2 = o.applications;
+						input = o.applicationsInput;
+					}
+				}
+				args.sel = selected;
+				args.sel2 = selected2;
+				args.input = inputText;
+				break;
 			default:
-				if (cost === 'sel') {
-					args.sel = selected;
-				}
-				else if (sel !== undefined && sel.length > 0) {
-					args.sel = selected;
-					currentCost = cost as number;
-				}
-				else if (tiers && typeof selectedTier === 'number') {
+				if (tiers && typeof selectedTier === 'number') {
 					if (selectedTier > 0) {
 						if (Array.isArray(cost)) {
 							currentCost = cost.slice(0, selectedTier).reduce((a, b) => a + b, 0);
@@ -264,9 +276,25 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 						}
 					}
 					args.tier = selectedTier;
+					if (cost === 'sel') {
+						args.sel = selected;
+					}
+					else if (sel !== undefined && sel.length > 0) {
+						args.sel = selected;
+					}
+					else if (input) {
+						args.input = inputText;
+					}
+				}
+				else if (cost === 'sel') {
+					args.sel = selected;
 				}
 				else if (tiers) {
 					currentCost = undefined;
+				}
+				else if (sel !== undefined && sel.length > 0) {
+					args.sel = selected;
+					currentCost = cost as number;
 				}
 				else if (input) {
 					args.input = inputText;

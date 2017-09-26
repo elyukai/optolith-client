@@ -8,11 +8,11 @@ import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelections';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { ProfessionsInfo } from './ProfessionsInfo';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
 
@@ -61,7 +61,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as ProfessionsState);
 
 	render() {
-		const { extensionVisibilityFilter, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, switchExpansionVisibilityFilter, visibilityFilter } = this.props;
+		const { currentProfessionId, extensionVisibilityFilter, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, switchExpansionVisibilityFilter, visibilityFilter } = this.props;
 		const { filterText, showAddSlidein } = this.state;
 
 		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }], { addProperty: 'subname', keyOfName: sex });
@@ -111,7 +111,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 				</Scroll>
 				<Aside>
 					<ProfessionVariants {...this.props} />
-					<ProfessionsInfo {...this.props} />
+					<WikiInfoContainer {...this.props} list={professions} currentId={currentProfessionId} noWrapper />
 				</Aside>
 			</div>
 		);

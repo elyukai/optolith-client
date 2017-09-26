@@ -10,7 +10,8 @@ import * as Reusable from '../types/reusable.d';
 import { getSelectionItem, isActive } from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
-import { mergeIntoOptionalState, mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
+import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
+import * as RCPUtils from '../utils/RCPUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
 import { CurrentHeroInstanceState } from './currentHero';
 import { DependentInstancesState } from './dependentInstances';
@@ -93,9 +94,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         });
         [ ...profession.spells, ...profession.liturgies ].forEach(([ key, value ]) => {
           skillActivateList.add(key);
-          if (typeof value === 'number') {
-            addToSkillRatingList(key, value);
-          }
+          addToSkillRatingList(key, value);
         });
         profession.blessings.forEach(e => skillActivateList.add(e));
         profession.specialAbilities.forEach(e => activatable.add(e));
@@ -107,9 +106,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         });
         [ ...professionVariant.spells, ...professionVariant.liturgies ].forEach(([ key, value ]) => {
           skillActivateList.add(key);
-          if (typeof value === 'number') {
-            addToSkillRatingList(key, value);
-          }
+          addToSkillRatingList(key, value);
         });
         professionVariant.specialAbilities.forEach(e => {
           if (e.active === false) {
@@ -125,23 +122,36 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         });
       }
 
+      let calculatedCost = 0;
+
       if (action.payload.map.has('SPECIALISATION')) {
-        const talentId = (action.payload.map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
-        if (Array.isArray(talentId)) {
+        const { map, spec, specTalentId } = action.payload;
+        const talentId = (map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
+        if (Array.isArray(talentId) && specTalentId) {
           activatable.add({
             id: 'SA_9',
             active: true,
-            sid: action.payload.specTalentId,
-            sid2: action.payload.spec,
+            sid: specTalentId,
+            sid2: spec,
           });
+          // Remove once calculating Activatable AP cost done:
+          const skill = state.dependent.talents.get(specTalentId);
+          if (skill) {
+            calculatedCost += skill.ic;
+          }
         }
-        else {
+        else if (typeof talentId === 'string') {
           activatable.add({
             id: 'SA_9',
             active: true,
             sid: talentId,
-            sid2: action.payload.spec,
+            sid2: spec,
           });
+          // Remove once calculating Activatable AP cost done:
+          const skill = state.dependent.talents.get(talentId);
+          if (skill) {
+            calculatedCost += skill.ic;
+          }
         }
       }
 
@@ -167,7 +177,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       });
 
       action.payload.curses.forEach((value, key) => {
-        skillRatingList.set(key, value);
+        addToSkillRatingList(key, value);
+        skillActivateList.add(key);
       });
 
       action.payload.skills.forEach((value, key) => {
@@ -178,8 +189,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       });
 
       // Apply:
-
-      let calculatedCost = 0;
 
       let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
 
@@ -212,9 +221,11 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         newlist = setNewStateItem(newlist, id, activate(getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance));
       }
 
+      let fulllist = mergeIntoState(dependent, newlist);
+
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
-        const entry = getLatest(dependent, newlist, id as string) as Data.ActivatableInstance;
+        const entry = get(fulllist, id as string) as Data.ActivatableInstance;
         let obj;
         const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
         switch (id) {
@@ -226,7 +237,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             obj = {...entry, active: [...entry.active, { sid: sid as string }]};
             add.push({ id: 'SA_72', active: true, sid: sid as string });
             break;
-          case 'SA_414': {
+          case 'SA_414':
+          case 'SA_663': {
             obj = {...entry, active: [...entry.active, { sid: sid as string }]};
             const selectionItem = getSelectionItem(obj, sid as string) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
             add.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
@@ -240,25 +252,23 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             break;
         }
         if (obj) {
-          const firstState = mergeIntoState(dependent, newlist);
+          const firstState = setStateItem(fulllist, obj.id, obj);
           const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-          newlist = mergeIntoOptionalState(newlist, DependentUtils.addDependencies(firstState, [...prerequisites, ...add], obj.id));
+          fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(firstState, [...prerequisites, ...add], obj.id));
         }
       }
 
-      const SA_27 = getLatest(dependent, newlist, 'SA_27') as Data.SpecialAbilityInstance;
-      const SA_29 = getLatest(dependent, newlist, 'SA_29') as Data.SpecialAbilityInstance;
+      const SA_27 = get(fulllist, 'SA_27') as Data.SpecialAbilityInstance;
+      const SA_29 = get(fulllist, 'SA_29') as Data.SpecialAbilityInstance;
 
-      newlist = setNewStateItem(newlist, 'SA_27', {
+      fulllist = setStateItem(fulllist, 'SA_27', {
         ...SA_27,
         active: [ ...SA_27.active, ...Array.from(scripts.values(), sid => ({ sid }))]
       });
-      newlist = setNewStateItem(newlist, 'SA_29', {
+      fulllist = setStateItem(fulllist, 'SA_29', {
         ...SA_29,
         active: [ ...SA_29.active, ...Array.from(languages.entries(), ([sid, tier]) => ({ sid, tier }))]
       });
-
-      let fulllist = mergeIntoState(dependent, newlist);
 
       // AP
 
@@ -282,7 +292,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         if (profession && profession.id !== 'P_0') {
           const requires = [ ...profession.requires ];
 
+          for (const [key, options] of action.payload.map) {
+            if (RCPUtils.isLanguagesScriptsSelection(key, options)) {
+              ap.spent += options.value;
+            }
+          }
+
           if (professionVariant) {
+            ap.spent += professionVariant.apOfActivatables - professionVariant.ap;
             requires.push(...professionVariant.requires);
           }
 
@@ -324,11 +341,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                   (get(fulllist, id as string) as Data.ActivatableInstance).active.push(activeObject);
                   const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
                   fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, prerequisites, obj.id));
-                  if (obj.tiers && tier) {
-                    cost = (obj.cost as number) * tier;
+                  if (obj.tiers && tier && typeof obj.cost === 'number') {
+                    cost = obj.cost * tier;
                   }
                   else if (Array.isArray(obj.sel)) {
-                    cost = obj.sel[(sid as number) - 1].cost;
+                    const selectionItem = obj.sel.find(e => e.id === sid);
+                    if (selectionItem) {
+                      cost = selectionItem.cost;
+                    }
                   }
                   else {
                     cost = obj.cost as number;

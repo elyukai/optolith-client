@@ -12,6 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, Instance, SecondaryAttribute, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
@@ -20,7 +21,6 @@ import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
-import { SpellsInfo } from './SpellsInfo';
 
 export interface SpellsOwnProps {
 	locale: UIMessages;
@@ -65,6 +65,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 		filterText: '',
 		filterTextSlidein: '',
 		showAddSlidein: false,
+		currentId: undefined,
 		currentSlideinId: undefined
 	};
 
@@ -189,7 +190,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 							}
 						</List>
 					</Scroll>
-					<SpellsInfo {...this.props} currentId={this.state.currentSlideinId} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -269,7 +270,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						}
 					</List>
 				</Scroll>
-				<SpellsInfo {...this.props} {...this.state} />
+				<WikiInfoContainer {...this.props} {...this.state} />
 			</Page>
 		);
 	}

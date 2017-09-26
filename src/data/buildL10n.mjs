@@ -25,6 +25,7 @@ function iterateRacesL10n(array) {
 	for (let obj of array) {
 		obj.id = `R_${obj.id}`;
 		obj.attributeAdjustments = (obj.attributeAdjustments || '').replace(/^"(.+)"$/, '$1');
+		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
 	}
 	return list;
@@ -34,6 +35,7 @@ function iterateCulturesL10n(array) {
 	const list = {};
 	for (let obj of array) {
 		obj.id = `C_${obj.id}`;
+		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
 	}
 	return list;
@@ -56,6 +58,8 @@ function iterateProfessionsL10n(array) {
 		delete obj.subname_f;
 
 		obj.req = obj.req ? obj.req.split('&').map(e => JSON.parse(e)) : [];
+
+		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 
 		list[obj.id] = obj;
 	}
@@ -262,7 +266,9 @@ export function buildL10n(locale) {
 	const languages = iterateSpecialAbilitiesLanguagesL10n(csvToArray(allWorksheets.get('Languages')));
 	if (locale === 'de-DE') {
 		const spellExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('SpellX')));
+		const chantExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('ChantX')));
 		specialabilities.SA_414.sel = spellExtensions;
+		specialabilities.SA_663.sel = chantExtensions;
 	}
 	const attributes = iterateAttributesL10n(csvToArray(allWorksheets.get('ATTRIBUTES')));
 	const talents = iterateSkillsL10n(csvToArray(allWorksheets.get('SKILLS')));

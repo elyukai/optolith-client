@@ -20,7 +20,7 @@ export function csvToArray(csv) {
 					newObj[column] = Number.parseFloat(c.replace(/\,/, '.'));
 				}
 				else {
-					let string = c.replace(/""/g, '"').replace(/\\n/g, '\n\n');
+					let string = c.replace(/""/g, '"').replace(/\\n/g, '\n');
 					if (/^".*\{.+\}.*"$/.test(string)) {
 						string = string.match(/^"(.+)"$/)[1];
 					}

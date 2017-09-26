@@ -160,13 +160,26 @@ export const getPrimaryBlessedAttribute = createSelector(
 			switch (ActivatableUtils.getSids(tradition)[0]) {
 				case 2:
 				case 3:
+				case 9:
+				case 13:
+				case 16:
+				case 18:
 					return attributes.get('ATTR_1');
 				case 1:
 				case 4:
+				case 8:
+				case 17:
 					return attributes.get('ATTR_2');
 				case 5:
 				case 6:
+				case 11:
+				case 14:
 					return attributes.get('ATTR_3');
+				case 7:
+				case 10:
+				case 12:
+				case 15:
+					return attributes.get('ATTR_4');
 			}
 		}
 		return;
@@ -203,13 +216,26 @@ export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance 
 		switch (sid) {
 			case 2:
 			case 3:
+			case 9:
+			case 13:
+			case 16:
+			case 18:
 				return 'ATTR_1';
 			case 1:
 			case 4:
+			case 8:
+			case 17:
 				return 'ATTR_2';
 			case 5:
 			case 6:
+			case 11:
+			case 14:
 				return 'ATTR_3';
+			case 7:
+			case 10:
+			case 12:
+			case 15:
+				return 'ATTR_4';
 		}
 	}
 	return;

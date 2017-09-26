@@ -4,11 +4,11 @@ import { List } from '../../components/List';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Race, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { RacesInfo } from './RacesInfo';
 import { RacesListItem } from './RacesListItem';
 
 export interface RacesOwnProps {
@@ -71,7 +71,7 @@ export class Races extends React.Component<RacesProps, RacesState> {
 						}
 					</List>
 				</Scroll>
-				<RacesInfo {...this.props} />
+				<WikiInfoContainer {...this.props} list={races} />
 			</div>
 		);
 	}

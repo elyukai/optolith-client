@@ -8,6 +8,7 @@ import { getDSids, getSecondSidMap, getSelectionItem, getSelectionName, getSids,
 import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { getTraditionOfAspect } from '../utils/LiturgyUtils';
+import { getRoman } from '../utils/NumberUtils';
 import { getMinTier, validate, validateTier } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { get, getAllByCategory, getAllByCategoryGroup, getMapByCategory } from './dependentInstancesSelectors';
@@ -53,7 +54,7 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
 
             let maxTier: number | undefined;
             if (!Array.isArray(reqs)) {
-              maxTier = validateTier(state, reqs, id);
+              maxTier = validateTier(state, reqs, dependencies, id);
             }
 
             let minTier: number | undefined;
@@ -198,18 +199,10 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                     add += `: ${entry.name}`;
                   }
                 }
-                else if (typeof add === 'string' && sid === 6) {
-                  const musictraditionIds = [1, 2, 3];
+                else if (typeof add === 'string' && (sid === 6 || sid === 7)) {
                   const musictraditionLabels = _translate(locale, 'musictraditions');
                   if (musictraditionLabels) {
-                    add += `: ${musictraditionLabels[musictraditionIds.findIndex(e => e === sid2)]}`;
-                  }
-                }
-                else if (typeof add === 'string' && sid === 7) {
-                  const dancetraditionIds = [4, 5, 6, 7];
-                  const dancetraditionLabels = _translate(locale, 'dancetraditions');
-                  if (dancetraditionLabels) {
-                    add += `: ${dancetraditionLabels[dancetraditionIds.findIndex(e => e === sid2)]}`;
+                    add += `: ${musictraditionLabels[(sid2 as number) - 1]}`;
                   }
                 }
                 break;
@@ -235,21 +228,28 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 add = getSelectionName(a, sid);
                 break;
               }
-              case 'SA_231': {
-                const { name, ic } = get(dependent, sid as string) as Data.SpellInstance;
+              case 'SA_231':
+              case 'SA_250':
+              case 'SA_472':
+              case 'SA_473':
+              case 'SA_531':
+              case 'SA_569': {
+                const { name, ic } = get(dependent, sid as string) as Data.SkillInstance;
                 add = name;
                 currentCost = (cost as number[])[ic - 1];
                 break;
               }
-              case 'SA_250': {
-                const { name, ic } = get(dependent, sid as string) as Data.SpellInstance;
+              case 'SA_533': {
+                const { name, ic } = get(dependent, sid as string) as Data.SkillInstance;
                 add = name;
-                currentCost = (cost as number[])[ic - 1];
+                currentCost = (cost as number[])[ic - 1] + dependent.talents.get(specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
                 break;
               }
-              case 'SA_414': {
+              case 'SA_414':
+              case 'SA_663': {
                 const selectionItem = getSelectionItem(a, sid) as (Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; }) | undefined;
-                add = selectionItem && `${(get(dependent, selectionItem.target) as Data.SpellInstance).name}: ${selectionItem.name}`;
+                const targetInstance = selectionItem && (id === 'SA_414' ? dependent.spells.get(selectionItem.target) : dependent.liturgies.get(selectionItem.target));
+                add = targetInstance && `${targetInstance.name}: ${selectionItem!.name}`;
                 currentCost = selectionItem && selectionItem.cost;
                 break;
               }
@@ -269,8 +269,6 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 break;
             }
 
-            const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-
             if (['ADV_28', 'ADV_29'].includes(id)) {
               activeObject.name = `${_translate(locale, 'activatable.view.immunityto')} ${add}`;
             }
@@ -281,7 +279,7 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
               activeObject.name = `${_translate(locale, 'activatable.view.hatredof')} ${add}`;
             }
             else if (['DISADV_34', 'DISADV_50'].includes(id)) {
-              activeObject.name  += ` ${roman[(tier as number) - 1]} (${add})`;
+              activeObject.name  += ` ${getRoman(tier as number)} (${add})`;
             }
             else if (add) {
               activeObject.name += ` (${add})`;
@@ -334,13 +332,12 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
           if (isActivatable(state, a) && !dependencies.includes(false) && (max === undefined || active.length < max)) {
             let maxTier: number | undefined;
             if (!Array.isArray(reqs)) {
-              maxTier = validateTier(state, reqs, id);
+              maxTier = validateTier(state, reqs, dependencies, id);
             }
             switch (id) {
               case 'ADV_4':
               case 'ADV_17':
-              case 'ADV_47':
-              case 'SA_250': {
+              case 'ADV_47': {
                 const activeIds = getSids(a);
                 const sel = a.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(a).includes(e.id));
                 if (a.category === Categories.SPECIAL_ABILITIES) {
@@ -589,23 +586,40 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 }
                 break;
               }
-              case 'SA_414': {
+              case 'SA_414':
+              case 'SA_663': {
                 const activeIds = getSids(a);
-                const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[], target: string; tier: number; }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(a).includes(e.id) && (get(dependent, e.target) as Data.SpellInstance).value > e.tier * 4 + 4).map(e => {
-                  const { name, target, ...other } = e;
-                  return { name: `${(get(dependent, target) as Data.SpellInstance).name}: ${name}`, target, ...other };
-                });
+                const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[], target: string; tier: number; }>).reduce((arr, e) => {
+                  const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target) : dependent.liturgies.get(e.target);
+                  if (!activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(a).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier * 4 + 4) {
+                    return [...arr, { ...e, name: `${targetInstance.name}: ${e.name}` }];
+                  }
+                  return arr;
+                }, []);
                 if (sel.length > 0) {
                   finalEntries.push({ id, name, sel, cost, gr, instance: entry });
                 }
                 break;
               }
+              case 'SA_533': {
+                const sel = Array.isArray(a.sel) ? sortObjects(a.sel, locale.id) : undefined;
+                if (tiers && maxTier === 0) {
+                  break;
+                }
+                const increaseValue = dependent.talents.get(dependent.specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
+                const increasedCost = (cost as number[]).map(e => e + increaseValue);
+                finalEntries.push({ id, name, cost: increasedCost, sel, gr, instance: entry });
+                break;
+              }
 
               default: {
-                let sel = Array.isArray(a.sel) ? a.sel.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) : undefined;
+                let sel = Array.isArray(a.sel) ? sortObjects(a.sel, locale.id) : undefined;
                 if (cost === 'sel' && sel) {
                   const activeIds = getSids(a);
                   sel = sel.filter(e => !activeIds.includes(e.id) && !getDSids(a).includes(e.id));
+                }
+                if (tiers && maxTier === 0) {
+                  break;
                 }
                 finalEntries.push({ id, name, cost, tiers, maxTier, input, sel, gr, instance: entry });
                 break;

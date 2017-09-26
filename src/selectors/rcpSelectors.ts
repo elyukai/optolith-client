@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ATTRIBUTES } from '../constants/Categories';
+import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
 import { Culture, Increasable, Profession, Race } from '../types/view.d';
@@ -88,7 +88,8 @@ export const getAllRaces = createSelector(
 				commonDisadvantages: commonDisadvantagesText,
 				uncommonAdvantages: uncommonAdvantagesText,
 				uncommonDisadvantages: uncommonDisadvantagesText,
-				src
+				src,
+				category: RACES
 			});
 		}
 
@@ -106,14 +107,41 @@ export const getAllCultures = createSelector(
 			const {
 				ap,
 				name,
-				talents
+				talents,
+				src,
+				areaKnowledge,
+				areaKnowledgeShort,
+				commonAdvantages,
+				commonBlessedProfessions,
+				commonDisadvantages,
+				commonMagicalProfessions,
+				commonMundaneProfessions,
+				commonNames,
+				uncommonAdvantages,
+				uncommonDisadvantages,
+				typicalTalents,
+				untypicalTalents,
 			} = culture;
 
 			list.push({
 				id,
 				name,
+				areaKnowledge,
+				areaKnowledgeShort,
+				commonAdvantages,
+				commonBlessedProfessions,
+				commonDisadvantages,
+				commonMagicalProfessions,
+				commonMundaneProfessions,
+				commonSkills: typicalTalents,
+				uncommonSkills: untypicalTalents,
+				commonNames,
+				uncommonAdvantages,
+				uncommonDisadvantages,
 				culturalPackageAp: ap,
 				culturalPackageSkills: talents.map(([id, value]) => ({ name: skills.get(id)!.name, value })),
+				src,
+				category: CULTURES
 			});
 		}
 
@@ -159,7 +187,7 @@ export const getAllProfessions = createSelector(
 			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
 			const commonVisible = e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
-			const extensionVisible = visibility === 'all' || (e.src.id === 'US25001' ? commonVisible : extensionVisibility);
+			const extensionVisible = visibility === 'all' || (e.src.some(e => e.id === 'US25001') ? commonVisible : extensionVisibility);
 			return groupVisible && extensionVisible;
 		};
 
@@ -176,7 +204,8 @@ export const getAllProfessions = createSelector(
 				spells,
 				liturgies,
 				blessings,
-				variants
+				variants,
+				src
 			} = profession;
 
 			const skills: Increasable[][] = [[], [], [], [], []];
@@ -212,7 +241,7 @@ export const getAllProfessions = createSelector(
 				liturgicalChants: liturgies.map(([id, value]) => ({ id, value })),
 				blessings,
 				variants: filteredVariants.map(v => {
-					const { id, name, ap, combatTechniques: combatTechniquesVariant, talents: talentsVariant } = v;
+					const { id, name, ap, combatTechniques: combatTechniquesVariant, talents: talentsVariant, concludingText, precedingText } = v;
 					return {
 						id,
 						name,
@@ -224,9 +253,13 @@ export const getAllProfessions = createSelector(
 						skills: talentsVariant.map(([id, value]) => {
 							const previousObject = talents.find(e => e[0] === id);
 							return { name: skillsState.get(id)!.name, value, previous: previousObject && previousObject[1] };
-						})
+						}),
+						concludingText,
+						precedingText
 					};
-				})
+				}),
+				src,
+				category: PROFESSIONS
 			});
 		}
 

@@ -8,7 +8,7 @@ import { getFlatPrerequisites } from './RequirementUtils';
 export function isIncreasable(state: CurrentHeroInstanceState, obj: TalentInstance): boolean {
 	const { dependent } = state;
 	let max = 0;
-	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
+	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e.sid === obj.id).length;
 
 	if (state.phase < 3) {
 		max = getStart(state.el).maxSkillRating;

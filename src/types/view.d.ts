@@ -1,5 +1,7 @@
+import * as Categories from '../constants/Categories';
 import { ProfessionSelections, SourceLink } from './data.d';
 
+export { Book } from './data.d';
 export { UIMessages } from './ui.d';
 
 export interface Race {
@@ -19,10 +21,8 @@ export interface Race {
 	commonDisadvantages: string;
 	uncommonAdvantages: string;
 	uncommonDisadvantages: string;
-	src: {
-		id: string;
-		page: number;
-	};
+	src: SourceLink[];
+	category: Categories.RACES;
 }
 
 export interface Increasable {
@@ -40,8 +40,25 @@ export interface IncreasableId {
 export interface Culture {
 	id: string;
 	name: string;
+	areaKnowledgeShort: string;
+	areaKnowledge: string;
+	commonMundaneProfessions: string;
+	commonMagicalProfessions: string;
+	commonBlessedProfessions: string;
+	commonAdvantages: string;
+	commonDisadvantages: string;
+	uncommonAdvantages: string;
+	uncommonDisadvantages: string;
+	commonSkills: string[];
+	uncommonSkills: string[];
+	/**
+	 * Markdown supported.
+	 */
+	commonNames: string;
 	culturalPackageAp: number;
 	culturalPackageSkills: Increasable[];
+	src: SourceLink[];
+	category: Categories.CULTURES;
 }
 
 export interface NameBySex {
@@ -65,6 +82,8 @@ export interface Profession {
 	liturgicalChants: IncreasableId[];
 	blessings: string[];
 	variants: ProfessionVariant[];
+	src: SourceLink[];
+	category: Categories.PROFESSIONS;
 }
 
 export interface ProfessionVariant {
@@ -73,6 +92,8 @@ export interface ProfessionVariant {
 	ap: number;
 	combatTechniques: Increasable[];
 	skills: Increasable[];
+	concludingText: string | undefined;
+	precedingText: string | undefined;
 }
 
 export interface Attribute {
@@ -80,6 +101,7 @@ export interface Attribute {
 	name: string;
 	short: string;
 	value: number;
+	category: Categories.ATTRIBUTES;
 }
 
 export interface AttributeWithRequirements extends Attribute {
@@ -96,6 +118,7 @@ export interface CombatTechnique {
 	gr: number;
 	at: number;
 	pa?: number;
+	category: Categories.COMBAT_TECHNIQUES;
 }
 
 export interface CombatTechniqueWithRequirements extends CombatTechnique {
@@ -111,6 +134,7 @@ export interface Liturgy {
 	checkmod?: 'SPI' | 'TOU';
 	ic: number;
 	aspects: number[];
+	category: Categories.LITURGIES;
 }
 
 export interface Spell {
@@ -133,6 +157,7 @@ export interface Spell {
 	durationShort: string;
 	target: string;
 	src: SourceLink[];
+	category: Categories.SPELLS;
 }
 
 export interface Item {

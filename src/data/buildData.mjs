@@ -54,6 +54,8 @@ function iterateRaces(array) {
     obj.size = obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
     obj.weight = obj.weight.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
 
+    obj.src = obj.src ? obj.src.split('&') : [];
+
     list[obj.id] = obj;
   }
   ValidateData.validateRaces(list);
@@ -97,6 +99,8 @@ function iterateCultures(array) {
       e[1] = Number.parseInt(e[1]);
       return e;
     });
+
+    obj.src = obj.src ? obj.src.split('&') : [];
 
     list[obj.id] = obj;
   }
@@ -159,6 +163,8 @@ function iterateProfessions(array) {
     obj.untyp_dadv = !obj.untyp_dadv ? [] : obj.untyp_dadv.split('&');
 
     obj.vars = !obj.vars ? [] : obj.vars.split('&');
+
+    obj.src = obj.src ? obj.src.split('&') : [];
 
     list[obj.id] = obj;
   }
@@ -428,6 +434,17 @@ function iterateSpecialAbilitiesSpellExtensions(array) {
   return list;
 }
 
+function iterateSpecialAbilitiesChantExtensions(array) {
+  const list = [];
+  for (const obj of array) {
+    delete obj.name;
+    obj.target = `LITURGY_${obj.target}`;
+    obj.req = !obj.req ? [] : obj.req.split('&').map(e => JSON.parse(e));
+    list.push(obj);
+  }
+  return list;
+}
+
 function iterateEquipment(array) {
   const list = {};
   for (const obj of array) {
@@ -466,8 +483,8 @@ function iterateEquipment(array) {
         isParryingWeapon: !!pryw,
         isTwoHanded: !!two
       });
-      if (typeof db === 'number') {
-        result.damageBonus = db;
+      if (typeof db === 'string' && /^[&\d]+$/.test(db)) {
+        result.damageBonus = /&/.test(db) ? db.split(/&/).map(e => Number.parseInt(e)) : Number.parseInt(db);
       }
     }
     else if (gr === 2 || imp === 2) {
@@ -513,6 +530,7 @@ const writing = iterateSpecialAbilitiesWriting(csvToArray(allWorksheets.get('Wri
 const languages = iterateSpecialAbilitiesLanguages(csvToArray(allWorksheets.get('Languages')));
 const animalTransformation = iterateSpecialAbilitiesAnimalTransform(csvToArray(allWorksheets.get('AnimalTrans')));
 const spellExtensions = iterateSpecialAbilitiesSpellExtensions(csvToArray(allWorksheets.get('SpellX')));
+const chantExtensions = iterateSpecialAbilitiesChantExtensions(csvToArray(allWorksheets.get('ChantX')));
 const attributes = iterateAttributes(csvToArray(allWorksheets.get('ATTRIBUTES')));
 const talents = iterateSkills(csvToArray(allWorksheets.get('SKILLS')));
 const combattech = iterateCombatTechniques(csvToArray(allWorksheets.get('COMBAT_TECHNIQUES')));
@@ -530,6 +548,7 @@ specialabilities.SA_28.sel = writing;
 specialabilities.SA_29.sel = languages;
 specialabilities.SA_338.sel = animalTransformation;
 specialabilities.SA_414.sel = spellExtensions;
+specialabilities.SA_663.sel = chantExtensions;
 
 const result = {
   books,

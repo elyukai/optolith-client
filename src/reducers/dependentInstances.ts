@@ -34,6 +34,9 @@ export interface DependentInstancesState {
   specialAbilities: Map<string, Data.SpecialAbilityInstance>;
   spells: Map<string, Data.SpellInstance>;
   talents: Map<string, Data.TalentInstance>;
+  combatStyleDependencies: Data.StyleDependency[];
+  magicalStyleDependencies: Data.StyleDependency[];
+  blessedStyleDependencies: Data.StyleDependency[];
 }
 
 const initialState: DependentInstancesState = {
@@ -50,7 +53,10 @@ const initialState: DependentInstancesState = {
   races: new Map(),
   specialAbilities: new Map(),
   spells: new Map(),
-  talents: new Map()
+  talents: new Map(),
+  combatStyleDependencies: [],
+  magicalStyleDependencies: [],
+  blessedStyleDependencies: []
 };
 
 export function dependentInstances(state = initialState, action: Action) {

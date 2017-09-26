@@ -27,13 +27,13 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
       commonAdvantages: commonAdvantagesText,
       commonDisadvantages: commonDisadvantagesText,
       name,
-      src: page,
+      src: srcPages,
       stronglyRecommendedAdvantages: stronglyRecommendedAdvantagesText,
       stronglyRecommendedDisadvantages: stronglyRecommendedDisadvantagesText,
       uncommonAdvantages: uncommonAdvantagesText,
       uncommonDisadvantages: uncommonDisadvantagesText
     } = localeObject;
-    const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: bookId, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
+    const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: srcIds, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
     return {
       ap,
       attributeAdjustments: attr.map<[number, string]>(e => [e[0], `ATTR_${e[1]}`]),
@@ -66,10 +66,7 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
       uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
       uncommonDisadvantagesText,
       weight,
-      src: {
-        id: bookId,
-        page
-      }
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;
@@ -79,14 +76,14 @@ export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents } = raw;
+    const { src: srcPages, ...localeRest } = localeObject;
+    const { ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents, src: srcIds } = raw;
     return {
+      ...localeRest,
       ap,
       category: Categories.CULTURES,
       id,
       languages: lang,
-      name,
       scripts: literacy,
       socialTiers: social,
       talents: talents.map<[string, number]>(e => [`TAL_${e[0]}`, e[1]]),
@@ -97,6 +94,7 @@ export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale
       untypicalAdvantages: untyp_adv.map(e => `ADV_${e}`),
       untypicalDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
       untypicalTalents: untyp_talents.map(e => `TAL_${e}`),
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;
@@ -106,8 +104,8 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, subname, req: localeReq, src: page } = localeObject;
-    const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src, blessings, sgr } = raw;
+    const { name, subname, req: localeReq, src: srcPages } = localeObject;
+    const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src: srcIds, blessings, sgr } = raw;
     const finalReq = [ ...req, ...localeReq ];
     return {
       ap,
@@ -132,10 +130,7 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
       variants: vars.map(e => `PV_${e}`),
       gr,
       subgr: sgr,
-      src: {
-        id: src,
-        page
-      }
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;
@@ -145,15 +140,15 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { id, ap, pre_req, req, sel, sa, combattech, talents, spells, chants } = raw;
+    const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants } = raw;
     return {
+      ...localeObject,
       ap,
+      apOfActivatables,
       category: Categories.PROFESSION_VARIANTS,
       combatTechniques: combattech.map<[string, number]>(e => [`CT_${e[0]}`, e[1]]),
       dependencies: pre_req,
       id,
-      name,
       requires: req,
       selections: sel,
       specialAbilities: sa,
@@ -436,13 +431,14 @@ export function initItem(raw: RawItem, locale: ToListById<RawItemLocale>): ItemI
   const localeObject = locale[id];
   if (localeObject) {
     const { name } = localeObject;
-    const { addPenalties, imp, ...other } = raw;
+    const { addPenalties, imp, damageBonus, ...other } = raw;
     return {
       ...other,
       name,
       addPenalties,
       amount: 1,
       improvisedWeaponGroup: imp,
+      damageBonus: Array.isArray(damageBonus) ? damageBonus.map(e => e === 0 ? undefined : e) : damageBonus,
       isTemplateLocked: true
     };
   }

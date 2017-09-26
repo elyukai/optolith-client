@@ -1,5 +1,6 @@
 import * as Categories from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
+import { getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { AdvantageInstanceInInit, DisadvantageInstanceInInit, InstanceInInit, SelectionObject, SkillishInstance, SpecialAbilityInstanceInInit, ToListById } from '../types/data.d';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import { _translate } from '../utils/I18n';
@@ -66,12 +67,13 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 		vars: [],
 		gr: 0,
 		sgr: 0,
-		src: 'US25001'
+		src: []
 	}, {
 		P_0: {
 			id: 'P_0',
 			name: _translate(rawlocale.ui, 'professions.ownprofession'),
-			req: []
+			req: [],
+			src: []
 		}
 	});
 	if (ownProfession) {
@@ -117,8 +119,11 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 	}
 
 	for (const [id, obj] of list.specialAbilities as Map<string, SpecialAbilityInstanceInInit>) {
-		if (['SA_231', 'SA_250'].includes(id) && obj.sel) {
+		if (['SA_231', 'SA_250', 'SA_562', 'SA_569'].includes(id) && obj.sel) {
 			obj.sel = getSelectionCategories(obj.sel);
+		}
+		else if (['SA_472', 'SA_473', 'SA_531', 'SA_533'].includes(id) && obj.sel) {
+			obj.sel = getAllByCategoryGroup(list, Categories.TALENTS, 4).map(({ id, name, ic }) => ({ id, name, cost: ic }));
 		}
 		else if (id === 'SA_258' && obj.sel) {
 			obj.sel = getSelectionCategories(obj.sel);
