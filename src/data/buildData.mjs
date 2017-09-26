@@ -258,6 +258,14 @@ function iterateActivatables(array, type) {
     else if (['SA_3', 'SA_27', 'SA_28', 'SA_29', 'SA_338', 'SA_414'].includes(newObj.id)) {
       newObj.sel = true;
     }
+    if (obj.extended) {
+      newObj.extended = obj.extended.split('&').map(e => {
+        if (/,/.test(e)) {
+          return e.split(',').map(n => `SA_${n}`);
+        }
+        return `SA_${e}`;
+      });
+    }
     newObj.req = convertRequirements(obj.req);
     list[newObj.id] = newObj;
   }

@@ -1,8 +1,11 @@
 import { flatten } from 'lodash';
+import { createSelector } from 'reselect';
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
+import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
-import { ActivatableInstance, ActivatableInstanceDependency, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
+import { getBlessedStyleDependencies, getCombatStyleDependencies, getMagicalStyleDependencies } from '../selectors/stateSelectors';
+import { ActivatableInstance, ActivatableInstanceDependency, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
@@ -254,4 +257,70 @@ export function isIncreasableInstance(entry?: Instance): entry is IncreasableIns
 export function isActivatableInstance(entry?: Instance): entry is ActivatableInstance {
   const categories = [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES];
   return !!entry && categories.includes(entry.category);
+}
+
+export const validateAddingExtendedSpecialAbilities = createSelector(
+  getBlessedStyleDependencies,
+  getCombatStyleDependencies,
+  getMagicalStyleDependencies,
+  (blessedStyleDependencies, combatStyleDependencies, magicalStyleDependencies) => {
+    const iterate = (list: StyleDependency[]) => list.reduce<string[]>((arr, e) => {
+      if (typeof e.active !== 'string') {
+        if (Array.isArray(e.id)) {
+          return [...arr, ...e.id];
+        }
+        return [...arr, e.id];
+      }
+      return arr;
+    }, []);
+
+    return [
+      ...iterate(blessedStyleDependencies),
+      ...iterate(combatStyleDependencies),
+      ...iterate(magicalStyleDependencies),
+    ];
+  }
+);
+
+export function validateRemovingStyle(state: DependentInstancesState, entry?: SpecialAbilityInstance): boolean {
+  if (entry) {
+    let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
+    if (entry.gr === 9 || entry.gr === 10) {
+      key = 'combatStyleDependencies';
+    }
+    else if (entry.gr === 13) {
+      key = 'magicalStyleDependencies';
+    }
+    else if (entry.gr === 25) {
+      key = 'blessedStyleDependencies';
+    }
+    if (typeof key === 'string') {
+      const {
+        itemsToRemove,
+        leftItems
+      } = state[key].reduce((obj, dependency) => {
+        if (dependency.origin === entry.id) {
+          return {
+            ...obj,
+            itemsToRemove: [...obj.itemsToRemove, dependency]
+          };
+        }
+        return {
+          ...obj,
+          leftItems: [...obj.leftItems, dependency]
+        };
+      }, {
+        itemsToRemove: [] as StyleDependency[],
+        leftItems: [] as StyleDependency[]
+      });
+      for (const dependency of itemsToRemove.filter(e => typeof e.active === 'string')) {
+        const index = leftItems.findIndex(e => !Array.isArray(e.id) ? dependency.active === e.id : e.id.includes(dependency.active!) && e.active === undefined);
+        if (index === -1) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+  return false;
 }

@@ -27,6 +27,9 @@ export const getRaces = (state: AppState) => state.currentHero.present.dependent
 export const getSkills = (state: AppState) => state.currentHero.present.dependent.talents;
 export const getSpecialAbilities = (state: AppState) => state.currentHero.present.dependent.specialAbilities;
 export const getSpells = (state: AppState) => state.currentHero.present.dependent.spells;
+export const getBlessedStyleDependencies = (state: AppState) => state.currentHero.present.dependent.blessedStyleDependencies;
+export const getCombatStyleDependencies = (state: AppState) => state.currentHero.present.dependent.combatStyleDependencies;
+export const getMagicalStyleDependencies = (state: AppState) => state.currentHero.present.dependent.magicalStyleDependencies;
 
 export const getProfile = (state: AppState) => state.currentHero.present.profile;
 export const getCultureAreaKnowledge = (state: AppState) => state.currentHero.present.profile.cultureAreaKnowledge;

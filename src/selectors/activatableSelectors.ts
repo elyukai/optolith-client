@@ -9,7 +9,7 @@ import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { getTraditionOfAspect } from '../utils/LiturgyUtils';
 import { getRoman } from '../utils/NumberUtils';
-import { getMinTier, validate, validateTier } from '../utils/RequirementUtils';
+import { getMinTier, validate, validateAddingExtendedSpecialAbilities, validateTier } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { get, getAllByCategory, getAllByCategoryGroup, getMapByCategory } from './dependentInstancesSelectors';
 import { getStart } from './elSelectors';
@@ -321,7 +321,8 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
   return createSelector(
     getCurrentHeroPresent,
     getLocaleMessages,
-    (state, locale) => {
+    validateAddingExtendedSpecialAbilities,
+    (state, locale, validExtendedSpecialAbilities) => {
       const { ap, dependent } = state;
       const allEntries = getMapByCategory(dependent, category) as Map<string, Data.AdvantageInstance | Data.DisadvantageInstance | Data.SpecialAbilityInstance>;
       const finalEntries: Data.DeactiveViewObject[] = [];
@@ -329,7 +330,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
         allEntries.forEach(entry => {
           const a = entry as Data.ActivatableInstance & { tiers?: number; gr?: number; };
           const { id, cost, max, active, name, input, tiers, dependencies, gr, reqs } = a;
-          if (isActivatable(state, a) && !dependencies.includes(false) && (max === undefined || active.length < max)) {
+          if (isActivatable(state, a) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
             let maxTier: number | undefined;
             if (!Array.isArray(reqs)) {
               maxTier = validateTier(state, reqs, dependencies, id);
@@ -632,6 +633,10 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
     }
   );
 };
+
+function isExtendedSpecialAbility(entry: Data.ActivatableInstance) {
+  return entry.category === 'SPECIAL_ABILITIES' && [11, 14, 26].includes(entry.gr);
+}
 
 export const getAdvantagesRating = createSelector(
   getCurrentRace,

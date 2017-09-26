@@ -119,8 +119,8 @@ function removeStyleExtendedSpecialAbilityDependencies(state: DependentInstances
         itemsToRemove: [] as Data.StyleDependency[],
         leftItems: [] as Data.StyleDependency[]
       });
-      for (const dependency of itemsToRemove.filter(e => Array.isArray(e.id) && typeof e.active === 'string')) {
-        const index = leftItems.findIndex(e => Array.isArray(e.id) && e.id.includes(dependency.active!) && e.active === undefined);
+      for (const dependency of itemsToRemove.filter(e => typeof e.active === 'string')) {
+        const index = leftItems.findIndex(e => !Array.isArray(e.id) ? dependency.active === e.id : e.id.includes(dependency.active!) && e.active === undefined);
         leftItems[index] = {
           ...leftItems[index],
           active: dependency.active
