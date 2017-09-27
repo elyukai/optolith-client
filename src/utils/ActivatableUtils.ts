@@ -52,30 +52,11 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       }
     }
   }
-  if (obj.category === SPECIAL_ABILITIES && obj.gr === 13) {
-    const combinationSA = get(dependent, 'SA_266') as SpecialAbilityInstance;
-    if (!combinationSA) {
-      const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
-      const totalActive = allStyles.filter(e => isActive(e)).length;
-      if (totalActive >= 1) {
-        return false;
-      }
-    }
-    else {
-      const combinationAvailable = isActive(combinationSA);
-      if (combinationAvailable) {
-        const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
-        const totalActive = allStyles.filter(e => isActive(e)).length;
-        if (totalActive >= 2) {
-          return false;
-        }
-      }
-      else {
-        const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr);
-        if (allEqualTypeStyles.find(e => isActive(e))) {
-          return false;
-        }
-      }
+  else if (obj.category === SPECIAL_ABILITIES && obj.gr === 25) {
+    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 25);
+    const totalActive = allStyles.filter(e => isActive(e)).length;
+    if (totalActive >= 1) {
+      return false;
     }
   }
   else if (obj.id === 'SA_164') {
