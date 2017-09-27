@@ -13,6 +13,7 @@ import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RCPUtils from '../utils/RCPUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
+import { addStyleExtendedSpecialAbilityDependencies } from './activatable';
 import { CurrentHeroInstanceState } from './currentHero';
 import { DependentInstancesState } from './dependentInstances';
 
@@ -226,7 +227,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        let obj;
+        let obj: Data.ActivatableInstance | undefined;
         const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
         switch (id) {
           case 'SA_9':
@@ -252,6 +253,9 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             break;
         }
         if (obj) {
+          if (obj.category === Categories.SPECIAL_ABILITIES) {
+            fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
+          }
           const firstState = setStateItem(fulllist, obj.id, obj);
           const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
           fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(firstState, [...prerequisites, ...add], obj.id));
@@ -340,6 +344,9 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                 if (!obj.active.find(checkIfActive)) {
                   (get(fulllist, id as string) as Data.ActivatableInstance).active.push(activeObject);
                   const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
+                  if (obj.category === Categories.SPECIAL_ABILITIES) {
+                    fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
+                  }
                   fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, prerequisites, obj.id));
                   if (obj.tiers && tier && typeof obj.cost === 'number') {
                     cost = obj.cost * tier;

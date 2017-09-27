@@ -53,7 +53,7 @@ function removeDependency<D>(obj: AbilityInstanceExtended, remove: D): AbilityIn
  * @param sel The SID from the current selection.
  */
 export function addDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string, sel?: string): ToOptionalKeys<DependentInstancesState> {
-  let instances: ToOptionalKeys<DependentInstancesState> = state;
+  let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
     if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
@@ -127,7 +127,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
  * @param sel The SID from the current selection.
  */
 export function removeDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string, sel?: string): ToOptionalKeys<DependentInstancesState> {
-  let instances: ToOptionalKeys<DependentInstancesState> = state;
+  let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
     if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {

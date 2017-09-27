@@ -9,7 +9,7 @@ import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
 import { setStateItem } from './ListUtils';
 import { getRoman } from './NumberUtils';
-import { getFlatFirstTierPrerequisites, getFlatPrerequisites, isRequiringActivatable, validate, validateObject } from './RequirementUtils';
+import { getFlatFirstTierPrerequisites, getFlatPrerequisites, isRequiringActivatable, validate, validateObject, validateRemovingStyle } from './RequirementUtils';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
   return obj.max !== 1;
@@ -112,6 +112,12 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
     const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
     const totalActive = allStyles.filter(e => isActive(e)).length;
     if (totalActive >= 2) {
+      return false;
+    }
+  }
+  if (obj.category === SPECIAL_ABILITIES) {
+    const validStyle = validateRemovingStyle(dependent, obj);
+    if (validStyle === false) {
       return false;
     }
   }

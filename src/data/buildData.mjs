@@ -1,6 +1,6 @@
 import fs from 'fs';
 import xlsx from 'xlsx';
-import { convertRequirements, splitList } from './buildUtils.mjs';
+import { convertPrerequisite, convertRequirements, splitList } from './buildUtils.mjs';
 import { csvToArray } from './csvToArray.mjs';
 import * as ValidateData from './validateData.mjs';
 
@@ -248,7 +248,14 @@ function iterateActivatables(array, type) {
     if (obj.gr) {
       newObj.gr = Number.parseInt(obj.gr);
     }
-    if (obj.sel) {
+    if (newObj.id === 'SA_639') {
+      newObj.sel = splitList(obj.sel).map((e, i) => {
+        const ee = e.split('?');
+        const id = /^\d+$/.test(ee[0]) ? Number.parseInt(ee[0]) : ee[0];
+        return ee[2] ? { id, prerequisites: convertPrerequisite(ee[2]) } : { id };
+      });
+    }
+    else if (obj.sel) {
       newObj.sel = splitList(obj.sel).map((e, i) => {
         const ee = e.split('?');
         const id = /^\d+$/.test(ee[0]) ? Number.parseInt(ee[0]) : ee[0];

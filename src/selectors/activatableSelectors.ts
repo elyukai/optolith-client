@@ -438,7 +438,8 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                   finalEntries.push({ id, name, cost, gr, instance: entry });
                 }
                 break;
-              case 'SA_3': {
+              case 'SA_3':
+              case 'SA_639': {
                 const activeIds = getSids(a);
                 const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(a).includes(e.id));
                 if (sel.length > 0) {

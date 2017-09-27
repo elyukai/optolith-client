@@ -49,7 +49,7 @@ export function activatable(state: DependentInstancesState, action: Action): Dep
   }
 }
 
-function addStyleExtendedSpecialAbilityDependencies(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
+export function addStyleExtendedSpecialAbilityDependencies(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
   if (instance) {
     let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
     if (instance.gr === 9 || instance.gr === 10) {
