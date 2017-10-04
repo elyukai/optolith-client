@@ -9,6 +9,6 @@ export interface MarkdownProps {
 export function Markdown(props: MarkdownProps) {
 	const { className = '', source = '...' } = props;
 	return (
-		<ReactMarkdown source={source} skipHtml className={className} />
+		<ReactMarkdown source={source} skipHtml className={className} softBreak="br" />
 	);
 }

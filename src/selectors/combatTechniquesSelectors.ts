@@ -29,7 +29,7 @@ export const getForSheet = createSelector(
 	(combatTechniques, attributes) => {
 		const array: CombatTechnique[] = [];
 		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr } = entry;
+			const { ic, name, primary, value, gr, category } = entry;
 			array.push({
 				id,
 				name,
@@ -38,7 +38,8 @@ export const getForSheet = createSelector(
 				ic,
 				gr,
 				at: getAt(attributes, entry),
-				pa: getPa(attributes, entry)
+				pa: getPa(attributes, entry),
+				category
 			});
 		}
 		return array;
@@ -55,7 +56,7 @@ export const getAllCombatTechniques = createSelector(
 	(combatTechniques, attributes, hunter, exceptionalCombatTechnique, phase, startEl) => {
 		const array: CombatTechniqueWithRequirements[] = [];
 		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr } = entry;
+			const { ic, name, primary, value, gr, category } = entry;
 			array.push({
 				id,
 				name,
@@ -66,7 +67,8 @@ export const getAllCombatTechniques = createSelector(
 				at: getAt(attributes, entry),
 				pa: getPa(attributes, entry),
 				min: getMin(hunter, combatTechniques, entry),
-				max: getMax(exceptionalCombatTechnique, startEl, attributes, phase, entry)
+				max: getMax(exceptionalCombatTechnique, startEl, attributes, phase, entry),
+				category
 			});
 		}
 		return array;

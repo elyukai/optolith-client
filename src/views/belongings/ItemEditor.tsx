@@ -6,26 +6,28 @@ import { Hr } from '../../components/Hr';
 import { IconButton } from '../../components/IconButton';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
+import { AttributeInstance, InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../../utils/I18n';
 import { convertToEdit, convertToSave } from '../../utils/ItemUtils';
 
-interface Props {
+export interface ItemEditorProps {
 	create?: boolean;
 	item?: ItemInstance;
 	locale: UIMessages;
 	node?: HTMLDivElement;
+	attributes: Map<string, AttributeInstance>;
 	combatTechniques: CombatTechnique[];
 	templates: ItemInstance[];
 	addToList(data: ItemInstance): void;
 	set(id: string, data: ItemInstance): void;
 }
 
-export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
+export class ItemEditor extends React.Component<ItemEditorProps, ItemEditorInstance> {
 	state: ItemEditorInstance;
 
-	constructor(props: Props) {
+	constructor(props: ItemEditorProps) {
 		super(props);
 		const tempState = this.props.item;
 		if (tempState) {
@@ -38,7 +40,9 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 				stabilityMod: '',
 				amount: '',
 				at: '',
-				damageBonus: '',
+				damageBonus: {
+					threshold: ''
+				},
 				damageDiceNumber: '',
 				damageFlat: '',
 				enc: '',
@@ -72,7 +76,28 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	changeDamageDiceNumber = (event: InputTextEvent) => this.setState({ damageDiceNumber: event.target.value } as ItemEditorInstance);
 	changeDamageDiceSides = (id: number) => this.setState({ damageDiceSides: id } as ItemEditorInstance);
 	changeDamageFlat = (event: InputTextEvent) => this.setState({ damageFlat: event.target.value } as ItemEditorInstance);
-	changeDamageBonus = (event: InputTextEvent) => this.setState({ damageBonus: event.target.value } as ItemEditorInstance);
+	changePrimaryAttribute = (primary?: string) => this.setState(prevState => ({ damageBonus: { primary, threshold: Array.isArray(prevState.damageBonus.threshold) ? '' : prevState.damageBonus.threshold } } as ItemEditorInstance));
+	changeDamageThreshold = (event: InputTextEvent) => {
+		const threshold = event.target.value as string;
+		this.setState(prevState => ({ damageBonus: { ...prevState.damageBonus, threshold } } as ItemEditorInstance));
+	}
+	changeFirstDamageThreshold = (event: InputTextEvent) => {
+		const thresholdValue = event.target.value as string;
+		this.setState(prevState => {
+			const threshold = [...prevState.damageBonus.threshold] as string[];
+			threshold[0] = thresholdValue;
+			return { damageBonus: { ...prevState.damageBonus, threshold } } as ItemEditorInstance;
+		});
+	}
+	changeSecondDamageThreshold = (event: InputTextEvent) => {
+		const thresholdValue = event.target.value as string;
+		this.setState(prevState => {
+			const threshold = [...prevState.damageBonus.threshold] as string[];
+			threshold[1] = thresholdValue;
+			return { damageBonus: { ...prevState.damageBonus, threshold } } as ItemEditorInstance;
+		});
+	}
+	changeDamageThresholdSeparation = () => this.setState(prevState => ({ damageBonus: { ...prevState.damageBonus, threshold: Array.isArray(prevState.damageBonus.threshold) ? '' : ['', ''] } } as ItemEditorInstance));
 	changeAT = (event: InputTextEvent) => this.setState({ at: event.target.value } as ItemEditorInstance);
 	changePA = (event: InputTextEvent) => this.setState({ pa: event.target.value } as ItemEditorInstance);
 	changeReach = (id: number) => this.setState({ reach: id } as ItemEditorInstance);
@@ -155,7 +180,7 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 	}
 
 	render() {
-		const { combatTechniques, create, locale, node, templates } = this.props;
+		const { attributes, combatTechniques, create, locale, node, templates } = this.props;
 		const { movMod, iniMod, addPenalties, armorType, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = this.state;
 
 		const GROUPS_SELECTION = _translate(locale, 'equipment.view.groups').map((e, i) => ({ id: i + 1, name: e }));
@@ -164,9 +189,9 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 			{ id: 2, name: _translate(locale, 'equipment.view.groups')[1] }
 		];
 		// const GROUPS_SELECTION = GROUPS.map((e,i) => [ e, i + 1 ]).sort((a,b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
-		const TEMPLATES = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.map(({ id, name }) => ({ id, name })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-		const AMMUNITION = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
-		const armorTypes = _translate(locale, 'equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e }));
+		const TEMPLATES = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(sortObjects(templates.map(({ id, name }) => ({ id, name })), locale.id));
+		const AMMUNITION = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(sortObjects(templates.filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })), locale.id));
+		const armorTypes = sortObjects(_translate(locale, 'equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e })), locale.id);
 
 		const dice = [2, 3, 6].map((e, i) => ({ id: e, name: _translate(locale, 'equipment.view.dice')[i] }));
 		const lossTiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
@@ -181,7 +206,9 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 		const validATMod = regexIntN.test(at);
 		const validDamageDiceNumber = regexIntEmpty.test(damageDiceNumber);
 		const validDamageFlat = regexIntNEmpty.test(damageFlat);
-		const validDamageThreshold = regexIntEmpty.test(damageBonus);
+		const validFirstDamageThreshold = Array.isArray(damageBonus.threshold) && regexInt.test(damageBonus.threshold[0]);
+		const validSecondDamageThreshold = Array.isArray(damageBonus.threshold) && regexInt.test(damageBonus.threshold[1]);
+		const validDamageThreshold = Array.isArray(damageBonus.threshold) ? validFirstDamageThreshold && validSecondDamageThreshold : regexInt.test(damageBonus.threshold);
 		const validENC = regexInt.test(enc);
 		const validINIMod = regexIntNEmpty.test(iniMod);
 		const validLength = regexIntEmpty.test(length);
@@ -317,8 +344,8 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 						)}
 					</div>
 				</div>
+				{(gr === 1 || improvisedWeaponGroup === 1 || gr === 2 || improvisedWeaponGroup === 2 || gr === 4) && <Hr className="vertical" />}
 				{(gr === 1 || improvisedWeaponGroup === 1) && ( <div className="melee">
-					<Hr />
 					<div className="row">
 						<Dropdown
 							className="combattechnique"
@@ -330,13 +357,58 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 							disabled={locked}
 							required
 							/>
-						<TextField
-							className="damage-bonus"
-							label={_translate(locale, 'itemeditor.options.damagethreshold')}
-							value={damageBonus}
-							onChange={this.changeDamageBonus}
-							disabled={locked}
-							valid={validDamageThreshold}
+					</div>
+					<div className="row">
+						<Dropdown
+							className="primary-attribute-selection"
+							label={_translate(locale, 'itemeditor.options.primaryattribute')}
+							value={damageBonus.primary}
+							options={[
+								{name: `${_translate(locale, 'itemeditor.options.primaryattributeshort')} (${combatTechnique && combatTechniques.find(e => e.id === combatTechnique)!.primary.map(e => attributes.get(e)!.short).join('/')})`},
+								{id: 'ATTR_5', name: attributes.get('ATTR_5')!.short},
+								{id: 'ATTR_6', name: attributes.get('ATTR_6')!.short},
+								{id: 'ATTR_6_8', name: `${attributes.get('ATTR_6')!.short}/${attributes.get('ATTR_8')!.short}`},
+								{id: 'ATTR_8', name: attributes.get('ATTR_8')!.short}
+							]}
+							onChange={this.changePrimaryAttribute}
+							disabled={locked || !combatTechnique}
+							/>
+						{Array.isArray(damageBonus.threshold) ? (
+							<div className="container damage-threshold">
+								<Label text={_translate(locale, 'itemeditor.options.damagethreshold')} disabled={locked || !combatTechnique} />
+								<TextField
+									className="damage-threshold-part"
+									value={damageBonus.threshold[0]}
+									onChange={this.changeFirstDamageThreshold}
+									disabled={locked || !combatTechnique}
+									valid={validFirstDamageThreshold}
+									/>
+								<TextField
+									className="damage-threshold-part"
+									value={damageBonus.threshold[1]}
+									onChange={this.changeSecondDamageThreshold}
+									disabled={locked || !combatTechnique}
+									valid={validSecondDamageThreshold}
+									/>
+							</div>
+						) : (
+							<TextField
+								className="damage-threshold"
+								label={_translate(locale, 'itemeditor.options.damagethreshold')}
+								value={damageBonus.threshold}
+								onChange={this.changeDamageThreshold}
+								disabled={locked || !combatTechnique}
+								valid={validDamageThreshold}
+								/>
+						)}
+					</div>
+					<div className="row">
+						<Checkbox
+							className="damage-threshold-separated"
+							label={_translate(locale, 'itemeditor.options.damagethresholdseparated')}
+							checked={Array.isArray(damageBonus.threshold)}
+							onClick={this.changeDamageThresholdSeparation}
+							disabled={locked || !combatTechnique || !(typeof damageBonus.primary === 'string' && damageBonus.primary === 'ATTR_6_8' || typeof combatTechnique === 'string' && combatTechniques.find(e => e.id === combatTechnique)!.primary.length === 2)}
 							/>
 					</div>
 					<div className="row">
@@ -447,7 +519,6 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					</div>
 				</div>)}
 				{(gr === 2 || improvisedWeaponGroup === 2) && (<div className="ranged">
-					<Hr />
 					<div className="row">
 						<Dropdown
 							className="combattechnique"
@@ -556,7 +627,6 @@ export class ItemEditor extends React.Component<Props, ItemEditorInstance> {
 					</div>
 				</div>)}
 				{gr === 4 && ( <div className="armor">
-					<Hr />
 					<div className="row">
 						<div className="container">
 							<TextField

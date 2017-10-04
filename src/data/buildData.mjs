@@ -252,7 +252,7 @@ function iterateActivatables(array, type) {
       newObj.sel = splitList(obj.sel).map((e, i) => {
         const ee = e.split('?');
         const id = /^\d+$/.test(ee[0]) ? Number.parseInt(ee[0]) : ee[0];
-        return ee[2] ? { id, prerequisites: convertPrerequisite(ee[2]) } : { id };
+        return ee[2] ? { id, prerequisites: [convertPrerequisite(ee[2])] } : { id };
       });
     }
     else if (obj.sel) {
@@ -498,8 +498,19 @@ function iterateEquipment(array) {
         isParryingWeapon: !!pryw,
         isTwoHanded: !!two
       });
-      if (typeof db === 'string' && /^[&\d]+$/.test(db)) {
-        result.damageBonus = /&/.test(db) ? db.split(/&/).map(e => Number.parseInt(e)) : Number.parseInt(db);
+      if (typeof db === 'string') {
+        const thresholdObject = {};
+        let threshold;
+        if (/\?/.test(db)) {
+          const [attr, thrh] = db.split(/\?/);
+          thresholdObject.primary = `ATTR_${attr}`;
+          threshold = thrh;
+        }
+        else {
+          threshold = db;
+        }
+        thresholdObject.threshold = /&/.test(threshold) ? threshold.split(/&/).map(e => Number.parseInt(e)) : Number.parseInt(threshold);
+        result.primaryThreshold = thresholdObject;
       }
     }
     else if (gr === 2 || imp === 2) {

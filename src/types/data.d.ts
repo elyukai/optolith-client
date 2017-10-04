@@ -714,7 +714,10 @@ export interface ItemInstance extends ItemBaseInstance {
 	at?: number;
 	iniMod?: number;
 	movMod?: number;
-	damageBonus?: number | (number | undefined)[];
+	damageBonus?: {
+		primary?: string;
+		threshold: number | number[];
+	};
 	damageDiceNumber?: number;
 	damageFlat?: number;
 	enc?: number;
@@ -734,7 +737,10 @@ export interface ItemEditorInstance extends ItemBaseInstance {
 	at: string;
 	iniMod: string;
 	movMod: string;
-	damageBonus: string | string[];
+	damageBonus: {
+		primary?: string;
+		threshold: string | string[];
+	};
 	damageDiceNumber: string;
 	damageFlat: string;
 	enc: string;

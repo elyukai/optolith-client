@@ -3,4 +3,10 @@ hr {
 	border: none;
 	height: 1px;
 	background: $c1t;
+
+	&.vertical {
+		margin: 0 20px;
+		height: auto;
+		width: 1px;
+	}
 }

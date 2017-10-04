@@ -3,23 +3,23 @@ import { ItemEditorInstance, ItemInstance } from '../types/data.d';
 export function convertToEdit(item: ItemInstance): ItemEditorInstance {
 	return {
 		...item,
-		amount: item.amount ? item.amount.toString() : '',
-		at: item.at ? item.at.toString() : '',
-		damageBonus: item.damageBonus ? item.damageBonus.toString() : '',
-		damageDiceNumber: item.damageDiceNumber ? item.damageDiceNumber.toString() : '',
-		damageFlat: item.damageFlat ? item.damageFlat.toString() : '',
-		enc: item.enc ? item.enc.toString() : '',
-		length: item.length ? item.length.toString() : '',
-		pa: item.pa ? item.pa.toString() : '',
-		price: item.price ? item.price.toString() : '',
-		pro: item.pro ? item.pro.toString() : '',
+		amount: typeof item.amount === 'number' ? item.amount.toString() : '',
+		at: typeof item.at === 'number' ? item.at.toString() : '',
+		damageBonus: item.damageBonus ? Array.isArray(item.damageBonus.threshold) ? { ...item.damageBonus, threshold: item.damageBonus.threshold.map(e => e.toString()) } : { ...item.damageBonus, threshold: item.damageBonus.threshold.toString() } : { threshold: '' },
+		damageDiceNumber: typeof item.damageDiceNumber === 'number' ? item.damageDiceNumber.toString() : '',
+		damageFlat: typeof item.damageFlat === 'number' ? item.damageFlat.toString() : '',
+		enc: typeof item.enc === 'number' ? item.enc.toString() : '',
+		length: typeof item.length === 'number' ? item.length.toString() : '',
+		pa: typeof item.pa === 'number' ? item.pa.toString() : '',
+		price: typeof item.price === 'number' ? item.price.toString() : '',
+		pro: typeof item.pro === 'number' ? item.pro.toString() : '',
 		range: (item.range ? item.range.map(e => e.toString()) : ['', '', '']) as [string, string, string],
-		reloadTime: item.reloadTime ? item.reloadTime.toString() : '',
-		stp: item.stp ? item.stp.toString() : '',
-		weight: item.weight ? item.weight.toString() : '',
-		movMod: item.movMod ? item.movMod.toString() : '',
-		iniMod: item.iniMod ? item.iniMod.toString() : '',
-		stabilityMod: item.stabilityMod ? item.stabilityMod.toString() : '',
+		reloadTime: typeof item.reloadTime === 'number' ? item.reloadTime.toString() : '',
+		stp: typeof item.stp === 'number' ? item.stp.toString() : '',
+		weight: typeof item.weight === 'number' ? item.weight.toString() : '',
+		movMod: typeof item.movMod === 'number' ? item.movMod.toString() : '',
+		iniMod: typeof item.iniMod === 'number' ? item.iniMod.toString() : '',
+		stabilityMod: typeof item.stabilityMod === 'number' ? item.stabilityMod.toString() : '',
 	};
 }
 
@@ -47,7 +47,7 @@ export function convertToSave(item: ItemEditorInstance): ItemInstance {
 		...other,
 		amount: item.amount ? Number.parseInt(item.amount.replace(/\,/, '.')) : 1,
 		at: item.at ? Number.parseInt(item.at.replace(/\,/, '.')) : 0,
-		damageBonus: item.damageBonus ? Number.parseInt(item.damageBonus.replace(/\,/, '.')) : 0,
+		damageBonus: (Array.isArray(item.damageBonus.threshold) ? item.damageBonus.threshold.every(e => e.length > 0) : item.damageBonus.threshold.length > 0) ? Array.isArray(item.damageBonus.threshold) ? { ...item.damageBonus, threshold: item.damageBonus.threshold.map(e => Number.parseInt(e)) } : { ...item.damageBonus, threshold: Number.parseInt(item.damageBonus.threshold) } : undefined,
 		damageDiceNumber: item.damageDiceNumber ? Number.parseInt(item.damageDiceNumber.replace(/\,/, '.')) : 0,
 		damageFlat: item.damageFlat ? Number.parseInt(item.damageFlat.replace(/\,/, '.')) : 0,
 		enc: item.enc ? Number.parseInt(item.enc.replace(/\,/, '.')) : 0,
@@ -79,4 +79,9 @@ export function containsNaN(item: ItemInstance): string[] | false {
 		return false;
 	}
 	return filtered;
+}
+
+export function convertPrimaryAttributeToArray(id: string): string[] {
+	const [attr, ...ids] = id.split(/_/);
+	return ids.map(e => `${attr}_${e}`);
 }

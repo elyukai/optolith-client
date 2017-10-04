@@ -124,6 +124,20 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 currentCost = selectionItem && selectionItem.cost;
                 break;
               }
+              case 'ADV_79': {
+                const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive).length;
+                if (active > 3) {
+                  activeObject.minTier = active - 3;
+                }
+                break;
+              }
+              case 'ADV_80': {
+                const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive).length;
+                if (active > 3) {
+                  activeObject.minTier = active - 3;
+                }
+                break;
+              }
               case 'DISADV_34':
               case 'DISADV_50': {
                 const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
@@ -161,6 +175,20 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
                 const activeSpells = (getAllByCategory(dependent, Categories.SPELLS) as Data.SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
                 if (activeSpells < 3) {
                   activeObject.maxTier = 3 - activeSpells;
+                }
+                break;
+              }
+              case 'DISADV_72': {
+                const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive).length;
+                if (active < 3) {
+                  activeObject.minTier = 3 - active;
+                }
+                break;
+              }
+              case 'DISADV_73': {
+                const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive).length;
+                if (active < 3) {
+                  activeObject.minTier = 3 - active;
                 }
                 break;
               }
@@ -438,8 +466,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                   finalEntries.push({ id, name, cost, gr, instance: entry });
                 }
                 break;
-              case 'SA_3':
-              case 'SA_639': {
+              case 'SA_3': {
                 const activeIds = getSids(a);
                 const sel = (a.sel as Array<Data.SelectionObject & { req: Reusable.AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(a).includes(e.id));
                 if (sel.length > 0) {
@@ -611,6 +638,54 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
                 const increaseValue = dependent.talents.get(dependent.specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
                 const increasedCost = (cost as number[]).map(e => e + increaseValue);
                 finalEntries.push({ id, name, cost: increasedCost, sel, gr, instance: entry });
+                break;
+              }
+              case 'SA_544':
+              case 'SA_545':
+              case 'SA_546':
+              case 'SA_547':
+              case 'SA_548': {
+                if (isActive(dependent.advantages.get('ADV_77'))) {
+                  let max = 3;
+                  if (isActive(dependent.advantages.get('ADV_79'))) {
+                    max += dependent.advantages.get('ADV_79')!.active[0].tier!;
+                  }
+                  else if (isActive(dependent.advantages.get('DISADV_72'))) {
+                    max -= dependent.advantages.get('DISADV_72')!.active[0].tier!;
+                  }
+                  const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive);
+                  if (active.length < max) {
+                    finalEntries.push({ id, name, cost, gr, instance: entry });
+                  }
+                }
+                break;
+              }
+              case 'SA_549':
+              case 'SA_550':
+              case 'SA_551':
+              case 'SA_552':
+              case 'SA_553': {
+                if (isActive(dependent.advantages.get('ADV_78'))) {
+                  let max = 3;
+                  if (isActive(dependent.advantages.get('ADV_80'))) {
+                    max += dependent.advantages.get('ADV_80')!.active[0].tier!;
+                  }
+                  else if (isActive(dependent.advantages.get('DISADV_73'))) {
+                    max -= dependent.advantages.get('DISADV_73')!.active[0].tier!;
+                  }
+                  const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive);
+                  if (active.length < max) {
+                    finalEntries.push({ id, name, cost, gr, instance: entry });
+                  }
+                }
+                break;
+              }
+              case 'SA_639': {
+                const activeIds = getSids(a);
+                const sel = (a.sel as Array<Data.SelectionObject & { prerequisites: Reusable.AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites, id) && !getDSids(a).includes(e.id));
+                if (sel.length > 0) {
+                  finalEntries.push({ id, name, sel, cost, gr, instance: entry });
+                }
                 break;
               }
 

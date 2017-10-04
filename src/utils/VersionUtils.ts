@@ -525,6 +525,14 @@ export function convertHero(hero: Hero) {
       }
     }
     entry.activatable = newActivatable;
+
+    for (const [id, item] of Object.entries(entry.belongings.items)) {
+      entry.belongings.items[id] = {
+        ...item,
+        damageBonus: { value: item.damageBonus as number }
+      };
+    }
+
     entry.clientVersion = '0.49.5';
   }
   return entry;

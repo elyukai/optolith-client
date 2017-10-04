@@ -52,7 +52,7 @@ export const getForView = createSelector(
 	(attributes, startEl, currentEl, phase, attributeValueLimit, specialAbilities, talents) => {
 		const array: AttributeWithRequirements[] = [];
 		for (const [id, entry] of attributes) {
-			const { mod, name, short, value, dependencies } = entry;
+			const { mod, name, short, value, dependencies, category } = entry;
 			const max = getMax(startEl, currentEl, phase, mod, attributeValueLimit);
 			const min = getMin(dependencies, specialAbilities, talents);
 			array.push({
@@ -61,7 +61,8 @@ export const getForView = createSelector(
 				short,
 				value,
 				max,
-				min
+				min,
+				category
 			});
 		}
 		return array;
@@ -73,12 +74,13 @@ export const getForSheet = createSelector(
 	attributes => {
 		const array: Attribute[] = [];
 		for (const [id, entry] of attributes) {
-			const { name, short, value } = entry;
+			const { name, short, value, category } = entry;
 			array.push({
 				id,
 				name,
 				short,
-				value
+				value,
+				category
 			});
 		}
 		return array;

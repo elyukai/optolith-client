@@ -28,7 +28,10 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 		races: new Map(),
 		specialAbilities: new Map(),
 		spells: new Map(),
-		talents: new Map()
+		talents: new Map(),
+		blessedStyleDependencies: [],
+		combatStyleDependencies: [],
+		magicalStyleDependencies: [],
 	};
 
 	const iterate = <TRaw extends RawDataClass, T extends InstanceInInit, L extends RawLocales>(source: { [id: string]: TRaw }, initFn: (raw: TRaw, locale: ToListById<L>) => T | undefined, locale: ToListById<L>) => {

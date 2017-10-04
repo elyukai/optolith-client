@@ -233,7 +233,7 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
   const localeObject = locale[id];
   if (localeObject) {
     const { name, sel: localeSel, input } = localeObject;
-    const { id, ap, tiers, max, sel, req, gr } = raw;
+    const { id, ap, tiers, max, sel, req, gr, extended } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -256,7 +256,8 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
       max,
       name,
       reqs: Array.isArray(req[0]) ? new Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>(req as any) : req as ('RCP' | Reusable.AllRequirementTypes)[],
-      sel: finalSel
+      sel: finalSel,
+      extended
     };
   }
   return;
@@ -431,14 +432,14 @@ export function initItem(raw: RawItem, locale: ToListById<RawItemLocale>): ItemI
   const localeObject = locale[id];
   if (localeObject) {
     const { name } = localeObject;
-    const { addPenalties, imp, damageBonus, ...other } = raw;
+    const { addPenalties, imp, primaryThreshold, ...other } = raw;
     return {
       ...other,
       name,
       addPenalties,
       amount: 1,
       improvisedWeaponGroup: imp,
-      damageBonus: Array.isArray(damageBonus) ? damageBonus.map(e => e === 0 ? undefined : e) : damageBonus,
+      damageBonus: primaryThreshold,
       isTemplateLocked: true
     };
   }

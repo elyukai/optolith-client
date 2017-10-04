@@ -562,7 +562,10 @@ export interface UIMessages {
 	"itemeditor.options.improvisedweapongr": string;
 	"itemeditor.options.template": string;
 	"itemeditor.options.combattechnique": string;
+	"itemeditor.options.primaryattribute": string;
+	"itemeditor.options.primaryattributeshort": string;
 	"itemeditor.options.damagethreshold": string;
+	"itemeditor.options.damagethresholdseparated": string;
 	"itemeditor.options.damage": string;
 	"itemeditor.options.damagedice": string;
 	"itemeditor.options.bfmod": string;

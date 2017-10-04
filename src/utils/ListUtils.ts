@@ -1,4 +1,4 @@
-import { DependentInstancesState } from '../reducers/dependentInstances';
+import { DependentInstancesState, DependentInstancesStateKeysForMaps } from '../reducers/dependentInstances';
 import { ToOptionalKeys } from '../types/data.d';
 import { AbilityInstanceExtended, Instance } from '../types/data.d';
 import { getStateKeyById } from './IDUtils';
@@ -68,11 +68,11 @@ export function setStateItem<T extends Instance>(newstate: DependentInstancesSta
 export function mergeIntoState(oldstate: DependentInstancesState, newstate: ToOptionalKeys<DependentInstancesState>): DependentInstancesState {
 	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
 
-	type D = DependentInstancesState;
-
 	const total = { ...oldstate };
 	for (const key of keys) {
-		total[key] = mergeIntoStateSlice<keyof D>(total[key], newstate[key]);
+		if (key !== 'blessedStyleDependencies' && key !== 'combatStyleDependencies' && key !== 'magicalStyleDependencies') {
+			total[key] = mergeIntoStateSlice(total[key], newstate[key]);
+		}
 	}
 
 	return total;
@@ -81,24 +81,24 @@ export function mergeIntoState(oldstate: DependentInstancesState, newstate: ToOp
 export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
 	const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
 
-	type D = DependentInstancesState;
-
 	const total = { ...oldstate };
 	for (const key of keys) {
-		total[key] = mergeIntoOptionalStateSlice<keyof D>(total[key], newstate[key]);
+		if (key !== 'blessedStyleDependencies' && key !== 'combatStyleDependencies' && key !== 'magicalStyleDependencies') {
+			total[key] = mergeIntoOptionalStateSlice(total[key], newstate[key]);
+		}
 	}
 
 	return total;
 }
 
-function mergeIntoStateSlice<T extends keyof DependentInstancesState>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+function mergeIntoStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
 	if (newslice) {
 		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
 	}
 	return oldslice;
 }
 
-function mergeIntoOptionalStateSlice<T extends keyof DependentInstancesState>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+function mergeIntoOptionalStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
 	if (newslice && oldslice) {
 		return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
 	}

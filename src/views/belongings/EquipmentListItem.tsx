@@ -10,6 +10,7 @@ import { AttributeInstance, ItemInstance, UIMessages } from '../../types/data.d'
 import { CombatTechnique } from '../../types/view.d';
 import { createOverlay } from '../../utils/createOverlay';
 import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
+import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
 import { sign, signNull } from '../../utils/NumberUtils';
 import { ItemEditor } from './ItemEditor';
 
@@ -42,6 +43,10 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 		addPenaltiesArr.push(`-${1 + (iniMod || 0)} INI`);
 	}
 
+	const combatTechniqueInstance = combatTechnique && combatTechniques.find(e => e.id === combatTechnique);
+
+	const primaryAttributeIdArray = damageBonus && typeof damageBonus.primary === 'string' && convertPrimaryAttributeToArray(damageBonus.primary) || combatTechniqueInstance && combatTechniqueInstance.primary;
+
 	return (
 		<TooltipToggle content={
 			<div className="inventory-item">
@@ -64,10 +69,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.combattechnique')}</td>
 							<td>
-								{(() => {
-									const entry = combatTechnique && combatTechniques.find(e => e.id === combatTechnique);
-									return entry && entry.name;
-								})()}
+								{combatTechniqueInstance && combatTechniqueInstance.name}
 							</td>
 						</tr>
 						<tr>
@@ -76,7 +78,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.primaryattributedamagethreshold')}</td>
-							<td>{combatTechnique && combatTechniques.find(e => e.id === combatTechnique)!.primary.map(attr => attributes.get(attr)!.short).join('/')} {damageBonus}</td>
+							<td>{primaryAttributeIdArray && damageBonus && (Array.isArray(damageBonus.threshold) ? primaryAttributeIdArray.map((attr, index) => `${attributes.get(attr)!.short} ${(damageBonus.threshold as number[])[index]}`).join('/') : `${primaryAttributeIdArray.map(attr => attributes.get(attr)!.short).join('/')} ${damageBonus.threshold}`)}</td>
 						</tr>
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.atpamod')}</td>
@@ -105,10 +107,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 						<tr>
 							<td>{_translate(locale, 'equipment.view.list.combattechnique')}</td>
 							<td>
-								{(() => {
-									const entry = combatTechnique && combatTechniques.find(e => e.id === combatTechnique);
-									return entry && entry.name;
-								})()}
+								{combatTechniqueInstance && combatTechniqueInstance.name}
 							</td>
 						</tr>
 						<tr>

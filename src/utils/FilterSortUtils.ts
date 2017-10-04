@@ -1,15 +1,11 @@
 import { first } from 'lodash';
 
-export function sortByLocaleName<T extends { name: string; [key: string]: any; }>(list: T[], locale: string) {
-	return list.sort((a, b) => a.name.localeCompare(b.name, locale));
-}
-
-interface BaseObject {
+export interface BaseObject {
 	name: any;
 	[key: string]: any;
 }
 
-interface SortOption<T> {
+export interface SortOption<T> {
 	key: keyof T | ((object: T) => any);
 	keyOfProperty?: string;
 	mapToIndex?: string[];
@@ -92,7 +88,7 @@ export function sortObjects<T extends BaseObject>(list: T[], locale: string, sor
 	});
 }
 
-interface FilterOptions<T> {
+export interface FilterOptions<T> {
 	addProperty?: keyof T;
 	keyOfName?: string;
 }

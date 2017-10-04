@@ -7,7 +7,7 @@ import { ActiveObjectName } from '../types/activatables';
 import { ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
-import { setStateItem } from './ListUtils';
+import { mergeIntoState, setStateItem } from './ListUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, isRequiringActivatable, validate, validateObject, validateRemovingStyle } from './RequirementUtils';
 
@@ -138,7 +138,7 @@ export function getSelectionItem(obj: ActivatableInstance, id?: string | number)
   return undefined;
 }
 
-export function getSelectionName(obj: ActivatableInstance, id?: string | number) {
+export function getSelectionName(obj: ActivatableInstance, id?: string | number): string | undefined {
   const selectionItem = getSelectionItem(obj, id);
   if (selectionItem) {
     return selectionItem.name;
@@ -146,132 +146,32 @@ export function getSelectionName(obj: ActivatableInstance, id?: string | number)
   return undefined;
 }
 
-export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | number) {
+export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | number): { name: string; cost: number; } | undefined {
   const selectionItem = getSelectionItem(obj, id);
-  if (selectionItem) {
+  if (selectionItem && selectionItem.cost) {
     const { name, cost } = selectionItem;
-    return cost && { name, cost };
+    return { name, cost };
   }
   return undefined;
 }
 
-export function activate(state: DependentInstancesState, obj: ActivatableInstance, { sel, sel2, input, tier }: ActivateObject): ToOptionalKeys<DependentInstancesState> {
-  const adds: AllRequirementTypes[] = [];
-  let active: ActiveObject | undefined;
-  let sidNew;
-  switch (obj.id) {
-    case 'ADV_4':
-    case 'ADV_16':
-    case 'DISADV_48':
-      active = { sid: sel };
-      sidNew = sel as string;
-      break;
-    case 'ADV_68':
-      active = { sid: sel, sid2: input };
-      break;
-    case 'DISADV_1':
-    case 'DISADV_34':
-    case 'DISADV_50':
-      if (!input) {
-        active = { sid: sel, tier };
-      }
-      else if (obj.active.filter(e => e.sid === input).length === 0) {
-        active = { sid: input, tier };
-      }
-      break;
-    case 'DISADV_33':
-      if ([7, 8].includes(sel as number) && input) {
-        if (obj.active.filter(e => e.sid2 === input).length === 0) {
-          active = { sid: sel, sid2: input };
-        }
-      } else {
-        active = { sid: sel };
-      }
-      break;
-    case 'DISADV_36':
-      if (!input) {
-        active = { sid: sel };
-      }
-      else if (obj.active.filter(e => e.sid === input).length === 0) {
-        active = { sid: input };
-      }
-      break;
-    case 'SA_9':
-      if (!input) {
-        active = { sid: sel, sid2: sel2 };
-      } else if (obj.active.filter(e => e.sid === input).length === 0) {
-        active = { sid: sel, sid2: input };
-      }
-      adds.push({ id: sel as string, value: (obj.active.filter(e => e.sid === sel).length + 1) * 6 });
-      break;
-    case 'SA_29':
-      active = { sid: sel, tier };
-      break;
-    case 'SA_81':
-      active = { sid: sel };
-      adds.push({ id: 'SA_72', active: true, sid: sel });
-      break;
-    case 'SA_414': {
-      active = { sid: sel };
-      const selectionItem = getSelectionItem(obj, sel) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
-      adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
-      break;
-    }
-
-    default:
-      if (sel && tier) {
-        active = { sid: (obj.input && input) || sel, sid2: sel2, tier };
-      }
-      else if (sel) {
-        active = { sid: (obj.input && input) || sel, sid2: sel2 };
-      }
-      else if (input && obj.active.filter(e => e.sid === input).length === 0 && tier) {
-        active = { sid: input, tier };
-      }
-      else if (input && obj.active.filter(e => e.sid === input).length === 0) {
-        active = { sid: input };
-      }
-      else if (tier) {
-        active = { tier };
-      }
-      else if (obj.max === 1) {
-        active = {};
-      }
-      break;
-  }
+export function activate(state: DependentInstancesState, obj: ActivatableInstance, activate: ActivateObject): DependentInstancesState {
+  const active = convertToActiveObject(obj, activate);
   if (active) {
+    const adds = getGeneratedPrerequisites(obj, active, true);
     const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active, active]});
     const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(active.tier && [...obj.reqs].filter(e => e[0] <= active!.tier!).map(e => e[1]) || []);
-    return DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id, sidNew);
+    return mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
   }
   return state;
 }
 
-export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): ToOptionalKeys<DependentInstancesState> {
-  const adds: AllRequirementTypes[] = [];
-  const { sid, tier } = obj.active[index];
-  let sidOld;
-  switch (obj.id) {
-    case 'ADV_4':
-    case 'ADV_16':
-    case 'DISADV_48':
-      sidOld = sid as string;
-      break;
-    case 'SA_9':
-      adds.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
-      break;
-    case 'SA_81':
-      adds.push({ id: 'SA_72', active: true, sid });
-      break;
-    case 'SA_414': {
-      const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
-      adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
-      break;
-    }
-  }
+export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): DependentInstancesState {
+  const adds = getGeneratedPrerequisites(obj, obj.active[index], false);
+  const { tier } = obj.active[index];
   const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active.slice(0, index), ...obj.active.slice(index + 1)]});
   const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-  return DependentUtils.removeDependencies(firstState, [...prerequisites, ...adds], obj.id, sidOld);
+  return mergeIntoState(firstState, DependentUtils.removeDependencies(firstState, [...prerequisites, ...adds], obj.id));
 }
 
 export function setTier(state: DependentInstancesState, obj: ActivatableInstance, index: number, tier: number): ToOptionalKeys<DependentInstancesState> {
@@ -285,9 +185,9 @@ export function setTier(state: DependentInstancesState, obj: ActivatableInstance
     const higher = Math.max(previousTier, tier);
     const prerequisites = flatten(tier ? [...obj.reqs].filter(e => e[0] <= higher && e[0] > lower).map(e => e[1]) : []);
     if (previousTier > tier) {
-      return DependentUtils.removeDependencies(firstState, prerequisites, obj.id);
+      return mergeIntoState(firstState, DependentUtils.removeDependencies(firstState, prerequisites, obj.id));
     }
-    return DependentUtils.addDependencies(firstState, prerequisites, obj.id);
+    return mergeIntoState(firstState, DependentUtils.addDependencies(firstState, prerequisites, obj.id));
   }
 
   return firstState;
@@ -413,4 +313,110 @@ export function getActiveSelection(state: DependentInstancesState, entry: Activa
     return { name: finalName, ...other };
   }
   return;
+}
+
+/**
+ * Converts the object generated by the list item to an object that can be inserted into an array of ActiveObjects.
+ * @param obj The entry for which you want to convert the object.
+ * @param activate The object generated by the list item.
+ */
+export function convertToActiveObject(obj: ActivatableInstance, activate: ActivateObject) {
+  const { sel, sel2, input, tier } = activate;
+  let active: ActiveObject | undefined;
+  switch (obj.id) {
+    case 'ADV_68':
+      active = { sid: sel, sid2: input };
+      break;
+    case 'DISADV_1':
+    case 'DISADV_34':
+    case 'DISADV_50':
+      if (!input) {
+        active = { sid: sel, tier };
+      }
+      else {
+        active = { sid: input, tier };
+      }
+      break;
+    case 'DISADV_33':
+      if ([7, 8].includes(sel as number) && input) {
+        active = { sid: sel, sid2: input };
+      }
+      else {
+        active = { sid: sel };
+      }
+      break;
+    case 'DISADV_36':
+      if (!input) {
+        active = { sid: sel };
+      }
+      else {
+        active = { sid: input };
+      }
+      break;
+    case 'SA_9':
+      if (!input) {
+        active = { sid: sel, sid2: sel2 };
+      }
+      else {
+        active = { sid: sel, sid2: input };
+      }
+      break;
+
+    default:
+      if (sel && tier) {
+        active = { sid: (obj.input && input) || sel, sid2: sel2, tier };
+      }
+      else if (sel) {
+        active = { sid: (obj.input && input) || sel, sid2: sel2 };
+      }
+      else if (input && tier) {
+        active = { sid: input, tier };
+      }
+      else if (input) {
+        active = { sid: input };
+      }
+      else if (tier) {
+        active = { tier };
+      }
+      else if (obj.max === 1) {
+        active = {};
+      }
+      break;
+  }
+  return active;
+}
+
+/**
+ * Some advantages, disadvantages and special abilities need more prerequisites than given in their respective main array.
+ * @param obj The entry for which you want to add the dependencies.
+ * @param active The actual active object.
+ * @param add States if the prerequisites should be added or removed (some prerequisites must be calculated based on that).
+ */
+export function getGeneratedPrerequisites(obj: ActivatableInstance, { sid }: ActiveObject, add: boolean): AllRequirementTypes[] {
+  const adds: AllRequirementTypes[] = [];
+  switch (obj.id) {
+    case 'SA_3': {
+      const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: AllRequirementTypes[] };
+      adds.push(...selectionItem.req);
+      break;
+    }
+    case 'SA_9':
+      adds.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + (add ? 1 : 0)) * 6 });
+      break;
+    case 'SA_81':
+      adds.push({ id: 'SA_72', active: true, sid });
+      break;
+    case 'SA_414':
+    case 'SA_663': {
+      const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
+      adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
+      break;
+    }
+    case 'SA_639': {
+      const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { prerequisites: AllRequirementTypes[] };
+      adds.push(...selectionItem.prerequisites);
+      break;
+    }
+  }
+  return adds;
 }

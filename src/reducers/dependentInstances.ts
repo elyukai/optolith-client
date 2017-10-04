@@ -10,7 +10,7 @@ import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/Talent
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import * as Data from '../types/data.d';
-import * as Reusable from '../types/reusable.d';
+import { getGeneratedPrerequisites } from '../utils/ActivatableUtils';
 import { addDependencies } from '../utils/DependentUtils';
 import { mergeIntoState, setStateItem } from '../utils/ListUtils';
 import { activatable } from './activatable';
@@ -38,6 +38,8 @@ export interface DependentInstancesState {
   magicalStyleDependencies: Data.StyleDependency[];
   blessedStyleDependencies: Data.StyleDependency[];
 }
+
+export type DependentInstancesStateKeysForMaps = 'advantages' | 'attributes' | 'blessings' | 'cantrips' | 'combatTechniques' | 'cultures' | 'disadvantages' | 'liturgies' | 'professions' | 'professionVariants' | 'races' | 'specialAbilities' | 'spells' | 'talents';
 
 const initialState: DependentInstancesState = {
   advantages: new Map(),
@@ -111,7 +113,7 @@ export function dependentInstances(state = initialState, action: Action) {
       for (const [id, value] of Object.entries(spells)) {
         const newObject = { ...newstate.spells.get(id)!, active: true, value };
         const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(newstate, addDependencies(firstState, newObject.reqs, newObject.id));
+        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const [id, value] of Object.entries(liturgies)) {
@@ -121,54 +123,24 @@ export function dependentInstances(state = initialState, action: Action) {
       for (const id of blessings) {
         const newObject = { ...newstate.blessings.get(id)!, active: true };
         const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(newstate, addDependencies(firstState, newObject.reqs, newObject.id));
+        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const id of cantrips) {
         const newObject = { ...newstate.cantrips.get(id)!, active: true };
         const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(newstate, addDependencies(firstState, newObject.reqs, newObject.id));
+        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const [id, active] of Object.entries(activatable)) {
-        const entry = { ...get(newstate, id), active: [ ...active.map(e => ({ ...e })) ] } as Data.ActivatableInstance;
-        switch (id) {
-          case 'ADV_4':
-          case 'ADV_16':
-          case 'DISADV_48':
-            active.forEach(p => {
-              const firstState = setStateItem(newstate, entry.id, entry);
-              newstate = mergeIntoState(newstate, addDependencies(firstState, entry.reqs as Data.AllRequirements[], entry.id, p.sid as string));
-            });
-            break;
-          case 'SA_9': {
-            const counter = new Map<string, number>();
-            active.forEach(p => {
-              if (typeof p.sid === 'string') {
-                const current = counter.get(p.sid);
-                if (current) {
-                  counter.set(p.sid, current + 1);
-                }
-                else {
-                  counter.set(p.sid, 1);
-                }
-                const amount = counter.get(p.sid);
-                if (amount) {
-                  const addRequire: Reusable.RequiresIncreasableObject = { id: p.sid, value: amount * 6 };
-                  const firstState = setStateItem(newstate, entry.id, entry);
-                  newstate = mergeIntoState(newstate, addDependencies(firstState, [...entry.reqs as Data.AllRequirements[], addRequire], entry.id));
-                }
-              }
-            });
-            break;
-          }
-          default:
-            active.forEach(({ tier }) => {
-              const firstState = setStateItem(newstate, entry.id, entry);
-              const prerequisites = Array.isArray(entry.reqs) ? entry.reqs : flatten(tier && [...entry.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-              newstate = mergeIntoState(newstate, addDependencies(firstState, prerequisites, entry.id));
-            });
-        }
+        active.forEach(activeObject => {
+          const { tier } = activeObject;
+          const entry = get(newstate, id) as Data.ActivatableInstance;
+          const adds = getGeneratedPrerequisites(entry, activeObject, true);
+          const firstState = setStateItem(newstate, id, {...entry, active: [...entry.active, {...activeObject}]});
+          const prerequisites = Array.isArray(entry.reqs) ? entry.reqs : flatten(tier && [...entry.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
+          newstate = mergeIntoState(firstState, addDependencies(firstState, [...prerequisites, ...adds], id));
+        });
       }
 
       return newstate;

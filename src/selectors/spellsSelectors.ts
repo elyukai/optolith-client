@@ -157,7 +157,7 @@ export const getSpellsForSheet = createSelector(
 	(spells, traditionSA) => {
 		const array: Spell[] = [];
 		for (const [id, entry] of spells) {
-			const { ic, name, active, value, check, checkmod, property, tradition, effect, castingTime, castingTimeShort, cost, costShort, range, rangeShort, duration, durationShort, target, src } = entry;
+			const { ic, name, active, value, check, checkmod, property, tradition, effect, castingTime, castingTimeShort, cost, costShort, range, rangeShort, duration, durationShort, target, src, category } = entry;
 			if (active) {
 				let traditions;
 				if (!traditionSA || !isOwnTradition(traditionSA, entry)) {
@@ -182,7 +182,8 @@ export const getSpellsForSheet = createSelector(
 					duration,
 					durationShort,
 					target,
-					src
+					src,
+					category
 				});
 			}
 		}

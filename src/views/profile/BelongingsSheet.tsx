@@ -7,7 +7,7 @@ import { TextBox } from '../../components/TextBox';
 import { Purse } from '../../reducers/equipment';
 import { PetInstance } from '../../types/data.d';
 import { Attribute, Item, UIMessages } from '../../types/view.d';
-import { sortByLocaleName } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { BelongingsSheetTableRow } from './BelongingsSheetTableRow';
 import { Sheet } from './Sheet';
@@ -26,7 +26,7 @@ export interface BelongingsSheetProps {
 export function BelongingsSheet(props: BelongingsSheetProps) {
 	const { attributes, items, locale, pet, purse: { d, s, h, k }, totalPrice, totalWeight } = props;
 	const { value } = attributes.find(e => e.id === 'ATTR_8')!;
-	const sortedItems = sortByLocaleName(items, locale.id);
+	const sortedItems = sortObjects(items, locale.id);
 	const firstColumn = Array.from({ length: 66 }) as (Item | undefined)[];
 	firstColumn.splice(0, Math.min(sortedItems.length, 66), ...sortedItems);
 	const secondColumn = firstColumn.splice(Math.round(firstColumn.length / 2));

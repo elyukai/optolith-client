@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { Attribute, CombatTechnique, UIMessages } from '../../types/view.d';
-import { sortByLocaleName } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 
@@ -28,7 +28,7 @@ export function CombatSheetTechniques(props: CombatSheetTechniquesProps) {
 				</thead>
 				<tbody>
 					{
-						sortByLocaleName(combatTechniques, locale.id).map(e => (
+						sortObjects(combatTechniques, locale.id).map(e => (
 							<tr key={e.id}>
 								<td className="name">{e.name}</td>
 								<td className="primary">{e.primary.map(p => attributes.find(a => a.id === p)!.short).join('/')}</td>

@@ -213,6 +213,7 @@ export interface RawSpecialAbility {
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
 	gr: number;
+	extended?: (string | string[])[];
 }
 
 export interface RawSpecialAbilityLocale {
@@ -297,7 +298,10 @@ export interface RawItem {
 	damageDiceNumber?: number;
 	damageDiceSides?: number;
 	damageFlat?: number;
-	damageBonus?: number | number[];
+	primaryThreshold?: {
+		primary?: string;
+		threshold: number | number[];
+	};
 	at?: number;
 	pa?: number;
 	reach?: number;

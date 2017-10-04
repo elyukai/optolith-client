@@ -215,7 +215,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel = selected;
 				args.input = inputText;
 				break;
-			case 'SA_9':
+			case 'SA_9': {
 				type Sel = Array<SelectionObject & TalentInstance>;
 				if (typeof selected === 'string') {
 					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
@@ -229,6 +229,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel2 = selected2;
 				args.input = inputText;
 				break;
+			}
 			case 'SA_29':
 				args.sel = selected;
 				args.tier = selectedTier;
@@ -250,20 +251,6 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					const dancetraditionIds = [4, 5, 6, 7];
 					sel2 = dancetraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
 				}
-				break;
-			case 'SA_9':
-				type Sel = Array<SelectionObject & TalentInstance>;
-				if (typeof selected === 'string') {
-					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
-					if (o) {
-						currentCost = o.cost;
-						sel2 = o.applications;
-						input = o.applicationsInput;
-					}
-				}
-				args.sel = selected;
-				args.sel2 = selected2;
-				args.input = inputText;
 				break;
 			default:
 				if (tiers && typeof selectedTier === 'number') {

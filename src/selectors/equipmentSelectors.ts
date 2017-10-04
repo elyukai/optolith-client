@@ -4,6 +4,7 @@ import { EquipmentState } from '../reducers/equipment';
 import { ArmorZonesInstance, AttributeInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data.d';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
+import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
 import { getHigherParadeValues } from './rulesSelectors';
@@ -177,18 +178,20 @@ export const getMeleeWeapons = createSelector(
 				isTwoHandedWeapon
 			} = getFullItem(items, templates, id);
 			const combatTechniqueInstance = getInstance(dependent, combatTechnique!) as CombatTechniqueInstance;
-			const primary = combatTechniqueInstance.primary.map(attr => getInstance(dependent, attr) as AttributeInstance);
 			const atBase = getAt(dependent, combatTechniqueInstance);
 			const at = atBase + (atMod || 0);
 			const paBase = getPa(dependent, combatTechniqueInstance);
 			const pa = paBase && paBase + (atMod || 0) + higherParadeValues;
-			const damageFlatBonus = Math.max(Math.max(...primary.map(e => e.value)) - (damageBonus || 0), 0);
+			const primaryAttributeIds = damageBonus && damageBonus.primary ? convertPrimaryAttributeToArray(damageBonus.primary) : combatTechniqueInstance.primary;
+			const primaryAttributes = primaryAttributeIds.map(attr => getInstance(dependent, attr) as AttributeInstance);
+			const damageThresholds = damageBonus && damageBonus.threshold || 0;
+			const damageFlatBonus = Math.max(Math.max(...(Array.isArray(damageThresholds) ? primaryAttributes.map((e, index) => damageThresholds[index] - e.value) : primaryAttributes.map(e => damageThresholds - e.value))), 0);
 			const damageFlat = damageFlatBase! + damageFlatBonus;
 			return {
 				id,
 				name,
 				combatTechnique: combatTechniqueInstance.name,
-				primary: primary.map(e => e.short),
+				primary: primaryAttributes.map(e => e.short),
 				primaryBonus: damageBonus,
 				damageDiceNumber,
 				damageDiceSides,

@@ -7,7 +7,7 @@ import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
-import { getSelectionItem, isActive } from '../utils/ActivatableUtils';
+import { getGeneratedPrerequisites, getSelectionItem, isActive } from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
@@ -227,38 +227,15 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        let obj: Data.ActivatableInstance | undefined;
-        const add: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[] = [];
-        switch (id) {
-          case 'SA_9':
-            obj = {...entry, active: [...entry.active, { sid: sid as string, sid2 }]};
-            add.push({ id: sid as string, value: obj.active.filter(e => e.sid === sid).length * 6 });
-            break;
-          case 'SA_81':
-            obj = {...entry, active: [...entry.active, { sid: sid as string }]};
-            add.push({ id: 'SA_72', active: true, sid: sid as string });
-            break;
-          case 'SA_414':
-          case 'SA_663': {
-            obj = {...entry, active: [...entry.active, { sid: sid as string }]};
-            const selectionItem = getSelectionItem(obj, sid as string) as Data.SelectionObject & { req: Data.RequirementObject[], target: string; tier: number; };
-            add.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
-            break;
-          }
-
-          default:
-            if (!Array.isArray(sid)) {
-              obj = {...entry, active: [...entry.active, { sid, sid2, tier }]};
-            }
-            break;
-        }
-        if (obj) {
+        if (!Array.isArray(sid)) {
+          const adds = getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
+          const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
           if (obj.category === Categories.SPECIAL_ABILITIES) {
             fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
           }
           const firstState = setStateItem(fulllist, obj.id, obj);
           const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-          fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(firstState, [...prerequisites, ...add], obj.id));
+          fulllist = mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
         }
       }
 
@@ -342,12 +319,13 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                 const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
                 if (!obj.active.find(checkIfActive)) {
-                  (get(fulllist, id as string) as Data.ActivatableInstance).active.push(activeObject);
+                  fulllist = setStateItem(fulllist, id, { ...obj, active: [...obj.active, activeObject]});
+                  const adds = getGeneratedPrerequisites(obj, activeObject, true);
                   const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
                   if (obj.category === Categories.SPECIAL_ABILITIES) {
                     fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
                   }
-                  fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, prerequisites, obj.id));
+                  fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
                   if (obj.tiers && tier && typeof obj.cost === 'number') {
                     cost = obj.cost * tier;
                   }

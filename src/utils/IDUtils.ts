@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { DependentInstancesState } from '../reducers/dependentInstances';
+import { DependentInstancesStateKeysForMaps } from '../reducers/dependentInstances';
 
 export function getNewId(keys: string[]) {
 	return keys.reduce((n, id) => Math.max(Number.parseInt(id.split('_')[1]), n), 0) + 1;
@@ -45,7 +45,7 @@ export function getCategoryById(id: string): Categories.Category | undefined {
 	}
 }
 
-export function getStateKeyById(id: string): keyof DependentInstancesState | undefined {
+export function getStateKeyById(id: string): DependentInstancesStateKeysForMaps | undefined {
 	const categoryTag = id.split(/_/)[0];
 	switch (categoryTag) {
 		case 'ADV':
@@ -81,7 +81,7 @@ export function getStateKeyById(id: string): keyof DependentInstancesState | und
 	}
 }
 
-export function getStateKeyByCategory(category: Categories.Category): keyof DependentInstancesState {
+export function getStateKeyByCategory(category: Categories.Category): DependentInstancesStateKeysForMaps {
 	switch (category) {
 		case Categories.ADVANTAGES:
 			return 'advantages';

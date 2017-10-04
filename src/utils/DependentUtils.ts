@@ -52,7 +52,7 @@ function removeDependency<D>(obj: AbilityInstanceExtended, remove: D): AbilityIn
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function addDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string, sel?: string): ToOptionalKeys<DependentInstancesState> {
+export function addDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string): ToOptionalKeys<DependentInstancesState> {
   let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
@@ -90,7 +90,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
               add = { active, ...add };
             }
             else {
-              add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
+              add = { sid, sid2, ...add };
             }
             id.forEach(e => {
               const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
@@ -108,7 +108,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
               add = { active, sid };
             }
             else {
-              add = { sid: sid === 'sel' ? sel : sid, sid2 };
+              add = { sid, sid2 };
             }
             const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
             instances = setNewStateItem(instances, id, addDependency(requiredAbility, add));
@@ -126,7 +126,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
  * @param adds Additional (computed) requirements that are not included in the static requirements.
  * @param sel The SID from the current selection.
  */
-export function removeDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string, sel?: string): ToOptionalKeys<DependentInstancesState> {
+export function removeDependencies(state: DependentInstancesState, requirements: AllRequirements[], sourceId: string): ToOptionalKeys<DependentInstancesState> {
   let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
@@ -164,7 +164,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
               add = { active, ...add };
             }
             else {
-              add = { sid: sid === 'sel' ? sel : sid, sid2, ...add };
+              add = { sid, sid2, ...add };
             }
             id.forEach(e => {
               const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
@@ -182,7 +182,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
               add = { active, sid };
             }
             else {
-              add = { sid: sid === 'sel' ? sel : sid, sid2 };
+              add = { sid, sid2 };
             }
             const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
             instances = setNewStateItem(instances, id, removeDependency(requiredAbility, add));

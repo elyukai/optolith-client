@@ -13,7 +13,7 @@ export interface WikiSkillInfoProps {
 }
 
 export function WikiSkillInfo(props: WikiSkillInfoProps) {
-	const { attributes, currentObject, locale } = props;
+	const { attributes, books, currentObject, locale } = props;
 
 	return <Scroll>
 		<div className="info skill-info">
@@ -41,6 +41,9 @@ export function WikiSkillInfo(props: WikiSkillInfoProps) {
 			<p>
 				<span>{_translate(locale, 'info.improvementcost')}</span>
 				<span>{getICName(currentObject.ic)}</span>
+			</p>
+			<p className="source">
+				<span>{books.get('US25001')!.name} {currentObject.src}</span>
 			</p>
 		</div>
 	</Scroll>;

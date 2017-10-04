@@ -54,7 +54,6 @@ export interface SetSpecialAbilityTierAction {
 export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const currentTier = state.currentHero.present.dependent.specialAbilities.get(id)!.active[index].tier!;
 		const validCost = validate(cost, state.currentHero.present.ap);
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
