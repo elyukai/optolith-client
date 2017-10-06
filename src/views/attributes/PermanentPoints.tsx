@@ -24,7 +24,7 @@ export function PermanentPoints(props: PermanentPointsProps) {
 	return (
 		<Dialog
 			{...props}
-			id="permanent-points-editor"
+			className="permanent-points-editor"
 			title={id === 'AE' ? _translate(locale, 'attributes.pae.name') : _translate(locale, 'attributes.pkp.name')}
 			buttons={[{autoWidth: true, label: _translate(locale, 'actions.done')}]}
 			>

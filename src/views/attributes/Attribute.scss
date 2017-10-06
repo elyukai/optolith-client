@@ -119,7 +119,7 @@
 	}
 }
 
-#permanent-points-editor {
+.permanent-points-editor {
 	.modal-header {
 		padding: 16px 0;
 
@@ -150,7 +150,7 @@
 				position: absolute;
 				height: 100%;
 				width: 1px;
-				background: $color12;
+				background: $c1t;
 				left: -1px;
 			}
 		}
@@ -158,7 +158,7 @@
 
 	.value {
 		font: bold 40px/1 Alegreya;
-		color: $color1;
+		color: $c3;
 	}
 
 	.description {
@@ -170,6 +170,12 @@
 
 		.remove {
 			margin-left: 20px;
+		}
+	}
+
+	&.theme-light {
+		.value {
+			color: $c7;
 		}
 	}
 }
