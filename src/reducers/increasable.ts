@@ -17,7 +17,7 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 			const entry = state.spells.get(id)!;
 			const newObject = { ...entry, active: true };
 			const firstState = setStateItem(state, newObject.id, newObject);
-			return mergeIntoState(state, addDependencies(firstState, newObject.reqs, newObject.id));
+			return mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.ACTIVATE_CANTRIP: {
@@ -25,7 +25,7 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 			const entry = state.cantrips.get(id)!;
 			const newObject = { ...entry, active: true };
 			const firstState = setStateItem(state, newObject.id, newObject);
-			return mergeIntoState(state, addDependencies(firstState, newObject.reqs, newObject.id));
+			return mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.ACTIVATE_LITURGY: {
@@ -51,7 +51,7 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 			const entry = state.spells.get(id)!;
 			const newObject = { ...entry, active: false };
 			const firstState = setStateItem(state, newObject.id, newObject);
-			return mergeIntoState(state, removeDependencies(firstState, newObject.reqs, newObject.id));
+			return mergeIntoState(firstState, removeDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.DEACTIVATE_CANTRIP: {
@@ -59,7 +59,7 @@ export function increasable(state: DependentInstancesState, action: Action): Dep
 			const entry = state.cantrips.get(id)!;
 			const newObject = { ...entry, active: false };
 			const firstState = setStateItem(state, newObject.id, newObject);
-			return mergeIntoState(state, removeDependencies(firstState, newObject.reqs, newObject.id));
+			return mergeIntoState(firstState, removeDependencies(firstState, newObject.reqs, newObject.id));
 		}
 
 		case ActionTypes.DEACTIVATE_LITURGY: {
