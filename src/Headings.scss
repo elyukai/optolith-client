@@ -1,5 +1,4 @@
-h2, h3, h4, h5, h6 {
-	font-weight: normal;
+h1, h2, h3, h4, h5, h6 {
 	text-align: left;
 	text-transform: none;
 	padding: 0;
@@ -13,8 +12,15 @@ h2, h3, h4, h5, h6 {
 	}
 }
 
+h1 {
+	font-size: 28px;
+	line-height: 38px;
+	margin: 40px 0 10px;
+}
+
 h2 {
 	text-transform: uppercase;
+	margin: 20px 0 5px;
 }
 
 h4 {
@@ -25,7 +31,7 @@ h4 {
 }
 
 .theme-light {
-	h2, h3, h4, h5, h6 {
+	h1, h2, h3, h4, h5, h6 {
 		color: $c7;
 	}
 }

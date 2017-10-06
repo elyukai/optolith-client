@@ -3,6 +3,7 @@ import { SubTabs } from '../../components/SubTabs';
 import { UIMessages } from '../../types/ui';
 import { _translate } from '../../utils/I18n';
 import { Imprint } from './Imprint';
+import { LastChanges } from './LastChanges';
 import { ThirdPartyLicenses } from './ThirdPartyLicenses';
 
 export interface AboutProps {
@@ -33,6 +34,9 @@ export class About extends React.Component<AboutProps, AboutState> {
 			case 'thirdPartyLicenses':
 				element = <ThirdPartyLicenses />;
 				break;
+			case 'lastchanges':
+				element = <LastChanges />;
+				break;
 		}
 
 		return (
@@ -49,8 +53,7 @@ export class About extends React.Component<AboutProps, AboutState> {
 						},
 						{
 							id: 'lastchanges',
-							label: _translate(locale, 'titlebar.tabs.lastchanges'),
-							disabled: true
+							label: _translate(locale, 'titlebar.tabs.lastchanges')
 						},
 					]}
 					active={this.state.tab}
