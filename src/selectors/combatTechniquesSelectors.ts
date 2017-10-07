@@ -6,8 +6,7 @@ import { getSids } from '../utils/ActivatableUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getAttributes, getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
-import { getPhase } from './phaseSelectors';
-import { getAdvantages, getSpecialAbilities } from './stateSelectors';
+import { getAdvantages, getPhase, getSpecialAbilities } from './stateSelectors';
 
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 

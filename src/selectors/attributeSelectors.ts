@@ -8,9 +8,8 @@ import { getFlatPrerequisites } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getEnergies } from './energiesSelectors';
-import { getPhase } from './phaseSelectors';
 import { getAttributeValueLimit } from './rulesSelectors';
-import { getSpecialAbilities } from './stateSelectors';
+import { getPhase, getSpecialAbilities } from './stateSelectors';
 import { getTalents } from './talentsSelectors';
 
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;

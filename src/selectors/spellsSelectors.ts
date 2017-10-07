@@ -9,8 +9,7 @@ import { validate } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getElState, getStart, getStartEl } from './elSelectors';
-import { getPhase } from './phaseSelectors';
-import { getAdvantages, getCantrips, getDisadvantages, getSpecialAbilities, getSpells } from './stateSelectors';
+import { getAdvantages, getCantrips, getDisadvantages, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
 
 export const get = (state: Map<string, SpellInstance>, id: string) => state.get(id);
 export { get as getSpell };

@@ -8,7 +8,7 @@ import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getAllByCategory, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isActivationDisabled } from '../selectors/liturgiesSelectors';
-import { getPhase } from '../selectors/phaseSelectors';
+import { getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from '../utils/ActivatableUtils';

@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { get } from '../selectors/spellsSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
@@ -21,7 +22,7 @@ export function _addToList(id: string): AsyncAction {
 		const state = getState();
 		const entry = get(state.currentHero.present.dependent.spells, id)!;
 		const cost = getIncreaseAP(entry.ic);
-		const validCost = validate(cost, state.currentHero.present.ap);
+		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -46,7 +47,7 @@ export interface ActivateCantripAction {
 export function _addCantripToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(1, state.currentHero.present.ap);
+		const validCost = validate(1, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -110,7 +111,7 @@ export interface AddSpellPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap);
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!cost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;

@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
+import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { AttributeInstance } from '../types/data.d';
@@ -20,7 +21,7 @@ export interface AddAttributePointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance, state.currentHero.present.ap);
+		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!cost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -67,7 +68,7 @@ export function _addLifePoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedLifePoints);
-		const validCost = validate(cost, state.currentHero.present.ap);
+		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -92,7 +93,7 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
-		const validCost = validate(cost, state.currentHero.present.ap);
+		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -117,7 +118,7 @@ export function _addKarmaPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
-		const validCost = validate(cost, state.currentHero.present.ap);
+		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -138,7 +139,7 @@ export interface AddBoughtBackAEPointAction {
 export function _addBoughtBackAEPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, state.currentHero.present.ap);
+		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -211,7 +212,7 @@ export interface AddBoughtBackKPPointAction {
 export function _addBoughtBackKPPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, state.currentHero.present.ap);
+		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;

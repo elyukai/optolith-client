@@ -23,10 +23,10 @@ export function removePoint(obj: IncreasableInstance): IncreasableInstance {
 	return ({ ...obj, value: obj.value - 1 });
 }
 
-export function getIncreaseCost(obj: IncreasableInstance, ap: AdventurePointsState): number | undefined {
+export function getIncreaseCost(obj: IncreasableInstance, ap: AdventurePointsState, negativeApValid: boolean): number | undefined {
 	const { ic, value } = obj;
 	const cost = getIncreaseAP(ic, value);
-	const validCost = validate(cost, ap);
+	const validCost = validate(cost, ap, negativeApValid);
 	return !validCost ? undefined : cost;
 }
 

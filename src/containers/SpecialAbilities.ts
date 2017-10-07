@@ -5,7 +5,7 @@ import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { AppState } from '../reducers/app';
 import { getDeactiveSpecialAbilities, getSpecialAbilitiesForSheet } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { getPhase } from '../selectors/phaseSelectors';
+import { getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/skills/SpecialAbilities';

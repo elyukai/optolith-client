@@ -1,6 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { DISADVANTAGES } from '../constants/Categories';
 import { get } from '../selectors/dependentInstancesSelectors';
+import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
@@ -29,7 +30,7 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
+		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0]) {
 			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;
@@ -83,7 +84,7 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage);
+		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0]) {
 			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;
@@ -136,7 +137,7 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage);
+		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0]) {
 			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
 			return;

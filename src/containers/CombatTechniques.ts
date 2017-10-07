@@ -5,7 +5,7 @@ import { AppState } from '../reducers/app';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { getPhase } from '../selectors/phaseSelectors';
+import { getPhase } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';

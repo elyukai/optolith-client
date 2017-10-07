@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
@@ -14,7 +15,7 @@ export interface ActivateSpecialAbilityAction {
 export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(args.cost, state.currentHero.present.ap);
+		const validCost = validate(args.cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;
@@ -54,7 +55,7 @@ export interface SetSpecialAbilityTierAction {
 export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(cost, state.currentHero.present.ap);
+		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		if (!validCost) {
 			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
 			return;

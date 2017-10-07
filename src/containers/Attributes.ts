@@ -4,7 +4,7 @@ import * as AttributesActions from '../actions/AttributesActions';
 import { AppState } from '../reducers/app';
 import { getForView, getSum } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { getPhase } from '../selectors/phaseSelectors';
+import { getPhase } from '../selectors/stateSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 

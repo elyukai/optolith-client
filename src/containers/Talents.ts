@@ -4,7 +4,7 @@ import * as TalentsActions from '../actions/TalentsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { getPhase } from '../selectors/phaseSelectors';
+import { getPhase } from '../selectors/stateSelectors';
 import { getTalents, getTalentsRating } from '../selectors/talentsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';

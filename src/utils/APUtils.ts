@@ -9,9 +9,10 @@ import { SpecialAbilityInstance } from '../types/data.d';
  * Checks if there are enough AP available.
  * @param cost The AP value you want to check.
  * @param ap The current AP state.
+ * @param negativeApValid If the character's AP left can be a negative value (during character creation) or not.
  */
-export function validate(cost: number, ap: AdventurePointsState): boolean {
-	if (cost > 0) {
+export function validate(cost: number, ap: AdventurePointsState, negativeApValid: boolean): boolean {
+	if (cost > 0 && negativeApValid === false) {
 		return cost <= getLeft(ap);
 	}
 	return true;
@@ -24,8 +25,9 @@ export function validate(cost: number, ap: AdventurePointsState): boolean {
  * @param state The list of dependent instances.
  * @param isMagicalOrBlessed If the the advantage/disadvantage is magical or blessed.
  * @param isDisadvantage If the entry is a disadvantage.
+ * @param negativeApValid If the character's AP left can be a negative value (during character creation) or not.
  */
-export function validateDisAdvantages(cost: number, ap: AdventurePointsState, state: DependentInstancesState, isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean; }, isDisadvantage: boolean): [boolean, boolean, boolean] {
+export function validateDisAdvantages(cost: number, ap: AdventurePointsState, state: DependentInstancesState, isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean; }, isDisadvantage: boolean, negativeApValid: boolean): [boolean, boolean, boolean] {
 	const { isBlessed, isMagical } = isMagicalOrBlessed;
 	const index = isBlessed ? 2 : isMagical ? 1 : 0;
 	const target = isDisadvantage ? ap.disadv : ap.adv;
@@ -33,7 +35,7 @@ export function validateDisAdvantages(cost: number, ap: AdventurePointsState, st
 	const equalizedCost = isDisadvantage ? cost * -1 : cost;
 	const subValid = index > 0 ? target[index] + equalizedCost <= smallMax : true;
 	const mainValid = target[0] + equalizedCost <= 80;
-	const totalValid = cost <= getLeft(ap);
+	const totalValid = cost <= getLeft(ap) || negativeApValid;
 
 	return [ totalValid, mainValid, subValid ];
 }
