@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
-import { AttributeInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpellInstance, TalentInstance } from '../../types/data.d';
+import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiCantripInfo } from './WikiCantripInfo';
 import { WikiCultureInfo } from './WikiCultureInfo';
 import { WikiInfoEmpty } from './WikiInfoEmpty';
+import { WikiLiturgicalChantInfo } from './WikiLiturgicalChantInfo';
 import { WikiProfessionInfo } from './WikiProfessionInfo';
 import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = CantripInstance | SpellInstance | Culture | Profession | Race | TalentInstance;
+type Instance = BlessingInstance | CantripInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | TalentInstance;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
@@ -48,6 +49,9 @@ export function WikiInfo(props: WikiInfoProps) {
 				break;
 			case 'CULTURES':
 				currentElement = <WikiCultureInfo {...props} currentObject={currentObject} />;
+				break;
+			case 'LITURGIES':
+				currentElement = <WikiLiturgicalChantInfo {...props} currentObject={currentObject} />;
 				break;
 			case 'PROFESSIONS':
 				currentElement = <WikiProfessionInfo {...props} currentObject={currentObject} />;

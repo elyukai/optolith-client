@@ -12,6 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { BlessingInstance, InputTextEvent, Instance, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
@@ -54,19 +55,25 @@ export interface LiturgiesState {
 	filterText: string;
 	filterTextSlidein: string;
 	showAddSlidein: boolean;
+	currentId?: string;
+	currentSlideinId?: string;
 }
 
 export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 	state = {
 		filterText: '',
 		filterTextSlidein: '',
-		showAddSlidein: false
+		showAddSlidein: false,
+		currentId: undefined,
+		currentSlideinId: undefined
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as LiturgiesState);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as LiturgiesState);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as LiturgiesState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as LiturgiesState);
+	showInfo = (id: string) => this.setState({ currentId: id } as LiturgiesState);
+	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as LiturgiesState);
 
 	render() {
 		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, phase, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
@@ -100,7 +107,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 		return (
 			<Page id="liturgies">
-				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="addings-liturgical-chants">
+				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-liturgical-chants">
 					<Options>
 						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
@@ -165,6 +172,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 											get={get}
 											derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showSlideinInfo}
 											{...add}
 											>
 											<ListItemGroup>
@@ -177,6 +185,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 							}
 						</List>
 					</Scroll>
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -243,6 +252,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 										get={get}
 										derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showInfo}
 										{...add}
 										>
 										<ListItemGroup>
@@ -255,6 +265,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						}
 					</List>
 				</Scroll>
+				<WikiInfoContainer {...this.props} {...this.state} />
 			</Page>
 		);
 	}

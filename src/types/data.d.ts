@@ -576,6 +576,17 @@ export interface LiturgyInstance {
 	active: boolean;
 	dependencies: LiturgyInstanceDependency[];
 	value: number;
+	readonly effect: string;
+	readonly castingTime: string;
+	readonly castingTimeShort: string;
+	readonly cost: string;
+	readonly costShort: string;
+	readonly range: string;
+	readonly rangeShort: string;
+	readonly duration: string;
+	readonly durationShort: string;
+	readonly target: string;
+	readonly src: SourceLink[];
 }
 
 export interface BlessingInstance {
@@ -606,17 +617,17 @@ export interface SpellInstance {
 	active: boolean;
 	dependencies: SpellInstanceDependency[];
 	value: number;
-	effect: string;
-	castingTime: string;
-	castingTimeShort: string;
-	cost: string;
-	costShort: string;
-	range: string;
-	rangeShort: string;
-	duration: string;
-	durationShort: string;
-	target: string;
-	src: SourceLink[];
+	readonly effect: string;
+	readonly castingTime: string;
+	readonly castingTimeShort: string;
+	readonly cost: string;
+	readonly costShort: string;
+	readonly range: string;
+	readonly rangeShort: string;
+	readonly duration: string;
+	readonly durationShort: string;
+	readonly target: string;
+	readonly src: SourceLink[];
 }
 
 export interface CantripInstance {

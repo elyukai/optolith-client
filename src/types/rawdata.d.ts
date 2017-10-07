@@ -186,11 +186,23 @@ export interface RawLiturgy {
 	trad: number[];
 	aspc: number[];
 	gr: number;
+	src: string[];
 }
 
 export interface RawLiturgyLocale {
 	id: string;
 	name: string;
+	effect: string;
+	castingtime: string;
+	castingtimeShort: string;
+	aecost: string;
+	aecostShort: string;
+	range: string;
+	rangeShort: string;
+	duration: string;
+	durationShort: string;
+	target: string;
+	src: number[];
 }
 
 export interface RawBlessing {

@@ -369,6 +369,7 @@ function iterateChants(array) {
     obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
     obj.aspc = obj.aspc ? obj.aspc.split('&').map(e => Number.parseInt(e)) : [];
     obj.req = obj.req ? obj.req.split('&').map(e => e === 'RCP' ? 'RCP' : JSON.parse(e)) : [];
+    obj.src = obj.src ? obj.src.split('&') : [];
     list[obj.id] = obj;
   }
   return list;

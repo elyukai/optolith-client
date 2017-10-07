@@ -515,6 +515,10 @@ export interface UIMessages {
 	"liturgies.view.groups": string[];
 	"liturgies.view.blessing": string;
 	"liturgies.view.aspects": string[];
+	"liturgies.view.traditions": string[];
+	"info.liturgicaltime": string;
+	"info.ceremonialtime": string;
+	"info.kpcost": string;
 	"equipment.actions.create": string;
 	"equipment.view.purse": string;
 	"equipment.view.ducates": string;
