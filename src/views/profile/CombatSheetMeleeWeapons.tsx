@@ -43,7 +43,7 @@ export function CombatSheetMeleeWeapons(props: CombatSheetMeleeWeaponsProps) {
 											<Textfit max={11} min={7} mode="single">{e.name}</Textfit>
 										</td>
 										<td className="combat-technique">{e.combatTechnique}</td>
-										<td className="damage-bonus">{e.primary.join('/')} {e.primaryBonus}</td>
+										<td className="damage-bonus">{Array.isArray(e.primary) && Array.isArray(e.primaryBonus) ? `${e.primary.map((a, i) => `${a} ${(e.primaryBonus as number[])[i]}`).join('/')}` : `${e.primary.join('/')} ${e.primaryBonus}`}</td>
 										<td className="damage">{e.damageDiceNumber}{_translate(locale, 'charactersheet.combat.content.dice')}{e.damageDiceSides}{signNull(e.damageFlat)}</td>
 										<td className="at-mod mod">{e.atMod}</td>
 										<td className="pa-mod mod">{e.paMod}</td>

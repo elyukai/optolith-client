@@ -175,7 +175,7 @@ export interface MeleeWeapon {
 	name: string;
 	combatTechnique: string;
 	primary: string[];
-	primaryBonus?: number;
+	primaryBonus: number | number[];
 	damageDiceNumber?: number;
 	damageDiceSides?: number;
 	damageFlat: number;

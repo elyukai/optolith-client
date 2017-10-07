@@ -55,7 +55,7 @@ export interface SheetsStateProps {
 	properties: string[];
 	spells: View.Spell[];
 	aspects: string[];
-	blessedPrimary: string;
+	blessedPrimary: string | undefined;
 	blessedSpecialAbilities: Data.ActiveViewObject[];
 	blessedTradition: string;
 	blessings: Data.BlessingInstance[];

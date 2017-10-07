@@ -15,7 +15,7 @@ import { SheetWrapper } from './SheetWrapper';
 export interface LiturgiesSheetProps {
 	aspects: string[];
 	attributes: Attribute[];
-	blessedPrimary: string;
+	blessedPrimary: string | undefined;
 	blessedSpecialAbilities: ActiveViewObject[];
 	blessedTradition: string;
 	blessings: BlessingInstance[];

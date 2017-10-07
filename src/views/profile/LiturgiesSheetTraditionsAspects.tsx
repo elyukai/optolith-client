@@ -3,7 +3,7 @@ import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface LiturgiesSheetTraditionsAspectsProps {
 	aspects: string[];
-	blessedPrimary: string;
+	blessedPrimary: string | undefined;
 	blessedTradition: string;
 	locale: UIMessages;
 }
