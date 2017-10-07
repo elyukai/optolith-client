@@ -20,7 +20,7 @@ export function activatable(state: DependentInstancesState, action: Action): Dep
     case ActionTypes.ACTIVATE_SPECIALABILITY: {
       const { id } = action.payload;
       const instance = state.specialAbilities.get(id);
-      return mergeIntoState(addStyleExtendedSpecialAbilityDependencies(state, instance), activate(state, instance!, action.payload));
+      return mergeIntoState(addExtendedSpecialAbilityDependency(addStyleExtendedSpecialAbilityDependencies(state, instance), instance), activate(state, instance!, action.payload));
     }
 
     case ActionTypes.DEACTIVATE_DISADV: {
@@ -31,7 +31,7 @@ export function activatable(state: DependentInstancesState, action: Action): Dep
     case ActionTypes.DEACTIVATE_SPECIALABILITY: {
       const { id, index } = action.payload;
       const instance = state.specialAbilities.get(id);
-      let newlist = mergeIntoState(removeStyleExtendedSpecialAbilityDependencies(state, instance), deactivate(state, get(state, id) as Data.ActivatableInstance, index));
+      let newlist = mergeIntoState(removeExtendedSpecialAbilityDependency(removeStyleExtendedSpecialAbilityDependencies(state, instance), instance), deactivate(state, get(state, id) as Data.ActivatableInstance, index));
       if (id === 'SA_109') {
         newlist = setStateItem(newlist, 'CT_17', IncreasableUtils.set(get(state, 'CT_17') as Data.CombatTechniqueInstance, 6));
       }
@@ -88,6 +88,37 @@ export function addStyleExtendedSpecialAbilityDependencies(state: DependentInsta
   return state;
 }
 
+export function addExtendedSpecialAbilityDependency(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
+  if (instance) {
+    let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
+    if (instance.gr === 11) {
+      key = 'combatStyleDependencies';
+    }
+    else if (instance.gr === 14) {
+      key = 'magicalStyleDependencies';
+    }
+    else if (instance.gr === 26) {
+      key = 'blessedStyleDependencies';
+    }
+    if (typeof key === 'string') {
+      const entries = state[key];
+      let index = entries.findIndex(e => e.id === instance.id);
+      if (index === -1) {
+        index = entries.findIndex(e => Array.isArray(e.id) && e.id.includes(instance.id));
+      }
+      if (index > -1) {
+        const prev = entries.slice(0, index);
+        const next = entries.slice(index + 1);
+        return {
+          ...state,
+          [key]: [ ...prev, { ...entries[index], active: instance.id }, ...next ]
+        };
+      }
+    }
+  }
+  return state;
+}
+
 function removeStyleExtendedSpecialAbilityDependencies(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
   if (instance) {
     let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
@@ -130,6 +161,37 @@ function removeStyleExtendedSpecialAbilityDependencies(state: DependentInstances
         ...state,
         [key]: leftItems
       };
+    }
+  }
+  return state;
+}
+
+export function removeExtendedSpecialAbilityDependency(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
+  if (instance) {
+    let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
+    if (instance.gr === 11) {
+      key = 'combatStyleDependencies';
+    }
+    else if (instance.gr === 14) {
+      key = 'magicalStyleDependencies';
+    }
+    else if (instance.gr === 26) {
+      key = 'blessedStyleDependencies';
+    }
+    if (typeof key === 'string') {
+      const entries = state[key];
+      let index = entries.findIndex(e => Array.isArray(e.id) && e.id.includes(instance.id) && e.active === instance.id);
+      if (index === -1) {
+        index = entries.findIndex(e => e.id === instance.id && e.active === instance.id);
+      }
+      if (index > -1) {
+        const prev = entries.slice(0, index);
+        const next = entries.slice(index + 1);
+        return {
+          ...state,
+          [key]: [ ...prev, { ...entries[index], active: undefined }, ...next ]
+        };
+      }
     }
   }
   return state;

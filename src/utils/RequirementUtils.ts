@@ -313,14 +313,16 @@ export function validateRemovingStyle(state: DependentInstancesState, entry?: Sp
         itemsToRemove: [] as StyleDependency[],
         leftItems: [] as StyleDependency[]
       });
+      console.log(itemsToRemove, leftItems);
       for (const dependency of itemsToRemove.filter(e => typeof e.active === 'string')) {
         const index = leftItems.findIndex(e => !Array.isArray(e.id) ? dependency.active === e.id : e.id.includes(dependency.active!) && e.active === undefined);
+        console.log(dependency, index);
         if (index === -1) {
           return false;
         }
       }
-      return true;
     }
+    return true;
   }
   return false;
 }
