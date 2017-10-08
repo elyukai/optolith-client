@@ -43,7 +43,7 @@
 
 	.short {
 		font: bold 14px/28px Alegreya;
-		color: $color1;
+		color: var(--headings-color);
 		letter-spacing: 0.05em;
 		text-align: center;
 	}
@@ -51,21 +51,19 @@
 	.value {
 		border: 2px solid transparent;
 		padding: 2px;
-		background: $background4;
 	}
 
 	.value-inner {
-		border: 1px solid $color4;
+		border: 1px solid var(--separator-color-transparent);
 		padding: 1px;
 
 		> div {
 			@include size(45px);
 			text-align: center;
 			font: bold 28px/45px Alegreya Sans;
-			color: $color1;
+			color: var(--headings-color);
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
-			background: $background2;
 			overflow: hidden;
 		}
 	}

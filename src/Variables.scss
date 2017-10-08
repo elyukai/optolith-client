@@ -1,63 +1,24 @@
 $defaultEase: cubic-bezier(.28,.3,.09,.82);
 
-
-$background1: black;
-$background2: #010a13;
-$background3: #1e2328;
-$background4: #0d141c;
-
-$color1: #f1e6d4;
-$color2: #878683;
-$color3: #797974;
-$color4: #3c3c41;
-$color5: #a09b8c;
-$color6: #cdbe91;
-$color7: #c89b3c;
-$color8: #463714;
-$color9: #1e282d;
-$color10: #3c3732;
-$color11: #31353a;
-$color12: #1e282d;
-$color13: #32281e;
-$color14: #785a28;
-$color15: #242328;
-$color16: #2b2f34;
-$color17: #7a7b76;
-
-// separator:
-$c1: #7a7a7a; // #4a4a4a
-$c1t: transparentize($c1, .86); // rgba(74, 74, 74, .3)
-// accent color:
-$c2: #826a3e;
-$c5: #5d4517;
-// background:
-$c4: #111; // dark $c6
-$c6: #f0f0f0; // light $c4
-// headings:
-$c3: #f7f4ed; // dark $c7
-$c7: black; // light $c3
-// text:
-$c8: #7f7f7f; // dark $c9
-$c9: #3c3c3c; // light $c8
-
 :root {
-	--separator-color: $c1;
-	--separator-color-transparent: $c1t;
-	--accent-color: $c2;
-	--accent-color-intense: $c5;
-	--background-color: $c4;
-	--background-color-transparent06: transparentize($c4, .4);
-	--background-color-transparent08: transparentize($c4, .2);
-	--headings-color: $c3;
-	--text-color: $c8;
+	--separator-color: #7a7a7a;
+	--separator-color-halftransparent: transparentize(#7a7a7a, .7);
+	--separator-color-transparent: transparentize(#7a7a7a, .86);
+	--accent-color: #826a3e;
+	--accent-color-intense: #5d4517;
+	--background-color: #111;
+	--background-color-transparent06: transparentize(#111, .4);
+	--background-color-transparent08: transparentize(#111, .2);
+	--headings-color: #f7f4ed;
+	--text-color: #7f7f7f;
 }
 
 .theme-light {
-	--background-color: $c6;
-	--background-color-transparent06: transparentize($c6, .4);
-	--background-color-transparent08: transparentize($c6, .2);
-	--headings-color: $c7;
-	--text-color: $c9;
+	--background-color: #f0f0f0;
+	--background-color-transparent06: transparentize(#f0f0f0, .4);
+	--background-color-transparent08: transparentize(#f0f0f0, .2);
+	--headings-color: black;
+	--text-color: #3c3c3c;
 }
 
 $link-color1: #0080b9;
@@ -78,46 +39,6 @@ $attr5: #aea000;
 $attr6: #005177;
 $attr7: #d1c6a4;
 $attr8: #ac6000;
-// $attr1color1: #ad1e36;
-// $attr1color2: #c31532;
-// $attr1color3: #e44d4c;
-// $attr1color4: #d51131;
-// $attr1color5: #ebbfb0;
-// $attr2color1: #51188b;
-// $attr2color2: #56119c;
-// $attr2color3: #744cc6;
-// $attr2color4: #5b0daa;
-// $attr2color5: #b1aedd;
-// $attr3color1: #58913b;
-// $attr3color2: #5ba138;
-// $attr3color3: #79c66a;
-// $attr3color4: #5fae38;
-// $attr3color5: #bcdfbf;
-// $attr4color1: #151515;
-// $attr4color2: #161616;
-// $attr4color3: #5b5b5b;
-// $attr4color4: #171717;
-// $attr4color5: #adadad;
-// $attr5color1: #ad891e;
-// $attr5color2: #c39715;
-// $attr5color3: #e4d64c;
-// $attr5color4: #d5a311;
-// $attr5color5: #ebc4b0;
-// $attr6color1: #1e7dad;
-// $attr6color2: #1589c3;
-// $attr6color3: #4cc9e4;
-// $attr6color4: #1193d5;
-// $attr6color5: #b0ebe6;
-// $attr7color1: #b8b8b8;
-// $attr7color2: #c4c4c4;
-// $attr7color3: #d6d6d6;
-// $attr7color4: #cfcfcf;
-// $attr7color5: #eee;
-// $attr8color1: #ad581e;
-// $attr8color2: #c35a15;
-// $attr8color3: #e4a14c;
-// $attr8color4: #d55f11;
-// $attr8color5: #ebe0b0;
 
 $print-border: 0.25mm solid black;
 

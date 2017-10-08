@@ -12,7 +12,7 @@
 	top: 0;
 	width: 100%;
 	z-index: 9000;
-	
+
 	div.icon {
 		-ms-transform: translateZ(0);
 		-webkit-animation: load8 1s infinite linear;
@@ -24,13 +24,13 @@
 		border-top: 4px solid rgba(75, 227, 222, 0.2);
 		position: relative;
 		transform: translateZ(0);
-		
+
 		&, &:after {
 			border-radius: 50%;
 			width: 44px;
 			height: 44px;
 		}
-		
+
 		@-webkit-keyframes load8 {
 			0% {
 				-webkit-transform: rotate(0deg);
@@ -54,7 +54,7 @@
 	}
 
 	div.text {
-		color: $color1;
+		color: var(--headings-color);
 		font: 500 13px Alegreya Sans;
 		letter-spacing: 0.05em;
 		margin-top: 10px;

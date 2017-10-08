@@ -1,6 +1,5 @@
 @import "bourbon/bourbon";
 @import "Variables";
-@import "../css/helpers/helpers";
 
 @import "Fonts";
 @import "Headings";
@@ -35,7 +34,7 @@ p {
 
 	&.featured {
 		font-weight: 500;
-		color: $color1;
+		color: var(--headings-color);
 	}
 }
 
@@ -60,7 +59,7 @@ p {
 .smallcaps {
 	font: bold 13px/1 Alegreya SC;
 	text-transform: uppercase;
-	color: $color2;
+	color: var(--headings-color);
 }
 
 @import "components/Aside";

@@ -46,7 +46,7 @@
 			content: "\E2C6";
 			@include size(64px);
 			font: 64px/64px Material;
-			color: $color1;
+			color: var(--headings-color);
 			text-align: center;
 		}
 	}

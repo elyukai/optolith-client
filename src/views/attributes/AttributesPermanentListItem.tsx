@@ -83,7 +83,6 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 						className="add"
 						icon="&#xE318;"
 						onClick={this.openAddDialog}
-						disabled={available > 0}
 						/>
 				)}
 				<AttributesRemovePermanent

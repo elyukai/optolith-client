@@ -73,7 +73,7 @@
 					align-items: center;
 
 					&:not(.disabled):hover {
-						background: var(--separator-color-transparent);
+						background: var(--separator-color-halftransparent);
 					}
 
 					> .checkbox {
@@ -81,6 +81,22 @@
 
 						&:hover {
 							background: none;
+						}
+
+						&.disabled {
+							.icon {
+								.border {
+									border: 1px solid var(--separator-color-halftransparent);
+								}
+
+								.hook {
+									border-color: var(--separator-color-halftransparent);
+								}
+							}
+
+							.text {
+								color: var(--separator-color-halftransparent);
+							}
 						}
 					}
 
@@ -110,6 +126,19 @@
 
 						&.top > div > .down {
 							bottom: 28px;
+						}
+
+						&.disabled {
+							> div {
+								> .value {
+									color: var(--separator-color-halftransparent);
+									border-color: var(--separator-color-halftransparent);
+
+									&::before, &::after {
+										border-color: var(--separator-color-halftransparent);
+									}
+								}
+							}
 						}
 					}
 				}

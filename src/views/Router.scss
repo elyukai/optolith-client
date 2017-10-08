@@ -1,9 +1,10 @@
 html, body, #bodywrapper, #body {
-	@extend %max-size-relative;
+	width: 100%;
+	height: 100%;
+	position: relative;
 	margin: 0;
 	overflow: hidden;
 	padding: 0;
-	position: relative;
 }
 
 #body {
