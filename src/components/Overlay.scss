@@ -1,9 +1,9 @@
 .overlay {
 	position: fixed;
-	border: 1px solid $c2;
-	background: $c4;
-	color: $c8;
-	box-shadow: 0 0 24px transparentize($c4, .2);
+	border: 1px solid var(--accent-color);
+	background: var(--background-color);
+	color: var(--text-color);
+	box-shadow: 0 0 24px var(--background-color-transparent06);
 	z-index: 12000;
 
 	> div {
@@ -13,13 +13,13 @@
 	h4 {
 		font: bold 14px/18px Alegreya SC;
 		text-transform: uppercase;
-		color: $c3;
+		color: var(--headings-color);
 		display: flex;
 		justify-content: space-between;
 		letter-spacing: 0.07em;
 
 		span:last-child {
-			color: $c1;
+			color: var(--separator-color);
 		}
 	}
 
@@ -37,8 +37,8 @@
 		content: "";
 		position: absolute;
 		@include size(12px);
-		border: 1px solid $c2;
-		background: $c4;
+		border: 1px solid var(--accent-color);
+		background: var(--background-color);
 		transform: rotate(45deg);
 		@include calc(left, "50% - 8px");
 		pointer-events: none;
@@ -50,19 +50,5 @@
 
 	&.overlay-bottom::before {
 		top: -7.5px;
-	}
-}
-
-.theme-light.overlay {
-	background: $c6;
-	color: $c9;
-	box-shadow: 0 0 24px transparentize($c6, .2);
-
-	h4 {
-		color: $c7;
-	}
-
-	&.overlay-top::after, &.overlay-bottom::before {
-		background: $c6;
 	}
 }

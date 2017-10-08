@@ -7,7 +7,7 @@ aside {
 	flex: none;
 	display: flex;
 	flex-direction: column;
-	border-left: 1px solid $c1t;
+	border-left: 1px solid var(--separator-color-transparent);
 
 	> div {
 		flex: none;
@@ -17,7 +17,7 @@ aside {
 		}
 
 		&:not(:last-child) {
-			border-bottom: 1px solid $c1t;
+			border-bottom: 1px solid var(--separator-color-transparent);
 		}
 	}
 

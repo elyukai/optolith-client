@@ -40,6 +40,26 @@ $c7: black; // light $c3
 $c8: #7f7f7f; // dark $c9
 $c9: #3c3c3c; // light $c8
 
+:root {
+	--separator-color: $c1;
+	--separator-color-transparent: $c1t;
+	--accent-color: $c2;
+	--accent-color-intense: $c5;
+	--background-color: $c4;
+	--background-color-transparent06: transparentize($c4, .4);
+	--background-color-transparent08: transparentize($c4, .2);
+	--headings-color: $c3;
+	--text-color: $c8;
+}
+
+.theme-light {
+	--background-color: $c6;
+	--background-color-transparent06: transparentize($c6, .4);
+	--background-color-transparent08: transparentize($c6, .2);
+	--headings-color: $c7;
+	--text-color: $c9;
+}
+
 $link-color1: #0080b9;
 $link-color2: #52abd1;
 

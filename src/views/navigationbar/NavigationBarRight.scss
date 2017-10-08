@@ -15,7 +15,7 @@
 	}
 
 	.collected-ap {
-		color: $c8;
+		color: var(--text-color);
 		flex: 1 0 auto;
 		font: bold 15px/32px Alegreya SC;
 		height: 32px;
@@ -30,8 +30,4 @@
 	p > span {
 		display: block;
 	}
-}
-
-.theme-light .navigationbar-right .collected-ap {
-	color: $c9;
 }

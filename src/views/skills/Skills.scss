@@ -13,7 +13,7 @@
 		}
 
 		.fill {
-			background-color: $c1t;
+			background-color: var(--separator-color-transparent);
 
 			&:first-child {
 				margin-right: 12px;

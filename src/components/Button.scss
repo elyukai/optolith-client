@@ -1,33 +1,33 @@
 .btn {
 	height: 32px;
-	color: $c2;
+	color: var(--accent-color);
 	text-align: center;
 	overflow: hidden;
-	border: 1px solid $c2;
+	border: 1px solid var(--accent-color);
 
 	&:hover, &:active {
 		cursor: pointer;
 	}
 
 	&.disabled {
-		border-color: $c1t;
+		border-color: var(--separator-color-transparent);
 		background: none;
-		color: $c1t;
+		color: var(--separator-color-transparent);
 		pointer-events: none;
 
 		&:hover {
-			border-color: $c1t;
-			color: $c1t;
+			border-color: var(--separator-color-transparent);
+			color: var(--separator-color-transparent);
 		}
 	}
 
 	&.active {
-		background: $c2;
-		color: $c4;
+		background: var(--accent-color);
+		color: var(--background-color);
 		pointer-events: none;
 
 		&:hover {
-			border-color: $c2;
+			border-color: var(--accent-color);
 		}
 	}
 
@@ -56,8 +56,4 @@
 			background: none;
 		}
 	}
-}
-
-.theme-light .btn.active {
-	color: $c6;
 }

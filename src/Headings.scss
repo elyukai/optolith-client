@@ -2,7 +2,7 @@ h1, h2, h3, h4, h5, h6 {
 	text-align: left;
 	text-transform: none;
 	padding: 0;
-	color: $c3;
+	color: var(--headings-color);
 	font: bold 18px/28px Alegreya;
 	margin: 20px 0 0;
 	letter-spacing: 0.05em;
@@ -28,10 +28,4 @@ h4 {
 	color: $color2;
 	letter-spacing: 0.025em;
 	text-transform: uppercase;
-}
-
-.theme-light {
-	h1, h2, h3, h4, h5, h6 {
-		color: $c7;
-	}
 }

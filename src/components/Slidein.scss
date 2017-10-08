@@ -12,18 +12,18 @@
 	justify-content: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
-	background: transparentize($c4, .2);
+	background: var(--background-color-transparent08);
 	z-index: 1100;
 
 	.slidein {
 		position: relative;
-		background: $c4;
-		border-top: 1px solid $c2;
+		background: var(--background-color);
+		border-top: 1px solid var(--accent-color);
 		height: calc(100% - #{$titlebar-height + 30px});
 		width: 100%;
 		bottom: 0;
 		right: 0;
-		color: $c8;
+		color: var(--text-color);
 		font: 13px/14px "Source Sans Pro";
 		letter-spacing: 0.03em;
 
@@ -33,7 +33,7 @@
 			content: "";
 			width: calc(100% - 10px);
 			height: 3px;
-			border: 1px solid $c2;
+			border: 1px solid var(--accent-color);
 			top: -5px;
 			left: 4px;
 			right: 4px;
@@ -46,8 +46,8 @@
 			display: block;
 			position: absolute;
 			border-radius: 50%;
-			background: $c4;
-			border: 1px solid $c2;
+			background: var(--background-color);
+			border: 1px solid var(--accent-color);
 			right: 24px;
 			top: -21px;
 			z-index: 1100;
@@ -60,18 +60,18 @@
 				width: 44px;
 				top: 11px;
 				right: -6px;
-				border: 1px solid $c2;
+				border: 1px solid var(--accent-color);
 				z-index: 1099;
 			}
 
 			> div {
-				border: 2px solid $c2;
+				border: 2px solid var(--accent-color);
 				border-radius: 50%;
-				color: $c2;
+				color: var(--accent-color);
 				margin: 2px;
 				font: 18px/26px Material;
 				text-align: center;
-				background: $c4;
+				background: var(--background-color);
 				position: absolute;
 				z-index: 1100;
 				width: 30px;
@@ -81,8 +81,8 @@
 				cursor: pointer;
 
 				> div {
-					border-color: $c3;
-					color: $c3;
+					border-color: var(--headings-color);
+					color: var(--headings-color);
 				}
 			}
 		}
@@ -185,30 +185,6 @@
 				font-size: 13px;
 				letter-spacing: 0.075em;
 				line-height: 40px;
-			}
-		}
-	}
-}
-
-.theme-light {
-	&.slidein-backdrop {
-		background: transparentize($c6, .2);
-	}
-
-	.slidein {
-		background: $c6;
-		color: $c9;
-
-		.slidein-close {
-			background: $c6;
-
-			> div {
-				background: $c6;
-			}
-
-			&:hover > div {
-				border-color: $c7;
-				color: $c7;
 			}
 		}
 	}

@@ -13,13 +13,13 @@
 	}
 
 	&:hover {
-		border-color: $c3;
-		color: $c3;
+		border-color: var(--headings-color);
+		color: var(--headings-color);
 	}
 
 	&:active {
-		border-color: $c5;
-		color: $c5;
+		border-color: var(--accent-color-intense);
+		color: var(--accent-color-intense);
 	}
 
 	// &.btn-primary {
@@ -48,17 +48,5 @@
 
 	&.fullWidth {
 		display: block;
-	}
-}
-
-.theme-light .btn {
-	&:hover {
-		border-color: $c7;
-		color: $c7;
-	}
-
-	&:active {
-		border-color: $c5;
-		color: $c5;
 	}
 }

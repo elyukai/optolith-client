@@ -2,14 +2,10 @@
 	flex: 1 1 auto;
 	font: 14px/22px Alegreya Sans;
 	letter-spacing: 0.025em;
-	color: $c8;
+	color: var(--text-color);
 	display: flex;
 	flex-wrap: nowrap;
 	position: relative;
 	overflow: hidden;
 	height: 100%;
-}
-
-.theme-light .page {
-	color: $c9;
 }

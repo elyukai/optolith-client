@@ -1,19 +1,11 @@
 label {
-	color: $c8;
+	color: var(--text-color);
 	letter-spacing: 0.05em;
 	display: block;
 	font: 500 12px/1 Alegreya Sans;
 	padding-bottom: 6px;
 
 	&.disabled {
-		color: $c1t;
-	}
-}
-
-.theme-light label {
-	color: $c9;
-
-	&.disabled {
-		color: $c1t;
+		color: var(--separator-color-transparent);
 	}
 }

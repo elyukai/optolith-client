@@ -150,7 +150,7 @@
 				position: absolute;
 				height: 100%;
 				width: 1px;
-				background: $c1t;
+				background: var(--separator-color-transparent);
 				left: -1px;
 			}
 		}
@@ -158,7 +158,7 @@
 
 	.value {
 		font: bold 40px/1 Alegreya;
-		color: $c3;
+		color: var(--headings-color);
 	}
 
 	.description {
@@ -170,12 +170,6 @@
 
 		.remove {
 			margin-left: 20px;
-		}
-	}
-
-	&.theme-light {
-		.value {
-			color: $c7;
 		}
 	}
 }

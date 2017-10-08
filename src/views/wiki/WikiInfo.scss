@@ -8,13 +8,13 @@
 		p {
 			margin: 0;
 			font: bold 18px/24px Alegreya;
-			color: $c3;
+			color: var(--headings-color);
 			padding-left: 0;
 			text-indent: 0;
 		}
 
 		p:nth-child(2) {
-			color: $c8;
+			color: var(--text-color);
 			margin-left: 10px;
 			font-family: Alegreya Sans;
 		}
@@ -54,7 +54,7 @@
 				transform: rotate(45deg);
 				width: 6px;
 				height: 6px;
-				background: $c1t;
+				background: var(--separator-color-transparent);
 				margin-top: 8px;
 				margin-left: -17px;
 			}
@@ -242,16 +242,4 @@
 	display: flex;
 	align-items: center;
 	font: 48px Material;
-}
-
-.theme-light .info {
-	.info-header {
-		p {
-			color: $c7;
-		}
-
-		p:nth-child(2) {
-			color: $c9;
-		}
-	}
 }

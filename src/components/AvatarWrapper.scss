@@ -1,5 +1,5 @@
 .avatar-wrapper {
-	border: 1px solid $c2;
+	border: 1px solid var(--accent-color);
 	border-radius: 50%;
 	position: relative;
 
@@ -12,14 +12,14 @@
 		position: absolute;
 		@include calc(width, "100% + 8px");
 		@include calc(height, "100% + 8px");
-		border: 1px solid $c2;
+		border: 1px solid var(--accent-color);
 		border-radius: 50%;
 		top: -5px;
 		left: -5px;
 	}
 
 	&.no-avatar {
-		border-color: $c1t;
+		border-color: var(--separator-color-transparent);
 
 		&::after {
 			display: none;

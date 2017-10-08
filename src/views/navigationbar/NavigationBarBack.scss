@@ -8,15 +8,11 @@
 	> div {
 		@include size(32px);
 		font: 32px TDE Heroes;
-		color: $c2;
+		color: var(--accent-color);
 
 		&:hover {
 			cursor: pointer;
-			color: $c3;
+			color: var(--headings-color);
 		}
 	}
-}
-
-.theme-light .navigationbar-back > div:hover {
-	color: $c7;
 }

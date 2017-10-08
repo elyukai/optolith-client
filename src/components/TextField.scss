@@ -11,7 +11,7 @@
 		padding: 1px 12px;
 		pointer-events: none;
 		position: absolute;
-		color: $c2;
+		color: var(--accent-color);
 		margin-top: -32px;
 
 		&.hide {
@@ -22,21 +22,21 @@
 	input, textarea {
 		width: 100%;
 		height: 32px;
-		border: 1px solid $c2;
+		border: 1px solid var(--accent-color);
 		padding: 0 11px;
 		margin: 0;
-		color: $c3;
+		color: var(--headings-color);
 		font: 500 13px/30px Alegreya Sans;
 		display: block;
 		outline: 0 none;
 		background: none;
 
 		&:hover, &:focus, &:active {
-			color: $c3;
-			border-color: $c3;
+			color: var(--headings-color);
+			border-color: var(--headings-color);
 
 			+ .textfield-hint {
-				color: $c3;
+				color: var(--headings-color);
 			}
 		}
 	}
@@ -49,16 +49,16 @@
 		pointer-events: none;
 
 		.textfield-hint {
-			color: $c1t;
+			color: var(--separator-color-transparent);
 		}
 
 		label {
-			color: $c1t;
+			color: var(--separator-color-transparent);
 		}
 
 		input, textarea {
-			border-color: $c1t;
-			color: $c1t;
+			border-color: var(--separator-color-transparent);
+			color: var(--separator-color-transparent);
 		}
 	}
 
@@ -96,30 +96,4 @@
 //			transform: scaleX(1);
 //		}
 //	}
-}
-
-.theme-light .textfield {
-	input, textarea {
-		color: $c7;
-
-		&:hover, &:focus, &:active {
-			color: $c7;
-			border-color: $c7;
-
-			+ .textfield-hint {
-				color: $c7;
-			}
-		}
-	}
-
-	// &.invalid:not(.disabled) {
-	// 	label {
-	// 		color: $unrecommended1;
-	// 	}
-
-	// 	input, textarea {
-	// 		border: 1px solid $unrecommended2;
-	// 		color: $unrecommended1;
-	// 	}
-	// }
 }

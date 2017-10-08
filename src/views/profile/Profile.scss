@@ -13,7 +13,7 @@
 				cursor: pointer;
 
 				.avatar {
-					box-shadow: 0 0 0 71px $c1t inset;
+					box-shadow: 0 0 0 71px var(--separator-color-transparent) inset;
 
 					&::after {
 						display: block;
@@ -35,7 +35,7 @@
 			content: "\E2C6";
 			@include size(64px);
 			font: 64px/64px Material;
-			color: $c3;
+			color: var(--headings-color);
 			text-align: center;
 		}
 
@@ -49,7 +49,7 @@
 				margin: 0;
 				font: 400 #{$size}/#{$size} Alegreya Sans;
 				letter-spacing: 0.025em;
-				color: $c3;
+				color: var(--headings-color);
 			}
 
 			> h1, > div.change-name {
@@ -114,15 +114,5 @@
 #profileavatarchange {
 	.avatar-wrapper {
 		@include size(64px);
-	}
-}
-
-.theme-light #overview  .title-wrapper {
-	.avatar::after {
-		color: $c7;
-	}
-
-	.text-wrapper > h1 {
-		color: $c7;
 	}
 }

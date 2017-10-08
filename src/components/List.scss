@@ -34,7 +34,7 @@ ul.list-wrapper {
 				width: 40%;
 				height: calc(100% - 1px);
 				border-style: solid;
-				border-color: $c2;
+				border-color: var(--accent-color);
 				pointer-events: none;
 				z-index: 7;
 				transition: width 0.3s ease-in-out;
@@ -58,7 +58,7 @@ ul.list-wrapper {
 		> .separator {
 			position: absolute;
 			@include size(12px);
-			border: 1px solid $c1t;
+			border: 1px solid var(--separator-color-transparent);
 			transform: rotate(45deg);
 			top: -30px;
 			left: calc(50% - 6px);
@@ -73,7 +73,7 @@ ul.list-wrapper {
 				width: 50%;
 				height: calc(100% - 1px);
 				border-style: solid;
-				border-color: $c2;
+				border-color: var(--accent-color);
 				pointer-events: none;
 				z-index: 8;
 			}
@@ -120,13 +120,13 @@ ul.list-wrapper {
 						text-overflow: ellipsis;
 						white-space: nowrap;
 						padding: 0;
-						color: $c3;
+						color: var(--headings-color);
 					}
 
 					.add {
 						padding-left: 20px;
 						font-size: 16px;
-						color: $c1;
+						color: var(--separator-color);
 						flex: none;
 					}
 				}
@@ -145,7 +145,7 @@ ul.list-wrapper {
 				text-overflow: ellipsis;
 				white-space: nowrap;
 				text-transform: none;
-				color: $c3;
+				color: var(--headings-color);
 				margin: 0;
 			}
 		}
@@ -159,7 +159,7 @@ ul.list-wrapper {
 
 		.hr {
 			border-width: 1px 0 0;
-			background-color: $c1t;
+			background-color: var(--separator-color-transparent);
 			flex: 1 1 auto;
 			height: 1px;
 			margin: 0 10px;
@@ -193,19 +193,19 @@ ul.list-wrapper {
 				height: 32px;
 				width: 32px;
 				margin-right: 8px;
-				border: 2px solid $c1t;
+				border: 2px solid var(--separator-color-transparent);
 				font: 500 12px/28px Alegreya Sans SC;
 				text-align: center;
 			}
 
 			.sr {
 				font-size: 15px;
-				color: $c3;
+				color: var(--headings-color);
 			}
 
 			.ic {
 				margin-left: 4px;
-				color: $c8;
+				color: var(--text-color);
 			}
 
 			.sr, .ic, .cost {
@@ -221,7 +221,7 @@ ul.list-wrapper {
 			.atpa {
 				width: 8px;
 				height: 2px;
-				background-color: $c1t;
+				background-color: var(--separator-color-transparent);
 				flex: none;
 				margin: 0 0 0 -8px;
 				border: none;
@@ -297,7 +297,7 @@ ul.list-wrapper {
 			pointer-events: none;
 
 			p.title {
-				color: $c1t;
+				color: var(--separator-color-transparent);
 				height: 32px;
 				line-height: 32px;
 			}
@@ -316,7 +316,7 @@ ul.list-wrapper {
 					left: 0;
 					height: 15px;
 					border-radius: 2px;
-					background: $c1t;
+					background: var(--separator-color-transparent);
 					width: 100%;
 				}
 			}
@@ -325,7 +325,7 @@ ul.list-wrapper {
 				display: inline-block;
 				height: 10px;
 				border-radius: 2px;
-				background: $c1t;
+				background: var(--separator-color-transparent);
 				margin: 10px 0;
 			}
 
@@ -398,24 +398,6 @@ ul.list-wrapper {
 }
 
 .theme-light ul.list-wrapper li {
-	.name.large p.title span:not(.add) {
-		color: $c7;
-	}
-
-	p.title {
-		color: $c7;
-	}
-
-	.values {
-		.sr {
-			color: $c7;
-		}
-
-		.ic {
-			color: $c9;
-		}
-	}
-
 	&.imp {
 		p.title, .values .sr {
 			color: #fabe0a;
@@ -432,9 +414,5 @@ ul.list-wrapper {
 		p.title, .values .sr {
 			color: #ff2345;
 		}
-	}
-
-	&.disabled p.title {
-		color: $c1t;
 	}
 }

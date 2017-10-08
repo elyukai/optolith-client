@@ -8,14 +8,10 @@ html, body, #bodywrapper, #body {
 
 #body {
 	cursor: default;
-	background: $c4;
+	background: var(--background-color);
 	display: flex;
 	font: 14px/23px Alegreya;
-	border: 1px solid $c1t;
-}
-
-#body.theme-light {
-	background: $c6;
+	border: 1px solid var(--separator-color-transparent);
 }
 
 .background-image {
@@ -27,7 +23,7 @@ html, body, #bodywrapper, #body {
 }
 
 .error-message {
-	color: $c2;
+	color: var(--accent-color);
 	white-space: pre-wrap;
 	font: 500 18px/20px Alegreya Sans;
 

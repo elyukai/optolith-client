@@ -16,13 +16,9 @@
 		}
 
 		&.text {
-			color: $c3;
+			color: var(--headings-color);
 			text-transform: uppercase;
 			letter-spacing: 0.1em;
 		}
 	}
-}
-
-.theme-light .navigationbar-left > div.text {
-	color: $c7;
 }

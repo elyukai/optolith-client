@@ -1,6 +1,3 @@
-.segmented-controls {
-}
-
 .segmented-controls-list {
 	display: flex;
 	padding: 0 1px;
@@ -16,7 +13,7 @@
 			content: "";
 			@include calc(height, "100% + 2px");
 			width: 1px;
-			background: $c2;
+			background: var(--accent-color);
 			z-index: 10;
 			top: -1px;
 		}
@@ -31,14 +28,14 @@
 
 		&:hover {
 			&::before, &::after {
-				background: $c3;
+				background: var(--headings-color);
 				z-index: 11;
 			}
 		}
 
 		&:active {
 			&::before, &::after {
-				background: $c5;
+				background: var(--accent-color-intense);
 				z-index: 11;
 			}
 		}
@@ -47,7 +44,7 @@
 			cursor: default;
 
 			&::before, &::after {
-				background: $c2;
+				background: var(--accent-color);
 				z-index: 10;
 			}
 		}
@@ -55,11 +52,5 @@
 		&:not(:first-child) {
 			margin-left: 1px;
 		}
-	}
-}
-
-.theme-light .segmented-controls-list .btn:hover {
-	&::before, &::after {
-		background: $c7;
 	}
 }

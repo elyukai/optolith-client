@@ -11,7 +11,7 @@
 		content: "";
 		width: 100%;
 		height: 1px;
-		background: $c1t;
+		background: var(--separator-color-transparent);
 		bottom: 0;
 		z-index: 799;
 	}
@@ -23,17 +23,17 @@
 		margin: 0 20px;
 		text-transform: uppercase;
 		position: relative;
-		color: $c2;
+		color: var(--accent-color);
 		min-width: 0;
 		z-index: 800;
 
 		&:hover {
-			color: $c3;
+			color: var(--headings-color);
 			cursor: pointer;
 		}
 
 		&:active, &:focus {
-			color: $c5;
+			color: var(--accent-color-intense);
 			cursor: pointer;
 		}
 
@@ -43,7 +43,7 @@
 
 		&.active {
 			pointer-events: none;
-			color: $c3;
+			color: var(--headings-color);
 
 			&:after {
 				position: absolute;
@@ -54,13 +54,13 @@
 				left: 0;
 				right: 0;
 				margin: 0 auto;
-				background: $c2;
+				background: var(--accent-color);
 			}
 		}
 
 		&.disabled {
 			pointer-events: none;
-			color: $c1t;
+			color: var(--separator-color-transparent);
 		}
 
 		div {
@@ -68,19 +68,5 @@
 			overflow: hidden;
 			white-space: nowrap;
 		}
-	}
-}
-
-.theme-light .subtabs .tab {
-	&:hover {
-		color: $c7;
-	}
-
-	&:active, &:focus {
-		color: $c5;
-	}
-
-	&.active {
-		color: $c7;
 	}
 }

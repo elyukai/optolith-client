@@ -16,7 +16,7 @@
 			height: 32px;
 
 			&:hover {
-				background: $c1t;
+				background: var(--separator-color-transparent);
 			}
 
 			> span {
@@ -73,7 +73,7 @@
 					align-items: center;
 
 					&:not(.disabled):hover {
-						background: $c1t;
+						background: var(--separator-color-transparent);
 					}
 
 					> .checkbox {
