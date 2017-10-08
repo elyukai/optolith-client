@@ -355,6 +355,7 @@ function iterateCantrips(array) {
     delete obj.name;
     obj.trad = obj.trad.toString().split('&').map(e => Number.parseInt(e));
     obj.req = convertRequirements(obj.req);
+    obj.src = obj.src ? obj.src.split('&') : [];
     list[obj.id] = obj;
   }
   return list;
@@ -383,6 +384,7 @@ function iterateBlessings(array) {
     obj.trad = obj.trad.toString().split('&').map(e => Number.parseInt(e));
     obj.aspc = obj.aspc.toString().split('&').map(e => Number.parseInt(e));
     obj.req = convertRequirements(obj.req);
+    obj.src = obj.src ? obj.src.split('&') : [];
     list[obj.id] = obj;
   }
   return list;

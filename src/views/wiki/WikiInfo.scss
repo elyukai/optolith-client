@@ -25,6 +25,15 @@
 		letter-spacing: 0.04em;
 	}
 
+	div.no-indent p {
+		padding-left: 0;
+		text-indent: 0;
+	}
+
+	div.always-indent p {
+		text-indent: 0;
+	}
+
 	p {
 		padding-left: 18px;
 		text-indent: -18px;

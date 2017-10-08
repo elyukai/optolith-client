@@ -519,6 +519,7 @@ export interface UIMessages {
 	"info.liturgicaltime": string;
 	"info.ceremonialtime": string;
 	"info.kpcost": string;
+	"info.aspect": string;
 	"equipment.actions.create": string;
 	"equipment.view.purse": string;
 	"equipment.view.ducates": string;

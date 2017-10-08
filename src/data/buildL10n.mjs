@@ -165,6 +165,7 @@ function iterateCantripsL10n(array) {
 	const list = {};
 	for (let obj of array) {
 		obj.id = `CANTRIP_${obj.id}`;
+		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
 	}
 	return list;
@@ -184,6 +185,7 @@ function iterateBlessingsL10n(array) {
 	const list = {};
 	for (let obj of array) {
 		obj.id = `BLESSING_${obj.id}`;
+		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
 	}
 	return list;

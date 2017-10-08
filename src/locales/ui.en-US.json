@@ -517,6 +517,7 @@
 	"info.liturgicaltime": "Liturgical Time",
 	"info.ceremonialtime": "Ceremonial Time",
 	"info.kpcost": "KP Cost",
+	"info.aspect": "Aspect",
 	"equipment.actions.create": "Create Item",
 	"equipment.view.purse": "Purse",
 	"equipment.view.ducates": "D",

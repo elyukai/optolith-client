@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
+import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
 import { WikiCultureInfo } from './WikiCultureInfo';
 import { WikiInfoEmpty } from './WikiInfoEmpty';
@@ -44,6 +45,9 @@ export function WikiInfo(props: WikiInfoProps) {
 
 	if (typeof currentObject === 'object') {
 		switch (currentObject.category) {
+			case 'BLESSINGS':
+				currentElement = <WikiBlessingInfo {...props} currentObject={currentObject} />;
+				break;
 			case 'CANTRIPS':
 				currentElement = <WikiCantripInfo {...props} currentObject={currentObject} />;
 				break;

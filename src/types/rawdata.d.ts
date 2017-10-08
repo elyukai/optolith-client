@@ -210,11 +210,17 @@ export interface RawBlessing {
 	aspc: number[];
 	trad: number[];
 	req: Reusable.AllRequirementTypes[];
+	src: string[];
 }
 
 export interface RawBlessingLocale {
 	id: string;
 	name: string;
+	effect: string;
+	range: string;
+	duration: string;
+	target: string;
+	src: number[];
 }
 
 export interface RawSpecialAbility {
@@ -269,11 +275,18 @@ export interface RawCantrip {
 	merk: number;
 	trad: number[];
 	req: Reusable.AllRequirementTypes[];
+	src: string[];
 }
 
 export interface RawCantripLocale {
 	id: string;
 	name: string;
+	effect: string;
+	range: string;
+	duration: string;
+	target: string;
+	note?: string;
+	src: number[];
 }
 
 export interface RawTalent {

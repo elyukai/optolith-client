@@ -519,6 +519,7 @@
 	"info.liturgicaltime": "Liturgiedauer",
 	"info.ceremonialtime": "Zeremoniedauer",
 	"info.kpcost": "KaP-Kosten",
+	"info.aspect": "Aspekt",
 	"equipment.actions.create": "Erstellen",
 	"equipment.view.purse": "Geldbeutel",
 	"equipment.view.ducates": "D",

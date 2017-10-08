@@ -152,6 +152,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 												get={get}
 												derivedCharacteristics={derivedCharacteristics}
+												selectForInfo={this.showSlideinInfo}
 												>
 												<ListItemGroup>
 													{_translate(locale, 'spells.view.properties')[obj.property - 1]}
@@ -227,6 +228,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
 											get={get}
 											derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showInfo}
 											>
 											<ListItemGroup>
 												{_translate(locale, 'spells.view.properties')[obj.property - 1]}

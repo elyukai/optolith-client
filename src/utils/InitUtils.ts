@@ -342,8 +342,8 @@ export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLoc
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { id, aspc, trad, req } = raw;
+    const { name, effect, range, duration, target, src: srcPages } = localeObject;
+    const { id, aspc, trad, req, src: srcIds } = raw;
     return {
       id,
       name,
@@ -352,7 +352,12 @@ export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLoc
       aspects: aspc,
       tradition: trad,
       reqs: req,
-      dependencies: []
+      dependencies: [],
+      effect,
+      range,
+      duration,
+      target,
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;
@@ -399,8 +404,8 @@ export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { id, merk, trad, req } = raw;
+    const { name, effect, range, duration, target, note, src: srcPages } = localeObject;
+    const { id, merk, trad, req, src: srcIds } = raw;
     return {
       id,
       name,
@@ -409,7 +414,13 @@ export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale
       property: merk,
       tradition: trad,
       reqs: req,
-      dependencies: []
+      dependencies: [],
+      effect,
+      range,
+      duration,
+      target,
+      note,
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;

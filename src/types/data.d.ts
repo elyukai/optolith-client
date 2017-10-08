@@ -598,6 +598,11 @@ export interface BlessingInstance {
 	readonly category: Categories.BLESSINGS;
 	active: boolean;
 	dependencies: boolean[];
+	readonly effect: string;
+	readonly range: string;
+	readonly duration: string;
+	readonly target: string;
+	readonly src: SourceLink[];
 }
 
 export type SpellInstanceDependency = number | boolean | SkillOptionalDependency;
@@ -639,6 +644,12 @@ export interface CantripInstance {
 	readonly category: Categories.CANTRIPS;
 	active: boolean;
 	dependencies: boolean[];
+	readonly effect: string;
+	readonly range: string;
+	readonly duration: string;
+	readonly target: string;
+	readonly note?: string;
+	readonly src: SourceLink[];
 }
 
 export type TalentInstanceDependency = number | SkillOptionalDependency;

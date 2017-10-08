@@ -148,6 +148,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 												get={get}
 												derivedCharacteristics={derivedCharacteristics}
+												selectForInfo={this.showSlideinInfo}
 												>
 												<ListItemGroup>
 													{aspc}
@@ -221,6 +222,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
 											get={get}
 											derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showInfo}
 											>
 											<ListItemGroup>
 												{aspc}
@@ -252,7 +254,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 										insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 										get={get}
 										derivedCharacteristics={derivedCharacteristics}
-											selectForInfo={this.showInfo}
+										selectForInfo={this.showInfo}
 										{...add}
 										>
 										<ListItemGroup>
