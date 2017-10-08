@@ -124,6 +124,7 @@
 	"settings.title": "Einstellungen",
 	"settings.options.language": "Sprache",
 	"settings.options.defaultlanguage": "Systemsprache",
+	"settings.options.languagehint": "Um die Sprachauswahl abzuschließen, muss die App neugestartet werden!",
 	"settings.options.theme": "Theme",
 	"settings.options.themedark": "Dunkel",
 	"settings.options.themelight": "Hell",

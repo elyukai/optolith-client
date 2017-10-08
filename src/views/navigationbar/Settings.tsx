@@ -38,6 +38,7 @@ export function Settings(props: SettingsProps) {
 				label={_translate(locale, 'settings.options.language')}
 				onChange={setLocale}
 				/>
+			<p>{_translate(locale, 'settings.options.languagehint')}</p>
 			<SegmentedControls
 				options={[
 					{name: _translate(locale, 'settings.options.themedark'), value: 'dark'},

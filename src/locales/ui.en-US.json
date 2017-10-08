@@ -122,6 +122,7 @@
 	"settings.title": "Settings",
 	"settings.options.language": "Language",
 	"settings.options.defaultlanguage": "System language",
+	"settings.options.languagehint": "To finalize changing the language you need to restart the app!",
 	"settings.options.theme": "Theme",
 	"settings.options.themedark": "Dark",
 	"settings.options.themelight": "Light",
