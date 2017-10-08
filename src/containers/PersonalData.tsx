@@ -5,7 +5,7 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
-import { getTotal } from '../selectors/adventurePointsSelectors';
+import { getAvailable, getTotal } from '../selectors/adventurePointsSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
@@ -18,6 +18,7 @@ import { OverviewAddAP } from '../views/profile/OverviewAddAP';
 function mapStateToProps(state: AppState) {
 	return {
 		advantages: getAdvantagesForSheet(state),
+		apLeft: getAvailable(state),
 		apTotal: getTotal(state),
 		culture: getCurrentCulture(state),
 		currentEl: getCurrentEl(state),

@@ -18,6 +18,7 @@ export interface PersonalDataOwnProps {
 }
 
 export interface PersonalDataStateProps {
+	apLeft: number;
 	apTotal: number;
 	advantages: ActiveViewObject[];
 	culture: CultureInstance | undefined;
@@ -71,6 +72,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 	render() {
 		const {
 			advantages,
+			apLeft,
 			apTotal,
 			culture,
 			currentEl,
@@ -228,6 +230,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 									label={_translate(locale, 'profileoverview.actions.endherocreation')}
 									onClick={endCharacterCreation}
 									primary
+									disabled={apLeft < 0}
 									/>
 							</div>
 						)
