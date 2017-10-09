@@ -185,7 +185,7 @@ export const getMeleeWeapons = createSelector(
 			const primaryAttributeIds = damageBonus && typeof damageBonus.primary === 'string' ? convertPrimaryAttributeToArray(damageBonus.primary) : combatTechniqueInstance.primary;
 			const primaryAttributes = primaryAttributeIds.map(attr => dependent.attributes.get(attr)!);
 			const damageThresholds = damageBonus && damageBonus.threshold || 0;
-			const damageFlatBonus = Math.max(Math.max(...(Array.isArray(damageThresholds) ? primaryAttributes.map((e, index) => damageThresholds[index] - e.value) : primaryAttributes.map(e => damageThresholds - e.value))), 0);
+			const damageFlatBonus = Math.max(...(Array.isArray(damageThresholds) ? primaryAttributes.map((e, index) => e.value - damageThresholds[index]) : primaryAttributes.map(e => e.value - damageThresholds)), 0);
 			const damageFlat = damageFlatBase! + damageFlatBonus;
 			return {
 				id,
