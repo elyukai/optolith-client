@@ -60,6 +60,10 @@ export interface UIMessages {
 	"options.none": string;
 	"actions.save": string;
 	"actions.done": string;
+	"yes": string;
+	"no": string;
+	"ok": string;
+	"cancel": string;
 	"homeintro.title": string;
 	"homeintro.text": string;
 	"heroes.actions.create": string;

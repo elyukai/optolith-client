@@ -2,9 +2,10 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { TalentInstance } from '../types/data.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
@@ -20,8 +21,9 @@ export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!cost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!cost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({

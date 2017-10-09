@@ -1,8 +1,9 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getMessages } from '../selectors/localeSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { Hero, UIMessages } from '../types/data.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { confirm } from '../utils/confirm';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
@@ -65,8 +66,8 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncActi
 				}
 			} as CreateHeroAction);
 		}
-		else {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
+		else if (messages) {
+			confirm(_translate(messages, 'heroes.warnings.unsavedactions.text'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.unsavedactions.title'), true).then(result => {
 				if (result === true) {
 					dispatch({
 						type: ActionTypes.CREATE_HERO,
@@ -116,8 +117,8 @@ export function loadHeroValidate(id: string): AsyncAction {
 				dispatch(action);
 			}
 		}
-		else if (id) {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.title'), _translate(messages, 'heroes.warnings.unsavedactions.text'), true).then(result => {
+		else if (id && messages) {
+			confirm(_translate(messages, 'heroes.warnings.unsavedactions.text'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.unsavedactions.title'), true).then(result => {
 				if (result === true) {
 					const action = _loadHero(id);
 					if (action) {
@@ -137,7 +138,7 @@ export function saveHeroes(): AsyncAction {
 		const messages = getMessages(getState());
 		if (messages) {
 			dispatch(requestSaveAll());
-			alert(_translate(messages, 'fileapi.allsaved'));
+			alert(_translate(messages, 'fileapi.allsaved'), getTheme(getState()));
 		}
 	};
 }
@@ -183,8 +184,8 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
 	return (dispatch, getState) => {
 		const { herolist: { heroes }, locale: { messages } } = getState();
 		const hero = id && heroes.get(id);
-		if (id && hero) {
-			confirm(_translate(messages, 'heroes.warnings.delete.title', hero.name), _translate(messages, 'heroes.warnings.delete.message'), true).then(result => {
+		if (id && hero && messages) {
+			confirm(_translate(messages, 'heroes.warnings.delete.message'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.delete.title', hero.name), true).then(result => {
 				if (result === true) {
 					dispatch(_deleteHero(id));
 					dispatch(requestHeroesSave());

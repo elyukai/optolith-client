@@ -13,7 +13,6 @@ $modal-padding: 24px;
 	align-items: center;
 
 	.modal-container {
-		width: 380px;
 		height: auto;
 		background: var(--background-color);
 		border: 1px solid var(--accent-color);
@@ -112,10 +111,24 @@ $modal-padding: 24px;
 		.modal-content {
 			position: relative;
 			@include calc(height, "100% - 77px");
+			width: 378px;
+
+			&:nth-child(2) {
+				width: 298px;
+
+				.modal-content-inner {
+					padding: 16px 0 47px;
+					font: bold 16px/24px Alegreya SC;
+					color: var(--headings-color);
+					letter-spacing: 0.1em;
+					text-transform: uppercase;
+					text-align: center;
+				}
+			}
 
 			.modal-content-inner {
 				color: var(--text-color);
-				font: 11px/16px "Source Sans Pro";
+				font: 500 11px/16px Alegreya Sans;
 				letter-spacing: 0.05em;
 				padding: 0 $modal-padding 55px;
 
@@ -176,23 +189,6 @@ $modal-padding: 24px;
 					}
 				}
 			}
-		}
-	}
-
-	&.no-content .modal-container {
-		width: 300px;
-
-		.modal-header {
-			padding: 16px 0 47px;
-
-			.modal-header-inner {
-				font-size: 16px;
-				text-align: center;
-			}
-		}
-
-		.modal-content {
-			display: none;
 		}
 	}
 }

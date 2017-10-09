@@ -9,7 +9,7 @@ import { getMessages } from '../selectors/localeSelectors';
 import { getCurrentTab } from '../selectors/uilocationSelectors';
 import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { confirm } from '../utils/confirm';
 import { _translate } from '../utils/I18n';
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
@@ -39,18 +39,19 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 				const state = getState();
 				const safeToExit = !getUndoAvailability(state);
 				const locale = getMessages(state);
+				const theme = getTheme(state);
 				if (locale) {
 					if (safeToExit) {
 						dispatch(PlatformActions.requestSaveAll());
-						alert(_translate(locale, 'fileapi.allsaved'), () => {
+						alert(_translate(locale, 'fileapi.allsaved'), theme).then(() => {
 							remote.getCurrentWindow().close();
 						});
 					}
 					else {
-						confirm(_translate(locale, 'heroes.warnings.unsavedactions.title'), _translate(locale, 'heroes.warnings.unsavedactions.text'), true).then(result => {
+						confirm(_translate(locale, 'heroes.warnings.unsavedactions.text'), theme, locale, _translate(locale, 'heroes.warnings.unsavedactions.title'), true).then(result => {
 							if (result === true) {
 								dispatch(PlatformActions.requestSaveAll());
-								alert(_translate(locale, 'fileapi.everythingelsesaved'), () => {
+								alert(_translate(locale, 'fileapi.everythingelsesaved'), theme).then(() => {
 									remote.getCurrentWindow().close();
 								});
 							}

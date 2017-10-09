@@ -2,9 +2,10 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { AttributeInstance } from '../types/data.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { getIncreaseAP } from '../utils/ICUtils';
@@ -22,8 +23,9 @@ export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!cost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!cost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -69,8 +71,9 @@ export function _addLifePoint(): AsyncAction {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedLifePoints);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -94,8 +97,9 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -119,8 +123,9 @@ export function _addKarmaPoint(): AsyncAction {
 		const state = getState();
 		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -140,8 +145,9 @@ export function _addBoughtBackAEPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -213,8 +219,9 @@ export function _addBoughtBackKPPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({

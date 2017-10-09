@@ -32,7 +32,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
 				>
 				<div className="modal-container">
 					<div className="modal-close" onClick={this.close}><div>&#xE5CD;</div></div>
-					{title ? <div className="modal-header"><div className="modal-header-inner">{title}</div></div> : null}
+					{title && <div className="modal-header"><div className="modal-header-inner">{title}</div></div>}
 					<div className="modal-content">
 						<div className="modal-content-inner" style={contentStyle}>
 							{this.props.children}

@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 
@@ -16,8 +17,9 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const validCost = validate(args.cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -56,8 +58,9 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 	return (dispatch, getState) => {
 		const state = getState();
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({

@@ -3,10 +3,11 @@ import { DISADVANTAGES } from '../constants/Categories';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { isMagicalOrBlessed } from '../utils/ActivatableUtils';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 
@@ -31,22 +32,22 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-		if (!validCost[0]) {
-			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
+		if (!validCost[0] && locale) {
+			alert(_translate(locale, 'notenoughap.content'), getTheme(state), _translate(locale, 'notenoughap.title'));
 			return;
 		}
-		else if (!validCost[1]) {
+		else if (!validCost[1] && locale) {
 			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
 			if (type) {
-				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+				alert(_translate(locale, 'notenoughap.content', type), getTheme(state), _translate(locale, 'reachedaplimit.title', type));
 			}
 			return;
 		}
-		else if (!validCost[2]) {
+		else if (!validCost[2] && locale) {
 			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
-				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+				alert(_translate(locale, 'reachedcategoryaplimit.title', type), getTheme(state), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
 			}
 			return;
 		}
@@ -85,22 +86,22 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-		if (!validCost[0]) {
-			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
+		if (!validCost[0] && locale) {
+			alert(_translate(locale, 'notenoughap.content'), getTheme(state), _translate(locale, 'notenoughap.title'));
 			return;
 		}
-		else if (!validCost[1]) {
+		else if (!validCost[1] && locale) {
 			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
 			if (type) {
-				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+				alert(_translate(locale, 'notenoughap.content', type), getTheme(state), _translate(locale, 'reachedaplimit.title', type));
 			}
 			return;
 		}
-		else if (!validCost[2]) {
+		else if (!validCost[2] && locale) {
 			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
-				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+				alert(_translate(locale, 'reachedcategoryaplimit.content', ap, type), getTheme(state), _translate(locale, 'reachedcategoryaplimit.title', type));
 			}
 			return;
 		}
@@ -138,22 +139,22 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-		if (!validCost[0]) {
-			alert(_translate(locale, 'notenoughap.title'), _translate(locale, 'notenoughap.content'));
+		if (!validCost[0] && locale) {
+			alert(_translate(locale, 'notenoughap.content'), getTheme(state), _translate(locale, 'notenoughap.title'));
 			return;
 		}
-		else if (!validCost[1]) {
+		else if (!validCost[1] && locale) {
 			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
 			if (type) {
-				alert(_translate(locale, 'reachedaplimit.title', type), _translate(locale, 'notenoughap.content', type));
+				alert(_translate(locale, 'notenoughap.content', type), getTheme(state), _translate(locale, 'reachedaplimit.title', type));
 			}
 			return;
 		}
-		else if (!validCost[2]) {
+		else if (!validCost[2] && locale) {
 			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
-				alert(_translate(locale, 'reachedcategoryaplimit.title', type), _translate(locale, 'reachedcategoryaplimit.content', ap, type));
+				alert(_translate(locale, 'reachedcategoryaplimit.content', ap, type), getTheme(state), _translate(locale, 'reachedcategoryaplimit.title', type));
 			}
 			return;
 		}

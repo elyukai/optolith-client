@@ -2,8 +2,9 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { get } from '../selectors/spellsSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { alert } from '../utils/alert';
+import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
@@ -23,8 +24,9 @@ export function _addToList(id: string): AsyncAction {
 		const entry = get(state.currentHero.present.dependent.spells, id)!;
 		const cost = getIncreaseAP(entry.ic);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -48,8 +50,9 @@ export function _addCantripToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const validCost = validate(1, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!validCost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!validCost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
@@ -112,8 +115,9 @@ export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap, isInCharacterCreation(state));
-		if (!cost) {
-			alert(_translate(getLocaleMessages(state), 'notenoughap.title'), _translate(getLocaleMessages(state), 'notenoughap.content'));
+		const messages = getLocaleMessages(state);
+		if (!cost && messages) {
+			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
 			return;
 		}
 		dispatch({
