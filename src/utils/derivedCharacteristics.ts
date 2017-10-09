@@ -188,7 +188,7 @@ export const getTOU = createSelector(
 	getLocaleMessages,
 	(races, currentRaceId, CON, STR, increase, decrease, locale) => {
 		const currentRace = currentRaceId && races.get(currentRaceId);
-		const base = currentRace && CON && STR && currentRace.spi + Math.round((CON.value * 2 + STR.value) / 6) || 0;
+		const base = currentRace && CON && STR && currentRace.tou + Math.round((CON.value * 2 + STR.value) / 6) || 0;
 
 		let mod = 0;
 		const increaseObject = isActive(increase);
