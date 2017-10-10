@@ -1,12 +1,14 @@
 import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
+import { get } from '../selectors/dependentInstancesSelectors';
 import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
 import { Culture, Increasable, Profession, Race } from '../types/view.d';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { getStartEl } from './elSelectors';
-import { getCombatTechniques, getSex, getSkills } from './stateSelectors';
+import { getCombatTechniques, getDependentInstances, getSex, getSkills, getLocaleMessages } from './stateSelectors';
 import { getProfessionsFromExpansionsVisibility, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getRaces = (state: AppState) => state.currentHero.present.dependent.races;
@@ -157,8 +159,7 @@ export const getCommonCultures = createSelector(
 export const getAllProfessions = createSelector(
 	getProfessions,
 	getProfessionVariants,
-	getCombatTechniques,
-	getSkills,
+	getDependentInstances,
 	getStartEl,
 	getCurrentRaceId,
 	getCurrentCulture,
@@ -166,7 +167,9 @@ export const getAllProfessions = createSelector(
 	getProfessionsFromExpansionsVisibility,
 	getProfessionsGroupVisibilityFilter,
 	getProfessionsVisibilityFilter,
-	(professions, professionVariants, combatTechniquesState, skillsState, startEl, currentRaceId, currentCulture, sex, extensionVisibility, groupVisibility, visibility) => {
+	getLocaleMessages,
+	(professions, professionVariants, dependentState, startEl, currentRaceId, currentCulture, sex, extensionVisibility, groupVisibility, visibility, locale) => {
+		const { combatTechniques: combatTechniquesState, talents: skillsState } = dependentState;
 		const list: Profession[] = [];
 
 		const filterProfession = (e: ProfessionInstance | ProfessionVariantInstance) => {
@@ -198,6 +201,8 @@ export const getAllProfessions = createSelector(
 				ap,
 				name,
 				subname,
+				requires,
+				specialAbilities,
 				selections,
 				combatTechniques,
 				talents,
@@ -222,6 +227,20 @@ export const getAllProfessions = createSelector(
 				name,
 				subname,
 				ap,
+				prerequisites: requires.map((e, index) => {
+					if (!isRequiringIncreasable(e)) {
+						const { active, ...other } = e;
+						return {
+							active,
+							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, locale!))
+						};
+					}
+					return e;
+				}),
+				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
+					active,
+					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, locale!))
+				})),
 				selections: selections.map(e => {
 					if (e.id === 'COMBAT_TECHNIQUES') {
 						return {

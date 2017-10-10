@@ -288,9 +288,9 @@ export interface ProfessionInstance {
 	readonly ap: number;
 	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
+	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: Reusable.RequiresActivatableObject[];
+	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];
@@ -316,7 +316,7 @@ export interface ProfessionVariantInstance {
 	readonly ap: number;
 	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
+	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
 	readonly specialAbilities: Reusable.RequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
@@ -334,8 +334,29 @@ export interface ActiveObject {
 	tier?: number;
 }
 
+export interface ActiveObjectWithId extends ActiveObject {
+	id: string;
+	index: number;
+}
+
+export interface ActivatableNameCost extends ActiveObjectWithId {
+	combinedName: string;
+	baseName: string;
+	addName: string | undefined;
+	cost: number | number[];
+}
+
+export interface ActivatableNameCostActive extends ActivatableNameCost {
+	active: boolean;
+}
+
+export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
+	cost: number;
+}
+
 export interface ActiveViewObject {
 	id: string;
+	index: number;
 	name: string;
 	tier?: number;
 	tiers?: number;
@@ -343,7 +364,6 @@ export interface ActiveViewObject {
 	maxTier?: number;
 	cost: number;
 	disabled: boolean;
-	index: number;
 	gr?: number;
 	instance: ActivatableInstance;
 }

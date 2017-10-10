@@ -1,5 +1,6 @@
 import * as Categories from '../constants/Categories';
-import { ProfessionSelections, SourceLink } from './data.d';
+import { ActivatableNameCostActive, ProfessionSelections, SourceLink } from './data.d';
+import { ProfessionRequiresIncreasableObject } from './reusable.d';
 
 export { Book } from './data.d';
 export { UIMessages } from './ui.d';
@@ -71,6 +72,8 @@ export interface Profession {
 	name: string | NameBySex;
 	subname?: string | NameBySex;
 	ap: number;
+	prerequisites: (ActivatableNameCostActive | ProfessionRequiresIncreasableObject)[];
+	specialAbilities: ActivatableNameCostActive[];
 	selections: ProfessionSelections;
 	combatTechniques: Increasable[];
 	physicalSkills: Increasable[];

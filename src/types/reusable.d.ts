@@ -30,9 +30,18 @@ export interface RequiresActivatableObject {
   tier?: number;
 }
 
+export interface ProfessionRequiresActivatableObject extends RequiresActivatableObject {
+  id: string;
+  sid?: string | number;
+}
+
 export interface RequiresIncreasableObject {
   id: string | string[];
   value: number;
+}
+
+export interface ProfessionRequiresIncreasableObject extends RequiresIncreasableObject {
+  id: string;
 }
 
 export interface RequiresPrimaryAttribute {

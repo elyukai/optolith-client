@@ -1,15 +1,17 @@
 import { flatten } from 'lodash';
-import { SPECIAL_ABILITIES } from '../constants/Categories';
+import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
+import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { ActiveObjectName } from '../types/activatables';
-import { ActivatableInstance, ActivateObject, ActiveObject, ActiveViewObject, AllRequirementObjects, RequirementObject, SelectionObject, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys } from '../types/data.d';
+import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateObject, ActiveObject, ActiveObjectWithId, ActiveViewObject, AllRequirementObjects, CombatTechniqueInstance, RequirementObject, SelectionObject, SkillInstance, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
+import { _translate } from './I18n';
 import { mergeIntoState, setStateItem } from './ListUtils';
 import { getRoman } from './NumberUtils';
-import { getFlatFirstTierPrerequisites, getFlatPrerequisites, isRequiringActivatable, validate, validateObject, validateRemovingStyle } from './RequirementUtils';
+import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
 
 export function isMultiselect(obj: ActivatableInstance): boolean {
   return obj.max !== 1;
@@ -24,10 +26,10 @@ export function isActive(obj?: ActivatableInstance): boolean {
 
 export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance): boolean {
   const { dependent } = state;
-  if (obj.category === SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
+  if (obj.category === Categories.SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
     const combinationSA = get(dependent, 'SA_164') as SpecialAbilityInstance;
     if (!combinationSA) {
-      const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
+      const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
       const totalActive = allStyles.filter(e => isActive(e)).length;
       if (totalActive >= 1) {
         return false;
@@ -36,7 +38,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
     else {
       const combinationAvailable = isActive(combinationSA);
       if (combinationAvailable) {
-        const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
+        const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
         const allEqualTypeStyles = allStyles.filter(e => e.gr === obj.gr);
         const totalActive = allStyles.filter(e => isActive(e)).length;
         const equalTypeStyleActive = allEqualTypeStyles.filter(e => isActive(e)).length;
@@ -45,29 +47,29 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
         }
       }
       else {
-        const allEqualTypeStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, obj.gr);
+        const allEqualTypeStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, obj.gr);
         if (allEqualTypeStyles.find(e => isActive(e))) {
           return false;
         }
       }
     }
   }
-  else if (obj.category === SPECIAL_ABILITIES && obj.gr === 25) {
-    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 25);
+  else if (obj.category === Categories.SPECIAL_ABILITIES && obj.gr === 25) {
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 25);
     const totalActive = allStyles.filter(e => isActive(e)).length;
     if (totalActive >= 1) {
       return false;
     }
   }
   else if (obj.id === 'SA_164') {
-    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
     const isOneActive = allStyles.find(e => isActive(e));
     if (!isOneActive) {
       return false;
     }
   }
   else if (obj.id === 'SA_266') {
-    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 13);
     const isOneActive = allStyles.find(e => isActive(e));
     if (!isOneActive) {
       return false;
@@ -79,7 +81,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
 export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid?: string | number): boolean {
   const { dependent } = state;
   if (obj.id === 'SA_164') {
-    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 9, 10);
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
     const allArmedStyles = allStyles.filter(e => e.gr === 9);
     const allUnarmedStyles = allStyles.filter(e => e.gr === 10);
     const totalActive = allStyles.filter(e => isActive(e)).length;
@@ -90,13 +92,13 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
     }
   }
   else if (obj.id === 'SA_266') {
-    const allStyles = getAllByCategoryGroup(dependent, SPECIAL_ABILITIES, 13);
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 13);
     const totalActive = allStyles.filter(e => isActive(e)).length;
     if (totalActive >= 2) {
       return false;
     }
   }
-  if (obj.category === SPECIAL_ABILITIES) {
+  if (obj.category === Categories.SPECIAL_ABILITIES) {
     const validStyle = validateRemovingStyle(dependent, obj);
     if (validStyle === false) {
       return false;
@@ -419,4 +421,390 @@ export function getGeneratedPrerequisites(obj: ActivatableInstance, { sid }: Act
     }
   }
   return adds;
+}
+
+/**
+ * Generates a list of ActiveObjects based on the given instance.
+ */
+export function convertActivatableToArray({ active, id }: ActivatableInstance): ActiveObjectWithId[] {
+  return active.map((e, index) => ({ ...e, id, index }));
+}
+
+/**
+ * Get all active items in an array.
+ * @param state A state slice.
+ */
+export function getActiveFromState(state: Map<string, ActivatableInstance>): ActiveObjectWithId[] {
+  return [...state.values()].reduce((arr, e) => [...arr, ...convertActivatableToArray(e)], []);
+}
+
+interface ActivatableObjectForRCPAndPrerequisites {
+  id: string;
+  index: number;
+  name: string;
+  cost: number;
+  active: boolean;
+}
+
+interface ActivatableObjectForActivatableActiveLists {
+	id: string;
+	name: string;
+	tier?: number;
+	tiers?: number;
+	minTier?: number;
+	maxTier?: number;
+	cost: number;
+	disabled: boolean;
+	index: number;
+	gr?: number;
+	instance: ActivatableInstance;
+}
+
+interface ActivatableObjectForActivatableDeactiveLists {
+	id: string;
+	name: string;
+	cost?: string | number | number[];
+	input?: string;
+	tiers?: number;
+	minTier?: number;
+	maxTier?: number;
+	sel?: SelectionObject[];
+	gr?: number;
+	instance: ActivatableInstance;
+}
+
+interface ActivatableObjectForCommaSeparatedActivatableActiveLists {
+  id: string;
+  index: number;
+  name: string;
+  cost: number;
+}
+
+interface ActiveObjectAny extends ActiveObject {
+	[key: string]: any;
+}
+
+export function getActiveObjectCore({ sid, sid2, tier }: ActiveObjectAny): ActiveObject {
+  return { sid, sid2, tier };
+}
+
+export function getActivatableValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanceState) {
+  const { dependent, el } = state;
+  const { id, sid } = obj;
+  const instance = get(dependent, id) as ActivatableInstance;
+  const { dependencies, active, reqs } = instance;
+  let { tiers } = instance;
+
+  let disabled = !isDeactivatable(state, instance, sid);
+  let maxTier: number | undefined;
+  let minTier: number | undefined;
+
+  if (!Array.isArray(reqs)) {
+    maxTier = validateTier(state, reqs, dependencies, id);
+  }
+
+  if (!Array.isArray(reqs)) {
+    minTier = getMinTier(dependencies);
+  }
+
+  switch (id) {
+    case 'ADV_16': {
+      const { value } = (get(dependent, sid as string)) as SkillInstance;
+      const counter = instance.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
+      disabled = disabled || getStart(el).maxSkillRating + counter === value;
+      break;
+    }
+    case 'ADV_17': {
+      const { value } = (get(dependent, sid as string)) as CombatTechniqueInstance;
+      disabled = disabled || getStart(el).maxCombatTechniqueRating + 1 === value;
+      break;
+    }
+    case 'ADV_58': {
+      const activeSpells = getAllByCategory(dependent, Categories.SPELLS).reduce((n, e) => e.active ? n + 1 : n, 0);
+      if (activeSpells > 3) {
+        minTier = activeSpells - 3;
+      }
+      break;
+    }
+    case 'ADV_79': {
+      const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive).length;
+      if (active > 3) {
+        minTier = active - 3;
+      }
+      break;
+    }
+    case 'ADV_80': {
+      const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive).length;
+      if (active > 3) {
+        minTier = active - 3;
+      }
+      break;
+    }
+    case 'DISADV_59': {
+      const activeSpells = getAllByCategory(dependent, Categories.SPELLS).reduce((n, e) => e.active ? n + 1 : n, 0);
+      if (activeSpells < 3) {
+        maxTier = 3 - activeSpells;
+      }
+      break;
+    }
+    case 'DISADV_72': {
+      const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive).length;
+      if (active < 3) {
+        minTier = 3 - active;
+      }
+      break;
+    }
+    case 'DISADV_73': {
+      const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive).length;
+      if (active < 3) {
+        minTier = 3 - active;
+      }
+      break;
+    }
+    case 'SA_29':
+      tiers = 3;
+      break;
+    case 'SA_70': {
+      if (getAllByCategory(dependent, Categories.SPELLS).some(e => e.active)) {
+        disabled = true;
+      }
+      break;
+    }
+    case 'SA_86': {
+      if (getAllByCategory(dependent, Categories.LITURGIES).some(e => e.active)) {
+        disabled = true;
+      }
+      break;
+    }
+  }
+
+  if (typeof tiers === 'number' && minTier) {
+    disabled = true;
+  }
+
+  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
+    disabled = true;
+  }
+
+  return {
+    ...obj,
+    disabled,
+    maxTier,
+    minTier,
+    tiers
+  };
+}
+
+export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstancesState, locale: UIMessages): ActivatableNameCost {
+  const { id, sid, sid2, tier } = obj;
+  const instance = get(dependent, id) as ActivatableInstance;
+  const { cost, category, sel, input, name, active } = instance;
+
+  let combinedName = name;
+  let addName: string | undefined;
+  let currentCost: number | number[] | undefined;
+
+  switch (id) {
+    case 'ADV_4':
+    case 'ADV_47':
+    case 'ADV_16':
+    case 'ADV_17':
+    case 'DISADV_48':
+    case 'SA_231':
+    case 'SA_250':
+    case 'SA_472':
+    case 'SA_473':
+    case 'SA_531':
+    case 'SA_569': {
+      const { name, ic } = get(dependent, sid as string) as SkillishInstance;
+      addName = name;
+      currentCost = (cost as number[])[ic - 1];
+      break;
+    }
+    case 'ADV_28':
+    case 'ADV_29':
+    case 'DISADV_37':
+    case 'DISADV_51':
+    case 'SA_86': {
+      const selectionItem = getSelectionItem(instance, sid);
+      addName = selectionItem && selectionItem.name;
+      currentCost = selectionItem && selectionItem.cost;
+      break;
+    }
+    case 'ADV_32':
+    case 'DISADV_1':
+    case 'DISADV_24':
+    case 'DISADV_45':
+      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid;
+      break;
+    case 'ADV_68': {
+      const selectionItem = getSelectionItem(instance, sid);
+      addName = selectionItem && `${sid2} (${selectionItem.name})`;
+      currentCost = selectionItem && selectionItem.cost;
+      break;
+    }
+    case 'DISADV_34':
+    case 'DISADV_50': {
+      const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
+      const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
+      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid;
+      currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
+      break;
+    }
+    case 'DISADV_33': {
+      const selectionItem = getSelectionItem(instance, sid);
+      if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
+        currentCost = 0;
+      }
+      else {
+        currentCost = selectionItem && selectionItem.cost as number;
+      }
+      if ([7, 8].includes(sid as number)) {
+        addName = `${selectionItem && selectionItem.name}: ${sid2}`;
+      }
+      else {
+        addName = selectionItem && selectionItem.name;
+      }
+      break;
+    }
+    case 'DISADV_36':
+      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid as string;
+      currentCost = active.length > 3 ? 0 : cost as number;
+      break;
+    case 'SA_9': {
+      const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
+      const skill = dependent.talents.get(sid as string)!;
+      let name;
+      if (typeof sid2 === 'string') {
+        name = sid2;
+      }
+      else {
+        const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
+        if (typeof selectedApplication === 'undefined') {
+          name = 'undefined';
+        }
+        else {
+          name = selectedApplication.name;
+        }
+      }
+      currentCost = skill.ic * counter;
+      addName = `${skill.name}: ${name}`;
+      break;
+    }
+    case 'SA_29':
+      addName = getSelectionName(instance, sid);
+      break;
+    case 'SA_70': {
+      const selectionItem = getSelectionItem(instance, sid);
+      addName = selectionItem && selectionItem.name;
+      currentCost = selectionItem && selectionItem.cost as number;
+      if (typeof addName === 'string' && sid === 9 && typeof sid2 === 'string') {
+        const entry = dependent.talents.get(sid2)!;
+        if (entry) {
+          addName += `: ${entry.name}`;
+        }
+      }
+      else if (typeof addName === 'string' && (sid === 6 || sid === 7)) {
+        const musictraditionLabels = _translate(locale, 'musictraditions');
+        if (musictraditionLabels) {
+          addName += `: ${musictraditionLabels[(sid2 as number) - 1]}`;
+        }
+      }
+      break;
+    }
+    case 'SA_72': {
+      const apArr = [10, 20, 40];
+      currentCost = apArr[active.length - 1];
+      addName = getSelectionName(instance, sid);
+      break;
+    }
+    case 'SA_87': {
+      const apArr = [15, 25, 45];
+      currentCost = apArr[active.length - 1];
+      addName = getSelectionName(instance, sid);
+      break;
+    }
+    case 'SA_533': {
+      const { name, ic } = dependent.talents.get(sid as string)!;
+      addName = name;
+      currentCost = (cost as number[])[ic - 1] + dependent.talents.get(dependent.specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
+      break;
+    }
+    case 'SA_414':
+    case 'SA_663': {
+      const selectionItem = getSelectionItem(instance, sid) as (SelectionObject & { target: string; }) | undefined;
+      const targetInstance = selectionItem && (id === 'SA_414' ? dependent.spells.get(selectionItem.target) : dependent.liturgies.get(selectionItem.target));
+      addName = targetInstance && `${targetInstance.name}: ${selectionItem!.name}`;
+      currentCost = selectionItem && selectionItem.cost;
+      break;
+    }
+
+    default:
+      if (typeof input === 'string') {
+        addName = sid as string;
+      }
+      else if (Array.isArray(sel) && cost === 'sel') {
+        const selectionItem = getSelectionItem(instance, sid);
+        addName = selectionItem && selectionItem.name;
+        currentCost = selectionItem && selectionItem.cost;
+      }
+      else if (Array.isArray(sel) && typeof cost === 'number') {
+        addName = getSelectionName(instance, sid);
+      }
+      break;
+  }
+
+  switch (id) {
+    case 'ADV_28':
+    case 'ADV_29':
+      combinedName = `${_translate(locale, 'activatable.view.immunityto')} ${addName}`;
+      break;
+    case 'ADV_68':
+      combinedName = `${_translate(locale, 'activatable.view.hatredof')} ${addName}`;
+      break;
+    case 'DISADV_1':
+      combinedName = `${_translate(locale, 'activatable.view.afraidof')} ${addName}`;
+      break;
+    case 'DISADV_34':
+    case 'DISADV_50':
+      combinedName  += ` ${getRoman(tier as number)} (${addName})`;
+      break;
+    default:
+      if (addName) {
+        combinedName += ` (${addName})`;
+      }
+  }
+
+  if (!currentCost) {
+    currentCost = cost as number | number[];
+  }
+  if (category === Categories.DISADVANTAGES) {
+    currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
+  }
+
+  return {
+    ...obj,
+    combinedName,
+    baseName: name,
+    addName,
+    cost: currentCost
+  };
+}
+
+export function convertPerTierCostToFinalCost(obj: ActivatableNameCost): ActivatableNameCostEvalTier {
+  const { tier } = obj;
+  let { cost, combinedName } = obj;
+  if (Array.isArray(cost)) {
+    cost = cost[tier! - 1];
+    combinedName += ` ${getRoman(tier!)}`;
+  }
+  else if (typeof tier === 'number') {
+    cost *= tier;
+    combinedName += ` ${getRoman(tier)}`;
+  }
+  return {
+    ...obj,
+    combinedName,
+    cost
+  };
 }

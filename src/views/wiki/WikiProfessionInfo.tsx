@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
-import { Book, CantripInstance, CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LiturgyInstance, SkillsSelection, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { ATTRIBUTES } from '../../constants/Categories';
+import { AttributeInstance, Book, CantripInstance, CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LiturgyInstance, SkillsSelection, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { isRequiringIncreasable } from '../../utils/RequirementUtils';
 
 export interface WikiProfessionInfoProps {
+	attributes: Map<string, AttributeInstance>;
 	books: Map<string, Book>;
 	cantrips: Map<string, CantripInstance>;
 	currentObject: Profession;
@@ -17,7 +20,7 @@ export interface WikiProfessionInfoProps {
 }
 
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
-	const { books, cantrips, currentObject, liturgicalChants, locale, sex = 'm', skills, spells } = props;
+	const { attributes, books, cantrips, currentObject, liturgicalChants, locale, sex = 'm', skills, spells } = props;
 
 	let { name, subname } = currentObject;
 
@@ -58,7 +61,22 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.prerequisites')}</span>
-				<span></span>
+				<span>
+					{sortStrings(currentObject.prerequisites.map(e => {
+						if (isRequiringIncreasable(e)) {
+							const instance = attributes.get(e.id) || skills.get(e.id);
+							let name;
+							if (instance && instance.category === ATTRIBUTES) {
+								name = instance.short;
+							}
+							else if (instance) {
+								name = instance.name;
+							}
+							return `${name} ${e.value}`;
+						}
+						return `${e.combinedName} (${e.cost} ${_translate(locale, 'apshort')})`;
+					}), locale.id).join(', ')}
+				</span>
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.specialabilities')}</span>
@@ -66,6 +84,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 					...(languagesLiteracySelection ? [_translate(locale, 'info.specialabilitieslanguagesandliteracy', languagesLiteracySelection.value)] : []),
 					...(specializationSelection ? [_translate(locale, 'info.specialabilitiesspecialization', Array.isArray(specializationSelection.sid) ? sortStrings(specializationSelection.sid.map(e => skills.get(e)!.name), locale.id).join(_translate(locale, 'info.specialabilitiesspecializationseparator')) : skills.get(specializationSelection.sid)!.name)] : []),
 					...(cursesSelection ? [_translate(locale, 'info.specialabilitiescurses', cursesSelection.value)] : []),
+					...sortStrings(currentObject.specialAbilities.map(e => e.combinedName), locale.id)
 				].join(', ')}</span>
 			</p>
 			<p>

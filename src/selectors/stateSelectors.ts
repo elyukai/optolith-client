@@ -14,6 +14,7 @@ export const getBooks = (state: AppState) => state.locale.books;
 
 export const getCurrentHeroPresent = (state: AppState) => state.currentHero.present;
 
+export const getDependentInstances = (state: AppState) => state.currentHero.present.dependent;
 export const getAdvantages = (state: AppState) => state.currentHero.present.dependent.advantages;
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
 export const getCantrips = (state: AppState) => state.currentHero.present.dependent.cantrips;
