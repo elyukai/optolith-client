@@ -438,47 +438,47 @@ export function getActiveFromState(state: Map<string, ActivatableInstance>): Act
   return [...state.values()].reduce((arr, e) => [...arr, ...convertActivatableToArray(e)], []);
 }
 
-interface ActivatableObjectForRCPAndPrerequisites {
-  id: string;
-  index: number;
-  name: string;
-  cost: number;
-  active: boolean;
-}
+// interface ActivatableObjectForRCPAndPrerequisites {
+//   id: string;
+//   index: number;
+//   name: string;
+//   cost: number;
+//   active: boolean;
+// }
 
-interface ActivatableObjectForActivatableActiveLists {
-	id: string;
-	name: string;
-	tier?: number;
-	tiers?: number;
-	minTier?: number;
-	maxTier?: number;
-	cost: number;
-	disabled: boolean;
-	index: number;
-	gr?: number;
-	instance: ActivatableInstance;
-}
+// interface ActivatableObjectForActivatableActiveLists {
+// 	id: string;
+// 	name: string;
+// 	tier?: number;
+// 	tiers?: number;
+// 	minTier?: number;
+// 	maxTier?: number;
+// 	cost: number;
+// 	disabled: boolean;
+// 	index: number;
+// 	gr?: number;
+// 	instance: ActivatableInstance;
+// }
 
-interface ActivatableObjectForActivatableDeactiveLists {
-	id: string;
-	name: string;
-	cost?: string | number | number[];
-	input?: string;
-	tiers?: number;
-	minTier?: number;
-	maxTier?: number;
-	sel?: SelectionObject[];
-	gr?: number;
-	instance: ActivatableInstance;
-}
+// interface ActivatableObjectForActivatableDeactiveLists {
+// 	id: string;
+// 	name: string;
+// 	cost?: string | number | number[];
+// 	input?: string;
+// 	tiers?: number;
+// 	minTier?: number;
+// 	maxTier?: number;
+// 	sel?: SelectionObject[];
+// 	gr?: number;
+// 	instance: ActivatableInstance;
+// }
 
-interface ActivatableObjectForCommaSeparatedActivatableActiveLists {
-  id: string;
-  index: number;
-  name: string;
-  cost: number;
-}
+// interface ActivatableObjectForCommaSeparatedActivatableActiveLists {
+//   id: string;
+//   index: number;
+//   name: string;
+//   cost: number;
+// }
 
 interface ActiveObjectAny extends ActiveObject {
 	[key: string]: any;
@@ -595,7 +595,7 @@ export function getActivatableValidation(obj: ActiveObjectWithId, state: Current
   };
 }
 
-export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstancesState, locale: UIMessages): ActivatableNameCost {
+export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstancesState, costToAdd: boolean, locale?: UIMessages): ActivatableNameCost {
   const { id, sid, sid2, tier } = obj;
   const instance = get(dependent, id) as ActivatableInstance;
   const { cost, category, sel, input, name, active } = instance;
@@ -648,12 +648,12 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a ? b.tier as number : a, 0);
       const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier ? b.tier as number : a, 0);
       addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid;
-      currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > 1 ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
+      currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > (costToAdd ? 0 : 1) ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
       break;
     }
     case 'DISADV_33': {
       const selectionItem = getSelectionItem(instance, sid);
-      if (sid === 7 && active.filter(e => e.sid === 7).length > 1) {
+      if (sid === 7 && active.filter(e => e.sid === 7).length > (costToAdd ? 0 : 1)) {
         currentCost = 0;
       }
       else {
@@ -669,7 +669,7 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     }
     case 'DISADV_36':
       addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid as string;
-      currentCost = active.length > 3 ? 0 : cost as number;
+      currentCost = active.length > (costToAdd ? 2 : 3) ? 0 : cost as number;
       break;
     case 'SA_9': {
       const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid ? c + 1 : c, 0);
@@ -687,7 +687,7 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
           name = selectedApplication.name;
         }
       }
-      currentCost = skill.ic * counter;
+      currentCost = skill.ic * (counter + (costToAdd ? 1 : 0));
       addName = `${skill.name}: ${name}`;
       break;
     }
@@ -714,13 +714,13 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     }
     case 'SA_72': {
       const apArr = [10, 20, 40];
-      currentCost = apArr[active.length - 1];
+      currentCost = apArr[active.length - (costToAdd ? 0 : 1)];
       addName = getSelectionName(instance, sid);
       break;
     }
     case 'SA_87': {
       const apArr = [15, 25, 45];
-      currentCost = apArr[active.length - 1];
+      currentCost = apArr[active.length - (costToAdd ? 0 : 1)];
       addName = getSelectionName(instance, sid);
       break;
     }
@@ -775,12 +775,22 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       }
   }
 
-  if (!currentCost) {
+  console.log(currentCost);
+
+  if (currentCost === undefined) {
     currentCost = cost as number | number[];
   }
   if (category === Categories.DISADVANTAGES) {
     currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
   }
+
+  console.log({
+    ...obj,
+    combinedName,
+    baseName: name,
+    addName,
+    cost: currentCost
+  });
 
   return {
     ...obj,
@@ -792,13 +802,13 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
 }
 
 export function convertPerTierCostToFinalCost(obj: ActivatableNameCost): ActivatableNameCostEvalTier {
-  const { tier } = obj;
+  const { id, tier } = obj;
   let { cost, combinedName } = obj;
   if (Array.isArray(cost)) {
     cost = cost[tier! - 1];
     combinedName += ` ${getRoman(tier!)}`;
   }
-  else if (typeof tier === 'number') {
+  else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50') {
     cost *= tier;
     combinedName += ` ${getRoman(tier)}`;
   }

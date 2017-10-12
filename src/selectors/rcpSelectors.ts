@@ -1,14 +1,13 @@
 import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { get } from '../selectors/dependentInstancesSelectors';
 import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
 import { Culture, Increasable, Profession, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { getStartEl } from './elSelectors';
-import { getCombatTechniques, getDependentInstances, getSex, getSkills, getLocaleMessages } from './stateSelectors';
+import { getDependentInstances, getLocaleMessages, getSex, getSkills } from './stateSelectors';
 import { getProfessionsFromExpansionsVisibility, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getRaces = (state: AppState) => state.currentHero.present.dependent.races;
@@ -232,14 +231,14 @@ export const getAllProfessions = createSelector(
 						const { active, ...other } = e;
 						return {
 							active,
-							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, locale!))
+							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
 						};
 					}
 					return e;
 				}),
 				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
 					active,
-					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, locale!))
+					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
 				})),
 				selections: selections.map(e => {
 					if (e.id === 'COMBAT_TECHNIQUES') {

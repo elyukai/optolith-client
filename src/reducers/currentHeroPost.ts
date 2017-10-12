@@ -3,11 +3,12 @@ import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
+import { DisAdvAdventurePoints } from '../reducers/adventurePoints';
 import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
-import { getGeneratedPrerequisites, getSelectionItem, isActive } from '../utils/ActivatableUtils';
+import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
@@ -54,7 +55,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         }
       };
       const skillActivateList = new Set<string>();
-      const activatable = new Set<Reusable.RequiresActivatableObject>();
+      const activatable = new Set<Reusable.ProfessionRequiresActivatableObject>();
       const languages = new Map<number, number>();
       const scripts = new Set<number>();
 
@@ -123,8 +124,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         });
       }
 
-      let calculatedCost = 0;
-
       if (action.payload.map.has('SPECIALISATION')) {
         const { map, spec, specTalentId } = action.payload;
         const talentId = (map.get('SPECIALISATION') as Data.SpecialisationSelection).sid;
@@ -135,11 +134,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             sid: specTalentId,
             sid2: spec,
           });
-          // Remove once calculating Activatable AP cost done:
-          const skill = state.dependent.talents.get(specTalentId);
-          if (skill) {
-            calculatedCost += skill.ic;
-          }
         }
         else if (typeof talentId === 'string') {
           activatable.add({
@@ -148,11 +142,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             sid: talentId,
             sid2: spec,
           });
-          // Remove once calculating Activatable AP cost done:
-          const skill = state.dependent.talents.get(talentId);
-          if (skill) {
-            calculatedCost += skill.ic;
-          }
         }
       }
 
@@ -160,7 +149,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         const [ category, id ] = key.split('_');
         if (category === 'LANG') {
           languages.set(Number.parseInt(id), value / 2);
-        } else {
+        }
+        else {
           scripts.add(Number.parseInt(id));
         }
       });
@@ -192,9 +182,11 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       // Apply:
 
       let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
+      let calculatedIncreasableCost = 0;
+      let calculatedActivatableCost = 0;
 
       function addValue(instance: Data.SkillishInstance, value: number): Data.SkillishInstance {
-        calculatedCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);
+        calculatedIncreasableCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);
         return {
           ...instance,
           value: instance.value + value
@@ -207,10 +199,10 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
       function activate(instance: Data.ActivatableSkillishInstance): Data.ActivatableSkillishInstance {
         if (instance.category === Categories.BLESSINGS || instance.category === Categories.CANTRIPS) {
-          calculatedCost += 1;
+          calculatedIncreasableCost += 1;
         }
         else {
-          calculatedCost += getIncreaseAP(instance.ic);
+          calculatedIncreasableCost += getIncreaseAP(instance.ic);
         }
         return {
           ...instance,
@@ -227,16 +219,16 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        if (!Array.isArray(sid)) {
-          const adds = getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
-          const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
-          if (obj.category === Categories.SPECIAL_ABILITIES) {
-            fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
-          }
-          const firstState = setStateItem(fulllist, obj.id, obj);
-          const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-          fulllist = mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
+        const { cost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
+        calculatedActivatableCost += cost;
+        const adds = ActivatableUtils.getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
+        const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
+        if (obj.category === Categories.SPECIAL_ABILITIES) {
+          fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
         }
+        const firstState = setStateItem(fulllist, obj.id, obj);
+        const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
+        fulllist = mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
       }
 
       const SA_27 = get(fulllist, 'SA_27') as Data.SpecialAbilityInstance;
@@ -259,14 +251,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
       if (race && culture && profession) {
         ap = {
-          spent: state.ap.spent + calculatedCost - profession.ap + profession.apOfActivatables,
+          spent: state.ap.spent + calculatedIncreasableCost - profession.ap,
           adv: race.automaticAdvantagesCost,
           disadv: [0, 0, 0] as [number, number, number]
         };
 
         if (action.payload.buyLiteracy) {
           const id = culture.scripts.length > 1 ? action.payload.litc : culture.scripts[0];
-          const selectionItem = getSelectionItem(get(fulllist, 'SA_27') as Data.SpecialAbilityInstance, id);
+          const selectionItem = ActivatableUtils.getSelectionItem(get(fulllist, 'SA_27') as Data.SpecialAbilityInstance, id);
           ap.spent += selectionItem && selectionItem.cost || 0;
         }
 
@@ -280,9 +272,16 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
           }
 
           if (professionVariant) {
-            ap.spent += professionVariant.apOfActivatables - professionVariant.ap;
+            ap.spent -= professionVariant.ap;
             requires.push(...professionVariant.requires);
           }
+
+          // Test case
+          if (profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0) !== calculatedActivatableCost) {
+            alert(`Calculated different AP value. Do not continue character creation with this profession! ${profession && profession.id} ${professionVariant && professionVariant.id} ${profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0)} ${calculatedActivatableCost}`);
+          }
+
+          ap.spent += calculatedActivatableCost;
 
           // Assign profession requirements
 
@@ -313,63 +312,59 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
               const { id, sid, sid2, tier } = req;
               if (typeof id === 'string') {
                 const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
-                let cost;
                 const activeObject = { sid: sid as string | number | undefined, sid2, tier };
+                let costObj: {
+                  spent: number;
+                  adv: DisAdvAdventurePoints;
+                  disadv: DisAdvAdventurePoints;
+                } | number | undefined;
 
                 const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
                 if (!obj.active.find(checkIfActive)) {
                   fulllist = setStateItem(fulllist, id, { ...obj, active: [...obj.active, activeObject]});
-                  const adds = getGeneratedPrerequisites(obj, activeObject, true);
+                  const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
                   const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
                   if (obj.category === Categories.SPECIAL_ABILITIES) {
                     fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
                   }
                   fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
-                  if (obj.tiers && tier && typeof obj.cost === 'number') {
-                    cost = obj.cost * tier;
-                  }
-                  else if (Array.isArray(obj.sel)) {
-                    const selectionItem = obj.sel.find(e => e.id === sid);
-                    if (selectionItem) {
-                      cost = selectionItem.cost;
-                    }
-                  }
-                  else {
-                    cost = obj.cost as number;
-                  }
+                  const { cost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
                   if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
                     const isKar = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
                     const isMag = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
                     const index = isKar ? 2 : isMag ? 1 : 0;
 
-                    cost = {
+                    costObj = {
                       adv: [0, 0, 0],
                       disadv: [0, 0, 0],
-                      spent: obj.category === Categories.DISADVANTAGES ? -cost : cost,
+                      spent: cost,
                     };
 
                     if (obj.category === Categories.ADVANTAGES) {
-                      cost.adv[0] = cost.spent;
+                      costObj.adv[0] = costObj.spent;
                       if (index > 0) {
-                        cost.adv[index] = cost.spent;
+                        costObj.adv[index] = costObj.spent;
                       }
                     }
                     else {
-                      cost.disadv[0] = -cost.spent;
+                      costObj.disadv[0] = -costObj.spent;
                       if (index > 0) {
-                        cost.disadv[index] = -cost.spent;
+                        costObj.disadv[index] = -costObj.spent;
                       }
                     }
                   }
-                  if (typeof cost === 'object') {
+                  else {
+                    costObj = cost;
+                  }
+                  if (typeof costObj === 'object') {
                     return {
-                      adv: cost.adv.map((e, i) => e + final.adv[i]) as [number, number, number],
-                      disadv: cost.disadv.map((e, i) => e + final.disadv[i]) as [number, number, number],
-                      spent: final.spent + cost.spent
+                      adv: costObj.adv.map((e, i) => e + final.adv[i]) as [number, number, number],
+                      disadv: costObj.disadv.map((e, i) => e + final.disadv[i]) as [number, number, number],
+                      spent: final.spent + costObj.spent
                     };
                   }
-                  if (typeof cost === 'number') {
+                  else if (typeof costObj === 'number') {
                     return { ...final, spent: final.spent + cost};
                   }
                 }
@@ -396,7 +391,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             professionName = 'Eigene Profession';
           }
 
-          if (isActive(get(fulllist, 'SA_76') as Data.SpecialAbilityInstance)) {
+          if (ActivatableUtils.isActive(get(fulllist, 'SA_76') as Data.SpecialAbilityInstance)) {
             permanentArcaneEnergyLoss += 2;
           }
         }

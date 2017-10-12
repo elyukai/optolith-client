@@ -318,7 +318,7 @@ export interface ProfessionVariantInstance {
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	readonly selections: ProfessionSelections;
-	readonly specialAbilities: Reusable.RequiresActivatableObject[];
+	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];

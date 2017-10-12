@@ -88,9 +88,9 @@ export interface RawProfession {
 	ap: number;
 	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
-	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
+	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
-	sa: Reusable.RequiresActivatableObject[];
+	sa: Reusable.ProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number][];
@@ -110,7 +110,7 @@ export interface RawProfessionLocale {
 	id: string;
 	name: string | { m: string, f: string };
 	subname?: string | { m: string, f: string };
-	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
+	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	src: number[];
 }
 
@@ -119,9 +119,9 @@ export interface RawProfessionVariant {
 	ap: number;
 	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
-	req: (Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject)[];
+	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	sel: Data.ProfessionSelections;
-	sa: Reusable.RequiresActivatableObject[];
+	sa: Reusable.ProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number][];

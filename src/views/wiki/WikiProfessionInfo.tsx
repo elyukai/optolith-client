@@ -75,7 +75,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 							return `${name} ${e.value}`;
 						}
 						return `${e.combinedName} (${e.cost} ${_translate(locale, 'apshort')})`;
-					}), locale.id).join(', ')}
+					}), locale.id).join(', ') || _translate(locale, 'info.none')}
 				</span>
 			</p>
 			<p>
@@ -85,7 +85,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 					...(specializationSelection ? [_translate(locale, 'info.specialabilitiesspecialization', Array.isArray(specializationSelection.sid) ? sortStrings(specializationSelection.sid.map(e => skills.get(e)!.name), locale.id).join(_translate(locale, 'info.specialabilitiesspecializationseparator')) : skills.get(specializationSelection.sid)!.name)] : []),
 					...(cursesSelection ? [_translate(locale, 'info.specialabilitiescurses', cursesSelection.value)] : []),
 					...sortStrings(currentObject.specialAbilities.map(e => e.combinedName), locale.id)
-				].join(', ')}</span>
+				].join(', ') || _translate(locale, 'info.none')}</span>
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.combattechniques')}</span>
