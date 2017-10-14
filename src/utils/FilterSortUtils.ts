@@ -100,32 +100,32 @@ export function filterObjects<T extends BaseObject>(list: T[], filterText: strin
 		if (addProperty) {
 			return list.filter(obj => {
 				if (typeof obj.name === 'object' && typeof obj[addProperty] === 'object' && keyOfName) {
-					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().match(filterText);
+					return (obj.name[keyOfName] as string).toLowerCase().includes(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().includes(filterText);
 				}
 				else if (typeof obj.name === 'object' && typeof obj[addProperty] === 'string' && keyOfName) {
-					return (obj.name[keyOfName] as string).toLowerCase().match(filterText) || (obj[addProperty] as string).toLowerCase().match(filterText);
+					return (obj.name[keyOfName] as string).toLowerCase().includes(filterText) || (obj[addProperty] as string).toLowerCase().includes(filterText);
 				}
 				else if (typeof obj.name === 'string' && typeof obj[addProperty] === 'object' && keyOfName) {
-					return obj.name.toLowerCase().match(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().match(filterText);
+					return obj.name.toLowerCase().includes(filterText) || (obj[addProperty][keyOfName] as string).toLowerCase().includes(filterText);
 				}
 				else if (typeof obj.name === 'string' && typeof obj[addProperty] === 'string') {
-					return obj.name.toLowerCase().match(filterText) || (obj[addProperty] as string).toLowerCase().match(filterText);
+					return obj.name.toLowerCase().includes(filterText) || (obj[addProperty] as string).toLowerCase().includes(filterText);
 				}
 				else if (typeof obj.name === 'object' && keyOfName) {
-					return (obj.name[keyOfName] as string).toLowerCase().match(filterText);
+					return (obj.name[keyOfName] as string).toLowerCase().includes(filterText);
 				}
 				else if (typeof obj.name === 'string') {
-					return obj.name.toLowerCase().match(filterText);
+					return obj.name.toLowerCase().includes(filterText);
 				}
 				return true;
 			});
 		}
 		return list.filter(obj => {
 			if (typeof obj.name === 'string') {
-				return obj.name.toLowerCase().match(filterText);
+				return obj.name.toLowerCase().includes(filterText);
 			}
 			else if (typeof obj.name === 'object' && keyOfName) {
-				return (obj.name[keyOfName] as string).toLowerCase().match(filterText);
+				return (obj.name[keyOfName] as string).toLowerCase().includes(filterText);
 			}
 			return true;
 		});
@@ -159,7 +159,7 @@ export function sortStrings(list: string[], locale: string) {
 export function filterStrings(list: string[], filterText: string) {
 	if (filterText !== '') {
 		filterText = filterText.toLowerCase();
-		return list.filter(e => e.toLowerCase().match(filterText));
+		return list.filter(e => e.toLowerCase().includes(filterText));
 	}
 	return list;
 }
