@@ -530,7 +530,7 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
               }
               case 'SA_70': {
                 const { adv, disadv } = ap;
-                const sel = a.sel && sortObjects(a.sel.filter(e => e.id < 6 && e.id > 9 || adv[1] <= 25 && disadv[1] <= 25), locale.id);
+                const sel = a.sel && sortObjects(a.sel.filter(e => e.id < 6 || e.id > 9 || adv[1] <= 25 && disadv[1] <= 25), locale.id);
                 if (Array.isArray(sel) && sel.length > 0) {
                   finalEntries.push({ id, name, sel, cost, gr, instance: entry });
                 }
