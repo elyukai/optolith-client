@@ -2,7 +2,7 @@
 
 Es gibt ein paar Richtlinien fürs Helfen beim Coden:
 
-- Der Code steht unter der Lizenz des Scriptoriums, weshalb diese Repo auch privat ist. Wird diese Repo geforkt, **muss** die geforkte Repo auch privat sein. Eine Verwendung außerhalb dessen ist nicht möglich.
+- Der Code steht unter der Lizenz des Scriptoriums, weshalb diese Repo auch privat ist. Wird dieses Repo geforkt, **muss** das geforkte Repo auch privat sein. Eine Verwendung außerhalb dessen ist nicht möglich.
 - Bitte schaut, dass der beigesteuerte Code dem Stil des bisherigen Codes entspricht. Ich habe mich für keinen verfügbaren Styleguide entscheiden können und mit Helfern wie Prettier konnte ich mich - bis jetzt - auh noch nicht anfreunden.
 - Der **develop**-Branch ist der Arbeitsbranch. Codeänderungen - also Pull Requests - führen meistens darauf zurück.
 - Der Masterbranch wird nur für Releases verwendet (das aber erst, nachdem die Beta fertig ist). Diese bekommen dann auch ihre eigenen temporären Branches, bei denen nur noch Bugfixes einfließen dürfen.

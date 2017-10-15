@@ -307,7 +307,7 @@ export function initLiturgy(raw: RawLiturgy, locale: ToListById<RawLiturgyLocale
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, effect, castingtime, castingtimeShort, aecost, aecostShort, range, rangeShort, duration, durationShort, target, src: srcPages } = localeObject;
+    const { name, effect, castingtime, castingtimeShort, kpcost, kpcostShort, range, rangeShort, duration, durationShort, target, src: srcPages } = localeObject;
     const { id, check, gr, skt, aspc, trad, mod, src: srcIds } = raw;
     return {
       active: false,
@@ -325,8 +325,8 @@ export function initLiturgy(raw: RawLiturgy, locale: ToListById<RawLiturgyLocale
       effect,
       castingTime: castingtime,
       castingTimeShort: castingtimeShort,
-      cost: aecost,
-      costShort: aecostShort,
+      cost: kpcost,
+      costShort: kpcostShort,
       range,
       rangeShort,
       duration,
