@@ -1,12 +1,11 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
-import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
+import { addAlert } from './AlertActions';
 
 export interface ActivateSpecialAbilityAction {
 	type: ActionTypes.ACTIVATE_SPECIALABILITY;
@@ -19,13 +18,17 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const validCost = validate(args.cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ACTIVATE_SPECIALABILITY,
-			payload: args
-		} as ActivateSpecialAbilityAction);
+		else {
+			dispatch({
+				type: ActionTypes.ACTIVATE_SPECIALABILITY,
+				payload: args
+			} as ActivateSpecialAbilityAction);
+		}
 	};
 }
 
@@ -60,18 +63,22 @@ export function _setTier(id: string, index: number, tier: number, cost: number):
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.SET_SPECIALABILITY_TIER,
-			payload: {
-				id,
-				tier,
-				cost,
-				index
-			}
-		} as SetSpecialAbilityTierAction);
+		else {
+			dispatch({
+				type: ActionTypes.SET_SPECIALABILITY_TIER,
+				payload: {
+					id,
+					tier,
+					cost,
+					index
+				}
+			} as SetSpecialAbilityTierAction);
+		}
 	};
 }
 

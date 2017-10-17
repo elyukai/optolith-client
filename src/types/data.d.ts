@@ -1,3 +1,4 @@
+import { Action } from 'redux';
 import * as DetailedData from './detaileddata.d';
 import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
@@ -332,6 +333,11 @@ export interface ActiveObject {
 	sid?: string | number;
 	sid2?: string | number;
 	tier?: number;
+	cost?: number;
+}
+
+export interface ActiveObjectName extends ActiveObject {
+	name: string;
 }
 
 export interface ActiveObjectWithId extends ActiveObject {
@@ -343,7 +349,7 @@ export interface ActivatableNameCost extends ActiveObjectWithId {
 	combinedName: string;
 	baseName: string;
 	addName: string | undefined;
-	cost: number | number[];
+	currentCost: number | number[];
 }
 
 export interface ActivatableNameCostActive extends ActivatableNameCost {
@@ -351,7 +357,7 @@ export interface ActivatableNameCostActive extends ActivatableNameCost {
 }
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
-	cost: number;
+	currentCost: number;
 }
 
 export interface ActiveViewObject {
@@ -379,6 +385,7 @@ export interface DeactiveViewObject {
 	sel?: SelectionObject[];
 	gr?: number;
 	instance: ActivatableInstance;
+	customCostDisabled?: boolean;
 }
 
 export type SetTierObject = ActiveObject;
@@ -506,11 +513,12 @@ interface ActivatableInstanceBaseInInit {
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
-	gr: number;
+	gr?: number;
 }
 
 export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.ADVANTAGES;
+	gr?: undefined;
 }
 
 export interface AdvantageInstance extends AdvantageInstanceInInit {
@@ -519,6 +527,7 @@ export interface AdvantageInstance extends AdvantageInstanceInInit {
 
 export interface DisadvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.DISADVANTAGES;
+	gr?: undefined;
 }
 
 export interface DisadvantageInstance extends DisadvantageInstanceInInit {
@@ -528,6 +537,7 @@ export interface DisadvantageInstance extends DisadvantageInstanceInInit {
 export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.SPECIAL_ABILITIES;
 	readonly extended?: (string | string[])[];
+	gr: number;
 }
 
 export interface SpecialAbilityInstance extends SpecialAbilityInstanceInInit {
@@ -999,6 +1009,27 @@ export interface PetEditorInstance extends PetBaseInstance {
 	mov: string;
 	at: string;
 	pa: string;
+}
+
+export interface AlertButton {
+	autoWidth?: boolean;
+	children?: React.ReactNode;
+	className?: string;
+	disabled?: boolean;
+	dispatchOnClick?: Action;
+	flat?: boolean;
+	fullWidth?: boolean;
+	label: string | undefined;
+	primary?: boolean;
+}
+
+export interface Alert {
+	message: string;
+	title?: string;
+	buttons?: AlertButton[];
+	confirm?: [Action | undefined, Action | undefined];
+	confirmYesNo?: boolean;
+	onClose?(): void;
 }
 
 export { UIMessages } from './ui.d';

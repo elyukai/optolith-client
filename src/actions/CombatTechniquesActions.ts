@@ -2,12 +2,11 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { CombatTechniqueInstance } from '../types/data.d';
-import { alert } from '../utils/alertNew';
 import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
+import { addAlert } from './AlertActions';
 
 export interface AddCombatTechniquePointAction {
 	type: ActionTypes.ADD_COMBATTECHNIQUE_POINT;
@@ -23,16 +22,20 @@ export function _addPoint(id: string): AsyncAction {
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as CombatTechniqueInstance, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!cost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
-			payload: {
-				id,
-				cost
-			}
-		} as AddCombatTechniquePointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
+				payload: {
+					id,
+					cost
+				}
+			} as AddCombatTechniquePointAction);
+		}
 	};
 }
 

@@ -2,13 +2,12 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/liturgiesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
+import { addAlert } from './AlertActions';
 
 export interface ActivateLiturgyAction {
 	type: ActionTypes.ACTIVATE_LITURGY;
@@ -26,16 +25,20 @@ export function _addToList(id: string): AsyncAction {
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ACTIVATE_LITURGY,
-			payload: {
-				id,
-				cost
-			}
-		} as ActivateLiturgyAction);
+		else {
+			dispatch({
+				type: ActionTypes.ACTIVATE_LITURGY,
+				payload: {
+					id,
+					cost
+				}
+			} as ActivateLiturgyAction);
+		}
 	};
 }
 
@@ -52,15 +55,19 @@ export function _addBlessingToList(id: string): AsyncAction {
 		const validCost = validate(1, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ACTIVATE_BLESSING,
-			payload: {
-				id
-			}
-		} as ActivateBlessingAction);
+		else {
+			dispatch({
+				type: ActionTypes.ACTIVATE_BLESSING,
+				payload: {
+					id
+				}
+			} as ActivateBlessingAction);
+		}
 	};
 }
 
@@ -117,16 +124,20 @@ export function _addPoint(id: string): AsyncAction {
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent.liturgies, id)!, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!cost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_LITURGY_POINT,
-			payload: {
-				id,
-				cost
-			}
-		} as AddLiturgyPointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_LITURGY_POINT,
+				payload: {
+					id,
+					cost
+				}
+			} as AddLiturgyPointAction);
+		}
 	};
 }
 

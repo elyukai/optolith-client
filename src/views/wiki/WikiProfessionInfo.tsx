@@ -74,7 +74,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 							}
 							return `${name} ${e.value}`;
 						}
-						return `${e.combinedName} (${e.cost} ${_translate(locale, 'apshort')})`;
+						return `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`;
 					}), locale.id).join(', ') || _translate(locale, 'info.none')}
 				</span>
 			</p>

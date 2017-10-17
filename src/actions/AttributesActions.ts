@@ -2,14 +2,13 @@ import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { AttributeInstance } from '../types/data.d';
-import { alert } from '../utils/alertNew';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
+import { addAlert } from './AlertActions';
 
 export interface AddAttributePointAction {
 	type: ActionTypes.ADD_ATTRIBUTE_POINT;
@@ -25,16 +24,20 @@ export function _addPoint(id: string): AsyncAction {
 		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!cost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_ATTRIBUTE_POINT,
-			payload: {
-				id,
-				cost
-			}
-		} as AddAttributePointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_ATTRIBUTE_POINT,
+				payload: {
+					id,
+					cost
+				}
+			} as AddAttributePointAction);
+		}
 	};
 }
 
@@ -73,15 +76,19 @@ export function _addLifePoint(): AsyncAction {
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_LIFE_POINT,
-			payload: {
-				cost
-			}
-		} as AddLifePointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_LIFE_POINT,
+				payload: {
+					cost
+				}
+			} as AddLifePointAction);
+		}
 	};
 }
 
@@ -99,15 +106,19 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
-			payload: {
-				cost
-			}
-		} as AddArcaneEnergyPointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
+				payload: {
+					cost
+				}
+			} as AddArcaneEnergyPointAction);
+		}
 	};
 }
 
@@ -125,15 +136,19 @@ export function _addKarmaPoint(): AsyncAction {
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_KARMA_POINT,
-			payload: {
-				cost
-			}
-		} as AddKarmaPointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_KARMA_POINT,
+				payload: {
+					cost
+				}
+			} as AddKarmaPointAction);
+		}
 	};
 }
 
@@ -147,12 +162,16 @@ export function _addBoughtBackAEPoint(): AsyncAction {
 		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
-		} as AddBoughtBackAEPointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
+			} as AddBoughtBackAEPointAction);
+		}
 	};
 }
 
@@ -221,12 +240,16 @@ export function _addBoughtBackKPPoint(): AsyncAction {
 		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
-			alert(_translate(messages, 'notenoughap.content'), getTheme(state), _translate(messages, 'notenoughap.title'));
-			return;
+			dispatch(addAlert({
+				title: _translate(messages, 'notenoughap.title'),
+				message: _translate(messages, 'notenoughap.content'),
+			}));
 		}
-		dispatch({
-			type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
-		} as AddBoughtBackKPPointAction);
+		else {
+			dispatch({
+				type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
+			} as AddBoughtBackKPPointAction);
+		}
 	};
 }
 

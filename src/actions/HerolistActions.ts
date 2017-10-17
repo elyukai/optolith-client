@@ -1,13 +1,11 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getMessages } from '../selectors/localeSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { Hero, UIMessages } from '../types/data.d';
-import { alert } from '../utils/alertNew';
-import { confirm } from '../utils/confirm';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
+import { addAlert } from './AlertActions';
 import { requestHeroExport } from './FileActions';
 import { _setSection } from './LocationActions';
 import { requestHeroesSave, requestSaveAll } from './PlatformActions';
@@ -67,21 +65,22 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncActi
 			} as CreateHeroAction);
 		}
 		else if (messages) {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.text'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.unsavedactions.title'), true).then(result => {
-				if (result === true) {
-					dispatch({
+			dispatch(addAlert({
+				title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
+				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
+				confirm: [
+					{
 						type: ActionTypes.CREATE_HERO,
 						payload: {
 							name,
 							sex,
 							el
 						}
-					} as CreateHeroAction);
-				}
-				else {
-					dispatch(_setSection('hero'));
-				}
-			});
+					} as CreateHeroAction,
+					_setSection('hero')
+				],
+				confirmYesNo: true
+			}));
 		}
 	};
 }
@@ -118,17 +117,15 @@ export function loadHeroValidate(id: string): AsyncAction {
 			}
 		}
 		else if (id && messages) {
-			confirm(_translate(messages, 'heroes.warnings.unsavedactions.text'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.unsavedactions.title'), true).then(result => {
-				if (result === true) {
-					const action = _loadHero(id);
-					if (action) {
-						dispatch(action);
-					}
-				}
-				else {
-					dispatch(_setSection('hero'));
-				}
-			});
+			dispatch(addAlert({
+				title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
+				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
+				confirm: [
+					_loadHero(id) as any,
+					_setSection('hero')
+				],
+				confirmYesNo: true
+			}));
 		}
 	};
 }
@@ -138,7 +135,9 @@ export function saveHeroes(): AsyncAction {
 		const messages = getMessages(getState());
 		if (messages) {
 			dispatch(requestSaveAll());
-			alert(_translate(messages, 'fileapi.allsaved'), getTheme(getState()));
+			dispatch(addAlert({
+				message: _translate(messages, 'fileapi.allsaved')
+			}));
 		}
 	};
 }
@@ -185,12 +184,18 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
 		const { herolist: { heroes }, locale: { messages } } = getState();
 		const hero = id && heroes.get(id);
 		if (id && hero && messages) {
-			confirm(_translate(messages, 'heroes.warnings.delete.message'), getTheme(getState()), messages, _translate(messages, 'heroes.warnings.delete.title', hero.name), true).then(result => {
-				if (result === true) {
-					dispatch(_deleteHero(id));
-					dispatch(requestHeroesSave());
-				}
-			});
+			dispatch(addAlert({
+				title: _translate(messages, 'heroes.warnings.delete.title', hero.name),
+				message: _translate(messages, 'heroes.warnings.delete.message'),
+				confirm: [
+					((dispatch: any) => {
+						dispatch(_deleteHero(id));
+						dispatch(requestHeroesSave());
+					}) as any,
+					undefined
+				],
+				confirmYesNo: true
+			}));
 		}
 	};
 }

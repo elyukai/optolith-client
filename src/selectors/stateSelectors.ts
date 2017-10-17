@@ -49,3 +49,5 @@ export const getPermanentArcaneEnergyPoints = (state: AppState) => state.current
 export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.present.energies.permanentKarmaPoints;
 
 export const getPhase = (state: AppState) => state.currentHero.present.phase;
+
+export const getAlerts = (state: AppState) => state.ui.alerts;

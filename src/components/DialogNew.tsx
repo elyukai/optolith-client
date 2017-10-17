@@ -9,12 +9,16 @@ export interface DialogProps extends PortalWrappedOwnProps {
 	id?: string;
 	title?: string;
 	close(): void;
+	onClose?(): void;
 }
 
 export class Dialog extends React.Component<DialogProps, {}> {
 	clickButton = (func: () => void) => {
 		if (func) {
 			func();
+		}
+		if (this.props.onClose) {
+			this.props.onClose();
 		}
 		this.props.close();
 	}

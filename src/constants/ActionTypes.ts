@@ -361,3 +361,8 @@ export const INGAME_SAVE = 'INGAME_SAVE';
 export type INGAME_SAVE = 'INGAME_SAVE';
 export const INGAME_SWITCH_OPTION = 'INGAME_SWITCH_OPTION';
 export type INGAME_SWITCH_OPTION = 'INGAME_SWITCH_OPTION';
+
+export type ADD_ALERT = 'ADD_ALERT';
+export const ADD_ALERT = 'ADD_ALERT';
+export type REMOVE_ALERT = 'REMOVE_ALERT';
+export const REMOVE_ALERT = 'REMOVE_ALERT';

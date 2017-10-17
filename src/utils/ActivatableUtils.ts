@@ -1,22 +1,31 @@
-import { flatten } from 'lodash';
+import { flatten, last } from 'lodash';
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
-import { ActiveObjectName } from '../types/activatables';
-import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateObject, ActiveObject, ActiveObjectWithId, ActiveViewObject, AllRequirementObjects, CombatTechniqueInstance, RequirementObject, SelectionObject, SkillInstance, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
+import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateObject, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SelectionObject, SkillInstance, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
+import { sortObjects } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { mergeIntoState, setStateItem } from './ListUtils';
+import { getTraditionOfAspect } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
 
+/**
+ * Checks if you can buy the entry multiple times.
+ * @param obj The entry.
+ */
 export function isMultiselect(obj: ActivatableInstance): boolean {
   return obj.max !== 1;
 }
 
+/**
+ * Checks if the entry is active. This will be the case if there is at least one `ActiveObject` in the `obj.active` array.
+ * @param obj The entry.
+ */
 export function isActive(obj?: ActivatableInstance): boolean {
   if (obj === undefined) {
     return false;
@@ -24,6 +33,11 @@ export function isActive(obj?: ActivatableInstance): boolean {
   return obj.active.length > 0;
 }
 
+/**
+ * Checks if you can somehow add an ActiveObject to the given entry.
+ * @param state The present state of the current hero.
+ * @param obj The entry.
+ */
 export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance): boolean {
   const { dependent } = state;
   if (obj.category === Categories.SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
@@ -78,6 +92,12 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
   return validate(state, getFlatFirstTierPrerequisites(obj.reqs), obj.id);
 }
 
+/**
+ * Checks if you can somehow remove an ActiveObject from the given entry.
+ * @param state The present state of the current hero.
+ * @param obj The entry.
+ * @param sid The sid of the Act
+ */
 export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid?: string | number): boolean {
   const { dependent } = state;
   if (obj.id === 'SA_164') {
@@ -125,14 +145,26 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
   return dependencies.length === 0;
 }
 
+/**
+ * Get all `ActiveObject.sid` values from the given instance.
+ * @param obj The entry.
+ */
 export function getSids(obj: ActivatableInstance): Array<string | number> {
   return obj.active.map(e => e.sid as string | number);
 }
 
+/**
+ * Get all `DependencyObject.sid` values from the given instance.
+ * @param obj The entry.
+ */
 export function getDSids(obj: ActivatableInstance): Array<(string | number)[] | string | number | boolean | undefined> {
   return obj.dependencies.map(e => typeof e !== 'number' && typeof e !== 'boolean' && e.sid);
 }
 
+/**
+ * Get a selection option with the given id from given entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
 export function getSelectionItem(obj: ActivatableInstance, id?: string | number): SelectionObject | undefined {
   if (obj.sel) {
     return obj.sel.find(e => e.id === id);
@@ -140,6 +172,10 @@ export function getSelectionItem(obj: ActivatableInstance, id?: string | number)
   return undefined;
 }
 
+/**
+ * Get a selection option's name with the given id from given entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
 export function getSelectionName(obj: ActivatableInstance, id?: string | number): string | undefined {
   const selectionItem = getSelectionItem(obj, id);
   if (selectionItem) {
@@ -148,6 +184,10 @@ export function getSelectionName(obj: ActivatableInstance, id?: string | number)
   return undefined;
 }
 
+/**
+ * Get a selection option's `name` and `cost` with the given id from given entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
 export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | number): { name: string; cost: number; } | undefined {
   const selectionItem = getSelectionItem(obj, id);
   if (selectionItem && selectionItem.cost) {
@@ -157,6 +197,12 @@ export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | 
   return undefined;
 }
 
+/**
+ * Activates the entry with the given parameters and adds all needed dependencies.
+ * @param state The object containing all dependent instances.
+ * @param obj The entry.
+ * @param activate The object given by the view.
+ */
 export function activate(state: DependentInstancesState, obj: ActivatableInstance, activate: ActivateObject): DependentInstancesState {
   const active = convertToActiveObject(obj, activate);
   if (active) {
@@ -168,6 +214,12 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
   return state;
 }
 
+/**
+ * Deactivates the entry with the given parameters and removes all previously needed dependencies.
+ * @param state The object containing all dependent instances.
+ * @param obj The entry.
+ * @param index The index of the `ActiveObject` in `obj.active`.
+ */
 export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): DependentInstancesState {
   const adds = getGeneratedPrerequisites(obj, obj.active[index], false);
   const { tier } = obj.active[index];
@@ -176,6 +228,13 @@ export function deactivate(state: DependentInstancesState, obj: ActivatableInsta
   return mergeIntoState(firstState, DependentUtils.removeDependencies(firstState, [...prerequisites, ...adds], obj.id));
 }
 
+/**
+ * Changes the tier of a specific active entry and adds or removes dependencies if needed.
+ * @param state The object containing all dependent instances.
+ * @param obj The entry.
+ * @param index The index of the `ActiveObject` in `obj.active`.
+ * @param tier The final tier.
+ */
 export function setTier(state: DependentInstancesState, obj: ActivatableInstance, index: number, tier: number): ToOptionalKeys<DependentInstancesState> {
   const previousTier = obj.active[index].tier;
   const active = obj.active;
@@ -193,14 +252,6 @@ export function setTier(state: DependentInstancesState, obj: ActivatableInstance
   }
 
   return firstState;
-}
-
-export function reset(obj: ActivatableInstance): ActivatableInstance {
-  return {
-    ...obj,
-    active: [],
-    dependencies: [],
-  };
 }
 
 export function getFullName(obj: string | ActiveViewObject): string {
@@ -238,83 +289,6 @@ export function getSecondSidMap(entry: ActivatableInstance): Map<string, (string
     }
     return map.set(sid, [sid2]);
   }, new Map<string, (number | string)[]>());
-}
-
-export function getActiveSelection(state: DependentInstancesState, entry: ActivatableInstance, index: number): ActiveObjectName | undefined {
-  const { active, id, input, sel } = entry;
-  const { sid, sid2, ...other } = active[index];
-  let finalName;
-  switch (id) {
-    case 'ADV_4':
-    case 'ADV_16':
-    case 'ADV_17':
-    case 'ADV_47':
-    case 'DISADV_48':
-    case 'SA_231':
-    case 'SA_250': {
-      const { name } = (get(state, sid as string)) as SkillishInstance;
-      finalName = name;
-      break;
-    }
-    case 'ADV_32':
-    case 'DISADV_1':
-    case 'DISADV_24':
-    case 'DISADV_34':
-    case 'DISADV_36':
-    case 'DISADV_45':
-    case 'DISADV_50':
-      finalName = typeof sid === 'number' ? getSelectionName(entry, sid) : sid;
-      break;
-    case 'ADV_68': {
-      const selectionItem = getSelectionItem(entry, sid);
-      finalName = selectionItem && `${sid2} (${selectionItem.name})`;
-      break;
-    }
-    case 'DISADV_33': {
-      const selectionItem = getSelectionItem(entry, sid);
-      if ([7, 8].includes(sid as number)) {
-        finalName = `${selectionItem && selectionItem.name}: ${sid2}`;
-      } else {
-        finalName = selectionItem && selectionItem.name;
-      }
-      break;
-    }
-    case 'SA_9': {
-      const skill = get(state, sid as string) as TalentInstance;
-      let name;
-      if (typeof sid2 === 'string') {
-        name = sid2;
-      }
-      else {
-        const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
-        if (typeof selectedApplication === 'undefined') {
-          return;
-        }
-        name = selectedApplication.name;
-      }
-      finalName = `${skill.name}: ${name}`;
-      break;
-    }
-    case 'SA_414': {
-      const selectionItem = getSelectionItem(entry, sid) as (SelectionObject & { target: string; }) | undefined;
-      finalName = selectionItem && `${(get(state, selectionItem.target) as SpellInstance).name}: ${selectionItem.name}`;
-      break;
-    }
-
-    default:
-      if (typeof input === 'string') {
-        finalName = sid as string;
-      }
-      else if (Array.isArray(sel)) {
-        finalName = getSelectionName(entry, sid);
-      }
-      break;
-  }
-
-  if (typeof finalName === 'string') {
-    return { name: finalName, ...other };
-  }
-  return;
 }
 
 /**
@@ -438,48 +412,6 @@ export function getActiveFromState(state: Map<string, ActivatableInstance>): Act
   return [...state.values()].reduce((arr, e) => [...arr, ...convertActivatableToArray(e)], []);
 }
 
-// interface ActivatableObjectForRCPAndPrerequisites {
-//   id: string;
-//   index: number;
-//   name: string;
-//   cost: number;
-//   active: boolean;
-// }
-
-// interface ActivatableObjectForActivatableActiveLists {
-// 	id: string;
-// 	name: string;
-// 	tier?: number;
-// 	tiers?: number;
-// 	minTier?: number;
-// 	maxTier?: number;
-// 	cost: number;
-// 	disabled: boolean;
-// 	index: number;
-// 	gr?: number;
-// 	instance: ActivatableInstance;
-// }
-
-// interface ActivatableObjectForActivatableDeactiveLists {
-// 	id: string;
-// 	name: string;
-// 	cost?: string | number | number[];
-// 	input?: string;
-// 	tiers?: number;
-// 	minTier?: number;
-// 	maxTier?: number;
-// 	sel?: SelectionObject[];
-// 	gr?: number;
-// 	instance: ActivatableInstance;
-// }
-
-// interface ActivatableObjectForCommaSeparatedActivatableActiveLists {
-//   id: string;
-//   index: number;
-//   name: string;
-//   cost: number;
-// }
-
 interface ActiveObjectAny extends ActiveObject {
 	[key: string]: any;
 }
@@ -488,7 +420,12 @@ export function getActiveObjectCore({ sid, sid2, tier }: ActiveObjectAny): Activ
   return { sid, sid2, tier };
 }
 
-export function getActivatableValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanceState) {
+/**
+ * Checks if the given ActiveObject can be removed or changed in tier.
+ * @param obj The ActiveObject with origin id.
+ * @param state The current hero's state.
+ */
+export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanceState) {
   const { dependent, el } = state;
   const { id, sid } = obj;
   const instance = get(dependent, id) as ActivatableInstance;
@@ -582,7 +519,11 @@ export function getActivatableValidation(obj: ActiveObjectWithId, state: Current
     disabled = true;
   }
 
-  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof ActiveObject) => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
+  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof {
+    sid?: string | number;
+    sid2?: string | number;
+    tier?: number;
+  }) => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
     disabled = true;
   }
 
@@ -595,8 +536,15 @@ export function getActivatableValidation(obj: ActiveObjectWithId, state: Current
   };
 }
 
+/**
+ * Returns name, splitted and combined, as well as the AP you get when removing the ActiveObject.
+ * @param obj The ActiveObject with origin id.
+ * @param state The current hero's state.
+ * @param costToAdd If the cost are going to be added or removed from AP left.
+ * @param locale The locale-dependent messages.
+ */
 export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstancesState, costToAdd: boolean, locale?: UIMessages): ActivatableNameCost {
-  const { id, sid, sid2, tier } = obj;
+  const { id, sid, sid2, tier, cost: customCost } = obj;
   const instance = get(dependent, id) as ActivatableInstance;
   const { cost, category, sel, input, name, active } = instance;
 
@@ -775,46 +723,389 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       }
   }
 
-  console.log(currentCost);
-
-  if (currentCost === undefined) {
+  if (customCost !== undefined) {
+    currentCost = customCost;
+  }
+  else if (currentCost === undefined) {
     currentCost = cost as number | number[];
   }
   if (category === Categories.DISADVANTAGES) {
     currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
   }
 
-  console.log({
-    ...obj,
-    combinedName,
-    baseName: name,
-    addName,
-    cost: currentCost
-  });
-
   return {
     ...obj,
     combinedName,
     baseName: name,
     addName,
-    cost: currentCost
+    currentCost
   };
 }
 
 export function convertPerTierCostToFinalCost(obj: ActivatableNameCost): ActivatableNameCostEvalTier {
-  const { id, tier } = obj;
-  let { cost, combinedName } = obj;
-  if (Array.isArray(cost)) {
-    cost = cost[tier! - 1];
+  const { id, tier, cost } = obj;
+  let { currentCost, combinedName } = obj;
+  if (Array.isArray(currentCost)) {
+    currentCost = currentCost[tier! - 1];
     combinedName += ` ${getRoman(tier!)}`;
   }
-  else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50') {
-    cost *= tier;
+  else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {
+    currentCost *= tier;
     combinedName += ` ${getRoman(tier)}`;
   }
   return {
     ...obj,
     combinedName,
-    cost
+    currentCost
   };
+}
+
+export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroInstanceState, validExtendedSpecialAbilities: string[], locale: UIMessages): DeactiveViewObject | undefined {
+  const { ap, dependent } = state;
+  const { id, cost, max, active, name, input, tiers, dependencies, gr, reqs } = entry;
+  if (isActivatable(state, entry) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
+    let maxTier: number | undefined;
+    if (!Array.isArray(reqs)) {
+      maxTier = validateTier(state, reqs, dependencies, id);
+    }
+    switch (id) {
+      case 'ADV_4':
+      case 'ADV_17':
+      case 'ADV_47': {
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(entry).includes(e.id));
+        if (entry.category === Categories.SPECIAL_ABILITIES) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        else {
+          return { id, name, sel, cost, instance: entry };
+        }
+      }
+      case 'ADV_16': {
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => activeIds.filter(d => d === e.id).length < 2 && !getDSids(entry).includes(e.id));
+        return { id, name, sel, cost, instance: entry };
+      }
+      case 'ADV_28':
+      case 'ADV_29': {
+        const sel = entry.sel!.filter(e => !getDSids(entry).includes(e.id));
+        return { id, name, sel, instance: entry };
+      }
+      case 'ADV_32': {
+        const sel = entry.sel!.filter(e => !getSids(get(dependent, 'DISADV_24') as DisadvantageInstance).includes(e.id) && !getDSids(entry).includes(e.id));
+        return { id, name, sel, input, cost, instance: entry };
+      }
+      case 'ADV_58': {
+        const activeSpells = (getAllByCategory(dependent, Categories.SPELLS) as SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+        if (activeSpells > 3) {
+          return { id, name, cost, tiers, minTier: activeSpells - 3, instance: entry };
+        }
+        break;
+      }
+      case 'DISADV_1':
+      case 'DISADV_34':
+      case 'DISADV_50': {
+        const sel = entry.sel!.filter(e => !getDSids(entry).includes(e.id));
+        return { id, name, tiers, sel, input, cost, instance: entry, customCostDisabled: ['DISADV_34', 'DISADV_50'].includes(id) };
+      }
+      case 'DISADV_24': {
+        const sel = entry.sel!.filter(e => !getSids(get(dependent, 'ADV_32') as AdvantageInstance).includes(e.id) && !getDSids(entry).includes(e.id));
+        return { id, name, sel, input, cost, instance: entry };
+      }
+      case 'DISADV_33':
+      case 'DISADV_37':
+      case 'DISADV_51': {
+        let sel;
+        const activeIds = getSids(entry);
+        let customCostDisabled = false;
+        if (entry.id === 'DISADV_33') {
+          sel = entry.sel!.filter(e => ([7, 8].includes(e.id as number) || !activeIds.includes(e.id)) && !getDSids(entry).includes(e.id));
+          customCostDisabled = true;
+        }
+        else {
+          sel = entry.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(entry).includes(e.id));
+        }
+        return { id, name, sel, cost, instance: entry, customCostDisabled };
+      }
+      case 'DISADV_36': {
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(entry).includes(e.id));
+        return { id, name, sel, input, cost, instance: entry, customCostDisabled: true };
+      }
+      case 'DISADV_48': {
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => {
+          if ((get(dependent, 'ADV_40') as AdvantageInstance).active.length > 0 || (get(dependent, 'ADV_46') as AdvantageInstance).active.length > 0) {
+            if ((get(dependent, e.id as string) as SkillInstance).gr === 2) {
+              return false;
+            }
+          }
+          return !activeIds.includes(e.id) && !getDSids(entry).includes(e.id);
+        });
+        return { id, name, sel, cost, instance: entry };
+      }
+      case 'DISADV_59': {
+        const activeSpells = (getAllByCategory(dependent, Categories.SPELLS) as SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
+        if (activeSpells < 3) {
+          return { id, name, cost, tiers, maxTier: 3 - activeSpells, instance: entry };
+        }
+        break;
+      }
+      case 'SA_17': {
+        const sum = (get(dependent, 'TAL_51') as TalentInstance).value + (get(dependent, 'TAL_55') as TalentInstance).value;
+        if (sum >= 12) {
+          return { id, name, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_18':
+        if ((getAllByCategoryGroup(dependent, Categories.COMBAT_TECHNIQUES, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length > 0) {
+          return { id, name, cost, gr, instance: entry };
+        }
+        break;
+      case 'SA_3': {
+        const activeIds = getSids(entry);
+        const sel = (entry.sel as Array<SelectionObject & { req: AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(entry).includes(e.id));
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_9': {
+        const counter = getSecondSidMap(entry);
+        type Sel = Array<SelectionObject & { applications?: Application[]; applicationsInput?: string }>;
+        const filtered = (entry.sel as Sel).filter(e => {
+          const id = e.id as string;
+          if (getDSids(entry).includes(id)) {
+            return false;
+          }
+          else if (counter.has(id)) {
+            const arr = counter.get(id);
+            return arr && arr.length < 3 && (get(dependent, id) as TalentInstance).value >= 6 * (arr.length + 1);
+          }
+          return (get(dependent, id) as TalentInstance).value >= 6;
+        });
+        const mapped = filtered.map(e => {
+          const id = e.id as string;
+          const arr = counter.get(id);
+          if (arr) {
+            e.cost = e.cost! * (arr.length + 1);
+          }
+          e.applications = e.applications && e.applications.filter(n => {
+            return !arr || !arr.includes(n.id);
+          });
+          return e;
+        });
+        const sel = sortObjects(mapped, locale.id);
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry, customCostDisabled: true };
+        }
+        break;
+      }
+      case 'SA_28': {
+        type Sel = Array<SelectionObject & { talent: [string, number]; }>;
+        const activeIds = getSids(entry);
+        const sel = (entry.sel as Sel).filter(e => {
+          if (getDSids(entry).includes(e.id)) {
+            return false;
+          }
+          else {
+            return !activeIds.includes(e.id) && (get(dependent, e.talent[0]) as TalentInstance).value >= e.talent[1];
+          }
+        });
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_29': {
+        const sel = sortObjects(entry.sel!.filter(e => active.every(n => n.sid !== e.id) && !getDSids(entry).includes(e.id)), locale.id);
+        if (sel.length > 0) {
+          return { id, name, sel, cost, tiers: 3, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_70': {
+        const { adv, disadv } = ap;
+        const sel = entry.sel && sortObjects(entry.sel.filter(e => e.id < 6 || e.id > 9 || adv[1] <= 25 && disadv[1] <= 25), locale.id);
+        if (Array.isArray(sel) && sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_72': {
+        const spellsAbove10 = [...dependent.spells.values()].filter(e => e.value >= 10);
+        const counter = spellsAbove10.reduce((map, obj) => {
+          const property = obj.property;
+          if (map.has(property)) {
+            map.set(property, map.get(property)! + 1);
+          }
+          else {
+            map.set(property, 1);
+          }
+          return map;
+        }, new Map<number, number>());
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => {
+          const spellsAbove10WithProperty = counter.get(e.id as number);
+          return spellsAbove10WithProperty && spellsAbove10WithProperty >= 3 && !activeIds.includes(e.id) && !getDSids(entry).includes(e.id);
+        }).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+        if (sel.length > 0) {
+          const apArr = [10, 20, 40];
+          const cost = apArr[active.length];
+          return { id, name, sel, cost, gr, instance: entry, customCostDisabled: true };
+        }
+        break;
+      }
+      case 'SA_81': {
+        const activeIds = getSids(entry);
+        const sel = sortObjects(entry.sel!.filter(e => getSids(get(dependent, 'SA_72') as SpecialAbilityInstance).includes(e.id) && !activeIds.includes(e.id)), locale.id);
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_87': {
+        const liturgiesAbove10 = [...dependent.liturgies.values()].filter(e => e.value >= 10);
+        const counter = liturgiesAbove10.reduce((map, obj) => {
+          obj.aspects.forEach(e => {
+            if (map.has(e)) {
+              map.set(e, map.get(e)! + 1);
+            }
+            else {
+              map.set(e, 1);
+            }
+          });
+          return map;
+        }, new Map<number, number>());
+        const activeIds = getSids(entry);
+        const activeTradition = last(getSids(get(dependent, 'SA_86') as SpecialAbilityInstance));
+        const sel = sortObjects(entry.sel!.filter(e => getTraditionOfAspect(e.id as number) === activeTradition && counter.get(e.id as number)! >= 3 && !activeIds.includes(e.id) && !getDSids(entry).includes(e.id)), locale.id);
+        if (sel.length > 0) {
+          const apArr = [15, 25, 45];
+          const cost = apArr[active.length];
+          return { id, name, sel, cost, gr, instance: entry, customCostDisabled: true };
+        }
+        break;
+      }
+      case 'SA_231': {
+        const activeIds = getSids(entry);
+        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && !getDSids(entry).includes(e.id) && (get(dependent, id) as SpellInstance).value >= 10);
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_338': {
+        type EnhancedSelectionObject = SelectionObject & { gr: number; tier: number; };
+        let sel = entry.sel as EnhancedSelectionObject[];
+        if (isActive(entry)) {
+          const selectedPath = (getSelectionItem(entry, entry.active[0].sid) as EnhancedSelectionObject).gr;
+          const lastTier = (getSelectionItem(entry, entry.active[entry.active.length - 1].sid) as EnhancedSelectionObject).tier;
+          sel = sel.filter(e => e.gr === selectedPath && e.tier === lastTier + 1);
+        }
+        else {
+          sel = sel.filter(e => e.tier === 1);
+        }
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_414':
+      case 'SA_663': {
+        const activeIds = getSids(entry);
+        const sel = (entry.sel as Array<SelectionObject & { req: AllRequirementTypes[], target: string; tier: number; }>).reduce((arr, e) => {
+          const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target) : dependent.liturgies.get(e.target);
+          if (!activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier * 4 + 4) {
+            return [...arr, { ...e, name: `${targetInstance.name}: ${e.name}` }];
+          }
+          return arr;
+        }, []);
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_533': {
+        const sel = Array.isArray(entry.sel) ? sortObjects(entry.sel, locale.id) : undefined;
+        if (tiers && maxTier === 0) {
+          break;
+        }
+        const increaseValue = dependent.talents.get(dependent.specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
+        const increasedCost = (cost as number[]).map(e => e + increaseValue);
+        return { id, name, cost: increasedCost, sel, gr, instance: entry };
+      }
+      case 'SA_544':
+      case 'SA_545':
+      case 'SA_546':
+      case 'SA_547':
+      case 'SA_548': {
+        if (isActive(dependent.advantages.get('ADV_77'))) {
+          let max = 3;
+          if (isActive(dependent.advantages.get('ADV_79'))) {
+            max += dependent.advantages.get('ADV_79')!.active[0].tier!;
+          }
+          else if (isActive(dependent.advantages.get('DISADV_72'))) {
+            max -= dependent.advantages.get('DISADV_72')!.active[0].tier!;
+          }
+          const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 24).filter(isActive);
+          if (active.length < max) {
+            return { id, name, cost, gr, instance: entry };
+          }
+        }
+        break;
+      }
+      case 'SA_549':
+      case 'SA_550':
+      case 'SA_551':
+      case 'SA_552':
+      case 'SA_553': {
+        if (isActive(dependent.advantages.get('ADV_78'))) {
+          let max = 3;
+          if (isActive(dependent.advantages.get('ADV_80'))) {
+            max += dependent.advantages.get('ADV_80')!.active[0].tier!;
+          }
+          else if (isActive(dependent.advantages.get('DISADV_73'))) {
+            max -= dependent.advantages.get('DISADV_73')!.active[0].tier!;
+          }
+          const active = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 27).filter(isActive);
+          if (active.length < max) {
+            return { id, name, cost, gr, instance: entry };
+          }
+        }
+        break;
+      }
+      case 'SA_639': {
+        const activeIds = getSids(entry);
+        const sel = (entry.sel as Array<SelectionObject & { prerequisites: AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites, id) && !getDSids(entry).includes(e.id));
+        if (sel.length > 0) {
+          return { id, name, sel, cost, gr, instance: entry };
+        }
+        break;
+      }
+
+      default: {
+        let sel = Array.isArray(entry.sel) ? sortObjects(entry.sel, locale.id) : undefined;
+        if (cost === 'sel' && sel) {
+          const activeIds = getSids(entry);
+          sel = sel.filter(e => !activeIds.includes(e.id) && !getDSids(entry).includes(e.id));
+        }
+        if (tiers && maxTier === 0) {
+          break;
+        }
+        return { id, name, cost, tiers, maxTier, input, sel, gr, instance: entry };
+      }
+    }
+  }
+
+  return;
+}
+
+/**
+ * Returns if the given entry is an extended (combat/magical/blessed) special ability.
+ * @param entry The entry.
+ */
+export function isExtendedSpecialAbility(entry: ActivatableInstance) {
+  return entry.category === 'SPECIAL_ABILITIES' && [11, 14, 26].includes(entry.gr);
 }
