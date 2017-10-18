@@ -1011,16 +1011,23 @@ export interface PetEditorInstance extends PetBaseInstance {
 	pa: string;
 }
 
-export interface AlertButton {
+export interface AlertButtonCore {
 	autoWidth?: boolean;
 	children?: React.ReactNode;
 	className?: string;
 	disabled?: boolean;
-	dispatchOnClick?: Action;
 	flat?: boolean;
 	fullWidth?: boolean;
 	label: string | undefined;
 	primary?: boolean;
+}
+
+export interface AlertButton extends AlertButtonCore {
+	dispatchOnClick?: Action;
+}
+
+export interface ViewAlertButton extends AlertButtonCore {
+	onClick?(): void;
 }
 
 export interface Alert {

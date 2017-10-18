@@ -1,6 +1,7 @@
+import { remote } from 'electron';
 import * as React from 'react';
 import { Action } from 'redux';
-import { Alert as AlertOptions, UIMessages } from '../types/data.d';
+import { Alert as AlertOptions, UIMessages, ViewAlertButton } from '../types/data.d';
 import { _translate } from '../utils/I18n';
 import { Dialog } from './DialogNew';
 
@@ -13,8 +14,8 @@ export interface AlertProps {
 
 export class Alert extends React.Component<AlertProps> {
 	render() {
-		const { dispatch, options, locale, ...other } = this.props;
-		let buttons;
+		const { close, dispatch, options, locale } = this.props;
+		let buttons: ViewAlertButton[] | undefined;
 		let message;
 		let title;
 
@@ -48,9 +49,16 @@ export class Alert extends React.Component<AlertProps> {
 			title = titleOption;
 		}
 
+		if (buttons && buttons.length === 1) {
+			remote.globalShortcut.register('Enter', () => {
+				remote.globalShortcut.unregister('Enter');
+				close();
+			});
+		}
+
 		return (
 			<Dialog
-				{...other}
+				close={close}
 				buttons={buttons}
 				isOpened={options !== null}
 				className="alert"
