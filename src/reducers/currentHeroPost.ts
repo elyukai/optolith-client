@@ -374,7 +374,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             return final;
           }, ap);
 
-          // Lower Combat Techniques with a too high CTR
+          // Lower Combat Techniques with too high CTR
 
           const maxCombatTechniqueRating = getStart(el).maxCombatTechniqueRating;
           const valueTooHigh = [...fulllist.combatTechniques.values()].filter(e => e.value > maxCombatTechniqueRating);
