@@ -219,8 +219,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        const { cost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
-        calculatedActivatableCost += cost;
+        const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
+        calculatedActivatableCost += currentCost;
         const adds = ActivatableUtils.getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
         const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
         if (obj.category === Categories.SPECIAL_ABILITIES) {
@@ -329,8 +329,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
                   }
                   fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
-                  const { cost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
-                  if (cost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
+                  const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
+                  if (currentCost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
                     const isKar = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
                     const isMag = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
                     const index = isKar ? 2 : isMag ? 1 : 0;
@@ -338,7 +338,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     costObj = {
                       adv: [0, 0, 0],
                       disadv: [0, 0, 0],
-                      spent: cost,
+                      spent: currentCost,
                     };
 
                     if (obj.category === Categories.ADVANTAGES) {
@@ -355,7 +355,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     }
                   }
                   else {
-                    costObj = cost;
+                    costObj = currentCost;
                   }
                   if (typeof costObj === 'object') {
                     return {
@@ -365,7 +365,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     };
                   }
                   else if (typeof costObj === 'number') {
-                    return { ...final, spent: final.spent + cost};
+                    return { ...final, spent: final.spent + currentCost};
                   }
                 }
                 return final;

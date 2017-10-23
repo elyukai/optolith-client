@@ -43,13 +43,16 @@ export interface Culture {
 	name: string;
 	areaKnowledgeShort: string;
 	areaKnowledge: string;
-	commonMundaneProfessions: string;
-	commonMagicalProfessions: string;
-	commonBlessedProfessions: string;
-	commonAdvantages: string;
-	commonDisadvantages: string;
-	uncommonAdvantages: string;
-	uncommonDisadvantages: string;
+	language: number[];
+	script: number[];
+	socialStatus: number[];
+	commonMundaneProfessions?: string;
+	commonMagicProfessions?: string;
+	commonBlessedProfessions?: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 	commonSkills: string[];
 	uncommonSkills: string[];
 	/**

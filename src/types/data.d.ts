@@ -194,13 +194,13 @@ export interface CultureInstance {
 	readonly src: SourceLink[];
 	areaKnowledgeShort: string;
 	areaKnowledge: string;
-	commonMundaneProfessions: string;
-	commonMagicalProfessions: string;
-	commonBlessedProfessions: string;
-	commonAdvantages: string;
-	commonDisadvantages: string;
-	uncommonAdvantages: string;
-	uncommonDisadvantages: string;
+	commonMundaneProfessions?: string;
+	commonMagicProfessions?: string;
+	commonBlessedProfessions?: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 	/**
 	 * Markdown supported.
 	 */

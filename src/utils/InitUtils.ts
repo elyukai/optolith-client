@@ -187,8 +187,7 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
       name,
       reqs: req,
       sel: finalSel,
-      tiers,
-      gr: 1
+      tiers
     };
   }
   return;
@@ -221,8 +220,7 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
       name,
       reqs: req,
       sel: finalSel,
-      tiers,
-      gr: 1
+      tiers
     };
   }
   return;

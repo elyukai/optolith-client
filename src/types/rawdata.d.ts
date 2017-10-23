@@ -72,13 +72,13 @@ export interface RawCultureLocale {
 	name: string;
 	areaKnowledgeShort: string;
 	areaKnowledge: string;
-	commonMundaneProfessions: string;
-	commonMagicalProfessions: string;
-	commonBlessedProfessions: string;
-	commonAdvantages: string;
-	commonDisadvantages: string;
-	uncommonAdvantages: string;
-	uncommonDisadvantages: string;
+	commonMundaneProfessions?: string;
+	commonMagicProfessions?: string;
+	commonBlessedProfessions?: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 	commonNames: string;
 	src: number[];
 }

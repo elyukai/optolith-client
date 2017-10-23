@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
-import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpellInstance, TalentInstance } from '../../types/data.d';
+import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
@@ -26,7 +26,9 @@ export interface WikiInfoStateProps {
 	books: Map<string, Book>;
 	cantrips: Map<string, CantripInstance>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
+	languages: SpecialAbilityInstance;
 	liturgicalChants: Map<string, LiturgyInstance>;
+	scripts: SpecialAbilityInstance;
 	sex: 'm' | 'f' | undefined;
 	skills: Map<string, TalentInstance>;
 	spells: Map<string, SpellInstance>;

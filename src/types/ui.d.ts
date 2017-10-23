@@ -410,10 +410,14 @@ export interface UIMessages {
 	"cultures.options.commoncultures": string;
 	"cultures.options.showculturalpackagevalues": string;
 	"info.language": string;
+	"info.or": string;
 	"info.script": string;
 	"info.areaknowledge": string;
 	"info.socialstatus": string;
 	"info.commonprofessions": string;
+	"info.commonmundaneprofessions": string;
+	"info.commonmagicprofessions": string;
+	"info.commonblessedprofessions": string;
 	"info.commonskills": string;
 	"info.uncommonskills": string;
 	"info.commonnames": string;

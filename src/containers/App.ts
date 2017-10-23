@@ -38,7 +38,6 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 				const state = getState();
 				const safeToExit = !getUndoAvailability(state);
 				const locale = getMessages(state);
-				const theme = getTheme(state);
 				if (locale) {
 					if (safeToExit) {
 						dispatch(PlatformActions.requestSaveAll());
@@ -51,8 +50,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 					}
 					else {
 						dispatch(addAlert({
-							title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
-							message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
+							title: _translate(locale, 'heroes.warnings.unsavedactions.title'),
+							message: _translate(locale, 'heroes.warnings.unsavedactions.text'),
 							confirm: [
 								((dispatch: any) => {
 									dispatch(PlatformActions.requestSaveAll());

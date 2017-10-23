@@ -71,7 +71,7 @@ function iterateCultures(array) {
 
     obj.lang = obj.lang.split('&').map(e => Number.parseInt(e));
     obj.literacy = !obj.literacy ? [] : obj.literacy.split('&').map(e => Number.parseInt(e));
-    obj.social = obj.social.split('&').map(e => Number.parseInt(e));
+    obj.social = obj.social ? obj.social.split('&').map(e => Number.parseInt(e)) : [];
 
     obj.typ_prof = obj.typ_prof.split('&').map(e => {
       if (e === 'true') {
