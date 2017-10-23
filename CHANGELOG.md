@@ -1,3 +1,14 @@
+# 0.49.6
+
+- Fixed dis/advantages from **Aventurian Magic I**.
+- Fixed alerts after selecting RCP.
+- Alerts might be a bit more responsive (internal rework).
+- Fixed *Last Changes* page.
+
+## German Specific
+
+- Added wiki info for cultures.
+
 # 0.49.5
 
 - Special abilities with tiers do not have separate entries anymore.
