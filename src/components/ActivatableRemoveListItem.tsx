@@ -1,3 +1,4 @@
+import classNames = require('classnames');
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data.d';
 import { _translate } from '../utils/I18n';
@@ -43,7 +44,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 
 	render() {
 		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
-		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr } = item;
+		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, customCost } = item;
 		let { cost, name } = item;
 		let addSpecial = '';
 
@@ -85,7 +86,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 				<ListItemSeparator/>
 				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
-					<div className="cost">{cost}</div>
+					<div className={classNames('cost', customCost && 'custom-cost')}>{cost}</div>
 				</ListItemValues>
 				<ListItemButtons>
 					{phase === 2 && (

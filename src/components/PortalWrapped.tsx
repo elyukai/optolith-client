@@ -20,6 +20,7 @@ interface ReactPortalProps {
 export interface PortalWrappedOwnProps extends ReactPortalProps {
 	children?: React.ReactNode;
 	className?: string;
+	id?: string;
 }
 
 export interface PortalWrappedStateProps {
@@ -31,10 +32,10 @@ export interface PortalWrappedDispatchProps {}
 export type PortalWrappedProps = PortalWrappedStateProps & PortalWrappedDispatchProps & PortalWrappedOwnProps;
 
 export function PortalWrapped(props: PortalWrappedProps) {
-	const { children, className, theme, ...other } = props;
+	const { children, className, theme, id, ...other } = props;
 	return (
 		<Portal {...other}>
-			<div className={classNames(className, `theme-${theme}`)}>
+			<div className={classNames(className, `theme-${theme}`)} id={id}>
 				{children}
 			</div>
 		</Portal>

@@ -3,5 +3,5 @@
  * @param string The string to test.
  */
 export function isInteger(string: string) {
-	return /\d+/.test(string);
+	return /^\d+$/.test(string);
 }

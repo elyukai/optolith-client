@@ -372,6 +372,7 @@ export interface ActiveViewObject {
 	disabled: boolean;
 	gr?: number;
 	instance: ActivatableInstance;
+	customCost?: boolean;
 }
 
 export interface DeactiveViewObject {
@@ -397,6 +398,7 @@ export interface ActivateArgs {
 	input?: string;
 	tier?: number;
 	cost: number;
+	customCost?: number;
 }
 
 export interface UndoExtendedActivateArgs extends ActivateArgs {
@@ -419,6 +421,7 @@ export interface ActivateObject {
 	sel2?: string | number;
 	input?: string;
 	tier?: number;
+	cost?: number;
 }
 
 export interface SelectionObject {

@@ -59,24 +59,31 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       const languages = new Map<number, number>();
       const scripts = new Set<number>();
 
+      let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
+      let calculatedIncreasableCost = 0;
+      let calculatedActivatableCost = 0;
+
       // Race selections:
 
       if (typeof race === 'object') {
-        race.attributeAdjustments.forEach(e => {
-          const [ mod, id ] = e;
-          (get(dependent, id) as Data.AttributeInstance).mod += mod;
-        });
-        race.automaticAdvantages.forEach(e => activatable.add({ id: e, active: true }));
-        (get(dependent, action.payload.attrSel) as Data.AttributeInstance).mod = race.attributeAdjustmentsSelection[0];
+        for (const [mod, id] of race.attributeAdjustments) {
+          const entry = getLatest(dependent, newlist, id) as Data.AttributeInstance;
+          newlist = setNewStateItem(newlist, id, { ...entry, mod: entry.mod + mod });
+        }
+        for (const id of race.automaticAdvantages) {
+          activatable.add({ id, active: true });
+        }
+        const entry = getLatest(dependent, newlist, action.payload.attrSel) as Data.AttributeInstance;
+        newlist = setNewStateItem(newlist, action.payload.attrSel, { ...entry, mod: race.attributeAdjustmentsSelection[0] });
       }
 
       // Culture selections:
 
       if (typeof culture === 'object') {
         if (action.payload.useCulturePackage) {
-          culture.talents.forEach(([ key, value ]) => {
+          for (const [key, value] of culture.talents) {
             skillRatingList.set(key, value);
-          });
+          }
         }
 
         const motherTongueId = culture.languages.length > 1 ? action.payload.lang : culture.languages[0];
@@ -91,37 +98,41 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       // Profession selections:
 
       if (typeof profession === 'object') {
-        [ ...profession.talents, ...profession.combatTechniques ].forEach(([ key, value ]) => {
-          addToSkillRatingList(key, value);
-        });
-        [ ...profession.spells, ...profession.liturgies ].forEach(([ key, value ]) => {
-          skillActivateList.add(key);
-          addToSkillRatingList(key, value);
-        });
-        profession.blessings.forEach(e => skillActivateList.add(e));
-        profession.specialAbilities.forEach(e => activatable.add(e));
+        for (const [id, value] of [ ...profession.talents, ...profession.combatTechniques ]) {
+          addToSkillRatingList(id, value);
+        }
+        for (const [id, value] of [ ...profession.spells, ...profession.liturgies ]) {
+          skillActivateList.add(id);
+          addToSkillRatingList(id, value);
+        }
+        for (const id of profession.blessings) {
+          skillActivateList.add(id);
+        }
+        for (const activeObject of profession.specialAbilities) {
+          activatable.add(activeObject);
+        }
       }
 
       if (typeof professionVariant === 'object') {
-        [ ...professionVariant.talents, ...professionVariant.combatTechniques ].forEach(([ key, value ]) => {
-          addToSkillRatingList(key, value);
-        });
-        [ ...professionVariant.spells, ...professionVariant.liturgies ].forEach(([ key, value ]) => {
-          skillActivateList.add(key);
-          addToSkillRatingList(key, value);
-        });
-        professionVariant.specialAbilities.forEach(e => {
-          if (e.active === false) {
-            activatable.forEach(i => {
-              if (i.id === e.id) {
-                activatable.delete(i);
+        for (const [id, value] of [ ...professionVariant.talents, ...professionVariant.combatTechniques ]) {
+          addToSkillRatingList(id, value);
+        }
+        for (const [id, value] of [ ...professionVariant.spells, ...professionVariant.liturgies ]) {
+          skillActivateList.add(id);
+          addToSkillRatingList(id, value);
+        }
+        for (const activeObject of professionVariant.specialAbilities) {
+          if (activeObject.active === false) {
+            for (const item of activatable) {
+              if (item.id === activeObject.id) {
+                activatable.delete(item);
               }
-            });
+            }
           }
           else {
-            activatable.add(e);
+            activatable.add(activeObject);
           }
-        });
+        }
       }
 
       if (action.payload.map.has('SPECIALISATION')) {
@@ -145,7 +156,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         }
       }
 
-      action.payload.langLitc.forEach((value, key) => {
+      for (const [key, value] of action.payload.langLitc) {
         const [ category, id ] = key.split('_');
         if (category === 'LANG') {
           languages.set(Number.parseInt(id), value / 2);
@@ -153,37 +164,33 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         else {
           scripts.add(Number.parseInt(id));
         }
-      });
+      }
 
-      action.payload.combattech.forEach(e => {
+      for (const e of action.payload.combattech.values()) {
         addToSkillRatingList(e, (action.payload.map.get('COMBAT_TECHNIQUES') as Data.CombatTechniquesSelection).value);
-      });
+      }
 
-      action.payload.combatTechniquesSecond.forEach(e => {
+      for (const e of action.payload.combatTechniquesSecond.values()) {
         addToSkillRatingList(e, (action.payload.map.get('COMBAT_TECHNIQUES_SECOND') as Data.CombatTechniquesSecondSelection).value);
-      });
+      }
 
-      action.payload.cantrips.forEach(e => {
+      for (const e of action.payload.cantrips.values()) {
         skillActivateList.add(e);
-      });
+      }
 
-      action.payload.curses.forEach((value, key) => {
+      for (const [key, value] of action.payload.curses) {
         addToSkillRatingList(key, value);
         skillActivateList.add(key);
-      });
+      }
 
-      action.payload.skills.forEach((value, key) => {
+      for (const [key, value] of action.payload.skills) {
         const skill = state.dependent.talents.get(key);
         if (skill !== undefined) {
           addToSkillRatingList(key, value / skill.ic);
         }
-      });
+      }
 
       // Apply:
-
-      let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
-      let calculatedIncreasableCost = 0;
-      let calculatedActivatableCost = 0;
 
       function addValue(instance: Data.SkillishInstance, value: number): Data.SkillishInstance {
         calculatedIncreasableCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);

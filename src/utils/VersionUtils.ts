@@ -1,7 +1,7 @@
 import { lt } from 'semver';
 import { ActiveObject, Hero, ToListById } from '../types/data.d';
 
-export const currentVersion = '0.49.6';
+export const currentVersion = '0.50.0';
 
 export function convertHero(hero: Hero) {
   const entry = { ...hero };

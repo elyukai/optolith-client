@@ -214,6 +214,71 @@ ul.list-wrapper {
 				line-height: 30px;
 			}
 
+			.value-btn {
+				border-color: var(--accent-color);
+				color: var(--accent-color);
+
+				&:hover {
+					border-color: var(--headings-color);
+					color: var(--headings-color);
+					cursor: pointer;
+
+					&.custom-cost::after, &.custom-cost::before {
+						border-color: var(--headings-color);
+					}
+				}
+
+				&:active {
+					border-color: var(--accent-color-intense);
+					color: var(--accent-color-intense);
+
+					&.custom-cost::after, &.custom-cost::before {
+						border-color: var(--accent-color-intense);
+					}
+				}
+
+				&.custom-cost {
+					$distance: -5px;
+
+					&::after {
+						bottom: $distance;
+						right: $distance;
+					}
+
+					&::before {
+						top: $distance;
+						left: $distance;
+					}
+				}
+			}
+
+			.custom-cost {
+				position: relative;
+
+				&::after, &::before {
+					content: "";
+					position: absolute;
+					height: 10px;
+					width: 10px;
+					border-style: solid;
+					border-color: var(--accent-color);
+				}
+
+				$distance: -1px;
+
+				&::after {
+					bottom: $distance;
+					right: $distance;
+					border-width: 0 1px 1px 0;
+				}
+
+				&::before {
+					top: $distance;
+					left: $distance;
+					border-width: 1px 0 0 1px;
+				}
+			}
+
 			.ATTR_6_8 {
 				font-size: 8px;
 			}

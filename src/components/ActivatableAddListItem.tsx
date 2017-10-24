@@ -1,3 +1,4 @@
+import classNames = require('classnames');
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as Categories from '../constants/Categories';
@@ -8,6 +9,8 @@ import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
+import { isInteger } from '../utils/RegexUtils';
+import { Dialog } from './DialogNew';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
@@ -45,10 +48,15 @@ export interface ActivatableAddListItemState {
 	selectedTier?: number;
 	input?: string;
 	input2?: string;
+	customCost?: string;
+	customCostPreview?: string;
+	showCustomCostDialog: boolean;
 }
 
 export class ActivatableAddListItem extends React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
-	state: ActivatableAddListItemState = {};
+	state: ActivatableAddListItemState = {
+		showCustomCostDialog: false
+	};
 
 	handleSelect = (selected: string | number) => {
 		if (this.state.selected2) {
@@ -68,6 +76,11 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 	}
 	handleInput = (event: InputTextEvent) => this.setState({ input: event.target.value || undefined } as ActivatableAddListItemState);
 	handleSecondInput = (event: InputTextEvent) => this.setState({ input2: event.target.value || undefined } as ActivatableAddListItemState);
+	showCustomCostDialog = () => this.setState({ showCustomCostDialog: this.props.hideGroup, customCostPreview: this.state.customCost } as ActivatableAddListItemState);
+	closeCustomCostDialog = () => this.setState({ showCustomCostDialog: false } as ActivatableAddListItemState);
+	setCustomCost = () => this.setState({ customCost: this.state.customCostPreview } as ActivatableAddListItemState);
+	setCustomCostPreview = (event: InputTextEvent) => this.setState({ customCostPreview: event.target.value || undefined } as ActivatableAddListItemState);
+	deleteCustomCost = () => this.setState({ customCost: undefined } as ActivatableAddListItemState);
 	addToList = (args: ActivateArgs) => {
 		this.props.addToList(args);
 		if (this.state.selected !== undefined || this.state.selectedTier !== undefined || this.state.input !== undefined) {
@@ -76,7 +89,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				input2: undefined,
 				selected: undefined,
 				selected2: undefined,
-				selectedTier: undefined
+				selectedTier: undefined,
+				customCost: undefined
 			} as ActivatableAddListItemState);
 		}
 	}
@@ -85,7 +99,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills } = this.props;
 		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
-		const { input: inputText, selected, selected2, selectedTier } = this.state;
+		const { customCost, customCostPreview, input: inputText, selected, selected2, selectedTier, showCustomCostDialog } = this.state;
 		let sel2: SelectionObject[] | undefined;
 
 		const args: ActivateArgs = { id, cost: 0 };
@@ -300,12 +314,20 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			currentCost = selectionItem && selectionItem.cost;
 		}
 
+		if (typeof customCost === 'string' && isInteger(customCost)) {
+			currentCost = Number.parseInt(customCost);
+		}
+
 		if (category === Categories.DISADVANTAGES && currentCost) {
 			currentCost = -currentCost;
 		}
 
 		if (typeof currentCost === 'number') {
 			args.cost = currentCost;
+
+			if (typeof customCost === 'string' && isInteger(customCost)) {
+				args.customCost = currentCost;
+			}
 		}
 
 		if (typeof tiers === 'number') {
@@ -387,7 +409,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 
 		if (['DISADV_34', 'DISADV_50'].includes(id)) {
 			tierElement1 = tierElement;
-		} else {
+		}
+		else {
 			tierElement2 = tierElement;
 		}
 
@@ -404,7 +427,22 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				<ListItemSeparator/>
 				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
-					<div className="cost">{currentCost}</div>
+					<div className={classNames('cost', hideGroup && 'value-btn', typeof customCost === 'string' && 'custom-cost')} onClick={this.showCustomCostDialog}>{currentCost}</div>
+					<Dialog
+						id="custom-cost-dialog"
+						close={this.closeCustomCostDialog}
+						isOpened={showCustomCostDialog}
+						title={_translate(locale, 'customcost.title')}
+						buttons={[{autoWidth: true, label: _translate(locale, 'actions.done'), disabled: typeof customCostPreview === 'string' && !isInteger(customCostPreview), onClick: this.setCustomCost}, {autoWidth: true, label: _translate(locale, 'actions.delete'), disabled: customCost === undefined, onClick: this.deleteCustomCost}]}
+						>
+						{_translate(locale, 'customcost.message')}{name}
+						<TextField
+							value={customCostPreview}
+							onChange={this.setCustomCostPreview}
+							fullWidth
+							autoFocus
+							/>
+					</Dialog>
 				</ListItemValues>
 				<ListItemButtons>
 					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />

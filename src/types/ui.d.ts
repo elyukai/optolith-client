@@ -60,6 +60,7 @@ export interface UIMessages {
 	"options.none": string;
 	"actions.save": string;
 	"actions.done": string;
+	"actions.delete": string;
 	"yes": string;
 	"no": string;
 	"ok": string;
@@ -488,6 +489,8 @@ export interface UIMessages {
 	"activatable.view.afraidof": string;
 	"activatable.view.immunityto": string;
 	"activatable.view.hatredof": string;
+	"customcost.title": string;
+	"customcost.message": string;
 	"skills.options.commoninculture": string;
 	"skills.view.groups": string[];
 	"info.check": string;

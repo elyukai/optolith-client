@@ -44,7 +44,8 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
 
         const {
           combinedName,
-          currentCost
+          currentCost,
+          cost
         } = convertPerTierCostToFinalCost(getNameCost(activeObject, dependent, false, locale));
 
         const {
@@ -64,7 +65,8 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
           disabled,
           instance,
           maxTier,
-          minTier
+          minTier,
+          customCost: typeof cost === 'number'
         });
       }
 
