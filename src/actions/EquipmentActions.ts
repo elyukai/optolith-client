@@ -1,6 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { AsyncAction } from '../types/actions.d';
-import { ArmorZonesEditorInstance, ArmorZonesInstance } from '../types/data.d';
 import { getNewId } from '../utils/IDUtils';
 
 export interface AddItemAction {
@@ -91,46 +90,6 @@ export function editItem(id: string): EditItemAction {
 		};
 }
 
-export interface AddArmorZonesAction {
-	type: ActionTypes.ADD_ARMOR_ZONES;
-	payload: {
-		id: string;
-		data: ArmorZonesEditorInstance;
-	};
-}
-
-export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AsyncAction {
-	return (dispatch, getState) => {
-		const { items } = getState().currentHero.present.equipment;
-		const id = `ARMORZONES_${getNewId([...items.keys()])}`;
-		dispatch({
-			type: ActionTypes.ADD_ARMOR_ZONES,
-			payload: {
-				id,
-				data
-			}
-		} as AddArmorZonesAction);
-	};
-}
-
-export interface SetArmorZonesAction {
-	type: ActionTypes.SET_ARMOR_ZONES;
-	payload: {
-		id: string;
-		data: ArmorZonesInstance;
-	};
-}
-
-export function _setArmorZones(id: string, data: ArmorZonesInstance): SetArmorZonesAction {
-	return {
-		type: ActionTypes.SET_ARMOR_ZONES,
-		payload: {
-			id,
-			data
-		}
-	};
-}
-
 export interface RemoveItemAction {
 	type: ActionTypes.REMOVE_ITEM;
 	payload: {
@@ -141,22 +100,6 @@ export interface RemoveItemAction {
 export function _removeFromList(id: string): RemoveItemAction {
 	return {
 		type: ActionTypes.REMOVE_ITEM,
-		payload: {
-			id
-		}
-	};
-}
-
-export interface RemoveArmorZonesAction {
-	type: ActionTypes.REMOVE_ARMOR_ZONES;
-	payload: {
-		id: string;
-	};
-}
-
-export function _removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
-	return {
-		type: ActionTypes.REMOVE_ARMOR_ZONES,
 		payload: {
 			id
 		}
@@ -828,5 +771,295 @@ export interface UnlockItemTemplateAction {
 export function unlockItemTemplate(): UnlockItemTemplateAction {
 	return {
 		type: ActionTypes.UNLOCK_ITEM_TEMPLATE
+	};
+}
+
+export interface AddArmorZonesAction {
+	type: ActionTypes.ADD_ARMOR_ZONES;
+	payload: {
+		newId: string;
+	};
+}
+
+export function addArmorZonesToList(): AsyncAction {
+	return (dispatch, getState) => {
+		const { items } = getState().currentHero.present.equipment;
+		const newId = `ARMORZONES_${getNewId([...items.keys()])}`;
+		dispatch({
+			type: ActionTypes.ADD_ARMOR_ZONES,
+			payload: {
+				newId
+			}
+		} as AddArmorZonesAction);
+	};
+}
+
+export interface CreateArmorZonesAction {
+	type: ActionTypes.CREATE_ARMOR_ZONES;
+}
+
+export function createArmorZones(): CreateArmorZonesAction {
+	return {
+		type: ActionTypes.CREATE_ARMOR_ZONES
+	};
+}
+
+export interface CloseArmorZonesEditorAction {
+	type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR;
+}
+
+export function closeArmorZonesEditor(): CloseArmorZonesEditorAction {
+	return {
+		type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR
+	};
+}
+
+export interface SaveArmorZonesAction {
+	type: ActionTypes.SAVE_ARMOR_ZONES;
+}
+
+export function saveArmorZones(): SaveArmorZonesAction {
+	return {
+		type: ActionTypes.SAVE_ARMOR_ZONES
+	};
+}
+
+export interface EditArmorZonesAction {
+	type: ActionTypes.EDIT_ARMOR_ZONES;
+	payload: {
+		id: string;
+	};
+}
+
+export function editArmorZones(id: string): EditArmorZonesAction {
+	return {
+			type: ActionTypes.EDIT_ARMOR_ZONES,
+			payload: {
+				id
+			}
+		};
+}
+
+export interface RemoveArmorZonesAction {
+	type: ActionTypes.REMOVE_ARMOR_ZONES;
+	payload: {
+		id: string;
+	};
+}
+
+export function removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
+	return {
+		type: ActionTypes.REMOVE_ARMOR_ZONES,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesNameAction {
+	type: ActionTypes.SET_ARMOR_ZONES_NAME;
+	payload: {
+		value: string;
+	};
+}
+
+export function setArmorZonesName(value: string): SetArmorZonesNameAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_NAME,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetArmorZonesHeadAction {
+	type: ActionTypes.SET_ARMOR_ZONES_HEAD;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesHead(id: string | undefined): SetArmorZonesHeadAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_HEAD,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesHeadLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesHeadLoss(id: number | undefined): SetArmorZonesHeadLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesLeftArmAction {
+	type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesLeftArm(id: string | undefined): SetArmorZonesLeftArmAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesLeftArmLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesLeftArmLoss(id: number | undefined): SetArmorZonesLeftArmLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesLeftLegAction {
+	type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesLeftLeg(id: string | undefined): SetArmorZonesLeftLegAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesLeftLegLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesLeftLegLoss(id: number | undefined): SetArmorZonesLeftLegLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesTorsoAction {
+	type: ActionTypes.SET_ARMOR_ZONES_TORSO;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesTorso(id: string | undefined): SetArmorZonesTorsoAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_TORSO,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesTorsoLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesTorsoLoss(id: number | undefined): SetArmorZonesTorsoLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesRightArmAction {
+	type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesRightArm(id: string | undefined): SetArmorZonesRightArmAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesRightArmLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesRightArmLoss(id: number | undefined): SetArmorZonesRightArmLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesRightLegAction {
+	type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG;
+	payload: {
+		id: string | undefined;
+	};
+}
+
+export function setArmorZonesRightLeg(id: string | undefined): SetArmorZonesRightLegAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetArmorZonesRightLegLossAction {
+	type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setArmorZonesRightLegLoss(id: number | undefined): SetArmorZonesRightLegLossAction {
+	return {
+		type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS,
+		payload: {
+			id
+		}
 	};
 }

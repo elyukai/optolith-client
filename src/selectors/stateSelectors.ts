@@ -52,5 +52,7 @@ export const getPhase = (state: AppState) => state.currentHero.present.phase;
 
 export const getItemEditorInstance = (state: AppState) => state.currentHero.present.equipment.itemEditor;
 export const getIsItemCreation = (state: AppState) => state.currentHero.present.equipment.isItemCreation;
+export const getArmorZonesEditorInstance = (state: AppState) => state.currentHero.present.equipment.armorZoneEditor;
+export const getIsArmorZonesCreation = (state: AppState) => state.currentHero.present.equipment.isArmorZonesCreation;
 
 export const getAlerts = (state: AppState) => state.ui.alerts;

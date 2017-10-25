@@ -1,52 +1,54 @@
 import * as React from 'react';
-import { Dialog } from '../../components/Dialog';
+import { Dialog } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { ArmorZonesEditorInstance, ArmorZonesInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
+import { ArmorZonesEditorInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 
 export interface ArmorZonesEditorProps {
+	armorZonesEditor: ArmorZonesEditorInstance;
 	create?: boolean;
-	item?: ArmorZonesInstance;
-	node?: HTMLDivElement;
+	isOpened: boolean;
 	locale: UIMessages;
 	items: ItemInstance[];
 	templates: ItemInstance[];
-	addToList(data: ArmorZonesEditorInstance): void;
-	set(id: string, data: ArmorZonesEditorInstance): void;
+	addToList(): void;
+	closeEditor(): void;
+	saveItem(): void;
+	setName(value: string): void;
+	setHead(id: string | undefined): void;
+	setHeadLoss(id: number | undefined): void;
+	setLeftArm(id: string | undefined): void;
+	setLeftArmLoss(id: number | undefined): void;
+	setLeftLeg(id: string | undefined): void;
+	setLeftLegLoss(id: number | undefined): void;
+	setTorso(id: string | undefined): void;
+	setTorsoLoss(id: number | undefined): void;
+	setRightArm(id: string | undefined): void;
+	setRightArmLoss(id: number | undefined): void;
+	setRightLeg(id: string | undefined): void;
+	setRightLegLoss(id: number | undefined): void;
 }
 
-export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps, ArmorZonesEditorInstance> {
-	state: ArmorZonesEditorInstance = { name: '', ...this.props.item };
-
-	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as ArmorZonesEditorInstance);
-	changeHead = (id?: string) => this.setState({ head: id } as ArmorZonesEditorInstance);
-	changeHeadLoss = (id?: number) => this.setState({ headLoss: id } as ArmorZonesEditorInstance);
-	changeLeftArm = (id?: string) => this.setState({ leftArm: id } as ArmorZonesEditorInstance);
-	changeLeftArmLoss = (id?: number) => this.setState({ leftArmLoss: id } as ArmorZonesEditorInstance);
-	changeLeftLeg = (id?: string) => this.setState({ leftLeg: id } as ArmorZonesEditorInstance);
-	changeLeftLegLoss = (id?: number) => this.setState({ leftLegLoss: id } as ArmorZonesEditorInstance);
-	changeTorso = (id?: string) => this.setState({ torso: id } as ArmorZonesEditorInstance);
-	changeTorsoLoss = (id?: number) => this.setState({ torsoLoss: id } as ArmorZonesEditorInstance);
-	changeRightArm = (id?: string) => this.setState({ rightArm: id } as ArmorZonesEditorInstance);
-	changeRightArmLoss = (id?: number) => this.setState({ rightArmLoss: id } as ArmorZonesEditorInstance);
-	changeRightLeg = (id?: string) => this.setState({ rightLeg: id } as ArmorZonesEditorInstance);
-	changeRightLegLoss = (id?: number) => this.setState({ rightLegLoss: id } as ArmorZonesEditorInstance);
-
-	addItem = () => {
-		this.props.addToList(this.state);
-	}
-	saveItem = () => {
-		const { id } = this.state;
-		if (typeof id === 'string') {
-			this.props.set(id, this.state as ArmorZonesInstance);
-		}
-	}
+export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps> {
+	changeName = (event: InputTextEvent) => this.props.setName(event.target.value);
+	changeHead = (id?: string) => this.props.setHead(id);
+	changeHeadLoss = (id?: number) => this.props.setHeadLoss(id);
+	changeLeftArm = (id?: string) => this.props.setLeftArm(id);
+	changeLeftArmLoss = (id?: number) => this.props.setLeftArmLoss(id);
+	changeLeftLeg = (id?: string) => this.props.setLeftLeg(id);
+	changeLeftLegLoss = (id?: number) => this.props.setLeftLegLoss(id);
+	changeTorso = (id?: string) => this.props.setTorso(id);
+	changeTorsoLoss = (id?: number) => this.props.setTorsoLoss(id);
+	changeRightArm = (id?: string) => this.props.setRightArm(id);
+	changeRightArmLoss = (id?: number) => this.props.setRightArmLoss(id);
+	changeRightLeg = (id?: string) => this.props.setRightLeg(id);
+	changeRightLegLoss = (id?: number) => this.props.setRightLegLoss(id);
 
 	render() {
-		const { create, node, items, locale, templates } = this.props;
-		const { name, head, headLoss, leftArm, leftArmLoss, leftLeg, leftLegLoss, torso, torsoLoss, rightArm, rightArmLoss, rightLeg, rightLegLoss } = this.state;
+		const { armorZonesEditor, closeEditor, create, isOpened, items, locale, templates } = this.props;
+		const { name, head, headLoss, leftArm, leftArmLoss, leftLeg, leftLegLoss, torso, torsoLoss, rightArm, rightArmLoss, rightLeg, rightLegLoss } = armorZonesEditor;
 
 		const combinedArmorList = sortObjects([
 			...templates.filter(e => e.gr === 4),
@@ -59,13 +61,14 @@ export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps, Arm
 			<Dialog
 				id="armor-zones-editor"
 				title={create ? _translate(locale, 'zonearmoreditor.titlecreate') : _translate(locale, 'zonearmoreditor.titleedit')}
-				node={node}
+				isOpened={isOpened}
+				close={closeEditor}
 				buttons={[
 					{
 						autoWidth: true,
 						disabled: name === '',
 						label: _translate(locale, 'actions.save'),
-						onClick: create ? this.addItem : this.saveItem,
+						onClick: create ? this.props.addToList : this.props.saveItem,
 					},
 				]}>
 				<div className="main">

@@ -7,7 +7,7 @@ import { getTotal } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getArmorZoneInstances, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { ArmorZonesEditorInstance, ArmorZonesInstance } from '../types/data.d';
+import { getArmorZonesEditorInstance, getIsArmorZonesCreation } from '../selectors/stateSelectors';
 import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/belongings/ArmorZones';
 
 function mapStateToProps(state: AppState) {
@@ -16,6 +16,8 @@ function mapStateToProps(state: AppState) {
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),
 		items: getItems(state),
+		create: getIsArmorZonesCreation(state),
+		armorZonesEditor: getArmorZonesEditorInstance(state),
 		hasNoAddedAP: getTotal(state) === getStartEl(state).ap,
 		purse: getPurse(state),
 		templates: getTemplates(state),
@@ -26,15 +28,24 @@ function mapStateToProps(state: AppState) {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
-		addToList(item: ArmorZonesEditorInstance) {
-			dispatch(EquipmentActions._addArmorZonesToList(item));
+		addToList() {
+			dispatch(EquipmentActions.addArmorZonesToList());
 		},
+		createItem(): void {
+      dispatch(EquipmentActions.createArmorZones());
+    },
+		editItem(id: string): void {
+      dispatch(EquipmentActions.editArmorZones(id));
+    },
 		deleteItem(id: string) {
-			dispatch(EquipmentActions._removeArmorZonesFromList(id));
+			dispatch(EquipmentActions.removeArmorZonesFromList(id));
 		},
-		set(id: string, item: ArmorZonesEditorInstance) {
-			dispatch(EquipmentActions._setArmorZones(id, item as ArmorZonesInstance));
-		},
+		closeEditor(): void {
+      dispatch(EquipmentActions.closeArmorZonesEditor());
+    },
+		saveItem(): void {
+      dispatch(EquipmentActions.saveArmorZones());
+    },
 		setDucates(value: string) {
 			dispatch(EquipmentActions._setDucates(value));
 		},
@@ -46,7 +57,46 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setKreutzers(value: string) {
 			dispatch(EquipmentActions._setKreutzers(value));
-		}
+		},
+		setName(value: string): void {
+      dispatch(EquipmentActions.setArmorZonesName(value));
+    },
+		setHead(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesHead(id));
+    },
+		setHeadLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesHeadLoss(id));
+    },
+		setLeftArm(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesLeftArm(id));
+    },
+		setLeftArmLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesLeftArmLoss(id));
+    },
+		setLeftLeg(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesLeftLeg(id));
+    },
+		setLeftLegLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesLeftLegLoss(id));
+    },
+		setTorso(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesTorso(id));
+    },
+		setTorsoLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesTorsoLoss(id));
+    },
+		setRightArm(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesRightArm(id));
+    },
+		setRightArmLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesRightArmLoss(id));
+    },
+		setRightLeg(id: string | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesRightLeg(id));
+    },
+		setRightLegLoss(id: number | undefined): void {
+      dispatch(EquipmentActions.setArmorZonesRightLegLoss(id));
+    },
 	};
 }
 

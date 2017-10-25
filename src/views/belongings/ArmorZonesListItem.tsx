@@ -6,21 +6,18 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { ArmorZonesInstance, ItemInstance, UIMessages } from '../../types/data.d';
-import { createOverlay } from '../../utils/createOverlay';
-import { ArmorZonesEditor } from './ArmorZonesEditor';
 
 export interface ArmorZonesListItemProps {
 	data: ArmorZonesInstance;
 	locale: UIMessages;
 	items: ItemInstance[];
 	templates: ItemInstance[];
-	addToList(item: ItemInstance): void;
+	editItem(id: string): void;
 	deleteItem(id: string): void;
-	set(id: string, item: ItemInstance): void;
 }
 
 export function ArmorZonesListItem(props: ArmorZonesListItemProps) {
-	const { data: item, deleteItem } = props;
+	const { data: item, editItem, deleteItem } = props;
 	const { name } = item;
 
 	return (
@@ -35,11 +32,7 @@ export function ArmorZonesListItem(props: ArmorZonesListItemProps) {
 				<ListItemButtons>
 					<IconButton
 						icon="&#xE254;"
-						onClick={function showItemCreation() {
-							createOverlay(
-								<ArmorZonesEditor {...props} item={item} />
-							);
-						}}
+						onClick={() => editItem(item.id)}
 						flat
 						/>
 					<IconButton

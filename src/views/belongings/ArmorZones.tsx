@@ -7,8 +7,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { Purse } from '../../reducers/equipment';
-import { ArmorZonesInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
-import { createOverlay } from '../../utils/createOverlay';
+import { ArmorZonesEditorInstance, ArmorZonesInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { ArmorZonesEditor } from './ArmorZonesEditor';
@@ -23,6 +22,8 @@ export interface ArmorZonesStateProps {
 	carryingCapacity: number;
 	initialStartingWealth: number;
 	items: ItemInstance[];
+	create: boolean | undefined;
+	armorZonesEditor: ArmorZonesEditorInstance | undefined;
 	hasNoAddedAP: boolean;
 	purse: Purse;
 	templates: ItemInstance[];
@@ -31,13 +32,29 @@ export interface ArmorZonesStateProps {
 }
 
 export interface ArmorZonesDispatchProps {
-	addToList(item: ItemInstance): void;
+	addToList(): void;
+	createItem(): void;
+	editItem(id: string): void;
 	deleteItem(id: string): void;
-	set(id: string, item: ItemInstance): void;
+	closeEditor(): void;
+	saveItem(): void;
 	setDucates(value: string): void;
 	setSilverthalers(value: string): void;
 	setHellers(value: string): void;
 	setKreutzers(value: string): void;
+	setName(value: string): void;
+	setHead(id: string | undefined): void;
+	setHeadLoss(id: number | undefined): void;
+	setLeftArm(id: string | undefined): void;
+	setLeftArmLoss(id: number | undefined): void;
+	setLeftLeg(id: string | undefined): void;
+	setLeftLegLoss(id: number | undefined): void;
+	setTorso(id: string | undefined): void;
+	setTorsoLoss(id: number | undefined): void;
+	setRightArm(id: string | undefined): void;
+	setRightArmLoss(id: number | undefined): void;
+	setRightLeg(id: string | undefined): void;
+	setRightLegLoss(id: number | undefined): void;
 }
 
 export type ArmorZonesProps = ArmorZonesStateProps & ArmorZonesDispatchProps & ArmorZonesOwnProps;
@@ -57,17 +74,8 @@ export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState
 	setHellers = (event: InputTextEvent) => this.props.setHellers(event.target.value as string);
 	setKreutzers = (event: InputTextEvent) => this.props.setKreutzers(event.target.value as string);
 
-	showArmorZonesCreation = () => {
-		createOverlay(
-			<ArmorZonesEditor
-				{...this.props}
-				create
-				/>
-		);
-	}
-
 	render() {
-		const { carryingCapacity, initialStartingWealth, armorZones, hasNoAddedAP, locale, purse, totalPrice, totalWeight } = this.props;
+		const { armorZonesEditor, carryingCapacity, create, initialStartingWealth, armorZones, hasNoAddedAP, locale, purse, totalPrice, totalWeight } = this.props;
 		const { filterText } = this.state;
 
 		const list = filterAndSortObjects(armorZones, locale.id, filterText);
@@ -76,7 +84,7 @@ export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState
 			<Page id="armor-zones">
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<BorderButton label={_translate(locale, 'zonearmor.actions.create')} onClick={this.showArmorZonesCreation} />
+					<BorderButton label={_translate(locale, 'zonearmor.actions.create')} onClick={this.props.createItem} />
 				</Options>
 				<Scroll>
 					<List>
@@ -103,6 +111,12 @@ export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState
 						</div>
 					</div>
 				</Aside>
+				{armorZonesEditor && <ArmorZonesEditor
+					{...this.props}
+					armorZonesEditor={armorZonesEditor}
+					create={create}
+					isOpened
+					/>}
 			</Page>
 		);
 	}

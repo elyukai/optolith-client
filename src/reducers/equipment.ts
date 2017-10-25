@@ -1,4 +1,4 @@
-import { AddArmorZonesAction, AddItemAction, AddItemTemplateAction, ApplyItemTemplateAction, CloseItemEditorAction, CreateItemAction, EditItemAction, LockItemTemplateAction, RemoveArmorZonesAction, RemoveItemAction, SaveItemAction, SetAmmunitionAction, SetAmountAction, SetArmorTypeAction, SetArmorZonesAction, SetAttackAction, SetCombatTechniqueAction, SetDamageDiceNumberAction, SetDamageDiceSidesAction, SetDamageFlatAction, SetDamageThresholdAction, SetDucatesAction, SetEncumbranceAction, SetFirstDamageThresholdAction, SetGroupAction, SetHellersAction, SetImprovisedWeaponGroupAction, SetInitiativeModifierAction, SetItemsSortOrderAction, SetKreutzersAction, SetLengthAction, SetLossAction, SetMovementModifierAction, SetNameAction, SetParryAction, SetPriceAction, SetPrimaryAttributeAction, SetProtectionAction, SetRangeAction, SetReachAction, SetReloadTimeAction, SetSecondDamageThresholdAction, SetSilverthalersAction, SetStabilityModifierAction, SetStructurePointsAction, SetTemplateAction, SetWeightAction, SetWhereAction, SwitchHasAdditionalPenaltiesAction, SwitchIsDamageThresholdSeparatedAction, SwitchIsForArmorZonesOnlyAction, SwitchIsImprovisedWeaponAction, SwitchIsParryingWeaponAction, SwitchIsTwoHandedWeaponAction, UnlockItemTemplateAction } from '../actions/EquipmentActions';
+import { AddArmorZonesAction, AddItemAction, AddItemTemplateAction, ApplyItemTemplateAction, CloseItemEditorAction, CreateItemAction, EditItemAction, LockItemTemplateAction, RemoveArmorZonesAction, RemoveItemAction, SaveItemAction, SetAmmunitionAction, SetAmountAction, SetArmorTypeAction, SetAttackAction, SetCombatTechniqueAction, SetDamageDiceNumberAction, SetDamageDiceSidesAction, SetDamageFlatAction, SetDamageThresholdAction, SetDucatesAction, SetEncumbranceAction, SetFirstDamageThresholdAction, SetGroupAction, SetHellersAction, SetImprovisedWeaponGroupAction, SetInitiativeModifierAction, SetItemsSortOrderAction, SetKreutzersAction, SetLengthAction, SetLossAction, SetMovementModifierAction, SetNameAction, SetParryAction, SetPriceAction, SetPrimaryAttributeAction, SetProtectionAction, SetRangeAction, SetReachAction, SetReloadTimeAction, SetSecondDamageThresholdAction, SetSilverthalersAction, SetStabilityModifierAction, SetStructurePointsAction, SetTemplateAction, SetWeightAction, SetWhereAction, SwitchHasAdditionalPenaltiesAction, SwitchIsDamageThresholdSeparatedAction, SwitchIsForArmorZonesOnlyAction, SwitchIsImprovisedWeaponAction, SwitchIsParryingWeaponAction, SwitchIsTwoHandedWeaponAction, UnlockItemTemplateAction, SetArmorZonesHeadAction, SetArmorZonesHeadLossAction, SetArmorZonesLeftArmAction, SetArmorZonesLeftArmLossAction, SetArmorZonesLeftLegAction, SetArmorZonesLeftLegLossAction, SetArmorZonesNameAction, SetArmorZonesRightArmAction, SetArmorZonesRightArmLossAction, SetArmorZonesRightLegAction, SetArmorZonesRightLegLossAction, SetArmorZonesTorsoAction, SetArmorZonesTorsoLossAction, CloseArmorZonesEditorAction, SaveArmorZonesAction, EditArmorZonesAction, CreateArmorZonesAction } from '../actions/EquipmentActions';
 import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import * as ActionTypes from '../constants/ActionTypes';
@@ -6,13 +6,14 @@ import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemEditorInstance, ItemI
 import { convertToEdit, convertToSave } from '../utils/ItemUtils';
 import { mergeIntoList, removeListItem, setListItem } from '../utils/ListUtils';
 
-type Action = AddItemAction | AddItemTemplateAction | CreateItemAction | EditItemAction | RemoveItemAction | LoadHeroAction | SaveItemAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | SetArmorZonesAction | CreateHeroAction | SetAmmunitionAction | SetAmountAction | SetArmorTypeAction | SetAttackAction | SetCombatTechniqueAction | SetDamageDiceNumberAction | SetDamageDiceSidesAction | SetDamageFlatAction | SetDamageThresholdAction | SetEncumbranceAction | SetFirstDamageThresholdAction | SetGroupAction | SetImprovisedWeaponGroupAction | SetInitiativeModifierAction | SetItemsSortOrderAction | SetLengthAction | SetLossAction | SetMovementModifierAction | SetNameAction | SetParryAction | SetPriceAction | SetPrimaryAttributeAction | SetProtectionAction | SetRangeAction | SetReachAction | SetReloadTimeAction | SetSecondDamageThresholdAction | SetStabilityModifierAction | SetStructurePointsAction | SetTemplateAction | SetWeightAction | SetWhereAction | SwitchHasAdditionalPenaltiesAction | SwitchIsDamageThresholdSeparatedAction | SwitchIsForArmorZonesOnlyAction | SwitchIsImprovisedWeaponAction | SwitchIsParryingWeaponAction | SwitchIsTwoHandedWeaponAction | ApplyItemTemplateAction | LockItemTemplateAction | UnlockItemTemplateAction | CloseItemEditorAction;
+type Action = AddItemAction | AddItemTemplateAction | CreateItemAction | EditItemAction | RemoveItemAction | LoadHeroAction | SaveItemAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | CreateHeroAction | SetAmmunitionAction | SetAmountAction | SetArmorTypeAction | SetAttackAction | SetCombatTechniqueAction | SetDamageDiceNumberAction | SetDamageDiceSidesAction | SetDamageFlatAction | SetDamageThresholdAction | SetEncumbranceAction | SetFirstDamageThresholdAction | SetGroupAction | SetImprovisedWeaponGroupAction | SetInitiativeModifierAction | SetItemsSortOrderAction | SetLengthAction | SetLossAction | SetMovementModifierAction | SetNameAction | SetParryAction | SetPriceAction | SetPrimaryAttributeAction | SetProtectionAction | SetRangeAction | SetReachAction | SetReloadTimeAction | SetSecondDamageThresholdAction | SetStabilityModifierAction | SetStructurePointsAction | SetTemplateAction | SetWeightAction | SetWhereAction | SwitchHasAdditionalPenaltiesAction | SwitchIsDamageThresholdSeparatedAction | SwitchIsForArmorZonesOnlyAction | SwitchIsImprovisedWeaponAction | SwitchIsParryingWeaponAction | SwitchIsTwoHandedWeaponAction | ApplyItemTemplateAction | LockItemTemplateAction | UnlockItemTemplateAction | CloseItemEditorAction | SetArmorZonesHeadAction | SetArmorZonesHeadLossAction | SetArmorZonesLeftArmAction | SetArmorZonesLeftArmLossAction | SetArmorZonesLeftLegAction | SetArmorZonesLeftLegLossAction | SetArmorZonesNameAction | SetArmorZonesRightArmAction | SetArmorZonesRightArmLossAction | SetArmorZonesRightLegAction | SetArmorZonesRightLegLossAction | SetArmorZonesTorsoAction | SetArmorZonesTorsoLossAction | CloseArmorZonesEditorAction | SaveArmorZonesAction | EditArmorZonesAction | CreateArmorZonesAction;
 
 export interface EquipmentState {
   items: Map<string, ItemInstance>;
   itemTemplates: Map<string, ItemInstance>;
   itemEditor?: ItemEditorInstance;
   isItemCreation?: boolean;
+  isArmorZonesCreation?: boolean;
   armorZones: Map<string, ArmorZonesInstance>;
   armorZoneEditor?: ArmorZonesEditorInstance;
   purse: Purse;
@@ -745,14 +746,250 @@ export function equipment(state: EquipmentState = initialState, action: Action):
       return state;
     }
 
-    case ActionTypes.ADD_ARMOR_ZONES:
-    case ActionTypes.SET_ARMOR_ZONES: {
-      const { data, id } = action.payload;
-      return { ...state, armorZones: setListItem(state.armorZones, id, { ...data, id }) };
+    case ActionTypes.ADD_ARMOR_ZONES: {
+      if (state.armorZoneEditor !== undefined) {
+        const { newId } = action.payload;
+        return {
+          ...state,
+          armorZones: setListItem(state.armorZones, newId, { ...state.armorZoneEditor, id: newId }),
+          armorZoneEditor: undefined,
+          isArmorZonesCreation: undefined
+        };
+      }
+      return state;
     }
 
-    case ActionTypes.REMOVE_ARMOR_ZONES:
-      return { ...state, armorZones: removeListItem(state.armorZones, action.payload.id) };
+    case ActionTypes.REMOVE_ARMOR_ZONES: {
+      return {
+        ...state,
+        armorZones: removeListItem(state.armorZones, action.payload.id)
+      };
+    }
+
+    case ActionTypes.CREATE_ARMOR_ZONES: {
+      return {
+        ...state,
+        armorZoneEditor: {
+          name: ''
+        },
+        isArmorZonesCreation: true
+      };
+    }
+
+    case ActionTypes.SAVE_ARMOR_ZONES: {
+      if (state.armorZoneEditor && state.armorZoneEditor.id) {
+        const id = state.armorZoneEditor.id;
+        return {
+          ...state,
+          armorZones: setListItem(state.armorZones, id, { ...state.armorZoneEditor, id }),
+          armorZoneEditor: undefined,
+          isArmorZonesCreation: undefined
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.EDIT_ARMOR_ZONES: {
+      const armorZone = state.armorZones.get(action.payload.id);
+      if (armorZone) {
+        return {
+          ...state,
+          armorZoneEditor: armorZone,
+          isArmorZonesCreation: false
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.CLOSE_ARMOR_ZONES_EDITOR: {
+      return {
+        ...state,
+        armorZoneEditor: undefined,
+        isArmorZonesCreation: undefined
+      };
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_NAME: {
+      const { value } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            name: value
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_HEAD: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            head: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            headLoss: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_LEFT_ARM: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            leftArm: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            leftArmLoss: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_LEFT_LEG: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            leftLeg: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            leftLegLoss: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_TORSO: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            torso: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            torsoLoss: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            rightArm: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            rightArmLoss: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            rightLeg: id
+          }
+        };
+      }
+      return state;
+    }
+
+    case ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS: {
+      const { id } = action.payload;
+      if (state.armorZoneEditor) {
+        return {
+          ...state,
+          armorZoneEditor: {
+            ...state.armorZoneEditor,
+            rightLegLoss: id
+          }
+        };
+      }
+      return state;
+    }
 
     case ActionTypes.LOAD_HERO:
       const { belongings: { items, purse, armorZones } } = action.payload.data;
