@@ -10,7 +10,6 @@ import { getStartEl } from '../selectors/elSelectors';
 import { getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getAttributes } from '../selectors/stateSelectors';
 import { getEquipmentSortOrder } from '../selectors/uisettingsSelectors';
-import { ItemInstance } from '../types/data.d';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
 
 function mapStateToProps(state: AppState) {
@@ -31,14 +30,17 @@ function mapStateToProps(state: AppState) {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
-		addToList(item: ItemInstance) {
-			dispatch(EquipmentActions._addToList(item));
-		},
+		addTemplateToList(id: string): void {
+      dispatch(EquipmentActions.addTemplateToList(id));
+    },
+		createItem(): void {
+      dispatch(EquipmentActions.createItem());
+    },
+		editItem(id: string): void {
+      dispatch(EquipmentActions.editItem(id));
+    },
 		deleteItem(id: string) {
 			dispatch(EquipmentActions._removeFromList(id));
-		},
-		set(id: string, item: ItemInstance) {
-			dispatch(EquipmentActions._set(id, item));
 		},
 		setSortOrder(option: string) {
 			dispatch(EquipmentActions._setSortOrder(option));
@@ -54,7 +56,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setKreutzers(value: string) {
 			dispatch(EquipmentActions._setKreutzers(value));
-		}
+		},
 	};
 }
 

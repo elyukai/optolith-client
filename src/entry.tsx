@@ -4,7 +4,7 @@ declare global {
 	}
 
 	interface EventTarget {
-		readonly value: string | number;
+		readonly value: string;
 		readonly files: FileList | null;
 		readonly result: string;
 	}

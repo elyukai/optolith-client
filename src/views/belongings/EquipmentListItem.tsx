@@ -8,11 +8,9 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { AttributeInstance, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
 import { sign, signNull } from '../../utils/NumberUtils';
-import { ItemEditor } from './ItemEditor';
 
 export interface EquipmentListItemProps {
 	add?: boolean;
@@ -21,13 +19,13 @@ export interface EquipmentListItemProps {
 	data: ItemInstance;
 	locale: UIMessages;
 	templates: ItemInstance[];
-	addToList(item: ItemInstance): void;
+	addTemplateToList(id: string): void;
 	deleteItem(id: string): void;
-	set(id: string, item: ItemInstance): void;
+	editItem(id: string): void;
 }
 
 export function EquipmentListItem(props: EquipmentListItemProps) {
-	const { add, addToList, attributes, combatTechniques, data, deleteItem, locale, templates } = props;
+	const { add, addTemplateToList, attributes, combatTechniques, data, deleteItem, editItem, locale, templates } = props;
 	const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties, amount } = data;
 	const ammunitionTemplate = typeof ammunition === 'string' && templates.find(e => e.id === ammunition);
 
@@ -172,7 +170,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 					<ListItemButtons>
 						<IconButton
 							icon="&#xE145;"
-							onClick={() => addToList(data)}
+							onClick={() => addTemplateToList(data.id)}
 							flat
 							/>
 					</ListItemButtons>
@@ -185,11 +183,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 					<ListItemButtons>
 						<IconButton
 							icon="&#xE254;"
-							onClick={function showItemCreation() {
-								createOverlay(
-									<ItemEditor {...props} item={data} />
-								);
-							}}
+							onClick={() => editItem(data.id)}
 							flat
 							/>
 						<IconButton

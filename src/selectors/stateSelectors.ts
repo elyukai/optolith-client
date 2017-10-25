@@ -50,4 +50,7 @@ export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.pr
 
 export const getPhase = (state: AppState) => state.currentHero.present.phase;
 
+export const getItemEditorInstance = (state: AppState) => state.currentHero.present.equipment.itemEditor;
+export const getIsItemCreation = (state: AppState) => state.currentHero.present.equipment.isItemCreation;
+
 export const getAlerts = (state: AppState) => state.ui.alerts;

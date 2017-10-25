@@ -315,7 +315,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 		}
 
 		if (typeof customCost === 'string' && isInteger(customCost)) {
-			currentCost = Number.parseInt(customCost);
+			currentCost = Math.abs(Number.parseInt(customCost));
 		}
 
 		if (category === Categories.DISADVANTAGES && currentCost) {

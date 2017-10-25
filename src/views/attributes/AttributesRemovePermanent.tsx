@@ -4,7 +4,7 @@ import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
-import { isInteger } from '../../utils/RegexUtils';
+import { isNaturalNumber } from '../../utils/RegexUtils';
 
 export interface AttributesRemovePermanentProps extends DialogProps {
 	locale: UIMessages;
@@ -34,7 +34,7 @@ export class AttributesRemovePermanent extends React.Component<AttributesRemoveP
 				title={_translate(locale, 'removepermanentenergypoints.title')}
 				buttons={[
 					{
-						disabled: !isInteger(this.state.value),
+						disabled: !isNaturalNumber(this.state.value),
 						label: _translate(locale, 'modal.actions.remove'),
 						onClick: this.remove,
 					},

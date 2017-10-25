@@ -1,9 +1,10 @@
 #item-editor, #armor-zones-editor {
 	.modal-container {
-		// width: 820px;
 		width: auto;
-		// height: 250px;
-		// height: 740px;
+
+		.modal-content {
+			width: auto;
+		}
 
 		.modal-content-inner {
 			display: flex;

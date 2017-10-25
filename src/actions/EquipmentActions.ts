@@ -1,28 +1,94 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { AsyncAction } from '../types/actions.d';
-import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance } from '../types/data.d';
+import { ArmorZonesEditorInstance, ArmorZonesInstance } from '../types/data.d';
 import { getNewId } from '../utils/IDUtils';
 
 export interface AddItemAction {
 	type: ActionTypes.ADD_ITEM;
 	payload: {
-		id: string;
-		data: ItemInstance;
+		newId: string;
 	};
 }
 
-export function _addToList(data: ItemInstance): AsyncAction {
+export function addToList(): AsyncAction {
 	return (dispatch, getState) => {
 		const { items } = getState().currentHero.present.equipment;
-		const id = `ITEM_${getNewId([...items.keys()])}`;
+		const newId = `ITEM_${getNewId([...items.keys()])}`;
 		dispatch({
 			type: ActionTypes.ADD_ITEM,
 			payload: {
-				id,
-				data
+				newId
 			}
 		} as AddItemAction);
 	};
+}
+
+export interface AddItemTemplateAction {
+	type: ActionTypes.ADD_ITEM_TEMPLATE;
+	payload: {
+		id: string;
+		newId: string;
+	};
+}
+
+export function addTemplateToList(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { items } = getState().currentHero.present.equipment;
+		const newId = `ITEM_${getNewId([...items.keys()])}`;
+		dispatch({
+			type: ActionTypes.ADD_ITEM_TEMPLATE,
+			payload: {
+				id,
+				newId
+			}
+		} as AddItemTemplateAction);
+	};
+}
+
+export interface CreateItemAction {
+	type: ActionTypes.CREATE_ITEM;
+}
+
+export function createItem(): CreateItemAction {
+	return {
+		type: ActionTypes.CREATE_ITEM
+	};
+}
+
+export interface CloseItemEditorAction {
+	type: ActionTypes.CLOSE_ITEM_EDITOR;
+}
+
+export function closeItemEditor(): CloseItemEditorAction {
+	return {
+		type: ActionTypes.CLOSE_ITEM_EDITOR
+	};
+}
+
+export interface SaveItemAction {
+	type: ActionTypes.SAVE_ITEM;
+}
+
+export function saveItem(): SaveItemAction {
+	return {
+		type: ActionTypes.SAVE_ITEM
+	};
+}
+
+export interface EditItemAction {
+	type: ActionTypes.EDIT_ITEM;
+	payload: {
+		id: string;
+	};
+}
+
+export function editItem(id: string): EditItemAction {
+	return {
+			type: ActionTypes.EDIT_ITEM,
+			payload: {
+				id
+			}
+		};
 }
 
 export interface AddArmorZonesAction {
@@ -44,24 +110,6 @@ export function _addArmorZonesToList(data: ArmorZonesEditorInstance): AsyncActio
 				data
 			}
 		} as AddArmorZonesAction);
-	};
-}
-
-export interface SetItemAction {
-	type: ActionTypes.SET_ITEM;
-	payload: {
-		id: string;
-		data: ItemInstance;
-	};
-}
-
-export function _set(id: string, data: ItemInstance): SetItemAction {
-	return {
-		type: ActionTypes.SET_ITEM,
-		payload: {
-			id,
-			data
-		}
 	};
 }
 
@@ -192,5 +240,593 @@ export function _setKreutzers(value: string): SetKreutzersAction {
 		payload: {
 			value
 		}
+	};
+}
+
+export interface SetNameAction {
+	type: ActionTypes.SET_ITEM_NAME;
+	payload: {
+		value: string;
+	};
+}
+
+export function setName(value: string): SetNameAction {
+	return {
+		type: ActionTypes.SET_ITEM_NAME,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetPriceAction {
+	type: ActionTypes.SET_ITEM_PRICE;
+	payload: {
+		value: string;
+	};
+}
+
+export function setPrice(value: string): SetPriceAction {
+	return {
+		type: ActionTypes.SET_ITEM_PRICE,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetWeightAction {
+	type: ActionTypes.SET_ITEM_WEIGHT;
+	payload: {
+		value: string;
+	};
+}
+
+export function setWeight(value: string): SetWeightAction {
+	return {
+		type: ActionTypes.SET_ITEM_WEIGHT,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetAmountAction {
+	type: ActionTypes.SET_ITEM_AMOUNT;
+	payload: {
+		value: string;
+	};
+}
+
+export function setAmount(value: string): SetAmountAction {
+	return {
+		type: ActionTypes.SET_ITEM_AMOUNT,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetWhereAction {
+	type: ActionTypes.SET_ITEM_WHERE;
+	payload: {
+		value: string;
+	};
+}
+
+export function setWhere(value: string): SetWhereAction {
+	return {
+		type: ActionTypes.SET_ITEM_WHERE,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetGroupAction {
+	type: ActionTypes.SET_ITEM_GROUP;
+	payload: {
+		gr: number;
+	};
+}
+
+export function setGroup(gr: number): SetGroupAction {
+	return {
+		type: ActionTypes.SET_ITEM_GROUP,
+		payload: {
+			gr
+		}
+	};
+}
+
+export interface SetTemplateAction {
+	type: ActionTypes.SET_ITEM_TEMPLATE;
+	payload: {
+		template: string;
+	};
+}
+
+export function setTemplate(template: string): SetTemplateAction {
+	return {
+		type: ActionTypes.SET_ITEM_TEMPLATE,
+		payload: {
+			template
+		}
+	};
+}
+
+export interface SetCombatTechniqueAction {
+	type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE;
+	payload: {
+		id: string;
+	};
+}
+
+export function setCombatTechnique(id: string): SetCombatTechniqueAction {
+	return {
+		type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetDamageDiceNumberAction {
+	type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER;
+	payload: {
+		value: string;
+	};
+}
+
+export function setDamageDiceNumber(value: string): SetDamageDiceNumberAction {
+	return {
+		type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetDamageDiceSidesAction {
+	type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES;
+	payload: {
+		value: number;
+	};
+}
+
+export function setDamageDiceSides(value: number): SetDamageDiceSidesAction {
+	return {
+		type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetDamageFlatAction {
+	type: ActionTypes.SET_ITEM_DAMAGE_FLAT;
+	payload: {
+		value: string;
+	};
+}
+
+export function setDamageFlat(value: string): SetDamageFlatAction {
+	return {
+		type: ActionTypes.SET_ITEM_DAMAGE_FLAT,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetPrimaryAttributeAction {
+	type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE;
+	payload: {
+		primary: string | undefined;
+	};
+}
+
+export function setPrimaryAttribute(primary: string | undefined): SetPrimaryAttributeAction {
+	return {
+		type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
+		payload: {
+			primary
+		}
+	};
+}
+
+export interface SetDamageThresholdAction {
+	type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD;
+	payload: {
+		value: string;
+	};
+}
+
+export function setDamageThreshold(value: string): SetDamageThresholdAction {
+	return {
+		type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetFirstDamageThresholdAction {
+	type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD;
+	payload: {
+		value: string;
+	};
+}
+
+export function setFirstDamageThreshold(value: string): SetFirstDamageThresholdAction {
+	return {
+		type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetSecondDamageThresholdAction {
+	type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD;
+	payload: {
+		value: string;
+	};
+}
+
+export function setSecondDamageThreshold(value: string): SetSecondDamageThresholdAction {
+	return {
+		type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SwitchIsDamageThresholdSeparatedAction {
+	type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED;
+}
+
+export function switchIsDamageThresholdSeparated(): SwitchIsDamageThresholdSeparatedAction {
+	return {
+		type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
+	};
+}
+
+export interface SetAttackAction {
+	type: ActionTypes.SET_ITEM_ATTACK;
+	payload: {
+		value: string;
+	};
+}
+
+export function setAttack(value: string): SetAttackAction {
+	return {
+		type: ActionTypes.SET_ITEM_ATTACK,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetParryAction {
+	type: ActionTypes.SET_ITEM_PARRY;
+	payload: {
+		value: string;
+	};
+}
+
+export function setParry(value: string): SetParryAction {
+	return {
+		type: ActionTypes.SET_ITEM_PARRY,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetReachAction {
+	type: ActionTypes.SET_ITEM_REACH;
+	payload: {
+		id: number;
+	};
+}
+
+export function setReach(id: number): SetReachAction {
+	return {
+		type: ActionTypes.SET_ITEM_REACH,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetLengthAction {
+	type: ActionTypes.SET_ITEM_LENGTH;
+	payload: {
+		value: string;
+	};
+}
+
+export function setLength(value: string): SetLengthAction {
+	return {
+		type: ActionTypes.SET_ITEM_LENGTH,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetStructurePointsAction {
+	type: ActionTypes.SET_ITEM_STRUCTURE_POINTS;
+	payload: {
+		value: string;
+	};
+}
+
+export function setStructurePoints(value: string): SetStructurePointsAction {
+	return {
+		type: ActionTypes.SET_ITEM_STRUCTURE_POINTS,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetRangeAction {
+	type: ActionTypes.SET_ITEM_RANGE;
+	payload: {
+		value: string;
+		index: number;
+	};
+}
+
+export function setRange(value: string, index: number): SetRangeAction {
+	return {
+		type: ActionTypes.SET_ITEM_RANGE,
+		payload: {
+			value,
+			index
+		}
+	};
+}
+
+export interface SetReloadTimeAction {
+	type: ActionTypes.SET_ITEM_RELOAD_TIME;
+	payload: {
+		value: string;
+	};
+}
+
+export function setReloadTime(value: string): SetReloadTimeAction {
+	return {
+		type: ActionTypes.SET_ITEM_RELOAD_TIME,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetAmmunitionAction {
+	type: ActionTypes.SET_ITEM_AMMUNITION;
+	payload: {
+		id: string;
+	};
+}
+
+export function setAmmunition(id: string): SetAmmunitionAction {
+	return {
+		type: ActionTypes.SET_ITEM_AMMUNITION,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SetProtectionAction {
+	type: ActionTypes.SET_ITEM_PROTECTION;
+	payload: {
+		value: string;
+	};
+}
+
+export function setProtection(value: string): SetProtectionAction {
+	return {
+		type: ActionTypes.SET_ITEM_PROTECTION,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetEncumbranceAction {
+	type: ActionTypes.SET_ITEM_ENCUMBRANCE;
+	payload: {
+		value: string;
+	};
+}
+
+export function setEncumbrance(value: string): SetEncumbranceAction {
+	return {
+		type: ActionTypes.SET_ITEM_ENCUMBRANCE,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetMovementModifierAction {
+	type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER;
+	payload: {
+		value: string;
+	};
+}
+
+export function setMovementModifier(value: string): SetMovementModifierAction {
+	return {
+		type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetInitiativeModifierAction {
+	type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER;
+	payload: {
+		value: string;
+	};
+}
+
+export function setInitiativeModifier(value: string): SetInitiativeModifierAction {
+	return {
+		type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SetStabilityModifierAction {
+	type: ActionTypes.SET_ITEM_STABILITY_MODIFIER;
+	payload: {
+		value: string;
+	};
+}
+
+export function setStabilityModifier(value: string): SetStabilityModifierAction {
+	return {
+		type: ActionTypes.SET_ITEM_STABILITY_MODIFIER,
+		payload: {
+			value
+		}
+	};
+}
+
+export interface SwitchIsParryingWeaponAction {
+	type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON;
+}
+
+export function switchIsParryingWeapon(): SwitchIsParryingWeaponAction {
+	return {
+		type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON
+	};
+}
+
+export interface SwitchIsTwoHandedWeaponAction {
+	type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON;
+}
+
+export function switchIsTwoHandedWeapon(): SwitchIsTwoHandedWeaponAction {
+	return {
+		type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON
+	};
+}
+
+export interface SwitchIsImprovisedWeaponAction {
+	type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON;
+}
+
+export function switchIsImprovisedWeapon(): SwitchIsImprovisedWeaponAction {
+	return {
+		type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON
+	};
+}
+
+export interface SetImprovisedWeaponGroupAction {
+	type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP;
+	payload: {
+		gr: number;
+	};
+}
+
+export function setImprovisedWeaponGroup(gr: number): SetImprovisedWeaponGroupAction {
+	return {
+		type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP,
+		payload: {
+			gr
+		}
+	};
+}
+
+export interface SetLossAction {
+	type: ActionTypes.SET_ITEM_LOSS;
+	payload: {
+		id: number | undefined;
+	};
+}
+
+export function setLoss(id: number | undefined): SetLossAction {
+	return {
+		type: ActionTypes.SET_ITEM_LOSS,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface SwitchIsForArmorZonesOnlyAction {
+	type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY;
+}
+
+export function switchIsForArmorZonesOnly(): SwitchIsForArmorZonesOnlyAction {
+	return {
+		type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY
+	};
+}
+
+export interface SwitchHasAdditionalPenaltiesAction {
+	type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES;
+}
+
+export function setHasAdditionalPenalties(): SwitchHasAdditionalPenaltiesAction {
+	return {
+		type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES
+	};
+}
+
+export interface SetArmorTypeAction {
+	type: ActionTypes.SET_ITEM_ARMOR_TYPE;
+	payload: {
+		id: number;
+	};
+}
+
+export function setArmorType(id: number): SetArmorTypeAction {
+	return {
+		type: ActionTypes.SET_ITEM_ARMOR_TYPE,
+		payload: {
+			id
+		}
+	};
+}
+
+export interface ApplyItemTemplateAction {
+	type: ActionTypes.APPLY_ITEM_TEMPLATE;
+}
+
+export function applyItemTemplate(): ApplyItemTemplateAction {
+	return {
+		type: ActionTypes.APPLY_ITEM_TEMPLATE
+	};
+}
+
+export interface LockItemTemplateAction {
+	type: ActionTypes.LOCK_ITEM_TEMPLATE;
+}
+
+export function lockItemTemplate(): LockItemTemplateAction {
+	return {
+		type: ActionTypes.LOCK_ITEM_TEMPLATE
+	};
+}
+
+export interface UnlockItemTemplateAction {
+	type: ActionTypes.UNLOCK_ITEM_TEMPLATE;
+}
+
+export function unlockItemTemplate(): UnlockItemTemplateAction {
+	return {
+		type: ActionTypes.UNLOCK_ITEM_TEMPLATE
 	};
 }

@@ -4,10 +4,12 @@ import { EquipmentState } from '../reducers/equipment';
 import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data.d';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
+import { sortObjects } from '../utils/FilterSortUtils';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
 import { getHigherParadeValues } from './rulesSelectors';
+import { getLocaleMessages } from './stateSelectors';
 
 export function getForSave(state: EquipmentState) {
 	const { armorZones, items, purse } = state;
@@ -69,6 +71,12 @@ export function getFullItem(items: Map<string, ItemInstance>, templates: Map<str
 export const getTemplates = createSelector(
 	getItemTemplatesState,
 	templates => [...templates.values()]
+);
+
+export const getSortedTemplates = createSelector(
+	getTemplates,
+	getLocaleMessages,
+	(templates, locale) => sortObjects(templates, locale!.id)
 );
 
 export const getItems = createSelector(

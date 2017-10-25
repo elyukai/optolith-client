@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SubTabs } from '../../components/SubTabs';
 import { ArmorZonesContainer } from '../../containers/ArmorZones';
 import { EquipmentContainer } from '../../containers/Equipment';
+import { ItemEditorContainer } from '../../containers/ItemEditor';
 import { PetsContainer } from '../../containers/Pets';
 import { _translate, UIMessages } from '../../utils/I18n';
 
@@ -68,6 +69,7 @@ export class Belongings extends React.Component<BelongingsProps, BelongingsState
 					onClick={this.handleClick}
 					/>
 				{element}
+				<ItemEditorContainer locale={locale} />
 			</section>
 		);
 	}

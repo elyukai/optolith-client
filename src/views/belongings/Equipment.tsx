@@ -12,11 +12,9 @@ import { TextField } from '../../components/TextField';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
-import { createOverlay } from '../../utils/createOverlay';
 import { filterAndSortObjects, sortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
-import { ItemEditor } from './ItemEditor';
 
 export interface EquipmentOwnProps {
 	locale: UIMessages;
@@ -37,14 +35,15 @@ export interface EquipmentStateProps {
 }
 
 export interface EquipmentDispatchProps {
-	addToList(item: ItemInstance): void;
-	deleteItem(id: string): void;
-	set(id: string, item: ItemInstance): void;
 	setSortOrder(option: string): void;
 	setDucates(value: string): void;
 	setSilverthalers(value: string): void;
 	setHellers(value: string): void;
 	setKreutzers(value: string): void;
+	addTemplateToList(id: string): void;
+	createItem(): void;
+	deleteItem(id: string): void;
+	editItem(id: string): void;
 }
 
 export type EquipmentProps = EquipmentStateProps & EquipmentDispatchProps & EquipmentOwnProps;
@@ -75,12 +74,6 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as EquipmentState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as EquipmentState);
-
-	showItemCreation = () => {
-		createOverlay(
-			<ItemEditor {...this.props} create />
-		);
-	}
 
 	render() {
 		const { carryingCapacity, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight } = this.props;
@@ -139,7 +132,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 						locale={locale}
 						/>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
-					<BorderButton label={_translate(locale, 'equipment.actions.create')} onClick={this.showItemCreation} />
+					<BorderButton label={_translate(locale, 'equipment.actions.create')} onClick={this.props.createItem} />
 				</Options>
 				<Scroll>
 					<List>
