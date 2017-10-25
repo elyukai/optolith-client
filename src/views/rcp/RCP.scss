@@ -73,7 +73,7 @@
 					align-items: center;
 
 					&:not(.disabled):hover {
-						background: var(--separator-color-halftransparent);
+						background: var(--separator-color-transparent);
 					}
 
 					> .checkbox {
@@ -86,11 +86,11 @@
 						&.disabled {
 							.icon {
 								.border {
-									border: 1px solid var(--separator-color-halftransparent);
+									border: 1px solid var(--separator-color-transparent);
 								}
 
 								.hook {
-									border-color: var(--separator-color-halftransparent);
+									border-color: var(--separator-color-transparent);
 								}
 							}
 
@@ -132,10 +132,10 @@
 							> div {
 								> .value {
 									color: var(--separator-color-halftransparent);
-									border-color: var(--separator-color-halftransparent);
+									border-color: var(--separator-color-transparent);
 
 									&::before, &::after {
-										border-color: var(--separator-color-halftransparent);
+										border-color: var(--separator-color-transparent);
 									}
 								}
 							}

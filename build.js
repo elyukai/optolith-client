@@ -29,7 +29,7 @@ async function build() {
 			arch: ['ia32', 'x64'],
 			platform: 'win32'
 		});
-		const linuxPaths = await packagerAsync({
+		const linuxPaths = process.argv.includes('test') ? [] : await packagerAsync({
 			...options,
 			arch: 'x64',
 			platform: 'linux'

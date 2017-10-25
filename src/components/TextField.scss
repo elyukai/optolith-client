@@ -49,16 +49,16 @@
 		pointer-events: none;
 
 		.textfield-hint {
-			color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
 		}
 
 		label {
-			color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
 		}
 
 		input, textarea {
 			border-color: var(--separator-color-transparent);
-			color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
 		}
 	}
 

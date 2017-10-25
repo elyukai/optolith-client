@@ -12,12 +12,12 @@
 	&.disabled {
 		border-color: var(--separator-color-transparent);
 		background: none;
-		color: var(--separator-color-transparent);
+		color: var(--separator-color-halftransparent);
 		pointer-events: none;
 
 		&:hover {
 			border-color: var(--separator-color-transparent);
-			color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
 		}
 	}
 
