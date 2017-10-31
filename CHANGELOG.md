@@ -1,3 +1,9 @@
+# 0.50.0
+
+- Custom AP cost possible for advantages and disadvantages.
+- Fixed ItemEditor's and ArmorZonesEditor's theming and layout.
+- Slightly brightened the color for disabled elements.
+
 # 0.49.6
 
 - Fixed dis/advantages from **Aventurian Magic I**.
