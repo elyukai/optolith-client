@@ -15,7 +15,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { requestInitialData } from './actions/FileActions';
+import { requestInitialData } from './actions/IOActions';
 import { AppContainer } from './containers/App';
 import { app } from './reducers/app';
 

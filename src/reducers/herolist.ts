@@ -1,5 +1,5 @@
-import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, DeleteHeroAction, DuplicateHeroAction, LoadHeroAction, SaveHeroAction } from '../actions/HerolistActions';
+import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Hero, User } from '../types/data.d';
 import { removeListItem, setListItem } from '../utils/ListUtils';

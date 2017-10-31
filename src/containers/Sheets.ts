@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
+import * as IOActions from '../actions/IOActions';
 import * as SheetActions from '../actions/SheetActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../selectors/activatableSelectors';
@@ -70,6 +71,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		switchAttributeValueVisibility() {
 			dispatch(SheetActions._switchAttributeValueVisibility());
+		},
+		printToPDF() {
+			dispatch(IOActions.requestPrintHeroToPDF());
 		}
 	};
 }

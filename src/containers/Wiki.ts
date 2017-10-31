@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import { setWikiCategory1, setWikiCategory2, setWikiFilter, setWikiFilterAll } from '../actions/WikiActions';
 import { AppState } from '../reducers/app';
 import { getWikiCategory1, getWikiCategory2, getWikiFilter, getWikiFilterAll } from '../selectors/stateSelectors';

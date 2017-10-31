@@ -1,0 +1,26 @@
+<hero>
+	<version>0.49.5</version>
+	<name>Tauriel</name>
+	<phase>3</phase>
+	<ap>
+		<total>1104</total>
+		<spent>1064</spent>
+		<advantages>
+			<mundane>68</mundane>
+			<magical>0</magical>
+			<blessed>0</blessed>
+		</advantages>
+		<disadvantages>
+			<mundane>39</mundane>
+			<magical>5</magical>
+			<blessed>0</blessed>
+		</disadvantages>
+	</ap>
+	<experienceLevel>Erfahren</experienceLevel>
+	<race>Auelf</race>
+	<culture>Auelfen</culture>
+	<profession>Wildnisläuferin</profession>
+	<sex>Weiblich</sex>
+</hero>
+
+<!-- "pers":{"eyecolor":14,"haircolor":1,"age":"27","weight":"62","size":"174","socialstatus":2},"attr":{"values":[["ATTR_1",12,0],["ATTR_2",12,0],["ATTR_3",15,1],["ATTR_4",13,0],["ATTR_5",13,0],["ATTR_6",15,1],["ATTR_7",12,0],["ATTR_8",8,-2]],"ae":1,"kp":0,"lp":0,"permanentAE":{"lost":0,"redeemed":0},"permanentKP":{"lost":0,"redeemed":0}},"activatable":{"ADV_2":[{}],"ADV_6":[{"tier":1}],"ADV_34":[{}],"ADV_47":[{"sid":"CT_2"}],"ADV_48":[{}],"ADV_50":[{}],"ADV_52":[{}],"DISADV_1":[{"sid":7,"tier":1}],"DISADV_19":[{}],"DISADV_33":[{"sid":8}],"DISADV_37":[{"sid":8}],"DISADV_43":[{}],"DISADV_48":[{"sid":"TAL_14"}],"SA_9":[{"sid":"TAL_24","sid2":3}],"SA_29":[{"sid":10,"tier":4},{"sid":8,"tier":1}],"SA_70":[{"sid":3}]},"talents":{"TAL_4":6,"TAL_7":4,"TAL_9":6,"TAL_10":5,"TAL_13":5,"TAL_16":1,"TAL_24":9,"TAL_26":2,"TAL_27":5,"TAL_28":6,"TAL_29":6,"TAL_30":8,"TAL_44":1,"TAL_50":4,"TAL_51":5,"TAL_56":6},"ct":{"CT_2":11,"CT_3":8},"spells":{"SPELL_3":6,"SPELL_4":2,"SPELL_5":2,"SPELL_14":12,"SPELL_30":3,"SPELL_39":6,"SPELL_44":5,"SPELL_45":3,"SPELL_64":4},"cantrips":["CANTRIP_4"],"liturgies":{},"blessings":[],"belongings":{"items":{},"armorZones":{},"purse":{"d":"0","h":"0","k":"0","s":"0"}},"rules":{"higherParadeValues":0,"attributeValueLimit":false},"pets":{},"id":"H_1507582508853","dateCreated":"2017-10-09T16:48:07.184Z","dateModified":"2017-10-09T21:08:33.703Z"}} -->

@@ -1,5 +1,5 @@
-import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { ExperienceLevel } from '../types/data.d';
 

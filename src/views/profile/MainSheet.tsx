@@ -7,7 +7,6 @@ import { ProfileState } from '../../reducers/profile';
 import * as Data from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import * as View from '../../types/view.d';
-import { printToPDF } from '../../utils/FileAPIUtils';
 import { _translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
 import { MainSheetAttributes } from './MainSheetAttributes';
@@ -30,6 +29,7 @@ export interface MainSheetProps {
 	professionVariant: Data.ProfessionVariantInstance | undefined;
 	profile: ProfileState;
 	race: Data.RaceInstance | undefined;
+	printToPDF(): void;
 }
 
 export function MainSheet(props: MainSheetProps) {
@@ -47,6 +47,7 @@ export function MainSheet(props: MainSheetProps) {
 		professionVariant,
 		profile,
 		locale,
+		printToPDF,
 		race
 	} = props;
 	return (
@@ -55,7 +56,7 @@ export function MainSheet(props: MainSheetProps) {
 				<BorderButton
 					className="print-document"
 					label={_translate(locale, 'charactersheet.actions.printtopdf')}
-					onClick={() => printToPDF(locale)}
+					onClick={() => printToPDF()}
 					/>
 			</Options>
 			<Sheet

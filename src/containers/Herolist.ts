@@ -1,7 +1,7 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
-import * as FileActions from '../actions/FileActions';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
+import * as IOActions from '../actions/IOActions';
 import * as LocationActions from '../actions/LocationActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
@@ -22,7 +22,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>, props: HerolistOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
@@ -34,7 +34,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, props: HerolistOwnProps)
 		},
 		saveHeroAsJSON(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.exportHeroValidate(id, props.locale));
+				dispatch(HerolistActions.exportHeroValidate(id));
 			}
 		},
 		deleteHero(id?: string) {
@@ -51,7 +51,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, props: HerolistOwnProps)
 			dispatch(HerolistActions._createHero(name, sex, el));
 		},
 		importHero() {
-			dispatch(FileActions.requestHeroImport(props.locale));
+			dispatch(IOActions.requestHeroImport());
 		},
 		setSortOrder(id: string) {
 			dispatch(HerolistActions._setSortOrder(id));

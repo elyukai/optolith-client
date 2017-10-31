@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as CultureActions from '../actions/CultureActions';
 import { AppState } from '../reducers/app';
 import { getAllCultures, getCommonCultures, getCurrentCultureId } from '../selectors/rcpSelectors';

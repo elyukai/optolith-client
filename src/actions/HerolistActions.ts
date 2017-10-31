@@ -1,14 +1,13 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getMessages } from '../selectors/localeSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { Hero, UIMessages } from '../types/data.d';
+import { Hero } from '../types/data.d';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
-import { requestHeroExport } from './FileActions';
+import { requestHeroesSave, requestHeroExport, requestSaveAll } from './IOActions';
 import { _setSection } from './LocationActions';
-import { requestHeroesSave, requestSaveAll } from './PlatformActions';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -173,9 +172,9 @@ export function _saveHero(): AsyncAction {
 	};
 }
 
-export function exportHeroValidate(id: string, locale: UIMessages): AsyncAction {
+export function exportHeroValidate(id: string): AsyncAction {
 	return dispatch => {
-		dispatch(requestHeroExport(id, locale));
+		dispatch(requestHeroExport(id));
 	};
 }
 

@@ -1,5 +1,5 @@
-import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
+import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { SetHigherParadeValuesAction, SwitchAttributeValueLimitAction } from '../actions/RulesActions';
 import * as ActionTypes from '../constants/ActionTypes';
 

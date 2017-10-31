@@ -1,5 +1,5 @@
 import { AppState } from '../reducers/app';
-import { getSystemLocale as getSystemLocaleAPI } from '../utils/FileAPIUtils';
+import { getSystemLocale as getSystemLocaleAPI } from '../utils/IOUtils';
 
 export const getMessages = (state: AppState) => state.locale.messages;
 export const getLocaleId = (state: AppState) => state.locale.id;

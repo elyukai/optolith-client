@@ -63,6 +63,7 @@ export interface SheetsStateProps {
 }
 
 export interface SheetsDispatchProps {
+	printToPDF(): void;
 	switchAttributeValueVisibility(): void;
 }
 

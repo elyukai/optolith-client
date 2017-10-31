@@ -1,4 +1,4 @@
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../reducers/app';
 
-export type AsyncAction = ThunkAction<void, AppState, undefined>;
+export type AsyncAction<R = void> = ThunkAction<R, AppState, undefined>;

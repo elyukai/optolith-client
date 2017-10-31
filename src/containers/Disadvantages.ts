@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';

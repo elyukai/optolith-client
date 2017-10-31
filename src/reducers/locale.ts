@@ -1,4 +1,4 @@
-import { ReceiveInitialDataAction } from '../actions/FileActions';
+import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { SetLocaleAction } from '../actions/LocaleActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Book } from '../types/data.d';
@@ -21,10 +21,10 @@ const initialState: LocaleState = {
 export function locale(state: LocaleState = initialState, action: Action): LocaleState {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_INITIAL_DATA: {
-			const id = action.payload.config.locale || action.payload.defaultLocale;
+			const id = action.payload.config && action.payload.config.locale || action.payload.defaultLocale;
 			return {
 				...state,
-				type: action.payload.config.locale ? 'set' : 'default',
+				type: action.payload.config && action.payload.config.locale ? 'set' : 'default',
 				id,
 				messages: action.payload.locales[id].ui
 			};

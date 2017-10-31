@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
 import { AppState } from '../reducers/app';

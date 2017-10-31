@@ -1,5 +1,5 @@
-import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { RedoAction, UndoAction } from '../actions/HistoryActions';
+import { ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getLocaleId } from '../selectors/stateSelectors';
 import { getCurrentTab, getPhase } from '../selectors/stateSelectors';

@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../actions/AttributesActions';
 import { AppState } from '../reducers/app';
 import { getForView, getSum } from '../selectors/attributeSelectors';

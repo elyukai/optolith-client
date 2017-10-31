@@ -16,8 +16,8 @@ export interface WikiOwnProps {
 export interface WikiStateProps {
 	filterText: string;
 	filterAllText: string;
-	category1: string;
-	category2: string;
+	category1: string | undefined;
+	category2: string | undefined;
 }
 
 export interface WikiDispatchProps {

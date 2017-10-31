@@ -434,7 +434,7 @@ export interface Config {
 }
 
 export interface Raw {
-	config: Config;
+	config?: Config;
 	heroes: RawHerolist;
 	tables: RawTables;
 	locales: Data.ToListById<RawLocale>;

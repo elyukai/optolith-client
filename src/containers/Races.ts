@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as RaceActions from '../actions/RaceActions';
 import { AppState } from '../reducers/app';
 import { getAllRaces, getCurrentRaceId } from '../selectors/rcpSelectors';

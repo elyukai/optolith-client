@@ -3,8 +3,8 @@ import { SetThemeAction, SwitchEnableActiveItemHintsAction } from '../actions/Co
 import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction, SwitchCultureValueVisibilityAction } from '../actions/CultureActions';
 import { SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
 import { SetItemsSortOrderAction } from '../actions/EquipmentActions';
-import { ReceiveInitialDataAction } from '../actions/FileActions';
 import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
+import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { SetLiturgiesSortOrderAction } from '../actions/LiturgiesActions';
 import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction, SwitchProfessionsExpansionVisibilityFilterAction } from '../actions/ProfessionActions';
 import { SetRacesSortOrderAction, SwitchRaceValueVisibilityAction } from '../actions/RaceActions';
@@ -73,8 +73,11 @@ const initialState: UISettingsState = {
 export function uisettings(state: UISettingsState = initialState, action: Action): UISettingsState {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_INITIAL_DATA: {
-			const { locale: _, sheetCheckAttributeValueVisibility = false, theme = 'dark', ...config } = action.payload.config;
-			return { ...config, sheetCheckAttributeValueVisibility, theme };
+			if (action.payload.config) {
+				const { locale: _, sheetCheckAttributeValueVisibility = false, theme = 'dark', ...config } = action.payload.config;
+				return { ...state, ...config, sheetCheckAttributeValueVisibility, theme };
+			}
+			return state;
 		}
 
 		case ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY:

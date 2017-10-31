@@ -6,7 +6,7 @@ import * as HistoryActions from '../actions/HistoryActions';
 import * as InGameActions from '../actions/InGameActions';
 import * as LocaleActions from '../actions/LocaleActions';
 import * as LocationActions from '../actions/LocationActions';
-import * as PlatformActions from '../actions/PlatformActions';
+import * as IOActions from '../actions/IOActions';
 import { AppState } from '../reducers/app';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getCurrentHeroPresent, getLocaleId, getLocaleType } from '../selectors/stateSelectors';
@@ -45,7 +45,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(HistoryActions.redo());
 		},
 		saveConfig() {
-			dispatch(PlatformActions.requestConfigSave());
+			dispatch(IOActions.requestConfigSave());
 		},
 		saveHero() {
 			dispatch(HerolistActions._saveHero());

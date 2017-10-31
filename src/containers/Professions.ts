@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as ProfessionActions from '../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../actions/ProfessionVariantActions';
 import { AppState } from '../reducers/app';
