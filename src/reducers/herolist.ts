@@ -53,7 +53,7 @@ export function herolist(state: HerolistState = initialState, action: Action): H
 			const { heroes: rawHeroes } = action.payload;
 			const heroes = new Map<string, Hero>();
 			const users = new Map<string, User>();
-			Object.entries(rawHeroes).forEach(([key, hero]) => {
+			for (const [key, hero] of Object.entries(rawHeroes)) {
 				const { player, ...other } = hero;
 				const finalHero: Hero = {
 					...other,
@@ -66,7 +66,7 @@ export function herolist(state: HerolistState = initialState, action: Action): H
 					users.set(player.id, player);
 				}
 				heroes.set(key, convertHero(finalHero));
-			});
+			}
 			return { ...state, heroes, users };
 		}
 

@@ -123,7 +123,7 @@ export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 				title: 'Error'
 			}));
 		}
-		if (tables && heroes && locales) {
+		if (tables && locales) {
 			return {
 				tables,
 				heroes,
