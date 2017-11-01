@@ -695,4 +695,24 @@ export interface UIMessages {
 	"modal.actions.cancel": string;
 	"removepermanentenergypoints.title": string;
 	"removepermanentenergypoints.inputhint": string;
+	"name": string;
+	"group": string;
+	"sr.short": string;
+	"sr.long": string;
+	"check": string;
+	"ic.short": string;
+	"ic.long": string;
+	"ctr.short": string;
+	"ctr.long": string;
+	"primaryattribute.short": string;
+	"primaryattribute.long": string;
+	"at.short": string;
+	"at.long": string;
+	"pa.short": string;
+	"pa.long": string;
+	"aspect": string;
+	"mod.short": string;
+	"mod.long": string;
+	"property": string;
+	"unfamiliartraditions": string;
 }

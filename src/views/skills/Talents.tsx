@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { ListItemGroup } from '../../components/ListItemGroup';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
@@ -77,37 +80,59 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{_translate(locale, 'skills.options.commoninculture')}</Checkbox>
 					{ratingVisibility && <RecommendedReference locale={locale} />}
 				</Options>
-				<Scroll>
-					<List>
-						{
-							list.map((obj, index, array) => {
-								const prevObj = array[index - 1];
-								return (
-									<SkillListItem
-										key={obj.id}
-										id={obj.id}
-										typ={ratingVisibility && isTyp(talentRating, obj)}
-										untyp={ratingVisibility && isUntyp(talentRating, obj)}
-										name={obj.name}
-										sr={obj.value}
-										check={obj.check}
-										ic={obj.ic}
-										addPoint={addPoint.bind(null, obj.id)}
-										addDisabled={!isIncreasable(currentHero, obj)}
-										removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={!isDecreasable(currentHero, obj)}
-										insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
-										selectForInfo={this.showInfo}
-										get={get}
-										derivedCharacteristics={derivedCharacteristics}
-										>
-										<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />
-									</SkillListItem>
-								);
-							})
-						}
-					</List>
-				</Scroll>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="group">
+							{_translate(locale, 'group')}
+							</ListHeaderTag>
+						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
+							{_translate(locale, 'sr.short')}
+						</ListHeaderTag>
+						<ListHeaderTag className="check">
+							{_translate(locale, 'check')}
+						</ListHeaderTag>
+						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
+							{_translate(locale, 'ic.short')}
+						</ListHeaderTag>
+						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map((obj, index, array) => {
+									const prevObj = array[index - 1];
+									return (
+										<SkillListItem
+											key={obj.id}
+											id={obj.id}
+											typ={ratingVisibility && isTyp(talentRating, obj)}
+											untyp={ratingVisibility && isUntyp(talentRating, obj)}
+											name={obj.name}
+											sr={obj.value}
+											check={obj.check}
+											ic={obj.ic}
+											addPoint={addPoint.bind(null, obj.id)}
+											addDisabled={!isIncreasable(currentHero, obj)}
+											removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+											removeDisabled={!isDecreasable(currentHero, obj)}
+											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
+											selectForInfo={this.showInfo}
+											get={get}
+											derivedCharacteristics={derivedCharacteristics}
+											>
+											<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />
+										</SkillListItem>
+									);
+								})
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<WikiInfoContainer {...this.props} currentId={infoId}/>
 			</Page>
 		);

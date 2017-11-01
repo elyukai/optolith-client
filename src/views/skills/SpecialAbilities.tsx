@@ -3,6 +3,9 @@ import { ActivatableAddList } from '../../components/ActivatableAddList';
 import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
@@ -76,16 +79,31 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 							/>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
-					<ActivatableAddList
-						activeList={enableActiveItemHints ? activeList : undefined}
-						addToList={addToList}
-						filterText={filterTextSlidein}
-						groupNames={groupNames}
-						list={deactiveList}
-						locale={locale}
-						sortOrder={sortOrder}
-						get={get}
-						/>
+					<MainContent>
+						<ListHeader>
+							<ListHeaderTag className="name">
+								{_translate(locale, 'name')}
+							</ListHeaderTag>
+							<ListHeaderTag className="group">
+								{_translate(locale, 'group')}
+								</ListHeaderTag>
+							<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+								{_translate(locale, 'apshort')}
+							</ListHeaderTag>
+							<ListHeaderTag className="btn-placeholder" />
+							<ListHeaderTag className="btn-placeholder" />
+						</ListHeader>
+						<ActivatableAddList
+							activeList={enableActiveItemHints ? activeList : undefined}
+							addToList={addToList}
+							filterText={filterTextSlidein}
+							groupNames={groupNames}
+							list={deactiveList}
+							locale={locale}
+							sortOrder={sortOrder}
+							get={get}
+							/>
+					</MainContent>
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -96,16 +114,31 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 						/>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 				</Options>
-				<ActivatableRemoveList
-					filterText={filterText}
-					groupNames={groupNames}
-					list={activeList}
-					locale={locale}
-					phase={phase}
-					removeFromList={removeFromList}
-					setTier={setTier}
-					sortOrder={sortOrder}
-					/>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="group">
+							{_translate(locale, 'group')}
+							</ListHeaderTag>
+						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+							{_translate(locale, 'apshort')}
+						</ListHeaderTag>
+						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<ActivatableRemoveList
+						filterText={filterText}
+						groupNames={groupNames}
+						list={activeList}
+						locale={locale}
+						phase={phase}
+						removeFromList={removeFromList}
+						setTier={setTier}
+						sortOrder={sortOrder}
+						/>
+				</MainContent>
 			</Page>
 		);
 	}

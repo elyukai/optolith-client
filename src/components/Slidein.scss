@@ -101,7 +101,9 @@
 			> .scroll {
 				flex: 1 1 100%;
 				margin-left: 24px;
+			}
 
+			> .scroll, > .main-content > .scroll {
 				.scroll-inner {
 					padding: 24px 24px 24px 0;
 				}

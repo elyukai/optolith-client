@@ -3,6 +3,9 @@ import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
@@ -115,13 +118,21 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							fullWidth
 							/>
 					</Options>
-					<Scroll>
-						<List>
-							{
-								templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add />)
-							}
-						</List>
-					</Scroll>
+					<MainContent>
+						<ListHeader>
+							<ListHeaderTag className="name">
+								{_translate(locale, 'name')}
+							</ListHeaderTag>
+							<ListHeaderTag className="btn-placeholder" />
+						</ListHeader>
+						<Scroll>
+							<List>
+								{
+									templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add />)
+								}
+							</List>
+						</Scroll>
+					</MainContent>
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -134,13 +145,25 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 					<BorderButton label={_translate(locale, 'equipment.actions.create')} onClick={this.props.createItem} />
 				</Options>
-				<Scroll>
-					<List>
-						{
-							list.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} />)
-						}
-					</List>
-				</Scroll>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="group">
+							{_translate(locale, 'group')}
+							</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} />)
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<Aside>
 					<div className="purse">
 						<h4>{_translate(locale, 'equipment.view.purse')}</h4>

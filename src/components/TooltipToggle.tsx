@@ -9,6 +9,7 @@ import { Overlay } from './Overlay';
 export interface TooltipToggleOwnProps {
 	content: React.ReactNode;
 	margin?: number;
+	small?: boolean;
 	position?: 'top' | 'bottom' | 'left' | 'right';
 }
 
@@ -31,8 +32,8 @@ export class TooltipToggleWrapped extends React.Component<TooltipToggleProps, {}
 	}
 
 	open = (event: React.MouseEvent<HTMLElement>) => {
-		const { content, margin, position = 'top', theme } = this.props;
-		this.node = createOverlay(<Overlay className={classNames('tooltip', `theme-${theme}`)} position={position} trigger={event.currentTarget} margin={margin}>
+		const { content, margin, position = 'top', small, theme } = this.props;
+		this.node = createOverlay(<Overlay className={classNames('tooltip', `theme-${theme}`, small && 'tooltip-small')} position={position} trigger={event.currentTarget} margin={margin}>
 			{content}
 		</Overlay>);
 	}

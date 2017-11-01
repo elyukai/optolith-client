@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { RecommendedReference } from '../../components/RecommendedReference';
@@ -75,16 +78,28 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						</p>
 						{showRating && <RecommendedReference locale={locale} />}
 					</Options>
-					<DeactiveList
-						activeList={enableActiveItemHints ? activeList : undefined}
-						filterText={filterTextSlidein}
-						list={deactiveList}
-						locale={locale}
-						rating={rating}
-						showRating={showRating}
-						get={get}
-						addToList={addToList}
-						/>
+					<MainContent>
+						<ListHeader>
+							<ListHeaderTag className="name">
+								{_translate(locale, 'name')}
+							</ListHeaderTag>
+							<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+								{_translate(locale, 'apshort')}
+							</ListHeaderTag>
+							<ListHeaderTag className="btn-placeholder" />
+							<ListHeaderTag className="btn-placeholder" />
+						</ListHeader>
+						<DeactiveList
+							activeList={enableActiveItemHints ? activeList : undefined}
+							filterText={filterTextSlidein}
+							list={deactiveList}
+							locale={locale}
+							rating={rating}
+							showRating={showRating}
+							get={get}
+							addToList={addToList}
+							/>
+					</MainContent>
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -92,15 +107,27 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 					{showRating && <RecommendedReference locale={locale} />}
 				</Options>
-				<ActiveList
-					filterText={filterText}
-					list={activeList}
-					locale={locale}
-					rating={rating}
-					showRating={showRating}
-					removeFromList={removeFromList}
-					setTier={setTier}
-					/>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+							{_translate(locale, 'apshort')}
+						</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<ActiveList
+						filterText={filterText}
+						list={activeList}
+						locale={locale}
+						rating={rating}
+						showRating={showRating}
+						removeFromList={removeFromList}
+						setTier={setTier}
+						/>
+				</MainContent>
 			</Page>
 		);
 	}

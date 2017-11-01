@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
@@ -86,13 +89,22 @@ export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<BorderButton label={_translate(locale, 'zonearmor.actions.create')} onClick={this.props.createItem} />
 				</Options>
-				<Scroll>
-					<List>
-						{
-							list.map(obj => <ArmorZonesListItem {...this.props} key={obj.id} data={obj} />)
-						}
-					</List>
-				</Scroll>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(obj => <ArmorZonesListItem {...this.props} key={obj.id} data={obj} />)
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<Aside>
 					<div className="purse">
 						<h4>{_translate(locale, 'equipment.view.purse')}</h4>

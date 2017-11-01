@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { ListItemGroup } from '../../components/ListItemGroup';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
@@ -65,40 +68,68 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 						]}
 						/>
 				</Options>
-				<Scroll>
-					<List>
-						{
-							list.map(obj => {
-								const primary = obj.primary.map(attr => (get(attr) as AttributeInstance).short).join('/');
-								const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
-								return (
-									<SkillListItem
-										key={obj.id}
-										id={obj.id}
-										name={obj.name}
-										sr={obj.value}
-										ic={obj.ic}
-										checkDisabled
-										addPoint={addPoint.bind(null, obj.id)}
-										addDisabled={obj.value >= obj.max}
-										removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
-										removeDisabled={obj.value <= obj.min}
-										addValues={[
-											{ className: primaryClassName, value: primary },
-											{ className: 'at', value: obj.at },
-											{ className: 'atpa' },
-											{ className: 'pa', value: obj.pa || '--' },
-										]}
-										get={get}
-										derivedCharacteristics={derivedCharacteristics}
-										>
-										<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
-									</SkillListItem>
-								);
-							})
-						}
-					</List>
-				</Scroll>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="group">
+							{_translate(locale, 'group')}
+							</ListHeaderTag>
+						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
+							{_translate(locale, 'sr.short')}
+						</ListHeaderTag>
+						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
+							{_translate(locale, 'ic.short')}
+						</ListHeaderTag>
+						<ListHeaderTag className="primary" hint={_translate(locale, 'primaryattribute.long')}>
+							{_translate(locale, 'primaryattribute.short')}
+						</ListHeaderTag>
+						<ListHeaderTag className="at" hint={_translate(locale, 'at.long')}>
+							{_translate(locale, 'at.short')}
+						</ListHeaderTag>
+						<ListHeaderTag className="pa" hint={_translate(locale, 'pa.long')}>
+							{_translate(locale, 'pa.short')}
+						</ListHeaderTag>
+						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(obj => {
+									const primary = obj.primary.map(attr => (get(attr) as AttributeInstance).short).join('/');
+									const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
+									return (
+										<SkillListItem
+											key={obj.id}
+											id={obj.id}
+											name={obj.name}
+											sr={obj.value}
+											ic={obj.ic}
+											checkDisabled
+											addPoint={addPoint.bind(null, obj.id)}
+											addDisabled={obj.value >= obj.max}
+											removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+											removeDisabled={obj.value <= obj.min}
+											addValues={[
+												{ className: primaryClassName, value: primary },
+												{ className: 'at', value: obj.at },
+												{ className: 'atpa' },
+												{ className: 'pa', value: obj.pa || '--' },
+											]}
+											get={get}
+											derivedCharacteristics={derivedCharacteristics}
+											>
+											<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
+										</SkillListItem>
+									);
+								})
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 			</Page>
 		);
 	}
