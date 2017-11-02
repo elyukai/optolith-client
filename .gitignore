@@ -1,7 +1,6 @@
 node_modules/
 npm-debug.log*
 .vs/
-.vscode/
 /data/
 ~$TDE5*
 /dist/

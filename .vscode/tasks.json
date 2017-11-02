@@ -1,0 +1,53 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "0.1.0",
+	"showOutput": "always",
+	"tasks": [
+		{
+				"taskName": "build",
+				"command": "npm",
+				"args": ["run", "build"],
+				"isShellCommand": true
+		},
+		{
+				"taskName": "buildTest",
+				"command": "npm",
+				"args": ["run", "buildTest"],
+				"isShellCommand": true
+		},
+		{
+				"taskName": "bundle",
+				"command": "npm",
+				"args": ["run", "bundle"],
+				"isShellCommand": true,
+				"problemMatcher": [
+					"$tsc"
+				]
+		},
+		{
+				"taskName": "run",
+				"command": "npm",
+				"args": ["start"],
+				"isShellCommand": true
+		},
+		{
+				"taskName": "bundle_l10ns",
+				"command": "npm",
+				"args": ["run", "bundle_l10ns"],
+				"isShellCommand": true
+		},
+		{
+				"taskName": "bundle_data",
+				"command": "npm",
+				"args": ["run", "bundle_data"],
+				"isShellCommand": true
+		},
+		{
+				"taskName": "bundle_css",
+				"command": "npm",
+				"args": ["run", "bundle_css"],
+				"isShellCommand": true
+		}
+	]
+}
