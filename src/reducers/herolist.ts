@@ -53,19 +53,21 @@ export function herolist(state: HerolistState = initialState, action: Action): H
 			const { heroes: rawHeroes } = action.payload;
 			const heroes = new Map<string, Hero>();
 			const users = new Map<string, User>();
-			for (const [key, hero] of Object.entries(rawHeroes)) {
-				const { player, ...other } = hero;
-				const finalHero: Hero = {
-					...other,
-					id: key,
-					dateCreated: new Date(hero.dateCreated),
-					dateModified: new Date(hero.dateModified),
-				};
-				if (player) {
-					finalHero.player = player.id;
-					users.set(player.id, player);
+			if (rawHeroes) {
+				for (const [key, hero] of Object.entries(rawHeroes)) {
+					const { player, ...other } = hero;
+					const finalHero: Hero = {
+						...other,
+						id: key,
+						dateCreated: new Date(hero.dateCreated),
+						dateModified: new Date(hero.dateModified),
+					};
+					if (player) {
+						finalHero.player = player.id;
+						users.set(player.id, player);
+					}
+					heroes.set(key, convertHero(finalHero));
 				}
-				heroes.set(key, convertHero(finalHero));
 			}
 			return { ...state, heroes, users };
 		}
