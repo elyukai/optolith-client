@@ -3,7 +3,11 @@ import { Aside } from '../../components/Aside';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
@@ -67,7 +71,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }], { addProperty: 'subname', keyOfName: sex });
 
 		return (
-			<div className="page" id="professions">
+			<Page id="professions">
 				{
 					showAddSlidein && <SelectionsContainer close={this.hideAddSlidein} locale={locale} />
 				}
@@ -95,25 +99,37 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 						{_translate(locale, 'professions.options.alwaysshowprofessionsfromextensions')}
 					</Checkbox>
 				</Options>
-				<Scroll>
-					<List>
-						{
-							list.map(profession =>
-							<ProfessionsListItem
-								{...this.props}
-								key={profession.id}
-								showAddSlidein={this.showAddSlidein}
-								profession={profession}
-								/>
-							)
-						}
-					</List>
-				</Scroll>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+							{_translate(locale, 'apshort')}
+						</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder has-border" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(profession =>
+								<ProfessionsListItem
+									{...this.props}
+									key={profession.id}
+									showAddSlidein={this.showAddSlidein}
+									profession={profession}
+									/>
+								)
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<Aside>
 					<ProfessionVariants {...this.props} />
 					<WikiInfoContainer {...this.props} list={professions} currentId={currentProfessionId} noWrapper />
 				</Aside>
-			</div>
+			</Page>
 		);
 	}
 }

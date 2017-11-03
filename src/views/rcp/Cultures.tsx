@@ -2,6 +2,11 @@ import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
@@ -53,8 +58,8 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 		const list = filterAndSortObjects(cultures.filter(e => visibilityFilter === 'all' || commonCultures!.includes(e.id)), locale.id, filterText, sortOrder === 'cost' ? ['culturalPackageAp', 'name'] : ['name']);
 
 		return (
-			<div className="page" id="cultures">
-				<div className="options">
+			<Page id="cultures">
+				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibilityFilter}
@@ -69,22 +74,31 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						locale={locale}
 						/>
 					<Checkbox checked={areValuesVisible} onClick={switchValueVisibilityFilter}>{_translate(locale, 'cultures.options.showculturalpackagevalues')}</Checkbox>
-				</div>
-				<Scroll>
-					<List>
-						{
-							list.map(culture =>
-								<CulturesListItem
-									{...this.props}
-									key={culture.id}
-									culture={culture}
-									/>
-							)
-						}
-					</List>
-				</Scroll>
+				</Options>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(culture =>
+									<CulturesListItem
+										{...this.props}
+										key={culture.id}
+										culture={culture}
+										/>
+								)
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<WikiInfoContainer {...this.props} list={cultures} />
-			</div>
+			</Page>
 		);
 	}
 }

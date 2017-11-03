@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { List } from '../../components/List';
+import { ListHeader } from '../../components/ListHeader';
+import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { MainContent } from '../../components/MainContent';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
@@ -51,8 +56,8 @@ export class Races extends React.Component<RacesProps, RacesState> {
 		const list = filterAndSortObjects(races, locale.id, filterText, sortOrder === 'cost' ? ['ap', 'name'] : ['name']);
 
 		return (
-			<div className="page" id="races">
-				<div className="options">
+			<Page id="races">
+				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
@@ -61,18 +66,30 @@ export class Races extends React.Component<RacesProps, RacesState> {
 						locale={locale}
 						/>
 					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{_translate(locale, 'races.options.showvalues')}</Checkbox>
-				</div>
-				<Scroll>
-					<List>
-						{
-							list.map(race =>
-								<RacesListItem {...this.props} key={race.id} race={race} />
-							)
-						}
-					</List>
-				</Scroll>
+				</Options>
+				<MainContent>
+					<ListHeader>
+						<ListHeaderTag className="name">
+							{_translate(locale, 'name')}
+						</ListHeaderTag>
+						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
+							{_translate(locale, 'apshort')}
+						</ListHeaderTag>
+						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder has-border" />
+					</ListHeader>
+					<Scroll>
+						<List>
+							{
+								list.map(race =>
+									<RacesListItem {...this.props} key={race.id} race={race} />
+								)
+							}
+						</List>
+					</Scroll>
+				</MainContent>
 				<WikiInfoContainer {...this.props} list={races} />
-			</div>
+			</Page>
 		);
 	}
 }
