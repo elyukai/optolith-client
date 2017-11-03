@@ -41,12 +41,12 @@ export class EditText extends React.Component<EditTextProps, EditTextState> {
 					autoFocus={this.props.autoFocus}
 					/>
 				<IconButton
-					icon="&#xE876;"
+					icon="&#xE90a;"
 					onClick={this.submit}
 					disabled={!this.state.text}
 					/>
 				<IconButton
-					icon="&#xE5CD;"
+					icon="&#xE915;"
 					onClick={this.props.cancel}
 					/>
 			</div>

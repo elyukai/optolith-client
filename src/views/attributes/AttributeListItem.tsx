@@ -29,14 +29,14 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
 				}
 				<IconButton
 					className="add"
-					icon="&#xE145;"
+					icon="&#xE908;"
 					onClick={this.props.addPoint.bind(null, id)}
 					disabled={phase === 2 && sum >= maxTotalAttributeValues || typeof max === 'number' && value >= max}
 					/>
 				{phase === 2 &&
 					<IconButton
 						className="remove"
-						icon="&#xE15B;"
+						icon="&#xE909;"
 						onClick={this.props.removePoint.bind(null, id)}
 						disabled={value <= min}
 						/>

@@ -109,7 +109,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 		) : (
 			<h1 className="confirm-edit">
 				{name}
-				<IconButton icon="&#xE254;" onClick={this.editName} />
+				<IconButton icon="&#xE90c;" onClick={this.editName} />
 			</h1>
 		);
 

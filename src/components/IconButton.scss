@@ -6,14 +6,9 @@
 	padding: 0;
 
 	> div {
-		font: 16px/30px Material;
+		font: 32px/30px TDE Heroes;
 		width: 30px;
 		text-align: center;
-	}
-
-	&.test > div {
-		font: 32px/30px TDE Heroes;
-		width: 32px;
 		margin-left: -1px;
 	}
 }

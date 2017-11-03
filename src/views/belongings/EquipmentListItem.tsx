@@ -169,7 +169,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 					<ListItemSeparator />
 					<ListItemButtons>
 						<IconButton
-							icon="&#xE145;"
+							icon="&#xE916;"
 							onClick={() => addTemplateToList(data.id)}
 							flat
 							/>
@@ -182,12 +182,12 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 					<ListItemGroup list={_translate(locale, 'equipment.view.groups')} index={gr} />
 					<ListItemButtons>
 						<IconButton
-							icon="&#xE254;"
+							icon="&#xE90c;"
 							onClick={() => editItem(data.id)}
 							flat
 							/>
 						<IconButton
-							icon="&#xE872;"
+							icon="&#xE90b;"
 							onClick={() => deleteItem(data.id)}
 							flat
 							/>

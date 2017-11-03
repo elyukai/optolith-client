@@ -91,13 +91,13 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 				<ListItemButtons>
 					{phase === 2 && (
 						<IconButton
-							icon="&#xE15B;"
+							icon="&#xE90b;"
 							onClick={this.removeFromList.bind(null, args as DeactivateArgs)}
 							disabled={disabled}
 							flat
 							/>
 					)}
-					<IconButton icon="&#xE88F;" flat disabled />
+					<IconButton icon="&#xE912;" flat disabled />
 				</ListItemButtons>
 			</ListItem>
 		);

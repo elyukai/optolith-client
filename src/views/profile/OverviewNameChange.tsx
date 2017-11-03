@@ -38,12 +38,12 @@ export class OverviewNameChange extends React.Component<Props, State> {
 					autoFocus
 					/>
 				<IconButton
-					icon="&#xE876;"
+					icon="&#xE90a;"
 					onClick={this.change}
 					disabled={this.state.name === ''}
 					/>
 				<IconButton
-					icon="&#xE5CD;"
+					icon="&#xE915;"
 					onClick={this.props.cancel}
 					/>
 			</div>

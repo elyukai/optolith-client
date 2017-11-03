@@ -31,12 +31,12 @@ export function ArmorZonesListItem(props: ArmorZonesListItemProps) {
 				<ListItemSeparator />
 				<ListItemButtons>
 					<IconButton
-						icon="&#xE254;"
+						icon="&#xE90c;"
 						onClick={() => editItem(item.id)}
 						flat
 						/>
 					<IconButton
-						icon="&#xE872;"
+						icon="&#xE90b;"
 						onClick={() => deleteItem(item.id)}
 						flat
 						/>

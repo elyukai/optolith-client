@@ -445,8 +445,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					</Dialog>
 				</ListItemValues>
 				<ListItemButtons>
-					<IconButton icon="&#xE145;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
-					<IconButton icon="&#xE88F;" flat disabled />
+					<IconButton icon="&#xE916;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
+					<IconButton icon="&#xE912;" flat disabled />
 				</ListItemButtons>
 			</ListItem>
 		);

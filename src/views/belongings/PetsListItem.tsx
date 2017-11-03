@@ -35,8 +35,8 @@ export class PetsListItem extends React.Component<PetsListItemProps, {}> {
 				</ListItemName>
 				<ListItemSeparator/>
 				<ListItemButtons>
-					<IconButton icon="&#xE872;" onClick={this.delete} />
-					<IconButton icon="&#xE254;" onClick={this.edit} />
+					<IconButton icon="&#xE90b;" onClick={this.delete} />
+					<IconButton icon="&#xE90c;" onClick={this.edit} />
 				</ListItemButtons>
 			</ListItem>
 		);

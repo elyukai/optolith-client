@@ -41,12 +41,12 @@ export function NavigationBarForGroup(props: NavigationBarForGroupProps) {
 					onClick={saveGroup}
 					/>
 				<IconButton
-					icon="&#xE8B8;"
+					icon="&#xE906;"
 					onClick={openSettings}
 					/>
 				<Settings {...props} close={closeSettings} />
 				<IconButton
-					icon="&#xE868;"
+					icon="&#xE911;"
 					onClick={toggleDevtools}
 					/>
 			</NavigationBarRight>

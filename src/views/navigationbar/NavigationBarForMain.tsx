@@ -41,13 +41,12 @@ export function NavigationBarForMain(props: NavigationBarForMainProps) {
 			</NavigationBarLeft>
 			<NavigationBarRight>
 				<IconButton
-					className="test"
-					icon="&#xE909;"
+					icon="&#xE906;"
 					onClick={openSettings}
 					/>
 				<Settings {...props} close={closeSettings} />
 				<IconButton
-					icon="&#xE868;"
+					icon="&#xE911;"
 					onClick={toggleDevtools}
 					/>
 			</NavigationBarRight>

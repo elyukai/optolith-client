@@ -87,13 +87,13 @@ export function HerolistItem(props: HerolistItemProps) {
 			</ListItemName>
 			<ListItemSeparator/>
 			<ListItemButtons>
-				{id && <IconButton icon="&#xE14D;" onClick={duplicateHero.bind(null, id)} />}
-				{id && <IconButton icon="&#xE80D;" onClick={saveHeroAsJSON.bind(null, id)} />}
-				{id && <IconButton icon="&#xE872;" onClick={deleteHero.bind(null, id)} />}
+				{id && <IconButton icon="&#xE907;" onClick={duplicateHero.bind(null, id)} />}
+				{id && <IconButton icon="&#xE914;" onClick={saveHeroAsJSON.bind(null, id)} />}
+				{id && <IconButton icon="&#xE90b;" onClick={deleteHero.bind(null, id)} />}
 				{(() => isOpen ? (
-					<IconButton icon="&#xE89E;" onClick={showHero} />
+					<IconButton icon="&#xE919;" onClick={showHero} />
 				) : (
-					<IconButton icon="&#xE5DD;" onClick={loadHero.bind(null, id)} />
+					<IconButton icon="&#xE90e;" onClick={loadHero.bind(null, id)} />
 				))()}
 			</ListItemButtons>
 		</ListItem>

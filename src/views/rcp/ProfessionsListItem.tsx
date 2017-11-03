@@ -38,12 +38,12 @@ export function ProfessionsListItem(props: ProfessionsListItemProps) {
 			</ListItemValues>
 			<ListItemButtons>
 				<IconButton
-					icon="&#xE876;"
+					icon="&#xE90a;"
 					onClick={() => selectProfession(profession.id)}
 					disabled={profession.id === currentProfessionId}
 					/>
 				<IconButton
-					icon="&#xE5DD;"
+					icon="&#xE90e;"
 					onClick={showAddSlidein}
 					disabled={profession.id !== currentProfessionId}
 					/>

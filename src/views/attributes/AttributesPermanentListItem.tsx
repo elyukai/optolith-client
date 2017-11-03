@@ -65,7 +65,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				{phase === 2 && (
 					<IconButton
 						className="edit"
-						icon="&#xE254;"
+						icon="&#xE90c;"
 						onClick={this.openEditDialog}
 						/>
 				)}
@@ -81,7 +81,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				{phase === 3 && (
 					<IconButton
 						className="add"
-						icon="&#xE318;"
+						icon="&#xE908;"
 						onClick={this.openAddDialog}
 						/>
 				)}
@@ -94,7 +94,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				{phase === 3 && (
 					<IconButton
 						className="remove"
-						icon="&#xE15B;"
+						icon="&#xE909;"
 						onClick={addBoughtBack}
 						disabled={available <= 0}
 						/>

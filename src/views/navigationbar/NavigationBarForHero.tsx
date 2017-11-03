@@ -83,12 +83,12 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 					<Text className="collected-ap">{total - spent} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
 				</TooltipToggle>
 				<IconButton
-					icon="&#xE166;"
+					icon="&#xE90f;"
 					onClick={undo}
 					disabled={!isUndoAvailable}
 					/>
 				<IconButton
-					icon="&#xE15A;"
+					icon="&#xE910;"
 					onClick={redo}
 					disabled={!isRedoAvailable}
 					/>
@@ -97,12 +97,12 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 					onClick={saveHero}
 					/>
 				<IconButton
-					icon="&#xE8B8;"
+					icon="&#xE906;"
 					onClick={openSettings}
 					/>
 				<Settings {...props} close={closeSettings} />
 				<IconButton
-					icon="&#xE868;"
+					icon="&#xE911;"
 					onClick={toggleDevtools}
 					/>
 			</NavigationBarRight>

@@ -264,18 +264,18 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								disabled={locked}
 								/>
 							<IconButton
-								icon="&#xE876;"
+								icon="&#xE90a;"
 								onClick={this.applyTemplate}
 								disabled={template === 'ITEMTPL_0' || !template || locked}
 								/>
 							{locked ? (
 								<IconButton
-									icon="&#xE898;"
+									icon="&#xE918;"
 									onClick={this.unlockTemplate}
 									/>
 							) : (
 								<IconButton
-									icon="&#xE899;"
+									icon="&#xE917;"
 									onClick={this.lockTemplate}
 									disabled={template === 'ITEMTPL_0' || !template}
 									/>

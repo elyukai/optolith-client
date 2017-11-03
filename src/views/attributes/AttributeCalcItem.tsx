@@ -35,7 +35,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
 		const increaseElement = typeof currentAdd === 'number' && typeof maxAdd === 'number' && value !== '-' && phase > 2 ? (
 			<IconButton
 				className="add"
-				icon="&#xE145;"
+				icon="&#xE908;"
 				onClick={this.addMaxEnergyPoint}
 				disabled={currentAdd >= maxAdd || typeof permanentLost === 'number' && typeof permanentRedeemed === 'number' && permanentLost - permanentRedeemed > 0}/>
 		) : null;

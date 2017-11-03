@@ -28,12 +28,12 @@ export function RacesListItem(props: RacesListItemProps) {
 			</ListItemValues>
 			<ListItemButtons>
 				<IconButton
-					icon="&#xE876;"
+					icon="&#xE90a;"
 					onClick={() => selectRace(race.id)}
 					disabled={race.id === currentId}
 					/>
 				<IconButton
-					icon="&#xE5DD;"
+					icon="&#xE90e;"
 					onClick={switchToCultures}
 					disabled={race.id !== currentId}
 					/>

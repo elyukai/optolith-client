@@ -24,12 +24,12 @@ export function CulturesListItem(props: CulturesListItemProps) {
 			<ListItemSeparator />
 			<ListItemButtons>
 				<IconButton
-					icon="&#xE876;"
+					icon="&#xE90a;"
 					onClick={() => selectCulture(culture.id)}
 					disabled={culture.id === currentId}
 					/>
 				<IconButton
-					icon="&#xE5DD;"
+					icon="&#xE90e;"
 					onClick={switchToProfessions}
 					disabled={culture.id !== currentId}
 					/>

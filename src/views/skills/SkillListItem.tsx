@@ -87,21 +87,21 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 
 		const btnElement = isNotActive ? (
 			<ListItemButtons>
-				<IconButton icon="&#xE03B;" onClick={activate} disabled={activateDisabled} flat />
-				{selectForInfo && <IconButton icon="&#xE88F;" flat onClick={this.showInfo} />}
+				<IconButton icon="&#xE916;" onClick={activate} disabled={activateDisabled} flat />
+				{selectForInfo && <IconButton icon="&#xE912;" flat onClick={this.showInfo} />}
 			</ListItemButtons>
 		) : (
 			<ListItemButtons>
-				{ addPoint ? <IconButton icon="&#xE145;" onClick={addPoint} disabled={addDisabled} flat /> : null }
+				{ addPoint ? <IconButton icon="&#xE908;" onClick={addPoint} disabled={addDisabled} flat /> : null }
 				{ removePoint ? (
 					<IconButton
-						icon={ic && sr === 0 && !removeDisabled || !ic ? '\uE872' : '\uE15B'}
+						icon={ic && sr === 0 && !removeDisabled || !ic ? '\uE90b' : '\uE909'}
 						onClick={removePoint}
 						disabled={removeDisabled}
 						flat
 						/>
 				) : null }
-				<IconButton icon="&#xE88F;" flat onClick={this.showInfo} disabled={!selectForInfo} />
+				<IconButton icon="&#xE912;" flat onClick={this.showInfo} disabled={!selectForInfo} />
 			</ListItemButtons>
 		);
 

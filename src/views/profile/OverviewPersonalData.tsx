@@ -107,7 +107,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					onChange={props.changeHaircolor}
 					options={hairArr}
 					/>
-				<IconButton icon="&#xEB40;" onClick={props.rerollHair} />
+				<IconButton icon="&#xE913;" onClick={props.rerollHair} />
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<Dropdown
@@ -116,7 +116,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					onChange={props.changeEyecolor}
 					options={eyesArr}
 					/>
-				<IconButton icon="&#xEB40;" onClick={props.rerollEyes} />
+				<IconButton icon="&#xE913;" onClick={props.rerollEyes} />
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<TextField
@@ -124,7 +124,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					value={size}
 					onChange={props.changeSize}
 					/>
-				<IconButton icon="&#xEB40;" onClick={props.rerollSize} />
+				<IconButton icon="&#xE913;" onClick={props.rerollSize} />
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<TextField
@@ -132,7 +132,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					value={weight}
 					onChange={props.changeWeight}
 					/>
-				<IconButton icon="&#xEB40;" onClick={props.rerollWeight} />
+				<IconButton icon="&#xE913;" onClick={props.rerollWeight} />
 			</InputButtonGroup>
 			<div>
 				<TextField

@@ -33,16 +33,16 @@ export function PermanentPoints(props: PermanentPointsProps) {
 					<div className="value">{permanentBoughtBack}</div>
 					<div className="description smallcaps">{_translate(locale, 'permanentpoints.boughtback')}</div>
 					<div className="buttons">
-						<IconButton className="add" icon="&#xE145;" onClick={id === 'AE' ? addBoughtBackAEPoint : addBoughtBackKPPoint} disabled={permanentBoughtBack >= permanentSpent} />
-						<IconButton className="remove" icon="&#xE15B;" onClick={id === 'AE' ? removeBoughtBackAEPoint : removeBoughtBackKPPoint} disabled={permanentBoughtBack <= 0} />
+						<IconButton className="add" icon="&#xE908;" onClick={id === 'AE' ? addBoughtBackAEPoint : addBoughtBackKPPoint} disabled={permanentBoughtBack >= permanentSpent} />
+						<IconButton className="remove" icon="&#xE909;" onClick={id === 'AE' ? removeBoughtBackAEPoint : removeBoughtBackKPPoint} disabled={permanentBoughtBack <= 0} />
 					</div>
 				</div>
 				<div className="column lost">
 					<div className="value">{permanentSpent}</div>
 					<div className="description smallcaps">{_translate(locale, 'permanentpoints.spent')}</div>
 					<div className="buttons">
-						<IconButton className="add" icon="&#xE145;" onClick={id === 'AE' ? addLostAEPoint : addLostKPPoint} />
-						<IconButton className="remove" icon="&#xE15B;" onClick={id === 'AE' ? removeLostAEPoint : removeLostKPPoint} disabled={permanentSpent <= 0} />
+						<IconButton className="add" icon="&#xE908;" onClick={id === 'AE' ? addLostAEPoint : addLostKPPoint} />
+						<IconButton className="remove" icon="&#xE909;" onClick={id === 'AE' ? removeLostAEPoint : removeLostKPPoint} disabled={permanentSpent <= 0} />
 					</div>
 				</div>
 			</div>
