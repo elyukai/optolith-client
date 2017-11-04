@@ -11,4 +11,12 @@
 		text-align: center;
 		margin-left: -1px;
 	}
+
+	&.disabled {
+		color: var(--separator-color-transparent);
+
+		&:hover {
+			color: var(--separator-color-transparent);
+		}
+	}
 }

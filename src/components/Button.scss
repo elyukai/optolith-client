@@ -38,22 +38,5 @@
 
 	&.btn-flat {
 		border: none;
-		background: none;
-
-		&:hover, &:active {
-			background: none;
-
-			> div {
-				background: none;
-			}
-		}
-
-		&.disabled > div {
-			line-height: 28px;
-		}
-
-		> div {
-			background: none;
-		}
 	}
 }

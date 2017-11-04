@@ -668,6 +668,12 @@ export interface SpellInstance {
 	readonly src: SourceLink[];
 }
 
+export interface SkillExtension extends SelectionObject {
+	target: string;
+	tier: 1 | 2 | 3;
+	effect: string;
+}
+
 export interface CantripInstance {
 	readonly id: string;
 	readonly name: string;

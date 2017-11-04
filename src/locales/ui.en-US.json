@@ -712,5 +712,7 @@
 	"mod.short": "Mod",
 	"mod.long": "Check Modifier",
 	"property": "Property",
-	"unfamiliartraditions": "Unfamiliar Traditions"
+	"unfamiliartraditions": "Unfamiliar Traditions",
+	"spellextensions": "Spell Extensions",
+	"liturgicalchantextensions": "Liturgical Chant Extensions"
 }

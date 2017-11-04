@@ -267,10 +267,12 @@ export function buildL10n(locale) {
 	const tradeSecrets = iterateSpecialAbilitiesTradeSecretsL10n(csvToArray(allWorksheets.get('TradeSecr')));
 	const scripts = iterateSpecialAbilitiesScriptsL10n(csvToArray(allWorksheets.get('Scripts')));
 	const languages = iterateSpecialAbilitiesLanguagesL10n(csvToArray(allWorksheets.get('Languages')));
-	if (locale === 'de-DE') {
+	if (allWorksheets.has('SpellX') && specialabilities.SA_414) {
 		const spellExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('SpellX')));
-		const chantExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('ChantX')));
 		specialabilities.SA_414.sel = spellExtensions;
+	}
+	if (allWorksheets.has('ChantX') && specialabilities.SA_663) {
+		const chantExtensions = iterateSpecialAbilitiesSpellExtensionsL10n(csvToArray(allWorksheets.get('ChantX')));
 		specialabilities.SA_663.sel = chantExtensions;
 	}
 	const attributes = iterateAttributesL10n(csvToArray(allWorksheets.get('ATTRIBUTES')));

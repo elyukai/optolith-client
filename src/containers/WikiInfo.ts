@@ -12,11 +12,13 @@ function mapStateToProps(state: AppState) {
 		cantrips: getCantrips(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		languages: mapGetToSlice(getSpecialAbilities, 'SA_29')(state)!,
+		liturgicalChantExtensions: mapGetToSlice(getSpecialAbilities, 'SA_663')(state),
 		liturgicalChants: getLiturgicalChants(state),
 		scripts: mapGetToSlice(getSpecialAbilities, 'SA_27')(state)!,
 		sex: getSex(state),
 		skills: getSkills(state),
 		spells: getSpells(state),
+		spellExtensions: mapGetToSlice(getSpecialAbilities, 'SA_414')(state),
 	};
 }
 

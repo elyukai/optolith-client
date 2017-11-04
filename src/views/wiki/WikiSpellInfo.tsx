@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, SecondaryAttribute, SpellInstance } from '../../types/data.d';
+import { AttributeInstance, Book, SecondaryAttribute, SkillExtension, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -13,10 +13,13 @@ export interface WikiSpellInfoProps {
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
 	currentObject: SpellInstance;
 	locale: UIMessages;
+	spellExtensions: SpecialAbilityInstance | undefined;
 }
 
 export function WikiSpellInfo(props: WikiSpellInfoProps) {
-	const { attributes, books, derivedCharacteristics, currentObject, locale } = props;
+	const { attributes, books, derivedCharacteristics, currentObject, locale, spellExtensions } = props;
+
+	const filteredSpellExtensions = spellExtensions && (spellExtensions.sel as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
 
 	switch (currentObject.gr) {
 		case 1:
@@ -62,6 +65,14 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 						<span>{_translate(locale, 'info.improvementcost')}</span>
 						<span>{getICName(currentObject.ic)}</span>
 					</p>
+					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">
+						<span>{_translate(locale, 'spellextensions')}</span>
+					</p>}
+					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <ul className="extensions">
+						{filteredSpellExtensions.map(({ cost, effect, id, name, tier }) => (
+							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
+						))}
+					</ul>}
 					<p className="source">
 						<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
 					</p>
@@ -110,6 +121,14 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 						<span>{_translate(locale, 'info.improvementcost')}</span>
 						<span>{getICName(currentObject.ic)}</span>
 					</p>
+					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">
+						<span>{_translate(locale, 'spellextensions')}</span>
+					</p>}
+					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <ul className="extensions">
+						{filteredSpellExtensions.map(({ cost, effect, id, name, tier }) => (
+							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
+						))}
+					</ul>}
 					<p className="source">
 						<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
 					</p>

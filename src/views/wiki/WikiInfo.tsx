@@ -27,10 +27,12 @@ export interface WikiInfoStateProps {
 	cantrips: Map<string, CantripInstance>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
 	languages: SpecialAbilityInstance;
+	liturgicalChantExtensions: SpecialAbilityInstance | undefined;
 	liturgicalChants: Map<string, LiturgyInstance>;
 	scripts: SpecialAbilityInstance;
 	sex: 'm' | 'f' | undefined;
 	skills: Map<string, TalentInstance>;
+	spellExtensions: SpecialAbilityInstance | undefined;
 	spells: Map<string, SpellInstance>;
 }
 

@@ -715,4 +715,6 @@ export interface UIMessages {
 	"mod.long": string;
 	"property": string;
 	"unfamiliartraditions": string;
+	"spellextensions": string;
+	"liturgicalchantextensions": string;
 }
