@@ -2,12 +2,14 @@ import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { Profession } from '../../types/view.d';
+import { Book, Profession } from '../../types/view.d';
 
 export interface ProfessionsListItemProps {
+	books: Map<string, Book>;
 	currentProfessionId?: string;
 	currentProfessionVariantId?: string;
 	profession: Profession;
@@ -18,7 +20,7 @@ export interface ProfessionsListItemProps {
 }
 
 export function ProfessionsListItem(props: ProfessionsListItemProps) {
-	const { showAddSlidein, currentProfessionId, profession, selectProfession, sex } = props;
+	const { books, showAddSlidein, currentProfessionId, profession, selectProfession, sex } = props;
 
 	let { name, subname } = profession;
 
@@ -33,6 +35,9 @@ export function ProfessionsListItem(props: ProfessionsListItemProps) {
 		<ListItem active={profession.id === currentProfessionId}>
 			<ListItemName name={subname ? `${name} (${subname})` : name} />
 			<ListItemSeparator />
+			{profession.src.length > 0 && <ListItemGroup small>
+				{profession.src.map(e => <span>{books.get(e.id)!.short}</span>)}
+			</ListItemGroup>}
 			<ListItemValues>
 				<div className="cost">{profession.ap}</div>
 			</ListItemValues>

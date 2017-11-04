@@ -155,6 +155,10 @@ ul.list-wrapper {
 			margin-right: 12px;
 			text-align: right;
 			white-space: nowrap;
+
+			span:not(:last-child)::after {
+				content: " / ";
+			}
 		}
 
 		.hr {

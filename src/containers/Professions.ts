@@ -4,12 +4,13 @@ import * as ProfessionActions from '../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../actions/ProfessionVariantActions';
 import { AppState } from '../reducers/app';
 import { getAllProfessions, getCurrentProfessionId, getCurrentProfessionVariantId } from '../selectors/rcpSelectors';
-import { getCantrips, getLiturgicalChants, getSex, getSpells } from '../selectors/stateSelectors';
+import { getBooks, getCantrips, getLiturgicalChants, getSex, getSpells } from '../selectors/stateSelectors';
 import { getProfessionsFromExpansionsVisibility, getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../views/rcp/Professions';
 
 function mapStateToProps(state: AppState) {
 	return {
+		books: getBooks(state),
 		cantrips: getCantrips(state),
 		currentProfessionId: getCurrentProfessionId(state),
 		currentProfessionVariantId: getCurrentProfessionVariantId(state),

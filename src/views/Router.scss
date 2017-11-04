@@ -32,3 +32,10 @@ html, body, #bodywrapper, #body {
 		padding: 36px 36px 36px 0;
 	}
 }
+
+.small-info-text {
+	font: 500 12px Alegreya Sans;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--separator-color-halftransparent);
+}

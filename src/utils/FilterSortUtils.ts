@@ -13,6 +13,10 @@ export interface SortOption<T> {
 }
 
 export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: (keyof T | SortOption<T>)[] = ['name']) {
+	if (list.length < 2) {
+		return list;
+	}
+
 	const sortFunctions: ((a: T, b: T) => number)[] = [];
 	const isSortOptionObject = (option: keyof T | SortOption<T>): option is SortOption<T> => typeof option === 'object';
 	const firstItem = first(list);

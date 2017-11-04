@@ -13,7 +13,7 @@ import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelections';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
-import { CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
+import { Book, CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -25,6 +25,7 @@ export interface ProfessionsOwnProps {
 }
 
 export interface ProfessionsStateProps {
+	books: SMap<Book>;
 	cantrips: SMap<CantripInstance>;
 	liturgicalChants: SMap<LiturgyInstance>;
 	spells: SMap<SpellInstance>;

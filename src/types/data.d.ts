@@ -31,6 +31,7 @@ export interface AdventurePoints {
 
 export interface Book {
 	id: string;
+	short: string;
 	name: string;
 }
 
