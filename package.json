@@ -1,7 +1,7 @@
 {
   "name": "tdeheroes",
   "productName": "TDE5 Heroes",
-  "version": "0.50.0",
+  "version": "0.50.1",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
   "author": "Lukas Obermann",
   "license": "GPL-3.0",

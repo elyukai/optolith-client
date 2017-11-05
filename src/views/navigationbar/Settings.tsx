@@ -32,7 +32,8 @@ export function Settings(props: SettingsProps) {
 				options={[
 					{name: _translate(locale, 'settings.options.defaultlanguage')},
 					{id: 'de-DE', name: 'Deutsch (Deutschland)'},
-					{id: 'en-US', name: 'English (United States)'}
+					{id: 'en-US', name: 'English (United States)'},
+					{id: 'nl-BE', name: 'Nederlands (België)', disabled: true }
 				]}
 				value={localeType === 'default' ? undefined : localeString}
 				label={_translate(locale, 'settings.options.language')}

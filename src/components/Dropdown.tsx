@@ -9,7 +9,11 @@ export interface DropdownProps {
 	fullWidth?: boolean;
 	hint?: string;
 	label?: string;
-	options: Array<{ id?: number | string; name: string | undefined; }>;
+	options: {
+		id?: number | string;
+		name: string | undefined;
+		disabled?: boolean;
+	}[];
 	required?: boolean;
 	value?: boolean | string | number;
 	onChange?(option?: number | string): void;
@@ -84,9 +88,9 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 					<Scroll noInnerElement className={options.length > 5 ? 'scroll-active' : ''}>
 						{
 							options.map(option => {
-								const classNameInner = classNames(option.id === value && 'active');
+								const classNameInner = classNames(option.id === value && 'active', option.disabled === true && 'disabled');
 								return (
-									<div className={classNameInner} key={option.id || '__DEFAULT__'} onClick={!disabled && this.onChange.bind(null, option.id)}>
+									<div className={classNameInner} key={option.id || '__DEFAULT__'} onClick={!disabled && !option.disabled && this.onChange.bind(null, option.id)}>
 										{option.name}
 									</div>
 								);

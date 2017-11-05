@@ -102,6 +102,11 @@
 							transform: rotate(-45deg);
 						}
 					}
+
+					&.disabled {
+						color: var(--separator-color-halftransparent);
+						pointer-events: none;
+					}
 				}
 
 				.scroll-active .scroll-view > div.active:after {
