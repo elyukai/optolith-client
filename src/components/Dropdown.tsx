@@ -90,7 +90,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 							options.map(option => {
 								const classNameInner = classNames(option.id === value && 'active', option.disabled === true && 'disabled');
 								return (
-									<div className={classNameInner} key={option.id || '__DEFAULT__'} onClick={!disabled && !option.disabled && this.onChange.bind(null, option.id)}>
+									<div className={classNameInner} key={option.id || '__DEFAULT__'} onClick={!disabled && !option.disabled ? this.onChange.bind(null, option.id) : undefined}>
 										{option.name}
 									</div>
 								);

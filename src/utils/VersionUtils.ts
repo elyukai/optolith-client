@@ -1,8 +1,8 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import { lt } from 'semver';
 import { ActiveObject, Hero, ToListById } from '../types/data.d';
 
-export const currentVersion = JSON.parse(fs.readFileSync('../../package.json', 'utf8')).version as string;
+export const currentVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version as string;
 
 export function convertHero(hero: Hero) {
   const entry = { ...hero };
