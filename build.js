@@ -9,7 +9,6 @@ const options = {
 	asar: true,
 	icon: './app/icon',
 	ignore,
-	name: 'tdeheroes',
 	out: './dist',
 	overwrite: true,
 	prune: true,

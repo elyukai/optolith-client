@@ -30,7 +30,7 @@ export function _localizeSize(number: number | undefined, locale: string): numbe
 	if (typeof number !== 'number') {
 		return 0;
 	}
-	else if (locale === 'de-DE') {
+	else if (['de-DE', 'nl-BE'].includes(locale)) {
 		return number;
 	}
 	return number * 0.4;
@@ -44,7 +44,7 @@ export function _localizeWeight(number: number | undefined, locale: string): num
 	if (typeof number !== 'number') {
 		return 0;
 	}
-	else if (locale === 'de-DE') {
+	else if (['de-DE', 'nl-BE'].includes(locale)) {
 		return number;
 	}
 	return number * 2;
