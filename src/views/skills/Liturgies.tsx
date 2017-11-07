@@ -266,7 +266,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												key={obj.id}
 												id={obj.id}
 												name={name}
-												removePoint={phase < 3 ? removeBlessingFromList.bind(null, obj.id) : undefined}
+												removePoint={removeBlessingFromList.bind(null, obj.id)}
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
@@ -298,7 +298,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											key={obj.id}
 											id={obj.id}
 											name={name}
-											removePoint={phase < 3 ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
+											removePoint={obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id)}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}

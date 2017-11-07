@@ -4,7 +4,8 @@ import { AttributeListItem } from './AttributeListItem';
 
 export interface AttributeListProps {
 	attributes: AttributeWithRequirements[];
-	phase: number;
+	isInCharacterCreation: boolean;
+	isRemovingEnabled: boolean;
 	maxTotalAttributeValues: number;
 	sum: number;
 	addPoint(id: string): void;

@@ -111,7 +111,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											checkDisabled
 											addPoint={addPoint.bind(null, obj.id)}
 											addDisabled={obj.value >= obj.max}
-											removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+											removePoint={removePoint.bind(null, obj.id)}
 											removeDisabled={obj.value <= obj.min}
 											addValues={[
 												{ className: primaryClassName, value: primary },

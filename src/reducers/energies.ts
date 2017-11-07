@@ -1,9 +1,9 @@
-import { AddArcaneEnergyPointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
+import { AddArcaneEnergyPointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, RemoveArcaneEnergyPointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveKarmaPointAction, RemoveLifePointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointAction | AddLostAEPointsAction | AddLostKPPointAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | SetSelectionsAction;
+type Action = AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointAction | AddLostAEPointsAction | AddLostKPPointAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | SetSelectionsAction | RemoveArcaneEnergyPointAction | RemoveKarmaPointAction | RemoveLifePointAction;
 
 export interface EnergiesState {
 	addedLifePoints: number;
@@ -87,6 +87,15 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 
 		case ActionTypes.ADD_KARMA_POINT:
 			return { ...state, addedKarmaPoints: state.addedKarmaPoints + 1 };
+
+		case ActionTypes.REMOVE_LIFE_POINT:
+			return { ...state, addedLifePoints: state.addedLifePoints - 1 };
+
+		case ActionTypes.REMOVE_ARCANE_ENERGY_POINT:
+			return { ...state, addedArcaneEnergy: state.addedArcaneEnergy - 1 };
+
+		case ActionTypes.REMOVE_KARMA_POINT:
+			return { ...state, addedKarmaPoints: state.addedKarmaPoints - 1 };
 
 		case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
 			return {

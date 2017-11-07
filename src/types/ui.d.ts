@@ -717,4 +717,5 @@ export interface UIMessages {
 	"unfamiliartraditions": string;
 	"spellextensions": string;
 	"liturgicalchantextensions": string;
+	"enableeditingheroaftercreationphase": string;
 }

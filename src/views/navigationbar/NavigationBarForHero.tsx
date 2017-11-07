@@ -5,6 +5,7 @@ import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
+import { SettingsContainer } from '../../containers/Settings';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
@@ -14,7 +15,6 @@ import { NavigationBarLeft } from './NavigationBarLeft';
 import { NavigationBarRight } from './NavigationBarRight';
 import { NavigationBarTabs } from './NavigationBarTabs';
 import { NavigationBarWrapper } from './NavigationBarWrapper';
-import { Settings } from './Settings';
 
 export interface NavigationBarForHeroProps {
 	currentTab: string;
@@ -22,20 +22,14 @@ export interface NavigationBarForHeroProps {
 	isRedoAvailable: boolean;
 	isUndoAvailable: boolean;
 	locale: UIMessages;
-	localeString?: string;
-	localeType: 'default' | 'set';
 	showSettings?: boolean;
-	theme: string;
 	closeSettings(): void;
 	openSettings(): void;
 	undo(): void;
 	redo(): void;
-	saveConfig(): void;
 	saveHero(): void;
-	setLocale(id?: string): void;
 	setSection(id: string): void;
 	setTab(id: string): void;
-	setTheme(id: string): void;
 }
 
 export function NavigationBarForHero(props: NavigationBarForHeroProps) {
@@ -100,7 +94,7 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 					icon="&#xE906;"
 					onClick={openSettings}
 					/>
-				<Settings {...props} close={closeSettings} />
+				<SettingsContainer {...props} close={closeSettings} />
 				<IconButton
 					icon="&#xE911;"
 					onClick={toggleDevtools}

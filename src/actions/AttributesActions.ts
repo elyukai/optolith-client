@@ -6,7 +6,7 @@ import { AsyncAction } from '../types/actions.d';
 import { AttributeInstance } from '../types/data.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
-import { getIncreaseAP } from '../utils/ICUtils';
+import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 
@@ -149,6 +149,66 @@ export function _addKarmaPoint(): AsyncAction {
 				}
 			} as AddKarmaPointAction);
 		}
+	};
+}
+
+export interface RemoveLifePointAction {
+	type: ActionTypes.REMOVE_LIFE_POINT;
+	payload: {
+		cost: number;
+	};
+}
+
+export function removeLifePoint(): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedLifePoints);
+		dispatch({
+			type: ActionTypes.REMOVE_LIFE_POINT,
+			payload: {
+				cost
+			}
+		} as RemoveLifePointAction);
+	};
+}
+
+export interface RemoveArcaneEnergyPointAction {
+	type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT;
+	payload: {
+		cost: number;
+	};
+}
+
+export function removeArcaneEnergyPoint(): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
+		dispatch({
+			type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT,
+			payload: {
+				cost
+			}
+		} as RemoveArcaneEnergyPointAction);
+	};
+}
+
+export interface RemoveKarmaPointAction {
+	type: ActionTypes.REMOVE_KARMA_POINT;
+	payload: {
+		cost: number;
+	};
+}
+
+export function removeKarmaPoint(): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
+		dispatch({
+			type: ActionTypes.REMOVE_KARMA_POINT,
+			payload: {
+				cost
+			}
+		} as RemoveKarmaPointAction);
 	};
 }
 

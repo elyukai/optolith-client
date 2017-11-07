@@ -25,3 +25,13 @@ export function setTheme(theme: string): SetThemeAction {
 		}
 	};
 }
+
+export interface SwitchEnableEditingHeroAfterCreationPhaseAction {
+	type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE;
+}
+
+export function switchEnableEditingHeroAfterCreationPhase(): SwitchEnableEditingHeroAfterCreationPhaseAction {
+	return {
+		type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE
+	};
+}

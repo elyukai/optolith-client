@@ -15,7 +15,8 @@ export interface AttributesOwnProps {
 export interface AttributesStateProps {
 	attributes: AttributeWithRequirements[];
 	derived: SecondaryAttribute[];
-	phase: number;
+	isInCharacterCreation: boolean;
+	isRemovingEnabled: boolean;
 	maxTotalAttributeValues: number;
 	sum: number;
 }
@@ -26,6 +27,9 @@ export interface AttributesDispatchProps {
 	addLifePoint(): void;
 	addArcaneEnergyPoint(): void;
 	addKarmaPoint(): void;
+	removeLifePoint(): void;
+	removeArcaneEnergyPoint(): void;
+	removeKarmaPoint(): void;
 	addBoughtBackAEPoint(): void;
 	removeBoughtBackAEPoint(): void;
 	addLostAEPoint(): void;
@@ -41,13 +45,13 @@ export interface AttributesDispatchProps {
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps;
 
 export function Attributes(props: AttributesProps) {
-	const { locale, phase, maxTotalAttributeValues, sum } = props;
+	const { locale, isInCharacterCreation, maxTotalAttributeValues, sum } = props;
 
 	return (
 		<section id="attribute">
 			<div className="page">
 				<Scroll>
-					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{phase === 2 && ` / ${maxTotalAttributeValues}`}</div>
+					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
 					<AttributeList {...props} />
 					<div className="secondary">
 						<AttributeCalc {...props} locale={locale} />

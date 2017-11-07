@@ -1,24 +1,35 @@
 import * as React from 'react';
+import { Checkbox } from '../../components/Checkbox';
 import { Dialog } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
 import { SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 
-export interface SettingsProps {
+export interface SettingsOwnProps {
 	locale: UIMessages;
+	showSettings?: boolean;
+	close(): void;
+}
+
+export interface SettingsStateProps {
 	localeString?: string;
 	localeType: 'default' | 'set';
-	showSettings?: boolean;
 	theme: string;
-	close(): void;
+	isEditingHeroAfterCreationPhaseEnabled: boolean;
+}
+
+export interface SettingsDispatchProps {
 	saveConfig(): void;
 	setLocale(id?: string): void;
 	setTheme(id: string): void;
+	switchEnableEditingHeroAfterCreationPhase(): void;
 }
 
+export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps;
+
 export function Settings(props: SettingsProps) {
-	const { close, locale, localeString, localeType, setLocale, setTheme, saveConfig, showSettings, theme } = props;
+	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, showSettings, theme, switchEnableEditingHeroAfterCreationPhase } = props;
 
 	return (
 		<Dialog
@@ -48,6 +59,12 @@ export function Settings(props: SettingsProps) {
 				active={theme}
 				onClick={setTheme}
 				label={_translate(locale, 'settings.options.theme')}
+				/>
+			<Checkbox
+				checked={isEditingHeroAfterCreationPhaseEnabled}
+				className="editor-switch"
+				label={ _translate(locale, 'enableeditingheroaftercreationphase')}
+				onClick={switchEnableEditingHeroAfterCreationPhase}
 				/>
 		</Dialog>
 	);

@@ -4,14 +4,15 @@ import * as AttributesActions from '../actions/AttributesActions';
 import { AppState } from '../reducers/app';
 import { getForView, getSum } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { isInCharacterCreation, isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
 function mapStateToProps(state: AppState) {
 	return {
 		attributes: getForView(state),
-		phase: getPhase(state),
+		isInCharacterCreation: isInCharacterCreation(state),
+		isRemovingEnabled: isRemovingEnabled(state),
 		derived: getDerivedCharacteristics(state),
 		maxTotalAttributeValues: getStartEl(state).maxTotalAttributeValues,
 		sum: getSum(state)
@@ -30,28 +31,25 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(AttributesActions._removePoint(id));
 		},
 		addLifePoint: () => {
-			const action = AttributesActions._addLifePoint();
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(AttributesActions._addLifePoint());
 		},
 		addArcaneEnergyPoint: () => {
-			const action = AttributesActions._addArcaneEnergyPoint();
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(AttributesActions._addArcaneEnergyPoint());
 		},
 		addKarmaPoint: () => {
-			const action = AttributesActions._addKarmaPoint();
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(AttributesActions._addKarmaPoint());
+		},
+		removeLifePoint: () => {
+			dispatch(AttributesActions.removeLifePoint());
+		},
+		removeArcaneEnergyPoint: () => {
+			dispatch(AttributesActions.removeArcaneEnergyPoint());
+		},
+		removeKarmaPoint: () => {
+			dispatch(AttributesActions.removeKarmaPoint());
 		},
 		addBoughtBackAEPoint: () => {
-			const action = AttributesActions._addBoughtBackAEPoint();
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(AttributesActions._addBoughtBackAEPoint());
 		},
 		removeBoughtBackAEPoint: () => {
 			dispatch(AttributesActions._removeBoughtBackAEPoint());
@@ -66,10 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(AttributesActions._addLostAEPoints(value));
 		},
 		addBoughtBackKPPoint: () => {
-			const action = AttributesActions._addBoughtBackKPPoint();
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(AttributesActions._addBoughtBackKPPoint());
 		},
 		removeBoughtBackKPPoint: () => {
 			dispatch(AttributesActions._removeBoughtBackKPPoint());

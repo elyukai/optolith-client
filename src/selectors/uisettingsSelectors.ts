@@ -25,3 +25,4 @@ export const getEquipmentGroupVisibilityFilter = (state: AppState) => state.ui.s
 export const getEnableActiveItemHints = (state: AppState) => state.ui.settings.enableActiveItemHints;
 export const getSheetCheckAttributeValueVisibility = (state: AppState) => state.ui.settings.sheetCheckAttributeValueVisibility;
 export const getTheme = (state: AppState) => state.ui.settings.theme;
+export const isEditingHeroAfterCreationPhaseEnabled = (state: AppState) => state.ui.settings.enableEditingHeroAfterCreationPhase;

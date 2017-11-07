@@ -431,6 +431,7 @@ export interface Config {
 	enableActiveItemHints: boolean;
 	locale?: string;
 	theme?: string;
+	enableEditingHeroAfterCreationPhase?: boolean;
 }
 
 export interface Raw {

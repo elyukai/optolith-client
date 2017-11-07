@@ -714,5 +714,6 @@
 	"property": "Property",
 	"unfamiliartraditions": "Unfamiliar Traditions",
 	"spellextensions": "Spell Extensions",
-	"liturgicalchantextensions": "Liturgical Chant Extensions"
+	"liturgicalchantextensions": "Liturgical Chant Extensions",
+	"enableeditingheroaftercreationphase": "Edit Heroes after Hero Creation Phase"
 }

@@ -3,28 +3,22 @@ import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
+import { SettingsContainer } from '../../containers/Settings';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { NavigationBarBack } from './NavigationBarBack';
 import { NavigationBarLeft } from './NavigationBarLeft';
 import { NavigationBarRight } from './NavigationBarRight';
 import { NavigationBarWrapper } from './NavigationBarWrapper';
-import { Settings } from './Settings';
 
 export interface NavigationBarForGroupProps {
 	locale: UIMessages;
-	localeString?: string;
-	localeType: 'default' | 'set';
 	groupName: string;
 	showSettings?: boolean;
-	theme: string;
 	closeSettings(): void;
 	openSettings(): void;
-	saveConfig(): void;
 	saveGroup(): void;
-	setLocale(id?: string): void;
 	setSection(id: string): void;
-	setTheme(id: string): void;
 }
 
 export function NavigationBarForGroup(props: NavigationBarForGroupProps) {
@@ -44,7 +38,7 @@ export function NavigationBarForGroup(props: NavigationBarForGroupProps) {
 					icon="&#xE906;"
 					onClick={openSettings}
 					/>
-				<Settings {...props} close={closeSettings} />
+				<SettingsContainer {...props} close={closeSettings} />
 				<IconButton
 					icon="&#xE911;"
 					onClick={toggleDevtools}

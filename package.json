@@ -41,7 +41,7 @@
     "@types/react-portal": "^3.0.3",
     "@types/react-redux": "^4.4.47",
     "@types/semver": "^5.4.0",
-    "electron": "^1.8.0",
+    "electron": "^1.8.1",
     "electron-packager": "^8.7.2",
     "jest": "^19.0.2",
     "node-sass": "^4.5.3",

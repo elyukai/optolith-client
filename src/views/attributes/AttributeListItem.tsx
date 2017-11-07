@@ -6,7 +6,8 @@ import { AttributeBorder } from './AttributeBorder';
 
 export interface AttributeListItemProps {
 	attribute: AttributeWithRequirements;
-	phase: number;
+	isInCharacterCreation: boolean;
+	isRemovingEnabled: boolean;
 	maxTotalAttributeValues: number;
 	sum: number;
 	addPoint(id: string): void;
@@ -15,32 +16,28 @@ export interface AttributeListItemProps {
 
 export class AttributeListItem extends React.Component<AttributeListItemProps, {}> {
 	render() {
-		const { attribute, maxTotalAttributeValues, phase, sum } = this.props;
+		const { attribute, maxTotalAttributeValues, isInCharacterCreation, isRemovingEnabled, sum } = this.props;
 		const { id, short, name, value, max, min } = attribute;
 
-		const valueHeader = phase === 2 ? `${value} / ${max}` : value;
+		const valueHeader = isInCharacterCreation ? `${value} / ${max}` : value;
 
 		return (
 			<AttributeBorder className={id} label={short} value={value} tooltip={<div className="calc-attr-overlay">
 					<h4><span>{name}</span><span>{valueHeader}</span></h4>
 				</div>} tooltipMargin={11}>
-				{phase === 2 &&
-					<NumberBox max={max || 0} />
-				}
+				{isInCharacterCreation && <NumberBox max={max || 0} />}
 				<IconButton
 					className="add"
 					icon="&#xE908;"
 					onClick={this.props.addPoint.bind(null, id)}
-					disabled={phase === 2 && sum >= maxTotalAttributeValues || typeof max === 'number' && value >= max}
+					disabled={isInCharacterCreation && sum >= maxTotalAttributeValues || typeof max === 'number' && value >= max}
 					/>
-				{phase === 2 &&
-					<IconButton
-						className="remove"
-						icon="&#xE909;"
-						onClick={this.props.removePoint.bind(null, id)}
-						disabled={value <= min}
-						/>
-				}
+				{isRemovingEnabled && <IconButton
+					className="remove"
+					icon="&#xE909;"
+					onClick={this.props.removePoint.bind(null, id)}
+					disabled={value <= min}
+					/>}
 			</AttributeBorder>
 		);
 	}

@@ -7,7 +7,8 @@ import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 export interface AttributesPermanentListProps {
 	derived: SecondaryAttribute[];
 	locale: UIMessages;
-	phase: number;
+	isInCharacterCreation: boolean;
+	isRemovingEnabled: boolean;
 	addBoughtBackAEPoint(): void;
 	removeBoughtBackAEPoint(): void;
 	addLostAEPoint(): void;

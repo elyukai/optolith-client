@@ -13,7 +13,7 @@ export interface AttributesPermanentListItemProps {
 	name: string;
 	boughtBack: number;
 	lost: number;
-	phase: number;
+	isRemovingEnabled: boolean;
 	addBoughtBack(): void;
 	addLost(value: number): void;
 	addBoughtBackAEPoint(): void;
@@ -45,7 +45,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 	closeAddDialog = () => this.setState(() => ({ isAddDialogOpened: false } as AttributesPermanentListItemState));
 
 	render() {
-		const { id, label, locale, name, phase, addBoughtBack, addLost, boughtBack, lost, ...other } = this.props;
+		const { id, label, locale, name, isRemovingEnabled, addBoughtBack, addLost, boughtBack, lost, ...other } = this.props;
 		const { isAddDialogOpened, isEditDialogOpened } = this.state;
 		const available = lost - boughtBack;
 
@@ -62,7 +62,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				</div>}
 				tooltipMargin={7}
 				>
-				{phase === 2 && (
+				{isRemovingEnabled && (
 					<IconButton
 						className="edit"
 						icon="&#xE90c;"
@@ -78,7 +78,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 					permanentBoughtBack={boughtBack}
 					permanentSpent={lost}
 					/>
-				{phase === 3 && (
+				{!isRemovingEnabled && (
 					<IconButton
 						className="add"
 						icon="&#xE908;"
@@ -91,7 +91,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 					isOpened={isAddDialogOpened}
 					close={this.closeAddDialog}
 					/>
-				{phase === 3 && (
+				{!isRemovingEnabled && (
 					<IconButton
 						className="remove"
 						icon="&#xE909;"

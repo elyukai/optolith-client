@@ -272,7 +272,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												key={obj.id}
 												id={obj.id}
 												name={name}
-												removePoint={phase < 3 ? removeCantripFromList.bind(null, obj.id) : undefined}
+												removePoint={removeCantripFromList.bind(null, obj.id)}
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
@@ -304,7 +304,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											key={obj.id}
 											id={obj.id}
 											name={name}
-											removePoint={phase < 3 ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
+											removePoint={obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id)}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}

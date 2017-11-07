@@ -1,27 +1,21 @@
 import { remote } from 'electron';
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
+import { SettingsContainer } from '../../containers/Settings';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { NavigationBarLeft } from './NavigationBarLeft';
 import { NavigationBarRight } from './NavigationBarRight';
 import { NavigationBarTabProps, NavigationBarTabs } from './NavigationBarTabs';
 import { NavigationBarWrapper } from './NavigationBarWrapper';
-import { Settings } from './Settings';
 
 export interface NavigationBarForMainProps {
 	currentTab: string;
 	locale: UIMessages;
-	localeString?: string;
-	localeType: 'default' | 'set';
 	showSettings?: boolean;
-	theme: string;
 	closeSettings(): void;
 	openSettings(): void;
-	saveConfig(): void;
-	setLocale(id?: string): void;
 	setTab(id: string): void;
-	setTheme(id: string): void;
 }
 
 export function NavigationBarForMain(props: NavigationBarForMainProps) {
@@ -44,7 +38,7 @@ export function NavigationBarForMain(props: NavigationBarForMainProps) {
 					icon="&#xE906;"
 					onClick={openSettings}
 					/>
-				<Settings {...props} close={closeSettings} />
+				<SettingsContainer {...props} close={closeSettings} />
 				<IconButton
 					icon="&#xE911;"
 					onClick={toggleDevtools}

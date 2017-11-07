@@ -15,22 +15,16 @@ export interface NavigationBarStateProps {
 	hero: CurrentHeroInstanceState;
 	isRedoAvailable: boolean;
 	isUndoAvailable: boolean;
-	localeString?: string;
-	localeType: 'default' | 'set';
-	theme: string;
 }
 
 export interface NavigationBarDispatchProps {
 	undo(): void;
 	redo(): void;
-	saveConfig(): void;
 	saveHero(): void;
 	saveHeroes(): void;
 	saveGroup(): void;
-	setLocale(id?: string): void;
 	setSection(id: string): void;
 	setTab(id: string): void;
-	setTheme(id: string): void;
 }
 
 export type NavigationBarProps = NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;

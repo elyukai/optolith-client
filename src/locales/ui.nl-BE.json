@@ -715,5 +715,6 @@
 	"property": "Merkmal",
 	"unfamiliartraditions": "Fremdtraditionen",
 	"spellextensions": "Zaubererweiterungen",
-	"liturgicalchantextensions": "Liturgieerweiterungen"
+	"liturgicalchantextensions": "Liturgieerweiterungen",
+	"enableeditingheroaftercreationphase": "Editieren von Helden nach der Heldenerschaffung"
 }

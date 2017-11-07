@@ -1,5 +1,5 @@
 import { SetCombatTechniquesSortOrderAction } from '../actions/CombatTechniquesActions';
-import { SetThemeAction, SwitchEnableActiveItemHintsAction } from '../actions/ConfigActions';
+import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from '../actions/ConfigActions';
 import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction, SwitchCultureValueVisibilityAction } from '../actions/CultureActions';
 import { SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
 import { SetItemsSortOrderAction } from '../actions/EquipmentActions';
@@ -14,7 +14,7 @@ import { SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import { SetTalentsSortOrderAction, SwitchTalentRatingVisibilityAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = ReceiveInitialDataAction | SetCombatTechniquesSortOrderAction | SwitchEnableActiveItemHintsAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | SwitchDisAdvRatingVisibilityAction | SetItemsSortOrderAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | SetLiturgiesSortOrderAction | SetProfessionsGroupVisibilityFilterAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | SetSpecialAbilitiesSortOrderAction | SetSpellsSortOrderAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | SwitchSheetAttributeValueVisibilityAction | SetThemeAction;
+type Action = ReceiveInitialDataAction | SetCombatTechniquesSortOrderAction | SwitchEnableActiveItemHintsAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | SwitchDisAdvRatingVisibilityAction | SetItemsSortOrderAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | SetLiturgiesSortOrderAction | SetProfessionsGroupVisibilityFilterAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | SetSpecialAbilitiesSortOrderAction | SetSpellsSortOrderAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | SwitchSheetAttributeValueVisibilityAction | SetThemeAction | SwitchEnableEditingHeroAfterCreationPhaseAction;
 
 export interface UISettingsState {
 	herolistSortOrder: string;
@@ -41,6 +41,7 @@ export interface UISettingsState {
 	enableActiveItemHints: boolean;
 	sheetCheckAttributeValueVisibility: boolean;
 	theme: string;
+	enableEditingHeroAfterCreationPhase: boolean;
 }
 
 const initialState: UISettingsState = {
@@ -67,7 +68,8 @@ const initialState: UISettingsState = {
 	equipmentGroupVisibilityFilter: 1,
 	enableActiveItemHints: false,
 	sheetCheckAttributeValueVisibility: false,
-	theme: 'dark'
+	theme: 'dark',
+	enableEditingHeroAfterCreationPhase: false
 };
 
 export function uisettings(state: UISettingsState = initialState, action: Action): UISettingsState {
@@ -145,6 +147,9 @@ export function uisettings(state: UISettingsState = initialState, action: Action
 
 		case ActionTypes.SET_THEME:
 			return { ...state, theme: action.payload.theme };
+
+		case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
+			return { ...state, enableEditingHeroAfterCreationPhase: !state.enableEditingHeroAfterCreationPhase };
 
 		default:
 			return state;
