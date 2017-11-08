@@ -35,3 +35,13 @@ export function isFloat(string: string): boolean {
 export function isEmptyOr(check: (string: string) => boolean, string: string): boolean {
 	return string === '' || check(string);
 }
+
+export const base64ImageCheck = /^data:image\/(png|gif|jpeg);base64,.+/;
+
+/**
+ * Checks if the provided string is a base64 encoded image.
+ * @param string The string to test.
+ */
+export function isBase64Image(string: string): boolean {
+	return base64ImageCheck.test(string);
+}

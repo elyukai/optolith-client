@@ -1,6 +1,7 @@
 import * as classNames from 'classnames';
 import { existsSync } from 'fs';
 import * as React from 'react';
+import { isBase64Image } from '../utils/RegexUtils';
 import { Avatar } from './Avatar';
 
 export interface AvatarWrapperProps {
@@ -14,7 +15,7 @@ export interface AvatarWrapperProps {
 export function AvatarWrapper(props: AvatarWrapperProps) {
 	const { children, img, onClick, src } = props;
 	let { className } = props;
-	const validPath = typeof src === 'string' && src.length > 0 && existsSync(src.replace(/file:[\\\/]+/, ''));
+	const validPath = typeof src === 'string' && src.length > 0 && (isBase64Image(src) || existsSync(src.replace(/file:[\\\/]+/, '')));
 
 	className = classNames(className, {
 		'avatar-wrapper': true,
@@ -24,7 +25,7 @@ export function AvatarWrapper(props: AvatarWrapperProps) {
 	return (
 		<div className={className} onClick={onClick}>
 			{children}
-			<Avatar img={img} src={src} hasWrapper />
+			<Avatar img={img} src={src} hasWrapper validPath={validPath} />
 		</div>
 	);
 }

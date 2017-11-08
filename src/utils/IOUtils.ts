@@ -2,7 +2,7 @@ import { remote } from 'electron';
 import * as fs from 'fs';
 
 export function readFile(path: string, encoding: string = 'utf8') {
-	return new Promise<string>((resolve, reject) => {
+	return new Promise<string | Buffer>((resolve, reject) => {
 		fs.readFile(path, encoding, (error, data) => {
 			if (error) {
 				reject(error);

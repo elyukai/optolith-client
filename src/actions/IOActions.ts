@@ -1,5 +1,5 @@
 import { remote } from 'electron';
-import { existsSync } from 'fs';
+import * as fs from 'fs';
 import { extname, join } from 'path';
 import * as ActionTypes from '../constants/ActionTypes';
 import { getUndoAvailability } from '../selectors/currentHeroSelectors';
@@ -13,6 +13,7 @@ import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../type
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
+import { isBase64Image } from '../utils/RegexUtils';
 import { convertHero } from '../utils/VersionUtils';
 import { addAlert } from './AlertActions';
 import { _setSection } from './LocationActions';
@@ -87,7 +88,7 @@ export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 		let locales: ToListById<RawLocale> | undefined;
 		try {
 			const result = await readFile(join(root, 'app', 'data.json'));
-			tables = JSON.parse(result);
+			tables = JSON.parse(result as string);
 		}
 		catch (error) {
 			dispatch(addAlert({
@@ -97,14 +98,14 @@ export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 		}
 		try {
 			const result = await readFile(join(appPath, 'config.json'));
-			config = JSON.parse(result);
+			config = JSON.parse(result as string);
 		}
 		catch (error) {
 			config = undefined;
 		}
 		try {
 			const result = await readFile(join(appPath, 'heroes.json'));
-			heroes = JSON.parse(result);
+			heroes = JSON.parse(result as string);
 		}
 		catch (error) {
 			heroes = undefined;
@@ -114,7 +115,7 @@ export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 			locales = {};
 			for (const file of result) {
 				const locale = await readFile(join(root, 'app', 'locales', file));
-				locales[file.split('.')[0]] = JSON.parse(locale);
+				locales[file.split('.')[0]] = JSON.parse(locale as string);
 			}
 		}
 		catch (error) {
@@ -197,7 +198,7 @@ export function receiveHeroImport(raw: RawHero): ReceiveImportedHeroAction {
 		id: newId,
 		dateCreated: new Date(dateCreated),
 		dateModified: new Date(dateModified),
-		avatar: avatar && existsSync(avatar.replace(/file:[\\\/]+/, '')) ? avatar : undefined
+		avatar: avatar && (isBase64Image(avatar) || fs.existsSync(avatar.replace(/file:[\\\/]+/, ''))) ? avatar : undefined
 	});
 	return {
 		type: ActionTypes.RECEIVE_IMPORTED_HERO,
@@ -211,7 +212,7 @@ export function receiveHeroImport(raw: RawHero): ReceiveImportedHeroAction {
 export function requestHeroExport(id: string): AsyncAction {
 	return async (dispatch, getState) => {
 		const state = getState();
-		const hero = getHeroForSave(state, id);
+		let hero = getHeroForSave(state, id);
 		const locale = getLocaleMessages(state)!;
 		const filename = await showSaveDialog({
 			title: _translate(locale, 'fileapi.exporthero.title'),
@@ -220,6 +221,18 @@ export function requestHeroExport(id: string): AsyncAction {
 			],
 			defaultPath: hero.name.replace(/\//, '\/')
 		});
+		if (typeof hero.avatar === 'string' && hero.avatar.length > 0 && !isBase64Image(hero.avatar)) {
+			const preparedUrl = hero.avatar.replace(/file:[\\\/]+/, '');
+			if (fs.existsSync(preparedUrl)) {
+				const prefix = `data:image/${extname(hero.avatar).slice(1)};base64,`;
+				const file = fs.readFileSync(preparedUrl);
+				const fileString = file.toString('base64');
+				hero = {
+					...hero,
+					avatar: prefix + fileString
+				};
+			}
+		}
 		if (filename) {
 			try {
 				await writeFile(filename, JSON.stringify(hero));
