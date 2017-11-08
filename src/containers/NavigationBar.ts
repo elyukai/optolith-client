@@ -6,6 +6,7 @@ import * as InGameActions from '../actions/InGameActions';
 import * as LocationActions from '../actions/LocationActions';
 import { AppState } from '../reducers/app';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
+import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getCurrentHeroPresent } from '../selectors/stateSelectors';
 import { getCurrentSection, getCurrentTab } from '../selectors/uilocationSelectors';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
@@ -17,6 +18,7 @@ function mapStateToProps(state: AppState) {
 		hero: getCurrentHeroPresent(state),
 		isRedoAvailable: getRedoAvailability(state),
 		isUndoAvailable: getUndoAvailability(state),
+		isRemovingEnabled: isRemovingEnabled(state),
 	};
 }
 

@@ -12,7 +12,7 @@ export interface ActivatableRemoveListProps {
 	hideGroup?: boolean;
 	list: ActiveViewObject[];
 	locale: UIMessages;
-	phase?: number;
+	isRemovingEnabled: boolean;
 	rating?: { [id: string]: string };
 	showRating?: boolean;
 	sortOrder?: string;
@@ -21,7 +21,7 @@ export interface ActivatableRemoveListProps {
 }
 
 export function ActivatableRemoveList(props: ActivatableRemoveListProps) {
-	const { filterText = '', groupNames, hideGroup, list, locale, phase, rating, removeFromList, setTier, showRating, sortOrder = 'name' } = props;
+	const { filterText = '', groupNames, list, locale, rating, showRating, sortOrder = 'name' } = props;
 
 	const sortedList = filterAndSortObjects(list, locale.id, filterText, sortOrder === 'groupname' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
 
@@ -33,16 +33,12 @@ export function ActivatableRemoveList(props: ActivatableRemoveListProps) {
 				<List>
 					{sortedList.map(item => (
 						<ActivatableRemoveListItem
+							{...props}
 							key={`${item.id}_${item.index}`}
 							item={item}
-							locale={locale}
-							phase={phase}
-							setTier={setTier}
-							removeFromList={removeFromList}
 							isImportant={showRating && rating && rating[item.id] === 'IMP'}
 							isTypical={showRating && rating && rating[item.id] === 'TYP'}
 							isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
-							hideGroup={hideGroup}
 							/>
 					))}
 				</List>

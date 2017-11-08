@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
@@ -7,13 +6,12 @@ import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
 import { getAvailable, getTotal } from '../selectors/adventurePointsSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
+import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getPhase } from '../selectors/stateSelectors';
 import { InputTextEvent } from '../types/data.d';
-import { createOverlay } from '../utils/createOverlay';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
-import { OverviewAddAP } from '../views/profile/OverviewAddAP';
 
 function mapStateToProps(state: AppState) {
 	return {
@@ -23,6 +21,7 @@ function mapStateToProps(state: AppState) {
 		culture: getCurrentCulture(state),
 		currentEl: getCurrentEl(state),
 		disadvantages: getDisadvantagesForSheet(state),
+		isRemovingEnabled: isRemovingEnabled(state),
 		phase: getPhase(state),
 		profession: getCurrentProfession(state),
 		professionVariant: getCurrentProfessionVariant(state),
@@ -31,7 +30,7 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
@@ -50,8 +49,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, props: PersonalDataOwnPr
 		endCharacterCreation() {
 			dispatch(ProfileActions._endHeroCreation());
 		},
-		showApAdd() {
-			createOverlay(<OverviewAddAP addAdventurePoints={(ap: number) => dispatch(ProfileActions._addAdventurePoints(ap))} locale={props.locale} />);
+		addAdventurePoints(ap: number) {
+			dispatch(ProfileActions._addAdventurePoints(ap));
 		},
 		changeFamily(e: InputTextEvent) {
 			dispatch(ProfileActions._setFamily(e.target.value as string));

@@ -92,15 +92,15 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 			</ListItemButtons>
 		) : (
 			<ListItemButtons>
-				{ addPoint ? <IconButton icon="&#xE908;" onClick={addPoint} disabled={addDisabled} flat /> : null }
-				{ removePoint ? (
+				{addPoint && <IconButton icon="&#xE908;" onClick={addPoint} disabled={addDisabled} flat />}
+				{removePoint && (
 					<IconButton
 						icon={ic && sr === 0 && !removeDisabled || !ic ? '\uE90b' : '\uE909'}
 						onClick={removePoint}
 						disabled={removeDisabled}
 						flat
 						/>
-				) : null }
+				)}
 				<IconButton icon="&#xE912;" flat onClick={this.showInfo} disabled={!selectForInfo} />
 			</ListItemButtons>
 		);

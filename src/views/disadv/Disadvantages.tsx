@@ -28,6 +28,7 @@ export interface DisadvantagesStateProps {
 	magicalMax: number;
 	rating: ToListById<string>;
 	showRating: boolean;
+	isRemovingEnabled: boolean;
 	get(id: string): Instance | undefined;
 }
 
@@ -60,7 +61,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as DisadvantagesState);
 
 	render() {
-		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, removeFromList, setTier, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
+		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
 		const { filterText, filterTextSlidein } = this.state;
 
 		return (
@@ -119,13 +120,9 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
 					<ActiveList
+						{...this.props}
 						filterText={filterText}
 						list={activeList}
-						locale={locale}
-						rating={rating}
-						showRating={showRating}
-						removeFromList={removeFromList}
-						setTier={setTier}
 						/>
 				</MainContent>
 			</Page>

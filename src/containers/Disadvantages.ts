@@ -6,6 +6,7 @@ import { AppState } from '../reducers/app';
 import { getDeactiveDisadvantages, getDisadvantagesForSheet, getDisadvantagesRating } from '../selectors/activatableSelectors';
 import { getAp } from '../selectors/adventurePointsSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
+import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
@@ -20,6 +21,7 @@ function mapStateToProps(state: AppState) {
 		get(id: string) {
 			return get(getDependent(state), id);
 		},
+		isRemovingEnabled: isRemovingEnabled(state),
 		magicalMax: getAdvantagesDisadvantagesSubMax(getDependent(state), 1),
 		rating: getDisadvantagesRating(state),
 		showRating: getAdvantagesDisadvantagesCultureRatingVisibility(state),

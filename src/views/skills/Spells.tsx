@@ -37,7 +37,7 @@ export interface SpellsStateProps {
 	currentHero: CurrentHeroInstanceState;
 	enableActiveItemHints: boolean;
 	list: (SpellInstance | CantripInstance)[];
-	phase: number;
+	isRemovingEnabled: boolean;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
 }
@@ -80,7 +80,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, phase, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -138,7 +138,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 							<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
 								{_translate(locale, 'ic.short')}
 							</ListHeaderTag>
-							{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+							{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 							<ListHeaderTag className="btn-placeholder" />
 						</ListHeader>
 						<Scroll>
@@ -251,7 +251,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
 							{_translate(locale, 'ic.short')}
 						</ListHeaderTag>
-						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
@@ -272,7 +272,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												key={obj.id}
 												id={obj.id}
 												name={name}
-												removePoint={removeCantripFromList.bind(null, obj.id)}
+												removePoint={isRemovingEnabled ? removeCantripFromList.bind(null, obj.id) : undefined}
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
@@ -304,7 +304,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											key={obj.id}
 											id={obj.id}
 											name={name}
-											removePoint={obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id)}
+											removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}

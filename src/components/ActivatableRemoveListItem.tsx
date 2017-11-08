@@ -22,7 +22,7 @@ interface RemoveObject {
 export interface ActivatableRemoveListItemProps {
 	item: ActiveViewObject;
 	locale: UIMessages;
-	phase?: number;
+	isRemovingEnabled: boolean;
 	hideGroup?: boolean;
 	isImportant?: boolean;
 	isTypical?: boolean;
@@ -43,17 +43,17 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { phase = 2, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
+		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
 		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, customCost } = item;
 		let { cost, name } = item;
 		let addSpecial = '';
 
 		let tierElement;
 		if (tier && tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
-			const min = phase === 3 ? tier : Math.max(1, minTier);
+			const min = !isRemovingEnabled ? tier : Math.max(1, minTier);
 			const max = Math.min(tiers, maxTier);
 			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
-			if (id === 'SA_29' && (tier === 4 || phase < 3)) {
+			if (id === 'SA_29' && (tier === 4 || isRemovingEnabled)) {
 				array.push({ id: 4, name: 'MS' });
 			}
 			if (array.length > 1) {
@@ -89,12 +89,12 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 					<div className={classNames('cost', customCost && 'custom-cost')}>{cost}</div>
 				</ListItemValues>
 				<ListItemButtons>
-					<IconButton
+					{isRemovingEnabled && <IconButton
 						icon="&#xE90b;"
 						onClick={this.removeFromList.bind(null, args as DeactivateArgs)}
 						disabled={disabled}
 						flat
-						/>
+						/>}
 					<IconButton icon="&#xE912;" flat disabled />
 				</ListItemButtons>
 			</ListItem>

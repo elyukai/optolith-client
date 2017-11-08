@@ -35,7 +35,7 @@ export interface LiturgiesStateProps {
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	enableActiveItemHints: boolean;
 	list: (BlessingInstance | LiturgyInstance)[];
-	phase: number;
+	isRemovingEnabled: boolean;
 	sortOrder: string;
 	traditionId: number;
 	get(id: string): Instance | undefined;
@@ -79,7 +79,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as LiturgiesState);
 
 	render() {
-		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, phase, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
+		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -138,7 +138,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 							<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
 								{_translate(locale, 'ic.short')}
 							</ListHeaderTag>
-							{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+							{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 							<ListHeaderTag className="btn-placeholder" />
 						</ListHeader>
 						<Scroll>
@@ -246,7 +246,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
 							{_translate(locale, 'ic.short')}
 						</ListHeaderTag>
-						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
@@ -266,7 +266,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												key={obj.id}
 												id={obj.id}
 												name={name}
-												removePoint={removeBlessingFromList.bind(null, obj.id)}
+												removePoint={isRemovingEnabled ? removeBlessingFromList.bind(null, obj.id) : undefined}
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
@@ -298,7 +298,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											key={obj.id}
 											id={obj.id}
 											name={name}
-											removePoint={obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id)}
+											removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}

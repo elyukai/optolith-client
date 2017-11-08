@@ -23,7 +23,7 @@ export interface SpecialAbilitiesStateProps {
 	activeList: ActiveViewObject[];
 	deactiveList: DeactiveViewObject[];
 	enableActiveItemHints: boolean;
-	phase: number;
+	isRemovingEnabled: boolean;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
 }
@@ -57,7 +57,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpecialAbilitiesState);
 
 	render() {
-		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, phase, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints } = this.props;
+		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, isRemovingEnabled, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -125,7 +125,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
 							{_translate(locale, 'apshort')}
 						</ListHeaderTag>
-						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
 					<ActivatableRemoveList
@@ -133,7 +133,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 						groupNames={groupNames}
 						list={activeList}
 						locale={locale}
-						phase={phase}
+						isRemovingEnabled={isRemovingEnabled}
 						removeFromList={removeFromList}
 						setTier={setTier}
 						sortOrder={sortOrder}

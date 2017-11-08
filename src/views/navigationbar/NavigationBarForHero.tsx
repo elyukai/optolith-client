@@ -21,6 +21,7 @@ export interface NavigationBarForHeroProps {
 	hero: CurrentHeroInstanceState;
 	isRedoAvailable: boolean;
 	isUndoAvailable: boolean;
+	isRemovingEnabled: boolean;
 	locale: UIMessages;
 	showSettings?: boolean;
 	closeSettings(): void;
@@ -33,7 +34,7 @@ export interface NavigationBarForHeroProps {
 }
 
 export function NavigationBarForHero(props: NavigationBarForHeroProps) {
-	const { closeSettings, currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, openSettings, redo, saveHero, undo, setSection, setTab } = props;
+	const { closeSettings, currentTab, hero: { ap, dependent, phase, profile: { avatar } }, isRedoAvailable, isUndoAvailable, locale, openSettings, redo, saveHero, undo, setSection, setTab, isRemovingEnabled } = props;
 	const { total, spent } = ap;
 
 	const tabs = [
@@ -45,17 +46,16 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 			{ label: _translate(locale, 'titlebar.tabs.racecultureprofession'), tag: 'rcp' }
 		);
 	}
-	else if (phase === 2) {
-		tabs.push(
-			{ label: _translate(locale, 'titlebar.tabs.attributes'), tag: 'attributes' },
-			{ label: _translate(locale, 'titlebar.tabs.advantagesdisadvantages'), tag: 'disadv' },
-			{ label: _translate(locale, 'titlebar.tabs.skills'), tag: 'skills' },
-			{ label: _translate(locale, 'titlebar.tabs.belongings'), tag: 'belongings' }
-		);
-	}
 	else {
 		tabs.push(
 			{ label: _translate(locale, 'titlebar.tabs.attributes'), tag: 'attributes' },
+		);
+		if (isRemovingEnabled) {
+			tabs.push(
+				{ label: _translate(locale, 'titlebar.tabs.advantagesdisadvantages'), tag: 'disadv' },
+			);
+		}
+		tabs.push(
 			{ label: _translate(locale, 'titlebar.tabs.skills'), tag: 'skills' },
 			{ label: _translate(locale, 'titlebar.tabs.belongings'), tag: 'belongings' }
 		);

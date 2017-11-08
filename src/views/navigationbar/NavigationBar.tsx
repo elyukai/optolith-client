@@ -14,6 +14,7 @@ export interface NavigationBarStateProps {
 	currentTab: string;
 	hero: CurrentHeroInstanceState;
 	isRedoAvailable: boolean;
+	isRemovingEnabled: boolean;
 	isUndoAvailable: boolean;
 }
 

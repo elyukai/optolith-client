@@ -24,7 +24,7 @@ export interface CombatTechniquesOwnProps {
 export interface CombatTechniquesStateProps {
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: CombatTechniqueWithRequirements[];
-	phase: number;
+	isRemovingEnabled: boolean;
 	sortOrder: string;
 	get(id: string): Instance | undefined;
 }
@@ -49,7 +49,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
 
 	render() {
-		const { addPoint, get, derivedCharacteristics, list: rawlist, locale, phase, removePoint, setSortOrder, sortOrder } = this.props;
+		const { addPoint, get, derivedCharacteristics, list: rawlist, locale, isRemovingEnabled, removePoint, setSortOrder, sortOrder } = this.props;
 		const { filterText } = this.state;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
@@ -91,7 +91,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 						<ListHeaderTag className="pa" hint={_translate(locale, 'pa.long')}>
 							{_translate(locale, 'pa.short')}
 						</ListHeaderTag>
-						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
@@ -111,7 +111,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											checkDisabled
 											addPoint={addPoint.bind(null, obj.id)}
 											addDisabled={obj.value >= obj.max}
-											removePoint={removePoint.bind(null, obj.id)}
+											removePoint={isRemovingEnabled ? removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={obj.value <= obj.min}
 											addValues={[
 												{ className: primaryClassName, value: primary },

@@ -11,6 +11,7 @@ import { ActiveViewObject, CultureInstance, ExperienceLevel, ProfessionInstance,
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
+import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 
 export interface PersonalDataOwnProps {
@@ -29,6 +30,7 @@ export interface PersonalDataStateProps {
 	professionVariant: ProfessionVariantInstance | undefined;
 	profile: ProfileState;
 	race: RaceInstance | undefined;
+	isRemovingEnabled: boolean;
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
@@ -36,7 +38,7 @@ export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchP
 	setHeroName(name: string): void;
 	setCustomProfessionName(name: string): void;
 	endCharacterCreation(): void;
-	showApAdd(): void;
+	addAdventurePoints(ap: number): void;
 }
 
 export type PersonalDataProps = PersonalDataStateProps & PersonalDataDispatchProps & PersonalDataOwnProps;
@@ -45,17 +47,21 @@ export interface PersonalDataState {
 	editName: boolean;
 	editProfessionName: boolean;
 	isAvatarChangeOpened: boolean;
+	isAddAPOpened: boolean;
 }
 
 export class PersonalData extends React.Component<PersonalDataProps, PersonalDataState> {
 	state = {
 		editName: false,
 		editProfessionName: false,
-		isAvatarChangeOpened: false
+		isAvatarChangeOpened: false,
+		isAddAPOpened: false
 	};
 
 	openAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: true } as PersonalDataState));
 	closeAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: false } as PersonalDataState));
+	openAddAP = () => this.setState(() => ({ isAddAPOpened: true } as PersonalDataState));
+	closeAddAP = () => this.setState(() => ({ isAddAPOpened: false } as PersonalDataState));
 	changeName = (name: string) => {
 		this.props.setHeroName(name);
 		this.setState({ editName: false } as PersonalDataState);
@@ -84,7 +90,6 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			professionVariant,
 			profile,
 			race,
-			showApAdd,
 			...other
 		} = this.props;
 
@@ -197,7 +202,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 								<BorderButton
 									className="add-ap"
 									label={_translate(locale, 'profileoverview.actions.addadventurepoints')}
-									onClick={showApAdd}
+									onClick={this.openAddAP}
 									/>
 							)
 						}
@@ -246,6 +251,11 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 						)
 					}
 				</Scroll>
+				<OverviewAddAP
+					{...this.props}
+					close={this.closeAddAP}
+					isOpened={this.state.isAddAPOpened}
+					/>
 				<AvatarChange
 					{...this.props}
 					setPath={this.props.setAvatar}

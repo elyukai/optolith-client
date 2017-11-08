@@ -8,6 +8,7 @@ import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getAllByCategory, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isActivationDisabled } from '../selectors/liturgiesSelectors';
+import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
@@ -21,6 +22,7 @@ function mapStateToProps(state: AppState) {
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
+		isRemovingEnabled: isRemovingEnabled(state),
 		list: getAllByCategory(getDependent(state), LITURGIES, BLESSINGS) as (LiturgyInstance | BlessingInstance)[],
 		phase: getPhase(state),
 		sortOrder: getLiturgiesSortOrder(state),

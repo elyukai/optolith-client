@@ -8,6 +8,7 @@ interface Props {
 	locale: UIMessages;
 	rating: { [id: string]: string };
 	showRating: boolean;
+	isRemovingEnabled: boolean;
 	removeFromList(args: DeactivateArgs): void;
 	setTier(id: string, index: number, tier: number, cost: number): void;
 }

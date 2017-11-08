@@ -29,7 +29,7 @@ export interface TalentsStateProps {
 	currentHero: CurrentHeroInstanceState;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: TalentInstance[];
-	phase: number;
+	isRemovingEnabled: boolean;
 	sortOrder: string;
 	ratingVisibility: boolean;
 	talentRating: ToListById<string>;
@@ -59,7 +59,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as TalentsState);
 
 	render() {
-		const { addPoint, currentHero, get, derivedCharacteristics, locale, phase, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
+		const { addPoint, currentHero, get, derivedCharacteristics, locale, isRemovingEnabled, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
 		const { filterText, infoId } = this.state;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
@@ -97,7 +97,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
 							{_translate(locale, 'ic.short')}
 						</ListHeaderTag>
-						{phase < 3 && <ListHeaderTag className="btn-placeholder" />}
+						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
@@ -118,7 +118,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 											ic={obj.ic}
 											addPoint={addPoint.bind(null, obj.id)}
 											addDisabled={!isIncreasable(currentHero, obj)}
-											removePoint={phase < 3 ? removePoint.bind(null, obj.id) : undefined}
+											removePoint={isRemovingEnabled ? removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
 											selectForInfo={this.showInfo}

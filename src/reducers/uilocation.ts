@@ -1,9 +1,10 @@
+import { SwitchEnableEditingHeroAfterCreationPhaseAction } from '../actions/ConfigActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SetSectionAction, SetTabAction } from '../actions/LocationActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = SetSectionAction | SetTabAction | CreateHeroAction | LoadHeroAction | SetSelectionsAction;
+type Action = SetSectionAction | SetTabAction | CreateHeroAction | LoadHeroAction | SetSelectionsAction | SwitchEnableEditingHeroAfterCreationPhaseAction;
 
 export interface UILocationState {
 	section: string;
@@ -31,6 +32,12 @@ export function uilocation(state: UILocationState = initialState, action: Action
 
 		case ActionTypes.ASSIGN_RCP_OPTIONS:
 			return { ...state, tab: 'attributes' };
+
+		case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
+			if (state.tab === 'disadv') {
+				return { ...state, tab: 'profile' };
+			}
+			return state;
 
 		default:
 			return state;
