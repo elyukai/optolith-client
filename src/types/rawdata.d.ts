@@ -432,6 +432,8 @@ export interface Config {
 	locale?: string;
 	theme?: string;
 	enableEditingHeroAfterCreationPhase?: boolean;
+	meleeItemTemplatesCombatTechniqueFilter?: string;
+	rangedItemTemplatesCombatTechniqueFilter?: string;
 }
 
 export interface Raw {

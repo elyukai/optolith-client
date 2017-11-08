@@ -26,3 +26,5 @@ export const getEnableActiveItemHints = (state: AppState) => state.ui.settings.e
 export const getSheetCheckAttributeValueVisibility = (state: AppState) => state.ui.settings.sheetCheckAttributeValueVisibility;
 export const getTheme = (state: AppState) => state.ui.settings.theme;
 export const isEditingHeroAfterCreationPhaseEnabled = (state: AppState) => state.ui.settings.enableEditingHeroAfterCreationPhase;
+export const getMeleeItemTemplateCombatTechniqueFilter = (state: AppState) => state.ui.settings.meleeItemTemplatesCombatTechniqueFilter;
+export const getRangedItemTemplateCombatTechniqueFilter = (state: AppState) => state.ui.settings.rangedItemTemplatesCombatTechniqueFilter;

@@ -718,4 +718,5 @@ export interface UIMessages {
 	"spellextensions": string;
 	"liturgicalchantextensions": string;
 	"enableeditingheroaftercreationphase": string;
+	"allcombattechniques": string;
 }

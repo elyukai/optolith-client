@@ -1063,3 +1063,35 @@ export function setArmorZonesRightLegLoss(id: number | undefined): SetArmorZones
 		}
 	};
 }
+
+export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
+	type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
+	payload: {
+		filterOption: string | undefined;
+	};
+}
+
+export function setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): SetMeleeItemTemplatesCombatTechniqueFilterAction {
+	return {
+		type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+		payload: {
+			filterOption
+		}
+	};
+}
+
+export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
+	type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
+	payload: {
+		filterOption: string | undefined;
+	};
+}
+
+export function setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): SetRangedItemTemplatesCombatTechniqueFilterAction {
+	return {
+		type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
+		payload: {
+			filterOption
+		}
+	};
+}

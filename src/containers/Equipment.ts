@@ -9,7 +9,7 @@ import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getAttributes } from '../selectors/stateSelectors';
-import { getEquipmentSortOrder } from '../selectors/uisettingsSelectors';
+import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from '../selectors/uisettingsSelectors';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
 
 function mapStateToProps(state: AppState) {
@@ -24,7 +24,9 @@ function mapStateToProps(state: AppState) {
 		sortOrder: getEquipmentSortOrder(state),
 		templates: getTemplates(state),
 		totalPrice: getTotalPrice(state),
-		totalWeight: getTotalWeight(state)
+		totalWeight: getTotalWeight(state),
+		meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter(state),
+		rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter(state)
 	};
 }
 
@@ -56,6 +58,12 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setKreutzers(value: string) {
 			dispatch(EquipmentActions._setKreutzers(value));
+		},
+		setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined) {
+			dispatch(EquipmentActions.setMeleeItemTemplatesCombatTechniqueFilter(filterOption));
+		},
+		setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined) {
+			dispatch(EquipmentActions.setRangedItemTemplatesCombatTechniqueFilter(filterOption));
 		},
 	};
 }

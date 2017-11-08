@@ -35,6 +35,8 @@ export interface EquipmentStateProps {
 	templates: ItemInstance[];
 	totalPrice: number;
 	totalWeight: number;
+	meleeItemTemplateCombatTechniqueFilter?: string;
+	rangedItemTemplateCombatTechniqueFilter?: string;
 }
 
 export interface EquipmentDispatchProps {
@@ -47,6 +49,8 @@ export interface EquipmentDispatchProps {
 	createItem(): void;
 	deleteItem(id: string): void;
 	editItem(id: string): void;
+	setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): void;
+	setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): void;
 }
 
 export type EquipmentProps = EquipmentStateProps & EquipmentDispatchProps & EquipmentOwnProps;
@@ -79,7 +83,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as EquipmentState);
 
 	render() {
-		const { carryingCapacity, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight } = this.props;
+		const { carryingCapacity, combatTechniques, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight, meleeItemTemplateCombatTechniqueFilter, rangedItemTemplateCombatTechniqueFilter, setMeleeItemTemplatesCombatTechniqueFilter, setRangedItemTemplatesCombatTechniqueFilter } = this.props;
 		const { filterGroupSlidein, filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const groups = _translate(locale, 'equipment.view.groups');
@@ -96,14 +100,24 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
 		const filterTemplatesByIsActiveAndInGroup = (e: ItemInstance): boolean => {
 			const isGroup = e.gr === filterGroupSlidein;
+			let isCombatTechnique = true;
+			if (meleeItemTemplateCombatTechniqueFilter !== undefined && e.gr === 1) {
+				isCombatTechnique = e.combatTechnique === meleeItemTemplateCombatTechniqueFilter;
+			}
+			else if (rangedItemTemplateCombatTechniqueFilter !== undefined && e.gr === 2) {
+				isCombatTechnique = e.combatTechnique === rangedItemTemplateCombatTechniqueFilter;
+			}
 			const isNotInList = !items.find(item => item.template === e.template && item.isTemplateLocked);
-			return isGroup && isNotInList;
+			return isGroup && isCombatTechnique && isNotInList;
 		};
 
 		const filterTemplatesByIsActive = (e: ItemInstance): boolean => {
 			return !items.find(item => item.template === e.template && item.isTemplateLocked);
 		};
 
+		const combatTechniquesList = sortObjects(combatTechniques, locale.id);
+		const meleeCombatTechniques = combatTechniquesList.filter(e => e.gr === 1);
+		const rangedCombatTechniques = combatTechniquesList.filter(e => e.gr === 2);
 		const templateList = filterAndSortObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive), locale.id, filterTextSlidein);
 
 		return (
@@ -117,6 +131,24 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							options={groupsSelectionItems}
 							fullWidth
 							/>
+						{filterGroupSlidein === 1 && <Dropdown
+							value={meleeItemTemplateCombatTechniqueFilter}
+							onChange={setMeleeItemTemplatesCombatTechniqueFilter}
+							options={[
+								{ name: _translate(locale, 'allcombattechniques') },
+								...meleeCombatTechniques
+							]}
+							fullWidth
+							/>}
+						{filterGroupSlidein === 2 && <Dropdown
+							value={rangedItemTemplateCombatTechniqueFilter}
+							onChange={setRangedItemTemplatesCombatTechniqueFilter}
+							options={[
+								{ name: _translate(locale, 'allcombattechniques') },
+								...rangedCombatTechniques
+							]}
+							fullWidth
+							/>}
 					</Options>
 					<MainContent>
 						<ListHeader>
