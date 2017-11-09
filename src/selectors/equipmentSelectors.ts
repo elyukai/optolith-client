@@ -61,9 +61,9 @@ export function getZoneArmorFn(state: EquipmentState) {
 export function getFullItem(items: Map<string, ItemInstance>, templates: Map<string, ItemInstance>, id: string) {
 	if (items.has(id)) {
 		const item = items.get(id)!;
-		const { isTemplateLocked, template, where, amount } = item;
+		const { isTemplateLocked, template, where, amount, loss } = item;
 		const activeTemplate = typeof template === 'string' && templates.get(template);
-		return isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount, id } : item;
+		return isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount, loss, id } : item;
 	}
 	return templates.get(id)!;
 }

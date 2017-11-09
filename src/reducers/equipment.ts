@@ -117,10 +117,24 @@ export function equipment(state: EquipmentState = initialState, action: Action):
 
     case ActionTypes.SAVE_ITEM: {
       if (state.itemEditor && state.itemEditor.id) {
-        const id = state.itemEditor.id;
+        let convertedItem = convertToSave(state.itemEditor);
+        const { id, where, amount, price, name, gr, isTemplateLocked, template, loss } = convertedItem;
+        if (convertedItem.isTemplateLocked === true) {
+          convertedItem = {
+            id,
+            name,
+            gr,
+            amount,
+            where,
+            price,
+            template,
+            loss,
+            isTemplateLocked,
+          };
+        }
         return {
           ...state,
-          items: setListItem(state.items, id, convertToSave(state.itemEditor)),
+          items: setListItem(state.items, id, convertedItem),
           itemEditor: undefined,
           isItemCreation: undefined
         };
