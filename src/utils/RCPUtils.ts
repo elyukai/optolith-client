@@ -2,6 +2,7 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, ProfessionInstance, ProfessionVariantInstance, RaceInstance, SkillsSelection, SpecialisationSelection, ProfessionSelectionIds, ProfessionSelection } from '../types/data.d';
 import { dice } from './dice';
+import { multiplyString } from './NumberUtils';
 
 /**
  * Returns the AP cost difference between the given Races/Professions/Profession Variants. If you have to pay more, the returned number is positive and vice versa.
@@ -53,8 +54,9 @@ export function rerollWeight(race: RaceInstance, size: string = rerollSize(race)
       const result = dice(Math.abs(e));
       return e < 0 ? -result : result;
     });
-  const result = Number.parseInt(size) + (base as number) + add.reduce((a, b) => a + b, 0);
-  return [result.toString(), size] as [string, string];
+  const formattedSize = multiplyString(size);
+  const result = Number.parseInt(formattedSize) + (base as number) + add.reduce((a, b) => a + b, 0);
+  return [result.toString(), formattedSize] as [string, string];
 }
 
 export function isSpecialisationSelection(id: ProfessionSelectionIds, options: ProfessionSelection | undefined): options is SpecialisationSelection {

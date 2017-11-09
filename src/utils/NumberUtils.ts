@@ -24,3 +24,11 @@ export function sign(number: number): string {
 export function signNull(number: number, placeholder: string = ''): string {
 	return number > 0 ? `+${number}` : number < 0 ? number.toString() : placeholder;
 }
+
+/**
+ * Multiplies given string by 100 if it contains `,` o `.`.
+ * @param number
+ */
+export function multiplyString(string: string): string {
+	return /^\d+[,\.]\d+$/.test(string) ? (Number.parseFloat(string.replace(/,/, '.')) * 100).toString() : string;
+}

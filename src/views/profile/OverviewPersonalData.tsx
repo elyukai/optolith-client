@@ -8,6 +8,7 @@ import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.
 import { UIMessages } from '../../types/ui.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
+import { isEmptyOr, isFloat, isNaturalNumber } from '../../utils/RegexUtils';
 
 export interface OverviewPersonalDataOwnProps {
 	culture: CultureInstance | undefined;
@@ -98,6 +99,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					label={_translate(locale, 'personaldata.age')}
 					value={age}
 					onChange={props.changeAge}
+					valid={isEmptyOr(isNaturalNumber, age)}
 					/>
 			</div>
 			<InputButtonGroup className="reroll">
@@ -123,6 +125,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					label={_translate(locale, 'personaldata.size')}
 					value={size}
 					onChange={props.changeSize}
+					valid={isEmptyOr(isFloat, size)}
 					/>
 				<IconButton icon="&#xE913;" onClick={props.rerollSize} />
 			</InputButtonGroup>
@@ -131,6 +134,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					label={_translate(locale, 'personaldata.weight')}
 					value={weight}
 					onChange={props.changeWeight}
+					valid={isEmptyOr(isNaturalNumber, weight)}
 					/>
 				<IconButton icon="&#xE913;" onClick={props.rerollWeight} />
 			</InputButtonGroup>
