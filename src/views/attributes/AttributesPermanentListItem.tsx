@@ -8,24 +8,17 @@ import { PermanentPoints } from './PermanentPoints';
 
 export interface AttributesPermanentListItemProps {
 	locale: UIMessages;
-	id: 'AE' | 'KP';
+	id: 'LP' | 'AE' | 'KP';
 	label: string;
 	name: string;
-	boughtBack: number;
+	boughtBack?: number;
 	lost: number;
 	isRemovingEnabled: boolean;
-	addBoughtBack(): void;
-	addLost(value: number): void;
-	addBoughtBackAEPoint(): void;
-	removeBoughtBackAEPoint(): void;
-	addLostAEPoint(): void;
-	removeLostAEPoint(): void;
-	addLostAEPoints(value: number): void;
-	addBoughtBackKPPoint(): void;
-	removeBoughtBackKPPoint(): void;
-	addLostKPPoint(): void;
-	removeLostKPPoint(): void;
-	addLostKPPoints(value: number): void;
+	addBoughtBackPoint?(): void;
+	addLostPoint(): void;
+	addLostPoints(value: number): void;
+	removeBoughtBackPoint?(): void;
+	removeLostPoint(): void;
 }
 
 export interface AttributesPermanentListItemState {
@@ -45,9 +38,9 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 	closeAddDialog = () => this.setState(() => ({ isAddDialogOpened: false } as AttributesPermanentListItemState));
 
 	render() {
-		const { id, label, locale, name, isRemovingEnabled, addBoughtBack, addLost, boughtBack, lost, ...other } = this.props;
+		const { id, label, locale, name, isRemovingEnabled, addBoughtBackPoint, addLostPoints, boughtBack, lost, ...other } = this.props;
 		const { isAddDialogOpened, isEditDialogOpened } = this.state;
-		const available = lost - boughtBack;
+		const available = typeof boughtBack === 'number' ? lost - boughtBack : lost;
 
 		return (
 			<AttributeBorder
@@ -55,10 +48,12 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				value={available}
 				tooltip={<div className="calc-attr-overlay">
 					<h4><span>{name}</span><span>{available}</span></h4>
-					<p>
+					{typeof boughtBack === 'number' ? <p>
 						{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
 						{_translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
-					</p>
+					</p> : <p>
+						{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}
+					</p>}
 				</div>}
 				tooltipMargin={7}
 				>
@@ -86,16 +81,16 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 						/>
 				)}
 				<AttributesRemovePermanent
-					remove={addLost}
+					remove={addLostPoints}
 					locale={locale}
 					isOpened={isAddDialogOpened}
 					close={this.closeAddDialog}
 					/>
-				{!isRemovingEnabled && (
+				{!isRemovingEnabled && addBoughtBackPoint && (
 					<IconButton
 						className="remove"
 						icon="&#xE909;"
-						onClick={addBoughtBack}
+						onClick={addBoughtBackPoint}
 						disabled={available <= 0}
 						/>
 				)}

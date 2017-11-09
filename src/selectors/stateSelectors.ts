@@ -45,6 +45,7 @@ export const getEnergies = (state: AppState) => state.currentHero.present.energi
 export const getAddedLifePoints = (state: AppState) => state.currentHero.present.energies.addedLifePoints;
 export const getAddedArcaneEnergyPoints = (state: AppState) => state.currentHero.present.energies.addedArcaneEnergy;
 export const getAddedKarmaPoints = (state: AppState) => state.currentHero.present.energies.addedKarmaPoints;
+export const getPermanentLifePoints = (state: AppState) => state.currentHero.present.energies.permanentLifePoints;
 export const getPermanentArcaneEnergyPoints = (state: AppState) => state.currentHero.present.energies.permanentArcaneEnergy;
 export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.present.energies.permanentKarmaPoints;
 

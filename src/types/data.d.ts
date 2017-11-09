@@ -82,6 +82,9 @@ export interface HeroBase extends HeroBaseForHerolist {
 		lp: number;
 		ae: number;
 		kp: number;
+		permanentLP?: {
+			lost: number;
+		};
 		permanentAE: {
 			lost: number;
 			redeemed: number;
@@ -880,10 +883,10 @@ export interface Energy<I = string> extends SecondaryAttribute<I> {
 	mod: number;
 	maxAdd: number;
 	currentAdd: number;
+	permanentLost: number;
 }
 
 export interface EnergyWithLoss<I = string> extends Energy<I> {
-	permanentLost: number;
 	permanentRedeemed: number;
 }
 

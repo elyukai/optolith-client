@@ -9,6 +9,9 @@ export interface AttributesPermanentListProps {
 	locale: UIMessages;
 	isInCharacterCreation: boolean;
 	isRemovingEnabled: boolean;
+	addLostLPPoint(): void;
+	removeLostLPPoint(): void;
+	addLostLPPoints(value: number): void;
 	addBoughtBackAEPoint(): void;
 	removeBoughtBackAEPoint(): void;
 	addLostAEPoint(): void;
@@ -22,11 +25,23 @@ export interface AttributesPermanentListProps {
 }
 
 export function AttributesPermanentList(props: AttributesPermanentListProps) {
+	const LP = props.derived.find(e => e.id === 'LP') as EnergyWithLoss;
 	const AE = props.derived.find(e => e.id === 'AE') as EnergyWithLoss | undefined;
 	const KP = props.derived.find(e => e.id === 'KP') as EnergyWithLoss | undefined;
 
 	return (
 		<div className="permanent">
+			<AttributesPermanentListItem
+				{...props}
+				id="LP"
+				label={_translate(props.locale, 'plp.short')}
+				name={_translate(props.locale, 'plp.long')}
+				boughtBack={LP.permanentRedeemed}
+				lost={LP.permanentLost}
+				addLostPoint={props.addLostLPPoint}
+				addLostPoints={props.addLostLPPoints}
+				removeLostPoint={props.removeLostLPPoint}
+				/>
 			{ AE !== undefined && typeof AE.value === 'number' ? (
 				<AttributesPermanentListItem
 					{...props}
@@ -35,8 +50,11 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 					name={_translate(props.locale, 'attributes.pae.name')}
 					boughtBack={AE.permanentRedeemed}
 					lost={AE.permanentLost}
-					addBoughtBack={props.addBoughtBackAEPoint}
-					addLost={props.addLostAEPoints}
+					addBoughtBackPoint={props.addBoughtBackAEPoint}
+					addLostPoint={props.addLostAEPoint}
+					addLostPoints={props.addLostAEPoints}
+					removeBoughtBackPoint={props.removeBoughtBackAEPoint}
+					removeLostPoint={props.removeLostAEPoint}
 					/>
 			) : <div className="placeholder"></div> }
 			{ KP !== undefined && typeof KP.value === 'number' && (
@@ -47,8 +65,11 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 					name={_translate(props.locale, 'attributes.pkp.name')}
 					boughtBack={KP.permanentRedeemed}
 					lost={KP.permanentLost}
-					addBoughtBack={props.addBoughtBackKPPoint}
-					addLost={props.addLostKPPoints}
+					addBoughtBackPoint={props.addBoughtBackKPPoint}
+					addLostPoint={props.addLostKPPoint}
+					addLostPoints={props.addLostKPPoints}
+					removeBoughtBackPoint={props.removeBoughtBackKPPoint}
+					removeLostPoint={props.removeLostKPPoint}
 					/>
 			) }
 		</div>

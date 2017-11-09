@@ -30,6 +30,9 @@ export interface AttributesDispatchProps {
 	removeLifePoint(): void;
 	removeArcaneEnergyPoint(): void;
 	removeKarmaPoint(): void;
+	addLostLPPoint(): void;
+	removeLostLPPoint(): void;
+	addLostLPPoints(value: number): void;
 	addBoughtBackAEPoint(): void;
 	removeBoughtBackAEPoint(): void;
 	addLostAEPoint(): void;

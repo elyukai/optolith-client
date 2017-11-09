@@ -480,6 +480,8 @@ export interface UIMessages {
 	"attributes.tooltips.bought": string;
 	"attributes.tooltips.losttotal": string;
 	"attributes.tooltips.boughtback": string;
+	"plp.short": string;
+	"plp.long": string;
 	"attributes.pae.name": string;
 	"attributes.pae.short": string;
 	"attributes.pkp.name": string;

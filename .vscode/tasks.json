@@ -1,53 +1,48 @@
 {
 	// See https://go.microsoft.com/fwlink/?LinkId=733558
 	// for the documentation about the tasks.json format
-	"version": "0.1.0",
-	"showOutput": "always",
+	"version": "2.0.0",
+	"presentation": {
+		"reveal": "always"
+	},
+	"type": "shell",
 	"tasks": [
 		{
-				"taskName": "build",
+				"label": "build",
 				"command": "npm",
-				"args": ["run", "build"],
-				"isShellCommand": true
+				"args": ["run", "build"]
 		},
 		{
-				"taskName": "buildTest",
+				"label": "buildTest",
 				"command": "npm",
-				"args": ["run", "buildTest"],
-				"isShellCommand": true
+				"args": ["run", "buildTest"]
 		},
 		{
-				"taskName": "bundle",
-				"command": "npm",
-				"args": ["run", "bundle"],
-				"isShellCommand": true,
+				"label": "bundle",
+				"command": "npm run bundle",
 				"problemMatcher": [
-					"$tsc"
+					"$tsc-watch"
 				]
 		},
 		{
-				"taskName": "run",
+				"label": "run",
 				"command": "npm",
-				"args": ["start"],
-				"isShellCommand": true
+				"args": ["start"]
 		},
 		{
-				"taskName": "bundle_l10ns",
+				"label": "bundle_l10ns",
 				"command": "npm",
-				"args": ["run", "bundle_l10ns"],
-				"isShellCommand": true
+				"args": ["run", "bundle_l10ns"]
 		},
 		{
-				"taskName": "bundle_data",
+				"label": "bundle_data",
 				"command": "npm",
-				"args": ["run", "bundle_data"],
-				"isShellCommand": true
+				"args": ["run", "bundle_data"]
 		},
 		{
-				"taskName": "bundle_css",
+				"label": "bundle_css",
 				"command": "npm",
-				"args": ["run", "bundle_css"],
-				"isShellCommand": true
+				"args": ["run", "bundle_css"]
 		}
 	]
 }

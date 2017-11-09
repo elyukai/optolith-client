@@ -52,7 +52,7 @@
   "scripts": {
     "build": "node build.js",
     "buildTest": "node build.js test",
-    "bundle": "./node_modules/.bin/tsc",
+    "bundle": "./node_modules/.bin/tsc --watch",
     "start": "./node_modules/.bin/electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",

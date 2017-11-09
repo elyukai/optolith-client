@@ -235,6 +235,42 @@ export function _addBoughtBackAEPoint(): AsyncAction {
 	};
 }
 
+export interface AddLostLPPointAction {
+	type: ActionTypes.ADD_LOST_LP_POINT;
+}
+
+export function _addLostLPPoint(): AddLostLPPointAction {
+	return {
+		type: ActionTypes.ADD_LOST_LP_POINT
+	};
+}
+
+export interface RemoveLostLPPointAction {
+	type: ActionTypes.REMOVE_LOST_LP_POINT;
+}
+
+export function _removeLostLPPoint(): RemoveLostLPPointAction {
+	return {
+		type: ActionTypes.REMOVE_LOST_LP_POINT
+	};
+}
+
+export interface AddLostLPPointsAction {
+	type: ActionTypes.ADD_LOST_LP_POINTS;
+	payload: {
+		value: number;
+	};
+}
+
+export function _addLostLPPoints(value: number): AddLostLPPointsAction {
+	return {
+		type: ActionTypes.ADD_LOST_LP_POINTS,
+		payload: {
+			value
+		}
+	};
+}
+
 export interface RemoveBoughtBackAEPointAction {
 	type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT;
 }

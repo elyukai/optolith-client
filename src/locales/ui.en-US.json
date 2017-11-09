@@ -478,6 +478,8 @@
 	"attributes.tooltips.bought": "Bought",
 	"attributes.tooltips.losttotal": "Lost Total",
 	"attributes.tooltips.boughtback": "Bought Back",
+	"plp.short": "pLP",
+	"plp.long": "Perm. Life Points",
 	"attributes.pae.name": "Perm. Arcane Energy",
 	"attributes.pae.short": "pAeP",
 	"attributes.pkp.name": "Perm. Karma Points",

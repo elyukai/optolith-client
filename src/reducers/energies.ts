@@ -1,14 +1,17 @@
-import { AddArcaneEnergyPointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, RemoveArcaneEnergyPointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveKarmaPointAction, RemoveLifePointAction, RemoveLostAEPointAction, RemoveLostKPPointAction } from '../actions/AttributesActions';
+import { AddArcaneEnergyPointAction, AddBoughtBackAEPointAction, AddBoughtBackKPPointAction, AddKarmaPointAction, AddLifePointAction, AddLostAEPointAction, AddLostAEPointsAction, AddLostKPPointAction, AddLostKPPointsAction, AddLostLPPointAction, AddLostLPPointsAction, RemoveArcaneEnergyPointAction, RemoveBoughtBackAEPointAction, RemoveBoughtBackKPPointAction, RemoveKarmaPointAction, RemoveLifePointAction, RemoveLostAEPointAction, RemoveLostKPPointAction, RemoveLostLPPointAction } from '../actions/AttributesActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointAction | AddLostAEPointsAction | AddLostKPPointAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | SetSelectionsAction | RemoveArcaneEnergyPointAction | RemoveKarmaPointAction | RemoveLifePointAction;
+type Action = AddArcaneEnergyPointAction | AddKarmaPointAction | AddLifePointAction | LoadHeroAction | CreateHeroAction | AddBoughtBackAEPointAction | AddBoughtBackKPPointAction | AddLostAEPointAction | AddLostAEPointsAction | AddLostKPPointAction | AddLostKPPointsAction | RemoveBoughtBackAEPointAction | RemoveBoughtBackKPPointAction | RemoveLostAEPointAction | RemoveLostKPPointAction | SetSelectionsAction | RemoveArcaneEnergyPointAction | RemoveKarmaPointAction | RemoveLifePointAction | AddLostLPPointAction | AddLostLPPointsAction | RemoveLostLPPointAction;
 
 export interface EnergiesState {
 	addedLifePoints: number;
 	addedArcaneEnergy: number;
 	addedKarmaPoints: number;
+	permanentLifePoints: {
+		lost: number;
+	};
 	permanentArcaneEnergy: {
 		lost: number;
 		redeemed: number;
@@ -23,6 +26,9 @@ const initialState: EnergiesState = {
 	addedLifePoints: 0,
 	addedArcaneEnergy: 0,
 	addedKarmaPoints: 0,
+	permanentLifePoints: {
+		lost: 0
+	},
 	permanentArcaneEnergy: {
 		lost: 0,
 		redeemed: 0
@@ -40,6 +46,9 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				addedLifePoints: 0,
 				addedArcaneEnergy: 0,
 				addedKarmaPoints: 0,
+				permanentLifePoints: {
+					lost: 0
+				},
 				permanentArcaneEnergy: {
 					lost: 0,
 					redeemed: 0
@@ -55,6 +64,7 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				ae,
 				kp,
 				lp,
+				permanentLP,
 				permanentAE: {
 					lost: lostAE,
 					redeemed: redeemedAE
@@ -68,6 +78,9 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				addedLifePoints: lp,
 				addedArcaneEnergy: ae,
 				addedKarmaPoints: kp,
+				permanentLifePoints: permanentLP ? {
+					lost: permanentLP.lost
+				} : state.permanentLifePoints,
 				permanentArcaneEnergy: {
 					lost: lostAE,
 					redeemed: redeemedAE
@@ -133,6 +146,14 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				}
 			};
 
+		case ActionTypes.ADD_LOST_LP_POINT:
+			return {
+				...state,
+				permanentLifePoints: {
+					lost: state.permanentLifePoints.lost + 1
+				}
+			};
+
 		case ActionTypes.ADD_LOST_AE_POINT:
 			return {
 				...state,
@@ -148,6 +169,14 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				permanentKarmaPoints: {
 					...state.permanentKarmaPoints,
 					lost: state.permanentKarmaPoints.lost + 1
+				}
+			};
+
+		case ActionTypes.REMOVE_LOST_LP_POINT:
+			return {
+				...state,
+				permanentLifePoints: {
+					lost: state.permanentLifePoints.lost - 1
 				}
 			};
 
@@ -172,6 +201,14 @@ export function energies(state: EnergiesState = initialState, action: Action): E
 				}
 			};
 		}
+
+		case ActionTypes.ADD_LOST_LP_POINTS:
+			return {
+				...state,
+				permanentLifePoints: {
+					lost: state.permanentLifePoints.lost + action.payload.value
+				}
+			};
 
 		case ActionTypes.ADD_LOST_AE_POINTS:
 			return {

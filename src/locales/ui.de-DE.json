@@ -480,6 +480,8 @@
 	"attributes.tooltips.bought": "Zukauf",
 	"attributes.tooltips.losttotal": "Gesamt verloren",
 	"attributes.tooltips.boughtback": "Zurückgekauft",
+	"plp.short": "pLeP",
+	"plp.long": "Perm. Lebensenergie",
 	"attributes.pae.name": "Perm. Astralenergie",
 	"attributes.pae.short": "pAsP",
 	"attributes.pkp.name": "Perm. Karmaenergie",

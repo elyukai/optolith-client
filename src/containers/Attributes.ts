@@ -48,6 +48,15 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		removeKarmaPoint: () => {
 			dispatch(AttributesActions.removeKarmaPoint());
 		},
+		addLostLPPoint: () => {
+			dispatch(AttributesActions._addLostLPPoint());
+		},
+		removeLostLPPoint: () => {
+			dispatch(AttributesActions._removeLostLPPoint());
+		},
+		addLostLPPoints: (value: number) => {
+			dispatch(AttributesActions._addLostLPPoints(value));
+		},
 		addBoughtBackAEPoint: () => {
 			dispatch(AttributesActions._addBoughtBackAEPoint());
 		},

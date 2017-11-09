@@ -1,7 +1,7 @@
 import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from '../selectors/attributeSelectors';
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getRaces, getSpecialAbilities } from '../selectors/stateSelectors';
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities } from '../selectors/stateSelectors';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { _translate } from './I18n';
@@ -14,15 +14,16 @@ export const getLP = createSelector(
 	getRaces,
 	getCurrentRaceId,
 	mapGetToSlice(getAttributes, 'ATTR_7'),
+	getPermanentLifePoints,
 	mapGetToSlice(getAdvantages, 'ADV_25'),
 	mapGetToSlice(getDisadvantages, 'DISADV_28'),
 	getAddedLifePoints,
 	getLocaleMessages,
-	(races, currentRaceId, CON, increase, decrease, add, locale) => {
+	(races, currentRaceId, CON, { lost }, increase, decrease, add, locale) => {
 		const currentRace = currentRaceId && races.get(currentRaceId);
 		const base = currentRace && CON && currentRace.lp + CON.value * 2 || 0;
 
-		let mod = 0;
+		let mod = -lost;
 		const increaseObject = increase && increase.active[0];
 		const decreaseObject = decrease && decrease.active[0];
 		if (increaseObject && increaseObject.tier) {
@@ -41,6 +42,7 @@ export const getLP = createSelector(
 			maxAdd: CON ? CON.value : 0,
 			mod,
 			name: _translate(locale, 'secondaryattributes.lp.name'),
+			permanentLost: lost,
 			short: _translate(locale, 'secondaryattributes.lp.short'),
 			value,
 		} as Energy<'LP'>;
@@ -58,7 +60,7 @@ export const getAE = createSelector(
 	(tradition, primary, { lost, redeemed }, increase, decrease, add, locale) => {
 		const lastTradition = last(tradition!.active);
 		let base = 0;
-		let mod = 0;
+		let mod = redeemed - lost;
 		let maxAdd = 0;
 
 		if (primary !== undefined && lastTradition !== undefined && (lastTradition.sid === 6 || lastTradition.sid === 7)) {
@@ -81,7 +83,7 @@ export const getAE = createSelector(
 		else if (decreaseObject && decreaseObject.tier) {
 			mod -= decreaseObject.tier;
 		}
-		const value = base > 0 ? base + mod + add + redeemed - lost : undefined;
+		const value = base > 0 ? base + mod + add : undefined;
 		return {
 			add,
 			base,
@@ -109,7 +111,7 @@ export const getKP = createSelector(
 	mapGetToSlice(getSpecialAbilities, 'SA_563'),
 	(primary, { lost, redeemed }, increase, decrease, add, locale, highConsecration) => {
 		let base = 0;
-		let mod = 0;
+		let mod = redeemed - lost;
 
 		if (primary) {
 			base = 20 + primary.value;
@@ -125,7 +127,7 @@ export const getKP = createSelector(
 		if (highConsecration && isActive(highConsecration)) {
 			mod += highConsecration.active[0].tier! * 6;
 		}
-		const value = base > 0 ? base + mod + add + redeemed - lost : undefined;
+		const value = base > 0 ? base + mod + add : undefined;
 		return {
 			add,
 			base,
