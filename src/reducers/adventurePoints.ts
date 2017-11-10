@@ -101,7 +101,7 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 			let finalCost = cost;
 
 			if (['DISADV_17', 'DISADV_18'].includes(id)) {
-				finalCost += 10;
+				finalCost += action.type === ActionTypes.DEACTIVATE_DISADV ? -10 : 10;
 			}
 
 			const addState = isDisadvantage ? [...state.disadv] as DisAdvAdventurePoints : [...state.adv] as DisAdvAdventurePoints;
@@ -116,7 +116,7 @@ export function adventurePoints(state: AdventurePointsState = initialState, acti
 
 			return {
 				...state,
-				spent: state.spent + cost,
+				spent: state.spent + finalCost,
 				adv: !isDisadvantage ? addState : state.adv,
 				disadv: isDisadvantage ? addState : state.disadv
 			};

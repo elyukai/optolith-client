@@ -5,7 +5,7 @@ import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
-import { isMagicalOrBlessed } from '../utils/ActivatableUtils';
+import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '../utils/ActivatableUtils';
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
@@ -145,12 +145,16 @@ export interface SetDisAdvTierAction {
 	};
 }
 
-export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
+export function _setTier(id: string, index: number, tier: number): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state);
 		const { ap, dependent } = state.currentHero.present;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
+		const activeObjectWithId = { id, index, ...entry.active[index] };
+		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, dependent, false)).currentCost;
+		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, dependent, true)).currentCost;
+		const cost = nextCost - previousCost;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));

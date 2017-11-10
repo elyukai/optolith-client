@@ -362,6 +362,7 @@ export interface ActivatableNameCostActive extends ActivatableNameCost {
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
 	currentCost: number;
+	tierName?: string;
 }
 
 export interface ActiveViewObject {
@@ -369,7 +370,6 @@ export interface ActiveViewObject {
 	index: number;
 	name: string;
 	tier?: number;
-	tiers?: number;
 	minTier?: number;
 	maxTier?: number;
 	cost: number;
@@ -377,6 +377,7 @@ export interface ActiveViewObject {
 	gr?: number;
 	instance: ActivatableInstance;
 	customCost?: boolean;
+	tierName?: string;
 }
 
 export interface DeactiveViewObject {

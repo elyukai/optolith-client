@@ -27,34 +27,30 @@ export interface ActivatableRemoveListItemProps {
 	isImportant?: boolean;
 	isTypical?: boolean;
 	isUntypical?: boolean;
-	setTier(id: string, index: number, tier: number, cost: number): void;
+	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
 }
 
 export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps, undefined> {
 	handleSelectTier = (selectedTier: number) => {
-		const { id, tier, index, cost } = this.props.item;
-		const lower = Math.min(selectedTier, tier!);
-		const higher = Math.max(selectedTier, tier!);
-		const diff = selectedTier - tier!;
-		const finalCost = Array.isArray(cost) ? cost.slice(lower, higher).reduce((a, b) => a + b, 0) * diff / Math.abs(diff) : diff * (cost as number);
-		this.props.setTier(id, index, selectedTier, finalCost);
+		const { id, index} = this.props.item;
+		this.props.setTier(id, index, selectedTier);
 	}
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
 		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
-		const { id, minTier = 1, tier, tiers, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, customCost } = item;
-		let { cost, name } = item;
-		let addSpecial = '';
+		const { id, minTier = 1, tier, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, cost, customCost, instance: { tiers } } = item;
+		let { name } = item;
+		let addSpecial;
 
 		let tierElement;
-		if (tier && tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
+		if (typeof tier === 'number' && typeof tiers === 'number' && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			const min = !isRemovingEnabled ? tier : Math.max(1, minTier);
 			const max = Math.min(tiers, maxTier);
 			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
 			if (id === 'SA_29' && (tier === 4 || isRemovingEnabled)) {
-				array.push({ id: 4, name: 'MS' });
+				array.push({ id: 4, name: _translate(locale, 'mothertongue.short') });
 			}
 			if (array.length > 1) {
 				tierElement = (
@@ -68,10 +64,9 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 			else {
 				addSpecial = ' ' + array[0].name;
 			}
-			cost = tier === 4 && id === 'SA_29' ? 0 : Array.isArray(cost) ? cost.slice(0, tier).reduce((a, b) => a + b, 0) : (cost as number) * tier;
 		}
 
-		if (addSpecial !== '') {
+		if (typeof addSpecial === 'string') {
 			name += addSpecial;
 		}
 

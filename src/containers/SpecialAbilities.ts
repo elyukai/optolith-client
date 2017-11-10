@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { AppState } from '../reducers/app';
-import { getDeactiveSpecialAbilities, getSpecialAbilitiesForSheet } from '../selectors/activatableSelectors';
+import { getDeactiveSpecialAbilities, getSpecialAbilitiesForEdit } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getPhase } from '../selectors/stateSelectors';
@@ -13,7 +13,7 @@ import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnPro
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getSpecialAbilitiesForSheet(state),
+		activeList: getSpecialAbilitiesForEdit(state),
 		deactiveList: getDeactiveSpecialAbilities(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {

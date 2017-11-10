@@ -21,7 +21,7 @@ export function ListPlaceholder(props: ListPlaceholderProps) {
 				<div className="cost"><div className="placeholder-text"></div></div>
 			</ListItemValues>
 			<ListItemButtons>
-				<IconButton icon="&#xE90a;" flat disabled />
+				<IconButton icon="&#xE90b;" flat disabled />
 				<IconButton icon="&#xE912;" flat disabled />
 			</ListItemButtons>
 		</ListItem>

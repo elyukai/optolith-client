@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';
-import { getDeactiveDisadvantages, getDisadvantagesForSheet, getDisadvantagesRating } from '../selectors/activatableSelectors';
+import { getDeactiveDisadvantages, getDisadvantagesForEdit, getDisadvantagesRating } from '../selectors/activatableSelectors';
 import { getAp } from '../selectors/adventurePointsSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
@@ -14,7 +14,7 @@ import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, Disad
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getDisadvantagesForSheet(state),
+		activeList: getDisadvantagesForEdit(state),
 		ap: getAp(state),
 		deactiveList: getDeactiveDisadvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),

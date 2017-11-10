@@ -258,15 +258,10 @@ export function getFullName(obj: string | ActiveViewObject): string {
   if (typeof obj === 'string') {
     return obj;
   }
-  const { tiers, id, tier } = obj;
+  const { tierName } = obj;
   let { name } = obj;
-  if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
-    if (id === 'SA_29' && tier === 4) {
-      name += ` MS`;
-    }
-    else {
-      name += tier && ` ${getRoman(tier)}`;
-    }
+  if (tierName) {
+    name += tierName;
   }
   return name;
 }
@@ -339,19 +334,19 @@ export function convertToActiveObject(obj: ActivatableInstance, activate: Activa
       break;
 
     default:
-      if (sel && tier) {
+      if (sel !== undefined && tier !== undefined) {
         active = { sid: (obj.input && input) || sel, sid2: sel2, tier };
       }
-      else if (sel) {
+      else if (sel !== undefined) {
         active = { sid: (obj.input && input) || sel, sid2: sel2 };
       }
-      else if (input && tier) {
+      else if (input !== undefined && tier !== undefined) {
         active = { sid: input, tier };
       }
-      else if (input) {
+      else if (input !== undefined) {
         active = { sid: input };
       }
-      else if (tier) {
+      else if (tier !== undefined) {
         active = { tier };
       }
       else if (obj.max === 1) {
@@ -409,7 +404,7 @@ export function convertActivatableToArray({ active, id }: ActivatableInstance): 
  * @param state A state slice.
  */
 export function getActiveFromState(state: Map<string, ActivatableInstance>): ActiveObjectWithId[] {
-  return [...state.values()].reduce((arr, e) => [...arr, ...convertActivatableToArray(e)], []);
+  return [...state.values()].reduce<ActiveObjectWithId[]>((arr, e) => [...arr, ...convertActivatableToArray(e)], []);
 }
 
 interface ActiveObjectAny extends ActiveObject {
@@ -640,7 +635,9 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       break;
     }
     case 'SA_29':
-      addName = getSelectionName(instance, sid);
+      const selection = getSelectionItem(instance, sid);
+      addName = selection && selection.name;
+      currentCost = tier === 4 ? 0 : tier;
       break;
     case 'SA_70': {
       const selectionItem = getSelectionItem(instance, sid);
@@ -742,19 +739,29 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
   };
 }
 
-export function convertPerTierCostToFinalCost(obj: ActivatableNameCost): ActivatableNameCostEvalTier {
+export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?: UIMessages, addTierToCombinedTier?: boolean): ActivatableNameCostEvalTier {
   const { id, tier, cost } = obj;
   let { currentCost, combinedName } = obj;
+  let tierName;
   if (Array.isArray(currentCost)) {
     currentCost = currentCost[tier! - 1];
-    combinedName += ` ${getRoman(tier!)}`;
+    tierName = ` ${getRoman(tier!)}`;
   }
   else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {
     currentCost *= tier;
-    combinedName += ` ${getRoman(tier)}`;
+    if (id === 'SA_29' && tier === 4) {
+      tierName = ` ${_translate(locale, 'mothertongue.short')}`;
+    }
+    else {
+      tierName = ` ${getRoman(tier)}`;
+    }
+  }
+  if (addTierToCombinedTier !== true && tierName) {
+    combinedName += tierName;
   }
   return {
     ...obj,
+    tierName,
     combinedName,
     currentCost
   };

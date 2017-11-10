@@ -1,8 +1,9 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getDependentInstances, getLocaleMessages, getSpecialAbilities } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
+import { convertPerTierCostToFinalCost, getNameCost } from '../utils/ActivatableUtils';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
@@ -57,9 +58,14 @@ export interface SetSpecialAbilityTierAction {
 	};
 }
 
-export function _setTier(id: string, index: number, tier: number, cost: number): AsyncAction {
+export function _setTier(id: string, index: number, tier: number): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
+		const dependent = getDependentInstances(state);
+		const activeObjectWithId = { id, index, ...getSpecialAbilities(state).get(id)!.active[index] };
+		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, dependent, false)).currentCost;
+		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, dependent, true)).currentCost;
+		const cost = nextCost - previousCost;
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {

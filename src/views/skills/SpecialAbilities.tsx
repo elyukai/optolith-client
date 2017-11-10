@@ -67,6 +67,8 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 
 		const groupNames = _translate(locale, 'specialabilities.view.groups');
 
+		console.log(activeList);
+
 		return (
 			<Page id="specialabilities">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>

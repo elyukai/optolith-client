@@ -725,4 +725,5 @@ export interface UIMessages {
 	"newversionavailable.message": string;
 	"newversionavailable.update": string;
 	"downloadupdate": string;
+	"mothertongue.short": string;
 }

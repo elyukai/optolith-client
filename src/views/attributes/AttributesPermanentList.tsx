@@ -29,6 +29,8 @@ export function AttributesPermanentList(props: AttributesPermanentListProps) {
 	const AE = props.derived.find(e => e.id === 'AE') as EnergyWithLoss | undefined;
 	const KP = props.derived.find(e => e.id === 'KP') as EnergyWithLoss | undefined;
 
+	console.log(props.addBoughtBackKPPoint);
+
 	return (
 		<div className="permanent">
 			<AttributesPermanentListItem

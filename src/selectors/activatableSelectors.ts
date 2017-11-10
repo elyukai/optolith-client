@@ -22,7 +22,7 @@ export function getForSave(state: DependentInstancesState): { [id: string]: Data
   return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
 }
 
-export const getActiveForView = (category: Categories.ACTIVATABLE) => {
+export const getActive = (category: Categories.ACTIVATABLE, addTierToName: boolean) => {
   return createSelector(
     getAdvantages,
     getDisadvantages,
@@ -39,14 +39,16 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
       for (const activeObject of activeEntries) {
         const {
           id,
-          index
+          index,
+          tier
         } = activeObject;
 
         const {
           combinedName,
           currentCost,
-          cost
-        } = convertPerTierCostToFinalCost(getNameCost(activeObject, dependent, false, locale));
+          cost,
+          tierName
+        } = convertPerTierCostToFinalCost(getNameCost(activeObject, dependent, false, locale), locale, addTierToName);
 
         const {
           disabled,
@@ -66,13 +68,23 @@ export const getActiveForView = (category: Categories.ACTIVATABLE) => {
           instance,
           maxTier,
           minTier,
-          customCost: typeof cost === 'number'
+          tier,
+          customCost: typeof cost === 'number',
+          tierName
         });
       }
 
       return finalEntries;
     }
   );
+};
+
+export const getActiveForView = (category: Categories.ACTIVATABLE) => {
+  return getActive(category, false);
+};
+
+export const getActiveForEditView = (category: Categories.ACTIVATABLE) => {
+  return getActive(category, true);
 };
 
 export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
@@ -144,6 +156,11 @@ export const getAdvantagesForSheet = createSelector(
   active => active
 );
 
+export const getAdvantagesForEdit = createSelector(
+  getActiveForEditView(Categories.ADVANTAGES),
+  active => active
+);
+
 export const getDeactiveAdvantages = createSelector(
   getDeactiveForView(Categories.ADVANTAGES),
   active => active
@@ -154,6 +171,11 @@ export const getDisadvantagesForSheet = createSelector(
   active => active
 );
 
+export const getDisadvantagesForEdit = createSelector(
+  getActiveForEditView(Categories.DISADVANTAGES),
+  active => active
+);
+
 export const getDeactiveDisadvantages = createSelector(
   getDeactiveForView(Categories.DISADVANTAGES),
   active => active
@@ -161,6 +183,11 @@ export const getDeactiveDisadvantages = createSelector(
 
 export const getSpecialAbilitiesForSheet = createSelector(
   getActiveForView(Categories.SPECIAL_ABILITIES),
+  active => active
+);
+
+export const getSpecialAbilitiesForEdit = createSelector(
+  getActiveForEditView(Categories.SPECIAL_ABILITIES),
   active => active
 );
 

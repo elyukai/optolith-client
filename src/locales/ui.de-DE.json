@@ -723,5 +723,6 @@
 	"newversionavailable.title": "Neue Version verfügbar!",
 	"newversionavailable.message": "Version {0} ist bereit zum Download! Möchtest du das Update herunterladen und dann installieren? Die App wird automatisch neugestartet.",
 	"newversionavailable.update": "Aktualisieren",
-	"downloadupdate": "Update herunterladen"
+	"downloadupdate": "Update herunterladen",
+	"mothertongue.short": "MS"
 }
