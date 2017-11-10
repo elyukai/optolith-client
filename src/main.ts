@@ -62,11 +62,12 @@ function createWindow() {
 		autoUpdater.checkForUpdates();
 
 		autoUpdater.on('update-available', (info: UpdateInfo) => {
+
 			mainWindow!.webContents.send('update-available', info);
 		});
 
 		// @ts-ignore
-		ipcMain.on('download-updater', () => {
+		ipcMain.on('download-update', () => {
 			autoUpdater.downloadUpdate();
 		});
 
