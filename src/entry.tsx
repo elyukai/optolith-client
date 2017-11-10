@@ -17,8 +17,9 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { requestInitialData, updateAvailable } from './actions/IOActions';
+import { requestInitialData, setUpdateDownloadProgress, updateAvailable } from './actions/IOActions';
 import { AppContainer } from './containers/App';
+import { ProgressInfo } from './main';
 import { app } from './reducers/app';
 
 const store = createStore(app, applyMiddleware(ReduxThunk));
@@ -34,4 +35,8 @@ render(
 
 ipcRenderer.on('update-available', (info: UpdateInfo) => {
 	store.dispatch(updateAvailable(info));
+});
+
+ipcRenderer.on('download-progress', (progressObj: ProgressInfo) => {
+	store.dispatch(setUpdateDownloadProgress(progressObj));
 });

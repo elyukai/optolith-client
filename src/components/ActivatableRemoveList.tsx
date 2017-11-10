@@ -16,7 +16,7 @@ export interface ActivatableRemoveListProps {
 	rating?: { [id: string]: string };
 	showRating?: boolean;
 	sortOrder?: string;
-	setTier(id: string, index: number, tier: number, cost: number): void;
+	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
 }
 

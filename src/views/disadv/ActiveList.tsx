@@ -10,7 +10,7 @@ interface Props {
 	showRating: boolean;
 	isRemovingEnabled: boolean;
 	removeFromList(args: DeactivateArgs): void;
-	setTier(id: string, index: number, tier: number, cost: number): void;
+	setTier(id: string, index: number, tier: number): void;
 }
 
 export function ActiveList(props: Props) {

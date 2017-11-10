@@ -37,7 +37,7 @@ export interface DisadvantagesDispatchProps {
 	switchRatingVisibility(): void;
 	addToList(args: ActivateArgs): void;
 	removeFromList(args: DeactivateArgs): void;
-	setTier(id: string, index: number, tier: number, cost: number): void;
+	setTier(id: string, index: number, tier: number): void;
 }
 
 export type DisadvantagesProps = DisadvantagesStateProps & DisadvantagesDispatchProps & DisadvantagesOwnProps;

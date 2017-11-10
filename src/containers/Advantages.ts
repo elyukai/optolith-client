@@ -37,22 +37,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			dispatch(ConfigActions._switchEnableActiveItemHints());
 		},
 		addToList(args: ActivateArgs) {
-			const action = DisAdvActions._addToList(args);
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(DisAdvActions._addToList(args));
 		},
 		removeFromList(args: DeactivateArgs) {
-			const action = DisAdvActions._removeFromList(args);
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(DisAdvActions._removeFromList(args));
 		},
-		setTier(id: string, index: number, tier: number, cost: number) {
-			const action = DisAdvActions._setTier(id, index, tier, cost);
-			if (action) {
-				dispatch(action);
-			}
+		setTier(id: string, index: number, tier: number) {
+			dispatch(DisAdvActions._setTier(id, index, tier));
 		}
 	};
 }
