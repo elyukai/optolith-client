@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
 import { AlertsContainer } from '../containers/Alerts';
+import { DownloaderContainer } from '../containers/DownloaderContainer';
 import { NavigationBarContainer } from '../containers/NavigationBar';
 import { UIMessages } from '../types/ui.d';
 import { Route } from './Route';
@@ -60,6 +61,7 @@ export class App extends React.Component<AppProps, AppState> {
 		return (
 			<div id="body" className={`theme-${theme}`} lang={locale.id.split('-')[0]}>
 				<div className="background-image"></div>
+				<DownloaderContainer locale={locale} />
 				<AlertsContainer locale={locale} />
 				<TitleBar {...other} />
 				<NavigationBarContainer locale={locale} />

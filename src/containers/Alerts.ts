@@ -2,12 +2,12 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as AlertActions from '../actions/AlertActions';
 import { AppState } from '../reducers/app';
-import { getAlerts } from '../selectors/stateSelectors';
+import { getCurrentAlert } from '../selectors/stateSelectors';
 import { Alerts, AlertsDispatchProps, AlertsOwnProps, AlertsStateProps } from '../views/alerts/Alerts';
 
 function mapStateToProps(state: AppState) {
 	return {
-		options: getAlerts(state)
+		options: getCurrentAlert(state)
 	};
 }
 

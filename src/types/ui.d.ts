@@ -721,4 +721,8 @@ export interface UIMessages {
 	"liturgicalchantextensions": string;
 	"enableeditingheroaftercreationphase": string;
 	"allcombattechniques": string;
+	"newversionavailable.title": string;
+	"newversionavailable.message": string;
+	"newversionavailable.update": string;
+	"downloadupdate": string;
 }

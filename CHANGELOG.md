@@ -1,3 +1,22 @@
+# 0.51.0
+
+- New icon set.
+- You can now edit heroes after character creation phase if you check the respective box in the settings.
+- Enabled filtering of item templates by combat technique.
+- Exported characters will now include the avatar image.
+- Added support for permanent LP loss.
+- Source book abbreviations will now appear in profession list.
+- Fixed calculations based on size value (meter-based size entry allowed).
+- Fixed surplus page in character sheet PDF.
+
+## German Specific
+
+- Added spell and liturgical chant extensions to wiki boxes.
+
+## Dutch Specific
+
+- Started localization work.
+
 # 0.50.0
 
 - Custom AP cost possible for advantages and disadvantages.

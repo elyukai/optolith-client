@@ -9,7 +9,7 @@ export interface ProgressBarOverlayProps {
 export function ProgressBarOverlay(props: ProgressBarOverlayProps) {
 	const { current, max, horizontal } = props;
 
-	const style = horizontal ? { width: current / max } : { height: current / max };
+	const style = horizontal ? { width: current / max * 100 + '%' } : { height: current / max * 100 + '%' };
 
 	return (
 		<div className="progressbar-overlay" style={style}></div>

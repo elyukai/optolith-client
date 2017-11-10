@@ -7,3 +7,4 @@ npm-debug.log*
 .rpt2_cache
 .esm-cache
 app/**/*.js
+/installer/

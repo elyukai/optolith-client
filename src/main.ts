@@ -1,7 +1,17 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { autoUpdater, UpdateInfo } from 'electron-updater';
 import windowStateKeeper = require('electron-window-state');
 import * as path from 'path';
 import * as url from 'url';
+
+export interface ProgressInfo {
+	bytesPerSecond: number;
+	percent: number;
+	transferred: number;
+	total: number;
+}
+
+app.setAppUserModelId('lukasobermann.optolyth');
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
 
@@ -27,9 +37,6 @@ function createWindow() {
 		titleBarStyle: 'hidden',
 		acceptFirstMouse: true,
 		backgroundColor: '#000000',
-		// webPreferences: {
-		// 	devTools: false
-		// },
 		show: false
 	});
 
@@ -48,14 +55,34 @@ function createWindow() {
 		if (mainWindowState.isMaximized) {
 			mainWindow!.maximize();
 		}
+
+		autoUpdater.autoDownload = false;
+		autoUpdater.allowDowngrade = true;
+
+		autoUpdater.checkForUpdates();
+
+		autoUpdater.on('update-available', (info: UpdateInfo) => {
+			mainWindow!.webContents.send('update-available', info);
+		});
+
+		// @ts-ignore
+		ipcMain.on('download-updater', () => {
+			autoUpdater.downloadUpdate();
+		});
+
+		autoUpdater.on('download-progress', (progressObj: ProgressInfo) => {
+			mainWindow!.webContents.send('download-progress', progressObj);
+		});
+
+		autoUpdater.on('update-downloaded', () => {
+		  autoUpdater.quitAndInstall();
+		});
 	});
 
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
 }
-
-app.setAppUserModelId('lukasobermann.tdeheroes');
 
 app.on('ready', createWindow);
 

@@ -4,12 +4,13 @@ import { ProgressBarOverlay, ProgressBarOverlayProps } from './ProgressBarOverla
 
 export interface ProgressBarProps extends ProgressBarOverlayProps {
 	className?: string;
+	fullWidth?: boolean;
 }
 
 export function ProgressBar(props: ProgressBarProps) {
-	const { className, horizontal, ...other } = props;
+	const { className, fullWidth, horizontal, ...other } = props;
 	return (
-		<div className={classNames('progressbar', className, { horizontal })}>
+		<div className={classNames('progressbar', className, { fullWidth, horizontal })}>
 			<ProgressBarOverlay horizontal={horizontal} {...other} />
 		</div>
 	);

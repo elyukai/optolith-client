@@ -1,18 +1,15 @@
 {
   "name": "tdeheroes",
   "productName": "TDE5 Heroes",
-  "version": "0.51.0",
-  "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'",
+  "version": "0.51.0-alpha.1",
+  "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": "Lukas Obermann",
   "license": "GPL-3.0",
   "main": "app/main.js",
-  "copyright": "This product was created under a license. Das Schwarze Auge and its logo as well as Aventuria, Dere, Myranor, Riesland, Tharun and Uthuria and their logos are trademarks of Significant GbR. The title and contents of this book are protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in retrieval systems or transmitted, in any form or by any means, whether electronic, mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems. This publication includes material that is protected under copyright laws by Ulisses Spiele and/or other authors. Such material is used under the Community Content Agreement for the SCRIPTORIUM AVENTURIS. All other original materials in this work is copyright 2017-present by Lukas Obermann and published under the Community Content Agreement for the SCRIPTORIUM AVENTURIS.",
-  "directories": {
-    "test": "test"
-  },
   "dependencies": {
     "@std/esm": "^0.9.2",
     "classnames": "^2.2.5",
+    "electron-updater": "^2.16.1",
     "electron-window-state": "^4.1.1",
     "lodash": "^4.17.4",
     "react": "^16.1.0",
@@ -42,7 +39,10 @@
     "@types/react-redux": "^4.4.47",
     "@types/semver": "^5.4.0",
     "electron": "^1.8.1",
+    "electron-builder": "^19.45.4",
+    "electron-builder-squirrel-windows": "^19.45.0",
     "electron-packager": "^8.7.2",
+    "electron-winstaller": "^2.6.3",
     "jest": "^19.0.2",
     "node-sass": "^4.5.3",
     "ts-jest": "^19.0.14",
@@ -50,14 +50,13 @@
     "xlsx": "^0.10.9"
   },
   "scripts": {
-    "build": "node build.js",
-    "buildTest": "node build.js test",
+    "build": "electron-builder --config",
+    "buildTest": "electron-builder --config electron-builder.test.json",
     "bundle": "./node_modules/.bin/tsc --watch",
     "start": "./node_modules/.bin/electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",
     "bundle_css": "node -r @std/esm bundleSass.mjs"
   },
-  "repository": {},
-  "false": {}
+  "repository": {}
 }

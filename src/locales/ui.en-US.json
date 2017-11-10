@@ -718,5 +718,9 @@
 	"spellextensions": "Spell Extensions",
 	"liturgicalchantextensions": "Liturgical Chant Extensions",
 	"enableeditingheroaftercreationphase": "Edit Heroes after Hero Creation Phase",
-	"allcombattechniques": "All Combat Techniques"
+	"allcombattechniques": "All Combat Techniques",
+	"newversionavailable.title": "New version available!",
+	"newversionavailable.message": "Version {0} is ready for download! Do you wish to download and install it? The app will be restarted automatically.",
+	"newversionavailable.update": "Update",
+	"downloadupdate": "Download Update"
 }

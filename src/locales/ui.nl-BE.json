@@ -719,5 +719,9 @@
 	"spellextensions": "Zaubererweiterungen",
 	"liturgicalchantextensions": "Liturgieerweiterungen",
 	"enableeditingheroaftercreationphase": "Editieren von Helden nach der Heldenerschaffung",
-	"allcombattechniques": "Alle Kampftechniken"
+	"allcombattechniques": "Alle Kampftechniken",
+	"newversionavailable.title": "Neue Version verfügbar!",
+	"newversionavailable.message": "Version {0} ist bereit zum Download! Möchtest du das Update herunterladen und dann installieren? Die App wird automatisch neugestartet.",
+	"newversionavailable.update": "Aktualisieren",
+	"downloadupdate": "Update herunterladen"
 }

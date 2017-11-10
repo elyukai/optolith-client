@@ -1,7 +1,9 @@
-import { remote } from 'electron';
+import { ipcRenderer, remote } from 'electron';
+import { UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
 import { extname, join } from 'path';
 import * as ActionTypes from '../constants/ActionTypes';
+import { ProgressInfo } from '../main';
 import { getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getHeroesForSave, getHeroForSave } from '../selectors/herolistSelectors';
 import { getSystemLocale } from '../selectors/I18n';
@@ -337,5 +339,42 @@ export function requestPrintHeroToPDF(): AsyncAction {
 				title: _translate(locale, 'fileapi.error.title')
 			}));
 		}
+	};
+}
+
+export function updateAvailable(info: UpdateInfo): AsyncAction {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const locale = getLocaleMessages(state)!;
+		// @ts-ignore
+		dispatch(addAlert({
+			message: _translate(locale, 'newversionavailable.message', info.version),
+			title: _translate(locale, 'newversionavailable.title'),
+			buttons: [
+				{
+					label: _translate(locale, 'newversionavailable.update'),
+					dispatchOnClick: () => {
+						ipcRenderer.send('download-update');
+					}
+				},
+				{
+					label: _translate(locale, 'cancel')
+				}
+			]
+		}));
+	};
+}
+
+export interface SetUpdateDownloadProgressAction {
+	type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS;
+	payload: {
+		percent: number;
+	};
+}
+
+export function setUpdateDownloadProgress(info: ProgressInfo): SetUpdateDownloadProgressAction {
+	return {
+		type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS,
+		payload: info
 	};
 }

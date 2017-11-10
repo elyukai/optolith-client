@@ -108,23 +108,23 @@ $modal-padding: 24px;
 			}
 		}
 
+		.modal-close + .modal-content, .modal-content:nth-child(1) {
+			width: 298px;
+
+			.modal-content-inner {
+				padding: 16px 0 47px;
+				font: bold 16px/24px Alegreya SC;
+				color: var(--headings-color);
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				text-align: center;
+			}
+		}
+
 		.modal-content {
 			position: relative;
 			@include calc(height, "100% - 77px");
 			width: 378px;
-
-			&:nth-child(2) {
-				width: 298px;
-
-				.modal-content-inner {
-					padding: 16px 0 47px;
-					font: bold 16px/24px Alegreya SC;
-					color: var(--headings-color);
-					letter-spacing: 0.1em;
-					text-transform: uppercase;
-					text-align: center;
-				}
-			}
 
 			.modal-content-inner {
 				color: var(--text-color);
