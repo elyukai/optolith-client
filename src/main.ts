@@ -75,6 +75,10 @@ function createWindow() {
 			mainWindow!.webContents.send('download-progress', progressObj);
 		});
 
+		autoUpdater.on('error', (err: Error) => {
+			mainWindow!.webContents.send('auto-updater-error', err);
+		});
+
 		autoUpdater.on('update-downloaded', () => {
 		  autoUpdater.quitAndInstall();
 		});
