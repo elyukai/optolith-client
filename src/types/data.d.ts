@@ -527,6 +527,11 @@ interface ActivatableInstanceBaseInInit {
 export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.ADVANTAGES;
 	gr?: undefined;
+	rules: string;
+	range?: string;
+	actions?: string;
+	apValue?: string;
+	apValueAppend?: string;
 }
 
 export interface AdvantageInstance extends AdvantageInstanceInInit {
@@ -536,6 +541,11 @@ export interface AdvantageInstance extends AdvantageInstanceInInit {
 export interface DisadvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.DISADVANTAGES;
 	gr?: undefined;
+	rules: string;
+	range?: string;
+	actions?: string;
+	apValue?: string;
+	apValueAppend?: string;
 }
 
 export interface DisadvantageInstance extends DisadvantageInstanceInInit {

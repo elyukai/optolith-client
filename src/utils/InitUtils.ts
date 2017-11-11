@@ -164,8 +164,8 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, input, sel: localeSel } = localeObject;
-    const { id, ap, max, sel, req, tiers } = raw;
+    const { sel: localeSel, ...otherLocale } = localeObject;
+    const { ap, sel, req, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -177,17 +177,15 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
       finalSel = localeSel;
     }
     return {
+      ...otherLocale,
+      ...otherData,
       active: [],
       category: Categories.ADVANTAGES,
       cost: ap,
       dependencies: [],
       id,
-      input,
-      max,
-      name,
       reqs: req,
-      sel: finalSel,
-      tiers
+      sel: finalSel
     };
   }
   return;
@@ -197,8 +195,8 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, input, sel: localeSel } = localeObject;
-    const { id, ap, max, sel, req, tiers } = raw;
+    const { sel: localeSel, ...otherLocale } = localeObject;
+    const { ap, sel, req, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -210,17 +208,14 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
       finalSel = localeSel;
     }
     return {
+      ...otherLocale,
+      ...otherData,
       active: [],
       category: Categories.DISADVANTAGES,
       cost: ap,
       dependencies: [],
-      id,
-      input,
-      max,
-      name,
       reqs: req,
-      sel: finalSel,
-      tiers
+      sel: finalSel
     };
   }
   return;

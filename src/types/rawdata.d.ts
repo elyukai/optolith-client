@@ -149,6 +149,11 @@ export interface RawAdvantageLocale {
 	name: string;
 	sel?: Data.SelectionObject[];
 	input?: string;
+	rules: string;
+	range?: string;
+	actions?: string;
+	apValue?: string;
+	apValueAppend?: string;
 }
 
 export interface RawAttribute {
