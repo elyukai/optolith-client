@@ -1,5 +1,7 @@
 # 0.51.0
 
+- Auto-Updater.
+- Installer for Windows.
 - New icon set.
 - You can now edit heroes after character creation phase if you check the respective box in the settings.
 - Enabled filtering of item templates by combat technique.
@@ -8,10 +10,12 @@
 - Source book abbreviations will now appear in profession list.
 - Fixed calculations based on size value (meter-based size entry allowed).
 - Fixed surplus page in character sheet PDF.
+- Added placeholder wiki boxes for advantages, disadvantages, special abilities and items.
 
 ## German Specific
 
 - Added spell and liturgical chant extensions to wiki boxes.
+- Fixed text of *magical professions* for culture *Ore Dwarf*.
 
 ## Dutch Specific
 
