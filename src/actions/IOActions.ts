@@ -343,7 +343,6 @@ export function requestPrintHeroToPDF(): AsyncAction {
 }
 
 export function updateAvailable(info: UpdateInfo): AsyncAction {
-	console.log(info);
 	return async (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state)!;

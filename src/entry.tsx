@@ -45,6 +45,6 @@ ipcRenderer.on('download-progress', (progressObj: ProgressInfo) => {
 ipcRenderer.on('auto-updater-error', (err: Error) => {
 	store.dispatch(addAlert({
 		title: 'Auto Update Error',
-		message: `An error occured during auto-update. (${err.message})`
+		message: `An error occured during auto-update. (${err})`
 	}));
 });

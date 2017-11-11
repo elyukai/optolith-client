@@ -1,6 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
+import * as log from 'electron-log';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import windowStateKeeper = require('electron-window-state');
+import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -12,6 +14,12 @@ export interface ProgressInfo {
 }
 
 app.setAppUserModelId('lukasobermann.optolyth');
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "info";
+
+autoUpdater.autoDownload = false;
+autoUpdater.allowDowngrade = true;
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
 
@@ -56,13 +64,9 @@ function createWindow() {
 			mainWindow!.maximize();
 		}
 
-		autoUpdater.autoDownload = false;
-		autoUpdater.allowDowngrade = true;
-
 		autoUpdater.checkForUpdates();
 
-		autoUpdater.on('update-available', (info: UpdateInfo) => {
-
+		autoUpdater.on('update-available', (_: EventEmitter, info: UpdateInfo) => {
 			mainWindow!.webContents.send('update-available', info);
 		});
 
@@ -71,7 +75,7 @@ function createWindow() {
 			autoUpdater.downloadUpdate();
 		});
 
-		autoUpdater.on('download-progress', (progressObj: ProgressInfo) => {
+		autoUpdater.on('download-progress', (_: EventEmitter, progressObj: ProgressInfo) => {
 			mainWindow!.webContents.send('download-progress', progressObj);
 		});
 
