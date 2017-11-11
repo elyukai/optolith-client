@@ -17,7 +17,7 @@ import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { AttributeInstance, Book, CantripInstance, InputTextEvent, Instance, SecondaryAttribute, SpellInstance } from '../../types/data.d';
+import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
@@ -39,7 +39,6 @@ export interface SpellsStateProps {
 	list: (SpellInstance | CantripInstance)[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
-	get(id: string): Instance | undefined;
 }
 
 export interface SpellsDispatchProps {
@@ -80,7 +79,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -174,7 +173,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 													activate={addCantripToList.bind(null, obj.id)}
 													addFillElement
 													insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
-													get={get}
+													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
 													>
@@ -201,7 +200,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												checkmod={checkmod}
 												ic={ic}
 												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
-												get={get}
+												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
 												>
@@ -276,7 +275,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
-												get={get}
+												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
 												>
@@ -308,7 +307,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
-											get={get}
+											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
 											{...other} >

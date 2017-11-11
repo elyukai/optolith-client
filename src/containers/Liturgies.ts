@@ -9,7 +9,7 @@ import { getPresent } from '../selectors/currentHeroSelectors';
 import { get, getAllByCategory, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isActivationDisabled } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { getAttributes, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance } from '../types/data.d';
 import { getSids } from '../utils/ActivatableUtils';
@@ -18,6 +18,7 @@ import { Liturgies, LiturgiesDispatchProps, LiturgiesOwnProps, LiturgiesStatePro
 
 function mapStateToProps(state: AppState) {
 	return {
+		attributes: getAttributes(state),
 		addChantsDisabled: isActivationDisabled(state),
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
@@ -26,10 +27,7 @@ function mapStateToProps(state: AppState) {
 		list: getAllByCategory(getDependent(state), LITURGIES, BLESSINGS) as (LiturgyInstance | BlessingInstance)[],
 		phase: getPhase(state),
 		sortOrder: getLiturgiesSortOrder(state),
-		traditionId: last(getSids(get(getDependent(state), 'SA_86') as SpecialAbilityInstance)) as number,
-		get(id: string) {
-			return get(getDependent(state), id);
-		}
+		traditionId: last(getSids(get(getDependent(state), 'SA_86') as SpecialAbilityInstance)) as number
 	};
 }
 

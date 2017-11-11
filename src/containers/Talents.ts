@@ -3,9 +3,8 @@ import { Action, Dispatch } from 'redux';
 import * as TalentsActions from '../actions/TalentsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
-import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { getAttributes, getPhase } from '../selectors/stateSelectors';
 import { getTalents, getTalentsRating } from '../selectors/talentsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
@@ -13,6 +12,7 @@ import { Talents, TalentsDispatchProps, TalentsOwnProps, TalentsStateProps } fro
 
 function mapStateToProps(state: AppState) {
 	return {
+		attributes: getAttributes(state),
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		isRemovingEnabled: isRemovingEnabled(state),
@@ -20,20 +20,14 @@ function mapStateToProps(state: AppState) {
 		phase: getPhase(state),
 		sortOrder: getTalentsSortOrder(state),
 		ratingVisibility: getTalentsCultureRatingVisibility(state),
-		talentRating: getTalentsRating(state),
-		get(id: string) {
-			return get(getDependent(state), id);
-		}
+		talentRating: getTalentsRating(state)
 	};
 }
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			const action = TalentsActions._addPoint(id);
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(TalentsActions._addPoint(id));
 		},
 		removePoint(id: string) {
 			dispatch(TalentsActions._removePoint(id));

@@ -3,7 +3,6 @@ import { UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
 import { extname, join } from 'path';
 import * as ActionTypes from '../constants/ActionTypes';
-import { ProgressInfo } from '../main';
 import { getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getHeroesForSave, getHeroForSave } from '../selectors/herolistSelectors';
 import { getSystemLocale } from '../selectors/I18n';
@@ -353,9 +352,10 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 			buttons: [
 				{
 					label: _translate(locale, 'newversionavailable.update'),
-					dispatchOnClick: () => {
+					dispatchOnClick: (dispatch => {
+						dispatch(setUpdateDownloadProgress({ percent: 0 }));
 						ipcRenderer.send('download-update');
-					}
+					}) as AsyncAction
 				},
 				{
 					label: _translate(locale, 'cancel')
@@ -368,11 +368,11 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 export interface SetUpdateDownloadProgressAction {
 	type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS;
 	payload: {
-		percent: number;
+		percent: number | undefined;
 	};
 }
 
-export function setUpdateDownloadProgress(info: ProgressInfo): SetUpdateDownloadProgressAction {
+export function setUpdateDownloadProgress(info: { percent: number | undefined; }): SetUpdateDownloadProgressAction {
 	return {
 		type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS,
 		payload: info

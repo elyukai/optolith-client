@@ -27,6 +27,16 @@ ul.list-wrapper {
 				}
 			}
 
+			.values .check:not(.mod) {
+				.short {
+					display: none;
+				}
+
+				.value {
+					display: initial;
+				}
+			}
+
 			&::before, &::after {
 				position: absolute;
 				content: "";
@@ -216,6 +226,12 @@ ul.list-wrapper {
 				border-width: 1px;
 				margin-right: 12px;
 				line-height: 30px;
+			}
+
+			.check:not(.mod) {
+				.value {
+					display: none;
+				}
 			}
 
 			.value-btn {

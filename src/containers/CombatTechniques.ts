@@ -4,34 +4,28 @@ import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import { AppState } from '../reducers/app';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
-import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { getAttributes, getPhase } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';
 
 function mapStateToProps(state: AppState) {
 	return {
+		attributes: getAttributes(state),
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		isRemovingEnabled: isRemovingEnabled(state),
 		list: getAllCombatTechniques(state),
 		phase: getPhase(state),
-		sortOrder: getCombatTechniquesSortOrder(state),
-		get(id: string) {
-			return get(getDependent(state), id);
-		}
+		sortOrder: getCombatTechniquesSortOrder(state)
 	};
 }
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			const action = CombatTechniquesActions._addPoint(id);
-			if (action) {
-				dispatch(action);
-			}
+			dispatch(CombatTechniquesActions._addPoint(id));
 		},
 		removePoint(id: string) {
 			dispatch(CombatTechniquesActions._removePoint(id));

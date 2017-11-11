@@ -2,7 +2,6 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as log from 'electron-log';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import windowStateKeeper = require('electron-window-state');
-import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -66,26 +65,24 @@ function createWindow() {
 
 		autoUpdater.checkForUpdates();
 
-		autoUpdater.on('update-available', (_event: EventEmitter, info: UpdateInfo) => {
-			log.log(JSON.stringify(info));
+		autoUpdater.addListener('update-available', (info: UpdateInfo) => {
 			mainWindow!.webContents.send('update-available', info);
 		});
 
 		// @ts-ignore
-		ipcMain.on('download-update', () => {
+		ipcMain.addListener('download-update', () => {
 			autoUpdater.downloadUpdate();
 		});
 
-		autoUpdater.addListener('download-progress', (_event: EventEmitter, progressObj: ProgressInfo) => {
-			log.log(JSON.stringify(progressObj));
+		autoUpdater.addListener('download-progress', (progressObj: ProgressInfo) => {
 			mainWindow!.webContents.send('download-progress', progressObj);
 		});
 
-		autoUpdater.on('error', (_event: EventEmitter, err: Error) => {
+		autoUpdater.addListener('error', (err: Error) => {
 			mainWindow!.webContents.send('auto-updater-error', err);
 		});
 
-		autoUpdater.on('update-downloaded', () => {
+		autoUpdater.addListener('update-downloaded', () => {
 		  autoUpdater.quitAndInstall();
 		});
 	});

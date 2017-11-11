@@ -9,7 +9,7 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { AttributeInstance, InputTextEvent, Instance, SecondaryAttribute } from '../../types/data.d';
+import { AttributeInstance, InputTextEvent, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { CombatTechniqueWithRequirements } from '../../types/view.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
@@ -22,11 +22,11 @@ export interface CombatTechniquesOwnProps {
 }
 
 export interface CombatTechniquesStateProps {
+	attributes: Map<string, AttributeInstance>;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: CombatTechniqueWithRequirements[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
-	get(id: string): Instance | undefined;
 }
 
 export interface CombatTechniquesDispatchProps {
@@ -49,7 +49,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
 
 	render() {
-		const { addPoint, get, derivedCharacteristics, list: rawlist, locale, isRemovingEnabled, removePoint, setSortOrder, sortOrder } = this.props;
+		const { addPoint, attributes, derivedCharacteristics, list: rawlist, locale, isRemovingEnabled, removePoint, setSortOrder, sortOrder } = this.props;
 		const { filterText } = this.state;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
@@ -99,7 +99,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 						<List>
 							{
 								list.map(obj => {
-									const primary = obj.primary.map(attr => (get(attr) as AttributeInstance).short).join('/');
+									const primary = obj.primary.map(attr => attributes.get(attr)!.short).join('/');
 									const primaryClassName = `primary ${obj.primary.length > 1 ? 'ATTR_6_8' : obj.primary[0]}`;
 									return (
 										<SkillListItem
@@ -119,7 +119,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 												{ className: 'atpa' },
 												{ className: 'pa', value: obj.pa || '--' },
 											]}
-											get={get}
+											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											>
 											<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />

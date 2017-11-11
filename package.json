@@ -1,7 +1,7 @@
 {
   "name": "tdeheroes",
   "productName": "TDE5 Heroes",
-  "version": "0.51.0-alpha.8",
+  "version": "0.51.0-alpha.10",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": "Lukas Obermann",
   "license": "GPL-3.0",
@@ -53,6 +53,7 @@
   "scripts": {
     "build": "electron-builder --config",
     "buildTest": "electron-builder --config electron-builder.test.json",
+    "buildDir": "electron-builder --config electron-builder.test.json --dir",
     "bundle": "./node_modules/.bin/tsc --watch",
     "start": "./node_modules/.bin/electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",

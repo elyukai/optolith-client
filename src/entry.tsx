@@ -34,15 +34,16 @@ render(
 	document.querySelector('#bodywrapper')
 );
 
-ipcRenderer.on('update-available', (info: UpdateInfo) => {
+ipcRenderer.addListener('update-available', (_event: Event, info: UpdateInfo) => {
 	store.dispatch(updateAvailable(info));
 });
 
-ipcRenderer.on('download-progress', (progressObj: ProgressInfo) => {
+ipcRenderer.addListener('download-progress', (_event: Event, progressObj: ProgressInfo) => {
 	store.dispatch(setUpdateDownloadProgress(progressObj));
 });
 
-ipcRenderer.on('auto-updater-error', (err: Error) => {
+ipcRenderer.addListener('auto-updater-error', (_event: Event, err: Error) => {
+	store.dispatch(setUpdateDownloadProgress({ percent: undefined }));
 	store.dispatch(addAlert({
 		title: 'Auto Update Error',
 		message: `An error occured during auto-update. (${JSON.stringify(err)})`

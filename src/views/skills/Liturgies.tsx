@@ -17,7 +17,7 @@ import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { BlessingInstance, InputTextEvent, Instance, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
+import { AttributeInstance, BlessingInstance, InputTextEvent, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
@@ -31,6 +31,7 @@ export interface LiturgiesOwnProps {
 
 export interface LiturgiesStateProps {
 	addChantsDisabled: boolean;
+	attributes: Map<string, AttributeInstance>;
 	currentHero: CurrentHeroInstanceState;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	enableActiveItemHints: boolean;
@@ -38,7 +39,6 @@ export interface LiturgiesStateProps {
 	isRemovingEnabled: boolean;
 	sortOrder: string;
 	traditionId: number;
-	get(id: string): Instance | undefined;
 }
 
 export interface LiturgiesDispatchProps {
@@ -79,7 +79,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as LiturgiesState);
 
 	render() {
-		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, get, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
+		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -170,7 +170,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 													activate={addBlessingToList.bind(null, obj.id)}
 													addFillElement
 													insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
-													get={get}
+													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
 													>
@@ -195,7 +195,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												activateDisabled={addChantsDisabled && obj.gr < 3}
 												addFillElement
 												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
-												get={get}
+												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
 												{...add}
@@ -270,7 +270,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												addFillElement
 												noIncrease
 												insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
-												get={get}
+												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
 												>
@@ -302,7 +302,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
-											get={get}
+											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
 											{...add}

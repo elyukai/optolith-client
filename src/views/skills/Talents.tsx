@@ -13,7 +13,7 @@ import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { InputTextEvent, Instance, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
+import { AttributeInstance, InputTextEvent, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
@@ -26,6 +26,7 @@ export interface TalentsOwnProps {
 }
 
 export interface TalentsStateProps {
+	attributes: Map<string, AttributeInstance>;
 	currentHero: CurrentHeroInstanceState;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	list: TalentInstance[];
@@ -33,7 +34,6 @@ export interface TalentsStateProps {
 	sortOrder: string;
 	ratingVisibility: boolean;
 	talentRating: ToListById<string>;
-	get(id: string): Instance | undefined;
 }
 
 export interface TalentsDispatchProps {
@@ -59,7 +59,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as TalentsState);
 
 	render() {
-		const { addPoint, currentHero, get, derivedCharacteristics, locale, isRemovingEnabled, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
+		const { addPoint, currentHero, attributes, derivedCharacteristics, locale, isRemovingEnabled, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
 		const { filterText, infoId } = this.state;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
@@ -122,7 +122,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											insertTopMargin={sortOrder === 'group' && prevObj && prevObj.gr !== obj.gr}
 											selectForInfo={this.showInfo}
-											get={get}
+											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											>
 											<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />

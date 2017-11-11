@@ -4,7 +4,6 @@ import * as ConfigActions from '../actions/ConfigActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
-import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAllForView, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getAttributes, getBooks, getPhase } from '../selectors/stateSelectors';
@@ -23,10 +22,7 @@ function mapStateToProps(state: AppState) {
 		isRemovingEnabled: isRemovingEnabled(state),
 		list: getAllForView(state),
 		phase: getPhase(state),
-		sortOrder: getSpellsSortOrder(state),
-		get(id: string) {
-			return get(getDependent(state), id);
-		}
+		sortOrder: getSpellsSortOrder(state)
 	};
 }
 
