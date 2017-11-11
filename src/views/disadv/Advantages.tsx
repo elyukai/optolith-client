@@ -9,6 +9,7 @@ import { Page } from '../../components/Page';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
@@ -101,6 +102,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 							addToList={addToList}
 							/>
 					</MainContent>
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={[]} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -125,6 +127,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 						list={activeList}
 						/>
 				</MainContent>
+				<WikiInfoContainer {...this.props} {...this.state} list={[]} />
 			</Page>
 		);
 	}

@@ -66,7 +66,8 @@ function createWindow() {
 
 		autoUpdater.checkForUpdates();
 
-		autoUpdater.on('update-available', (_: EventEmitter, info: UpdateInfo) => {
+		autoUpdater.on('update-available', (_event: EventEmitter, info: UpdateInfo) => {
+			log.log(JSON.stringify(info));
 			mainWindow!.webContents.send('update-available', info);
 		});
 
@@ -75,11 +76,12 @@ function createWindow() {
 			autoUpdater.downloadUpdate();
 		});
 
-		autoUpdater.on('download-progress', (_: EventEmitter, progressObj: ProgressInfo) => {
+		autoUpdater.addListener('download-progress', (_event: EventEmitter, progressObj: ProgressInfo) => {
+			log.log(JSON.stringify(progressObj));
 			mainWindow!.webContents.send('download-progress', progressObj);
 		});
 
-		autoUpdater.on('error', (err: Error) => {
+		autoUpdater.on('error', (_event: EventEmitter, err: Error) => {
 			mainWindow!.webContents.send('auto-updater-error', err);
 		});
 

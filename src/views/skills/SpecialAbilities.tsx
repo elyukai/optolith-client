@@ -11,6 +11,7 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
@@ -33,7 +34,7 @@ export interface SpecialAbilitiesDispatchProps {
 	switchActiveItemHints(): void;
 	addToList(args: ActivateArgs): void;
 	removeFromList(args: DeactivateArgs): void;
-	setTier(id: string, index: number, tier: number, cost: number): void;
+	setTier(id: string, index: number, tier: number): void;
 }
 
 export type SpecialAbilitiesProps = SpecialAbilitiesStateProps & SpecialAbilitiesDispatchProps & SpecialAbilitiesOwnProps;
@@ -106,6 +107,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 							get={get}
 							/>
 					</MainContent>
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={[]} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -141,6 +143,7 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 						sortOrder={sortOrder}
 						/>
 				</MainContent>
+				<WikiInfoContainer {...this.props} {...this.state} list={[]} />
 			</Page>
 		);
 	}

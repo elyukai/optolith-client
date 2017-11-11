@@ -12,6 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
@@ -165,6 +166,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							</List>
 						</Scroll>
 					</MainContent>
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={[]} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -213,6 +215,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							<div>{_localizeNumber(_localizeWeight(totalWeight, locale.id), locale.id)} / {_localizeNumber(_localizeWeight(carryingCapacity, locale.id), locale.id)} {_translate(locale, 'equipment.view.weight')}</div>
 						</div>
 					</div>
+					<WikiInfoContainer {...this.props} {...this.state} noWrapper list={[]} />
 				</Aside>
 			</Page>
 		);
