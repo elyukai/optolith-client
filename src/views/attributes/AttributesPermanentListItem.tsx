@@ -42,8 +42,6 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 		const { isAddDialogOpened, isEditDialogOpened } = this.state;
 		const available = typeof boughtBack === 'number' ? lost - boughtBack : lost;
 
-		console.log(addBoughtBackPoint);
-
 		return (
 			<AttributeBorder
 				label={label}
