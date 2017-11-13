@@ -1,8 +1,13 @@
 import { UIMessages } from '../types/ui.d';
 
+/**
+ * Displays a localized message and inserts values if necessary.
+ * @param messages The object containing all translations.
+ * @param key The key in messages containing the string you want to display.
+ * @param params If you need to insert values into the string (for example `{0}` inside the string), it will map the params to the placeholders based on index.
+ */
 export function _translate<T extends keyof UIMessages>(messages: UIMessages, key: T, ...params: (string | number)[]): UIMessages[T];
 export function _translate<T extends keyof UIMessages>(messages: undefined, key: T, ...params: (string | number)[]): undefined;
-export function _translate<T extends keyof UIMessages>(messages: UIMessages | undefined, key: T, ...params: (string | number)[]): UIMessages[T] | undefined;
 export function _translate<T extends keyof UIMessages>(messages: UIMessages | undefined, key: T, ...params: (string | number)[]): UIMessages[T] | undefined {
 	if (messages === undefined) {
 		return '...';

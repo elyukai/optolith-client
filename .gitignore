@@ -8,3 +8,4 @@ npm-debug.log*
 .esm-cache
 app/**/*.js
 /installer/
+electron-builder.env
