@@ -10,6 +10,6 @@ export interface MarkdownProps {
 export function Markdown(props: MarkdownProps) {
 	const { className = '', source = '...', isListElement } = props;
 	return (
-		<ReactMarkdown source={source} skipHtml className={className} softBreak="br" containerTagName={isListElement ? 'li' : 'div'} />
+		<ReactMarkdown source={source} skipHtml className={className} renderers={{ root: isListElement ? <ul/> : <div/> }} />
 	);
 }
