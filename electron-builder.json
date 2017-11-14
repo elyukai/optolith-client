@@ -37,7 +37,7 @@
 		"target": "default",
 		"artifactName": "TDEHeroes.${ext}"
 	},
-	"generateUpdatesFilesForAllChannels": true,
+	"detectUpdateChannel": false,
 	"publish": {
 		"provider": "generic",
 		"url": "http://cha5app.dsa-sh.de/releases/${os}",
