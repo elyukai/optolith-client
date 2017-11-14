@@ -1,6 +1,6 @@
 # 0.51.0
 
-- Auto-Updater.
+- Auto-Updater for Windows and macOS.
 - Installer for Windows.
 - New icon set.
 - You can now edit heroes after character creation phase if you check the respective box in the settings.
@@ -8,9 +8,12 @@
 - Exported characters will now include the avatar image.
 - Added support for permanent LP loss.
 - Source book abbreviations will now appear in profession list.
+- All lists of skills (skills, spells, liturgical chants) will now show the attribute values if you hover over an list item.
+- Fixed calculations of AP spent on **active** advantages/disadvantages/special abiltiies (AP for buying them were still calculated correctly).
 - Fixed calculations based on size value (meter-based size entry allowed).
 - Fixed surplus page in character sheet PDF.
 - Added placeholder wiki boxes for advantages, disadvantages, special abilities and items.
+- Fixed available hair colors for some races.
 
 ## German Specific
 

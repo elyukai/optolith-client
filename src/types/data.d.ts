@@ -167,6 +167,76 @@ export interface RaceInstance {
 	readonly src: SourceLink[];
 }
 
+export interface RaceInstanceBase {
+	readonly id: string;
+	readonly name: string;
+	readonly ap: number;
+	readonly lp: number;
+	readonly spi: number;
+	readonly tou: number;
+	readonly mov: number;
+	readonly attributeAdjustments: [number, string][];
+	readonly attributeAdjustmentsSelection: [number, string[]];
+	readonly attributeAdjustmentsText: string;
+	readonly automaticAdvantages: string[];
+	readonly automaticAdvantagesCost: [number, number, number];
+	readonly automaticAdvantagesText: string;
+	readonly stronglyRecommendedAdvantages: string[];
+	readonly stronglyRecommendedAdvantagesText: string;
+	readonly stronglyRecommendedDisadvantages: string[];
+	readonly stronglyRecommendedDisadvantagesText: string;
+	readonly src: SourceLink[];
+	readonly category: Categories.RACES;
+}
+
+export interface RaceInstanceWithoutVariants extends RaceInstanceBase {
+	readonly commonCultures: string[];
+	readonly commonAdvantages: string[];
+	readonly commonAdvantagesText: string;
+	readonly commonDisadvantages: string[];
+	readonly commonDisadvantagesText: string;
+	readonly uncommonAdvantages: string[];
+	readonly uncommonAdvantagesText: string;
+	readonly uncommonDisadvantages: string[];
+	readonly uncommonDisadvantagesText: string;
+	readonly hairColors: number[];
+	readonly eyeColors: number[];
+	readonly size: (number | [number, number])[];
+	readonly weight: (number | [number, number])[];
+}
+
+export interface RaceInstanceWithVariants extends RaceInstanceBase {
+	readonly commonCultures?: string[];
+	readonly commonAdvantages?: string[];
+	readonly commonAdvantagesText?: string;
+	readonly commonDisadvantages?: string[];
+	readonly commonDisadvantagesText?: string;
+	readonly uncommonAdvantages?: string[];
+	readonly uncommonAdvantagesText?: string;
+	readonly uncommonDisadvantages?: string[];
+	readonly uncommonDisadvantagesText?: string;
+	readonly variants: RaceVariant[];
+	readonly isVariantRequired?: boolean;
+}
+
+export interface RaceVariant {
+	readonly id: string;
+	readonly name: string;
+	readonly commonCultures?: string[];
+	readonly commonAdvantages?: string[];
+	readonly commonAdvantagesText?: string;
+	readonly commonDisadvantages?: string[];
+	readonly commonDisadvantagesText?: string;
+	readonly uncommonAdvantages?: string[];
+	readonly uncommonAdvantagesText?: string;
+	readonly uncommonDisadvantages?: string[];
+	readonly uncommonDisadvantagesText?: string;
+	readonly hairColors: number[];
+	readonly eyeColors: number[];
+	readonly size: (number | [number, number])[];
+	readonly weight: (number | [number, number])[];
+}
+
 export interface SourceLink {
 	id: string;
 	page: number;
@@ -305,6 +375,7 @@ export interface ProfessionInstance {
 	readonly typicalDisadvantages: string[];
 	readonly untypicalAdvantages: string[];
 	readonly untypicalDisadvantages: string[];
+	readonly isVariantRequired?: boolean;
 	readonly variants: string[];
 	readonly category: Categories.PROFESSIONS;
 	readonly gr: number;
