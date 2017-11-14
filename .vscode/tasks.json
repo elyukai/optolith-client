@@ -9,13 +9,19 @@
 	"tasks": [
 		{
 				"label": "build",
-				"command": "npm",
-				"args": ["run", "build"]
+				"command": "npm run build"
 		},
 		{
 				"label": "buildTest",
-				"command": "npm",
-				"args": ["run", "buildTest"]
+				"command": "npm run buildTest"
+		},
+		{
+				"label": "buildMac",
+				"command": "npm run buildMac"
+		},
+		{
+				"label": "buildMacTest",
+				"command": "npm run buildMacTest"
 		},
 		{
 				"label": "bundle",
@@ -26,23 +32,19 @@
 		},
 		{
 				"label": "run",
-				"command": "npm",
-				"args": ["start"]
+				"command": "npm start"
 		},
 		{
 				"label": "bundle_l10ns",
-				"command": "npm",
-				"args": ["run", "bundle_l10ns"]
+				"command": "npm run bundle_l10ns"
 		},
 		{
 				"label": "bundle_data",
-				"command": "npm",
-				"args": ["run", "bundle_data"]
+				"command": "npm run bundle_data"
 		},
 		{
 				"label": "bundle_css",
-				"command": "npm",
-				"args": ["run", "bundle_css"]
+				"command": "npm run bundle_css"
 		}
 	]
 }

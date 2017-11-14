@@ -13,13 +13,12 @@ export interface MarkdownRootProps {
 
 export function Markdown(props: MarkdownProps) {
 	const { className, source = '...', isListElement } = props;
-	const root = (props: MarkdownRootProps) => isListElement ? (
-		<ul className={className}>{props.children}</ul>
-	) : (
-		<div className={className}>{props.children}</div>
-	);
+
+	const root = isListElement ? 'ul' : 'div';
+
 	return (
 		<ReactMarkdown
+			className={className}
 			source={source}
 			skipHtml
 			renderers={{

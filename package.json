@@ -55,10 +55,11 @@
     "xlsx": "^0.10.9"
   },
   "scripts": {
-    "build": "electron-builder --config",
-    "buildTest": "electron-builder --config electron-builder.test.json",
+    "build": "electron-builder --config -lw",
+    "buildTest": "electron-builder --config electron-builder.test.json -lw",
     "buildDir": "electron-builder --config electron-builder.test.json --dir",
-    "buildLinuxTest": "build --config electron-builder.test.json -l",
+    "buildMac": "build --config electron-builder.json -m",
+    "buildMacTest": "build --config electron-builder.test.json -m",
     "bundle": "tsc --watch",
     "start": "electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
