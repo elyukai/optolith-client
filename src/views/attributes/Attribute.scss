@@ -48,9 +48,24 @@
 		text-align: center;
 	}
 
-	.value {
+	.attr .value {
 		border: 2px solid transparent;
 		padding: 2px;
+	}
+
+	.attribute-adjustment {
+		margin: 10px 0 20px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		> span::after {
+			content: ":";
+		}
+
+		> .dropdown {
+			margin: 0 0 0 16px;
+		}
 	}
 
 	.value-inner {

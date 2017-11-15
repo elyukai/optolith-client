@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { AttributesContainer } from '../containers/Attributes';
 import { BelongingsContainer } from '../containers/Belongings';
+import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/Herolist';
 import { ProfileContainer } from '../containers/Profile';
 import { RCPContainer } from '../containers/RCP';
@@ -24,6 +25,7 @@ export function Route(props: RouteProps) {
 		herolist: <HerolistContainer locale={locale} />,
 		grouplist: <Grouplist />,
 		wiki: <WikiContainer locale={locale} />,
+		faq: <HelpContainer locale={locale} />,
 		about: <About locale={locale} />,
 
 		rcp: <RCPContainer locale={locale} />,

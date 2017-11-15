@@ -25,6 +25,7 @@ export function NavigationBarForMain(props: NavigationBarForMainProps) {
 		{ label: _translate(locale, 'titlebar.tabs.heroes'), tag: 'herolist' },
 		{ label: _translate(locale, 'titlebar.tabs.groups'), tag: 'grouplist', disabled: true },
 		{ label: _translate(locale, 'titlebar.tabs.wiki'), tag: 'wiki' },
+		{ label: _translate(locale, 'titlebar.tabs.faq'), tag: 'faq' },
 		{ label: _translate(locale, 'titlebar.tabs.about'), tag: 'about' }
 	];
 

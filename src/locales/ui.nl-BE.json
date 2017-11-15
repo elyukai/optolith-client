@@ -8,6 +8,7 @@
 	"titlebar.tabs.groups": "Groepen",
 	"titlebar.tabs.customrules": "Huisregels",
 	"titlebar.tabs.wiki": "Wiki",
+	"titlebar.tabs.faq": "FAQ",
 	"titlebar.tabs.about": "Over",
 	"titlebar.tabs.imprint": "Colofon",
 	"titlebar.tabs.thirdpartylicenses": "Licenties voor derden",
@@ -724,5 +725,6 @@
 	"newversionavailable.message": "Version {0} ist bereit zum Download! Möchtest du das Update herunterladen und dann installieren? Die App wird automatisch neugestartet.",
 	"newversionavailable.update": "Aktualisieren",
 	"downloadupdate": "Update herunterladen",
-	"mothertongue.short": "MS"
+	"mothertongue.short": "MS",
+	"attributeadjustmentselection": "Eigenschaftsänderungsauswahl"
 }

@@ -6,6 +6,7 @@ import { AttributeWithRequirements } from '../../types/view.d';
 import { _translate } from '../../utils/I18n';
 import { AttributeCalc } from './AttributeCalc';
 import { AttributeList } from './AttributeList';
+import { AttributesAdjustment } from './AttributesAdjustment';
 import { AttributesPermanentList } from './AttributesPermanentList';
 
 export interface AttributesOwnProps {
@@ -19,6 +20,9 @@ export interface AttributesStateProps {
 	isRemovingEnabled: boolean;
 	maxTotalAttributeValues: number;
 	sum: number;
+	adjustmentValue: number | undefined;
+	availableAttributeIds: string[] | undefined;
+	currentAttributeId: string | undefined;
 }
 
 export interface AttributesDispatchProps {
@@ -43,6 +47,7 @@ export interface AttributesDispatchProps {
 	addLostKPPoint(): void;
 	removeLostKPPoint(): void;
 	addLostKPPoints(value: number): void;
+	setAdjustmentId(id: string): void;
 }
 
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps;
@@ -57,6 +62,7 @@ export function Attributes(props: AttributesProps) {
 					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
 					<AttributeList {...props} />
 					<div className="secondary">
+						{isInCharacterCreation && <AttributesAdjustment {...props} />}
 						<AttributeCalc {...props} locale={locale} />
 						<AttributesPermanentList {...props} locale={locale} />
 					</div>

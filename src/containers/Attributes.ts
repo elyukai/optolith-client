@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../actions/AttributesActions';
 import { AppState } from '../reducers/app';
-import { getForView, getSum } from '../selectors/attributeSelectors';
+import { getAdjustmentValue, getAvailableAdjustmentIds, getCurrentAdjustmentId, getForView, getSum } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { isInCharacterCreation, isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
@@ -10,7 +10,10 @@ import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStat
 
 function mapStateToProps(state: AppState) {
 	return {
+		adjustmentValue: getAdjustmentValue(state),
 		attributes: getForView(state),
+		availableAttributeIds: getAvailableAdjustmentIds(state),
+		currentAttributeId: getCurrentAdjustmentId(state),
 		isInCharacterCreation: isInCharacterCreation(state),
 		isRemovingEnabled: isRemovingEnabled(state),
 		derived: getDerivedCharacteristics(state),
@@ -86,6 +89,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		addLostKPPoints: (value: number) => {
 			dispatch(AttributesActions._addLostKPPoints(value));
+		},
+		setAdjustmentId: (id: string) => {
+			dispatch(AttributesActions.setAdjustmentId(id));
 		}
 	};
 }

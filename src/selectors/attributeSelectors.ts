@@ -11,6 +11,7 @@ import { getEnergies } from './energiesSelectors';
 import { getAttributeValueLimit } from './rulesSelectors';
 import { getPhase, getSpecialAbilities } from './stateSelectors';
 import { getTalents } from './talentsSelectors';
+import { getCurrentRace } from './rcpSelectors';
 
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
 
@@ -246,5 +247,51 @@ export const getCarryingCapacity = createSelector(
 	mapGetToSlice(getAttributes, 'ATTR_8'),
 	strength => {
 		return strength!.value * 2;
+	}
+);
+
+export const getAdjustmentValue = createSelector(
+	getCurrentRace,
+	race => {
+		return race && race.attributeAdjustmentsSelection[0];
+	}
+);
+
+export const getAvailableAdjustmentIds = createSelector(
+	getCurrentRace,
+	getAdjustmentValue,
+	getAttributes,
+	getForView,
+	(race, adjustmentValue, attributes, attributesCalculated) => {
+		const arr = race && race.attributeAdjustmentsSelection[1];
+		if (arr) {
+			return arr.filter(id => {
+				const attribute = attributes.get(id);
+				const attributeCalculated = attributesCalculated.find(e => e.id === id);
+				if (attribute && attributeCalculated) {
+					if (attribute.mod === adjustmentValue) {
+						return !attributeCalculated.max || attributeCalculated.max - adjustmentValue >= attribute.value;
+					}
+					else if (typeof adjustmentValue === 'number') {
+						return !attributeCalculated.max || attributeCalculated.max + adjustmentValue >= attribute.value;
+					}
+				}
+				return false;
+			});
+		}
+		return [];
+	}
+);
+
+export const getCurrentAdjustmentId = createSelector(
+	getAvailableAdjustmentIds,
+	getAdjustmentValue,
+	getAttributes,
+	(availableAdjustmentIds, adjustmentValue, attributes) => {
+		const currentAttribute = [...attributes.values()].find(e => availableAdjustmentIds.includes(e.id) && e.mod === adjustmentValue);
+		if (currentAttribute) {
+			return currentAttribute.id;
+		}
+		return;
 	}
 );

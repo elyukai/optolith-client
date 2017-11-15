@@ -9,6 +9,7 @@ import { _translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
+import { getCurrentAdjustmentId, getAdjustmentValue } from '../selectors/attributeSelectors';
 
 export interface AddAttributePointAction {
 	type: ActionTypes.ADD_ATTRIBUTE_POINT;
@@ -401,5 +402,29 @@ export function _addLostKPPoints(value: number): AddLostKPPointsAction {
 		payload: {
 			value
 		}
+	};
+}
+
+export interface SetAdjustmentIdAction {
+	type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID;
+	payload: {
+		current: string;
+		next: string;
+		value: number;
+	};
+}
+
+export function setAdjustmentId(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const current = getCurrentAdjustmentId(getState());
+		const value = getAdjustmentValue(getState());
+		dispatch({
+			type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
+			payload: {
+				current,
+				next: id,
+				value
+			}
+		} as SetAdjustmentIdAction);
 	};
 }

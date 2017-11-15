@@ -8,6 +8,7 @@
 	"titlebar.tabs.groups": "Gruppen",
 	"titlebar.tabs.customrules": "Hausregeln",
 	"titlebar.tabs.wiki": "Wiki",
+	"titlebar.tabs.faq": "FAQ",
 	"titlebar.tabs.about": "Über",
 	"titlebar.tabs.imprint": "Impressum",
 	"titlebar.tabs.thirdpartylicenses": "Drittanbieterlizenzen",
@@ -724,5 +725,6 @@
 	"newversionavailable.message": "Version {0} ist bereit zum Download! Möchtest du das Update herunterladen und dann installieren? Die App wird automatisch neugestartet.",
 	"newversionavailable.update": "Aktualisieren",
 	"downloadupdate": "Update herunterladen",
-	"mothertongue.short": "MS"
+	"mothertongue.short": "MS",
+	"attributeadjustmentselection": "Eigenschaftsänderungsauswahl"
 }

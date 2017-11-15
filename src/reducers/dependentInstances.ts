@@ -1,5 +1,5 @@
 import { flatten } from 'lodash';
-import { AddAttributePointAction, RemoveAttributePointAction } from '../actions/AttributesActions';
+import { AddAttributePointAction, RemoveAttributePointAction, SetAdjustmentIdAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
@@ -17,7 +17,7 @@ import { activatable } from './activatable';
 import { dependentInstancesClear } from './dependentInstancesClear';
 import { increasable } from './increasable';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | CreateHeroAction | LoadHeroAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateCantripAction | DeactivateCantripAction | ActivateBlessingAction | DeactivateBlessingAction;
+type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | CreateHeroAction | LoadHeroAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateCantripAction | DeactivateCantripAction | ActivateBlessingAction | DeactivateBlessingAction | SetAdjustmentIdAction;
 
 export interface DependentInstancesState {
   advantages: Map<string, Data.AdvantageInstance>;
@@ -93,6 +93,22 @@ export function dependentInstances(state = initialState, action: Action) {
 
     case ActionTypes.CREATE_HERO:
       return dependentInstancesClear(state);
+
+    case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID: {
+      const { current, next, value } = action.payload;
+      const currentAttribute = state.attributes.get(current)!;
+      const nextAttribute = state.attributes.get(next)!;
+      console.log(currentAttribute, nextAttribute);
+      return setStateItem(
+        setStateItem(
+          state,
+          current,
+          { ...currentAttribute, mod: currentAttribute.mod - value }
+        ),
+        next,
+        { ...nextAttribute, mod: nextAttribute.mod + value }
+      );
+    }
 
     case ActionTypes.LOAD_HERO: {
       const { attr, talents, ct, spells, blessings, cantrips, liturgies, activatable } = action.payload.data;

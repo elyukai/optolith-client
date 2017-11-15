@@ -8,6 +8,7 @@ export interface UIMessages {
 	"titlebar.tabs.groups": string;
 	"titlebar.tabs.customrules": string;
 	"titlebar.tabs.wiki": string;
+	"titlebar.tabs.faq": string;
 	"titlebar.tabs.about": string;
 	"titlebar.tabs.imprint": string;
 	"titlebar.tabs.thirdpartylicenses": string;
@@ -726,4 +727,5 @@ export interface UIMessages {
 	"newversionavailable.update": string;
 	"downloadupdate": string;
 	"mothertongue.short": string;
+	"attributeadjustmentselection": string;
 }
