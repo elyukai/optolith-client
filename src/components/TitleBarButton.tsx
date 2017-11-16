@@ -10,7 +10,7 @@ export interface TitleBarButtonProps {
 export function TitleBarButton(props: TitleBarButtonProps) {
 	return (
 		<div className={classNames('titlebar-btn', props.className)} onClick={props.onClick}>
-			{props.icon}
+			<span>{props.icon}</span>
 		</div>
 	);
 }

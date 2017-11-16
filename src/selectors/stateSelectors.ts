@@ -1,4 +1,5 @@
 import { AppState } from '../reducers/app';
+import { UIMessages } from '../utils/I18n';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
@@ -8,6 +9,7 @@ export const getWikiCategory1 = (state: AppState) => state.ui.wiki.category1;
 export const getWikiCategory2 = (state: AppState) => state.ui.wiki.category2;
 
 export const getLocaleMessages = (state: AppState) => state.locale.messages;
+export const getLocaleAsProp = (_: AppState, props: { locale: UIMessages }) => props.locale;
 export const getLocaleId = (state: AppState) => state.locale.id;
 export const getLocaleType = (state: AppState) => state.locale.type;
 export const getBooks = (state: AppState) => state.locale.books;

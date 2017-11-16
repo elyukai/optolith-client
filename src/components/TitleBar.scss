@@ -14,7 +14,7 @@
 }
 
 .titlebar-inner {
-	height: 31px;
+	height: var(--titlebar-height);
 	width: 100%;
 	display: flex;
 	position: relative;
@@ -23,20 +23,70 @@
 	// background: var(--background-color);
 }
 
-.titlebar-btn {
-	width: 46px;
-	height: 30px;
-	font: 16px/30px TDE Heroes;
-	color: var(--accent-color);
-	-webkit-app-region: no-drag;
-	text-align: center;
+.platform-win32, .platform-linux {
+	.titlebar .titlebar-btn {
+		width: 46px;
+		height: 30px;
+		font: 16px/30px TDE Heroes;
+		color: var(--accent-color);
+		-webkit-app-region: no-drag;
+		text-align: center;
 
-	&:hover {
-		color: var(--headings-color);
-		background: var(--separator-color-transparent);
+		&:hover {
+			color: var(--headings-color);
+			background: var(--separator-color-transparent);
+		}
+
+		&.close:hover {
+			background: #e81123;
+		}
+	}
+}
+
+.platform-darwin .titlebar {
+	.titlebar-inner {
+		justify-content: flex-start;
 	}
 
-	&.close:hover {
-		background: #e81123;
+	&.not-focused .titlebar-btn {
+		&.close, &.minimize, &.fullscreen {
+			background: none;
+		}
+	}
+
+	.titlebar-btn {
+		width: 12px;
+		height: 12px;
+		font: 24px/22px TDE Heroes;
+		color: var(--accent-color);
+		-webkit-app-region: no-drag;
+		text-align: center;
+		border-radius: 50%;
+		margin: 13px 0 0 8px;
+		border: 1px solid var(--separator-color-transparent);
+
+		span {
+			display: none;
+		}
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		&:first-child {
+			margin-left: 13px;
+		}
+
+		&.close, &.close:hover {
+			background: #fc635d;
+		}
+
+		&.minimize, &.minimize:hover {
+			background: #fdbc40;
+		}
+
+		&.fullscreen, &.fullscreen:hover {
+			background: #33c748;
+		}
 	}
 }

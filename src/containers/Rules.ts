@@ -2,12 +2,14 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as RulesActions from '../actions/RulesActions';
 import { AppState } from '../reducers/app';
+import { getSortedBooks } from '../selectors/bookSelectors';
 import { getRules } from '../selectors/rulesSelectors';
 import { OptionalRules, OptionalRulesDispatchProps, OptionalRulesOwnProps, OptionalRulesStateProps } from '../views/profile/OptionalRules';
 
-function mapStateToProps(state: AppState) {
+function mapStateToProps(state: AppState, props?: OptionalRulesOwnProps) {
 	return {
-		rules: getRules(state)
+		rules: getRules(state),
+		sortedBooks: getSortedBooks(state, props!)
 	};
 }
 

@@ -21,6 +21,8 @@ export interface AppDispatchProps {
 	maximize(): void;
 	restore(): void;
 	close(): void;
+	enterFullscreen(): void;
+	leaveFullscreen(): void;
 }
 
 export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps;
@@ -40,7 +42,7 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, currentTab, theme, ...other } = this.props;
+		const { locale, currentTab, platform, theme, ...other } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {
@@ -59,11 +61,11 @@ export class App extends React.Component<AppProps, AppState> {
 		}
 
 		return (
-			<div id="body" className={`theme-${theme}`} lang={locale.id.split('-')[0]}>
+			<div id="body" className={`theme-${theme} platform-darwin`} lang={locale.id.split('-')[0]}>
 				<div className="background-image"></div>
 				<AlertsContainer locale={locale} />
 				<DownloaderContainer locale={locale} />
-				<TitleBar {...other} />
+				<TitleBar {...this.props} />
 				<NavigationBarContainer locale={locale} />
 				<Route id={currentTab} locale={locale} />
 			</div>

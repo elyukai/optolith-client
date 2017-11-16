@@ -11,6 +11,8 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 	--background-color-transparent08: transparentize(#111, .2);
 	--headings-color: #f7f4ed;
 	--text-color: #7f7f7f;
+	--titlebar-height: 31px;
+	--navigationbar-height: 64px;
 }
 
 .theme-light {
@@ -19,6 +21,10 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 	--background-color-transparent08: transparentize(#f0f0f0, .2);
 	--headings-color: black;
 	--text-color: #3c3c3c;
+}
+
+.platform-darwin {
+	--titlebar-height: 39px;
 }
 
 $link-color1: #0080b9;

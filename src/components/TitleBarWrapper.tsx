@@ -1,17 +1,14 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface TitleBarWrapperProps {
 	children?: React.ReactNode;
-	empty?: boolean;
+	isFocused: boolean;
 }
 
 export function TitleBarWrapper(props: TitleBarWrapperProps) {
-	if (props.empty) {
-		return <div className="titlebar empty"></div>;
-	}
-
 	return (
-		<div className="titlebar">
+		<div className={classNames('titlebar', !props.isFocused && 'not-focused')}>
 			<div className="titlebar-inner">
 				{props.children}
 			</div>

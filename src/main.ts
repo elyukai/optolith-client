@@ -41,7 +41,6 @@ function createWindow() {
 		frame: false,
 		center: true,
 		title: 'TDE Heroes',
-		titleBarStyle: 'hidden',
 		acceptFirstMouse: true,
 		backgroundColor: '#000000',
 		show: false
@@ -74,7 +73,7 @@ function createWindow() {
 			autoUpdater.downloadUpdate();
 		});
 
-		autoUpdater.addListener('download-progress', (progressObj: ProgressInfo) => {
+		autoUpdater.signals.progress(progressObj => {
 			mainWindow!.webContents.send('download-progress', progressObj);
 		});
 
@@ -82,7 +81,7 @@ function createWindow() {
 			mainWindow!.webContents.send('auto-updater-error', err);
 		});
 
-		autoUpdater.addListener('update-downloaded', () => {
+		autoUpdater.signals.updateDownloaded(() => {
 		  autoUpdater.quitAndInstall();
 		});
 	});

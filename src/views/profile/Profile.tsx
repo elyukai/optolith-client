@@ -56,15 +56,16 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
 				label: _translate(locale, 'titlebar.tabs.personaldata'),
 				disabled: true
 			},
+			{
+				id: 'optionalRules',
+				label: _translate(locale, 'titlebar.tabs.rules'),
+			},
 		];
 
 		if (phase === 3) {
-			tabs.push({
+			tabs.splice(2, 0, {
 				id: 'sheets',
 				label: _translate(locale, 'titlebar.tabs.charactersheet'),
-			}, {
-				id: 'optionalRules',
-				label: _translate(locale, 'titlebar.tabs.rules'),
 			});
 		}
 

@@ -2,7 +2,7 @@
 	position: absolute;
 	width: 100%;
 	z-index: 800;
-	margin-top: 31px;
+	margin-top: var(--titlebar-height);
 }
 
 .navigationbar-inner {

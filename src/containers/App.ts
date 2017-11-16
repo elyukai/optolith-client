@@ -30,7 +30,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		close() {
 			dispatch(IOActions.requestClose());
-		}
+		},
+		enterFullscreen() {
+			remote.getCurrentWindow().setFullScreen(true);
+		},
+		leaveFullscreen() {
+			remote.getCurrentWindow().setFullScreen(false);
+		},
 	};
 }
 
