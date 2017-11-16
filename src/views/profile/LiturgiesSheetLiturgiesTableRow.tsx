@@ -27,7 +27,7 @@ export function LiturgiesSheetLiturgiesTableRow(props: LiturgiesSheetLiturgiesTa
 				return attribute.short;
 			}
 		}).join('/');
-		const aspectNames = _translate(locale, 'spells.view.properties');
+		const aspectNames = _translate(locale, 'liturgies.view.aspects');
 		const aspects = sortStrings(aspectIds.map(e => aspectNames[e - 1]), locale.id);
 		return (
 			<tr>

@@ -1059,6 +1059,9 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
             return { id, name, cost, gr, instance: entry };
           }
         }
+        else if (isActive(dependent.advantages.get('ADV_12'))) {
+          return { id, name, cost, gr, instance: entry };
+        }
         break;
       }
       case 'SA_549':
@@ -1078,6 +1081,9 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
           if (active.length < max) {
             return { id, name, cost, gr, instance: entry };
           }
+        }
+        else if (isActive(dependent.advantages.get('ADV_12'))) {
+          return { id, name, cost, gr, instance: entry };
         }
         break;
       }

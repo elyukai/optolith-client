@@ -97,12 +97,12 @@ export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
       const allEntries = getMapByCategory(dependent, category) as Map<string, Data.ActivatableInstance>;
       const finalEntries: Data.DeactiveViewObject[] = [];
       if (locale) {
-        allEntries.forEach(entry => {
-          const obj = getDeactiveView(entry, state, validExtendedSpecialAbilities, locale);
+        for (const entry of allEntries) {
+          const obj = getDeactiveView(entry[1], state, validExtendedSpecialAbilities, locale);
           if (obj) {
             finalEntries.push(obj);
           }
-        });
+        }
       }
       return finalEntries;
     }
@@ -223,7 +223,7 @@ export const getMagicalSpecialAbilitiesForSheet = createSelector(
 export const getBlessedSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [7].includes(e.gr!));
+    return specialAbilities.filter(e => [7, 25, 26].includes(e.gr!));
   }
 );
 

@@ -54,8 +54,8 @@ export const getLiturgiesForSheet = createSelector(
 		const array: Liturgy[] = [];
 		for (const [id, entry] of liturgies) {
 			const { ic, name, active, value, check, checkmod, aspects, category } = entry;
-			const traditionId = last(getSids(tradition!));
-			const availableAspects = traditionId && getAspectsOfTradition(traditionId as number);
+			const traditionId = last(getSids(tradition!)) as number;
+			const availableAspects = traditionId && getAspectsOfTradition(traditionId + 1);
 			if (active) {
 				array.push({
 					id,

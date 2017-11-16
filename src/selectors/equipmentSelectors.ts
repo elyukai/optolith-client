@@ -189,7 +189,7 @@ export const getMeleeWeapons = createSelector(
 			const atBase = getAt(dependent, combatTechniqueInstance);
 			const at = atBase + (atMod || 0);
 			const paBase = getPa(dependent, combatTechniqueInstance);
-			const pa = paBase && paBase + (atMod || 0) + higherParadeValues;
+			const pa = paBase && paBase + (paMod || 0) + higherParadeValues;
 			const primaryAttributeIds = damageBonus && typeof damageBonus.primary === 'string' ? convertPrimaryAttributeToArray(damageBonus.primary) : combatTechniqueInstance.primary;
 			const primaryAttributes = primaryAttributeIds.map(attr => dependent.attributes.get(attr)!);
 			const damageThresholds = damageBonus && damageBonus.threshold || 0;

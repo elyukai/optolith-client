@@ -15,7 +15,7 @@ export interface LiturgiesSheetLiturgiesProps {
 }
 
 export function LiturgiesSheetLiturgies(props: LiturgiesSheetLiturgiesProps) {
-	const { attributes, checkAttributeValueVisibility, derivedCharacteristics, liturgies, locale } = props;
+	const { liturgies, locale } = props;
 	const sortedLiturgies = sortObjects(liturgies, locale.id);
 	const list = Array<Liturgy | undefined>(21).fill(undefined);
 	list.splice(0, Math.min(sortedLiturgies.length, 21), ...sortedLiturgies);
@@ -42,12 +42,9 @@ export function LiturgiesSheetLiturgies(props: LiturgiesSheetLiturgiesProps) {
 					{
 						list.map((e, i) =>
 							<LiturgiesSheetLiturgiesTableRow
+								{...props}
 								key={e ? e.id : `u${i}`}
-								attributes={attributes}
-								checkAttributeValueVisibility={checkAttributeValueVisibility}
-								derivedCharacteristics={derivedCharacteristics}
 								liturgy={e}
-								locale={locale}
 								/>
 						)
 					}

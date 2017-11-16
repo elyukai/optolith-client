@@ -72,8 +72,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
   }
   else if (isRequiringIncreasable(req)) {
     if (Array.isArray(req.id)) {
-      const resultOfAll = req.id.map(e => validateObject(state, { ...req, id: e }, sourceId));
-      return resultOfAll.includes(true);
+      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId));
     }
     const entry = get(state.dependent, req.id);
     if (isIncreasableInstance(entry)) {
@@ -82,8 +81,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
   }
   else {
     if (Array.isArray(req.id)) {
-      const resultOfAll = req.id.map(e => validateObject(state, { ...req, id: e }, sourceId));
-      return resultOfAll.includes(true);
+      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId));
     }
     if (req.sid === 'sel') {
       return true;
