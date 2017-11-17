@@ -726,5 +726,7 @@
 	"newversionavailable.update": "Aktualisieren",
 	"downloadupdate": "Update herunterladen",
 	"mothertongue.short": "MS",
-	"attributeadjustmentselection": "Eigenschaftsänderungsauswahl"
+	"attributeadjustmentselection": "Eigenschaftsänderungsauswahl",
+	"mac.aboutapp": "Über {0} ...",
+	"mac.quit": "Schließen"
 }

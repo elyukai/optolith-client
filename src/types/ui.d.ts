@@ -728,4 +728,6 @@ export interface UIMessages {
 	"downloadupdate": string;
 	"mothertongue.short": string;
 	"attributeadjustmentselection": string;
+	"mac.aboutapp": string;
+	"mac.quit": string;
 }

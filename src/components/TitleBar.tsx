@@ -4,6 +4,7 @@ import { TitleBarButton } from './TitleBarButton';
 import { TitleBarWrapper } from './TitleBarWrapper';
 
 export interface TitleBarProps {
+	platform: string;
 	minimize(): void;
 	maximize(): void;
 	restore(): void;
@@ -48,10 +49,10 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
 	}
 
 	render() {
-		const { close, maximize, minimize, restore, enterFullscreen, leaveFullscreen } = this.props;
+		const { close, platform, maximize, minimize, restore, enterFullscreen, leaveFullscreen } = this.props;
 		const { isMaximized, isFullScreen } = this.state;
 
-		// if (platform === 'darwin') {
+		if (platform === 'darwin') {
 			return (
 				<TitleBarWrapper {...this.state}>
 					<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
@@ -60,16 +61,16 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
 					{isFullScreen && <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />}
 				</TitleBarWrapper>
 			);
-		// }
+		}
 
-		// return (
-		// 	<TitleBarWrapper>
-		// 		<TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
-		// 		{!isMaximized && <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />}
-		// 		{isMaximized && <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />}
-		// 		<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
-		// 	</TitleBarWrapper>
-		// );
+		return (
+			<TitleBarWrapper {...this.state}>
+				<TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
+				{!isMaximized && <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />}
+				{isMaximized && <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />}
+				<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
+			</TitleBarWrapper>
+		);
 	}
 
 	private updateState = () => {

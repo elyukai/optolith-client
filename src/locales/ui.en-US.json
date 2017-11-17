@@ -725,5 +725,7 @@
 	"newversionavailable.update": "Update",
 	"downloadupdate": "Download Update",
 	"mothertongue.short": "MT",
-	"attributeadjustmentselection": "Attribute adjustment selection"
+	"attributeadjustmentselection": "Attribute adjustment selection",
+	"mac.aboutapp": "About {0} ...",
+	"mac.quit": "Quit"
 }
