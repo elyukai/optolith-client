@@ -730,4 +730,5 @@ export interface UIMessages {
 	"attributeadjustmentselection": string;
 	"mac.aboutapp": string;
 	"mac.quit": string;
+	"rules.enableallrulebooks": string;
 }

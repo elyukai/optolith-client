@@ -727,5 +727,6 @@
 	"mothertongue.short": "MT",
 	"attributeadjustmentselection": "Attribute adjustment selection",
 	"mac.aboutapp": "About {0} ...",
-	"mac.quit": "Quit"
+	"mac.quit": "Quit",
+	"rules.enableallrulebooks": "Enable all Rule Books"
 }

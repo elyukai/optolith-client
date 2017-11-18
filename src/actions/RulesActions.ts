@@ -25,3 +25,29 @@ export function _switchAttributeValueLimit(): SwitchAttributeValueLimitAction {
 		type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT
 	};
 }
+
+export interface SwitchEnableAllRuleBooksAction {
+	type: ActionTypes.SWITCH_ENABLE_ALL_RULE_BOOKS;
+}
+
+export function switchEnableAllRuleBooks(): SwitchEnableAllRuleBooksAction {
+	return {
+		type: ActionTypes.SWITCH_ENABLE_ALL_RULE_BOOKS
+	};
+}
+
+export interface SwitchEnableRuleBookAction {
+	type: ActionTypes.SWITCH_ENABLE_RULE_BOOK;
+	payload: {
+		id: string;
+	};
+}
+
+export function switchEnableRuleBook(id: string): SwitchEnableRuleBookAction {
+	return {
+		type: ActionTypes.SWITCH_ENABLE_RULE_BOOK,
+		payload: {
+			id
+		}
+	};
+}

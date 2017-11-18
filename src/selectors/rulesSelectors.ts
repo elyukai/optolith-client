@@ -1,5 +1,10 @@
-import { AppState } from '../reducers/app';
+import { createSelector } from 'reselect';
+import { areAllRuleBooksEnabled, getEnabledRuleBooks } from './stateSelectors';
 
-export const getRules = (state: AppState) => state.currentHero.present.rules;
-export const getAttributeValueLimit = (state: AppState) => state.currentHero.present.rules.attributeValueLimit;
-export const getHigherParadeValues = (state: AppState) => state.currentHero.present.rules.higherParadeValues;
+export const getRuleBooksEnabled = createSelector(
+	areAllRuleBooksEnabled,
+	getEnabledRuleBooks,
+	(areAllRuleBooksEnabled, getEnabledRuleBooks) => {
+		return areAllRuleBooksEnabled || getEnabledRuleBooks;
+	}
+);

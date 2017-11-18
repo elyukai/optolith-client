@@ -3,13 +3,15 @@ import { Action, Dispatch } from 'redux';
 import * as RulesActions from '../actions/RulesActions';
 import { AppState } from '../reducers/app';
 import { getSortedBooks } from '../selectors/bookSelectors';
-import { getRules } from '../selectors/rulesSelectors';
+import { getRuleBooksEnabled } from '../selectors/rulesSelectors';
+import { getRules } from '../selectors/stateSelectors';
 import { OptionalRules, OptionalRulesDispatchProps, OptionalRulesOwnProps, OptionalRulesStateProps } from '../views/profile/OptionalRules';
 
 function mapStateToProps(state: AppState, props?: OptionalRulesOwnProps) {
 	return {
 		rules: getRules(state),
-		sortedBooks: getSortedBooks(state, props!)
+		sortedBooks: getSortedBooks(state, props!),
+		ruleBooksEnabled: getRuleBooksEnabled(state)
 	};
 }
 
@@ -20,6 +22,12 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		changeAttributeValueLimit() {
 			dispatch(RulesActions._switchAttributeValueLimit());
+		},
+		switchEnableAllRuleBooks() {
+			dispatch(RulesActions.switchEnableAllRuleBooks());
+		},
+		switchEnableRuleBook(id: string) {
+			dispatch(RulesActions.switchEnableRuleBook(id));
 		}
 	};
 }

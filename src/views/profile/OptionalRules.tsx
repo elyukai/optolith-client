@@ -13,31 +13,39 @@ export interface OptionalRulesOwnProps {
 export interface OptionalRulesStateProps {
 	rules: RulesState;
 	sortedBooks: Book[];
+	ruleBooksEnabled: boolean | Set<string>;
 }
 
 export interface OptionalRulesDispatchProps {
 	changeAttributeValueLimit(): void;
 	changeHigherParadeValues(id: number): void;
+	switchEnableAllRuleBooks(): void;
+	switchEnableRuleBook(id: string): void;
 }
 
 export type OptionalRulesProps = OptionalRulesStateProps & OptionalRulesDispatchProps & OptionalRulesOwnProps;
 
 export function OptionalRules(props: OptionalRulesProps) {
-	const { sortedBooks, changeAttributeValueLimit, changeHigherParadeValues, locale, rules: { attributeValueLimit, higherParadeValues } } = props;
-	const changeCheckboxTrap = () => undefined;
+	const { sortedBooks, changeAttributeValueLimit, changeHigherParadeValues, locale, rules: { attributeValueLimit, higherParadeValues }, ruleBooksEnabled, switchEnableAllRuleBooks, switchEnableRuleBook } = props;
 
 	return (
 		<div className="page" id="optional-rules">
 			<Scroll>
 				<h3>{_translate(locale, 'rules.rulebase')}</h3>
+				<Checkbox
+					checked={ruleBooksEnabled === true}
+					onClick={switchEnableAllRuleBooks}
+					label={_translate(locale, 'rules.enableallrulebooks')}
+					/>
 				{sortedBooks.map(e => {
+					const isCore = ['US25001', 'US25002'].includes(e.id);
 					return (
 						<Checkbox
 							key={e.id}
-							checked
-							onClick={changeCheckboxTrap}
+							checked={typeof ruleBooksEnabled === 'boolean' ? ruleBooksEnabled : ruleBooksEnabled.has(e.id) || isCore}
+							onClick={() => switchEnableRuleBook(e.id)}
 							label={e.name}
-							disabled
+							disabled={ruleBooksEnabled === true || isCore}
 							/>
 					);
 				})}

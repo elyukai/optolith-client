@@ -42,7 +42,7 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, currentTab, platform, theme, ...other } = this.props;
+		const { locale, currentTab, platform, theme } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {

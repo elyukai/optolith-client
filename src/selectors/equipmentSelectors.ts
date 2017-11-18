@@ -8,8 +8,7 @@ import { sortObjects } from '../utils/FilterSortUtils';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
-import { getHigherParadeValues } from './rulesSelectors';
-import { getLocaleMessages } from './stateSelectors';
+import { getHigherParadeValues, getLocaleMessages } from './stateSelectors';
 
 export function getForSave(state: EquipmentState) {
 	const { armorZones, items, purse } = state;

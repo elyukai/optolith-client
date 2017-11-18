@@ -728,5 +728,6 @@
 	"mothertongue.short": "MS",
 	"attributeadjustmentselection": "Eigenschaftsänderungsauswahl",
 	"mac.aboutapp": "Über {0} ...",
-	"mac.quit": "Schließen"
+	"mac.quit": "Schließen",
+	"rules.enableallrulebooks": "Alle Regelwerke aktivieren"
 }

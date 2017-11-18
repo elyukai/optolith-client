@@ -38,6 +38,12 @@ export const getProfile = (state: AppState) => state.currentHero.present.profile
 export const getCultureAreaKnowledge = (state: AppState) => state.currentHero.present.profile.cultureAreaKnowledge;
 export const getSex = (state: AppState) => state.currentHero.present.profile.sex;
 
+export const getRules = (state: AppState) => state.currentHero.present.rules;
+export const getAttributeValueLimit = (state: AppState) => state.currentHero.present.rules.attributeValueLimit;
+export const getHigherParadeValues = (state: AppState) => state.currentHero.present.rules.higherParadeValues;
+export const areAllRuleBooksEnabled = (state: AppState) => state.currentHero.present.rules.enableAllRuleBooks;
+export const getEnabledRuleBooks = (state: AppState) => state.currentHero.present.rules.enabledRuleBooks;
+
 export const getCurrentRaceId = (state: AppState) => state.currentHero.present.rcp.race;
 export const getCurrentCultureId = (state: AppState) => state.currentHero.present.rcp.culture;
 export const getCurrentProfessionId = (state: AppState) => state.currentHero.present.rcp.profession;
