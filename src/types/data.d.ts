@@ -15,6 +15,7 @@ export interface InstanceByCategory {
 	'PROFESSIONS': ProfessionInstance;
 	'PROFESSION_VARIANTS': ProfessionVariantInstance;
 	'RACES': RaceInstance;
+	'RACE_VARIANTS': RaceVariantInstance;
 	'SPECIAL_ABILITIES': SpecialAbilityInstance;
 	'SPELLS': SpellInstance;
 	'TALENTS': TalentInstance;
@@ -50,6 +51,7 @@ export interface HeroBaseForHerolist {
 	readonly avatar?: string;
 	readonly ap: AdventurePoints;
 	readonly r: string;
+	readonly rv?: string;
 	readonly c: string;
 	readonly p: string;
 	professionName?: string;
@@ -152,89 +154,38 @@ export interface RaceInstance {
 	readonly stronglyRecommendedDisadvantages: string[];
 	readonly stronglyRecommendedDisadvantagesText: string;
 	readonly commonAdvantages: string[];
-	readonly commonAdvantagesText: string;
+	readonly commonAdvantagesText?: string;
 	readonly commonDisadvantages: string[];
-	readonly commonDisadvantagesText: string;
+	readonly commonDisadvantagesText?: string;
 	readonly uncommonAdvantages: string[];
-	readonly uncommonAdvantagesText: string;
+	readonly uncommonAdvantagesText?: string;
 	readonly uncommonDisadvantages: string[];
-	readonly uncommonDisadvantagesText: string;
-	readonly hairColors: number[];
-	readonly eyeColors: number[];
-	readonly size: (number | [number, number])[];
+	readonly uncommonDisadvantagesText?: string;
+	readonly hairColors?: number[];
+	readonly eyeColors?: number[];
+	readonly size?: (number | [number, number])[];
 	readonly weight: (number | [number, number])[];
+	readonly variants: string[];
 	readonly category: Categories.RACES;
 	readonly src: SourceLink[];
 }
 
-export interface RaceInstanceBase {
+export interface RaceVariantInstance {
 	readonly id: string;
 	readonly name: string;
-	readonly ap: number;
-	readonly lp: number;
-	readonly spi: number;
-	readonly tou: number;
-	readonly mov: number;
-	readonly attributeAdjustments: [number, string][];
-	readonly attributeAdjustmentsSelection: [number, string[]];
-	readonly attributeAdjustmentsText: string;
-	readonly automaticAdvantages: string[];
-	readonly automaticAdvantagesCost: [number, number, number];
-	readonly automaticAdvantagesText: string;
-	readonly stronglyRecommendedAdvantages: string[];
-	readonly stronglyRecommendedAdvantagesText: string;
-	readonly stronglyRecommendedDisadvantages: string[];
-	readonly stronglyRecommendedDisadvantagesText: string;
-	readonly src: SourceLink[];
-	readonly category: Categories.RACES;
-}
-
-export interface RaceInstanceWithoutVariants extends RaceInstanceBase {
 	readonly commonCultures: string[];
 	readonly commonAdvantages: string[];
-	readonly commonAdvantagesText: string;
+	readonly commonAdvantagesText?: string;
 	readonly commonDisadvantages: string[];
-	readonly commonDisadvantagesText: string;
+	readonly commonDisadvantagesText?: string;
 	readonly uncommonAdvantages: string[];
-	readonly uncommonAdvantagesText: string;
+	readonly uncommonAdvantagesText?: string;
 	readonly uncommonDisadvantages: string[];
-	readonly uncommonDisadvantagesText: string;
-	readonly hairColors: number[];
-	readonly eyeColors: number[];
-	readonly size: (number | [number, number])[];
-	readonly weight: (number | [number, number])[];
-}
-
-export interface RaceInstanceWithVariants extends RaceInstanceBase {
-	readonly commonCultures?: string[];
-	readonly commonAdvantages?: string[];
-	readonly commonAdvantagesText?: string;
-	readonly commonDisadvantages?: string[];
-	readonly commonDisadvantagesText?: string;
-	readonly uncommonAdvantages?: string[];
-	readonly uncommonAdvantagesText?: string;
-	readonly uncommonDisadvantages?: string[];
 	readonly uncommonDisadvantagesText?: string;
-	readonly variants: RaceVariant[];
-	readonly isVariantRequired?: boolean;
-}
-
-export interface RaceVariant {
-	readonly id: string;
-	readonly name: string;
-	readonly commonCultures?: string[];
-	readonly commonAdvantages?: string[];
-	readonly commonAdvantagesText?: string;
-	readonly commonDisadvantages?: string[];
-	readonly commonDisadvantagesText?: string;
-	readonly uncommonAdvantages?: string[];
-	readonly uncommonAdvantagesText?: string;
-	readonly uncommonDisadvantages?: string[];
-	readonly uncommonDisadvantagesText?: string;
-	readonly hairColors: number[];
-	readonly eyeColors: number[];
-	readonly size: (number | [number, number])[];
-	readonly weight: (number | [number, number])[];
+	readonly hairColors?: number[];
+	readonly eyeColors?: number[];
+	readonly size?: (number | [number, number])[];
+	readonly category: Categories.RACE_VARIANTS;
 }
 
 export interface SourceLink {
@@ -927,8 +878,8 @@ export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
 	id?: string;
 }
 
-export type Instance = AbilityInstanceExtended | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
-export type InstanceInInit = AbilityInstanceInInit | RaceInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance | BlessingInstance | CantripInstance;
+export type Instance = AbilityInstanceExtended | RaceInstance | RaceVariantInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
+export type InstanceInInit = AbilityInstanceInInit | RaceInstance | RaceVariantInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance | BlessingInstance | CantripInstance;
 export type AbilityInstance = ActivatableInstance | IncreasableInstance;
 export type AbilityInstanceExtended = ActivatableInstance | IncreasableInstance | BlessingInstance | CantripInstance;
 export type AbilityInstanceInInit = ActivatableInstanceInInit | IncreasableInstance;
@@ -987,6 +938,8 @@ export interface ExperienceLevel {
 export interface Rules {
 	higherParadeValues: number;
 	attributeValueLimit: boolean;
+	enableAllRuleBooks: boolean;
+	enabledRuleBooks: string[];
 }
 
 export interface HistoryPayload {

@@ -8,6 +8,7 @@ import { UIMessages } from '../types/ui.d';
  */
 export function _translate<T extends keyof UIMessages>(messages: UIMessages, key: T, ...params: (string | number)[]): UIMessages[T];
 export function _translate<T extends keyof UIMessages>(messages: undefined, key: T, ...params: (string | number)[]): undefined;
+export function _translate<T extends keyof UIMessages>(messages: UIMessages | undefined, key: T, ...params: (string | number)[]): UIMessages[T] | undefined;
 export function _translate<T extends keyof UIMessages>(messages: UIMessages | undefined, key: T, ...params: (string | number)[]): UIMessages[T] | undefined {
 	if (messages === undefined) {
 		return '...';

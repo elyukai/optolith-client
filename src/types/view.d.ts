@@ -18,12 +18,23 @@ export interface Race {
 	automaticAdvantages: string;
 	stronglyRecommendedAdvantages: string;
 	stronglyRecommendedDisadvantages: string;
-	commonAdvantages: string;
-	commonDisadvantages: string;
-	uncommonAdvantages: string;
-	uncommonDisadvantages: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
+	variants: RaceVariant[];
 	src: SourceLink[];
 	category: Categories.RACES;
+}
+
+export interface RaceVariant {
+	id: string;
+	name: string;
+	commonCultures: string[];
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 }
 
 export interface Increasable {

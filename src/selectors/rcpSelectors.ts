@@ -1,29 +1,24 @@
 import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
-import { AppState } from '../reducers/app';
 import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
 import { Culture, Increasable, Profession, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { getStartEl } from './elSelectors';
-import { getDependentInstances, getLocaleMessages, getSex, getSkills } from './stateSelectors';
+import { getCultures, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessions, getProfessionVariants, getRaces, getRaceVariants, getSex, getSkills } from './stateSelectors';
 import { getProfessionsFromExpansionsVisibility, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
-
-export const getRaces = (state: AppState) => state.currentHero.present.dependent.races;
-export const getCultures = (state: AppState) => state.currentHero.present.dependent.cultures;
-export const getProfessions = (state: AppState) => state.currentHero.present.dependent.professions;
-export const getProfessionVariants = (state: AppState) => state.currentHero.present.dependent.professionVariants;
-
-export const getCurrentRaceId = (state: AppState) => state.currentHero.present.rcp.race;
-export const getCurrentCultureId = (state: AppState) => state.currentHero.present.rcp.culture;
-export const getCurrentProfessionId = (state: AppState) => state.currentHero.present.rcp.profession;
-export const getCurrentProfessionVariantId = (state: AppState) => state.currentHero.present.rcp.professionVariant;
 
 export const getCurrentRace = createSelector(
 	getRaces,
 	getCurrentRaceId,
 	(races, raceId) => raceId ? races.get(raceId) : undefined
+);
+
+export const getCurrentRaceVariant = createSelector(
+	getRaceVariants,
+	getCurrentRaceVariantId,
+	(raceVariants, raceVariantId) => raceVariantId ? raceVariants.get(raceVariantId) : undefined
 );
 
 export const getCurrentCulture = createSelector(
@@ -46,8 +41,9 @@ export const getCurrentProfessionVariant = createSelector(
 
 export const getAllRaces = createSelector(
 	getRaces,
+	getRaceVariants,
 	getCultures,
-	(races, cultures) => {
+	(races, raceVariants, cultures) => {
 		const list: Race[] = [];
 
 		for (const [id, race] of races) {
@@ -67,10 +63,15 @@ export const getAllRaces = createSelector(
 				stronglyRecommendedDisadvantagesText,
 				tou,
 				uncommonAdvantagesText,
-				uncommonDisadvantagesText
+				uncommonDisadvantagesText,
+				variants: variantIds
 			} = race;
 
-			const filteredCultures = commonCultures.filter(e => cultures.has(e)).map(e => cultures.get(e)!.name);
+			const filterCultures = (cultureIds: string[]) => cultureIds.filter(e => cultures.has(e)).map(e => cultures.get(e)!.name);
+
+			const filteredCultures = filterCultures(commonCultures);
+
+			const filteredVariants = variantIds.filter(e => raceVariants.has(e)).map(e => raceVariants.get(e)!);
 
 			list.push({
 				id,
@@ -89,6 +90,26 @@ export const getAllRaces = createSelector(
 				commonDisadvantages: commonDisadvantagesText,
 				uncommonAdvantages: uncommonAdvantagesText,
 				uncommonDisadvantages: uncommonDisadvantagesText,
+				variants: filteredVariants.map(e => {
+					const {
+						id,
+						name,
+						commonAdvantagesText,
+						commonCultures,
+						commonDisadvantagesText,
+						uncommonAdvantagesText,
+						uncommonDisadvantagesText
+					} = e;
+					return {
+						id,
+						name,
+						commonCultures: filterCultures(commonCultures),
+						commonAdvantages: commonAdvantagesText,
+						commonDisadvantages: commonDisadvantagesText,
+						uncommonAdvantages: uncommonAdvantagesText,
+						uncommonDisadvantages: uncommonDisadvantagesText
+					};
+				}),
 				src,
 				category: RACES
 			});
@@ -158,7 +179,12 @@ export const getAllCultures = createSelector(
 
 export const getCommonCultures = createSelector(
 	getCurrentRace,
-	race => race && race.commonCultures
+	getCurrentRaceVariant,
+	(race, raceVariant) => {
+		const raceCultures = race && race.commonCultures;
+		const raceVariantCultures = raceVariant && raceVariant.commonCultures;
+		return [ ...(raceCultures || []), ...(raceVariantCultures || [])];
+	}
 );
 
 export const getAllProfessions = createSelector(

@@ -8,7 +8,7 @@ import { getAvailable, getTotal } from '../selectors/adventurePointsSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getPhase } from '../selectors/stateSelectors';
 import { InputTextEvent } from '../types/data.d';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
@@ -26,7 +26,8 @@ function mapStateToProps(state: AppState) {
 		profession: getCurrentProfession(state),
 		professionVariant: getCurrentProfessionVariant(state),
 		profile: getProfile(state),
-		race: getCurrentRace(state)
+		race: getCurrentRace(state),
+		raceVariant: getCurrentRaceVariant(state)
 	};
 }
 

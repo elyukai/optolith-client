@@ -1,6 +1,6 @@
 import * as Categories from '../constants/Categories';
-import { AdvantageInstance, AttributeInstance, BlessingInstance, CantripInstance, CombatTechniqueInstance, CultureInstance, DisadvantageInstance, ExperienceLevel, ItemInstance, LiturgyInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, SelectionObject, SpecialAbilityInstance, SpellInstance, TalentInstance, ToListById } from '../types/data.d';
-import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawExperienceLevel, RawExperienceLevelLocale, RawItem, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata.d';
+import { AdvantageInstance, AttributeInstance, BlessingInstance, CantripInstance, CombatTechniqueInstance, CultureInstance, DisadvantageInstance, ExperienceLevel, ItemInstance, LiturgyInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, SelectionObject, SpecialAbilityInstance, SpellInstance, TalentInstance, ToListById } from '../types/data.d';
+import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawExperienceLevel, RawExperienceLevelLocale, RawItem, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import * as Reusable from '../types/reusable.d';
 
 export function initExperienceLevel(raw: RawExperienceLevel, locale: ToListById<RawExperienceLevelLocale>): ExperienceLevel | undefined {
@@ -33,7 +33,7 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
       uncommonAdvantages: uncommonAdvantagesText,
       uncommonDisadvantages: uncommonDisadvantagesText
     } = localeObject;
-    const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: srcIds, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk } = raw;
+    const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: srcIds, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk, vars } = raw;
     return {
       ap,
       attributeAdjustments: attr.map<[number, string]>(e => [e[0], `ATTR_${e[1]}`]),
@@ -66,7 +66,41 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
       uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
       uncommonDisadvantagesText,
       weight,
+      variants: vars.map(e => `RV_${e}`),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
+    };
+  }
+  return;
+}
+
+export function initRaceVariant(raw: RawRaceVariant, locale: ToListById<RawRaceVariantLocale>): RaceVariantInstance | undefined {
+  const { id } = raw;
+  const localeObject = locale[id];
+  if (localeObject) {
+    const {
+      commonAdvantages: commonAdvantagesText,
+      commonDisadvantages: commonDisadvantagesText,
+      name,
+      uncommonAdvantages: uncommonAdvantagesText,
+      uncommonDisadvantages: uncommonDisadvantagesText
+    } = localeObject;
+    const { eyes, hair, typ_adv, typ_cultures, typ_dadv, size, untyp_adv, untyp_dadv } = raw;
+    return {
+      category: Categories.RACE_VARIANTS,
+      eyeColors: eyes,
+      hairColors: hair,
+      id,
+      name,
+      size,
+      commonAdvantages: typ_adv.map(e => `ADV_${e}`),
+      commonAdvantagesText,
+      commonCultures: typ_cultures.map(e => `C_${e}`),
+      commonDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
+      commonDisadvantagesText,
+      uncommonAdvantages: untyp_adv.map(e => `ADV_${e}`),
+      uncommonAdvantagesText,
+      uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+      uncommonDisadvantagesText
     };
   }
   return;

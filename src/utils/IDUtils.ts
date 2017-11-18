@@ -105,6 +105,8 @@ export function getStateKeyByCategory(category: Categories.Category): DependentI
 			return 'professionVariants';
 		case Categories.RACES:
 			return 'races';
+		case Categories.RACE_VARIANTS:
+			return 'raceVariants';
 		case Categories.SPECIAL_ABILITIES:
 			return 'specialAbilities';
 		case Categories.SPELLS:

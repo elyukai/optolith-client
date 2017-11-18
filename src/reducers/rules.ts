@@ -33,7 +33,8 @@ export function rules(state: RulesState = initialState, action: Action): RulesSt
 		case ActionTypes.LOAD_HERO:
 			return {
 				...state,
-				...action.payload.data.rules
+				...action.payload.data.rules,
+				enabledRuleBooks: new Set(action.payload.data.rules.enabledRuleBooks)
 			};
 
 		case ActionTypes.SET_HIGHER_PARADE_VALUES:

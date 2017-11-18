@@ -64,8 +64,8 @@ export function convertToSave(item: ItemEditorInstance): ItemInstance {
 }
 
 export function containsNaN(item: ItemInstance): string[] | false {
-	const keys = Object.keys(item);
-	const filtered = keys.filter((e: keyof ItemInstance) => {
+	const keys = Object.keys(item) as (keyof ItemInstance)[];
+	const filtered = keys.filter(e => {
 		const element = item[e];
 		if (Array.isArray(element)) {
 			return element.every(i => Number.isNaN(i));

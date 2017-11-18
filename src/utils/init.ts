@@ -2,17 +2,17 @@ import * as Categories from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { AdvantageInstanceInInit, DisadvantageInstanceInInit, InstanceInInit, SelectionObject, SkillishInstance, SpecialAbilityInstanceInInit, ToListById } from '../types/data.d';
-import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
+import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import { _translate } from '../utils/I18n';
 import { getStateKeyByCategory } from '../utils/IDUtils';
 import * as InitUtils from '../utils/InitUtils';
 
-type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawSpecialAbility | RawSpell | RawTalent;
+type RawDataClass = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawRaceVariant | RawSpecialAbility | RawSpell | RawTalent;
 
-type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
+type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawRaceVariantLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
 
 export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesState {
-	const { attributes, advantages, blessings, cantrips, cultures, disadvantages, talents, combattech, professions, professionvariants, races, spells, liturgies, specialabilities } = raw;
+	const { attributes, advantages, blessings, cantrips, cultures, disadvantages, talents, combattech, professions, professionvariants, races, racevariants, spells, liturgies, specialabilities } = raw;
 
 	const list: DependentInstancesState = {
 		advantages: new Map(),
@@ -26,6 +26,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 		professions: new Map(),
 		professionVariants: new Map(),
 		races: new Map(),
+		raceVariants: new Map(),
 		specialAbilities: new Map(),
 		spells: new Map(),
 		talents: new Map(),
@@ -48,6 +49,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 	};
 
 	list.races = iterate(races, InitUtils.initRace, rawlocale.races);
+	list.raceVariants = iterate(racevariants, InitUtils.initRaceVariant, rawlocale.racevariants);
 	list.cultures = iterate(cultures, InitUtils.initCulture, rawlocale.cultures);
 	list.professions = iterate(professions, InitUtils.initProfession, rawlocale.professions);
 	const ownProfession = InitUtils.initProfession({

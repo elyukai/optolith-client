@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { UIMessages } from '../../utils/I18n';
 
 export interface HelpOwnProps {
 	locale: UIMessages;

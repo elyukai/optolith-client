@@ -1,6 +1,6 @@
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get } from '../selectors/dependentInstancesSelectors';
-import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, ProfessionInstance, ProfessionVariantInstance, RaceInstance, SkillsSelection, SpecialisationSelection, ProfessionSelectionIds, ProfessionSelection } from '../types/data.d';
+import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, ProfessionInstance, ProfessionSelection, ProfessionSelectionIds, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, SkillsSelection, SpecialisationSelection } from '../types/data.d';
 import { dice } from './dice';
 import { multiplyString } from './NumberUtils';
 
@@ -16,20 +16,20 @@ export function getDiffCost(state: DependentInstancesState, prevId?: string, nex
   return next - prev;
 }
 
-export function rerollHairColor(current: RaceInstance) {
+export function rerollHairColor(current: RaceInstance, currentVariant: RaceVariantInstance | undefined) {
   const result = dice(20);
-  return current.hairColors[result - 1];
+  return (current.hairColors || currentVariant && currentVariant.hairColors)![result - 1];
 }
 
-export function rerollEyeColor(current: RaceInstance) {
+export function rerollEyeColor(current: RaceInstance, currentVariant: RaceVariantInstance | undefined) {
   const result = dice(20);
-  return current.eyeColors[result - 1];
+  return (current.eyeColors || currentVariant && currentVariant.eyeColors)![result - 1];
 }
 
-export function rerollSize(race: RaceInstance) {
-  const [ base, ...dices ] = race.size;
+export function rerollSize(race: RaceInstance, raceVariant: RaceVariantInstance | undefined) {
+  const [ base, ...dices ] = (race.size || raceVariant && raceVariant.size)!;
   const arr: number[] = [];
-  dices.forEach((e: [number, number]) => {
+  (dices as [number, number][]).forEach(e => {
     const elements = Array.from({ length: e[0] }, () => e[1]);
     arr.push(...elements);
   });
@@ -37,11 +37,11 @@ export function rerollSize(race: RaceInstance) {
   return result.toString();
 }
 
-export function rerollWeight(race: RaceInstance, size: string = rerollSize(race)) {
+export function rerollWeight(race: RaceInstance, raceVariant: RaceVariantInstance | undefined, size: string = rerollSize(race, raceVariant)) {
   const { id, weight } = race;
   const [ base, ...dices ] = weight;
   const arr: number[] = [];
-  dices.forEach((e: [number, number]) => {
+  (dices as [number, number][]).forEach(e => {
     const elements = Array.from({ length: e[0] }, () => e[1]);
     arr.push(...elements);
   });

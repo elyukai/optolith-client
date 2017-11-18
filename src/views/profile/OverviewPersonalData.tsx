@@ -4,7 +4,7 @@ import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
 import { ProfileState } from '../../reducers/profile';
-import { CultureInstance, InputTextEvent, RaceInstance } from '../../types/data.d';
+import { CultureInstance, InputTextEvent, RaceInstance, RaceVariantInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -17,6 +17,7 @@ export interface OverviewPersonalDataOwnProps {
 	locale: UIMessages;
 	profile: ProfileState;
 	race: RaceInstance | undefined;
+	raceVariant: RaceVariantInstance | undefined;
 	socialstatusTags: string[];
 }
 
@@ -64,11 +65,12 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			weight = ''
 		},
 		race,
+		raceVariant,
 		socialstatusTags
 	} = props;
 
-	const hairArr = race ? sortObjects(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.hairColors.includes(e.id)), locale.id) : [];
-	const eyesArr = race ? sortObjects(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => race.eyeColors.includes(e.id)), locale.id) : [];
+	const hairArr = race ? sortObjects(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => (race.hairColors || raceVariant && raceVariant.hairColors)!.includes(e.id)), locale.id) : [];
+	const eyesArr = race ? sortObjects(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => (race.eyeColors || raceVariant && raceVariant.eyeColors)!.includes(e.id)), locale.id) : [];
 	const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialTiers.includes(e.id)) : [];
 
 	return (

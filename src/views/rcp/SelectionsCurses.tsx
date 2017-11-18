@@ -7,7 +7,7 @@ interface SelectionsCursesProps {
 	active: Map<string, number>;
 	apLeft: number;
 	apTotal: number;
-	change: (id: string, operation: string) => void;
+	change: (id: string, operation: 'add' | 'remove') => void;
 	list: {
 		id: string;
 		name: string;

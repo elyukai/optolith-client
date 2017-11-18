@@ -102,7 +102,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 							addToList={addToList}
 							/>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={[]} />
+					<WikiInfoContainer {...this.props} currentId={undefined} list={[]} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />

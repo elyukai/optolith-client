@@ -29,11 +29,24 @@ export interface RawRace {
 	typ_dadv: string[];
 	untyp_adv: string[];
 	untyp_dadv: string[];
-	hair: number[];
-	eyes: number[];
-	size: (number | [number, number])[];
+	hair?: number[];
+	eyes?: number[];
+	size?: (number | [number, number])[];
 	weight: (number | [number, number])[];
+	vars: string[];
 	src: string[];
+}
+
+export interface RawRaceVariant {
+	id: string;
+	typ_cultures: string[];
+	typ_adv: string[];
+	typ_dadv: string[];
+	untyp_adv: string[];
+	untyp_dadv: string[];
+	hair?: number[];
+	eyes?: number[];
+	size?: (number | [number, number])[];
 }
 
 export interface RawRaceLocale {
@@ -43,11 +56,20 @@ export interface RawRaceLocale {
 	automaticAdvantages: string;
 	stronglyRecommendedAdvantages: string;
 	stronglyRecommendedDisadvantages: string;
-	commonAdvantages: string;
-	commonDisadvantages: string;
-	uncommonAdvantages: string;
-	uncommonDisadvantages: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 	src: number[];
+}
+
+export interface RawRaceVariantLocale {
+	id: string;
+	name: string;
+	commonAdvantages?: string;
+	commonDisadvantages?: string;
+	uncommonAdvantages?: string;
+	uncommonDisadvantages?: string;
 }
 
 export interface RawCulture {
@@ -382,6 +404,7 @@ export interface RawTables {
 	professions: Data.ToListById<RawProfession>;
 	professionvariants: Data.ToListById<RawProfessionVariant>;
 	races: Data.ToListById<RawRace>;
+	racevariants: Data.ToListById<RawRaceVariant>;
 	specialabilities: Data.ToListById<RawSpecialAbility>;
 	spells: Data.ToListById<RawSpell>;
 	talents: Data.ToListById<RawTalent>;
@@ -393,6 +416,7 @@ export interface RawLocale {
 	el: Data.ToListById<RawExperienceLevelLocale>;
 	attributes: Data.ToListById<RawAttributeLocale>;
 	races: Data.ToListById<RawRaceLocale>;
+	racevariants: Data.ToListById<RawRaceVariantLocale>;
 	cultures: Data.ToListById<RawCultureLocale>;
 	professions: Data.ToListById<RawProfessionLocale>;
 	professionvariants: Data.ToListById<RawProfessionVariantLocale>;

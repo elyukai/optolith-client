@@ -7,7 +7,7 @@ import { IconButton } from '../../components/IconButton';
 import { Scroll } from '../../components/Scroll';
 import { VerticalList } from '../../components/VerticalList';
 import { ProfileState } from '../../reducers/profile';
-import { ActiveViewObject, CultureInstance, ExperienceLevel, ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../../types/data.d';
+import { ActiveViewObject, CultureInstance, ExperienceLevel, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
@@ -30,6 +30,7 @@ export interface PersonalDataStateProps {
 	professionVariant: ProfessionVariantInstance | undefined;
 	profile: ProfileState;
 	race: RaceInstance | undefined;
+	raceVariant: RaceVariantInstance | undefined;
 	isRemovingEnabled: boolean;
 }
 
@@ -90,6 +91,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			professionVariant,
 			profile,
 			race,
+			raceVariant,
 			...other
 		} = this.props;
 
@@ -146,6 +148,9 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 										<span className="race">
 											{(() => {
 												return race && race.name;
+											})()}
+											{(() => {
+												return raceVariant ? ` (${raceVariant.name})` : '';
 											})()}
 										</span>
 										<span className="culture">
@@ -222,6 +227,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 								eyecolorTags={_translate(locale, 'eyecolors')}
 								haircolorTags={_translate(locale, 'haircolors')}
 								race={race}
+								raceVariant={raceVariant}
 								socialstatusTags={_translate(locale, 'socialstatus')}
 								locale={locale}
 								/>

@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as CultureActions from '../actions/CultureActions';
 import { AppState } from '../reducers/app';
-import { getAllCultures, getCommonCultures, getCurrentCultureId } from '../selectors/rcpSelectors';
+import { getAllCultures, getCommonCultures } from '../selectors/rcpSelectors';
+import { getCurrentCultureId } from '../selectors/stateSelectors';
 import { getCulturesSortOrder, getCulturesValueVisibility, getCulturesVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from '../views/rcp/Cultures';
 

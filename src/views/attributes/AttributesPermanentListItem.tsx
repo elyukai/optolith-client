@@ -38,7 +38,7 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 	closeAddDialog = () => this.setState(() => ({ isAddDialogOpened: false } as AttributesPermanentListItemState));
 
 	render() {
-		const { id, label, locale, name, isRemovingEnabled, addBoughtBackPoint, addLostPoints, boughtBack, lost, ...other } = this.props;
+		const { label, locale, name, isRemovingEnabled, addBoughtBackPoint, addLostPoints, boughtBack, lost } = this.props;
 		const { isAddDialogOpened, isEditDialogOpened } = this.state;
 		const available = typeof boughtBack === 'number' ? lost - boughtBack : lost;
 
@@ -66,8 +66,6 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				)}
 				<PermanentPoints
 					{...this.props}
-					id={id}
-					locale={locale}
 					isOpened={isEditDialogOpened}
 					close={this.closeEditDialog}
 					permanentBoughtBack={boughtBack}

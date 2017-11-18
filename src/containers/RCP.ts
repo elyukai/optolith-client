@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
-import { getCurrentCultureId, getCurrentRaceId } from '../selectors/rcpSelectors';
+import { getCurrentCultureId, getCurrentRaceId } from '../selectors/stateSelectors';
 import { RCP, RCPDispatchProps, RCPOwnProps, RCPStateProps } from '../views/rcp/RCP';
 
 function mapStateToProps(state: AppState) {

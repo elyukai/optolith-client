@@ -31,6 +31,7 @@ export interface DependentInstancesState {
   professions: Map<string, Data.ProfessionInstance>;
   professionVariants: Map<string, Data.ProfessionVariantInstance>;
   races: Map<string, Data.RaceInstance>;
+  raceVariants: Map<string, Data.RaceVariantInstance>;
   specialAbilities: Map<string, Data.SpecialAbilityInstance>;
   spells: Map<string, Data.SpellInstance>;
   talents: Map<string, Data.TalentInstance>;
@@ -39,7 +40,7 @@ export interface DependentInstancesState {
   blessedStyleDependencies: Data.StyleDependency[];
 }
 
-export type DependentInstancesStateKeysForMaps = 'advantages' | 'attributes' | 'blessings' | 'cantrips' | 'combatTechniques' | 'cultures' | 'disadvantages' | 'liturgies' | 'professions' | 'professionVariants' | 'races' | 'specialAbilities' | 'spells' | 'talents';
+export type DependentInstancesStateKeysForMaps = 'advantages' | 'attributes' | 'blessings' | 'cantrips' | 'combatTechniques' | 'cultures' | 'disadvantages' | 'liturgies' | 'professions' | 'professionVariants' | 'races' | 'raceVariants' | 'specialAbilities' | 'spells' | 'talents';
 
 const initialState: DependentInstancesState = {
   advantages: new Map(),
@@ -53,6 +54,7 @@ const initialState: DependentInstancesState = {
   professions: new Map(),
   professionVariants: new Map(),
   races: new Map(),
+  raceVariants: new Map(),
   specialAbilities: new Map(),
   spells: new Map(),
   talents: new Map(),
@@ -98,7 +100,6 @@ export function dependentInstances(state = initialState, action: Action) {
       const { current, next, value } = action.payload;
       const currentAttribute = state.attributes.get(current)!;
       const nextAttribute = state.attributes.get(next)!;
-      console.log(currentAttribute, nextAttribute);
       return setStateItem(
         setStateItem(
           state,

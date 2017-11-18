@@ -13,6 +13,12 @@ export interface WikiRaceInfoProps {
 export function WikiRaceInfo(props: WikiRaceInfoProps) {
 	const { books, currentObject, locale } = props;
 
+	const sameCommonCultures = currentObject.variants.every(e => e.commonCultures.length === 0) || currentObject.variants.every(e => e.commonCultures.length === 1);
+	const sameCommonAdvantages = currentObject.variants.every(e => e.commonAdvantages === undefined);
+	const sameCommonDisadvantages = currentObject.variants.every(e => e.commonDisadvantages === undefined);
+	const sameUncommonAdvantages = currentObject.variants.every(e => e.uncommonAdvantages === undefined);
+	const sameUncommonDisadvantages = currentObject.variants.every(e => e.uncommonDisadvantages === undefined);
+
 	return <Scroll>
 		<div className="info race-info">
 			<div className="race-header info-header">
@@ -52,24 +58,64 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 			</p>}
 			<p>
 				<span>{_translate(locale, 'info.commoncultures')}</span>
-				<span>{sortStrings(currentObject.commonCultures, locale.id).join(', ')}</span>
+				{sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures : currentObject.variants.map(e => e.name)), locale.id).join(', ')}</span>}
 			</p>
+			{!sameCommonCultures && <ul className="race-variant-options">
+				{currentObject.variants.map(e => {
+					return <li key={e.id}>
+						<span>{e.name}</span>
+						<span>{sortStrings(e.commonCultures, locale.id).join(', ')}</span>
+					</li>;
+				})}
+			</ul>}
 			<p>
 				<span>{_translate(locale, 'info.commonadvantages')}</span>
-				<span>{currentObject.commonAdvantages || _translate(locale, 'info.none')}</span>
+				{sameCommonAdvantages && <span>{currentObject.commonAdvantages || _translate(locale, 'info.none')}</span>}
 			</p>
+			{!sameCommonAdvantages && <ul className="race-variant-options">
+				{currentObject.variants.map(e => {
+					return <li key={e.id}>
+						<span>{e.name}</span>
+						<span>{e.commonAdvantages || _translate(locale, 'info.none')}</span>
+					</li>;
+				})}
+			</ul>}
 			<p>
 				<span>{_translate(locale, 'info.commondisadvantages')}</span>
-				<span>{currentObject.commonDisadvantages || _translate(locale, 'info.none')}</span>
+				{sameCommonDisadvantages && <span>{currentObject.commonDisadvantages || _translate(locale, 'info.none')}</span>}
 			</p>
+			{!sameCommonDisadvantages && <ul className="race-variant-options">
+				{currentObject.variants.map(e => {
+					return <li key={e.id}>
+						<span>{e.name}</span>
+						<span>{e.commonDisadvantages || _translate(locale, 'info.none')}</span>
+					</li>;
+				})}
+			</ul>}
 			<p>
 				<span>{_translate(locale, 'info.uncommonadvantages')}</span>
-				<span>{currentObject.uncommonAdvantages || _translate(locale, 'info.none')}</span>
+				{sameUncommonAdvantages && <span>{currentObject.uncommonAdvantages || _translate(locale, 'info.none')}</span>}
 			</p>
+			{!sameUncommonAdvantages && <ul className="race-variant-options">
+				{currentObject.variants.map(e => {
+					return <li key={e.id}>
+						<span>{e.name}</span>
+						<span>{e.uncommonAdvantages || _translate(locale, 'info.none')}</span>
+					</li>;
+				})}
+			</ul>}
 			<p>
 				<span>{_translate(locale, 'info.uncommondisadvantages')}</span>
-				<span>{currentObject.uncommonDisadvantages || _translate(locale, 'info.none')}</span>
+				{sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantages || _translate(locale, 'info.none')}</span>}
 			</p>
+			{!sameUncommonDisadvantages && <ul className="race-variant-options">
+				{currentObject.variants.map(e => {
+					return <li key={e.id}>
+						<span>{e.name}</span>
+						<span>{e.uncommonDisadvantages || _translate(locale, 'info.none')}</span>
+					</li>;
+				})}
+			</ul>}
 			<p className="source">
 				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
 			</p>

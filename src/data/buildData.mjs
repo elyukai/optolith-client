@@ -36,7 +36,7 @@ function iterateRaces(array) {
     obj.attr_sel[0] = Number.parseInt(obj.attr_sel[0]);
     obj.attr_sel[1] = obj.attr_sel[1].split('&').map(e => Number.parseInt(e));
 
-    obj.typ_cultures = obj.typ_cultures.split('&');
+    obj.typ_cultures = obj.typ_cultures ? obj.typ_cultures.split('&') : [];
 
     obj.auto_adv = obj.auto_adv ? obj.auto_adv.split('&') : [];
     obj.autoAdvCost = obj.autoAdvCost.split('&').map(e => Number.parseInt(e));
@@ -47,18 +47,45 @@ function iterateRaces(array) {
     obj.untyp_adv = !obj.untyp_adv ? [] : obj.untyp_adv.split('&');
     obj.untyp_dadv = !obj.untyp_dadv ? [] : obj.untyp_dadv.split('&');
 
-    obj.hair = obj.hair.split('&').map(e => Number.parseInt(e));
+    obj.hair = obj.hair ? obj.hair.split('&').map(e => Number.parseInt(e)) : undefined;
 
-    obj.eyes = obj.eyes.split('&').map(e => Number.parseInt(e));
+    obj.eyes = obj.eyes ? obj.eyes.split('&').map(e => Number.parseInt(e)) : undefined;
 
-    obj.size = obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
+    obj.size = obj.size ? obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
     obj.weight = obj.weight.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
+
+    obj.vars = obj.vars ? obj.vars.split('&') : [];
 
     obj.src = obj.src ? obj.src.split('&') : [];
 
     list[obj.id] = obj;
   }
-  ValidateData.validateRaces(list);
+  return list;
+}
+
+function iterateRaceVariants(array) {
+  const list = {};
+  for (const obj of array) {
+    obj.id = 'RV_' + obj.id;
+
+    delete obj.name;
+
+    obj.typ_cultures = obj.typ_cultures ? obj.typ_cultures.split('&') : [];
+
+    obj.typ_adv = !obj.typ_adv ? [] : obj.typ_adv.split('&');
+    obj.typ_dadv = !obj.typ_dadv ? [] : obj.typ_dadv.split('&');
+    obj.untyp_adv = !obj.untyp_adv ? [] : obj.untyp_adv.split('&');
+    obj.untyp_dadv = !obj.untyp_dadv ? [] : obj.untyp_dadv.split('&');
+
+    obj.hair = obj.hair ? obj.hair.split('&').map(e => Number.parseInt(e)) : undefined;
+
+    obj.eyes = obj.eyes ? obj.eyes.split('&').map(e => Number.parseInt(e)) : undefined;
+
+    obj.size = obj.size ? obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
+    obj.weight = obj.weight ? obj.weight.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
+
+    list[obj.id] = obj;
+  }
   return list;
 }
 
@@ -545,6 +572,7 @@ const allWorksheets = file.SheetNames.reduce((m, name) => {
 const books = iterateBooks(csvToArray(allWorksheets.get('BOOKS')));
 const el = iterateExperienceLevels(csvToArray(allWorksheets.get('EXPERIENCE_LEVELS')));
 const races = iterateRaces(csvToArray(allWorksheets.get('RACES')));
+const racevariants = iterateRaceVariants(csvToArray(allWorksheets.get('RACE_VARIANTS')));
 const cultures = iterateCultures(csvToArray(allWorksheets.get('CULTURES')));
 const professions = iterateProfessions(csvToArray(allWorksheets.get('PROFESSIONS')));
 const professionvariants = iterateProfessionVariants(csvToArray(allWorksheets.get('PROFESSION_VARIANTS')));
@@ -583,6 +611,7 @@ const result = {
   books,
   el,
   races,
+  racevariants,
   cultures,
   professions,
   professionvariants,

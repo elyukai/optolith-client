@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox } from '../../components/Checkbox';
+import { Aside } from '../../components/Aside';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
@@ -15,6 +15,7 @@ import { Race, UIMessages } from '../../types/view.d';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { RacesListItem } from './RacesListItem';
+import { RaceVariants } from './RaceVariants';
 
 export interface RacesOwnProps {
 	locale: UIMessages;
@@ -22,16 +23,16 @@ export interface RacesOwnProps {
 }
 
 export interface RacesStateProps {
-	areValuesVisible: boolean;
 	currentId?: string;
+	currentVariantId?: string;
 	races: Race[];
 	sortOrder: string;
 }
 
 export interface RacesDispatchProps {
 	selectRace(id: string): void;
+	selectRaceVariant(id: string, variantId?: string): void;
 	setSortOrder(sortOrder: string): void;
-	switchValueVisibilityFilter(): void;
 }
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps;
@@ -47,10 +48,9 @@ export class Races extends React.Component<RacesProps, RacesState> {
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as RacesState);
 	sort = (option: string) => this.props.setSortOrder(option);
-	changeValueVisibility = () => this.props.switchValueVisibilityFilter();
 
 	render() {
-		const { areValuesVisible, locale, races, setSortOrder, sortOrder } = this.props;
+		const { locale, races, setSortOrder, sortOrder } = this.props;
 		const { filterText } = this.state;
 
 		const list = filterAndSortObjects(races, locale.id, filterText, sortOrder === 'cost' ? ['ap', 'name'] : ['name']);
@@ -65,7 +65,6 @@ export class Races extends React.Component<RacesProps, RacesState> {
 						options={['name', 'cost']}
 						locale={locale}
 						/>
-					<Checkbox checked={areValuesVisible} onClick={this.changeValueVisibility}>{_translate(locale, 'races.options.showvalues')}</Checkbox>
 				</Options>
 				<MainContent>
 					<ListHeader>
@@ -88,7 +87,10 @@ export class Races extends React.Component<RacesProps, RacesState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} list={races} />
+				<Aside>
+					<RaceVariants {...this.props} />
+					<WikiInfoContainer {...this.props} list={races} noWrapper />
+				</Aside>
 			</Page>
 		);
 	}

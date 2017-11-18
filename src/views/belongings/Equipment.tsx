@@ -166,7 +166,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={[]} />
+					<WikiInfoContainer {...this.props} currentId={undefined} list={[]} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />

@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getCurrentAlert } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { getCurrentAlert, getItemEditorInstance } from '../selectors/stateSelectors';
 
 export interface SetSectionAction {
 	type: ActionTypes.SET_SECTION;

@@ -27,6 +27,7 @@ export const getLiturgicalChants = (state: AppState) => state.currentHero.presen
 export const getProfessions = (state: AppState) => state.currentHero.present.dependent.professions;
 export const getProfessionVariants = (state: AppState) => state.currentHero.present.dependent.professionVariants;
 export const getRaces = (state: AppState) => state.currentHero.present.dependent.races;
+export const getRaceVariants = (state: AppState) => state.currentHero.present.dependent.raceVariants;
 export const getSkills = (state: AppState) => state.currentHero.present.dependent.talents;
 export const getSpecialAbilities = (state: AppState) => state.currentHero.present.dependent.specialAbilities;
 export const getSpells = (state: AppState) => state.currentHero.present.dependent.spells;
@@ -45,6 +46,7 @@ export const areAllRuleBooksEnabled = (state: AppState) => state.currentHero.pre
 export const getEnabledRuleBooks = (state: AppState) => state.currentHero.present.rules.enabledRuleBooks;
 
 export const getCurrentRaceId = (state: AppState) => state.currentHero.present.rcp.race;
+export const getCurrentRaceVariantId = (state: AppState) => state.currentHero.present.rcp.raceVariant;
 export const getCurrentCultureId = (state: AppState) => state.currentHero.present.rcp.culture;
 export const getCurrentProfessionId = (state: AppState) => state.currentHero.present.rcp.profession;
 export const getCurrentProfessionVariantId = (state: AppState) => state.currentHero.present.rcp.professionVariant;

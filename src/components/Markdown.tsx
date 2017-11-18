@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactMarkdown from 'react-markdown';
+import ReactMarkdown = require('react-markdown');
 
 export interface MarkdownProps {
 	className?: string;

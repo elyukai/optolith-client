@@ -62,10 +62,16 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 		const {
 			currentHero: {
 				ap,
-				dependent,
+				dependent: {
+					races,
+					raceVariants,
+					cultures,
+					professions,
+					professionVariants
+				},
 				el: { startId },
 				profile: { avatar, professionName, sex },
-				rcp: { culture, profession, professionVariant, race }
+				rcp: { culture, profession, professionVariant, race, raceVariant }
 			},
 			currentHeroId,
 			importHero,
@@ -101,9 +107,14 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				player={typeof hero.player === 'string' ? users.get(hero.player) : undefined}
 				pv={hero.pv}
 				r={hero.r}
+				rv={hero.rv}
 				sex={hero.sex}
 				professionName={hero.professionName}
-				dependent={dependent}
+				races={races}
+				raceVariants={raceVariants}
+				cultures={cultures}
+				professions={professions}
+				professionVariants={professionVariants}
 				currentHeroId={currentHeroId}
 				locale={locale}
 				/>
@@ -156,12 +167,17 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 										name={_translate(locale, 'heroes.view.unsavedhero.title')}
 										ap={ap}
 										r={race}
+										rv={raceVariant}
 										c={culture}
 										p={profession}
 										pv={professionVariant}
 										sex={sex}
 										professionName={professionName}
-										dependent={dependent}
+										races={races}
+										raceVariants={raceVariants}
+										cultures={cultures}
+										professions={professions}
+										professionVariants={professionVariants}
 										locale={locale}
 										/>
 								)

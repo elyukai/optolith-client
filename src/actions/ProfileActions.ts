@@ -1,7 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../selectors/dependentInstancesSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { RaceInstance } from '../types/data.d';
 import * as RCPUtils from '../utils/RCPUtils';
 
 export interface SetHeroNameAction {
@@ -184,10 +182,11 @@ export function _setWeight(weight: string, size?: string): SetWeightAction {
 
 export function _rerollHairColor(): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
-		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		const { dependent: { races, raceVariants }, rcp: { race: raceId, raceVariant: raceVariantId }} = getState().currentHero.present;
+		const race = raceId ? races.get(raceId) : undefined;
+		const raceVariant = raceVariantId ? raceVariants.get(raceVariantId) : undefined;
 		if (typeof race !== 'undefined') {
-			const hairColor = RCPUtils.rerollHairColor(race);
+			const hairColor = RCPUtils.rerollHairColor(race, raceVariant);
 			dispatch(_setHairColor(hairColor));
 		}
 		return;
@@ -196,10 +195,11 @@ export function _rerollHairColor(): AsyncAction {
 
 export function _rerollEyeColor(): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
-		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		const { dependent: { races, raceVariants }, rcp: { race: raceId, raceVariant: raceVariantId }} = getState().currentHero.present;
+		const race = raceId ? races.get(raceId) : undefined;
+		const raceVariant = raceVariantId ? raceVariants.get(raceVariantId) : undefined;
 		if (typeof race !== 'undefined') {
-			const eyeColor = RCPUtils.rerollEyeColor(race);
+			const eyeColor = RCPUtils.rerollEyeColor(race, raceVariant);
 			dispatch(_setEyeColor(eyeColor));
 		}
 		return;
@@ -208,10 +208,11 @@ export function _rerollEyeColor(): AsyncAction {
 
 export function _rerollSize(): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { race: raceId }} = getState().currentHero.present;
-		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		const { dependent: { races, raceVariants }, rcp: { race: raceId, raceVariant: raceVariantId }} = getState().currentHero.present;
+		const race = raceId ? races.get(raceId) : undefined;
+		const raceVariant = raceVariantId ? raceVariants.get(raceVariantId) : undefined;
 		if (typeof race !== 'undefined') {
-			const size = RCPUtils.rerollSize(race);
+			const size = RCPUtils.rerollSize(race, raceVariant);
 			dispatch(_setSize(size));
 		}
 		return;
@@ -220,10 +221,11 @@ export function _rerollSize(): AsyncAction {
 
 export function _rerollWeight(): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, profile: { size: prevSize }, rcp: { race: raceId }} = getState().currentHero.present;
-		const race = raceId ? get(dependent, raceId) as RaceInstance | undefined : undefined;
+		const { dependent: { races, raceVariants }, profile: { size: prevSize }, rcp: { race: raceId, raceVariant: raceVariantId }} = getState().currentHero.present;
+		const race = raceId ? races.get(raceId) : undefined;
+		const raceVariant = raceVariantId ? raceVariants.get(raceVariantId) : undefined;
 		if (typeof race !== 'undefined') {
-			const [ weight, size ] = RCPUtils.rerollWeight(race, prevSize);
+			const [ weight, size ] = RCPUtils.rerollWeight(race, raceVariant, prevSize);
 			dispatch(_setWeight(weight, size));
 		}
 		return;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Portal = require('react-portal');
 
 interface CallBackProps extends React.Props<any> {
-		closePortal(): {};
+		closePortal(): void;
 }
 
 interface ReactPortalProps {

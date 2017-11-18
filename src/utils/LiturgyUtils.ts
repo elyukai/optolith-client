@@ -51,8 +51,8 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 
 	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
 
-	const activeAspectKnowledge = getSids(get(dependent, 'SA_87') as SpecialAbilityInstance);
-	if (activeAspectKnowledge.some((e: number) => obj.aspects.includes(e))) {
+	const activeAspectKnowledge = getSids(get(dependent, 'SA_87') as SpecialAbilityInstance) as number[];
+	if (activeAspectKnowledge.some(e => obj.aspects.includes(e))) {
 		const counter = getAspectCounter(dependent.liturgies);
 		const countedLowestWithProperty = obj.aspects.reduce((n, aspect) => {
 			const counted = counter.get(aspect);

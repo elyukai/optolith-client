@@ -19,7 +19,7 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 			equipment,
 			pets,
 			phase,
-			rcp: { race: r, culture: c, profession: p, professionVariant: pv },
+			rcp: { race: r, raceVariant: rv, culture: c, profession: p, professionVariant: pv },
 			profile: {
 				avatar,
 				dateCreated,
@@ -29,7 +29,10 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 				professionName,
 				...pers
 			},
-			rules
+			rules: {
+				enabledRuleBooks,
+				...otherRules
+			}
 		}},
 		herolist: {
 			currentId
@@ -46,6 +49,7 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 		ap,
 		el: el.startId!,
 		r: r!,
+		rv,
 		c: c!,
 		p: p!,
 		professionName: p === 'P_0' ? professionName : undefined,
@@ -61,7 +65,10 @@ export function generateHeroSaveData(state: AppState): HeroForSave {
 		liturgies: liturgies.getForSave(dependent),
 		blessings: liturgies.getBlessingsForSave(dependent),
 		belongings: getEquipmentForSave(equipment),
-		rules,
+		rules: {
+			...otherRules,
+			enabledRuleBooks: [...enabledRuleBooks]
+		},
 		pets: getPetsForSave(pets)
 	};
 

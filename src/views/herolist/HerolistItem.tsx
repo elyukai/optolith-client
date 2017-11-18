@@ -6,14 +6,16 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { DependentInstancesState } from '../../reducers/dependentInstances';
-import { get } from '../../selectors/dependentInstancesSelectors';
-import { ProfessionInstance, UIMessages, User } from '../../types/data.d';
+import { CultureInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, UIMessages, User } from '../../types/data.d';
 import { _translate } from '../../utils/I18n';
 
 export interface HerolistItemProps {
 	currentHeroId?: string;
-	dependent: DependentInstancesState;
+	races: Map<string, RaceInstance>;
+	raceVariants: Map<string, RaceVariantInstance>;
+	cultures: Map<string, CultureInstance>;
+	professions: Map<string, ProfessionInstance>;
+	professionVariants: Map<string, ProfessionVariantInstance>;
 	id?: string;
 	name: string;
 	ap: {
@@ -26,6 +28,7 @@ export interface HerolistItemProps {
 	player?: User;
 	pv?: string;
 	r?: string;
+	rv?: string;
 	professionName?: string;
 	sex?: 'm' | 'f';
 	locale: UIMessages;
@@ -37,20 +40,27 @@ export interface HerolistItemProps {
 }
 
 export function HerolistItem(props: HerolistItemProps) {
-	const { player, id, currentHeroId, dependent, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, r, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
+	const { player, id, currentHeroId, races, raceVariants, cultures, professions, professionVariants, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, r, rv, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
 	const isOpen = id === currentHeroId;
 
 	const rcpElement = id !== null && (
 		<VerticalList className="rcp">
 			<span className="race">
 				{(() => {
-					const { name } = r && get(dependent, r) || { name: '' };
+					const { name } = r && races.get(r) || { name: '' };
 					return name;
+				})()}
+				{(() => {
+					const raceVariant = rv && raceVariants.get(rv);
+					if (raceVariant) {
+						return ` (${raceVariant.name})`;
+					}
+					return '';
 				})()}
 			</span>
 			<span className="culture">
 				{(() => {
-					const { name } = c && get(dependent, c) || { name: '' };
+					const { name } = c && cultures.get(c) || { name: '' };
 					return name;
 				})()}
 			</span>
@@ -59,14 +69,14 @@ export function HerolistItem(props: HerolistItemProps) {
 					if (p === 'P_0') {
 						return professionName || _translate(locale, 'professions.ownprofession');
 					}
-					let { name, subname } = p && get(dependent, p) as ProfessionInstance || { name: '', subname: undefined };
+					let { name, subname } = p && professions.get(p) || { name: '', subname: undefined };
 					if (typeof name === 'object' && sex) {
 						name = name[sex];
 					}
 					if (typeof subname === 'object' && sex) {
 						subname = subname[sex];
 					}
-					let { name: vname } = pv && get(dependent, pv) || { name: '' };
+					let { name: vname } = pv && professionVariants.get(pv) || { name: '' };
 					if (typeof vname === 'object' && sex) {
 						vname = vname[sex];
 					}

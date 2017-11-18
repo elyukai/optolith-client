@@ -31,6 +31,15 @@ function iterateRacesL10n(array) {
 	return list;
 }
 
+function iterateRaceVariantsL10n(array) {
+	const list = {};
+	for (let obj of array) {
+		obj.id = `RV_${obj.id}`;
+		list[obj.id] = obj;
+	}
+	return list;
+}
+
 function iterateCulturesL10n(array) {
 	const list = {};
 	for (let obj of array) {
@@ -258,6 +267,7 @@ export function buildL10n(locale) {
 	const books = iterateBooksL10n(csvToArray(allWorksheets.get('BOOKS')));
 	const el = iterateExperienceLevelsL10n(csvToArray(allWorksheets.get('EXPERIENCE_LEVELS')));
 	const races = iterateRacesL10n(csvToArray(allWorksheets.get('RACES')));
+	const racevariants = iterateRaceVariantsL10n(csvToArray(allWorksheets.get('RACE_VARIANTS')));
 	const cultures = iterateCulturesL10n(csvToArray(allWorksheets.get('CULTURES')));
 	const professions = iterateProfessionsL10n(csvToArray(allWorksheets.get('PROFESSIONS')));
 	const professionvariants = iterateProfessionVariantsL10n(csvToArray(allWorksheets.get('PROFESSION_VARIANTS')));
@@ -293,6 +303,7 @@ export function buildL10n(locale) {
 		books,
 		el,
 		races,
+		racevariants,
 		cultures,
 		professions,
 		professionvariants,

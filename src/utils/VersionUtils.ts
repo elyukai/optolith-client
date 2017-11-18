@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import { lt } from 'semver';
+import { lt, lte } from 'semver';
 import { ActiveObject, Hero, ToListById } from '../types/data.d';
 
 export const currentVersion = JSON.parse(fs.readFileSync(path.join(remote.app.getAppPath(), 'package.json'), 'utf8')).version as string;
@@ -532,11 +532,68 @@ export function convertHero(hero: Hero) {
     for (const [id, item] of Object.entries(entry.belongings.items)) {
       entry.belongings.items[id] = {
         ...item,
+        // @ts-ignore
         damageBonus: { value: item.damageBonus as number }
       };
     }
 
     entry.clientVersion = '0.49.5';
+  }
+  if (lte(entry.clientVersion.split(/-/)[0], '0.51.0') || entry.clientVersion === '0.51.1-alpha.1') {
+    const oldRaceId = entry.r;
+    switch (oldRaceId) {
+      case 'R_1':
+        entry.r = 'R_1';
+        entry.rv = 'RV_1';
+        break;
+      case 'R_2':
+        entry.r = 'R_1';
+        entry.rv = 'RV_2';
+        break;
+      case 'R_3':
+        entry.r = 'R_1';
+        entry.rv = 'RV_3';
+        break;
+      case 'R_4':
+        entry.r = 'R_1';
+        entry.rv = 'RV_4';
+        break;
+      case 'R_5':
+        entry.r = 'R_1';
+        entry.rv = 'RV_5';
+        break;
+      case 'R_6':
+        entry.r = 'R_1';
+        entry.rv = 'RV_6';
+        break;
+      case 'R_7':
+        entry.r = 'R_1';
+        entry.rv = 'RV_7';
+        break;
+      case 'R_8':
+        entry.r = 'R_2';
+        entry.rv = 'RV_1';
+        break;
+      case 'R_9':
+        entry.r = 'R_2';
+        entry.rv = 'RV_2';
+        break;
+      case 'R_10':
+        entry.r = 'R_2';
+        entry.rv = 'RV_3';
+        break;
+      case 'R_11':
+        entry.r = 'R_3';
+        break;
+      case 'R_12':
+        entry.r = 'R_4';
+        break;
+    }
+    entry.rules = {
+      ...entry.rules,
+      enableAllRuleBooks: true,
+      enabledRuleBooks: []
+    };
   }
   return entry;
 }

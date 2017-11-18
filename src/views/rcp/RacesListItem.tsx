@@ -8,11 +8,10 @@ import { ListItemValues } from '../../components/ListItemValues';
 import { Race, UIMessages } from '../../types/view.d';
 
 export interface RacesListItemProps {
-	areValuesVisible: boolean;
 	currentId?: string;
 	locale: UIMessages;
 	race: Race;
-	selectRace(id: string): void;
+	selectRace(id: string, variantId?: string): void;
 	switchToCultures(): void;
 }
 
@@ -29,7 +28,7 @@ export function RacesListItem(props: RacesListItemProps) {
 			<ListItemButtons>
 				<IconButton
 					icon="&#xE90a;"
-					onClick={() => selectRace(race.id)}
+					onClick={() => selectRace(race.id, race.variants.length > 0 ? race.variants[0].id : undefined)}
 					disabled={race.id === currentId}
 					/>
 				<IconButton

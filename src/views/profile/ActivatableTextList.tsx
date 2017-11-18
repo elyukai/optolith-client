@@ -26,7 +26,7 @@ export function ActivatableTextList(props: Props) {
 		if (typeof obj === 'string') {
 			return obj;
 		}
-		const { tiers, id, tier } = obj;
+		const { instance: { tiers }, id, tier } = obj;
 		let { name } = obj;
 		if (tiers && !['DISADV_34', 'DISADV_50'].includes(id)) {
 			if (id === 'SA_29' && tier === 4) {
