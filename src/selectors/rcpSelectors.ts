@@ -5,7 +5,7 @@ import { Culture, Increasable, Profession, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
-import { filterByAvailability } from '../utils/RulesUtils';
+import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCultures, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessions, getProfessionVariants, getRaces, getRaceVariants, getSex, getSkills } from './stateSelectors';
@@ -241,7 +241,8 @@ export const getAllProfessions = createSelector(
 
 		const filterProfessionExtended = (e: ProfessionInstance) => {
 			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : (typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.list.includes(e.id) !== typicalList.reverse));
+			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
 			return groupVisible && commonVisible;
 		};

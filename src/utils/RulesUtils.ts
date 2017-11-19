@@ -19,6 +19,14 @@ export const isAvailable = <T extends ObjectWithSource>(availablility: boolean |
 };
 
 /**
+ * Returns if the given entry is from a core rule book.
+ * @param entry The entry.
+ */
+export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: T) => {
+	return entry.src.some(s => isCoreBook(s));
+};
+
+/**
  * Filters a list with `SourceLink`s by availability.
  * @param list A list with `SourceLink`s.
  * @param availablility The availability state.
