@@ -70,7 +70,7 @@ export interface ReceiveInitialDataAction {
 	payload: ReceiveInitialDataActionPayload;
 }
 
-export function requestInitialData(): AsyncAction {
+export function requestInitialData(): AsyncAction<Promise<void>> {
 	return async dispatch => {
 		const data = await dispatch(getInitialData());
 		if (data) {

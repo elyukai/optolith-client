@@ -28,7 +28,31 @@ import { _translate } from './utils/I18n';
 
 const store = createStore<AppState>(app, applyMiddleware(ReduxThunk));
 
-store.dispatch(requestInitialData());
+store.dispatch(requestInitialData()).then(() => {
+	if (remote.process.platform === 'darwin') {
+		const { dispatch, getState } = store;
+		const locale = getLocaleMessages(getState())!;
+		const menu = remote.Menu.buildFromTemplate([
+			{
+				label: remote.app.getName(),
+				submenu: [
+					{
+						label: _translate(locale, 'mac.aboutapp', remote.app.getName()),
+						click: () => dispatch(showAbout())
+					},
+					{
+						type: 'separator'
+					},
+					{
+						label: _translate(locale, 'mac.quit'),
+						click: () => dispatch(requestClose())
+					}
+				]
+			}
+		]);
+		remote.Menu.setApplicationMenu(menu);
+	}
+});
 
 render(
 	<Provider store={store}>
@@ -36,30 +60,6 @@ render(
 	</Provider>,
 	document.querySelector('#bodywrapper')
 );
-
-if (remote.process.platform === 'darwin') {
-	const { dispatch, getState } = store;
-	const locale = getLocaleMessages(getState())!;
-	const menu = remote.Menu.buildFromTemplate([
-		{
-			label: remote.app.getName(),
-			submenu: [
-				{
-					label: _translate(locale, 'mac.aboutapp', remote.app.getName()),
-					click: () => dispatch(showAbout())
-				},
-				{
-					type: 'separator'
-				},
-				{
-					label: _translate(locale, 'mac.quit'),
-					click: () => dispatch(requestClose())
-				}
-			]
-		}
-	]);
-	remote.Menu.setApplicationMenu(menu);
-}
 
 ipcRenderer.addListener('update-available', (_event: Event, info: UpdateInfo) => {
 	store.dispatch(updateAvailable(info));
