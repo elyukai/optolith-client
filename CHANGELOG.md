@@ -1,3 +1,25 @@
+# 0.51.1
+
+- Fixed Auto Updater.
+- Added FAQ page.
+- It is now possible to change attribute adjustment selection from selected race during character creation.
+- Fixed shown special ability groups on character sheet.
+- Fixed displayed aspects of liturgical chants.
+- Fixed calculating PA on character sheet.
+- You can now select the rule books you want to include in the Profile > Rules tab. Inactive book entries will not be displayed (only Races, Cultures, Professions, Skills, Spells and Liturgical Chants).
+- Displaying races now corresponds with the Core Rules.
+- Fixed inactive Advantages/Disadvantages/Special Abilities list's layout (temporarily).
+
+## macOS
+
+- Added custom titlebar.
+- Added *About ...* app menu option.
+
+## German Specific
+
+- Fixed *Visions* and *Sermons* for Blessed Ones.
+- Fixed profession *Graumagier (Schule der Verformungen zu Lowangen)*.
+
 # 0.51.0
 
 - Auto-Updater for Windows and macOS.
