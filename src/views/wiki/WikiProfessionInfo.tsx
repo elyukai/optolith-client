@@ -169,8 +169,9 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 						<span>{name}</span>
 						<span>({currentObject.ap + e.ap} {_translate(locale, 'apshort')})</span>
 						<span>{e.precedingText && `${e.precedingText} `}{[
-							...sortStrings(e.combatTechniques.map(({ name, value, previous = 0}) => `${name} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id),
-							...sortStrings(e.skills.map(({ name, value, previous = 0}) => `${name} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id)
+							...sortStrings(e.combatTechniques.map(({ name, value, previous = 0}) => `${name} ${previous + value + 6} ${_translate(locale, 'info.variantsinsteadof')} ${previous + 6}`), locale.id),
+							...sortStrings(e.skills.map(({ name, value, previous = 0}) => `${name} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id),
+							...sortStrings(e.spells.map(({ id, value, previous = 0}) => `${spells.has(id) ? spells.get(id)!.name : '...'} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id)
 						].join(', ')}{e.concludingText && `; ${e.concludingText}`}</span>
 					</li>;
 				})}

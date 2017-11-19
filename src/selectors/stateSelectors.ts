@@ -19,6 +19,7 @@ export const getCurrentHeroPresent = (state: AppState) => state.currentHero.pres
 export const getDependentInstances = (state: AppState) => state.currentHero.present.dependent;
 export const getAdvantages = (state: AppState) => state.currentHero.present.dependent.advantages;
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
+export const getBlessings = (state: AppState) => state.currentHero.present.dependent.blessings;
 export const getCantrips = (state: AppState) => state.currentHero.present.dependent.cantrips;
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 export const getCultures = (state: AppState) => state.currentHero.present.dependent.cultures;

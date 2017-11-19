@@ -109,6 +109,7 @@ export interface ProfessionVariant {
 	ap: number;
 	combatTechniques: Increasable[];
 	skills: Increasable[];
+	spells: IncreasableId[];
 	concludingText: string | undefined;
 	precedingText: string | undefined;
 }

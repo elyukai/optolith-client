@@ -108,6 +108,28 @@ ul.list-wrapper {
 			@include size($size);
 		}
 
+		> .left {
+			flex: 0 1 auto;
+			display: flex;
+			min-width: 0;
+
+			> div {
+				flex: 1 1 auto;
+
+				&:not(.name) {
+					margin: 0 0 0 10px;
+				}
+
+				&.dropdown, &.textfield {
+					width: 200px;
+				}
+
+				&.dropdown.tiers {
+					width: 65px;
+				}
+			}
+		}
+
 		.name {
 			flex: 0 1 auto;
 			display: flex;

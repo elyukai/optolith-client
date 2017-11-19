@@ -5,6 +5,8 @@ export interface BaseObject {
 	[key: string]: any;
 }
 
+export type AllSortOptions<T> = (keyof T | SortOption<T>)[] | keyof T | SortOption<T>;
+
 export interface SortOption<T> {
 	key: keyof T | ((object: T) => any);
 	keyOfProperty?: string;
@@ -12,7 +14,7 @@ export interface SortOption<T> {
 	reverse?: boolean;
 }
 
-export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: (keyof T | SortOption<T>)[] | keyof T | SortOption<T> = 'name') {
+export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: AllSortOptions<T> = 'name') {
 	if (list.length < 2) {
 		return list;
 	}
@@ -93,17 +95,21 @@ export function filterObjects<T extends BaseObject>(list: T[], filterText: strin
 	return list;
 }
 
+function isSortOptionType<T>(test: AllSortOptions<T> | FilterOptions<T> | undefined): test is AllSortOptions<T> {
+	return Array.isArray(test) || typeof test === 'string' || typeof test === 'object' && test.hasOwnProperty('key');
+}
+
 export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string): T[];
-export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: (keyof T | SortOption<T>)[]): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: AllSortOptions<T>): T[];
 export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, filterOptions: FilterOptions<T>): T[];
-export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: (keyof T | SortOption<T>)[], filterOptions: FilterOptions<T>): T[];
-export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOrFilterOptions?: (keyof T | SortOption<T>)[] | FilterOptions<T>, filterOptions?: FilterOptions<T>): T[] {
-	let sortOptionsFinal: (keyof T | SortOption<T>)[] | undefined;
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOptions: AllSortOptions<T>, filterOptions: FilterOptions<T>): T[];
+export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: string, filterText: string, sortOrFilterOptions?: AllSortOptions<T> | FilterOptions<T>, filterOptions?: FilterOptions<T>): T[] {
+	let sortOptionsFinal: AllSortOptions<T> | undefined;
 	let filterOptionsFinal: FilterOptions<T> | undefined;
-	if (Array.isArray(sortOrFilterOptions)) {
+	if (isSortOptionType(sortOrFilterOptions)) {
 		sortOptionsFinal = sortOrFilterOptions;
 	}
-	else if (typeof sortOrFilterOptions === 'object') {
+	else if (sortOrFilterOptions !== undefined) {
 		filterOptionsFinal = sortOrFilterOptions;
 	}
 	if (filterOptions && !filterOptionsFinal) {

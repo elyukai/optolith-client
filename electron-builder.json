@@ -37,7 +37,6 @@
 		"icon": "app/icon.icns",
 		"target": "default"
 	},
-	"detectUpdateChannel": false,
 	"publish": {
 		"provider": "generic",
 		"url": "http://cha5app.dsa-sh.de/releases/${os}",

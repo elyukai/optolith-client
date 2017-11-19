@@ -22,7 +22,7 @@ import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../../utils/LiturgyUtils';
+import { getAspectsOfTradition, isDecreasable, isIncreasable } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
 
 export interface LiturgiesOwnProps {
@@ -35,7 +35,8 @@ export interface LiturgiesStateProps {
 	currentHero: CurrentHeroInstanceState;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	enableActiveItemHints: boolean;
-	list: (BlessingInstance | LiturgyInstance)[];
+	activeList: (BlessingInstance | LiturgyInstance)[];
+	inactiveList: (BlessingInstance | LiturgyInstance)[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
 	traditionId: number;
@@ -79,7 +80,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as LiturgiesState);
 
 	render() {
-		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
+		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, activeList, inactiveList, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -88,22 +89,13 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 			{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 		];
 
-		const listActive: (BlessingInstance | LiturgyInstance)[] = [];
-		const listDeactive: (BlessingInstance | LiturgyInstance)[] = [];
+		const listActive = activeList;
+		let listDeactive = inactiveList;
+		const list = [...inactiveList, ...activeList];
 
-		list.forEach(e => {
-			if (e.active) {
-				listActive.push(e);
-				if (enableActiveItemHints === true) {
-					listDeactive.push(e);
-				}
-			}
-			else {
-				if (isOwnTradition(currentHero.dependent, e)) {
-					listDeactive.push(e);
-				}
-			}
-		});
+		if (enableActiveItemHints === true) {
+			listDeactive = list;
+		}
 
 		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
 		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
@@ -211,7 +203,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={list} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -318,7 +310,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} />
+				<WikiInfoContainer {...this.props} {...this.state} list={list} />
 			</Page>
 		);
 	}

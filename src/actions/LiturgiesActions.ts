@@ -1,5 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../selectors/liturgiesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
@@ -20,7 +19,7 @@ export interface ActivateLiturgyAction {
 export function _addToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = get(state.currentHero.present.dependent.liturgies, id)!;
+		const entry = state.currentHero.present.dependent.liturgies.get(id)!;
 		const cost = getIncreaseAP(entry.ic);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
@@ -82,7 +81,7 @@ export interface DeactivateLiturgyAction {
 export function _removeFromList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = get(state.currentHero.present.dependent.liturgies, id)!;
+		const entry = state.currentHero.present.dependent.liturgies.get(id)!;
 		const cost = getDecreaseAP(entry.ic);
 		dispatch({
 			type: ActionTypes.DEACTIVATE_LITURGY,
@@ -121,7 +120,7 @@ export interface AddLiturgyPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent.liturgies, id)!, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(state.currentHero.present.dependent.liturgies.get(id)!, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!cost && messages) {
 			dispatch(addAlert({
@@ -152,7 +151,7 @@ export interface RemoveLiturgyPointAction {
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseCost(get(state.currentHero.present.dependent.liturgies, id)!);
+		const cost = getDecreaseCost(state.currentHero.present.dependent.liturgies.get(id)!);
 		dispatch({
 			type: ActionTypes.REMOVE_LITURGY_POINT,
 			payload: {

@@ -41,6 +41,10 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				<span>{currentObject.tou}</span>
 			</p>
 			<p>
+				<span>{_translate(locale, 'info.movementbasevalue')}</span>
+				<span>{currentObject.mov}</span>
+			</p>
+			<p>
 				<span>{_translate(locale, 'info.attributeadjustments')}</span>
 				<span>{currentObject.attributeAdjustments}</span>
 			</p>
@@ -73,10 +77,10 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{sameCommonAdvantages && <span>{currentObject.commonAdvantages || _translate(locale, 'info.none')}</span>}
 			</p>
 			{!sameCommonAdvantages && <ul className="race-variant-options">
-				{currentObject.variants.map(e => {
+				{currentObject.variants.filter(e => typeof e.commonAdvantages === 'string').map(e => {
 					return <li key={e.id}>
 						<span>{e.name}</span>
-						<span>{e.commonAdvantages || _translate(locale, 'info.none')}</span>
+						<span>{e.commonAdvantages}</span>
 					</li>;
 				})}
 			</ul>}
@@ -85,10 +89,10 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{sameCommonDisadvantages && <span>{currentObject.commonDisadvantages || _translate(locale, 'info.none')}</span>}
 			</p>
 			{!sameCommonDisadvantages && <ul className="race-variant-options">
-				{currentObject.variants.map(e => {
+				{currentObject.variants.filter(e => typeof e.commonDisadvantages === 'string').map(e => {
 					return <li key={e.id}>
 						<span>{e.name}</span>
-						<span>{e.commonDisadvantages || _translate(locale, 'info.none')}</span>
+						<span>{e.commonDisadvantages}</span>
 					</li>;
 				})}
 			</ul>}
@@ -97,10 +101,10 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{sameUncommonAdvantages && <span>{currentObject.uncommonAdvantages || _translate(locale, 'info.none')}</span>}
 			</p>
 			{!sameUncommonAdvantages && <ul className="race-variant-options">
-				{currentObject.variants.map(e => {
+				{currentObject.variants.filter(e => typeof e.uncommonAdvantages === 'string').map(e => {
 					return <li key={e.id}>
 						<span>{e.name}</span>
-						<span>{e.uncommonAdvantages || _translate(locale, 'info.none')}</span>
+						<span>{e.uncommonAdvantages}</span>
 					</li>;
 				})}
 			</ul>}
@@ -109,10 +113,10 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantages || _translate(locale, 'info.none')}</span>}
 			</p>
 			{!sameUncommonDisadvantages && <ul className="race-variant-options">
-				{currentObject.variants.map(e => {
+				{currentObject.variants.filter(e => typeof e.uncommonDisadvantages === 'string').map(e => {
 					return <li key={e.id}>
 						<span>{e.name}</span>
-						<span>{e.uncommonDisadvantages || _translate(locale, 'info.none')}</span>
+						<span>{e.uncommonDisadvantages}</span>
 					</li>;
 				})}
 			</ul>}

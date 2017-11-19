@@ -1,20 +1,16 @@
 import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { CANTRIPS, SPELLS } from '../constants/Categories';
-import { AppState } from '../reducers/app';
 import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
 import { Spell } from '../types/view.d';
 import { getSids, isActive } from '../utils/ActivatableUtils';
 import { validate } from '../utils/RequirementUtils';
+import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getElState, getStart, getStartEl } from './elSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
 import { getAdvantages, getCantrips, getDisadvantages, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
-
-export const get = (state: Map<string, SpellInstance>, id: string) => state.get(id);
-export { get as getSpell };
-export const getCantripsState = (state: AppState) => state.currentHero.present.dependent.cantrips;
-export const getSpellsState = (state: AppState) => state.currentHero.present.dependent.spells;
 
 export const areMaxUnfamiliar = createSelector(
 	getPhase,
@@ -49,64 +45,140 @@ export const getActiveSpellsNumber = createSelector(
 	}
 );
 
-export const getAllForView = createSelector(
+export const getSpellsAndCantrips = createSelector(
 	getSpells,
 	getCantrips,
+	(spells, cantrips) => {
+		return [...spells.values(), ...cantrips.values()];
+	}
+);
+
+export interface InactiveSpells {
+	valid: (SpellInstance | CantripInstance)[];
+	invalid: (SpellInstance | CantripInstance)[];
+}
+
+export const getInactiveSpells = createSelector(
+	getSpellsAndCantrips,
 	areMaxUnfamiliar,
 	getPresent,
 	mapGetToSlice(getSpecialAbilities, 'SA_70'),
-	mapGetToSlice(getAdvantages, 'ADV_58'),
-	mapGetToSlice(getDisadvantages, 'DISADV_59'),
-	(spells, cantrips, areMaxUnfamiliar, currentHero, tradition) => {
+	(allEntries, areMaxUnfamiliar, currentHero, tradition): InactiveSpells => {
 		if (!tradition) {
-			return [];
+			return {
+				valid: [],
+				invalid: []
+			};
 		}
-		const allEntries = [...spells.values(), ...cantrips.values()];
+		const allInactiveSpells = allEntries.filter(e => e.active === false);
 		const lastTraditionId = last(getSids(tradition));
 		if (lastTraditionId === 8) {
-			return allEntries.filter(entry => {
-				return entry.category === CANTRIPS || entry.gr < 3 && (entry.active === true || validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar));
+			return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
+				if (entry.category === CANTRIPS || entry.gr < 3 && validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
+					return {
+						...obj,
+						valid: [...obj.valid, entry]
+					};
+				}
+				else {
+					return {
+						...obj,
+						invalid: [...obj.invalid, entry]
+					};
+				}
+			}, {
+				valid: [],
+				invalid: []
 			});
 		}
 		else if (lastTraditionId === 6 || lastTraditionId === 7) {
 			const lastTradition = last(tradition.active);
 			const subtradition = lastTradition && lastTradition.sid2;
 			if (typeof subtradition === 'number') {
-				return allEntries.filter(entry => {
-					return entry.category === CANTRIPS || entry.subtradition.includes(subtradition);
+				return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
+					if (entry.category === CANTRIPS || entry.subtradition.includes(subtradition)) {
+						return {
+							...obj,
+							valid: [...obj.valid, entry]
+						};
+					}
+					else {
+						return {
+							...obj,
+							invalid: [...obj.invalid, entry]
+						};
+					}
+				}, {
+					valid: [],
+					invalid: []
 				});
 			}
-			return [];
+			return {
+				valid: [],
+				invalid: []
+			};
 		}
-		return allEntries.filter(entry => {
-			return entry.category === CANTRIPS || entry.active === true || validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || entry.gr < 3 && !areMaxUnfamiliar);
+		return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
+			if (entry.category === CANTRIPS || validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || entry.gr < 3 && !areMaxUnfamiliar)) {
+				return {
+					...obj,
+					valid: [...obj.valid, entry]
+				};
+			}
+			else {
+				return {
+					...obj,
+					invalid: [...obj.invalid, entry]
+				};
+			}
+		}, {
+			valid: [],
+			invalid: []
 		});
 	}
 );
 
-export const getSpellsForSave = createSelector(
-	getSpells,
-	spells => {
-		const active: ToListById<number> = {};
-		for (const skill of [...spells.values()]) {
-			const { id, active: isActive, value } = skill;
-			if (isActive) {
-				active[id] = value;
-			}
-		}
-		return active;
+export const getActiveSpells = createSelector(
+	getSpellsAndCantrips,
+	allEntries => {
+		return allEntries.filter(e => e.active === true);
 	}
 );
 
-export const getCantripsForSave = createSelector(
-	getCantrips,
-	cantrips => {
-		return [...cantrips.values()].reduce<string[]>((arr, e) => {
-			if (e.active) {
-				return [...arr, e.id];
+export const getFilteredInactiveSpells = createSelector(
+	getInactiveSpells,
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByAvailability(list.valid, availablility);
+	}
+);
+
+export const getFilteredSpellsWithUnmetPrerequisites = createSelector(
+	getInactiveSpells,
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByAvailability(list.invalid, availablility);
+	}
+);
+
+export const getSpellsAndCantripsForSave = createSelector(
+	getActiveSpells,
+	list => {
+		const spells: ToListById<number> = {};
+		const cantrips: string[] = [];
+		for (const entry of list) {
+			if (entry.category === SPELLS) {
+				const { id, value } = entry;
+				spells[id] = value;
 			}
-			return arr;
-		}, []);
+			else {
+				cantrips.push(entry.id);
+			}
+		}
+		return {
+			spells,
+			cantrips
+		};
 	}
 );
 
@@ -146,12 +218,12 @@ export const isActivationDisabled = createSelector(
 );
 
 export const getCantripsForSheet = createSelector(
-	getCantripsState,
+	getCantrips,
 	cantrips => [...cantrips.values()].filter(e => e.active)
 );
 
 export const getSpellsForSheet = createSelector(
-	getSpellsState,
+	getSpells,
 	mapGetToSlice(getSpecialAbilities, 'SA_70'),
 	(spells, traditionSA) => {
 		const array: Spell[] = [];

@@ -2,17 +2,16 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as RaceActions from '../actions/RaceActions';
 import { AppState } from '../reducers/app';
-import { getAllRaces } from '../selectors/rcpSelectors';
+import { getFilteredRaces } from '../selectors/rcpSelectors';
 import { getCurrentRaceId, getCurrentRaceVariantId } from '../selectors/stateSelectors';
-import { getRacesSortOrder, getRacesValueVisibility } from '../selectors/uisettingsSelectors';
+import { getRacesSortOrder } from '../selectors/uisettingsSelectors';
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from '../views/rcp/Races';
 
 function mapStateToProps(state: AppState) {
 	return {
-		areValuesVisible: getRacesValueVisibility(state),
 		currentId: getCurrentRaceId(state),
 		currentVariantId: getCurrentRaceVariantId(state),
-		races: getAllRaces(state),
+		races: getFilteredRaces(state),
 		sortOrder: getRacesSortOrder(state),
 	};
 }

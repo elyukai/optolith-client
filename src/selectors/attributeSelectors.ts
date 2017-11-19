@@ -9,8 +9,7 @@ import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getEnergies } from './energiesSelectors';
 import { getCurrentRace } from './rcpSelectors';
-import { getAttributeValueLimit, getPhase, getSpecialAbilities } from './stateSelectors';
-import { getTalents } from './talentsSelectors';
+import { getAttributeValueLimit, getPhase, getSkills, getSpecialAbilities } from './stateSelectors';
 
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
 
@@ -47,7 +46,7 @@ export const getForView = createSelector(
 	getPhase,
 	getAttributeValueLimit,
 	getSpecialAbilities,
-	getTalents,
+	getSkills,
 	(attributes, startEl, currentEl, phase, attributeValueLimit, specialAbilities, talents) => {
 		const array: AttributeWithRequirements[] = [];
 		for (const [id, entry] of attributes) {

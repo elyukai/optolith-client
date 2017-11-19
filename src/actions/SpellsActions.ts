@@ -1,6 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { get } from '../selectors/spellsSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
@@ -20,7 +19,7 @@ export interface ActivateSpellAction {
 export function _addToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const entry = state.currentHero.present.dependent.spells.get(id)!;
 		const cost = getIncreaseAP(entry.ic);
 		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
@@ -82,7 +81,7 @@ export interface DeactivateSpellAction {
 export function _removeFromList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = get(state.currentHero.present.dependent.spells, id)!;
+		const entry = state.currentHero.present.dependent.spells.get(id)!;
 		const cost = getDecreaseAP(entry.ic);
 		dispatch({
 			type: ActionTypes.DEACTIVATE_SPELL,
@@ -121,7 +120,7 @@ export interface AddSpellPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent.spells, id)!, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(state.currentHero.present.dependent.spells.get(id)!, state.currentHero.present.ap, isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!cost && messages) {
 			dispatch(addAlert({
@@ -152,7 +151,7 @@ export interface RemoveSpellPointAction {
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseCost(get(state.currentHero.present.dependent.spells, id)!);
+		const cost = getDecreaseCost(state.currentHero.present.dependent.spells.get(id)!);
 		dispatch({
 			type: ActionTypes.REMOVE_SPELL_POINT,
 			payload: {

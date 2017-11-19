@@ -15,7 +15,7 @@ import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
 import { getSpecialAbilities } from '../selectors/stateSelectors';
-import { getTalents } from '../selectors/talentsSelectors';
+import { getAllSkills } from '../selectors/talentsSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
@@ -44,7 +44,7 @@ function mapStateToProps(state: AppState) {
 		race: getCurrentRace(state),
 		rangedWeapons: getRangedWeapons(state),
 		shieldsAndParryingWeapons: getShieldsAndParryingWeapons(state),
-		talents: [...getTalents(state).values()],
+		talents: getAllSkills(state),
 		items: getAllItems(state),
 		pet: getPet(state),
 		purse: getPurse(state),

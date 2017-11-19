@@ -1,60 +1,89 @@
 import { last } from 'lodash';
 import { createSelector } from 'reselect';
-import { BLESSINGS, LITURGIES } from '../constants/Categories';
-import { AppState } from '../reducers/app';
-import { DependentInstancesState } from '../reducers/dependentInstances';
-import { BlessingInstance, LiturgyInstance } from '../types/data.d';
+import { LITURGIES } from '../constants/Categories';
+import { ToListById } from '../types/data.d';
 import { Liturgy } from '../types/view.d';
 import { getSids } from '../utils/ActivatableUtils';
-import { getAspectsOfTradition } from '../utils/LiturgyUtils';
+import { getAspectsOfTradition, isOwnTradition } from '../utils/LiturgyUtils';
+import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getAllByCategory, getDependent } from './dependentInstancesSelectors';
-import { getElState, getStart } from './elSelectors';
-import { getPhase, getSpecialAbilities } from './stateSelectors';
+import { getStartEl } from './elSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
+import { getBlessings, getDependentInstances, getLiturgicalChants, getPhase, getSpecialAbilities } from './stateSelectors';
 
-export const get = (state: Map<string, LiturgyInstance>, id: string) => state.get(id);
-export { get as getLiturgy };
-export const getBlessingsState = (state: AppState) => state.currentHero.present.dependent.blessings;
-export const getLiturgiesState = (state: AppState) => state.currentHero.present.dependent.liturgies;
-
-export function getForSave(state: DependentInstancesState) {
-	const active: { [id: string]: number } = {};
-	for (const skill of getAllByCategory(state, LITURGIES) as LiturgyInstance[]) {
-		const { id, active: isActive, value } = skill;
-		if (isActive) {
-			active[id] = value;
-		}
+export const getLiturgicalChantsAndBlessings = createSelector(
+	getLiturgicalChants,
+	getBlessings,
+	(liturgicalChants, blessings) => {
+		return [...liturgicalChants.values(), ...blessings.values()];
 	}
-	return active;
-}
+);
 
-export function getBlessingsForSave(state: DependentInstancesState) {
-	return (getAllByCategory(state, BLESSINGS) as BlessingInstance[]).reduce<string[]>((arr, e) => {
-		if (e.active) {
-			return [...arr, e.id];
+export const getActiveLiturgicalChants = createSelector(
+	getLiturgicalChantsAndBlessings,
+	allEntries => {
+		return allEntries.filter(e => e.active === true);
+	}
+);
+
+export const getFilteredInactiveLiturgicalChants = createSelector(
+	getLiturgicalChantsAndBlessings,
+	getDependentInstances,
+	getRuleBooksEnabled,
+	(list, dependent, availablility) => {
+		return filterByAvailability(list.filter(e => isOwnTradition(dependent, e)), availablility);
+	}
+);
+
+export const getLiturgicalChantsAndBlessingsForSave = createSelector(
+	getActiveLiturgicalChants,
+	list => {
+		const liturgies: ToListById<number> = {};
+		const blessings: string[] = [];
+		for (const entry of list) {
+			if (entry.category === LITURGIES) {
+				const { id, value } = entry;
+				liturgies[id] = value;
+			}
+			else {
+				blessings.push(entry.id);
+			}
 		}
-		return arr;
-	}, []);
-}
+		return {
+			liturgies,
+			blessings
+		};
+	}
+);
 
-export function isActivationDisabled(state: AppState) {
-	const maxSpellsLiturgies = getStart(getElState(state)).maxSpellsLiturgies;
-	return getPhase(state) < 3 && (getAllByCategory(getDependent(state), LITURGIES) as LiturgyInstance[]).filter(e => e.gr < 3 && e.active).length >= maxSpellsLiturgies;
-}
+export const isActivationDisabled = createSelector(
+	getStartEl,
+	getPhase,
+	getLiturgicalChants,
+	(startEl, phase, liturgicalChants) => {
+		return phase < 3 && [...liturgicalChants.values()].filter(e => e.gr < 3 && e.active).length >= startEl.maxSpellsLiturgies;
+	}
+);
+
+export const getTraditionId = createSelector(
+	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	tradition => {
+		return last(getSids(tradition!)) as number | undefined;
+	}
+);
 
 export const getBlessingsForSheet = createSelector(
-	getBlessingsState,
+	getBlessings,
 	blessings => [...blessings.values()].filter(e => e.active)
 );
 
 export const getLiturgiesForSheet = createSelector(
-	getLiturgiesState,
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
-	(liturgies, tradition) => {
+	getLiturgicalChants,
+	getTraditionId,
+	(liturgies, traditionId) => {
 		const array: Liturgy[] = [];
 		for (const [id, entry] of liturgies) {
 			const { ic, name, active, value, check, checkmod, aspects, category } = entry;
-			const traditionId = last(getSids(tradition!)) as number;
 			const availableAspects = traditionId && getAspectsOfTradition(traditionId + 1);
 			if (active) {
 				array.push({

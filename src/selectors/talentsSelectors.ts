@@ -1,20 +1,29 @@
 import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
 import { ToListById } from '../types/data.d';
 import { getCurrentCulture } from './rcpSelectors';
+import { getSkills } from './stateSelectors';
 
-export const getTalents = (state: AppState) => state.currentHero.present.dependent.talents;
+export const getSkillsForSave = createSelector(
+	getSkills,
+	skills => {
+		const active: ToListById<number> = {};
 
-export function getTalentsForSave(state: AppState) {
-	const active: { [id: string]: number } = {};
-	for (const [id, entry] of getTalents(state)) {
-		const { value } = entry;
-		if (value > 0) {
-			active[id] = value;
+		for (const [id, { value }] of skills) {
+			if (value > 0) {
+				active[id] = value;
+			}
 		}
+
+		return active;
 	}
-	return active;
-}
+);
+
+export const getAllSkills = createSelector(
+	getSkills,
+	skills => {
+		return [...skills.values()];
+	}
+);
 
 export const getTalentsRating = createSelector(
 	getCurrentCulture,

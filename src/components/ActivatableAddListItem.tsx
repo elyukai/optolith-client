@@ -16,8 +16,8 @@ import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';
 import { ListItemButtons } from './ListItemButtons';
 import { ListItemGroup } from './ListItemGroup';
+import { ListItemLeft } from './ListItemLeft';
 import { ListItemName } from './ListItemName';
-import { ListItemSelections } from './ListItemSelections';
 import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 import { TextField } from './TextField';
@@ -416,14 +416,14 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 
 		return (
 			<ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
-				<ListItemName name={name} />
-				<ListItemSelections>
+				<ListItemLeft>
+					<ListItemName name={name} />
 					{tierElement1}
 					{selectElement}
 					{selectElement2}
 					{inputElement}
 					{tierElement2}
-				</ListItemSelections>
+				</ListItemLeft>
 				<ListItemSeparator/>
 				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>

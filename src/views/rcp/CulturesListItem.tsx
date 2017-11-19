@@ -7,7 +7,6 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { Culture, UIMessages } from '../../types/view.d';
 
 export interface CulturesListItemProps {
-	areValuesVisible: boolean;
 	currentId?: string;
 	culture: Culture;
 	locale: UIMessages;

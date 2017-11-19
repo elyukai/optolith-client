@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
-import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -31,7 +30,6 @@ export interface ProfessionsStateProps {
 	spells: SMap<SpellInstance>;
 	currentProfessionId?: string;
 	currentProfessionVariantId?: string;
-	extensionVisibilityFilter: boolean;
 	groupVisibilityFilter: number;
 	professions: Profession[];
 	sortOrder: string;
@@ -66,10 +64,10 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as ProfessionsState);
 
 	render() {
-		const { currentProfessionId, extensionVisibilityFilter, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, switchExpansionVisibilityFilter, visibilityFilter } = this.props;
+		const { currentProfessionId, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, visibilityFilter } = this.props;
 		const { filterText, showAddSlidein } = this.state;
 
-		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }], { addProperty: 'subname', keyOfName: sex });
+		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key: e => e.src[0].id }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key: e => e.src[0].id }], { addProperty: 'subname', keyOfName: sex });
 
 		return (
 			<Page id="professions">
@@ -96,9 +94,6 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 						options={['name', 'cost']}
 						locale={locale}
 						/>
-					<Checkbox checked={extensionVisibilityFilter} onClick={switchExpansionVisibilityFilter}>
-						{_translate(locale, 'professions.options.alwaysshowprofessionsfromextensions')}
-					</Checkbox>
 				</Options>
 				<MainContent>
 					<ListHeader>

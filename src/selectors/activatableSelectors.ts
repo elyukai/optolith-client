@@ -200,7 +200,7 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet, getMessages, getCultureAreaKnowledge ],
   (specialAbilities, messages, cultureAreaKnowledge = '') => {
     return [
-      ...specialAbilities.filter(e => [1, 2].includes(e.gr!)),
+      ...specialAbilities.filter(e => [1, 2, 22, 28, 29].includes(e.gr!)),
       _translate(messages!, 'charactersheet.main.generalspecialabilites.areaknowledge', cultureAreaKnowledge)
     ];
   }
@@ -209,21 +209,21 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
 export const getCombatSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [3, 9, 10, 11, 12].includes(e.gr!));
+    return specialAbilities.filter(e => [3, 9, 10, 11, 12, 21].includes(e.gr!));
   }
 );
 
 export const getMagicalSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [4, 5, 6].includes(e.gr!));
+    return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20].includes(e.gr!));
   }
 );
 
 export const getBlessedSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [7, 25, 26].includes(e.gr!));
+    return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27].includes(e.gr!));
   }
 );
 

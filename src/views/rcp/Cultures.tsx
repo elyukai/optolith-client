@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -23,8 +22,6 @@ export interface CulturesOwnProps {
 }
 
 export interface CulturesStateProps {
-	areValuesVisible: boolean;
-	commonCultures?: string[];
 	cultures: Culture[];
 	currentId?: string;
 	sortOrder: string;
@@ -52,10 +49,10 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CulturesState);
 
 	render() {
-		const { areValuesVisible, commonCultures, cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, switchValueVisibilityFilter, visibilityFilter } = this.props;
+		const { cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, visibilityFilter } = this.props;
 		const { filterText } = this.state;
 
-		const list = filterAndSortObjects(cultures.filter(e => visibilityFilter === 'all' || commonCultures!.includes(e.id)), locale.id, filterText, sortOrder === 'cost' ? ['culturalPackageAp', 'name'] : ['name']);
+		const list = filterAndSortObjects(cultures, locale.id, filterText, sortOrder === 'cost' ? ['culturalPackageAp', 'name'] : ['name']);
 
 		return (
 			<Page id="cultures">
@@ -73,7 +70,6 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						options={['name', 'cost']}
 						locale={locale}
 						/>
-					<Checkbox checked={areValuesVisible} onClick={switchValueVisibilityFilter}>{_translate(locale, 'cultures.options.showculturalpackagevalues')}</Checkbox>
 				</Options>
 				<MainContent>
 					<ListHeader>

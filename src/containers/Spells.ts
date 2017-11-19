@@ -5,7 +5,7 @@ import * as SpellsActions from '../actions/SpellsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAllForView, isActivationDisabled } from '../selectors/spellsSelectors';
+import { getActiveSpells, getFilteredInactiveSpells, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getAttributes, getBooks, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
@@ -20,7 +20,8 @@ function mapStateToProps(state: AppState) {
 		currentHero: getPresent(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		isRemovingEnabled: isRemovingEnabled(state),
-		list: getAllForView(state),
+		inactiveList: getFilteredInactiveSpells(state),
+		activeList: getActiveSpells(state),
 		phase: getPhase(state),
 		sortOrder: getSpellsSortOrder(state)
 	};

@@ -36,7 +36,8 @@ export interface SpellsStateProps {
 	addSpellsDisabled: boolean;
 	currentHero: CurrentHeroInstanceState;
 	enableActiveItemHints: boolean;
-	list: (SpellInstance | CantripInstance)[];
+	inactiveList: (SpellInstance | CantripInstance)[];
+	activeList: (SpellInstance | CantripInstance)[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
 }
@@ -79,7 +80,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, list, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -89,20 +90,13 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 			{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 		];
 
-		const listActive: (SpellInstance | CantripInstance)[] = [];
-		const listDeactive: (SpellInstance | CantripInstance)[] = [];
+		const listActive = activeList;
+		let listDeactive = inactiveList;
+		const list = [...activeList, ...inactiveList];
 
-		list.forEach(e => {
-			if (e.active) {
-				listActive.push(e);
-				if (enableActiveItemHints === true) {
-					listDeactive.push(e);
-				}
-			}
-			else {
-				listDeactive.push(e);
-			}
-		});
+		if (enableActiveItemHints === true) {
+			listDeactive = list;
+		}
 
 		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
 		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
@@ -215,7 +209,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
+					<WikiInfoContainer {...this.props} list={list} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -322,7 +316,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} />
+				<WikiInfoContainer {...this.props} {...this.state} list={list} />
 			</Page>
 		);
 	}
