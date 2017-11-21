@@ -493,7 +493,10 @@ export interface UIMessages {
 	"activatable.view.immunityto": string;
 	"activatable.view.hatredof": string;
 	"info.rules": string;
+	"info.extendedcombatspecialabilities": string;
 	"info.penalty": string;
+	"info.tier": string;
+	"info.pertier": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;

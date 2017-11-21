@@ -580,7 +580,7 @@ export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInI
 	nameInWiki?: string;
 	gr: number;
 	subgr?: number;
-	combatTechniques?: string[];
+	combatTechniques?: string;
 	rules: string;
 	penalty?: string;
 	apValue?: string;

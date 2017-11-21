@@ -259,7 +259,6 @@ export interface RawSpecialAbility {
 	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
 	gr: number;
 	subgr?: number;
-	combatTechniques?: string[];
 	extended?: (string | string[])[];
 	src: string[];
 }
@@ -272,6 +271,7 @@ export interface RawSpecialAbilityLocale {
 	nameInWiki?: string;
 	rules: string;
 	penalty?: string;
+	combatTechniques?: string;
 	apValue?: string;
 	apValueAppend?: string;
 	src: number[];

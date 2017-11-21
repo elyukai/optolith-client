@@ -35,6 +35,7 @@ export interface WikiInfoStateProps {
 	skills: Map<string, TalentInstance>;
 	spellExtensions: SpecialAbilityInstance | undefined;
 	spells: Map<string, SpellInstance>;
+	specialAbilities: Map<string, SpecialAbilityInstance>;
 }
 
 export interface WikiInfoDispatchProps {}

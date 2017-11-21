@@ -51,31 +51,33 @@ declare module 'react-textfit' {
 }
 
 declare module 'react-markdown' {
+	type Renderer<T> = (props: T) => React.ReactElement<T>;
+
 	interface Renderers {
-		'root': string | React.Component<object>;
-		'break': string | React.Component<object>;
-		'paragraph': string | React.Component<object>;
-		'emphasis': string | React.Component<object>;
-		'strong': string | React.Component<object>;
-		'thematicBreak': string | React.Component<object>;
-		'blockquote': string | React.Component<object>;
-		'delete': string | React.Component<object>;
-		'link': string | React.Component<object>;
-		'image': string | React.Component<object>;
-		'linkReference': string | React.Component<object>;
-		'imageReference': string | React.Component<object>;
-		'table': string | React.Component<object>;
-		'tableHead': string | React.Component<object>;
-		'tableBody': string | React.Component<object>;
-		'tableRow': string | React.Component<object>;
-		'tableCell': string | React.Component<object>;
-		'list': string | React.Component<object>;
-		'listItem': string | React.Component<object>;
-		'definition': string | React.Component<object>;
-		'heading': string | React.Component<object>;
-		'inlineCode': string | React.Component<object>;
-		'code': string | React.Component<object>;
-		'html': string | React.Component<object>;
+		'root': string | Renderer<object>;
+		'break': string | Renderer<object>;
+		'paragraph': string | Renderer<object>;
+		'emphasis': string | Renderer<object>;
+		'strong': string | Renderer<object>;
+		'thematicBreak': string | Renderer<object>;
+		'blockquote': string | Renderer<object>;
+		'delete': string | Renderer<object>;
+		'link': string | Renderer<object>;
+		'image': string | Renderer<object>;
+		'linkReference': string | Renderer<object>;
+		'imageReference': string | Renderer<object>;
+		'table': string | Renderer<object>;
+		'tableHead': string | Renderer<object>;
+		'tableBody': string | Renderer<object>;
+		'tableRow': string | Renderer<object>;
+		'tableCell': string | Renderer<object>;
+		'list': string | Renderer<object>;
+		'listItem': string | Renderer<object>;
+		'definition': string | Renderer<object>;
+		'heading': string | Renderer<object>;
+		'inlineCode': string | Renderer<object>;
+		'code': string | Renderer<object>;
+		'html': string | Renderer<object>;
 	}
 
 	type NodeTypes = keyof Renderers;
@@ -136,9 +138,19 @@ declare module 'react-markdown' {
 		 * An object where the keys represent the node type and the value is a React component. The object is merged with the default renderers. The props passed to the component varies based on the type of node.
 		 */
 		renderers?: ToOptionalKeys<Renderers>;
+		/**
+		 * An object where the keys represent the node type and the value is a React component. The object is merged with the default renderers. The props passed to the component varies based on the type of node.
+		 */
+		plugins?: any[];
 	}
 
 	class ReactMarkdown extends React.Component<MarkdownProps> {}
 
 	export = ReactMarkdown;
+}
+
+declare module 'remark-breaks' {
+	class ph {}
+
+	export = ph;
 }

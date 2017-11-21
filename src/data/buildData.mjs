@@ -249,7 +249,7 @@ function iterateProfessionVariants(array) {
 function iterateActivatables(array, type) {
   const list = {};
   for (const obj of array) {
-    const { subgr, combatTechniques } = obj;
+    const { subgr } = obj;
 
     const prefix = {
       adv: 'ADV_',
@@ -259,8 +259,7 @@ function iterateActivatables(array, type) {
 
     const newObj = {
       id: prefix[type] + obj.id,
-      subgr,
-      combatTechniques
+      subgr
     };
 
     if (obj.ap && obj.ap.match('&')) {

@@ -19,6 +19,7 @@ function mapStateToProps(state: AppState) {
 		skills: getSkills(state),
 		spells: getSpells(state),
 		spellExtensions: mapGetToSlice(getSpecialAbilities, 'SA_414')(state),
+		specialAbilities: getSpecialAbilities(state),
 	};
 }
 

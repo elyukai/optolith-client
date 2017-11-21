@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactMarkdown = require('react-markdown');
+import breaks = require('remark-breaks');
 
 export interface MarkdownProps {
 	className?: string;
@@ -24,6 +25,7 @@ export function Markdown(props: MarkdownProps) {
 			renderers={{
 				root
 			}}
+			plugins={[breaks]}
 			/>
 	);
 }
