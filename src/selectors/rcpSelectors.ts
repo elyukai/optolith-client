@@ -241,7 +241,7 @@ export const getAllProfessions = createSelector(
 
 		const filterProfessionExtended = (e: ProfessionInstance) => {
 			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : (typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.list.includes(e.id) !== typicalList.reverse));
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.list.includes(e.id) !== typicalList.reverse);
 			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
 			return groupVisible && commonVisible;
