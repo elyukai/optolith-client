@@ -29,6 +29,7 @@ export interface ActivatableRemoveListItemProps {
 	isUntypical?: boolean;
 	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
+	selectForInfo?(id: string): void;
 }
 
 export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps, undefined> {
@@ -39,7 +40,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	render() {
-		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale } = this.props;
+		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale, selectForInfo } = this.props;
 		const { id, minTier = 1, tier, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, cost, customCost, instance: { tiers } } = item;
 		let { name } = item;
 		let addSpecial;
@@ -90,7 +91,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 						disabled={disabled}
 						flat
 						/>}
-					<IconButton icon="&#xE912;" flat disabled />
+					<IconButton icon="&#xE912;" disabled={!selectForInfo} onClick={() => selectForInfo && selectForInfo(id)} flat />
 				</ListItemButtons>
 			</ListItem>
 		);

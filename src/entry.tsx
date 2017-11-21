@@ -40,13 +40,39 @@ store.dispatch(requestInitialData()).then(() => {
 						label: _translate(locale, 'mac.aboutapp', remote.app.getName()),
 						click: () => dispatch(showAbout())
 					},
-					{
-						type: 'separator'
-					},
+					{type: 'separator'},
+					{role: 'hide'},
+					{role: 'hideothers'},
+					{role: 'unhide'},
+					{type: 'separator'},
 					{
 						label: _translate(locale, 'mac.quit'),
 						click: () => dispatch(requestClose())
 					}
+				]
+			},
+			{
+				label: _translate(locale, 'edit'),
+				submenu: [
+					{role: 'cut'},
+					{role: 'copy'},
+					{role: 'paste'},
+					{role: 'delete'},
+					{role: 'selectall'}
+				]
+			},
+			{
+				label: _translate(locale, 'view'),
+				submenu: [
+					{role: 'togglefullscreen'}
+				]
+			},
+			{
+				role: 'window',
+				submenu: [
+					{role: 'minimize'},
+					{type: 'separator'},
+					{role: 'front'}
 				]
 			}
 		]);

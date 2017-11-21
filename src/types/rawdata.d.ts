@@ -258,7 +258,10 @@ export interface RawSpecialAbility {
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
 	gr: number;
+	subgr?: number;
+	combatTechniques?: string[];
 	extended?: (string | string[])[];
+	src: string[];
 }
 
 export interface RawSpecialAbilityLocale {
@@ -266,6 +269,12 @@ export interface RawSpecialAbilityLocale {
 	name: string;
 	sel?: Data.SelectionObject[];
 	input?: string;
+	nameInWiki?: string;
+	rules: string;
+	penalty?: string;
+	apValue?: string;
+	apValueAppend?: string;
+	src: number[];
 }
 
 export interface RawSpell {

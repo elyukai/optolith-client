@@ -577,7 +577,15 @@ export interface DisadvantageInstance extends DisadvantageInstanceInInit {
 export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.SPECIAL_ABILITIES;
 	readonly extended?: (string | string[])[];
+	nameInWiki?: string;
 	gr: number;
+	subgr?: number;
+	combatTechniques?: string[];
+	rules: string;
+	penalty?: string;
+	apValue?: string;
+	apValueAppend?: string;
+	src: SourceLink[];
 }
 
 export interface SpecialAbilityInstance extends SpecialAbilityInstanceInInit {

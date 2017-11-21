@@ -2,8 +2,9 @@
 	.info-header {
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-end;
+		align-items: flex-start;
 		margin-bottom: 16px;
+		flex-direction: column;
 
 		p {
 			margin: 0;
@@ -15,8 +16,8 @@
 
 		p:nth-child(2) {
 			color: var(--text-color);
-			margin-left: 10px;
-			font-family: Alegreya Sans;
+			margin-top: 4px;
+			font: 500 12px Alegreya Sans;
 		}
 	}
 

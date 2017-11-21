@@ -6,7 +6,7 @@ import { AppState } from '../reducers/app';
 import { getDeactiveSpecialAbilities, getSpecialAbilitiesForEdit } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { getPhase, getSpecialAbilities } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/skills/SpecialAbilities';
@@ -20,6 +20,7 @@ function mapStateToProps(state: AppState) {
 			return get(getDependent(state), id);
 		},
 		isRemovingEnabled: isRemovingEnabled(state),
+		list: [...getSpecialAbilities(state).values()],
 		phase: getPhase(state),
 		sortOrder: getSpecialAbilitiesSortOrder(state)
 	};

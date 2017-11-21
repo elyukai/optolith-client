@@ -249,14 +249,20 @@ function iterateProfessionVariants(array) {
 function iterateActivatables(array, type) {
   const list = {};
   for (const obj of array) {
+    const { subgr, combatTechniques } = obj;
+
     const prefix = {
       adv: 'ADV_',
       disadv: 'DISADV_',
       special: 'SA_'
     };
+
     const newObj = {
-      id: prefix[type] + obj.id
+      id: prefix[type] + obj.id,
+      subgr,
+      combatTechniques
     };
+
     if (obj.ap && obj.ap.match('&')) {
       newObj.ap = obj.ap.split('&').map(a => Number.parseInt(a));
     }
@@ -301,6 +307,8 @@ function iterateActivatables(array, type) {
       });
     }
     newObj.req = convertRequirements(obj.req);
+    newObj.src = obj.src ? obj.src.split('&') : [];
+
     list[newObj.id] = newObj;
   }
   return list;
@@ -355,6 +363,7 @@ function iterateCombatTechniques(array) {
     obj.id = 'CT_' + obj.id;
     delete obj.name;
     obj.leit = obj.leit.split('&').map(e => `ATTR_${e}`);
+    obj.src = obj.src ? obj.src.split('&') : [];
     list[obj.id] = obj;
   }
   return list;

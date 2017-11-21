@@ -259,8 +259,8 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, sel: localeSel, input } = localeObject;
-    const { id, ap, tiers, max, sel, req, gr, extended } = raw;
+    const { sel: localeSel, src: srcPages, ...otherLocale } = localeObject;
+    const { ap, sel, req, src: srcIds, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -272,19 +272,15 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
       finalSel = localeSel;
     }
     return {
+      ...otherLocale,
+      ...otherData,
       active: [],
       category: Categories.SPECIAL_ABILITIES,
       cost: ap,
       dependencies: [],
-      gr,
-      id,
-      input,
-      tiers,
-      max,
-      name,
       reqs: Array.isArray(req[0]) ? new Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>(req as any) : req as ('RCP' | Reusable.AllRequirementTypes)[],
       sel: finalSel,
-      extended
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;

@@ -744,7 +744,7 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   let { currentCost, combinedName } = obj;
   let tierName;
   if (Array.isArray(currentCost)) {
-    currentCost = currentCost[tier! - 1];
+    currentCost = currentCost.reduce((sum, current, index) => index <= (tier! - 1) ? sum + current : sum, 0);
     tierName = ` ${getRoman(tier!)}`;
   }
   else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {

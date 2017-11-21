@@ -492,6 +492,8 @@ export interface UIMessages {
 	"activatable.view.afraidof": string;
 	"activatable.view.immunityto": string;
 	"activatable.view.hatredof": string;
+	"info.rules": string;
+	"info.penalty": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;
@@ -510,6 +512,7 @@ export interface UIMessages {
 	"combattechniques.view.groups": string[];
 	"actions.addtolist": string;
 	"specialabilities.view.groups": string[];
+	"info.specialabilities.subgroups": string[];
 	"spells.view.groups": string[];
 	"spells.view.cantrip": string;
 	"spells.view.properties": string[];
@@ -729,6 +732,9 @@ export interface UIMessages {
 	"mothertongue.short": string;
 	"attributeadjustmentselection": string;
 	"mac.aboutapp": string;
+	"mac.preferences": string;
 	"mac.quit": string;
+	"edit": string;
+	"view": string;
 	"rules.enableallrulebooks": string;
 }

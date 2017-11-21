@@ -31,6 +31,7 @@ export interface ActivatableAddListItemOwnProps {
 	locale: UIMessages;
 	addToList(args: ActivateArgs): void;
 	get(id: string): Instance | undefined;
+	selectForInfo?(id: string): void;
 }
 
 export interface ActivatableAddListItemStateProps {
@@ -96,7 +97,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 	}
 
 	render() {
-		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills } = this.props;
+		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills, selectForInfo } = this.props;
 		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
 		let { item: { input } } = this.props;
 		const { customCost, customCostPreview, input: inputText, selected, selected2, selectedTier, showCustomCostDialog } = this.state;
@@ -446,7 +447,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				</ListItemValues>
 				<ListItemButtons>
 					<IconButton icon="&#xE916;" disabled={disabled} onClick={this.addToList.bind(null, args as ActivateArgs)} flat />
-					<IconButton icon="&#xE912;" flat disabled />
+					<IconButton icon="&#xE912;" disabled={!selectForInfo} onClick={() => selectForInfo && selectForInfo(id)} flat />
 				</ListItemButtons>
 			</ListItem>
 		);

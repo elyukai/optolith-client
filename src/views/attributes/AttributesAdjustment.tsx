@@ -19,13 +19,14 @@ export function AttributesAdjustment(props: AttributesAdjustmentProps) {
 	return (
 		<div className="attribute-adjustment">
 			<span className="label">{_translate(locale, 'attributeadjustmentselection')}</span>
-			{availableAttributeIds && adjustmentValue && currentAttributeId && <Dropdown
+			{availableAttributeIds && adjustmentValue && <Dropdown
 				options={attributes.filter(e => availableAttributeIds.includes(e.id)).map(({ id, name }) => ({
 					id,
 					name: `${name} ${sign(adjustmentValue)}`
 				}))}
 				value={currentAttributeId}
 				onChange={setAdjustmentId}
+				disabled={currentAttributeId === undefined}
 				/>}
 		</div>
 	);

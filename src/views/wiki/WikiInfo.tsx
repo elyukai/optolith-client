@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
+import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
 import { WikiCultureInfo } from './WikiCultureInfo';
@@ -12,7 +13,7 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = BlessingInstance | CantripInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | TalentInstance;
+type Instance = BlessingInstance | CantripInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | SpecialAbilityInstance | TalentInstance;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
@@ -49,6 +50,9 @@ export function WikiInfo(props: WikiInfoProps) {
 
 	if (typeof currentObject === 'object') {
 		switch (currentObject.category) {
+			case 'SPECIAL_ABILITIES':
+				currentElement = <WikiActivatableInfo {...props} currentObject={currentObject} />;
+				break;
 			case 'BLESSINGS':
 				currentElement = <WikiBlessingInfo {...props} currentObject={currentObject} />;
 				break;

@@ -92,19 +92,25 @@ function iterateProfessionVariantsL10n(array) {
 function iterateActivatablesL10n(array, type) {
 	const list = {};
 	for (const obj of array) {
-		const { name } = obj;
+		const { name, input, nameInWiki, rules, penalty, apValue, apValueAppend, src } = obj;
+
 		const prefix = {
 			adv: 'ADV_',
 			disadv: 'DISADV_',
 			special: 'SA_'
 		};
+
 		const newObj = {
 			id: prefix[type] + obj.id,
-			name
+			name,
+			input,
+			nameInWiki,
+			rules,
+			penalty,
+			apValue,
+			apValueAppend
 		};
-		if (obj.input) {
-			newObj.input = obj.input;
-		}
+
 		if (obj.sel) {
 			newObj.sel = splitList(obj.sel).map((e, i) => {
 				const ee = e.split('?');
@@ -112,6 +118,8 @@ function iterateActivatablesL10n(array, type) {
 				return { id, name: ee[1] };
 			});
 		}
+		newObj.src = src ? (typeof src === 'number' ? [src] : src.split('&').map(e => Number.parseInt(e))) : [];
+
 		list[newObj.id] = newObj;
 	}
 	return list;

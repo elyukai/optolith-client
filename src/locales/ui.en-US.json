@@ -490,6 +490,8 @@
 	"activatable.view.afraidof": "Afraid of",
 	"activatable.view.immunityto": "Immunity to",
 	"activatable.view.hatredof": "Hatred of",
+	"info.rules": "Rules",
+	"info.penalty": "Penalty",
 	"customcost.title": "Custom AP Cost",
 	"customcost.message": "AP Cost for ",
 	"skills.options.commoninculture": "Common Skills",
@@ -508,6 +510,7 @@
 	"combattechniques.view.groups": ["Melee", "Ranged"],
 	"actions.addtolist": "Add to list",
 	"specialabilities.view.groups": ["General", "Fate", "Combat", "Magical", "Staff", "Witch", "Karma", "Protective/Warding Circles", "Combat Styles (armed)", "Combat Styles (unarmed)", "Combat (extended)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten & Visionen", "Liturgiestile", "Karmal (Erweitert)"],
+	"info.specialabilities.subgroups": ["Passive", "Base Maneuver", "Special Maneuver"],
 	"spells.view.groups": ["Spell", "Ritual", "Curse", "Song"],
 	"spells.view.cantrip": "Cantrip",
 	"spells.view.properties": ["Anti-Magic", "Demonic", "Influence", "Elemental", "Healing", "Clairvoyance", "Illusion", "Spheres", "Object", "Telekinesis", "Transformation"],
@@ -726,7 +729,10 @@
 	"downloadupdate": "Download Update",
 	"mothertongue.short": "MT",
 	"attributeadjustmentselection": "Attribute adjustment selection",
-	"mac.aboutapp": "About {0} ...",
+	"mac.aboutapp": "About {0}",
+	"mac.preferences": "Preferences...",
 	"mac.quit": "Quit",
+	"edit": "Edit",
+	"view": "View",
 	"rules.enableallrulebooks": "Enable all Rule Books"
 }

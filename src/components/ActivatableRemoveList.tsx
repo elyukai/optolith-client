@@ -18,6 +18,7 @@ export interface ActivatableRemoveListProps {
 	sortOrder?: string;
 	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
+	selectForInfo?(id: string): void;
 }
 
 export function ActivatableRemoveList(props: ActivatableRemoveListProps) {

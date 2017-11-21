@@ -22,6 +22,7 @@ export interface ActivatableAddListProps {
 	sortOrder?: string;
 	addToList(args: ActivateArgs): void;
 	get(id: string): Instance | undefined;
+	selectForInfo?(id: string): void;
 }
 
 export function ActivatableAddList(props: ActivatableAddListProps) {

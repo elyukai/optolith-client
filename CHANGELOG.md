@@ -1,3 +1,12 @@
+# 0.51.2
+
+- Fixed calculating AP for *activated* special ability entries where you have to buy each tier separately (e.g. *Feint I-III*). Previously, only the cost for the highest bought tier were shown.
+- Removing bought energy points now correctly lowers AP spent. Previously, it did not change the current AP spent.
+
+## German Specific
+
+- Fixed *Lederüstung* typo.
+
 # 0.51.1
 
 - Fixed Auto Updater.
