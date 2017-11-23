@@ -92,7 +92,7 @@ function iterateProfessionVariantsL10n(array) {
 function iterateActivatablesL10n(array, type) {
 	const list = {};
 	for (const obj of array) {
-		const { name, input, nameInWiki, rules, penalty, combatTechniques, aeCost, protectiveCircle, wardingCircle, apValue, apValueAppend, src } = obj;
+		const { name, input, nameInWiki, rules, effect, volume, penalty, combatTechniques, aeCost, protectiveCircle, wardingCircle, bindingCost, property, aspect, apValue, apValueAppend, src } = obj;
 
 		const prefix = {
 			adv: 'ADV_',
@@ -106,11 +106,17 @@ function iterateActivatablesL10n(array, type) {
 			input,
 			nameInWiki,
 			rules,
+			effect,
+			volume,
+			rules,
 			penalty,
 			combatTechniques,
 			aeCost,
 			protectiveCircle,
 			wardingCircle,
+			bindingCost,
+			property,
+			aspect,
 			apValue,
 			apValueAppend
 		};

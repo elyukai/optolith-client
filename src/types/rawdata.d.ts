@@ -260,6 +260,8 @@ export interface RawSpecialAbility {
 	gr: number;
 	subgr?: number;
 	extended?: (string | string[])[];
+	property?: number;
+	aspect?: number;
 	src: string[];
 }
 
@@ -270,11 +272,16 @@ export interface RawSpecialAbilityLocale {
 	input?: string;
 	nameInWiki?: string;
 	rules?: string;
+	effect?: string;
+	volume?: string;
 	penalty?: string;
 	combatTechniques?: string;
 	aeCost?: string;
 	protectiveCircle?: string;
 	wardingCircle?: string;
+	bindingCost?: string;
+	property?: string;
+	aspect?: string;
 	apValue?: string;
 	apValueAppend?: string;
 	src: number[];

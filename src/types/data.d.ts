@@ -582,10 +582,15 @@ export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInI
 	subgr?: number;
 	combatTechniques?: string;
 	rules?: string;
+	effect?: string;
+	volume?: string;
 	penalty?: string;
 	aeCost?: string;
 	protectiveCircle?: string;
 	wardingCircle?: string;
+	bindingCost?: string;
+	property?: number | string;
+	aspect?: number | string;
 	apValue?: string;
 	apValueAppend?: string;
 	src: SourceLink[];

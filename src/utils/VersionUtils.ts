@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import { lt, lte } from 'semver';
+import { lt, lte, satisfies } from 'semver';
 import { ActiveObject, Hero, ToListById } from '../types/data.d';
 
 export const currentVersion = JSON.parse(fs.readFileSync(path.join(remote.app.getAppPath(), 'package.json'), 'utf8')).version as string;
@@ -594,6 +594,20 @@ export function convertHero(hero: Hero) {
       enableAllRuleBooks: true,
       enabledRuleBooks: []
     };
+  }
+  if (satisfies(entry.clientVersion.split(/-/)[0], '<= 0.51.2 || <= 0.51.3-alpha.3')) {
+    if (entry.activatable.hasOwnProperty('SA_243') && entry.activatable.hasOwnProperty('SA_255')) {
+      const { SA_255: _, ...other } = entry.activatable;
+      entry.activatable = other;
+      entry.ap.spent -= 10;
+    }
+    else if (entry.activatable.hasOwnProperty('SA_255')) {
+      const { SA_255: arr, ...other } = entry.activatable;
+      entry.activatable = {
+        ...other,
+        SA_243: arr
+      };
+    }
   }
   return entry;
 }
