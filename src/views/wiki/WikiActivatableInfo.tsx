@@ -42,13 +42,25 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 	return <Scroll>
 		<div className="info specialability-info">
 			<div className="specialability-header info-header">
-				<p className="title">{currentObject.name}</p>
+				<p className="title">{currentObject.name}{typeof tiers === 'number' ? tiers < 2 ? ' I' : ` I-${getRoman(tiers)}` : ''}</p>
 				{currentObject.subgr && <p className="title">{_translate(locale, 'info.specialabilities.subgroups')[currentObject.subgr - 1]}</p>}
 			</div>
-			<Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />
+			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
 			{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedcombatspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
 			{currentObject.penalty && <Markdown source={`**${_translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
 			{currentObject.combatTechniques && <Markdown source={`**${_translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
+			{currentObject.aeCost && <p>
+				<span>{_translate(locale, 'info.aecost')}</span>
+				<span>{currentObject.aeCost}</span>
+			</p>}
+			{currentObject.protectiveCircle && <p>
+				<span>{_translate(locale, 'info.aecost')}</span>
+				<span>{currentObject.protectiveCircle}</span>
+			</p>}
+			{currentObject.wardingCircle && <p>
+				<span>{_translate(locale, 'info.aecost')}</span>
+				<span>{currentObject.wardingCircle}</span>
+			</p>}
 			<Markdown source={costText} />
 			<p className="source">
 				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>

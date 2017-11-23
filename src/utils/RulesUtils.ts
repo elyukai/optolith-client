@@ -30,7 +30,11 @@ export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: T) => {
  * Filters a list with `SourceLink`s by availability.
  * @param list A list with `SourceLink`s.
  * @param availablility The availability state.
+ * @param or An additional function to state the entry should be still shown.
  */
-export const filterByAvailability = <T extends ObjectWithSource>(list: T[], availablility: boolean | Set<string>) => {
-	return list.filter(isAvailable(availablility));
+export const filterByAvailability = <T extends ObjectWithSource>(list: T[], availablility: boolean | Set<string>, or?: (obj: T) => boolean) => {
+	if (or) {
+		return list.filter(e => (isAvailable(availablility)(e) || or(e)));
+	}
+	return list.filter(e => (isAvailable(availablility)(e) || or && or(e)));
 };

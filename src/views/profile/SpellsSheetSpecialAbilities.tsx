@@ -13,9 +13,7 @@ export function SpellsSheetSpecialAbilities(props: SpellsSheetSpecialAbilitiesPr
 	const { locale, magicalSpecialAbilities } = props;
 	return (
 		<TextBox label={_translate(locale, 'charactersheet.spells.magicalspecialabilities.title')} className="activatable-list">
-			<ActivatableTextList
-				list={magicalSpecialAbilities}
-				/>
+			<ActivatableTextList list={magicalSpecialAbilities} locale={locale} />
 		</TextBox>
 	);
 }

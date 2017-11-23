@@ -13,6 +13,7 @@ import { mergeIntoState, setStateItem } from './ListUtils';
 import { getTraditionOfAspect } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
+import { getCategoryById } from './IDUtils';
 
 /**
  * Checks if you can buy the entry multiple times.
@@ -745,12 +746,15 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   let tierName;
   if (Array.isArray(currentCost)) {
     currentCost = currentCost.reduce((sum, current, index) => index <= (tier! - 1) ? sum + current : sum, 0);
-    tierName = ` ${getRoman(tier!)}`;
+    tierName = ` I-${getRoman(tier!)}`;
   }
   else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {
     currentCost *= tier;
     if (id === 'SA_29' && tier === 4) {
       tierName = ` ${_translate(locale, 'mothertongue.short')}`;
+    }
+    else if (getCategoryById(obj.id) === 'SPECIAL_ABILITIES') {
+      tierName = ` I-${getRoman(tier)}`;
     }
     else {
       tierName = ` ${getRoman(tier)}`;

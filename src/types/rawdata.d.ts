@@ -269,9 +269,12 @@ export interface RawSpecialAbilityLocale {
 	sel?: Data.SelectionObject[];
 	input?: string;
 	nameInWiki?: string;
-	rules: string;
+	rules?: string;
 	penalty?: string;
 	combatTechniques?: string;
+	aeCost?: string;
+	protectiveCircle?: string;
+	wardingCircle?: string;
 	apValue?: string;
 	apValueAppend?: string;
 	src: number[];

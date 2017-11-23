@@ -81,13 +81,13 @@ export function MainSheet(props: MainSheetProps) {
 				<div className="lower">
 					<div className="lists">
 						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.advantages')}>
-							<ActivatableTextList list={advantagesActive} />
+							<ActivatableTextList list={advantagesActive} locale={locale} />
 						</TextBox>
 						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.disadvantages')}>
-							<ActivatableTextList list={disadvantagesActive} />
+							<ActivatableTextList list={disadvantagesActive} locale={locale} />
 						</TextBox>
 						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.generalspecialabilites')}>
-							<ActivatableTextList list={generalsaActive} />
+							<ActivatableTextList list={generalsaActive} locale={locale} />
 						</TextBox>
 					</div>
 					<MainSheetAttributes

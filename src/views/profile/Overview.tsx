@@ -250,9 +250,9 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 						phase === 3 && (
 							<div>
 								<h3>{_translate(locale, 'profileoverview.view.advantages')}</h3>
-								<ActivatableTextList list={advantages} />
+								<ActivatableTextList list={advantages} locale={locale} />
 								<h3>{_translate(locale, 'profileoverview.view.disadvantages')}</h3>
-								<ActivatableTextList list={disadvantages} />
+								<ActivatableTextList list={disadvantages} locale={locale} />
 							</div>
 						)
 					}

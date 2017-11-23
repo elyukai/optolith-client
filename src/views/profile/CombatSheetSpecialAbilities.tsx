@@ -13,7 +13,7 @@ export function CombatSheetSpecialAbilities(props: CombatSheetSpecialAbilitiesPr
 	const { combatSpecialAbilities, locale } = props;
 	return (
 		<TextBox label={_translate(locale, 'charactersheet.combat.combatspecialabilities.title')} className="activatable-list">
-			<ActivatableTextList list={combatSpecialAbilities} />
+			<ActivatableTextList list={combatSpecialAbilities} locale={locale} />
 		</TextBox>
 	);
 }

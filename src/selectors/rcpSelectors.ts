@@ -241,7 +241,7 @@ export const getAllProfessions = createSelector(
 
 		const filterProfessionExtended = (e: ProfessionInstance) => {
 			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.list.includes(e.id) !== typicalList.reverse);
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.reverse === true ? !typicalList.list.includes(e.id) && isEntryFromCoreBook(e) : typicalList.list.includes(e.id));
 			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
 			return groupVisible && commonVisible;
@@ -346,7 +346,8 @@ export const getAllProfessions = createSelector(
 export const getFilteredProfessions = createSelector(
 	getAllProfessions,
 	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByAvailability(list, availablility);
+	getProfessionsVisibilityFilter,
+	(list, availablility, visibility) => {
+		return visibility === 'all' ? filterByAvailability(list, availablility, entry => entry.id === 'P_0') : list;
 	}
 );

@@ -13,9 +13,7 @@ export function LiturgiesSheetSpecialAbilities(props: LiturgiesSheetSpecialAbili
 	const { blessedSpecialAbilities, locale } = props;
 	return (
 		<TextBox label={_translate(locale, 'charactersheet.chants.blessedspecialabilities.title')} className="activatable-list">
-			<ActivatableTextList
-				list={blessedSpecialAbilities}
-				/>
+			<ActivatableTextList list={blessedSpecialAbilities} locale={locale} />
 		</TextBox>
 	);
 }
