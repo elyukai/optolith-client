@@ -746,7 +746,7 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   let tierName;
   if (Array.isArray(currentCost)) {
     currentCost = currentCost.reduce((sum, current, index) => index <= (tier! - 1) ? sum + current : sum, 0);
-    tierName = ` I-${getRoman(tier!)}`;
+    tierName = tier! > 1 ? ` I-${getRoman(tier!)}` : ` ${getRoman(tier!)}`;
   }
   else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {
     currentCost *= tier;
@@ -754,7 +754,7 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
       tierName = ` ${_translate(locale, 'mothertongue.short')}`;
     }
     else if (getCategoryById(obj.id) === 'SPECIAL_ABILITIES') {
-      tierName = ` I-${getRoman(tier)}`;
+      tierName = tier > 1 ? ` I-${getRoman(tier)}` : ` ${getRoman(tier)}`;
     }
     else {
       tierName = ` ${getRoman(tier)}`;

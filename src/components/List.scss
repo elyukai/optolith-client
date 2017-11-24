@@ -14,16 +14,40 @@ ul.list-wrapper {
 
 		&:hover {
 			.values {
-				$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+				.ATTR_1 {
+					border-color: var(--courage-color);
+				}
 
-				@for $i from 1 through 8 {
-					.ATTR_#{$i} {
-						border-color: map-get($map: $colors, $key: $i);
-					}
+				.ATTR_2 {
+					border-color: var(--sagacity-color);
+				}
+
+				.ATTR_3 {
+					border-color: var(--intuition-color);
+				}
+
+				.ATTR_4 {
+					border-color: var(--charisma-color);
+				}
+
+				.ATTR_5 {
+					border-color: var(--dexterity-color);
+				}
+
+				.ATTR_6 {
+					border-color: var(--agility-color);
+				}
+
+				.ATTR_7 {
+					border-color: var(--constitution-color);
+				}
+
+				.ATTR_8 {
+					border-color: var(--strength-color);
 				}
 
 				.ATTR_6_8 {
-					border-color: $attr6 $attr8 $attr8 $attr6;
+					border-color: var(--agility-color) var(--strength-color) var(--strength-color) var(--agility-color);
 				}
 			}
 
@@ -360,43 +384,43 @@ ul.list-wrapper {
 
 		&.imp {
 			.group {
-				color: #c89c3d;
+				color: var(--important-dark-color);
 			}
 
 			.values > div {
-				border-color: #c89c3d;
+				border-color: var(--important-dark-color);
 			}
 
 			p.title, .values .sr {
-				color: #fabe0a;
+				color: var(--important-bright-color);
 			}
 		}
 
 		&.typ {
 			.group {
-				color: #005177;
+				color: var(--common-dark-color);
 			}
 
 			.values > div {
-				border-color: #005177;
+				border-color: var(--common-dark-color);
 			}
 
 			p.title, .values .sr {
-				color: #0acbe6;
+				color: var(--common-bright-color);
 			}
 		}
 
 		&.untyp {
 			.group {
-				color: #aa1b32;
+				color: var(--uncommon-dark-color);
 			}
 
 			.values > div {
-				border-color: #aa1b32;
+				border-color: var(--uncommon-dark-color);
 			}
 
 			p.title, .values .sr {
-				color: #ff2345;
+				color: var(--uncommon-bright-color);
 			}
 		}
 
@@ -501,25 +525,5 @@ ul.list-wrapper {
 		text-align: center;
 		align-self: center;
 		margin-top: -50px;
-	}
-}
-
-.theme-light ul.list-wrapper li {
-	&.imp {
-		p.title, .values .sr {
-			color: #fabe0a;
-		}
-	}
-
-	&.typ {
-		p.title, .values .sr {
-			color: #0acbe6;
-		}
-	}
-
-	&.untyp {
-		p.title, .values .sr {
-			color: #ff2345;
-		}
 	}
 }

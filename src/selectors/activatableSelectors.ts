@@ -236,7 +236,7 @@ export const getFatePointsModifier = createSelector(
       return luckActive.tier!;
     }
     if (badLuckActive) {
-      return badLuckActive.tier!;
+      return badLuckActive.tier! * -1;
     }
     return 0;
   }

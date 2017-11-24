@@ -22,21 +22,21 @@
 
 	.rec {
 		.icon {
-			border-color: $recommended2;
+			border-color: var(--common-dark-color);
 		}
 
 		.name {
-			color: $recommended1
+			color: var(--common-bright-color);
 		}
 	}
 
 	.unrec {
 		.icon {
-			border-color: $unrecommended2;
+			border-color: var(--uncommon-dark-color);
 		}
 
 		.name {
-			color: $unrecommended1
+			color: var(--uncommon-bright-color);
 		}
 	}
 }

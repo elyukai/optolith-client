@@ -13,14 +13,51 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 	--text-color: #7f7f7f;
 	--titlebar-height: 31px;
 	--navigationbar-height: 64px;
+	--important-bright-color: #fabe0a;
+	--important-dark-color: #c89c3d;
+	--common-bright-color: #0acbe6;
+	--common-dark-color: #005177;
+	--uncommon-bright-color: #ff2345;
+	--uncommon-dark-color: #aa1b32;
+	--courage-color: #aa1b32;
+	--sagacity-color: #6b4497;
+	--intuition-color: #06a341;
+	--charisma-color: #3c3c41;
+	--dexterity-color: #aea000;
+	--agility-color: #005177;
+	--constitution-color: #f7f4ed;
+	--strength-color: #ac6000;
 }
 
 .theme-light {
+	--accent-color-intense: #b6a68a;
 	--background-color: #f0f0f0;
 	--background-color-transparent06: transparentize(#f0f0f0, .4);
 	--background-color-transparent08: transparentize(#f0f0f0, .2);
 	--headings-color: black;
 	--text-color: #3c3c3c;
+	--important-bright-color: #cac158;
+	--important-dark-color: #cac158;
+	--common-bright-color: #5398bb;
+	--common-dark-color: #5398bb;
+	--uncommon-bright-color: #c54747;
+	--uncommon-dark-color: #c54747;
+	--courage-color: #c54747;
+	--sagacity-color: #a85bd4;
+	--intuition-color: #339b5b;
+	--charisma-color: black;
+	--dexterity-color: #cac158;
+	--agility-color: #5398bb;
+	--constitution-color: white;
+	--strength-color: #c28e46;
+	// --courage-color: #d00000;
+	// --sagacity-color: #8100ca;
+	// --intuition-color: #00ba4a;
+	// --charisma-color: black;
+	// --dexterity-color: #daca00;
+	// --agility-color: #007eca;
+	// --constitution-color: white;
+	// --strength-color: #ea8c00;
 }
 
 .platform-darwin {

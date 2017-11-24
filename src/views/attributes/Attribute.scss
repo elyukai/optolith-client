@@ -97,12 +97,36 @@
 		flex: none;
 		position: relative;
 
-		$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+		&.ATTR_1 > .value {
+			border-color: var(--courage-color);
+		}
 
-		@for $i from 1 through 8 {
-			&.ATTR_#{$i} > .value {
-				border-color: map-get($map: $colors, $key: $i);
-			}
+		&.ATTR_2 > .value {
+			border-color: var(--sagacity-color);
+		}
+
+		&.ATTR_3 > .value {
+			border-color: var(--intuition-color);
+		}
+
+		&.ATTR_4 > .value {
+			border-color: var(--charisma-color);
+		}
+
+		&.ATTR_5 > .value {
+			border-color: var(--dexterity-color);
+		}
+
+		&.ATTR_6 > .value {
+			border-color: var(--agility-color);
+		}
+
+		&.ATTR_7 > .value {
+			border-color: var(--constitution-color);
+		}
+
+		&.ATTR_8 > .value {
+			border-color: var(--strength-color);
 		}
 	}
 

@@ -42,7 +42,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 	return <Scroll>
 		<div className="info specialability-info">
 			<div className="specialability-header info-header">
-				<p className="title">{currentObject.name}{typeof tiers === 'number' ? tiers < 2 ? ' I' : ` I-${getRoman(tiers)}` : ''}</p>
+				<p className="title">{currentObject.nameInWiki || currentObject.name}{typeof tiers === 'number' ? tiers < 2 ? ' I' : ` I-${getRoman(tiers)}` : ''}</p>
 				{currentObject.subgr && <p className="title">{_translate(locale, 'info.specialabilities.subgroups')[currentObject.subgr - 1]}</p>}
 			</div>
 			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
