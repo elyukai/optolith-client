@@ -513,6 +513,7 @@ export interface UIMessages {
 	"view.commoninculture": string;
 	"view.uncommoninculture": string;
 	"combattechniques.view.groups": string[];
+	"info.special": string;
 	"actions.addtolist": string;
 	"specialabilities.view.groups": string[];
 	"info.specialabilities.subgroups": string[];

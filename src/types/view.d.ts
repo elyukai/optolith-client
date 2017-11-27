@@ -137,6 +137,8 @@ export interface CombatTechnique {
 	at: number;
 	pa?: number;
 	category: Categories.COMBAT_TECHNIQUES;
+	special?: string;
+	src: SourceLink[];
 }
 
 export interface CombatTechniqueWithRequirements extends CombatTechnique {

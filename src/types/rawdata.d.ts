@@ -194,11 +194,14 @@ export interface RawCombatTechnique {
 	leit: string[];
 	bf: number;
 	gr: number;
+	src: string[];
 }
 
 export interface RawCombatTechniqueLocale {
 	id: string;
 	name: string;
+	special?: string;
+	src: number[];
 }
 
 export interface RawDisadvantage extends RawAdvantage {}

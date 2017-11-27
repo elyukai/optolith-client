@@ -309,18 +309,19 @@ export function initCombatTechnique(raw: RawCombatTechnique, locale: ToListById<
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { id, gr, skt, leit, bf } = raw;
+    const { src: srcPages, ...otherLocale } = localeObject;
+    const { id, gr, skt, leit, bf, src: srcIds, ...otherData } = raw;
     return {
+      ...otherLocale,
+      ...otherData,
       category: Categories.COMBAT_TECHNIQUES,
       dependencies: [],
       gr,
       ic: skt,
-      id,
-      name,
       primary: leit,
       value: 6,
-      bf
+      bf,
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;

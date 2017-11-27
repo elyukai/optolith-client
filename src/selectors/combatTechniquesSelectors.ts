@@ -3,9 +3,11 @@ import { AppState } from '../reducers/app';
 import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, ExperienceLevel, SpecialAbilityInstance } from '../types/data.d';
 import { CombatTechnique, CombatTechniqueWithRequirements } from '../types/view.d';
 import { getSids } from '../utils/ActivatableUtils';
+import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getAttributes, getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
 import { getAdvantages, getPhase, getSpecialAbilities } from './stateSelectors';
 
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
@@ -28,7 +30,7 @@ export const getForSheet = createSelector(
 	(combatTechniques, attributes) => {
 		const array: CombatTechnique[] = [];
 		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr, category } = entry;
+			const { ic, name, primary, value, gr, category, special, src } = entry;
 			array.push({
 				id,
 				name,
@@ -38,7 +40,9 @@ export const getForSheet = createSelector(
 				gr,
 				at: getAt(attributes, entry),
 				pa: getPa(attributes, entry),
-				category
+				category,
+				special,
+				src,
 			});
 		}
 		return array;
@@ -55,7 +59,7 @@ export const getAllCombatTechniques = createSelector(
 	(combatTechniques, attributes, hunter, exceptionalCombatTechnique, phase, startEl) => {
 		const array: CombatTechniqueWithRequirements[] = [];
 		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr, category } = entry;
+			const { ic, name, primary, value, gr, category, special, src } = entry;
 			array.push({
 				id,
 				name,
@@ -67,10 +71,20 @@ export const getAllCombatTechniques = createSelector(
 				pa: getPa(attributes, entry),
 				min: getMin(hunter, combatTechniques, entry),
 				max: getMax(exceptionalCombatTechnique, startEl, attributes, phase, entry),
-				category
+				category,
+				special,
+				src,
 			});
 		}
 		return array;
+	}
+);
+
+export const getFilteredCombatTechniques = createSelector(
+	getAllCombatTechniques,
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByAvailability(list, availablility, obj => obj.value > 6);
 	}
 );
 

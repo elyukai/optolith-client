@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
-import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
+import { CombatTechnique, Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
+import { WikiCombatTechniqueInfo } from './WikiCombatTechniqueInfo';
 import { WikiCultureInfo } from './WikiCultureInfo';
 import { WikiInfoEmpty } from './WikiInfoEmpty';
 import { WikiLiturgicalChantInfo } from './WikiLiturgicalChantInfo';
@@ -13,7 +14,7 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = BlessingInstance | CantripInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | SpecialAbilityInstance | TalentInstance;
+type Instance = BlessingInstance | CantripInstance | CombatTechnique | LiturgyInstance | SpellInstance | Culture | Profession | Race | SpecialAbilityInstance | TalentInstance;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
@@ -59,6 +60,9 @@ export function WikiInfo(props: WikiInfoProps) {
 				break;
 			case 'CANTRIPS':
 				currentElement = <WikiCantripInfo {...props} currentObject={currentObject} />;
+				break;
+			case 'COMBAT_TECHNIQUES':
+				currentElement = <WikiCombatTechniqueInfo {...props} currentObject={currentObject} />;
 				break;
 			case 'CULTURES':
 				currentElement = <WikiCultureInfo {...props} currentObject={currentObject} />;

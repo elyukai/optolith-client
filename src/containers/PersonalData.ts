@@ -10,6 +10,7 @@ import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getPhase } from '../selectors/stateSelectors';
+import { isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { InputTextEvent } from '../types/data.d';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
 
@@ -22,6 +23,7 @@ function mapStateToProps(state: AppState) {
 		currentEl: getCurrentEl(state),
 		disadvantages: getDisadvantagesForSheet(state),
 		isRemovingEnabled: isRemovingEnabled(state),
+		isEditingHeroAfterCreationPhaseEnabled: isEditingHeroAfterCreationPhaseEnabled(state),
 		phase: getPhase(state),
 		profession: getCurrentProfession(state),
 		professionVariant: getCurrentProfessionVariant(state),

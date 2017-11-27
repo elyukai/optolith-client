@@ -9,6 +9,7 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
+import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { CombatTechniqueWithRequirements } from '../../types/view.d';
@@ -39,18 +40,21 @@ export type CombatTechniquesProps = CombatTechniquesStateProps & CombatTechnique
 
 export interface CombatTechniquesState {
 	filterText: string;
+	infoId?: string;
 }
 
 export class CombatTechniques extends React.Component<CombatTechniquesProps, CombatTechniquesState> {
 	state = {
-		filterText: ''
+		filterText: '',
+		infoId: undefined
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CombatTechniquesState);
+	showInfo = (id: string) => this.setState({ infoId: id } as CombatTechniquesState);
 
 	render() {
 		const { addPoint, attributes, derivedCharacteristics, list: rawlist, locale, isRemovingEnabled, removePoint, setSortOrder, sortOrder } = this.props;
-		const { filterText } = this.state;
+		const { filterText, infoId } = this.state;
 
 		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
 
@@ -121,6 +125,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											]}
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
+											selectForInfo={this.showInfo}
 											>
 											<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
 										</SkillListItem>
@@ -130,6 +135,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 						</List>
 					</Scroll>
 				</MainContent>
+				<WikiInfoContainer {...this.props} currentId={infoId}/>
 			</Page>
 		);
 	}

@@ -32,6 +32,7 @@ export interface PersonalDataStateProps {
 	race: RaceInstance | undefined;
 	raceVariant: RaceVariantInstance | undefined;
 	isRemovingEnabled: boolean;
+	isEditingHeroAfterCreationPhaseEnabled: boolean;
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
@@ -92,6 +93,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			profile,
 			race,
 			raceVariant,
+			isEditingHeroAfterCreationPhaseEnabled,
 			...other
 		} = this.props;
 
@@ -241,7 +243,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 									label={_translate(locale, 'profileoverview.actions.endherocreation')}
 									onClick={endCharacterCreation}
 									primary
-									disabled={apLeft < 0}
+									disabled={apLeft < 0 || apLeft > 10 && !isEditingHeroAfterCreationPhaseEnabled}
 									/>
 							</div>
 						)

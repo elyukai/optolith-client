@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import { AppState } from '../reducers/app';
-import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
+import { getFilteredCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getPhase } from '../selectors/stateSelectors';
@@ -16,7 +16,7 @@ function mapStateToProps(state: AppState) {
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		isRemovingEnabled: isRemovingEnabled(state),
-		list: getAllCombatTechniques(state),
+		list: getFilteredCombatTechniques(state),
 		phase: getPhase(state),
 		sortOrder: getCombatTechniquesSortOrder(state)
 	};

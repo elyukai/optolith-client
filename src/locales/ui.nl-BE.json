@@ -513,6 +513,7 @@
 	"view.commoninculture": "Typisch",
 	"view.uncommoninculture": "Untypisch",
 	"combattechniques.view.groups": ["Nahkampf", "Fernkampf"],
+	"info.special": "Besonderheiten",
 	"actions.addtolist": "Hinzufügen",
 	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Stab", "Hexe", "Karmal", "Bann-/Schutzkreise", "Kampfstile (bewaffnet)", "Kampfstile (unbewaffnet)", "Kampf (erweitert)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten", "Liturgiestile", "Karmal (Erweitert)", "Visionen"],
 	"info.specialabilities.subgroups": ["Passiv", "Basismanöver", "Spezialmanöver"],

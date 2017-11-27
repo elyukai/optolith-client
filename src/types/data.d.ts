@@ -645,6 +645,8 @@ export interface CombatTechniqueInstance {
 	readonly primary: string[];
 	dependencies: CombatTechniqueInstanceDependency[];
 	value: number;
+	readonly special?: string;
+	readonly src: SourceLink[];
 }
 
 export type LiturgyInstanceDependency = SpellInstanceDependency;
