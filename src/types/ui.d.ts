@@ -497,6 +497,10 @@ export interface UIMessages {
 	"info.penalty": string;
 	"info.tier": string;
 	"info.pertier": string;
+	"info.volume": string;
+	"info.bindingcost": string;
+	"info.protectivecircle": string;
+	"info.wardingcircle": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;

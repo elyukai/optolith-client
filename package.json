@@ -44,7 +44,7 @@
     "@types/react-portal": "^3.0.3",
     "@types/react-redux": "^4.4.47",
     "@types/semver": "^5.4.0",
-    "electron": "^1.8.1",
+    "electron": "^1.8.2-beta.2",
     "electron-builder": "^19.45.6",
     "electron-builder-squirrel-windows": "^19.45.0",
     "electron-packager": "^8.7.2",

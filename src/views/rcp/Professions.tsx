@@ -67,7 +67,9 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 		const { currentProfessionId, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, visibilityFilter } = this.props;
 		const { filterText, showAddSlidein } = this.state;
 
-		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key: e => e.src[0].id }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key: e => e.src[0].id }], { addProperty: 'subname', keyOfName: sex });
+		const key = (e: Profession) => e.src[0] ? e.src[0].id : 'US25000';
+
+		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }], { addProperty: 'subname', keyOfName: sex });
 
 		return (
 			<Page id="professions">
