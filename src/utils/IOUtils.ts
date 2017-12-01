@@ -84,3 +84,16 @@ export function showOpenDialog(options: Electron.OpenDialogOptions, window: Elec
 export function getSystemLocale() {
 	return remote.app.getLocale().match(/^de/) ? 'de-DE' : 'en-US';
 }
+
+const byteTags = ['', 'K', 'M', 'G', 'T'];
+
+export function bytify(number: number, localeId: string) {
+	let tier = 0;
+
+	while (number > 1023 && tier < byteTags.length) {
+		tier++;
+		number /= 1024;
+	}
+
+	return `${(Math.round(number * 10) / 10).toLocaleString(localeId)} ${byteTags[tier]}B`;
+}

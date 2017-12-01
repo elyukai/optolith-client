@@ -1,3 +1,4 @@
+import { ProgressInfo } from 'builder-util-runtime';
 import { AddAlertAction, RemoveAlertAction } from '../actions/AlertActions';
 import { SetUpdateDownloadProgressAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
@@ -7,7 +8,7 @@ type Action = AddAlertAction | RemoveAlertAction | SetUpdateDownloadProgressActi
 
 export interface AlertsState {
 	currentAlert: Alert | null;
-	updateDownloadProgress?: number;
+	updateDownloadProgress?: ProgressInfo;
 }
 
 const initialState: AlertsState = {
@@ -31,7 +32,7 @@ export function alerts(state: AlertsState = initialState, action: Action): Alert
 		case ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS:
 			return {
 				...state,
-				updateDownloadProgress: action.payload.percent
+				updateDownloadProgress: action.payload
 			};
 
 		default:

@@ -1,3 +1,4 @@
+import { ProgressInfo } from 'builder-util-runtime';
 import { ipcRenderer, remote } from 'electron';
 import { UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
@@ -353,7 +354,13 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 				{
 					label: _translate(locale, 'newversionavailable.update'),
 					dispatchOnClick: (dispatch => {
-						dispatch(setUpdateDownloadProgress({ percent: 0 }));
+						dispatch(setUpdateDownloadProgress({
+							total: 0,
+							delta: 0,
+							transferred: 0,
+							percent: 0,
+							bytesPerSecond: 0
+						}));
 						ipcRenderer.send('download-update');
 					}) as AsyncAction
 				},
@@ -367,12 +374,10 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 
 export interface SetUpdateDownloadProgressAction {
 	type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS;
-	payload: {
-		percent: number | undefined;
-	};
+	payload?: ProgressInfo;
 }
 
-export function setUpdateDownloadProgress(info: { percent: number | undefined; }): SetUpdateDownloadProgressAction {
+export function setUpdateDownloadProgress(info?: ProgressInfo): SetUpdateDownloadProgressAction {
 	return {
 		type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS,
 		payload: info

@@ -5,13 +5,6 @@ import windowStateKeeper = require('electron-window-state');
 import * as path from 'path';
 import * as url from 'url';
 
-export interface ProgressInfo {
-	bytesPerSecond: number;
-	percent: number;
-	transferred: number;
-	total: number;
-}
-
 app.setAppUserModelId('lukasobermann.optolyth');
 
 autoUpdater.logger = log;
