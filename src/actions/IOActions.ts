@@ -24,7 +24,7 @@ function getAppDataPath(): string {
 	return remote.app.getPath('userData');
 }
 
-export function requestClose(): AsyncAction {
+export function requestClose(optionalCall?: () => void): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const safeToExit = !getUndoAvailability(state);
@@ -35,6 +35,9 @@ export function requestClose(): AsyncAction {
 				dispatch(addAlert({
 					message: _translate(locale, 'fileapi.allsaved'),
 					onClose() {
+						if (optionalCall) {
+							optionalCall();
+						}
 						remote.getCurrentWindow().close();
 					}
 				}));

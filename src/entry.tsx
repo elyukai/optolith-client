@@ -47,7 +47,7 @@ store.dispatch(requestInitialData()).then(() => {
 					{type: 'separator'},
 					{
 						label: _translate(locale, 'mac.quit'),
-						click: () => dispatch(requestClose())
+						click: () => dispatch(requestClose(() => remote.app.quit()))
 					}
 				]
 			},
