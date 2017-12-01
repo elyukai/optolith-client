@@ -55,10 +55,12 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
 		if (platform === 'darwin') {
 			return (
 				<TitleBarWrapper {...this.state}>
-					<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
-					<TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
-					{!isFullScreen && <TitleBarButton icon="&#xE901;" onClick={enterFullscreen} className="fullscreen" />}
-					{isFullScreen && <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />}
+					<div className="macos-hover-area">
+						<TitleBarButton icon="&#xE900;" onClick={close} className="close" />
+						<TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
+						{!isFullScreen && <TitleBarButton icon="&#xE901;" onClick={enterFullscreen} className="fullscreen" />}
+						{isFullScreen && <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />}
+					</div>
 				</TitleBarWrapper>
 			);
 		}

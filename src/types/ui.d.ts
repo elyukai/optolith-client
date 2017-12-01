@@ -66,6 +66,7 @@ export interface UIMessages {
 	"no": string;
 	"ok": string;
 	"cancel": string;
+	"copy": string;
 	"homeintro.title": string;
 	"homeintro.text": string;
 	"heroes.actions.create": string;

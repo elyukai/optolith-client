@@ -1,5 +1,7 @@
+import { clipboard } from 'electron';
 import * as ActionTypes from '../constants/ActionTypes';
 import { Alert } from '../types/data.d';
+import { UIMessages, _translate } from '../utils/I18n';
 
 export interface AddAlertAction {
 	type: ActionTypes.ADD_ALERT;
@@ -10,6 +12,25 @@ export function addAlert(options: Alert): AddAlertAction {
 	return {
 		type: ActionTypes.ADD_ALERT,
 		payload: options
+	};
+}
+
+export function addErrorAlert(options: Alert, locale: UIMessages): AddAlertAction {
+	// @ts-ignore
+	return {
+		type: ActionTypes.ADD_ALERT,
+		payload: {
+			...options,
+			buttons: [
+				{
+					label: _translate(locale, 'copy'),
+					dispatchOnClick: () => clipboard.writeText(options.message)
+				},
+				{
+					label: _translate(locale, 'ok')
+				},
+			]
+		}
 	};
 }
 

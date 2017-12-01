@@ -66,6 +66,7 @@
 	"no": "No",
 	"ok": "OK",
 	"cancel": "Cancel",
+	"copy": "Copy",
 	"homeintro.title": "Welcome to TDE5 Heroes!",
 	"homeintro.text": "### A lot of customization options\n\nCustomize the views the way you need them: Use text filters, different sort orders and category filters. You can also get hints for skills recommended by culture. You need an option that is not available? Suggest it!\n\n### Planned: Groups\n\nWe will add a group management system later on. This allows you to view and compare group members side by side. You will also be able to use it during a game session to manage life points, order in combat and all that stuff easily.\n\n### Planned: Custom Rules\n\nTDE5 offers an easy way to customize the rules. You want to create a new special ability? Or a race or a profession? Or you just want to change the AP cost for an advantage? Yes, it will come. At some point.",
 	"heroes.actions.create": "Create",

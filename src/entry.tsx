@@ -18,7 +18,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { addAlert } from './actions/AlertActions';
+import { addAlert, addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
 import { AppContainer } from './containers/App';
@@ -97,8 +97,8 @@ ipcRenderer.addListener('download-progress', (_event: Event, progressObj: Progre
 
 ipcRenderer.addListener('auto-updater-error', (_event: Event, err: Error) => {
 	store.dispatch(setUpdateDownloadProgress());
-	store.dispatch(addAlert({
+	store.dispatch((dispatch, getState) => dispatch(addErrorAlert({
 		title: 'Auto Update Error',
 		message: `An error occured during auto-update. (${JSON.stringify(err)})`
-	}));
+	}, getLocaleMessages(getState())!)));
 });

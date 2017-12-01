@@ -60,6 +60,7 @@
 .platform-darwin .titlebar {
 	.titlebar-inner {
 		justify-content: flex-start;
+		align-items: center;
 	}
 
 	&.not-focused .titlebar-btn {
@@ -68,25 +69,32 @@
 		}
 	}
 
-	&:hover .titlebar-btn, &:active .titlebar-btn {
-		&.close, &.minimize, &.fullscreen {
-			span {
-				&::after, &::before {
-					visibility: visible;
+	.macos-hover-area {
+		-webkit-app-region: no-drag;
+		border-radius: 6px;
+		margin-left: 13px;
+		display: flex;
+
+		&:hover .titlebar-btn, &:active .titlebar-btn {
+			&.close, &.minimize, &.fullscreen {
+				span {
+					&::after, &::before {
+						visibility: visible;
+					}
 				}
 			}
-		}
 
-		&.close {
-			background: var(--mac-titlebar-close);
-		}
+			&.close {
+				background: var(--mac-titlebar-close);
+			}
 
-		&.minimize {
-			background: var(--mac-titlebar-minimize);
-		}
+			&.minimize {
+				background: var(--mac-titlebar-minimize);
+			}
 
-		&.fullscreen {
-			background: var(--mac-titlebar-fullscreen);
+			&.fullscreen {
+				background: var(--mac-titlebar-fullscreen);
+			}
 		}
 	}
 
@@ -98,7 +106,7 @@
 		-webkit-app-region: no-drag;
 		text-align: center;
 		border-radius: 50%;
-		margin: 13px 0 0 8px;
+		margin-left: 8px;
 		border: 1px solid var(--separator-color-transparent);
 
 		span {
@@ -125,7 +133,7 @@
 		}
 
 		&:first-child {
-			margin-left: 13px;
+			margin-left: 0;
 		}
 
 		&.close {
