@@ -6,6 +6,8 @@
 - Ignores auto updater on Linux.
 - Small tweaks to the light theme.
 - Some fixes for items regarding price and weight.
+- There are now additional infos about an update available in the download progress dialog.
+- The Enter key should work as usual after closing the app.
 
 ## German Specific
 

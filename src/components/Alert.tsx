@@ -52,6 +52,9 @@ export function Alert(props: AlertProps) {
 	}
 
 	const closeEnhanced = () => {
+		if (remote.globalShortcut.isRegistered('Enter')) {
+			remote.globalShortcut.unregister('Enter');
+		}
 		if (onClose) {
 			onClose();
 		}
