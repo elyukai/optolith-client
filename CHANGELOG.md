@@ -1,3 +1,17 @@
+# 0.51.3
+
+- Fixed issues with prerequisites for races.
+- Fixed profession list filter.
+- Fixed showing levels multiple times on character sheet and in profile overview.
+- Ignores auto updater on Linux.
+- Small tweaks to the light theme.
+- Some fixes for items regarding price and weight.
+
+## German Specific
+
+- Added filtering by activated rule books and wiki entries for combat techniques, advantages, disadvantages and special abilities. Prerequisite texts for advantages, disadvantages and special abilities are missing, though.
+- Removed special ability *Magischer Gedankenschutz* as this the exact same special ability as *Gedankenschutz*, the only difference is the name and this seems to be a issue with consistent naming.
+
 # 0.51.2
 
 - Fixed calculating AP for *activated* special ability entries where you have to buy each tier separately (e.g. *Feint I-III*). Previously, only the cost for the highest bought tier were shown.
