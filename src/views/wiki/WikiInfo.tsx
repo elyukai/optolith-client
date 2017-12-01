@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
-import { AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
+import * as Categories from '../../constants/Categories';
+import { ActivatableInstance, AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
 import { CombatTechnique, Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
@@ -14,7 +15,7 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = BlessingInstance | CantripInstance | CombatTechnique | LiturgyInstance | SpellInstance | Culture | Profession | Race | SpecialAbilityInstance | TalentInstance;
+type Instance = BlessingInstance | CantripInstance | CombatTechnique | LiturgyInstance | SpellInstance | Culture | Profession | Race | ActivatableInstance | TalentInstance;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
@@ -52,34 +53,36 @@ export function WikiInfo(props: WikiInfoProps) {
 
 	if (typeof currentObject === 'object') {
 		switch (currentObject.category) {
-			case 'SPECIAL_ABILITIES':
+			case Categories.ADVANTAGES:
+			case Categories.DISADVANTAGES:
+			case Categories.SPECIAL_ABILITIES:
 				currentElement = <WikiActivatableInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'BLESSINGS':
+			case Categories.BLESSINGS:
 				currentElement = <WikiBlessingInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'CANTRIPS':
+			case Categories.CANTRIPS:
 				currentElement = <WikiCantripInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'COMBAT_TECHNIQUES':
+			case Categories.COMBAT_TECHNIQUES:
 				currentElement = <WikiCombatTechniqueInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'CULTURES':
+			case Categories.CULTURES:
 				currentElement = <WikiCultureInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'LITURGIES':
+			case Categories.LITURGIES:
 				currentElement = <WikiLiturgicalChantInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'PROFESSIONS':
+			case Categories.PROFESSIONS:
 				currentElement = <WikiProfessionInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'RACES':
+			case Categories.RACES:
 				currentElement = <WikiRaceInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'SPELLS':
+			case Categories.SPELLS:
 				currentElement = <WikiSpellInfo {...props} currentObject={currentObject} />;
 				break;
-			case 'TALENTS':
+			case Categories.TALENTS:
 				currentElement = <WikiSkillInfo {...props} currentObject={currentObject} />;
 				break;
 		}

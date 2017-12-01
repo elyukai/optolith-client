@@ -34,7 +34,25 @@ export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: T) => {
  */
 export const filterByAvailability = <T extends ObjectWithSource>(list: T[], availablility: boolean | Set<string>, or?: (obj: T) => boolean) => {
 	if (or) {
-		return list.filter(e => (isAvailable(availablility)(e) || or(e)));
+		return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e) || or(e));
 	}
-	return list.filter(e => (isAvailable(availablility)(e) || or && or(e)));
+	return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e) || or && or(e));
+};
+
+interface ObjectWithInstance {
+	instance: ObjectWithSource;
+	[key: string]: any;
+}
+
+/**
+ * Filters a list of objects with an `instance` property containing `SourceLink`s by availability.
+ * @param list A list of objects with an `instance` property containing `SourceLink`s.
+ * @param availablility The availability state.
+ * @param or An additional function to state the entry should be still shown.
+ */
+export const filterByInstancePropertyAvailability = <T extends ObjectWithInstance>(list: T[], availablility: boolean | Set<string>, or?: (obj: T) => boolean) => {
+	if (or) {
+		return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance) || or(e));
+	}
+	return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance) || or && or(e));
 };

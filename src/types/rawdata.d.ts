@@ -164,6 +164,7 @@ export interface RawAdvantage {
 	max?: number;
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes)[];
+	src: string[];
 }
 
 export interface RawAdvantageLocale {
@@ -176,6 +177,7 @@ export interface RawAdvantageLocale {
 	actions?: string;
 	apValue?: string;
 	apValueAppend?: string;
+	src: number[];
 }
 
 export interface RawAttribute {

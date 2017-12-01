@@ -579,7 +579,6 @@ const file = xlsx.readFile('src/data/TDE5.xlsx');
 const allWorksheets = file.SheetNames.reduce((m, name) => {
   return m.set(name, xlsx.utils.sheet_to_csv(file.Sheets[name], { FS: ';;', blankrows: false }));
 }, new Map());
-const books = iterateBooks(csvToArray(allWorksheets.get('BOOKS')));
 const el = iterateExperienceLevels(csvToArray(allWorksheets.get('EXPERIENCE_LEVELS')));
 const races = iterateRaces(csvToArray(allWorksheets.get('RACES')));
 const racevariants = iterateRaceVariants(csvToArray(allWorksheets.get('RACE_VARIANTS')));
@@ -618,7 +617,6 @@ specialabilities.SA_414.sel = spellExtensions;
 specialabilities.SA_663.sel = chantExtensions;
 
 const result = {
-  books,
   el,
   races,
   racevariants,

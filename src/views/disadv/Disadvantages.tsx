@@ -11,7 +11,7 @@ import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { AdventurePointsState } from '../../reducers/adventurePoints';
-import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
+import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
@@ -26,6 +26,7 @@ export interface DisadvantagesStateProps {
 	ap: AdventurePointsState;
 	deactiveList: DeactiveViewObject[];
 	enableActiveItemHints: boolean;
+	list: DisadvantageInstance[];
 	magicalMax: number;
 	rating: ToListById<string>;
 	showRating: boolean;
@@ -47,19 +48,25 @@ export interface DisadvantagesState {
 	filterText: string;
 	filterTextSlidein: string;
 	showAddSlidein: boolean;
+	currentId?: string;
+	currentSlideinId?: string;
 }
 
 export class Disadvantages extends React.Component<DisadvantagesProps, DisadvantagesState> {
 	state = {
 		filterText: '',
 		filterTextSlidein: '',
-		showAddSlidein: false
+		showAddSlidein: false,
+		currentId: undefined,
+		currentSlideinId: undefined
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as DisadvantagesState);
 	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as DisadvantagesState);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as DisadvantagesState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as DisadvantagesState);
+	showInfo = (id: string) => this.setState({ currentId: id } as DisadvantagesState);
+	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as DisadvantagesState);
 
 	render() {
 		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
@@ -100,9 +107,10 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 							showRating={showRating}
 							get={get}
 							addToList={addToList}
+							selectForInfo={this.showSlideinInfo}
 							/>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={undefined} list={[]} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -125,9 +133,10 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						{...this.props}
 						filterText={filterText}
 						list={activeList}
+						selectForInfo={this.showInfo}
 						/>
 				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} list={[]} />
+				<WikiInfoContainer {...this.props} {...this.state} />
 			</Page>
 		);
 	}

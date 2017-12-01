@@ -7,6 +7,7 @@ import { getAdvantagesForEdit, getAdvantagesRating, getDeactiveAdvantages } from
 import { getAp } from '../selectors/adventurePointsSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getAdvantages } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
@@ -22,6 +23,7 @@ function mapStateToProps(state: AppState) {
 			return get(getDependent(state), id);
 		},
 		isRemovingEnabled: isRemovingEnabled(state),
+		list: [...getAdvantages(state).values()],
 		magicalMax: getAdvantagesDisadvantagesSubMax(getDependent(state), 1),
 		rating: getAdvantagesRating(state),
 		showRating: getAdvantagesDisadvantagesCultureRatingVisibility(state),

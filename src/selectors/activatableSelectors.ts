@@ -6,11 +6,13 @@ import * as Data from '../types/data.d';
 import { convertPerTierCostToFinalCost, getActiveFromState, getDeactiveView, getNameCost, getSelectionName, getSids, getValidation, isActive } from '../utils/ActivatableUtils';
 import { _translate } from '../utils/I18n';
 import { validateAddingExtendedSpecialAbilities } from '../utils/RequirementUtils';
+import { filterByInstancePropertyAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { get, getAllByCategory, getMapByCategory } from './dependentInstancesSelectors';
 import { getMessages } from './localeSelectors';
 import { getCultureAreaKnowledge } from './profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
 import { getAdvantages, getCurrentHeroPresent, getDisadvantages, getLocaleMessages, getSpecialAbilities } from './stateSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
@@ -87,15 +89,15 @@ export const getActiveForEditView = (category: Categories.ACTIVATABLE) => {
   return getActive(category, true);
 };
 
-export const getDeactiveForView = (category: Categories.ACTIVATABLE) => {
+export const getDeactiveForView = <T extends Categories.ACTIVATABLE>(category: T) => {
   return createSelector(
     getCurrentHeroPresent,
     getLocaleMessages,
     validateAddingExtendedSpecialAbilities,
     (state, locale, validExtendedSpecialAbilities) => {
       const { dependent } = state;
-      const allEntries = getMapByCategory(dependent, category) as Map<string, Data.ActivatableInstance>;
-      const finalEntries: Data.DeactiveViewObject[] = [];
+      const allEntries = getMapByCategory(dependent, category) as Map<string, Data.InstanceByCategory[T]>;
+      const finalEntries: Data.DeactiveViewObject<Data.InstanceByCategory[T]>[] = [];
       if (locale) {
         for (const entry of allEntries) {
           const obj = getDeactiveView(entry[1], state, validExtendedSpecialAbilities, locale);
@@ -163,7 +165,10 @@ export const getAdvantagesForEdit = createSelector(
 
 export const getDeactiveAdvantages = createSelector(
   getDeactiveForView(Categories.ADVANTAGES),
-  active => active
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByInstancePropertyAvailability(list, availablility);
+	}
 );
 
 export const getDisadvantagesForSheet = createSelector(
@@ -178,7 +183,10 @@ export const getDisadvantagesForEdit = createSelector(
 
 export const getDeactiveDisadvantages = createSelector(
   getDeactiveForView(Categories.DISADVANTAGES),
-  active => active
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByInstancePropertyAvailability(list, availablility);
+	}
 );
 
 export const getSpecialAbilitiesForSheet = createSelector(
@@ -193,7 +201,10 @@ export const getSpecialAbilitiesForEdit = createSelector(
 
 export const getDeactiveSpecialAbilities = createSelector(
   getDeactiveForView(Categories.SPECIAL_ABILITIES),
-  active => active
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return filterByInstancePropertyAvailability(list, availablility);
+	}
 );
 
 export const getGeneralSpecialAbilitiesForSheet = createSelector(

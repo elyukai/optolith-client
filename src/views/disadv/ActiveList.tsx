@@ -11,6 +11,7 @@ interface Props {
 	isRemovingEnabled: boolean;
 	removeFromList(args: DeactivateArgs): void;
 	setTier(id: string, index: number, tier: number): void;
+	selectForInfo(id: string): void;
 }
 
 export function ActiveList(props: Props) {

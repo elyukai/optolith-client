@@ -499,6 +499,7 @@
 	"info.bindingcost": "Binding Cost",
 	"info.protectivecircle": "Protective Circle",
 	"info.wardingcircle": "Warding Circle",
+	"info.actions": "Actions",
 	"customcost.title": "Custom AP Cost",
 	"customcost.message": "AP Cost for ",
 	"skills.options.commoninculture": "Common Skills",

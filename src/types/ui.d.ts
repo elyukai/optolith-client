@@ -501,6 +501,7 @@ export interface UIMessages {
 	"info.bindingcost": string;
 	"info.protectivecircle": string;
 	"info.wardingcircle": string;
+	"info.actions": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;

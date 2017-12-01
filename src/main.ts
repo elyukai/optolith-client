@@ -61,28 +61,29 @@ function createWindow() {
 			mainWindow!.maximize();
 		}
 
-		autoUpdater.checkForUpdates();
+		if (global.process.arch !== 'linux') {
+			autoUpdater.checkForUpdates();
 
-		autoUpdater.addListener('update-available', (info: UpdateInfo) => {
-			mainWindow!.webContents.send('update-available', info);
-		});
+			autoUpdater.addListener('update-available', (info: UpdateInfo) => {
+				mainWindow!.webContents.send('update-available', info);
+			});
 
-		// @ts-ignore
-		ipcMain.addListener('download-update', () => {
-			autoUpdater.downloadUpdate();
-		});
+			ipcMain.addListener('download-update', () => {
+				autoUpdater.downloadUpdate();
+			});
 
-		autoUpdater.signals.progress(progressObj => {
-			mainWindow!.webContents.send('download-progress', progressObj);
-		});
+			autoUpdater.signals.progress(progressObj => {
+				mainWindow!.webContents.send('download-progress', progressObj);
+			});
 
-		autoUpdater.addListener('error', (err: Error) => {
-			mainWindow!.webContents.send('auto-updater-error', err);
-		});
+			autoUpdater.addListener('error', (err: Error) => {
+				mainWindow!.webContents.send('auto-updater-error', err);
+			});
 
-		autoUpdater.signals.updateDownloaded(() => {
-		  autoUpdater.quitAndInstall();
-		});
+			autoUpdater.signals.updateDownloaded(() => {
+				autoUpdater.quitAndInstall();
+			});
+		}
 	});
 
 	mainWindow.on('closed', () => {

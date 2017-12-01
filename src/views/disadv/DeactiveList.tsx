@@ -11,6 +11,7 @@ export interface DeactiveListProps {
 	showRating: boolean;
 	get(id: string): Instance | undefined;
 	addToList(args: ActivateArgs): void;
+	selectForInfo(id: string): void;
 }
 
 export function DeactiveList(props: DeactiveListProps) {

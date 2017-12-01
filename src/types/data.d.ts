@@ -402,7 +402,7 @@ export interface ActiveViewObject {
 	tierName?: string;
 }
 
-export interface DeactiveViewObject {
+export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
 	id: string;
 	name: string;
 	cost?: string | number | number[];
@@ -412,7 +412,7 @@ export interface DeactiveViewObject {
 	maxTier?: number;
 	sel?: SelectionObject[];
 	gr?: number;
-	instance: ActivatableInstance;
+	instance: T;
 	customCostDisabled?: boolean;
 }
 
@@ -554,6 +554,7 @@ export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	actions?: string;
 	apValue?: string;
 	apValueAppend?: string;
+	src: SourceLink[];
 }
 
 export interface AdvantageInstance extends AdvantageInstanceInInit {
@@ -568,6 +569,7 @@ export interface DisadvantageInstanceInInit extends ActivatableInstanceBaseInIni
 	actions?: string;
 	apValue?: string;
 	apValueAppend?: string;
+	src: SourceLink[];
 }
 
 export interface DisadvantageInstance extends DisadvantageInstanceInInit {
