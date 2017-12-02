@@ -264,8 +264,8 @@ export const getINI = createSelector(
 export const getMOV = createSelector(
 	getRaces,
 	getCurrentRaceId,
-	mapGetToSlice(getAdvantages, 'ADV_27'),
-	mapGetToSlice(getDisadvantages, 'DISADV_30'),
+	mapGetToSlice(getAdvantages, 'ADV_9'),
+	mapGetToSlice(getDisadvantages, 'DISADV_51'),
 	getLocaleMessages,
 	(races, currentRaceId, nimble, maimed, locale) => {
 		const currentRace = currentRaceId && races.get(currentRaceId);
