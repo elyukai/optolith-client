@@ -225,7 +225,7 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
       prerequisitesTextStart: reqStart,
       prerequisitesTextIndex: new Map<number, string | false>([
         ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
-        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+        ...reqIndexIgnore.map<[number, false]>(e => [Number.parseInt(e), false])
       ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
@@ -263,7 +263,7 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
       prerequisitesTextStart: reqStart,
       prerequisitesTextIndex: new Map<number, string | false>([
         ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
-        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+        ...reqIndexIgnore.map<[number, false]>(e => [Number.parseInt(e), false])
       ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
@@ -301,7 +301,7 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
       prerequisitesTextStart: reqStart,
       prerequisitesTextIndex: new Map<number, string | false>([
         ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
-        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+        ...reqIndexIgnore.map<[number, false]>(e => [Number.parseInt(e), false])
       ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };

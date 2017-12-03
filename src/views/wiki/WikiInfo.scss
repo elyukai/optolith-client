@@ -64,7 +64,7 @@
 		// text-indent: -10px;
 		// padding-left: 10px;
 
-		span:first-child {
+		> span:first-child {
 			font-weight: bold;
 
 			&::after {
@@ -112,6 +112,20 @@
 
 			&::after {
 				content: "";
+			}
+		}
+
+		span:nth-child(2) {
+			span.disabled {
+				text-decoration: line-through;
+			}
+
+			span.tier:not(:last-child)::after {
+				content: "; ";
+			}
+
+			span:not(.tier):not(:last-child)::after {
+				content: ", ";
 			}
 		}
 	}

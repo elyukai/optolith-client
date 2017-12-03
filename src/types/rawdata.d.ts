@@ -164,7 +164,7 @@ export interface RawAdvantage {
 	max?: number;
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes)[];
-	reqIndex: number[];
+	reqIndex: string[];
 	src: string[];
 }
 
@@ -277,7 +277,7 @@ export interface RawSpecialAbility {
 	extended?: (string | string[])[];
 	property?: number;
 	aspect?: number;
-	reqIndex: number[];
+	reqIndex: string[];
 	src: string[];
 }
 

@@ -508,6 +508,11 @@ export interface UIMessages {
 	"advantage": string;
 	"disadvantage": string;
 	"primaryattributeofthetradition": string;
+	"knowledgeof": string;
+	"race": string;
+	"appropriatecombatstylespecialability": string;
+	"appropriatemagicalstylespecialability": string;
+	"appropriateblessedstylespecialability": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;

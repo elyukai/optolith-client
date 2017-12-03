@@ -5,10 +5,10 @@ import { Scroll } from '../../components/Scroll';
 import { ADVANTAGES, ATTRIBUTES, DISADVANTAGES, LITURGIES, SPECIAL_ABILITIES, SPELLS } from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { get } from '../../selectors/dependentInstancesSelectors';
-import { ActivatableBasePrerequisites, ActivatableInstance, AttributeInstance, Book, SecondaryAttribute, SpecialAbilityInstance } from '../../types/data.d';
+import { ActivatableBasePrerequisites, ActivatableInstance, AttributeInstance, Book, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../../types/data.d';
 import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/requirements';
 import { UIMessages } from '../../types/view.d';
-import { getNameCost } from '../../utils/ActivatableUtils';
+import { getNameCost, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
@@ -88,6 +88,10 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 							<span>{_translate(locale, 'info.property')}</span>
 							<span>{typeof currentObject.property === 'number' ? _translate(locale, 'spells.view.properties')[currentObject.property - 1] : currentObject.property}</span>
 						</p>}
+						<p>
+							<span>{_translate(locale, 'info.prerequisites')}</span>
+							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
+						</p>
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -104,6 +108,10 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 							<span>{_translate(locale, 'info.aspect')}</span>
 							<span>{typeof currentObject.aspect === 'number' ? _translate(locale, 'liturgies.view.aspects')[currentObject.aspect - 1] : currentObject.aspect}</span>
 						</p>}
+						<p>
+							<span>{_translate(locale, 'info.prerequisites')}</span>
+							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
+						</p>
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -178,6 +186,10 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 				<span>{_translate(locale, 'info.actions')}</span>
 				<span>{currentObject.actions}</span>
 			</p>}
+			<p>
+				<span>{_translate(locale, 'info.prerequisites')}</span>
+				<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
+			</p>
 			<Markdown source={costText} />
 			<p className="source">
 				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -193,27 +205,29 @@ export function getPrerequisitesText(entry: ActivatableInstance, dependent: Depe
 		</React.Fragment>;
   }
 
-  if (!Array.isArray(entry.reqs)) {
-		const tiersArr = [...entry.reqs];
+	const { prerequisitesTextEnd, prerequisitesTextStart, tiers = 1, reqs } = entry;
+
+  if (!Array.isArray(reqs)) {
+		const tiersArr = Array.from({ length: tiers }, (_, index) => index + 1);
 		return <React.Fragment>
-			{!entry.reqs.has(1) && `${_translate(locale, 'tier')} I: ${_translate(locale, 'info.none')}; `}
-			{tiersArr.map((e, i) => {
-				if (i < tiersArr.length - 1) {
-					return <React.Fragment key={e[0]}>
-						{`${_translate(locale, 'tier')} ${getRoman(e[0])}: `}
-						<Prerequisites list={e[1]} entry={entry} dependent={dependent} locale={locale} />
-						{'; '}
-					</React.Fragment>;
-				}
-				return <React.Fragment key={e[0]}>
-						{`${_translate(locale, 'tier')} ${getRoman(e[0])}: `}
-					<Prerequisites list={e[1]} entry={entry} dependent={dependent} locale={locale} />
-				</React.Fragment>;
+			{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+			{!reqs.has(1) && `${_translate(locale, 'tier')} I: ${_translate(locale, 'info.none')}; `}
+			{tiersArr.map(e => {
+				return <span key={e} className="tier">
+					{`${_translate(locale, 'tier')} ${getRoman(e)}: `}
+					{reqs.has(e) && <Prerequisites list={reqs.get(e)!} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />}
+					{e > 1 && <span>{entry.name} {getRoman(e - 1)}</span>}
+				</span>;
 			})}
+			{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
 		</React.Fragment>;
 	}
 
-	return <Prerequisites list={entry.reqs} entry={entry} dependent={dependent} locale={locale} />;
+	return <React.Fragment>
+		{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+		<Prerequisites list={reqs} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />
+		{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
+	</React.Fragment>;
 }
 
 export interface PrerequisitesProps {
@@ -221,10 +235,19 @@ export interface PrerequisitesProps {
 	entry: ActivatableInstance;
 	locale: UIMessages;
 	dependent: DependentInstancesState;
+	prerequisitesTextIndex: Map<number, string | false>;
 }
 
 export function Prerequisites(props: PrerequisitesProps) {
-	const { list, entry, locale, dependent } = props;
+	const { list, entry, locale, dependent, prerequisitesTextIndex } = props;
+
+	if (list.length === 0 && !isExtendedSpecialAbility(entry)) {
+		return <React.Fragment>
+			{_translate(locale, 'info.none')}
+		</React.Fragment>;
+	}
+
+	const items = getCategorizedItems(list, prerequisitesTextIndex);
 
 	const {
 		rcp,
@@ -241,10 +264,10 @@ export function Prerequisites(props: PrerequisitesProps) {
 		activeDisadvantages,
 		inactiveDisadvantages,
 		race
-	} = getCategorizedItems(list);
+	} = items;
 
 	return <React.Fragment>
-		{rcp && getPrerequisitesRCPText(entry, locale)}
+		{rcp && getPrerequisitesRCPText(rcp, entry, locale)}
 		{getPrerequisitesActivatablesText(casterBlessedOne, dependent, locale)}
 		{getPrerequisitesActivatablesText(traditions, dependent, locale)}
 		{getPrerequisitesAttributesText(attributes, dependent.attributes, locale)}
@@ -257,47 +280,95 @@ export function Prerequisites(props: PrerequisitesProps) {
 		{getPrerequisitesActivatablesText(inactiveAdvantages, dependent, locale)}
 		{getPrerequisitesActivatablesText(activeDisadvantages, dependent, locale)}
 		{getPrerequisitesActivatablesText(inactiveDisadvantages, dependent, locale)}
+		{race && getPrerequisitesRaceText(race, dependent.races, locale)}
+		{entry.category === SPECIAL_ABILITIES ? (entry.gr === 11 ? <span>{_translate(locale, 'appropriatecombatstylespecialability')}</span> : entry.gr === 14 ? <span>{_translate(locale, 'appropriatemagicalstylespecialability')}</span> : entry.gr === 26 ? <span>{_translate(locale, 'appropriateblessedstylespecialability')}</span> : '') : ''}
 	</React.Fragment>;
 }
 
-export function getPrerequisitesRCPText(entry: ActivatableInstance, locale: UIMessages): string {
-  return _translate(locale, 'requiresrcp', entry.name, entry.category === ADVANTAGES ? _translate(locale, 'advantage') : _translate(locale, 'disadvantage'));
+interface ActivatableStringObject {
+	id: string;
+	active: boolean;
+	value: string;
 }
 
-export function getPrerequisitesAttributesText(list: RequiresIncreasableObject[], attributes: Map<string, AttributeInstance>, locale: UIMessages): string[] {
-	return list.map(e => {
-		const { id, value } = e;
-		return `${Array.isArray(id) ? id.map(a => attributes.get(a)!.short).join(_translate(locale, 'info.or')) : attributes.get(id)!.short} ${value}`;
-	});
+type ReplacedPrerequisite<T = RequiresActivatableObject> = T | string;
+type ActivatablePrerequisiteObjects = RequiresActivatableObject | ActivatableStringObject;
+type PrimaryAttributePrerequisiteObjects = RequiresPrimaryAttribute | string;
+type IncreasablePrerequisiteObjects = RequiresIncreasableObject | string;
+type RacePrerequisiteObjects = RaceRequirement | string;
+type RCPPrerequisiteObjects = boolean | string;
+
+function isActivatableStringObject(testObj: ActivatablePrerequisiteObjects): testObj is ActivatableStringObject {
+	return testObj.hasOwnProperty('id') && testObj.hasOwnProperty('active') && testObj.hasOwnProperty('value');
 }
 
-export function getPrerequisitesPrimaryAttributeText(primaryAttribute: RequiresPrimaryAttribute, locale: UIMessages): string {
-	return `${_translate(locale, 'primaryattributeofthetradition')} ${primaryAttribute.value}`;
+export function getPrerequisitesRCPText(options: RCPPrerequisiteObjects, entry: ActivatableInstance, locale: UIMessages): JSX.Element {
+  return <span>
+		{typeof options === 'string' ? options : _translate(locale, 'requiresrcp', entry.name, entry.category === ADVANTAGES ? _translate(locale, 'advantage') : _translate(locale, 'disadvantage'))}
+	</span>;
 }
 
-export function getPrerequisitesSkillsText(list: RequiresIncreasableObject[], dependent: DependentInstancesState, locale: UIMessages): string[] {
-	return sortStrings(list.map(e => {
-		const { id, value } = e;
-		return `${Array.isArray(id) ? id.map(a => get(dependent, a)!.name).join(_translate(locale, 'info.or')) : get(dependent, id)!.name} ${value}`;
-	}), locale.id);
+export function getPrerequisitesAttributesText(list: IncreasablePrerequisiteObjects[], attributes: Map<string, AttributeInstance>, locale: UIMessages): JSX.Element {
+	return list.length > 0 ? <span>
+		{list.map(e => {
+			if (typeof e === 'string') {
+				return e;
+			}
+			const { id, value } = e;
+			return `${Array.isArray(id) ? id.map(a => attributes.get(a)!.short).join(_translate(locale, 'info.or')) : attributes.get(id)!.short} ${value}`;
+		}).join(', ')}
+	</span> : <React.Fragment></React.Fragment>;
 }
 
-export function getPrerequisitesActivatedSkillsText(list: RequiresActivatableObject[], dependent: DependentInstancesState, locale: UIMessages): string[] {
-	return sortStrings(list.map(e => {
+export function getPrerequisitesPrimaryAttributeText(primaryAttribute: PrimaryAttributePrerequisiteObjects, locale: UIMessages): JSX.Element {
+	return <span>
+		{typeof primaryAttribute === 'string' ? primaryAttribute : `${_translate(locale, 'primaryattributeofthetradition')} ${primaryAttribute.value}`}
+	</span>;
+}
+
+export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[], dependent: DependentInstancesState, locale: UIMessages): JSX.Element {
+	return list.length > 0 ? <span>
+		{sortStrings(list.map(e => {
+			if (typeof e === 'string') {
+				return e;
+			}
+			const { id, value } = e;
+			return `${Array.isArray(id) ? id.map(a => get(dependent, a)!.name).join(_translate(locale, 'info.or')) : get(dependent, id)!.name} ${value}`;
+		}), locale.id).join(', ')}
+	</span> : <React.Fragment></React.Fragment>;
+}
+
+export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisiteObjects[], dependent: DependentInstancesState, locale: UIMessages): JSX.Element {
+	return list.length > 0 ? <span>
+	{sortStrings(list.map(e => {
+		if (isActivatableStringObject(e)) {
+			return e.value;
+		}
 		const { id } = e;
-		return `${_translate(locale, 'info.or')} ${get(dependent, id as string)!.name}`;
-	}), locale.id);
+		return `${_translate(locale, 'knowledgeof')} ${get(dependent, id as string)!.name}`;
+	}), locale.id).join(', ')}
+	</span> : <React.Fragment></React.Fragment>;
 }
 
-export function getPrerequisitesActivatablesText(list: RequiresActivatableObject[], dependent: DependentInstancesState, locale: UIMessages): React.ReactFragment[] {
+export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteObjects[], dependent: DependentInstancesState, locale: UIMessages): React.ReactFragment[] {
 	return sortObjects(list.map(e => {
+		if (isActivatableStringObject(e)) {
+			const { id, active, value } = e;
+			const category = getCategoryById(id);
+			return {
+				name: `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${value}`,
+				active
+			};
+		}
 		const { id, active, sid, sid2, tier } = e;
 		return {
-			name: `${Array.isArray(id) ? id.map(a => {
-				return getNameCost({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, dependent, true, locale).combinedName;
+			name: Array.isArray(id) ? id.map(a => {
+				const category = getCategoryById(a);
+				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
 			}).join(_translate(locale, 'info.or')) : Array.isArray(sid) ? sid.map(a => {
-				return getNameCost({ id, sid: a, sid2, tier, index: 0 }, dependent, true, locale).combinedName;
-			}).join(_translate(locale, 'info.or')) : getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`,
+				const category = getCategoryById(id);
+				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid: a, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
+			}).join(_translate(locale, 'info.or')) : `${getCategoryById(id) === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : getCategoryById(id) === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`,
 			active
 		};
 	}), locale.id).map(e => {
@@ -305,41 +376,51 @@ export function getPrerequisitesActivatablesText(list: RequiresActivatableObject
 	});
 }
 
-interface CategorizedItems {
-	rcp: boolean;
-	casterBlessedOne: RequiresActivatableObject[];
-	traditions: RequiresActivatableObject[];
-	attributes: RequiresIncreasableObject[];
-	primaryAttribute?: RequiresPrimaryAttribute;
-	skills: RequiresIncreasableObject[];
-	activeSkills: RequiresActivatableObject[];
-	otherActiveSpecialAbilities: RequiresActivatableObject[];
-	inactiveSpecialAbilities: RequiresActivatableObject[];
-	otherActiveAdvantages: RequiresActivatableObject[];
-	inactiveAdvantages: RequiresActivatableObject[];
-	activeDisadvantages: RequiresActivatableObject[];
-	inactiveDisadvantages: RequiresActivatableObject[];
-	race?: RaceRequirement;
+export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: Map<string, RaceInstance>, locale: UIMessages): JSX.Element {
+	return <span>
+		{typeof race === 'string' ? race : `${_translate(locale, 'race')} ${Array.isArray(race.value) ? race.value.map(e => races.get(e)).join(_translate(locale, 'info.or')) : races.get(race.value)}`}
+	</span>;
 }
 
-export function getCategorizedItems(list: ActivatableBasePrerequisites) {
-	return list.reduce<CategorizedItems>((obj, item) => {
+interface CategorizedItems {
+	rcp: RCPPrerequisiteObjects;
+	casterBlessedOne: ActivatablePrerequisiteObjects[];
+	traditions: ActivatablePrerequisiteObjects[];
+	attributes: ReplacedPrerequisite<RequiresIncreasableObject>[];
+	primaryAttribute?: ReplacedPrerequisite<RequiresPrimaryAttribute>;
+	skills: ReplacedPrerequisite<RequiresIncreasableObject>[];
+	activeSkills: ActivatablePrerequisiteObjects[];
+	otherActiveSpecialAbilities: ActivatablePrerequisiteObjects[];
+	inactiveSpecialAbilities: ActivatablePrerequisiteObjects[];
+	otherActiveAdvantages: ActivatablePrerequisiteObjects[];
+	inactiveAdvantages: ActivatablePrerequisiteObjects[];
+	activeDisadvantages: ActivatablePrerequisiteObjects[];
+	inactiveDisadvantages: ActivatablePrerequisiteObjects[];
+	race?: RacePrerequisiteObjects;
+}
+
+export function getCategorizedItems(list: ActivatableBasePrerequisites, prerequisitesTextIndex: Map<number, string | false>) {
+	return list.reduce<CategorizedItems>((obj, item, index) => {
+		const indexSpecial = prerequisitesTextIndex.get(index);
+		if (indexSpecial === false) {
+			return obj;
+		}
 		if (item === 'RCP') {
 			return {
 				...obj,
-				rcp: true
+				rcp: indexSpecial || true
 			};
 		}
 		else if (isRaceRequirement(item)) {
 			return {
 				...obj,
-				race: item
+				race: indexSpecial || item
 			};
 		}
 		else if (isRequiringPrimaryAttribute(item)) {
 			return {
 				...obj,
-				primaryAttribute: item
+				primaryAttribute: indexSpecial || item
 			};
 		}
 		else if (isRequiringIncreasable(item)) {
@@ -347,12 +428,12 @@ export function getCategorizedItems(list: ActivatableBasePrerequisites) {
 			if (category === ATTRIBUTES) {
 				return {
 					...obj,
-					attributes: [...obj.attributes, item]
+					attributes: [...obj.attributes, indexSpecial || item]
 				};
 			}
 			return {
 				...obj,
-				skills: [...obj.skills, item]
+				skills: [...obj.skills, indexSpecial || item]
 			};
 		}
 		else if (isRequiringActivatable(item)) {
@@ -360,55 +441,55 @@ export function getCategorizedItems(list: ActivatableBasePrerequisites) {
 			if (category === LITURGIES || category === SPELLS) {
 				return {
 					...obj,
-					activeSkills: [...obj.activeSkills, item]
+					activeSkills: [...obj.activeSkills, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
 			else if (Array.isArray(item.id) ? item.id.includes('ADV_12') || item.id.includes('ADV_50') : ['ADV_12', 'ADV_50'].includes(item.id)) {
 				return {
 					...obj,
-					casterBlessedOne: [...obj.casterBlessedOne, item]
+					casterBlessedOne: [...obj.casterBlessedOne, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
 			else if (Array.isArray(item.id) ? item.id.includes('SA_78') || item.id.includes('SA_86') : ['SA_78', 'SA_86'].includes(item.id)) {
 				return {
 					...obj,
-					traditions: [...obj.traditions, item]
+					traditions: [...obj.traditions, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
-			else if (category === SPECIAL_ABILITIES && item.active === true) {
+			else if (category === SPECIAL_ABILITIES) {
 				if (item.active === true) {
 					return {
 						...obj,
-						otherActiveSpecialAbilities: [...obj.otherActiveSpecialAbilities, item]
+						otherActiveSpecialAbilities: [...obj.otherActiveSpecialAbilities, indexSpecial ? { ...item, value: indexSpecial } : item]
 					};
 				}
 				return {
 					...obj,
-					inactiveSpecialAbilities: [...obj.inactiveSpecialAbilities, item]
+					inactiveSpecialAbilities: [...obj.inactiveSpecialAbilities, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
-			else if (category === ADVANTAGES && item.active === true) {
+			else if (category === ADVANTAGES) {
 				if (item.active === true) {
 					return {
 						...obj,
-						otherActiveAdvantages: [...obj.otherActiveAdvantages, item]
+						otherActiveAdvantages: [...obj.otherActiveAdvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
 					};
 				}
 				return {
 					...obj,
-					inactiveAdvantages: [...obj.inactiveAdvantages, item]
+					inactiveAdvantages: [...obj.inactiveAdvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
-			else if (category === DISADVANTAGES && item.active === true) {
+			else if (category === DISADVANTAGES) {
 				if (item.active === true) {
 					return {
 						...obj,
-						activeDisadvantages: [...obj.activeDisadvantages, item]
+						activeDisadvantages: [...obj.activeDisadvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
 					};
 				}
 				return {
 					...obj,
-					inactiveDisadvantages: [...obj.inactiveDisadvantages, item]
+					inactiveDisadvantages: [...obj.inactiveDisadvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
 				};
 			}
 		}
