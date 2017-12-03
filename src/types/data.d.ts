@@ -532,18 +532,27 @@ export type AllDependency = ActivatableInstanceDependency | AttributeInstanceDep
 
 export type ActivatableInstanceDependency = boolean | DependencyObject;
 
+export type ActivatableBasePrerequisites = ('RCP' | Reusable.AllRequirementTypes)[];
+
 interface ActivatableInstanceBaseInInit {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly reqs: ('RCP' | Reusable.AllRequirementTypes)[] | Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>;
+	readonly reqs: ActivatableBasePrerequisites | Map<number, ActivatableBasePrerequisites>;
 	readonly tiers?: number;
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
 	gr?: number;
+	prerequisitesText?: string;
+	/**
+	 * 0-based index as key!
+	 */
+	prerequisitesTextIndex: Map<number, string | false>;
+	prerequisitesTextStart?: string;
+	prerequisitesTextEnd?: string;
 }
 
 export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {

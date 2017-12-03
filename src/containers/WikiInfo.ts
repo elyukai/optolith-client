@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
-import { getAttributes, getBooks, getCantrips, getLiturgicalChants, getSex, getSkills, getSpecialAbilities, getSpells } from '../selectors/stateSelectors';
+import { getAttributes, getBooks, getCantrips, getDependentInstances, getLiturgicalChants, getSex, getSkills, getSpecialAbilities, getSpells } from '../selectors/stateSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps, WikiInfoStateProps } from '../views/wiki/WikiInfo';
@@ -11,6 +11,7 @@ function mapStateToProps(state: AppState) {
 		books: getBooks(state),
 		cantrips: getCantrips(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
+		dependent: getDependentInstances(state),
 		languages: mapGetToSlice(getSpecialAbilities, 'SA_29')(state)!,
 		liturgicalChantExtensions: mapGetToSlice(getSpecialAbilities, 'SA_663')(state),
 		liturgicalChants: getLiturgicalChants(state),

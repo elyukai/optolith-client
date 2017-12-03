@@ -198,8 +198,8 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { sel: localeSel, src: srcPages, ...otherLocale } = localeObject;
-    const { ap, sel, req, src: srcIds, ...otherData } = raw;
+    const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
+    const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -220,6 +220,13 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
       id,
       reqs: req,
       sel: finalSel,
+      prerequisitesText: reqText,
+      prerequisitesTextEnd: reqEnd,
+      prerequisitesTextStart: reqStart,
+      prerequisitesTextIndex: new Map<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
+        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+      ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
@@ -230,8 +237,8 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { sel: localeSel, src: srcPages, ...otherLocale } = localeObject;
-    const { ap, sel, req, src: srcIds, ...otherData } = raw;
+    const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
+    const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -251,6 +258,13 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
       dependencies: [],
       reqs: req,
       sel: finalSel,
+      prerequisitesText: reqText,
+      prerequisitesTextEnd: reqEnd,
+      prerequisitesTextStart: reqStart,
+      prerequisitesTextIndex: new Map<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
+        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+      ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
@@ -261,8 +275,8 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { sel: localeSel, src: srcPages, ...otherLocale } = localeObject;
-    const { ap, sel, req, src: srcIds, ...otherData } = raw;
+    const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
+    const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
     let finalSel: SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
@@ -282,6 +296,13 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
       dependencies: [],
       reqs: Array.isArray(req[0]) ? new Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>(req as any) : req as ('RCP' | Reusable.AllRequirementTypes)[],
       sel: finalSel,
+      prerequisitesText: reqText,
+      prerequisitesTextEnd: reqEnd,
+      prerequisitesTextStart: reqStart,
+      prerequisitesTextIndex: new Map<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(([index, text]) => [Number.parseInt(index) - 1, text]),
+        ...reqIndexIgnore.map<[number, false]>(e => [e, false])
+      ]),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }

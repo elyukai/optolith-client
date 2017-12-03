@@ -92,7 +92,7 @@ function iterateProfessionVariantsL10n(array) {
 function iterateActivatablesL10n(array, type) {
 	const list = {};
 	for (const obj of array) {
-		const { name, input, nameInWiki, rules, range, actions, effect, volume, penalty, combatTechniques, aeCost, protectiveCircle, wardingCircle, bindingCost, property, aspect, apValue, apValueAppend, src
+		const { name, input, nameInWiki, rules, range, actions, effect, volume, penalty, combatTechniques, aeCost, protectiveCircle, wardingCircle, bindingCost, property, aspect, apValue, apValueAppend, src, req, reqStart, reqEnd, reqIndex
 		} = obj;
 
 		const prefix = {
@@ -121,7 +121,10 @@ function iterateActivatablesL10n(array, type) {
 			property,
 			aspect,
 			apValue,
-			apValueAppend
+			apValueAppend,
+			req,
+			reqStart,
+			reqEnd,
 		};
 
 		if (obj.sel) {
@@ -132,6 +135,13 @@ function iterateActivatablesL10n(array, type) {
 			});
 		}
 		newObj.src = src ? (typeof src === 'number' ? [src] : src.split('&').map(e => Number.parseInt(e))) : [];
+		newObj.reqIndex = reqIndex ? reqIndex.split('&').reduce((obj, str) => {
+			const [index, text] = str.split('?');
+			return {
+				...obj,
+				[index]: text
+			};
+		}, {}) : {};
 
 		list[newObj.id] = newObj;
 	}

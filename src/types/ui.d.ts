@@ -503,6 +503,11 @@ export interface UIMessages {
 	"info.protectivecircle": string;
 	"info.wardingcircle": string;
 	"info.actions": string;
+	"tier": string;
+	"requiresrcp": string;
+	"advantage": string;
+	"disadvantage": string;
+	"primaryattributeofthetradition": string;
 	"customcost.title": string;
 	"customcost.message": string;
 	"skills.options.commoninculture": string;

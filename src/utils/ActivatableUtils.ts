@@ -9,11 +9,11 @@ import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
 import { sortObjects } from './FilterSortUtils';
 import { _translate } from './I18n';
+import { getCategoryById } from './IDUtils';
 import { mergeIntoState, setStateItem } from './ListUtils';
 import { getTraditionOfAspect } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
-import { getCategoryById } from './IDUtils';
 
 /**
  * Checks if you can buy the entry multiple times.
@@ -745,8 +745,9 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   let { currentCost, combinedName } = obj;
   let tierName;
   if (Array.isArray(currentCost)) {
-    currentCost = currentCost.reduce((sum, current, index) => index <= (tier! - 1) ? sum + current : sum, 0);
-    tierName = tier! > 1 ? ` I-${getRoman(tier!)}` : ` ${getRoman(tier!)}`;
+    const { tier = 1 } = obj;
+    currentCost = currentCost.reduce((sum, current, index) => index <= (tier - 1) ? sum + current : sum, 0);
+    tierName = tier > 1 ? ` I-${getRoman(tier)}` : ` ${getRoman(tier)}`;
   }
   else if (typeof tier === 'number' && id !== 'DISADV_34' && id !== 'DISADV_50' && typeof cost !== 'number') {
     currentCost *= tier;

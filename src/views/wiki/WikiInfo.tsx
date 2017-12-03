@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import * as Categories from '../../constants/Categories';
+import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { ActivatableInstance, AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
 import { CombatTechnique, Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
@@ -29,6 +30,7 @@ export interface WikiInfoStateProps {
 	books: Map<string, Book>;
 	cantrips: Map<string, CantripInstance>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
+	dependent: DependentInstancesState;
 	languages: SpecialAbilityInstance;
 	liturgicalChantExtensions: SpecialAbilityInstance | undefined;
 	liturgicalChants: Map<string, LiturgyInstance>;

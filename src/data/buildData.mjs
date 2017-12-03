@@ -309,6 +309,7 @@ function iterateActivatables(array, type) {
     }
     newObj.req = convertRequirements(obj.req);
     newObj.src = obj.src ? obj.src.split('&') : [];
+    newObj.reqIndex = obj.reqIndex ? obj.reqIndex.split('&') : [];
 
     list[newObj.id] = newObj;
   }

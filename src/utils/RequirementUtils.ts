@@ -5,7 +5,7 @@ import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getBlessedStyleDependencies, getCombatStyleDependencies, getMagicalStyleDependencies } from '../selectors/stateSelectors';
-import { ActivatableInstance, ActivatableInstanceDependency, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency } from '../types/data.d';
+import { ActivatableInstance, ActivatableInstanceDependency, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency, ActivatableSkillInstance } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
@@ -116,6 +116,9 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
         return entry.active.some(e => typeof e.tier === 'number' && typeof req.tier === 'number' && e.tier >= req.tier);
       }
       return isActive(entry) === req.active;
+    }
+    else if (isActivatableSkillInstance(entry)) {
+      return entry.active === req.active;
     }
   }
   return false;
@@ -232,7 +235,7 @@ export function isRequiringIncreasable(req: AllRequirementObjects): req is Requi
 }
 
 export function isRequiringActivatable(req: AllRequirementObjects): req is RequiresActivatableObject {
-  const categories = [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES];
+  const categories = [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES, Categories.SPELLS, Categories.LITURGIES];
   if (Array.isArray(req.id)) {
     return req.hasOwnProperty('active') && req.id.every(e => {
       const category = getCategoryById(e);
@@ -254,6 +257,11 @@ export function isIncreasableInstance(entry?: Instance): entry is IncreasableIns
 
 export function isActivatableInstance(entry?: Instance): entry is ActivatableInstance {
   const categories = [Categories.ADVANTAGES, Categories.DISADVANTAGES, Categories.SPECIAL_ABILITIES];
+  return !!entry && categories.includes(entry.category);
+}
+
+export function isActivatableSkillInstance(entry?: Instance): entry is ActivatableSkillInstance {
+  const categories = [Categories.SPELLS, Categories.LITURGIES];
   return !!entry && categories.includes(entry.category);
 }
 

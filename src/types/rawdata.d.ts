@@ -164,6 +164,7 @@ export interface RawAdvantage {
 	max?: number;
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes)[];
+	reqIndex: number[];
 	src: string[];
 }
 
@@ -177,6 +178,15 @@ export interface RawAdvantageLocale {
 	actions?: string;
 	apValue?: string;
 	apValueAppend?: string;
+	req?: string;
+	/**
+	 * 0-based index as key!
+	 */
+	reqIndex: {
+		[key: number]: string;
+	};
+	reqStart?: string;
+	reqEnd?: string;
 	src: number[];
 }
 
@@ -267,6 +277,7 @@ export interface RawSpecialAbility {
 	extended?: (string | string[])[];
 	property?: number;
 	aspect?: number;
+	reqIndex: number[];
 	src: string[];
 }
 
@@ -289,6 +300,15 @@ export interface RawSpecialAbilityLocale {
 	aspect?: string;
 	apValue?: string;
 	apValueAppend?: string;
+	req?: string;
+	/**
+	 * 0-based index as key!
+	 */
+	reqIndex: {
+		[key: number]: string;
+	};
+	reqStart?: string;
+	reqEnd?: string;
 	src: number[];
 }
 
