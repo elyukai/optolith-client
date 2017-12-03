@@ -1,15 +1,14 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
-import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { SpecialAbilityInstance } from '../types/data.d';
-import { getSids, isActive } from '../utils/ActivatableUtils';
+import { getBlessedTradition } from '../selectors/liturgiesSelectors';
+import { getMagicalTraditions } from '../selectors/spellsSelectors';
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '../views/skills/Skills';
 
 function mapStateToProps(state: AppState) {
-	const dependent = getDependent(state);
+	const magicalTraditions = getMagicalTraditions(state);
 	return {
-		showChants: isActive(get(dependent, 'SA_86') as SpecialAbilityInstance),
-		showSpells: isActive(get(dependent, 'SA_70') as SpecialAbilityInstance) && getSids(get(dependent, 'SA_70') as SpecialAbilityInstance)[0] !== 9,
+		showChants: typeof getBlessedTradition === 'object',
+		showSpells: magicalTraditions.length > 0 && magicalTraditions[0].id !== 'SA_680',
 	};
 }
 

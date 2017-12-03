@@ -1,14 +1,16 @@
-import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { AppState } from '../reducers/app';
 import { AttributeInstance, ExperienceLevel, RequirementObject, SkillOptionalDependency, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import { Attribute, AttributeWithRequirements } from '../types/view.d';
-import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { getNumericBlessedTraditionIdByInstanceId } from '../utils/LiturgyUtils';
 import { getFlatPrerequisites } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { getNumericMagicalTraditionIdByInstanceId } from '../utils/SpellUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getEnergies } from './energiesSelectors';
+import { getBlessedTradition } from './liturgiesSelectors';
 import { getCurrentRace } from './rcpSelectors';
+import { getMagicalTraditions } from './spellsSelectors';
 import { getAttributeValueLimit, getPhase, getSkills, getSpecialAbilities } from './stateSelectors';
 
 export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
@@ -68,7 +70,7 @@ export const getForView = createSelector(
 );
 
 export const getForSheet = createSelector(
-	[ getAttributes ],
+	getAttributes,
 	attributes => {
 		const array: Attribute[] = [];
 		for (const [id, entry] of attributes) {
@@ -114,33 +116,25 @@ export function getMaxAttributeValueByID(attributes: Map<string, AttributeInstan
 	return ids.reduce((a, b) => Math.max(a, attributes.get(b)!.value), 0);
 }
 
-export const getPrimaryMagicalAttributeForSheet = createSelector(
-	[ mapGetToSlice(getSpecialAbilities, 'SA_70'), getAttributes ],
-	(tradition, attributes) => {
-		const id = getPrimaryAttributeId(tradition!);
-		return (id && attributes.get(id)!.short)!;
-	}
-);
-
 export const getPrimaryMagicalAttribute = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	getAttributes,
-	(tradition, attributes) => {
-		return tradition && ActivatableUtils.getSids(tradition).reduce<AttributeInstance | undefined>((highestAttribute, sid) => {
+	(traditions, attributes) => {
+		return traditions.reduce<AttributeInstance | undefined>((highestAttribute, sa) => {
 			let attribute;
-			switch (sid) {
+			switch (getNumericMagicalTraditionIdByInstanceId(sa.id)) {
 				case 1:
 				case 4:
 				case 10:
 					attribute = attributes.get('ATTR_2');
 					break;
-				case 3:
+					case 3:
 					attribute = attributes.get('ATTR_3');
 					break;
-				case 2:
-				case 5:
-				case 6:
-				case 7:
+					case 2:
+					case 5:
+					case 6:
+					case 7:
 					attribute = attributes.get('ATTR_4');
 					break;
 			}
@@ -152,12 +146,19 @@ export const getPrimaryMagicalAttribute = createSelector(
 	}
 );
 
+export const getPrimaryMagicalAttributeForSheet = createSelector(
+	getPrimaryMagicalAttribute,
+	attribute => {
+		return attribute && attribute.short;
+	}
+);
+
 export const getPrimaryBlessedAttribute = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
+	getBlessedTradition,
 	getAttributes,
 	(tradition, attributes) => {
 		if (tradition) {
-			switch (ActivatableUtils.getSids(tradition)[0]) {
+			switch (getNumericBlessedTraditionIdByInstanceId(tradition.id)) {
 				case 2:
 				case 3:
 				case 9:
@@ -188,58 +189,8 @@ export const getPrimaryBlessedAttribute = createSelector(
 
 export const getPrimaryBlessedAttributeForSheet = createSelector(
 	getPrimaryBlessedAttribute,
-	primary => primary && primary.short
+	attribute => attribute && attribute.short
 );
-
-export function getPrimaryAttributeId(specialAbilitiesState: Map<string, SpecialAbilityInstance>, type: 1 | 2): string | undefined;
-export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance): string | undefined;
-export function getPrimaryAttributeId(traditionInstance: SpecialAbilityInstance | Map<string, SpecialAbilityInstance>, type?: 1 | 2): string | undefined {
-	const isInstance = (obj: SpecialAbilityInstance | Map<string, SpecialAbilityInstance>): obj is SpecialAbilityInstance => obj.hasOwnProperty('category');
-	const tradition = isInstance(traditionInstance) ? traditionInstance : traditionInstance.get(type === 1 ? 'SA_70' : 'SA_86')!;
-	const sid = last(ActivatableUtils.getSids(tradition));
-	if (tradition.id === 'SA_70') {
-		switch (sid) {
-			case 1:
-			case 4:
-			case 10:
-				return 'ATTR_2';
-			case 3:
-				return 'ATTR_3';
-			case 2:
-			case 5:
-			case 6:
-			case 7:
-				return 'ATTR_4';
-		}
-	}
-	else if (tradition.id === 'SA_86') {
-		switch (sid) {
-			case 2:
-			case 3:
-			case 9:
-			case 13:
-			case 16:
-			case 18:
-				return 'ATTR_1';
-			case 1:
-			case 4:
-			case 8:
-			case 17:
-				return 'ATTR_2';
-			case 5:
-			case 6:
-			case 11:
-			case 14:
-				return 'ATTR_3';
-			case 7:
-			case 10:
-			case 12:
-			case 15:
-				return 'ATTR_4';
-		}
-	}
-	return;
-}
 
 export const getCarryingCapacity = createSelector(
 	mapGetToSlice(getAttributes, 'ATTR_8'),

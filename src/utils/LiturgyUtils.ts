@@ -1,5 +1,4 @@
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
@@ -7,9 +6,8 @@ import { RequiresIncreasableObject } from '../types/reusable.d';
 import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
 
-export function isOwnTradition(state: DependentInstancesState, obj: LiturgyInstance | BlessingInstance): boolean {
-	const SA = get(state, 'SA_86') as SpecialAbilityInstance;
-	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
+export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyInstance | BlessingInstance): boolean {
+	return obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
 }
 
 export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
@@ -117,4 +115,58 @@ const aspectsByTradition: ToListById<number[]> = { 1: [1], 2: [2, 3], 3: [4, 5],
 export function getAspectsOfTradition(traditionId: number): number[] {
 	const add = traditionId > 1 ? [1] : [];
 	return [...add, ...aspectsByTradition[traditionId]];
+}
+
+const traditionIdByNumericId = new Map([
+	[1, 'SA_86'],
+	[2, 'SA_682'],
+	[3, 'SA_683'],
+	[4, 'SA_684'],
+	[5, 'SA_685'],
+	[6, 'SA_686'],
+	[7, 'SA_687'],
+	[8, 'SA_688'],
+	[9, 'SA_689'],
+	[10, 'SA_690'],
+	[11, 'SA_691'],
+	[12, 'SA_692'],
+	[13, 'SA_693'],
+	[14, 'SA_694'],
+	[15, 'SA_695'],
+	[16, 'SA_696'],
+	[17, 'SA_697'],
+	[18, 'SA_698'],
+]);
+
+const numericIdByTraditionId = new Map([
+	['SA_86', 1],
+	['SA_682', 2],
+	['SA_683', 3],
+	['SA_684', 4],
+	['SA_685', 5],
+	['SA_686', 6],
+	['SA_687', 7],
+	['SA_688', 8],
+	['SA_689', 9],
+	['SA_690', 10],
+	['SA_691', 11],
+	['SA_692', 12],
+	['SA_693', 13],
+	['SA_694', 14],
+	['SA_695', 15],
+	['SA_696', 16],
+	['SA_697', 17],
+	['SA_698', 18],
+]);
+
+export function isBlessedTraditionId(id: string): boolean {
+	return numericIdByTraditionId.has(id);
+}
+
+export function getBlessedTraditionInstanceIdByNumericId(id: number): string {
+	return traditionIdByNumericId.get(id)!;
+}
+
+export function getNumericBlessedTraditionIdByInstanceId(id: string): number {
+	return numericIdByTraditionId.get(id)!;
 }

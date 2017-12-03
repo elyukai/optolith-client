@@ -1,6 +1,6 @@
-import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from '../selectors/attributeSelectors';
+import { getMagicalTraditions } from '../selectors/spellsSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities } from '../selectors/stateSelectors';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { getSids, isActive } from './ActivatableUtils';
@@ -50,7 +50,7 @@ export const getLP = createSelector(
 );
 
 export const getAE = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	getPrimaryMagicalAttribute,
 	getPermanentArcaneEnergyPoints,
 	mapGetToSlice(getAdvantages, 'ADV_23'),
@@ -58,12 +58,12 @@ export const getAE = createSelector(
 	getAddedArcaneEnergyPoints,
 	getLocaleMessages,
 	(tradition, primary, { lost, redeemed }, increase, decrease, add, locale) => {
-		const lastTradition = last(tradition!.active);
+		const lastTradition = tradition[0];
 		let base = 0;
 		let mod = redeemed - lost;
 		let maxAdd = 0;
 
-		if (primary !== undefined && lastTradition !== undefined && (lastTradition.sid === 6 || lastTradition.sid === 7)) {
+		if (primary !== undefined && lastTradition !== undefined && (lastTradition.id === 'SA_677' || lastTradition.id === 'SA_678')) {
 			maxAdd = Math.round(primary.value / 2);
 		}
 		else if (primary !== undefined) {

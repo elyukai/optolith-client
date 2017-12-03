@@ -4,7 +4,7 @@ import { _translate, UIMessages } from '../../utils/I18n';
 export interface LiturgiesSheetTraditionsAspectsProps {
 	aspects: string[];
 	blessedPrimary: string | undefined;
-	blessedTradition: string;
+	blessedTradition: string | undefined;
 	locale: UIMessages;
 }
 

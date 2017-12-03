@@ -531,7 +531,7 @@
 	"combattechniques.view.groups": ["Nahkampf", "Fernkampf"],
 	"info.special": "Besonderheiten",
 	"actions.addtolist": "Hinzufügen",
-	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Stab", "Hexe", "Karmal", "Bann-/Schutzkreise", "Kampfstile (bewaffnet)", "Kampfstile (unbewaffnet)", "Kampf (erweitert)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten", "Liturgiestile", "Karmal (Erweitert)", "Visionen"],
+	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Stab", "Hexe", "Karmal", "Bann-/Schutzkreise", "Kampfstile (bewaffnet)", "Kampfstile (unbewaffnet)", "Kampf (erweitert)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten", "Liturgiestile", "Karmal (Erweitert)", "Visionen", "Magische Traditionen", "Karmale Traditionen", "Paktgeschenke"],
 	"info.specialabilities.subgroups": ["Passiv", "Basismanöver", "Spezialmanöver"],
 	"spells.view.groups": ["Spruch", "Ritual", "Fluch", "Lied", "Zaubermelodie", "Zaubertanz"],
 	"spells.view.cantrip": "Trick",

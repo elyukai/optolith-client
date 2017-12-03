@@ -1,22 +1,31 @@
-import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { CANTRIPS, SPELLS } from '../constants/Categories';
 import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
 import { Spell } from '../types/view.d';
-import { getSids, isActive } from '../utils/ActivatableUtils';
+import { isActive } from '../utils/ActivatableUtils';
 import { validate } from '../utils/RequirementUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getElState, getStart, getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getAdvantages, getCantrips, getDisadvantages, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
 
+export const getMagicalTraditionsResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
+	return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));
+};
+
+export const getMagicalTraditions = createSelector(
+	getSpecialAbilities,
+	getMagicalTraditionsResultFunc
+);
+
 export const areMaxUnfamiliar = createSelector(
 	getPhase,
 	getSpells,
 	getElState,
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	(phase, spells, el, tradition) => {
 		if (phase > 2) {
 			return false;
@@ -26,7 +35,7 @@ export const areMaxUnfamiliar = createSelector(
 		}
 		const max = getStart(el).maxUnfamiliarSpells;
 		const unfamiliarSpells = [...spells.values()].reduce((n, e) => {
-			const unknownTradition = !e.tradition.some(e => e === 1 || e === (getSids(tradition)[0] as number) + 1);
+			const unknownTradition = !isOwnTradition(tradition, e);
 			return unknownTradition && e.gr < 3 && e.active ? n + 1 : n;
 		}, 0);
 		return unfamiliarSpells >= max;
@@ -62,17 +71,17 @@ export const getInactiveSpells = createSelector(
 	getSpellsAndCantrips,
 	areMaxUnfamiliar,
 	getPresent,
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	(allEntries, areMaxUnfamiliar, currentHero, tradition): InactiveSpells => {
-		if (!tradition) {
+		if (tradition.length === 0) {
 			return {
 				valid: [],
 				invalid: []
 			};
 		}
 		const allInactiveSpells = allEntries.filter(e => e.active === false);
-		const lastTraditionId = last(getSids(tradition));
-		if (lastTraditionId === 8) {
+		const lastTraditionId = tradition[0].id;
+		if (lastTraditionId === 'SA_679') {
 			return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
 				if (entry.category === CANTRIPS || entry.gr < 3 && validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
 					return {
@@ -91,9 +100,9 @@ export const getInactiveSpells = createSelector(
 				invalid: []
 			});
 		}
-		else if (lastTraditionId === 6 || lastTraditionId === 7) {
-			const lastTradition = last(tradition.active);
-			const subtradition = lastTradition && lastTradition.sid2;
+		else if (lastTraditionId === 'SA_677' || lastTraditionId === 'SA_678') {
+			const lastTradition = tradition[0];
+			const subtradition = lastTradition.active[0] && lastTradition.active[0].sid;
 			if (typeof subtradition === 'number') {
 				return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
 					if (entry.category === CANTRIPS || entry.subtradition.includes(subtradition)) {
@@ -186,15 +195,15 @@ export const isActivationDisabled = createSelector(
 	getStartEl,
 	getPhase,
 	getActiveSpellsNumber,
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	mapGetToSlice(getAdvantages, 'ADV_58'),
 	mapGetToSlice(getDisadvantages, 'DISADV_59'),
 	(startEl, phase, activeSpells, tradition, bonusEntry, penaltyEntry) => {
-		if (!tradition) {
+		if (tradition.length === 0) {
 			return true;
 		}
-		const lastTraditionId = last(getSids(tradition));
-		if (lastTraditionId === 8) {
+		const lastTraditionId = tradition[0].id;
+		if (lastTraditionId === 'SA_679') {
 			let maxSpells = 3;
 			if (bonusEntry && isActive(bonusEntry)) {
 				const tier = bonusEntry.active[0].tier;
@@ -224,14 +233,14 @@ export const getCantripsForSheet = createSelector(
 
 export const getSpellsForSheet = createSelector(
 	getSpells,
-	mapGetToSlice(getSpecialAbilities, 'SA_70'),
+	getMagicalTraditions,
 	(spells, traditionSA) => {
 		const array: Spell[] = [];
 		for (const [id, entry] of spells) {
 			const { ic, name, active, value, check, checkmod, property, tradition, effect, castingTime, castingTimeShort, cost, costShort, range, rangeShort, duration, durationShort, target, src, category } = entry;
 			if (active) {
 				let traditions;
-				if (!traditionSA || !isOwnTradition(traditionSA, entry)) {
+				if (traditionSA.length === 0 || !isOwnTradition(traditionSA, entry)) {
 					traditions = tradition;
 				}
 				array.push({
@@ -261,7 +270,3 @@ export const getSpellsForSheet = createSelector(
 		return array;
 	}
 );
-
-function isOwnTradition(tradition: SpecialAbilityInstance, obj: SpellInstance | CantripInstance): boolean {
-	return obj.tradition.some(e => e === 1 || e === last(getSids(tradition)) as number + 1);
-}

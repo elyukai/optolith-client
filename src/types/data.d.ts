@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import * as DetailedData from './detaileddata.d';
 import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
+import { AllRequirementTypes } from './reusable.d';
 
 export interface InstanceByCategory {
 	'ADVANTAGES': AdvantageInstance;
@@ -455,6 +456,7 @@ export interface SelectionObject {
 	id: string | number;
 	name: string;
 	cost?: number;
+	req?: AllRequirementTypes[];
 }
 
 export interface ActivatableRequirementObject {

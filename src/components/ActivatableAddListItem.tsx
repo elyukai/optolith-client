@@ -98,7 +98,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 
 	render() {
 		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills, selectForInfo } = this.props;
-		const { id, name, cost, instance: { category, gr }, sel, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
+		const { id, name, cost, instance: { category, gr }, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
+		let { sel } = item;
 		let { item: { input } } = this.props;
 		const { customCost, customCostPreview, input: inputText, selected, selected2, selectedTier, showCustomCostDialog } = this.state;
 		let sel2: SelectionObject[] | undefined;
@@ -252,20 +253,19 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					currentCost = selectedTier === 4 ? 0 : (cost as number) * selectedTier;
 				}
 				break;
-			case 'SA_70':
+			case 'SA_677':
 				args.sel = selected;
-				args.sel2 = selected2;
-				if (selected === 9) {
-					sel2 = sortObjects([...skills.values()], locale.id);
-				}
-				else if (selected === 6) {
-					const musictraditionIds = [1, 2, 3];
-					sel2 = musictraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
-				}
-				else if (selected === 7) {
-					const dancetraditionIds = [4, 5, 6, 7];
-					sel2 = dancetraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
-				}
+				const musictraditionIds = [1, 2, 3];
+				sel = musictraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
+				break;
+			case 'SA_678':
+				args.sel = selected;
+				const dancetraditionIds = [4, 5, 6, 7];
+				sel = dancetraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
+				break;
+			case 'SA_680':
+				args.sel = selected;
+				sel = sortObjects([...skills.values()], locale.id);
 				break;
 			default:
 				if (tiers && typeof selectedTier === 'number') {

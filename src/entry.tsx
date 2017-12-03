@@ -18,7 +18,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { addAlert, addErrorAlert } from './actions/AlertActions';
+import { addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
 import { AppContainer } from './containers/App';

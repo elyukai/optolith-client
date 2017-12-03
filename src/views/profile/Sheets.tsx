@@ -49,7 +49,7 @@ export interface SheetsStateProps {
 	languagesInstance: Data.SpecialAbilityInstance;
 	scriptsInstance: Data.SpecialAbilityInstance;
 	cantrips: Data.CantripInstance[];
-	magicalPrimary: string;
+	magicalPrimary: string | undefined;
 	magicalSpecialAbilities: Data.ActiveViewObject[];
 	magicalTradition: string;
 	properties: string[];
@@ -57,7 +57,7 @@ export interface SheetsStateProps {
 	aspects: string[];
 	blessedPrimary: string | undefined;
 	blessedSpecialAbilities: Data.ActiveViewObject[];
-	blessedTradition: string;
+	blessedTradition: string | undefined;
 	blessings: Data.BlessingInstance[];
 	liturgies: View.Liturgy[];
 }

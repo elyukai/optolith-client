@@ -4,6 +4,8 @@ import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
+import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
+import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
 import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SelectionObject, SkillInstance, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as DependentUtils from './DependentUtils';
@@ -497,14 +499,41 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
     case 'SA_29':
       tiers = 3;
       break;
-    case 'SA_70': {
-      if (getAllByCategory(dependent, Categories.SPELLS).some(e => e.active)) {
+    case 'SA_70':
+    case 'SA_255':
+    case 'SA_345':
+    case 'SA_346':
+    case 'SA_676':
+    case 'SA_677':
+    case 'SA_678':
+    case 'SA_679':
+    case 'SA_680':
+    case 'SA_681': {
+      const multipleTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities).length > 1;
+      if (!multipleTraditions && ([...dependent.spells.values()].some(e => e.active) || [...dependent.cantrips.values()].some(e => e.active))) {
         disabled = true;
       }
       break;
     }
-    case 'SA_86': {
-      if (getAllByCategory(dependent, Categories.LITURGIES).some(e => e.active)) {
+    case 'SA_86':
+    case 'SA_682':
+    case 'SA_683':
+    case 'SA_684':
+    case 'SA_685':
+    case 'SA_686':
+    case 'SA_687':
+    case 'SA_688':
+    case 'SA_689':
+    case 'SA_690':
+    case 'SA_691':
+    case 'SA_692':
+    case 'SA_693':
+    case 'SA_694':
+    case 'SA_695':
+    case 'SA_696':
+    case 'SA_697':
+    case 'SA_698': {
+      if ([...dependent.liturgies.values()].some(e => e.active) || [...dependent.blessings.values()].some(e => e.active)) {
         disabled = true;
       }
       break;
@@ -640,24 +669,20 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       addName = selection && selection.name;
       currentCost = tier === 4 ? 0 : tier;
       break;
-    case 'SA_70': {
-      const selectionItem = getSelectionItem(instance, sid);
-      addName = selectionItem && selectionItem.name;
-      currentCost = selectionItem && selectionItem.cost as number;
-      if (typeof addName === 'string' && sid === 9 && typeof sid2 === 'string') {
-        const entry = dependent.talents.get(sid2)!;
-        if (entry) {
-          addName += `: ${entry.name}`;
-        }
-      }
-      else if (typeof addName === 'string' && (sid === 6 || sid === 7)) {
-        const musictraditionLabels = _translate(locale, 'musictraditions');
-        if (musictraditionLabels) {
-          addName += `: ${musictraditionLabels[(sid2 as number) - 1]}`;
-        }
+    case 'SA_677':
+    case 'SA_678':
+      const part = getTraditionNameFromFullName(name);
+      const musictraditionLabels = _translate(locale, 'musictraditions');
+      if (musictraditionLabels) {
+        combinedName = combinedName.replace(part, `${part}: ${musictraditionLabels[(sid2 as number) - 1]}`);
       }
       break;
-    }
+    case 'SA_680':
+      const entry = dependent.talents.get(sid as string);
+      if (entry) {
+        addName += `: ${entry.name}`;
+      }
+      break;
     case 'SA_72': {
       const apArr = [10, 20, 40];
       currentCost = apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
@@ -935,11 +960,50 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
         }
         break;
       }
-      case 'SA_70': {
+      case 'SA_70':
+      case 'SA_255':
+      case 'SA_345':
+      case 'SA_346':
+      case 'SA_676':
+      case 'SA_681': {
+        const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
+        if (magicalTraditions.length === 0) {
+          return { id, name, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_677':
+      case 'SA_678':
+      case 'SA_679':
+      case 'SA_680': {
         const { adv, disadv } = ap;
-        const sel = entry.sel && sortObjects(entry.sel.filter(e => e.id < 6 || e.id > 9 || adv[1] <= 25 && disadv[1] <= 25), locale.id);
-        if (Array.isArray(sel) && sel.length > 0) {
-          return { id, name, sel, cost, gr, instance: entry };
+        const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
+        if (adv[1] <= 25 && disadv[1] <= 25 && magicalTraditions.length === 0) {
+          return { id, name, cost, gr, instance: entry };
+        }
+        break;
+      }
+      case 'SA_86':
+      case 'SA_682':
+      case 'SA_683':
+      case 'SA_684':
+      case 'SA_685':
+      case 'SA_686':
+      case 'SA_687':
+      case 'SA_688':
+      case 'SA_689':
+      case 'SA_690':
+      case 'SA_691':
+      case 'SA_692':
+      case 'SA_693':
+      case 'SA_694':
+      case 'SA_695':
+      case 'SA_696':
+      case 'SA_697':
+      case 'SA_698': {
+        const blessedTradition = getBlessedTraditionResultFunc(dependent.specialAbilities);
+        if (!blessedTradition) {
+          return { id, name, cost, gr, instance: entry };
         }
         break;
       }
@@ -1124,4 +1188,12 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
  */
 export function isExtendedSpecialAbility(entry: ActivatableInstance) {
   return entry.category === 'SPECIAL_ABILITIES' && [11, 14, 26].includes(entry.gr);
+}
+
+export function getTraditionNameFromFullName(name: string): string {
+	const result = /\((.+)\)/.exec(name);
+	if (result === null) {
+		return '';
+	}
+	return result[1];
 }

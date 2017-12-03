@@ -17,7 +17,7 @@ export interface LiturgiesSheetProps {
 	attributes: Attribute[];
 	blessedPrimary: string | undefined;
 	blessedSpecialAbilities: ActiveViewObject[];
-	blessedTradition: string;
+	blessedTradition: string | undefined;
 	blessings: BlessingInstance[];
 	checkAttributeValueVisibility: boolean;
 	derivedCharacteristics: SecondaryAttribute[];

@@ -1,9 +1,7 @@
-import { last } from 'lodash';
 import { AdventurePointsState } from '../reducers/adventurePoints';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { getLeft } from '../selectors/adventurePointsSelectors';
-import { get } from '../selectors/dependentInstancesSelectors';
-import { SpecialAbilityInstance } from '../types/data.d';
+import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
 
 /**
  * Checks if there are enough AP available.
@@ -48,8 +46,8 @@ export function validateDisAdvantages(cost: number, ap: AdventurePointsState, st
 export function getAdvantagesDisadvantagesSubMax(state: DependentInstancesState, index: number): number {
 	let max = 50;
 	if (index === 1) {
-		const traditionActive = last((get(state, 'SA_70') as SpecialAbilityInstance).active);
-		if (traditionActive && typeof traditionActive.sid === 'number' && traditionActive.sid >= 6 && traditionActive.sid <= 9) {
+		const traditionActive = getMagicalTraditionsResultFunc(state.specialAbilities)[0];
+		if (traditionActive && ['SA_677', 'SA_678', 'SA_679', 'SA_680'].includes(traditionActive.id)) {
 			max = 25;
 		}
 	}

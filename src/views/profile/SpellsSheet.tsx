@@ -18,7 +18,7 @@ export interface SpellsSheetProps {
 	checkAttributeValueVisibility: boolean;
 	derivedCharacteristics: SecondaryAttribute[];
 	locale: UIMessages;
-	magicalPrimary: string;
+	magicalPrimary: string | undefined;
 	magicalSpecialAbilities: ActiveViewObject[];
 	magicalTradition: string;
 	properties: string[];

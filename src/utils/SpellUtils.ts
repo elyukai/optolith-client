@@ -1,5 +1,4 @@
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
@@ -7,9 +6,8 @@ import { RequiresIncreasableObject } from '../types/requirements.d';
 import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
 
-export function isOwnTradition(state: DependentInstancesState, obj: SpellInstance | CantripInstance): boolean {
-	const SA = get(state, 'SA_70') as SpecialAbilityInstance;
-	return obj.tradition.some(e => e === 1 || e === getSids(SA)[0] as number + 1);
+export function isOwnTradition(tradition: SpecialAbilityInstance[], obj: SpellInstance | CantripInstance): boolean {
+	return obj.tradition.some(e => e === 1 || !!tradition.find(t => e === getNumericMagicalTraditionIdByInstanceId(t.id) + 1));
 }
 
 export function isIncreasable(state: CurrentHeroInstanceState, obj: SpellInstance): boolean {
@@ -86,4 +84,42 @@ export function resetCantrip(obj: CantripInstance): CantripInstance {
 		active: false,
 		dependencies: []
 	};
+}
+
+export const traditionIdByNumericId = new Map([
+	[1, 'SA_70'],
+	[2, 'SA_255'],
+	[3, 'SA_345'],
+	[4, 'SA_346'],
+	[5, 'SA_676'],
+	[6, 'SA_677'],
+	[7, 'SA_678'],
+	[8, 'SA_679'],
+	[9, 'SA_680'],
+	[10, 'SA_681'],
+]);
+
+export const numericIdByTraditionId = new Map([
+	['SA_70', 1],
+	['SA_255', 2],
+	['SA_345', 3],
+	['SA_346', 4],
+	['SA_676', 5],
+	['SA_677', 6],
+	['SA_678', 7],
+	['SA_679', 8],
+	['SA_680', 9],
+	['SA_681', 10],
+]);
+
+export function isMagicalTraditionId(id: string): boolean {
+	return numericIdByTraditionId.has(id);
+}
+
+export function getMagicalTraditionInstanceIdByNumericId(id: number): string {
+	return traditionIdByNumericId.get(id)!;
+}
+
+export function getNumericMagicalTraditionIdByInstanceId(id: string): number {
+	return numericIdByTraditionId.get(id)!;
 }

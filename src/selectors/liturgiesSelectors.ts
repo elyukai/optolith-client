@@ -1,15 +1,22 @@
-import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import { LITURGIES } from '../constants/Categories';
-import { ToListById } from '../types/data.d';
+import { SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { Liturgy } from '../types/view.d';
-import { getSids } from '../utils/ActivatableUtils';
-import { getAspectsOfTradition, isOwnTradition } from '../utils/LiturgyUtils';
+import { isActive } from '../utils/ActivatableUtils';
+import { getAspectsOfTradition, getNumericBlessedTraditionIdByInstanceId, isBlessedTraditionId, isOwnTradition } from '../utils/LiturgyUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getBlessings, getDependentInstances, getLiturgicalChants, getPhase, getSpecialAbilities } from './stateSelectors';
+import { getBlessings, getLiturgicalChants, getPhase, getSpecialAbilities } from './stateSelectors';
+
+export const getBlessedTraditionResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
+	return [...list.values()].find(e => isBlessedTraditionId(e.id) && isActive(e));
+};
+
+export const getBlessedTradition = createSelector(
+	getSpecialAbilities,
+	getBlessedTraditionResultFunc
+);
 
 export const getLiturgicalChantsAndBlessings = createSelector(
 	getLiturgicalChants,
@@ -28,10 +35,10 @@ export const getActiveLiturgicalChants = createSelector(
 
 export const getFilteredInactiveLiturgicalChants = createSelector(
 	getLiturgicalChantsAndBlessings,
-	getDependentInstances,
+	getBlessedTradition,
 	getRuleBooksEnabled,
-	(list, dependent, availablility) => {
-		return filterByAvailability(list.filter(e => isOwnTradition(dependent, e)), availablility);
+	(list, tradition, availablility) => {
+		return filterByAvailability(list.filter(e => tradition && isOwnTradition(tradition, e)), availablility);
 	}
 );
 
@@ -65,13 +72,6 @@ export const isActivationDisabled = createSelector(
 	}
 );
 
-export const getTraditionId = createSelector(
-	mapGetToSlice(getSpecialAbilities, 'SA_86'),
-	tradition => {
-		return last(getSids(tradition!)) as number | undefined;
-	}
-);
-
 export const getBlessingsForSheet = createSelector(
 	getBlessings,
 	blessings => [...blessings.values()].filter(e => e.active)
@@ -79,12 +79,12 @@ export const getBlessingsForSheet = createSelector(
 
 export const getLiturgiesForSheet = createSelector(
 	getLiturgicalChants,
-	getTraditionId,
-	(liturgies, traditionId) => {
+	getBlessedTradition,
+	(liturgies, tradition) => {
 		const array: Liturgy[] = [];
 		for (const [id, entry] of liturgies) {
 			const { ic, name, active, value, check, checkmod, aspects, category } = entry;
-			const availableAspects = traditionId && getAspectsOfTradition(traditionId + 1);
+			const availableAspects = tradition && getAspectsOfTradition(getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
 			if (active) {
 				array.push({
 					id,

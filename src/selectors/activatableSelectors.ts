@@ -1,18 +1,19 @@
-import { last } from 'lodash';
 import { createSelector } from 'reselect';
 import * as Categories from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import * as Data from '../types/data.d';
-import { convertPerTierCostToFinalCost, getActiveFromState, getDeactiveView, getNameCost, getSelectionName, getSids, getValidation, isActive } from '../utils/ActivatableUtils';
+import { convertPerTierCostToFinalCost, getActiveFromState, getDeactiveView, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
 import { _translate } from '../utils/I18n';
 import { validateAddingExtendedSpecialAbilities } from '../utils/RequirementUtils';
 import { filterByInstancePropertyAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { get, getAllByCategory, getMapByCategory } from './dependentInstancesSelectors';
+import { getBlessedTradition } from './liturgiesSelectors';
 import { getMessages } from './localeSelectors';
 import { getCultureAreaKnowledge } from './profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
+import { getMagicalTraditions } from './spellsSelectors';
 import { getAdvantages, getCurrentHeroPresent, getDisadvantages, getLocaleMessages, getSpecialAbilities } from './stateSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
@@ -211,7 +212,7 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet, getMessages, getCultureAreaKnowledge ],
   (specialAbilities, messages, cultureAreaKnowledge = '') => {
     return [
-      ...specialAbilities.filter(e => [1, 2, 22, 28, 29].includes(e.gr!)),
+      ...specialAbilities.filter(e => [1, 2, 22, 30].includes(e.gr!)),
       _translate(messages!, 'charactersheet.main.generalspecialabilites.areaknowledge', cultureAreaKnowledge)
     ];
   }
@@ -227,19 +228,20 @@ export const getCombatSpecialAbilitiesForSheet = createSelector(
 export const getMagicalSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20].includes(e.gr!));
+    return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28].includes(e.gr!));
   }
 );
 
 export const getBlessedSpecialAbilitiesForSheet = createSelector(
   [ getSpecialAbilitiesForSheet ],
   specialAbilities => {
-    return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27].includes(e.gr!));
+    return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27, 29].includes(e.gr!));
   }
 );
 
 export const getFatePointsModifier = createSelector(
-  [ mapGetToSlice(getAdvantages, 'ADV_14'), mapGetToSlice(getDisadvantages, 'DISADV_31') ],
+  mapGetToSlice(getAdvantages, 'ADV_14'),
+  mapGetToSlice(getDisadvantages, 'DISADV_31'),
   (luck, badLuck) => {
     const luckActive = luck && luck.active[0];
     const badLuckActive = badLuck && badLuck.active[0];
@@ -254,27 +256,28 @@ export const getFatePointsModifier = createSelector(
 );
 
 export const getMagicalTraditionForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_70') ],
-  tradition =>  getSelectionName(tradition!, last(getSids(tradition!)))!
+  getMagicalTraditions,
+  specialAbilities => specialAbilities.map(e => getTraditionNameFromFullName(e.name)).join(', ')
 );
 
 export const getPropertyKnowledgesForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_72') ],
+  mapGetToSlice(getSpecialAbilities, 'SA_72'),
   propertyKnowledge => getSids(propertyKnowledge!).map(e => getSelectionName(propertyKnowledge!, e)!)
 );
 
 export const getBlessedTraditionForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_86') ],
-  tradition =>  getSelectionName(tradition!, last(getSids(tradition!)))!
+  getBlessedTradition,
+  tradition => tradition && getTraditionNameFromFullName(tradition.name)
 );
 
 export const getAspectKnowledgesForSheet = createSelector(
-  [ mapGetToSlice(getSpecialAbilities, 'SA_87') ],
+  mapGetToSlice(getSpecialAbilities, 'SA_87'),
   aspectKnowledge => getSids(aspectKnowledge!).map(e => getSelectionName(aspectKnowledge!, e)!)
 );
 
 export const getInitialStartingWealth = createSelector(
-  [ mapGetToSlice(getAdvantages, 'ADV_36'), mapGetToSlice(getDisadvantages, 'DISADV_2') ],
+  mapGetToSlice(getAdvantages, 'ADV_36'),
+  mapGetToSlice(getDisadvantages, 'DISADV_2'),
   (rich, poor) => {
     if (rich && isActive(rich)) {
       return 750 + rich.active[0]!.tier! * 250;

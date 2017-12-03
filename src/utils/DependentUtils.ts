@@ -59,7 +59,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
     if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
       if (isRequiringPrimaryAttribute(req)) {
         const { type, value } = req;
-        const id = getPrimaryAttributeId(state, type);
+        const id = getPrimaryAttributeId(state.specialAbilities, type);
         if (id) {
           const requiredAbility = getLatest(state, instances, id) as AttributeInstance;
           instances = setNewStateItem(instances, id, addDependency(requiredAbility, value));
@@ -133,7 +133,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
     if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
       if (isRequiringPrimaryAttribute(req)) {
         const { type, value } = req;
-        const id = getPrimaryAttributeId(state, type);
+        const id = getPrimaryAttributeId(state.specialAbilities, type);
         if (id) {
           const requiredAbility = getLatest(state, instances, id) as AttributeInstance;
           instances = setNewStateItem(instances, id, removeDependency(requiredAbility, value));

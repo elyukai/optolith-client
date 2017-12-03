@@ -142,6 +142,23 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 					</div>
 				</Scroll>;
 
+			case 28:
+			case 29:
+				return <Scroll>
+					<div className="info specialability-info">
+						{headerElement}
+						<Markdown source={`${currentObject.rules}`} />
+						<p>
+							<span>{_translate(locale, 'info.prerequisites')}</span>
+							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
+						</p>
+						<Markdown source={costText} />
+						<p className="source">
+							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
+						</p>
+					</div>
+				</Scroll>;
+
 			default:
 				return <Scroll>
 					<div className="info specialability-info">

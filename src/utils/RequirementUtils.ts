@@ -5,7 +5,7 @@ import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getBlessedStyleDependencies, getCombatStyleDependencies, getMagicalStyleDependencies } from '../selectors/stateSelectors';
-import { ActivatableInstance, ActivatableInstanceDependency, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency, ActivatableSkillInstance } from '../types/data.d';
+import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency } from '../types/data.d';
 import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
@@ -61,7 +61,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
     return typeof culture === 'string' && culture === `C_${req.value}`;
   }
   else if (isRequiringPrimaryAttribute(req)) {
-    const id = getPrimaryAttributeId(state.dependent, req.type);
+    const id = getPrimaryAttributeId(state.dependent.specialAbilities, req.type);
     if (typeof id === 'string') {
       const entry = get(state.dependent, id);
       if (isIncreasableInstance(entry)) {

@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { lt, lte, satisfies } from 'semver';
 import { ActiveObject, Hero, ToListById } from '../types/data.d';
+import { getBlessedTraditionInstanceIdByNumericId } from './LiturgyUtils';
+import { getMagicalTraditionInstanceIdByNumericId } from './SpellUtils';
 
 export const currentVersion = JSON.parse(fs.readFileSync(path.join(remote.app.getAppPath(), 'package.json'), 'utf8')).version as string;
 
@@ -607,6 +609,60 @@ export function convertHero(hero: Hero) {
         ...other,
         SA_243: arr
       };
+    }
+  }
+  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.3')) {
+    if (entry.activatable.hasOwnProperty('SA_344')) {
+      entry.activatable = {
+        ...entry.activatable,
+        SA_344: [{ sid: 'CT_3' }]
+      };
+    }
+    if (entry.activatable.hasOwnProperty('SA_345')) {
+      const { SA_344: arr, ...other } = entry.activatable;
+      if (Array.isArray(arr)) {
+        entry.activatable = {
+          ...other,
+          SA_344: [...arr, { sid: 'CT_12' }]
+        };
+      }
+      else {
+        entry.activatable = {
+          ...other,
+          SA_344: [{ sid: 'CT_12' }]
+        };
+      }
+    }
+    if (entry.activatable.hasOwnProperty('SA_346')) {
+      const { SA_344: arr, ...other } = entry.activatable;
+      if (Array.isArray(arr)) {
+        entry.activatable = {
+          ...other,
+          SA_344: [...arr, { sid: 'CT_16' }]
+        };
+      }
+      else {
+        entry.activatable = {
+          ...other,
+          SA_344: [{ sid: 'CT_16' }]
+        };
+      }
+    }
+    if (entry.activatable.hasOwnProperty('SA_70')) {
+      const { SA_70: arr, ...other } = entry.activatable;
+      entry.activatable = other;
+      for (const active of arr) {
+        const { sid, sid2 } = active;
+        entry.activatable[getMagicalTraditionInstanceIdByNumericId(sid as number)] = [{ sid: sid2 }];
+      }
+    }
+    if (entry.activatable.hasOwnProperty('SA_86')) {
+      const { SA_86: arr, ...other } = entry.activatable;
+      entry.activatable = other;
+      for (const active of arr) {
+        const { sid, sid2 } = active;
+        entry.activatable[getBlessedTraditionInstanceIdByNumericId(sid as number)] = [{ sid: sid2 }];
+      }
     }
   }
   return entry;

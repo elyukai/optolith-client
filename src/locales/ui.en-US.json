@@ -529,7 +529,7 @@
 	"combattechniques.view.groups": ["Melee", "Ranged"],
 	"info.special": "Special",
 	"actions.addtolist": "Add to list",
-	"specialabilities.view.groups": ["General", "Fate", "Combat", "Magical", "Staff", "Witch", "Karma", "Protective/Warding Circles", "Combat Styles (armed)", "Combat Styles (unarmed)", "Combat (extended)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten & Visionen", "Liturgiestile", "Karmal (Erweitert)"],
+	"specialabilities.view.groups": ["General", "Fate", "Combat", "Magical", "Staff", "Witch", "Karma", "Protective/Warding Circles", "Combat Styles (armed)", "Combat Styles (unarmed)", "Combat (extended)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten & Visionen", "Liturgiestile", "Karmal (Erweitert)", "Magical Traditions", "Blessed Traditions", "Paktgeschenke"],
 	"info.specialabilities.subgroups": ["Passive", "Base Maneuver", "Special Maneuver"],
 	"spells.view.groups": ["Spell", "Ritual", "Curse", "Song"],
 	"spells.view.cantrip": "Cantrip",

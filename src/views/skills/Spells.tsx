@@ -17,7 +17,7 @@ import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpellInstance } from '../../types/data.d';
+import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
@@ -38,6 +38,7 @@ export interface SpellsStateProps {
 	enableActiveItemHints: boolean;
 	inactiveList: (SpellInstance | CantripInstance)[];
 	activeList: (SpellInstance | CantripInstance)[];
+	traditions: SpecialAbilityInstance[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
 }
@@ -80,7 +81,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditions } = this.props;
 		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
 
 		const sortArray = [
@@ -141,7 +142,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 										const prevObj = array[index - 1];
 
 										let extendName = '';
-										if (!isOwnTradition(currentHero.dependent, obj)) {
+										if (!isOwnTradition(traditions, obj)) {
 											extendName += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 										}
 
@@ -255,7 +256,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 									const prevObj = array[index - 1];
 
 									let name = obj.name;
-									if (!isOwnTradition(currentHero.dependent, obj)) {
+									if (!isOwnTradition(traditions, obj)) {
 										name += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 									}
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface SpellsSheetTraditionsPropertiesProps {
-	magicalPrimary: string;
+	magicalPrimary: string | undefined;
 	magicalTradition: string;
 	properties: string[];
 	locale: UIMessages;

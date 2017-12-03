@@ -1,13 +1,14 @@
-import { last } from 'lodash';
 import { ATTRIBUTES } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
+import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
+import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
 import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
-import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
+import { getNumericBlessedTraditionIdByInstanceId } from './LiturgyUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
+import { getNumericMagicalTraditionIdByInstanceId } from './SpellUtils';
 
 export function getSum(list: AttributeInstance[]): number {
 	return list.reduce((n, e) => n + e.value, 0);
@@ -78,48 +79,52 @@ export function convertId<T extends string | undefined>(id: T): T {
 	}
 }
 
-export function getPrimaryAttributeId(state: DependentInstancesState, type: 1 | 2) {
+export function getPrimaryAttributeId(state: Map<string, SpecialAbilityInstance>, type: 1 | 2) {
 	if (type === 1) {
-		const tradition = state.specialAbilities.get('SA_70')!;
-		switch (last(ActivatableUtils.getSids(tradition))) {
-			case 1:
-			case 4:
-			case 10:
-				return 'ATTR_2';
-			case 3:
-				return 'ATTR_3';
-			case 2:
-			case 5:
-			case 6:
-			case 7:
-				return 'ATTR_4';
+		const traditions = getMagicalTraditionsResultFunc(state);
+		if (traditions.length > 0) {
+			switch (getNumericMagicalTraditionIdByInstanceId(traditions[0].id)) {
+				case 1:
+				case 4:
+				case 10:
+					return 'ATTR_2';
+				case 3:
+					return 'ATTR_3';
+				case 2:
+				case 5:
+				case 6:
+				case 7:
+					return 'ATTR_4';
+			}
 		}
 	}
 	else if (type === 2) {
-		const tradition = state.specialAbilities.get('SA_86')!;
-		switch (last(ActivatableUtils.getSids(tradition))) {
-			case 2:
-			case 3:
-			case 9:
-			case 13:
-			case 16:
-			case 18:
-				return 'ATTR_1';
-			case 1:
-			case 4:
-			case 8:
-			case 17:
-				return 'ATTR_2';
-			case 5:
-			case 6:
-			case 11:
-			case 14:
-				return 'ATTR_3';
-			case 7:
-			case 10:
-			case 12:
-			case 15:
-				return 'ATTR_4';
+		const tradition = getBlessedTraditionResultFunc(state);
+		if (tradition) {
+			switch (getNumericBlessedTraditionIdByInstanceId(tradition.id)) {
+				case 2:
+				case 3:
+				case 9:
+				case 13:
+				case 16:
+				case 18:
+					return 'ATTR_1';
+				case 1:
+				case 4:
+				case 8:
+				case 17:
+					return 'ATTR_2';
+				case 5:
+				case 6:
+				case 11:
+				case 14:
+					return 'ATTR_3';
+				case 7:
+				case 10:
+				case 12:
+				case 15:
+					return 'ATTR_4';
+			}
 		}
 	}
 	return;
