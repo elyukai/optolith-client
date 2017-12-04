@@ -142,19 +142,19 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 			</p>}
 			<p>
 				<span>{_translate(locale, 'info.suggestedadvantages')}</span>
-				<span></span>
+				<span>{currentObject.suggestedAdvantagesText || _translate(locale, 'info.none')}</span>
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.suggesteddisadvantages')}</span>
-				<span></span>
+				<span>{currentObject.suggestedDisadvantagesText || _translate(locale, 'info.none')}</span>
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.unsuitableadvantages')}</span>
-				<span></span>
+				<span>{currentObject.unsuitableAdvantagesText || _translate(locale, 'info.none')}</span>
 			</p>
 			<p>
 				<span>{_translate(locale, 'info.unsuitabledisadvantages')}</span>
-				<span></span>
+				<span>{currentObject.unsuitableDisadvantagesText || _translate(locale, 'info.none')}</span>
 			</p>
 			{currentObject.variants.length > 0 && <p className="profession-variants">
 				<span>{_translate(locale, 'info.variants')}</span>

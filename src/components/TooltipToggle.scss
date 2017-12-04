@@ -7,8 +7,10 @@
 }
 
 .tooltip-small {
-	padding: 6px;
+	padding: 6px 8px;
 	font: 500 12px Alegreya Sans;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
 	color: var(--text-color);
 
 	&.overlay-top::after, &.overlay-bottom::before {

@@ -138,7 +138,7 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, subname, req: localeReq, src: srcPages } = localeObject;
+    const { name, subname, req: localeReq, prerequisitesEnd, prerequisitesStart, suggestedAdvantages, suggestedDisadvantages, unsuitableAdvantages, unsuitableDisadvantages, src: srcPages } = localeObject;
     const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants, typ_adv, typ_dadv, untyp_adv, untyp_dadv, vars, gr, src: srcIds, blessings, sgr } = raw;
     const finalReq = [ ...req, ...localeReq ];
     return {
@@ -164,6 +164,12 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
       variants: vars.map(e => `PV_${e}`),
       gr,
       subgr: sgr,
+      prerequisitesEnd,
+      prerequisitesStart,
+      suggestedAdvantagesText: suggestedAdvantages,
+      suggestedDisadvantagesText: suggestedDisadvantages,
+      unsuitableAdvantagesText: unsuitableAdvantages,
+      unsuitableDisadvantagesText: unsuitableDisadvantages,
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }

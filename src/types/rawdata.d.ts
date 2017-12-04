@@ -133,6 +133,12 @@ export interface RawProfessionLocale {
 	name: string | { m: string, f: string };
 	subname?: string | { m: string, f: string };
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
+	prerequisitesStart?: string;
+	prerequisitesEnd?: string;
+	suggestedAdvantages?: string;
+	suggestedDisadvantages?: string;
+	unsuitableAdvantages?: string;
+	unsuitableDisadvantages?: string;
 	src: number[];
 }
 

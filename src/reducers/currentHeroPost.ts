@@ -120,6 +120,10 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         for (const [id, value] of [ ...professionVariant.spells, ...professionVariant.liturgies ]) {
           skillActivateList.add(id);
           addToSkillRatingList(id, value);
+          if (skillRatingList.get(id) === 0) {
+            skillRatingList.delete(id);
+            skillActivateList.delete(id);
+          }
         }
         for (const activeObject of professionVariant.specialAbilities) {
           if (activeObject.active === false) {

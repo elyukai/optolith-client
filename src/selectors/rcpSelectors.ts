@@ -263,6 +263,12 @@ export const getAllProfessions = createSelector(
 				liturgies,
 				blessings,
 				variants,
+				prerequisitesStart,
+				prerequisitesEnd,
+				suggestedAdvantagesText,
+				suggestedDisadvantagesText,
+				unsuitableAdvantagesText,
+				unsuitableDisadvantagesText,
 				src
 			} = profession;
 
@@ -335,6 +341,12 @@ export const getAllProfessions = createSelector(
 					};
 				}),
 				src,
+				prerequisitesStart,
+				prerequisitesEnd,
+				suggestedAdvantagesText,
+				suggestedDisadvantagesText,
+				unsuitableAdvantagesText,
+				unsuitableDisadvantagesText,
 				category: PROFESSIONS
 			});
 		}

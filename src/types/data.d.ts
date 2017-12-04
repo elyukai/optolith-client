@@ -335,6 +335,12 @@ export interface ProfessionInstance {
 	 * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the Twelve Gods" or "Fighter".
 	 */
 	readonly subgr: number;
+	readonly prerequisitesStart?: string;
+	readonly prerequisitesEnd?: string;
+	readonly suggestedAdvantagesText?: string;
+	readonly suggestedDisadvantagesText?: string;
+	readonly unsuitableAdvantagesText?: string;
+	readonly unsuitableDisadvantagesText?: string;
 	readonly src: SourceLink[];
 }
 

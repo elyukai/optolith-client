@@ -100,6 +100,12 @@ export interface Profession {
 	blessings: string[];
 	variants: ProfessionVariant[];
 	src: SourceLink[];
+	prerequisitesStart?: string;
+	prerequisitesEnd?: string;
+	suggestedAdvantagesText?: string;
+	suggestedDisadvantagesText?: string;
+	unsuitableAdvantagesText?: string;
+	unsuitableDisadvantagesText?: string;
 	category: Categories.PROFESSIONS;
 }
 

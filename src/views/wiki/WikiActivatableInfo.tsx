@@ -35,10 +35,11 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 		costText += apValue;
 	}
 	else if (Array.isArray(cost)) {
-		costText += `${_translate(locale, 'info.tier')} ${cost.map((_, i) => getRoman(i, true)).join('/')}: ${cost.join('/')} ${_translate(locale, 'aptext')}`;
+		const iteratedCost = currentObject.category === DISADVANTAGES ? cost.map(e => -e) : cost;
+		costText += `${_translate(locale, 'info.tier')} ${iteratedCost.map((_, i) => getRoman(i, true)).join('/')}: ${iteratedCost.join('/')} ${_translate(locale, 'aptext')}`;
 	}
 	else {
-		costText += `${cost} ${_translate(locale, 'aptext')}`;
+		costText += `${currentObject.category === DISADVANTAGES && typeof cost === 'number' ? -cost : cost} ${_translate(locale, 'aptext')}`;
 
 		if (typeof tiers === 'number') {
 			costText += ` ${_translate(locale, 'info.pertier')}`;
