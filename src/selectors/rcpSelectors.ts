@@ -254,6 +254,7 @@ export const getAllProfessions = createSelector(
 				ap,
 				name,
 				subname,
+				dependencies,
 				requires,
 				specialAbilities,
 				selections,
@@ -341,6 +342,7 @@ export const getAllProfessions = createSelector(
 					};
 				}),
 				src,
+				dependencies,
 				prerequisitesStart,
 				prerequisitesEnd,
 				suggestedAdvantagesText,

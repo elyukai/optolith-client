@@ -33,15 +33,23 @@ export interface SetRaceVariantAction {
 	type: ActionTypes.SET_RACE_VARIANT;
 	payload: {
 		id: string;
+		cost: number;
 	};
 }
 
-export function setRaceVariant(id: string): SetRaceVariantAction {
-	return {
-		type: ActionTypes.SET_RACE_VARIANT,
-		payload: {
-			id
-		}
+export function setRaceVariant(id: string): AsyncAction {
+	return (dispatch, getState) => {
+		const { dependent, rcp: { profession, professionVariant } } = getState().currentHero.present;
+		const professionDiff = getDiffCost(dependent, profession);
+		const professionVariantDiff = getDiffCost(dependent, professionVariant);
+		const cost = professionDiff + professionVariantDiff;
+		dispatch({
+			type: ActionTypes.SET_RACE_VARIANT,
+			payload: {
+				id,
+				cost
+			}
+		} as SetRaceVariantAction);
 	};
 }
 

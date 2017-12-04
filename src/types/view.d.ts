@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableNameCostActive, ProfessionSelections, SourceLink } from './data.d';
+import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject } from './data.d';
 import { ProfessionRequiresIncreasableObject } from './reusable.d';
 
 export { Book } from './data.d';
@@ -100,6 +100,7 @@ export interface Profession {
 	blessings: string[];
 	variants: ProfessionVariant[];
 	src: SourceLink[];
+	dependencies: ProfessionDependencyObject[];
 	prerequisitesStart?: string;
 	prerequisitesEnd?: string;
 	suggestedAdvantagesText?: string;

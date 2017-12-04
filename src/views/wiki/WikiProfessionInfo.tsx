@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
 import { ATTRIBUTES } from '../../constants/Categories';
-import { AttributeInstance, Book, CantripInstance, CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LiturgyInstance, SkillsSelection, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { AttributeInstance, Book, CantripInstance, CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LiturgyInstance, RaceInstance, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
-import { isRequiringIncreasable } from '../../utils/RequirementUtils';
+import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/RequirementUtils';
 
 export interface WikiProfessionInfoProps {
 	attributes: Map<string, AttributeInstance>;
@@ -15,12 +15,13 @@ export interface WikiProfessionInfoProps {
 	liturgicalChants: Map<string, LiturgyInstance>;
 	locale: UIMessages;
 	sex: 'm' | 'f' | undefined;
+	races: Map<string, RaceInstance>;
 	skills: Map<string, TalentInstance>;
 	spells: Map<string, SpellInstance>;
 }
 
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
-	const { attributes, books, cantrips, currentObject, liturgicalChants, locale, sex = 'm', skills, spells } = props;
+	const { attributes, books, cantrips, currentObject, liturgicalChants, locale, races, sex = 'm', skills, spells } = props;
 
 	let { name, subname } = currentObject;
 
@@ -50,6 +51,31 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 		...currentObject.liturgicalChants.map(e => `${liturgicalChants.get(e.id)!.name} ${e.value}`)
 	], locale.id);
 
+	const raceRequirement = currentObject.dependencies.find(e => isRaceRequirement(e)) as RaceRequirement | undefined;
+	const sexRequirement = currentObject.dependencies.find(e => isSexRequirement(e)) as SexRequirement | undefined;
+
+	const getRaceNameAP = (race: RaceInstance) => `${race.name} (${race.ap} ${_translate(locale, 'apshort')})`;
+
+	const prerequisites = [
+		...(raceRequirement ? [`${_translate(locale, 'race')}: ${Array.isArray(raceRequirement.value) ? raceRequirement.value.map(e => getRaceNameAP(races.get(`R_${e}`)!)).join(_translate(locale, 'info.or')) : getRaceNameAP(races.get(`R_${raceRequirement.value}`)!)}`] : []),
+		...(currentObject.prerequisitesStart ? [currentObject.prerequisitesStart] : []),
+		...sortStrings(currentObject.prerequisites.map(e => {
+			if (isRequiringIncreasable(e)) {
+				const instance = attributes.get(e.id) || skills.get(e.id);
+				let name;
+				if (instance && instance.category === ATTRIBUTES) {
+					name = instance.short;
+				}
+				else if (instance) {
+					name = instance.name;
+				}
+				return `${name} ${e.value}`;
+			}
+			return `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`;
+		}), locale.id),
+		...(currentObject.prerequisitesEnd ? [currentObject.prerequisitesEnd] : []),
+	];
+
 	return <Scroll>
 		<div className="info profession-info">
 			<div className="profession-header info-header">
@@ -62,20 +88,8 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 			<p>
 				<span>{_translate(locale, 'info.prerequisites')}</span>
 				<span>
-					{sortStrings(currentObject.prerequisites.map(e => {
-						if (isRequiringIncreasable(e)) {
-							const instance = attributes.get(e.id) || skills.get(e.id);
-							let name;
-							if (instance && instance.category === ATTRIBUTES) {
-								name = instance.short;
-							}
-							else if (instance) {
-								name = instance.name;
-							}
-							return `${name} ${e.value}`;
-						}
-						return `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`;
-					}), locale.id).join(', ') || _translate(locale, 'info.none')}
+					{prerequisites.length > 0 ? prerequisites.join(', ') : _translate(locale, 'info.none')}
+					{sexRequirement && `${prerequisites.length > 0 ? '; ' : ''}${_translate(locale, 'charactersheet.main.sex')}: ${sexRequirement.value === 'm' ? _translate(locale, 'herocreation.options.selectsex.male') : _translate(locale, 'herocreation.options.selectsex.female')}`}
 				</span>
 			</p>
 			<p>
