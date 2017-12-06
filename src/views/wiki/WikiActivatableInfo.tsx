@@ -6,7 +6,7 @@ import { ADVANTAGES, ATTRIBUTES, DISADVANTAGES, LITURGIES, SPECIAL_ABILITIES, SP
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { get } from '../../selectors/dependentInstancesSelectors';
 import { ActivatableBasePrerequisites, ActivatableInstance, AttributeInstance, Book, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../../types/data.d';
-import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/requirements';
+import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/reusable';
 import { UIMessages } from '../../types/view.d';
 import { getNameCost, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';

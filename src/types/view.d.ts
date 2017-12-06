@@ -1,6 +1,6 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject } from './data.d';
-import { ProfessionRequiresIncreasableObject } from './reusable.d';
+import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject, ProfessionVariantSelections } from './data.d';
+import { ProfessionRequiresIncreasableObject, ProfessionRequiresActivatableObject } from './reusable.d';
 
 export { Book } from './data.d';
 export { UIMessages } from './ui.d';
@@ -87,6 +87,7 @@ export interface Profession {
 	subname?: string | NameBySex;
 	ap: number;
 	prerequisites: (ActivatableNameCostActive | ProfessionRequiresIncreasableObject)[];
+	prerequisitesModel: (ProfessionRequiresActivatableObject | ProfessionRequiresIncreasableObject)[];
 	specialAbilities: ActivatableNameCostActive[];
 	selections: ProfessionSelections;
 	combatTechniques: Increasable[];
@@ -108,16 +109,23 @@ export interface Profession {
 	unsuitableAdvantagesText?: string;
 	unsuitableDisadvantagesText?: string;
 	category: Categories.PROFESSIONS;
+	gr: number;
+	subgr: number;
 }
 
 export interface ProfessionVariant {
 	id: string;
 	name: string | NameBySex;
 	ap: number;
+	dependencies: ProfessionDependencyObject[];
+	prerequisitesModel: (ProfessionRequiresActivatableObject | ProfessionRequiresIncreasableObject)[];
+	selections: ProfessionVariantSelections;
+	specialAbilities: ActivatableNameCostActive[];
 	combatTechniques: Increasable[];
 	skills: Increasable[];
 	spells: IncreasableId[];
 	concludingText: string | undefined;
+	fullText: string | undefined;
 	precedingText: string | undefined;
 }
 

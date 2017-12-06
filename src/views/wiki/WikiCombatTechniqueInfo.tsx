@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, UIMessages } from '../../types/data.d';
-import { CombatTechnique } from '../../types/view';
+import { AttributeInstance, Book, CombatTechniqueInstance, UIMessages } from '../../types/data.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
@@ -10,7 +9,7 @@ import { getICName } from '../../utils/ICUtils';
 export interface WikiCombatTechniqueInfoProps {
 	attributes: Map<string, AttributeInstance>;
 	books: Map<string, Book>;
-	currentObject: CombatTechnique;
+	currentObject: CombatTechniqueInstance;
 	locale: UIMessages;
 	sex: 'm' | 'f' | undefined;
 }

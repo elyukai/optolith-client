@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
 import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
-import { Culture, Increasable, Profession, Race } from '../types/view.d';
+import { Culture, Increasable, Profession, Race, ProfessionVariant } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
@@ -214,42 +214,12 @@ export const getAllProfessions = createSelector(
 	getProfessions,
 	getProfessionVariants,
 	getDependentInstances,
-	getStartEl,
-	getCurrentRaceId,
-	getCurrentCulture,
-	getSex,
-	getProfessionsGroupVisibilityFilter,
-	getProfessionsVisibilityFilter,
 	getLocaleMessages,
-	(professions, professionVariants, dependentState, startEl, currentRaceId, currentCulture, sex, groupVisibility, visibility, locale) => {
+	(professions, professionVariants, dependentState, locale) => {
 		const { combatTechniques: combatTechniquesState, talents: skillsState } = dependentState;
 		const list: Profession[] = [];
 
-		const filterProfession = (e: ProfessionInstance | ProfessionVariantInstance) => {
-			const { dependencies, requires } = e;
-			return validateProfession(dependencies, currentRaceId, currentCulture && currentCulture.id, sex) && !requires.some(d => {
-				if (isRequiringIncreasable(d) && typeof d.id === 'string') {
-					const category = getCategoryById(d.id);
-					if (typeof category !== 'undefined' && category === ATTRIBUTES && d.value > startEl.maxAttributeValue) {
-						return true;
-					}
-					return false;
-				}
-				return false;
-			});
-		};
-
-		const filterProfessionExtended = (e: ProfessionInstance) => {
-			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
-			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.reverse === true ? !typicalList.list.includes(e.id) && isEntryFromCoreBook(e) : typicalList.list.includes(e.id));
-			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
-			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
-			return groupVisible && commonVisible;
-		};
-
-		const filteredProfessions = [...professions].filter(([_, entry]) => filterProfession(entry) && filterProfessionExtended(entry));
-
-		for (const [id, profession] of filteredProfessions) {
+		for (const [id, profession] of professions) {
 			const {
 				ap,
 				name,
@@ -270,7 +240,9 @@ export const getAllProfessions = createSelector(
 				suggestedDisadvantagesText,
 				unsuitableAdvantagesText,
 				unsuitableDisadvantagesText,
-				src
+				src,
+				gr,
+				subgr,
 			} = profession;
 
 			const skills: Increasable[][] = [[], [], [], [], []];
@@ -280,7 +252,7 @@ export const getAllProfessions = createSelector(
 				skills[gr - 1].push({ name, value });
 			}
 
-			const filteredVariants = variants.filter(e => professionVariants.has(e)).map(v => professionVariants.get(v)!).filter(filterProfession);
+			const filteredVariants = variants.filter(e => professionVariants.has(e)).map(v => professionVariants.get(v)!);
 
 			list.push({
 				id,
@@ -297,6 +269,7 @@ export const getAllProfessions = createSelector(
 					}
 					return e;
 				}),
+				prerequisitesModel: requires,
 				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
 					active,
 					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
@@ -320,7 +293,21 @@ export const getAllProfessions = createSelector(
 				liturgicalChants: liturgies.map(([id, value]) => ({ id, value })),
 				blessings,
 				variants: filteredVariants.map(v => {
-					const { id, name, ap, combatTechniques: combatTechniquesVariant, talents: talentsVariant, concludingText, precedingText, spells: spellsVariant } = v;
+					const {
+						id,
+						name,
+						ap,
+						combatTechniques: combatTechniquesVariant,
+						talents: talentsVariant,
+						concludingText,
+						fullText,
+						precedingText,
+						spells: spellsVariant,
+						dependencies: dependenciesVariant,
+						requires: variantRequires,
+						selections: selectionsVariant,
+						specialAbilities: specialAbilitiesVariant,
+					} = v;
 					return {
 						id,
 						name,
@@ -337,7 +324,23 @@ export const getAllProfessions = createSelector(
 							const previousObject = spells.find(e => e[0] === id);
 							return { id, value, previous: previousObject && previousObject[1] };
 						}),
+						dependencies: dependenciesVariant,
+						prerequisitesModel: variantRequires,
+						selections: selectionsVariant.map(e => {
+							if (e.id === 'COMBAT_TECHNIQUES') {
+								return {
+									...e,
+									sid: e.sid ? e.sid.map(id => combatTechniquesState.get(id)!.name) : undefined
+								};
+							}
+							return e;
+						}),
+						specialAbilities: specialAbilitiesVariant.map(({ active, ...other }, index) => ({
+							active,
+							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
+						})),
 						concludingText,
+						fullText,
 						precedingText
 					};
 				}),
@@ -349,7 +352,9 @@ export const getAllProfessions = createSelector(
 				suggestedDisadvantagesText,
 				unsuitableAdvantagesText,
 				unsuitableDisadvantagesText,
-				category: PROFESSIONS
+				category: PROFESSIONS,
+				gr,
+				subgr,
 			});
 		}
 
@@ -357,8 +362,46 @@ export const getAllProfessions = createSelector(
 	}
 );
 
-export const getFilteredProfessions = createSelector(
+export const getCommonProfessions = createSelector(
 	getAllProfessions,
+	getStartEl,
+	getCurrentRaceId,
+	getCurrentCulture,
+	getSex,
+	getProfessionsGroupVisibilityFilter,
+	getProfessionsVisibilityFilter,
+	(professions, startEl, currentRaceId, currentCulture, sex, groupVisibility, visibility) => {
+		const filterProfession = (e: Profession | ProfessionVariant) => {
+			const { dependencies, prerequisitesModel } = e;
+			return validateProfession(dependencies, currentRaceId, currentCulture && currentCulture.id, sex) && !prerequisitesModel.some(d => {
+				if (isRequiringIncreasable(d) && typeof d.id === 'string') {
+					const category = getCategoryById(d.id);
+					if (typeof category !== 'undefined' && category === ATTRIBUTES && d.value > startEl.maxAttributeValue) {
+						return true;
+					}
+					return false;
+				}
+				return false;
+			});
+		};
+
+		const filterProfessionExtended = (e: Profession) => {
+			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
+			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.reverse === true ? !typicalList.list.includes(e.id) && isEntryFromCoreBook(e) : typicalList.list.includes(e.id));
+			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
+			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
+			return groupVisible && commonVisible;
+		};
+
+		return professions.filter(e => filterProfession(e) && filterProfessionExtended(e)).map(e => ({
+			...e,
+			variants: e.variants.filter(filterProfession)
+		}));
+	}
+);
+
+export const getFilteredProfessions = createSelector(
+	getCommonProfessions,
 	getRuleBooksEnabled,
 	getProfessionsVisibilityFilter,
 	(list, availablility, visibility) => {

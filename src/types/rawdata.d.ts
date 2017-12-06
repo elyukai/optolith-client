@@ -148,7 +148,7 @@ export interface RawProfessionVariant {
 	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	sel: Data.ProfessionSelections;
+	sel: Data.ProfessionVariantSelections;
 	sa: Reusable.ProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
@@ -160,6 +160,7 @@ export interface RawProfessionVariantLocale {
 	id: string;
 	name: string | { m: string, f: string };
 	precedingText?: string;
+	fullText?: string;
 	concludingText?: string;
 }
 

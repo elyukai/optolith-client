@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import { setWikiCategory1, setWikiCategory2, setWikiFilter, setWikiFilterAll } from '../actions/WikiActions';
 import { AppState } from '../reducers/app';
-import { getWikiCategory1, getWikiCategory2, getWikiFilter, getWikiFilterAll } from '../selectors/stateSelectors';
+import { getAllProfessions } from '../selectors/rcpSelectors';
+import { getSex, getWikiCategory1, getWikiCategory2, getWikiFilter, getWikiFilterAll } from '../selectors/stateSelectors';
 import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../views/wiki/Wiki';
 
 function mapStateToProps(state: AppState) {
@@ -10,7 +11,9 @@ function mapStateToProps(state: AppState) {
 		filterText: getWikiFilter(state),
 		filterAllText: getWikiFilterAll(state),
 		category1: getWikiCategory1(state),
-		category2: getWikiCategory2(state)
+		category2: getWikiCategory2(state),
+		professions: getAllProfessions(state),
+		sex: getSex(state)!,
 	};
 }
 

@@ -11,6 +11,7 @@ export interface ListItemProps {
 	noIncrease?: boolean;
 	recommended?: boolean;
 	unrecommended?: boolean;
+	onClick?(): void;
 }
 
 export class ListItem extends React.Component<ListItemProps, {}> {

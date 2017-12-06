@@ -125,7 +125,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 				</MainContent>
 				<Aside>
 					<ProfessionVariants {...this.props} />
-					<WikiInfoContainer {...this.props} list={professions} currentId={currentProfessionId} noWrapper />
+					<WikiInfoContainer {...this.props} currentId={currentProfessionId} noWrapper />
 				</Aside>
 			</Page>
 		);

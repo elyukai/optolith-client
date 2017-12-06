@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import * as Categories from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
-import { ActivatableInstance, AttributeInstance, BlessingInstance, Book, CantripInstance, LiturgyInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
-import { CombatTechnique, Culture, Profession, Race, UIMessages } from '../../types/view.d';
+import { ActivatableInstance, AttributeInstance, BlessingInstance, Book, CantripInstance, CombatTechniqueInstance, LiturgyInstance, RaceInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
+import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
@@ -16,11 +16,10 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = BlessingInstance | CantripInstance | CombatTechnique | LiturgyInstance | SpellInstance | Culture | Profession | Race | ActivatableInstance | TalentInstance;
+type Instance = BlessingInstance | CantripInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | ActivatableInstance | TalentInstance;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
-	list: Instance[];
 	locale: UIMessages;
 	noWrapper?: boolean;
 }
@@ -34,6 +33,8 @@ export interface WikiInfoStateProps {
 	languages: SpecialAbilityInstance;
 	liturgicalChantExtensions: SpecialAbilityInstance | undefined;
 	liturgicalChants: Map<string, LiturgyInstance>;
+	list: Instance[];
+	races: Map<string, RaceInstance>;
 	scripts: SpecialAbilityInstance;
 	sex: 'm' | 'f' | undefined;
 	skills: Map<string, TalentInstance>;

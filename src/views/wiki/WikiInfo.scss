@@ -43,7 +43,7 @@
 
 	ul {
 		&.race-variant-options, &.profession-variants {
-			li span {
+			li > span {
 				&:first-child {
 					font-style: italic;
 					font-weight: 400;
@@ -55,7 +55,7 @@
 			}
 		}
 
-		&.profession-variants li span:nth-child(2)::after, &.race-variant-options li span:first-child::after {
+		&.profession-variants li > span:nth-child(2)::after, &.race-variant-options li > span:first-child::after {
 			content: ": ";
 		}
 	}
@@ -114,17 +114,19 @@
 				content: "";
 			}
 		}
+	}
 
-		span:nth-child(2) {
+	> p, li {
+		> span:last-child:not(:first-child) {
 			span.disabled {
 				text-decoration: line-through;
 			}
 
-			span.tier:not(:last-child)::after {
+			span.tier:not(:last-child)::after, span.hard-break:not(:last-child)::after {
 				content: "; ";
 			}
 
-			span:not(.tier):not(:last-child)::after {
+			span:not(.tier):not(.hard-break):not(:last-child)::after {
 				content: ", ";
 			}
 		}

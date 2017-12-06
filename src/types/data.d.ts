@@ -3,6 +3,7 @@ import * as DetailedData from './detaileddata.d';
 import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
 import { AllRequirementTypes } from './reusable.d';
+import { Purse } from '../reducers/equipment';
 
 export interface InstanceByCategory {
 	'ADVANTAGES': AdvantageInstance;
@@ -124,6 +125,99 @@ export interface Hero extends HeroBase {
 	player?: string;
 }
 
+export interface ActivatableDependent {
+	id: string;
+	active: ActiveObject[];
+	dependencies: ActivatableInstanceDependency[];
+}
+
+export interface AttributeDependent {
+	id: string;
+	value: number;
+	mod: number;
+	dependencies: AttributeInstanceDependency[];
+}
+
+export interface SkillDependent {
+	id: string;
+	value: number;
+	dependencies: TalentInstanceDependency[];
+}
+
+export interface ActivatableSkillDependent {
+	id: string;
+	value: number;
+	active: boolean;
+	dependencies: SpellInstanceDependency[];
+}
+
+export interface HeroDependent {
+	id: string;
+	clientVersion: string;
+	dateCreated: Date;
+	dateModified: Date;
+	name: string;
+	avatar?: string;
+	adventurePoints: AdventurePoints;
+	race: string;
+	raceVariant?: string;
+	culture: string;
+	profession: string;
+	professionName?: string;
+	professionVariant?: string;
+	sex: 'm' | 'f';
+	phase: number;
+	el: string;
+	personalData: {
+		family?: string;
+		placeOfBirth?: string;
+		dateOfBirth?: string;
+		age?: string;
+		hairColor?: number;
+		eyeColor?: number;
+		size?: string;
+		weight?: string;
+		title?: string;
+		socialStatus?: number;
+		characteristics?: string;
+		otherInfo?: string;
+		cultureAreaKnowledge?: string;
+	};
+	advantages: Map<string, ActivatableDependent>;
+	disadvantages: Map<string, ActivatableDependent>;
+	specialAbilities: Map<string, ActivatableDependent>;
+	attributes: Map<string, AttributeDependent>;
+	energies: {
+		lp: number;
+		ae: number;
+		kp: number;
+		permanentLifePoints: {
+			lost: number;
+		};
+		permanentArcaneEnergyPoints: {
+			lost: number;
+			redeemed: number;
+		};
+		permanentKarmaPoints: {
+			lost: number;
+			redeemed: number;
+		};
+	};
+	talents: Map<string, SkillDependent>;
+	ct: Map<string, SkillDependent>;
+	spells: Map<string, ActivatableSkillDependent>;
+	cantrips: Set<string>;
+	liturgies: Map<string, ActivatableSkillDependent>;
+	blessings: Set<string>;
+	belongings: {
+		items: Map<string, ItemInstance>;
+		armorZones: Map<string, ArmorZonesInstance>;
+		purse: Purse;
+	};
+	rules: Rules;
+	pets: Map<string, PetInstance>;
+}
+
 export interface HeroForSave extends HeroBase {
 	id?: string;
 	dateCreated?: Date;
@@ -236,6 +330,7 @@ export interface CultureInstance {
 export interface SpecialisationSelection {
 	id: 'SPECIALISATION';
 	sid: string | string[];
+	active?: boolean;
 }
 
 export interface LanguagesScriptsSelection {
@@ -251,12 +346,28 @@ export interface CombatTechniquesSelection {
 	sid: string[];
 }
 
+export interface VariantCombatTechniquesSelection {
+	id: 'COMBAT_TECHNIQUES';
+	active?: boolean;
+	amount?: number;
+	value?: number;
+	sid?: string[];
+}
+
 export interface CombatTechniquesSecondSelection {
 	id: 'COMBAT_TECHNIQUES_SECOND';
 	active?: boolean;
 	amount: number;
 	value: number;
 	sid: string[];
+}
+
+export interface VariantCombatTechniquesSecondSelection {
+	id: 'COMBAT_TECHNIQUES_SECOND';
+	active?: boolean;
+	amount?: number;
+	value?: number;
+	sid?: string[];
 }
 
 export interface CantripsSelection {
@@ -284,7 +395,9 @@ export interface SkillsSelection {
 
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
 export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
+export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
 export type ProfessionSelections = ProfessionSelection[];
+export type ProfessionVariantSelections = ProfessionVariantSelection[];
 
 export interface Selections {
 	attrSel: string;
@@ -351,13 +464,14 @@ export interface ProfessionVariantInstance {
 	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	readonly selections: ProfessionSelections;
+	readonly selections: ProfessionVariantSelections;
 	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];
 	readonly liturgies: [string, number][];
 	precedingText?: string;
+	fullText?: string;
 	concludingText?: string;
 	readonly category: Categories.PROFESSION_VARIANTS;
 }

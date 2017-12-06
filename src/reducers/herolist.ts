@@ -1,7 +1,7 @@
 import { CreateHeroAction, DeleteHeroAction, DuplicateHeroAction, LoadHeroAction, SaveHeroAction } from '../actions/HerolistActions';
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { Hero, User } from '../types/data.d';
+import { Hero, HeroDependent, User } from '../types/data.d';
 import { removeListItem, setListItem } from '../utils/ListUtils';
 import { convertHero } from '../utils/VersionUtils';
 
@@ -9,12 +9,14 @@ type Action = CreateHeroAction | LoadHeroAction | SaveHeroAction | DeleteHeroAct
 
 export interface HerolistState {
 	heroes: Map<string, Hero>;
+	heroesNew: Map<string, HeroDependent>;
 	users: Map<string, User>;
 	currentId?: string;
 }
 
 const initialState: HerolistState = {
 	heroes: new Map(),
+	heroesNew: new Map(),
 	users: new Map()
 };
 
