@@ -665,5 +665,37 @@ export function convertHero(hero: Hero) {
       }
     }
   }
+  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
+    if (entry.activatable.hasOwnProperty('DISADV_34')) {
+      entry.activatable = {
+        ...entry.activatable,
+        DISADV_34: entry.activatable.DISADV_34.map(e => {
+          switch (e.sid) {
+            case 5:
+              return { sid: 1, tier: 2 };
+            case 6:
+              return { sid: 5, tier: 2 };
+            case 7:
+              return { sid: 6, tier: 2 };
+            case 8:
+              return { sid: 7, tier: 2 };
+            case 9:
+              return { sid: 8, tier: 2 };
+            case 10:
+              return { sid: 9, tier: 2 };
+            case 11:
+              return { sid: 10, tier: 2 };
+            case 12:
+              return { sid: 11, tier: 2 };
+            case 13:
+              return { sid: 1, tier: 3 };
+            case 14:
+              return { sid: 12, tier: 3 };
+          }
+          return e;
+        })
+      };
+    }
+  }
   return entry;
 }

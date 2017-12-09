@@ -591,8 +591,6 @@ const professions = iterateProfessions(csvToArray(allWorksheets.get('PROFESSIONS
 const professionvariants = iterateProfessionVariants(csvToArray(allWorksheets.get('PROFESSION_VARIANTS')));
 const advantages = iterateActivatables(csvToArray(allWorksheets.get('ADVANTAGES')), 'adv');
 const disadvantages = iterateActivatables(csvToArray(allWorksheets.get('DISADVANTAGES')), 'disadv');
-const principles = iterateDisadvantagesPrinciples(csvToArray(allWorksheets.get('Principles')));
-const obligations = iterateDisadvantagesObligations(csvToArray(allWorksheets.get('Obligations')));
 const specialabilities = iterateActivatables(csvToArray(allWorksheets.get('SPECIAL_ABILITIES')), 'special');
 const tradeSecrets = iterateSpecialAbilitiesTradeSecrets(csvToArray(allWorksheets.get('TradeSecr')));
 const scripts = iterateSpecialAbilitiesScripts(csvToArray(allWorksheets.get('Scripts')));
@@ -610,8 +608,6 @@ const liturgies = iterateChants(csvToArray(allWorksheets.get('CHANTS')));
 const blessings = iterateBlessings(csvToArray(allWorksheets.get('BLESSINGS')));
 const items = iterateEquipment(csvToArray(allWorksheets.get('EQUIPMENT')));
 
-disadvantages.DISADV_34.sel = principles;
-disadvantages.DISADV_50.sel = obligations;
 specialabilities.SA_3.sel = tradeSecrets;
 specialabilities.SA_27.sel = scripts;
 specialabilities.SA_28.sel = writing;

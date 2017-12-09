@@ -161,20 +161,22 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					currentCost = maxCurrentTier >= selectedTier ? 0 : (cost as number) * (selectedTier - maxCurrentTier);
 				}
 				const currentSelIDs = new Set((get(id) as DisadvantageInstance).active.map(e => e.sid));
-				const newSel = (sel as Array<SelectionObject & { tier: number; }>).filter(e => selectedTier === e.tier && !currentSelIDs.has(e.id));
-				selectElement = (
-					<Dropdown
-						value={selected}
-						onChange={this.handleSelect}
-						options={newSel}
-						disabled={selectedTier === 0 || selectElementDisabled} />
-				);
-				if (typeof selected === 'string' && typeof inputText === 'string') {
-					disabled = true;
+				const newSel = sel && sel.filter(e => !currentSelIDs.has(e.id));
+				if (newSel) {
+					selectElement = (
+						<Dropdown
+							value={selected}
+							onChange={this.handleSelect}
+							options={newSel}
+							disabled={selectedTier === 0 || selectElementDisabled} />
+					);
+					if (typeof selected === 'string' && typeof inputText === 'string') {
+						disabled = true;
+					}
+					args.sel = selected;
+					args.input = inputText;
+					args.tier = selectedTier;
 				}
-				args.sel = selected;
-				args.input = inputText;
-				args.tier = selectedTier;
 				break;
 			}
 			case 'ADV_32':
