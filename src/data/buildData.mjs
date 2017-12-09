@@ -51,8 +51,8 @@ function iterateRaces(array) {
 
     obj.eyes = obj.eyes ? obj.eyes.split('&').map(e => Number.parseInt(e)) : undefined;
 
-    obj.size = obj.size ? obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
-    obj.weight = obj.weight.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
+    obj.size = obj.size ? obj.size.split('&').map((e, i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
+    obj.weight = obj.weight.split('&').map((e, i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k)));
 
     obj.vars = obj.vars ? obj.vars.split('&') : [];
 
@@ -81,8 +81,8 @@ function iterateRaceVariants(array) {
 
     obj.eyes = obj.eyes ? obj.eyes.split('&').map(e => Number.parseInt(e)) : undefined;
 
-    obj.size = obj.size ? obj.size.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
-    obj.weight = obj.weight ? obj.weight.split('&').map((e,i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
+    obj.size = obj.size ? obj.size.split('&').map((e, i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
+    obj.weight = obj.weight ? obj.weight.split('&').map((e, i) => i === 0 ? Number.parseInt(e) : e.split('W').map(k => Number.parseInt(k))) : undefined;
 
     list[obj.id] = obj;
   }
@@ -376,7 +376,7 @@ function iterateSpells(array) {
   for (const obj of array) {
     obj.id = 'SPELL_' + obj.id;
     delete obj.name;
-    obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
+    obj.check = obj.check.split('&').map((e, i) => `ATTR_${e}`);
     obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
     obj.subtrad = obj.subtrad ? obj.subtrad.split('&').map(e => Number.parseInt(e)) : [];
     obj.req = convertRequirements(obj.req);
@@ -404,7 +404,7 @@ function iterateChants(array) {
   for (const obj of array) {
     obj.id = 'LITURGY_' + obj.id;
     delete obj.name;
-    obj.check = obj.check.split('&').map((e,i) => `ATTR_${e}`);
+    obj.check = obj.check.split('&').map((e, i) => `ATTR_${e}`);
     obj.trad = obj.trad.split('&').map(e => Number.parseInt(e));
     obj.aspc = obj.aspc ? obj.aspc.split('&').map(e => Number.parseInt(e)) : [];
     obj.req = obj.req ? obj.req.split('&').map(e => e === 'RCP' ? 'RCP' : JSON.parse(e)) : [];
@@ -431,9 +431,10 @@ function iterateBlessings(array) {
 function iterateSpecialAbilitiesTradeSecrets(array) {
   const list = [];
   for (const obj of array) {
-    let { id, req, cost, sec } = obj;
+    const { id, cost } = obj;
+    let { req, sec } = obj;
     req = !req ? [] : req.split('&').map(e => JSON.parse(e));
-    sec = !!sec
+    sec = !!sec;
     list.push({ id, cost, req, sec });
   }
   return list;
@@ -462,7 +463,8 @@ function iterateSpecialAbilitiesWriting(array) {
 function iterateSpecialAbilitiesScripts(array) {
   const list = [];
   for (const obj of array) {
-    let { id, languages, cost, cont, ext } = obj;
+    const { id, cost, cont } = obj;
+    let { languages, ext } = obj;
     languages = languages ? languages.split('&').map(r => Number.parseInt(r)) : [];
     ext = !!ext;
     list.push({ id, cost, languages, cont, ext });
@@ -504,7 +506,7 @@ function iterateSpecialAbilitiesChantExtensions(array) {
 function iterateEquipment(array) {
   const list = {};
   for (const obj of array) {
-    const { id, price, weight, gr, ct, ddn, dds, df, db, at, pa, re, length, stp, range, rt, am, pro, enc, addp, pryw, two, imp, armty } = obj;
+    const { id, price, weight, gr, ct, ddn, dds, df, db, at, pa, re, length, stp, range, rt, am, pro, enc, addp, pryw, two, imp, armty, src } = obj;
 
     let result = {
       id: 'ITEMTPL_' + id,
@@ -512,7 +514,8 @@ function iterateEquipment(array) {
       gr,
       price,
       weight,
-      where: ''
+      where: '',
+      src: src ? src.split('&') : []
     };
 
     if (typeof imp === 'number') {

@@ -18,8 +18,8 @@ export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
 	const { attributes, books, currentObject, locale } = props;
 
 	return <Scroll>
-		<div className="info profession-info">
-			<div className="profession-header info-header">
+		<div className="info combattechnique-info">
+			<div className="combattechnique-header info-header">
 				<p className="title">{currentObject.name}</p>
 			</div>
 			{currentObject.special && <Markdown source={`**${_translate(locale, 'info.special')}:** ${currentObject.special}`} />}

@@ -13,7 +13,7 @@ function iterateBooksL10n(array) {
 
 function iterateExperienceLevelsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `EL_${obj.id}`;
 		list[obj.id] = obj;
 	}
@@ -22,7 +22,7 @@ function iterateExperienceLevelsL10n(array) {
 
 function iterateRacesL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `R_${obj.id}`;
 		obj.attributeAdjustments = (obj.attributeAdjustments || '').replace(/^"(.+)"$/, '$1');
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
@@ -33,7 +33,7 @@ function iterateRacesL10n(array) {
 
 function iterateRaceVariantsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `RV_${obj.id}`;
 		list[obj.id] = obj;
 	}
@@ -42,7 +42,7 @@ function iterateRaceVariantsL10n(array) {
 
 function iterateCulturesL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `C_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -52,7 +52,7 @@ function iterateCulturesL10n(array) {
 
 function iterateProfessionsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `P_${obj.id}`;
 
 		const isNameEqual = obj.name === obj.name_f;
@@ -77,7 +77,7 @@ function iterateProfessionsL10n(array) {
 
 function iterateProfessionVariantsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `PV_${obj.id}`;
 
 		const isNameEqual = obj.name === obj.name_f && obj.subname === obj.subname_f || !obj.name_f && !obj.subname_f || !obj.name && !obj.subname;
@@ -150,7 +150,7 @@ function iterateActivatablesL10n(array, type) {
 
 function iterateAttributesL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `ATTR_${obj.id}`;
 		list[obj.id] = obj;
 	}
@@ -159,7 +159,7 @@ function iterateAttributesL10n(array) {
 
 function iterateSkillsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		const { id, name, spec, spec_input, tools, quality, failed, critical, botch, src } = obj;
 		const newObject = {
 			id: `TAL_${id}`,
@@ -184,7 +184,7 @@ function iterateSkillsL10n(array) {
 
 function iterateCombatTechniquesL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `CT_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -194,7 +194,7 @@ function iterateCombatTechniquesL10n(array) {
 
 function iterateSpellsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `SPELL_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -204,7 +204,7 @@ function iterateSpellsL10n(array) {
 
 function iterateCantripsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `CANTRIP_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -214,7 +214,7 @@ function iterateCantripsL10n(array) {
 
 function iterateChantsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `LITURGY_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -224,7 +224,7 @@ function iterateChantsL10n(array) {
 
 function iterateBlessingsL10n(array) {
 	const list = {};
-	for (let obj of array) {
+	for (const obj of array) {
 		obj.id = `BLESSING_${obj.id}`;
 		obj.src = obj.src ? (typeof obj.src === 'number' ? [obj.src] : obj.src.split('&').map(e => Number.parseInt(e))) : [];
 		list[obj.id] = obj;
@@ -235,7 +235,7 @@ function iterateBlessingsL10n(array) {
 function iterateSpecialAbilitiesTradeSecretsL10n(array) {
 	const list = [];
 	for (const obj of array) {
-		let { id, name } = obj;
+		const { id, name } = obj;
 		list.push({ id, name });
 	}
 	return list;
@@ -244,7 +244,7 @@ function iterateSpecialAbilitiesTradeSecretsL10n(array) {
 function iterateSpecialAbilitiesScriptsL10n(array) {
 	const list = [];
 	for (const obj of array) {
-		let { id, name } = obj;
+		const { id, name } = obj;
 		list.push({ id, name });
 	}
 	return list;
@@ -277,12 +277,17 @@ function iterateSpecialAbilitiesSpellExtensionsL10n(array) {
 
 function iterateEquipmentL10n(array) {
 	const list = {};
-	for (let obj of array) {
-		const { id, name } = obj;
+	for (const obj of array) {
+		const { id, name, note, rules, advantage, disadvantage, src } = obj;
 
 		const result = {
 			id: 'ITEMTPL_' + id,
-			name
+			name,
+			note,
+			rules,
+			advantage,
+			disadvantage,
+			src: src ? (typeof src === 'number' ? [src] : src.split('&').map(e => Number.parseInt(e))) : []
 		};
 
 		list[result.id] = result;

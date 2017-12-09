@@ -89,10 +89,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 							<span>{_translate(locale, 'info.property')}</span>
 							<span>{typeof currentObject.property === 'number' ? _translate(locale, 'spells.view.properties')[currentObject.property - 1] : currentObject.property}</span>
 						</p>}
-						<p>
-							<span>{_translate(locale, 'info.prerequisites')}</span>
-							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
-						</p>
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -109,10 +106,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 							<span>{_translate(locale, 'info.aspect')}</span>
 							<span>{typeof currentObject.aspect === 'number' ? _translate(locale, 'liturgies.view.aspects')[currentObject.aspect - 1] : currentObject.aspect}</span>
 						</p>}
-						<p>
-							<span>{_translate(locale, 'info.prerequisites')}</span>
-							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
-						</p>
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -149,10 +143,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 					<div className="info specialability-info">
 						{headerElement}
 						<Markdown source={`${currentObject.rules}`} />
-						<p>
-							<span>{_translate(locale, 'info.prerequisites')}</span>
-							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
-						</p>
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -173,10 +164,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 							<span>{_translate(locale, 'info.aecost')}</span>
 							<span>{currentObject.aeCost}</span>
 						</p>}
-						<p>
-							<span>{_translate(locale, 'info.prerequisites')}</span>
-							<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
-						</p>
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
 						<p className="source">
 							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -193,7 +181,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 	);
 
 	return <Scroll>
-		<div className="info specialability-info">
+		<div className="info disadv-info">
 			{headerElement}
 			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
 			{currentObject.range && <p>
@@ -204,10 +192,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 				<span>{_translate(locale, 'info.actions')}</span>
 				<span>{currentObject.actions}</span>
 			</p>}
-			<p>
-				<span>{_translate(locale, 'info.prerequisites')}</span>
-				<span>{getPrerequisitesText(currentObject, dependent, locale)}</span>
-			</p>
+			<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 			<Markdown source={costText} />
 			<p className="source">
 				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
@@ -216,36 +201,48 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 	</Scroll>;
 }
 
-export function getPrerequisitesText(entry: ActivatableInstance, dependent: DependentInstancesState, locale: UIMessages): JSX.Element {
+export interface PrerequisitesTextProps {
+	entry: ActivatableInstance;
+	dependent: DependentInstancesState;
+	locale: UIMessages;
+}
+
+export function PrerequisitesText(props: PrerequisitesTextProps): JSX.Element {
+	const { entry, dependent, locale } = props;
+
   if (typeof entry.prerequisitesText === 'string') {
-		return <React.Fragment>
-			{entry.prerequisitesText}
-		</React.Fragment>;
+		return <Markdown source={`**${_translate(locale, 'info.prerequisites')}:** ${entry.prerequisitesText}`} />;
   }
 
 	const { prerequisitesTextEnd, prerequisitesTextStart, tiers = 1, reqs } = entry;
 
   if (!Array.isArray(reqs)) {
 		const tiersArr = Array.from({ length: tiers }, (_, index) => index + 1);
-		return <React.Fragment>
-			{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
-			{!reqs.has(1) && `${_translate(locale, 'tier')} I: ${_translate(locale, 'info.none')}; `}
-			{tiersArr.map(e => {
-				return <span key={e} className="tier">
-					{`${_translate(locale, 'tier')} ${getRoman(e)}: `}
-					{reqs.has(e) && <Prerequisites list={reqs.get(e)!} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />}
-					{e > 1 && <span>{entry.name} {getRoman(e - 1)}</span>}
-				</span>;
-			})}
-			{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
-		</React.Fragment>;
+		return <p>
+			<span>{_translate(locale, 'info.prerequisites')}</span>
+			<span>
+				{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+				{!reqs.has(1) && `${_translate(locale, 'tier')} I: ${_translate(locale, 'info.none')}; `}
+				{tiersArr.map(e => {
+					return <span key={e} className="tier">
+						{`${_translate(locale, 'tier')} ${getRoman(e)}: `}
+						{reqs.has(e) && <Prerequisites list={reqs.get(e)!} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />}
+						{e > 1 && <span>{entry.name} {getRoman(e - 1)}</span>}
+					</span>;
+				})}
+				{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
+			</span>
+		</p>;
 	}
 
-	return <React.Fragment>
-		{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
-		<Prerequisites list={reqs} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />
-		{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
-	</React.Fragment>;
+	return <p>
+		<span>{_translate(locale, 'info.prerequisites')}</span>
+		<span>
+			{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+			<Prerequisites list={reqs} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />
+			{prerequisitesTextEnd && (/^(?:;|,|.)/.test(prerequisitesTextEnd) ? prerequisitesTextEnd : <span>{prerequisitesTextEnd}</span>)}
+		</span>
+	</p>;
 }
 
 export interface PrerequisitesProps {
@@ -390,7 +387,7 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
 			active
 		};
 	}), locale.id).map(e => {
-		return <span key={e.name} className={classNames(!e.active && 'disabled')}>{e.name}</span>;
+		return <span key={e.name}><span className={classNames(!e.active && 'disabled')}>{e.name}</span></span>;
 	});
 }
 

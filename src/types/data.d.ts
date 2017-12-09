@@ -980,6 +980,11 @@ export interface ItemInstance extends ItemBaseInstance {
 	stp?: number;
 	weight?: number;
 	stabilityMod?: number;
+	note?: string;
+	rules?: string;
+	advantage?: string;
+	disadvantage?: string;
+	src?: SourceLink[];
 }
 
 export interface ItemEditorInstance extends ItemBaseInstance {

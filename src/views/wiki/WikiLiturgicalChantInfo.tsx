@@ -91,8 +91,8 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 			</Scroll>;
 		case 2:
 			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
+				<div className="info liturgicalchant-info">
+					<div className="liturgicalchant-header info-header">
 						<p className="title">{currentObject.name}</p>
 					</div>
 					<p>

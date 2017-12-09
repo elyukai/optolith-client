@@ -506,16 +506,16 @@ export function initItem(raw: RawItem, locale: ToListById<RawItemLocale>): ItemI
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name } = localeObject;
-    const { addPenalties, imp, primaryThreshold, ...other } = raw;
+    const { src: srcPages, ...otherLocale } = localeObject;
+    const { imp, primaryThreshold, src: srcIds, ...otherData } = raw;
     return {
-      ...other,
-      name,
-      addPenalties,
+      ...otherLocale,
+      ...otherData,
       amount: 1,
       improvisedWeaponGroup: imp,
       damageBonus: primaryThreshold,
-      isTemplateLocked: true
+      isTemplateLocked: true,
+      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
   return;

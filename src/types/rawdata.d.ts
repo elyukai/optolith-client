@@ -418,11 +418,17 @@ export interface RawItem {
 	addPenalties?: boolean;
 	isParryingWeapon?: boolean;
 	isTwoHandedWeapon?: boolean;
+	src: string[];
 }
 
 export interface RawItemLocale {
 	id: string;
 	name: string;
+	note?: string;
+	rules?: string;
+	advantage?: string;
+	disadvantage?: string;
+	src: number[];
 }
 
 export interface RawExperienceLevelLocale {

@@ -61,6 +61,8 @@ export interface EquipmentState {
 	filterText: string;
 	filterTextSlidein: string;
 	showAddSlidein: boolean;
+	currentId?: string;
+	currentSlideinId?: string;
 }
 
 export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
@@ -68,7 +70,9 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 		filterGroupSlidein: 1,
 		filterText: '',
 		filterTextSlidein: '',
-		showAddSlidein: false
+		showAddSlidein: false,
+		currentId: undefined,
+		currentSlideinId: undefined,
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as EquipmentState);
@@ -79,6 +83,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 	setSilverthalers = (event: InputTextEvent) => this.props.setSilverthalers(event.target.value as string);
 	setHellers = (event: InputTextEvent) => this.props.setHellers(event.target.value as string);
 	setKreutzers = (event: InputTextEvent) => this.props.setKreutzers(event.target.value as string);
+	showInfo = (id: string) => this.setState({ currentId: id } as EquipmentState);
+	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as EquipmentState);
 
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as EquipmentState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as EquipmentState);
@@ -161,12 +167,12 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 						<Scroll>
 							<List>
 								{
-									templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add />)
+									templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add selectForInfo={this.showSlideinInfo} />)
 								}
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={undefined} list={[]} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -193,7 +199,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					<Scroll>
 						<List>
 							{
-								list.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} />)
+								list.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} selectForInfo={this.showInfo} />)
 							}
 						</List>
 					</Scroll>
@@ -215,7 +221,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							<div>{_localizeNumber(_localizeWeight(totalWeight, locale.id), locale.id)} / {_localizeNumber(_localizeWeight(carryingCapacity, locale.id), locale.id)} {_translate(locale, 'equipment.view.weight')}</div>
 						</div>
 					</div>
-					<WikiInfoContainer {...this.props} {...this.state} noWrapper list={[]} />
+					<WikiInfoContainer {...this.props} {...this.state} noWrapper />
 				</Aside>
 			</Page>
 		);

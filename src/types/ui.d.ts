@@ -647,6 +647,11 @@ export interface UIMessages {
 	"zonearmoreditor.options.rightarm": string;
 	"zonearmoreditor.options.leftleg": string;
 	"zonearmoreditor.options.rightleg": string;
+	"info.equipment.rules": string;
+	"info.weaponadvantage": string;
+	"info.weapondisadvantage": string;
+	"info.armoradvantage": string;
+	"info.armordisadvantage": string;
 	"pet.name": string;
 	"pet.sizecategory": string;
 	"pet.type": string;

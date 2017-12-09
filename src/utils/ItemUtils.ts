@@ -1,8 +1,10 @@
-import { ItemEditorInstance, ItemInstance } from '../types/data.d';
+import { ItemEditorInstance, ItemInstance, SourceLink } from '../types/data.d';
 
 export function convertToEdit(item: ItemInstance): ItemEditorInstance {
+	const { note: _, rules: _1, advantage: _2, disadvantage: _3, src: _4, ...otherProperties } = item;
+
 	return {
-		...item,
+		...otherProperties,
 		amount: typeof item.amount === 'number' ? item.amount.toString() : '',
 		at: typeof item.at === 'number' ? item.at.toString() : '',
 		damageBonus: item.damageBonus ? Array.isArray(item.damageBonus.threshold) ? { ...item.damageBonus, threshold: item.damageBonus.threshold.map(e => e.toString()) } : { ...item.damageBonus, threshold: item.damageBonus.threshold.toString() } : { threshold: '' },
@@ -65,10 +67,11 @@ export function convertToSave(item: ItemEditorInstance): ItemInstance {
 
 export function containsNaN(item: ItemInstance): string[] | false {
 	const keys = Object.keys(item) as (keyof ItemInstance)[];
+	const arrayFilter = (value: [number, number, number] | SourceLink[]): value is [number, number, number] => value.length === 0 || typeof value[0] === 'number';
 	const filtered = keys.filter(e => {
 		const element = item[e];
 		if (Array.isArray(element)) {
-			return element.every(i => Number.isNaN(i));
+			return !arrayFilter(element) || element.every(i => Number.isNaN(i));
 		}
 		else if (typeof element === 'number') {
 			return Number.isNaN(element);

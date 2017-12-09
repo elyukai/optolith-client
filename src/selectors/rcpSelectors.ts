@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
-import { ProfessionInstance, ProfessionVariantInstance } from '../types/data.d';
-import { Culture, Increasable, Profession, Race, ProfessionVariant } from '../types/view.d';
+import { Culture, Increasable, Profession, ProfessionVariant, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
