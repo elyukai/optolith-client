@@ -16,7 +16,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
-import { filterAndSortObjects, sortObjects } from '../../utils/FilterSortUtils';
+import { filterAndSortObjects, filterObjects, sortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
 
@@ -125,7 +125,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 		const combatTechniquesList = sortObjects(combatTechniques, locale.id);
 		const meleeCombatTechniques = combatTechniquesList.filter(e => e.gr === 1);
 		const rangedCombatTechniques = combatTechniquesList.filter(e => e.gr === 2);
-		const templateList = filterAndSortObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive), locale.id, filterTextSlidein);
+		const templateList = filterObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive), filterTextSlidein);
 
 		return (
 			<Page id="equipment">

@@ -7,6 +7,8 @@ import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 import { getAspectsOfTradition, getTraditionOfAspect } from '../../utils/LiturgyUtils';
+import { WikiProperty } from './WikiProperty';
+import { WikiSource } from './WikiSource';
 
 export interface WikiLiturgicalChantInfoProps {
 	attributes: Map<string, AttributeInstance>;
@@ -34,6 +36,19 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 		return `${_translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => _translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).join(', ')})`;
 	}), locale.id).join(', ');
 
+	if (['en-US', 'nl-BE'].includes(locale.id)) {
+		return <Scroll>
+			<div className="info liturgicalchant-info">
+				<div className="liturgicalchant-header info-header">
+					<p className="title">{currentObject.name}</p>
+				</div>
+				<WikiProperty locale={locale} title="info.check">{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}</WikiProperty>
+				<WikiProperty locale={locale} title="info.traditions">{traditions}</WikiProperty>
+				<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
+			</div>
+		</Scroll>;
+	}
+
 	const filteredLiturgicalChantExtensions = liturgicalChantExtensions && (liturgicalChantExtensions.sel as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
 
 	switch (currentObject.gr) {
@@ -43,39 +58,17 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 					<div className="spell-header info-header">
 						<p className="title">{currentObject.name}</p>
 					</div>
-					<p>
-						<span>{_translate(locale, 'info.check')}</span>
-						<span>{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}</span>
-					</p>
+					<WikiProperty locale={locale} title="info.check">
+						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
+					</WikiProperty>
 					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<p>
-						<span>{_translate(locale, 'info.liturgicaltime')}</span>
-						<span>{currentObject.castingTime}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.kpcost')}</span>
-						<span>{currentObject.cost}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.range')}</span>
-						<span>{currentObject.range}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.duration')}</span>
-						<span>{currentObject.duration}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.targetcategory')}</span>
-						<span>{currentObject.target}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.traditions')}</span>
-						<span>{traditions}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.improvementcost')}</span>
-						<span>{getICName(currentObject.ic)}</span>
-					</p>
+					<WikiProperty locale={locale} title="info.liturgicaltime">{currentObject.castingTime}</WikiProperty>
+					<WikiProperty locale={locale} title="info.kpcost">{currentObject.cost}</WikiProperty>
+					<WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
+					<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
+					<WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
+					<WikiProperty locale={locale} title="info.traditions">{traditions}</WikiProperty>
+					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
 					{filteredLiturgicalChantExtensions && filteredLiturgicalChantExtensions.length === 3 && <p className="extensions-title">
 						<span>{_translate(locale, 'liturgicalchantextensions')}</span>
 					</p>}
@@ -84,9 +77,7 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
 						))}
 					</ul>}
-					<p className="source">
-						<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-					</p>
+					<WikiSource src={currentObject.src} books={books} locale={locale} />
 				</div>
 			</Scroll>;
 		case 2:
@@ -95,39 +86,15 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 					<div className="liturgicalchant-header info-header">
 						<p className="title">{currentObject.name}</p>
 					</div>
-					<p>
-						<span>{_translate(locale, 'info.check')}</span>
-						<span>{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}</span>
-					</p>
+					<WikiProperty locale={locale} title="info.check">{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}</WikiProperty>
 					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<p>
-						<span>{_translate(locale, 'info.ceremonialtime')}</span>
-						<span>{currentObject.castingTime}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.kpcost')}</span>
-						<span>{currentObject.cost}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.range')}</span>
-						<span>{currentObject.range}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.duration')}</span>
-						<span>{currentObject.duration}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.targetcategory')}</span>
-						<span>{currentObject.target}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.traditions')}</span>
-						<span>{traditions}</span>
-					</p>
-					<p>
-						<span>{_translate(locale, 'info.improvementcost')}</span>
-						<span>{getICName(currentObject.ic)}</span>
-					</p>
+					<WikiProperty locale={locale} title="info.ceremonialtime">{currentObject.castingTime}</WikiProperty>
+					<WikiProperty locale={locale} title="info.kpcost">{currentObject.cost}</WikiProperty>
+					<WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
+					<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
+					<WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
+					<WikiProperty locale={locale} title="info.traditions">{traditions}</WikiProperty>
+					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
 					{filteredLiturgicalChantExtensions && filteredLiturgicalChantExtensions.length === 3 && <p className="extensions-title">
 						<span>{_translate(locale, 'liturgicalchantextensions')}</span>
 					</p>}
@@ -136,9 +103,7 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
 						))}
 					</ul>}
-					<p className="source">
-						<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-					</p>
+					<WikiSource src={currentObject.src} books={books} locale={locale} />
 				</div>
 			</Scroll>;
 	}

@@ -9,6 +9,8 @@ import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
 import { getHigherParadeValues, getLocaleMessages } from './stateSelectors';
+import { filterByAvailability, isAvailable } from '../utils/RulesUtils';
+import { getRuleBooksEnabled } from './rulesSelectors';
 
 export function getForSave(state: EquipmentState) {
 	const { armorZones, items, purse } = state;
@@ -76,6 +78,14 @@ export const getSortedTemplates = createSelector(
 	getTemplates,
 	getLocaleMessages,
 	(templates, locale) => sortObjects(templates, locale!.id)
+);
+
+export const getFilteredAndSortedTemplates = createSelector(
+	getSortedTemplates,
+	getRuleBooksEnabled,
+	(list, availablility) => {
+		return list.filter(e => !e.src || e.src.length === 0 || isAvailable(availablility)({ ...e, src: e.src }));
+	}
 );
 
 export const getItems = createSelector(

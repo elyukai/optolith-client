@@ -1,3 +1,23 @@
+# 0.51.4
+
+- Fixed MOV modificators.
+- Splitted tradition special abilties to be able to provide wiki texts for them.
+- Fixed some profession and profession variant values.
+- Moved item infos to the wiki box on the right; removed the tooltip shown on hover before.
+- Fixed resetting AP on changing race variant.
+- Selection lists for disadvantages *Principles* and *Obligations* are not filtered by selected level anymore. This means, you can select *Code of the Church of Peraine* for all three levels of *Principles* instead of typing in the optional input field.
+
+## German Specific
+
+- Added **ALL** missing texts to complete the offline wiki.
+- Joined the different `Bindung des Bannschwerts` special abilties.
+- Additional item texts are only shown for templates and locked entries.
+- Added missing armory from regional armory books.
+
+## English/Dutch Specific
+
+- Wiki boxes will show the entries that can be generated safely. Their full functionality will be enabled once the needed texts are added.
+
 # 0.51.3
 
 - Fixed issues with prerequisites for races.

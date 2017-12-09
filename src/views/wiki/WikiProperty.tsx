@@ -12,6 +12,6 @@ export function WikiProperty(props: WikiPropertyProps) {
 
 	return <p>
 		<span>{_translate(locale, title)}</span>
-		<span>{children}</span>
+		{children && <span>{children}</span>}
 	</p>;
 }

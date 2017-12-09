@@ -36,7 +36,7 @@ export const filterByAvailability = <T extends ObjectWithSource>(list: T[], avai
 	if (or) {
 		return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e) || or(e));
 	}
-	return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e) || or && or(e));
+	return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e));
 };
 
 interface ObjectWithInstance {
@@ -54,5 +54,5 @@ export const filterByInstancePropertyAvailability = <T extends ObjectWithInstanc
 	if (or) {
 		return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance) || or(e));
 	}
-	return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance) || or && or(e));
+	return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance));
 };

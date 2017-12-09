@@ -59,6 +59,14 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 			</div>
 		);
 
+		if (['en-US', 'nl-BE'].includes(locale.id)) {
+			return <Scroll>
+				<div className="info specialability-info">
+					{headerElement}
+				</div>
+			</Scroll>;
+		}
+
 		switch (currentObject.gr) {
 			case 5:
 			case 15:
@@ -221,6 +229,14 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 			<p className="title">{currentObject.name}{typeof tiers === 'number' ? tiers < 2 ? ' I' : ` I-${getRoman(tiers)}` : ''}{(Array.isArray(currentObject.reqs) ? currentObject.reqs.includes('RCP') : (currentObject.reqs.has(1) && currentObject.reqs.get(1)!.includes('RCP'))) ? ' (*)' : ''}</p>
 		</div>
 	);
+
+	if (['en-US', 'nl-BE'].includes(locale.id)) {
+		return <Scroll>
+			<div className="info disadv-info">
+				{headerElement}
+			</div>
+		</Scroll>;
+	}
 
 	return <Scroll>
 		<div className="info disadv-info">
