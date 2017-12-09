@@ -311,6 +311,21 @@ export function equipment(state: EquipmentState = initialState, action: Action):
     case ActionTypes.SET_ITEM_COMBAT_TECHNIQUE: {
       const { id } = action.payload;
       if (state.itemEditor) {
+        if (id === 'CT_7') {
+          return {
+            ...state,
+            itemEditor: {
+              ...state.itemEditor,
+              at: '',
+              pa: '',
+              damageBonus: {
+                threshold: ''
+              },
+              reach: undefined,
+              combatTechnique: id
+            }
+          };
+        }
         return {
           ...state,
           itemEditor: {

@@ -161,7 +161,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 			const validStructurePoints = isEmptyOr(isNaturalNumber, stp);
 			const validWeight = isEmptyOr(isFloat, weight);
 
-			const validMelee = [validATMod, validDamageDiceNumber, validDamageFlat, validDamageThreshold, validLength, validNumber, validPAMod, validPrice, validStabilityMod, validStructurePoints, validWeight, typeof combatTechnique === 'string', typeof reach === 'number'];
+			const validMelee = combatTechnique === 'CT_7' ? [validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPrice, validStabilityMod, validStructurePoints, validWeight] : [validATMod, validDamageDiceNumber, validDamageFlat, validDamageThreshold, validLength, validNumber, validPAMod, validPrice, validStabilityMod, validStructurePoints, validWeight, typeof combatTechnique === 'string', typeof reach === 'number'];
 			const validRanged = [validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPrice, validRange1, validRange2, validRange3, validStabilityMod, validWeight, typeof combatTechnique === 'string'];
 			const validArmor = [validENC, validINIMod, validMOVMod, validNumber, validPrice, validPRO, validStabilityMod, validWeight, typeof armorType === 'number'];
 			const validOther = [validNumber, validPrice, validStructurePoints, validWeight];
@@ -309,23 +309,23 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									{id: 'ATTR_8', name: attributes.get('ATTR_8')!.short}
 								]}
 								onChange={this.changePrimaryAttribute}
-								disabled={locked || !combatTechnique}
+								disabled={locked || !combatTechnique || combatTechnique === 'CT_7'}
 								/>
 							{Array.isArray(damageBonus.threshold) ? (
 								<div className="container damage-threshold">
-									<Label text={_translate(locale, 'itemeditor.options.damagethreshold')} disabled={locked || !combatTechnique} />
+									<Label text={_translate(locale, 'itemeditor.options.damagethreshold')} disabled={locked || !combatTechnique || combatTechnique === 'CT_7'} />
 									<TextField
 										className="damage-threshold-part"
 										value={damageBonus.threshold[0]}
 										onChange={this.changeFirstDamageThreshold}
-										disabled={locked || !combatTechnique}
+										disabled={locked || !combatTechnique || combatTechnique === 'CT_7'}
 										valid={validFirstDamageThreshold}
 										/>
 									<TextField
 										className="damage-threshold-part"
 										value={damageBonus.threshold[1]}
 										onChange={this.changeSecondDamageThreshold}
-										disabled={locked || !combatTechnique}
+										disabled={locked || !combatTechnique || combatTechnique === 'CT_7'}
 										valid={validSecondDamageThreshold}
 										/>
 								</div>
@@ -335,7 +335,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									label={_translate(locale, 'itemeditor.options.damagethreshold')}
 									value={damageBonus.threshold}
 									onChange={this.changeDamageThreshold}
-									disabled={locked || !combatTechnique}
+									disabled={locked || !combatTechnique || combatTechnique === 'CT_7'}
 									valid={validDamageThreshold}
 									/>
 							)}
@@ -346,7 +346,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								label={_translate(locale, 'itemeditor.options.damagethresholdseparated')}
 								checked={Array.isArray(damageBonus.threshold)}
 								onClick={this.changeDamageThresholdSeparation}
-								disabled={locked || !combatTechnique || !(typeof damageBonus.primary === 'string' && damageBonus.primary === 'ATTR_6_8' || typeof combatTechnique === 'string' && combatTechniques.find(e => e.id === combatTechnique)!.primary.length === 2)}
+								disabled={locked || !combatTechnique || !(typeof damageBonus.primary === 'string' && damageBonus.primary === 'ATTR_6_8' || typeof combatTechnique === 'string' && combatTechniques.find(e => e.id === combatTechnique)!.primary.length === 2) || combatTechnique === 'CT_7'}
 								/>
 						</div>
 						<div className="row">
@@ -399,23 +399,23 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								value={reach}
 								options={[{id: 1, name: _translate(locale, 'itemeditor.options.reachshort')}, {id: 2, name: _translate(locale, 'itemeditor.options.reachmedium')}, {id: 3, name: _translate(locale, 'itemeditor.options.reachlong')}]}
 								onChange={this.changeReach}
-								disabled={locked}
+								disabled={locked || combatTechnique === 'CT_7'}
 								required
 								/>
 							<div className="container">
-								<Label text={_translate(locale, 'itemeditor.options.atpamod')} disabled={locked} />
+								<Label text={_translate(locale, 'itemeditor.options.atpamod')} disabled={locked || combatTechnique === 'CT_7'} />
 								<TextField
 									className="at"
 									value={at}
 									onChange={this.changeAT}
-									disabled={locked}
+									disabled={locked || combatTechnique === 'CT_7'}
 									valid={validATMod}
 									/>
 								<TextField
 									className="pa"
 									value={pa}
 									onChange={this.changePA}
-									disabled={locked || combatTechnique === 'CT_6'}
+									disabled={locked || combatTechnique === 'CT_6' || combatTechnique === 'CT_7'}
 									valid={validPAMod}
 									/>
 							</div>

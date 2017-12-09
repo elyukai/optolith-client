@@ -6,6 +6,7 @@ import { sortStrings } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
 import { sign, signNull } from '../../utils/NumberUtils';
+import { WikiSource } from './WikiSource';
 
 export interface WikiEquipmentInfoProps {
 	attributes: Map<string, AttributeInstance>;
@@ -69,15 +70,15 @@ export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
 					</tr>
 					<tr>
 						<td>{_translate(locale, 'equipment.view.list.primaryattributedamagethreshold')}</td>
-						<td>{primaryAttributeIdArray && damageBonus && (Array.isArray(damageBonus.threshold) ? primaryAttributeIdArray.map((attr, index) => `${attributes.get(attr)!.short} ${(damageBonus.threshold as number[])[index]}`).join('/') : `${primaryAttributeIdArray.map(attr => attributes.get(attr)!.short).join('/')} ${damageBonus.threshold}`)}</td>
+						<td>{combatTechnique === 'CT_7' && '-' || primaryAttributeIdArray && damageBonus && (Array.isArray(damageBonus.threshold) ? primaryAttributeIdArray.map((attr, index) => `${attributes.get(attr)!.short} ${(damageBonus.threshold as number[])[index]}`).join('/') : `${primaryAttributeIdArray.map(attr => attributes.get(attr)!.short).join('/')} ${damageBonus.threshold}`)}</td>
 					</tr>
 					<tr>
 						<td>{_translate(locale, 'equipment.view.list.atpamod')}</td>
-						<td>{at && sign(at)}/{pa && sign(pa)}</td>
+						<td>{combatTechnique === 'CT_7' ? '-' : `${at && sign(at)}/${pa && sign(pa)}`}</td>
 					</tr>
 					<tr>
 						<td>{_translate(locale, 'equipment.view.list.reach')}</td>
-						<td>{reach && _translate(locale, 'equipment.view.list.reachlabels')[reach - 1]}</td>
+						<td>{combatTechnique === 'CT_7' && '-' || reach && _translate(locale, 'equipment.view.list.reachlabels')[reach - 1]}</td>
 					</tr>
 					<tr>
 						<td>{_translate(locale, 'equipment.view.list.weight')}</td>
@@ -157,11 +158,9 @@ export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
 			</table> : null}
 			{currentObject.note && <Markdown source={`**${_translate(locale, 'info.note')}:** ${currentObject.note}`} />}
 			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.equipment.rules')}:** ${currentObject.rules}`} />}
-			{[1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weaponadvantage') : _translate(locale, 'info.armoradvantage')}:** ${currentObject.advantage || _translate(locale, 'info.none')}`} />}
-			{[1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weapondisadvantage') : _translate(locale, 'info.armordisadvantage')}:** ${currentObject.disadvantage || _translate(locale, 'info.none')}`} />}
-			{currentObject.src && <p className="source">
-				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-			</p>}
+			{currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weaponadvantage') : _translate(locale, 'info.armoradvantage')}:** ${currentObject.advantage || _translate(locale, 'info.none')}`} />}
+			{currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weapondisadvantage') : _translate(locale, 'info.armordisadvantage')}:** ${currentObject.disadvantage || _translate(locale, 'info.none')}`} />}
+			{currentObject.src && <WikiSource src={currentObject.src} books={books} locale={locale} />}
 		</div>
 	</Scroll>;
 }
