@@ -495,6 +495,8 @@ export interface UIMessages {
 	"activatable.view.hatredof": string;
 	"info.rules": string;
 	"info.extendedcombatspecialabilities": string;
+	"info.extendedmagicalspecialabilities": string;
+	"info.extendedblessedtspecialabilities": string;
 	"info.penalty": string;
 	"info.tier": string;
 	"info.pertier": string;
@@ -508,7 +510,8 @@ export interface UIMessages {
 	"advantage": string;
 	"disadvantage": string;
 	"primaryattributeofthetradition": string;
-	"knowledgeof": string;
+	"knowledgeofspell": string;
+	"knowledgeofliturgicalchant": string;
 	"race": string;
 	"appropriatecombatstylespecialability": string;
 	"appropriatemagicalstylespecialability": string;

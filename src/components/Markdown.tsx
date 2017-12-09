@@ -5,6 +5,7 @@ import breaks = require('remark-breaks');
 export interface MarkdownProps {
 	className?: string;
 	isListElement?: boolean;
+	oneLine?: 'span' | 'fragment';
 	source: string;
 }
 
@@ -13,19 +14,21 @@ export interface MarkdownRootProps {
 }
 
 export function Markdown(props: MarkdownProps) {
-	const { className, source = '...', isListElement } = props;
+	const { className, source = '...', isListElement, oneLine } = props;
 
-	const root = isListElement ? 'ul' : 'div';
+	const root = oneLine === 'fragment' ? (props: { children?: React.ReactNode}) => <React.Fragment>{props.children}</React.Fragment> : oneLine === 'span' ? 'span' : isListElement ? 'ul' : 'div';
 
 	return (
 		<ReactMarkdown
 			className={className}
 			source={source}
+			unwrapDisallowed={typeof oneLine === 'string'}
 			skipHtml
 			renderers={{
 				root
 			}}
 			plugins={[breaks]}
+			disallowedTypes={oneLine ? ['paragraph'] : undefined}
 			/>
 	);
 }

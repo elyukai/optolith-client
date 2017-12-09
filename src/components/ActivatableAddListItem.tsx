@@ -168,7 +168,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 							value={selected}
 							onChange={this.handleSelect}
 							options={newSel}
-							disabled={selectedTier === 0 || selectElementDisabled} />
+							disabled={selectElementDisabled} />
 					);
 					if (typeof selected === 'string' && typeof inputText === 'string') {
 						disabled = true;

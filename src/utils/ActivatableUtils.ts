@@ -589,9 +589,15 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     case 'SA_473':
     case 'SA_531':
     case 'SA_569': {
-      const { name, ic } = get(dependent, sid as string) as SkillishInstance;
-      addName = name;
-      currentCost = (cost as number[])[ic - 1];
+      const entry = typeof sid === 'string' ? get(dependent, sid) as SkillishInstance : undefined;
+      if (entry) {
+        const { name, ic } = entry;
+        addName = name;
+        currentCost = (cost as number[])[ic - 1];
+      }
+      else {
+        currentCost = 0;
+      }
       break;
     }
     case 'ADV_28':
@@ -673,8 +679,8 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     case 'SA_678':
       const part = getTraditionNameFromFullName(name);
       const musictraditionLabels = _translate(locale, 'musictraditions');
-      if (musictraditionLabels) {
-        combinedName = combinedName.replace(part, `${part}: ${musictraditionLabels[(sid2 as number) - 1]}`);
+      if (musictraditionLabels && typeof sid2 === 'number') {
+        combinedName = combinedName.replace(part, `${part}: ${musictraditionLabels[sid2 - 1]}`);
       }
       break;
     case 'SA_680':
@@ -696,9 +702,18 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       break;
     }
     case 'SA_533': {
-      const { name, ic } = dependent.talents.get(sid as string)!;
-      addName = name;
-      currentCost = (cost as number[])[ic - 1] + dependent.talents.get(dependent.specialAbilities.get('SA_531')!.active[0].sid as string)!.ic;
+      const entry = typeof sid === 'string' ? dependent.talents.get(sid) : undefined;
+      const SA_531 = dependent.specialAbilities.get('SA_531')!.active;
+      const firstSID = SA_531[0] && SA_531[0].sid;
+      const firstEntry = typeof firstSID === 'string' ? dependent.talents.get(firstSID) : undefined;
+      if (entry && firstEntry) {
+        const { name, ic } = entry;
+        addName = name;
+        currentCost = (cost as number[])[ic - 1] + firstEntry.ic;
+      }
+      else {
+        currentCost = 0;
+      }
       break;
     }
     case 'SA_414':
@@ -739,6 +754,9 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     case 'DISADV_34':
     case 'DISADV_50':
       combinedName  += ` ${getRoman(tier as number)} (${addName})`;
+      break;
+    case 'SA_639':
+      combinedName  += ` ${addName}`;
       break;
     default:
       if (addName) {
@@ -1158,7 +1176,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       }
       case 'SA_639': {
         const activeIds = getSids(entry);
-        const sel = (entry.sel as Array<SelectionObject & { prerequisites: AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites, id) && !getDSids(entry).includes(e.id));
+        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites!, id) && !getDSids(entry).includes(e.id));
         if (sel.length > 0) {
           return { id, name, sel, cost, gr, instance: entry };
         }

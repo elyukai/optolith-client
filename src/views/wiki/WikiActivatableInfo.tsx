@@ -5,7 +5,7 @@ import { Scroll } from '../../components/Scroll';
 import { ADVANTAGES, ATTRIBUTES, DISADVANTAGES, LITURGIES, SPECIAL_ABILITIES, SPELLS } from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { get } from '../../selectors/dependentInstancesSelectors';
-import { ActivatableBasePrerequisites, ActivatableInstance, AttributeInstance, Book, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../../types/data.d';
+import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, AttributeInstance, Book, RaceInstance, SecondaryAttribute, SpecialAbilityInstance } from '../../types/data.d';
 import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/reusable';
 import { UIMessages } from '../../types/view.d';
 import { getNameCost, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
@@ -14,6 +14,8 @@ import { _translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
 import { getRoman } from '../../utils/NumberUtils';
 import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/RequirementUtils';
+import { WikiProperty } from './WikiProperty';
+import { WikiSource } from './WikiSource';
 
 export interface WikiActivatableInfoProps {
 	attributes: Map<string, AttributeInstance>;
@@ -69,31 +71,24 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 					<div className="info specialability-info">
 						{headerElement}
 						{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-						<p>
-							<span>{_translate(locale, 'info.volume')}</span>
-							<span>{currentObject.volume}</span>
-						</p>
-						{currentObject.aeCost && <p>
-							<span>{_translate(locale, 'info.aecost')}</span>
-							<span>{currentObject.aeCost}</span>
-						</p>}
-						{currentObject.aeCost === undefined && currentObject.bindingCost === undefined && <p>
-							<span>{_translate(locale, 'info.aecost')}</span>
-							<span>{_translate(locale, 'info.none')}</span>
-						</p>}
-						{currentObject.bindingCost && <p>
-							<span>{_translate(locale, 'info.bindingcost')}</span>
-							<span>{currentObject.bindingCost}</span>
-						</p>}
-						{currentObject.property && <p>
-							<span>{_translate(locale, 'info.property')}</span>
-							<span>{typeof currentObject.property === 'number' ? _translate(locale, 'spells.view.properties')[currentObject.property - 1] : currentObject.property}</span>
-						</p>}
+						{currentObject.volume && <WikiProperty locale={locale} title="info.volume">
+							{currentObject.volume}
+						</WikiProperty>}
+						{currentObject.aeCost && <WikiProperty locale={locale} title="info.aecost">
+							{currentObject.aeCost}
+						</WikiProperty>}
+						{currentObject.aeCost === undefined && currentObject.bindingCost === undefined && <WikiProperty locale={locale} title="info.aecost">
+							{_translate(locale, 'info.none')}
+						</WikiProperty>}
+						{currentObject.bindingCost && <WikiProperty locale={locale} title="info.bindingcost">
+							{currentObject.bindingCost}
+						</WikiProperty>}
+						{currentObject.property && <WikiProperty locale={locale} title="info.property">
+							{typeof currentObject.property === 'number' ? _translate(locale, 'spells.view.properties')[currentObject.property - 1] : currentObject.property}
+						</WikiProperty>}
 						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
-						<p className="source">
-							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-						</p>
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>
 				</Scroll>;
 
@@ -102,15 +97,12 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 					<div className="info specialability-info">
 						{headerElement}
 						{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-						{currentObject.aspect && <p>
-							<span>{_translate(locale, 'info.aspect')}</span>
-							<span>{typeof currentObject.aspect === 'number' ? _translate(locale, 'liturgies.view.aspects')[currentObject.aspect - 1] : currentObject.aspect}</span>
-						</p>}
+						{currentObject.aspect && <WikiProperty locale={locale} title="info.aspect">
+							{typeof currentObject.aspect === 'number' ? _translate(locale, 'liturgies.view.aspects')[currentObject.aspect - 1] : currentObject.aspect}
+						</WikiProperty>}
 						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
-						<p className="source">
-							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-						</p>
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>
 				</Scroll>;
 
@@ -118,22 +110,17 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 				return <Scroll>
 					<div className="info specialability-info">
 						{headerElement}
-						<p>
-							<span>{_translate(locale, 'info.aecost')}</span>
-							<span>{currentObject.aeCost}</span>
-						</p>
-						<p>
-							<span>{_translate(locale, 'info.protectivecircle')}</span>
-							<span>{currentObject.protectiveCircle}</span>
-						</p>
-						<p>
-							<span>{_translate(locale, 'info.wardingcircle')}</span>
-							<span>{currentObject.wardingCircle}</span>
-						</p>
+						<WikiProperty locale={locale} title="info.aecost">
+							{currentObject.aeCost}
+							</WikiProperty>}
+						<WikiProperty locale={locale} title="info.protectivecircle">
+							{currentObject.protectiveCircle}
+							</WikiProperty>}
+						<WikiProperty locale={locale} title="info.wardingcircle">
+							{currentObject.wardingCircle}
+						</WikiProperty>}
 						<Markdown source={costText} />
-						<p className="source">
-							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-						</p>
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>
 				</Scroll>;
 
@@ -151,24 +138,79 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 					</div>
 				</Scroll>;
 
+			case 9:
+			case 10:
+				return <Scroll>
+					<div className="info specialability-info">
+						{headerElement}
+						{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
+						{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedcombatspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
+						{currentObject.penalty && <Markdown source={`**${_translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
+						{currentObject.combatTechniques && <Markdown source={`**${_translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
+						<Markdown source={costText} />
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
+					</div>
+				</Scroll>;
+
+			case 13:
+				return <Scroll>
+					<div className="info specialability-info">
+						{headerElement}
+						{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
+						{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedmagicalspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
+						<Markdown source={costText} />
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
+					</div>
+				</Scroll>;
+
+			case 25: {
+				const SA_639 = specialAbilities.get('SA_639');
+
+				const additionalExtended = SA_639 && SA_639.sel && SA_639.sel.reduce<ActiveObject[]>((arr, selectionObject) => {
+					if (selectionObject.prerequisites) {
+						if (selectionObject.prerequisites.find(e => e.id === currentObject.id || e.id.includes(currentObject.id))) {
+							return [
+								{ sid: selectionObject.id },
+								...arr
+							];
+						}
+					}
+					return arr;
+				}, []);
+
+				return <Scroll>
+					<div className="info specialability-info">
+						{headerElement}
+						{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
+						{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedblessedtspecialabilities')}:** ${sortStrings([
+							...currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'),
+							...(additionalExtended ? additionalExtended.map(e => getNameCost({ id: 'SA_639', index: 0, ...e }, dependent, true, locale).combinedName) : [])
+						], locale.id).join(', ')}`} />}
+						{currentObject.penalty && <Markdown source={`**${_translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
+						{currentObject.combatTechniques && <Markdown source={`**${_translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
+						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
+						<Markdown source={costText} />
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
+					</div>
+				</Scroll>;
+			}
+
 			default:
 				return <Scroll>
 					<div className="info specialability-info">
 						{headerElement}
 						{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
 						{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-						{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedcombatspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
 						{currentObject.penalty && <Markdown source={`**${_translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
 						{currentObject.combatTechniques && <Markdown source={`**${_translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
-						{currentObject.aeCost && <p>
-							<span>{_translate(locale, 'info.aecost')}</span>
-							<span>{currentObject.aeCost}</span>
-						</p>}
+						{currentObject.aeCost && <WikiProperty locale={locale} title="info.aecost">
+							{currentObject.aeCost}
+						</WikiProperty>}
 						<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 						<Markdown source={costText} />
-						<p className="source">
-							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-						</p>
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>
 				</Scroll>;
 		}
@@ -184,19 +226,15 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 		<div className="info disadv-info">
 			{headerElement}
 			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
-			{currentObject.range && <p>
-				<span>{_translate(locale, 'info.range')}</span>
-				<span>{currentObject.range}</span>
-			</p>}
-			{currentObject.actions && <p>
-				<span>{_translate(locale, 'info.actions')}</span>
-				<span>{currentObject.actions}</span>
-			</p>}
+			{currentObject.range && <WikiProperty locale={locale} title="info.range">
+				{currentObject.range}
+			</WikiProperty>}
+			{currentObject.actions && <WikiProperty locale={locale} title="info.actions">
+				{currentObject.actions}
+			</WikiProperty>}
 			<PrerequisitesText entry={currentObject} dependent={dependent} locale={locale} />
 			<Markdown source={costText} />
-			<p className="source">
-				<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-			</p>
+			<WikiSource src={currentObject.src} books={books} locale={locale} />
 		</div>
 	</Scroll>;
 }
@@ -221,7 +259,7 @@ export function PrerequisitesText(props: PrerequisitesTextProps): JSX.Element {
 		return <p>
 			<span>{_translate(locale, 'info.prerequisites')}</span>
 			<span>
-				{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+				{prerequisitesTextStart && <Markdown source={prerequisitesTextStart} oneLine="span" />}
 				{!reqs.has(1) && `${_translate(locale, 'tier')} I: ${_translate(locale, 'info.none')}; `}
 				{tiersArr.map(e => {
 					return <span key={e} className="tier">
@@ -230,7 +268,7 @@ export function PrerequisitesText(props: PrerequisitesTextProps): JSX.Element {
 						{e > 1 && <span>{entry.name} {getRoman(e - 1)}</span>}
 					</span>;
 				})}
-				{prerequisitesTextEnd && <span>{prerequisitesTextEnd}</span>}
+				{prerequisitesTextEnd && <Markdown source={prerequisitesTextEnd} oneLine="span" />}
 			</span>
 		</p>;
 	}
@@ -238,9 +276,9 @@ export function PrerequisitesText(props: PrerequisitesTextProps): JSX.Element {
 	return <p>
 		<span>{_translate(locale, 'info.prerequisites')}</span>
 		<span>
-			{prerequisitesTextStart && <span>{prerequisitesTextStart}</span>}
+			{prerequisitesTextStart && <Markdown source={prerequisitesTextStart} oneLine="span" />}
 			<Prerequisites list={reqs} entry={entry} dependent={dependent} locale={locale} prerequisitesTextIndex={entry.prerequisitesTextIndex} />
-			{prerequisitesTextEnd && (/^(?:;|,|.)/.test(prerequisitesTextEnd) ? prerequisitesTextEnd : <span>{prerequisitesTextEnd}</span>)}
+			{prerequisitesTextEnd && (/^(?:;|,|\.)/.test(prerequisitesTextEnd) ? <Markdown source={prerequisitesTextEnd} oneLine="fragment" /> : <Markdown source={prerequisitesTextEnd} oneLine="span" />)}
 		</span>
 	</p>;
 }
@@ -360,7 +398,12 @@ export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisit
 			return e.value;
 		}
 		const { id } = e;
-		return `${_translate(locale, 'knowledgeof')} ${get(dependent, id as string)!.name}`;
+		if (Array.isArray(id)) {
+			const category = getCategoryById(id[0]);
+			return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${id.map(e => get(dependent, e)!.name).join(_translate(locale, 'info.or'))}`;
+		}
+		const category = getCategoryById(id);
+		return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${get(dependent, id)!.name}`;
 	}), locale.id).join(', ')}
 	</span> : <React.Fragment></React.Fragment>;
 }

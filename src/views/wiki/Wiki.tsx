@@ -10,7 +10,6 @@ import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { UIMessages } from '../../types/ui.d';
-import { Profession } from '../../types/view';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 
@@ -23,7 +22,7 @@ export interface WikiStateProps {
 	filterAllText: string;
 	category1: string | undefined;
 	category2: string | undefined;
-	professions: Profession[];
+	professions: any[];
 	sex: 'm' | 'f';
 }
 
@@ -46,7 +45,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as WikiState);
 
 	render() {
-		const { category1, category2, filterText, locale, setCategory1, setCategory2, setFilter, professions, sex } = this.props;
+		const { category1, category2, filterText, locale, setCategory1, setCategory2, setFilter, professions } = this.props;
 		const { infoId } = this.state;
 		return (
 			<section id="wiki">
@@ -85,23 +84,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 							<List>
 								{
 									professions.map(profession => {
-										const { name, subname } = profession;
-
-										let fullName = '';
-
-										if (typeof name === 'string') {
-											fullName = name;
-										}
-										else {
-											fullName = name.m;
-										}
-
-										if (typeof subname === 'string') {
-											fullName += ` (${subname})`;
-										}
-										else if (typeof subname === 'object') {
-											fullName += ` (${subname.m})`;
-										}
+										const { name } = profession;
 
 										return (
 											<ListItem
@@ -109,7 +92,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 												active={profession.id === infoId}
 												onClick={() => this.showInfo(profession.id)}
 												>
-												<ListItemName name={fullName} />
+												<ListItemName name={name} />
 											</ListItem>
 										);
 									})
