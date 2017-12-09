@@ -24,11 +24,12 @@
 				"command": "npm run buildMacTest"
 		},
 		{
+				"label": "watch",
+				"command": "npm run watch"
+		},
+		{
 				"label": "bundle",
-				"command": "npm run bundle",
-				"problemMatcher": [
-					"$tsc-watch"
-				]
+				"command": "npm run bundle"
 		},
 		{
 				"label": "run",

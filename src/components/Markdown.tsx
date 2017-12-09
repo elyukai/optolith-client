@@ -17,6 +17,9 @@ export function Markdown(props: MarkdownProps) {
 	const { className, source = '...', isListElement, oneLine } = props;
 
 	const root = oneLine === 'fragment' ? (props: { children?: React.ReactNode}) => <React.Fragment>{props.children}</React.Fragment> : oneLine === 'span' ? 'span' : isListElement ? 'ul' : 'div';
+	const link = (props: { children?: React.ReactNode}) => {
+		return <React.Fragment>[{props.children}]</React.Fragment>;
+	};
 
 	return (
 		<ReactMarkdown
@@ -25,7 +28,9 @@ export function Markdown(props: MarkdownProps) {
 			unwrapDisallowed={typeof oneLine === 'string'}
 			skipHtml
 			renderers={{
-				root
+				root,
+				link,
+				linkReference: link
 			}}
 			plugins={[breaks]}
 			disallowedTypes={oneLine ? ['paragraph'] : undefined}
