@@ -9,7 +9,6 @@ app.setAppUserModelId('lukasobermann.optolyth');
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = "info";
-
 autoUpdater.autoDownload = false;
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
