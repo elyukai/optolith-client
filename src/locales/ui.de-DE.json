@@ -57,6 +57,7 @@
 	"options.sortorder.aspect": "Nach Aspekt",
 	"options.sortorder.location": "Nach Trageort",
 	"options.sortorder.cost": "Nach Kosten",
+	"options.sortorder.weight": "Nach Gewicht",
 	"options.showactivated": "Aktivierte anzeigen",
 	"options.none": "Keine",
 	"actions.save": "Speichern",

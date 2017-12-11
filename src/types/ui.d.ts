@@ -57,6 +57,7 @@ export interface UIMessages {
 	"options.sortorder.aspect": string;
 	"options.sortorder.location": string;
 	"options.sortorder.cost": string;
+	"options.sortorder.weight": string;
 	"options.showactivated": string;
 	"options.none": string;
 	"actions.save": string;

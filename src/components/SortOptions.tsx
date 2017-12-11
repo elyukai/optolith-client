@@ -3,7 +3,7 @@ import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../utils/I18n';
 import { RadioButtonGroup } from './RadioButtonGroup';
 
-export type SortNames = 'name' | 'group' | 'groupname' | 'where' | 'cost' | 'ap' | 'ic' | 'property' | 'aspect';
+export type SortNames = 'name' | 'group' | 'groupname' | 'where' | 'cost' | 'ap' | 'ic' | 'property' | 'aspect' | 'weight';
 
 export interface SortOptionsProps {
 	locale: UIMessages;
@@ -24,7 +24,8 @@ export function SortOptions(props: SortOptionsProps) {
 		ap: _translate(locale, 'options.sortorder.ap'),
 		ic: _translate(locale, 'options.sortorder.improvementcost'),
 		property: _translate(locale, 'options.sortorder.property'),
-		aspect: _translate(locale, 'options.sortorder.aspect')
+		aspect: _translate(locale, 'options.sortorder.aspect'),
+		weight: _translate(locale, 'options.sortorder.weight'),
 	};
 
 	return (

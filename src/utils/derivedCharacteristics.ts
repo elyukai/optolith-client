@@ -266,14 +266,18 @@ export const getMOV = createSelector(
 	getCurrentRaceId,
 	mapGetToSlice(getAdvantages, 'ADV_9'),
 	mapGetToSlice(getDisadvantages, 'DISADV_51'),
+	mapGetToSlice(getDisadvantages, 'DISADV_4'),
 	getLocaleMessages,
-	(races, currentRaceId, nimble, maimed, locale) => {
+	(races, currentRaceId, nimble, maimed, slow, locale) => {
 		const currentRace = currentRaceId && races.get(currentRaceId);
 		let base = currentRace && currentRace.mov || 0;
 
 		let mod = 0;
 		if (isActive(nimble)) {
 			mod = 1;
+		}
+		else if (isActive(slow)) {
+			mod = -1;
 		}
 		if (maimed && getSids(maimed).includes(3)) {
 			base = Math.round(base / 2);

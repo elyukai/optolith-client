@@ -57,6 +57,7 @@
 	"options.sortorder.aspect": "Sort by Aspect",
 	"options.sortorder.location": "Sort by Carrying Location",
 	"options.sortorder.cost": "Sort by Cost",
+	"options.sortorder.weight": "Sort by Weight",
 	"options.showactivated": "Show Activated",
 	"options.none": "None",
 	"actions.save": "Save",

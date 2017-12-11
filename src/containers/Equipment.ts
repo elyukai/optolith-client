@@ -7,7 +7,7 @@ import { getTotal } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { getFilteredAndSortedTemplates, getItems, getPurse, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getFilteredAndSortedTemplates, getPurse, getSortedItems, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getAttributes } from '../selectors/stateSelectors';
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from '../selectors/uisettingsSelectors';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
@@ -18,7 +18,7 @@ function mapStateToProps(state: AppState) {
 		combatTechniques: getAllCombatTechniques(state),
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),
-		items: getItems(state),
+		items: getSortedItems(state),
 		hasNoAddedAP: getTotal(state) === getStartEl(state).ap,
 		purse: getPurse(state),
 		sortOrder: getEquipmentSortOrder(state),

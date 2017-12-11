@@ -4,13 +4,15 @@ import { EquipmentState } from '../reducers/equipment';
 import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data.d';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
-import { sortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, sortObjects } from '../utils/FilterSortUtils';
+import { _translate } from '../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
+import { isAvailable } from '../utils/RulesUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
-import { getHigherParadeValues, getLocaleMessages } from './stateSelectors';
-import { filterByAvailability, isAvailable } from '../utils/RulesUtils';
 import { getRuleBooksEnabled } from './rulesSelectors';
+import { getHigherParadeValues, getLocaleMessages } from './stateSelectors';
+import { getEquipmentSortOrder } from './uisettingsSelectors';
 
 export function getForSave(state: EquipmentState) {
 	const { armorZones, items, purse } = state;
@@ -74,10 +76,34 @@ export const getTemplates = createSelector(
 	templates => [...templates.values()]
 );
 
+export const getSortOptions = createSelector(
+	getLocaleMessages,
+	getEquipmentSortOrder,
+	(locale, sortOrder) => {
+		let sortOptions: AllSortOptions<ItemInstance> | undefined;
+		if (sortOrder === 'groupname') {
+			const groups = _translate(locale, 'equipment.view.groups');
+			sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
+		}
+		else if (sortOrder === 'where') {
+			sortOptions = ['where', 'name'];
+		}
+		else if (sortOrder === 'weight') {
+			sortOptions = [
+				{ key: ({ weight = 0 }) => weight, reverse: true },
+				'name'
+			];
+		}
+		return sortOptions;
+	}
+);
+
 export const getSortedTemplates = createSelector(
 	getTemplates,
 	getLocaleMessages,
-	(templates, locale) => sortObjects(templates, locale!.id)
+	(templates, locale) => {
+		return sortObjects(templates, locale!.id);
+	}
 );
 
 export const getFilteredAndSortedTemplates = createSelector(
@@ -92,6 +118,15 @@ export const getItems = createSelector(
 	getItemsState,
 	getItemTemplatesState,
 	(items, templates) => [...items.values()].map(e => getFullItem(items, templates, e.id))
+);
+
+export const getSortedItems = createSelector(
+	getItems,
+	getLocaleMessages,
+	getSortOptions,
+	(items, locale, sortOptions) => {
+		return sortObjects(items, locale!.id, sortOptions);
+	}
 );
 
 export const getArmorZoneInstances = createSelector(

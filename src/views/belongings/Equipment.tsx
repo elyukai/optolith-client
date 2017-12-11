@@ -16,7 +16,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
-import { filterAndSortObjects, filterObjects, sortObjects } from '../../utils/FilterSortUtils';
+import { filterObjects, sortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
 
@@ -97,13 +97,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
 		const groupsSelectionItems = sortObjects(groups.map((e, i) => ({ id: i + 1, name: e })), locale.id);
 
-		const sortOptionArrays = {
-			name: ['name' as 'name'],
-			groupname: [{ key: 'gr' as 'gr', mapToIndex: groups }, 'name' as 'name'],
-			where: ['where' as 'where', 'name' as 'name']
-		};
-
-		const list = filterAndSortObjects(items, locale.id, filterText, sortOptionArrays[sortOrder as keyof typeof sortOptionArrays]);
+		const list = filterObjects(items, filterText);
 
 		const filterTemplatesByIsActiveAndInGroup = (e: ItemInstance): boolean => {
 			const isGroup = e.gr === filterGroupSlidein;
@@ -177,7 +171,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
-						options={[ 'name', 'groupname', 'where' ]}
+						options={[ 'name', 'groupname', 'where', 'weight' ]}
 						sortOrder={sortOrder}
 						sort={this.sort}
 						locale={locale}
