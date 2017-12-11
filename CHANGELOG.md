@@ -1,3 +1,7 @@
+# 0.51.5
+
+- Fixed hidden liturgical chants tab.
+
 # 0.51.4
 
 - Fixed MOV modificators.
