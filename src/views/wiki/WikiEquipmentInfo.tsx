@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
 import { AttributeInstance, Book, CombatTechniqueInstance, ItemInstance, UIMessages } from '../../types/data.d';
-import { sortStrings } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
 import { sign, signNull } from '../../utils/NumberUtils';

@@ -18,6 +18,11 @@ export const getBlessedTradition = createSelector(
 	getBlessedTraditionResultFunc
 );
 
+export const getBlessedTraditionNumericId = createSelector(
+	getBlessedTradition,
+	tradition => tradition && getNumericBlessedTraditionIdByInstanceId(tradition.id)
+);
+
 export const getLiturgicalChantsAndBlessings = createSelector(
 	getLiturgicalChants,
 	getBlessings,

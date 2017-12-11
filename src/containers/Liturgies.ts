@@ -4,7 +4,7 @@ import * as ConfigActions from '../actions/ConfigActions';
 import * as LiturgiesActions from '../actions/LiturgiesActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
-import { getActiveLiturgicalChants, getFilteredInactiveLiturgicalChants, getTraditionId, isActivationDisabled } from '../selectors/liturgiesSelectors';
+import { getActiveLiturgicalChants, getBlessedTraditionNumericId, getFilteredInactiveLiturgicalChants, isActivationDisabled } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
@@ -23,7 +23,7 @@ function mapStateToProps(state: AppState) {
 		inactiveList: getFilteredInactiveLiturgicalChants(state),
 		phase: getPhase(state),
 		sortOrder: getLiturgiesSortOrder(state),
-		traditionId: getTraditionId(state)!
+		traditionId: getBlessedTraditionNumericId(state)!
 	};
 }
 

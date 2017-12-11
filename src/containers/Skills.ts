@@ -6,8 +6,9 @@ import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '.
 
 function mapStateToProps(state: AppState) {
 	const magicalTraditions = getMagicalTraditions(state);
+	const blessedTradition = getBlessedTradition(state);
 	return {
-		showChants: typeof getBlessedTradition === 'object',
+		showChants: typeof blessedTradition === 'object',
 		showSpells: magicalTraditions.length > 0 && magicalTraditions[0].id !== 'SA_680',
 	};
 }
