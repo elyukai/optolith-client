@@ -8,7 +8,7 @@ import { _translate } from '../../utils/I18n';
 
 export interface SettingsOwnProps {
 	locale: UIMessages;
-	showSettings?: boolean;
+	isSettingsOpen: boolean;
 	close(): void;
 }
 
@@ -29,7 +29,7 @@ export interface SettingsDispatchProps {
 export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps;
 
 export function Settings(props: SettingsProps) {
-	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, showSettings, theme, switchEnableEditingHeroAfterCreationPhase } = props;
+	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, isSettingsOpen, theme, switchEnableEditingHeroAfterCreationPhase } = props;
 
 	return (
 		<Dialog
@@ -37,7 +37,7 @@ export function Settings(props: SettingsProps) {
 			title={_translate(locale, 'settings.title')}
 			buttons={[{label: _translate(locale, 'settings.actions.close'), onClick: saveConfig }]}
 			close={close}
-			isOpened={showSettings}
+			isOpened={isSettingsOpen}
 			>
 			<Dropdown
 				options={[

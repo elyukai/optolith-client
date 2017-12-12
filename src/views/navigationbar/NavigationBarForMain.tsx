@@ -12,7 +12,7 @@ import { NavigationBarWrapper } from './NavigationBarWrapper';
 export interface NavigationBarForMainProps {
 	currentTab: string;
 	locale: UIMessages;
-	showSettings?: boolean;
+	isSettingsOpen: boolean;
 	closeSettings(): void;
 	openSettings(): void;
 	setTab(id: string): void;

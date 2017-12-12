@@ -67,5 +67,10 @@ export const getIsItemCreation = (state: AppState) => state.currentHero.present.
 export const getArmorZonesEditorInstance = (state: AppState) => state.currentHero.present.equipment.armorZoneEditor;
 export const getIsArmorZonesCreation = (state: AppState) => state.currentHero.present.equipment.isArmorZonesCreation;
 
-export const getCurrentAlert = (state: AppState) => state.ui.alerts.currentAlert;
-export const getUpdateDownloadProgress = (state: AppState) => state.ui.alerts.updateDownloadProgress;
+export const getCurrentAlert = (state: AppState) => state.ui.alerts;
+export const getUpdateDownloadProgress = (state: AppState) => state.ui.subwindows.updateDownloadProgress;
+export const getAddPermanentEnergy = (state: AppState) => state.ui.subwindows.addPermanentEnergy;
+export const getEditPermanentEnergy = (state: AppState) => state.ui.subwindows.editPermanentEnergy;
+export const isAddAdventurePointsOpen = (state: AppState) => state.ui.subwindows.isAddAdventurePointsOpen;
+export const isCharacterCreatorOpen = (state: AppState) => state.ui.subwindows.isCharacterCreatorOpen;
+export const isSettingsOpen = (state: AppState) => state.ui.subwindows.isSettingsOpen;

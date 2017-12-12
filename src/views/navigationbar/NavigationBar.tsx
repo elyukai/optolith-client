@@ -16,6 +16,7 @@ export interface NavigationBarStateProps {
 	isRedoAvailable: boolean;
 	isRemovingEnabled: boolean;
 	isUndoAvailable: boolean;
+	isSettingsOpen: boolean;
 }
 
 export interface NavigationBarDispatchProps {
@@ -26,20 +27,13 @@ export interface NavigationBarDispatchProps {
 	saveGroup(): void;
 	setSection(id: string): void;
 	setTab(id: string): void;
+	openSettings(): void;
+	closeSettings(): void;
 }
 
 export type NavigationBarProps = NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;
 
-export interface NavigationBarState {
-	showSettings?: boolean;
-}
-
-export class NavigationBar extends React.Component<NavigationBarProps, NavigationBarState> {
-	state = {};
-
-	openSettings = () => this.setState(() => ({ showSettings: true }));
-	closeSettings = () => this.setState(() => ({ showSettings: false }));
-
+export class NavigationBar extends React.Component<NavigationBarProps> {
 	render() {
 		const { currentSection } = this.props;
 
@@ -48,24 +42,18 @@ export class NavigationBar extends React.Component<NavigationBarProps, Navigatio
 				return <NavigationBarForMain
 					{...this.props}
 					{...this.state}
-					openSettings={this.openSettings}
-					closeSettings={this.closeSettings}
 					/>;
 
 			case 'hero':
 				return <NavigationBarForHero
 					{...this.props}
 					{...this.state}
-					openSettings={this.openSettings}
-					closeSettings={this.closeSettings}
 					/>;
 
 			case 'group':
 				return <NavigationBarForGroup
 					{...this.props}
 					{...this.state}
-					openSettings={this.openSettings}
-					closeSettings={this.closeSettings}
 					groupName=""
 					/>;
 

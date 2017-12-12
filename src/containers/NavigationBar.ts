@@ -4,10 +4,11 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as HistoryActions from '../actions/HistoryActions';
 import * as InGameActions from '../actions/InGameActions';
 import * as LocationActions from '../actions/LocationActions';
+import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getCurrentHeroPresent } from '../selectors/stateSelectors';
+import { getCurrentHeroPresent, isSettingsOpen } from '../selectors/stateSelectors';
 import { getCurrentSection, getCurrentTab } from '../selectors/uilocationSelectors';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
 
@@ -19,6 +20,7 @@ function mapStateToProps(state: AppState) {
 		isRedoAvailable: getRedoAvailability(state),
 		isUndoAvailable: getUndoAvailability(state),
 		isRemovingEnabled: isRemovingEnabled(state),
+		isSettingsOpen: isSettingsOpen(state),
 	};
 }
 
@@ -38,6 +40,12 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		saveHero() {
 			dispatch(HerolistActions._saveHero());
+		},
+		openSettings() {
+			dispatch(SubwindowsActions.openSettings());
+		},
+		closeSettings() {
+			dispatch(SubwindowsActions.closeSettings());
 		},
 		saveGroup() {
 			dispatch(InGameActions._save());

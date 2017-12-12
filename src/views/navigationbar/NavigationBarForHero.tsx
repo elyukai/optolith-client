@@ -23,7 +23,7 @@ export interface NavigationBarForHeroProps {
 	isUndoAvailable: boolean;
 	isRemovingEnabled: boolean;
 	locale: UIMessages;
-	showSettings?: boolean;
+	isSettingsOpen: boolean;
 	closeSettings(): void;
 	openSettings(): void;
 	undo(): void;

@@ -14,7 +14,7 @@ import { NavigationBarWrapper } from './NavigationBarWrapper';
 export interface NavigationBarForGroupProps {
 	locale: UIMessages;
 	groupName: string;
-	showSettings?: boolean;
+	isSettingsOpen: boolean;
 	closeSettings(): void;
 	openSettings(): void;
 	saveGroup(): void;
