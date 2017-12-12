@@ -1,3 +1,9 @@
+# 0.51.6
+
+- Added sort option to inventory to sort by weight (in descending order).
+- *Slow* is now considered when calculating MOV value.
+- Fixed magical and blessed professions.
+
 # 0.51.5
 
 - Fixed hidden liturgical chants tab.

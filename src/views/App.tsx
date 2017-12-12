@@ -62,7 +62,7 @@ export class App extends React.Component<AppProps, AppState> {
 
 		return (
 			<div id="body" className={`theme-${theme} platform-${platform}`} lang={locale.id.split('-')[0]}>
-				<div className="background-image"></div>
+				<div className="background-image"><img src="images/background.svg" alt=""/></div>
 				<AlertsContainer locale={locale} />
 				<DownloaderContainer locale={locale} />
 				<TitleBar {...this.props} />

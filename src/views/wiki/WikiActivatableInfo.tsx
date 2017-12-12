@@ -120,13 +120,13 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 						{headerElement}
 						<WikiProperty locale={locale} title="info.aecost">
 							{currentObject.aeCost}
-							</WikiProperty>}
+						</WikiProperty>
 						<WikiProperty locale={locale} title="info.protectivecircle">
 							{currentObject.protectiveCircle}
-							</WikiProperty>}
+						</WikiProperty>
 						<WikiProperty locale={locale} title="info.wardingcircle">
 							{currentObject.wardingCircle}
-						</WikiProperty>}
+						</WikiProperty>
 						<Markdown source={costText} />
 						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>

@@ -2,8 +2,10 @@ $defaultEase: cubic-bezier(.28,.3,.09,.82);
 
 :root {
 	--separator-color: #7a7a7a;
-	--separator-color-halftransparent: transparentize(#7a7a7a, .7);
-	--separator-color-transparent: transparentize(#7a7a7a, .86);
+	--separator-color-halftransparent: rgba(122, 122, 122, .3);
+	--secondary-text-color: rgba(122, 122, 122, .5);
+	--disabled-color: rgba(122, 122, 122, .3);
+	--separator-color-transparent: rgba(122, 122, 122, .2);
 	--accent-color: #826a3e;
 	--accent-color-intense: #5d4517;
 	--background-color: #111;

@@ -1,0 +1,15 @@
+.error-message {
+	color: var(--accent-color);
+	white-space: pre-wrap;
+	font: 500 14px/18px Alegreya Sans;
+
+	.scroll-inner {
+		padding: 20px;
+		user-select: initial;
+		cursor: initial;
+
+		> h4, > p {
+			user-select: initial;
+		}
+	}
+}
