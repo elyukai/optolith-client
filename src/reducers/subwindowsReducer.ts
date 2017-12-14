@@ -1,24 +1,28 @@
 import { ProgressInfo } from 'builder-util-runtime';
 import { SetUpdateDownloadProgressAction } from '../actions/IOActions';
 import { SetTabAction } from '../actions/LocationActions';
-import { CloseAddAdventurePointsAction, CloseAddPermanentEnergyLossAction, CloseCharacterCreatorAction, CloseEditPermanentEnergyAction, CloseSettingsAction, OpenAddAdventurePointsAction, OpenAddPermanentEnergyLossAction, OpenCharacterCreatorAction, OpenEditPermanentEnergyAction, OpenSettingsAction } from '../actions/SubwindowsActions';
+import { CloseAddAdventurePointsAction, CloseAddPermanentEnergyLossAction, CloseCharacterCreatorAction, CloseEditCharacterAvatarAction, CloseEditPermanentEnergyAction, CloseEditPetAvatarAction, CloseSettingsAction, OpenAddAdventurePointsAction, OpenAddPermanentEnergyLossAction, OpenCharacterCreatorAction, OpenEditCharacterAvatarAction, OpenEditPermanentEnergyAction, OpenEditPetAvatarAction, OpenSettingsAction } from '../actions/SubwindowsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = SetTabAction | SetUpdateDownloadProgressAction | OpenAddPermanentEnergyLossAction | OpenCharacterCreatorAction | OpenEditPermanentEnergyAction | CloseAddPermanentEnergyLossAction | CloseCharacterCreatorAction | CloseEditPermanentEnergyAction | OpenAddAdventurePointsAction | OpenSettingsAction | CloseAddAdventurePointsAction | CloseSettingsAction;
+type Action = SetTabAction | SetUpdateDownloadProgressAction | OpenAddPermanentEnergyLossAction | OpenCharacterCreatorAction | OpenEditPermanentEnergyAction | CloseAddPermanentEnergyLossAction | CloseCharacterCreatorAction | CloseEditPermanentEnergyAction | OpenAddAdventurePointsAction | OpenSettingsAction | CloseAddAdventurePointsAction | CloseSettingsAction | OpenEditCharacterAvatarAction | OpenEditPetAvatarAction | CloseEditCharacterAvatarAction | CloseEditPetAvatarAction;
 
 export interface SubWindowsState {
 	editPermanentEnergy?: 'LP' | 'AE' | 'KP';
-	addPermanentEnergy?: 'AE' | 'KP';
+	addPermanentEnergy?: 'LP' | 'AE' | 'KP';
 	updateDownloadProgress?: ProgressInfo;
 	isCharacterCreatorOpen: boolean;
 	isAddAdventurePointsOpen: boolean;
 	isSettingsOpen: boolean;
+	isEditCharacterAvatarOpen: boolean;
+	isEditPetAvatarOpen: boolean;
 }
 
 const initialState: SubWindowsState = {
 	isCharacterCreatorOpen: false,
 	isAddAdventurePointsOpen: false,
-	isSettingsOpen: false
+	isSettingsOpen: false,
+	isEditCharacterAvatarOpen: false,
+	isEditPetAvatarOpen: false,
 };
 
 export function subwindows(state: SubWindowsState = initialState, action: Action): SubWindowsState {
@@ -41,13 +45,13 @@ export function subwindows(state: SubWindowsState = initialState, action: Action
 		case ActionTypes.OPEN_ADD_PERMANENT_ENERGY_LOSS:
 			return {
 				...state,
-				editPermanentEnergy: action.payload.energy
+				addPermanentEnergy: action.payload.energy
 			};
 
 		case ActionTypes.CLOSE_ADD_PERMANENT_ENERGY_LOSS:
 			return {
 				...state,
-				editPermanentEnergy: undefined
+				addPermanentEnergy: undefined
 			};
 
 		case ActionTypes.OPEN_CHARACTER_CREATOR:
@@ -84,6 +88,30 @@ export function subwindows(state: SubWindowsState = initialState, action: Action
 			return {
 				...state,
 				isSettingsOpen: false
+			};
+
+		case ActionTypes.OPEN_EDIT_CHARACTER_AVATAR:
+			return {
+				...state,
+				isEditCharacterAvatarOpen: true
+			};
+
+		case ActionTypes.CLOSE_EDIT_CHARACTER_AVATAR:
+			return {
+				...state,
+				isEditCharacterAvatarOpen: false
+			};
+
+		case ActionTypes.OPEN_EDIT_PET_AVATAR:
+			return {
+				...state,
+				isEditPetAvatarOpen: true
+			};
+
+		case ActionTypes.CLOSE_EDIT_PET_AVATAR:
+			return {
+				...state,
+				isEditPetAvatarOpen: false
 			};
 
 		case ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS:

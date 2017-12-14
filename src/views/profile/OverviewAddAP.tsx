@@ -25,6 +25,14 @@ export class OverviewAddAP extends React.Component<Props, State> {
 	onChange = (event: InputTextEvent) => this.setState({ value: event.target.value } as State);
 	addAP = () => this.props.addAdventurePoints(Number.parseInt(this.state.value));
 
+	componentWillReceiveProps(nextProps: Props) {
+		if (nextProps.isOpened === false && this.props.isOpened === true) {
+			this.setState({
+				value: '',
+			});
+		}
+	}
+
 	render() {
 		const { isRemovingEnabled, locale } = this.props;
 		const { value } = this.state;

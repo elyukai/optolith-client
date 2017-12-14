@@ -20,7 +20,7 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
 	state = {
 		fileValid: false,
 		url: ''
-	} as AvatarChangeState;
+	};
 
 	selectFile = () => {
 		const extensions = ['jpeg', 'png', 'jpg'];
@@ -39,10 +39,20 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
 			}
 		});
 	}
+
 	load = () => {
 		const { setPath } = this.props;
 		const { url } = this.state;
 		setPath(url);
+	}
+
+	componentWillReceiveProps(nextProps: AvatarChangeProps) {
+		if (nextProps.isOpened === false && this.props.isOpened === true) {
+			this.setState({
+				fileValid: false,
+				url: ''
+			});
+		}
 	}
 
 	render() {

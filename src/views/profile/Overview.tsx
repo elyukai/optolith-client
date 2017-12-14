@@ -33,6 +33,8 @@ export interface PersonalDataStateProps {
 	raceVariant: RaceVariantInstance | undefined;
 	isRemovingEnabled: boolean;
 	isEditingHeroAfterCreationPhaseEnabled: boolean;
+	isAddAdventurePointsOpen: boolean;
+	isEditCharacterAvatarOpen: boolean;
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
@@ -41,6 +43,10 @@ export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchP
 	setCustomProfessionName(name: string): void;
 	endCharacterCreation(): void;
 	addAdventurePoints(ap: number): void;
+	openAddAdventurePoints(): void;
+	closeAddAdventurePoints(): void;
+	openEditCharacterAvatar(): void;
+	closeEditCharacterAvatar(): void;
 }
 
 export type PersonalDataProps = PersonalDataStateProps & PersonalDataDispatchProps & PersonalDataOwnProps;
@@ -94,6 +100,13 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			race,
 			raceVariant,
 			isEditingHeroAfterCreationPhaseEnabled,
+			isAddAdventurePointsOpen,
+			isEditCharacterAvatarOpen,
+			openAddAdventurePoints,
+			openEditCharacterAvatar,
+			closeAddAdventurePoints,
+			closeEditCharacterAvatar,
+			setAvatar,
 			...other
 		} = this.props;
 
@@ -140,7 +153,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 			<div className="page" id="overview">
 				<Scroll className="text">
 					<div className="title-wrapper">
-						<AvatarWrapper src={avatar} onClick={this.openAvatarChange} />
+						<AvatarWrapper src={avatar} onClick={openEditCharacterAvatar} />
 						<div className="text-wrapper">
 							{nameElement}
 							{
@@ -209,7 +222,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 								<BorderButton
 									className="add-ap"
 									label={_translate(locale, 'profileoverview.actions.addadventurepoints')}
-									onClick={this.openAddAP}
+									onClick={openAddAdventurePoints}
 									/>
 							)
 						}
@@ -261,14 +274,14 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 				</Scroll>
 				<OverviewAddAP
 					{...this.props}
-					close={this.closeAddAP}
-					isOpened={this.state.isAddAPOpened}
+					close={closeAddAdventurePoints}
+					isOpened={isAddAdventurePointsOpen}
 					/>
 				<AvatarChange
 					{...this.props}
-					setPath={this.props.setAvatar}
-					close={this.closeAvatarChange}
-					isOpened={this.state.isAvatarChangeOpened}
+					setPath={setAvatar}
+					close={closeEditCharacterAvatar}
+					isOpened={isEditCharacterAvatarOpen}
 					/>
 			</div>
 		);

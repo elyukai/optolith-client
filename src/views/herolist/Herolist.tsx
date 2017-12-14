@@ -27,6 +27,7 @@ export interface HerolistStateProps {
 	users: Map<string, User>;
 	visibilityFilter: string;
 	sortOrder: string;
+	isCharacterCreatorOpen: boolean;
 }
 
 export interface HerolistDispatchProps {
@@ -39,6 +40,8 @@ export interface HerolistDispatchProps {
 	importHero(): void;
 	setSortOrder(id: string): void;
 	setVisibilityFilter(id: string): void;
+	openCharacterCreator(): void;
+	closeCharacterCreator(): void;
 }
 
 export type HerolistProps = HerolistStateProps & HerolistDispatchProps & HerolistOwnProps;
@@ -55,8 +58,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 	};
 
 	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as HerolistState);
-	showHeroCreation = () => this.setState(() => ({ showHeroCreation: true } as HerolistState));
-	closeHeroCreation = () => this.setState(() => ({ showHeroCreation: false } as HerolistState));
 
 	render() {
 		const {
@@ -82,6 +83,9 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 			sortOrder,
 			users,
 			visibilityFilter,
+			isCharacterCreatorOpen,
+			openCharacterCreator,
+			closeCharacterCreator,
 			...other
 		} = this.props;
 		const { filterText } = this.state;
@@ -154,7 +158,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 								},
 							]}
 							/>
-						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={this.showHeroCreation} primary />
+						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={openCharacterCreator} primary />
 						<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
 					</Options>
 					<Scroll>
@@ -188,8 +192,8 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				</Page>
 				<HeroCreation
 					{...this.props}
-					close={this.closeHeroCreation}
-					isOpened={this.state.showHeroCreation}
+					close={closeCharacterCreator}
+					isOpened={isCharacterCreatorOpen}
 					/>
 			</section>
 		);

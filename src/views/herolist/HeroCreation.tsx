@@ -7,27 +7,27 @@ import { ExperienceLevel, InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 
-export interface Props extends DialogProps {
+export interface HeroCreationProps extends DialogProps {
 	locale: UIMessages;
 	elList: Map<string, ExperienceLevel>;
 	close(): void;
 	createHero(name: string, sex: 'm' | 'f', el: string): void;
 }
 
-export interface State {
+export interface HeroCreationState {
 	name: string;
 	gender?: 'm' | 'f';
 	el?: string;
 }
 
-export class HeroCreation extends React.Component<Props, State> {
-	state: State = {
+export class HeroCreation extends React.Component<HeroCreationProps, HeroCreationState> {
+	state: HeroCreationState = {
 		name: '',
 	};
 
-	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
-	changeGender = (gender: string) => this.setState({ gender } as State);
-	changeEL = (el: string) => this.setState({ el } as State);
+	changeName = (event: InputTextEvent) => this.setState({ name: event.target.value } as HeroCreationState);
+	changeGender = (gender: string) => this.setState({ gender } as HeroCreationState);
+	changeEL = (el: string) => this.setState({ el } as HeroCreationState);
 	create = () => {
 		const { name, gender, el } = this.state;
 		if (name.length > 0 && gender && el) {
@@ -37,6 +37,16 @@ export class HeroCreation extends React.Component<Props, State> {
 	close = () => {
 		this.props.close();
 		this.setState({ name: '', gender: undefined, el: undefined });
+	}
+
+	componentWillReceiveProps(nextProps: HeroCreationProps) {
+		if (nextProps.isOpened === false && this.props.isOpened === true) {
+			this.setState({
+				name: '',
+				gender: undefined,
+				el: undefined
+			});
+		}
 	}
 
 	render() {

@@ -23,6 +23,8 @@ export interface AttributesStateProps {
 	adjustmentValue: number | undefined;
 	availableAttributeIds: string[] | undefined;
 	currentAttributeId: string | undefined;
+	getEditPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
+	getAddPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
 }
 
 export interface AttributesDispatchProps {
@@ -48,6 +50,10 @@ export interface AttributesDispatchProps {
 	removeLostKPPoint(): void;
 	addLostKPPoints(value: number): void;
 	setAdjustmentId(id: string): void;
+	openAddPermanentEnergyLoss(energy: 'LP' | 'AE' | 'KP'): void;
+	closeAddPermanentEnergyLoss(): void;
+	openEditPermanentEnergy(energy: 'LP' | 'AE' | 'KP'): void;
+	closeEditPermanentEnergy(): void;
 }
 
 export type AttributesProps = AttributesStateProps & AttributesDispatchProps & AttributesOwnProps;

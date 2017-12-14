@@ -10,6 +10,7 @@ import { _translate } from '../../utils/I18n';
 export interface PetEditorProps {
 	data?: PetEditorInstance;
 	locale: UIMessages;
+	isEditPetAvatarOpen: boolean;
 	setAvatar(path: string): void;
 	setName(event: InputTextEvent): void;
 	setSize(event: InputTextEvent): void;
@@ -42,33 +43,24 @@ export interface PetEditorProps {
 	setNotes(event: InputTextEvent): void;
 	hideSlidein(): void;
 	save(): void;
+	openEditPetAvatar(): void;
+	closeEditPetAvatar(): void;
 }
 
-export interface PetEditorState {
-	isAvatarChangeOpened: boolean;
-}
-
-export class PetEditor extends React.Component<PetEditorProps, PetEditorState> {
-	state = {
-		isAvatarChangeOpened: false
-	};
-
-	openAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: true }));
-	closeAvatarChange = () => this.setState(() => ({ isAvatarChangeOpened: false }));
-
+export class PetEditor extends React.Component<PetEditorProps> {
 	saveEdit = () => {
 		this.props.save();
 		this.props.hideSlidein();
 	}
 
 	render() {
-		const { data, hideSlidein, locale, setActions, setAe, setAgility, setAt, setAttack, setCharisma, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes } = this.props;
+		const { data, hideSlidein, locale, setActions, setAe, setAgility, setAt, setAttack, setCharisma, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes, isEditPetAvatarOpen, openEditPetAvatar, closeEditPetAvatar } = this.props;
 
 		return (
 			<Slidein isOpened={!!data} close={hideSlidein}>
 				{data && <div className="pet-edit">
 					<div className="left">
-						<AvatarWrapper src={data.avatar} onClick={this.openAvatarChange} />
+						<AvatarWrapper src={data.avatar} onClick={openEditPetAvatar} />
 					</div>
 					<div className="right">
 						<div className="row">
@@ -121,8 +113,8 @@ export class PetEditor extends React.Component<PetEditorProps, PetEditorState> {
 				<AvatarChange
 					{...this.props}
 					setPath={this.props.setAvatar}
-					close={this.closeAvatarChange}
-					isOpened={this.state.isAvatarChangeOpened}
+					close={closeEditPetAvatar}
+					isOpened={isEditPetAvatarOpen}
 					/>
 			</Slidein>
 		);

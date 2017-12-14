@@ -14,32 +14,25 @@ export interface AttributesPermanentListItemProps {
 	boughtBack?: number;
 	lost: number;
 	isRemovingEnabled: boolean;
+	getEditPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
+	getAddPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
 	addBoughtBackPoint?(): void;
 	addLostPoint(): void;
 	addLostPoints(value: number): void;
 	removeBoughtBackPoint?(): void;
 	removeLostPoint(): void;
+	openAddPermanentEnergyLoss(energy: 'LP' | 'AE' | 'KP'): void;
+	closeAddPermanentEnergyLoss(): void;
+	openEditPermanentEnergy(energy: 'LP' | 'AE' | 'KP'): void;
+	closeEditPermanentEnergy(): void;
 }
 
-export interface AttributesPermanentListItemState {
-	isAddDialogOpened: boolean;
-	isEditDialogOpened: boolean;
-}
-
-export class AttributesPermanentListItem extends React.Component<AttributesPermanentListItemProps, AttributesPermanentListItemState> {
-	state = {
-		isAddDialogOpened: false,
-		isEditDialogOpened: false
-	};
-
-	openEditDialog = () => this.setState(() => ({ isEditDialogOpened: true } as AttributesPermanentListItemState));
-	openAddDialog = () => this.setState(() => ({ isAddDialogOpened: true } as AttributesPermanentListItemState));
-	closeEditDialog = () => this.setState(() => ({ isEditDialogOpened: false } as AttributesPermanentListItemState));
-	closeAddDialog = () => this.setState(() => ({ isAddDialogOpened: false } as AttributesPermanentListItemState));
+export class AttributesPermanentListItem extends React.Component<AttributesPermanentListItemProps> {
+	openEditPermanentEnergy = () => this.props.openEditPermanentEnergy(this.props.id);
+	openAddPermanentEnergyLoss = () => this.props.openAddPermanentEnergyLoss(this.props.id);
 
 	render() {
-		const { label, locale, name, isRemovingEnabled, addBoughtBackPoint, addLostPoints, boughtBack, lost } = this.props;
-		const { isAddDialogOpened, isEditDialogOpened } = this.state;
+		const { id, label, locale, name, isRemovingEnabled, addBoughtBackPoint, addLostPoints, boughtBack, lost, getEditPermanentEnergy, getAddPermanentEnergy, closeAddPermanentEnergyLoss, closeEditPermanentEnergy } = this.props;
 		const available = typeof boughtBack === 'number' ? lost - boughtBack : lost;
 
 		return (
@@ -61,13 +54,13 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 					<IconButton
 						className="edit"
 						icon="&#xE90c;"
-						onClick={this.openEditDialog}
+						onClick={this.openEditPermanentEnergy}
 						/>
 				)}
 				<PermanentPoints
 					{...this.props}
-					isOpened={isEditDialogOpened}
-					close={this.closeEditDialog}
+					isOpened={getEditPermanentEnergy === id}
+					close={closeEditPermanentEnergy}
 					permanentBoughtBack={boughtBack}
 					permanentSpent={lost}
 					/>
@@ -75,14 +68,14 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 					<IconButton
 						className="add"
 						icon="&#xE908;"
-						onClick={this.openAddDialog}
+						onClick={this.openAddPermanentEnergyLoss}
 						/>
 				)}
 				<AttributesRemovePermanent
 					remove={addLostPoints}
 					locale={locale}
-					isOpened={isAddDialogOpened}
-					close={this.closeAddDialog}
+					isOpened={getAddPermanentEnergy === id}
+					close={closeAddPermanentEnergyLoss}
 					/>
 				{!isRemovingEnabled && addBoughtBackPoint && (
 					<IconButton

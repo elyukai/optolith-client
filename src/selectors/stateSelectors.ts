@@ -74,3 +74,5 @@ export const getEditPermanentEnergy = (state: AppState) => state.ui.subwindows.e
 export const isAddAdventurePointsOpen = (state: AppState) => state.ui.subwindows.isAddAdventurePointsOpen;
 export const isCharacterCreatorOpen = (state: AppState) => state.ui.subwindows.isCharacterCreatorOpen;
 export const isSettingsOpen = (state: AppState) => state.ui.subwindows.isSettingsOpen;
+export const isEditCharacterAvatarOpen = (state: AppState) => state.ui.subwindows.isEditCharacterAvatarOpen;
+export const isEditPetAvatarOpen = (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen;

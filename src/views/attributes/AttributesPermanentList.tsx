@@ -9,6 +9,8 @@ export interface AttributesPermanentListProps {
 	locale: UIMessages;
 	isInCharacterCreation: boolean;
 	isRemovingEnabled: boolean;
+	getEditPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
+	getAddPermanentEnergy: 'LP' | 'AE' | 'KP' | undefined;
 	addLostLPPoint(): void;
 	removeLostLPPoint(): void;
 	addLostLPPoints(value: number): void;
@@ -22,6 +24,10 @@ export interface AttributesPermanentListProps {
 	addLostKPPoint(): void;
 	removeLostKPPoint(): void;
 	addLostKPPoints(value: number): void;
+	openAddPermanentEnergyLoss(energy: 'LP' | 'AE' | 'KP'): void;
+	closeAddPermanentEnergyLoss(): void;
+	openEditPermanentEnergy(energy: 'LP' | 'AE' | 'KP'): void;
+	closeEditPermanentEnergy(): void;
 }
 
 export function AttributesPermanentList(props: AttributesPermanentListProps) {

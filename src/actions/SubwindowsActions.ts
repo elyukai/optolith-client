@@ -111,3 +111,44 @@ export function closeAddAdventurePoints(): CloseAddAdventurePointsAction {
 		type: ActionTypes.CLOSE_ADD_ADVENTURE_POINTS
 	};
 }
+
+
+export interface OpenEditCharacterAvatarAction {
+	type: ActionTypes.OPEN_EDIT_CHARACTER_AVATAR;
+}
+
+export function openEditCharacterAvatar(): OpenEditCharacterAvatarAction {
+	return {
+		type: ActionTypes.OPEN_EDIT_CHARACTER_AVATAR
+	};
+}
+
+export interface CloseEditCharacterAvatarAction {
+	type: ActionTypes.CLOSE_EDIT_CHARACTER_AVATAR;
+}
+
+export function closeEditCharacterAvatar(): CloseEditCharacterAvatarAction {
+	return {
+		type: ActionTypes.CLOSE_EDIT_CHARACTER_AVATAR
+	};
+}
+
+export interface OpenEditPetAvatarAction {
+	type: ActionTypes.OPEN_EDIT_PET_AVATAR;
+}
+
+export function openEditPetAvatar(): OpenEditPetAvatarAction {
+	return {
+		type: ActionTypes.OPEN_EDIT_PET_AVATAR
+	};
+}
+
+export interface CloseEditPetAvatarAction {
+	type: ActionTypes.CLOSE_EDIT_PET_AVATAR;
+}
+
+export function closeEditPetAvatar(): CloseEditPetAvatarAction {
+	return {
+		type: ActionTypes.CLOSE_EDIT_PET_AVATAR
+	};
+}

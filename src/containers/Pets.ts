@@ -1,14 +1,17 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as PetActions from '../actions/PetActions';
+import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getPets } from '../selectors/petsSelectors';
+import { isEditPetAvatarOpen } from '../selectors/stateSelectors';
 import { PetEditorInstance } from '../types/data.d';
 import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../views/belongings/Pets';
 
 function mapStateToProps(state: AppState) {
 	return {
-		pets: getPets(state)
+		pets: getPets(state),
+		isEditPetAvatarOpen: isEditPetAvatarOpen(state),
 	};
 }
 
@@ -26,7 +29,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		deletePet(id: string) {
 			dispatch(PetActions._removeFromList(id));
-		}
+		},
+		openEditPetAvatar() {
+			dispatch(SubwindowsActions.openEditPetAvatar());
+		},
+		closeEditPetAvatar() {
+			dispatch(SubwindowsActions.closeEditPetAvatar());
+		},
 	};
 }
 

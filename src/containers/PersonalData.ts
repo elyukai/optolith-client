@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
+import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
 import { getAvailable, getTotal } from '../selectors/adventurePointsSelectors';
@@ -9,7 +10,7 @@ import { getCurrentEl } from '../selectors/elSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getPhase } from '../selectors/stateSelectors';
+import { getPhase, isAddAdventurePointsOpen, isEditCharacterAvatarOpen } from '../selectors/stateSelectors';
 import { isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { InputTextEvent } from '../types/data.d';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
@@ -29,7 +30,9 @@ function mapStateToProps(state: AppState) {
 		professionVariant: getCurrentProfessionVariant(state),
 		profile: getProfile(state),
 		race: getCurrentRace(state),
-		raceVariant: getCurrentRaceVariant(state)
+		raceVariant: getCurrentRaceVariant(state),
+		isAddAdventurePointsOpen: isAddAdventurePointsOpen(state),
+		isEditCharacterAvatarOpen: isEditCharacterAvatarOpen(state),
 	};
 }
 
@@ -54,6 +57,18 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		addAdventurePoints(ap: number) {
 			dispatch(ProfileActions._addAdventurePoints(ap));
+		},
+		openAddAdventurePoints() {
+			dispatch(SubwindowsActions.openAddAdventurePoints());
+		},
+		closeAddAdventurePoints() {
+			dispatch(SubwindowsActions.closeAddAdventurePoints());
+		},
+		openEditCharacterAvatar() {
+			dispatch(SubwindowsActions.openEditCharacterAvatar());
+		},
+		closeEditCharacterAvatar() {
+			dispatch(SubwindowsActions.closeEditCharacterAvatar());
 		},
 		changeFamily(e: InputTextEvent) {
 			dispatch(ProfileActions._setFamily(e.target.value as string));

@@ -1,10 +1,12 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../actions/AttributesActions';
+import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getAdjustmentValue, getAvailableAdjustmentIds, getCurrentAdjustmentId, getForView, getSum } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { isInCharacterCreation, isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getAddPermanentEnergy, getEditPermanentEnergy } from '../selectors/stateSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
@@ -18,7 +20,9 @@ function mapStateToProps(state: AppState) {
 		isRemovingEnabled: isRemovingEnabled(state),
 		derived: getDerivedCharacteristics(state),
 		maxTotalAttributeValues: getStartEl(state).maxTotalAttributeValues,
-		sum: getSum(state)
+		sum: getSum(state),
+		getEditPermanentEnergy: getEditPermanentEnergy(state),
+		getAddPermanentEnergy: getAddPermanentEnergy(state),
 	};
 }
 
@@ -89,6 +93,18 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		addLostKPPoints: (value: number) => {
 			dispatch(AttributesActions._addLostKPPoints(value));
+		},
+		openAddPermanentEnergyLoss: (energy: 'LP' | 'AE' | 'KP') => {
+			dispatch(SubwindowsActions.openAddPermanentEnergyLoss(energy));
+		},
+		closeAddPermanentEnergyLoss: () => {
+			dispatch(SubwindowsActions.closeAddPermanentEnergyLoss());
+		},
+		openEditPermanentEnergy: (energy: 'LP' | 'AE' | 'KP') => {
+			dispatch(SubwindowsActions.openEditPermanentEnergy(energy));
+		},
+		closeEditPermanentEnergy: () => {
+			dispatch(SubwindowsActions.closeEditPermanentEnergy());
 		},
 		setAdjustmentId: (id: string) => {
 			dispatch(AttributesActions.setAdjustmentId(id));

@@ -16,11 +16,14 @@ export interface PetsOwnProps {
 
 export interface PetsStateProps {
 	pets: PetInstance[];
+	isEditPetAvatarOpen: boolean;
 }
 
 export interface PetsDispatchProps {
 	savePet(instance: PetEditorInstance | undefined): void;
 	deletePet(id: string): void;
+	openEditPetAvatar(): void;
+	closeEditPetAvatar(): void;
 }
 
 export type PetsProps = PetsStateProps & PetsDispatchProps & PetsOwnProps;
@@ -78,6 +81,7 @@ export class Pets extends React.Component<PetsProps, PetsState> {
 		return (
 			<Page id="pets">
 				<PetEditor
+					{...this.props}
 					data={editorInstance}
 					hideSlidein={this.hideAddSlidein}
 					locale={locale}
