@@ -12,6 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
+import { ItemEditorContainer } from '../../containers/ItemEditor';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
@@ -217,6 +218,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					</div>
 					<WikiInfoContainer {...this.props} {...this.state} noWrapper />
 				</Aside>
+				<ItemEditorContainer locale={locale} />
 			</Page>
 		);
 	}

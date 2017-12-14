@@ -94,7 +94,6 @@ p {
 @import "components/SegmentedControls";
 @import "components/Slidein";
 @import "components/Slider";
-@import "components/SubTabs";
 @import "components/TextField";
 @import "components/InputButtonGroup";
 @import "components/TitleBar";
@@ -119,6 +118,7 @@ p {
 @import "views/master/InGameTableLeft";
 @import "views/master/InGameTableRight";
 @import "views/navigationbar/NavigationBar";
+@import "views/navigationbar/NavigationBarSubTabs";
 @import "views/profile/Profile";
 @import "views/profile/CombatSheet";
 @import "views/profile/BelongingsSheet";

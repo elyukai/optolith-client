@@ -1,33 +1,16 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getCurrentAlert } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-
-export interface SetSectionAction {
-	type: ActionTypes.SET_SECTION;
-	payload: {
-		section: 'main' | 'hero' | 'group';
-		tab?: string;
-	};
-}
-
-export function _setSection(section: 'main' | 'hero' | 'group', tab?: string): SetSectionAction {
-	return {
-		type: ActionTypes.SET_SECTION,
-		payload: {
-			section,
-			tab
-		}
-	};
-}
+import { TabId } from '../utils/LocationUtils';
 
 export interface SetTabAction {
 	type: ActionTypes.SET_TAB;
 	payload: {
-		tab: string;
+		tab: TabId;
 	};
 }
 
-export function _setTab(tab: string): SetTabAction {
+export function _setTab(tab: TabId): SetTabAction {
 	return {
 		type: ActionTypes.SET_TAB,
 		payload: {
@@ -40,7 +23,7 @@ export function showAbout(): AsyncAction {
 	return (dispatch, getState) => {
 		const alert = getCurrentAlert(getState());
 		if (alert === null) {
-			dispatch(_setTab('about'));
+			dispatch(_setTab('imprint'));
 		}
 	};
 }

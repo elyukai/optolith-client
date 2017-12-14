@@ -1,8 +1,7 @@
 .navigationbar {
-	position: absolute;
 	width: 100%;
-	z-index: 800;
 	margin-top: var(--titlebar-height);
+	flex: none;
 }
 
 .navigationbar-inner {

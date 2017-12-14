@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { UIMessages } from '../../types/ui';
 import { _translate } from '../../utils/I18n';
@@ -10,7 +11,7 @@ export interface ImprintProps {
 export function Imprint(props: ImprintProps) {
 	const { locale } = props;
 	return (
-		<div className="page" id="imprint">
+		<Page id="imprint">
 			<Scroll className="text">
 				<h2>{_translate(locale, 'imprint.title')}</h2>
 
@@ -30,6 +31,6 @@ export function Imprint(props: ImprintProps) {
 					Germany
 				</p>
 			</Scroll>
-		</div>
+		</Page>
 	);
 }

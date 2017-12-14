@@ -125,77 +125,75 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 		));
 
 		return (
-			<section id="herolist">
-				<Page>
-					<Options>
-						<TextField
-							hint={_translate(locale, 'options.filtertext')}
-							value={filterText}
-							onChange={this.filter}
-							fullWidth
-							/>
-						<Dropdown
-							value={visibilityFilter}
-							onChange={setVisibilityFilter}
-							options={[
-								{ id: 'all', name: _translate(locale, 'heroes.options.filter.all') },
-								{ id: 'own', name: _translate(locale, 'heroes.options.filter.own') },
-								{ id: 'shared', name: _translate(locale, 'heroes.options.filter.shared') },
-							]}
-							fullWidth
-							/>
-						<RadioButtonGroup
-							active={sortOrder}
-							onClick={setSortOrder}
-							array={[
-								{
-									name: _translate(locale, 'options.sortorder.alphabetically'),
-									value: 'name',
-								},
-								{
-									name: _translate(locale, 'options.sortorder.datemodified'),
-									value: 'datemodified',
-								},
-							]}
-							/>
-						<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={openCharacterCreator} primary />
-						<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
-					</Options>
-					<Scroll>
-						<List>
+			<Page id="herolist">
+				<Options>
+					<TextField
+						hint={_translate(locale, 'options.filtertext')}
+						value={filterText}
+						onChange={this.filter}
+						fullWidth
+						/>
+					<Dropdown
+						value={visibilityFilter}
+						onChange={setVisibilityFilter}
+						options={[
+							{ id: 'all', name: _translate(locale, 'heroes.options.filter.all') },
+							{ id: 'own', name: _translate(locale, 'heroes.options.filter.own') },
+							{ id: 'shared', name: _translate(locale, 'heroes.options.filter.shared') },
+						]}
+						fullWidth
+						/>
+					<RadioButtonGroup
+						active={sortOrder}
+						onClick={setSortOrder}
+						array={[
 							{
-								currentHeroId === undefined && startId !== undefined && (
-									<HerolistItem
-										{...other}
-										avatar={avatar}
-										name={_translate(locale, 'heroes.view.unsavedhero.title')}
-										ap={ap}
-										r={race}
-										rv={raceVariant}
-										c={culture}
-										p={profession}
-										pv={professionVariant}
-										sex={sex}
-										professionName={professionName}
-										races={races}
-										raceVariants={raceVariants}
-										cultures={cultures}
-										professions={professions}
-										professionVariants={professionVariants}
-										locale={locale}
-										/>
-								)
-							}
-							{list}
-						</List>
-					</Scroll>
-				</Page>
+								name: _translate(locale, 'options.sortorder.alphabetically'),
+								value: 'name',
+							},
+							{
+								name: _translate(locale, 'options.sortorder.datemodified'),
+								value: 'datemodified',
+							},
+						]}
+						/>
+					<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={openCharacterCreator} primary />
+					<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
+				</Options>
+				<Scroll>
+					<List>
+						{
+							currentHeroId === undefined && startId !== undefined && (
+								<HerolistItem
+									{...other}
+									avatar={avatar}
+									name={_translate(locale, 'heroes.view.unsavedhero.title')}
+									ap={ap}
+									r={race}
+									rv={raceVariant}
+									c={culture}
+									p={profession}
+									pv={professionVariant}
+									sex={sex}
+									professionName={professionName}
+									races={races}
+									raceVariants={raceVariants}
+									cultures={cultures}
+									professions={professions}
+									professionVariants={professionVariants}
+									locale={locale}
+									/>
+							)
+						}
+						{list}
+					</List>
+				</Scroll>
 				<HeroCreation
 					{...this.props}
 					close={closeCharacterCreator}
 					isOpened={isCharacterCreatorOpen}
 					/>
-			</section>
+			</Page>
 		);
 	}
 }

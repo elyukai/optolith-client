@@ -22,17 +22,17 @@ export function NavigationBarForMain(props: NavigationBarForMainProps) {
 	const { closeSettings, currentTab, locale, openSettings, setTab } = props;
 
 	const tabs: NavigationBarTabProps[] = [
-		{ label: _translate(locale, 'titlebar.tabs.heroes'), tag: 'herolist' },
-		{ label: _translate(locale, 'titlebar.tabs.groups'), tag: 'grouplist', disabled: true },
-		{ label: _translate(locale, 'titlebar.tabs.wiki'), tag: 'wiki' },
-		{ label: _translate(locale, 'titlebar.tabs.faq'), tag: 'faq' },
-		{ label: _translate(locale, 'titlebar.tabs.about'), tag: 'about' }
+		{ label: _translate(locale, 'titlebar.tabs.heroes'), id: 'herolist' },
+		{ label: _translate(locale, 'titlebar.tabs.groups'), id: 'grouplist', disabled: true },
+		{ label: _translate(locale, 'titlebar.tabs.wiki'), id: 'wiki' },
+		{ label: _translate(locale, 'titlebar.tabs.faq'), id: 'faq' },
+		{ label: _translate(locale, 'titlebar.tabs.about'), id: 'about' }
 	];
 
 	return (
 		<NavigationBarWrapper>
 			<NavigationBarLeft>
-				<NavigationBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
+				<NavigationBarTabs currentTab={currentTab} tabs={tabs} setTab={setTab} />
 			</NavigationBarLeft>
 			<NavigationBarRight>
 				<IconButton

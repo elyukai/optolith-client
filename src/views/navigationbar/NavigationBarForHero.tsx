@@ -64,9 +64,9 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 	return (
 		<NavigationBarWrapper>
 			<NavigationBarLeft>
-				<NavigationBarBack setSection={setSection} />
+				<NavigationBarBack setTab={setSection} />
 				<AvatarWrapper src={avatar} />
-				<NavigationBarTabs active={currentTab} tabs={tabs} setTab={setTab} />
+				<NavigationBarTabs currentTab={currentTab} tabs={tabs} setTab={setTab} />
 			</NavigationBarLeft>
 			<NavigationBarRight>
 				<TooltipToggle
@@ -102,8 +102,4 @@ export function NavigationBarForHero(props: NavigationBarForHeroProps) {
 			</NavigationBarRight>
 		</NavigationBarWrapper>
 	);
-}
-
-function toggleDevtools() {
-	remote.getCurrentWindow().webContents.toggleDevTools();
 }

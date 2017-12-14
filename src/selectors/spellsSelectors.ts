@@ -21,6 +21,11 @@ export const getMagicalTraditions = createSelector(
 	getMagicalTraditionsResultFunc
 );
 
+export const isSpellsTabAvailable = createSelector(
+	getMagicalTraditions,
+	traditions => traditions.length > 0
+);
+
 export const areMaxUnfamiliar = createSelector(
 	getPhase,
 	getSpells,

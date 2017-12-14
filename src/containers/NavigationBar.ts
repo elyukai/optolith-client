@@ -8,28 +8,28 @@ import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getCurrentHeroPresent, isSettingsOpen } from '../selectors/stateSelectors';
-import { getCurrentSection, getCurrentTab } from '../selectors/uilocationSelectors';
+import { getCurrentHeroPresent, getCurrentTab, isSettingsOpen } from '../selectors/stateSelectors';
+import { getSubtabs, getTabs, isHeroSection } from '../selectors/uilocationSelectors';
+import { TabId } from '../utils/LocationUtils';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
 
 function mapStateToProps(state: AppState) {
 	return {
-		currentSection: getCurrentSection(state),
 		currentTab: getCurrentTab(state),
 		hero: getCurrentHeroPresent(state),
 		isRedoAvailable: getRedoAvailability(state),
 		isUndoAvailable: getUndoAvailability(state),
 		isRemovingEnabled: isRemovingEnabled(state),
 		isSettingsOpen: isSettingsOpen(state),
+		isHeroSection: isHeroSection(state),
+		tabs: getTabs(state),
+		subtabs: getSubtabs(state),
 	};
 }
 
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
-		setSection(id: 'main' | 'hero' | 'group') {
-			dispatch(LocationActions._setSection(id));
-		},
-		setTab(id: string) {
+		setTab(id: TabId) {
 			dispatch(LocationActions._setTab(id));
 		},
 		undo() {

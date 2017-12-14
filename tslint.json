@@ -1,4 +1,5 @@
 {
+  // "extends": ["tslint:latest", "tslint-react"],
 	"rules": {
 		// TypeScript Specific
 		"adjacent-overload-signatures": true,
@@ -49,7 +50,7 @@
 		"no-switch-case-fall-through": true,
 		"no-unsafe-any": true,
 		"no-unsafe-finally": true,
-		"no-unused-expression": true,
+		// "no-unused-expression": true,
 		"no-unused-variable": [true, "check-parameters", { "ignore-pattern": "^_" }],
 		"no-var-keyword": true,
 		"restrict-plus-operands": true,
@@ -83,8 +84,8 @@
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
 		"ordered-imports": [true],
 		"quotemark": [true, "single", "jsx-double"],
-		"semicolon": [true, "always"],
-		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],
-		"whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]
+		// "semicolon": [true, "always"],
+		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
+		// "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]
 	}
 }

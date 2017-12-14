@@ -18,6 +18,11 @@ export const getBlessedTradition = createSelector(
 	getBlessedTraditionResultFunc
 );
 
+export const isLiturgicalChantsTabAvailable = createSelector(
+	getBlessedTradition,
+	tradition => typeof tradition === 'object'
+);
+
 export const getBlessedTraditionNumericId = createSelector(
 	getBlessedTradition,
 	tradition => tradition && getNumericBlessedTraditionIdByInstanceId(tradition.id)

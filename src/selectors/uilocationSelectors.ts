@@ -1,4 +1,301 @@
-import { AppState } from '../reducers/app';
+import { createSelector } from 'reselect';
+import { SubTab } from '../types/data';
+import { _translate } from '../utils/I18n';
+import { isHeroSectionTab, isMainSectionTab, TabId } from '../utils/LocationUtils';
+import { NavigationBarTabProps } from '../views/navigationbar/NavigationBarTabs';
+import { isLiturgicalChantsTabAvailable } from './liturgiesSelectors';
+import { isRemovingEnabled } from './phaseSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
+import { isSpellsTabAvailable } from './spellsSelectors';
+import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
 
-export const getCurrentSection = (state: AppState) => state.ui.location.section;
-export const getCurrentTab = (state: AppState) => state.ui.location.tab;
+export const isMainSection = createSelector(
+	getCurrentTab,
+	tab => {
+		return isMainSectionTab(tab);
+	}
+);
+
+export const isHeroSection = createSelector(
+	getCurrentTab,
+	tab => {
+		return isHeroSectionTab(tab);
+	}
+);
+
+export const getTabs = createSelector(
+	isMainSection,
+	isHeroSection,
+	getLocaleMessages,
+	getPhase,
+	isRemovingEnabled,
+	(isMainSection, isHeroSection, locale, phase, isRemovingEnabled): NavigationBarTabProps[] => {
+		if (isMainSection) {
+			return [
+				{
+					id: 'herolist',
+					label: _translate(locale, 'titlebar.tabs.heroes'),
+				},
+				{
+					id: 'grouplist',
+					label: _translate(locale, 'titlebar.tabs.groups'),
+					disabled: true,
+				},
+				{
+					id: 'wiki',
+					label: _translate(locale, 'titlebar.tabs.wiki'),
+				},
+				{
+					id: 'faq',
+					label: _translate(locale, 'titlebar.tabs.faq'),
+				},
+				{
+					id: 'imprint',
+					label: _translate(locale, 'titlebar.tabs.about'),
+					subTabs: ['imprint', 'thirdPartyLicenses', 'lastChanges'],
+				}
+			];
+		}
+		else if (isHeroSection) {
+			if (phase === 1) {
+				return [
+					{
+						id: 'profile',
+						label: _translate(locale, 'titlebar.tabs.profile'),
+						subTabs: ['profile', 'personalData', 'characterSheet'],
+					},
+					{
+						id: 'rules',
+						label: _translate(locale, 'titlebar.tabs.rules'),
+					},
+					{
+						id: 'races',
+						label: _translate(locale, 'titlebar.tabs.racecultureprofession'),
+						subTabs: ['races', 'cultures', 'professions'],
+					}
+				];
+			}
+			else if (isRemovingEnabled) {
+				return [
+					{
+						id: 'profile',
+						label: _translate(locale, 'titlebar.tabs.profile'),
+						subTabs: ['profile', 'personalData', 'characterSheet', 'rules'],
+					},
+					{
+						id: 'attributes',
+						label: _translate(locale, 'titlebar.tabs.attributes'),
+					},
+					{
+						id: 'advantages',
+						label: _translate(locale, 'titlebar.tabs.advantagesdisadvantages'),
+						subTabs: ['advantages', 'disadvantages'],
+					},
+					{
+						id: 'skills',
+						label: _translate(locale, 'titlebar.tabs.skills'),
+						subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
+					},
+					{
+						id: 'equipment',
+						label: _translate(locale, 'titlebar.tabs.belongings'),
+						subTabs: ['equipment', 'zoneArmor', 'pets'],
+					}
+				];
+			}
+			return [
+				{
+					id: 'profile',
+					label: _translate(locale, 'titlebar.tabs.profile'),
+					subTabs: ['profile', 'personalData', 'characterSheet', 'rules'],
+				},
+				{
+					id: 'attributes',
+					label: _translate(locale, 'titlebar.tabs.attributes'),
+				},
+				{
+					id: 'skills',
+					label: _translate(locale, 'titlebar.tabs.skills'),
+					subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
+				},
+				{
+					id: 'equipment',
+					label: _translate(locale, 'titlebar.tabs.belongings'),
+					subTabs: ['equipment', 'zoneArmor', 'pets'],
+				}
+			];
+		}
+		return [];
+	}
+);
+
+export const getSubtabs = createSelector(
+	getCurrentTab,
+	isMainSection,
+	isHeroSection,
+	getLocaleMessages,
+	getPhase,
+	getCurrentRaceId,
+	getCurrentCultureId,
+	isSpellsTabAvailable,
+	isLiturgicalChantsTabAvailable,
+	getRuleBooksEnabled,
+	(tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled): SubTab[] | undefined => {
+		let tabs: SubTab[] | undefined;
+
+		if (locale) {
+			if (isMainSection) {
+				const aboutSubTabs: TabId[] = ['imprint', 'thirdPartyLicenses', 'lastChanges'];
+				if (aboutSubTabs.includes(tab)) {
+					tabs = [
+						{
+							id: 'imprint',
+							label: _translate(locale, 'titlebar.tabs.imprint'),
+						},
+						{
+							id: 'thirdPartyLicenses',
+							label: _translate(locale, 'titlebar.tabs.thirdpartylicenses'),
+						},
+						{
+							id: 'lastChanges',
+							label: _translate(locale, 'titlebar.tabs.lastchanges'),
+						},
+					];
+				}
+			}
+			else if (isHeroSection) {
+				if (phase === 1) {
+					const profileSubTabs: TabId[] = ['profile', 'personalData'];
+					const rcpSubTabs: TabId[] = ['races', 'cultures', 'professions'];
+					if (profileSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'profile',
+								label: _translate(locale, 'titlebar.tabs.profileoverview'),
+							},
+							{
+								id: 'personalData',
+								label: _translate(locale, 'titlebar.tabs.personaldata'),
+								disabled: true,
+							},
+						];
+					}
+					else if (rcpSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'races',
+								label: _translate(locale, 'titlebar.tabs.race'),
+							},
+						];
+
+						if (typeof raceId === 'string') {
+							tabs.push({
+								id: 'cultures',
+								label: _translate(locale, 'titlebar.tabs.culture'),
+							});
+						}
+
+						if (typeof cultureId === 'string') {
+							tabs.push({
+								id: 'professions',
+								label: _translate(locale, 'titlebar.tabs.profession'),
+							});
+						}
+					}
+				}
+				else {
+					const profileSubTabs: TabId[] = ['profile', 'personalData', 'characterSheet', 'rules'];
+					const disadvSubTabs: TabId[] = ['advantages', 'disadvantages'];
+					const abilitiesSubTabs: TabId[] = ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'];
+					const belongingsSubTabs: TabId[] = ['equipment', 'zoneArmor', 'pets'];
+					if (profileSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'profile',
+								label: _translate(locale, 'titlebar.tabs.profileoverview'),
+							},
+							{
+								id: 'personalData',
+								label: _translate(locale, 'titlebar.tabs.personaldata'),
+								disabled: true,
+							},
+							{
+								id: 'rules',
+								label: _translate(locale, 'titlebar.tabs.rules'),
+							},
+						];
+
+						if (phase === 3) {
+							tabs.splice(2, 0, {
+								id: 'characterSheet',
+								label: _translate(locale, 'titlebar.tabs.charactersheet'),
+							});
+						}
+					}
+					else if (disadvSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'advantages',
+								label: _translate(locale, 'titlebar.tabs.advantages'),
+							},
+							{
+								id: 'disadvantages',
+								label: _translate(locale, 'titlebar.tabs.disadvantages'),
+							},
+						];
+					}
+					else if (abilitiesSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'skills',
+								label: _translate(locale, 'titlebar.tabs.skills'),
+							},
+							{
+								id: 'combatTechniques',
+								label: _translate(locale, 'titlebar.tabs.combattechniques'),
+							},
+							{
+								id: 'specialAbilities',
+								label: _translate(locale, 'titlebar.tabs.specialabilities'),
+							},
+						];
+
+						if (isSpellsTabAvailable) {
+							tabs.push({
+								id: 'spells',
+								label: _translate(locale, 'titlebar.tabs.spells'),
+							});
+						}
+
+						if (isLiturgicalChantsTabAvailable) {
+							tabs.push({
+								id: 'liturgicalChants',
+								label: _translate(locale, 'titlebar.tabs.liturgies'),
+							});
+						}
+					}
+					else if (belongingsSubTabs.includes(tab)) {
+						tabs = [
+							{
+								id: 'equipment',
+								label: _translate(locale, 'titlebar.tabs.equipment'),
+							},
+							{
+								id: 'pets',
+								label: _translate(locale, 'titlebar.tabs.pets'),
+							},
+						];
+
+						if (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208')) {
+							tabs.splice(1, 0, {
+								id: 'zoneArmor',
+								label: _translate(locale, 'titlebar.tabs.zonearmor'),
+							});
+						}
+					}
+				}
+			}
+		}
+		return tabs;
+	}
+);

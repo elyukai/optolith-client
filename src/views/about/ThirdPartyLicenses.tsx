@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { currentVersion } from '../../utils/VersionUtils';
 
 export function ThirdPartyLicenses() {
 	return (
-		<div className="page" id="third-party-software">
+		<Page id="third-party-software">
 			<Scroll className="text">
 				<h2>TDE5 Heroes Client v{currentVersion}</h2>
 				Third Party Software and Content Licenses
@@ -366,6 +367,6 @@ export function ThirdPartyLicenses() {
 					See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
 				</div>
 			</Scroll>
-		</div>
+		</Page>
 	);
 }

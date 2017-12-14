@@ -23,12 +23,10 @@ export function Help(props: HelpProps) {
 	const { locale } = props;
 	const text = fs.readFileSync(path.join(remote.app.getAppPath(), 'app', 'docs', `FAQ.${locale.id}.md`), 'UTF-8');
 	return (
-		<section id="help">
-			<Page>
-				<Scroll>
-					<Markdown source={text} />
-				</Scroll>
-			</Page>
-		</section>
+		<Page id="help">
+			<Scroll>
+				<Markdown source={text} />
+			</Scroll>
+		</Page>
 	);
 }

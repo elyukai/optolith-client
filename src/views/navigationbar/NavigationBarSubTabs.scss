@@ -1,10 +1,11 @@
-.subtabs {
+.navigationbar-subtabs {
 	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	position: relative;
 	height: 32px;
+	flex: none;
 
 	&::after {
 		position: absolute;

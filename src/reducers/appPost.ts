@@ -1,7 +1,7 @@
 import { RedoAction, UndoAction } from '../actions/HistoryActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { getLocaleId } from '../selectors/stateSelectors';
+import { getCurrentCultureId, getCurrentRaceId, getLocaleId } from '../selectors/stateSelectors';
 import { getCurrentTab, getPhase } from '../selectors/stateSelectors';
 import { Book, ExperienceLevel, ItemInstance } from '../types/data.d';
 import { init } from '../utils/init';
@@ -43,32 +43,44 @@ export function appPost(state: AppState, action: Action, previousState: AppState
 		}
 
 		case ActionTypes.UNDO: {
-			if (getPhase(previousState) === 3 && getPhase(state) === 2 && getCurrentTab(state) === 'belongings') {
+			if (getCurrentCultureId(state) === undefined && getCurrentTab(state) === 'professions') {
 				return {
+					...state,
 					ui: {
+						...state.ui,
 						location: {
-							tab: 'profile',
-							...state.ui.location
+							...state.ui.location,
+							tab: 'cultures',
 						},
-						...state.ui
 					},
-					...state
+				};
+			}
+			else if (getCurrentRaceId(state) === undefined && getCurrentTab(state) === 'cultures') {
+				return {
+					...state,
+					ui: {
+						...state.ui,
+						location: {
+							...state.ui.location,
+							tab: 'races',
+						},
+					},
 				};
 			}
 			return state;
 		}
 
 		case ActionTypes.REDO: {
-			if (getPhase(previousState) === 2 && getPhase(state) === 3 && getCurrentTab(state) === 'disadv') {
+			if (getPhase(previousState) === 2 && getPhase(state) === 3 && ['advantages', 'disadvantages'].includes(getCurrentTab(state))) {
 				return {
+					...state,
 					ui: {
+						...state.ui,
 						location: {
+							...state.ui.location,
 							tab: 'profile',
-							...state.ui.location
 						},
-						...state.ui
 					},
-					...state
 				};
 			}
 			return state;

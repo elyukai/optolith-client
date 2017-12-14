@@ -1,9 +1,9 @@
 import { Action } from 'redux';
-import * as DetailedData from './detaileddata.d';
 import * as Reusable from './reusable.d';
 import * as Categories from '../constants/Categories';
 import { AllRequirementTypes } from './reusable.d';
 import { Purse } from '../reducers/equipment';
+import { TabId } from '../utils/LocationUtils';
 
 export interface InstanceByCategory {
 	'ADVANTAGES': AdvantageInstance;
@@ -1142,7 +1142,7 @@ export type InputTextEvent =  React.FormEvent<HTMLInputElement>;
 export type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;
 
 export interface SubTab {
-	id: string;
+	id: TabId;
 	label: string;
 	disabled?: boolean;
 	// element: JSX.Element;

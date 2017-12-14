@@ -2,10 +2,12 @@ import { remote } from 'electron';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as IOActions from '../actions/IOActions';
+import { _setTab } from '../actions/LocationActions';
 import { AppState } from '../reducers/app';
 import { getMessages } from '../selectors/localeSelectors';
-import { getCurrentTab } from '../selectors/uilocationSelectors';
+import { getCurrentTab } from '../selectors/stateSelectors';
 import { getTheme } from '../selectors/uisettingsSelectors';
+import { TabId } from '../utils/LocationUtils';
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
 
 function mapStateToProps(state: AppState) {
@@ -36,6 +38,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		leaveFullscreen() {
 			remote.getCurrentWindow().setFullScreen(false);
+		},
+		setTab(id: TabId) {
+			dispatch(_setTab(id));
 		},
 	};
 }

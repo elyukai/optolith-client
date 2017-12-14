@@ -4,6 +4,7 @@ import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { EditText } from '../../components/EditText';
 import { IconButton } from '../../components/IconButton';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { VerticalList } from '../../components/VerticalList';
 import { ProfileState } from '../../reducers/profile';
@@ -150,7 +151,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 		));
 
 		return (
-			<div className="page" id="overview">
+			<Page id="personal-data">
 				<Scroll className="text">
 					<div className="title-wrapper">
 						<AvatarWrapper src={avatar} onClick={openEditCharacterAvatar} />
@@ -283,7 +284,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 					close={closeEditCharacterAvatar}
 					isOpened={isEditCharacterAvatarOpen}
 					/>
-			</div>
+			</Page>
 		);
 	}
 }

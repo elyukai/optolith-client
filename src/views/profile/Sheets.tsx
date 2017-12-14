@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { Purse } from '../../reducers/equipment';
@@ -73,7 +74,7 @@ export function Sheets(props: SheetsProps) {
 	const ae = props.derivedCharacteristics.find(e => e.id === 'AE');
 	const kp = props.derivedCharacteristics.find(e => e.id === 'KP');
 	return (
-		<div className="page" id="sheets">
+		<Page id="sheets">
 			<Scroll className="sheet-wrapper">
 				<MainSheet {...props} />
 				<SkillsSheet {...props} />
@@ -83,6 +84,6 @@ export function Sheets(props: SheetsProps) {
 				{ ae && typeof ae.value === 'number' && <SpellsSheet {...props} /> }
 				{ kp && typeof kp.value === 'number' && <LiturgiesSheet {...props} /> }
 			</Scroll>
-		</div>
+		</Page>
 	);
 }

@@ -41,6 +41,14 @@ html, body, #bodywrapper, #body {
 	}
 }
 
+section#content {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
 .small-info-text {
 	font: 500 12px Alegreya Sans;
 	letter-spacing: 0.05em;

@@ -3,6 +3,8 @@ import { BorderButton } from '../../components/BorderButton';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
+import { Options } from '../../components/Options';
+import { Page } from '../../components/Page';
 
 export class Grouplist extends React.Component<{}, undefined> {
 
@@ -10,17 +12,15 @@ export class Grouplist extends React.Component<{}, undefined> {
 
 	render() {
 		return (
-			<section id="about">
-				<div className="page">
-					<div className="options">
-						<TextField hint="Suchen" value={''} onChange={this.filter} fullWidth disabled />
-						<BorderButton label="Erstellen" disabled />
-					</div>
-					<Scroll className="list">
-						<BorderButton label="Gruppe laden" />
-					</Scroll>
-				</div>
-			</section>
+			<Page>
+				<Options>
+					<TextField hint="Suchen" value={''} onChange={this.filter} fullWidth disabled />
+					<BorderButton label="Erstellen" disabled />
+				</Options>
+				<Scroll className="list">
+					<BorderButton label="Gruppe laden" />
+				</Scroll>
+			</Page>
 		);
 	}
 }

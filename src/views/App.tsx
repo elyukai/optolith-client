@@ -5,12 +5,13 @@ import { AlertsContainer } from '../containers/Alerts';
 import { DownloaderContainer } from '../containers/DownloaderContainer';
 import { NavigationBarContainer } from '../containers/NavigationBar';
 import { UIMessages } from '../types/ui.d';
+import { TabId } from '../utils/LocationUtils';
 import { Route } from './Route';
 
 export interface AppOwnProps {}
 
 export interface AppStateProps {
-	currentTab: string;
+	currentTab: TabId;
 	locale?: UIMessages;
 	platform: string;
 	theme: string;
@@ -23,6 +24,7 @@ export interface AppDispatchProps {
 	close(): void;
 	enterFullscreen(): void;
 	leaveFullscreen(): void;
+	setTab(id: TabId): void;
 }
 
 export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps;
@@ -42,7 +44,7 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, currentTab, platform, theme } = this.props;
+		const { locale, currentTab, platform, theme, setTab } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {
@@ -66,8 +68,10 @@ export class App extends React.Component<AppProps, AppState> {
 				<AlertsContainer locale={locale} />
 				<DownloaderContainer locale={locale} />
 				<TitleBar {...this.props} />
-				<NavigationBarContainer locale={locale} />
-				<Route id={currentTab} locale={locale} />
+				<section id="content">
+					<NavigationBarContainer locale={locale} />
+					<Route id={currentTab} locale={locale} setTab={setTab} />
+				</section>
 			</div>
 		);
 	}

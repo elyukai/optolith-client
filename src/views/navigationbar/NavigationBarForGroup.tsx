@@ -26,7 +26,7 @@ export function NavigationBarForGroup(props: NavigationBarForGroupProps) {
 	return (
 		<NavigationBarWrapper>
 			<NavigationBarLeft>
-				<NavigationBarBack setSection={setSection} />
+				<NavigationBarBack setTab={setSection} />
 				<Text>{groupName}</Text>
 			</NavigationBarLeft>
 			<NavigationBarRight>

@@ -36,7 +36,7 @@ export function ProfessionsListItem(props: ProfessionsListItemProps) {
 			<ListItemName name={subname ? `${name} (${subname})` : name} />
 			<ListItemSeparator />
 			{profession.src.length > 0 && <ListItemGroup small>
-				{profession.src.map(e => <span>{books.get(e.id)!.short}</span>)}
+				{profession.src.map(e => <span key={e.id}>{books.get(e.id)!.short}</span>)}
 			</ListItemGroup>}
 			<ListItemValues>
 				<div className="cost">{profession.ap}</div>

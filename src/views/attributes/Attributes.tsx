@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
@@ -62,18 +63,16 @@ export function Attributes(props: AttributesProps) {
 	const { locale, isInCharacterCreation, maxTotalAttributeValues, sum } = props;
 
 	return (
-		<section id="attribute">
-			<div className="page">
-				<Scroll>
-					<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
-					<AttributeList {...props} />
-					<div className="secondary">
-						{isInCharacterCreation && <AttributesAdjustment {...props} />}
-						<AttributeCalc {...props} locale={locale} />
-						<AttributesPermanentList {...props} locale={locale} />
-					</div>
-				</Scroll>
-			</div>
-		</section>
+		<Page id="attribute">
+			<Scroll>
+				<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
+				<AttributeList {...props} />
+				<div className="secondary">
+					{isInCharacterCreation && <AttributesAdjustment {...props} />}
+					<AttributeCalc {...props} locale={locale} />
+					<AttributesPermanentList {...props} locale={locale} />
+				</div>
+			</Scroll>
+		</Page>
 	);
 }
