@@ -7,7 +7,7 @@ import { isLiturgicalChantsTabAvailable } from './liturgiesSelectors';
 import { isRemovingEnabled } from './phaseSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { isSpellsTabAvailable } from './spellsSelectors';
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
+import { getBooks, getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
 
 export const isMainSection = createSelector(
 	getCurrentTab,
@@ -140,7 +140,8 @@ export const getSubtabs = createSelector(
 	isSpellsTabAvailable,
 	isLiturgicalChantsTabAvailable,
 	getRuleBooksEnabled,
-	(tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled): SubTab[] | undefined => {
+	getBooks,
+	(tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled, books): SubTab[] | undefined => {
 		let tabs: SubTab[] | undefined;
 
 		if (locale) {
@@ -286,7 +287,7 @@ export const getSubtabs = createSelector(
 							},
 						];
 
-						if (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208')) {
+						if (books.has('US25208') && (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208'))) {
 							tabs.splice(1, 0, {
 								id: 'zoneArmor',
 								label: _translate(locale, 'titlebar.tabs.zonearmor'),

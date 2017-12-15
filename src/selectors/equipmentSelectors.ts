@@ -312,7 +312,7 @@ export const getRangedWeapons = createSelector(
 
 export const getStabilityByArmorTypeId = (id: number) => [4, 5, 6, 8, 9, 13, 12, 11, 10][id - 1];
 
-export const getEncumbranceZoneTier = (pro: number) => [0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8][pro - 1];
+export const getEncumbranceZoneTier = (pro: number) => [0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8][pro];
 
 export const getArmors = createSelector(
 	getItemsState,

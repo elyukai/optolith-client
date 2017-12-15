@@ -1,7 +1,7 @@
 import { RedoAction, UndoAction } from '../actions/HistoryActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
 import * as ActionTypes from '../constants/ActionTypes';
-import { getCurrentCultureId, getCurrentRaceId, getLocaleId } from '../selectors/stateSelectors';
+import { getCurrentCultureId, getCurrentRaceId, getLocaleId, getEnabledRuleBooks, areAllRuleBooksEnabled } from '../selectors/stateSelectors';
 import { getCurrentTab, getPhase } from '../selectors/stateSelectors';
 import { Book, ExperienceLevel, ItemInstance } from '../types/data.d';
 import { init } from '../utils/init';
@@ -63,6 +63,18 @@ export function appPost(state: AppState, action: Action, previousState: AppState
 						location: {
 							...state.ui.location,
 							tab: 'races',
+						},
+					},
+				};
+			}
+			else if ((areAllRuleBooksEnabled(previousState) && !areAllRuleBooksEnabled(state) && !getEnabledRuleBooks(state).has('US25208') || getEnabledRuleBooks(previousState).has('US25208') && !getEnabledRuleBooks(state).has('US25208')) && getCurrentTab(state) === 'zoneArmor') {
+				return {
+					...state,
+					ui: {
+						...state.ui,
+						location: {
+							...state.ui.location,
+							tab: 'equipment',
 						},
 					},
 				};

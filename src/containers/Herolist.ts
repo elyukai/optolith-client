@@ -33,7 +33,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			}
 		},
 		showHero() {
-			dispatch(LocationActions._setSection('hero'));
+			dispatch(LocationActions._setTab('profile'));
 		},
 		saveHeroAsJSON(id?: string) {
 			if (id) {
