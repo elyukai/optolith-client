@@ -25,6 +25,7 @@ export interface AppDispatchProps {
 	enterFullscreen(): void;
 	leaveFullscreen(): void;
 	setTab(id: TabId): void;
+	checkForUpdates(): void;
 }
 
 export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps;
@@ -69,7 +70,7 @@ export class App extends React.Component<AppProps, AppState> {
 				<DownloaderContainer locale={locale} />
 				<TitleBar {...this.props} />
 				<section id="content">
-					<NavigationBarContainer locale={locale} />
+					<NavigationBarContainer {...this.props} locale={locale} />
 					<Route id={currentTab} locale={locale} setTab={setTab} />
 				</section>
 			</div>

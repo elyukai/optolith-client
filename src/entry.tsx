@@ -19,7 +19,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import { addErrorAlert } from './actions/AlertActions';
-import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable } from './actions/IOActions';
+import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
 import { AppContainer } from './containers/App';
 import { app, AppState } from './reducers/app';
@@ -89,6 +89,10 @@ render(
 
 ipcRenderer.addListener('update-available', (_event: Event, info: UpdateInfo) => {
 	store.dispatch(updateAvailable(info));
+});
+
+ipcRenderer.addListener('update-not-available', () => {
+	store.dispatch(updateNotAvailable());
 });
 
 ipcRenderer.addListener('download-progress', (_event: Event, progressObj: ProgressInfo) => {

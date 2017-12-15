@@ -137,6 +137,7 @@ export interface UIMessages {
 	"settings.options.themedark": string;
 	"settings.options.themelight": string;
 	"settings.actions.close": string;
+	"checkforupdates": string;
 	"charactersheet.title": string;
 	"charactersheet.actions.printtopdf": string;
 	"charactersheet.options.showattributevalues": string;
@@ -756,7 +757,10 @@ export interface UIMessages {
 	"allcombattechniques": string;
 	"newversionavailable.title": string;
 	"newversionavailable.message": string;
+	"newversionavailable.messagewithsize": string;
 	"newversionavailable.update": string;
+	"nonewversionavailable.title": string;
+	"nonewversionavailable.message": string;
 	"downloadupdate": string;
 	"mothertongue.short": string;
 	"attributeadjustmentselection": string;

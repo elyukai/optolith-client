@@ -21,6 +21,8 @@ import { NavigationBarWrapper } from './NavigationBarWrapper';
 
 export interface NavigationBarOwnProps {
   locale: UIMessages;
+	platform: string;
+  checkForUpdates(): void;
 }
 
 export interface NavigationBarStateProps {

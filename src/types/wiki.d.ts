@@ -75,15 +75,15 @@ export interface Race {
 	readonly hairColors?: number[];
 	readonly eyeColors?: number[];
 	readonly sizeBase?: number;
-	readonly sizeRandom?: Dice[];
+	readonly sizeRandom?: Die[];
 	readonly weightBase: number[];
-	readonly weightRandom: Dice[];
+	readonly weightRandom: Die[];
 	readonly variants: string[];
 	readonly category: Categories.RACES;
 	readonly src: SourceLink[];
 }
 
-export interface Dice {
+export interface Die {
 	readonly sides: number;
 	readonly amount: number;
 }
@@ -103,7 +103,7 @@ export interface RaceVariant {
 	readonly hairColors?: number[];
 	readonly eyeColors?: number[];
 	readonly sizeBase?: number;
-	readonly sizeRandom?: Dice[];
+	readonly sizeRandom?: Die[];
 	readonly category: Categories.RACE_VARIANTS;
 }
 

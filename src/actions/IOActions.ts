@@ -14,11 +14,11 @@ import { Hero, ToListById, User } from '../types/data.d';
 import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
-import { readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
+import { bytify, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
 import { isBase64Image } from '../utils/RegexUtils';
 import { convertHero } from '../utils/VersionUtils';
 import { addAlert } from './AlertActions';
-import { _setSection } from './LocationActions';
+import { _setTab } from './LocationActions';
 
 function getAppDataPath(): string {
 	return remote.app.getPath('userData');
@@ -56,7 +56,7 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 								}
 							}));
 						}) as any,
-						_setSection('hero')
+						_setTab('profile')
 					],
 					confirmYesNo: true
 				}));
@@ -351,7 +351,7 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 		const locale = getLocaleMessages(state)!;
 		// @ts-ignore
 		dispatch(addAlert({
-			message: _translate(locale, 'newversionavailable.message', info.version),
+			message: info.files[0] && info.files[0].size ? _translate(locale, 'newversionavailable.messagewithsize', info.version, bytify(info.files[0].size!, locale.id)) : _translate(locale, 'newversionavailable.message', info.version),
 			title: _translate(locale, 'newversionavailable.title'),
 			buttons: [
 				{
@@ -371,6 +371,17 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 					label: _translate(locale, 'cancel')
 				}
 			]
+		}));
+	};
+}
+
+export function updateNotAvailable(): AsyncAction {
+	return async (dispatch, getState) => {
+		const state = getState();
+		const locale = getLocaleMessages(state)!;
+		dispatch(addAlert({
+			message: _translate(locale, 'nonewversionavailable.message'),
+			title: _translate(locale, 'nonewversionavailable.title')
 		}));
 	};
 }

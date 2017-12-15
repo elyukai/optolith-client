@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
@@ -9,7 +10,9 @@ import { _translate } from '../../utils/I18n';
 export interface SettingsOwnProps {
 	locale: UIMessages;
 	isSettingsOpen: boolean;
+	platform: string;
 	close(): void;
+	checkForUpdates(): void;
 }
 
 export interface SettingsStateProps {
@@ -29,7 +32,7 @@ export interface SettingsDispatchProps {
 export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps;
 
 export function Settings(props: SettingsProps) {
-	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, isSettingsOpen, theme, switchEnableEditingHeroAfterCreationPhase } = props;
+	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, isSettingsOpen, theme, switchEnableEditingHeroAfterCreationPhase, platform, checkForUpdates } = props;
 
 	return (
 		<Dialog
@@ -63,9 +66,16 @@ export function Settings(props: SettingsProps) {
 			<Checkbox
 				checked={isEditingHeroAfterCreationPhaseEnabled}
 				className="editor-switch"
-				label={ _translate(locale, 'enableeditingheroaftercreationphase')}
+				label={_translate(locale, 'enableeditingheroaftercreationphase')}
 				onClick={switchEnableEditingHeroAfterCreationPhase}
 				/>
+			{(platform === 'win32' || platform === 'darwin') && (
+				<BorderButton
+					label={_translate(locale, 'checkforupdates')}
+					onClick={checkForUpdates}
+					autoWidth
+					/>
+			)}
 		</Dialog>
 	);
 }

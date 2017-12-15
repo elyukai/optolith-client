@@ -1,4 +1,4 @@
-import { remote } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as IOActions from '../actions/IOActions';
@@ -41,6 +41,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setTab(id: TabId) {
 			dispatch(_setTab(id));
+		},
+		checkForUpdates() {
+			ipcRenderer.send('check-for-updates');
 		},
 	};
 }

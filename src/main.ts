@@ -8,7 +8,8 @@ import * as url from 'url';
 app.setAppUserModelId('lukasobermann.optolyth');
 
 autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = "info";
+// @ts-ignore
+autoUpdater.logger.transports.file.level = 'info';
 autoUpdater.autoDownload = false;
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
@@ -58,10 +59,18 @@ function createWindow() {
 
 			autoUpdater.addListener('update-available', (info: UpdateInfo) => {
 				mainWindow!.webContents.send('update-available', info);
+				autoUpdater.removeAllListeners('update-not-available');
 			});
 
 			ipcMain.addListener('download-update', () => {
 				autoUpdater.downloadUpdate();
+			});
+
+			ipcMain.addListener('check-for-updates', () => {
+				autoUpdater.checkForUpdates();
+				autoUpdater.once('update-not-available', () => {
+					mainWindow!.webContents.send('update-not-available');
+				});
 			});
 
 			autoUpdater.signals.progress(progressObj => {
