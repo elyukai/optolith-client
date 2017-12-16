@@ -22,6 +22,8 @@ export interface WikiEntryByCategory {
 
 export type WikiEntriesWithGroups = CombatTechnique | LiturgicalChant | SpecialAbility | Spell | Skill;
 
+export type SkillishEntry = Spell | LiturgicalChant | Skill | CombatTechnique;
+
 export interface Book {
 	readonly id: string;
 	readonly short: string;
@@ -76,7 +78,7 @@ export interface Race {
 	readonly eyeColors?: number[];
 	readonly sizeBase?: number;
 	readonly sizeRandom?: Die[];
-	readonly weightBase: number[];
+	readonly weightBase: number;
 	readonly weightRandom: Die[];
 	readonly variants: string[];
 	readonly category: Categories.RACES;
@@ -319,7 +321,6 @@ interface ActivatableBase {
 }
 
 interface AdvantageDisadvantageBase extends ActivatableBase {
-	readonly sel?: SelectionObject[];
 	readonly gr?: undefined;
 	readonly rules: string;
 	readonly range?: string;

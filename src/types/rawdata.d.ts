@@ -1,6 +1,7 @@
 import * as Data from './data.d';
 import * as Reusable from './reusable.d';
 import * as UI from './ui.d';
+import * as Wiki from './wiki.d';
 
 export interface RawHero extends Data.HeroBase {
 	readonly id: string;
@@ -148,7 +149,7 @@ export interface RawProfessionVariant {
 	apOfActivatables: number;
 	pre_req: Data.ProfessionDependencyObject[];
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	sel: Data.ProfessionVariantSelections;
+	sel: Wiki.ProfessionVariantSelections;
 	sa: Reusable.ProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
