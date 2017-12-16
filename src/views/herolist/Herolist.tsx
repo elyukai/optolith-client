@@ -8,8 +8,9 @@ import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
-import { ExperienceLevel, Hero, InputTextEvent, User } from '../../types/data.d';
+import { Hero, InputTextEvent, User } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
+import { ExperienceLevel } from '../../types/wiki';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { HeroCreation } from './HeroCreation';
@@ -22,7 +23,7 @@ export interface HerolistOwnProps {
 export interface HerolistStateProps {
 	currentHero: CurrentHeroInstanceState;
 	currentHeroId: string | undefined;
-	elList: Map<string, ExperienceLevel>;
+	experienceLevels: Map<string, ExperienceLevel>;
 	list: Hero[];
 	users: Map<string, User>;
 	visibilityFilter: string;

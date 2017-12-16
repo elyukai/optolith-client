@@ -93,7 +93,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} list={cultures} />
+				<WikiInfoContainer {...this.props} />
 			</Page>
 		);
 	}

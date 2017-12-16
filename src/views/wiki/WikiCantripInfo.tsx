@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { Book, CantripInstance, UIMessages } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { Book, Cantrip } from '../../types/wiki';
+import { _translate, UIMessages } from '../../utils/I18n';
 import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
 export interface WikiCantripInfoProps {
 	books: Map<string, Book>;
-	currentObject: CantripInstance;
+	currentObject: Cantrip;
 	locale: UIMessages;
 }
 

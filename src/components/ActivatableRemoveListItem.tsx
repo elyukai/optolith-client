@@ -32,7 +32,7 @@ export interface ActivatableRemoveListItemProps {
 	selectForInfo?(id: string): void;
 }
 
-export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps, undefined> {
+export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps> {
 	handleSelectTier = (selectedTier: number) => {
 		const { id, index} = this.props.item;
 		this.props.setTier(id, index, selectedTier);

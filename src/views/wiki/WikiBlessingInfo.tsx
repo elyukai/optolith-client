@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { BlessingInstance, Book, UIMessages } from '../../types/data.d';
+import { Blessing, Book } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { _translate, UIMessages } from '../../utils/I18n';
 import { getAspectsOfTradition, getTraditionOfAspect } from '../../utils/LiturgyUtils';
 import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
 export interface WikiBlessingInfoProps {
 	books: Map<string, Book>;
-	currentObject: BlessingInstance;
+	currentObject: Blessing;
 	locale: UIMessages;
 }
 

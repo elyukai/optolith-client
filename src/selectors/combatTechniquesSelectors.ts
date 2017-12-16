@@ -5,15 +5,15 @@ import { CombatTechnique, CombatTechniqueWithRequirements } from '../types/view.
 import { getSids } from '../utils/ActivatableUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getAttributes, getMaxAttributeValueByID } from './attributeSelectors';
+import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getAdvantages, getPhase, getSpecialAbilities } from './stateSelectors';
+import { getAdvantages, getAttributes, getPhase, getSpecialAbilities } from './stateSelectors';
 
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 
 export const getForSave = createSelector(
-	[ getCombatTechniques ],
+	getCombatTechniques,
 	combatTechniques => {
 		const active: { [id: string]: number } = {};
 		for (const [id, { value }] of combatTechniques) {
@@ -26,7 +26,8 @@ export const getForSave = createSelector(
 );
 
 export const getForSheet = createSelector(
-	[ getCombatTechniques, getAttributes ],
+	getCombatTechniques,
+	getAttributes,
 	(combatTechniques, attributes) => {
 		const array: CombatTechnique[] = [];
 		for (const [id, entry] of combatTechniques) {

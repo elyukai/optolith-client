@@ -578,6 +578,8 @@ export interface SelectionObject {
 	cost?: number;
 	req?: AllRequirementTypes[];
 	prerequisites?: AllRequirementTypes[];
+	target?: string;
+	tier?: number;
 }
 
 export interface ActivatableRequirementObject {

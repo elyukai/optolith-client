@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
-import { Book, Race, UIMessages } from '../../types/view.d';
+import { Race, UIMessages } from '../../types/view.d';
+import { Book } from '../../types/wiki.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { WikiProperty } from './WikiProperty';

@@ -1107,9 +1107,9 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       case 'SA_414':
       case 'SA_663': {
         const activeIds = getSids(entry);
-        const sel = (entry.sel as Array<SelectionObject & { req: AllRequirementTypes[], target: string; tier: number; }>).reduce((arr, e) => {
-          const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target) : dependent.liturgies.get(e.target);
-          if (!activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier * 4 + 4) {
+        const sel = entry.sel!.reduce((arr, e) => {
+          const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target!) : dependent.liturgies.get(e.target!);
+          if (!activeIds.includes(e.id) && validate(state, e.req!, id) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier! * 4 + 4) {
             return [...arr, { ...e, name: `${targetInstance.name}: ${e.name}` }];
           }
           return arr;

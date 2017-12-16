@@ -62,6 +62,9 @@ export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.pr
 
 export const getPhase = (state: AppState) => state.currentHero.present.phase;
 
+export const getElState = (state: AppState) => state.currentHero.present.el;
+export const getStartId = (state: AppState) => state.currentHero.present.el.startId;
+
 export const getItemEditorInstance = (state: AppState) => state.currentHero.present.equipment.itemEditor;
 export const getIsItemCreation = (state: AppState) => state.currentHero.present.equipment.isItemCreation;
 export const getArmorZonesEditorInstance = (state: AppState) => state.currentHero.present.equipment.armorZoneEditor;
@@ -76,3 +79,23 @@ export const isCharacterCreatorOpen = (state: AppState) => state.ui.subwindows.i
 export const isSettingsOpen = (state: AppState) => state.ui.subwindows.isSettingsOpen;
 export const isEditCharacterAvatarOpen = (state: AppState) => state.ui.subwindows.isEditCharacterAvatarOpen;
 export const isEditPetAvatarOpen = (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen;
+
+export const getWiki = (state: AppState) => state.wiki;
+export const getWikiAdvantages = (state: AppState) => state.wiki.advantages;
+export const getWikiAttributes = (state: AppState) => state.wiki.attributes;
+export const getWikiBlessings = (state: AppState) => state.wiki.blessings;
+export const getWikiBooks = (state: AppState) => state.wiki.books;
+export const getWikiCantrips = (state: AppState) => state.wiki.cantrips;
+export const getWikiCombatTechniques = (state: AppState) => state.wiki.combatTechniques;
+export const getWikiCultures = (state: AppState) => state.wiki.cultures;
+export const getWikiDisadvantages = (state: AppState) => state.wiki.disadvantages;
+export const getWikiExperienceLevels = (state: AppState) => state.wiki.experienceLevels;
+export const getWikiItemTemplates = (state: AppState) => state.wiki.itemTemplates;
+export const getWikiLiturgicalChants = (state: AppState) => state.wiki.liturgicalChants;
+export const getWikiProfessions = (state: AppState) => state.wiki.professions;
+export const getWikiProfessionVariants = (state: AppState) => state.wiki.professionVariants;
+export const getWikiRaces = (state: AppState) => state.wiki.races;
+export const getWikiRaceVariants = (state: AppState) => state.wiki.raceVariants;
+export const getWikiSkills = (state: AppState) => state.wiki.skills;
+export const getWikiSpecialAbilities = (state: AppState) => state.wiki.specialAbilities;
+export const getWikiSpells = (state: AppState) => state.wiki.spells;

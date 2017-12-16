@@ -210,7 +210,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} list={list} currentId={this.state.currentSlideinId} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -317,7 +317,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} list={list} />
+				<WikiInfoContainer {...this.props} {...this.state} />
 			</Page>
 		);
 	}

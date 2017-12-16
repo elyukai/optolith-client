@@ -2,7 +2,7 @@ import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
-import { RequiresIncreasableObject } from '../types/requirements.d';
+import { RequiresIncreasableObject } from '../types/reusable.d';
 import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
 

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, CombatTechniqueInstance, ItemInstance, UIMessages } from '../../types/data.d';
-import { _localizeNumber, _localizeSize, _localizeWeight, _translate } from '../../utils/I18n';
+import { Attribute, Book, CombatTechnique, ItemTemplate } from '../../types/wiki';
+import { _localizeNumber, _localizeSize, _localizeWeight, _translate, UIMessages } from '../../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
 import { sign, signNull } from '../../utils/NumberUtils';
 import { WikiSource } from './WikiSource';
 
 export interface WikiEquipmentInfoProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
-	combatTechniques: Map<string, CombatTechniqueInstance>;
-	currentObject: ItemInstance;
+	combatTechniques: Map<string, CombatTechnique>;
+	currentObject: ItemTemplate;
 	locale: UIMessages;
-	templates: Map<string, ItemInstance>;
+	templates: Map<string, ItemTemplate>;
 }
 
 export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, LiturgyInstance, SecondaryAttribute, SkillExtension, SpecialAbilityInstance } from '../../types/data.d';
+import { SecondaryAttribute, SkillExtension } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
+import { Attribute, Book, LiturgicalChant, SpecialAbility } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
@@ -11,12 +12,12 @@ import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
 export interface WikiLiturgicalChantInfoProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
-	currentObject: LiturgyInstance;
+	currentObject: LiturgicalChant;
 	locale: UIMessages;
-	liturgicalChantExtensions: SpecialAbilityInstance | undefined;
+	liturgicalChantExtensions: SpecialAbility | undefined;
 }
 
 export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
@@ -49,7 +50,7 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 		</Scroll>;
 	}
 
-	const filteredLiturgicalChantExtensions = liturgicalChantExtensions && (liturgicalChantExtensions.sel as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
+	const filteredLiturgicalChantExtensions = liturgicalChantExtensions && (liturgicalChantExtensions.select as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
 
 	switch (currentObject.gr) {
 		case 1:

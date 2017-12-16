@@ -7,7 +7,7 @@ import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
 import { requestHeroesSave, requestHeroExport, requestSaveAll } from './IOActions';
-import { _setSection } from './LocationActions';
+import { _setTab } from './LocationActions';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -76,7 +76,7 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncActi
 							el
 						}
 					} as CreateHeroAction,
-					_setSection('hero')
+					_setTab('profile')
 				],
 				confirmYesNo: true
 			}));
@@ -121,7 +121,7 @@ export function loadHeroValidate(id: string): AsyncAction {
 				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
 				confirm: [
 					_loadHero(id) as any,
-					_setSection('hero')
+					_setTab('profile')
 				],
 				confirmYesNo: true
 			}));

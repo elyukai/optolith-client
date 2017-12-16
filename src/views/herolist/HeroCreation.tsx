@@ -3,13 +3,14 @@ import { Dialog, DialogProps } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
 import { SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
-import { ExperienceLevel, InputTextEvent } from '../../types/data.d';
+import { InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
+import { ExperienceLevel } from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
 
 export interface HeroCreationProps extends DialogProps {
 	locale: UIMessages;
-	elList: Map<string, ExperienceLevel>;
+	experienceLevels: Map<string, ExperienceLevel>;
 	close(): void;
 	createHero(name: string, sex: 'm' | 'f', el: string): void;
 }
@@ -50,8 +51,8 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
 	}
 
 	render() {
-		const { elList, locale, ...other } = this.props;
-		const experienceLevels = [...elList.values()].map(e => {
+		const { experienceLevels: experienceLevelsMap, locale, ...other } = this.props;
+		const experienceLevels = [...experienceLevelsMap.values()].map(e => {
 			const { id, name, ap } = e;
 			return { id, name: `${name} (${ap} AP)` };
 		});

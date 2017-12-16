@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, SecondaryAttribute, SkillExtension, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
+import { SecondaryAttribute, SkillExtension } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
+import { Attribute, Book, SpecialAbility, Spell } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
@@ -10,12 +11,12 @@ import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
 export interface WikiSpellInfoProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
-	currentObject: SpellInstance;
+	currentObject: Spell;
 	locale: UIMessages;
-	spellExtensions: SpecialAbilityInstance | undefined;
+	spellExtensions: SpecialAbility | undefined;
 }
 
 export function WikiSpellInfo(props: WikiSpellInfoProps) {
@@ -41,7 +42,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 		</Scroll>;
 	}
 
-	const filteredSpellExtensions = spellExtensions && (spellExtensions.sel as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
+	const filteredSpellExtensions = spellExtensions && (spellExtensions.select as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
 
 	switch (currentObject.gr) {
 		case 1:

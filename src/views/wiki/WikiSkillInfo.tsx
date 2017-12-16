@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { AttributeInstance, Book, TalentInstance, UIMessages } from '../../types/data.d';
+import { UIMessages } from '../../types/data.d';
+import { Attribute, Book, Skill } from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 import { WikiProperty } from './WikiProperty';
 
 export interface WikiSkillInfoProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
-	currentObject: TalentInstance;
+	currentObject: Skill;
 	locale: UIMessages;
 }
 

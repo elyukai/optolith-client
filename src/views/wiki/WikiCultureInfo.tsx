@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Scroll } from '../../components/Scroll';
-import { SpecialAbilityInstance, TalentInstance } from '../../types/data.d';
-import { Book, Culture, UIMessages } from '../../types/view.d';
+import { Culture, UIMessages } from '../../types/view.d';
+import { Book, Skill, SpecialAbility } from '../../types/wiki';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { WikiProperty } from './WikiProperty';
@@ -11,10 +11,10 @@ import { WikiSource } from './WikiSource';
 export interface WikiCultureInfoProps {
 	books: Map<string, Book>;
 	currentObject: Culture;
-	languages: SpecialAbilityInstance;
+	languages: SpecialAbility;
 	locale: UIMessages;
-	scripts: SpecialAbilityInstance;
-	skills: Map<string, TalentInstance>;
+	scripts: SpecialAbility;
+	skills: Map<string, Skill>;
 }
 
 export function WikiCultureInfo(props: WikiCultureInfoProps) {
@@ -44,10 +44,10 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
 				<p className="title">{currentObject.name}</p>
 			</div>
 			<WikiProperty locale={locale} title="info.language">
-				{sortStrings(currentObject.language.map(id => languages.sel!.find(e => e.id === id)!.name), locale.id).join(_translate(locale, 'info.or'))}
+				{sortStrings(currentObject.language.map(id => languages.select!.find(e => e.id === id)!.name), locale.id).join(_translate(locale, 'info.or'))}
 			</WikiProperty>
 			<WikiProperty locale={locale} title="info.script">
-				{currentObject.script.length > 0 ? `${sortStrings(currentObject.script.map(id => scripts.sel!.find(e => e.id === id)!.name), locale.id).join(_translate(locale, 'info.or'))} (${scripts.sel!.find(e => e.id === currentObject.script[0])!.cost} ${_translate(locale, 'apshort')})` : _translate(locale, 'info.none')}
+				{currentObject.script.length > 0 ? `${sortStrings(currentObject.script.map(id => scripts.select!.find(e => e.id === id)!.name), locale.id).join(_translate(locale, 'info.or'))} (${scripts.select!.find(e => e.id === currentObject.script[0])!.cost} ${_translate(locale, 'apshort')})` : _translate(locale, 'info.none')}
 			</WikiProperty>
 			<WikiProperty locale={locale} title="info.areaknowledge">
 				{currentObject.areaKnowledge}

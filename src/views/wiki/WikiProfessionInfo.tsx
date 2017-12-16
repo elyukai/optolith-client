@@ -2,8 +2,9 @@ import { difference } from 'lodash';
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
 import { ATTRIBUTES } from '../../constants/Categories';
-import { AttributeInstance, Book, CantripInstance, CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LiturgyInstance, RaceInstance, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection } from '../../types/data.d';
 import { IncreasableId, Profession, UIMessages } from '../../types/view.d';
+import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, Spell } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/RequirementUtils';
@@ -11,16 +12,16 @@ import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
 export interface WikiProfessionInfoProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
-	cantrips: Map<string, CantripInstance>;
+	cantrips: Map<string, Cantrip>;
 	currentObject: Profession;
-	liturgicalChants: Map<string, LiturgyInstance>;
+	liturgicalChants: Map<string, LiturgicalChant>;
 	locale: UIMessages;
 	sex: 'm' | 'f' | undefined;
-	races: Map<string, RaceInstance>;
-	skills: Map<string, TalentInstance>;
-	spells: Map<string, SpellInstance>;
+	races: Map<string, Race>;
+	skills: Map<string, Skill>;
+	spells: Map<string, Spell>;
 }
 
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
@@ -217,7 +218,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 		</Scroll>;
 	}
 
-	const getRaceNameAP = (race: RaceInstance) => `${race.name} (${race.ap} ${_translate(locale, 'apshort')})`;
+	const getRaceNameAP = (race: Race) => `${race.name} (${race.ap} ${_translate(locale, 'apshort')})`;
 
 	const prerequisites = [
 		...(raceRequirement ? [`${_translate(locale, 'race')}: ${Array.isArray(raceRequirement.value) ? raceRequirement.value.map(e => getRaceNameAP(races.get(`R_${e}`)!)).join(_translate(locale, 'info.or')) : getRaceNameAP(races.get(`R_${raceRequirement.value}`)!)}`] : []),
@@ -427,7 +428,7 @@ function isCombinedSpell(obj: IncreasableId | CombinedSpell): obj is CombinedSpe
 	return obj.hasOwnProperty('newId') && obj.hasOwnProperty('oldId') && obj.hasOwnProperty('value');
 }
 
-function combineSpells(list: IncreasableId[], allSpells: Map<string, SpellInstance>): (IncreasableId | CombinedSpell)[] {
+function combineSpells(list: IncreasableId[], allSpells: Map<string, Spell>): (IncreasableId | CombinedSpell)[] {
 	const oldList = [...list];
 	const combinedSpells: CombinedSpell[] = [];
 	const singleSpells: IncreasableId[] = [];

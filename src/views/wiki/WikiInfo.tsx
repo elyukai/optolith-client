@@ -2,11 +2,13 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
-import { ActivatableInstance, AttributeInstance, BlessingInstance, Book, CantripInstance, CombatTechniqueInstance, ItemInstance, LiturgyInstance, RaceInstance, SecondaryAttribute, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../../types/data.d';
-import { Culture, Profession, Race, UIMessages } from '../../types/view.d';
+import { WikiState } from '../../reducers/wikiReducer';
+import { ActivatableInstance, SecondaryAttribute } from '../../types/data.d';
+import { Culture, Profession, Race as RaceView, UIMessages } from '../../types/view.d';
+import { Attribute, Blessing, Book, Cantrip, CombatTechnique, ItemTemplate, LiturgicalChant, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
 import { WikiInfoContent } from './WikiInfoContent';
 
-type Instance = BlessingInstance | CantripInstance | CombatTechniqueInstance | LiturgyInstance | SpellInstance | Culture | Profession | Race | ActivatableInstance | TalentInstance | ItemInstance;
+type Instance = ActivatableInstance | Blessing | Cantrip | CombatTechnique | Culture | ItemTemplate | LiturgicalChant | Profession | RaceView | Skill | Spell;
 
 export interface WikiInfoOwnProps {
 	currentId?: string;
@@ -15,24 +17,25 @@ export interface WikiInfoOwnProps {
 }
 
 export interface WikiInfoStateProps {
-	attributes: Map<string, AttributeInstance>;
+	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
-	cantrips: Map<string, CantripInstance>;
-	combatTechniques: Map<string, CombatTechniqueInstance>;
+	cantrips: Map<string, Cantrip>;
+	combatTechniques: Map<string, CombatTechnique>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
 	dependent: DependentInstancesState;
-	languages: SpecialAbilityInstance;
-	liturgicalChantExtensions: SpecialAbilityInstance | undefined;
-	liturgicalChants: Map<string, LiturgyInstance>;
+	languages: SpecialAbility;
+	liturgicalChantExtensions: SpecialAbility | undefined;
+	liturgicalChants: Map<string, LiturgicalChant>;
 	list: Instance[];
-	races: Map<string, RaceInstance>;
-	scripts: SpecialAbilityInstance;
+	races: Map<string, Race>;
+	scripts: SpecialAbility;
 	sex: 'm' | 'f' | undefined;
-	skills: Map<string, TalentInstance>;
-	spellExtensions: SpecialAbilityInstance | undefined;
-	spells: Map<string, SpellInstance>;
-	specialAbilities: Map<string, SpecialAbilityInstance>;
-	templates: Map<string, ItemInstance>;
+	skills: Map<string, Skill>;
+	spellExtensions: SpecialAbility | undefined;
+	spells: Map<string, Spell>;
+	specialAbilities: Map<string, SpecialAbility>;
+	templates: Map<string, ItemTemplate>;
+	wiki: WikiState;
 }
 
 export interface WikiInfoDispatchProps {}

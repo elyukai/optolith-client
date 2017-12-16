@@ -7,6 +7,7 @@ import { Slidein } from '../../components/Slidein';
 import { getAllByGroupFromSlice } from '../../selectors/dependentInstancesSelectors';
 import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CultureInstance, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionInstance, ProfessionSelection, ProfessionSelectionIds, ProfessionVariantInstance, RaceInstance, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
+import { ProfessionVariantSelection } from '../../types/wiki';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -211,7 +212,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		const selectLang = currentCulture.languages.length > 1;
 		const selectLitc = currentCulture.scripts.length > 1;
 
-		const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection>();
+		const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection | ProfessionVariantSelection>();
 
 		if (currentProfession.id !== 'P_0') {
 			currentProfession.selections.forEach(e => {
@@ -221,7 +222,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 
 		if (currentProfessionVariant) {
 			currentProfessionVariant.selections.forEach(e => {
-				if (e.id === 'COMBAT_TECHNIQUES' && e.active === false) {
+				if ((e.id === 'COMBAT_TECHNIQUES' || e.id === 'COMBAT_TECHNIQUES_SECOND') && e.active === false) {
 					professionSelections.delete(e.id);
 				}
 				else {

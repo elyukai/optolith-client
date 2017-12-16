@@ -196,8 +196,6 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 				list.specialAbilities.set(id, obj);
 			}
 
-			console.log(list);
-
 			return list;
 		}
 

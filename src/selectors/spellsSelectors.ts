@@ -8,9 +8,9 @@ import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
-import { getElState, getStart, getStartEl } from './elSelectors';
+import { getStart, getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getAdvantages, getCantrips, getDisadvantages, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
+import { getAdvantages, getCantrips, getDisadvantages, getElState, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
 
 export const getMagicalTraditionsResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
 	return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));

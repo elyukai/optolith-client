@@ -22,11 +22,11 @@ export interface TextFieldProps {
 }
 
 export class TextField extends React.Component<TextFieldProps, {}> {
-	inputRef: HTMLInputElement;
+	inputRef: HTMLInputElement | null;
 
 	componentDidMount() {
-		if (this.props.autoFocus) {
-			findDOMNode<HTMLInputElement>(this.inputRef).focus();
+		if (this.props.autoFocus && this.inputRef !== null) {
+			(findDOMNode(this.inputRef) as HTMLInputElement).focus();
 		}
 	}
 

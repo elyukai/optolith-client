@@ -203,7 +203,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 							</List>
 						</Scroll>
 					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} list={list} />
+					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
@@ -310,7 +310,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						</List>
 					</Scroll>
 				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} list={list} />
+				<WikiInfoContainer {...this.props} {...this.state} />
 			</Page>
 		);
 	}

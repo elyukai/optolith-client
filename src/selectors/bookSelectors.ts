@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import { sortObjects } from '../utils/FilterSortUtils';
-import { getBooks, getLocaleAsProp } from './stateSelectors';
+import { getLocaleAsProp, getWikiBooks } from './stateSelectors';
 
 export const getSortedBooks = createSelector(
-	getBooks,
+	getWikiBooks,
 	getLocaleAsProp,
 	(books, locale) => sortObjects([...books.values()], locale.id, 'id')
 );

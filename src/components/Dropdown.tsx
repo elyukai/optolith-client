@@ -30,11 +30,11 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 		position: 'bottom'
 	};
 
-	containerRef: HTMLDivElement;
+	containerRef: HTMLDivElement | null;
 	clickInside = false;
 
 	switch = () => {
-		if (!this.state.isOpen) {
+		if (!this.state.isOpen && this.containerRef !== null) {
 			const height = this.props.options.length < 6 ? this.props.options.length * 33 + 1 : 166;
 			const containerRect = this.containerRef.getBoundingClientRect();
 			if ((window.innerHeight - 32 - containerRect.top) < height) {

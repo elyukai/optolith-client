@@ -89,7 +89,7 @@ export class Races extends React.Component<RacesProps, RacesState> {
 				</MainContent>
 				<Aside>
 					<RaceVariants {...this.props} />
-					<WikiInfoContainer {...this.props} list={races} noWrapper />
+					<WikiInfoContainer {...this.props} noWrapper />
 				</Aside>
 			</Page>
 		);

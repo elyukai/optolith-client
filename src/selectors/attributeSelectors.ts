@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
 import { AttributeInstance, ExperienceLevel, RequirementObject, SkillOptionalDependency, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import { Attribute, AttributeWithRequirements } from '../types/view.d';
 import { getNumericBlessedTraditionIdByInstanceId } from '../utils/LiturgyUtils';
@@ -7,16 +6,14 @@ import { getFlatPrerequisites } from '../utils/RequirementUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getNumericMagicalTraditionIdByInstanceId } from '../utils/SpellUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';
-import { getEnergies } from './energiesSelectors';
 import { getBlessedTradition } from './liturgiesSelectors';
 import { getCurrentRace } from './rcpSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
-import { getAttributeValueLimit, getPhase, getSkills, getSpecialAbilities } from './stateSelectors';
-
-export const getAttributes = (state: AppState) => state.currentHero.present.dependent.attributes;
+import { getAttributes, getAttributeValueLimit, getEnergies, getPhase, getSkills, getSpecialAbilities } from './stateSelectors';
 
 export const getForSave = createSelector(
-	[ getAttributes, getEnergies ],
+	getAttributes,
+	getEnergies,
 	(attributes, energies) => {
 		const {
 			addedArcaneEnergy: ae,
@@ -37,7 +34,7 @@ export const getForSave = createSelector(
 );
 
 export const getSum = createSelector(
-	[ getAttributes ],
+	getAttributes,
 	attributes => [...attributes.values()].reduce((sum, { value }) => sum + value, 0)
 );
 

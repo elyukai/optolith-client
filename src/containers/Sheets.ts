@@ -7,14 +7,14 @@ import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAb
 import { getAp } from '../selectors/adventurePointsSelectors';
 import { getForSheet as getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
 import { getForSheet as getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
-import { getElState, getStart } from '../selectors/elSelectors';
+import { getStart } from '../selectors/elSelectors';
 import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getPurse, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getBlessingsForSheet, getLiturgiesForSheet } from '../selectors/liturgiesSelectors';
 import { getPet } from '../selectors/petsSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
-import { getSpecialAbilities } from '../selectors/stateSelectors';
+import { getElState, getSpecialAbilities } from '../selectors/stateSelectors';
 import { getAllSkills } from '../selectors/talentsSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
