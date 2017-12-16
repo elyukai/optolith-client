@@ -3,6 +3,7 @@ import { AsyncAction } from '../types/actions.d';
 import { PetEditorInstance, PetInstance } from '../types/data.d';
 import { getNewId } from '../utils/IDUtils';
 import { convertToSave } from '../utils/PetUtils';
+import { getPetsState } from '../selectors/stateSelectors';
 
 export interface AddPetAction {
 	type: ActionTypes.ADD_PET;
@@ -14,15 +15,14 @@ export interface AddPetAction {
 
 export function _addToList(data: PetEditorInstance): AsyncAction {
 	return (dispatch, getState) => {
-		const { pets } = getState().currentHero.present;
-		const id = `PET_${getNewId([...pets.keys()])}`;
-		dispatch({
+		const id = `PET_${getNewId([...getPetsState(getState()).keys()])}`;
+		dispatch<AddPetAction>({
 			type: ActionTypes.ADD_PET,
 			payload: {
 				id,
 				data: convertToSave(data)
 			}
-		} as AddPetAction);
+		});
 	};
 }
 

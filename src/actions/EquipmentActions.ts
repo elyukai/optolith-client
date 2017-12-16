@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getArmorZonesState, getItemsState } from '../selectors/equipmentSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { getNewId } from '../utils/IDUtils';
 
@@ -11,14 +12,13 @@ export interface AddItemAction {
 
 export function addToList(): AsyncAction {
 	return (dispatch, getState) => {
-		const { items } = getState().currentHero.present.equipment;
-		const newId = `ITEM_${getNewId([...items.keys()])}`;
-		dispatch({
+		const newId = `ITEM_${getNewId([...getItemsState(getState()).keys()])}`;
+		dispatch<AddItemAction>({
 			type: ActionTypes.ADD_ITEM,
 			payload: {
 				newId
 			}
-		} as AddItemAction);
+		});
 	};
 }
 
@@ -783,14 +783,13 @@ export interface AddArmorZonesAction {
 
 export function addArmorZonesToList(): AsyncAction {
 	return (dispatch, getState) => {
-		const { items } = getState().currentHero.present.equipment;
-		const newId = `ARMORZONES_${getNewId([...items.keys()])}`;
-		dispatch({
+		const newId = `ARMORZONES_${getNewId([...getArmorZonesState(getState()).keys()])}`;
+		dispatch<AddArmorZonesAction>({
 			type: ActionTypes.ADD_ARMOR_ZONES,
 			payload: {
 				newId
 			}
-		} as AddArmorZonesAction);
+		});
 	};
 }
 

@@ -3,7 +3,6 @@ import { get } from '../selectors/dependentInstancesSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { TalentInstance } from '../types/data.d';
-import { alert } from '../utils/alert';
 import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 

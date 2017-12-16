@@ -1,15 +1,13 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../selectors/dependentInstancesSelectors';
+import { getAdjustmentValue, getCurrentAdjustmentId } from '../selectors/attributeSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdventurePoints, getAttributes, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { AttributeInstance } from '../types/data.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
-import { getCurrentAdjustmentId, getAdjustmentValue } from '../selectors/attributeSelectors';
 
 export interface AddAttributePointAction {
 	type: ActionTypes.ADD_ATTRIBUTE_POINT;
@@ -22,22 +20,24 @@ export interface AddAttributePointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as AttributeInstance, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(getAttributes(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
-		if (!cost && messages) {
-			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
-			}));
-		}
-		else {
-			dispatch({
-				type: ActionTypes.ADD_ATTRIBUTE_POINT,
-				payload: {
-					id,
-					cost
-				}
-			} as AddAttributePointAction);
+		if (messages) {
+			if (!cost) {
+				dispatch(addAlert({
+					title: _translate(messages, 'notenoughap.title'),
+					message: _translate(messages, 'notenoughap.content'),
+				}));
+			}
+			else {
+				dispatch<AddAttributePointAction>({
+					type: ActionTypes.ADD_ATTRIBUTE_POINT,
+					payload: {
+						id,
+						cost
+					}
+				});
+			}
 		}
 	};
 }
@@ -52,14 +52,14 @@ export interface RemoveAttributePointAction {
 
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
-		const cost = getDecreaseCost(get(getState().currentHero.present.dependent, id) as AttributeInstance);
-		dispatch({
+		const cost = getDecreaseCost(getAttributes(getState()).get(id)!);
+		dispatch<RemoveAttributePointAction>({
 			type: ActionTypes.REMOVE_ATTRIBUTE_POINT,
 			payload: {
 				id,
 				cost
 			}
-		} as RemoveAttributePointAction);
+		});
 	};
 }
 
@@ -73,8 +73,8 @@ export interface AddLifePointAction {
 export function _addLifePoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedLifePoints);
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseAP(4, getAddedLifePoints(state));
+		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -83,12 +83,12 @@ export function _addLifePoint(): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<AddLifePointAction>({
 				type: ActionTypes.ADD_LIFE_POINT,
 				payload: {
 					cost
 				}
-			} as AddLifePointAction);
+			});
 		}
 	};
 }
@@ -103,8 +103,8 @@ export interface AddArcaneEnergyPointAction {
 export function _addArcaneEnergyPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseAP(4, getAddedArcaneEnergyPoints(state));
+		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -113,12 +113,12 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<AddArcaneEnergyPointAction>({
 				type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
 				payload: {
 					cost
 				}
-			} as AddArcaneEnergyPointAction);
+			});
 		}
 	};
 }
@@ -133,8 +133,8 @@ export interface AddKarmaPointAction {
 export function _addKarmaPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseAP(4, getAddedKarmaPoints(state));
+		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -143,12 +143,12 @@ export function _addKarmaPoint(): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<AddKarmaPointAction>({
 				type: ActionTypes.ADD_KARMA_POINT,
 				payload: {
 					cost
 				}
-			} as AddKarmaPointAction);
+			});
 		}
 	};
 }
@@ -163,13 +163,13 @@ export interface RemoveLifePointAction {
 export function removeLifePoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedLifePoints);
-		dispatch({
+		const cost = getDecreaseAP(4, getAddedLifePoints(state));
+		dispatch<RemoveLifePointAction>({
 			type: ActionTypes.REMOVE_LIFE_POINT,
 			payload: {
 				cost
 			}
-		} as RemoveLifePointAction);
+		});
 	};
 }
 
@@ -183,13 +183,13 @@ export interface RemoveArcaneEnergyPointAction {
 export function removeArcaneEnergyPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedArcaneEnergy);
-		dispatch({
+		const cost = getDecreaseAP(4, getAddedArcaneEnergyPoints(state));
+		dispatch<RemoveArcaneEnergyPointAction>({
 			type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT,
 			payload: {
 				cost
 			}
-		} as RemoveArcaneEnergyPointAction);
+		});
 	};
 }
 
@@ -203,13 +203,13 @@ export interface RemoveKarmaPointAction {
 export function removeKarmaPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseAP(4, state.currentHero.present.energies.addedKarmaPoints);
-		dispatch({
+		const cost = getDecreaseAP(4, getAddedKarmaPoints(state));
+		dispatch<RemoveKarmaPointAction>({
 			type: ActionTypes.REMOVE_KARMA_POINT,
 			payload: {
 				cost
 			}
-		} as RemoveKarmaPointAction);
+		});
 	};
 }
 
@@ -220,7 +220,7 @@ export interface AddBoughtBackAEPointAction {
 export function _addBoughtBackAEPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(2, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -229,9 +229,9 @@ export function _addBoughtBackAEPoint(): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<AddBoughtBackAEPointAction>({
 				type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
-			} as AddBoughtBackAEPointAction);
+			});
 		}
 	};
 }
@@ -301,13 +301,13 @@ export interface RemoveLostAEPointAction {
 
 export function _removeLostAEPoint(): AsyncAction {
 	return (dispatch, getState) => {
-		const { lost, redeemed } = getState().currentHero.present.energies.permanentArcaneEnergy;
-		dispatch({
+		const { lost, redeemed } = getPermanentArcaneEnergyPoints(getState());
+		dispatch<RemoveLostAEPointAction>({
 			type: ActionTypes.REMOVE_LOST_AE_POINT,
 			payload: {
 				cost: lost === redeemed ? -2 : 0
 			}
-		} as RemoveLostAEPointAction);
+		});
 	};
 }
 
@@ -334,7 +334,7 @@ export interface AddBoughtBackKPPointAction {
 export function _addBoughtBackKPPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(2, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -343,9 +343,9 @@ export function _addBoughtBackKPPoint(): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<AddBoughtBackKPPointAction>({
 				type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
-			} as AddBoughtBackKPPointAction);
+			});
 		}
 	};
 }
@@ -379,13 +379,13 @@ export interface RemoveLostKPPointAction {
 
 export function _removeLostKPPoint(): AsyncAction {
 	return (dispatch, getState) => {
-		const { lost, redeemed } = getState().currentHero.present.energies.permanentArcaneEnergy;
-		dispatch({
+		const { lost, redeemed } = getPermanentKarmaPoints(getState());
+		dispatch<RemoveLostKPPointAction>({
 			type: ActionTypes.REMOVE_LOST_KP_POINT,
 			payload: {
 				cost: lost === redeemed ? -2 : 0
 			}
-		} as RemoveLostKPPointAction);
+		});
 	};
 }
 
@@ -418,13 +418,15 @@ export function setAdjustmentId(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const current = getCurrentAdjustmentId(getState());
 		const value = getAdjustmentValue(getState());
-		dispatch({
-			type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
-			payload: {
-				current,
-				next: id,
-				value
-			}
-		} as SetAdjustmentIdAction);
+		if (typeof current === 'string' && typeof value === 'number') {
+			dispatch<SetAdjustmentIdAction>({
+				type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
+				payload: {
+					current,
+					next: id,
+					value
+				}
+			});
+		}
 	};
 }

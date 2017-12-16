@@ -3,7 +3,7 @@ import { ELState } from '../reducers/el';
 import { ExperienceLevel } from '../types/data.d';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 import { getTotal } from './adventurePointsSelectors';
-import { getStartId, getWikiExperienceLevels } from './stateSelectors';
+import { getExperienceLevelStartId, getWikiExperienceLevels } from './stateSelectors';
 
 export function getStart(state: ELState): ExperienceLevel {
 	return state.all.get(state.startId!)!;
@@ -17,6 +17,6 @@ export const getCurrentEl = createSelector(
 
 export const getStartEl = createSelector(
 	getWikiExperienceLevels,
-	getStartId,
+	getExperienceLevelStartId,
 	(allEls, id) => allEls.get(id!) as ExperienceLevel
 );

@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getDependentInstances } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { getDiffCost } from '../utils/RCPUtils';
 
@@ -6,26 +7,30 @@ export interface SelectRaceAction {
 	type: ActionTypes.SELECT_RACE;
 	payload: {
 		id: string;
-		variantId: string;
+		variantId: string | undefined;
 		cost: number;
 	};
 }
 
 export function _selectRace(id: string, variantId?: string): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { profession, professionVariant, race } } = getState().currentHero.present;
+		const state = getState();
+		const dependent = getDependentInstances(state);
+		const race = getCurrentRaceId(state);
+		const profession = getCurrentProfessionId(state);
+		const professionVariant = getCurrentProfessionVariantId(state);
 		const raceDiff = getDiffCost(dependent, race, id);
 		const professionDiff = getDiffCost(dependent, profession);
 		const professionVariantDiff = getDiffCost(dependent, professionVariant);
 		const cost = raceDiff + professionDiff + professionVariantDiff;
-		dispatch({
+		dispatch<SelectRaceAction>({
 			type: ActionTypes.SELECT_RACE,
 			payload: {
 				id,
 				variantId,
 				cost
 			}
-		} as SelectRaceAction);
+		});
 	};
 }
 
@@ -39,17 +44,20 @@ export interface SetRaceVariantAction {
 
 export function setRaceVariant(id: string): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { profession, professionVariant } } = getState().currentHero.present;
+		const state = getState();
+		const dependent = getDependentInstances(state);
+		const profession = getCurrentProfessionId(state);
+		const professionVariant = getCurrentProfessionVariantId(state);
 		const professionDiff = getDiffCost(dependent, profession);
 		const professionVariantDiff = getDiffCost(dependent, professionVariant);
 		const cost = professionDiff + professionVariantDiff;
-		dispatch({
+		dispatch<SetRaceVariantAction>({
 			type: ActionTypes.SET_RACE_VARIANT,
 			payload: {
 				id,
 				cost
 			}
-		} as SetRaceVariantAction);
+		});
 	};
 }
 

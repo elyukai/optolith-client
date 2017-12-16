@@ -14,7 +14,17 @@ export const getLocaleId = (state: AppState) => state.locale.id;
 export const getLocaleType = (state: AppState) => state.locale.type;
 export const getBooks = (state: AppState) => state.locale.books;
 
+export const getCurrentHeroId = (state: AppState) => state.herolist.currentId;
+export const getHeroes = (state: AppState) => state.herolist.heroes;
+export const getUsers = (state: AppState) => state.herolist.users;
+
 export const getCurrentHeroPresent = (state: AppState) => state.currentHero.present;
+export const getCurrentHeroPast = (state: AppState) => state.currentHero.past;
+export const getCurrentHeroFuture = (state: AppState) => state.currentHero.future;
+
+export const getAdventurePoints = (state: AppState) => state.currentHero.present.ap;
+export const getTotalAdventurePoints = (state: AppState) => state.currentHero.present.ap.total;
+export const getAdventurePointsSpent = (state: AppState) => state.currentHero.present.ap.spent;
 
 export const getDependentInstances = (state: AppState) => state.currentHero.present.dependent;
 export const getAdvantages = (state: AppState) => state.currentHero.present.dependent.advantages;
@@ -63,12 +73,13 @@ export const getPermanentKarmaPoints = (state: AppState) => state.currentHero.pr
 export const getPhase = (state: AppState) => state.currentHero.present.phase;
 
 export const getElState = (state: AppState) => state.currentHero.present.el;
-export const getStartId = (state: AppState) => state.currentHero.present.el.startId;
+export const getExperienceLevelStartId = (state: AppState) => state.currentHero.present.el.startId;
 
 export const getItemEditorInstance = (state: AppState) => state.currentHero.present.equipment.itemEditor;
 export const getIsItemCreation = (state: AppState) => state.currentHero.present.equipment.isItemCreation;
 export const getArmorZonesEditorInstance = (state: AppState) => state.currentHero.present.equipment.armorZoneEditor;
 export const getIsArmorZonesCreation = (state: AppState) => state.currentHero.present.equipment.isArmorZonesCreation;
+export const getPetsState = (state: AppState) => state.currentHero.present.pets;
 
 export const getCurrentAlert = (state: AppState) => state.ui.alerts;
 export const getUpdateDownloadProgress = (state: AppState) => state.ui.subwindows.updateDownloadProgress;

@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getCurrentProfessionVariantId, getDependentInstances } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { getDiffCost } from '../utils/RCPUtils';
 
@@ -12,14 +13,16 @@ export interface SelectProfessionVariantAction {
 
 export function _selectProfessionVariant(id?: string): AsyncAction {
 	return (dispatch, getState) => {
-		const { dependent, rcp: { professionVariant } } = getState().currentHero.present;
+		const state = getState();
+		const dependent = getDependentInstances(state);
+		const professionVariant = getCurrentProfessionVariantId(state);
 		const cost = getDiffCost(dependent, professionVariant, id);
-		dispatch({
+		dispatch<SelectProfessionVariantAction>({
 			type: ActionTypes.SELECT_PROFESSION_VARIANT,
 			payload: {
 				id,
 				cost
 			}
-		} as SelectProfessionVariantAction);
+		});
 	};
 }

@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getAdventurePoints, getLocaleMessages, getSkills } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { TalentInstance } from '../types/data.d';
 import { _translate } from '../utils/I18n';
@@ -19,22 +19,24 @@ export interface AddTalentPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(get(state.currentHero.present.dependent, id) as TalentInstance, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(getSkills(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
-		if (!cost && messages) {
-			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
-			}));
-		}
-		else {
-			dispatch({
-				type: ActionTypes.ADD_TALENT_POINT,
-				payload: {
-					id,
-					cost
-				}
-			} as AddTalentPointAction);
+		if (messages) {
+			if (!cost) {
+				dispatch(addAlert({
+					title: _translate(messages, 'notenoughap.title'),
+					message: _translate(messages, 'notenoughap.content'),
+				}));
+			}
+			else {
+				dispatch<AddTalentPointAction>({
+					type: ActionTypes.ADD_TALENT_POINT,
+					payload: {
+						id,
+						cost
+					}
+				});
+			}
 		}
 	};
 }
@@ -49,14 +51,14 @@ export interface RemoveTalentPointAction {
 
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
-		const cost = getDecreaseCost(get(getState().currentHero.present.dependent, id) as TalentInstance);
-		dispatch({
+		const cost = getDecreaseCost(getSkills(getState()).get(id)!);
+		dispatch<RemoveTalentPointAction>({
 			type: ActionTypes.REMOVE_TALENT_POINT,
 			payload: {
 				id,
 				cost
 			}
-		} as RemoveTalentPointAction);
+		});
 	};
 }
 

@@ -8,6 +8,7 @@ import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
 import { requestHeroesSave, requestHeroExport, requestSaveAll } from './IOActions';
 import { _setTab } from './LocationActions';
+import { getExperienceLevelStartId, getCurrentHeroId, getCurrentHeroPast, getLocaleMessages, getHeroes } from '../selectors/stateSelectors';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -52,16 +53,20 @@ export interface CreateHeroAction {
 
 export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncAction {
 	return (dispatch, getState) => {
-		const { currentHero: { past, present: { el: { startId }} }, herolist: { currentId }, locale: { messages }} = getState();
+		const state = getState();
+		const past = getCurrentHeroPast(state);
+		const startId = getExperienceLevelStartId(state);
+		const currentId = getCurrentHeroId(state);
+		const messages = getLocaleMessages(state);
 		if (typeof startId !== 'string' || typeof startId === 'string' && typeof currentId === 'string' && past.length === 0) {
-			dispatch({
+			dispatch<CreateHeroAction>({
 				type: ActionTypes.CREATE_HERO,
 				payload: {
 					name,
 					sex,
 					el
 				}
-			} as CreateHeroAction);
+			});
 		}
 		else if (messages) {
 			dispatch(addAlert({
@@ -93,14 +98,14 @@ export interface LoadHeroAction {
 
 export function _loadHero(id: string): AsyncAction {
 	return (dispatch, getState) => {
-		const data = getState().herolist.heroes.get(id);
+		const data = getHeroes(getState()).get(id);
 		if (data) {
-			dispatch({
+			dispatch<LoadHeroAction>({
 				type: ActionTypes.LOAD_HERO,
 				payload: {
 					data
 				}
-			} as LoadHeroAction);
+			});
 		}
 		return;
 	};
@@ -108,7 +113,10 @@ export function _loadHero(id: string): AsyncAction {
 
 export function loadHeroValidate(id: string): AsyncAction {
 	return (dispatch, getState) => {
-		const { currentHero: { past, present: { el: { startId }} }, locale: { messages }} = getState();
+		const state = getState();
+		const past = getCurrentHeroPast(state);
+		const startId = getExperienceLevelStartId(state);
+		const messages = getLocaleMessages(state);
 		if (id && (past.length === 0 || !startId)) {
 			const action = _loadHero(id);
 			if (action) {
@@ -116,11 +124,12 @@ export function loadHeroValidate(id: string): AsyncAction {
 			}
 		}
 		else if (id && messages) {
+			// @ts-ignore
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
 				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
 				confirm: [
-					_loadHero(id) as any,
+					_loadHero(id),
 					_setTab('profile')
 				],
 				confirmYesNo: true
@@ -180,17 +189,19 @@ export function exportHeroValidate(id: string): AsyncAction {
 
 export function deleteHeroValidate(id: string | undefined): AsyncAction {
 	return (dispatch, getState) => {
-		const { herolist: { heroes }, locale: { messages } } = getState();
+		const state = getState();
+		const heroes = getHeroes(state);
+		const messages = getLocaleMessages(state);
 		const hero = id && heroes.get(id);
 		if (id && hero && messages) {
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.delete.title', hero.name),
 				message: _translate(messages, 'heroes.warnings.delete.message'),
 				confirm: [
-					((dispatch: any) => {
+					(dispatch => {
 						dispatch(_deleteHero(id));
 						dispatch(requestHeroesSave());
-					}) as any,
+					}) as AsyncAction,
 					undefined
 				],
 				confirmYesNo: true

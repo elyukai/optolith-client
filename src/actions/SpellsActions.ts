@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getAdventurePoints, getLocaleMessages, getSpells } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
@@ -19,9 +19,9 @@ export interface ActivateSpellAction {
 export function _addToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = state.currentHero.present.dependent.spells.get(id)!;
+		const entry = getSpells(state).get(id)!;
 		const cost = getIncreaseAP(entry.ic);
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -30,13 +30,13 @@ export function _addToList(id: string): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<ActivateSpellAction>({
 				type: ActionTypes.ACTIVATE_SPELL,
 				payload: {
 					id,
 					cost
 				}
-			} as ActivateSpellAction);
+			});
 		}
 	};
 }
@@ -51,7 +51,7 @@ export interface ActivateCantripAction {
 export function _addCantripToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(1, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(1, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -60,12 +60,12 @@ export function _addCantripToList(id: string): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<ActivateCantripAction>({
 				type: ActionTypes.ACTIVATE_CANTRIP,
 				payload: {
 					id
 				}
-			} as ActivateCantripAction);
+			});
 		}
 	};
 }
@@ -81,15 +81,15 @@ export interface DeactivateSpellAction {
 export function _removeFromList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = state.currentHero.present.dependent.spells.get(id)!;
+		const entry = getSpells(state).get(id)!;
 		const cost = getDecreaseAP(entry.ic);
-		dispatch({
+		dispatch<DeactivateSpellAction>({
 			type: ActionTypes.DEACTIVATE_SPELL,
 			payload: {
 				id,
 				cost
 			}
-		} as DeactivateSpellAction);
+		});
 	};
 }
 
@@ -120,22 +120,24 @@ export interface AddSpellPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(state.currentHero.present.dependent.spells.get(id)!, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(getSpells(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
-		if (!cost && messages) {
-			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
-			}));
-		}
-		else {
-			dispatch({
-				type: ActionTypes.ADD_SPELL_POINT,
-				payload: {
-					id,
-					cost
-				}
-			} as AddSpellPointAction);
+		if (messages) {
+			if (!cost) {
+				dispatch(addAlert({
+					title: _translate(messages, 'notenoughap.title'),
+					message: _translate(messages, 'notenoughap.content'),
+				}));
+			}
+			else {
+				dispatch<AddSpellPointAction>({
+					type: ActionTypes.ADD_SPELL_POINT,
+					payload: {
+						id,
+						cost
+					}
+				});
+			}
 		}
 	};
 }
@@ -151,14 +153,14 @@ export interface RemoveSpellPointAction {
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseCost(state.currentHero.present.dependent.spells.get(id)!);
-		dispatch({
+		const cost = getDecreaseCost(getSpells(state).get(id)!);
+		dispatch<RemoveSpellPointAction>({
 			type: ActionTypes.REMOVE_SPELL_POINT,
 			payload: {
 				id,
 				cost
 			}
-		} as RemoveSpellPointAction);
+		});
 	};
 }
 

@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
+import { getLocaleMessages, getLiturgicalChants, getAdventurePoints } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
@@ -19,9 +19,9 @@ export interface ActivateLiturgyAction {
 export function _addToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = state.currentHero.present.dependent.liturgies.get(id)!;
+		const entry = getLiturgicalChants(state).get(id)!;
 		const cost = getIncreaseAP(entry.ic);
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -30,13 +30,13 @@ export function _addToList(id: string): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<ActivateLiturgyAction>({
 				type: ActionTypes.ACTIVATE_LITURGY,
 				payload: {
 					id,
 					cost
 				}
-			} as ActivateLiturgyAction);
+			});
 		}
 	};
 }
@@ -51,7 +51,7 @@ export interface ActivateBlessingAction {
 export function _addBlessingToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(1, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(1, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -60,12 +60,12 @@ export function _addBlessingToList(id: string): AsyncAction {
 			}));
 		}
 		else {
-			dispatch({
+			dispatch<ActivateBlessingAction>({
 				type: ActionTypes.ACTIVATE_BLESSING,
 				payload: {
 					id
 				}
-			} as ActivateBlessingAction);
+			});
 		}
 	};
 }
@@ -81,7 +81,7 @@ export interface DeactivateLiturgyAction {
 export function _removeFromList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const entry = state.currentHero.present.dependent.liturgies.get(id)!;
+		const entry = getLiturgicalChants(state).get(id)!;
 		const cost = getDecreaseAP(entry.ic);
 		dispatch({
 			type: ActionTypes.DEACTIVATE_LITURGY,
@@ -120,22 +120,24 @@ export interface AddLiturgyPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(state.currentHero.present.dependent.liturgies.get(id)!, state.currentHero.present.ap, isInCharacterCreation(state));
+		const cost = getIncreaseCost(getLiturgicalChants(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
-		if (!cost && messages) {
-			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
-			}));
-		}
-		else {
-			dispatch({
-				type: ActionTypes.ADD_LITURGY_POINT,
-				payload: {
-					id,
-					cost
-				}
-			} as AddLiturgyPointAction);
+		if (messages) {
+			if (!cost) {
+				dispatch(addAlert({
+					title: _translate(messages, 'notenoughap.title'),
+					message: _translate(messages, 'notenoughap.content'),
+				}));
+			}
+			else {
+				dispatch<AddLiturgyPointAction>({
+					type: ActionTypes.ADD_LITURGY_POINT,
+					payload: {
+						id,
+						cost
+					}
+				});
+			}
 		}
 	};
 }
@@ -151,7 +153,7 @@ export interface RemoveLiturgyPointAction {
 export function _removePoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getDecreaseCost(state.currentHero.present.dependent.liturgies.get(id)!);
+		const cost = getDecreaseCost(getLiturgicalChants(state).get(id)!);
 		dispatch({
 			type: ActionTypes.REMOVE_LITURGY_POINT,
 			payload: {

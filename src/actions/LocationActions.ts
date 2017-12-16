@@ -1,5 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { getCurrentAlert } from '../selectors/stateSelectors';
+import { isDialogOpen } from '../selectors/subwindowsSelectors';
 import { AsyncAction } from '../types/actions';
 import { TabId } from '../utils/LocationUtils';
 
@@ -21,8 +21,8 @@ export function _setTab(tab: TabId): SetTabAction {
 
 export function showAbout(): AsyncAction {
 	return (dispatch, getState) => {
-		const alert = getCurrentAlert(getState());
-		if (alert === null) {
+		const alert = isDialogOpen(getState());
+		if (!alert) {
 			dispatch(_setTab('imprint'));
 		}
 	};
