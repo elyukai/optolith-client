@@ -287,6 +287,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             requires.push(...professionVariant.requires);
           }
 
+          calculatedActivatableCost -= race.automaticAdvantagesCost[0];
+
           // Test case
           if (profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0) !== calculatedActivatableCost) {
             alert(`Calculated different AP value. Do not continue character creation with this profession! ${profession && profession.id} ${professionVariant && professionVariant.id} ${profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0)} ${calculatedActivatableCost}`);
