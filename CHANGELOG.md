@@ -1,3 +1,22 @@
+# 0.51.7
+
+- Tweaked some colors to improve UI readability.
+- Error messages (the ones that contain "error" and "component stack") can be selected and thus copied.
+- After creating a hero (temporary name, sex, experience level) you will be in the "rules" tab, which is a main tab in this phase of character creation. You can select race, culture and profession by switching to the respective tab.
+- You can now check for updates manually via the Settings window.
+- The wiki, which is shown if you switch to the "wiki" tab, is now complete - regarding functionality. Contents still vary depending on the selected language.
+- If race Elf is selected the app will no longer warn you to not use the selected profession because the calculated AP would be incorrect.
+- *Cendrash Style* is fixed and can be added to your character(s) again.
+
+## German Specific
+
+- Zone armor tab will only be shown if *Aventuria Armory* or *All rule books* are activated in "rules" tab.
+- ENC is now correctly calculated for zone armor.
+
+## English Specific
+
+- App will no longer crash all the time.
+
 # 0.51.6
 
 - Added sort option to inventory to sort by weight (in descending order).
