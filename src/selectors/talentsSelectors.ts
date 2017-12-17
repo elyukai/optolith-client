@@ -31,8 +31,8 @@ export const getTalentsRating = createSelector(
 		const rating: ToListById<string> = {};
 
 		if (culture) {
-			culture.typicalTalents.forEach(e => { rating[e] = 'TYP'; });
-			culture.untypicalTalents.forEach(e => { rating[e] = 'UNTYP'; });
+			culture.commonSkills.forEach(e => { rating[e] = 'TYP'; });
+			culture.uncommonSkills.forEach(e => { rating[e] = 'UNTYP'; });
 		}
 
 		return rating;

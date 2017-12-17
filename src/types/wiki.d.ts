@@ -112,10 +112,10 @@ export interface RaceVariant {
 export interface Culture {
 	readonly id: string;
 	readonly name: string;
-	readonly ap: number;
+	readonly culturalPackageAdventurePoints: number;
 	readonly languages: number[];
 	readonly scripts: number[];
-	readonly socialTiers: number[];
+	readonly socialStatus: number[];
 	readonly areaKnowledge: string;
 	readonly areaKnowledgeShort: string;
 	readonly commonProfessions: CommonProfession[];
@@ -132,7 +132,7 @@ export interface Culture {
 	readonly uncommonDisadvantagesText?: string;
 	readonly commonSkills: string[];
 	readonly uncommonSkills: string[];
-	readonly skills: IncreaseSkill[];
+	readonly culturalPackageSkills: IncreaseSkill[];
 	readonly category: Categories.CULTURES;
 	readonly src: SourceLink[];
 	/**

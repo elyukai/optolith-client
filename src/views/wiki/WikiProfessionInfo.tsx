@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
 import { ATTRIBUTES } from '../../constants/Categories';
 import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection } from '../../types/data.d';
-import { IncreasableId, Profession, UIMessages } from '../../types/view.d';
+import { Increasable, IncreasableId, Profession, UIMessages } from '../../types/view.d';
 import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, Spell } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -81,41 +81,41 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 					].join(', ') || '-'}
 				</WikiProperty>
 				<WikiProperty locale={locale} title="info.skills" />
-				<p className="skill-group">
-					<span>{_translate(locale, 'skills.view.groups')[0]}</span>
-					<span>{currentObject.physicalSkills.length > 0 ? [
-						...sortStrings(currentObject.physicalSkills.map(e => `${e.name} ${e.value}`), locale.id),
-						...(skillsSelectionString && skillsSelection!.gr === 1 ? [skillsSelectionString] : [])
-					].join(', ') : '-'}</span>
-				</p>
-				<p className="skill-group">
-					<span>{_translate(locale, 'skills.view.groups')[1]}</span>
-					<span>{currentObject.socialSkills.length > 0 ? [
-						...sortStrings(currentObject.socialSkills.map(e => `${e.name} ${e.value}`), locale.id),
-						...(skillsSelectionString && skillsSelection!.gr === 2 ? [skillsSelectionString] : [])
-					].join(', ') : '-'}</span>
-				</p>
-				<p className="skill-group">
-					<span>{_translate(locale, 'skills.view.groups')[2]}</span>
-					<span>{currentObject.natureSkills.length > 0 ? [
-						...sortStrings(currentObject.natureSkills.map(e => `${e.name} ${e.value}`), locale.id),
-						...(skillsSelectionString && skillsSelection!.gr === 3 ? [skillsSelectionString] : [])
-					].join(', ') : '-'}</span>
-				</p>
-				<p className="skill-group">
-					<span>{_translate(locale, 'skills.view.groups')[3]}</span>
-					<span>{currentObject.knowledgeSkills.length > 0 ? [
-						...sortStrings(currentObject.knowledgeSkills.map(e => `${e.name} ${e.value}`), locale.id),
-						...(skillsSelectionString && skillsSelection!.gr === 4 ? [skillsSelectionString] : [])
-					].join(', ') : '-'}</span>
-				</p>
-				<p className="skill-group">
-					<span>{_translate(locale, 'skills.view.groups')[4]}</span>
-					<span>{currentObject.craftSkills.length > 0 ? [
-						...sortStrings(currentObject.craftSkills.map(e => `${e.name} ${e.value}`), locale.id),
-						...(skillsSelectionString && skillsSelection!.gr === 5 ? [skillsSelectionString] : [])
-					].join(', ') : '-'}</span>
-				</p>
+				<Skills
+					groupIndex={0}
+					list={currentObject.physicalSkills}
+					locale={locale}
+					skillsSelection={skillsSelection}
+					skillsSelectionString={skillsSelectionString}
+					/>
+				<Skills
+					groupIndex={1}
+					list={currentObject.socialSkills}
+					locale={locale}
+					skillsSelection={skillsSelection}
+					skillsSelectionString={skillsSelectionString}
+					/>
+				<Skills
+					groupIndex={2}
+					list={currentObject.natureSkills}
+					locale={locale}
+					skillsSelection={skillsSelection}
+					skillsSelectionString={skillsSelectionString}
+					/>
+				<Skills
+					groupIndex={3}
+					list={currentObject.knowledgeSkills}
+					locale={locale}
+					skillsSelection={skillsSelection}
+					skillsSelectionString={skillsSelectionString}
+					/>
+				<Skills
+					groupIndex={4}
+					list={currentObject.craftSkills}
+					locale={locale}
+					skillsSelection={skillsSelection}
+					skillsSelectionString={skillsSelectionString}
+					/>
 				{spellsArray.length > 0 && <WikiProperty locale={locale} title="info.spells">{spellsArray.join(', ')}</WikiProperty>}
 				{liturgicalChantsArray.length > 0 && <WikiProperty locale={locale} title="info.liturgicalchants">
 					{liturgicalChantsArray.join(', ')}
@@ -480,4 +480,23 @@ function combineSpells(list: IncreasableId[], allSpells: Map<string, Spell>): (I
 		...combinedSpells,
 		...singleSpells
 	];
+}
+
+function Skills(props: {
+	locale: UIMessages;
+	groupIndex: 0 | 1 | 2 | 3 | 4;
+	list: Increasable[];
+	skillsSelectionString: string | undefined;
+	skillsSelection: SkillsSelection | undefined
+}) {
+	const { groupIndex, list, locale, skillsSelection, skillsSelectionString} = props;
+	return (
+		<p className="skill-group">
+			<span>{_translate(locale, 'skills.view.groups')[groupIndex]}</span>
+			<span>{list.length > 0 ? [
+				...sortStrings(list.map(e => `${e.name} ${e.value}`), locale.id),
+				...(skillsSelectionString && skillsSelection && skillsSelection.gr === 1 ? [skillsSelectionString] : [])
+			].join(', ') : '-'}</span>
+		</p>
+	);
 }

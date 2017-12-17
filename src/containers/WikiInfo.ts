@@ -1,10 +1,11 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
-import { getDependentInstances, getSex, getWiki, getWikiAttributes, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiItemTemplates, getWikiLiturgicalChants, getWikiRaces, getWikiSkills, getWikiSpecialAbilities, getWikiSpells } from '../selectors/stateSelectors';
+import { getDependentInstances, getSex, getWiki, getWikiAttributes, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiItemTemplates, getWikiLiturgicalChants, getWikiRaces, getWikiSkills, getWikiSpecialAbilities, getWikiSpells, getWikiRaceVariants } from '../selectors/stateSelectors';
 import { getAllWikiEntries } from '../selectors/wikiSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps, WikiInfoStateProps } from '../views/wiki/WikiInfo';
+import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../views/wiki/WikiInfo';
+import { WikiInfoContentStateProps } from '../views/wiki/WikiInfoContent';
 
 function mapStateToProps(state: AppState) {
 	return {
@@ -16,6 +17,7 @@ function mapStateToProps(state: AppState) {
 		dependent: getDependentInstances(state),
 		languages: mapGetToSlice(getWikiSpecialAbilities, 'SA_29')(state)!,
 		list: getAllWikiEntries(state),
+		raceVariants: getWikiRaceVariants(state),
 		races: getWikiRaces(state),
 		liturgicalChantExtensions: mapGetToSlice(getWikiSpecialAbilities, 'SA_663')(state),
 		liturgicalChants: getWikiLiturgicalChants(state),
@@ -30,4 +32,4 @@ function mapStateToProps(state: AppState) {
 	};
 }
 
-export const WikiInfoContainer = connect<WikiInfoStateProps, WikiInfoDispatchProps, WikiInfoOwnProps>(mapStateToProps)(WikiInfo);
+export const WikiInfoContainer = connect<WikiInfoContentStateProps, WikiInfoDispatchProps, WikiInfoOwnProps>(mapStateToProps)(WikiInfo);

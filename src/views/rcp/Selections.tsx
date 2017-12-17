@@ -5,9 +5,9 @@ import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { getAllByGroupFromSlice } from '../../selectors/dependentInstancesSelectors';
-import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CultureInstance, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionInstance, ProfessionSelection, ProfessionSelectionIds, ProfessionVariantInstance, RaceInstance, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
+import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
-import { ProfessionVariantSelection } from '../../types/wiki';
+import { Culture, Profession, ProfessionVariant, ProfessionVariantSelection, Race } from '../../types/wiki';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -27,10 +27,10 @@ export interface SelectionsStateProps {
 	attributes: Map<string, AttributeInstance>;
 	cantrips: Map<string, CantripInstance>;
 	combatTechniques: Map<string, CombatTechniqueInstance>;
-	currentRace: RaceInstance;
-	currentCulture: CultureInstance;
-	currentProfession: ProfessionInstance;
-	currentProfessionVariant: ProfessionVariantInstance | undefined;
+	currentRace: Race;
+	currentCulture: Culture;
+	currentProfession: Profession;
+	currentProfessionVariant: ProfessionVariant | undefined;
 	skills: Map<string, TalentInstance>;
 	spells: Map<string, SpellInstance>;
 	specialAbilities: Map<string, SpecialAbilityInstance>;
@@ -441,7 +441,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 						})} />
 					<h3>{_translate(locale, 'titlebar.tabs.culture')}</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-						{_translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.ap} AP)
+						{_translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.culturalPackageAdventurePoints} AP)
 					</Checkbox>
 					{
 						selectLang && (

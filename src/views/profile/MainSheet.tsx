@@ -7,6 +7,7 @@ import { ProfileState } from '../../reducers/profile';
 import * as Data from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import * as View from '../../types/view.d';
+import * as Wiki from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
 import { ActivatableTextList } from './ActivatableTextList';
 import { MainSheetAttributes } from './MainSheetAttributes';
@@ -18,17 +19,17 @@ export interface MainSheetProps {
 	advantagesActive: Data.ActiveViewObject[];
 	ap: AdventurePointsState;
 	attributes: View.Attribute[];
-	culture: Data.CultureInstance | undefined;
+	culture: Wiki.Culture | undefined;
 	derivedCharacteristics: Data.SecondaryAttribute[];
 	disadvantagesActive: Data.ActiveViewObject[];
 	el: Data.ExperienceLevel;
 	fatePointsModifier: number;
 	generalsaActive: (string | Data.ActiveViewObject)[];
 	locale: UIMessages;
-	profession: Data.ProfessionInstance | undefined;
-	professionVariant: Data.ProfessionVariantInstance | undefined;
+	profession: Wiki.Profession | undefined;
+	professionVariant: Wiki.ProfessionVariant | undefined;
 	profile: ProfileState;
-	race: Data.RaceInstance | undefined;
+	race: Wiki.Race | undefined;
 	printToPDF(): void;
 }
 

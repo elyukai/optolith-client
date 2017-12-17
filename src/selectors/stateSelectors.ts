@@ -3,7 +3,7 @@ import { UIMessages } from '../utils/I18n';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
-export const getWikiFilter = (state: AppState) => state.ui.wiki.filter;
+export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
 export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
 export const getWikiCategory1 = (state: AppState) => state.ui.wiki.category1;
 export const getWikiCategory2 = (state: AppState) => state.ui.wiki.category2;
@@ -49,6 +49,7 @@ export const getMagicalStyleDependencies = (state: AppState) => state.currentHer
 export const getProfile = (state: AppState) => state.currentHero.present.profile;
 export const getCultureAreaKnowledge = (state: AppState) => state.currentHero.present.profile.cultureAreaKnowledge;
 export const getSex = (state: AppState) => state.currentHero.present.profile.sex;
+export const getSize = (state: AppState) => state.currentHero.present.profile.size;
 
 export const getRules = (state: AppState) => state.currentHero.present.rules;
 export const getAttributeValueLimit = (state: AppState) => state.currentHero.present.rules.attributeValueLimit;

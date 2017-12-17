@@ -4,8 +4,8 @@ import * as Categories from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
 import { ActivatableInstance, SecondaryAttribute } from '../../types/data.d';
-import { Culture, Profession, Race as RaceView, UIMessages } from '../../types/view.d';
-import { Attribute, Blessing, Book, Cantrip, CombatTechnique, ItemTemplate, LiturgicalChant, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { Profession, UIMessages } from '../../types/view.d';
+import { Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../types/wiki';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
@@ -19,7 +19,7 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = ActivatableInstance | Blessing | Cantrip | CombatTechnique | Culture | ItemTemplate | LiturgicalChant | Profession | RaceView | Skill | Spell;
+type Instance = ActivatableInstance | Blessing | Cantrip | CombatTechnique | Culture | ItemTemplate | LiturgicalChant | Profession | Race | Skill | Spell;
 
 export interface WikiInfoContentOwnProps {
 	currentId?: string;
@@ -38,6 +38,8 @@ export interface WikiInfoContentStateProps {
 	liturgicalChantExtensions: SpecialAbility | undefined;
 	liturgicalChants: Map<string, LiturgicalChant>;
 	list: Instance[];
+	professionVariants: Map<string, ProfessionVariant>;
+	raceVariants: Map<string, RaceVariant>;
 	races: Map<string, Race>;
 	scripts: SpecialAbility;
 	sex: 'm' | 'f' | undefined;

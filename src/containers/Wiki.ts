@@ -2,17 +2,30 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import { setWikiCategory1, setWikiCategory2, setWikiFilter, setWikiFilterAll } from '../actions/WikiActions';
 import { AppState } from '../reducers/app';
-import { getSex, getSpecialAbilities, getWikiCategory1, getWikiCategory2, getWikiFilter, getWikiFilterAll } from '../selectors/stateSelectors';
+import { getSex, getWikiCategory1, getWikiCategory2, getWikiFilterAll, getWikiFilterText } from '../selectors/stateSelectors';
+import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells } from '../selectors/wikiSelectors';
 import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../views/wiki/Wiki';
 
 function mapStateToProps(state: AppState) {
 	return {
-		filterText: getWikiFilter(state),
+		filterText: getWikiFilterText(state),
 		filterAllText: getWikiFilterAll(state),
 		category1: getWikiCategory1(state),
 		category2: getWikiCategory2(state),
-		professions: [...getSpecialAbilities(state).values()],
 		sex: getSex(state)!,
+		races: getPreparedRaces(state),
+		cultures: getPreparedCultures(state),
+		professions: getPreparedProfessions(state),
+		advantages: getPreparedAdvantages(state),
+		disadvantages: getPreparedDisadvantages(state),
+		skills: getPreparedSkills(state),
+		combatTechniques: getPreparedCombatTechniques(state),
+		specialAbilities: getPreparedSpecialAbilities(state),
+		spells: getPreparedSpells(state),
+		cantrips: getPreparedCantrips(state),
+		liturgicalChants: getPreparedLiturgicalChants(state),
+		blessings: getPreparedBlessings(state),
+		itemTemplates: getPreparedItemTemplates(state),
 	};
 }
 

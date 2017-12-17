@@ -1,6 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages, getLiturgicalChants, getAdventurePoints } from '../selectors/stateSelectors';
+import { getAdventurePoints, getLiturgicalChants, getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';

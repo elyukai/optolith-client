@@ -7,42 +7,42 @@ import { isRequiringIncreasable, validateProfession } from '../utils/Requirement
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getCultures, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessions, getProfessionVariants, getRaces, getRaceVariants, getSex, getSkills } from './stateSelectors';
+import { getCultures, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessions, getProfessionVariants, getSex, getSkills, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getCurrentRace = createSelector(
-	getRaces,
+	getWikiRaces,
 	getCurrentRaceId,
 	(races, raceId) => raceId ? races.get(raceId) : undefined
 );
 
 export const getCurrentRaceVariant = createSelector(
-	getRaceVariants,
+	getWikiRaceVariants,
 	getCurrentRaceVariantId,
 	(raceVariants, raceVariantId) => raceVariantId ? raceVariants.get(raceVariantId) : undefined
 );
 
 export const getCurrentCulture = createSelector(
-	getCultures,
+	getWikiCultures,
 	getCurrentCultureId,
 	(cultures, cultureId) => cultureId ? cultures.get(cultureId) : undefined
 );
 
 export const getCurrentProfession = createSelector(
-	getProfessions,
+	getWikiProfessions,
 	getCurrentProfessionId,
 	(professions, professionId) => professionId ? professions.get(professionId) : undefined
 );
 
 export const getCurrentProfessionVariant = createSelector(
-	getProfessionVariants,
+	getWikiProfessionVariants,
 	getCurrentProfessionVariantId,
 	(professionVariants, professionVariantId) => professionVariantId ? professionVariants.get(professionVariantId) : undefined
 );
 
 export const getAllRaces = createSelector(
-	getRaces,
-	getRaceVariants,
+	getWikiRaces,
+	getWikiRaceVariants,
 	getCultures,
 	(races, raceVariants, cultures) => {
 		const list: Race[] = [];
@@ -209,6 +209,14 @@ export const getFilteredCultures = createSelector(
 	}
 );
 
+interface SkillGroupLists {
+	physicalSkills: Increasable[];
+	socialSkills: Increasable[];
+	natureSkills: Increasable[];
+	knowledgeSkills: Increasable[];
+	craftSkills: Increasable[];
+}
+
 export const getAllProfessions = createSelector(
 	getProfessions,
 	getProfessionVariants,
@@ -244,12 +252,40 @@ export const getAllProfessions = createSelector(
 				subgr,
 			} = profession;
 
-			const skills: Increasable[][] = [[], [], [], [], []];
-
-			for (const [id, value] of talents) {
+			const {
+				physicalSkills,
+				socialSkills,
+				natureSkills,
+				knowledgeSkills,
+				craftSkills,
+			} = talents.reduce<SkillGroupLists>((obj, [id, value]) => {
 				const { name, gr } = skillsState.get(id)!;
-				skills[gr - 1].push({ name, value });
-			}
+
+				let key: keyof SkillGroupLists = 'craftSkills';
+				if (gr === 1) {
+					key = 'physicalSkills';
+				}
+				else if (gr === 2) {
+					key = 'socialSkills';
+				}
+				else if (gr === 3) {
+					key = 'natureSkills';
+				}
+				else if (gr === 4) {
+					key = 'knowledgeSkills';
+				}
+
+				return {
+					...obj,
+					[key]: [...obj[key], { name, value }],
+				};
+			}, {
+				physicalSkills: [],
+				socialSkills: [],
+				natureSkills: [],
+				knowledgeSkills: [],
+				craftSkills: [],
+			});
 
 			const filteredVariants = variants.filter(e => professionVariants.has(e)).map(v => professionVariants.get(v)!);
 
@@ -283,11 +319,11 @@ export const getAllProfessions = createSelector(
 					return e;
 				}),
 				combatTechniques: combatTechniques.map(([id, value]) => ({ name: combatTechniquesState.get(id)!.name, value })),
-				physicalSkills: skills[0],
-				socialSkills: skills[1],
-				natureSkills: skills[2],
-				knowledgeSkills: skills[3],
-				craftSkills: skills[4],
+				physicalSkills,
+				socialSkills,
+				natureSkills,
+				knowledgeSkills,
+				craftSkills,
 				spells: spells.map(([id, value]) => ({ id, value })),
 				liturgicalChants: liturgies.map(([id, value]) => ({ id, value })),
 				blessings,
@@ -385,7 +421,7 @@ export const getCommonProfessions = createSelector(
 		};
 
 		const filterProfessionExtended = (e: Profession) => {
-			const typicalList = currentCulture!.typicalProfessions[e.gr - 1];
+			const typicalList = currentCulture!.commonProfessions[e.gr - 1];
 			const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? (typicalList === true && isEntryFromCoreBook(e)) : typicalList.list.includes(e.subgr) ? (typicalList.list.includes(e.subgr) !== typicalList.reverse && isEntryFromCoreBook(e)) : typicalList.reverse === true ? !typicalList.list.includes(e.id) && isEntryFromCoreBook(e) : typicalList.list.includes(e.id));
 			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
 			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;

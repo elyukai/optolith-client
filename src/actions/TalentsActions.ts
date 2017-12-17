@@ -1,9 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAdventurePoints, getLocaleMessages, getSkills } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { TalentInstance } from '../types/data.d';
 import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';

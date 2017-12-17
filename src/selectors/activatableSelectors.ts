@@ -122,10 +122,10 @@ export const getAdvantagesRating = createSelector(
     if (race && culture && profession) {
       race.commonAdvantages.forEach(e => { rating[e] = 'TYP'; });
       race.uncommonAdvantages.forEach(e => { rating[e] = 'UNTYP'; });
-      culture.typicalAdvantages.forEach(e => { rating[e] = 'TYP'; });
-      culture.untypicalAdvantages.forEach(e => { rating[e] = 'UNTYP'; });
-      profession.typicalAdvantages.forEach(e => { rating[e] = 'TYP'; });
-      profession.untypicalAdvantages.forEach(e => { rating[e] = 'UNTYP'; });
+      culture.commonAdvantages.forEach(e => { rating[e] = 'TYP'; });
+      culture.uncommonAdvantages.forEach(e => { rating[e] = 'UNTYP'; });
+      profession.suggestedAdvantages.forEach(e => { rating[e] = 'TYP'; });
+      profession.unsuitableAdvantages.forEach(e => { rating[e] = 'UNTYP'; });
       race.stronglyRecommendedAdvantages.forEach(e => { rating[e] = 'IMP'; });
     }
 
@@ -143,10 +143,10 @@ export const getDisadvantagesRating = createSelector(
     if (race && culture && profession) {
       race.commonDisadvantages.forEach(e => { rating[e] = 'TYP'; });
       race.uncommonDisadvantages.forEach(e => { rating[e] = 'UNTYP'; });
-      culture.typicalDisadvantages.forEach(e => { rating[e] = 'TYP'; });
-      culture.untypicalDisadvantages.forEach(e => { rating[e] = 'UNTYP'; });
-      profession.typicalDisadvantages.forEach(e => { rating[e] = 'TYP'; });
-      profession.untypicalDisadvantages.forEach(e => { rating[e] = 'UNTYP'; });
+      culture.commonDisadvantages.forEach(e => { rating[e] = 'TYP'; });
+      culture.uncommonDisadvantages.forEach(e => { rating[e] = 'UNTYP'; });
+      profession.suggestedDisadvantages.forEach(e => { rating[e] = 'TYP'; });
+      profession.unsuitableDisadvantages.forEach(e => { rating[e] = 'UNTYP'; });
       race.stronglyRecommendedDisadvantages.forEach(e => { rating[e] = 'IMP'; });
     }
 

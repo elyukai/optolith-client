@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RaceInstance, SecondaryAttribute } from '../../types/data.d';
+import { SecondaryAttribute } from '../../types/data.d';
+import { Race } from '../../types/wiki';
 import { _translate, UIMessages } from '../../utils/I18n';
 import { MainSheetAttributesItem } from './MainSheetAttributesItem';
 import { MainSheetFatePoints } from './MainSheetFatePoints';
@@ -8,7 +9,7 @@ export interface MainSheetAttributesProps {
 	attributes: SecondaryAttribute[];
 	fatePointsModifier: number;
 	locale: UIMessages;
-	race: RaceInstance | undefined;
+	race: Race | undefined;
 }
 
 export function MainSheetAttributes(props: MainSheetAttributesProps) {

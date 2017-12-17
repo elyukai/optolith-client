@@ -1,36 +1,47 @@
 import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
-import { List } from '../../components/List';
-import { ListItem } from '../../components/ListItem';
-import { ListItemName } from '../../components/ListItemName';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { AdvantageInstance, DisadvantageInstance, SpecialAbilityInstance } from '../../types/data';
 import { UIMessages } from '../../types/ui.d';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { Blessing, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
+import { WikiList } from './WikiList';
 
 export interface WikiOwnProps {
 	locale: UIMessages;
 }
 
-export interface WikiStateProps {
+interface Lists {
+	races: Race[];
+	cultures: Culture[];
+	professions: Profession[];
+	advantages: AdvantageInstance[];
+	disadvantages: DisadvantageInstance[];
+	skills: Skill[];
+	combatTechniques: CombatTechnique[];
+	specialAbilities: SpecialAbilityInstance[];
+	spells: Spell[];
+	cantrips: Cantrip[];
+	liturgicalChants: LiturgicalChant[];
+	blessings: Blessing[];
+	itemTemplates: ItemTemplate[];
+}
+
+export interface WikiStateProps extends Lists {
 	filterText: string;
-	filterAllText: string;
 	category1: string | undefined;
 	category2: string | undefined;
-	professions: any[];
-	sex: 'm' | 'f';
 }
 
 export interface WikiDispatchProps {
 	setCategory1(category: string): void;
 	setCategory2(category: string): void;
 	setFilter(filterText: string): void;
-	setFilterAll(filterText: string): void;
 }
 
 export type WikiProps = WikiStateProps & WikiDispatchProps & WikiOwnProps;
@@ -45,58 +56,42 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as WikiState);
 
 	render() {
-		const { category1, category2, filterText, locale, setCategory1, setCategory2, setFilter, professions } = this.props;
+		const { category1, category2, filterText, locale, setCategory1, setCategory2, setFilter, ...other } = this.props;
 		const { infoId } = this.state;
+
+		const list: (Race | Culture | Profession | AdvantageInstance | DisadvantageInstance | Skill | CombatTechnique | SpecialAbilityInstance | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate)[] | undefined = typeof category1 === 'string' ? other[category1 as keyof Lists] : undefined;
+
 		return (
 			<Page id="wiki">
 				<Options>
 					<TextField
 						hint={_translate(locale, 'options.filtertext')}
-						onChange={e => setFilter(e.target.result)}
+						onChange={e => setFilter(e.target.value)}
 						value={filterText}
 						/>
 					<Dropdown
 						value={category1}
 						onChange={setCategory1}
 						options={[
-							{id: 'magic', name: _translate(locale, 'wiki.category.magic')}
+							{id: 'races', name: _translate(locale, 'charactersheet.main.race')},
+							{id: 'cultures', name: _translate(locale, 'charactersheet.main.culture')},
+							{id: 'professions', name: _translate(locale, 'charactersheet.main.profession')},
+							{id: 'advantages', name: _translate(locale, 'charactersheet.main.advantages')},
+							{id: 'disadvantages', name: _translate(locale, 'charactersheet.main.disadvantages')},
+							{id: 'skills', name: _translate(locale, 'charactersheet.gamestats.skills.title')},
+							{id: 'combatTechniques', name: _translate(locale, 'info.combattechniques')},
+							{id: 'specialAbilities', name: _translate(locale, 'info.specialabilities')},
+							{id: 'spells', name: _translate(locale, 'charactersheet.spells.title')},
+							{id: 'cantrips', name: _translate(locale, 'charactersheet.spells.cantrips.title')},
+							{id: 'liturgicalChants', name: _translate(locale, 'titlebar.tabs.liturgies')},
+							{id: 'blessings', name: _translate(locale, 'charactersheet.chants.blessings.title')},
+							{id: 'itemTemplates', name: _translate(locale, 'itemeditor.options.template')},
 						]}
 						/>
-					{category1 === 'magic' && (
-						<Dropdown
-							value={category2}
-							onChange={setCategory2}
-							options={sortObjects([
-								{id: 'spells', name: _translate(locale, 'wiki.category.spells')},
-								{id: 'rituals', name: _translate(locale, 'wiki.category.rituals')},
-								{id: 'cantrips', name: _translate(locale, 'wiki.category.cantrips')},
-								{id: 'curses', name: _translate(locale, 'wiki.category.curses')},
-								{id: 'elvenmagicalsongs', name: _translate(locale, 'wiki.category.elvenmagicalsongs')},
-								{id: 'magicalmelodies', name: _translate(locale, 'wiki.category.magicalmelodies')},
-								{id: 'magicaldances', name: _translate(locale, 'wiki.category.magicaldances')}
-							].filter(e => typeof e.name === 'string'), locale.id)}
-							/>
-					)}
 				</Options>
 				<MainContent>
 					<Scroll>
-						<List>
-							{
-								professions.map(profession => {
-									const { name } = profession;
-
-									return (
-										<ListItem
-											key={profession.id}
-											active={profession.id === infoId}
-											onClick={() => this.showInfo(profession.id)}
-											>
-											<ListItemName name={name} />
-										</ListItem>
-									);
-								})
-							}
-						</List>
+						{list && <WikiList list={list} showInfo={this.showInfo} currentInfoId={infoId} />}
 					</Scroll>
 				</MainContent>
 				<WikiInfoContainer {...this.props} currentId={infoId}/>

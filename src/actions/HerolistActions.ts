@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getMessages } from '../selectors/localeSelectors';
+import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHeroes, getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { Hero } from '../types/data.d';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
@@ -8,7 +9,6 @@ import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
 import { requestHeroesSave, requestHeroExport, requestSaveAll } from './IOActions';
 import { _setTab } from './LocationActions';
-import { getExperienceLevelStartId, getCurrentHeroId, getCurrentHeroPast, getLocaleMessages, getHeroes } from '../selectors/stateSelectors';
 
 export interface SetHerolistSortOrderAction {
 	type: ActionTypes.SET_HEROLIST_SORT_ORDER;
@@ -194,6 +194,7 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
 		const messages = getLocaleMessages(state);
 		const hero = id && heroes.get(id);
 		if (id && hero && messages) {
+			// @ts-ignore
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.delete.title', hero.name),
 				message: _translate(messages, 'heroes.warnings.delete.message'),

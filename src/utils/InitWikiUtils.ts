@@ -163,13 +163,13 @@ export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale
     const { ap, lang, literacy, social, typ_prof, typ_adv, typ_dadv, untyp_adv, untyp_dadv, typ_talents, untyp_talents, talents, src: srcIds } = raw;
     return {
       ...localeRest,
-      ap,
+      culturalPackageAdventurePoints: ap,
       category: Categories.CULTURES,
       id,
       languages: lang,
       scripts: literacy,
-      socialTiers: social,
-      skills: talents.map(e => ({
+      socialStatus: social,
+      culturalPackageSkills: talents.map(e => ({
 				id: `TAL_${e[0]}`,
 				value: e[1]
 			})),

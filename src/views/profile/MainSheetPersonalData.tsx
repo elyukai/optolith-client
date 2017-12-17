@@ -3,24 +3,23 @@ import { Avatar } from '../../components/Avatar';
 import { LabelBox } from '../../components/LabelBox';
 import { Plain } from '../../components/Plain';
 import { ProfileState } from '../../reducers/profile';
-import { CultureInstance, ExperienceLevel, ProfessionInstance, ProfessionVariantInstance, RaceInstance } from '../../types/data.d';
-import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { Culture, ExperienceLevel, Profession, ProfessionVariant, Race } from '../../types/wiki';
+import { _translate, UIMessages } from '../../utils/I18n';
 
 export interface MainSheetPersonalDataProps {
 	ap: {
 		spent: number;
 		total: number;
 	};
-	culture: CultureInstance | undefined;
+	culture: Culture | undefined;
 	el: ExperienceLevel;
 	eyecolorTags: string[];
 	haircolorTags: string[];
 	locale: UIMessages;
-	profession: ProfessionInstance | undefined;
-	professionVariant?: ProfessionVariantInstance;
+	profession: Profession | undefined;
+	professionVariant?: ProfessionVariant;
 	profile: ProfileState;
-	race: RaceInstance | undefined;
+	race: Race | undefined;
 	socialstatusTags: string[];
 }
 
