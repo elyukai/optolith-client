@@ -6,6 +6,7 @@ import { WikiState } from '../../reducers/wikiReducer';
 import { ActivatableInstance, SecondaryAttribute } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
 import { Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { isItemTemplateFromMixed } from '../../utils/WikiUtils';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';
@@ -32,6 +33,7 @@ export interface WikiInfoContentStateProps {
 	books: Map<string, Book>;
 	cantrips: Map<string, Cantrip>;
 	combatTechniques: Map<string, CombatTechnique>;
+	cultures: Map<string, Culture>;
 	derivedCharacteristics: Map<string, SecondaryAttribute>;
 	dependent: DependentInstancesState;
 	languages: SpecialAbility;
@@ -63,7 +65,7 @@ export function WikiInfoContent(props: WikiInfoContentProps) {
 	let currentElement: JSX.Element | null | undefined;
 
 	if (typeof currentObject === 'object') {
-		if (isItemTemplate(currentObject)) {
+		if (isItemTemplateFromMixed(currentObject)) {
 			currentElement = <WikiEquipmentInfo {...props} currentObject={currentObject} />;
 		}
 		else {
@@ -109,8 +111,4 @@ export function WikiInfoContent(props: WikiInfoContentProps) {
 			{currentElement || <WikiInfoEmpty />}
 		</Aside>
 	);
-}
-
-function isItemTemplate(obj: Instance): obj is ItemTemplate {
-	return obj.hasOwnProperty('id') && obj.hasOwnProperty('name') && obj.hasOwnProperty('isTemplateLocked');
 }

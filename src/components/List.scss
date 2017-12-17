@@ -525,5 +525,9 @@ ul.list-wrapper {
 		text-align: center;
 		align-self: center;
 		margin-top: -50px;
+
+		&.wiki-initial {
+			font-size: 16px;
+		}
 	}
 }

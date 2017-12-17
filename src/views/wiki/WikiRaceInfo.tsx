@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Scroll } from '../../components/Scroll';
-import { Book, Race, RaceVariant } from '../../types/wiki';
+import { Book, Culture, Race, RaceVariant } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../../utils/I18n';
 import { WikiProperty } from './WikiProperty';
@@ -8,13 +8,14 @@ import { WikiSource } from './WikiSource';
 
 export interface WikiRaceInfoProps {
 	books: Map<string, Book>;
+	cultures: Map<string, Culture>;
 	currentObject: Race;
 	locale: UIMessages;
 	raceVariants: Map<string, RaceVariant>;
 }
 
 export function WikiRaceInfo(props: WikiRaceInfoProps) {
-	const { books, currentObject, locale, raceVariants } = props;
+	const { books, cultures, currentObject, locale, raceVariants } = props;
 
 	if (['en-US', 'nl-BE'].includes(locale.id)) {
 		return <Scroll>
@@ -61,13 +62,14 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{currentObject.stronglyRecommendedDisadvantagesText}
 			</WikiProperty>}
 			<WikiProperty locale={locale} title="info.commoncultures">
-				{sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures : variants.map(e => e.name)), locale.id).join(', ')}</span>}
+				{sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.map(id => cultures.has(id) ? cultures.get(id)!.name : '...') : variants.map(e => e.name)), locale.id).join(', ')}</span>}
 			</WikiProperty>
 			{!sameCommonCultures && <ul className="race-variant-options">
 				{variants.map(e => {
+					const commonCultures = e.commonCultures.map(id => cultures.has(id) ? cultures.get(id)!.name : '...');
 					return <li key={e.id}>
 						<span>{e.name}</span>
-						<span>{sortStrings(e.commonCultures, locale.id).join(', ')}</span>
+						<span>{sortStrings(commonCultures, locale.id).join(', ')}</span>
 					</li>;
 				})}
 			</ul>}

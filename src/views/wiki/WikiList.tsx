@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { List } from '../../components/List';
-import { PROFESSIONS } from '../../constants/Categories';
-import { AdvantageInstance, DisadvantageInstance, SpecialAbilityInstance } from '../../types/data';
-import { Blessing, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../../types/wiki';
+import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { isProfession, isSpecialAbility } from '../../utils/WikiUtils';
 import { WikiListItem } from './WikiListItem';
 
 export interface WikiListProps {
-	list: (Race | Culture | Profession | AdvantageInstance | DisadvantageInstance | Skill | CombatTechnique | SpecialAbilityInstance | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate)[];
+	list: (Race | Culture | Profession | Advantage | Disadvantage | Skill | CombatTechnique | SpecialAbility | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate)[];
 	sex?: 'm' | 'f';
 	currentInfoId?: string;
 	showInfo(id: string): void;
@@ -26,23 +25,25 @@ export class WikiList extends React.Component<WikiListProps> {
 					list && list.map(item => {
 						const { id } = item;
 						let { name } = item;
-						let subname: string | undefined;
 
 						if (typeof name === 'object') {
 							name = name[sex];
 						}
 
-						// if (item.category === PROFESSIONS) {
-						// 	if (typeof item.subname === 'object') {
-						// 		subname = item.subname[sex];
-						// 	}
-						// 	else {
-						// 		subname = item.subname;
-						// 	}
-						// }
+						if (isProfession(item) && item.subname !== undefined) {
+							if (typeof item.subname === 'object') {
+								name += ` (${item.subname[sex]})`;
+							}
+							else {
+								name += ` (${item.subname})`;
+							}
+						}
+						else if (isSpecialAbility(item) && typeof item.nameInWiki === 'string') {
+							name = item.nameInWiki;
+						}
 
 						return (
-							<WikiListItem {...this.props} {...item} key={id} name={name} subname={subname} />
+							<WikiListItem {...this.props} {...item} key={id} name={name} />
 						);
 					})
 				}

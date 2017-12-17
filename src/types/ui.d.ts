@@ -770,4 +770,26 @@ export interface UIMessages {
 	"edit": string;
 	"view": string;
 	"rules.enableallrulebooks": string;
+	"races": string;
+	"cultures": string;
+	"professions": string;
+	"advantages": string;
+	"disadvantages": string;
+	"skills": string;
+	"combattechniques": string;
+	"specialabilities": string;
+	"spells": string;
+	"cantrips": string;
+	"liturgicalChants": string;
+	"blessings": string;
+	"items": string;
+	"allskillgroups": string;
+	"allcombattechniquegroups": string;
+	"allspecialabilitygroups": string;
+	"allspellgroups": string;
+	"allliturgicalchantgroups": string;
+	"allitemtemplategroups": string;
+	"wiki.chooseacategory": string;
+	"wiki.initialmessage": string;
+	"emptylistnoresults": string;
 }

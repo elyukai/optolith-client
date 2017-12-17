@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { _translate, UIMessages } from '../utils/I18n';
 import { IconButton } from './IconButton';
@@ -10,10 +11,13 @@ import { ListItemValues } from './ListItemValues';
 
 export interface ListPlaceholderProps {
 	locale: UIMessages;
+	noResults?: boolean;
+	wikiInitial?: boolean;
+	type?: 'advantages' | 'disadvantages' | 'wiki';
 }
 
 export function ListPlaceholder(props: ListPlaceholderProps) {
-	const placeholder = (
+	let placeholder = (
 		<ListItem className="placeholder">
 			<ListItemName name="" />
 			<ListItemSeparator/>
@@ -27,6 +31,17 @@ export function ListPlaceholder(props: ListPlaceholderProps) {
 		</ListItem>
 	);
 
+	switch (props.type) {
+		case 'wiki':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+				</ListItem>
+			);
+			break;
+	}
+
 	return (
 		<List>
 			{placeholder}
@@ -34,8 +49,8 @@ export function ListPlaceholder(props: ListPlaceholderProps) {
 			{placeholder}
 			{placeholder}
 			{placeholder}
-			<div className="placeholder-message">
-				{_translate(props.locale, 'emptylist')}
+			<div className={classNames('placeholder-message', props.wikiInitial && 'wiki-initial')}>
+				{props.wikiInitial ? _translate(props.locale, 'wiki.initialmessage') : props.noResults ? _translate(props.locale, 'emptylistnoresults') : _translate(props.locale, 'emptylist')}
 			</div>
 		</List>
 	);

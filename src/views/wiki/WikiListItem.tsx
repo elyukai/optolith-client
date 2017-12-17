@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ListItem } from '../../components/ListItem';
 import { ListItemName } from '../../components/ListItemName';
+import { ListItemSeparator } from '../../components/ListItemSeparator';
 
 export interface WikiListItemProps {
 	id: string;
 	name: string;
-	subname?: string;
 	currentInfoId?: string;
 	showInfo(id: string): void;
 }
@@ -18,7 +18,7 @@ export class WikiListItem extends React.Component<WikiListItemProps> {
 	}
 
 	render() {
-		const { id, name, subname, currentInfoId, showInfo } = this.props;
+		const { id, name, currentInfoId, showInfo } = this.props;
 
 		return (
 			<ListItem
@@ -26,9 +26,8 @@ export class WikiListItem extends React.Component<WikiListItemProps> {
 				active={id === currentInfoId}
 				onClick={() => showInfo(id)}
 				>
-				<ListItemName name={name}>
-					{typeof subname === 'string' && <p className="subname">{subname}</p>}
-				</ListItemName>
+				<ListItemName name={name} />
+				<ListItemSeparator />
 			</ListItem>
 		);
 	}

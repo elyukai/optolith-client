@@ -3,11 +3,6 @@ import { UIMessages } from '../utils/I18n';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
-export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
-export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
-export const getWikiCategory1 = (state: AppState) => state.ui.wiki.category1;
-export const getWikiCategory2 = (state: AppState) => state.ui.wiki.category2;
-
 export const getLocaleMessages = (state: AppState) => state.locale.messages;
 export const getLocaleAsProp = (_: AppState, props: { locale: UIMessages }) => props.locale;
 export const getLocaleId = (state: AppState) => state.locale.id;
@@ -91,6 +86,17 @@ export const isCharacterCreatorOpen = (state: AppState) => state.ui.subwindows.i
 export const isSettingsOpen = (state: AppState) => state.ui.subwindows.isSettingsOpen;
 export const isEditCharacterAvatarOpen = (state: AppState) => state.ui.subwindows.isEditCharacterAvatarOpen;
 export const isEditPetAvatarOpen = (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen;
+
+export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
+export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
+export const getWikiMainCategory = (state: AppState) => state.ui.wiki.category1;
+export const getWikiCombatTechniquesGroup = (state: AppState) => state.ui.wiki.combatTechniquesGroup;
+export const getWikiItemTemplatesGroup = (state: AppState) => state.ui.wiki.itemTemplatesGroup;
+export const getWikiLiturgicalChantsGroup = (state: AppState) => state.ui.wiki.liturgicalChantsGroup;
+export const getWikiProfessionsGroup = (state: AppState) => state.ui.wiki.professionsGroup;
+export const getWikiSkillsGroup = (state: AppState) => state.ui.wiki.skillsGroup;
+export const getWikiSpecialAbilitiesGroup = (state: AppState) => state.ui.wiki.specialAbilitiesGroup;
+export const getWikiSpellsGroup = (state: AppState) => state.ui.wiki.spellsGroup;
 
 export const getWiki = (state: AppState) => state.wiki;
 export const getWikiAdvantages = (state: AppState) => state.wiki.advantages;
