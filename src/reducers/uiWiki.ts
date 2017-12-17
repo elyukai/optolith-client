@@ -1,7 +1,8 @@
+import { SetTabAction } from '../actions/LocationActions';
 import { SetWikiCategory1Action, SetWikiCategory2Action, SetWikiFilterAction, SetWikiFilterAllAction} from '../actions/WikiActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = SetWikiCategory1Action | SetWikiCategory2Action | SetWikiFilterAction | SetWikiFilterAllAction;
+type Action = SetTabAction | SetWikiCategory1Action | SetWikiCategory2Action | SetWikiFilterAction | SetWikiFilterAllAction;
 
 export interface UIWikiState {
 	filter: string;
@@ -21,7 +22,8 @@ export function uiWiki(state: UIWikiState = initialState, action: Action): UIWik
 			return {
 				...state,
 				category1: action.payload.category,
-				category2: undefined
+				category2: undefined,
+				filter: ''
 			};
 
 		case ActionTypes.SET_WIKI_CATEGORY_2:

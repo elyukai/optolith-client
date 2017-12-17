@@ -57,12 +57,12 @@ export interface SexRequirement {
 
 export interface RaceRequirement {
   id: 'RACE';
-  value: string | string[];
+  value: number | number[];
 }
 
 export interface CultureRequirement {
   id: 'CULTURE';
-  value: string | string[];
+  value: number | number[];
 }
 
 export type AllRequirementTypes = RequiresActivatableObject | RequiresIncreasableObject | RequiresPrimaryAttribute | SexRequirement | RaceRequirement | CultureRequirement;

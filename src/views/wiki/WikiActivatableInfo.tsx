@@ -457,7 +457,7 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
 
 export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: Map<string, RaceInstance>, locale: UIMessages): JSX.Element {
 	return <span>
-		{typeof race === 'string' ? race : `${_translate(locale, 'race')} ${Array.isArray(race.value) ? race.value.map(e => races.get(e)).join(_translate(locale, 'info.or')) : races.get(race.value)}`}
+		{typeof race === 'string' ? race : `${_translate(locale, 'race')} ${Array.isArray(race.value) ? race.value.map(e => races.get(`R_${e}`)!.name).join(_translate(locale, 'info.or')) : races.get(`R_${race.value}`)!.name}`}
 	</span>;
 }
 
