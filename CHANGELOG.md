@@ -12,6 +12,7 @@
 
 - Zone armor tab will only be shown if *Aventuria Armory* or *All rule books* are activated in "rules" tab.
 - ENC is now correctly calculated for zone armor.
+- Fixed *Brevier der zwölfgöttlichen Unterweisung*.
 
 ## English Specific
 

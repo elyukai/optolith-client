@@ -4,6 +4,7 @@ import { SpecialAbilityInstance } from '../types/data';
 import { Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../types/wiki';
 import { AllSortOptions, filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
+import { getItems } from './equipmentSelectors';
 import { getAllProfessions } from './rcpSelectors';
 import { getCombatTechniquesSortOrder, getCulturesSortOrder, getEquipmentSortOrder, getLiturgiesSortOrder, getProfessionsSortOrder, getRacesSortOrder, getSpecialAbilitiesSortOrder, getSpellsSortOrder, getTalentsSortOrder } from './uisettingsSelectors';
 
@@ -13,6 +14,7 @@ const getFirstPartWikiEntries = createSelector(
   getWikiCombatTechniques,
   getWikiCultures,
   getWikiItemTemplates,
+  getItems,
   getAdvantages,
   getDisadvantages,
   getSpecialAbilities,
@@ -21,13 +23,14 @@ const getFirstPartWikiEntries = createSelector(
   // getWikiBooks,
   // getWikiDisadvantages,
   // getWikiExperienceLevels,
-  (blessings, cantrips, combatTechniques, cultures, itemTemplates, advantages, disadvantages, specialAbilties) => {
+  (blessings, cantrips, combatTechniques, cultures, itemTemplates, items, advantages, disadvantages, specialAbilties) => {
     return [
       ...blessings.values(),
       ...cantrips.values(),
       ...combatTechniques.values(),
       ...cultures.values(),
       ...itemTemplates.values(),
+      ...items,
       ...advantages.values(),
       ...disadvantages.values(),
       ...specialAbilties.values(),

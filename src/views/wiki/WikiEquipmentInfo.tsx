@@ -155,8 +155,8 @@ export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
 					</tr>
 				</tbody>
 			</table> : null}
-			{currentObject.note && <Markdown source={`**${_translate(locale, 'info.note')}:** ${currentObject.note}`} />}
-			{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.equipment.rules')}:** ${currentObject.rules}`} />}
+			{currentObject.isTemplateLocked && currentObject.note && <Markdown source={`**${_translate(locale, 'info.note')}:** ${currentObject.note}`} />}
+			{currentObject.isTemplateLocked && currentObject.rules && <Markdown source={`**${_translate(locale, 'info.equipment.rules')}:** ${currentObject.rules}`} />}
 			{currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weaponadvantage') : _translate(locale, 'info.armoradvantage')}:** ${currentObject.advantage || _translate(locale, 'info.none')}`} />}
 			{currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? _translate(locale, 'info.weapondisadvantage') : _translate(locale, 'info.armordisadvantage')}:** ${currentObject.disadvantage || _translate(locale, 'info.none')}`} />}
 			{currentObject.src && <WikiSource src={currentObject.src} books={books} locale={locale} />}

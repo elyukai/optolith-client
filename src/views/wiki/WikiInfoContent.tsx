@@ -60,7 +60,7 @@ export type WikiInfoContentProps = WikiInfoContentStateProps & WikiInfoContentDi
 export function WikiInfoContent(props: WikiInfoContentProps) {
 	const { currentId, list, noWrapper } = props;
 
-	const currentObject = currentId && list.find(e => currentId === e.id);
+	const currentObject = typeof currentId === 'string' && list.find(e => currentId === e.id);
 
 	let currentElement: JSX.Element | null | undefined;
 
