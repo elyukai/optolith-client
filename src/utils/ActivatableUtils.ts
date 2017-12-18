@@ -71,6 +71,14 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       }
     }
   }
+  else if (obj.category === Categories.SPECIAL_ABILITIES && obj.gr === 13) {
+    const combinationSA = dependent.specialAbilities.get('SA_266');
+    const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 13);
+    const totalActive = allStyles.filter(e => isActive(e)).length;
+    if (totalActive >= (isActive(combinationSA) ? 2 : 1)) {
+      return false;
+    }
+  }
   else if (obj.category === Categories.SPECIAL_ABILITIES && obj.gr === 25) {
     const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 25);
     const totalActive = allStyles.filter(e => isActive(e)).length;
