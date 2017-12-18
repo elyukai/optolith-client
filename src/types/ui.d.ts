@@ -16,6 +16,7 @@ export interface UIMessages {
 	"titlebar.tabs.profileoverview": string;
 	"titlebar.tabs.personaldata": string;
 	"titlebar.tabs.charactersheet": string;
+	"titlebar.tabs.pact": string;
 	"titlebar.tabs.rules": string;
 	"titlebar.tabs.racecultureprofession": string;
 	"titlebar.tabs.race": string;

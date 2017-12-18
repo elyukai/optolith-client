@@ -62,7 +62,7 @@ export const getTabs = createSelector(
 					{
 						id: 'profile',
 						label: _translate(locale, 'titlebar.tabs.profile'),
-						subTabs: ['profile', 'personalData', 'characterSheet'],
+						subTabs: ['profile', 'personalData', 'pact'],
 					},
 					{
 						id: 'rules',
@@ -80,7 +80,7 @@ export const getTabs = createSelector(
 					{
 						id: 'profile',
 						label: _translate(locale, 'titlebar.tabs.profile'),
-						subTabs: ['profile', 'personalData', 'characterSheet', 'rules'],
+						subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
 					},
 					{
 						id: 'attributes',
@@ -107,7 +107,7 @@ export const getTabs = createSelector(
 				{
 					id: 'profile',
 					label: _translate(locale, 'titlebar.tabs.profile'),
-					subTabs: ['profile', 'personalData', 'characterSheet', 'rules'],
+					subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
 				},
 				{
 					id: 'attributes',
@@ -179,6 +179,11 @@ export const getSubtabs = createSelector(
 								label: _translate(locale, 'titlebar.tabs.personaldata'),
 								disabled: true,
 							},
+							{
+								id: 'pact',
+								label: _translate(locale, 'titlebar.tabs.pact'),
+								disabled: true,
+							},
 						];
 					}
 					else if (rcpSubTabs.includes(tab)) {
@@ -218,6 +223,11 @@ export const getSubtabs = createSelector(
 							{
 								id: 'personalData',
 								label: _translate(locale, 'titlebar.tabs.personaldata'),
+								disabled: true,
+							},
+							{
+								id: 'pact',
+								label: _translate(locale, 'titlebar.tabs.pact'),
 								disabled: true,
 							},
 							{
