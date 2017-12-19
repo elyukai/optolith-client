@@ -552,11 +552,7 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
     disabled = true;
   }
 
-  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : Object.keys(e).every((key: keyof {
-    sid?: string | number;
-    sid2?: string | number;
-    tier?: number;
-  }) => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
+  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : (Object.keys(e) as ('sid' | 'sid2' | 'tier')[]).every(key => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
     disabled = true;
   }
 
@@ -681,7 +677,7 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     case 'SA_29':
       const selection = getSelectionItem(instance, sid);
       addName = selection && selection.name;
-      currentCost = tier === 4 ? 0 : tier;
+      currentCost = tier === 4 ? 0 : cost as number;
       break;
     case 'SA_677':
     case 'SA_678':
@@ -1115,7 +1111,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       case 'SA_414':
       case 'SA_663': {
         const activeIds = getSids(entry);
-        const sel = entry.sel!.reduce((arr, e) => {
+        const sel = entry.sel!.reduce<SelectionObject[]>((arr, e) => {
           const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target!) : dependent.liturgies.get(e.target!);
           if (!activeIds.includes(e.id) && validate(state, e.req!, id) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier! * 4 + 4) {
             return [...arr, { ...e, name: `${targetInstance.name}: ${e.name}` }];

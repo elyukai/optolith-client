@@ -13,6 +13,6 @@ export function WikiSource(props: WikiSourceProps) {
 	const { books, src, locale } = props;
 
 	return <p className="source">
-		<span>{sortStrings(src.map(e => e.page ? `${books.get(e.id)!.name} ${e.page}` : books.get(e.id)!.name), locale.id).join(', ')}</span>
+		<span>{sortStrings(src.filter(e => books.has(e.id)).map(e => e.page ? `${books.get(e.id)!.name} ${e.page}` : books.get(e.id)!.name), locale.id).join(', ')}</span>
 	</p>;
 }

@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { MainContent } from '../components/MainContent';
+import { Page } from '../components/Page';
+import { Scroll } from '../components/Scroll';
 import { AdvantagesContainer } from '../containers/Advantages';
 import { ArmorZonesContainer } from '../containers/ArmorZones';
 import { AttributesContainer } from '../containers/Attributes';
@@ -33,44 +36,74 @@ export interface RouteProps {
 	setTab(id: TabId): void;
 }
 
-export function Route(props: RouteProps) {
-	const { id, locale, setTab } = props;
-
-	const VIEWS = {
-		herolist: <HerolistContainer locale={locale} />,
-		grouplist: <Grouplist />,
-		wiki: <WikiContainer locale={locale} />,
-		faq: <HelpContainer locale={locale} />,
-		imprint: <Imprint locale={locale} />,
-		thirdPartyLicenses: <ThirdPartyLicenses />,
-		lastChanges: <LastChanges />,
-
-		profile: <PersonalDataContainer locale={locale} />,
-		personalData: <PersonalDataContainer locale={locale} />,
-		characterSheet: <SheetsContainer locale={locale} />,
-		rules: <RulesContainer locale={locale} />,
-
-		races: <RacesContainer locale={locale} switchToCultures={() => setTab('cultures')} />,
-		cultures: <CulturesContainer locale={locale} switchToProfessions={() => setTab('professions')} />,
-		professions: <ProfessionsContainer locale={locale} />,
-
-		attributes: <AttributesContainer locale={locale} />,
-
-		advantages: <AdvantagesContainer locale={locale} />,
-		disadvantages: <DisadvantagesContainer locale={locale} />,
-
-		skills: <TalentsContainer locale={locale} />,
-		combatTechniques: <CombatTechniquesContainer locale={locale} />,
-		specialAbilities: <SpecialAbilitiesContainer locale={locale} />,
-		spells: <SpellsContainer locale={locale} />,
-		liturgicalChants: <LiturgiesContainer locale={locale} />,
-
-		equipment: <EquipmentContainer locale={locale} />,
-		zoneArmor: <ArmorZonesContainer locale={locale} />,
-		pets: <PetsContainer locale={locale} />,
-
-		// master: <Master />
+export interface RouteState {
+	hasError?: {
+		error: Error;
+		info: any;
 	};
+}
 
-	return VIEWS[id] || null;
+export class Route extends React.Component<RouteProps> {
+	state: RouteState = {};
+
+	componentDidCatch(error: any, info: any) {
+		this.setState(() => ({ hasError: { error, info }}));
+	}
+
+	render() {
+		const { id, locale, setTab } = this.props;
+		const { hasError } = this.state;
+
+		if (hasError) {
+			return <Page>
+				<MainContent>
+					<Scroll className="error-message">
+						<h4>Error</h4>
+						<p>{hasError.error.stack}</p>
+						<h4>Component Stack</h4>
+						<p>{hasError.info.componentStack}</p>
+					</Scroll>
+				</MainContent>
+			</Page>;
+		}
+
+		const VIEWS = {
+			herolist: <HerolistContainer locale={locale} />,
+			grouplist: <Grouplist />,
+			wiki: <WikiContainer locale={locale} />,
+			faq: <HelpContainer locale={locale} />,
+			imprint: <Imprint locale={locale} />,
+			thirdPartyLicenses: <ThirdPartyLicenses />,
+			lastChanges: <LastChanges />,
+
+			profile: <PersonalDataContainer locale={locale} />,
+			personalData: <PersonalDataContainer locale={locale} />,
+			characterSheet: <SheetsContainer locale={locale} />,
+			pact: <PersonalDataContainer locale={locale} />,
+			rules: <RulesContainer locale={locale} />,
+
+			races: <RacesContainer locale={locale} switchToCultures={() => setTab('cultures')} />,
+			cultures: <CulturesContainer locale={locale} switchToProfessions={() => setTab('professions')} />,
+			professions: <ProfessionsContainer locale={locale} />,
+
+			attributes: <AttributesContainer locale={locale} />,
+
+			advantages: <AdvantagesContainer locale={locale} />,
+			disadvantages: <DisadvantagesContainer locale={locale} />,
+
+			skills: <TalentsContainer locale={locale} />,
+			combatTechniques: <CombatTechniquesContainer locale={locale} />,
+			specialAbilities: <SpecialAbilitiesContainer locale={locale} />,
+			spells: <SpellsContainer locale={locale} />,
+			liturgicalChants: <LiturgiesContainer locale={locale} />,
+
+			equipment: <EquipmentContainer locale={locale} />,
+			zoneArmor: <ArmorZonesContainer locale={locale} />,
+			pets: <PetsContainer locale={locale} />,
+
+			// master: <Master />
+		};
+
+		return VIEWS[id] || null;
+	}
 }
