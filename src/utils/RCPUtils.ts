@@ -56,7 +56,10 @@ export function rerollWeight(race: Race, raceVariant: RaceVariant | undefined, s
   const add = arr.map(addFunc);
   const formattedSize = multiplyString(size);
   const result = Number.parseInt(formattedSize) + weightBase + add.reduce((a, b) => a + b, 0);
-  return [result.toString(), formattedSize] as [string, string];
+  return {
+    weight: result.toString(),
+    size: formattedSize
+  };
 }
 
 export function isSpecialisationSelection(id: ProfessionSelectionIds, options: ProfessionSelection | undefined): options is SpecialisationSelection {

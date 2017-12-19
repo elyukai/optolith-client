@@ -52,13 +52,13 @@ function convertWeight(old: (number | [number, number])[]): WeightNew {
 		if (typeof value === 'number') {
 			return {
 				...obj,
-				sizeBase: obj.weightBase + value
+				weightBase: obj.weightBase + value
 			};
 		}
 		const [ amount, sides ] = value;
 		return {
 			...obj,
-			sizeRandom: [...obj.weightRandom, { amount, sides }]
+			weightRandom: [...obj.weightRandom, { amount, sides }]
 		};
 	}, {
 		weightBase: 0,

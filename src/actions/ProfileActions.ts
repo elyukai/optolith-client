@@ -228,7 +228,7 @@ export function _rerollWeight(): AsyncAction {
 		const raceVariant = getCurrentRaceVariant(state);
 		const prevSize = getSize(state);
 		if (typeof race !== 'undefined') {
-			const [ weight, size ] = RCPUtils.rerollWeight(race, raceVariant, prevSize);
+			const { weight, size } = RCPUtils.rerollWeight(race, raceVariant, prevSize);
 			dispatch(_setWeight(weight, size));
 		}
 		return;

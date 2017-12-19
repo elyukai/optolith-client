@@ -1,3 +1,10 @@
+# 0.51.8
+
+- Fixed AP cost for languages.
+- Fixed generating random values for size and weight of a character.
+- Added error binding to content, so that if an error occurs you can still access the navigation bar.
+- Fixed crashes of wiki box in English version.
+
 # 0.51.7
 
 - Tweaked some colors to improve UI readability.
