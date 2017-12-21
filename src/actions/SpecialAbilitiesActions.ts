@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getDependentInstances, getLocaleMessages, getSpecialAbilities } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
@@ -16,7 +17,7 @@ export interface ActivateSpecialAbilityAction {
 export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(args.cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(args.cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -66,7 +67,7 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, dependent, false)).currentCost;
 		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, dependent, true)).currentCost;
 		const cost = nextCost - previousCost;
-		const validCost = validate(cost, state.currentHero.present.ap, isInCharacterCreation(state));
+		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({

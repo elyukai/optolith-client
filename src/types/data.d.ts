@@ -51,7 +51,10 @@ export type SMap<T> = Map<string, T>;
 export interface HeroBaseForHerolist {
 	readonly name: string;
 	readonly avatar?: string;
-	readonly ap: AdventurePoints;
+	readonly ap: {
+		total: number;
+		spent: number;
+	};
 	readonly r: string;
 	readonly rv?: string;
 	readonly c: string;

@@ -1,10 +1,4 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { get } from '../selectors/dependentInstancesSelectors';
-import { getLocaleMessages } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
-import { TalentInstance } from '../types/data.d';
-import { _translate } from '../utils/I18n';
-import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 
 export interface SetWikiFilterAction {
 	type: ActionTypes.SET_WIKI_FILTER;

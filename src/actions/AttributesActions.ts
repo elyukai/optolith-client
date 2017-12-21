@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getAdjustmentValue, getCurrentAdjustmentId } from '../selectors/attributeSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdventurePoints, getAttributes, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints } from '../selectors/stateSelectors';
@@ -20,7 +21,7 @@ export interface AddAttributePointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(getAttributes(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
+		const cost = getIncreaseCost(getAttributes(state).get(id)!, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (messages) {
 			if (!cost) {
@@ -74,7 +75,7 @@ export function _addLifePoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, getAddedLifePoints(state));
-		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -104,7 +105,7 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, getAddedArcaneEnergyPoints(state));
-		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -134,7 +135,7 @@ export function _addKarmaPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const cost = getIncreaseAP(4, getAddedKarmaPoints(state));
-		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -220,7 +221,7 @@ export interface AddBoughtBackAEPointAction {
 export function _addBoughtBackAEPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(2, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -334,7 +335,7 @@ export interface AddBoughtBackKPPointAction {
 export function _addBoughtBackKPPoint(): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(2, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(2, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({

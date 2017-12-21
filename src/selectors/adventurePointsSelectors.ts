@@ -3,7 +3,8 @@ import { calculateAdventurePointsSpentDifference } from '../utils/ActivatableUti
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
-import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
+import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells, getPhase } from './stateSelectors';
+import { getCurrentRace, getCurrentProfession } from './rcpSelectors';
 
 export const getAdventurePointsSpentForAttributes = createSelector(
 	getAttributes,
@@ -175,6 +176,17 @@ export const getAdventurePointsSpentForEnergies = createSelector(
 	}
 );
 
+export const getAdventurePointsSpentForRCP = createSelector(
+	getCurrentRace,
+	getCurrentProfession,
+	getPhase,
+	(race, profession, phase) => {
+		const raceCost = race ? race.ap : 0;
+		const professionCost = phase === 1 ? profession ? profession.ap : 0 : 0;
+		return raceCost + professionCost;
+	}
+);
+
 export const getAdventurePointsSpent = createSelector(
 	getAdventurePointsSpentForAttributes,
 	getAdventurePointsSpentForSkills,
@@ -187,6 +199,7 @@ export const getAdventurePointsSpent = createSelector(
 	getAdventurePointsSpentForDisadvantages,
 	getAdventurePointsSpentForSpecialAbilities,
 	getAdventurePointsSpentForEnergies,
+	getAdventurePointsSpentForRCP,
 	(...cost: number[]) => {
 		return cost.reduce((a, b) => a + b, 0);
 	}
@@ -196,4 +209,46 @@ export const getAvailableAdventurePoints = createSelector(
 	getTotalAdventurePoints,
 	getAdventurePointsSpent,
 	(total, spent) => total - spent
+);
+
+export interface DisAdvAdventurePoints extends Array<number> {
+	/**
+	 * Spent AP for Advantages/Disadvantages in total.
+	 */
+	0: number;
+	/**
+	 * Spent AP for magical Advantages/Disadvantages.
+	 */
+	1: number;
+	/**
+	 * Spent AP for blessed Advantages/Disadvantages.
+	 */
+	2: number;
+}
+
+export interface AdventurePointsObject {
+	total: number;
+	spent: number;
+	available: number;
+	adv: DisAdvAdventurePoints;
+	disadv: DisAdvAdventurePoints;
+}
+
+export const getAdventurePointsObject = createSelector(
+	getTotalAdventurePoints,
+	getAdventurePointsSpent,
+	getAvailableAdventurePoints,
+	getAdventurePointsSpentForAdvantages,
+	getAdventurePointsSpentForBlessedAdvantages,
+	getAdventurePointsSpentForMagicalAdvantages,
+	getAdventurePointsSpentForDisadvantages,
+	getAdventurePointsSpentForBlessedDisadvantages,
+	getAdventurePointsSpentForMagicalDisadvantages,
+	(total, spent, available, advantages, blessedAdvantages, magicalAdvantages, disadvantages, blessedDisadvantages, magicalDisadvantages): AdventurePointsObject => ({
+		total,
+		spent,
+		available,
+		adv: [advantages, magicalAdvantages, blessedAdvantages],
+		disadv: [disadvantages, magicalDisadvantages, blessedDisadvantages],
+	})
 );

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListItemGroup } from '../../components/ListItemGroup';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';

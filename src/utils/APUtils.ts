@@ -1,10 +1,6 @@
-import { AdventurePointsState } from '../reducers/adventurePoints';
 import { DependentInstancesState } from '../reducers/dependentInstances';
+import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
-
-function getAvailableAdventurePointsByLocalState(state: AdventurePointsState): number {
-	return state.total - state.spent;
-}
 
 /**
  * Checks if there are enough AP available.
@@ -12,9 +8,9 @@ function getAvailableAdventurePointsByLocalState(state: AdventurePointsState): n
  * @param ap The current AP state.
  * @param negativeApValid If the character's AP left can be a negative value (during character creation) or not.
  */
-export function validate(cost: number, ap: AdventurePointsState, negativeApValid: boolean): boolean {
+export function validate(cost: number, availableAP: number, negativeApValid: boolean): boolean {
 	if (cost > 0 && negativeApValid === false) {
-		return cost <= getAvailableAdventurePointsByLocalState(ap);
+		return cost <= availableAP;
 	}
 	return true;
 }
@@ -28,15 +24,15 @@ export function validate(cost: number, ap: AdventurePointsState, negativeApValid
  * @param isDisadvantage If the entry is a disadvantage.
  * @param isInCharacterCreation If the character's AP left can be a negative value (during character creation) or not.
  */
-export function validateDisAdvantages(cost: number, ap: AdventurePointsState, state: DependentInstancesState, isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean; }, isDisadvantage: boolean, isInCharacterCreation: boolean): [boolean, boolean, boolean] {
+export function validateDisAdvantages(cost: number, adventurePoints: AdventurePointsObject, state: DependentInstancesState, isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean; }, isDisadvantage: boolean, isInCharacterCreation: boolean): [boolean, boolean, boolean] {
 	const { isBlessed, isMagical } = isMagicalOrBlessed;
 	const index = isBlessed ? 2 : isMagical ? 1 : 0;
-	const target = isDisadvantage ? ap.disadv : ap.adv;
+	const target = isDisadvantage ? adventurePoints.disadv : adventurePoints.adv;
 	const smallMax = getAdvantagesDisadvantagesSubMax(state, index);
 	const equalizedCost = isDisadvantage ? cost * -1 : cost;
 	const subValid = index > 0 ? target[index] + equalizedCost <= smallMax : true || !isInCharacterCreation;
 	const mainValid = target[0] + equalizedCost <= 80 || !isInCharacterCreation;
-	const totalValid = cost <= getAvailableAdventurePointsByLocalState(ap) || isInCharacterCreation;
+	const totalValid = cost <= adventurePoints.available || isInCharacterCreation;
 
 	return [ totalValid, mainValid, subValid ];
 }

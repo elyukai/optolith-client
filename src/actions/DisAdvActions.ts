@@ -9,6 +9,7 @@ import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
+import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 
 interface ActivateArgsWithEntryType extends UndoExtendedActivateArgs {
 	isBlessed: boolean;
@@ -25,12 +26,12 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state);
-		const { ap, dependent } = state.currentHero.present;
+		const { dependent } = state.currentHero.present;
 		const { id, cost, ...other } = args;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
+		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
 				title: _translate(locale, 'notenoughap.title'),
@@ -86,13 +87,13 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state);
-		const { ap, dependent } = state.currentHero.present;
+		const { dependent } = state.currentHero.present;
 		const { id, cost } = args;
 		const negativeCost = cost * -1; // the entry should be removed
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(negativeCost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
+		const validCost = validateDisAdvantages(negativeCost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
 				title: _translate(locale, 'notenoughap.title'),
@@ -149,7 +150,7 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state);
-		const { ap, dependent } = state.currentHero.present;
+		const { dependent } = state.currentHero.present;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const activeObjectWithId = { id, index, ...entry.active[index] };
 		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, dependent, false)).currentCost;
@@ -157,7 +158,7 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const cost = nextCost - previousCost;
 		const entryType = isMagicalOrBlessed(entry);
 		const isDisadvantage = entry.category === DISADVANTAGES;
-		const validCost = validateDisAdvantages(cost, ap, dependent, entryType, isDisadvantage, isInCharacterCreation(state));
+		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
 				title: _translate(locale, 'notenoughap.title'),

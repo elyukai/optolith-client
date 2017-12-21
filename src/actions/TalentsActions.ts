@@ -1,6 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getAdventurePoints, getLocaleMessages, getSkills } from '../selectors/stateSelectors';
+import { getLocaleMessages, getSkills } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { _translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
@@ -17,7 +18,7 @@ export interface AddTalentPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(getSkills(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
+		const cost = getIncreaseCost(getSkills(state).get(id)!, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (messages) {
 			if (!cost) {

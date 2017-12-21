@@ -1,6 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getAdventurePointsSpent } from '../selectors/adventurePointsSelectors';
 import { getMessages } from '../selectors/localeSelectors';
-import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHeroes, getLocaleMessages } from '../selectors/stateSelectors';
+import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHeroes, getLocaleMessages, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { Hero } from '../types/data.d';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
@@ -165,11 +166,15 @@ export function _saveHero(): AsyncAction {
 			dateModified,
 			...other
 		} = generateHeroSaveData(getState());
-		const data = {
+		const data: Hero = {
 			...other,
 			id,
 			dateCreated,
-			dateModified: new Date()
+			dateModified: new Date(),
+			ap: {
+				total: getTotalAdventurePoints(getState()),
+				spent: getAdventurePointsSpent(getState())
+			}
 		};
 		dispatch({
 			type: ActionTypes.SAVE_HERO,

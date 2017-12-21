@@ -5,7 +5,6 @@ import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { ListItem } from '../../components/ListItem';
-import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';

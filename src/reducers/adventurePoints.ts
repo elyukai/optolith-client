@@ -47,7 +47,10 @@ const initialState: AdventurePointsState = {
 export function adventurePoints(state: AdventurePointsState = initialState, action: Action): AdventurePointsState {
 	switch (action.type) {
 		case ActionTypes.LOAD_HERO:
-			return { ...action.payload.data.ap };
+			return {
+				...state,
+				...action.payload.data.ap
+			};
 
 		case ActionTypes.ACTIVATE_SPELL:
 		case ActionTypes.ACTIVATE_LITURGY:

@@ -1,4 +1,5 @@
 import * as ActionTypes from '../constants/ActionTypes';
+import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAdventurePoints, getLiturgicalChants, getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
@@ -21,7 +22,7 @@ export function _addToList(id: string): AsyncAction {
 		const state = getState();
 		const entry = getLiturgicalChants(state).get(id)!;
 		const cost = getIncreaseAP(entry.ic);
-		const validCost = validate(cost, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -51,7 +52,7 @@ export interface ActivateBlessingAction {
 export function _addBlessingToList(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const validCost = validate(1, getAdventurePoints(state), isInCharacterCreation(state));
+		const validCost = validate(1, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
@@ -120,7 +121,7 @@ export interface AddLiturgyPointAction {
 export function _addPoint(id: string): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
-		const cost = getIncreaseCost(getLiturgicalChants(state).get(id)!, getAdventurePoints(state), isInCharacterCreation(state));
+		const cost = getIncreaseCost(getLiturgicalChants(state).get(id)!, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);
 		if (messages) {
 			if (!cost) {
