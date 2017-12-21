@@ -2,6 +2,7 @@ import { flatten, last } from 'lodash';
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
+import { WikiState } from '../reducers/wikiReducer';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
@@ -1218,4 +1219,81 @@ export function getTraditionNameFromFullName(name: string): string {
 		return '';
 	}
 	return result[1];
+}
+
+export function calculateAdventurePointsSpentDifference(entries: ActiveViewObject[], state: Map<string, ActivatableInstance>, wiki: WikiState): number {
+  let diff = 0;
+
+  if (entries.find(e => e.id === 'DISADV_34')) {
+    const { active } = state.get('DISADV_34')!;
+    const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
+    const amountMaxTiers = active.reduce((a, b) => maxCurrentTier === b.tier ? a + 1 : a, 0);
+    if (amountMaxTiers > 1) {
+      diff -= maxCurrentTier * (wiki.disadvantages.get('DISADV_34')!.cost as number);
+    }
+  }
+
+  if (entries.find(e => e.id === 'DISADV_50')) {
+    const { active } = state.get('DISADV_50')!;
+    const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
+    const amountMaxTiers = active.reduce((a, b) => maxCurrentTier === b.tier ? a + 1 : a, 0);
+    if (amountMaxTiers > 1) {
+      diff -= maxCurrentTier * (wiki.disadvantages.get('DISADV_50')!.cost as number);
+    }
+  }
+
+  if (entries.find(e => e.id === 'DISADV_33')) {
+    const { active } = state.get('DISADV_33')!;
+    if (active.filter(e => e.sid === 7 && e.cost === undefined).length > 1) {
+      diff -= wiki.disadvantages.get('DISADV_33')!.select!.find(e => e.id === 7)!.cost!;
+    }
+  }
+
+  if (entries.find(e => e.id === 'DISADV_36')) {
+    const { active } = state.get('DISADV_36')!;
+    if (active.length > 3) {
+      diff -= (wiki.disadvantages.get('DISADV_36')!.cost as number) * 3;
+    }
+  }
+
+  if (entries.find(e => e.id === 'SA_9')) {
+    const { active } = state.get('SA_9')!;
+    const sameSkill = new Map<string, number>();
+    const skillDone = new Map<string, number>();
+
+    for (const { sid } of active) {
+      const id = sid as string;
+      if (sameSkill.has(id)) {
+        sameSkill.set(id, sameSkill.get(id)! + 1);
+      }
+      else {
+        sameSkill.set(id, 1);
+      }
+    }
+
+    for (const { sid } of active) {
+      const id = sid as string;
+      const counter = sameSkill.get(id)!;
+      if (!skillDone.has(id) || skillDone.get(id)! < counter) {
+        const current = skillDone.get(id) || 0;
+        const skill = wiki.skills.get(id)!;
+        diff += skill.ic * (current + 1 - counter);
+        skillDone.set(id, current + 1);
+      }
+    }
+  }
+
+  if (entries.find(e => e.id === 'SA_72')) {
+    const apArr = [10, 20, 40];
+    const { active } = state.get('SA_72')!;
+    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * active.length - 1;
+  }
+
+  if (entries.find(e => e.id === 'SA_87')) {
+    const apArr = [15, 25, 45];
+    const { active } = state.get('SA_87')!;
+    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * active.length - 1;
+  }
+
+  return diff;
 }

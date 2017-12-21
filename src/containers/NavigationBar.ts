@@ -6,6 +6,7 @@ import * as InGameActions from '../actions/InGameActions';
 import * as LocationActions from '../actions/LocationActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
+import { getAdventurePointsSpent, getAdventurePointsSpentForAdvantages, getAdventurePointsSpentForAttributes, getAdventurePointsSpentForBlessings, getAdventurePointsSpentForCantrips, getAdventurePointsSpentForCombatTechniques, getAdventurePointsSpentForDisadvantages, getAdventurePointsSpentForLiturgicalChants, getAdventurePointsSpentForSkills, getAdventurePointsSpentForSpecialAbilities, getAdventurePointsSpentForSpells } from '../selectors/adventurePointsSelectors';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getCurrentHeroPresent, getCurrentTab, isSettingsOpen } from '../selectors/stateSelectors';
@@ -24,6 +25,17 @@ function mapStateToProps(state: AppState) {
 		isHeroSection: isHeroSection(state),
 		tabs: getTabs(state),
 		subtabs: getSubtabs(state),
+		spentForAttributes: getAdventurePointsSpentForAttributes(state),
+		spentForSkills: getAdventurePointsSpentForSkills(state),
+		spentForCombatTechniques: getAdventurePointsSpentForCombatTechniques(state),
+		spentForSpells: getAdventurePointsSpentForSpells(state),
+		spentForLiturgicalChants: getAdventurePointsSpentForLiturgicalChants(state),
+		spentForCantrips: getAdventurePointsSpentForCantrips(state),
+		spentForBlessings: getAdventurePointsSpentForBlessings(state),
+		spentForAdvantages: getAdventurePointsSpentForAdvantages(state),
+		spentForDisadvantages: getAdventurePointsSpentForDisadvantages(state),
+		spentForSpecialAbilities: getAdventurePointsSpentForSpecialAbilities(state),
+		spentTotal: getAdventurePointsSpent(state),
 	};
 }
 

@@ -9,6 +9,17 @@ export interface ApTooltipProps {
 	ap: AdventurePoints;
 	dependent: DependentInstancesState;
 	locale?: UIMessages;
+	spentForAttributes: number;
+	spentForSkills: number;
+	spentForCombatTechniques: number;
+	spentForSpells: number;
+	spentForLiturgicalChants: number;
+	spentForCantrips: number;
+	spentForBlessings: number;
+	spentForAdvantages: number;
+	spentForDisadvantages: number;
+	spentForSpecialAbilities: number;
+	spentTotal: number;
 }
 
 export function ApTooltip(props: ApTooltipProps) {
@@ -30,6 +41,20 @@ export function ApTooltip(props: ApTooltipProps) {
 				<span>{_translate(locale, 'titlebar.adventurepoints.disadvantages', disadv[0], 80)}</span>
 				<span>{disadv[1] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesmagic', disadv[1], magical)}</span>
 				<span>{disadv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesblessed', disadv[2], 50)}</span>
+			</p>
+			<hr />
+			<p>
+				<span>Total Spent: {props.spentTotal}</span>
+				<span>Spent attributes: {props.spentForAttributes}</span>
+				<span>Spent skills: {props.spentForSkills}</span>
+				<span>Spent combat techniques: {props.spentForCombatTechniques}</span>
+				<span>Spent spells: {props.spentForSpells}</span>
+				<span>Spent liturgical chants: {props.spentForLiturgicalChants}</span>
+				<span>Spent cantrips: {props.spentForCantrips}</span>
+				<span>Spent blessings: {props.spentForBlessings}</span>
+				<span>Spent advantages: {props.spentForAdvantages}</span>
+				<span>Spent disadvantages: {props.spentForDisadvantages}</span>
+				<span>Spent special abilities: {props.spentForSpecialAbilities}</span>
 			</p>
 		</div>
 	);

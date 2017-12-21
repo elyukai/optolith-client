@@ -35,6 +35,17 @@ export interface NavigationBarStateProps {
   isHeroSection: boolean;
   tabs: NavigationBarTabProps[];
   subtabs: SubTab[] | undefined;
+	spentForAttributes: number;
+	spentForSkills: number;
+	spentForCombatTechniques: number;
+	spentForSpells: number;
+	spentForLiturgicalChants: number;
+	spentForCantrips: number;
+	spentForBlessings: number;
+	spentForAdvantages: number;
+	spentForDisadvantages: number;
+	spentForSpecialAbilities: number;
+	spentTotal: number;
 }
 
 export interface NavigationBarDispatchProps {
@@ -68,7 +79,7 @@ export function NavigationBar(props: NavigationBarProps) {
             <TooltipToggle
               position="bottom"
               margin={12}
-              content={<ApTooltip ap={ap} dependent={dependent} locale={locale} />}
+              content={<ApTooltip {...props} ap={ap} dependent={dependent} />}
               >
               <Text className="collected-ap">{total - spent} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
             </TooltipToggle>
