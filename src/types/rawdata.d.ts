@@ -173,6 +173,7 @@ export interface RawAdvantage {
 	sel?: Data.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes)[];
 	reqIndex: string[];
+	gr: number;
 	src: string[];
 }
 

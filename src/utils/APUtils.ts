@@ -1,7 +1,10 @@
 import { AdventurePointsState } from '../reducers/adventurePoints';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { getLeft } from '../selectors/adventurePointsSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
+
+function getAvailableAdventurePointsByLocalState(state: AdventurePointsState): number {
+	return state.total - state.spent;
+}
 
 /**
  * Checks if there are enough AP available.
@@ -11,7 +14,7 @@ import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
  */
 export function validate(cost: number, ap: AdventurePointsState, negativeApValid: boolean): boolean {
 	if (cost > 0 && negativeApValid === false) {
-		return cost <= getLeft(ap);
+		return cost <= getAvailableAdventurePointsByLocalState(ap);
 	}
 	return true;
 }
@@ -33,7 +36,7 @@ export function validateDisAdvantages(cost: number, ap: AdventurePointsState, st
 	const equalizedCost = isDisadvantage ? cost * -1 : cost;
 	const subValid = index > 0 ? target[index] + equalizedCost <= smallMax : true || !isInCharacterCreation;
 	const mainValid = target[0] + equalizedCost <= 80 || !isInCharacterCreation;
-	const totalValid = cost <= getLeft(ap) || isInCharacterCreation;
+	const totalValid = cost <= getAvailableAdventurePointsByLocalState(ap) || isInCharacterCreation;
 
 	return [ totalValid, mainValid, subValid ];
 }

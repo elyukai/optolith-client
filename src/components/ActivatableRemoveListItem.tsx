@@ -37,7 +37,12 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 		const { id, index} = this.props.item;
 		this.props.setTier(id, index, selectedTier);
 	}
+
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
+
+	shouldComponentUpdate(nextProps: ActivatableRemoveListItemProps) {
+		return this.props.item.tier !== nextProps.item.tier || this.props.item.cost !== nextProps.item.cost;
+	}
 
 	render() {
 		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale, selectForInfo } = this.props;

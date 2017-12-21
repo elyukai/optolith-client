@@ -124,9 +124,9 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 											selectForInfo={this.showInfo}
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
-											>
-											<ListItemGroup list={_translate(locale, 'skills.view.groups')} index={obj.gr} />
-										</SkillListItem>
+											groupIndex={obj.gr}
+											groupList={_translate(locale, 'skills.view.groups')}
+											/>
 									);
 								})
 							}

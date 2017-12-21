@@ -2,14 +2,14 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface ListItemGroupProps {
-	children?: React.ReactNode;
 	index?: number;
 	list?: string[];
 	small?: boolean;
+	text?: string;
 }
 
 export function ListItemGroup(props: ListItemGroupProps) {
-	const { children, index, list, small } = props;
+	const { index, list, small, text } = props;
 	if (typeof index === 'number' && Array.isArray(list)) {
 		return (
 			<div className={classNames('group', small && 'small-info-text')}>
@@ -19,7 +19,7 @@ export function ListItemGroup(props: ListItemGroupProps) {
 	}
 	return (
 		<div className={classNames('group', small && 'small-info-text')}>
-			{children}
+			{text}
 		</div>
 	);
 }

@@ -4,10 +4,9 @@ import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';
 import { getDeactiveDisadvantages, getDisadvantagesForEdit, getDisadvantagesRating } from '../selectors/activatableSelectors';
-import { getAp } from '../selectors/adventurePointsSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getDisadvantages } from '../selectors/stateSelectors';
+import { getAdventurePoints, getDisadvantages } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
@@ -16,7 +15,7 @@ import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, Disad
 function mapStateToProps(state: AppState) {
 	return {
 		activeList: getDisadvantagesForEdit(state),
-		ap: getAp(state),
+		ap: getAdventurePoints(state),
 		deactiveList: getDeactiveDisadvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {

@@ -317,17 +317,16 @@ interface ActivatableBase {
 	readonly prerequisitesTextEnd?: string;
 	readonly tiers?: number;
 	readonly select?: SelectionObject[];
-	readonly gr?: number;
+	readonly gr: number;
+	readonly src: SourceLink[];
 }
 
 interface AdvantageDisadvantageBase extends ActivatableBase {
-	readonly gr?: undefined;
 	readonly rules: string;
 	readonly range?: string;
 	readonly actions?: string;
 	readonly apValue?: string;
 	readonly apValueAppend?: string;
-	readonly src: SourceLink[];
 }
 
 export interface Advantage extends AdvantageDisadvantageBase {
@@ -342,7 +341,6 @@ export interface SpecialAbility extends ActivatableBase {
 	readonly category: Categories.SPECIAL_ABILITIES;
 	readonly extended?: (string | string[])[];
 	readonly nameInWiki?: string;
-	readonly gr: number;
 	readonly subgr?: number;
 	readonly combatTechniques?: string;
 	readonly rules?: string;
@@ -357,7 +355,6 @@ export interface SpecialAbility extends ActivatableBase {
 	readonly aspect?: number | string;
 	readonly apValue?: string;
 	readonly apValueAppend?: string;
-	readonly src: SourceLink[];
 }
 
 export interface Attribute {

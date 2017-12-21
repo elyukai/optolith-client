@@ -5,12 +5,12 @@ import * as ProfileActions from '../actions/ProfileActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
-import { getAvailable, getTotal } from '../selectors/adventurePointsSelectors';
+import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getPhase, isAddAdventurePointsOpen, isEditCharacterAvatarOpen } from '../selectors/stateSelectors';
+import { getPhase, getTotalAdventurePoints, isAddAdventurePointsOpen, isEditCharacterAvatarOpen } from '../selectors/stateSelectors';
 import { isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { InputTextEvent } from '../types/data.d';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
@@ -18,8 +18,8 @@ import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, Personal
 function mapStateToProps(state: AppState) {
 	return {
 		advantages: getAdvantagesForSheet(state),
-		apLeft: getAvailable(state),
-		apTotal: getTotal(state),
+		apLeft: getAvailableAdventurePoints(state),
+		apTotal: getTotalAdventurePoints(state),
 		culture: getCurrentCulture(state),
 		currentEl: getCurrentEl(state),
 		disadvantages: getDisadvantagesForSheet(state),

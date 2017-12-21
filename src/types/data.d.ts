@@ -670,7 +670,7 @@ interface ActivatableInstanceBaseInInit {
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];
 	active: ActiveObject[];
-	gr?: number;
+	gr: number;
 	prerequisitesText?: string;
 	/**
 	 * 0-based index as key!
@@ -682,7 +682,6 @@ interface ActivatableInstanceBaseInInit {
 
 export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.ADVANTAGES;
-	gr?: undefined;
 	rules: string;
 	range?: string;
 	actions?: string;
@@ -697,7 +696,6 @@ export interface AdvantageInstance extends AdvantageInstanceInInit {
 
 export interface DisadvantageInstanceInInit extends ActivatableInstanceBaseInInit {
 	readonly category: Categories.DISADVANTAGES;
-	gr?: undefined;
 	rules: string;
 	range?: string;
 	actions?: string;
@@ -714,7 +712,6 @@ export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInI
 	readonly category: Categories.SPECIAL_ABILITIES;
 	readonly extended?: (string | string[])[];
 	nameInWiki?: string;
-	gr: number;
 	subgr?: number;
 	combatTechniques?: string;
 	rules?: string;

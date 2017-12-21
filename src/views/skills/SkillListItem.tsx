@@ -2,11 +2,13 @@ import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
+import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { AttributeInstance, SecondaryAttribute } from '../../types/data.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
+import { getICName } from '../../utils/ICUtils';
 
 export interface SkillListItemProps {
 	attributes: Map<string, AttributeInstance>;
@@ -14,11 +16,13 @@ export interface SkillListItemProps {
 	addDisabled?: boolean;
 	addFillElement?: boolean;
 	addValues?: Array<{ className: string; value?: string | number }>;
+	addText?: string;
 	check?: string[];
 	checkDisabled?: boolean;
 	checkmod?: 'SPI' | 'TOU';
-	children?: React.ReactNode;
 	derivedCharacteristics?: Map<DCIds, SecondaryAttribute>;
+	groupList?: string[];
+	groupIndex?: number;
 	ic?: number;
 	id: string;
 	insertTopMargin?: boolean;
@@ -44,11 +48,11 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 	}
 
 	shouldComponentUpdate(nextProps: SkillListItemProps) {
-		return this.props.sr !== nextProps.sr || this.props.children !== nextProps.children;
+		return this.props.sr !== nextProps.sr || this.props.addText !== nextProps.addText || this.props.attributes !== nextProps.attributes || this.props.derivedCharacteristics !== nextProps.derivedCharacteristics || this.props.typ !== nextProps.typ || this.props.untyp !== nextProps.untyp;
 	}
 
 	render() {
-		const { attributes, typ, untyp, name, sr, check, checkDisabled, checkmod, derivedCharacteristics, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], children, addFillElement, noIncrease, insertTopMargin } = this.props;
+		const { attributes, typ, untyp, name, sr, check, checkDisabled, checkmod, derivedCharacteristics, selectForInfo, ic, isNotActive, activate, activateDisabled, addPoint, addDisabled, removePoint, removeDisabled, addValues = [], addFillElement, noIncrease, insertTopMargin, addText, groupIndex, groupList } = this.props;
 
 		const values: JSX.Element[] = [];
 
@@ -81,14 +85,12 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 			}
 		}
 
-		const COMP = ['A', 'B', 'C', 'D', 'E'];
-
 		if (addFillElement) {
 			values.push(<div key="fill" className="fill"></div>);
 		}
 
 		if (ic) {
-			values.push(<div key="ic" className="ic">{COMP[ic - 1]}</div>);
+			values.push(<div key="ic" className="ic">{getICName(ic)}</div>);
 		}
 
 		values.push(...addValues.map(e => <div key={e.className} className={e.className}>{e.value}</div>));
@@ -117,7 +119,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp} insertTopMargin={insertTopMargin}>
 				<ListItemName name={name} />
 				<ListItemSeparator />
-				{children}
+				{addText && <ListItemGroup index={groupIndex} list={groupList} text={addText}></ListItemGroup>}
 				<ListItemValues>
 					{values}
 				</ListItemValues>

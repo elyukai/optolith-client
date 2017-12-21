@@ -45,6 +45,7 @@ export const getProfile = (state: AppState) => state.currentHero.present.profile
 export const getCultureAreaKnowledge = (state: AppState) => state.currentHero.present.profile.cultureAreaKnowledge;
 export const getSex = (state: AppState) => state.currentHero.present.profile.sex;
 export const getSize = (state: AppState) => state.currentHero.present.profile.size;
+export const getAvatar = (state: AppState) => state.currentHero.present.profile.avatar;
 
 export const getRules = (state: AppState) => state.currentHero.present.rules;
 export const getAttributeValueLimit = (state: AppState) => state.currentHero.present.rules.attributeValueLimit;

@@ -6,7 +6,6 @@ import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { SettingsContainer } from '../../containers/Settings';
-import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { SubTab } from '../../types/data';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
@@ -27,7 +26,7 @@ export interface NavigationBarOwnProps {
 
 export interface NavigationBarStateProps {
   currentTab: TabId;
-  hero: CurrentHeroInstanceState;
+  avatar: string | undefined;
   isRedoAvailable: boolean;
   isRemovingEnabled: boolean;
   isUndoAvailable: boolean;
@@ -35,6 +34,8 @@ export interface NavigationBarStateProps {
   isHeroSection: boolean;
   tabs: NavigationBarTabProps[];
   subtabs: SubTab[] | undefined;
+	total: number;
+	spent: number;
 	spentForAttributes: number;
 	spentForSkills: number;
 	spentForCombatTechniques: number;
@@ -43,9 +44,17 @@ export interface NavigationBarStateProps {
 	spentForCantrips: number;
 	spentForBlessings: number;
 	spentForAdvantages: number;
+	spentForMagicalAdvantages: number;
+	spentForBlessedAdvantages: number;
 	spentForDisadvantages: number;
+	spentForMagicalDisadvantages: number;
+	spentForBlessedDisadvantages: number;
 	spentForSpecialAbilities: number;
+	spentForEnergies: number;
 	spentTotal: number;
+	maximumForMagicalAdvantagesDisadvantages: number;
+	isSpellcaster: boolean;
+	isBlessedOne: boolean;
 }
 
 export interface NavigationBarDispatchProps {
@@ -61,8 +70,7 @@ export interface NavigationBarDispatchProps {
 export type NavigationBarProps = NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;
 
 export function NavigationBar(props: NavigationBarProps) {
-  const { subtabs, openSettings, closeSettings, isHeroSection, hero: { ap, dependent, profile: { avatar } }, locale, undo, isRedoAvailable, isUndoAvailable, redo, saveHero, setTab } = props;
-  const { spent, total } = ap;
+  const { subtabs, openSettings, closeSettings, isHeroSection, avatar, locale, undo, isRedoAvailable, isUndoAvailable, redo, saveHero, setTab, spentTotal, total } = props;
 
   return (
     <>
@@ -79,9 +87,9 @@ export function NavigationBar(props: NavigationBarProps) {
             <TooltipToggle
               position="bottom"
               margin={12}
-              content={<ApTooltip {...props} ap={ap} dependent={dependent} />}
+              content={<ApTooltip {...props} />}
               >
-              <Text className="collected-ap">{total - spent} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
+              <Text className="collected-ap">{total - spentTotal} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
             </TooltipToggle>
             <IconButton
               icon="&#xE90f;"

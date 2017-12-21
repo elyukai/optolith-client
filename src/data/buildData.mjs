@@ -249,7 +249,7 @@ function iterateProfessionVariants(array) {
 function iterateActivatables(array, type) {
   const list = {};
   for (const obj of array) {
-    const { subgr, property, aspect } = obj;
+    const { gr, subgr, property, aspect } = obj;
 
     const prefix = {
       adv: 'ADV_',
@@ -259,6 +259,7 @@ function iterateActivatables(array, type) {
 
     const newObj = {
       id: prefix[type] + obj.id,
+      gr,
       subgr,
       property,
       aspect,
@@ -278,9 +279,6 @@ function iterateActivatables(array, type) {
     }
     if (typeof obj.max === 'number') {
       newObj.max = obj.max;
-    }
-    if (obj.gr) {
-      newObj.gr = Number.parseInt(obj.gr);
     }
     if (newObj.id === 'SA_639') {
       newObj.sel = splitList(obj.sel).map((e, i) => {

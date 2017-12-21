@@ -165,12 +165,8 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
-													>
-													<ListItemGroup>
-														{aspc}
-														{sortOrder === 'group' && ` / ${_translate(locale, 'liturgies.view.blessing')}`}
-													</ListItemGroup>
-												</SkillListItem>
+													addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.blessing')}` : aspc}
+													/>
 											);
 										}
 
@@ -179,6 +175,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 										return (
 											<SkillListItem
+												{...add}
 												key={obj.id}
 												id={obj.id}
 												name={name}
@@ -190,13 +187,8 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												{...add}
-												>
-												<ListItemGroup>
-													{aspc}
-													{sortOrder === 'group' && ` / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}`}
-												</ListItemGroup>
-											</SkillListItem>
+												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+												/>
 										);
 									})
 								}
@@ -265,12 +257,8 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
-												>
-												<ListItemGroup>
-													{aspc}
-													{sortOrder === 'group' && ` / ${_translate(locale, 'liturgies.view.blessing')}`}
-												</ListItemGroup>
-											</SkillListItem>
+												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.blessing')}` : aspc}
+												/>
 										);
 									}
 
@@ -287,6 +275,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 									return (
 										<SkillListItem
+											{...add}
 											key={obj.id}
 											id={obj.id}
 											name={name}
@@ -297,13 +286,8 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											{...add}
-											>
-											<ListItemGroup>
-												{aspc}
-												{sortOrder === 'group' && ` / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}`}
-											</ListItemGroup>
-										</SkillListItem>
+											addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+											/>
 									);
 								})
 							}

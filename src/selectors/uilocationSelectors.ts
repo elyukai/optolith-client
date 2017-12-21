@@ -259,7 +259,7 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'skills',
-								label: _translate(locale, 'titlebar.tabs.skills'),
+								label: _translate(locale, 'titlebar.tabs.talents'),
 							},
 							{
 								id: 'combatTechniques',

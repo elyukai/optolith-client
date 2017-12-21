@@ -48,6 +48,15 @@ export interface UIMessages {
 	"titlebar.adventurepoints.disadvantages": string;
 	"titlebar.adventurepoints.disadvantagesmagic": string;
 	"titlebar.adventurepoints.disadvantagesblessed": string;
+	"titlebar.adventurepoints.attributes": string;
+	"titlebar.adventurepoints.skills": string;
+	"titlebar.adventurepoints.combattechniques": string;
+	"titlebar.adventurepoints.spells": string;
+	"titlebar.adventurepoints.cantrips": string;
+	"titlebar.adventurepoints.liturgicalchants": string;
+	"titlebar.adventurepoints.blessings": string;
+	"titlebar.adventurepoints.specialabilities": string;
+	"titlebar.adventurepoints.energies": string;
 	"options.filtertext": string;
 	"options.sortorder.alphabetically": string;
 	"options.sortorder.ap": string;

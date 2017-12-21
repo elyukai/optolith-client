@@ -3,11 +3,10 @@ import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../actions/EquipmentActions';
 import { AppState } from '../reducers/app';
 import { getInitialStartingWealth } from '../selectors/activatableSelectors';
-import { getTotal } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getArmorZoneInstances, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getArmorZonesEditorInstance, getIsArmorZonesCreation } from '../selectors/stateSelectors';
+import { getArmorZonesEditorInstance, getIsArmorZonesCreation, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/belongings/ArmorZones';
 
 function mapStateToProps(state: AppState) {
@@ -18,7 +17,7 @@ function mapStateToProps(state: AppState) {
 		items: getItems(state),
 		create: getIsArmorZonesCreation(state),
 		armorZonesEditor: getArmorZonesEditorInstance(state),
-		hasNoAddedAP: getTotal(state) === getStartEl(state).ap,
+		hasNoAddedAP: getTotalAdventurePoints(state) === getStartEl(state).ap,
 		purse: getPurse(state),
 		templates: getTemplates(state),
 		totalPrice: getTotalPrice(state),

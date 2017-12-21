@@ -190,6 +190,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
+						<ListHeaderTag className="btn-placeholder" />
 					</ListHeader>
 					<Scroll>
 						<List>

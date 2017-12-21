@@ -249,7 +249,7 @@ export function deactivate(state: DependentInstancesState, obj: ActivatableInsta
  */
 export function setTier(state: DependentInstancesState, obj: ActivatableInstance, index: number, tier: number): ToOptionalKeys<DependentInstancesState> {
   const previousTier = obj.active[index].tier;
-  const active = obj.active;
+  const active = [...obj.active];
   active.splice(index, 1, { ...active[index], tier });
   const firstState = setStateItem(state, obj.id, {...obj, active });
 
@@ -1286,13 +1286,13 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
   if (entries.find(e => e.id === 'SA_72')) {
     const apArr = [10, 20, 40];
     const { active } = state.get('SA_72')!;
-    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * active.length - 1;
+    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * (active.length - 1);
   }
 
   if (entries.find(e => e.id === 'SA_87')) {
     const apArr = [15, 25, 45];
     const { active } = state.get('SA_87')!;
-    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * active.length - 1;
+    diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * (active.length - 1);
   }
 
   return diff;

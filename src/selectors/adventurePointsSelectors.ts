@@ -1,19 +1,9 @@
 import { createSelector } from 'reselect';
-import { AdventurePointsState } from '../reducers/adventurePoints';
-import { AppState } from '../reducers/app';
 import { calculateAdventurePointsSpentDifference } from '../utils/ActivatableUtils';
-import { getIncreaseRangeAP, getIncreaseAP } from '../utils/ICUtils';
+import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
+import { getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
-import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDisadvantages, getLiturgicalChants, getSkills, getSpecialAbilities, getSpells, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
-
-export const getAp = (state: AppState) => state.currentHero.present.ap;
-export const getTotal = (state: AppState) => state.currentHero.present.ap.total;
-export const getSpent = (state: AppState) => state.currentHero.present.ap.spent;
-export const getAvailable = (state: AppState) => getTotal(state) - getSpent(state);
-
-export function getLeft(state: AdventurePointsState) {
-	return state.total - state.spent;
-}
+import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
 
 export const getAdventurePointsSpentForAttributes = createSelector(
 	getAttributes,
@@ -85,6 +75,30 @@ export const getAdventurePointsSpentForAdvantages = createSelector(
 	}
 );
 
+export const getAdventurePointsSpentForMagicalAdvantages = createSelector(
+	getAdvantagesForEdit,
+	getAdvantages,
+	getWiki,
+	(list, state, wiki) => {
+		const filteredList = list.filter(e => e.instance.gr === 2);
+		const baseAP = filteredList.reduce((sum, obj) => sum + obj.cost, 0);
+		const diffAP = calculateAdventurePointsSpentDifference(filteredList, state, wiki);
+		return baseAP + diffAP;
+	}
+);
+
+export const getAdventurePointsSpentForBlessedAdvantages = createSelector(
+	getAdvantagesForEdit,
+	getAdvantages,
+	getWiki,
+	(list, state, wiki) => {
+		const filteredList = list.filter(e => e.instance.gr === 3);
+		const baseAP = filteredList.reduce((sum, obj) => sum + obj.cost, 0);
+		const diffAP = calculateAdventurePointsSpentDifference(filteredList, state, wiki);
+		return baseAP + diffAP;
+	}
+);
+
 export const getAdventurePointsSpentForDisadvantages = createSelector(
 	getDisadvantagesForEdit,
 	getDisadvantages,
@@ -93,6 +107,37 @@ export const getAdventurePointsSpentForDisadvantages = createSelector(
 		const baseAP = list.reduce((sum, obj) => sum + obj.cost, 0);
 		const diffAP = calculateAdventurePointsSpentDifference(list, state, wiki);
 		return baseAP + diffAP;
+	}
+);
+
+export const getAdventurePointsSpentForMagicalDisadvantages = createSelector(
+	getDisadvantagesForEdit,
+	getDisadvantages,
+	getWiki,
+	(list, state, wiki) => {
+		const filteredList = list.filter(e => e.instance.gr === 2);
+		const baseAP = filteredList.reduce((sum, obj) => sum + obj.cost, 0);
+		const diffAP = calculateAdventurePointsSpentDifference(filteredList, state, wiki);
+		return baseAP + diffAP;
+	}
+);
+
+export const getAdventurePointsSpentForBlessedDisadvantages = createSelector(
+	getDisadvantagesForEdit,
+	getDisadvantages,
+	getWiki,
+	(list, state, wiki) => {
+		const filteredList = list.filter(e => e.instance.gr === 3);
+		const baseAP = filteredList.reduce((sum, obj) => sum + obj.cost, 0);
+		const diffAP = calculateAdventurePointsSpentDifference(filteredList, state, wiki);
+		return baseAP + diffAP;
+	}
+);
+
+export const getMagicalAdvantagesDisadvantagesAdventurePointsMaximum = createSelector(
+	getDependentInstances,
+	dependent => {
+		return getAdvantagesDisadvantagesSubMax(dependent, 1);
 	}
 );
 
@@ -107,6 +152,29 @@ export const getAdventurePointsSpentForSpecialAbilities = createSelector(
 	}
 );
 
+export const getAdventurePointsSpentForEnergies = createSelector(
+	getEnergies,
+	energies => {
+		const {
+			addedArcaneEnergy,
+			addedKarmaPoints,
+			addedLifePoints,
+			permanentArcaneEnergy: {
+				redeemed: redeemedArcaneEnergy
+			},
+			permanentKarmaPoints: {
+				redeemed: redeemedKarmaPoints
+			},
+		} = energies;
+		const addedArcaneEnergyCost = getIncreaseRangeAP(4, 0, addedArcaneEnergy);
+		const addedKarmaPointsCost = getIncreaseRangeAP(4, 0, addedKarmaPoints);
+		const addedLifePointsCost = getIncreaseRangeAP(4, 0, addedLifePoints);
+		const boughtBackArcaneEnergyCost = redeemedArcaneEnergy * 2;
+		const boughtBackKarmaPointsCost = redeemedKarmaPoints * 2;
+		return addedArcaneEnergyCost + addedKarmaPointsCost + addedLifePointsCost + boughtBackArcaneEnergyCost + boughtBackKarmaPointsCost;
+	}
+);
+
 export const getAdventurePointsSpent = createSelector(
 	getAdventurePointsSpentForAttributes,
 	getAdventurePointsSpentForSkills,
@@ -118,7 +186,14 @@ export const getAdventurePointsSpent = createSelector(
 	getAdventurePointsSpentForAdvantages,
 	getAdventurePointsSpentForDisadvantages,
 	getAdventurePointsSpentForSpecialAbilities,
+	getAdventurePointsSpentForEnergies,
 	(...cost: number[]) => {
 		return cost.reduce((a, b) => a + b, 0);
 	}
+);
+
+export const getAvailableAdventurePoints = createSelector(
+	getTotalAdventurePoints,
+	getAdventurePointsSpent,
+	(total, spent) => total - spent
 );

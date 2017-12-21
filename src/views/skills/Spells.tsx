@@ -171,12 +171,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
-													>
-													<ListItemGroup>
-														{_translate(locale, 'spells.view.properties')[obj.property - 1]}
-														{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.cantrip')}` : null}
-													</ListItemGroup>
-												</SkillListItem>
+													addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.cantrip')}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+													/>
 											);
 										}
 
@@ -198,12 +194,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												>
-												<ListItemGroup>
-													{_translate(locale, 'spells.view.properties')[obj.property - 1]}
-													{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : null}
-												</ListItemGroup>
-											</SkillListItem>
+												addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+												/>
 										);
 									})
 								}
@@ -273,12 +265,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
-												>
-												<ListItemGroup>
-													{_translate(locale, 'spells.view.properties')[obj.property - 1]}
-													{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.cantrip')}` : null}
-												</ListItemGroup>
-											</SkillListItem>
+												addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.cantrip')}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+												/>
 										);
 									}
 
@@ -295,6 +283,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 									return (
 										<SkillListItem
+											{...other}
 											key={obj.id}
 											id={obj.id}
 											name={name}
@@ -305,12 +294,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											{...other} >
-											<ListItemGroup>
-												{_translate(locale, 'spells.view.properties')[obj.property - 1]}
-												{sortOrder === 'group' ? ` / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : null}
-											</ListItemGroup>
-										</SkillListItem>
+											addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+											/>
 									);
 								})
 							}

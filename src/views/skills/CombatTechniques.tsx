@@ -126,9 +126,9 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											>
-											<ListItemGroup list={_translate(locale, 'combattechniques.view.groups')} index={obj.gr} />
-										</SkillListItem>
+											groupIndex={obj.gr}
+											groupList={_translate(locale, 'combattechniques.view.groups')}
+											/>
 									);
 								})
 							}

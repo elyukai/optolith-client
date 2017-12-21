@@ -3,12 +3,11 @@ import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../actions/EquipmentActions';
 import { AppState } from '../reducers/app';
 import { getInitialStartingWealth } from '../selectors/activatableSelectors';
-import { getTotal } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getFilteredAndSortedTemplates, getPurse, getSortedItems, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getAttributes } from '../selectors/stateSelectors';
+import { getAttributes, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from '../selectors/uisettingsSelectors';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
 
@@ -19,7 +18,7 @@ function mapStateToProps(state: AppState) {
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),
 		items: getSortedItems(state),
-		hasNoAddedAP: getTotal(state) === getStartEl(state).ap,
+		hasNoAddedAP: getTotalAdventurePoints(state) === getStartEl(state).ap,
 		purse: getPurse(state),
 		sortOrder: getEquipmentSortOrder(state),
 		templates: getFilteredAndSortedTemplates(state),
