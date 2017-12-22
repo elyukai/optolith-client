@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as RaceActions from '../actions/RaceActions';
 import { AppState } from '../reducers/app';
 import { getFilteredRaces } from '../selectors/rcpSelectors';
-import { getCurrentRaceId, getCurrentRaceVariantId } from '../selectors/stateSelectors';
+import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from '../selectors/stateSelectors';
 import { getRacesSortOrder } from '../selectors/uisettingsSelectors';
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from '../views/rcp/Races';
 
@@ -13,6 +13,7 @@ function mapStateToProps(state: AppState) {
 		currentVariantId: getCurrentRaceVariantId(state),
 		races: getFilteredRaces(state),
 		sortOrder: getRacesSortOrder(state),
+		filterText: getRacesFilterText(state),
 	};
 }
 
@@ -29,7 +30,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchValueVisibilityFilter() {
 			dispatch(RaceActions._switchRaceValueVisibilityFilter());
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(RaceActions.setFilterText(filterText));
+		},
 	};
 }
 

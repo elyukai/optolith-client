@@ -86,3 +86,19 @@ export function _switchRatingVisibility(): SwitchTalentRatingVisibilityAction {
 		type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY
 	};
 }
+
+export interface SetSkillsFilterTextAction {
+	type: ActionTypes.SET_SKILLS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setFilterText(filterText: string): SetSkillsFilterTextAction {
+	return {
+		type: ActionTypes.SET_SKILLS_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

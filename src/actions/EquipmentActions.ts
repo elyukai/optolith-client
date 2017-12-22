@@ -1094,3 +1094,51 @@ export function setRangedItemTemplatesCombatTechniqueFilter(filterOption: string
 		}
 	};
 }
+
+export interface SetEquipmentFilterTextAction {
+	type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setEquipmentFilterText(filterText: string): SetEquipmentFilterTextAction {
+	return {
+		type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetItemTemplatesFilterTextAction {
+	type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setItemTemplatesFilterText(filterText: string): SetItemTemplatesFilterTextAction {
+	return {
+		type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetZoneArmorFilterTextAction {
+	type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setZoneArmorFilterText(filterText: string): SetZoneArmorFilterTextAction {
+	return {
+		type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

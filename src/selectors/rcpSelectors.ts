@@ -2,12 +2,15 @@ import { createSelector } from 'reselect';
 import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
 import { Culture, Increasable, Profession, ProfessionVariant, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
+import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getCultures, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessions, getProfessionVariants, getSex, getSkills, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants } from './stateSelectors';
+import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions } from './sortOptionsSelectors';
+import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWikiCombatTechniques, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getCurrentRace = createSelector(
@@ -43,7 +46,7 @@ export const getCurrentProfessionVariant = createSelector(
 export const getAllRaces = createSelector(
 	getWikiRaces,
 	getWikiRaceVariants,
-	getCultures,
+	getWikiCultures,
 	(races, raceVariants, cultures) => {
 		const list: Race[] = [];
 
@@ -120,7 +123,7 @@ export const getAllRaces = createSelector(
 	}
 );
 
-export const getFilteredRaces = createSelector(
+export const getAvailableRaces = createSelector(
 	getAllRaces,
 	getRuleBooksEnabled,
 	(list, availablility) => {
@@ -128,33 +131,43 @@ export const getFilteredRaces = createSelector(
 	}
 );
 
+export const getFilteredRaces = createSelector(
+	getAvailableRaces,
+	getRacesFilterText,
+	getRacesSortOptions,
+	getLocaleMessages,
+	(list, filterText, sortOptions, locale) => {
+		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
+	}
+);
+
 export const getAllCultures = createSelector(
-	getCultures,
-	getSkills,
+	getWikiCultures,
+	getWikiSkills,
 	(cultures, skills) => {
 		const list: Culture[] = [];
 
 		for (const [id, culture] of cultures) {
 			const {
-				ap,
+				culturalPackageAdventurePoints,
 				name,
-				talents,
+				culturalPackageSkills,
 				src,
 				areaKnowledge,
 				areaKnowledgeShort,
 				languages,
 				scripts,
-				commonAdvantages,
+				commonAdvantagesText,
 				commonBlessedProfessions,
-				commonDisadvantages,
+				commonDisadvantagesText,
 				commonMagicProfessions,
 				commonMundaneProfessions,
 				commonNames,
-				uncommonAdvantages,
-				uncommonDisadvantages,
-				typicalTalents,
-				untypicalTalents,
-				socialTiers
+				uncommonAdvantagesText,
+				uncommonDisadvantagesText,
+				commonSkills,
+				uncommonSkills,
+				socialStatus
 			} = culture;
 
 			list.push({
@@ -164,19 +177,19 @@ export const getAllCultures = createSelector(
 				areaKnowledgeShort,
 				language: languages,
 				script: scripts,
-				socialStatus: socialTiers,
-				commonAdvantages,
+				socialStatus,
+				commonAdvantages: commonAdvantagesText,
 				commonBlessedProfessions,
-				commonDisadvantages,
+				commonDisadvantages: commonDisadvantagesText,
 				commonMagicProfessions,
 				commonMundaneProfessions,
-				commonSkills: typicalTalents,
-				uncommonSkills: untypicalTalents,
+				commonSkills,
+				uncommonSkills,
 				commonNames,
-				uncommonAdvantages,
-				uncommonDisadvantages,
-				culturalPackageAp: ap,
-				culturalPackageSkills: talents.map(([id, value]) => ({ name: skills.get(id)!.name, value })),
+				uncommonAdvantages: uncommonAdvantagesText,
+				uncommonDisadvantages: uncommonDisadvantagesText,
+				culturalPackageAdventurePoints,
+				culturalPackageSkills: culturalPackageSkills.map(({ id, value }) => ({ name: skills.get(id)!.name, value })),
 				src,
 				category: CULTURES
 			});
@@ -196,7 +209,7 @@ export const getCommonCultures = createSelector(
 	}
 );
 
-export const getFilteredCultures = createSelector(
+export const getAvailableCultures = createSelector(
 	getAllCultures,
 	getRuleBooksEnabled,
 	getCommonCultures,
@@ -209,6 +222,16 @@ export const getFilteredCultures = createSelector(
 	}
 );
 
+export const getFilteredCultures = createSelector(
+	getAvailableCultures,
+	getCulturesFilterText,
+	getCulturesSortOptions,
+	getLocaleMessages,
+	(list, filterText, sortOptions, locale) => {
+		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
+	}
+);
+
 interface SkillGroupLists {
 	physicalSkills: Increasable[];
 	socialSkills: Increasable[];
@@ -218,12 +241,13 @@ interface SkillGroupLists {
 }
 
 export const getAllProfessions = createSelector(
-	getProfessions,
-	getProfessionVariants,
+	getWikiProfessions,
+	getWikiProfessionVariants,
+	getWikiCombatTechniques,
+	getWikiSkills,
 	getDependentInstances,
 	getLocaleMessages,
-	(professions, professionVariants, dependentState, locale) => {
-		const { combatTechniques: combatTechniquesState, talents: skillsState } = dependentState;
+	(professions, professionVariants, combatTechniquesState, skillsState, dependentState, locale) => {
 		const list: Profession[] = [];
 
 		for (const [id, profession] of professions) {
@@ -232,13 +256,13 @@ export const getAllProfessions = createSelector(
 				name,
 				subname,
 				dependencies,
-				requires,
+				prerequisites,
 				specialAbilities,
 				selections,
 				combatTechniques,
-				talents,
+				skills,
 				spells,
-				liturgies,
+				liturgicalChants,
 				blessings,
 				variants,
 				prerequisitesStart,
@@ -258,7 +282,7 @@ export const getAllProfessions = createSelector(
 				natureSkills,
 				knowledgeSkills,
 				craftSkills,
-			} = talents.reduce<SkillGroupLists>((obj, [id, value]) => {
+			} = skills.reduce<SkillGroupLists>((obj, { id, value }) => {
 				const { name, gr } = skillsState.get(id)!;
 
 				let key: keyof SkillGroupLists = 'craftSkills';
@@ -294,7 +318,7 @@ export const getAllProfessions = createSelector(
 				name,
 				subname,
 				ap,
-				prerequisites: requires.map((e, index) => {
+				prerequisites: prerequisites.map((e, index) => {
 					if (!isRequiringIncreasable(e)) {
 						const { active, ...other } = e;
 						return {
@@ -304,7 +328,7 @@ export const getAllProfessions = createSelector(
 					}
 					return e;
 				}),
-				prerequisitesModel: requires,
+				prerequisitesModel: prerequisites,
 				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
 					active,
 					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
@@ -318,14 +342,14 @@ export const getAllProfessions = createSelector(
 					}
 					return e;
 				}),
-				combatTechniques: combatTechniques.map(([id, value]) => ({ name: combatTechniquesState.get(id)!.name, value })),
+				combatTechniques: combatTechniques.map(({ id, value }) => ({ name: combatTechniquesState.get(id)!.name, value })),
 				physicalSkills,
 				socialSkills,
 				natureSkills,
 				knowledgeSkills,
 				craftSkills,
-				spells: spells.map(([id, value]) => ({ id, value })),
-				liturgicalChants: liturgies.map(([id, value]) => ({ id, value })),
+				spells,
+				liturgicalChants,
 				blessings,
 				variants: filteredVariants.map(v => {
 					const {
@@ -333,13 +357,13 @@ export const getAllProfessions = createSelector(
 						name,
 						ap,
 						combatTechniques: combatTechniquesVariant,
-						talents: talentsVariant,
+						skills: skillsVariant,
 						concludingText,
 						fullText,
 						precedingText,
 						spells: spellsVariant,
 						dependencies: dependenciesVariant,
-						requires: variantRequires,
+						prerequisites: variantRequires,
 						selections: selectionsVariant,
 						specialAbilities: specialAbilitiesVariant,
 					} = v;
@@ -347,25 +371,25 @@ export const getAllProfessions = createSelector(
 						id,
 						name,
 						ap,
-						combatTechniques: combatTechniquesVariant.map(([id, value]) => {
-							const previousObject = combatTechniques.find(e => e[0] === id);
-							return { name: combatTechniquesState.get(id)!.name, value, previous: previousObject && previousObject[1] };
+						combatTechniques: combatTechniquesVariant.map(({ id, value }) => {
+							const previousObject = combatTechniques.find(e => e.id === id);
+							return { name: combatTechniquesState.get(id)!.name, value, previous: previousObject && previousObject.value };
 						}),
-						skills: talentsVariant.map(([id, value]) => {
-							const previousObject = talents.find(e => e[0] === id);
-							return { name: skillsState.get(id)!.name, value, previous: previousObject && previousObject[1] };
+						skills: skillsVariant.map(({ id, value }) => {
+							const previousObject = skills.find(e => e.id === id);
+							return { name: skillsState.get(id)!.name, value, previous: previousObject && previousObject.value };
 						}),
-						spells: spellsVariant.map(([id, value]) => {
-							const previousObject = spells.find(e => e[0] === id);
-							return { id, value, previous: previousObject && previousObject[1] };
+						spells: spellsVariant.map(({ id, value }) => {
+							const previousObject = spells.find(e => e.id === id);
+							return { id, value, previous: previousObject && previousObject.value };
 						}),
 						dependencies: dependenciesVariant,
 						prerequisitesModel: variantRequires,
 						selections: selectionsVariant.map(e => {
-							if (e.id === 'COMBAT_TECHNIQUES') {
+							if (isCombatTechniquesSelection(e)) {
 								return {
 									...e,
-									sid: e.sid ? e.sid.map(id => combatTechniquesState.get(id)!.name) : undefined
+									sid: e.sid.map(id => combatTechniquesState.get(id)!.name)
 								};
 							}
 							return e;
@@ -435,11 +459,21 @@ export const getCommonProfessions = createSelector(
 	}
 );
 
-export const getFilteredProfessions = createSelector(
+export const getAvailableProfessions = createSelector(
 	getCommonProfessions,
 	getRuleBooksEnabled,
 	getProfessionsVisibilityFilter,
 	(list, availablility, visibility) => {
 		return visibility === 'all' ? filterByAvailability(list, availablility, entry => entry.id === 'P_0') : list;
+	}
+);
+
+export const getFilteredProfessions = createSelector(
+	getAvailableProfessions,
+	getProfessionsFilterText,
+	getProfessionsSortOptions,
+	getLocaleMessages,
+	(list, filterText, sortOptions, locale) => {
+		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
 	}
 );

@@ -4,14 +4,15 @@ import { EquipmentState } from '../reducers/equipment';
 import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data.d';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
-import { AllSortOptions, sortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { isAvailable } from '../utils/RulesUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
 import { get as getInstance, getDependent } from './dependentInstancesSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getHigherParadeValues, getLocaleMessages } from './stateSelectors';
+import { getEquipmentSortOptions } from './sortOptionsSelectors';
+import { getEquipmentFilterText, getHigherParadeValues, getItemTemplatesFilterText, getLocaleMessages, getZoneArmorFilterText } from './stateSelectors';
 import { getEquipmentSortOrder } from './uisettingsSelectors';
 
 export function getForSave(state: EquipmentState) {
@@ -106,11 +107,19 @@ export const getSortedTemplates = createSelector(
 	}
 );
 
-export const getFilteredAndSortedTemplates = createSelector(
+export const getAvailableItemTemplates = createSelector(
 	getSortedTemplates,
 	getRuleBooksEnabled,
 	(list, availablility) => {
 		return list.filter(e => !e.src || e.src.length === 0 || isAvailable(availablility)({ ...e, src: e.src }));
+	}
+);
+
+export const getFilteredItemTemplates = createSelector(
+	getAvailableItemTemplates,
+	getItemTemplatesFilterText,
+	(items, filterText) => {
+		return filterObjects(items, filterText);
 	}
 );
 
@@ -120,18 +129,28 @@ export const getItems = createSelector(
 	(items, templates) => [...items.values()].map(e => getFullItem(items, templates, e.id))
 );
 
-export const getSortedItems = createSelector(
+export const getFilteredItems = createSelector(
 	getItems,
+	getEquipmentFilterText,
+	getEquipmentSortOptions,
 	getLocaleMessages,
-	getSortOptions,
-	(items, locale, sortOptions) => {
-		return sortObjects(items, locale!.id, sortOptions);
+	(items, filterText, sortOptions, locale) => {
+		return filterAndSortObjects(items, locale!.id, filterText, sortOptions);
 	}
 );
 
 export const getArmorZoneInstances = createSelector(
 	getArmorZonesState,
 	armorZones => [...armorZones.values()]
+);
+
+export const getFilteredZoneArmors = createSelector(
+	getArmorZoneInstances,
+	getZoneArmorFilterText,
+	getLocaleMessages,
+	(items, filterText, locale) => {
+		return filterAndSortObjects(items, locale!.id, filterText);
+	}
 );
 
 export const getAllItems = createSelector(

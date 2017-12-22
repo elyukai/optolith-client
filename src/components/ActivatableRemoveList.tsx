@@ -7,43 +7,39 @@ import { ListPlaceholder } from './ListPlaceholder';
 import { Scroll } from './Scroll';
 
 export interface ActivatableRemoveListProps {
-	filterText?: string;
-	groupNames?: string[];
+	filterText: string;
 	hideGroup?: boolean;
 	list: ActiveViewObject[];
 	locale: UIMessages;
 	isRemovingEnabled: boolean;
 	rating?: { [id: string]: string };
 	showRating?: boolean;
-	sortOrder?: string;
 	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
 	selectForInfo?(id: string): void;
 }
 
 export function ActivatableRemoveList(props: ActivatableRemoveListProps) {
-	const { filterText = '', groupNames, list, locale, rating, showRating, sortOrder = 'name' } = props;
+	const { filterText, list, locale, rating, showRating } = props;
 
-	const sortedList = filterAndSortObjects(list, locale.id, filterText, sortOrder === 'groupname' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
+	if (list.length === 0) {
+		return <ListPlaceholder locale={locale} noResults={filterText.length > 0} type="specialAbilities" />;
+	}
 
 	return (
 		<Scroll>
-			{list.length === 0 ? (
-				<ListPlaceholder locale={locale} />
-			) : (
-				<List>
-					{sortedList.map(item => (
-						<ActivatableRemoveListItem
-							{...props}
-							key={`${item.id}_${item.index}`}
-							item={item}
-							isImportant={showRating && rating && rating[item.id] === 'IMP'}
-							isTypical={showRating && rating && rating[item.id] === 'TYP'}
-							isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
-							/>
-					))}
-				</List>
-			)}
+			<List>
+				{list.map(item => (
+					<ActivatableRemoveListItem
+						{...props}
+						key={`${item.id}_${item.index}`}
+						item={item}
+						isImportant={showRating && rating && rating[item.id] === 'IMP'}
+						isTypical={showRating && rating && rating[item.id] === 'TYP'}
+						isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
+						/>
+				))}
+			</List>
 		</Scroll>
 	);
 }

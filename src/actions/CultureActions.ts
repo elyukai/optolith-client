@@ -71,3 +71,19 @@ export function _switchValueVisibilityFilter(): SwitchCultureValueVisibilityActi
 		type: ActionTypes.SWITCH_CULTURE_VALUE_VISIBILITY
 	};
 }
+
+export interface SetCulturesFilterTextAction {
+	type: ActionTypes.SET_CULTURES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setFilterText(filterText: string): SetCulturesFilterTextAction {
+	return {
+		type: ActionTypes.SET_CULTURES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

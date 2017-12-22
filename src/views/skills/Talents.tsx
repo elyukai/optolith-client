@@ -3,19 +3,19 @@ import { Checkbox } from '../../components/Checkbox';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Scroll } from '../../components/Scroll';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
@@ -31,12 +31,14 @@ export interface TalentsStateProps {
 	list: TalentInstance[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
+	filterText: string;
 	ratingVisibility: boolean;
 	talentRating: ToListById<string>;
 }
 
 export interface TalentsDispatchProps {
 	setSortOrder(sortOrder: string): void;
+	setFilterText(filterText: string): void;
 	switchRatingVisibility(): void;
 	addPoint(id: string): void;
 	removePoint(id: string): void;
@@ -45,36 +47,28 @@ export interface TalentsDispatchProps {
 export type TalentsProps = TalentsStateProps & TalentsDispatchProps & TalentsOwnProps;
 
 export interface TalentsState {
-	filterText: string;
 	infoId?: string;
 }
 
 export class Talents extends React.Component<TalentsProps, TalentsState> {
-	state: TalentsState = {
-		filterText: ''
-	};
+	state: TalentsState = {};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as TalentsState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 	showInfo = (id: string) => this.setState({ infoId: id } as TalentsState);
 
 	render() {
-		const { addPoint, currentHero, attributes, derivedCharacteristics, locale, isRemovingEnabled, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list: rawlist } = this.props;
-		const { filterText, infoId } = this.state;
-
-		const list = filterAndSortObjects(rawlist, locale.id, filterText, sortOrder === 'ic' ? ['ic', 'name'] : sortOrder === 'group' ? ['gr', 'name'] : ['name']);
+		const { addPoint, currentHero, attributes, derivedCharacteristics, locale, isRemovingEnabled, ratingVisibility, removePoint, setSortOrder, sortOrder, switchRatingVisibility, talentRating, list, filterText } = this.props;
+		const { infoId } = this.state;
 
 		return (
 			<Page id="talents">
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={setSortOrder}
-						array={[
-							{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
-							{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
-							{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
-						]}
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={setSortOrder}
+						locale={locale}
+						options={['name', 'group', 'ic']}
 						/>
 					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{_translate(locale, 'skills.options.commoninculture')}</Checkbox>
 					{ratingVisibility && <RecommendedReference locale={locale} />}
@@ -86,7 +80,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
 							{_translate(locale, 'group')}
-							</ListHeaderTag>
+						</ListHeaderTag>
 						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
 							{_translate(locale, 'sr.short')}
 						</ListHeaderTag>
@@ -103,7 +97,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 					<Scroll>
 						<List>
 							{
-								list.map((obj, index, array) => {
+								list.length === 0 ? <ListPlaceholder locale={locale} type="skills" noResults /> : list.map((obj, index, array) => {
 									const prevObj = array[index - 1];
 									return (
 										<SkillListItem

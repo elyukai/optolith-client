@@ -2,7 +2,7 @@ import { PROFESSIONS, SPECIAL_ABILITIES } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import { ActivatableInstance } from '../types/data';
 import { Profession as ProfessionView } from '../types/view';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../types/wiki';
+import { Advantage, Blessing, Cantrip, CombatTechnique, CombatTechniquesSelection, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, ProfessionVariantSelection, Race, RemoveCombatTechniquesSecondSelection, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, Spell } from '../types/wiki';
 import { getWikiStateKeyById } from './IDUtils';
 
 export function get(state: WikiState, id: string) {
@@ -29,4 +29,20 @@ export function isProfession(obj: Element): obj is Profession {
 
 export function isSpecialAbility(obj: Element): obj is SpecialAbility {
 	return !isItemTemplate(obj) && obj.category === SPECIAL_ABILITIES;
+}
+
+export function isRemoveSpecializationSelection(obj: ProfessionVariantSelection): obj is RemoveSpecializationSelection {
+	return obj.id === 'SPECIALISATION' && obj.hasOwnProperty('active');
+}
+
+export function isCombatTechniquesSelection(obj: ProfessionVariantSelection): obj is CombatTechniquesSelection {
+	return obj.id === 'COMBAT_TECHNIQUES' && obj.hasOwnProperty('sid') && obj.hasOwnProperty('value') && obj.hasOwnProperty('amount');
+}
+
+export function isRemoveCombatTechniquesSelection(obj: ProfessionVariantSelection): obj is RemoveCombatTechniquesSelection {
+	return obj.id === 'COMBAT_TECHNIQUES' && obj.hasOwnProperty('active');
+}
+
+export function isRemoveSecondCombatTechniquesSelection(obj: ProfessionVariantSelection): obj is RemoveCombatTechniquesSecondSelection {
+	return obj.id === 'COMBAT_TECHNIQUES_SECOND' && obj.hasOwnProperty('active');
 }

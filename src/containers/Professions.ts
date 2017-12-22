@@ -4,7 +4,7 @@ import * as ProfessionActions from '../actions/ProfessionActions';
 import * as ProfessionVariantActions from '../actions/ProfessionVariantActions';
 import { AppState } from '../reducers/app';
 import { getFilteredProfessions } from '../selectors/rcpSelectors';
-import { getBooks, getCantrips, getCurrentProfessionId, getCurrentProfessionVariantId, getLiturgicalChants, getSex, getSpells } from '../selectors/stateSelectors';
+import { getBooks, getCantrips, getCurrentProfessionId, getCurrentProfessionVariantId, getLiturgicalChants, getProfessionsFilterText, getSex, getSpells } from '../selectors/stateSelectors';
 import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../views/rcp/Professions';
 
@@ -21,6 +21,7 @@ function mapStateToProps(state: AppState) {
 		sortOrder: getProfessionsSortOrder(state),
 		spells: getSpells(state),
 		visibilityFilter: getProfessionsVisibilityFilter(state),
+		filterText: getProfessionsFilterText(state),
 	};
 }
 
@@ -43,7 +44,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchExpansionVisibilityFilter() {
 			dispatch(ProfessionActions._switchProfessionsExpansionVisibilityFilter());
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(ProfessionActions.setFilterText(filterText));
+		},
 	};
 }
 

@@ -3,10 +3,10 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';
-import { getDeactiveDisadvantages, getDisadvantagesForEdit, getDisadvantagesRating } from '../selectors/activatableSelectors';
+import { getDisadvantagesRating, getFilteredActiveDisadvantages, getFilteredInactiveDisadvantages } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAdventurePoints, getDisadvantages } from '../selectors/stateSelectors';
+import { getAdventurePoints, getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
@@ -14,9 +14,9 @@ import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, Disad
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getDisadvantagesForEdit(state),
+		activeList: getFilteredActiveDisadvantages(state),
 		ap: getAdventurePoints(state),
-		deactiveList: getDeactiveDisadvantages(state),
+		deactiveList: getFilteredInactiveDisadvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {
 			return get(getDependent(state), id);
@@ -26,6 +26,8 @@ function mapStateToProps(state: AppState) {
 		magicalMax: getAdvantagesDisadvantagesSubMax(getDependent(state), 1),
 		rating: getDisadvantagesRating(state),
 		showRating: getAdvantagesDisadvantagesCultureRatingVisibility(state),
+		filterText: getDisadvantagesFilterText(state),
+		inactiveFilterText: getInactiveDisadvantagesFilterText(state),
 	};
 }
 
@@ -45,7 +47,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setTier(id: string, index: number, tier: number) {
 			dispatch(DisAdvActions._setTier(id, index, tier));
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(DisAdvActions.setActiveDisadvantagesFilterText(filterText));
+		},
+		setInactiveFilterText(filterText: string) {
+			dispatch(DisAdvActions.setInactiveDisadvantagesFilterText(filterText));
+		},
 	};
 }
 

@@ -148,18 +148,17 @@ export interface CommonProfessionObject {
 	readonly reverse: boolean;
 }
 
-export interface SpecialisationSelection {
+export interface SpecializationSelection {
 	readonly id: 'SPECIALISATION';
 	readonly sid: string | string[];
-	readonly active?: boolean;
 }
 
-export interface RemoveSpecialisationSelection {
+export interface RemoveSpecializationSelection {
 	readonly id: 'SPECIALISATION';
 	readonly active: boolean;
 }
 
-export type VariantSpecialisationSelection = SpecialisationSelection | RemoveSpecialisationSelection;
+export type VariantSpecializationSelection = SpecializationSelection | RemoveSpecializationSelection;
 
 export interface LanguagesScriptsSelection {
 	readonly id: 'LANGUAGES_SCRIPTS';
@@ -218,8 +217,8 @@ export interface SkillsSelection {
 }
 
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
-export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
-export type ProfessionVariantSelection = VariantSpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
+export type ProfessionSelection = SpecializationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
+export type ProfessionVariantSelection = VariantSpecializationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
 export type ProfessionSelections = ProfessionSelection[];
 export type ProfessionVariantSelections = ProfessionVariantSelection[];
 

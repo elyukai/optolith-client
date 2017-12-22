@@ -6,6 +6,7 @@ import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { SettingsContainer } from '../../containers/Settings';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { SubTab } from '../../types/data';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
@@ -34,24 +35,8 @@ export interface NavigationBarStateProps {
   isHeroSection: boolean;
   tabs: NavigationBarTabProps[];
   subtabs: SubTab[] | undefined;
-	total: number;
+	adventurePoints: AdventurePointsObject;
 	spent: number;
-	spentForAttributes: number;
-	spentForSkills: number;
-	spentForCombatTechniques: number;
-	spentForSpells: number;
-	spentForLiturgicalChants: number;
-	spentForCantrips: number;
-	spentForBlessings: number;
-	spentForAdvantages: number;
-	spentForMagicalAdvantages: number;
-	spentForBlessedAdvantages: number;
-	spentForDisadvantages: number;
-	spentForMagicalDisadvantages: number;
-	spentForBlessedDisadvantages: number;
-	spentForSpecialAbilities: number;
-	spentForEnergies: number;
-	spentTotal: number;
 	maximumForMagicalAdvantagesDisadvantages: number;
 	isSpellcaster: boolean;
 	isBlessedOne: boolean;
@@ -70,7 +55,7 @@ export interface NavigationBarDispatchProps {
 export type NavigationBarProps = NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;
 
 export function NavigationBar(props: NavigationBarProps) {
-  const { subtabs, openSettings, closeSettings, isHeroSection, avatar, locale, undo, isRedoAvailable, isUndoAvailable, redo, saveHero, setTab, spentTotal, total } = props;
+  const { subtabs, openSettings, closeSettings, isHeroSection, avatar, locale, undo, isRedoAvailable, isUndoAvailable, redo, saveHero, setTab, adventurePoints } = props;
 
   return (
     <>
@@ -89,7 +74,7 @@ export function NavigationBar(props: NavigationBarProps) {
               margin={12}
               content={<ApTooltip {...props} />}
               >
-              <Text className="collected-ap">{total - spentTotal} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
+              <Text className="collected-ap">{adventurePoints.available} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
             </TooltipToggle>
             <IconButton
               icon="&#xE90f;"

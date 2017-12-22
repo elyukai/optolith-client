@@ -13,25 +13,188 @@ export interface ListPlaceholderProps {
 	locale: UIMessages;
 	noResults?: boolean;
 	wikiInitial?: boolean;
-	type?: 'advantages' | 'disadvantages' | 'wiki';
+	type?: 'races' | 'cultures' | 'professions' | 'advantages' | 'disadvantages' | 'specialAbilities' | 'inactiveAdvantages' | 'inactiveDisadvantages' | 'inactiveSpecialAbilities' | 'wiki' | 'skills' | 'combatTechniques' | 'spells' | 'liturgicalChants' | 'inactiveSpells' | 'inactiveLiturgicalChants' | 'equipment' | 'itemTemplates' | 'zoneArmor';
 }
 
 export function ListPlaceholder(props: ListPlaceholderProps) {
-	let placeholder = (
-		<ListItem className="placeholder">
-			<ListItemName name="" />
-			<ListItemSeparator/>
-			<ListItemValues>
-				<div className="cost"><div className="placeholder-text"></div></div>
-			</ListItemValues>
-			<ListItemButtons>
-				<IconButton icon="&#xE90b;" flat disabled />
-				<IconButton icon="&#xE912;" flat disabled />
-			</ListItemButtons>
-		</ListItem>
-	);
+	const { type = 'advantages' } = props;
+	let placeholder: JSX.Element | undefined;
 
-	switch (props.type) {
+	switch (type) {
+		case 'races':
+		case 'professions':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="cost"><div className="placeholder-text"></div></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE90a;" disabled />
+						<IconButton icon="&#xE90e;" disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'cultures':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemButtons>
+						<IconButton icon="&#xE90a;" disabled />
+						<IconButton icon="&#xE90e;" disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'advantages':
+		case 'disadvantages':
+		case 'specialAbilities':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="cost"><div className="placeholder-text"></div></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE90b;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'inactiveAdvantages':
+		case 'inactiveDisadvantages':
+		case 'inactiveSpecialAbilities':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="cost"><div className="placeholder-text"></div></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE916;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'skills':
+		case 'spells':
+		case 'liturgicalChants':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="sr"></div>
+						<div className="check"></div>
+						<div className="check"></div>
+						<div className="check"></div>
+						<div className="fill"></div>
+						<div className="ic"></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE908;" flat disabled />
+						<IconButton icon="&#xE909;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'inactiveSpells':
+		case 'inactiveLiturgicalChants':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="sr"></div>
+						<div className="check"></div>
+						<div className="check"></div>
+						<div className="check"></div>
+						<div className="fill"></div>
+						<div className="ic"></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE916;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'combatTechniques':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemValues>
+						<div className="sr"></div>
+						<div className="ic"></div>
+						<div className="primary"></div>
+						<div className="at"></div>
+						<div className="atpa"></div>
+						<div className="pa"></div>
+					</ListItemValues>
+					<ListItemButtons>
+						<IconButton icon="&#xE908;" flat disabled />
+						<IconButton icon="&#xE909;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'equipment':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemButtons>
+						<IconButton icon="&#xE90c;" flat disabled />
+						<IconButton icon="&#xE90b;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'itemTemplates':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemButtons>
+						<IconButton icon="&#xE916;" flat disabled />
+						<IconButton icon="&#xE912;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
+		case 'zoneArmor':
+			placeholder = (
+				<ListItem className="placeholder">
+					<ListItemName name="" />
+					<ListItemSeparator/>
+					<ListItemButtons>
+						<IconButton icon="&#xE90c;" flat disabled />
+						<IconButton icon="&#xE90b;" flat disabled />
+					</ListItemButtons>
+				</ListItem>
+			);
+			break;
+
 		case 'wiki':
 			placeholder = (
 				<ListItem className="placeholder">
@@ -43,7 +206,7 @@ export function ListPlaceholder(props: ListPlaceholderProps) {
 	}
 
 	return (
-		<List>
+		<List className={classNames('placeholder-wrapper', ['advantages', 'disadvantages', 'specialAbilities', 'inactiveAdvantages', 'inactiveDisadvantages', 'inactiveSpecialAbilities'].includes(type) && 'increased-padding')}>
 			{placeholder}
 			{placeholder}
 			{placeholder}

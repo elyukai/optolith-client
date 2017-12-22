@@ -1,62 +1,47 @@
 import * as React from 'react';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 
 export interface ApTooltipProps {
 	locale?: UIMessages;
-	total: number;
+	adventurePoints: AdventurePointsObject;
 	spent: number;
-	spentForAttributes: number;
-	spentForSkills: number;
-	spentForCombatTechniques: number;
-	spentForSpells: number;
-	spentForLiturgicalChants: number;
-	spentForCantrips: number;
-	spentForBlessings: number;
-	spentForAdvantages: number;
-	spentForMagicalAdvantages: number;
-	spentForBlessedAdvantages: number;
-	spentForDisadvantages: number;
-	spentForMagicalDisadvantages: number;
-	spentForBlessedDisadvantages: number;
-	spentForSpecialAbilities: number;
-	spentForEnergies: number;
-	spentTotal: number;
 	maximumForMagicalAdvantagesDisadvantages: number;
 	isSpellcaster: boolean;
 	isBlessedOne: boolean;
 }
 
 export function ApTooltip(props: ApTooltipProps) {
-	const { locale } = props;
+	const { locale, adventurePoints } = props;
 
 	return (
 		<div className="ap-details">
 			<h4>{_translate(locale, 'titlebar.adventurepoints.title')}</h4>
 			<p className="general">
-				{_translate(locale, 'titlebar.adventurepoints.total', props.total)}<br/>
-				{_translate(locale, 'titlebar.adventurepoints.spent', props.spentTotal)} ({props.spent})
+				{_translate(locale, 'titlebar.adventurepoints.total', adventurePoints.total)}<br/>
+				{_translate(locale, 'titlebar.adventurepoints.spent', adventurePoints.spent)} ({props.spent})
 			</p>
 			<hr />
 			<p>
-				<span>{_translate(locale, 'titlebar.adventurepoints.advantages', props.spentForAdvantages, 80)}</span>
-				<span>{props.spentForMagicalAdvantages > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesmagic', props.spentForMagicalAdvantages, props.maximumForMagicalAdvantagesDisadvantages)}</span>
-				<span>{props.spentForBlessedAdvantages > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesblessed', props.spentForBlessedAdvantages, 50)}</span>
-				<span>{_translate(locale, 'titlebar.adventurepoints.disadvantages', -props.spentForDisadvantages, 80)}</span>
-				<span>{props.spentForDisadvantages > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesmagic', -props.spentForMagicalDisadvantages, props.maximumForMagicalAdvantagesDisadvantages)}</span>
-				<span>{props.spentForBlessedDisadvantages > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesblessed', -props.spentForBlessedDisadvantages, 50)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.advantages', adventurePoints.spentOnAdvantages, 80)}</span>
+				<span>{adventurePoints.spentOnMagicalAdvantages > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesmagic', adventurePoints.spentOnMagicalAdvantages, props.maximumForMagicalAdvantagesDisadvantages)}</span>
+				<span>{adventurePoints.spentOnBlessedAdvantages > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesblessed', adventurePoints.spentOnBlessedAdvantages, 50)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.disadvantages', -adventurePoints.spentOnDisadvantages, 80)}</span>
+				<span>{adventurePoints.spentOnDisadvantages > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesmagic', -adventurePoints.spentOnMagicalDisadvantages, props.maximumForMagicalAdvantagesDisadvantages)}</span>
+				<span>{adventurePoints.spentOnBlessedDisadvantages > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesblessed', -adventurePoints.spentOnBlessedDisadvantages, 50)}</span>
 			</p>
 			<hr />
 			<p>
-				<span>{_translate(locale, 'titlebar.adventurepoints.attributes', props.spentForAttributes)}</span>
-				<span>{_translate(locale, 'titlebar.adventurepoints.skills', props.spentForSkills)}</span>
-				<span>{_translate(locale, 'titlebar.adventurepoints.combattechniques', props.spentForCombatTechniques)}</span>
-				{props.isSpellcaster && <span>{_translate(locale, 'titlebar.adventurepoints.spells', props.spentForSpells)}</span>}
-				{props.isSpellcaster && <span>{_translate(locale, 'titlebar.adventurepoints.cantrips', props.spentForCantrips)}</span>}
-				{props.isBlessedOne && <span>{_translate(locale, 'titlebar.adventurepoints.liturgicalchants', props.spentForLiturgicalChants)}</span>}
-				{props.isBlessedOne && <span>{_translate(locale, 'titlebar.adventurepoints.blessings', props.spentForBlessings)}</span>}
-				<span>{_translate(locale, 'titlebar.adventurepoints.specialabilities', props.spentForSpecialAbilities)}</span>
-				<span>{_translate(locale, 'titlebar.adventurepoints.energies', props.spentForEnergies)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.attributes', adventurePoints.spentOnAttributes)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.skills', adventurePoints.spentOnSkills)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.combattechniques', adventurePoints.spentOnCombatTechniques)}</span>
+				{props.isSpellcaster && <span>{_translate(locale, 'titlebar.adventurepoints.spells', adventurePoints.spentOnSpells)}</span>}
+				{props.isSpellcaster && <span>{_translate(locale, 'titlebar.adventurepoints.cantrips', adventurePoints.spentOnCantrips)}</span>}
+				{props.isBlessedOne && <span>{_translate(locale, 'titlebar.adventurepoints.liturgicalchants', adventurePoints.spentOnLiturgicalChants)}</span>}
+				{props.isBlessedOne && <span>{_translate(locale, 'titlebar.adventurepoints.blessings', adventurePoints.spentOnBlessings)}</span>}
+				<span>{_translate(locale, 'titlebar.adventurepoints.specialabilities', adventurePoints.spentOnSpecialAbilities)}</span>
+				<span>{_translate(locale, 'titlebar.adventurepoints.energies', adventurePoints.spentOnEnergies)}</span>
 			</p>
 		</div>
 	);

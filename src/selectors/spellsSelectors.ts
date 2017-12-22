@@ -3,6 +3,7 @@ import { CANTRIPS, SPELLS } from '../constants/Categories';
 import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
 import { Spell } from '../types/view.d';
 import { isActive } from '../utils/ActivatableUtils';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { validate } from '../utils/RequirementUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
@@ -10,7 +11,9 @@ import { isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getStart, getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getAdvantages, getCantrips, getDisadvantages, getElState, getPhase, getSpecialAbilities, getSpells } from './stateSelectors';
+import { getSpellsSortOptions } from './sortOptionsSelectors';
+import { getAdvantages, getCantrips, getDisadvantages, getElState, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText } from './stateSelectors';
+import { getEnableActiveItemHints } from './uisettingsSelectors';
 
 export const getMagicalTraditionsResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
 	return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));
@@ -159,7 +162,7 @@ export const getActiveSpells = createSelector(
 	}
 );
 
-export const getFilteredInactiveSpells = createSelector(
+export const getAvailableInactiveSpells = createSelector(
 	getInactiveSpells,
 	getRuleBooksEnabled,
 	(list, availablility) => {
@@ -167,11 +170,28 @@ export const getFilteredInactiveSpells = createSelector(
 	}
 );
 
-export const getFilteredSpellsWithUnmetPrerequisites = createSelector(
-	getInactiveSpells,
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByAvailability(list.invalid, availablility);
+export const getFilteredActiveSpellsAndCantrips = createSelector(
+	getActiveSpells,
+	getSpellsSortOptions,
+	getSpellsFilterText,
+	getLocaleMessages,
+	(spells, sortOptions, filterText, locale) => {
+		return filterAndSortObjects(spells, locale!.id, filterText, sortOptions);
+	}
+);
+
+export const getFilteredInactiveSpellsAndCantrips = createSelector(
+	getAvailableInactiveSpells,
+	getActiveSpells,
+	getSpellsSortOptions,
+	getInactiveSpellsFilterText,
+	getLocaleMessages,
+	getEnableActiveItemHints,
+	(inactive, active, sortOptions, filterText, locale, areActiveItemHintsEnabled) => {
+		if (areActiveItemHintsEnabled) {
+			return filterAndSortObjects([...inactive, ...active], locale!.id, filterText, sortOptions);
+		}
+		return filterAndSortObjects(inactive, locale!.id, filterText, sortOptions);
 	}
 );
 

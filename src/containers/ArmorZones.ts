@@ -5,13 +5,13 @@ import { AppState } from '../reducers/app';
 import { getInitialStartingWealth } from '../selectors/activatableSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { getArmorZoneInstances, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getArmorZonesEditorInstance, getIsArmorZonesCreation, getTotalAdventurePoints } from '../selectors/stateSelectors';
+import { getFilteredZoneArmors, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getArmorZonesEditorInstance, getIsArmorZonesCreation, getTotalAdventurePoints, getZoneArmorFilterText } from '../selectors/stateSelectors';
 import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/belongings/ArmorZones';
 
 function mapStateToProps(state: AppState) {
 	return {
-		armorZones: getArmorZoneInstances(state),
+		armorZones: getFilteredZoneArmors(state),
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),
 		items: getItems(state),
@@ -21,7 +21,8 @@ function mapStateToProps(state: AppState) {
 		purse: getPurse(state),
 		templates: getTemplates(state),
 		totalPrice: getTotalPrice(state),
-		totalWeight: getTotalWeight(state)
+		totalWeight: getTotalWeight(state),
+		filterText: getZoneArmorFilterText(state)
 	};
 }
 
@@ -96,6 +97,9 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		setRightLegLoss(id: number | undefined): void {
       dispatch(EquipmentActions.setArmorZonesRightLegLoss(id));
     },
+		setFilterText(filterText: string) {
+			dispatch(EquipmentActions.setZoneArmorFilterText(filterText));
+		},
 	};
 }
 

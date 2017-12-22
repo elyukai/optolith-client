@@ -894,7 +894,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
         const activeIds = getSids(entry);
         const sel = entry.sel!.filter(e => {
           if ((get(dependent, 'ADV_40') as AdvantageInstance).active.length > 0 || (get(dependent, 'ADV_46') as AdvantageInstance).active.length > 0) {
-            if ((get(dependent, e.id as string) as SkillInstance).gr === 2) {
+            if ((get(dependent, e.id as string) as SkillInstance).ic === 2) {
               return false;
             }
           }
@@ -1296,4 +1296,8 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
   }
 
   return diff;
+}
+
+export function isActiveViewObject(obj: ActiveViewObject | DeactiveViewObject): obj is ActiveViewObject {
+  return obj.hasOwnProperty('index');
 }

@@ -5,14 +5,16 @@ import * as SpellsActions from '../actions/SpellsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getActiveSpells, getFilteredInactiveSpells, getMagicalTraditions, isActivationDisabled } from '../selectors/spellsSelectors';
-import { getAttributes, getBooks, getPhase } from '../selectors/stateSelectors';
+import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditions, isActivationDisabled } from '../selectors/spellsSelectors';
+import { getAttributes, getBooks, getInactiveSpellsFilterText, getPhase, getSpellsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/skills/Spells';
 
 function mapStateToProps(state: AppState) {
 	return {
+		activeList: getFilteredActiveSpellsAndCantrips(state),
+		inactiveList: getFilteredInactiveSpellsAndCantrips(state),
 		attributes: getAttributes(state),
 		books: getBooks(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
@@ -20,11 +22,11 @@ function mapStateToProps(state: AppState) {
 		currentHero: getPresent(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		isRemovingEnabled: isRemovingEnabled(state),
-		inactiveList: getFilteredInactiveSpells(state),
-		activeList: getActiveSpells(state),
 		traditions: getMagicalTraditions(state),
 		phase: getPhase(state),
-		sortOrder: getSpellsSortOrder(state)
+		sortOrder: getSpellsSortOrder(state),
+		filterText: getSpellsFilterText(state),
+		inactiveFilterText: getInactiveSpellsFilterText(state),
 	};
 }
 
@@ -53,7 +55,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchActiveItemHints() {
 			dispatch(ConfigActions._switchEnableActiveItemHints());
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(SpellsActions.setActiveFilterText(filterText));
+		},
+		setInactiveFilterText(filterText: string) {
+			dispatch(SpellsActions.setInactiveFilterText(filterText));
+		},
 	};
 }
 

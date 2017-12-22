@@ -76,3 +76,19 @@ export function _setSortOrder(sortOrder: string): SetCombatTechniquesSortOrderAc
 		}
 	};
 }
+
+export interface SetCombatTechniquesFilterTextAction {
+	type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setFilterText(filterText: string): SetCombatTechniquesFilterTextAction {
+	return {
+		type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

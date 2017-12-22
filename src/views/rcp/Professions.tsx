@@ -4,6 +4,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -14,7 +15,6 @@ import { SelectionsContainer } from '../../containers/RCPSelections';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Book, CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
@@ -35,6 +35,7 @@ export interface ProfessionsStateProps {
 	sortOrder: string;
 	sex: 'm' | 'f';
 	visibilityFilter: string;
+	filterText: string;
 }
 
 export interface ProfessionsDispatchProps {
@@ -44,32 +45,27 @@ export interface ProfessionsDispatchProps {
 	setSortOrder(sortOrder: string): void;
 	setVisibilityFilter(): void;
 	switchExpansionVisibilityFilter(): void;
+	setFilterText(filterText: string): void;
 }
 
 export type ProfessionsProps = ProfessionsStateProps & ProfessionsDispatchProps & ProfessionsOwnProps;
 
 export interface ProfessionsState {
-	filterText: string;
 	showAddSlidein: boolean;
 }
 
 export class Professions extends React.Component<ProfessionsProps, ProfessionsState> {
 	state = {
-		filterText: '',
 		showAddSlidein: false
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as ProfessionsState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as ProfessionsState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false } as ProfessionsState);
 
 	render() {
-		const { currentProfessionId, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sex, sortOrder, visibilityFilter } = this.props;
-		const { filterText, showAddSlidein } = this.state;
-
-		const key = (e: Profession) => e.src[0] ? e.src[0].id : 'US25000';
-
-		const list = filterAndSortObjects(professions, locale.id, filterText, sortOrder === 'cost' ? ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }] : [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }], { addProperty: 'subname', keyOfName: sex });
+		const { currentProfessionId, groupVisibilityFilter, locale, professions, setGroupVisibilityFilter, setSortOrder, setVisibilityFilter, sortOrder, visibilityFilter, filterText } = this.props;
+		const { showAddSlidein } = this.state;
 
 		return (
 			<Page id="professions">
@@ -111,7 +107,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 					<Scroll>
 						<List>
 							{
-								list.map(profession =>
+								professions.length === 0 ? <ListPlaceholder locale={locale} type="professions" noResults /> : professions.map(profession =>
 								<ProfessionsListItem
 									{...this.props}
 									key={profession.id}

@@ -104,3 +104,35 @@ export function _setSortOrder(sortOrder: string): SetSpecialAbilitiesSortOrderAc
 		},
 	};
 }
+
+export interface SetActiveSpecialAbilitiesFilterTextAction {
+	type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setActiveFilterText(filterText: string): SetActiveSpecialAbilitiesFilterTextAction {
+	return {
+		type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetInactiveSpecialAbilitiesFilterTextAction {
+	type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setInactiveFilterText(filterText: string): SetInactiveSpecialAbilitiesFilterTextAction {
+	return {
+		type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

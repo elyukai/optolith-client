@@ -4,6 +4,7 @@ import { BorderButton } from '../../components/BorderButton';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -11,7 +12,6 @@ import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { Purse } from '../../reducers/equipment';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { ArmorZonesEditor } from './ArmorZonesEditor';
 import { ArmorZonesListItem } from './ArmorZonesListItem';
@@ -32,6 +32,7 @@ export interface ArmorZonesStateProps {
 	templates: ItemInstance[];
 	totalPrice: number;
 	totalWeight: number;
+	filterText: string;
 }
 
 export interface ArmorZonesDispatchProps {
@@ -58,30 +59,20 @@ export interface ArmorZonesDispatchProps {
 	setRightArmLoss(id: number | undefined): void;
 	setRightLeg(id: string | undefined): void;
 	setRightLegLoss(id: number | undefined): void;
+	setFilterText(filterText: string): void;
 }
 
 export type ArmorZonesProps = ArmorZonesStateProps & ArmorZonesDispatchProps & ArmorZonesOwnProps;
 
-export interface ArmorZonesState {
-	filterText: string;
-}
-
-export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState> {
-	state = {
-		filterText: ''
-	};
-
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as ArmorZonesState);
+export class ArmorZones extends React.Component<ArmorZonesProps> {
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 	setDucates = (event: InputTextEvent) => this.props.setDucates(event.target.value as string);
 	setSilverthalers = (event: InputTextEvent) => this.props.setSilverthalers(event.target.value as string);
 	setHellers = (event: InputTextEvent) => this.props.setHellers(event.target.value as string);
 	setKreutzers = (event: InputTextEvent) => this.props.setKreutzers(event.target.value as string);
 
 	render() {
-		const { armorZonesEditor, carryingCapacity, create, initialStartingWealth, armorZones, hasNoAddedAP, locale, purse, totalPrice, totalWeight } = this.props;
-		const { filterText } = this.state;
-
-		const list = filterAndSortObjects(armorZones, locale.id, filterText);
+		const { armorZonesEditor, carryingCapacity, create, initialStartingWealth, armorZones, hasNoAddedAP, locale, purse, totalPrice, totalWeight, filterText } = this.props;
 
 		return (
 			<Page id="armor-zones">
@@ -100,7 +91,7 @@ export class ArmorZones extends React.Component<ArmorZonesProps, ArmorZonesState
 					<Scroll>
 						<List>
 							{
-								list.map(obj => <ArmorZonesListItem {...this.props} key={obj.id} data={obj} />)
+								armorZones.length === 0 ? <ListPlaceholder locale={locale} type="zoneArmor" noResults={filterText.length > 0} /> : armorZones.map(obj => <ArmorZonesListItem {...this.props} key={obj.id} data={obj} />)
 							}
 						</List>
 					</Scroll>

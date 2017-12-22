@@ -1,6 +1,7 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject, ProfessionVariantSelections } from './data.d';
+import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject } from './data.d';
 import { ProfessionRequiresIncreasableObject, ProfessionRequiresActivatableObject } from './reusable.d';
+import { ProfessionVariantSelections } from './wiki';
 
 export { Book } from './data.d';
 export { UIMessages } from './ui.d';
@@ -70,7 +71,7 @@ export interface Culture {
 	 * Markdown supported.
 	 */
 	commonNames: string;
-	culturalPackageAp: number;
+	culturalPackageAdventurePoints: number;
 	culturalPackageSkills: Increasable[];
 	src: SourceLink[];
 	category: Categories.CULTURES;

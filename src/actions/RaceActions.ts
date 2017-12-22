@@ -86,3 +86,19 @@ export function _switchRaceValueVisibilityFilter(): SwitchRaceValueVisibilityAct
 		type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY
 	};
 }
+
+export interface SetRacesFilterTextAction {
+	type: ActionTypes.SET_RACES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setFilterText(filterText: string): SetRacesFilterTextAction {
+	return {
+		type: ActionTypes.SET_RACES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

@@ -88,6 +88,25 @@ export const isSettingsOpen = (state: AppState) => state.ui.subwindows.isSetting
 export const isEditCharacterAvatarOpen = (state: AppState) => state.ui.subwindows.isEditCharacterAvatarOpen;
 export const isEditPetAvatarOpen = (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen;
 
+export const getAdvantagesFilterText = (state: AppState) => state.ui.filters.advantagesFilterText;
+export const getCombatTechniquesFilterText = (state: AppState) => state.ui.filters.combatTechniquesFilterText;
+export const getCulturesFilterText = (state: AppState) => state.ui.filters.culturesFilterText;
+export const getDisadvantagesFilterText = (state: AppState) => state.ui.filters.disadvantagesFilterText;
+export const getEquipmentFilterText = (state: AppState) => state.ui.filters.equipmentFilterText;
+export const getInactiveAdvantagesFilterText = (state: AppState) => state.ui.filters.inactiveAdvantagesFilterText;
+export const getInactiveDisadvantagesFilterText = (state: AppState) => state.ui.filters.inactiveDisadvantagesFilterText;
+export const getInactiveLiturgicalChantsFilterText = (state: AppState) => state.ui.filters.inactiveLiturgicalChantsFilterText;
+export const getInactiveSpecialAbilitiesFilterText = (state: AppState) => state.ui.filters.inactiveSpecialAbilitiesFilterText;
+export const getInactiveSpellsFilterText = (state: AppState) => state.ui.filters.inactiveSpellsFilterText;
+export const getItemTemplatesFilterText = (state: AppState) => state.ui.filters.itemTemplatesFilterText;
+export const getLiturgicalChantsFilterText = (state: AppState) => state.ui.filters.liturgicalChantsFilterText;
+export const getProfessionsFilterText = (state: AppState) => state.ui.filters.professionsFilterText;
+export const getRacesFilterText = (state: AppState) => state.ui.filters.racesFilterText;
+export const getSkillsFilterText = (state: AppState) => state.ui.filters.skillsFilterText;
+export const getSpecialAbilitiesFilterText = (state: AppState) => state.ui.filters.specialAbilitiesFilterText;
+export const getSpellsFilterText = (state: AppState) => state.ui.filters.spellsFilterText;
+export const getZoneArmorFilterText = (state: AppState) => state.ui.filters.zoneArmorFilterText;
+
 export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
 export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
 export const getWikiMainCategory = (state: AppState) => state.ui.wiki.category1;

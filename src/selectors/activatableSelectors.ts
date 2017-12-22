@@ -3,6 +3,7 @@ import * as Categories from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import * as Data from '../types/data.d';
 import { convertPerTierCostToFinalCost, getActiveFromState, getDeactiveView, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { validateAddingExtendedSpecialAbilities } from '../utils/RequirementUtils';
 import { filterByInstancePropertyAvailability } from '../utils/RulesUtils';
@@ -13,8 +14,10 @@ import { getMessages } from './localeSelectors';
 import { getCultureAreaKnowledge } from './profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
+import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
-import { getAdvantages, getCurrentHeroPresent, getDisadvantages, getLocaleMessages, getSpecialAbilities } from './stateSelectors';
+import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText } from './stateSelectors';
+import { getEnableActiveItemHints } from './uisettingsSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
   const allEntries = [
@@ -25,7 +28,7 @@ export function getForSave(state: DependentInstancesState): { [id: string]: Data
   return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
 }
 
-export const getActive = (category: Categories.ACTIVATABLE, addTierToName: boolean) => {
+export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTierToName: boolean) => {
   return createSelector(
     getAdvantages,
     getDisadvantages,
@@ -34,8 +37,8 @@ export const getActive = (category: Categories.ACTIVATABLE, addTierToName: boole
     getLocaleMessages,
     (advantages, disadvantages, specialAbilities, state, locale) => {
       const { dependent } = state;
-      const allEntries = (category === Categories.ADVANTAGES ? advantages : category === Categories.DISADVANTAGES ? disadvantages : specialAbilities) as Map<string, Data.ActivatableInstance>;
-      const finalEntries: Data.ActiveViewObject[] = [];
+      const allEntries = (category === Categories.ADVANTAGES ? advantages : category === Categories.DISADVANTAGES ? disadvantages : specialAbilities) as Map<string, Data.InstanceByCategory[T]>;
+      const finalEntries: Data.ActiveViewObject<Data.InstanceByCategory[T]>[] = [];
 
       const activeEntries = getActiveFromState(allEntries);
 
@@ -82,11 +85,11 @@ export const getActive = (category: Categories.ACTIVATABLE, addTierToName: boole
   );
 };
 
-export const getActiveForView = (category: Categories.ACTIVATABLE) => {
+export const getActiveForView = <T extends Categories.ACTIVATABLE>(category: T) => {
   return getActive(category, false);
 };
 
-export const getActiveForEditView = (category: Categories.ACTIVATABLE) => {
+export const getActiveForEditView = <T extends Categories.ACTIVATABLE>(category: T) => {
   return getActive(category, true);
 };
 
@@ -172,6 +175,29 @@ export const getDeactiveAdvantages = createSelector(
 	}
 );
 
+export const getFilteredActiveAdvantages = createSelector(
+	getAdvantagesForEdit,
+	getAdvantagesFilterText,
+	getLocaleMessages,
+	(spells, filterText, locale) => {
+		return filterAndSortObjects(spells, locale!.id, filterText);
+	}
+);
+
+export const getFilteredInactiveAdvantages = createSelector(
+	getDeactiveAdvantages,
+	getAdvantagesForEdit,
+	getInactiveAdvantagesFilterText,
+	getLocaleMessages,
+	getEnableActiveItemHints,
+	(inactive, active, filterText, locale, areActiveItemHintsEnabled) => {
+		if (areActiveItemHintsEnabled) {
+			return filterAndSortObjects([...inactive, ...active], locale!.id, filterText);
+		}
+		return filterAndSortObjects(inactive, locale!.id, filterText);
+	}
+);
+
 export const getDisadvantagesForSheet = createSelector(
   getActiveForView(Categories.DISADVANTAGES),
   active => active
@@ -187,6 +213,29 @@ export const getDeactiveDisadvantages = createSelector(
 	getRuleBooksEnabled,
 	(list, availablility) => {
 		return filterByInstancePropertyAvailability(list, availablility);
+	}
+);
+
+export const getFilteredActiveDisadvantages = createSelector(
+	getDisadvantagesForEdit,
+	getDisadvantagesFilterText,
+	getLocaleMessages,
+	(spells, filterText, locale) => {
+		return filterAndSortObjects(spells, locale!.id, filterText);
+	}
+);
+
+export const getFilteredInactiveDisadvantages = createSelector(
+	getDeactiveDisadvantages,
+	getDisadvantagesForEdit,
+	getInactiveDisadvantagesFilterText,
+	getLocaleMessages,
+	getEnableActiveItemHints,
+	(inactive, active, filterText, locale, areActiveItemHintsEnabled) => {
+		if (areActiveItemHintsEnabled) {
+			return filterAndSortObjects([...inactive, ...active], locale!.id, filterText);
+		}
+		return filterAndSortObjects(inactive, locale!.id, filterText);
 	}
 );
 
@@ -208,8 +257,35 @@ export const getDeactiveSpecialAbilities = createSelector(
 	}
 );
 
+export const getFilteredActiveSpecialAbilities = createSelector(
+	getSpecialAbilitiesForEdit,
+	getSpecialAbilitiesSortOptions,
+	getSpecialAbilitiesFilterText,
+	getLocaleMessages,
+	(spells, sortOptions, filterText, locale) => {
+		return filterAndSortObjects(spells, locale!.id, filterText, sortOptions);
+	}
+);
+
+export const getFilteredInactiveSpecialAbilities = createSelector(
+	getDeactiveSpecialAbilities,
+	getSpecialAbilitiesForEdit,
+	getSpecialAbilitiesSortOptions,
+	getInactiveSpecialAbilitiesFilterText,
+	getLocaleMessages,
+	getEnableActiveItemHints,
+	(inactive, active, sortOptions, filterText, locale, areActiveItemHintsEnabled) => {
+		if (areActiveItemHintsEnabled) {
+			return filterAndSortObjects([...inactive, ...active], locale!.id, filterText, sortOptions);
+		}
+		return filterAndSortObjects(inactive, locale!.id, filterText, sortOptions);
+	}
+);
+
 export const getGeneralSpecialAbilitiesForSheet = createSelector(
-  [ getSpecialAbilitiesForSheet, getMessages, getCultureAreaKnowledge ],
+  getSpecialAbilitiesForSheet,
+  getMessages,
+  getCultureAreaKnowledge,
   (specialAbilities, messages, cultureAreaKnowledge = '') => {
     return [
       ...specialAbilities.filter(e => [1, 2, 22, 30].includes(e.gr!)),
@@ -219,21 +295,21 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
 );
 
 export const getCombatSpecialAbilitiesForSheet = createSelector(
-  [ getSpecialAbilitiesForSheet ],
+  getSpecialAbilitiesForSheet,
   specialAbilities => {
     return specialAbilities.filter(e => [3, 9, 10, 11, 12, 21].includes(e.gr!));
   }
 );
 
 export const getMagicalSpecialAbilitiesForSheet = createSelector(
-  [ getSpecialAbilitiesForSheet ],
+  getSpecialAbilitiesForSheet,
   specialAbilities => {
     return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28].includes(e.gr!));
   }
 );
 
 export const getBlessedSpecialAbilitiesForSheet = createSelector(
-  [ getSpecialAbilitiesForSheet ],
+  getSpecialAbilitiesForSheet,
   specialAbilities => {
     return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27, 29].includes(e.gr!));
   }

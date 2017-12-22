@@ -525,9 +525,15 @@ ul.list-wrapper {
 		text-align: center;
 		align-self: center;
 		margin-top: -50px;
+		line-height: 22px;
 
 		&.wiki-initial {
 			font-size: 16px;
+			line-height: 22px;
 		}
 	}
+}
+
+.placeholder-wrapper.increased-padding {
+	padding-right: 24px;
 }

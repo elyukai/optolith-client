@@ -31,6 +31,8 @@ export interface AdvantagesStateProps {
 	rating: ToListById<string>;
 	showRating: boolean;
 	isRemovingEnabled: boolean;
+	filterText: string;
+	inactiveFilterText: string;
 	get(id: string): Instance | undefined;
 }
 
@@ -40,13 +42,13 @@ export interface AdvantagesDispatchProps {
 	addToList(args: ActivateArgs): void;
 	removeFromList(args: DeactivateArgs): void;
 	setTier(id: string, index: number, tier: number): void;
+	setFilterText(filterText: string): void;
+	setInactiveFilterText(filterText: string): void;
 }
 
 export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & AdvantagesOwnProps;
 
 export interface AdvantagesState {
-	filterText: string;
-	filterTextSlidein: string;
 	showAddSlidein: boolean;
 	currentId?: string;
 	currentSlideinId?: string;
@@ -54,29 +56,26 @@ export interface AdvantagesState {
 
 export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
 	state = {
-		filterText: '',
-		filterTextSlidein: '',
 		showAddSlidein: false,
 		currentId: undefined,
 		currentSlideinId: undefined
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as AdvantagesState);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as AdvantagesState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+	filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as AdvantagesState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as AdvantagesState);
 	showInfo = (id: string) => this.setState({ currentId: id } as AdvantagesState);
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as AdvantagesState);
 
 	render() {
-		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, showRating, switchActiveItemHints, switchRatingVisibility } = this.props;
-		const { filterText, filterTextSlidein } = this.state;
+		const { activeList, addToList, ap, deactiveList, enableActiveItemHints, get, magicalMax, locale, rating, showRating, switchActiveItemHints, switchRatingVisibility, filterText, inactiveFilterText } = this.props;
 
 		return (
 			<Page id="advantages">
 				<Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
 						<p>
@@ -100,7 +99,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 						</ListHeader>
 						<DeactiveList
 							activeList={enableActiveItemHints ? activeList : undefined}
-							filterText={filterTextSlidein}
+							filterText={inactiveFilterText}
 							list={deactiveList}
 							locale={locale}
 							rating={rating}

@@ -1,56 +1,36 @@
 import * as React from 'react';
 import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessages } from '../types/data.d';
-import { getFullName } from '../utils/ActivatableUtils';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { getFullName, isActiveViewObject } from '../utils/ActivatableUtils';
 import { ActivatableAddListItemContainer } from './ActivatableAddListItem';
 import { List } from './List';
 import { ListItem } from './ListItem';
 import { ListItemName } from './ListItemName';
+import { ListPlaceholder } from './ListPlaceholder';
 import { Scroll } from './Scroll';
 
-type CombinedList = Array<DeactiveViewObject & { active: false } | ActiveViewObject & { active: true }>;
-
 export interface ActivatableAddListProps {
-	activeList?: ActiveViewObject[];
-	filterText?: string;
-	groupNames?: string[];
 	hideGroup?: boolean;
-	list: DeactiveViewObject[];
+	list: (ActiveViewObject | DeactiveViewObject)[];
 	locale: UIMessages;
 	rating?: { [id: string]: string };
 	showRating?: boolean;
-	sortOrder?: string;
 	addToList(args: ActivateArgs): void;
 	get(id: string): Instance | undefined;
 	selectForInfo?(id: string): void;
 }
 
 export function ActivatableAddList(props: ActivatableAddListProps) {
-	const { activeList, filterText = '', groupNames, list, locale, rating, showRating, sortOrder = 'name' } = props;
+	const { list, locale, rating, showRating } = props;
 
-	const combinedList: CombinedList = list.map<DeactiveViewObject & { active: false }>(e => {
-		return {
-			...e,
-			active: false
-		};
-	});
-
-	if (Array.isArray(activeList)) {
-		combinedList.push(...activeList.map<ActiveViewObject & { active: true }>(e => {
-			return {
-				...e,
-				active: true
-			};
-		}));
+	if (list.length === 0) {
+		return <ListPlaceholder locale={locale} noResults type="inactiveSpecialAbilities" />;
 	}
-
-	const sortedList = filterAndSortObjects(combinedList, locale.id, filterText, sortOrder === 'groupname' ? [{ key: 'gr', mapToIndex: groupNames }, 'name'] : ['name']);
 
 	return (
 		<Scroll>
 			<List>
-				{sortedList.map(item => {
-					if (item.active === true) {
+				{list.map(item => {
+					if (isActiveViewObject(item)) {
 						const name = getFullName(item);
 						return (
 							<ListItem key={`${item.id}_${item.index}`} disabled>

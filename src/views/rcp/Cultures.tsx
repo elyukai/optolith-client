@@ -3,6 +3,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -12,7 +13,6 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Culture, UIMessages } from '../../types/view.d';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { CulturesListItem } from './CulturesListItem';
 
@@ -26,6 +26,7 @@ export interface CulturesStateProps {
 	currentId?: string;
 	sortOrder: string;
 	visibilityFilter: string;
+	filterText: string;
 }
 
 export interface CulturesDispatchProps {
@@ -33,6 +34,7 @@ export interface CulturesDispatchProps {
 	setSortOrder(sortOrder: string): void;
 	setVisibilityFilter(option: string): void;
 	switchValueVisibilityFilter(): void;
+	setFilterText(filterText: string): void;
 }
 
 export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps;
@@ -46,13 +48,10 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 		filterText: ''
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as CulturesState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 
 	render() {
-		const { cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, visibilityFilter } = this.props;
-		const { filterText } = this.state;
-
-		const list = filterAndSortObjects(cultures, locale.id, filterText, sortOrder === 'cost' ? ['culturalPackageAp', 'name'] : ['name']);
+		const { cultures, locale, setSortOrder, setVisibilityFilter, sortOrder, visibilityFilter, filterText } = this.props;
 
 		return (
 			<Page id="cultures">
@@ -82,7 +81,7 @@ export class Cultures extends React.Component<CulturesProps, CulturesState> {
 					<Scroll>
 						<List>
 							{
-								list.map(culture =>
+								cultures.length === 0 ? <ListPlaceholder locale={locale} type="cultures" noResults /> : cultures.map(culture =>
 									<CulturesListItem
 										{...this.props}
 										key={culture.id}

@@ -3,18 +3,18 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { AppState } from '../reducers/app';
-import { getDeactiveSpecialAbilities, getSpecialAbilitiesForEdit } from '../selectors/activatableSelectors';
+import { getFilteredActiveSpecialAbilities, getFilteredInactiveSpecialAbilities } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getPhase, getSpecialAbilities } from '../selectors/stateSelectors';
+import { getInactiveSpecialAbilitiesFilterText, getPhase, getSpecialAbilities, getSpecialAbilitiesFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/skills/SpecialAbilities';
 
 function mapStateToProps(state: AppState) {
 	return {
-		activeList: getSpecialAbilitiesForEdit(state),
-		deactiveList: getDeactiveSpecialAbilities(state),
+		activeList: getFilteredActiveSpecialAbilities(state),
+		deactiveList: getFilteredInactiveSpecialAbilities(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {
 			return get(getDependent(state), id);
@@ -22,7 +22,9 @@ function mapStateToProps(state: AppState) {
 		isRemovingEnabled: isRemovingEnabled(state),
 		list: [...getSpecialAbilities(state).values()],
 		phase: getPhase(state),
-		sortOrder: getSpecialAbilitiesSortOrder(state)
+		sortOrder: getSpecialAbilitiesSortOrder(state),
+		filterText: getSpecialAbilitiesFilterText(state),
+		inactiveFilterText: getInactiveSpecialAbilitiesFilterText(state),
 	};
 }
 
@@ -42,7 +44,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setTier(id: string, index: number, tier: number) {
 			dispatch(SpecialAbilitiesActions._setTier(id, index, tier));
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(SpecialAbilitiesActions.setActiveFilterText(filterText));
+		},
+		setInactiveFilterText(filterText: string) {
+			dispatch(SpecialAbilitiesActions.setInactiveFilterText(filterText));
+		},
 	};
 }
 

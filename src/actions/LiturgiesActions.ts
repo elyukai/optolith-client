@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getAdventurePoints, getLiturgicalChants, getLocaleMessages } from '../selectors/stateSelectors';
+import { getLiturgicalChants, getLocaleMessages } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
@@ -177,6 +177,38 @@ export function _setSortOrder(sortOrder: string): SetLiturgiesSortOrderAction {
 		type: ActionTypes.SET_LITURGIES_SORT_ORDER,
 		payload: {
 			sortOrder
+		}
+	};
+}
+
+export interface SetActiveLiturgicalChantsFilterTextAction {
+	type: ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setActiveFilterText(filterText: string): SetActiveLiturgicalChantsFilterTextAction {
+	return {
+		type: ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetInactiveLiturgicalChantsFilterTextAction {
+	type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setInactiveFilterText(filterText: string): SetInactiveLiturgicalChantsFilterTextAction {
+	return {
+		type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT,
+		payload: {
+			filterText
 		}
 	};
 }

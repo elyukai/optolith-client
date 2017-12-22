@@ -6,8 +6,8 @@ import { getInitialStartingWealth } from '../selectors/activatableSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getAllCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { getFilteredAndSortedTemplates, getPurse, getSortedItems, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getAttributes, getTotalAdventurePoints } from '../selectors/stateSelectors';
+import { getFilteredItems, getFilteredItemTemplates, getPurse, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getAttributes, getEquipmentFilterText, getItemTemplatesFilterText, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from '../selectors/uisettingsSelectors';
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from '../views/belongings/Equipment';
 
@@ -17,15 +17,17 @@ function mapStateToProps(state: AppState) {
 		combatTechniques: getAllCombatTechniques(state),
 		carryingCapacity: getCarryingCapacity(state),
 		initialStartingWealth: getInitialStartingWealth(state),
-		items: getSortedItems(state),
+		items: getFilteredItems(state),
 		hasNoAddedAP: getTotalAdventurePoints(state) === getStartEl(state).ap,
 		purse: getPurse(state),
 		sortOrder: getEquipmentSortOrder(state),
-		templates: getFilteredAndSortedTemplates(state),
+		templates: getFilteredItemTemplates(state),
 		totalPrice: getTotalPrice(state),
 		totalWeight: getTotalWeight(state),
 		meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter(state),
-		rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter(state)
+		rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter(state),
+		filterText: getEquipmentFilterText(state),
+		templatesFilterText: getItemTemplatesFilterText(state),
 	};
 }
 
@@ -63,6 +65,12 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined) {
 			dispatch(EquipmentActions.setRangedItemTemplatesCombatTechniqueFilter(filterOption));
+		},
+		setFilterText(filterText: string) {
+			dispatch(EquipmentActions.setEquipmentFilterText(filterText));
+		},
+		setTemplatesFilterText(filterText: string) {
+			dispatch(EquipmentActions.setItemTemplatesFilterText(filterText));
 		},
 	};
 }

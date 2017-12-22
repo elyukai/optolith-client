@@ -5,7 +5,7 @@ import { AppState } from '../reducers/app';
 import { getFilteredCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAttributes, getPhase } from '../selectors/stateSelectors';
+import { getAttributes, getCombatTechniquesFilterText, getPhase } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';
@@ -18,7 +18,8 @@ function mapStateToProps(state: AppState) {
 		isRemovingEnabled: isRemovingEnabled(state),
 		list: getFilteredCombatTechniques(state),
 		phase: getPhase(state),
-		sortOrder: getCombatTechniquesSortOrder(state)
+		sortOrder: getCombatTechniquesSortOrder(state),
+		filterText: getCombatTechniquesFilterText(state),
 	};
 }
 
@@ -32,7 +33,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setSortOrder(sortOrder: string) {
 			dispatch(CombatTechniquesActions._setSortOrder(sortOrder));
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(CombatTechniquesActions.setFilterText(filterText));
+		},
 	};
 }
 

@@ -8,8 +8,8 @@ import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Slidein } from '../../components/Slidein';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, SpecialAbilityInstance } from '../../types/data.d';
@@ -27,6 +27,8 @@ export interface SpecialAbilitiesStateProps {
 	enableActiveItemHints: boolean;
 	isRemovingEnabled: boolean;
 	sortOrder: string;
+	filterText: string;
+	inactiveFilterText: string;
 	get(id: string): Instance | undefined;
 }
 
@@ -36,13 +38,13 @@ export interface SpecialAbilitiesDispatchProps {
 	addToList(args: ActivateArgs): void;
 	removeFromList(args: DeactivateArgs): void;
 	setTier(id: string, index: number, tier: number): void;
+	setFilterText(filterText: string): void;
+	setInactiveFilterText(filterText: string): void;
 }
 
 export type SpecialAbilitiesProps = SpecialAbilitiesStateProps & SpecialAbilitiesDispatchProps & SpecialAbilitiesOwnProps;
 
 export interface SpecialAbilitiesState {
-	filterText: string;
-	filterTextSlidein: string;
 	showAddSlidein: boolean;
 	currentId?: string;
 	currentSlideinId?: string;
@@ -50,40 +52,32 @@ export interface SpecialAbilitiesState {
 
 export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
 	state = {
-		filterText: '',
-		filterTextSlidein: '',
 		showAddSlidein: false,
 		currentId: undefined,
 		currentSlideinId: undefined
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpecialAbilitiesState);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpecialAbilitiesState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+	filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpecialAbilitiesState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpecialAbilitiesState);
 	showInfo = (id: string) => this.setState({ currentId: id } as SpecialAbilitiesState);
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpecialAbilitiesState);
 
 	render() {
-		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, isRemovingEnabled, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints } = this.props;
-		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
-
-		const sortArray = [
-			{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
-			{ name: _translate(locale, 'options.sortorder.group'), value: 'groupname' }
-		];
-
-		const groupNames = _translate(locale, 'specialabilities.view.groups');
+		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, isRemovingEnabled, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints, filterText, inactiveFilterText } = this.props;
+		const { showAddSlidein } = this.state;
 
 		return (
 			<Page id="specialabilities">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
-						<RadioButtonGroup
-							active={sortOrder}
-							onClick={setSortOrder}
-							array={sortArray}
+						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<SortOptions
+							sortOrder={sortOrder}
+							sort={setSortOrder}
+							options={['name', 'groupname']}
+							locale={locale}
 							/>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
@@ -102,13 +96,10 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 							<ListHeaderTag className="btn-placeholder" />
 						</ListHeader>
 						<ActivatableAddList
-							activeList={enableActiveItemHints ? activeList : undefined}
 							addToList={addToList}
-							filterText={filterTextSlidein}
-							groupNames={groupNames}
+							filterText={inactiveFilterText}
 							list={deactiveList}
 							locale={locale}
-							sortOrder={sortOrder}
 							get={get}
 							selectForInfo={this.showSlideinInfo}
 							/>
@@ -117,10 +108,11 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={setSortOrder}
-						array={sortArray}
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={setSortOrder}
+						options={['name', 'groupname']}
+						locale={locale}
 						/>
 					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 				</Options>
@@ -140,13 +132,11 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 					</ListHeader>
 					<ActivatableRemoveList
 						filterText={filterText}
-						groupNames={groupNames}
 						list={activeList}
 						locale={locale}
 						isRemovingEnabled={isRemovingEnabled}
 						removeFromList={removeFromList}
 						setTier={setTier}
-						sortOrder={sortOrder}
 						selectForInfo={this.showInfo}
 						/>
 				</MainContent>

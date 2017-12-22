@@ -100,3 +100,19 @@ export function _switchProfessionsExpansionVisibilityFilter(): SwitchProfessions
 		type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER
 	};
 }
+
+export interface SetProfessionsFilterTextAction {
+	type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setFilterText(filterText: string): SetProfessionsFilterTextAction {
+	return {
+		type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}

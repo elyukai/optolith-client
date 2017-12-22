@@ -6,6 +6,7 @@ import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { ListItem } from '../../components/ListItem';
 import { ListItemName } from '../../components/ListItemName';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -19,7 +20,6 @@ import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, BlessingInstance, InputTextEvent, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getAspectsOfTradition, isDecreasable, isIncreasable } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
@@ -39,6 +39,8 @@ export interface LiturgiesStateProps {
 	isRemovingEnabled: boolean;
 	sortOrder: string;
 	traditionId: number;
+	filterText: string;
+	inactiveFilterText: string;
 }
 
 export interface LiturgiesDispatchProps {
@@ -50,6 +52,8 @@ export interface LiturgiesDispatchProps {
 	removePoint(id: string): void;
 	removeFromList(id: string): void;
 	removeBlessingFromList(id: string): void;
+	setFilterText(filterText: string): void;
+	setInactiveFilterText(filterText: string): void;
 }
 
 export type LiturgiesProps = LiturgiesStateProps & LiturgiesDispatchProps & LiturgiesOwnProps;
@@ -71,16 +75,16 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 		currentSlideinId: undefined
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as LiturgiesState);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as LiturgiesState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+	filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as LiturgiesState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as LiturgiesState);
 	showInfo = (id: string) => this.setState({ currentId: id } as LiturgiesState);
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as LiturgiesState);
 
 	render() {
-		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, activeList, inactiveList, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId } = this.props;
-		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
+		const { addChantsDisabled, addPoint, addToList, addBlessingToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, activeList, inactiveList, locale, isRemovingEnabled, removeFromList, removeBlessingFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditionId, filterText, inactiveFilterText } = this.props;
+		const { showAddSlidein } = this.state;
 
 		const sortArray = [
 			{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
@@ -88,22 +92,11 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 			{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 		];
 
-		const listActive = activeList;
-		let listDeactive = inactiveList;
-		const list = [...inactiveList, ...activeList];
-
-		if (enableActiveItemHints === true) {
-			listDeactive = list;
-		}
-
-		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
-		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
-
 		return (
 			<Page id="liturgies">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-liturgical-chants">
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<RadioButtonGroup
 							active={sortOrder}
 							onClick={setSortOrder}
@@ -135,7 +128,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						<Scroll>
 							<List>
 								{
-									sortedDeactiveList.map((obj, index, array) => {
+									inactiveList.length === 0 ? <ListPlaceholder locale={locale} type="inactiveLiturgicalChants" noResults /> : inactiveList.map((obj, index, array) => {
 										const prevObj = array[index - 1];
 
 										if (obj.active === true) {
@@ -180,13 +173,13 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												name={name}
 												isNotActive
 												activate={addToList.bind(null, obj.id)}
-												activateDisabled={addChantsDisabled && obj.gr < 3}
+												activateDisabled={addChantsDisabled && obj.ic < 3}
 												addFillElement
-												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
+												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.ic !== obj.ic)}
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.ic - 1]}` : aspc}
 												/>
 										);
 									})
@@ -236,7 +229,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 					<Scroll>
 						<List>
 							{
-								sortedActiveList.map((obj, index, array) => {
+								activeList.length === 0 ? <ListPlaceholder locale={locale} type="liturgicalChants" noResults={filterText.length > 0} /> : activeList.map((obj, index, array) => {
 									const prevObj = array[index - 1];
 
 									const name = obj.name;
@@ -281,11 +274,11 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
-											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
+											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.ic !== obj.ic)}
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+											addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.ic - 1]}` : aspc}
 											/>
 									);
 								})

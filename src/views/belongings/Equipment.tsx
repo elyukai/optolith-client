@@ -5,6 +5,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -17,7 +18,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
-import { filterObjects, sortObjects } from '../../utils/FilterSortUtils';
+import { sortObjects } from '../../utils/FilterSortUtils';
 import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
 
@@ -39,6 +40,8 @@ export interface EquipmentStateProps {
 	totalWeight: number;
 	meleeItemTemplateCombatTechniqueFilter?: string;
 	rangedItemTemplateCombatTechniqueFilter?: string;
+	filterText: string;
+	templatesFilterText: string;
 }
 
 export interface EquipmentDispatchProps {
@@ -53,14 +56,14 @@ export interface EquipmentDispatchProps {
 	editItem(id: string): void;
 	setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): void;
 	setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): void;
+	setFilterText(filterText: string): void;
+	setTemplatesFilterText(filterText: string): void;
 }
 
 export type EquipmentProps = EquipmentStateProps & EquipmentDispatchProps & EquipmentOwnProps;
 
 export interface EquipmentState {
 	filterGroupSlidein: number;
-	filterText: string;
-	filterTextSlidein: string;
 	showAddSlidein: boolean;
 	currentId?: string;
 	currentSlideinId?: string;
@@ -69,15 +72,13 @@ export interface EquipmentState {
 export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 	state = {
 		filterGroupSlidein: 1,
-		filterText: '',
-		filterTextSlidein: '',
 		showAddSlidein: false,
 		currentId: undefined,
 		currentSlideinId: undefined,
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as EquipmentState);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as EquipmentState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+	filterSlidein = (event: InputTextEvent) => this.props.setTemplatesFilterText(event.target.value);
 	filterGroupSlidein = (gr: number) => this.setState({ filterGroupSlidein: gr } as EquipmentState);
 	sort = (option: string) => this.props.setSortOrder(option);
 	setDucates = (event: InputTextEvent) => this.props.setDucates(event.target.value as string);
@@ -88,17 +89,15 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as EquipmentState);
 
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as EquipmentState);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as EquipmentState);
+	hideAddSlidein = () => this.setState({ showAddSlidein: false } as EquipmentState);
 
 	render() {
-		const { carryingCapacity, combatTechniques, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight, meleeItemTemplateCombatTechniqueFilter, rangedItemTemplateCombatTechniqueFilter, setMeleeItemTemplatesCombatTechniqueFilter, setRangedItemTemplatesCombatTechniqueFilter } = this.props;
-		const { filterGroupSlidein, filterText, filterTextSlidein, showAddSlidein } = this.state;
+		const { carryingCapacity, combatTechniques, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight, meleeItemTemplateCombatTechniqueFilter, rangedItemTemplateCombatTechniqueFilter, setMeleeItemTemplatesCombatTechniqueFilter, setRangedItemTemplatesCombatTechniqueFilter, filterText, templatesFilterText } = this.props;
+		const { filterGroupSlidein, showAddSlidein } = this.state;
 
 		const groups = _translate(locale, 'equipment.view.groups');
 
 		const groupsSelectionItems = sortObjects(groups.map((e, i) => ({ id: i + 1, name: e })), locale.id);
-
-		const list = filterObjects(items, filterText);
 
 		const filterTemplatesByIsActiveAndInGroup = (e: ItemInstance): boolean => {
 			const isGroup = e.gr === filterGroupSlidein;
@@ -120,13 +119,13 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 		const combatTechniquesList = sortObjects(combatTechniques, locale.id);
 		const meleeCombatTechniques = combatTechniquesList.filter(e => e.gr === 1);
 		const rangedCombatTechniques = combatTechniquesList.filter(e => e.gr === 2);
-		const templateList = filterObjects(filterTextSlidein.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive), filterTextSlidein);
+		const templateList = templatesFilterText.length === 0 ? templates.filter(filterTemplatesByIsActiveAndInGroup) : templates.filter(filterTemplatesByIsActive);
 
 		return (
 			<Page id="equipment">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={_translate(locale, 'options.filtertext')} value={templatesFilterText} onChange={this.filterSlidein} fullWidth />
 						<Dropdown
 							value={filterGroupSlidein}
 							onChange={this.filterGroupSlidein}
@@ -162,7 +161,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 						<Scroll>
 							<List>
 								{
-									templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add selectForInfo={this.showSlideinInfo} />)
+									templateList.length === 0 ? <ListPlaceholder locale={locale} type="itemTemplates" noResults /> : templateList.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} add selectForInfo={this.showSlideinInfo} />)
 								}
 							</List>
 						</Scroll>
@@ -195,7 +194,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					<Scroll>
 						<List>
 							{
-								list.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} selectForInfo={this.showInfo} />)
+								items.length === 0 ? <ListPlaceholder locale={locale} type="equipment" noResults={filterText.length > 0} /> : items.map(obj => <EquipmentListItem {...this.props} key={obj.id} data={obj} selectForInfo={this.showInfo} />)
 							}
 						</List>
 					</Scroll>

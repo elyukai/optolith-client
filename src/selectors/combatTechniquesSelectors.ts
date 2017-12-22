@@ -3,12 +3,14 @@ import { AppState } from '../reducers/app';
 import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, ExperienceLevel, SpecialAbilityInstance } from '../types/data.d';
 import { CombatTechnique, CombatTechniqueWithRequirements } from '../types/view.d';
 import { getSids } from '../utils/ActivatableUtils';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { getAdvantages, getAttributes, getPhase, getSpecialAbilities } from './stateSelectors';
+import { getCombatTechniquesSortOptions } from './sortOptionsSelectors';
+import { getAdvantages, getAttributes, getCombatTechniquesFilterText, getLocaleMessages, getPhase, getSpecialAbilities } from './stateSelectors';
 
 export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
 
@@ -81,11 +83,21 @@ export const getAllCombatTechniques = createSelector(
 	}
 );
 
-export const getFilteredCombatTechniques = createSelector(
+export const getAvailableCombatTechniques = createSelector(
 	getAllCombatTechniques,
 	getRuleBooksEnabled,
 	(list, availablility) => {
 		return filterByAvailability(list, availablility, obj => obj.value > 6);
+	}
+);
+
+export const getFilteredCombatTechniques = createSelector(
+	getAvailableCombatTechniques,
+	getCombatTechniquesSortOptions,
+	getCombatTechniquesFilterText,
+	getLocaleMessages,
+	(skills, sortOptions, filterText, locale) => {
+		return filterAndSortObjects(skills, locale!.id, filterText, sortOptions);
 	}
 );
 

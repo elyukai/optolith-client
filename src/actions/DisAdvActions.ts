@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { DISADVANTAGES } from '../constants/Categories';
+import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages } from '../selectors/stateSelectors';
@@ -9,7 +10,6 @@ import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
-import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 
 interface ActivateArgsWithEntryType extends UndoExtendedActivateArgs {
 	isBlessed: boolean;
@@ -207,5 +207,69 @@ export interface SwitchDisAdvRatingVisibilityAction {
 export function _switchRatingVisibility(): SwitchDisAdvRatingVisibilityAction {
 	return {
 		type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
+	};
+}
+
+export interface SetActiveAdvantagesFilterTextAction {
+	type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setActiveAdvantagesFilterText(filterText: string): SetActiveAdvantagesFilterTextAction {
+	return {
+		type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetInactiveAdvantagesFilterTextAction {
+	type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setInactiveAdvantagesFilterText(filterText: string): SetInactiveAdvantagesFilterTextAction {
+	return {
+		type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetActiveDisadvantagesFilterTextAction {
+	type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setActiveDisadvantagesFilterText(filterText: string): SetActiveDisadvantagesFilterTextAction {
+	return {
+		type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetInactiveDisadvantagesFilterTextAction {
+	type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setInactiveDisadvantagesFilterText(filterText: string): SetInactiveDisadvantagesFilterTextAction {
+	return {
+		type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT,
+		payload: {
+			filterText
+		}
 	};
 }

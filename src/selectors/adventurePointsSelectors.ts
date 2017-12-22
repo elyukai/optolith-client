@@ -3,8 +3,8 @@ import { calculateAdventurePointsSpentDifference } from '../utils/ActivatableUti
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
-import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells, getPhase } from './stateSelectors';
-import { getCurrentRace, getCurrentProfession } from './rcpSelectors';
+import { getCurrentProfession, getCurrentRace } from './rcpSelectors';
+import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
 
 export const getAdventurePointsSpentForAttributes = createSelector(
 	getAttributes,
@@ -226,13 +226,57 @@ export interface DisAdvAdventurePoints extends Array<number> {
 	2: number;
 }
 
-export interface AdventurePointsObject {
+export interface AdventurePointsObjectPart {
+	spentOnAttributes: number;
+	spentOnSkills: number;
+	spentOnCombatTechniques: number;
+	spentOnSpells: number;
+	spentOnLiturgicalChants: number;
+	spentOnCantrips: number;
+	spentOnBlessings: number;
+	spentOnSpecialAbilities: number;
+	spentOnEnergies: number;
+	spentOnRCP: number;
+}
+
+export interface AdventurePointsObject extends AdventurePointsObjectPart {
 	total: number;
 	spent: number;
 	available: number;
 	adv: DisAdvAdventurePoints;
 	disadv: DisAdvAdventurePoints;
+	spentOnAdvantages: number;
+	spentOnMagicalAdvantages: number;
+	spentOnBlessedAdvantages: number;
+	spentOnDisadvantages: number;
+	spentOnMagicalDisadvantages: number;
+	spentOnBlessedDisadvantages: number;
 }
+
+export const getAdventurePointsObjectPart = createSelector(
+	getAdventurePointsSpentForAttributes,
+	getAdventurePointsSpentForSkills,
+	getAdventurePointsSpentForCombatTechniques,
+	getAdventurePointsSpentForSpells,
+	getAdventurePointsSpentForLiturgicalChants,
+	getAdventurePointsSpentForCantrips,
+	getAdventurePointsSpentForBlessings,
+	getAdventurePointsSpentForSpecialAbilities,
+	getAdventurePointsSpentForEnergies,
+	getAdventurePointsSpentForRCP,
+	(spentOnAttributes, spentOnSkills, spentOnCombatTechniques, spentOnSpells, spentOnLiturgicalChants, spentOnCantrips, spentOnBlessings, spentOnSpecialAbilities, spentOnEnergies, spentOnRCP): AdventurePointsObjectPart => ({
+		spentOnAttributes,
+		spentOnSkills,
+		spentOnCombatTechniques,
+		spentOnSpells,
+		spentOnLiturgicalChants,
+		spentOnCantrips,
+		spentOnBlessings,
+		spentOnSpecialAbilities,
+		spentOnEnergies,
+		spentOnRCP,
+	})
+);
 
 export const getAdventurePointsObject = createSelector(
 	getTotalAdventurePoints,
@@ -244,11 +288,19 @@ export const getAdventurePointsObject = createSelector(
 	getAdventurePointsSpentForDisadvantages,
 	getAdventurePointsSpentForBlessedDisadvantages,
 	getAdventurePointsSpentForMagicalDisadvantages,
-	(total, spent, available, advantages, blessedAdvantages, magicalAdvantages, disadvantages, blessedDisadvantages, magicalDisadvantages): AdventurePointsObject => ({
+	getAdventurePointsObjectPart,
+	(total, spent, available, advantages, blessedAdvantages, magicalAdvantages, disadvantages, blessedDisadvantages, magicalDisadvantages, part): AdventurePointsObject => ({
+		...part,
 		total,
 		spent,
 		available,
 		adv: [advantages, magicalAdvantages, blessedAdvantages],
 		disadv: [disadvantages, magicalDisadvantages, blessedDisadvantages],
+		spentOnAdvantages: advantages,
+		spentOnMagicalAdvantages: magicalAdvantages,
+		spentOnBlessedAdvantages: blessedAdvantages,
+		spentOnDisadvantages: disadvantages,
+		spentOnMagicalDisadvantages: magicalDisadvantages,
+		spentOnBlessedDisadvantages: blessedDisadvantages,
 	})
 );

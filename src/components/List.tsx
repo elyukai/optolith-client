@@ -1,13 +1,15 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface ListProps {
 	children?: React.ReactNode;
+	className?: string;
 }
 
 export function List(props: ListProps) {
-	const { children } = props;
+	const { children, className } = props;
 	return (
-		<ul className="list-wrapper">
+		<ul className={classNames('list-wrapper', className)}>
 			{children}
 		</ul>
 	);

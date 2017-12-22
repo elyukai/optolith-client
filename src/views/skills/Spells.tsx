@@ -6,12 +6,13 @@ import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
 import { ListItem } from '../../components/ListItem';
 import { ListItemName } from '../../components/ListItemName';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
+import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
@@ -19,7 +20,6 @@ import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { DCIds } from '../../utils/derivedCharacteristics';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
@@ -40,6 +40,8 @@ export interface SpellsStateProps {
 	traditions: SpecialAbilityInstance[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
+	filterText: string;
+	inactiveFilterText: string;
 }
 
 export interface SpellsDispatchProps {
@@ -51,13 +53,13 @@ export interface SpellsDispatchProps {
 	removePoint(id: string): void;
 	removeFromList(id: string): void;
 	removeCantripFromList(id: string): void;
+	setFilterText(filterText: string): void;
+	setInactiveFilterText(filterText: string): void;
 }
 
 export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProps;
 
 export interface SpellsState {
-	filterText: string;
-	filterTextSlidein: string;
 	showAddSlidein: boolean;
 	currentId?: string;
 	currentSlideinId?: string;
@@ -65,51 +67,32 @@ export interface SpellsState {
 
 export class Spells extends React.Component<SpellsProps, SpellsState> {
 	state = {
-		filterText: '',
-		filterTextSlidein: '',
 		showAddSlidein: false,
 		currentId: undefined,
 		currentSlideinId: undefined
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as SpellsState);
-	filterSlidein = (event: InputTextEvent) => this.setState({ filterTextSlidein: event.target.value } as SpellsState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+	filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
 	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpellsState);
 	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '', currentSlideinId: undefined } as SpellsState);
 	showInfo = (id: string) => this.setState({ currentId: id } as SpellsState);
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditions } = this.props;
-		const { filterText, filterTextSlidein, showAddSlidein } = this.state;
-
-		const sortArray = [
-			{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
-			{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
-			{ name: _translate(locale, 'options.sortorder.property'), value: 'property' },
-			{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
-		];
-
-		const listActive = activeList;
-		let listDeactive = inactiveList;
-		const list = [...activeList, ...inactiveList];
-
-		if (enableActiveItemHints === true) {
-			listDeactive = list;
-		}
-
-		const sortedActiveList = filterAndSortObjects(listActive, locale.id, filterText, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
-		const sortedDeactiveList = filterAndSortObjects(listDeactive, locale.id, filterTextSlidein, sortOrder === 'property' ? [{ key: 'property', mapToIndex: _translate(locale, 'spells.view.properties')}, 'name'] : sortOrder === 'ic' ? [{ key: instance => (instance.ic || 0) }, 'name'] : sortOrder === 'group' ? [{ key: instance => (instance.gr || 1000) }, 'name'] : ['name']);
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditions, filterText, inactiveFilterText } = this.props;
+		const { showAddSlidein } = this.state;
 
 		return (
 			<Page id="spells">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={filterTextSlidein} onChange={this.filterSlidein} fullWidth />
-						<RadioButtonGroup
-							active={sortOrder}
-							onClick={setSortOrder}
-							array={sortArray}
+						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<SortOptions
+							sortOrder={sortOrder}
+							sort={setSortOrder}
+							options={['name', 'group', 'property', 'ic']}
+							locale={locale}
 							/>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
@@ -137,7 +120,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						<Scroll>
 							<List>
 								{
-									sortedDeactiveList.map((obj, index, array) => {
+									inactiveList.length === 0 ? <ListPlaceholder locale={locale} type="inactiveSpells" noResults /> : inactiveList.map((obj, index, array) => {
 										const prevObj = array[index - 1];
 
 										let extendName = '';
@@ -205,10 +188,11 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 				</Slidein>
 				<Options>
 					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<RadioButtonGroup
-						active={sortOrder}
-						onClick={setSortOrder}
-						array={sortArray}
+					<SortOptions
+						sortOrder={sortOrder}
+						sort={setSortOrder}
+						options={['name', 'group', 'property', 'ic']}
+						locale={locale}
 						/>
 					<BorderButton
 						label={_translate(locale, 'actions.addtolist')}
@@ -243,7 +227,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 					<Scroll>
 						<List>
 							{
-								sortedActiveList.map((obj, index, array) => {
+								activeList.length === 0 ? <ListPlaceholder locale={locale} type="spells" noResults={filterText.length > 0} /> : activeList.map((obj, index, array) => {
 									const prevObj = array[index - 1];
 
 									let name = obj.name;

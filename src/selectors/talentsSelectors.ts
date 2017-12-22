@@ -1,7 +1,9 @@
 import { createSelector } from 'reselect';
 import { ToListById } from '../types/data.d';
+import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { getCurrentCulture } from './rcpSelectors';
-import { getSkills } from './stateSelectors';
+import { getSkillsSortOptions } from './sortOptionsSelectors';
+import { getLocaleMessages, getSkills, getSkillsFilterText } from './stateSelectors';
 
 export const getSkillsForSave = createSelector(
 	getSkills,
@@ -22,6 +24,16 @@ export const getAllSkills = createSelector(
 	getSkills,
 	skills => {
 		return [...skills.values()];
+	}
+);
+
+export const getFilteredSkills = createSelector(
+	getAllSkills,
+	getSkillsSortOptions,
+	getSkillsFilterText,
+	getLocaleMessages,
+	(skills, sortOptions, filterText, locale) => {
+		return filterAndSortObjects(skills, locale!.id, filterText, sortOptions);
 	}
 );
 

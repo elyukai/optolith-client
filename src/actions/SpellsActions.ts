@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getAdventurePoints, getLocaleMessages, getSpells } from '../selectors/stateSelectors';
+import { getLocaleMessages, getSpells } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
@@ -177,6 +177,38 @@ export function _setSortOrder(sortOrder: string): SetSpellsSortOrderAction {
 		type: ActionTypes.SET_SPELLS_SORT_ORDER,
 		payload: {
 			sortOrder
+		}
+	};
+}
+
+export interface SetActiveSpellsFilterTextAction {
+	type: ActionTypes.SET_SPELLS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setActiveFilterText(filterText: string): SetActiveSpellsFilterTextAction {
+	return {
+		type: ActionTypes.SET_SPELLS_FILTER_TEXT,
+		payload: {
+			filterText
+		}
+	};
+}
+
+export interface SetInactiveSpellsFilterTextAction {
+	type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT;
+	payload: {
+		filterText: string;
+	};
+}
+
+export function setInactiveFilterText(filterText: string): SetInactiveSpellsFilterTextAction {
+	return {
+		type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT,
+		payload: {
+			filterText
 		}
 	};
 }

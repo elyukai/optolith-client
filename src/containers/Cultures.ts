@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as CultureActions from '../actions/CultureActions';
 import { AppState } from '../reducers/app';
 import { getFilteredCultures } from '../selectors/rcpSelectors';
-import { getCurrentCultureId } from '../selectors/stateSelectors';
+import { getCulturesFilterText, getCurrentCultureId } from '../selectors/stateSelectors';
 import { getCulturesSortOrder, getCulturesVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from '../views/rcp/Cultures';
 
@@ -13,6 +13,7 @@ function mapStateToProps(state: AppState) {
 		currentId: getCurrentCultureId(state),
 		sortOrder: getCulturesSortOrder(state),
 		visibilityFilter: getCulturesVisibilityFilter(state),
+		filterText: getCulturesFilterText(state),
 	};
 }
 
@@ -29,7 +30,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchValueVisibilityFilter() {
 			dispatch(CultureActions._switchValueVisibilityFilter());
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(CultureActions.setFilterText(filterText));
+		},
 	};
 }
 

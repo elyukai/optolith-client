@@ -511,31 +511,31 @@ export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
 	tierName?: string;
 }
 
-export interface ActiveViewObject {
+export interface ActiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
 	id: string;
 	index: number;
 	name: string;
+	cost: number;
 	tier?: number;
+	tierName?: string;
 	minTier?: number;
 	maxTier?: number;
-	cost: number;
 	disabled: boolean;
-	gr?: number;
-	instance: ActivatableInstance;
+	gr: number;
+	instance: T;
 	customCost?: boolean;
-	tierName?: string;
 }
 
 export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
 	id: string;
 	name: string;
 	cost?: string | number | number[];
-	input?: string;
 	tiers?: number;
 	minTier?: number;
 	maxTier?: number;
 	sel?: SelectionObject[];
-	gr?: number;
+	input?: string;
+	gr: number;
 	instance: T;
 	customCostDisabled?: boolean;
 }
@@ -822,6 +822,8 @@ export interface BlessingInstance {
 	readonly category: Categories.BLESSINGS;
 	active: boolean;
 	dependencies: boolean[];
+	ic?: undefined;
+	gr?: undefined;
 	readonly effect: string;
 	readonly range: string;
 	readonly duration: string;
@@ -874,6 +876,8 @@ export interface CantripInstance {
 	readonly category: Categories.CANTRIPS;
 	active: boolean;
 	dependencies: boolean[];
+	ic?: undefined;
+	gr?: undefined;
 	readonly effect: string;
 	readonly range: string;
 	readonly duration: string;

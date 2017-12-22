@@ -3,6 +3,7 @@ import { Aside } from '../../components/Aside';
 import { List } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -27,12 +28,14 @@ export interface RacesStateProps {
 	currentVariantId?: string;
 	races: Race[];
 	sortOrder: string;
+	filterText: string;
 }
 
 export interface RacesDispatchProps {
 	selectRace(id: string): void;
 	selectRaceVariant(id: string, variantId?: string): void;
 	setSortOrder(sortOrder: string): void;
+	setFilterText(filterText: string): void;
 }
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps;
@@ -46,7 +49,7 @@ export class Races extends React.Component<RacesProps, RacesState> {
 		filterText: ''
 	};
 
-	filter = (event: InputTextEvent) => this.setState({ filterText: event.target.value } as RacesState);
+	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 	sort = (option: string) => this.props.setSortOrder(option);
 
 	render() {
@@ -80,7 +83,7 @@ export class Races extends React.Component<RacesProps, RacesState> {
 					<Scroll>
 						<List>
 							{
-								list.map(race =>
+								list.length === 0 ? <ListPlaceholder locale={locale} type="races" noResults /> : list.map(race =>
 									<RacesListItem {...this.props} key={race.id} race={race} />
 								)
 							}

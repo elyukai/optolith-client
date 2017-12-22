@@ -4,9 +4,9 @@ import * as ConfigActions from '../actions/ConfigActions';
 import * as LiturgiesActions from '../actions/LiturgiesActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
-import { getActiveLiturgicalChants, getBlessedTraditionNumericId, getFilteredInactiveLiturgicalChants, isActivationDisabled } from '../selectors/liturgiesSelectors';
+import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAttributes, getPhase } from '../selectors/stateSelectors';
+import { getAttributes, getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Liturgies, LiturgiesDispatchProps, LiturgiesOwnProps, LiturgiesStateProps } from '../views/skills/Liturgies';
@@ -19,11 +19,13 @@ function mapStateToProps(state: AppState) {
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		isRemovingEnabled: isRemovingEnabled(state),
-		activeList: getActiveLiturgicalChants(state),
-		inactiveList: getFilteredInactiveLiturgicalChants(state),
+		activeList: getFilteredActiveLiturgicalChantsAndBlessings(state),
+		inactiveList: getFilteredInactiveLiturgicalChantsAndBlessings(state),
 		phase: getPhase(state),
 		sortOrder: getLiturgiesSortOrder(state),
-		traditionId: getBlessedTraditionNumericId(state)!
+		traditionId: getBlessedTraditionNumericId(state)!,
+		filterText: getLiturgicalChantsFilterText(state),
+		inactiveFilterText: getInactiveLiturgicalChantsFilterText(state),
 	};
 }
 
@@ -52,7 +54,13 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchActiveItemHints() {
 			dispatch(ConfigActions._switchEnableActiveItemHints());
-		}
+		},
+		setFilterText(filterText: string) {
+			dispatch(LiturgiesActions.setActiveFilterText(filterText));
+		},
+		setInactiveFilterText(filterText: string) {
+			dispatch(LiturgiesActions.setInactiveFilterText(filterText));
+		},
 	};
 }
 
