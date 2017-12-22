@@ -119,7 +119,7 @@ export class SkillListItem extends React.Component<SkillListItemProps, {}> {
 			<ListItem noIncrease={noIncrease} recommended={typ} unrecommended={untyp} insertTopMargin={insertTopMargin}>
 				<ListItemName name={name} />
 				<ListItemSeparator />
-				{addText && <ListItemGroup index={groupIndex} list={groupList} text={addText}></ListItemGroup>}
+				{(addText || groupIndex && groupList) && <ListItemGroup index={groupIndex} list={groupList} text={addText}/>}
 				<ListItemValues>
 					{values}
 				</ListItemValues>
