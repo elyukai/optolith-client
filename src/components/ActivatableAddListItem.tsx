@@ -3,8 +3,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as Categories from '../constants/Categories';
 import { AppState } from '../reducers/app';
-import { getSkills } from '../selectors/stateSelectors';
-import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, SpecialAbilityInstance, TalentInstance, UIMessages } from '../types/data.d';
+import { WikiState } from '../reducers/wikiReducer';
+import { getSkills, getWiki } from '../selectors/stateSelectors';
+import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, TalentInstance, UIMessages } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
@@ -36,6 +37,7 @@ export interface ActivatableAddListItemOwnProps {
 
 export interface ActivatableAddListItemStateProps {
 	skills: Map<string, TalentInstance>;
+	wiki: WikiState;
 }
 
 export interface ActivatableAddListItemDispatchProps {
@@ -98,7 +100,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 
 	render() {
 		const { get, item, isImportant, isTypical, isUntypical, hideGroup, locale, skills, selectForInfo } = this.props;
-		const { id, name, cost, instance: { category, gr }, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
+		const { id, name, cost, instance, tiers, minTier = 1, maxTier = Number.MAX_SAFE_INTEGER } = item;
+		const { category, gr } = instance;
 		let { sel } = item;
 		let { item: { input } } = this.props;
 		const { customCost, customCostPreview, input: inputText, selected, selected2, selectedTier, showCustomCostDialog } = this.state;
@@ -236,7 +239,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			case 'SA_9': {
 				type Sel = Array<SelectionObject & TalentInstance>;
 				if (typeof selected === 'string') {
-					const o = ((get(id) as SpecialAbilityInstance).sel as Sel).find(e => e.id === selected);
+					const o = (sel as Sel).find(e => e.id === selected);
 					if (o) {
 						currentCost = o.cost;
 						sel2 = o.applications;
@@ -436,7 +439,20 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 						close={this.closeCustomCostDialog}
 						isOpened={showCustomCostDialog}
 						title={_translate(locale, 'customcost.title')}
-						buttons={[{autoWidth: true, label: _translate(locale, 'actions.done'), disabled: typeof customCostPreview === 'string' && !isInteger(customCostPreview), onClick: this.setCustomCost}, {autoWidth: true, label: _translate(locale, 'actions.delete'), disabled: customCost === undefined, onClick: this.deleteCustomCost}]}
+						buttons={[
+							{
+								autoWidth: true,
+								label: _translate(locale, 'actions.done'),
+								disabled: typeof customCostPreview === 'string' && !isInteger(customCostPreview),
+								onClick: this.setCustomCost
+							},
+							{
+								autoWidth: true,
+								label: _translate(locale, 'actions.delete'),
+								disabled: customCost === undefined,
+								onClick: this.deleteCustomCost
+							}
+						]}
 						>
 						{_translate(locale, 'customcost.message')}{name}
 						<TextField
@@ -458,7 +474,8 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 
 function mapStateToProps(state: AppState) {
 	return {
-		skills: getSkills(state)
+		skills: getSkills(state),
+		wiki: getWiki(state)
 	};
 }
 

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ActiveViewObject, BlessingInstance, CantripInstance, ItemInstance, LiturgyInstance, SpellInstance, TalentInstance, SpecialAbilityInstance, DeactiveViewObject } from '../types/data';
+import { ActiveViewObject, BlessingInstance, CantripInstance, DeactiveViewObject, ItemInstance, LiturgyInstance, SpecialAbilityInstance, SpellInstance, TalentInstance } from '../types/data';
 import * as View from '../types/view';
 import { Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../types/wiki';
 import { AllSortOptions } from '../utils/FilterSortUtils';
@@ -76,7 +76,7 @@ export const getSpecialAbilitiesSortOptions = createSelector(
   (sortOrder, locale) => {
 		let sortOptions: AllSortOptions<ActiveViewObject<SpecialAbilityInstance> | DeactiveViewObject<SpecialAbilityInstance>> = 'name';
 		if (sortOrder === 'groupname') {
-			sortOptions = [{ key: 'gr', mapToIndex: _translate(locale, 'specialabilities.view.groups') }, 'name'];
+			sortOptions = [{ key: obj => obj.instance.gr, mapToIndex: _translate(locale, 'specialabilities.view.groups') }, 'name'];
     }
 		return sortOptions;
   }

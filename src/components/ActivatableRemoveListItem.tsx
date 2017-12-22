@@ -46,7 +46,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 
 	render() {
 		const { isRemovingEnabled, hideGroup, item, isImportant, isTypical, isUntypical, locale, selectForInfo } = this.props;
-		const { id, minTier = 1, tier, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, gr, cost, customCost, instance: { tiers } } = item;
+		const { id, minTier = 1, tier, maxTier = Number.MAX_SAFE_INTEGER, index, disabled, cost, customCost, instance: { tiers, gr } } = item;
 		let { name } = item;
 		let addSpecial;
 

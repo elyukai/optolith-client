@@ -69,7 +69,6 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
           index,
           name: combinedName,
           cost: currentCost,
-          gr: instance.gr,
           disabled,
           instance,
           maxTier,
@@ -288,7 +287,7 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
   getCultureAreaKnowledge,
   (specialAbilities, messages, cultureAreaKnowledge = '') => {
     return [
-      ...specialAbilities.filter(e => [1, 2, 22, 30].includes(e.gr!)),
+      ...specialAbilities.filter(e => [1, 2, 22, 30].includes(e.instance.gr!)),
       _translate(messages!, 'charactersheet.main.generalspecialabilites.areaknowledge', cultureAreaKnowledge)
     ];
   }
@@ -297,21 +296,21 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
 export const getCombatSpecialAbilitiesForSheet = createSelector(
   getSpecialAbilitiesForSheet,
   specialAbilities => {
-    return specialAbilities.filter(e => [3, 9, 10, 11, 12, 21].includes(e.gr!));
+    return specialAbilities.filter(e => [3, 9, 10, 11, 12, 21].includes(e.instance.gr!));
   }
 );
 
 export const getMagicalSpecialAbilitiesForSheet = createSelector(
   getSpecialAbilitiesForSheet,
   specialAbilities => {
-    return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28].includes(e.gr!));
+    return specialAbilities.filter(e => [4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28].includes(e.instance.gr!));
   }
 );
 
 export const getBlessedSpecialAbilitiesForSheet = createSelector(
   getSpecialAbilitiesForSheet,
   specialAbilities => {
-    return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27, 29].includes(e.gr!));
+    return specialAbilities.filter(e => [7, 8, 23, 24, 25, 26, 27, 29].includes(e.instance.gr!));
   }
 );
 

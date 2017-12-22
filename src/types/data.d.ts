@@ -521,7 +521,6 @@ export interface ActiveViewObject<T extends ActivatableInstance = ActivatableIns
 	minTier?: number;
 	maxTier?: number;
 	disabled: boolean;
-	gr: number;
 	instance: T;
 	customCost?: boolean;
 }
@@ -535,7 +534,6 @@ export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableI
 	maxTier?: number;
 	sel?: SelectionObject[];
 	input?: string;
-	gr: number;
 	instance: T;
 	customCostDisabled?: boolean;
 }
