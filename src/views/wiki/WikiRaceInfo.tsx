@@ -17,7 +17,7 @@ export interface WikiRaceInfoProps {
 export function WikiRaceInfo(props: WikiRaceInfoProps) {
 	const { books, cultures, currentObject, locale, raceVariants } = props;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info race-info">
 				<div className="race-header info-header">
@@ -62,7 +62,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 				{currentObject.stronglyRecommendedDisadvantagesText}
 			</WikiProperty>}
 			<WikiProperty locale={locale} title="info.commoncultures">
-				{sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.map(id => cultures.has(id) ? cultures.get(id)!.name : '...') : variants.map(e => e.name)), locale.id).join(', ')}</span>}
+				{sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.filter(id => cultures.has(id)).map(id => cultures.get(id)!.name) : variants.map(e => e.name)), locale.id).join(', ')}</span>}
 			</WikiProperty>
 			{!sameCommonCultures && <ul className="race-variant-options">
 				{variants.map(e => {

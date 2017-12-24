@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
+import { ListPlaceholder } from '../../components/ListPlaceholder';
 import { MainContent } from '../../components/MainContent';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -11,7 +12,6 @@ import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, I
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { WikiList } from './WikiList';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
 
 export interface WikiOwnProps {
 	locale: UIMessages;
@@ -43,6 +43,7 @@ export interface WikiStateProps extends Lists {
 	spellsGroup?: number;
 	liturgicalChantsGroup?: number;
 	itemTemplatesGroup?: number;
+	specialAbilityGroups: { id: number; name: string; }[];
 }
 
 export interface WikiDispatchProps {
@@ -70,7 +71,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 	showInfo = (id: string) => this.setState({ infoId: id } as WikiState);
 
 	render() {
-		const { category, filterText, locale, setCategory1, setCategory2, setFilter, professionsGroup, skillsGroup, combatTechniquesGroup, specialAbilitiesGroup, spellsGroup, liturgicalChantsGroup, itemTemplatesGroup, setProfessionsGroup, setSkillsGroup, setCombatTechniquesGroup, setSpecialAbilitiesGroup, setSpellsGroup, setLiturgicalChantsGroup, setItemTemplatesGroup, ...other } = this.props;
+		const { category, filterText, locale, setCategory1, setCategory2, setFilter, professionsGroup, skillsGroup, combatTechniquesGroup, specialAbilitiesGroup, spellsGroup, liturgicalChantsGroup, itemTemplatesGroup, setProfessionsGroup, setSkillsGroup, setCombatTechniquesGroup, setSpecialAbilitiesGroup, setSpellsGroup, setLiturgicalChantsGroup, setItemTemplatesGroup, specialAbilityGroups, ...other } = this.props;
 		const { infoId } = this.state;
 
 		const list: (Race | Culture | Profession | Advantage | Disadvantage | Skill | CombatTechnique | SpecialAbility | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate)[] | undefined = typeof category === 'string' ? other[category as keyof Lists] : undefined;
@@ -160,10 +161,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 							{
 								name: _translate(locale, 'allspecialabilitygroups')
 							},
-							...sortObjects(_translate(locale, 'specialabilities.view.groups').map((name, index) => ({
-								id: index + 1,
-								name
-							})), locale.id)
+							...specialAbilityGroups
 						]}
 						fullWidth
 						/>}

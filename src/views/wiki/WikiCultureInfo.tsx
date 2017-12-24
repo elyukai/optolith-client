@@ -27,7 +27,7 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
 		};
 	})
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info culture-info">
 				<div className="culture-header info-header">

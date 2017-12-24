@@ -5,6 +5,7 @@ import { Scroll } from '../../components/Scroll';
 import { ADVANTAGES, ATTRIBUTES, DISADVANTAGES, LITURGIES, SPECIAL_ABILITIES, SPELLS } from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
+import { get as getDependentInstance } from '../../selectors/dependentInstancesSelectors';
 import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, AttributeInstance, RaceInstance, SecondaryAttribute } from '../../types/data.d';
 import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/reusable';
 import { UIMessages } from '../../types/view.d';
@@ -62,7 +63,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 			</div>
 		);
 
-		if (['en-US', 'nl-BE'].includes(locale.id)) {
+		if (['nl-BE'].includes(locale.id)) {
 			return <Scroll>
 				<div className="info specialability-info">
 					{headerElement}
@@ -143,9 +144,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 						<Markdown source={`${currentObject.rules}`} />
 						<PrerequisitesText {...props} entry={currentObject} />
 						<Markdown source={costText} />
-						<p className="source">
-							<span>{sortStrings(currentObject.src.map(e => `${books.get(e.id)!.name} ${e.page}`), locale.id).join(', ')}</span>
-						</p>
+						<WikiSource src={currentObject.src} books={books} locale={locale} />
 					</div>
 				</Scroll>;
 
@@ -436,22 +435,26 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
 			const category = getCategoryById(id);
 			return {
 				name: `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${value}`,
-				active
+				active,
+				id
 			};
 		}
 		const { id, active, sid, sid2, tier } = e;
 		return {
-			name: Array.isArray(id) ? id.map(a => {
+			name: Array.isArray(id) ? id.filter(a => typeof getDependentInstance(dependent, a) === 'object').map(a => {
 				const category = getCategoryById(a);
 				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
-			}).join(_translate(locale, 'info.or')) : Array.isArray(sid) ? sid.map(a => {
+			}).join(_translate(locale, 'info.or')) : typeof getDependentInstance(dependent, id) === 'object' ? (Array.isArray(sid) ? sid.map(a => {
 				const category = getCategoryById(id);
 				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid: a, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
-			}).join(_translate(locale, 'info.or')) : `${getCategoryById(id) === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : getCategoryById(id) === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`,
-			active
+			}).join(_translate(locale, 'info.or')) : `${getCategoryById(id) === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : getCategoryById(id) === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`) : undefined,
+			active,
+			id
 		};
 	}), locale.id).map(e => {
-		return <span key={e.name}><span className={classNames(!e.active && 'disabled')}>{e.name}</span></span>;
+		return <span key={e.name || typeof e.id === 'string' ? e.id as string : ''}>
+			<span className={classNames(!e.active && 'disabled')}>{e.name}</span>
+		</span>;
 	});
 }
 

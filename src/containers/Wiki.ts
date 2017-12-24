@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from '../actions/WikiActions';
 import { AppState } from '../reducers/app';
 import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from '../selectors/stateSelectors';
-import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells } from '../selectors/wikiSelectors';
+import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from '../selectors/wikiSelectors';
 import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../views/wiki/Wiki';
 
 function mapStateToProps(state: AppState) {
@@ -32,6 +32,7 @@ function mapStateToProps(state: AppState) {
 		spellsGroup: getWikiSpellsGroup(state),
 		liturgicalChantsGroup: getWikiLiturgicalChantsGroup(state),
 		itemTemplatesGroup: getWikiItemTemplatesGroup(state),
+		specialAbilityGroups: getSpecialAbilityGroups(state),
 	};
 }
 

@@ -332,3 +332,15 @@ export const getPreparedItemTemplates = createSelector(
     return filterObjects(list, filterText);
   }
 );
+
+export const getSpecialAbilityGroups = createSelector(
+  getWikiSpecialAbilities,
+  getLocaleMessages,
+  (wiki, locale) => {
+    const specialAbilities = [...wiki.values()];
+    return sortObjects(_translate(locale!, 'specialabilities.view.groups').map((name, index) => ({
+      id: index + 1,
+      name
+    })).filter(({ id }) => specialAbilities.some(e => e.gr === id)), locale!.id);
+  }
+);

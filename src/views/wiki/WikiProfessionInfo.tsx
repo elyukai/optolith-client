@@ -65,7 +65,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 	const raceRequirement = currentObject.dependencies.find(e => isRaceRequirement(e)) as RaceRequirement | undefined;
 	const sexRequirement = currentObject.dependencies.find(e => isSexRequirement(e)) as SexRequirement | undefined;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info profession-info">
 				<div className="profession-header info-header">
