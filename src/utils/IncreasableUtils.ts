@@ -1,4 +1,3 @@
-import { AdventurePointsState } from '../reducers/adventurePoints';
 import { IncreasableInstance } from '../types/data.d';
 import { validate } from './APUtils';
 import { getDecreaseAP, getIncreaseAP } from './ICUtils';

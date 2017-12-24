@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data.d';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
 import { List } from './List';
 import { ListPlaceholder } from './ListPlaceholder';

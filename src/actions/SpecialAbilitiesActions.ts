@@ -1,7 +1,7 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getDependentInstances, getLocaleMessages, getSpecialAbilities } from '../selectors/stateSelectors';
+import { getDependentInstances, getLocaleMessages, getSpecialAbilities, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
 import { convertPerTierCostToFinalCost, getNameCost } from '../utils/ActivatableUtils';
@@ -64,8 +64,8 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const state = getState();
 		const dependent = getDependentInstances(state);
 		const activeObjectWithId = { id, index, ...getSpecialAbilities(state).get(id)!.active[index] };
-		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, dependent, false)).currentCost;
-		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, dependent, true)).currentCost;
+		const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, getWiki(state), dependent, false)).currentCost;
+		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, getWiki(state), dependent, true)).currentCost;
 		const cost = nextCost - previousCost;
 		const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
 		const messages = getLocaleMessages(state);

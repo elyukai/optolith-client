@@ -3,7 +3,7 @@ import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-import { DisAdvAdventurePoints } from '../reducers/adventurePoints';
+// import { DisAdvAdventurePoints } from '../reducers/adventurePoints';
 import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
@@ -230,8 +230,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
-        calculatedActivatableCost += currentCost;
+        // const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, dependent, true));
+        // calculatedActivatableCost += currentCost;
         const adds = ActivatableUtils.getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
         const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
         if (obj.category === Categories.SPECIAL_ABILITIES) {
@@ -326,11 +326,11 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
               if (typeof id === 'string') {
                 const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
                 const activeObject = { sid: sid as string | number | undefined, sid2, tier };
-                let costObj: {
-                  spent: number;
-                  adv: DisAdvAdventurePoints;
-                  disadv: DisAdvAdventurePoints;
-                } | number | undefined;
+                // let costObj: {
+                //   spent: number;
+                //   adv: DisAdvAdventurePoints;
+                //   disadv: DisAdvAdventurePoints;
+                // } | number | undefined;
 
                 const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
@@ -342,44 +342,44 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
                   }
                   fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
-                  const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true));
-                  if (currentCost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
-                    const isKar = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
-                    const isMag = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
-                    const index = isKar ? 2 : isMag ? 1 : 0;
+                  // const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, dependent, true));
+                  // if (currentCost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
+                  //   const isKar = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
+                  //   const isMag = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
+                  //   const index = isKar ? 2 : isMag ? 1 : 0;
 
-                    costObj = {
-                      adv: [0, 0, 0],
-                      disadv: [0, 0, 0],
-                      spent: currentCost,
-                    };
+                  //   costObj = {
+                  //     adv: [0, 0, 0],
+                  //     disadv: [0, 0, 0],
+                  //     spent: currentCost,
+                  //   };
 
-                    if (obj.category === Categories.ADVANTAGES) {
-                      costObj.adv[0] = costObj.spent;
-                      if (index > 0) {
-                        costObj.adv[index] = costObj.spent;
-                      }
-                    }
-                    else {
-                      costObj.disadv[0] = -costObj.spent;
-                      if (index > 0) {
-                        costObj.disadv[index] = -costObj.spent;
-                      }
-                    }
-                  }
-                  else {
-                    costObj = currentCost;
-                  }
-                  if (typeof costObj === 'object') {
-                    return {
-                      adv: costObj.adv.map((e, i) => e + final.adv[i]) as [number, number, number],
-                      disadv: costObj.disadv.map((e, i) => e + final.disadv[i]) as [number, number, number],
-                      spent: final.spent + costObj.spent
-                    };
-                  }
-                  else if (typeof costObj === 'number') {
-                    return { ...final, spent: final.spent + currentCost};
-                  }
+                  //   if (obj.category === Categories.ADVANTAGES) {
+                  //     costObj.adv[0] = costObj.spent;
+                  //     if (index > 0) {
+                  //       costObj.adv[index] = costObj.spent;
+                  //     }
+                  //   }
+                  //   else {
+                  //     costObj.disadv[0] = -costObj.spent;
+                  //     if (index > 0) {
+                  //       costObj.disadv[index] = -costObj.spent;
+                  //     }
+                  //   }
+                  // }
+                  // else {
+                  //   costObj = currentCost;
+                  // }
+                  // if (typeof costObj === 'object') {
+                  //   return {
+                  //     adv: costObj.adv.map((e, i) => e + final.adv[i]) as [number, number, number],
+                  //     disadv: costObj.disadv.map((e, i) => e + final.disadv[i]) as [number, number, number],
+                  //     spent: final.spent + costObj.spent
+                  //   };
+                  // }
+                  // else if (typeof costObj === 'number') {
+                  //   return { ...final, spent: final.spent + currentCost};
+                  // }
                 }
                 return final;
               }

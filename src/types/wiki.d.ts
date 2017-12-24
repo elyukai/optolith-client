@@ -293,6 +293,7 @@ export interface SelectionObject {
 	cost?: number;
 	req?: AllRequirementTypes[];
 	prerequisites?: AllRequirementTypes[];
+	target?: string;
 }
 
 export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
@@ -527,3 +528,6 @@ export interface PrimaryAttributeDamageThreshold {
 	readonly primary?: string;
 	readonly threshold: number | number[];
 }
+
+export type Activatable = Advantage | Disadvantage | SpecialAbility;
+export type Skillish = Spell | LiturgicalChant | Skill | CombatTechnique;

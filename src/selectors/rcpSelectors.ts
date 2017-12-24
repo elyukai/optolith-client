@@ -10,7 +10,7 @@ import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions } from './sortOptionsSelectors';
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getDependentInstances, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWikiCombatTechniques, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
+import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCombatTechniques, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getCurrentRace = createSelector(
@@ -241,13 +241,13 @@ interface SkillGroupLists {
 }
 
 export const getAllProfessions = createSelector(
+	getWiki,
 	getWikiProfessions,
 	getWikiProfessionVariants,
 	getWikiCombatTechniques,
 	getWikiSkills,
-	getDependentInstances,
 	getLocaleMessages,
-	(professions, professionVariants, combatTechniquesState, skillsState, dependentState, locale) => {
+	(wiki, professions, professionVariants, combatTechniquesState, skillsState, locale) => {
 		const list: Profession[] = [];
 
 		for (const [id, profession] of professions) {
@@ -323,7 +323,7 @@ export const getAllProfessions = createSelector(
 						const { active, ...other } = e;
 						return {
 							active,
-							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
+							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
 						};
 					}
 					return e;
@@ -331,7 +331,7 @@ export const getAllProfessions = createSelector(
 				prerequisitesModel: prerequisites,
 				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
 					active,
-					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
+					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
 				})),
 				selections: selections.map(e => {
 					if (e.id === 'COMBAT_TECHNIQUES') {
@@ -396,7 +396,7 @@ export const getAllProfessions = createSelector(
 						}),
 						specialAbilities: specialAbilitiesVariant.map(({ active, ...other }, index) => ({
 							active,
-							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ ...other, index }, dependentState, true, locale!))
+							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
 						})),
 						concludingText,
 						fullText,

@@ -16,7 +16,7 @@ import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSe
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
-import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText } from './stateSelectors';
+import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
@@ -35,7 +35,8 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
     getSpecialAbilities,
     getCurrentHeroPresent,
     getLocaleMessages,
-    (advantages, disadvantages, specialAbilities, state, locale) => {
+    getWiki,
+    (advantages, disadvantages, specialAbilities, state, locale, wiki) => {
       const { dependent } = state;
       const allEntries = (category === Categories.ADVANTAGES ? advantages : category === Categories.DISADVANTAGES ? disadvantages : specialAbilities) as Map<string, Data.InstanceByCategory[T]>;
       const finalEntries: Data.ActiveViewObject<Data.InstanceByCategory[T]>[] = [];
@@ -54,7 +55,7 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
           currentCost,
           cost,
           tierName
-        } = convertPerTierCostToFinalCost(getNameCost(activeObject, dependent, false, locale), locale, addTierToName);
+        } = convertPerTierCostToFinalCost(getNameCost(activeObject, wiki, dependent, false, locale), locale, addTierToName);
 
         const {
           disabled,

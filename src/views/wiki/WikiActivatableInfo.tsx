@@ -5,18 +5,17 @@ import { Scroll } from '../../components/Scroll';
 import { ADVANTAGES, ATTRIBUTES, DISADVANTAGES, LITURGIES, SPECIAL_ABILITIES, SPELLS } from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
-import { get as getDependentInstance } from '../../selectors/dependentInstancesSelectors';
-import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, AttributeInstance, RaceInstance, SecondaryAttribute } from '../../types/data.d';
+import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, SecondaryAttribute } from '../../types/data.d';
 import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/reusable';
 import { UIMessages } from '../../types/view.d';
-import { Attribute, Book, SpecialAbility } from '../../types/wiki';
-import { getNameCost, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
+import { Attribute, Book, Race, SpecialAbility } from '../../types/wiki';
+import { getNameCostForWiki, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
 import { getRoman } from '../../utils/NumberUtils';
 import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/RequirementUtils';
-import { get } from '../../utils/WikiUtils';
+import { getWikiEntry } from '../../utils/WikiUtils';
 import { WikiProperty } from './WikiProperty';
 import { WikiSource } from './WikiSource';
 
@@ -32,7 +31,7 @@ export interface WikiActivatableInfoProps {
 }
 
 export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
-	const { books, currentObject, dependent, locale, specialAbilities } = props;
+	const { books, currentObject, locale, specialAbilities, wiki } = props;
 	const { apValue, apValueAppend, cost, tiers } = currentObject;
 
 	let costText = `**${_translate(locale, 'info.apvalue')}:** `;
@@ -196,7 +195,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 						{currentObject.rules && <Markdown source={`**${_translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
 						{currentObject.extended && <Markdown source={`**${_translate(locale, 'info.extendedblessedtspecialabilities')}:** ${sortStrings([
 							...currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'),
-							...(additionalExtended ? additionalExtended.map(e => getNameCost({ id: 'SA_639', index: 0, ...e }, dependent, true, locale).combinedName) : [])
+							...(additionalExtended ? additionalExtended.map(e => getNameCostForWiki({ id: 'SA_639', index: 0, ...e }, wiki, locale).combinedName) : [])
 						], locale.id).join(', ')}`} />}
 						{currentObject.penalty && <Markdown source={`**${_translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
 						{currentObject.combatTechniques && <Markdown source={`**${_translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
@@ -306,13 +305,12 @@ export interface PrerequisitesProps {
 	list: ActivatableBasePrerequisites;
 	entry: ActivatableInstance;
 	locale: UIMessages;
-	dependent: DependentInstancesState;
 	prerequisitesTextIndex: Map<number, string | false>;
 	wiki: WikiState;
 }
 
 export function Prerequisites(props: PrerequisitesProps) {
-	const { list, entry, locale, dependent, prerequisitesTextIndex, wiki } = props;
+	const { list, entry, locale, prerequisitesTextIndex, wiki } = props;
 
 	if (list.length === 0 && !isExtendedSpecialAbility(entry)) {
 		return <React.Fragment>
@@ -341,19 +339,19 @@ export function Prerequisites(props: PrerequisitesProps) {
 
 	return <React.Fragment>
 		{rcp && getPrerequisitesRCPText(rcp, entry, locale)}
-		{getPrerequisitesActivatablesText(casterBlessedOne, dependent, locale)}
-		{getPrerequisitesActivatablesText(traditions, dependent, locale)}
-		{getPrerequisitesAttributesText(attributes, dependent.attributes, locale)}
+		{getPrerequisitesActivatablesText(casterBlessedOne, wiki, locale)}
+		{getPrerequisitesActivatablesText(traditions, wiki, locale)}
+		{getPrerequisitesAttributesText(attributes, wiki.attributes, locale)}
 		{primaryAttribute && getPrerequisitesPrimaryAttributeText(primaryAttribute, locale)}
 		{getPrerequisitesSkillsText(skills, wiki, locale)}
 		{getPrerequisitesActivatedSkillsText(activeSkills, wiki, locale)}
-		{getPrerequisitesActivatablesText(otherActiveSpecialAbilities, dependent, locale)}
-		{getPrerequisitesActivatablesText(inactiveSpecialAbilities, dependent, locale)}
-		{getPrerequisitesActivatablesText(otherActiveAdvantages, dependent, locale)}
-		{getPrerequisitesActivatablesText(inactiveAdvantages, dependent, locale)}
-		{getPrerequisitesActivatablesText(activeDisadvantages, dependent, locale)}
-		{getPrerequisitesActivatablesText(inactiveDisadvantages, dependent, locale)}
-		{race && getPrerequisitesRaceText(race, dependent.races, locale)}
+		{getPrerequisitesActivatablesText(otherActiveSpecialAbilities, wiki, locale)}
+		{getPrerequisitesActivatablesText(inactiveSpecialAbilities, wiki, locale)}
+		{getPrerequisitesActivatablesText(otherActiveAdvantages, wiki, locale)}
+		{getPrerequisitesActivatablesText(inactiveAdvantages, wiki, locale)}
+		{getPrerequisitesActivatablesText(activeDisadvantages, wiki, locale)}
+		{getPrerequisitesActivatablesText(inactiveDisadvantages, wiki, locale)}
+		{race && getPrerequisitesRaceText(race, wiki.races, locale)}
 		{entry.category === SPECIAL_ABILITIES ? (entry.gr === 11 ? <span>{_translate(locale, 'appropriatecombatstylespecialability')}</span> : entry.gr === 14 ? <span>{_translate(locale, 'appropriatemagicalstylespecialability')}</span> : entry.gr === 26 ? <span>{_translate(locale, 'appropriateblessedstylespecialability')}</span> : '') : ''}
 	</React.Fragment>;
 }
@@ -381,7 +379,7 @@ export function getPrerequisitesRCPText(options: RCPPrerequisiteObjects, entry: 
 	</span>;
 }
 
-export function getPrerequisitesAttributesText(list: IncreasablePrerequisiteObjects[], attributes: Map<string, AttributeInstance>, locale: UIMessages): JSX.Element {
+export function getPrerequisitesAttributesText(list: IncreasablePrerequisiteObjects[], attributes: Map<string, Attribute>, locale: UIMessages): JSX.Element {
 	return list.length > 0 ? <span>
 		{list.map(e => {
 			if (typeof e === 'string') {
@@ -406,7 +404,7 @@ export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[
 				return e;
 			}
 			const { id, value } = e;
-			return `${Array.isArray(id) ? id.map(a => get(wiki, a)!.name).join(_translate(locale, 'info.or')) : get(wiki, id)!.name} ${value}`;
+			return `${Array.isArray(id) ? id.map(a => getWikiEntry(wiki, a)!.name).join(_translate(locale, 'info.or')) : getWikiEntry(wiki, id)!.name} ${value}`;
 		}), locale.id).join(', ')}
 	</span> : <React.Fragment></React.Fragment>;
 }
@@ -420,15 +418,15 @@ export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisit
 		const { id } = e;
 		if (Array.isArray(id)) {
 			const category = getCategoryById(id[0]);
-			return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${id.map(e => get(wiki, e)!.name).join(_translate(locale, 'info.or'))}`;
+			return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${id.map(e => getWikiEntry(wiki, e)!.name).join(_translate(locale, 'info.or'))}`;
 		}
 		const category = getCategoryById(id);
-		return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${get(wiki, id)!.name}`;
+		return `${category === LITURGIES ? _translate(locale, 'knowledgeofliturgicalchant') : _translate(locale, 'knowledgeofspell')} ${getWikiEntry(wiki, id)!.name}`;
 	}), locale.id).join(', ')}
 	</span> : <React.Fragment></React.Fragment>;
 }
 
-export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteObjects[], dependent: DependentInstancesState, locale: UIMessages): React.ReactFragment[] {
+export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteObjects[], wiki: WikiState, locale: UIMessages): React.ReactFragment[] {
 	return sortObjects(list.map(e => {
 		if (isActivatableStringObject(e)) {
 			const { id, active, value } = e;
@@ -441,13 +439,13 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
 		}
 		const { id, active, sid, sid2, tier } = e;
 		return {
-			name: Array.isArray(id) ? id.filter(a => typeof getDependentInstance(dependent, a) === 'object').map(a => {
+			name: Array.isArray(id) ? id.filter(a => typeof getWikiEntry(wiki, a) === 'object').map(a => {
 				const category = getCategoryById(a);
-				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
-			}).join(_translate(locale, 'info.or')) : typeof getDependentInstance(dependent, id) === 'object' ? (Array.isArray(sid) ? sid.map(a => {
+				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, wiki, locale).combinedName}`;
+			}).join(_translate(locale, 'info.or')) : typeof getWikiEntry(wiki, id) === 'object' ? (Array.isArray(sid) ? sid.map(a => {
 				const category = getCategoryById(id);
-				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid: a, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`;
-			}).join(_translate(locale, 'info.or')) : `${getCategoryById(id) === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : getCategoryById(id) === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, true, locale).combinedName}`) : undefined,
+				return `${category === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : category === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id, sid: a, sid2, tier, index: 0 }, wiki, locale).combinedName}`;
+			}).join(_translate(locale, 'info.or')) : `${getCategoryById(id) === ADVANTAGES ? `${_translate(locale, 'advantage')} ` : getCategoryById(id) === DISADVANTAGES ? `${_translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id, sid, sid2, tier, index: 0 }, wiki, locale).combinedName}`) : undefined,
 			active,
 			id
 		};
@@ -458,9 +456,9 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
 	});
 }
 
-export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: Map<string, RaceInstance>, locale: UIMessages): JSX.Element {
+export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: Map<string, Race>, locale: UIMessages): JSX.Element {
 	return <span>
-		{typeof race === 'string' ? race : `${_translate(locale, 'race')} ${Array.isArray(race.value) ? race.value.map(e => races.get(`R_${e}`)!.name).join(_translate(locale, 'info.or')) : races.get(`R_${race.value}`)!.name}`}
+		{typeof race === 'string' ? race : `${_translate(locale, 'race')} ${Array.isArray(race.value) ? race.value.filter(e => races.has(`R_${e}`)).map(e => races.get(`R_${e}`)!.name).join(_translate(locale, 'info.or')) : races.has(`R_${race.value}`) && races.get(`R_${race.value}`)!.name}`}
 	</span>;
 }
 

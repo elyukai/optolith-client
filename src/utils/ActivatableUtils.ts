@@ -7,8 +7,9 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/depen
 import { getStart } from '../selectors/elSelectors';
 import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
-import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SelectionObject, SkillInstance, SkillishInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
+import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
+import { Activatable, SelectionObject, Skillish } from '../types/wiki';
 import * as DependentUtils from './DependentUtils';
 import { sortObjects } from './FilterSortUtils';
 import { _translate } from './I18n';
@@ -17,6 +18,7 @@ import { mergeIntoState, setStateItem } from './ListUtils';
 import { getTraditionOfAspect } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
+import { getWikiEntry } from './WikiUtils';
 
 /**
  * Checks if you can buy the entry multiple times.
@@ -185,6 +187,17 @@ export function getSelectionItem(obj: ActivatableInstance, id?: string | number)
 }
 
 /**
+ * Get a selection option with the given id from given wiki entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
+export function findSelectOption(obj: Activatable, id?: string | number): SelectionObject | undefined {
+  if (obj.select) {
+    return obj.select.find(e => e.id === id);
+  }
+  return undefined;
+}
+
+/**
  * Get a selection option's name with the given id from given entry. Returns `undefined` if not found.
  * @param obj The entry.
  */
@@ -192,6 +205,30 @@ export function getSelectionName(obj: ActivatableInstance, id?: string | number)
   const selectionItem = getSelectionItem(obj, id);
   if (selectionItem) {
     return selectionItem.name;
+  }
+  return undefined;
+}
+
+/**
+ * Get a selection option's name with the given id from given wiki entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
+export function getSelectOptionName(obj: Activatable, id?: string | number): string | undefined {
+  const selectionItem = findSelectOption(obj, id);
+  if (selectionItem) {
+    return selectionItem.name;
+  }
+  return undefined;
+}
+
+/**
+ * Get a selection option's name with the given id from given wiki entry. Returns `undefined` if not found.
+ * @param obj The entry.
+ */
+export function getSelectOptionCost(obj: Activatable, id?: string | number): number | undefined {
+  const selectionItem = findSelectOption(obj, id);
+  if (selectionItem) {
+    return selectionItem.cost;
   }
   return undefined;
 }
@@ -575,17 +612,52 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing the ActiveObject.
  * @param obj The ActiveObject with origin id.
+ * @param wiki The wiki state.
  * @param state The current hero's state.
  * @param costToAdd If the cost are going to be added or removed from AP left.
  * @param locale The locale-dependent messages.
  */
-export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstancesState, costToAdd: boolean, locale?: UIMessages): ActivatableNameCost {
-  const { id, sid, sid2, tier, cost: customCost } = obj;
-  const instance = get(dependent, id) as ActivatableInstance;
-  const { cost, category, sel, input, name, active } = instance;
+export function getNameCost(obj: ActiveObjectWithId, wiki: WikiState, dependent: DependentInstancesState, costToAdd: boolean, locale?: UIMessages): ActivatableNameCost {
+  const currentCost = getCost(obj, wiki, dependent, costToAdd);
+  const names = getName(obj, wiki, locale);
 
-  let combinedName = name;
-  let addName: string | undefined;
+  return {
+    ...obj,
+    ...names,
+    currentCost
+  };
+}
+
+/**
+ * Returns name, splitted and combined, as well as the AP you get when removing the ActiveObject.
+ * @param obj The ActiveObject with origin id.
+ * @param wiki The wiki state.
+ * @param locale The locale-dependent messages.
+ */
+export function getNameCostForWiki(obj: ActiveObjectWithId, wiki: WikiState, locale?: UIMessages): ActivatableNameCost {
+  const currentCost = getCost(obj, wiki);
+  const names = getName(obj, wiki, locale);
+
+  return {
+    ...obj,
+    ...names,
+    currentCost
+  };
+}
+
+/**
+ * Returns the AP you get when removing the ActiveObject.
+ * @param obj The ActiveObject with origin id.
+ * @param wiki The wiki state.
+ * @param dependent The current hero's state.
+ * @param costToAdd If the cost are going to be added or removed from AP left.
+ */
+export function getCost(obj: ActiveObjectWithId, wiki: WikiState, dependent?: DependentInstancesState, costToAdd?: boolean): number | number[] {
+  const { id, sid, tier, cost: customCost } = obj;
+  const instance = getWikiEntry(wiki, id) as Activatable;
+  const { cost, category, select } = instance;
+  const active = dependent && (get(dependent, id) as ActivatableInstance).active;
+
   let currentCost: number | number[] | undefined;
 
   switch (id) {
@@ -600,10 +672,9 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
     case 'SA_473':
     case 'SA_531':
     case 'SA_569': {
-      const entry = typeof sid === 'string' ? get(dependent, sid) as SkillishInstance : undefined;
+      const entry = typeof sid === 'string' ? getWikiEntry<Skillish>(wiki, sid) : undefined;
       if (entry) {
-        const { name, ic } = entry;
-        addName = name;
+        const { ic } = entry;
         currentCost = (cost as number[])[ic - 1];
       }
       else {
@@ -611,81 +682,181 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       }
       break;
     }
-    case 'ADV_28':
-    case 'ADV_29':
-    case 'DISADV_37':
-    case 'DISADV_51':
-    case 'SA_86': {
-      const selectionItem = getSelectionItem(instance, sid);
-      addName = selectionItem && selectionItem.name;
-      currentCost = selectionItem && selectionItem.cost;
-      break;
-    }
-    case 'ADV_32':
-    case 'DISADV_1':
-    case 'DISADV_24':
-    case 'DISADV_45':
-      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid;
-      break;
-    case 'ADV_68': {
-      const selectionItem = getSelectionItem(instance, sid);
-      addName = selectionItem && `${sid2} (${selectionItem.name})`;
-      currentCost = selectionItem && selectionItem.cost;
-      break;
-    }
     case 'DISADV_34':
     case 'DISADV_50': {
-      const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
-      const subMaxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && (b.tier as number) < maxCurrentTier && b.cost === undefined ? b.tier as number : a, 0);
-      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid;
-      currentCost = maxCurrentTier > (tier as number) || active.filter(e => e.tier === tier).length > (costToAdd ? 0 : 1) ? 0 : (cost as number) * ((tier as number) - subMaxCurrentTier);
+      if (typeof active === 'object') {
+        const compareMaxTier = (a: number, tier: number, cost: number | undefined) => {
+          return tier > a && cost === undefined ? tier : a;
+        };
+        const compareSubMaxTier = (a: number, tier: number, cost: number | undefined, maxCurrentTier: number) => {
+          return tier > a && tier < maxCurrentTier && cost === undefined ? tier : a;
+        };
+
+        const maxCurrentTier = active.reduce((a, { tier, cost }) => compareMaxTier(a, tier!, cost), 0);
+        const subMaxCurrentTier = active.reduce((a, { tier, cost }) => compareSubMaxTier(a, tier!, cost, maxCurrentTier), 0);
+
+        if (maxCurrentTier > tier! || active.filter(e => e.tier === tier).length > (costToAdd ? 0 : 1)) {
+          currentCost = 0;
+        }
+        else {
+          currentCost = (cost as number) * (tier! - subMaxCurrentTier);
+        }
+      }
+      else {
+        currentCost = (cost as number) * tier!;
+      }
       break;
     }
     case 'DISADV_33': {
-      const selectionItem = getSelectionItem(instance, sid);
-      if (sid === 7 && active.filter(e => e.sid === 7 && e.cost === undefined).length > (costToAdd ? 0 : 1)) {
+      if (sid === 7 && typeof active === 'object' && active.filter(e => e.sid === 7 && e.cost === undefined).length > (costToAdd ? 0 : 1)) {
         currentCost = 0;
       }
       else {
-        currentCost = selectionItem && selectionItem.cost as number;
-      }
-      if ([7, 8].includes(sid as number)) {
-        addName = `${selectionItem && selectionItem.name}: ${sid2}`;
-      }
-      else {
-        addName = selectionItem && selectionItem.name;
+        currentCost = getSelectOptionCost(instance, sid);
       }
       break;
     }
     case 'DISADV_36':
-      addName = typeof sid === 'number' ? getSelectionName(instance, sid) : sid as string;
-      currentCost = active.filter(e => e.cost === undefined).length > (costToAdd ? 2 : 3) ? 0 : cost as number;
+      currentCost = typeof active === 'object' && active.filter(e => e.cost === undefined).length > (costToAdd ? 2 : 3) ? 0 : cost as number;
       break;
     case 'SA_9': {
-      const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid && obj.cost === undefined ? c + 1 : c, 0);
-      const skill = dependent.talents.get(sid as string)!;
+      const skill = wiki.skills.get(sid as string)!;
+      if (typeof dependent === 'object') {
+        const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid && obj.cost === undefined ? c + 1 : c, 0);
+        currentCost = skill.ic * (counter + (costToAdd ? 1 : 0));
+      }
+      else {
+        currentCost = skill.ic;
+      }
+      break;
+    }
+    case 'SA_29':
+      currentCost = tier === 4 ? 0 : cost as number;
+      break;
+    case 'SA_72': {
+      const apArr = [10, 20, 40];
+      currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
+      break;
+    }
+    case 'SA_87': {
+      const apArr = [15, 25, 45];
+      currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
+      break;
+    }
+    case 'SA_87': {
+      currentCost = cost as number;
+      if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_17'))) {
+        currentCost -= 10;
+      }
+      if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_18'))) {
+        currentCost -= 10;
+      }
+      break;
+    }
+    case 'SA_533': {
+      const entry = typeof sid === 'string' ? wiki.skills.get(sid) : undefined;
+      const SA_531 = dependent && dependent.specialAbilities.get('SA_531')!.active;
+      const firstSID = SA_531 && SA_531[0] && SA_531[0].sid;
+      const firstEntry = typeof firstSID === 'string' ? wiki.skills.get(firstSID) : undefined;
+      if (entry && firstEntry) {
+        const { ic } = entry;
+        currentCost = (cost as number[])[ic - 1] + firstEntry.ic;
+      }
+      else {
+        currentCost = 0;
+      }
+      break;
+    }
+
+    default:
+      if (Array.isArray(select) && cost === 'sel') {
+        currentCost = getSelectOptionCost(instance, sid);
+      }
+      break;
+  }
+
+  if (customCost !== undefined) {
+    currentCost = customCost;
+  }
+  else if (currentCost === undefined) {
+    currentCost = cost as number | number[];
+  }
+  if (category === Categories.DISADVANTAGES) {
+    currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
+  }
+
+  return currentCost;
+}
+
+export interface CombinedName {
+  combinedName: string;
+  baseName: string;
+  addName: string | undefined;
+}
+
+/**
+ * Returns name, splitted and combined, of advantage/disadvantage/special ability.
+ * @param obj The ActiveObject with origin id.
+ * @param wiki The current hero's state.
+ * @param locale The locale-dependent messages.
+ */
+export function getName(obj: ActiveObjectWithId, wiki: WikiState, locale?: UIMessages): CombinedName {
+  const { id, sid, sid2, tier } = obj;
+  const instance = getWikiEntry(wiki, id) as Activatable;
+  const { select, input, name } = instance;
+
+  let combinedName = name;
+  let addName: string | undefined;
+
+  switch (id) {
+    case 'ADV_4':
+    case 'ADV_47':
+    case 'ADV_16':
+    case 'ADV_17':
+    case 'DISADV_48':
+    case 'SA_231':
+    case 'SA_250':
+    case 'SA_472':
+    case 'SA_473':
+    case 'SA_531':
+    case 'SA_569': {
+      const entry = typeof sid === 'string' ? getWikiEntry(wiki, sid) as Skillish : undefined;
+      if (entry) {
+        const { name } = entry;
+        addName = name;
+      }
+      break;
+    }
+    case 'ADV_68': {
+      const selectionItem = findSelectOption(instance, sid);
+      addName = selectionItem && `${sid2} (${selectionItem.name})`;
+      break;
+    }
+    case 'DISADV_33': {
+      const selection = getSelectOptionName(instance, sid);
+      if ([7, 8].includes(sid as number)) {
+        addName = `${selection}: ${sid2}`;
+      }
+      else {
+        addName = selection;
+      }
+      break;
+    }
+    case 'SA_9': {
+      const skill = wiki.skills.get(sid as string)!;
       let name;
       if (typeof sid2 === 'string') {
         name = sid2;
       }
       else {
         const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
-        if (typeof selectedApplication === 'undefined') {
-          name = 'undefined';
-        }
-        else {
+        if (typeof selectedApplication === 'object') {
           name = selectedApplication.name;
         }
       }
-      currentCost = skill.ic * (counter + (costToAdd ? 1 : 0));
       addName = `${skill.name}: ${name}`;
       break;
     }
-    case 'SA_29':
-      const selection = getSelectionItem(instance, sid);
-      addName = selection && selection.name;
-      currentCost = tier === 4 ? 0 : cost as number;
-      break;
     case 'SA_677':
     case 'SA_678':
       const part = getTraditionNameFromFullName(name);
@@ -695,58 +866,33 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       }
       break;
     case 'SA_680':
-      const entry = dependent.talents.get(sid as string);
+      const entry = wiki.skills.get(sid as string);
       if (entry) {
         addName += `: ${entry.name}`;
       }
       break;
-    case 'SA_72': {
-      const apArr = [10, 20, 40];
-      currentCost = apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
-      addName = getSelectionName(instance, sid);
-      break;
-    }
-    case 'SA_87': {
-      const apArr = [15, 25, 45];
-      currentCost = apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
-      addName = getSelectionName(instance, sid);
-      break;
-    }
     case 'SA_533': {
-      const entry = typeof sid === 'string' ? dependent.talents.get(sid) : undefined;
-      const SA_531 = dependent.specialAbilities.get('SA_531')!.active;
-      const firstSID = SA_531[0] && SA_531[0].sid;
-      const firstEntry = typeof firstSID === 'string' ? dependent.talents.get(firstSID) : undefined;
-      if (entry && firstEntry) {
-        const { name, ic } = entry;
+      const entry = typeof sid === 'string' ? wiki.skills.get(sid) : undefined;
+      if (entry) {
+        const { name } = entry;
         addName = name;
-        currentCost = (cost as number[])[ic - 1] + firstEntry.ic;
-      }
-      else {
-        currentCost = 0;
       }
       break;
     }
     case 'SA_414':
     case 'SA_663': {
-      const selectionItem = getSelectionItem(instance, sid) as (SelectionObject & { target: string; }) | undefined;
-      const targetInstance = selectionItem && (id === 'SA_414' ? dependent.spells.get(selectionItem.target) : dependent.liturgies.get(selectionItem.target));
+      const selectionItem = findSelectOption(instance, sid);
+      const targetInstance = selectionItem && (id === 'SA_414' ? wiki.spells.get(selectionItem.target!) : wiki.liturgicalChants.get(selectionItem.target!));
       addName = targetInstance && `${targetInstance.name}: ${selectionItem!.name}`;
-      currentCost = selectionItem && selectionItem.cost;
       break;
     }
 
     default:
-      if (typeof input === 'string') {
-        addName = sid as string;
+      if (typeof input === 'string' && typeof sid === 'string') {
+        addName = sid;
       }
-      else if (Array.isArray(sel) && cost === 'sel') {
-        const selectionItem = getSelectionItem(instance, sid);
-        addName = selectionItem && selectionItem.name;
-        currentCost = selectionItem && selectionItem.cost;
-      }
-      else if (Array.isArray(sel) && typeof cost === 'number') {
-        addName = getSelectionName(instance, sid);
+      else if (Array.isArray(select)) {
+        addName = getSelectOptionName(instance, sid);
       }
       break;
   }
@@ -775,22 +921,10 @@ export function getNameCost(obj: ActiveObjectWithId, dependent: DependentInstanc
       }
   }
 
-  if (customCost !== undefined) {
-    currentCost = customCost;
-  }
-  else if (currentCost === undefined) {
-    currentCost = cost as number | number[];
-  }
-  if (category === Categories.DISADVANTAGES) {
-    currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
-  }
-
   return {
-    ...obj,
     combinedName,
     baseName: name,
-    addName,
-    currentCost
+    addName
   };
 }
 
@@ -1227,7 +1361,7 @@ export function getTraditionNameFromFullName(name: string): string {
 export function calculateAdventurePointsSpentDifference(entries: ActiveViewObject[], state: Map<string, ActivatableInstance>, wiki: WikiState): number {
   let diff = 0;
 
-  if (entries.find(e => e.id === 'DISADV_34')) {
+  if (entries.some(e => e.id === 'DISADV_34')) {
     const { active } = state.get('DISADV_34')!;
     const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
     const amountMaxTiers = active.reduce((a, b) => maxCurrentTier === b.tier ? a + 1 : a, 0);
@@ -1236,7 +1370,7 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
     }
   }
 
-  if (entries.find(e => e.id === 'DISADV_50')) {
+  if (entries.some(e => e.id === 'DISADV_50')) {
     const { active } = state.get('DISADV_50')!;
     const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
     const amountMaxTiers = active.reduce((a, b) => maxCurrentTier === b.tier ? a + 1 : a, 0);
@@ -1245,21 +1379,21 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
     }
   }
 
-  if (entries.find(e => e.id === 'DISADV_33')) {
+  if (entries.some(e => e.id === 'DISADV_33')) {
     const { active } = state.get('DISADV_33')!;
     if (active.filter(e => e.sid === 7 && e.cost === undefined).length > 1) {
       diff -= wiki.disadvantages.get('DISADV_33')!.select!.find(e => e.id === 7)!.cost!;
     }
   }
 
-  if (entries.find(e => e.id === 'DISADV_36')) {
+  if (entries.some(e => e.id === 'DISADV_36')) {
     const { active } = state.get('DISADV_36')!;
     if (active.length > 3) {
       diff -= (wiki.disadvantages.get('DISADV_36')!.cost as number) * 3;
     }
   }
 
-  if (entries.find(e => e.id === 'SA_9')) {
+  if (entries.some(e => e.id === 'SA_9')) {
     const { active } = state.get('SA_9')!;
     const sameSkill = new Map<string, number>();
     const skillDone = new Map<string, number>();
@@ -1286,13 +1420,13 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
     }
   }
 
-  if (entries.find(e => e.id === 'SA_72')) {
+  if (entries.some(e => e.id === 'SA_72')) {
     const apArr = [10, 20, 40];
     const { active } = state.get('SA_72')!;
     diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * (active.length - 1);
   }
 
-  if (entries.find(e => e.id === 'SA_87')) {
+  if (entries.some(e => e.id === 'SA_87')) {
     const apArr = [15, 25, 45];
     const { active } = state.get('SA_87')!;
     diff += apArr.reduce((a, b, i) => i + 1 < active.length ? a + b : a, 0) - apArr[active.length - 1] * (active.length - 1);
