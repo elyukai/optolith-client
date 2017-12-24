@@ -99,7 +99,6 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 						</ListHeader>
 						<DeactiveList
 							activeList={enableActiveItemHints ? activeList : undefined}
-							filterText={inactiveFilterText}
 							list={deactiveList}
 							locale={locale}
 							rating={rating}

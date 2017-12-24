@@ -144,6 +144,7 @@
 	"settings.options.theme": "Theme",
 	"settings.options.themedark": "Dark",
 	"settings.options.themelight": "Light",
+	"settings.options.showanimations": "Show animations",
 	"settings.actions.close": "Close",
 	"checkforupdates": "Check for Updates",
 	"charactersheet.title": "Character Sheet",

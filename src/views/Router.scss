@@ -15,15 +15,6 @@ html, body, #bodywrapper, #body {
 	border: 1px solid var(--separator-color-transparent);
 }
 
-@keyframes rotateBackground {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
-}
-
 .background-image {
 	position: absolute;
 	width: 100%;
@@ -34,6 +25,20 @@ html, body, #bodywrapper, #body {
 
 	> img {
 		opacity: .15;
+	}
+}
+
+#body.show-animations {
+	@keyframes rotateBackground {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.background-image > img {
 		animation-name: rotateBackground;
 		animation-timing-function: linear;
 		animation-duration: 300s;

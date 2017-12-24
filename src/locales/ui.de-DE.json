@@ -146,6 +146,7 @@
 	"settings.options.theme": "Theme",
 	"settings.options.themedark": "Dunkel",
 	"settings.options.themelight": "Hell",
+	"settings.options.showanimations": "Animationen anzeigen",
 	"settings.actions.close": "Schließen",
 	"checkforupdates": "Nach Updates suchen",
 	"charactersheet.title": "Heldenbogen",

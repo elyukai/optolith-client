@@ -50,6 +50,12 @@ export class Route extends React.Component<RouteProps> {
 		this.setState(() => ({ hasError: { error, info }}));
 	}
 
+	componentWillReceiveProps(nextProps: RouteProps) {
+		if (nextProps.id !== this.props.id && typeof this.state.hasError === 'object') {
+			this.setState(() => ({ hasError: undefined }));
+		}
+	}
+
 	render() {
 		const { id, locale, setTab } = this.props;
 		const { hasError } = this.state;

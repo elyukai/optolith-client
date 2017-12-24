@@ -28,3 +28,4 @@ export const getTheme = (state: AppState) => state.ui.settings.theme;
 export const isEditingHeroAfterCreationPhaseEnabled = (state: AppState) => state.ui.settings.enableEditingHeroAfterCreationPhase;
 export const getMeleeItemTemplateCombatTechniqueFilter = (state: AppState) => state.ui.settings.meleeItemTemplatesCombatTechniqueFilter;
 export const getRangedItemTemplateCombatTechniqueFilter = (state: AppState) => state.ui.settings.rangedItemTemplatesCombatTechniqueFilter;
+export const areAnimationsEnabled = (state: AppState) => state.ui.settings.enableAnimations;

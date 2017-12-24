@@ -5,7 +5,7 @@ import * as IOActions from '../actions/IOActions';
 import * as LocaleActions from '../actions/LocaleActions';
 import { AppState } from '../reducers/app';
 import { getLocaleId, getLocaleType } from '../selectors/stateSelectors';
-import { getTheme, isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
+import { areAnimationsEnabled, getTheme, isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from '../views/navigationbar/Settings';
 
 function mapStateToProps(state: AppState) {
@@ -13,6 +13,7 @@ function mapStateToProps(state: AppState) {
 		localeString: getLocaleId(state),
 		localeType: getLocaleType(state),
 		isEditingHeroAfterCreationPhaseEnabled: isEditingHeroAfterCreationPhaseEnabled(state),
+		areAnimationsEnabled: areAnimationsEnabled(state),
 		theme: getTheme(state),
 	};
 }
@@ -30,7 +31,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		setLocale(id?: string) {
 			dispatch(LocaleActions._setLocale(id));
-		}
+		},
+		switchEnableAnimations() {
+			dispatch(ConfigActions.switchEnableAnimations());
+		},
 	};
 }
 

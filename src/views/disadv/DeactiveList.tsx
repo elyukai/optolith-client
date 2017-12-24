@@ -4,7 +4,6 @@ import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessage
 
 export interface DeactiveListProps {
 	activeList?: ActiveViewObject[];
-	filterText: string;
 	list: DeactiveViewObject[];
 	locale: UIMessages;
 	rating: { [id: string]: string };

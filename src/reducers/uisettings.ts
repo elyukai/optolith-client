@@ -1,5 +1,5 @@
 import { SetCombatTechniquesSortOrderAction } from '../actions/CombatTechniquesActions';
-import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from '../actions/ConfigActions';
+import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from '../actions/ConfigActions';
 import { SetCulturesSortOrderAction, SetCulturesVisibilityFilterAction, SwitchCultureValueVisibilityAction } from '../actions/CultureActions';
 import { SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
 import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from '../actions/EquipmentActions';
@@ -14,7 +14,7 @@ import { SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import { SetTalentsSortOrderAction, SwitchTalentRatingVisibilityAction } from '../actions/TalentsActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = ReceiveInitialDataAction | SetCombatTechniquesSortOrderAction | SwitchEnableActiveItemHintsAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | SwitchDisAdvRatingVisibilityAction | SetItemsSortOrderAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | SetLiturgiesSortOrderAction | SetProfessionsGroupVisibilityFilterAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | SetSpecialAbilitiesSortOrderAction | SetSpellsSortOrderAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | SwitchSheetAttributeValueVisibilityAction | SetThemeAction | SwitchEnableEditingHeroAfterCreationPhaseAction | SetMeleeItemTemplatesCombatTechniqueFilterAction | SetRangedItemTemplatesCombatTechniqueFilterAction;
+type Action = ReceiveInitialDataAction | SetCombatTechniquesSortOrderAction | SwitchEnableActiveItemHintsAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | SwitchDisAdvRatingVisibilityAction | SetItemsSortOrderAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | SetLiturgiesSortOrderAction | SetProfessionsGroupVisibilityFilterAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | SetSpecialAbilitiesSortOrderAction | SetSpellsSortOrderAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | SwitchSheetAttributeValueVisibilityAction | SetThemeAction | SwitchEnableEditingHeroAfterCreationPhaseAction | SetMeleeItemTemplatesCombatTechniqueFilterAction | SetRangedItemTemplatesCombatTechniqueFilterAction | SwitchEnableAnimationsAction;
 
 export interface UISettingsState {
 	herolistSortOrder: string;
@@ -44,6 +44,7 @@ export interface UISettingsState {
 	enableEditingHeroAfterCreationPhase: boolean;
 	meleeItemTemplatesCombatTechniqueFilter?: string;
 	rangedItemTemplatesCombatTechniqueFilter?: string;
+	enableAnimations: boolean;
 }
 
 const initialState: UISettingsState = {
@@ -71,15 +72,19 @@ const initialState: UISettingsState = {
 	enableActiveItemHints: false,
 	sheetCheckAttributeValueVisibility: false,
 	theme: 'dark',
-	enableEditingHeroAfterCreationPhase: false
+	enableEditingHeroAfterCreationPhase: false,
+	enableAnimations: true
 };
 
 export function uisettings(state: UISettingsState = initialState, action: Action): UISettingsState {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_INITIAL_DATA: {
 			if (action.payload.config) {
-				const { locale: _, sheetCheckAttributeValueVisibility = false, theme = 'dark', ...config } = action.payload.config;
-				return { ...state, ...config, sheetCheckAttributeValueVisibility, theme };
+				const {
+					locale: _,
+					...config
+				} = action.payload.config;
+				return { ...state, ...config };
 			}
 			return state;
 		}
@@ -158,6 +163,9 @@ export function uisettings(state: UISettingsState = initialState, action: Action
 
 		case ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:
 			return { ...state, rangedItemTemplatesCombatTechniqueFilter: action.payload.filterOption };
+
+		case ActionTypes.SWITCH_ENABLE_ANIMATIONS:
+			return { ...state, enableAnimations: !state.enableAnimations };
 
 		default:
 			return state;

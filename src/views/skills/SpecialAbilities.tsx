@@ -97,7 +97,6 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 						</ListHeader>
 						<ActivatableAddList
 							addToList={addToList}
-							filterText={inactiveFilterText}
 							list={deactiveList}
 							locale={locale}
 							get={get}

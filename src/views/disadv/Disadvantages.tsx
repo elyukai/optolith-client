@@ -99,7 +99,6 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						</ListHeader>
 						<DeactiveList
 							activeList={enableActiveItemHints ? activeList : undefined}
-							filterText={inactiveFilterText}
 							list={deactiveList}
 							locale={locale}
 							rating={rating}

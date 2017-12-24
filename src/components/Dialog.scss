@@ -149,11 +149,11 @@ $modal-padding: 24px;
 				}
 
 				> div {
-					&:first-child {
-						margin-top: 0;
-					}
-
 					margin-top: 14px;
+				}
+
+				> div:first-child, > .checkbox + .checkbox {
+					margin-top: 0;
 				}
 			}
 		}

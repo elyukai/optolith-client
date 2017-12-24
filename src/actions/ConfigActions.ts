@@ -35,3 +35,13 @@ export function switchEnableEditingHeroAfterCreationPhase(): SwitchEnableEditing
 		type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE
 	};
 }
+
+export interface SwitchEnableAnimationsAction {
+	type: ActionTypes.SWITCH_ENABLE_ANIMATIONS;
+}
+
+export function switchEnableAnimations(): SwitchEnableAnimationsAction {
+	return {
+		type: ActionTypes.SWITCH_ENABLE_ANIMATIONS
+	};
+}

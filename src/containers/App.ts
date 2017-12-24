@@ -6,7 +6,7 @@ import { _setTab } from '../actions/LocationActions';
 import { AppState } from '../reducers/app';
 import { getMessages } from '../selectors/localeSelectors';
 import { getCurrentTab } from '../selectors/stateSelectors';
-import { getTheme } from '../selectors/uisettingsSelectors';
+import { areAnimationsEnabled, getTheme } from '../selectors/uisettingsSelectors';
 import { TabId } from '../utils/LocationUtils';
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
 
@@ -15,6 +15,7 @@ function mapStateToProps(state: AppState) {
 		currentTab: getCurrentTab(state),
 		locale: getMessages(state),
 		theme: getTheme(state),
+		areAnimationsEnabled: areAnimationsEnabled(state),
 		platform: remote.process.platform
 	};
 }

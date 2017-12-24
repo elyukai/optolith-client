@@ -146,6 +146,7 @@ export interface UIMessages {
 	"settings.options.theme": string;
 	"settings.options.themedark": string;
 	"settings.options.themelight": string;
+	"settings.options.showanimations": string;
 	"settings.actions.close": string;
 	"checkforupdates": string;
 	"charactersheet.title": string;

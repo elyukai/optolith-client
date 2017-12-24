@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
@@ -15,6 +16,7 @@ export interface AppStateProps {
 	locale?: UIMessages;
 	platform: string;
 	theme: string;
+	areAnimationsEnabled: boolean;
 }
 
 export interface AppDispatchProps {
@@ -45,7 +47,7 @@ export class App extends React.Component<AppProps, AppState> {
 	}
 
 	render() {
-		const { locale, currentTab, platform, theme, setTab } = this.props;
+		const { locale, currentTab, platform, theme, setTab, areAnimationsEnabled } = this.props;
 		const { hasError } = this.state;
 
 		if (hasError) {
@@ -64,7 +66,15 @@ export class App extends React.Component<AppProps, AppState> {
 		}
 
 		return (
-			<div id="body" className={`theme-${theme} platform-${platform}`} lang={locale.id.split('-')[0]}>
+			<div
+				id="body"
+				className={classNames(
+					`theme-${theme}`,
+					`platform-${platform}`,
+					areAnimationsEnabled && 'show-animations'
+				)}
+				lang={locale.id.split('-')[0]}
+				>
 				<div className="background-image"><img src="images/background.svg" alt=""/></div>
 				<AlertsContainer locale={locale} />
 				<DownloaderContainer locale={locale} />

@@ -522,6 +522,7 @@ export interface Config {
 	enableEditingHeroAfterCreationPhase?: boolean;
 	meleeItemTemplatesCombatTechniqueFilter?: string;
 	rangedItemTemplatesCombatTechniqueFilter?: string;
+	enableAnimations?: boolean;
 }
 
 export interface Raw {

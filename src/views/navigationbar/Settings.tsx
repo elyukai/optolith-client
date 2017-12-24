@@ -20,6 +20,7 @@ export interface SettingsStateProps {
 	localeType: 'default' | 'set';
 	theme: string;
 	isEditingHeroAfterCreationPhaseEnabled: boolean;
+	areAnimationsEnabled: boolean;
 }
 
 export interface SettingsDispatchProps {
@@ -27,12 +28,13 @@ export interface SettingsDispatchProps {
 	setLocale(id?: string): void;
 	setTheme(id: string): void;
 	switchEnableEditingHeroAfterCreationPhase(): void;
+	switchEnableAnimations(): void;
 }
 
 export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps;
 
 export function Settings(props: SettingsProps) {
-	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, isSettingsOpen, theme, switchEnableEditingHeroAfterCreationPhase, platform, checkForUpdates } = props;
+	const { close, isEditingHeroAfterCreationPhaseEnabled, locale, localeString, localeType, setLocale, setTheme, saveConfig, isSettingsOpen, theme, switchEnableEditingHeroAfterCreationPhase, switchEnableAnimations, areAnimationsEnabled, platform, checkForUpdates } = props;
 
 	return (
 		<Dialog
@@ -68,6 +70,12 @@ export function Settings(props: SettingsProps) {
 				className="editor-switch"
 				label={_translate(locale, 'enableeditingheroaftercreationphase')}
 				onClick={switchEnableEditingHeroAfterCreationPhase}
+				/>
+			<Checkbox
+				checked={areAnimationsEnabled}
+				className="animations"
+				label={_translate(locale, 'settings.options.showanimations')}
+				onClick={switchEnableAnimations}
 				/>
 			{(platform === 'win32' || platform === 'darwin') && (
 				<BorderButton
