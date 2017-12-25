@@ -27,7 +27,9 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 
 	for (const aspectId of currentObject.aspects) {
 		const tradition = getTraditionOfAspect(aspectId);
-		traditionsMap.set(tradition, [...(traditionsMap.get(tradition) || []), aspectId]);
+		if (tradition <= _translate(locale, 'liturgies.view.traditions').length) {
+			traditionsMap.set(tradition, [...(traditionsMap.get(tradition) || []), aspectId]);
+		}
 	}
 
 	const traditions = sortStrings([...traditionsMap].map(e => {
@@ -37,7 +39,7 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 		return `${_translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => _translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).join(', ')})`;
 	}), locale.id).join(', ');
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info liturgicalchant-info">
 				<div className="liturgicalchant-header info-header">

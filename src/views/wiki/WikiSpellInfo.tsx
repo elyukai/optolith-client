@@ -22,7 +22,7 @@ export interface WikiSpellInfoProps {
 export function WikiSpellInfo(props: WikiSpellInfoProps) {
 	const { attributes, books, derivedCharacteristics, currentObject, locale, spellExtensions } = props;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info spell-info">
 				<div className="spell-header info-header">
@@ -35,7 +35,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 					{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
 				</WikiProperty>
 				<WikiProperty locale={locale} title="info.traditions">
-					{sortStrings(currentObject.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
+					{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
 				</WikiProperty>
 				<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
 			</div>
@@ -64,7 +64,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
 					</WikiProperty>
 					<WikiProperty locale={locale} title="info.traditions">
-						{sortStrings(currentObject.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
+						{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
 					</WikiProperty>
 					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
 					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">
@@ -97,7 +97,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
 						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
 					</WikiProperty>
 					<WikiProperty locale={locale} title="info.traditions">
-						{sortStrings(currentObject.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
+						{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
 					</WikiProperty>
 					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
 					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">

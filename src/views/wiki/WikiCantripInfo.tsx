@@ -15,7 +15,7 @@ export interface WikiCantripInfoProps {
 export function WikiCantripInfo(props: WikiCantripInfoProps) {
 	const { books, currentObject, locale } = props;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info cantrip-info">
 				<div className="cantrip-header info-header">

@@ -31,7 +31,7 @@ export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
 		return `${_translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => _translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).join(', ')})`;
 	}), locale.id).join(', ');
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info blessing-info">
 				<div className="blessing-header info-header">

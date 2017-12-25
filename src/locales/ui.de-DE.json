@@ -549,7 +549,7 @@
 	"actions.addtolist": "Hinzufügen",
 	"specialabilities.view.groups": ["Allgemein", "Schicksal", "Kampf", "Magisch", "Stab", "Hexe", "Karmal", "Bann-/Schutzkreise", "Kampfstile (bewaffnet)", "Kampfstile (unbewaffnet)", "Kampf (erweitert)", "Befehle", "Zauberstile", "Magisch (Erweitert)", "Bannschwert", "Dolch", "Instrument", "Gewand", "Kugel", "Stecken", "Prügel", "Ahnenzeichen", "Zeremonialgegenstände", "Predigten", "Liturgiestile", "Karmal (Erweitert)", "Visionen", "Magische Traditionen", "Karmale Traditionen", "Paktgeschenke"],
 	"info.specialabilities.subgroups": ["Passiv", "Basismanöver", "Spezialmanöver"],
-	"spells.view.groups": ["Spruch", "Ritual", "Fluch", "Lied", "Zaubermelodie", "Zaubertanz"],
+	"spells.view.groups": ["Zaubersprüche", "Rituale", "Flüche", "Elfenlieder", "Zaubermelodien", "Zaubertänze"],
 	"spells.view.cantrip": "Trick",
 	"spells.view.properties": ["Antimagie", "Dämonisch", "Einfluss", "Elementar", "Heilung", "Hellsicht", "Illusion", "Sphären", "Objekt", "Telekinese", "Verwandlung"],
 	"spells.view.traditions": ["Allgemein", "Gildenmagier", "Hexen", "Elfen", "Druiden", "Scharlatane", "Zauberbarden", "Zaubertänzer", "Intuitive Zauberer", "Meistertalentierte", "Qabalyamagier", "Kristallomanten", "Geoden", "Alchimisten", "Schelme"],

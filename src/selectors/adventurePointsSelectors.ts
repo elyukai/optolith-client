@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { calculateAdventurePointsSpentDifference } from '../utils/ActivatableUtils';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
 import { getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';

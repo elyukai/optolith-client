@@ -125,7 +125,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 										let extendName = '';
 										if (!isOwnTradition(traditions, obj)) {
-											extendName += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
+											extendName += ` (${obj.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 										}
 
 										if (obj.active === true) {
@@ -232,7 +232,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 									let name = obj.name;
 									if (!isOwnTradition(traditions, obj)) {
-										name += ` (${obj.tradition.map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
+										name += ` (${obj.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 									}
 
 									if (obj.category === Categories.CANTRIPS) {
