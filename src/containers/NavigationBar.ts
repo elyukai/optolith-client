@@ -11,7 +11,7 @@ import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHe
 import { isLiturgicalChantsTabAvailable } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { isSpellsTabAvailable } from '../selectors/spellsSelectors';
-import { getAdventurePointsSpent as getAdventurePointsSpentState, getAvatar, getCurrentTab, isSettingsOpen } from '../selectors/stateSelectors';
+import { getAvatar, getCurrentTab, isSettingsOpen } from '../selectors/stateSelectors';
 import { getSubtabs, getTabs, isHeroSection } from '../selectors/uilocationSelectors';
 import { TabId } from '../utils/LocationUtils';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
@@ -28,7 +28,6 @@ function mapStateToProps(state: AppState) {
 		tabs: getTabs(state),
 		subtabs: getSubtabs(state),
 		adventurePoints: getAdventurePointsObject(state),
-		spent: getAdventurePointsSpentState(state),
 		maximumForMagicalAdvantagesDisadvantages: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum(state),
 		isSpellcaster: isSpellsTabAvailable(state),
 		isBlessedOne: isLiturgicalChantsTabAvailable(state),

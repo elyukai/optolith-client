@@ -17,7 +17,8 @@
 	.collected-ap {
 		color: var(--text-color);
 		flex: 1 0 auto;
-		font: bold 15px/32px Alegreya SC;
+		font: bold 15px/32px Alegreya;
+		font-variant-numeric: lining-nums;
 		height: 32px;
 		letter-spacing: 0.1em;
 		margin: 0 11px 0 24px;
@@ -29,5 +30,6 @@
 .ap-details {
 	p > span {
 		display: block;
+		font-variant-numeric: lining-nums;
 	}
 }

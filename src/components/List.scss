@@ -254,7 +254,8 @@ ul.list-wrapper {
 				width: 32px;
 				margin-right: 8px;
 				border: 2px solid var(--separator-color-transparent);
-				font: 500 12px/28px Alegreya Sans SC;
+				font: 500 12px/28px Alegreya Sans;
+				font-variant-numeric: lining-nums;
 				text-align: center;
 			}
 

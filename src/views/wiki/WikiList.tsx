@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { List } from '../../components/List';
 import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
-import { isProfession, isSpecialAbility } from '../../utils/WikiUtils';
+import { getRoman } from '../../utils/NumberUtils';
+import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../utils/WikiUtils';
 import { WikiListItem } from './WikiListItem';
 
 export interface WikiListProps {
@@ -40,6 +41,10 @@ export class WikiList extends React.Component<WikiListProps> {
 						}
 						else if (isSpecialAbility(item) && typeof item.nameInWiki === 'string') {
 							name = item.nameInWiki;
+						}
+
+						if (isActivatableWikiObj(item) && typeof item.tiers === 'number') {
+							name += ` I-${getRoman(item.tiers)}`;
 						}
 
 						return (

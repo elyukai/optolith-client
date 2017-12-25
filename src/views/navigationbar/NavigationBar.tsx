@@ -36,7 +36,6 @@ export interface NavigationBarStateProps {
   tabs: NavigationBarTabProps[];
   subtabs: SubTab[] | undefined;
 	adventurePoints: AdventurePointsObject;
-	spent: number;
 	maximumForMagicalAdvantagesDisadvantages: number;
 	isSpellcaster: boolean;
 	isBlessedOne: boolean;

@@ -1,3 +1,4 @@
+import { LITURGIES } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
@@ -7,7 +8,9 @@ import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
 
 export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyInstance | BlessingInstance): boolean {
-	return obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
+	const isBaseTradition = obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
+	const isSpecial = obj.category === LITURGIES || !getUnavailableBlessingsForTradition(tradition.id).includes(obj.id);
+	return isBaseTradition && isSpecial;
 }
 
 export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
@@ -169,4 +172,16 @@ export function getBlessedTraditionInstanceIdByNumericId(id: number): string {
 
 export function getNumericBlessedTraditionIdByInstanceId(id: string): number {
 	return numericIdByTraditionId.get(id)!;
+}
+
+const unavailableBlessingsByTradition = new Map([
+	['SA_694', ['BLESSING_1', 'BLESSING_5', 'BLESSING_12']],
+	['SA_695', ['BLESSING_4', 'BLESSING_11', 'BLESSING_12']],
+	['SA_696', ['BLESSING_3', 'BLESSING_6', 'BLESSING_7']],
+	['SA_697', ['BLESSING_2', 'BLESSING_8', 'BLESSING_10']],
+	['SA_698', ['BLESSING_2', 'BLESSING_3', 'BLESSING_9']],
+])
+
+function getUnavailableBlessingsForTradition(traditionId: string): string[] {
+	return unavailableBlessingsByTradition.get(traditionId) || [];
 }

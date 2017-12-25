@@ -10,7 +10,7 @@ import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
-import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
+// import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RCPUtils from '../utils/RCPUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
@@ -60,8 +60,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       const scripts = new Set<number>();
 
       let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
-      let calculatedIncreasableCost = 0;
-      let calculatedActivatableCost = 0;
+      // let calculatedIncreasableCost = 0;
+      // let calculatedActivatableCost = 0;
 
       // Race selections:
 
@@ -197,7 +197,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       // Apply:
 
       function addValue(instance: Data.SkillishInstance, value: number): Data.SkillishInstance {
-        calculatedIncreasableCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);
+        // calculatedIncreasableCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);
         return {
           ...instance,
           value: instance.value + value
@@ -209,12 +209,12 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       }
 
       function activate(instance: Data.ActivatableSkillishInstance): Data.ActivatableSkillishInstance {
-        if (instance.category === Categories.BLESSINGS || instance.category === Categories.CANTRIPS) {
-          calculatedIncreasableCost += 1;
-        }
-        else {
-          calculatedIncreasableCost += getIncreaseAP(instance.ic);
-        }
+        // if (instance.category === Categories.BLESSINGS || instance.category === Categories.CANTRIPS) {
+        //   calculatedIncreasableCost += 1;
+        // }
+        // else {
+        //   calculatedIncreasableCost += getIncreaseAP(instance.ic);
+        // }
         return {
           ...instance,
           active: true
@@ -257,12 +257,12 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       // AP
 
       let ap;
-      let professionName;
       let permanentArcaneEnergyLoss = 0;
 
       if (race && culture && profession) {
         ap = {
-          spent: state.ap.spent + calculatedIncreasableCost - profession.ap,
+          // spent: state.ap.spent + calculatedIncreasableCost - profession.ap,
+          spent: state.ap.spent - profession.ap,
           adv: race.automaticAdvantagesCost,
           disadv: [0, 0, 0] as [number, number, number]
         };
@@ -287,14 +287,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             requires.push(...professionVariant.requires);
           }
 
-          calculatedActivatableCost -= race.automaticAdvantagesCost[0];
+          // calculatedActivatableCost -= race.automaticAdvantagesCost[0];
 
           // Test case
-          if (profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0) !== calculatedActivatableCost) {
-            alert(`Calculated different AP value. Do not continue character creation with this profession! ${profession && profession.id} ${professionVariant && professionVariant.id} ${profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0)} ${calculatedActivatableCost}`);
-          }
+          // if (profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0) !== calculatedActivatableCost) {
+          //   alert(`Calculated different AP value. Do not continue character creation with this profession! ${profession && profession.id} ${professionVariant && professionVariant.id} ${profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0)} ${calculatedActivatableCost}`);
+          // }
 
-          ap.spent += calculatedActivatableCost;
+          // ap.spent += calculatedActivatableCost;
 
           // Assign profession requirements
 
@@ -307,14 +307,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                   case Categories.ATTRIBUTES: {
                     if (typeof value === 'number') {
                       fulllist = setStateItem(fulllist, id, { ...obj, value });
-                      return { ...final, spent: final.spent + getIncreaseRangeAP(5, 8, value)};
+                      // return { ...final, spent: final.spent + getIncreaseRangeAP(5, 8, value)};
                     }
                     return final;
                   }
                   case Categories.TALENTS: {
                     if (typeof value === 'number') {
                       fulllist = setStateItem(fulllist, id, { ...obj, value });
-                      return { ...final, spent: final.spent + getIncreaseRangeAP(obj.ic, obj.value, value)};
+                      // return { ...final, spent: final.spent + getIncreaseRangeAP(obj.ic, obj.value, value)};
                     }
                     return final;
                   }
@@ -392,19 +392,15 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
           const maxCombatTechniqueRating = getStart(el).maxCombatTechniqueRating;
           const valueTooHigh = [...fulllist.combatTechniques.values()].filter(e => e.value > maxCombatTechniqueRating);
 
-          ap.spent += valueTooHigh.reduce<number>((ap, instance) => {
-            return ap + getDecreaseRangeAP(instance.ic, instance.value, maxCombatTechniqueRating);
-          }, 0);
+          // ap.spent += valueTooHigh.reduce<number>((ap, instance) => {
+          //   return ap + getDecreaseRangeAP(instance.ic, instance.value, maxCombatTechniqueRating);
+          // }, 0);
 
           for (const combatTechnique of valueTooHigh) {
             fulllist = setStateItem(fulllist, combatTechnique.id, { ...combatTechnique, value: maxCombatTechniqueRating });
           }
 
-          if (rcp.profession === 'P_0') {
-            professionName = 'Eigene Profession';
-          }
-
-          if (ActivatableUtils.isActive(get(fulllist, 'SA_76') as Data.SpecialAbilityInstance)) {
+          if (ActivatableUtils.isActive(fulllist.specialAbilities.get('SA_76'))) {
             permanentArcaneEnergyLoss += 2;
           }
         }
@@ -425,8 +421,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
           }
         },
         profile: {
-          ...state.profile,
-          professionName
+          ...state.profile
         }
       };
     }
