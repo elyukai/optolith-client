@@ -1,3 +1,23 @@
+# 0.51.9
+
+- The AP tooltip (if you hover over the available AP of the currently opened character) now show how many AP you spent on which category of entries - how much you spent on spells, on special abilities, on disadvantages, on cantrips, on energies (LP, AE, KP) and so on.
+- I build a new AP system which dynamically calculates the AP. This means if there were or will be issues with calculated AP they will be fixed automatically by installing the patch that fixes this issue. (You still have to open the character and save it, though).
+- Fixed AP value calculation of *Skill Specialization (Skill)*.
+- Lists belonging to a hero (active special abilities, inactive special abilities, skills, professions and so on) now show a placeholder element when the respective list is empty.
+- Slightly improved performance.
+- Improved displaying numbers in some areas.
+- You can now activate or deactivate if you want to see animations or not throught the settings window.
+- Wiki lists now display levels if available (example: `Rich I-X` instead of `Rich`).
+
+# German Specific
+
+- Fixed prerequisites of *Abrollen*.
+- Blessings are now tradition-aware: If you select a tradition of a demigod you will not be able to select the unavailable blessings (as specified by tradition special ability) anymore.
+
+# English Specific
+
+- There are full wiki entries available for *all* currently implemented entries.
+
 # 0.51.8
 
 - Fixed AP cost for languages.
