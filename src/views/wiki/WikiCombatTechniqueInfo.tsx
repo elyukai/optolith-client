@@ -18,7 +18,7 @@ export interface WikiCombatTechniqueInfoProps {
 export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
 	const { attributes, books, currentObject, locale } = props;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info combattechnique-info">
 				<div className="combattechnique-header info-header">

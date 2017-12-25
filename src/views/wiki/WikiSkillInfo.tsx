@@ -17,7 +17,7 @@ export interface WikiSkillInfoProps {
 export function WikiSkillInfo(props: WikiSkillInfoProps) {
 	const { attributes, books, currentObject, locale } = props;
 
-	if (['en-US', 'nl-BE'].includes(locale.id)) {
+	if (['nl-BE'].includes(locale.id)) {
 		return <Scroll>
 			<div className="info skill-info">
 				<div className="skill-header info-header">
