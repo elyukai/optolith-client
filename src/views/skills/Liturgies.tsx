@@ -173,13 +173,13 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												name={name}
 												isNotActive
 												activate={addToList.bind(null, obj.id)}
-												activateDisabled={addChantsDisabled && obj.ic < 3}
+												activateDisabled={addChantsDisabled && obj.gr < 3}
 												addFillElement
-												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.ic !== obj.ic)}
+												insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.ic - 1]}` : aspc}
+												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
 												/>
 										);
 									})
@@ -274,11 +274,11 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
 											removeDisabled={!isDecreasable(currentHero, obj)}
 											addFillElement
-											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.ic !== obj.ic)}
+											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.ic - 1]}` : aspc}
+											addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
 											/>
 									);
 								})
