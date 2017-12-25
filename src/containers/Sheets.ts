@@ -4,6 +4,7 @@ import * as IOActions from '../actions/IOActions';
 import * as SheetActions from '../actions/SheetActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../selectors/activatableSelectors';
+import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getForSheet as getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
 import { getForSheet as getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
 import { getStart } from '../selectors/elSelectors';
@@ -13,7 +14,7 @@ import { getPet } from '../selectors/petsSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
-import { getAdventurePoints, getElState, getSpecialAbilities } from '../selectors/stateSelectors';
+import { getElState, getSpecialAbilities } from '../selectors/stateSelectors';
 import { getAllSkills } from '../selectors/talentsSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
@@ -23,7 +24,7 @@ import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '.
 function mapStateToProps(state: AppState) {
 	return {
 		advantagesActive: getAdvantagesForSheet(state),
-		ap: getAdventurePoints(state),
+		ap: getAdventurePointsObject(state),
 		armors: getArmors(state),
 		armorZones: getArmorZones(state),
 		attributes: getAttributesForSheet(state),
