@@ -1,7 +1,7 @@
 import { last } from 'lodash';
 import * as React from 'react';
-import { ActiveViewObject, UIMessages } from '../../types/data.d';
-import { sortStrings } from '../../utils/FilterSortUtils';
+import { ActiveViewObject, UIMessages } from '../types/data';
+import { sortStrings } from '../utils/FilterSortUtils';
 
 interface ActivatableTextListProps {
 	list: (ActiveViewObject | string)[];

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { TextBox } from '../../components/TextBox';
 import { ActiveViewObject, UIMessages } from '../../types/data.d';
 import { _translate } from '../../utils/I18n';
-import { ActivatableTextList } from './ActivatableTextList';
 
 export interface SpellsSheetSpecialAbilitiesProps {
 	locale: UIMessages;

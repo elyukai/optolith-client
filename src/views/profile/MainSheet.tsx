@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { BorderButton } from '../../components/BorderButton';
 import { Options } from '../../components/Options';
 import { TextBox } from '../../components/TextBox';
@@ -9,7 +10,6 @@ import { UIMessages } from '../../types/ui.d';
 import * as View from '../../types/view.d';
 import * as Wiki from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
-import { ActivatableTextList } from './ActivatableTextList';
 import { MainSheetAttributes } from './MainSheetAttributes';
 import { MainSheetPersonalData } from './MainSheetPersonalData';
 import { Sheet } from './Sheet';

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
@@ -12,7 +13,6 @@ import { ActiveViewObject } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { Culture, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../types/wiki';
 import { _translate } from '../../utils/I18n';
-import { ActivatableTextList } from './ActivatableTextList';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 
