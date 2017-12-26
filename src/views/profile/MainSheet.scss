@@ -9,8 +9,20 @@
 			align-content: flex-start;
 			overflow: hidden;
 
-			.name, .profession, .title, .characteristics, .other {
+			.plain {
+				align-items: flex-start;
+			}
+
+			.name, .profession, .title, .characteristics, .otherinfo {
 				width: 100%;
+			}
+
+			.otherinfo {
+				height: 56px;
+
+				div.value {
+					height: 48px;
+				}
 			}
 
 			.family, .placeofbirth, .dateofbirth, .race, .haircolor, .eyecolor, .culture, .socialstatus {
@@ -110,7 +122,6 @@
 	}
 
 	> .lower {
-		margin-top: 22px;
 		flex: 1 1 100%;
 
 		> .lists {
@@ -122,7 +133,7 @@
 			> .textbox {
 				flex: 1 0 auto;
 
-				.list {
+				.textbox-content {
 					height: 54mm;
 				}
 			}

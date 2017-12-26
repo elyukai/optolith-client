@@ -14,11 +14,9 @@ export function TextBox(props: TextBoxProps) {
 		return (
 			<div className={classNames('textbox', className)}>
 				<h3>{label}</h3>
-				{value ? <div>
-					<Textfit max={16} min={8}>
-						{value}
-					</Textfit>
-				</div> : children}
+				{value ? <Textfit max={16} min={8} className="textbox-content">
+					{value}
+				</Textfit> : children}
 			</div>
 		);
 }

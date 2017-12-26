@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { TextBox } from '../../components/TextBox';
 import { ActiveViewObject, UIMessages } from '../../types/data.d';
+import { compressList } from '../../utils/ActivatableUtils';
 import { _translate } from '../../utils/I18n';
 
 export interface LiturgiesSheetSpecialAbilitiesProps {
@@ -12,8 +12,10 @@ export interface LiturgiesSheetSpecialAbilitiesProps {
 export function LiturgiesSheetSpecialAbilities(props: LiturgiesSheetSpecialAbilitiesProps) {
 	const { blessedSpecialAbilities, locale } = props;
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.chants.blessedspecialabilities.title')} className="activatable-list">
-			<ActivatableTextList list={blessedSpecialAbilities} locale={locale} />
-		</TextBox>
+		<TextBox
+			className="activatable-list"
+			label={_translate(locale, 'charactersheet.chants.blessedspecialabilities.title')}
+			value={compressList(blessedSpecialAbilities, locale)}
+			/>
 	);
 }

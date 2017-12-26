@@ -69,12 +69,14 @@ export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
 				<Plain className="profession" label={_translate(locale, 'charactersheet.main.profession')} value={professionName} />
 				<Plain className="title" label={_translate(locale, 'charactersheet.main.herotitle')} value={title} />
 				<Plain className="characteristics" label={_translate(locale, 'charactersheet.main.characteristics')} value={characteristics} />
-				<Plain className="otherinfo" label={_translate(locale, 'charactersheet.main.otherinfo')} value={otherinfo} />
+				<Plain className="otherinfo" label={_translate(locale, 'charactersheet.main.otherinfo')} value={otherinfo} multi />
 			</div>
 			<div className="ap-portrait">
 				<LabelBox className="el" label={_translate(locale, 'charactersheet.main.experiencelevel')} value={el.name} />
 				<LabelBox className="ap-total" label={_translate(locale, 'charactersheet.main.totalap')} value={ap.total} />
-				<LabelBox className="portrait" label={_translate(locale, 'charactersheet.main.avatar')}><Avatar src={avatar} img /></LabelBox>
+				<LabelBox className="portrait" label={_translate(locale, 'charactersheet.main.avatar')}>
+					<Avatar src={avatar} img />
+				</LabelBox>
 				<LabelBox className="ap-available" label={_translate(locale, 'charactersheet.main.apcollected')} value={ap.total - ap.spent} />
 				<LabelBox className="ap-used" label={_translate(locale, 'charactersheet.main.apspent')} value={ap.spent} />
 			</div>

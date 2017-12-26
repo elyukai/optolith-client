@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { BorderButton } from '../../components/BorderButton';
 import { Options } from '../../components/Options';
 import { TextBox } from '../../components/TextBox';
@@ -9,6 +8,7 @@ import * as Data from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import * as View from '../../types/view.d';
 import * as Wiki from '../../types/wiki';
+import { compressList } from '../../utils/ActivatableUtils';
 import { _translate } from '../../utils/I18n';
 import { MainSheetAttributes } from './MainSheetAttributes';
 import { MainSheetPersonalData } from './MainSheetPersonalData';
@@ -81,15 +81,21 @@ export function MainSheet(props: MainSheetProps) {
 					/>
 				<div className="lower">
 					<div className="lists">
-						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.advantages')}>
-							<ActivatableTextList list={advantagesActive} locale={locale} />
-						</TextBox>
-						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.disadvantages')}>
-							<ActivatableTextList list={disadvantagesActive} locale={locale} />
-						</TextBox>
-						<TextBox className="activatable-list" label={_translate(locale, 'charactersheet.main.generalspecialabilites')}>
-							<ActivatableTextList list={generalsaActive} locale={locale} />
-						</TextBox>
+						<TextBox
+							className="activatable-list"
+							label={_translate(locale, 'charactersheet.main.advantages')}
+							value={compressList(advantagesActive, locale)}
+							/>
+						<TextBox
+							className="activatable-list"
+							label={_translate(locale, 'charactersheet.main.disadvantages')}
+							value={compressList(disadvantagesActive, locale)}
+							/>
+						<TextBox
+							className="activatable-list"
+							label={_translate(locale, 'charactersheet.main.generalspecialabilites')}
+							value={compressList(generalsaActive, locale)}
+							/>
 					</div>
 					<MainSheetAttributes
 						attributes={derivedCharacteristics}

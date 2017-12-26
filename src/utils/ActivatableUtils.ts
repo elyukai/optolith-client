@@ -11,7 +11,7 @@ import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, 
 import { AllRequirementTypes } from '../types/reusable.d';
 import { Activatable, SelectionObject, Skillish } from '../types/wiki';
 import * as DependentUtils from './DependentUtils';
-import { sortObjects } from './FilterSortUtils';
+import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { mergeIntoState, setStateItem } from './ListUtils';
@@ -1078,7 +1078,6 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
           }
           return (get(dependent, id) as TalentInstance).value >= 6;
         });
-        console.log(counter, filtered);
         const mapped = filtered.map(e => {
           const id = e.id as string;
           const arr = counter.get(id);
@@ -1090,7 +1089,6 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
             })
           };
         });
-        console.log(mapped);
         const sel = sortObjects(mapped, locale.id);
         if (sel.length > 0) {
           return { id, name, sel, cost, instance: entry };
@@ -1437,4 +1435,45 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
 
 export function isActiveViewObject(obj: ActiveViewObject | DeactiveViewObject): obj is ActiveViewObject {
   return obj.hasOwnProperty('index');
+}
+
+interface EnhancedReduce {
+	final: string[];
+	previousLowerTier: boolean;
+}
+
+export function compressList(list: (ActiveViewObject | string)[], locale: UIMessages): string {
+	const listToString = sortStrings(list.filter(obj => typeof obj === 'string' || !['SA_27', 'SA_29'].includes(obj.id)).map(obj => {
+		if (typeof obj === 'string') {
+			return obj;
+		}
+		return obj.name;
+	}), locale.id);
+
+	const finalList = listToString.reduce<EnhancedReduce>((previous, current) => {
+		const prevElement = last(previous.final);
+		if (prevElement && prevElement.split(' (')[0] === current.split(' (')[0] && /\(.+\)(?: [IVX]+)?$/.test(prevElement)) {
+			const prevElementSplitted = prevElement.split(/\)/);
+			const optionalTier = prevElementSplitted.pop() || '';
+			const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;
+			const currentSplitted = current.split(/\(/);
+			const continuing = currentSplitted.slice(1).join('(').replace(/\)((?: [IVX]+)?)$/, '$1)');
+
+			const other = previous.final.slice(0, -1);
+
+			return {
+				...previous,
+				final: [ ...other, `${beginning}, ${continuing}` ]
+			};
+		}
+		return {
+			final: [ ...previous.final, current ],
+			previousLowerTier: false
+		};
+	}, {
+		final: [],
+		previousLowerTier: false
+	}).final.join(', ');
+
+	return finalList;
 }

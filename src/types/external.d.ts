@@ -16,6 +16,7 @@ declare module 'react-progress-arc' {
 
 declare module 'react-textfit' {
 	interface TextfitProps {
+		className?: string;
 		/**
 		 * Algorithm to fit the text. Use single for headlines and multi for paragraphs.
 		 * @default `multi`

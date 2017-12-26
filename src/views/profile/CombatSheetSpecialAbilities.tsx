@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { TextBox } from '../../components/TextBox';
 import { ActiveViewObject, UIMessages } from '../../types/data.d';
+import { compressList } from '../../utils/ActivatableUtils';
 import { _translate } from '../../utils/I18n';
 
 export interface CombatSheetSpecialAbilitiesProps {
@@ -12,8 +12,10 @@ export interface CombatSheetSpecialAbilitiesProps {
 export function CombatSheetSpecialAbilities(props: CombatSheetSpecialAbilitiesProps) {
 	const { combatSpecialAbilities, locale } = props;
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.combat.combatspecialabilities.title')} className="activatable-list">
-			<ActivatableTextList list={combatSpecialAbilities} locale={locale} />
-		</TextBox>
+		<TextBox
+			className="activatable-list"
+			label={_translate(locale, 'charactersheet.combat.combatspecialabilities.title')}
+			value={compressList(combatSpecialAbilities, locale)}
+			/>
 	);
 }
