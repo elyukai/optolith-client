@@ -47,6 +47,8 @@ export const getSex = (state: AppState) => state.currentHero.present.profile.sex
 export const getSize = (state: AppState) => state.currentHero.present.profile.size;
 export const getAvatar = (state: AppState) => state.currentHero.present.profile.avatar;
 
+export const getPact = (state: AppState) => state.currentHero.present.pact;
+
 export const getRules = (state: AppState) => state.currentHero.present.rules;
 export const getAttributeValueLimit = (state: AppState) => state.currentHero.present.rules.attributeValueLimit;
 export const getHigherParadeValues = (state: AppState) => state.currentHero.present.rules.higherParadeValues;

@@ -8,6 +8,7 @@ import { dependentInstances, DependentInstancesState } from './dependentInstance
 import { el, ELState } from './el';
 import { energies, EnergiesState } from './energies';
 import { equipment, EquipmentState } from './equipment';
+import { pactReducer as pact, PactState } from './pactReducer';
 import { pets, PetsState } from './pets';
 import { phase, PhaseState } from './phase';
 import { profile, ProfileState } from './profile';
@@ -25,6 +26,7 @@ export interface CurrentHeroInstanceState {
 	profile: ProfileState;
 	rcp: RCPState;
 	rules: RulesState;
+	pact: PactState;
 }
 
 export interface CurrentHeroState extends UndoState<CurrentHeroInstanceState> {}
@@ -39,7 +41,8 @@ const currentHeroSlices = combineReducers<CurrentHeroInstanceState>({
 	phase,
 	profile,
 	rcp,
-	rules
+	rules,
+	pact,
 });
 
 export const currentHero = undo(reduceReducers(currentHeroSlices, currentHeroPost), [

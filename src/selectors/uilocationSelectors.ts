@@ -210,7 +210,7 @@ export const getSubtabs = createSelector(
 					}
 				}
 				else {
-					const profileSubTabs: TabId[] = ['profile', 'personalData', 'characterSheet', 'rules'];
+					const profileSubTabs: TabId[] = ['profile', 'personalData', 'characterSheet', 'pact', 'rules'];
 					const disadvSubTabs: TabId[] = ['advantages', 'disadvantages'];
 					const abilitiesSubTabs: TabId[] = ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'];
 					const belongingsSubTabs: TabId[] = ['equipment', 'zoneArmor', 'pets'];
@@ -228,7 +228,7 @@ export const getSubtabs = createSelector(
 							{
 								id: 'pact',
 								label: _translate(locale, 'titlebar.tabs.pact'),
-								disabled: true,
+								disabled: locale.id !== 'de-DE',
 							},
 							{
 								id: 'rules',

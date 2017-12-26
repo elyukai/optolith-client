@@ -12,6 +12,7 @@ import { EquipmentContainer } from '../containers/Equipment';
 import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/Herolist';
 import { LiturgiesContainer } from '../containers/Liturgies';
+import { PactContainer } from '../containers/PactContainer';
 import { PersonalDataContainer } from '../containers/PersonalData';
 import { PetsContainer } from '../containers/Pets';
 import { ProfessionsContainer } from '../containers/Professions';
@@ -85,7 +86,7 @@ export class Route extends React.Component<RouteProps> {
 			profile: <PersonalDataContainer locale={locale} />,
 			personalData: <PersonalDataContainer locale={locale} />,
 			characterSheet: <SheetsContainer locale={locale} />,
-			pact: <PersonalDataContainer locale={locale} />,
+			pact: <PactContainer locale={locale} />,
 			rules: <RulesContainer locale={locale} />,
 
 			races: <RacesContainer locale={locale} switchToCultures={() => setTab('cultures')} />,

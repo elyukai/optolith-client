@@ -139,6 +139,15 @@ export interface UIMessages {
 	"socialstatus": string[];
 	"haircolors": string[];
 	"eyecolors": string[];
+	"pact.category": string;
+	"pact.nopact": string;
+	"pact.categories": string[];
+	"pact.level": string;
+	"pact.fairytype": string;
+	"pact.fairytypes": string[];
+	"domain": string;
+	"userdefined": string;
+	"pact.fairydomains": string[];
 	"settings.title": string;
 	"settings.options.language": string;
 	"settings.options.defaultlanguage": string;
