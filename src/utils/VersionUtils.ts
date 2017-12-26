@@ -697,5 +697,11 @@ export function convertHero(hero: Hero) {
       };
     }
   }
+  if (satisfies(entry.clientVersion, '< 0.51.10-alpha.1')) {
+    if (entry.activatable.hasOwnProperty('DISADV_45') && entry.activatable.DISADV_45.some(e => e.sid === 1)) {
+      entry.pers.haircolor = 24;
+      entry.pers.eyecolor = 19;
+    }
+  }
   return entry;
 }

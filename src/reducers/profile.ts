@@ -1,8 +1,9 @@
+import { ActivateDisAdvAction, DeactivateDisAdvAction } from '../actions/DisAdvActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SetAgeAction, SetCharacteristicsAction, SetCultureAreaKnowledge, SetCustomProfessionNameAction, SetDateOfBirthAction, SetEyeColorAction, SetFamilyAction, SetHairColorAction, SetHeroAvatarAction, SetHeroNameAction, SetOtherInfoAction, SetPlaceOfBirthAction, SetSizeAction, SetSocialStatusAction, SetTitleAction, SetWeightAction } from '../actions/ProfileActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | SetCultureAreaKnowledge | CreateHeroAction | LoadHeroAction | SetCustomProfessionNameAction;
+type Action = SetHeroNameAction | SetHeroAvatarAction | SetFamilyAction | SetPlaceOfBirthAction | SetDateOfBirthAction | SetAgeAction | SetHairColorAction | SetEyeColorAction | SetSizeAction | SetWeightAction | SetTitleAction | SetSocialStatusAction | SetCharacteristicsAction | SetOtherInfoAction | SetCultureAreaKnowledge | CreateHeroAction | LoadHeroAction | SetCustomProfessionNameAction | ActivateDisAdvAction | DeactivateDisAdvAction;
 
 export interface ProfileState {
 	name?: string;
@@ -95,8 +96,18 @@ export function profile(state: ProfileState = initialState, action: Action): Pro
 		case ActionTypes.SET_OTHERINFO:
 			return { ...state, otherinfo: action.payload.otherinfo };
 
-		case ActionTypes.SET_CULTURE_AREA_KNOWLEDGE:
-			return { ...state, cultureAreaKnowledge: action.payload.cultureAreaKnowledge };
+		case ActionTypes.ACTIVATE_DISADV:
+		case ActionTypes.DEACTIVATE_DISADV: {
+			const { eyeColor, hairColor } = action.payload;
+			if (typeof eyeColor === 'number' && typeof hairColor === 'number') {
+				return {
+					...state,
+					eyecolor: eyeColor,
+					haircolor: hairColor,
+				};
+			}
+			return state;
+		}
 
 		default:
 			return state;

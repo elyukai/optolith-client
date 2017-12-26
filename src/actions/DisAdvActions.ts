@@ -5,16 +5,19 @@ import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
+import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance } from '../types/data.d';
 import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '../utils/ActivatableUtils';
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
+import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 
-interface ActivateArgsWithEntryType extends UndoExtendedActivateArgs {
+interface ActivateArgsWithEntryType extends ActivateArgs {
 	isBlessed: boolean;
 	isMagical: boolean;
 	isDisadvantage: boolean;
+	hairColor?: number;
+	eyeColor?: number;
 }
 
 export interface ActivateDisAdvAction {
@@ -58,6 +61,14 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 			}
 		}
 		else {
+			let hairColor;
+			let eyeColor;
+
+			if (id === 'DISADV_45' && args.sel === 1) {
+				hairColor = 24;
+				eyeColor = 19;
+			}
+
 			dispatch({
 				type: ActionTypes.ACTIVATE_DISADV,
 				payload: {
@@ -65,17 +76,21 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 					cost,
 					...other,
 					...entryType,
-					isDisadvantage
+					isDisadvantage,
+					hairColor,
+					eyeColor,
 				}
 			} as ActivateDisAdvAction);
 		}
 	};
 }
 
-interface DeactivateArgsWithEntryType extends UndoExtendedDeactivateArgs {
+interface DeactivateArgsWithEntryType extends DeactivateArgs {
 	isBlessed: boolean;
 	isMagical: boolean;
 	isDisadvantage: boolean;
+	hairColor?: number;
+	eyeColor?: number;
 }
 
 export interface DeactivateDisAdvAction {
@@ -120,13 +135,28 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 			}
 		}
 		else {
+			let hairColor;
+			let eyeColor;
+
+			if (id === 'DISADV_45' && entry.active[args.index].sid === 1) {
+				const raceVariant = getCurrentRaceVariant(state);
+				const {
+					hairColors = raceVariant!.hairColors!,
+					eyeColors = raceVariant!.eyeColors!
+				} = getCurrentRace(state)!;
+				hairColor = hairColors[0];
+				eyeColor = eyeColors[0];
+			}
+
 			dispatch({
 				type: ActionTypes.DEACTIVATE_DISADV,
 				payload: {
 					...args,
 					cost: negativeCost,
 					...entryType,
-					isDisadvantage
+					isDisadvantage,
+					hairColor,
+					eyeColor,
 				}
 			} as DeactivateDisAdvAction);
 		}

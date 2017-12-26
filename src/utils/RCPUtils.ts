@@ -22,7 +22,10 @@ export function rerollHairColor(current: Race, currentVariant: RaceVariant | und
   return (current.hairColors || currentVariant && currentVariant.hairColors)![result - 1];
 }
 
-export function rerollEyeColor(current: Race, currentVariant: RaceVariant | undefined) {
+export function rerollEyeColor(current: Race, currentVariant: RaceVariant | undefined, isAlbino: boolean) {
+  if (isAlbino) {
+    return dice(2) + 18;
+  }
   const result = dice(20);
   return (current.eyeColors || currentVariant && currentVariant.eyeColors)![result - 1];
 }

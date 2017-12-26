@@ -550,11 +550,6 @@ export interface ActivateArgs {
 	customCost?: number;
 }
 
-export interface UndoExtendedActivateArgs extends ActivateArgs {
-	index?: number;
-	activeObject?: ActiveObject;
-}
-
 export interface DeactivateArgs {
 	id: string;
 	index: number;

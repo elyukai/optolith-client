@@ -20,6 +20,7 @@ export interface OverviewPersonalDataOwnProps {
 	race: Race | undefined;
 	raceVariant: RaceVariant | undefined;
 	socialstatusTags: string[];
+	isAlbino: boolean;
 }
 
 export interface OverviewPersonalDataDispatchProps {
@@ -67,12 +68,58 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 		},
 		race,
 		raceVariant,
-		socialstatusTags
+		socialstatusTags,
+		isAlbino,
 	} = props;
 
-	const hairArr = race ? sortObjects(haircolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => (race.hairColors || raceVariant && raceVariant.hairColors)!.includes(e.id)), locale.id) : [];
-	const eyesArr = race ? sortObjects(eyecolorTags.map((name, i) => ({ id: i + 1, name })).filter(e => (race.eyeColors || raceVariant && raceVariant.eyeColors)!.includes(e.id)), locale.id) : [];
-	const socialArr = culture ? socialstatusTags.map((name, i) => ({ id: i + 1, name })).filter(e => culture.socialStatus.includes(e.id)) : [];
+	let hairArr: { id: number; name: string; }[] = [];
+	let eyesArr: { id: number; name: string; }[] = [];
+
+	if (isAlbino) {
+		hairArr = [
+			{
+				id: 24,
+				name: haircolorTags[23]
+			}
+		];
+		eyesArr = sortObjects([
+			{
+				id: 19,
+				name: eyecolorTags[18]
+			},
+			{
+				id: 20,
+				name: eyecolorTags[19]
+			}
+		], locale.id);
+	}
+	else if (typeof race === 'object') {
+		hairArr = sortObjects(
+			haircolorTags
+			.map((name, i) => {
+				return { id: i + 1, name };
+			})
+			.filter(e => {
+				return (race.hairColors || raceVariant && raceVariant.hairColors)!.includes(e.id);
+			}),
+			locale.id
+		);
+
+		eyesArr = sortObjects(
+			eyecolorTags
+			.map((name, i) => {
+				return { id: i + 1, name };
+			})
+			.filter(e => {
+				return (race.eyeColors || raceVariant && raceVariant.eyeColors)!.includes(e.id);
+			}),
+			locale.id
+		);
+	}
+
+	const socialArr = culture ? socialstatusTags.map((name, i) => {
+		return { id: i + 1, name };
+	}).filter(e => culture.socialStatus.includes(e.id)) : [];
 
 	return (
 		<div className="personal-data">
@@ -111,8 +158,9 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 					value={haircolor}
 					onChange={props.changeHaircolor}
 					options={hairArr}
+					disabled={isAlbino}
 					/>
-				<IconButton icon="&#xE913;" onClick={props.rerollHair} />
+				<IconButton icon="&#xE913;" onClick={props.rerollHair} disabled={isAlbino} />
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<Dropdown

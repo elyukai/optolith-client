@@ -4,7 +4,7 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as ProfileActions from '../actions/ProfileActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
-import { getAdvantagesForSheet, getDisadvantagesForSheet } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../selectors/activatableSelectors';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getCurrentEl } from '../selectors/elSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
@@ -33,6 +33,7 @@ function mapStateToProps(state: AppState) {
 		raceVariant: getCurrentRaceVariant(state),
 		isAddAdventurePointsOpen: isAddAdventurePointsOpen(state),
 		isEditCharacterAvatarOpen: isEditCharacterAvatarOpen(state),
+		isAlbino: isAlbino(state)!,
 	};
 }
 

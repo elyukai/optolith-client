@@ -9,12 +9,12 @@
 - You can now activate or deactivate if you want to see animations or not throught the settings window.
 - Wiki lists now display levels if available (example: `Rich I-X` instead of `Rich`).
 
-# German Specific
+## German Specific
 
 - Fixed prerequisites of *Abrollen*.
 - Blessings are now tradition-aware: If you select a tradition of a demigod you will not be able to select the unavailable blessings (as specified by tradition special ability) anymore.
 
-# English Specific
+## English Specific
 
 - There are full wiki entries available for *all* currently implemented entries.
 

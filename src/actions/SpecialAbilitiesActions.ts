@@ -3,7 +3,7 @@ import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelecto
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getDependentInstances, getLocaleMessages, getSpecialAbilities, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { ActivateArgs, DeactivateArgs, UndoExtendedActivateArgs, UndoExtendedDeactivateArgs } from '../types/data.d';
+import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { convertPerTierCostToFinalCost, getNameCost } from '../utils/ActivatableUtils';
 import { validate } from '../utils/APUtils';
 import { _translate } from '../utils/I18n';
@@ -11,7 +11,7 @@ import { addAlert } from './AlertActions';
 
 export interface ActivateSpecialAbilityAction {
 	type: ActionTypes.ACTIVATE_SPECIALABILITY;
-	payload: UndoExtendedActivateArgs;
+	payload: ActivateArgs;
 }
 
 export function _addToList(args: ActivateArgs): AsyncAction {
@@ -36,7 +36,7 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 
 export interface DeactivateSpecialAbilityAction {
 	type: ActionTypes.DEACTIVATE_SPECIALABILITY;
-	payload: UndoExtendedDeactivateArgs;
+	payload: DeactivateArgs;
 }
 
 export function _removeFromList(args: DeactivateArgs): DeactivateSpecialAbilityAction {

@@ -364,3 +364,10 @@ export const getInitialStartingWealth = createSelector(
     return 750;
   }
 );
+
+export const isAlbino = createSelector(
+  mapGetToSlice(getDisadvantages, 'DISADV_45'),
+  stigma => {
+    return stigma && getSids(stigma).includes(1);
+  }
+);

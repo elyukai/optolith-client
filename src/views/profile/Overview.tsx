@@ -37,6 +37,7 @@ export interface PersonalDataStateProps {
 	isEditingHeroAfterCreationPhaseEnabled: boolean;
 	isAddAdventurePointsOpen: boolean;
 	isEditCharacterAvatarOpen: boolean;
+	isAlbino: boolean;
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
