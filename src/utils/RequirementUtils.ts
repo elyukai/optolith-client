@@ -1,12 +1,13 @@
 import { flatten } from 'lodash';
 import { createSelector } from 'reselect';
+import { Pact } from '../actions/PactActions';
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getBlessedStyleDependencies, getCombatStyleDependencies, getMagicalStyleDependencies } from '../selectors/stateSelectors';
 import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency } from '../types/data.d';
-import { CultureRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
+import { CultureRequirement, PactRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
 import { getCategoryById } from './IDUtils';
@@ -16,8 +17,9 @@ import { getCategoryById } from './IDUtils';
  * @param state The current hero data.
  * @param req A requirement object.
  * @param sourceId The id of the entry the requirement object belongs to.
+ * @param pact A valid `Pact` object or `undefined`.
  */
-export function validateObject(state: CurrentHeroInstanceState, req: AllRequirements, sourceId: string): boolean {
+export function validateObject(state: CurrentHeroInstanceState, req: AllRequirements, sourceId: string, pact?: Pact): boolean {
   if (req === 'RCP') {
     const array = [];
     const currentRace = typeof state.rcp.race === 'string' && get(state.dependent, state.rcp.race) as RaceInstance;
@@ -59,6 +61,15 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
       return typeof culture === 'string' && req.value.map(e => `C_${e}`).includes(culture);
     }
     return typeof culture === 'string' && culture === `C_${req.value}`;
+  }
+  else if (isPactRequirement(req)) {
+    if (typeof pact !== 'object') {
+      return false;
+    }
+    const isValidCategory = req.category === pact.category;
+    const isValidDomain = req.domain === undefined || typeof pact.domain === 'number' && (typeof req.domain === 'object' ? req.domain.includes(pact.domain) : req.domain === pact.domain);
+    const isValidLevel = req.level === undefined || req.level <= pact.level;
+    return isValidCategory && isValidDomain && isValidLevel;
   }
   else if (isRequiringPrimaryAttribute(req)) {
     const id = getPrimaryAttributeId(state.dependent.specialAbilities, req.type);
@@ -129,9 +140,10 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
  * @param state The current hero data.
  * @param requirements An array of requirement objects.
  * @param sourceId The id of the entry the requirement objects belong to.
+ * @param pact A valid `Pact` object or `undefined`.
  */
-export function validate(state: CurrentHeroInstanceState, requirements: AllRequirements[], sourceId: string): boolean {
-  return requirements.every(e => validateObject(state, e, sourceId));
+export function validate(state: CurrentHeroInstanceState, requirements: AllRequirements[], sourceId: string, pact?: Pact): boolean {
+  return requirements.every(e => validateObject(state, e, sourceId, pact));
 }
 
 /**
@@ -220,6 +232,10 @@ export function isRaceRequirement(req: AllRequirementObjects): req is RaceRequir
 
 export function isCultureRequirement(req: AllRequirementObjects): req is CultureRequirement {
   return req.id === 'CULTURE';
+}
+
+export function isPactRequirement(req: AllRequirementObjects): req is PactRequirement {
+  return req.id === 'PACT';
 }
 
 export function isRequiringIncreasable(req: AllRequirementObjects): req is RequiresIncreasableObject {

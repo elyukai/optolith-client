@@ -65,4 +65,11 @@ export interface CultureRequirement {
   value: number | number[];
 }
 
-export type AllRequirementTypes = RequiresActivatableObject | RequiresIncreasableObject | RequiresPrimaryAttribute | SexRequirement | RaceRequirement | CultureRequirement;
+export interface PactRequirement {
+  id: 'PACT';
+  category: number;
+  domain?: number | number[];
+  level?: number;
+}
+
+export type AllRequirementTypes = RequiresActivatableObject | RequiresIncreasableObject | RequiresPrimaryAttribute | SexRequirement | RaceRequirement | CultureRequirement | PactRequirement;

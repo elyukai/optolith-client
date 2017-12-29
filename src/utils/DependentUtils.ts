@@ -6,7 +6,7 @@ import { AbilityInstanceExtended, AllRequirements } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
 import { getPrimaryAttributeId } from './AttributeUtils';
 import { setNewStateItem } from './ListUtils';
-import { isCultureRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
+import { isCultureRequirement, isPactRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
 
 export type AdditionalRequirements = ActivatableInstance | SpellInstance | CantripInstance | BlessingInstance;
 
@@ -56,7 +56,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
   let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
-    if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
+    if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req) && !isPactRequirement(req)) {
       if (isRequiringPrimaryAttribute(req)) {
         const { type, value } = req;
         const id = getPrimaryAttributeId(state.specialAbilities, type);
@@ -130,7 +130,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
   let instances: ToOptionalKeys<DependentInstancesState> = {};
 
   requirements.forEach(req => {
-    if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req)) {
+    if (req !== 'RCP' && !isRaceRequirement(req) && !isCultureRequirement(req) && !isSexRequirement(req) && !isPactRequirement(req)) {
       if (isRequiringPrimaryAttribute(req)) {
         const { type, value } = req;
         const id = getPrimaryAttributeId(state.specialAbilities, type);

@@ -18,6 +18,7 @@ import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
 import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
+import { getValidPact } from './pactSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
   const allEntries = [
@@ -98,13 +99,14 @@ export const getDeactiveForView = <T extends Categories.ACTIVATABLE>(category: T
     getCurrentHeroPresent,
     getLocaleMessages,
     validateAddingExtendedSpecialAbilities,
-    (state, locale, validExtendedSpecialAbilities) => {
+    getValidPact,
+    (state, locale, validExtendedSpecialAbilities, pact) => {
       const { dependent } = state;
       const allEntries = getMapByCategory(dependent, category) as Map<string, Data.InstanceByCategory[T]>;
       const finalEntries: Data.DeactiveViewObject<Data.InstanceByCategory[T]>[] = [];
       if (locale) {
         for (const entry of allEntries) {
-          const obj = getDeactiveView(entry[1], state, validExtendedSpecialAbilities, locale);
+          const obj = getDeactiveView(entry[1], state, validExtendedSpecialAbilities, locale, pact);
           if (obj) {
             finalEntries.push(obj);
           }

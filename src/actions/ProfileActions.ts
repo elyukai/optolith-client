@@ -1,9 +1,9 @@
 import * as ActionTypes from '../constants/ActionTypes';
-import { AsyncAction } from '../types/actions.d';
-import * as RCPUtils from '../utils/RCPUtils';
+import { isAlbino } from '../selectors/activatableSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getSize } from '../selectors/stateSelectors';
-import { isAlbino } from '../selectors/activatableSelectors';
+import { AsyncAction } from '../types/actions.d';
+import * as RCPUtils from '../utils/RCPUtils';
 
 export interface SetHeroNameAction {
 	type: ActionTypes.SET_HERO_NAME;
@@ -201,7 +201,7 @@ export function _rerollEyeColor(): AsyncAction {
 		const state = getState();
 		const race = getCurrentRace(state);
 		const raceVariant = getCurrentRaceVariant(state);
-		const isAlbinoVar = isAlbino(state);
+		const isAlbinoVar = !!isAlbino(state);
 		if (typeof race !== 'undefined') {
 			const eyeColor = RCPUtils.rerollEyeColor(race, raceVariant, isAlbinoVar);
 			dispatch(_setEyeColor(eyeColor));

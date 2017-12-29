@@ -1,4 +1,5 @@
 import { flatten, last } from 'lodash';
+import { Pact } from '../actions/PactActions';
 import * as Categories from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
@@ -44,7 +45,7 @@ export function isActive(obj?: ActivatableInstance): boolean {
  * @param state The present state of the current hero.
  * @param obj The entry.
  */
-export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance): boolean {
+export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, pact: Pact | undefined): boolean {
   const { dependent } = state;
   if (obj.category === Categories.SPECIAL_ABILITIES && [9, 10].includes(obj.gr)) {
     const combinationSA = get(dependent, 'SA_164') as SpecialAbilityInstance;
@@ -103,7 +104,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       return false;
     }
   }
-  return validate(state, getFlatFirstTierPrerequisites(obj.reqs), obj.id);
+  return validate(state, getFlatFirstTierPrerequisites(obj.reqs), obj.id, pact);
 }
 
 /**
@@ -960,10 +961,10 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   };
 }
 
-export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroInstanceState, validExtendedSpecialAbilities: string[], locale: UIMessages): DeactiveViewObject | undefined {
+export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroInstanceState, validExtendedSpecialAbilities: string[], locale: UIMessages, pact: Pact | undefined): DeactiveViewObject | undefined {
   const { ap, dependent } = state;
   const { id, cost, max, active, name, input, tiers, dependencies, reqs } = entry;
-  if (isActivatable(state, entry) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
+  if (isActivatable(state, entry, pact) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
     let maxTier: number | undefined;
     if (!Array.isArray(reqs)) {
       maxTier = validateTier(state, reqs, dependencies, id);
