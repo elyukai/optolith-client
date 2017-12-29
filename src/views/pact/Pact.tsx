@@ -65,7 +65,7 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 							return {
 								id: i + 1,
 								name: getRoman(i, true),
-								disabled: pact === null || !isPactEditable && pact.level <= i + 1
+								disabled: pact === null || !isPactEditable && i + 1 <= pact.level
 							};
 						})}
 						onChange={setPactLevel}
