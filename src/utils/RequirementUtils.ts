@@ -19,7 +19,7 @@ import { getCategoryById } from './IDUtils';
  * @param sourceId The id of the entry the requirement object belongs to.
  * @param pact A valid `Pact` object or `undefined`.
  */
-export function validateObject(state: CurrentHeroInstanceState, req: AllRequirements, sourceId: string, pact?: Pact): boolean {
+export function validateObject(state: CurrentHeroInstanceState, req: AllRequirements, sourceId: string, pact: Pact | undefined): boolean {
   if (req === 'RCP') {
     const array = [];
     const currentRace = typeof state.rcp.race === 'string' && get(state.dependent, state.rcp.race) as RaceInstance;
@@ -66,10 +66,18 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
     if (typeof pact !== 'object') {
       return false;
     }
+
     const isValidCategory = req.category === pact.category;
+    let isValidType = true;
+
+    if (req.category === 1) {
+      isValidType = pact.type === 3;
+    }
+
     const isValidDomain = req.domain === undefined || typeof pact.domain === 'number' && (typeof req.domain === 'object' ? req.domain.includes(pact.domain) : req.domain === pact.domain);
     const isValidLevel = req.level === undefined || req.level <= pact.level;
-    return isValidCategory && isValidDomain && isValidLevel;
+
+    return isValidCategory && isValidType && isValidDomain && isValidLevel;
   }
   else if (isRequiringPrimaryAttribute(req)) {
     const id = getPrimaryAttributeId(state.dependent.specialAbilities, req.type);
@@ -83,7 +91,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
   }
   else if (isRequiringIncreasable(req)) {
     if (Array.isArray(req.id)) {
-      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId));
+      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId, pact));
     }
     const entry = get(state.dependent, req.id);
     if (isIncreasableInstance(entry)) {
@@ -92,7 +100,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
   }
   else {
     if (Array.isArray(req.id)) {
-      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId));
+      return req.id.some(e => validateObject(state, { ...req, id: e }, sourceId, pact));
     }
     if (req.sid === 'sel') {
       return true;
@@ -142,7 +150,7 @@ export function validateObject(state: CurrentHeroInstanceState, req: AllRequirem
  * @param sourceId The id of the entry the requirement objects belong to.
  * @param pact A valid `Pact` object or `undefined`.
  */
-export function validate(state: CurrentHeroInstanceState, requirements: AllRequirements[], sourceId: string, pact?: Pact): boolean {
+export function validate(state: CurrentHeroInstanceState, requirements: AllRequirements[], sourceId: string, pact: Pact | undefined): boolean {
   return requirements.every(e => validateObject(state, e, sourceId, pact));
 }
 
@@ -152,12 +160,12 @@ export function validate(state: CurrentHeroInstanceState, requirements: AllRequi
  * @param requirements A Map of tier prereqisite arrays.
  * @param sourceId The id of the entry the requirement objects belong to.
  */
-export function validateTier(state: CurrentHeroInstanceState, requirements: Map<number, AllRequirements[]>, dependencies: ActivatableInstanceDependency[], sourceId: string): number | undefined {
+export function validateTier(state: CurrentHeroInstanceState, requirements: Map<number, AllRequirements[]>, dependencies: ActivatableInstanceDependency[], sourceId: string, pact: Pact | undefined): number | undefined {
   const ascendingTiers = [...requirements].sort((a, b) => a[0] - b[0]);
   let validTier = 0;
   let maxTier: number | undefined;
   for (const [tier, prerequisites] of ascendingTiers) {
-    if (prerequisites.every(e => validateObject(state, e, sourceId))) {
+    if (prerequisites.every(e => validateObject(state, e, sourceId, pact))) {
       validTier = tier;
     }
     else {

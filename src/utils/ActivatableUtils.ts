@@ -104,6 +104,28 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       return false;
     }
   }
+  else if (obj.id === 'SA_667') {
+    const allPactPresents = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 30);
+    if (allPactPresents.some(e => isActive(e))) {
+      return false;
+    }
+  }
+  else if (obj.category === Categories.SPECIAL_ABILITIES && obj.gr === 30) {
+    const darkPactSA = dependent.specialAbilities.get('SA_667');
+    const allPactPresents = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 30);
+    const countPactPresents = allPactPresents.reduce((n, obj) => {
+      if (isActive(obj)) {
+        if (!Array.isArray(obj.reqs) && Array.isArray(obj.cost) && typeof obj.tiers === 'number') {
+          return n + obj.active[0].tier!;
+        }
+        return n + 1;
+      }
+      return n;
+    }, 0);
+    if (isActive(darkPactSA) || pact === undefined || pact.level <= countPactPresents) {
+      return false;
+    }
+  }
   return validate(state, getFlatFirstTierPrerequisites(obj.reqs), obj.id, pact);
 }
 
@@ -113,7 +135,7 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
  * @param obj The entry.
  * @param sid The sid of the Act
  */
-export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid?: string | number): boolean {
+export function isDeactivatable(state: CurrentHeroInstanceState, obj: ActivatableInstance, sid: string | number | undefined, pact: Pact | undefined): boolean {
   const { dependent } = state;
   if (obj.id === 'SA_164') {
     const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
@@ -144,7 +166,7 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
       const origin = get(dependent, e.origin) as SpecialAbilityInstance;
       const req = getFlatPrerequisites(origin.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && !!e.origin && r.id.includes(e.origin)) as AllRequirementObjects | undefined;
       if (req) {
-        const resultOfAll = (req.id as string[]).map(e => validateObject(state, { ...req, id: e } as AllRequirementObjects, obj.id));
+        const resultOfAll = (req.id as string[]).map(e => validateObject(state, { ...req, id: e } as AllRequirementObjects, obj.id, pact));
         return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? true : false;
       }
       return true;
@@ -476,19 +498,19 @@ export function getActiveObjectCore({ sid, sid2, tier }: ActiveObjectAny): Activ
  * @param obj The ActiveObject with origin id.
  * @param state The current hero's state.
  */
-export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanceState) {
+export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanceState, pact: Pact | undefined) {
   const { dependent, el } = state;
   const { id, sid } = obj;
   const instance = get(dependent, id) as ActivatableInstance;
   const { dependencies, active, reqs } = instance;
   let { tiers } = instance;
 
-  let disabled = !isDeactivatable(state, instance, sid);
+  let disabled = !isDeactivatable(state, instance, sid, pact);
   let maxTier: number | undefined;
   let minTier: number | undefined;
 
   if (!Array.isArray(reqs)) {
-    maxTier = validateTier(state, reqs, dependencies, id);
+    maxTier = validateTier(state, reqs, dependencies, id, pact);
   }
 
   if (!Array.isArray(reqs)) {
@@ -589,6 +611,10 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
       if ([...dependent.liturgies.values()].some(e => e.active) || [...dependent.blessings.values()].some(e => e.active)) {
         disabled = true;
       }
+      break;
+    }
+    case 'SA_667': {
+      maxTier = pact!.level;
       break;
     }
   }
@@ -967,7 +993,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
   if (isActivatable(state, entry, pact) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
     let maxTier: number | undefined;
     if (!Array.isArray(reqs)) {
-      maxTier = validateTier(state, reqs, dependencies, id);
+      maxTier = validateTier(state, reqs, dependencies, id, pact);
     }
     switch (id) {
       case 'ADV_4':
@@ -1059,7 +1085,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
         break;
       case 'SA_3': {
         const activeIds = getSids(entry);
-        const sel = (entry.sel as Array<SelectionObject & { req: AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id) && !getDSids(entry).includes(e.id));
+        const sel = (entry.sel as Array<SelectionObject & { req: AllRequirementTypes[] }>).filter(e => !activeIds.includes(e.id) && validate(state, e.req, id, pact) && !getDSids(entry).includes(e.id));
         if (sel.length > 0) {
           return { id, name, sel, cost, instance: entry };
         }
@@ -1127,17 +1153,6 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       case 'SA_681': {
         const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
         if (magicalTraditions.length === 0) {
-          return { id, name, cost, instance: entry };
-        }
-        break;
-      }
-      case 'SA_677':
-      case 'SA_678':
-      case 'SA_679':
-      case 'SA_680': {
-        const { adv, disadv } = ap;
-        const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
-        if (adv[1] <= 25 && disadv[1] <= 25 && magicalTraditions.length === 0) {
           return { id, name, cost, instance: entry };
         }
         break;
@@ -1250,7 +1265,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
         const activeIds = getSids(entry);
         const sel = entry.sel!.reduce<SelectionObject[]>((arr, e) => {
           const targetInstance = id === 'SA_414' ? dependent.spells.get(e.target!) : dependent.liturgies.get(e.target!);
-          if (!activeIds.includes(e.id) && validate(state, e.req!, id) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier! * 4 + 4) {
+          if (!activeIds.includes(e.id) && validate(state, e.req!, id, pact) && !getDSids(entry).includes(e.id) && typeof targetInstance === 'object' && targetInstance.value >= e.tier! * 4 + 4) {
             return [...arr, { ...e, name: `${targetInstance.name}: ${e.name}` }];
           }
           return arr;
@@ -1317,9 +1332,23 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       }
       case 'SA_639': {
         const activeIds = getSids(entry);
-        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites!, id) && !getDSids(entry).includes(e.id));
+        const sel = entry.sel!.filter(e => !activeIds.includes(e.id) && validate(state, e.prerequisites!, id, pact) && !getDSids(entry).includes(e.id));
         if (sel.length > 0) {
           return { id, name, sel, cost, instance: entry };
+        }
+        break;
+      }
+      case 'SA_667': {
+        return { id, name, cost, tiers, maxTier: pact!.level, instance: entry };
+      }
+      case 'SA_677':
+      case 'SA_678':
+      case 'SA_679':
+      case 'SA_680': {
+        const { adv, disadv } = ap;
+        const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
+        if (adv[1] <= 25 && disadv[1] <= 25 && magicalTraditions.length === 0) {
+          return { id, name, cost, instance: entry };
         }
         break;
       }

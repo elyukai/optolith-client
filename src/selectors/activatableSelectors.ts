@@ -11,6 +11,7 @@ import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { get, getAllByCategory, getMapByCategory } from './dependentInstancesSelectors';
 import { getBlessedTradition } from './liturgiesSelectors';
 import { getMessages } from './localeSelectors';
+import { getValidPact } from './pactSelectors';
 import { getCultureAreaKnowledge } from './profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
@@ -18,7 +19,6 @@ import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
 import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
-import { getValidPact } from './pactSelectors';
 
 export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
   const allEntries = [
@@ -37,7 +37,8 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
     getCurrentHeroPresent,
     getLocaleMessages,
     getWiki,
-    (advantages, disadvantages, specialAbilities, state, locale, wiki) => {
+    getValidPact,
+    (advantages, disadvantages, specialAbilities, state, locale, wiki, pact) => {
       const { dependent } = state;
       const allEntries = (category === Categories.ADVANTAGES ? advantages : category === Categories.DISADVANTAGES ? disadvantages : specialAbilities) as Map<string, Data.InstanceByCategory[T]>;
       const finalEntries: Data.ActiveViewObject<Data.InstanceByCategory[T]>[] = [];
@@ -62,7 +63,7 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
           disabled,
           maxTier,
           minTier
-        } = getValidation(activeObject, state);
+        } = getValidation(activeObject, state, pact);
 
         const instance = get(dependent, id) as Data.ActivatableInstance;
 
