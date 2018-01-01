@@ -45,6 +45,7 @@ export const getProfile = (state: AppState) => state.currentHero.present.profile
 export const getCultureAreaKnowledge = (state: AppState) => state.currentHero.present.profile.cultureAreaKnowledge;
 export const getSex = (state: AppState) => state.currentHero.present.profile.sex;
 export const getSize = (state: AppState) => state.currentHero.present.profile.size;
+export const getWeight = (state: AppState) => state.currentHero.present.profile.weight;
 export const getAvatar = (state: AppState) => state.currentHero.present.profile.avatar;
 
 export const getPact = (state: AppState) => state.currentHero.present.pact;

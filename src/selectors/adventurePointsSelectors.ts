@@ -176,18 +176,23 @@ export const getAdventurePointsSpentForEnergies = createSelector(
 	}
 );
 
-export const getAdventurePointsSpentForRCP = createSelector(
+export const getAdventurePointsSpentForRace = createSelector(
 	getCurrentRace,
-	getCurrentProfession,
-	getPhase,
-	(race, profession, phase) => {
-		const raceCost = race ? race.ap : 0;
-		const professionCost = phase === 1 ? profession ? profession.ap : 0 : 0;
-		return raceCost + professionCost;
+	race => {
+		return race ? race.ap : 0;
 	}
 );
 
-export const getAdventurePointsSpent = createSelector(
+export const getAdventurePointsSpentForProfession = createSelector(
+	getCurrentProfession,
+	getPhase,
+	(profession, phase) => {
+		const professionCost = phase === 1 ? profession ? profession.ap : 0 : undefined;
+		return professionCost;
+	}
+);
+
+export const getAdventurePointsSpentPart = createSelector(
 	getAdventurePointsSpentForAttributes,
 	getAdventurePointsSpentForSkills,
 	getAdventurePointsSpentForCombatTechniques,
@@ -195,13 +200,21 @@ export const getAdventurePointsSpent = createSelector(
 	getAdventurePointsSpentForLiturgicalChants,
 	getAdventurePointsSpentForCantrips,
 	getAdventurePointsSpentForBlessings,
+	(...cost: number[]) => {
+		return cost.reduce((a, b) => a + b, 0);
+	}
+);
+
+export const getAdventurePointsSpent = createSelector(
+	getAdventurePointsSpentPart,
 	getAdventurePointsSpentForAdvantages,
 	getAdventurePointsSpentForDisadvantages,
 	getAdventurePointsSpentForSpecialAbilities,
 	getAdventurePointsSpentForEnergies,
-	getAdventurePointsSpentForRCP,
-	(...cost: number[]) => {
-		return cost.reduce((a, b) => a + b, 0);
+	getAdventurePointsSpentForRace,
+	getAdventurePointsSpentForProfession,
+	(part, ...cost: (number | undefined)[]) => {
+		return cost.reduce<number>((a, b = 0) => a + b, part);
 	}
 );
 
@@ -236,7 +249,8 @@ export interface AdventurePointsObjectPart {
 	spentOnBlessings: number;
 	spentOnSpecialAbilities: number;
 	spentOnEnergies: number;
-	spentOnRCP: number;
+	spentOnRace: number;
+	spentOnProfession: number | undefined;
 }
 
 export interface AdventurePointsObject extends AdventurePointsObjectPart {
@@ -263,8 +277,9 @@ export const getAdventurePointsObjectPart = createSelector(
 	getAdventurePointsSpentForBlessings,
 	getAdventurePointsSpentForSpecialAbilities,
 	getAdventurePointsSpentForEnergies,
-	getAdventurePointsSpentForRCP,
-	(spentOnAttributes, spentOnSkills, spentOnCombatTechniques, spentOnSpells, spentOnLiturgicalChants, spentOnCantrips, spentOnBlessings, spentOnSpecialAbilities, spentOnEnergies, spentOnRCP): AdventurePointsObjectPart => ({
+	getAdventurePointsSpentForRace,
+	getAdventurePointsSpentForProfession,
+	(spentOnAttributes, spentOnSkills, spentOnCombatTechniques, spentOnSpells, spentOnLiturgicalChants, spentOnCantrips, spentOnBlessings, spentOnSpecialAbilities, spentOnEnergies, spentOnRace, spentOnProfession): AdventurePointsObjectPart => ({
 		spentOnAttributes,
 		spentOnSkills,
 		spentOnCombatTechniques,
@@ -274,7 +289,8 @@ export const getAdventurePointsObjectPart = createSelector(
 		spentOnBlessings,
 		spentOnSpecialAbilities,
 		spentOnEnergies,
-		spentOnRCP,
+		spentOnRace,
+		spentOnProfession
 	})
 );
 

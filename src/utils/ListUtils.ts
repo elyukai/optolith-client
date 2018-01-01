@@ -107,3 +107,27 @@ function mergeIntoOptionalStateSlice<T extends DependentInstancesStateKeysForMap
 	}
 	return oldslice;
 }
+
+interface StringObject<V> {
+	[id: string]: V;
+}
+
+export function convertMapToObject<V>(map: Map<string, V>): StringObject<V> {
+	const obj: StringObject<V> = {};
+
+	for (const [id, entry] of map) {
+		obj[id] = entry;
+	}
+
+	return obj;
+}
+
+export function convertObjectToMap<V>(obj: StringObject<V>): Map<string, V> {
+	const map: Map<string, V> = new Map<string, V>();
+
+	for (const [id, entry] of Object.entries(obj)) {
+		map.set(id, entry);
+	}
+
+	return map;
+}

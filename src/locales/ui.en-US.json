@@ -48,6 +48,8 @@
 	"titlebar.adventurepoints.disadvantages": "{0} / {1} AP from disadvantages",
 	"titlebar.adventurepoints.disadvantagesmagic": "Thereof {0} / {1} AP from magic disadvantages",
 	"titlebar.adventurepoints.disadvantagesblessed": "Thereof {0} / {1} AP from blessed disadvantages",
+	"titlebar.adventurepoints.race": "{0} AP on race",
+	"titlebar.adventurepoints.profession": "{0} AP on profession",
 	"titlebar.adventurepoints.attributes": "{0} AP on attributes",
 	"titlebar.adventurepoints.skills": "{0} AP on skills",
 	"titlebar.adventurepoints.combattechniques": "{0} AP on combat techniques",

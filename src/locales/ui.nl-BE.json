@@ -48,6 +48,8 @@
 	"titlebar.adventurepoints.disadvantages": "{0} / {1} AP durch Nachteile",
 	"titlebar.adventurepoints.disadvantagesmagic": "Davon {0} / {1} AP durch magische Nachteile",
 	"titlebar.adventurepoints.disadvantagesblessed": "Davon {0} / {1} AP durch karmale Nachteile",
+	"titlebar.adventurepoints.race": "{0} AP für Spezies",
+	"titlebar.adventurepoints.profession": "{0} AP für Profession",
 	"titlebar.adventurepoints.attributes": "{0} AP für Eigenschaften",
 	"titlebar.adventurepoints.skills": "{0} AP für Talente",
 	"titlebar.adventurepoints.combattechniques": "{0} AP für Kampftechniken",

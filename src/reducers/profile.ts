@@ -76,6 +76,9 @@ export function profile(state: ProfileState = initialState, action: Action): Pro
 			return { ...state, eyecolor: action.payload.eyecolor };
 
 		case ActionTypes.SET_SIZE:
+			if (action.payload.weight) {
+				return { ...state, weight: action.payload.weight, size: action.payload.size };
+			}
 			return { ...state, size: action.payload.size };
 
 		case ActionTypes.SET_WEIGHT:

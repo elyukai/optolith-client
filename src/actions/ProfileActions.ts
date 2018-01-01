@@ -1,9 +1,10 @@
 import * as ActionTypes from '../constants/ActionTypes';
 import { isAlbino } from '../selectors/activatableSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getSize } from '../selectors/stateSelectors';
+import { getSize, getWeight } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import * as RCPUtils from '../utils/RCPUtils';
+import { getWeightForRerolledSize } from '../utils/RCPUtils';
 
 export interface SetHeroNameAction {
 	type: ActionTypes.SET_HERO_NAME;
@@ -153,14 +154,16 @@ export interface SetSizeAction {
 	type: ActionTypes.SET_SIZE;
 	payload: {
 		size: string;
+		weight?: string;
 	};
 }
 
-export function _setSize(size: string): SetSizeAction {
+export function _setSize(size: string, weight?: string): SetSizeAction {
 	return {
 		type: ActionTypes.SET_SIZE,
 		payload: {
-			size
+			size,
+			weight
 		}
 	};
 }
@@ -216,8 +219,16 @@ export function _rerollSize(): AsyncAction {
 		const race = getCurrentRace(state);
 		const raceVariant = getCurrentRaceVariant(state);
 		if (typeof race !== 'undefined') {
+			const prevSize = getSize(state);
+			const weight = getWeight(state);
 			const size = RCPUtils.rerollSize(race, raceVariant);
-			dispatch(_setSize(size));
+			if (typeof prevSize === 'string' && typeof weight === 'string') {
+				const newWeight = getWeightForRerolledSize(weight, prevSize, size);
+				dispatch(_setSize(size, newWeight));
+			}
+			else {
+				dispatch(_setSize(size));
+			}
 		}
 		return;
 	};

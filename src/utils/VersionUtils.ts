@@ -610,8 +610,9 @@ export function convertHero(hero: Hero) {
         SA_243: arr
       };
     }
+    entry.clientVersion = '0.51.3';
   }
-  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.3')) {
+  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
     if (entry.activatable.hasOwnProperty('SA_344')) {
       entry.activatable = {
         ...entry.activatable,
@@ -653,7 +654,8 @@ export function convertHero(hero: Hero) {
       entry.activatable = other;
       for (const active of arr) {
         const { sid, sid2 } = active;
-        entry.activatable[getMagicalTraditionInstanceIdByNumericId(sid as number)] = [{ sid: sid2 }];
+        const id = getMagicalTraditionInstanceIdByNumericId(sid as number);
+        entry.activatable[id || 'SA_70'] = [{ sid: sid2 }];
       }
     }
     if (entry.activatable.hasOwnProperty('SA_86')) {
@@ -661,11 +663,10 @@ export function convertHero(hero: Hero) {
       entry.activatable = other;
       for (const active of arr) {
         const { sid, sid2 } = active;
-        entry.activatable[getBlessedTraditionInstanceIdByNumericId(sid as number)] = [{ sid: sid2 }];
+        const id = getBlessedTraditionInstanceIdByNumericId(sid as number);
+        entry.activatable[id || 'SA_86'] = [{ sid: sid2 }];
       }
     }
-  }
-  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
     if (entry.activatable.hasOwnProperty('DISADV_34')) {
       entry.activatable = {
         ...entry.activatable,
@@ -696,6 +697,7 @@ export function convertHero(hero: Hero) {
         })
       };
     }
+    entry.clientVersion = '0.51.4';
   }
   if (satisfies(entry.clientVersion, '< 0.51.10-alpha.1')) {
     if (entry.activatable.hasOwnProperty('DISADV_45') && entry.activatable.DISADV_45.some(e => e.sid === 1)) {

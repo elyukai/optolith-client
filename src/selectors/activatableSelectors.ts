@@ -20,7 +20,7 @@ import { getMagicalTraditions } from './spellsSelectors';
 import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
-export function getForSave(state: DependentInstancesState): { [id: string]: Data.ActiveObject[] } {
+export function getForSave(state: DependentInstancesState): Data.ToListById<Data.ActiveObject[]> {
   const allEntries = [
     ...getAllByCategory(state, Categories.ADVANTAGES),
     ...getAllByCategory(state, Categories.DISADVANTAGES),

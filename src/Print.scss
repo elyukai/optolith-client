@@ -23,7 +23,7 @@
 		background: white;
 	}
 
-	.titlebar, .navigationbar, .subtabs, .background-image {
+	.titlebar, section#content > .navigationbar, .background-image {
 		display: none;
 		margin: 0;
 		padding: 0;

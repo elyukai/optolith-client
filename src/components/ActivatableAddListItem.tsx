@@ -262,11 +262,13 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel = selected;
 				const musictraditionIds = [1, 2, 3];
 				sel = musictraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
+				currentCost = cost as number;
 				break;
 			case 'SA_678':
 				args.sel = selected;
 				const dancetraditionIds = [4, 5, 6, 7];
 				sel = dancetraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
+				currentCost = cost as number;
 				break;
 			case 'SA_680':
 				args.sel = selected;

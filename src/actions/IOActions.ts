@@ -31,31 +31,15 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 		const locale = getLocaleMessages(state);
 		if (locale) {
 			if (safeToExit) {
-				dispatch(requestSaveAll());
-				dispatch(addAlert({
-					message: _translate(locale, 'fileapi.allsaved'),
-					onClose() {
-						if (optionalCall) {
-							optionalCall();
-						}
-						remote.getCurrentWindow().close();
-					}
-				}));
+				dispatch(close(false, optionalCall));
 			}
 			else {
+				// @ts-ignore
 				dispatch(addAlert({
 					title: _translate(locale, 'heroes.warnings.unsavedactions.title'),
 					message: _translate(locale, 'heroes.warnings.unsavedactions.text'),
 					confirm: [
-						((dispatch: any) => {
-							dispatch(requestSaveAll());
-							dispatch(addAlert({
-								message: _translate(locale, 'fileapi.everythingelsesaved'),
-								onClose() {
-									remote.getCurrentWindow().close();
-								}
-							}));
-						}) as any,
+						close(true, optionalCall),
 						_setTab('profile')
 					],
 					confirmYesNo: true
@@ -63,6 +47,23 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 			}
 		}
 	};
+}
+
+function close(unsaved: boolean, func?: () => void): AsyncAction {
+	return (dispatch, getState) => {
+		const state = getState();
+		const locale = getLocaleMessages(state)!;
+		dispatch(requestSaveAll());
+		dispatch(addAlert({
+			message: _translate(locale, unsaved ? 'fileapi.everythingelsesaved' : 'fileapi.allsaved'),
+			onClose() {
+				if (func) {
+					func();
+				}
+				remote.getCurrentWindow().close();
+			}
+		}));
+	}
 }
 
 interface ReceiveInitialDataActionPayload extends Raw {

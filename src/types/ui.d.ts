@@ -48,6 +48,8 @@ export interface UIMessages {
 	"titlebar.adventurepoints.disadvantages": string;
 	"titlebar.adventurepoints.disadvantagesmagic": string;
 	"titlebar.adventurepoints.disadvantagesblessed": string;
+	"titlebar.adventurepoints.race": string;
+	"titlebar.adventurepoints.profession": string;
 	"titlebar.adventurepoints.attributes": string;
 	"titlebar.adventurepoints.skills": string;
 	"titlebar.adventurepoints.combattechniques": string;

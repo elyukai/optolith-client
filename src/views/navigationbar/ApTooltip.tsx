@@ -32,6 +32,8 @@ export function ApTooltip(props: ApTooltipProps) {
 			</p>
 			<hr />
 			<p>
+				<span>{_translate(locale, 'titlebar.adventurepoints.race', ap.spentOnRace, 80)}</span>
+				{typeof ap.spentOnProfession === 'number' && <span>{_translate(locale, 'titlebar.adventurepoints.profession', ap.spentOnProfession, 80)}</span>}
 				<span>{_translate(locale, 'titlebar.adventurepoints.attributes', ap.spentOnAttributes)}</span>
 				<span>{_translate(locale, 'titlebar.adventurepoints.skills', ap.spentOnSkills)}</span>
 				<span>{_translate(locale, 'titlebar.adventurepoints.combattechniques', ap.spentOnCombatTechniques)}</span>

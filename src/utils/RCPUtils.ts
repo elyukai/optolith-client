@@ -30,7 +30,7 @@ export function rerollEyeColor(current: Race, currentVariant: RaceVariant | unde
   return (current.eyeColors || currentVariant && currentVariant.eyeColors)![result - 1];
 }
 
-export function rerollSize(race: Race, raceVariant: RaceVariant | undefined) {
+export function rerollSize(race: Race, raceVariant: RaceVariant | undefined): string {
   const arr: number[] = [];
   for (const { amount, sides } of (race.sizeRandom || raceVariant && raceVariant.sizeRandom)!) {
     const elements = Array.from({ length: amount }, () => sides);
@@ -40,7 +40,18 @@ export function rerollSize(race: Race, raceVariant: RaceVariant | undefined) {
   return result.toString();
 }
 
-export function rerollWeight(race: Race, raceVariant: RaceVariant | undefined, size: string = rerollSize(race, raceVariant)) {
+export function getWeightForRerolledSize(weight: string, prevSize: string, newSize: string): string {
+  const diff = Number.parseInt(newSize) - Number.parseInt(prevSize);
+  const newWeight = Number.parseInt(weight) + diff;
+  return newWeight.toString();
+}
+
+interface RerolledWeight {
+  size: string;
+  weight: string;
+}
+
+export function rerollWeight(race: Race, raceVariant: RaceVariant | undefined, size: string = rerollSize(race, raceVariant)): RerolledWeight {
   const { id, weightBase, weightRandom } = race;
   const arr: number[] = [];
   for (const { amount, sides } of weightRandom) {

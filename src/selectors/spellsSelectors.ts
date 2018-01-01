@@ -10,6 +10,7 @@ import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getStart, getStartEl } from './elSelectors';
+import { getValidPact } from './pactSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
 import { getAdvantages, getCantrips, getDisadvantages, getElState, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText } from './stateSelectors';
@@ -80,7 +81,8 @@ export const getInactiveSpells = createSelector(
 	areMaxUnfamiliar,
 	getPresent,
 	getMagicalTraditions,
-	(allEntries, areMaxUnfamiliar, currentHero, tradition): InactiveSpells => {
+	getValidPact,
+	(allEntries, areMaxUnfamiliar, currentHero, tradition, pact): InactiveSpells => {
 		if (tradition.length === 0) {
 			return {
 				valid: [],
@@ -91,7 +93,7 @@ export const getInactiveSpells = createSelector(
 		const lastTraditionId = tradition[0].id;
 		if (lastTraditionId === 'SA_679') {
 			return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-				if (entry.category === CANTRIPS || entry.gr < 3 && validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
+				if (entry.category === CANTRIPS || entry.gr < 3 && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
 					return {
 						...obj,
 						valid: [...obj.valid, entry]
@@ -136,7 +138,7 @@ export const getInactiveSpells = createSelector(
 			};
 		}
 		return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-			if (entry.category === CANTRIPS || validate(currentHero, entry.reqs, entry.id) && (isOwnTradition(tradition, entry) || entry.gr < 3 && !areMaxUnfamiliar)) {
+			if (entry.category === CANTRIPS || validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || entry.gr < 3 && !areMaxUnfamiliar)) {
 				return {
 					...obj,
 					valid: [...obj.valid, entry]
