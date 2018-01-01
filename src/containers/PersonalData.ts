@@ -6,7 +6,7 @@ import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../selectors/activatableSelectors';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
-import { getCurrentEl } from '../selectors/elSelectors';
+import { getStartEl } from '../selectors/elSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
@@ -21,7 +21,7 @@ function mapStateToProps(state: AppState) {
 		apLeft: getAvailableAdventurePoints(state),
 		apTotal: getTotalAdventurePoints(state),
 		culture: getCurrentCulture(state),
-		currentEl: getCurrentEl(state),
+		currentEl: getStartEl(state),
 		disadvantages: getDisadvantagesForSheet(state),
 		isRemovingEnabled: isRemovingEnabled(state),
 		isEditingHeroAfterCreationPhaseEnabled: isEditingHeroAfterCreationPhaseEnabled(state),
