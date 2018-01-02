@@ -22,13 +22,22 @@ const initialState: RulesState = {
 export function rules(state: RulesState = initialState, action: Action): RulesState {
 	switch (action.type) {
 		case ActionTypes.RECEIVE_INITIAL_DATA:
-		case ActionTypes.CREATE_HERO:
 			return {
 				higherParadeValues: 0,
 				attributeValueLimit: false,
 				enableAllRuleBooks: false,
 				enabledRuleBooks: new Set()
 			};
+
+		case ActionTypes.CREATE_HERO: {
+			const { enableAllRuleBooks, enabledRuleBooks } = action.payload;
+			return {
+				higherParadeValues: 0,
+				attributeValueLimit: false,
+				enableAllRuleBooks,
+				enabledRuleBooks,
+			};
+		}
 
 		case ActionTypes.LOAD_HERO:
 			return {

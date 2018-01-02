@@ -49,10 +49,12 @@ export interface CreateHeroAction {
 		name: string;
 		sex: 'm' | 'f';
 		el: string;
+		enableAllRuleBooks: boolean;
+		enabledRuleBooks: Set<string>;
 	};
 }
 
-export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncAction {
+export function _createHero(name: string, sex: 'm' | 'f', el: string, enableAllRuleBooks: boolean, enabledRuleBooks: Set<string>): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
 		const past = getCurrentHeroPast(state);
@@ -65,7 +67,9 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncActi
 				payload: {
 					name,
 					sex,
-					el
+					el,
+					enableAllRuleBooks,
+					enabledRuleBooks,
 				}
 			});
 		}
@@ -79,7 +83,9 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string): AsyncActi
 						payload: {
 							name,
 							sex,
-							el
+							el,
+							enableAllRuleBooks,
+							enabledRuleBooks,
 						}
 					} as CreateHeroAction,
 					_setTab('profile')

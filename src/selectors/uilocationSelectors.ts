@@ -7,7 +7,7 @@ import { isLiturgicalChantsTabAvailable } from './liturgiesSelectors';
 import { isRemovingEnabled } from './phaseSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { isSpellsTabAvailable } from './spellsSelectors';
-import { getBooks, getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
+import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
 
 export const isMainSection = createSelector(
 	getCurrentTab,
@@ -62,11 +62,7 @@ export const getTabs = createSelector(
 					{
 						id: 'profile',
 						label: _translate(locale, 'titlebar.tabs.profile'),
-						subTabs: ['profile', 'personalData', 'pact'],
-					},
-					{
-						id: 'rules',
-						label: _translate(locale, 'titlebar.tabs.rules'),
+						subTabs: ['profile', 'personalData', 'pact', 'rules'],
 					},
 					{
 						id: 'races',
@@ -140,8 +136,7 @@ export const getSubtabs = createSelector(
 	isSpellsTabAvailable,
 	isLiturgicalChantsTabAvailable,
 	getRuleBooksEnabled,
-	getBooks,
-	(tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled, books): SubTab[] | undefined => {
+	(tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled): SubTab[] | undefined => {
 		let tabs: SubTab[] | undefined;
 
 		if (locale) {
@@ -166,7 +161,7 @@ export const getSubtabs = createSelector(
 			}
 			else if (isHeroSection) {
 				if (phase === 1) {
-					const profileSubTabs: TabId[] = ['profile', 'personalData'];
+					const profileSubTabs: TabId[] = ['profile', 'personalData', 'pact', 'rules'];
 					const rcpSubTabs: TabId[] = ['races', 'cultures', 'professions'];
 					if (profileSubTabs.includes(tab)) {
 						tabs = [
@@ -182,7 +177,11 @@ export const getSubtabs = createSelector(
 							{
 								id: 'pact',
 								label: _translate(locale, 'titlebar.tabs.pact'),
-								disabled: true,
+								disabled: locale.id !== 'de-DE'
+							},
+							{
+								id: 'rules',
+								label: _translate(locale, 'titlebar.tabs.rules'),
 							},
 						];
 					}
@@ -297,7 +296,7 @@ export const getSubtabs = createSelector(
 							},
 						];
 
-						if (books.has('US25208') && (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208'))) {
+						if (locale.id === 'de-DE' && (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208'))) {
 							tabs.splice(1, 0, {
 								id: 'zoneArmor',
 								label: _translate(locale, 'titlebar.tabs.zonearmor'),

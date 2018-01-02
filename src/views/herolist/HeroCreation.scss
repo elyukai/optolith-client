@@ -1,9 +1,32 @@
 #herocreation {
 	.modal-container {
-		width: 330px;
+		width: 360px;
+		height: 600px;
 
 		.modal-content {
 			width: auto;
+
+			.modal-content-inner {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+
+				.textfield, .dropdown, .segmented-controls, hr {
+					flex: 1 0 auto;
+				}
+
+				.textfield {
+					margin: 0;
+				}
+
+				.dropdown, .segmented-controls, hr, > .scroll {
+					margin: 14px 0 0;
+				}
+
+				> .scroll {
+					flex: 1 1 auto;
+				}
+			}
 		}
 	}
 }

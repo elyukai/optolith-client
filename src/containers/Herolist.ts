@@ -5,13 +5,14 @@ import * as IOActions from '../actions/IOActions';
 import * as LocationActions from '../actions/LocationActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
+import { getSortedBooks } from '../selectors/bookSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getCurrentId, getHeroesArray, getUsers } from '../selectors/herolistSelectors';
-import { isCharacterCreatorOpen, getWikiExperienceLevels } from '../selectors/stateSelectors';
+import { getWikiExperienceLevels, isCharacterCreatorOpen } from '../selectors/stateSelectors';
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../views/herolist/Herolist';
 
-function mapStateToProps(state: AppState) {
+function mapStateToProps(state: AppState, props?: HerolistOwnProps) {
 	return {
 		currentHero: getPresent(state),
 		currentHeroId: getCurrentId(state),
@@ -21,6 +22,7 @@ function mapStateToProps(state: AppState) {
 		sortOrder: getHerolistSortOrder(state),
 		visibilityFilter: getHerolistVisibilityFilter(state),
 		isCharacterCreatorOpen: isCharacterCreatorOpen(state),
+		sortedBooks: getSortedBooks(state, props!),
 	};
 }
 
@@ -49,8 +51,8 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 				dispatch(HerolistActions._duplicateHero(id));
 			}
 		},
-		createHero(name: string, sex: 'm' | 'f', el: string) {
-			dispatch(HerolistActions._createHero(name, sex, el));
+		createHero(name: string, sex: 'm' | 'f', el: string, enableAllRuleBooks: boolean, enabledRuleBooks: Set<string>) {
+			dispatch(HerolistActions._createHero(name, sex, el, enableAllRuleBooks, enabledRuleBooks));
 		},
 		importHero() {
 			dispatch(IOActions.requestHeroImport());

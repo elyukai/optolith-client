@@ -21,7 +21,7 @@ export function uilocation(state: UILocationState = initialState, action: Action
 			return { tab: action.payload.tab };
 
 		case ActionTypes.CREATE_HERO:
-			return { tab: 'rules' };
+			return { tab: 'races' };
 
 		case ActionTypes.LOAD_HERO:
 			return { tab: 'profile' };

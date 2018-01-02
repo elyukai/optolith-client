@@ -10,7 +10,7 @@ import { TextField } from '../../components/TextField';
 import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { Hero, InputTextEvent, User } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { ExperienceLevel } from '../../types/wiki';
+import { Book, ExperienceLevel } from '../../types/wiki';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { HeroCreation } from './HeroCreation';
@@ -29,6 +29,7 @@ export interface HerolistStateProps {
 	visibilityFilter: string;
 	sortOrder: string;
 	isCharacterCreatorOpen: boolean;
+	sortedBooks: Book[];
 }
 
 export interface HerolistDispatchProps {
@@ -37,7 +38,7 @@ export interface HerolistDispatchProps {
 	saveHeroAsJSON(id?: string): void;
 	deleteHero(id?: string): void;
 	duplicateHero(id?: string): void;
-	createHero(name: string, sex: 'm' | 'f', el: string): void;
+	createHero(name: string, sex: 'm' | 'f', el: string, enableAllRuleBooks: boolean, enabledRuleBooks: Set<string>): void;
 	importHero(): void;
 	setSortOrder(id: string): void;
 	setVisibilityFilter(id: string): void;
