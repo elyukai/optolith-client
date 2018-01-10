@@ -4,7 +4,7 @@
 }
 
 @media only print {
-	.titlebar-inner::after, .navigationbar-inner::after, .subtabs::after {
+	.titlebar-inner::after, .navigationbar-inner::after, .navigationbar-subtabs::after {
 		display: none;
 	}
 
@@ -23,7 +23,7 @@
 		background: white;
 	}
 
-	.titlebar, section#content > .navigationbar, .background-image {
+	.titlebar, section#content > .navigationbar, section#content > .navigationbar-subtabs, .background-image {
 		display: none;
 		margin: 0;
 		padding: 0;
@@ -69,12 +69,12 @@
 						page-break-inside: avoid;
 						overflow: hidden;
 
-						&:not(:last-child) {
-							page-break-after: always;
+						&:not(:first-child) {
+							page-break-before: always;
 						}
 
-						&:last-child {
-							page-break-after: avoid;
+						&:first-child {
+							page-break-before: avoid;
 						}
 					}
 				}

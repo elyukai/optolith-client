@@ -51,7 +51,7 @@ export const getAvailableInactiveLiturgicalChants = createSelector(
 	getBlessedTradition,
 	getRuleBooksEnabled,
 	(list, tradition, availablility) => {
-		return filterByAvailability(list.filter(e => tradition && isOwnTradition(tradition, e)), availablility);
+		return filterByAvailability(list.filter(e => tradition && isOwnTradition(tradition, e) && e.active === false), availablility);
 	}
 );
 
@@ -60,8 +60,8 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createSelector(
 	getLiturgicalChantsSortOptions,
 	getLiturgicalChantsFilterText,
 	getLocaleMessages,
-	(spells, sortOptions, filterText, locale) => {
-		return filterAndSortObjects(spells, locale!.id, filterText, sortOptions);
+	(liturgicalChants, sortOptions, filterText, locale) => {
+		return filterAndSortObjects(liturgicalChants, locale!.id, filterText, sortOptions);
 	}
 );
 
