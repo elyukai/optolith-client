@@ -77,8 +77,8 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string, enableAllR
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
 				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
-				confirm: [
-					{
+				confirm: {
+					resolve: {
 						type: ActionTypes.CREATE_HERO,
 						payload: {
 							name,
@@ -88,8 +88,8 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string, enableAllR
 							enabledRuleBooks,
 						}
 					} as CreateHeroAction,
-					_setTab('profile')
-				],
+					reject: _setTab('profile')
+				},
 				confirmYesNo: true
 			}));
 		}
@@ -135,10 +135,10 @@ export function loadHeroValidate(id: string): AsyncAction {
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
 				message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
-				confirm: [
-					_loadHero(id),
-					_setTab('profile')
-				],
+				confirm: {
+					resolve: _loadHero(id),
+					reject: _setTab('profile')
+				},
 				confirmYesNo: true
 			}));
 		}
@@ -209,13 +209,12 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
 			dispatch(addAlert({
 				title: _translate(messages, 'heroes.warnings.delete.title', hero.name),
 				message: _translate(messages, 'heroes.warnings.delete.message'),
-				confirm: [
-					(dispatch => {
+				confirm: {
+					resolve: (dispatch => {
 						dispatch(_deleteHero(id));
 						dispatch(requestHeroesSave());
-					}) as AsyncAction,
-					undefined
-				],
+					}) as AsyncAction
+				},
 				confirmYesNo: true
 			}));
 		}

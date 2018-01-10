@@ -32,11 +32,11 @@ export function Alert(props: AlertProps) {
 		buttons = (confirm ? [
 			{
 				label: confirmYesNo ? _translate(locale, 'yes') : _translate(locale, 'ok'),
-				dispatchOnClick: confirm[0]
+				dispatchOnClick: confirm.resolve
 			},
 			{
 				label: confirmYesNo ? _translate(locale, 'no') : _translate(locale, 'cancel'),
-				dispatchOnClick: confirm[1]
+				dispatchOnClick: confirm.reject
 			}
 		] : buttonsOption).map(e => {
 			const { dispatchOnClick, ...other } = e;

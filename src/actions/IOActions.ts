@@ -38,10 +38,10 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 				dispatch(addAlert({
 					title: _translate(locale, 'heroes.warnings.unsavedactions.title'),
 					message: _translate(locale, 'heroes.warnings.unsavedactions.text'),
-					confirm: [
-						close(true, optionalCall),
-						_setTab('profile')
-					],
+					confirm: {
+						resolve: close(true, optionalCall),
+						reject: _setTab('profile'),
+					},
 					confirmYesNo: true
 				}));
 			}
@@ -50,19 +50,21 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 }
 
 function close(unsaved: boolean, func?: () => void): AsyncAction {
-	return (dispatch, getState) => {
+	return async (dispatch, getState) => {
 		const state = getState();
 		const locale = getLocaleMessages(state)!;
-		dispatch(requestSaveAll());
-		dispatch(addAlert({
-			message: _translate(locale, unsaved ? 'fileapi.everythingelsesaved' : 'fileapi.allsaved'),
-			onClose() {
-				if (func) {
-					func();
+		const allSaved = await dispatch(requestSaveAll());
+		if (allSaved) {
+			dispatch(addAlert({
+				message: _translate(locale, unsaved ? 'fileapi.everythingelsesaved' : 'fileapi.allsaved'),
+				onClose() {
+					if (func) {
+						func();
+					}
+					remote.getCurrentWindow().close();
 				}
-				remote.getCurrentWindow().close();
-			}
-		}));
+			}));
+		}
 	}
 }
 
@@ -256,8 +258,8 @@ export function requestHeroExport(id: string): AsyncAction {
 	};
 }
 
-export function requestConfigSave(): AsyncAction {
-	return (dispatch, getState) => {
+export function requestConfigSave(): AsyncAction<Promise<boolean>> {
+	return async (dispatch, getState) => {
 		const state = getState();
 		const data: Config = {
 			...getUISettingsState(state),
@@ -268,19 +270,21 @@ export function requestConfigSave(): AsyncAction {
 		const path = join(dataPath, 'config.json');
 
 		try {
-			writeFile(path, JSON.stringify(data));
+			await writeFile(path, JSON.stringify(data));
+			return true;
 		}
 		catch (error) {
 			dispatch(addAlert({
 				message: `${_translate(locale, 'fileapi.error.message.saveconfig')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
 				title: _translate(locale, 'fileapi.error.title')
 			}));
+			return false;
 		}
 	};
 }
 
-export function requestHeroesSave(): AsyncAction {
-	return (dispatch, getState) => {
+export function requestHeroesSave(): AsyncAction<Promise<boolean>> {
+	return async (dispatch, getState) => {
 		const state = getState();
 		const data = getHeroesForSave(state);
 		const locale = getLocaleMessages(state)!;
@@ -288,21 +292,24 @@ export function requestHeroesSave(): AsyncAction {
 		const path = join(dataPath, 'heroes.json');
 
 		try {
-			writeFile(path, JSON.stringify(data));
+			await writeFile(path, JSON.stringify(data));
+			return true;
 		}
 		catch (error) {
 			dispatch(addAlert({
 				message: `${_translate(locale, 'fileapi.error.message.saveconfig')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
 				title: _translate(locale, 'fileapi.error.title')
 			}));
+			return false;
 		}
 	};
 }
 
-export function requestSaveAll(): AsyncAction {
-	return dispatch => {
-		dispatch(requestConfigSave());
-		dispatch(requestHeroesSave());
+export function requestSaveAll(): AsyncAction<Promise<boolean>> {
+	return async dispatch => {
+		const configSavedDone = await dispatch(requestConfigSave());
+		const heroesSavedDone = await dispatch(requestHeroesSave());
+		return configSavedDone && heroesSavedDone;
 	};
 }
 

@@ -1238,7 +1238,10 @@ export interface Alert {
 	message: string;
 	title?: string;
 	buttons?: AlertButton[];
-	confirm?: [Action | undefined, Action | undefined];
+	confirm?: {
+		resolve?: Action;
+		reject?: Action;
+	};
 	confirmYesNo?: boolean;
 	onClose?(): void;
 }
