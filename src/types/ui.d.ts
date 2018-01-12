@@ -384,6 +384,7 @@ export interface UIMessages {
 	"rules.optionalrules": string;
 	"rules.optionalrules.maximumattributescores": string;
 	"rules.optionalrules.higherdefensestats": string;
+	"rules.optionalrules.languagespecializations": string;
 	"secondaryattributes.lp.name": string;
 	"secondaryattributes.lp.short": string;
 	"secondaryattributes.lp.calc": string;

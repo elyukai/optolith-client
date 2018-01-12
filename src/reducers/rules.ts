@@ -1,39 +1,32 @@
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
-import { SetHigherParadeValuesAction, SwitchAttributeValueLimitAction, SwitchEnableAllRuleBooksAction, SwitchEnableRuleBookAction } from '../actions/RulesActions';
+import { SetHigherParadeValuesAction, SwitchAttributeValueLimitAction, SwitchEnableAllRuleBooksAction, SwitchEnableLanguageSpecializationsAction, SwitchEnableRuleBookAction } from '../actions/RulesActions';
 import * as ActionTypes from '../constants/ActionTypes';
 
-type Action = ReceiveInitialDataAction | LoadHeroAction | CreateHeroAction | SetHigherParadeValuesAction | SwitchAttributeValueLimitAction | SwitchEnableAllRuleBooksAction | SwitchEnableRuleBookAction;
+type Action = ReceiveInitialDataAction | LoadHeroAction | CreateHeroAction | SetHigherParadeValuesAction | SwitchAttributeValueLimitAction | SwitchEnableAllRuleBooksAction | SwitchEnableRuleBookAction | SwitchEnableLanguageSpecializationsAction;
 
 export interface RulesState {
 	higherParadeValues: number;
 	attributeValueLimit: boolean;
 	enableAllRuleBooks: boolean;
 	enabledRuleBooks: Set<string>;
+	enableLanguageSpecializations: boolean;
 }
 
 const initialState: RulesState = {
 	higherParadeValues: 0,
 	attributeValueLimit: false,
 	enableAllRuleBooks: false,
-	enabledRuleBooks: new Set()
+	enabledRuleBooks: new Set(),
+	enableLanguageSpecializations: false,
 };
 
 export function rules(state: RulesState = initialState, action: Action): RulesState {
 	switch (action.type) {
-		case ActionTypes.RECEIVE_INITIAL_DATA:
-			return {
-				higherParadeValues: 0,
-				attributeValueLimit: false,
-				enableAllRuleBooks: false,
-				enabledRuleBooks: new Set()
-			};
-
 		case ActionTypes.CREATE_HERO: {
 			const { enableAllRuleBooks, enabledRuleBooks } = action.payload;
 			return {
-				higherParadeValues: 0,
-				attributeValueLimit: false,
+				...initialState,
 				enableAllRuleBooks,
 				enabledRuleBooks,
 			};
@@ -41,7 +34,7 @@ export function rules(state: RulesState = initialState, action: Action): RulesSt
 
 		case ActionTypes.LOAD_HERO:
 			return {
-				...state,
+				...initialState,
 				...action.payload.data.rules,
 				enabledRuleBooks: new Set(action.payload.data.rules.enabledRuleBooks)
 			};
@@ -64,6 +57,9 @@ export function rules(state: RulesState = initialState, action: Action): RulesSt
 			}
 			return { ...state, enabledRuleBooks: new Set([...state.enabledRuleBooks, id]) };
 		}
+
+		case ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS:
+			return { ...state, enableLanguageSpecializations: !state.enableLanguageSpecializations };
 
 		default:
 			return state;

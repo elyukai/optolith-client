@@ -82,7 +82,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
         }
       }
       else {
-        const { id, active, sid, sid2 } = req;
+        const { id, active, sid, sid2, tier } = req;
         if (sid !== 'GR') {
           if (Array.isArray(id)) {
             let add: ActiveOptionalDependency = { origin: sourceId };
@@ -90,7 +90,7 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
               add = { active, ...add };
             }
             else {
-              add = { sid, sid2, ...add };
+              add = { sid, sid2, tier, ...add };
             }
             id.forEach(e => {
               const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
@@ -105,10 +105,10 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
               add = active;
             }
             else if (Array.isArray(sid)) {
-              add = { active, sid };
+              add = { active, sid, tier };
             }
             else {
-              add = { sid, sid2 };
+              add = { sid, sid2, tier };
             }
             const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
             instances = setNewStateItem(instances, id, addDependency(requiredAbility, add));
@@ -156,7 +156,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
         }
       }
       else {
-        const { id, active, sid, sid2 } = req;
+        const { id, active, sid, sid2, tier } = req;
         if (sid !== 'GR') {
           if (Array.isArray(id)) {
             let add: ActiveOptionalDependency = { origin: sourceId };
@@ -164,7 +164,7 @@ export function removeDependencies(state: DependentInstancesState, requirements:
               add = { active, ...add };
             }
             else {
-              add = { sid, sid2, ...add };
+              add = { sid, sid2, tier, ...add };
             }
             id.forEach(e => {
               const requiredAbility = getLatest(state, instances, e) as AbilityInstanceExtended;
@@ -179,10 +179,10 @@ export function removeDependencies(state: DependentInstancesState, requirements:
               add = active;
             }
             else if (Array.isArray(sid)) {
-              add = { active, sid };
+              add = { active, sid, tier };
             }
             else {
-              add = { sid, sid2 };
+              add = { sid, sid2, tier };
             }
             const requiredAbility = getLatest(state, instances, id) as AbilityInstanceExtended;
             instances = setNewStateItem(instances, id, removeDependency(requiredAbility, add));

@@ -375,6 +375,7 @@
 	"rules.optionalrules": "Optionalregeln",
 	"rules.optionalrules.maximumattributescores": "Eigenschaftsobergrenze",
 	"rules.optionalrules.higherdefensestats": "Höhere Verteidigungswerte",
+	"rules.optionalrules.languagespecializations": "Sprachspezialisierungen",
 	"secondaryattributes.lp.name": "Lebensenergie",
 	"secondaryattributes.lp.short": "LE",
 	"secondaryattributes.lp.calc": "(GW der Spezies + KO + KO)",

@@ -126,6 +126,11 @@ export function isActivatable(state: CurrentHeroInstanceState, obj: ActivatableI
       return false;
     }
   }
+  else if (obj.id === 'SA_699') {
+    if (state.rules.enableLanguageSpecializations === false) {
+      return false;
+    }
+  }
   return validate(state, getFlatFirstTierPrerequisites(obj.reqs), obj.id, pact);
 }
 
@@ -466,6 +471,10 @@ export function getGeneratedPrerequisites(obj: ActivatableInstance, { sid }: Act
       adds.push(...selectionItem.prerequisites);
       break;
     }
+    case 'SA_699': {
+      adds.push({ id: 'SA_29', active: true, sid, tier: 3 });
+      break;
+    }
   }
   return adds;
 }
@@ -507,14 +516,10 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
 
   let disabled = !isDeactivatable(state, instance, sid, pact);
   let maxTier: number | undefined;
-  let minTier: number | undefined;
+  let minTier = getMinTier(dependencies, sid);
 
   if (!Array.isArray(reqs)) {
     maxTier = validateTier(state, reqs, dependencies, id, pact);
-  }
-
-  if (!Array.isArray(reqs)) {
-    minTier = getMinTier(dependencies);
   }
 
   switch (id) {
@@ -911,6 +916,12 @@ export function getName(obj: ActiveObjectWithId, wiki: WikiState, locale?: UIMes
       const selectionItem = findSelectOption(instance, sid);
       const targetInstance = selectionItem && (id === 'SA_414' ? wiki.spells.get(selectionItem.target!) : wiki.liturgicalChants.get(selectionItem.target!));
       addName = targetInstance && `${targetInstance.name}: ${selectionItem!.name}`;
+      break;
+    }
+    case 'SA_699': {
+      const languages = wiki.specialAbilities.get('SA_29')!;
+      const selectionItem = findSelectOption(languages, sid);
+      addName = selectionItem && `${selectionItem.name}: ${typeof sid2 === 'string' ? sid2 : selectionItem.spec![sid2! - 1]}`;
       break;
     }
 
@@ -1349,6 +1360,20 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
         const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
         if (adv[1] <= 25 && disadv[1] <= 25 && magicalTraditions.length === 0) {
           return { id, name, cost, instance: entry };
+        }
+        break;
+      }
+      case 'SA_699': {
+        const languages = dependent.specialAbilities.get('SA_29')!;
+        const availableLanguages = languages.active.reduce<number[]>((arr, obj) => {
+          if (obj.tier === 3 || obj.tier === 4) {
+            return [ ...arr, obj.sid as number ];
+          }
+          return arr;
+        }, []);
+        const sel = languages.sel!.filter(e => availableLanguages.includes(e.id as number) && !entry.active.some(a => a.sid === (e.id as number)));
+        if (sel.length > 0) {
+          return { id, name, sel, cost, instance: entry };
         }
         break;
       }

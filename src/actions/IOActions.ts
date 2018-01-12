@@ -24,6 +24,10 @@ function getAppDataPath(): string {
 	return remote.app.getPath('userData');
 }
 
+function getRoot(): string {
+	return remote.app.getAppPath();
+}
+
 export function requestClose(optionalCall?: () => void): AsyncAction {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -88,50 +92,11 @@ export function requestInitialData(): AsyncAction<Promise<void>> {
 
 export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 	return async dispatch => {
-		const appPath = getAppDataPath();
-		const root = remote.app.getAppPath();
-		let tables: RawTables | undefined;
-		let config: Config | undefined;
-		let heroes: RawHerolist | undefined;
-		let locales: ToListById<RawLocale> | undefined;
-		try {
-			const result = await readFile(join(root, 'app', 'data.json'));
-			tables = JSON.parse(result as string);
-		}
-		catch (error) {
-			dispatch(addAlert({
-				message: `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`,
-				title: 'Error'
-			}));
-		}
-		try {
-			const result = await readFile(join(appPath, 'config.json'));
-			config = JSON.parse(result as string);
-		}
-		catch (error) {
-			config = undefined;
-		}
-		try {
-			const result = await readFile(join(appPath, 'heroes.json'));
-			heroes = JSON.parse(result as string);
-		}
-		catch (error) {
-			heroes = undefined;
-		}
-		try {
-			const result = await readDir(join(root, 'app', 'locales'));
-			locales = {};
-			for (const file of result) {
-				const locale = await readFile(join(root, 'app', 'locales', file));
-				locales[file.split('.')[0]] = JSON.parse(locale as string);
-			}
-		}
-		catch (error) {
-			dispatch(addAlert({
-				message: `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`,
-				title: 'Error'
-			}));
-		}
+		const tables = await dispatch(getDataTables());
+		const config = await dispatch(getConfig());
+		const heroes = await dispatch(getHeroes());
+		const locales = await dispatch(getLocale());
+
 		if (tables && locales) {
 			return {
 				tables,
@@ -141,6 +106,71 @@ export function getInitialData(): AsyncAction<Promise<Raw | undefined>> {
 			};
 		}
 		return;
+	};
+}
+
+function getDataTables(): AsyncAction<Promise<RawTables | undefined>> {
+	return async dispatch => {
+		const root = getRoot();
+		try {
+			const result = await readFile(join(root, 'app', 'data.json'));
+			return JSON.parse(result as string) as RawTables;
+		}
+		catch (error) {
+			dispatch(addAlert({
+				message: `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`,
+				title: 'Error'
+			}));
+			return;
+		}
+	};
+}
+
+function getConfig(): AsyncAction<Promise<Config | undefined>> {
+	return async () => {
+		const appPath = getAppDataPath();
+		try {
+			const result = await readFile(join(appPath, 'config.json'));
+			return JSON.parse(result as string) as Config;
+		}
+		catch (error) {
+			return;
+		}
+	};
+}
+
+function getHeroes(): AsyncAction<Promise<RawHerolist | undefined>> {
+	return async () => {
+		const appPath = getAppDataPath();
+		try {
+			const result = await readFile(join(appPath, 'heroes.json'));
+			return JSON.parse(result as string) as RawHerolist;
+		}
+		catch (error) {
+			return;
+		}
+	};
+}
+
+function getLocale(): AsyncAction<Promise<ToListById<RawLocale> | undefined>> {
+	return async dispatch => {
+		const root = getRoot();
+		try {
+			const result = await readDir(join(root, 'app', 'locales'));
+			const locales: ToListById<RawLocale> = {};
+			for (const file of result) {
+				const locale = await readFile(join(root, 'app', 'locales', file));
+				locales[file.split('.')[0]] = JSON.parse(locale as string);
+			}
+			return locales;
+		}
+		catch (error) {
+			dispatch(addAlert({
+				message: `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify(error)})`,
+				title: 'Error'
+			}));
+			return;
+		}
 	};
 }
 

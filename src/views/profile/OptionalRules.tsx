@@ -14,6 +14,7 @@ export interface OptionalRulesStateProps {
 	rules: RulesState;
 	sortedBooks: Book[];
 	ruleBooksEnabled: boolean | Set<string>;
+	isEnableLanguageSpecializationsDeactivatable: boolean;
 }
 
 export interface OptionalRulesDispatchProps {
@@ -21,12 +22,13 @@ export interface OptionalRulesDispatchProps {
 	changeHigherParadeValues(id: number): void;
 	switchEnableAllRuleBooks(): void;
 	switchEnableRuleBook(id: string): void;
+	switchEnableLanguageSpecializations(): void;
 }
 
 export type OptionalRulesProps = OptionalRulesStateProps & OptionalRulesDispatchProps & OptionalRulesOwnProps;
 
 export function OptionalRules(props: OptionalRulesProps) {
-	const { sortedBooks, changeAttributeValueLimit, changeHigherParadeValues, locale, rules: { attributeValueLimit, higherParadeValues }, ruleBooksEnabled, switchEnableAllRuleBooks, switchEnableRuleBook } = props;
+	const { sortedBooks, changeAttributeValueLimit, changeHigherParadeValues, locale, rules: { attributeValueLimit, higherParadeValues, enableLanguageSpecializations }, ruleBooksEnabled, switchEnableAllRuleBooks, switchEnableRuleBook, isEnableLanguageSpecializationsDeactivatable, switchEnableLanguageSpecializations } = props;
 
 	return (
 		<div className="page" id="optional-rules">
@@ -67,6 +69,12 @@ export function OptionalRules(props: OptionalRulesProps) {
 					checked={attributeValueLimit}
 					onClick={changeAttributeValueLimit}
 					label={_translate(locale, 'rules.optionalrules.maximumattributescores')}
+					/>
+				<Checkbox
+					checked={enableLanguageSpecializations}
+					onClick={switchEnableLanguageSpecializations}
+					label={_translate(locale, 'rules.optionalrules.languagespecializations')}
+					disabled={isEnableLanguageSpecializationsDeactivatable}
 					/>
 			</Scroll>
 		</div>

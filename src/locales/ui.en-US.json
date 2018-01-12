@@ -373,6 +373,7 @@
 	"rules.optionalrules": "Optional Rules",
 	"rules.optionalrules.maximumattributescores": "Maximum Attribute Scores",
 	"rules.optionalrules.higherdefensestats": "Higher Defense Stats",
+	"rules.optionalrules.languagespecializations": "Language Specializations",
 	"secondaryattributes.lp.name": "Life Points",
 	"secondaryattributes.lp.short": "LP",
 	"secondaryattributes.lp.calc": "(Race Base Stat + CON + CON)",

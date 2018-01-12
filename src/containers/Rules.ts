@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as RulesActions from '../actions/RulesActions';
 import { AppState } from '../reducers/app';
 import { getSortedBooks } from '../selectors/bookSelectors';
-import { getRuleBooksEnabled } from '../selectors/rulesSelectors';
+import { getRuleBooksEnabled, isEnableLanguageSpecializationsDeactivatable } from '../selectors/rulesSelectors';
 import { getRules } from '../selectors/stateSelectors';
 import { OptionalRules, OptionalRulesDispatchProps, OptionalRulesOwnProps, OptionalRulesStateProps } from '../views/profile/OptionalRules';
 
@@ -11,7 +11,8 @@ function mapStateToProps(state: AppState, props?: OptionalRulesOwnProps) {
 	return {
 		rules: getRules(state),
 		sortedBooks: getSortedBooks(state, props!),
-		ruleBooksEnabled: getRuleBooksEnabled(state)
+		ruleBooksEnabled: getRuleBooksEnabled(state),
+		isEnableLanguageSpecializationsDeactivatable: isEnableLanguageSpecializationsDeactivatable(state),
 	};
 }
 
@@ -28,7 +29,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		},
 		switchEnableRuleBook(id: string) {
 			dispatch(RulesActions.switchEnableRuleBook(id));
-		}
+		},
+		switchEnableLanguageSpecializations() {
+			dispatch(RulesActions.switchEnableLanguageSpecializations());
+		},
 	};
 }
 

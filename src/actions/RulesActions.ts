@@ -51,3 +51,13 @@ export function switchEnableRuleBook(id: string): SwitchEnableRuleBookAction {
 		}
 	};
 }
+
+export interface SwitchEnableLanguageSpecializationsAction {
+	type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS;
+}
+
+export function switchEnableLanguageSpecializations(): SwitchEnableLanguageSpecializationsAction {
+	return {
+		type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS
+	};
+}

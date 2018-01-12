@@ -201,8 +201,15 @@ export function getFlatFirstTierPrerequisites(prerequisites: Map<number, AllRequ
  * Get minimum valid tier.
  * @param dependencies The current instance dependencies.
  */
-export function getMinTier(dependencies: ActivatableInstanceDependency[]): number | undefined {
-  return dependencies.reduce<number | undefined>((min, dependency) => typeof dependency === 'object' && typeof dependency.tier === 'number' && dependency.tier > (min || 0) ? dependency.tier : min, undefined);
+export function getMinTier(dependencies: ActivatableInstanceDependency[], sid?: string | number): number | undefined {
+  return dependencies.reduce<number | undefined>((min, dependency) => {
+    if (typeof dependency === 'object' && typeof dependency.tier === 'number' && dependency.tier > (min || 0)) {
+      if (dependency.sid === undefined || dependency.sid === sid) {
+        return dependency.tier;
+      }
+    }
+    return min;
+  }, undefined);
 }
 
 /**

@@ -274,6 +274,21 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				args.sel = selected;
 				sel = sortObjects([...skills.values()], locale.id);
 				break;
+			case 'SA_699':
+				args.sel = selected;
+				if (typeof selected === 'number') {
+					const selectedObject = sel!.find(e => e.id === selected)!;
+					if (typeof selectedObject.specInput === 'string') {
+						input = selectedObject.specInput;
+						args.sel2 = inputText;
+					}
+					else {
+						sel2 = sortObjects(selectedObject.spec!.map((name, i) => ({ id: i + 1, name })), locale.id);
+						args.sel2 = selected2;
+					}
+				}
+				currentCost = cost as number;
+				break;
 			default:
 				if (tiers && typeof selectedTier === 'number') {
 					if (selectedTier > 0) {

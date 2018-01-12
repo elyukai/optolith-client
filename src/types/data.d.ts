@@ -576,6 +576,8 @@ export interface SelectionObject {
 	prerequisites?: AllRequirementTypes[];
 	target?: string;
 	tier?: number;
+	spec?: string[];
+	specInput?: string;
 }
 
 export interface ActivatableRequirementObject {

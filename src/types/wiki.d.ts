@@ -294,6 +294,8 @@ export interface SelectionObject {
 	req?: AllRequirementTypes[];
 	prerequisites?: AllRequirementTypes[];
 	target?: string;
+	spec?: string[];
+	specInput?: string;
 }
 
 export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
