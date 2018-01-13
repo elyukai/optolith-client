@@ -29,7 +29,7 @@ export interface ActivatableRemoveListItemProps {
 	isUntypical?: boolean;
 	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
-	selectForInfo?(id: string): void;
+	selectForInfo(id: string): void;
 }
 
 export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps> {
@@ -41,7 +41,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 	removeFromList = (args: DeactivateArgs) => this.props.removeFromList(args);
 
 	shouldComponentUpdate(nextProps: ActivatableRemoveListItemProps) {
-		return this.props.item.tier !== nextProps.item.tier || this.props.item.cost !== nextProps.item.cost || this.props.isRemovingEnabled === !nextProps.isRemovingEnabled || this.props.item.minTier !== nextProps.item.minTier || this.props.item.maxTier !== nextProps.item.maxTier;
+		return this.props.item.tier !== nextProps.item.tier || this.props.item.cost !== nextProps.item.cost || this.props.isRemovingEnabled === !nextProps.isRemovingEnabled || this.props.item.minTier !== nextProps.item.minTier || this.props.item.maxTier !== nextProps.item.maxTier || this.props.item.disabled !== nextProps.item.disabled;
 	}
 
 	render() {
@@ -96,7 +96,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 						disabled={disabled}
 						flat
 						/>}
-					<IconButton icon="&#xE912;" disabled={!selectForInfo} onClick={() => selectForInfo && selectForInfo(id)} flat />
+					<IconButton icon="&#xE912;" onClick={() => selectForInfo(id)} flat />
 				</ListItemButtons>
 			</ListItem>
 		);

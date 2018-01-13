@@ -32,6 +32,10 @@ export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
 		}
 	}
 
+	if (currentObject.tradition.includes(14)) {
+		traditionsMap.set(14, []);
+	}
+
 	const traditions = sortStrings([...traditionsMap].map(e => {
 		if (getAspectsOfTradition(e[0]).length < 2) {
 			return _translate(locale, 'liturgies.view.traditions')[e[0] - 1];

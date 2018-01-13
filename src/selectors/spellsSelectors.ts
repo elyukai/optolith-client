@@ -1,19 +1,19 @@
 import { createSelector } from 'reselect';
 import { CANTRIPS, SPELLS } from '../constants/Categories';
 import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
-import { Spell } from '../types/view.d';
+import { Spell, SpellWithRequirements } from '../types/view.d';
 import { isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { validate } from '../utils/RequirementUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
+import { isDecreasable, isIncreasable, isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
 import { getStart, getStartEl } from './elSelectors';
 import { getValidPact } from './pactSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
-import { getAdvantages, getCantrips, getDisadvantages, getElState, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText } from './stateSelectors';
+import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getElState, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
 export const getMagicalTraditionsResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
@@ -159,8 +159,30 @@ export const getInactiveSpells = createSelector(
 
 export const getActiveSpells = createSelector(
 	getSpellsAndCantrips,
-	allEntries => {
-		return allEntries.filter(e => e.active === true);
+	getStartEl,
+	getPhase,
+	getAttributes,
+	mapGetToSlice(getAdvantages, 'ADV_16'),
+	mapGetToSlice(getSpecialAbilities, 'SA_72'),
+	getWiki,
+	getSpells,
+	(allEntries, el, phase, attributes, exceptionalSkill, propertyKnowledge, wiki, spells) => {
+		const list: (SpellWithRequirements | CantripInstance)[] = [];
+		for (const entry of allEntries) {
+			if (entry.active === true) {
+				if (entry.category === CANTRIPS) {
+					list.push(entry)
+				}
+				else {
+					list.push({
+						...entry,
+						isIncreasable: isIncreasable(entry, el, phase, attributes, exceptionalSkill!, propertyKnowledge!),
+						isDecreasable: isDecreasable(wiki, entry, spells, propertyKnowledge!),
+					});
+				}
+			}
+		}
+		return list;
 	}
 );
 

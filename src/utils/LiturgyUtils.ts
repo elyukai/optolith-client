@@ -1,11 +1,11 @@
 import { LITURGIES } from '../constants/Categories';
-import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { get } from '../selectors/dependentInstancesSelectors';
-import { getStart } from '../selectors/elSelectors';
+import { WikiState } from '../reducers/wikiReducer';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/reusable.d';
+import { ExperienceLevel, SpecialAbility } from '../types/wiki';
 import { getSids } from './ActivatableUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
+import { getWikiEntry } from './WikiUtils';
 
 export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyInstance | BlessingInstance): boolean {
 	const isBaseTradition = obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
@@ -13,36 +13,38 @@ export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyIn
 	return isBaseTradition && isSpecial;
 }
 
-export function isIncreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
-	const { dependent } = state;
+export function isIncreasable(tradition: SpecialAbilityInstance, obj: LiturgyInstance, startEL: ExperienceLevel, phase: number, attributes: Map<string, AttributeInstance>, exceptionalSkill: AdvantageInstance, aspectKnowledge: SpecialAbilityInstance): boolean {
 	let max = 0;
-	const bonus = (get(dependent, 'ADV_16') as AdvantageInstance).active.filter(e => e === obj.id).length;
+	const bonus = exceptionalSkill.active.filter(e => e === obj.id).length;
 
-	if (state.phase < 3) {
-		max = getStart(state.el).maxSkillRating;
+	if (phase < 3) {
+		max = startEL.maxSkillRating;
 	}
 	else {
-		const checkValues = obj.check.map((attr, i) => i > 2 ? 0 : (get(dependent, attr) as AttributeInstance).value);
+		const checkValues = obj.check.map(id => attributes.get(id)!.value);
 		max = Math.max(...checkValues) + 2;
 	}
 
-	const tradition = get(dependent, 'SA_86') as SpecialAbilityInstance;
-	const aspectKnowledge = get(dependent, 'SA_87') as SpecialAbilityInstance;
-	if (!getSids(aspectKnowledge).some(e => obj.aspects.includes(e as number)) && !getSids(tradition).includes(13)) {
+	const activeAspects = getSids(aspectKnowledge) as number[];
+	const hasActiveAspect = activeAspects.some(e => obj.aspects.includes(e));
+	const noNamelessTradition = tradition.id !== 'SA_693';
+
+	if (!hasActiveAspect && noNamelessTradition) {
 		max = Math.min(14, max);
 	}
 
 	return obj.value < max + bonus;
 }
 
-export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInstance): boolean {
-	const { dependent } = state;
+export function isDecreasable(wiki: WikiState, obj: LiturgyInstance, liturgicalChants: Map<string, LiturgyInstance>, aspectKnowledge: SpecialAbilityInstance): boolean {
 	const dependencies = obj.dependencies.map(e => {
 		if (typeof e === 'object') {
-			const target = get(dependent, e.origin) as SpecialAbilityInstance;
-			const req = getFlatPrerequisites(target.reqs).find(r => typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin)) as RequiresIncreasableObject | undefined;
+			const target = getWikiEntry(wiki, e.origin) as SpecialAbility;
+			const req = getFlatPrerequisites(target.prerequisites).find(r => {
+				return typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin);
+			}) as RequiresIncreasableObject | undefined;
 			if (req) {
-				const resultOfAll = (req.id as string[]).map(id => (get(dependent, id) as LiturgyInstance).value >= e.value);
+				const resultOfAll = (req.id as string[]).map(id => liturgicalChants.get(id)!.value >= e.value);
 				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
 			}
 			return 0;
@@ -52,9 +54,9 @@ export function isDecreasable(state: CurrentHeroInstanceState, obj: LiturgyInsta
 
 	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
 
-	const activeAspectKnowledge = getSids(get(dependent, 'SA_87') as SpecialAbilityInstance) as number[];
+	const activeAspectKnowledge = getSids(aspectKnowledge) as number[];
 	if (activeAspectKnowledge.some(e => obj.aspects.includes(e))) {
-		const counter = getAspectCounter(dependent.liturgies);
+		const counter = getAspectCounter(liturgicalChants);
 		const countedLowestWithProperty = obj.aspects.reduce((n, aspect) => {
 			const counted = counter.get(aspect);
 			if (activeAspectKnowledge.includes(aspect) && typeof counted === 'number') {

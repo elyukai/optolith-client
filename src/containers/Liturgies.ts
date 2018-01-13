@@ -3,7 +3,6 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as LiturgiesActions from '../actions/LiturgiesActions';
 import { AppState } from '../reducers/app';
-import { getPresent } from '../selectors/currentHeroSelectors';
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText, getPhase } from '../selectors/stateSelectors';
@@ -15,7 +14,6 @@ function mapStateToProps(state: AppState) {
 	return {
 		attributes: getAttributes(state),
 		addChantsDisabled: isActivationDisabled(state),
-		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		isRemovingEnabled: isRemovingEnabled(state),

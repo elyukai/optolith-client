@@ -5,10 +5,11 @@ import * as Data from '../types/data.d';
 import { convertPerTierCostToFinalCost, getActiveFromState, getDeactiveView, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
+import { getStateKeyByCategory } from '../utils/IDUtils';
 import { validateAddingExtendedSpecialAbilities } from '../utils/RequirementUtils';
 import { filterByInstancePropertyAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { get, getAllByCategory, getMapByCategory } from './dependentInstancesSelectors';
+import { getAllByCategory, getMapByCategory } from './dependentInstancesSelectors';
 import { getBlessedTradition } from './liturgiesSelectors';
 import { getMessages } from './localeSelectors';
 import { getValidPact } from './pactSelectors';
@@ -65,21 +66,23 @@ export const getActive = <T extends Categories.ACTIVATABLE>(category: T, addTier
           minTier
         } = getValidation(activeObject, state, pact);
 
-        const instance = get(dependent, id) as Data.ActivatableInstance;
+        const instance = dependent[getStateKeyByCategory(category)].get(id);
 
-        finalEntries.push({
-          id,
-          index,
-          name: combinedName,
-          cost: currentCost,
-          disabled,
-          instance,
-          maxTier,
-          minTier,
-          tier,
-          customCost: typeof cost === 'number',
-          tierName
-        });
+        if (typeof instance === 'object') {
+          finalEntries.push({
+            id,
+            index,
+            name: combinedName,
+            cost: currentCost,
+            disabled,
+            instance,
+            maxTier,
+            minTier,
+            tier,
+            customCost: typeof cost === 'number',
+            tierName
+          });
+        }
       }
 
       return finalEntries;

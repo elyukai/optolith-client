@@ -16,12 +16,12 @@ import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import * as Categories from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
-import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
+import { SpellWithRequirements } from '../../types/view';
 import { DCIds } from '../../utils/derivedCharacteristics';
 import { _translate } from '../../utils/I18n';
-import { isDecreasable, isIncreasable, isOwnTradition } from '../../utils/SpellUtils';
+import { isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
 
 export interface SpellsOwnProps {
@@ -33,10 +33,9 @@ export interface SpellsStateProps {
 	books: Map<string, Book>;
 	derivedCharacteristics: Map<DCIds, SecondaryAttribute>;
 	addSpellsDisabled: boolean;
-	currentHero: CurrentHeroInstanceState;
 	enableActiveItemHints: boolean;
 	inactiveList: (SpellInstance | CantripInstance)[];
-	activeList: (SpellInstance | CantripInstance)[];
+	activeList: (SpellWithRequirements | CantripInstance)[];
 	traditions: SpecialAbilityInstance[];
 	isRemovingEnabled: boolean;
 	sortOrder: string;
@@ -80,7 +79,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpellsState);
 
 	render() {
-		const { addSpellsDisabled, addPoint, addToList, addCantripToList, currentHero, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditions, filterText, inactiveFilterText } = this.props;
+		const { addSpellsDisabled, addPoint, addToList, addCantripToList, enableActiveItemHints, attributes, derivedCharacteristics, inactiveList, activeList, locale, isRemovingEnabled, removeFromList, removeCantripFromList, removePoint, setSortOrder, sortOrder, switchActiveItemHints, traditions, filterText, inactiveFilterText } = this.props;
 		const { showAddSlidein } = this.state;
 
 		return (
@@ -253,10 +252,10 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 										);
 									}
 
-									const { check, checkmod, ic, value } = obj;
+									const { check, checkmod, ic, value, isIncreasable, isDecreasable } = obj;
 
 									const other = {
-										addDisabled: !isIncreasable(currentHero, obj),
+										addDisabled: !isIncreasable,
 										addPoint: addPoint.bind(null, obj.id),
 										check,
 										checkmod,
@@ -271,7 +270,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											id={obj.id}
 											name={name}
 											removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind(null, obj.id) : removePoint.bind(null, obj.id) : undefined}
-											removeDisabled={!isDecreasable(currentHero, obj)}
+											removeDisabled={!isDecreasable}
 											addFillElement
 											insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
 											attributes={attributes}

@@ -1,5 +1,5 @@
 import * as Categories from '../constants/Categories';
-import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject } from './data.d';
+import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject, LiturgyInstance, SpellInstance } from './data.d';
 import { ProfessionRequiresIncreasableObject, ProfessionRequiresActivatableObject } from './reusable.d';
 import { ProfessionVariantSelections } from './wiki';
 
@@ -173,6 +173,11 @@ export interface Liturgy {
 	category: Categories.LITURGIES;
 }
 
+export interface LiturgicalChantWithRequirements extends LiturgyInstance {
+	isIncreasable: boolean;
+	isDecreasable: boolean;
+}
+
 export interface Spell {
 	id: string;
 	name: string;
@@ -194,6 +199,11 @@ export interface Spell {
 	target: string;
 	src: SourceLink[];
 	category: Categories.SPELLS;
+}
+
+export interface SpellWithRequirements extends SpellInstance {
+	isIncreasable: boolean;
+	isDecreasable: boolean;
 }
 
 export interface Item {

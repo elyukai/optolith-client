@@ -16,7 +16,7 @@ import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { mergeIntoState, setStateItem } from './ListUtils';
-import { getTraditionOfAspect } from './LiturgyUtils';
+import { getTraditionOfAspect, isOwnTradition } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
 import { getWikiEntry } from './WikiUtils';
@@ -157,6 +157,17 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
     const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 13);
     const totalActive = allStyles.filter(e => isActive(e)).length;
     if (totalActive >= 2) {
+      return false;
+    }
+  }
+  else if (obj.id === 'SA_623' || obj.id === 'SA_625' || obj.id === 'SA_632') {
+    const liturgicalChants = [...dependent.liturgies.values()];
+    const activeLiturgicalChants = liturgicalChants.filter(e => e.active);
+    const blessedTradition = getBlessedTraditionResultFunc(dependent.specialAbilities);
+    const hasUnfamiliarEntry = !!blessedTradition && activeLiturgicalChants.some(e => {
+      return !isOwnTradition(blessedTradition!, e);
+    });
+    if (hasUnfamiliarEntry) {
       return false;
     }
   }

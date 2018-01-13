@@ -118,72 +118,82 @@ export function getWikiStateKeyById(id: string): keyof WikiState | undefined {
 	}
 }
 
-export function getStateKeyByCategory(category: Categories.Category): DependentInstancesStateKeysForMaps {
-	switch (category) {
-		case Categories.ADVANTAGES:
-			return 'advantages';
-		case Categories.ATTRIBUTES:
-			return 'attributes';
-		case Categories.BLESSINGS:
-			return 'blessings';
-		case Categories.CANTRIPS:
-			return 'cantrips';
-		case Categories.COMBAT_TECHNIQUES:
-			return 'combatTechniques';
-		case Categories.CULTURES:
-			return 'cultures';
-		case Categories.DISADVANTAGES:
-			return 'disadvantages';
-		case Categories.LITURGIES:
-			return 'liturgies';
-		case Categories.PROFESSIONS:
-			return 'professions';
-		case Categories.PROFESSION_VARIANTS:
-			return 'professionVariants';
-		case Categories.RACES:
-			return 'races';
-		case Categories.RACE_VARIANTS:
-			return 'raceVariants';
-		case Categories.SPECIAL_ABILITIES:
-			return 'specialAbilities';
-		case Categories.SPELLS:
-			return 'spells';
-		case Categories.TALENTS:
-			return 'talents';
-	}
+interface StateKeyByCategory {
+	'ADVANTAGES': 'advantages';
+	'ATTRIBUTES': 'attributes';
+	'BLESSINGS': 'blessings';
+	'CANTRIPS': 'cantrips';
+	'COMBAT_TECHNIQUES': 'combatTechniques';
+	'CULTURES': 'cultures';
+	'DISADVANTAGES': 'disadvantages';
+	'LITURGIES': 'liturgies';
+	'PROFESSIONS': 'professions';
+	'PROFESSION_VARIANTS': 'professionVariants';
+	'RACES': 'races';
+	'RACE_VARIANTS': 'raceVariants';
+	'SPECIAL_ABILITIES': 'specialAbilities';
+	'SPELLS': 'spells';
+	'TALENTS': 'talents';
 }
 
-export function getWikiStateKeyByCategory(category: Categories.Category): keyof WikiState {
-	switch (category) {
-		case Categories.ADVANTAGES:
-			return 'advantages';
-		case Categories.ATTRIBUTES:
-			return 'attributes';
-		case Categories.BLESSINGS:
-			return 'blessings';
-		case Categories.CANTRIPS:
-			return 'cantrips';
-		case Categories.COMBAT_TECHNIQUES:
-			return 'combatTechniques';
-		case Categories.CULTURES:
-			return 'cultures';
-		case Categories.DISADVANTAGES:
-			return 'disadvantages';
-		case Categories.LITURGIES:
-			return 'liturgicalChants';
-		case Categories.PROFESSIONS:
-			return 'professions';
-		case Categories.PROFESSION_VARIANTS:
-			return 'professionVariants';
-		case Categories.RACES:
-			return 'races';
-		case Categories.RACE_VARIANTS:
-			return 'raceVariants';
-		case Categories.SPECIAL_ABILITIES:
-			return 'specialAbilities';
-		case Categories.SPELLS:
-			return 'spells';
-		case Categories.TALENTS:
-			return 'skills';
-	}
+const stateKeyByCategory: StateKeyByCategory = {
+	'ADVANTAGES': 'advantages',
+	'ATTRIBUTES': 'attributes',
+	'BLESSINGS': 'blessings',
+	'CANTRIPS': 'cantrips',
+	'COMBAT_TECHNIQUES': 'combatTechniques',
+	'CULTURES': 'cultures',
+	'DISADVANTAGES': 'disadvantages',
+	'LITURGIES': 'liturgies',
+	'PROFESSIONS': 'professions',
+	'PROFESSION_VARIANTS': 'professionVariants',
+	'RACES': 'races',
+	'RACE_VARIANTS': 'raceVariants',
+	'SPECIAL_ABILITIES': 'specialAbilities',
+	'SPELLS': 'spells',
+	'TALENTS': 'talents',
+}
+
+export function getStateKeyByCategory<T extends Categories.Category>(category: T): StateKeyByCategory[T] {
+	return stateKeyByCategory[category];
+}
+
+interface WikiKeyByCategory {
+	'ADVANTAGES': 'advantages';
+	'ATTRIBUTES': 'attributes';
+	'BLESSINGS': 'blessings';
+	'CANTRIPS': 'cantrips';
+	'COMBAT_TECHNIQUES': 'combatTechniques';
+	'CULTURES': 'cultures';
+	'DISADVANTAGES': 'disadvantages';
+	'LITURGIES': 'liturgicalChants';
+	'PROFESSIONS': 'professions';
+	'PROFESSION_VARIANTS': 'professionVariants';
+	'RACES': 'races';
+	'RACE_VARIANTS': 'raceVariants';
+	'SPECIAL_ABILITIES': 'specialAbilities';
+	'SPELLS': 'spells';
+	'TALENTS': 'skills';
+}
+
+const wikiKeyByCategory: WikiKeyByCategory = {
+	'ADVANTAGES': 'advantages',
+	'ATTRIBUTES': 'attributes',
+	'BLESSINGS': 'blessings',
+	'CANTRIPS': 'cantrips',
+	'COMBAT_TECHNIQUES': 'combatTechniques',
+	'CULTURES': 'cultures',
+	'DISADVANTAGES': 'disadvantages',
+	'LITURGIES': 'liturgicalChants',
+	'PROFESSIONS': 'professions',
+	'PROFESSION_VARIANTS': 'professionVariants',
+	'RACES': 'races',
+	'RACE_VARIANTS': 'raceVariants',
+	'SPECIAL_ABILITIES': 'specialAbilities',
+	'SPELLS': 'spells',
+	'TALENTS': 'skills',
+}
+
+export function getWikiStateKeyByCategory<T extends Categories.Category>(category: T): WikiKeyByCategory[T] {
+	return wikiKeyByCategory[category];
 }
