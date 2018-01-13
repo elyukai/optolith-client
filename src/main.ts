@@ -54,37 +54,39 @@ function createWindow() {
 			mainWindow!.maximize();
 		}
 
-		if (process.platform !== 'linux') {
-			autoUpdater.checkForUpdates();
-
-			autoUpdater.addListener('update-available', (info: UpdateInfo) => {
-				mainWindow!.webContents.send('update-available', info);
-				autoUpdater.removeAllListeners('update-not-available');
-			});
-
-			ipcMain.addListener('download-update', () => {
-				autoUpdater.downloadUpdate();
-			});
-
-			ipcMain.addListener('check-for-updates', () => {
+		ipcMain.addListener('loading-done', () => {
+			if (process.platform !== 'linux') {
 				autoUpdater.checkForUpdates();
-				autoUpdater.once('update-not-available', () => {
-					mainWindow!.webContents.send('update-not-available');
+
+				autoUpdater.addListener('update-available', (info: UpdateInfo) => {
+					mainWindow!.webContents.send('update-available', info);
+					autoUpdater.removeAllListeners('update-not-available');
 				});
-			});
 
-			autoUpdater.signals.progress(progressObj => {
-				mainWindow!.webContents.send('download-progress', progressObj);
-			});
+				ipcMain.addListener('download-update', () => {
+					autoUpdater.downloadUpdate();
+				});
 
-			autoUpdater.addListener('error', (err: Error) => {
-				mainWindow!.webContents.send('auto-updater-error', err);
-			});
+				ipcMain.addListener('check-for-updates', () => {
+					autoUpdater.checkForUpdates();
+					autoUpdater.once('update-not-available', () => {
+						mainWindow!.webContents.send('update-not-available');
+					});
+				});
 
-			autoUpdater.signals.updateDownloaded(() => {
-				autoUpdater.quitAndInstall();
-			});
-		}
+				autoUpdater.signals.progress(progressObj => {
+					mainWindow!.webContents.send('download-progress', progressObj);
+				});
+
+				autoUpdater.addListener('error', (err: Error) => {
+					mainWindow!.webContents.send('auto-updater-error', err);
+				});
+
+				autoUpdater.signals.updateDownloaded(() => {
+					autoUpdater.quitAndInstall();
+				});
+			}
+		});
 	});
 
 	mainWindow.on('closed', () => {

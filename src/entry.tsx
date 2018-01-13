@@ -78,6 +78,7 @@ store.dispatch(requestInitialData()).then(() => {
 		]);
 		remote.Menu.setApplicationMenu(menu);
 	}
+	ipcRenderer.send('loading-done');
 });
 
 render(
