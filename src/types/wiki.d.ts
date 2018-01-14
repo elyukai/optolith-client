@@ -216,9 +216,14 @@ export interface SkillsSelection {
 	readonly value: number;
 }
 
+export interface TerrainKnowledgeSelection {
+	readonly id: 'TERRAIN_KNOWLEDGE';
+	readonly sid: number[];
+}
+
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
-export type ProfessionSelection = SpecializationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
-export type ProfessionVariantSelection = VariantSpecializationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
+export type ProfessionSelection = SpecializationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
+export type ProfessionVariantSelection = VariantSpecializationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
 export type ProfessionSelections = ProfessionSelection[];
 export type ProfessionVariantSelections = ProfessionVariantSelection[];
 

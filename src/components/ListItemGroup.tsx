@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 
 export interface ListItemGroupProps {
+	children?: React.ReactNode;
 	index?: number;
 	list?: string[];
 	small?: boolean;
@@ -9,17 +10,20 @@ export interface ListItemGroupProps {
 }
 
 export function ListItemGroup(props: ListItemGroupProps) {
-	const { index, list, small, text } = props;
+	const { children, index, list, small, text } = props;
+
+	let content: React.ReactNode;
+
 	if (typeof index === 'number' && Array.isArray(list)) {
-		return (
-			<div className={classNames('group', small && 'small-info-text')}>
-				{list[index - 1]}
-			</div>
-		);
+		content = list[index - 1];
 	}
+	else if (typeof text === 'string') {
+		content = text;
+	}
+
 	return (
 		<div className={classNames('group', small && 'small-info-text')}>
-			{text}
+			{content || children}
 		</div>
 	);
 }

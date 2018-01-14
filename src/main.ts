@@ -2,17 +2,44 @@ import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import * as log from 'electron-log';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import windowStateKeeper = require('electron-window-state');
+import * as fs from 'fs';
 import * as path from 'path';
 import * as url from 'url';
 
+let mainWindow: Electron.BrowserWindow | null | undefined;
+
 app.setAppUserModelId('lukasobermann.optolyth');
 
-autoUpdater.logger = log;
-// @ts-ignore
-autoUpdater.logger.transports.file.level = 'info';
-autoUpdater.autoDownload = false;
+const userDataPath = app.getPath('userData');
 
-let mainWindow: Electron.BrowserWindow | null | undefined;
+function accessPromise(path: string) {
+	return new Promise<boolean>(resolve => {
+		fs.access(path, err => {
+			if (err) {
+				resolve(false);
+			}
+			resolve(true);
+		})
+	});
+}
+
+async function copyFile(fileName: string) {
+	const newJSONPath = path.join(userDataPath, `${fileName}.json`);
+	const hasNewJSON = await accessPromise(newJSONPath);
+
+	const oldJSONPath = path.join(userDataPath, '..', 'TDE5 Heroes', `${fileName}.json`);
+	const hasOldJSON = await accessPromise(oldJSONPath);
+
+	if (!hasNewJSON && hasOldJSON) {
+		try {
+			fs.createReadStream(oldJSONPath).pipe(fs.createWriteStream(newJSONPath));
+		}
+		catch (err) {
+			log.error(`Could not load or read ${fileName}.json (${err})`)
+		}
+	}
+	return;
+}
 
 function createWindow() {
 	const mainWindowState = windowStateKeeper({
@@ -95,22 +122,35 @@ function createWindow() {
 	});
 }
 
-app.on('ready', createWindow);
+async function main() {
+	await copyFile('window');
+	await copyFile('heroes');
+	await copyFile('config');
 
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') {
-		app.quit();
-	}
-	else {
-		globalShortcut.register('Cmd+Q', () => {
+	autoUpdater.logger = log;
+	// @ts-ignore
+	autoUpdater.logger.transports.file.level = 'info';
+	autoUpdater.autoDownload = false;
+
+	createWindow();
+
+	app.on('window-all-closed', () => {
+		if (process.platform !== 'darwin') {
 			app.quit();
-		});
-	}
-});
+		}
+		else {
+			globalShortcut.register('Cmd+Q', () => {
+				app.quit();
+			});
+		}
+	});
 
-app.on('activate', () => {
-	if (mainWindow === null) {
-		globalShortcut.unregister('Cmd+Q');
-		createWindow();
-	}
-});
+	app.on('activate', () => {
+		if (mainWindow === null) {
+			globalShortcut.unregister('Cmd+Q');
+			createWindow();
+		}
+	});
+}
+
+app.on('ready', main);

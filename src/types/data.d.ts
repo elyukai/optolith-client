@@ -4,6 +4,7 @@ import * as Categories from '../constants/Categories';
 import { AllRequirementTypes } from './reusable.d';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
+import { TerrainKnowledgeSelection } from './wiki';
 
 export interface InstanceByCategory {
 	'ADVANTAGES': AdvantageInstance;
@@ -397,8 +398,8 @@ export interface SkillsSelection {
 }
 
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
-export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
-export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection;
+export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
+export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
 export type ProfessionSelections = ProfessionSelection[];
 export type ProfessionVariantSelections = ProfessionVariantSelection[];
 
