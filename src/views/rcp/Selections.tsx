@@ -4,10 +4,11 @@ import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
+import { WikiState } from '../../reducers/wikiReducer';
 import { getAllByGroupFromSlice } from '../../selectors/dependentInstancesSelectors';
 import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
-import { Culture, Profession, ProfessionVariant, ProfessionVariantSelection, Race } from '../../types/wiki';
+import { Culture, Profession, ProfessionVariant, ProfessionVariantSelection, Race, TerrainKnowledgeSelection } from '../../types/wiki';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
@@ -17,6 +18,7 @@ import { SelectionsCurses } from './SelectionsCurses';
 import { SelectionsLangLitc } from './SelectionsLangLitc';
 import { SelectionsSkills } from './SelectionsSkills';
 import { SelectionsTalentSpec } from './SelectionsTalentSpec';
+import { TerrainKnowledge } from './SelectionsTerrainKnowledge';
 
 export interface SelectionsOwnProps {
 	locale: UIMessages;
@@ -34,6 +36,7 @@ export interface SelectionsStateProps {
 	skills: Map<string, TalentInstance>;
 	spells: Map<string, SpellInstance>;
 	specialAbilities: Map<string, SpecialAbilityInstance>;
+	wiki: WikiState;
 }
 
 export interface SelectionsDispatchProps {
@@ -56,10 +59,11 @@ export interface SelectionsState {
 	skills: Map<string, number>;
 	spec: [number | null, string];
 	specTalentId?: string;
+	terrainKnowledge?: number;
 }
 
 export class Selections extends React.Component<SelectionsProps, SelectionsState> {
-	state = {
+	state: SelectionsState = {
 		attrSel: 'ATTR_0',
 		buyLiteracy: false,
 		cantrips: new Set<string>(),
@@ -71,7 +75,6 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		litc: 0,
 		skills: new Map<string, number>(),
 		spec: [null, ''] as [number | null, string],
-		specTalentId: undefined,
 		useCulturePackage: false,
 	};
 
@@ -169,6 +172,9 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		}
 		this.setState({ skills } as SelectionsState);
 	}
+	setTerrainKnowledge = (terrainKnowledge: number) => {
+		this.setState(() => ({ terrainKnowledge }));
+	}
 
 	assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
 		this.props.setSelections({
@@ -191,7 +197,8 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			locale,
 			skills: skillsState,
 			specialAbilities,
-			spells
+			spells,
+			wiki
 		} = this.props;
 		const {
 			attrSel,
@@ -207,6 +214,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			spec,
 			specTalentId,
 			useCulturePackage,
+			terrainKnowledge
 		} = this.state;
 
 		const selectLang = currentCulture.languages.length > 1;
@@ -426,6 +434,20 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			);
 		}
 
+		let terrainKnowledgeElement;
+
+		if (professionSelections.has('TERRAIN_KNOWLEDGE')) {
+			const { sid } = professionSelections.get('TERRAIN_KNOWLEDGE') as TerrainKnowledgeSelection;
+			terrainKnowledgeElement = (
+				<TerrainKnowledge
+					available={sid}
+					terrainKnowledge={wiki.specialAbilities.get('SA_12')!}
+					set={this.setTerrainKnowledge}
+					active={terrainKnowledge}
+					/>
+			);
+		}
+
 		return (
 			<Slidein isOpened close={close} className="rcp-selections">
 				<Scroll>
@@ -478,6 +500,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 					{cursesElement}
 					{cantripsElement}
 					{skillsElement}
+					{terrainKnowledgeElement}
 					<BorderButton
 						label={_translate(locale, 'rcpselections.actions.complete')}
 						primary
@@ -490,7 +513,8 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 							(professionSelections.has('CURSES') && cursesApLeft !== 0) ||
 							(professionSelections.has('COMBAT_TECHNIQUES') && combattech.size !== (professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).amount) ||
 							(professionSelections.has('CANTRIPS') && cantrips.size !== (professionSelections.get('CANTRIPS') as CantripsSelection).amount) ||
-							(professionSelections.has('SKILLS') && skillsApLeft > 0)
+							(professionSelections.has('SKILLS') && skillsApLeft > 0) ||
+							(professionSelections.has('TERRAIN_KNOWLEDGE') && typeof terrainKnowledge !== 'number')
 						}
 						onClick={this.assignRCPEntries.bind(null, professionSelections)}
 						/>

@@ -397,7 +397,7 @@ export interface SkillsSelection {
 	value: number;
 }
 
-export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS';
+export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS' | 'TERRAIN_KNOWLEDGE';
 export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
 export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
 export type ProfessionSelections = ProfessionSelection[];
@@ -418,6 +418,7 @@ export interface Selections {
 	specTalentId?: string;
 	skills: Map<string, number>;
 	map: Map<ProfessionSelectionIds, ProfessionSelection>;
+	terrainKnowledge?: number;
 }
 
 export interface ProfessionNameForSexes {

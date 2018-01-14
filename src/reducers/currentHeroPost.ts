@@ -160,6 +160,15 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         }
       }
 
+      if (action.payload.map.has('TERRAIN_KNOWLEDGE')) {
+        const { terrainKnowledge } = action.payload;
+        activatable.add({
+          id: 'SA_12',
+          active: true,
+          sid: terrainKnowledge,
+        });
+      }
+
       for (const [key, value] of action.payload.langLitc) {
         const [ category, id ] = key.split('_');
         if (category === 'LANG') {
