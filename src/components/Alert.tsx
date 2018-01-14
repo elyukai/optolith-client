@@ -7,7 +7,7 @@ import { Dialog } from './DialogNew';
 
 export interface AlertProps {
 	locale: UIMessages;
-	options: AlertOptions | null;
+	options: AlertOptions | undefined;
 	close(): void;
 	dispatch(action: Action): void;
 }

@@ -1,5 +1,6 @@
 import { AppState } from '../reducers/app';
 import { UIMessages } from '../utils/I18n';
+import { Alert } from '../types/data';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
@@ -81,7 +82,8 @@ export const getArmorZonesEditorInstance = (state: AppState) => state.currentHer
 export const getIsArmorZonesCreation = (state: AppState) => state.currentHero.present.equipment.isArmorZonesCreation;
 export const getPetsState = (state: AppState) => state.currentHero.present.pets;
 
-export const getCurrentAlert = (state: AppState) => state.ui.alerts;
+export const getAlerts = (state: AppState) => state.ui.alerts;
+export const getCurrentAlert = (state: AppState): Alert | undefined => state.ui.alerts[0];
 export const getUpdateDownloadProgress = (state: AppState) => state.ui.subwindows.updateDownloadProgress;
 export const getAddPermanentEnergy = (state: AppState) => state.ui.subwindows.addPermanentEnergy;
 export const getEditPermanentEnergy = (state: AppState) => state.ui.subwindows.editPermanentEnergy;

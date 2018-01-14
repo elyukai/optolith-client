@@ -9,7 +9,7 @@ export interface AlertsOwnProps {
 }
 
 export interface AlertsStateProps {
-	options: AlertOptions | null;
+	options: AlertOptions | undefined;
 }
 
 export interface AlertsDispatchProps {

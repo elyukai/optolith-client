@@ -4,15 +4,18 @@ import { Alert } from '../types/data.d';
 
 type Action = AddAlertAction | RemoveAlertAction;
 
-export type AlertsState = Alert | null;
+export type AlertsState = Alert[];
 
-export function alerts(state: AlertsState = null, action: Action): AlertsState {
+export function alerts(state: AlertsState = [], action: Action): AlertsState {
 	switch (action.type) {
 		case ActionTypes.ADD_ALERT:
-			return action.payload;
+			return [
+				action.payload,
+				...state
+			];
 
 		case ActionTypes.REMOVE_ALERT:
-			return null;
+			return state.slice(1);
 
 		default:
 			return state;
