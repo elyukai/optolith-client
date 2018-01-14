@@ -1,6 +1,6 @@
 import { AppState } from '../reducers/app';
-import { UIMessages } from '../utils/I18n';
 import { Alert } from '../types/data';
+import { UIMessages } from '../utils/I18n';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 

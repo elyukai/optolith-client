@@ -7,7 +7,7 @@ export function ThirdPartyLicenses() {
 	return (
 		<Page id="third-party-software">
 			<Scroll className="text">
-				<h2>TDE5 Heroes Client v{currentVersion}</h2>
+				<h2>Optolyth Desktop Client v{currentVersion}</h2>
 				Third Party Software and Content Licenses
 				<div className="third-party-software-body">
 					This product was created under a license. Das Schwarze Auge and its logo as well as Aventuria, Dere, Myranor, Riesland, Tharun and Uthuria and their logos are trademarks of Significant GbR. The title and contents of this book are protected under the copyright laws of the United States of America. No part of this publication may be reproduced, stored in retrieval systems or transmitted, in any form or by any means, whether electronic, mechanical, photocopy, recording, or otherwise, without prior written consent by Ulisses Spiele GmbH, Waldems.<br/>

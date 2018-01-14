@@ -32,7 +32,7 @@ function createWindow() {
 		icon: path.join(app.getAppPath(), 'app', 'icon.png'),
 		frame: false,
 		center: true,
-		title: 'TDE Heroes',
+		title: 'Optolyth',
 		acceptFirstMouse: true,
 		backgroundColor: '#000000',
 		show: false
