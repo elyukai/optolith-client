@@ -31,19 +31,15 @@ export function ProfessionsListItem(props: ProfessionsListItemProps) {
 		subname = subname[sex];
 	}
 
-	const sourceAbbreviaions = profession.src.map(e => {
-		return <span key={e.id}>{books.get(e.id)!.short}</span>;
-	});
-
-	console.log(sourceAbbreviaions);
-
 	return (
 		<ListItem active={profession.id === currentProfessionId}>
 			<ListItemName name={subname ? `${name} (${subname})` : name} />
 			<ListItemSeparator />
 			{profession.src.length > 0 && (
 				<ListItemGroup small>
-					{sourceAbbreviaions}
+					{profession.src.map(e => {
+						return <span key={e.id}>{books.get(e.id)!.short}</span>;
+					})}
 				</ListItemGroup>
 			)}
 			<ListItemValues>

@@ -36,7 +36,7 @@ export function isEmptyOr(check: (string: string) => boolean, string: string): b
 	return string === '' || check(string);
 }
 
-export const base64ImageCheck = /^data:image\/(png|gif|jpeg);base64,.+/;
+export const base64ImageCheck = /^data:image\/(png|gif|jpeg|jpg);base64,.+/;
 
 /**
  * Checks if the provided string is a base64 encoded image.
