@@ -18,6 +18,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
+import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from './actions/AcceleratorActions';
 import { addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
@@ -77,7 +78,28 @@ store.dispatch(requestInitialData()).then(() => {
 			}
 		]);
 		remote.Menu.setApplicationMenu(menu);
+		remote.globalShortcut.register('Cmd+Q', () => {
+			store.dispatch(quitAccelerator());
+		});
 	}
+	remote.globalShortcut.register('CmdOrCtrl+Z', () => {
+		store.dispatch(undoAccelerator());
+	});
+	remote.globalShortcut.register('CmdOrCtrl+Y', () => {
+		store.dispatch(redoAccelerator());
+	});
+	remote.globalShortcut.register('CmdOrCtrl+Shift+Z', () => {
+		store.dispatch(redoAccelerator());
+	});
+	remote.globalShortcut.register('CmdOrCtrl+S', () => {
+		store.dispatch(saveHeroAccelerator());
+	});
+	remote.globalShortcut.register('CmdOrCtrl+W', () => {
+		store.dispatch(backAccelerator());
+	});
+	remote.globalShortcut.register('CmdOrCtrl+O', () => {
+		store.dispatch(openSettingsAccelerator());
+	});
 	ipcRenderer.send('loading-done');
 });
 

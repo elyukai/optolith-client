@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import * as log from 'electron-log';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import windowStateKeeper = require('electron-window-state');
@@ -91,6 +91,7 @@ function createWindow() {
 
 	mainWindow.on('closed', () => {
 		mainWindow = null;
+		globalShortcut.unregisterAll();
 	});
 }
 
@@ -100,10 +101,16 @@ app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
 	}
+	else {
+		globalShortcut.register('Cmd+Q', () => {
+			app.quit();
+		});
+	}
 });
 
 app.on('activate', () => {
 	if (mainWindow === null) {
+		globalShortcut.unregister('Cmd+Q');
 		createWindow();
 	}
 });
