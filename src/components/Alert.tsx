@@ -72,7 +72,7 @@ export function Alert(props: AlertProps) {
 		<Dialog
 			close={closeEnhanced}
 			buttons={buttons}
-			isOpened={options !== null}
+			isOpened={typeof options === 'object'}
 			className="alert"
 			title={title}
 			>
