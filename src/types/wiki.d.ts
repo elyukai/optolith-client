@@ -249,6 +249,7 @@ export interface Profession {
 	readonly spells: IncreaseSkill[];
 	readonly liturgicalChants: IncreaseSkill[];
 	readonly blessings: string[];
+	readonly twelveBlessingsAdd?: string;
 	readonly suggestedAdvantages: string[];
 	readonly suggestedAdvantagesText?: string;
 	readonly suggestedDisadvantages: string[];
@@ -281,6 +282,7 @@ export interface ProfessionVariant {
 	readonly skills: IncreaseSkill[];
 	readonly spells: IncreaseSkill[];
 	readonly liturgicalChants: IncreaseSkill[];
+	readonly blessings: string[];
 	readonly precedingText?: string;
 	readonly fullText?: string;
 	readonly concludingText?: string;

@@ -105,6 +105,7 @@ export interface Profession {
 	dependencies: ProfessionDependencyObject[];
 	prerequisitesStart?: string;
 	prerequisitesEnd?: string;
+	twelveBlessingsAdd?: string;
 	suggestedAdvantagesText?: string;
 	suggestedDisadvantagesText?: string;
 	unsuitableAdvantagesText?: string;
@@ -119,12 +120,15 @@ export interface ProfessionVariant {
 	name: string | NameBySex;
 	ap: number;
 	dependencies: ProfessionDependencyObject[];
+	prerequisites: (ActivatableNameCostActive | ProfessionRequiresIncreasableObject)[];
 	prerequisitesModel: (ProfessionRequiresActivatableObject | ProfessionRequiresIncreasableObject)[];
 	selections: ProfessionVariantSelections;
 	specialAbilities: ActivatableNameCostActive[];
 	combatTechniques: Increasable[];
 	skills: Increasable[];
 	spells: IncreasableId[];
+	liturgicalChants: IncreasableId[];
+	blessings: string[];
 	concludingText: string | undefined;
 	fullText: string | undefined;
 	precedingText: string | undefined;

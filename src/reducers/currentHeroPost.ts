@@ -14,7 +14,7 @@ import * as DependentUtils from '../utils/DependentUtils';
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RCPUtils from '../utils/RCPUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
-import { addStyleExtendedSpecialAbilityDependencies } from './activatable';
+import { addExtendedSpecialAbilityDependency, addStyleExtendedSpecialAbilityDependencies, removeExtendedSpecialAbilityDependency, removeStyleExtendedSpecialAbilityDependencies } from './activatable';
 import { CurrentHeroInstanceState } from './currentHero';
 import { DependentInstancesState } from './dependentInstances';
 
@@ -307,103 +307,71 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
 
           // Assign profession requirements
 
-          ap = requires.reduce((final, req) => {
+          for (const req of requires) {
             if (RequirementUtils.isRequiringIncreasable(req)) {
               const { id, value } = req;
               if (typeof id === 'string') {
                 const obj = get(fulllist, id) as Data.AttributeInstance | Data.TalentInstance;
                 switch (obj.category) {
-                  case Categories.ATTRIBUTES: {
-                    if (typeof value === 'number') {
-                      fulllist = setStateItem(fulllist, id, { ...obj, value });
-                      // return { ...final, spent: final.spent + getIncreaseRangeAP(5, 8, value)};
-                    }
-                    return final;
-                  }
+                  case Categories.ATTRIBUTES:
                   case Categories.TALENTS: {
                     if (typeof value === 'number') {
                       fulllist = setStateItem(fulllist, id, { ...obj, value });
-                      // return { ...final, spent: final.spent + getIncreaseRangeAP(obj.ic, obj.value, value)};
                     }
-                    return final;
                   }
                 }
               }
             }
             else {
-              const { id, sid, sid2, tier } = req;
-              if (typeof id === 'string') {
-                const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
-                const activeObject = { sid: sid as string | number | undefined, sid2, tier };
-                // let costObj: {
-                //   spent: number;
-                //   adv: DisAdvAdventurePoints;
-                //   disadv: DisAdvAdventurePoints;
-                // } | number | undefined;
+              const { id, sid, sid2, tier, active } = req;
+              const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
+              const activeObject = { sid, sid2, tier };
 
-                const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
+              const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
-                if (!obj.active.find(checkIfActive)) {
-                  fulllist = setStateItem(fulllist, id, { ...obj, active: [...obj.active, activeObject]});
-                  const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
-                  const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-                  if (obj.category === Categories.SPECIAL_ABILITIES) {
-                    fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
-                  }
-                  fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
-                  // const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, dependent, true));
-                  // if (currentCost && (obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES)) {
-                  //   const isKar = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_12' && RequirementUtils.isRequiringActivatable(e) && e.active);
-                  //   const isMag = RequirementUtils.getFlatFirstTierPrerequisites(obj.reqs).some(e => e !== 'RCP' && e.id === 'ADV_50' && RequirementUtils.isRequiringActivatable(e) && e.active);
-                  //   const index = isKar ? 2 : isMag ? 1 : 0;
+              const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
+              const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
 
-                  //   costObj = {
-                  //     adv: [0, 0, 0],
-                  //     disadv: [0, 0, 0],
-                  //     spent: currentCost,
-                  //   };
-
-                  //   if (obj.category === Categories.ADVANTAGES) {
-                  //     costObj.adv[0] = costObj.spent;
-                  //     if (index > 0) {
-                  //       costObj.adv[index] = costObj.spent;
-                  //     }
-                  //   }
-                  //   else {
-                  //     costObj.disadv[0] = -costObj.spent;
-                  //     if (index > 0) {
-                  //       costObj.disadv[index] = -costObj.spent;
-                  //     }
-                  //   }
-                  // }
-                  // else {
-                  //   costObj = currentCost;
-                  // }
-                  // if (typeof costObj === 'object') {
-                  //   return {
-                  //     adv: costObj.adv.map((e, i) => e + final.adv[i]) as [number, number, number],
-                  //     disadv: costObj.disadv.map((e, i) => e + final.disadv[i]) as [number, number, number],
-                  //     spent: final.spent + costObj.spent
-                  //   };
-                  // }
-                  // else if (typeof costObj === 'number') {
-                  //   return { ...final, spent: final.spent + currentCost};
-                  // }
+              const index = obj.active.findIndex(checkIfActive);
+              if (active === false && index > -1) {
+                fulllist = setStateItem(fulllist, id, {
+                  ...obj,
+                  active: [
+                    ...obj.active.slice(0, index),
+                    ...obj.active.slice(index + 1),
+                  ]
+                });
+                if (obj.category === Categories.SPECIAL_ABILITIES) {
+                  fulllist = removeExtendedSpecialAbilityDependency(
+                    removeStyleExtendedSpecialAbilityDependencies(fulllist, obj),
+                    obj
+                  );
                 }
-                return final;
+                fulllist = mergeIntoState(fulllist, DependentUtils.removeDependencies(fulllist, [...prerequisites, ...adds], obj.id));
+              }
+              else if (active !== false && !obj.active.some(checkIfActive)) {
+                fulllist = setStateItem(fulllist, id, {
+                  ...obj,
+                  active: [
+                    ...obj.active,
+                    activeObject
+                  ]
+                });
+                if (obj.category === Categories.SPECIAL_ABILITIES) {
+                  fulllist = addExtendedSpecialAbilityDependency(
+                    addStyleExtendedSpecialAbilityDependencies(fulllist, obj),
+                    obj
+                  );
+                }
+                fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
               }
             }
-            return final;
-          }, ap);
+          }
 
           // Lower Combat Techniques with too high CTR
 
           const maxCombatTechniqueRating = getStart(el).maxCombatTechniqueRating;
           const valueTooHigh = [...fulllist.combatTechniques.values()].filter(e => e.value > maxCombatTechniqueRating);
-
-          // ap.spent += valueTooHigh.reduce<number>((ap, instance) => {
-          //   return ap + getDecreaseRangeAP(instance.ic, instance.value, maxCombatTechniqueRating);
-          // }, 0);
 
           for (const combatTechnique of valueTooHigh) {
             fulllist = setStateItem(fulllist, combatTechnique.id, { ...combatTechnique, value: maxCombatTechniqueRating });

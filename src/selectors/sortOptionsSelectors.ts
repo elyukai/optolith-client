@@ -29,14 +29,26 @@ export const getCulturesSortOptions = createSelector(
   }
 );
 
+const sourceKey = (e: Profession | View.Profession) => {
+	return e.src[0] ? e.src[0].id : 'US25000';
+};
+
 export const getProfessionsSortOptions = createSelector(
   getProfessionsSortOrder,
   getSex,
   (sortOrder, sex) => {
-    const key = (e: Profession | View.Profession) => e.src[0] ? e.src[0].id : 'US25000';
-		let sortOptions: AllSortOptions<Profession | View.Profession> = [{ key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }];
+		let sortOptions: AllSortOptions<Profession | View.Profession> = [
+			{ key: 'name', keyOfProperty: sex },
+			{ key: 'subname', keyOfProperty: sex },
+			{ key: sourceKey }
+		];
 		if (sortOrder === 'cost') {
-			sortOptions = ['ap', { key: 'name', keyOfProperty: sex }, { key: 'subname', keyOfProperty: sex }, { key }];
+			sortOptions = [
+				'ap',
+				{ key: 'name', keyOfProperty: sex },
+				{ key: 'subname', keyOfProperty: sex },
+				{ key: sourceKey }
+			];
 		}
 		return sortOptions;
   }

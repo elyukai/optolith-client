@@ -136,6 +136,7 @@ export interface RawProfessionLocale {
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	prerequisitesStart?: string;
 	prerequisitesEnd?: string;
+	twelveBlessingsAdd?: string;
 	suggestedAdvantages?: string;
 	suggestedDisadvantages?: string;
 	unsuitableAdvantages?: string;
@@ -155,6 +156,7 @@ export interface RawProfessionVariant {
 	talents: [string, number][];
 	spells: [string, number][];
 	chants: [string, number][];
+	blessings: string[];
 }
 
 export interface RawProfessionVariantLocale {

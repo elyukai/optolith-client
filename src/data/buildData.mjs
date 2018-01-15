@@ -241,6 +241,8 @@ function iterateProfessionVariants(array) {
       return e;
     });
 
+    obj.blessings = !obj.blessings ? [] : obj.blessings.split('&');
+
     list[obj.id] = obj;
   }
   return list;

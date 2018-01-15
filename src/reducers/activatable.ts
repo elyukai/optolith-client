@@ -119,7 +119,7 @@ export function addExtendedSpecialAbilityDependency(state: DependentInstancesSta
   return state;
 }
 
-function removeStyleExtendedSpecialAbilityDependencies(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
+export function removeStyleExtendedSpecialAbilityDependencies(state: DependentInstancesState, instance: Data.SpecialAbilityInstance | undefined): DependentInstancesState {
   if (instance) {
     let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
     if (instance.gr === 9 || instance.gr === 10) {

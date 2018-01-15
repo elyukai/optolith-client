@@ -366,6 +366,8 @@ export const getAllProfessions = createSelector(
 						prerequisites: variantRequires,
 						selections: selectionsVariant,
 						specialAbilities: specialAbilitiesVariant,
+						liturgicalChants: liturgicalChantsVariant,
+						blessings: blessingsVariant,
 					} = v;
 					return {
 						id,
@@ -384,6 +386,16 @@ export const getAllProfessions = createSelector(
 							return { id, value, previous: previousObject && previousObject.value };
 						}),
 						dependencies: dependenciesVariant,
+						prerequisites: variantRequires.map((e, index) => {
+							if (!isRequiringIncreasable(e)) {
+								const { active, ...other } = e;
+								return {
+									active,
+									...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
+								};
+							}
+							return e;
+						}),
 						prerequisitesModel: variantRequires,
 						selections: selectionsVariant.map(e => {
 							if (isCombatTechniquesSelection(e)) {
@@ -398,6 +410,11 @@ export const getAllProfessions = createSelector(
 							active,
 							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
 						})),
+						liturgicalChants: liturgicalChantsVariant.map(({ id, value }) => {
+							const previousObject = liturgicalChants.find(e => e.id === id);
+							return { id, value, previous: previousObject && previousObject.value };
+						}),
+						blessings: blessingsVariant,
 						concludingText,
 						fullText,
 						precedingText

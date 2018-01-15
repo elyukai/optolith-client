@@ -4,8 +4,9 @@ import { Scroll } from '../../components/Scroll';
 import { ATTRIBUTES } from '../../constants/Categories';
 import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection } from '../../types/data.d';
 import { Increasable, IncreasableId, Profession, UIMessages } from '../../types/view.d';
-import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, Spell } from '../../types/wiki';
-import { sortStrings } from '../../utils/FilterSortUtils';
+import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, SpecialAbility, Spell, TerrainKnowledgeSelection } from '../../types/wiki';
+import { getSelectOptionName } from '../../utils/ActivatableUtils';
+import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/RequirementUtils';
 import { WikiProperty } from './WikiProperty';
@@ -22,10 +23,27 @@ export interface WikiProfessionInfoProps {
 	races: Map<string, Race>;
 	skills: Map<string, Skill>;
 	spells: Map<string, Spell>;
+	specialAbilities: Map<string, SpecialAbility>;
 }
 
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
-	const { attributes, books, cantrips, currentObject, liturgicalChants, locale, races, sex = 'm', skills, spells } = props;
+	const {
+		attributes,
+		books,
+		cantrips,
+		currentObject,
+		liturgicalChants,
+		locale,
+		races,
+		sex = 'm',
+		skills,
+		spells,
+		specialAbilities,
+	} = props;
+
+	const {
+		selections
+	} = currentObject;
 
 	let { name, subname } = currentObject;
 
@@ -52,13 +70,33 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 	const combatTechniquesSecondSelection = currentObject.selections.find(e => e.id === 'COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSecondSelection | undefined;
 	const combatTechniquesSelectionString = combatTechniquesSelection && combatTechniquesSecondSelection ? `${_translate(locale, 'info.combattechniquessecondselection', _translate(locale, 'info.combattechniquesselectioncounter')[combatTechniquesSelection.amount - 1], combatTechniquesSelection.value + 6, _translate(locale, 'info.combattechniquesselectioncounter')[combatTechniquesSecondSelection.amount - 1], combatTechniquesSecondSelection.value + 6)}${sortStrings(combatTechniquesSelection.sid, locale.id).join(', ')}` : combatTechniquesSelection && `${_translate(locale, 'info.combattechniquesselection', _translate(locale, 'info.combattechniquesselectioncounter')[combatTechniquesSelection.amount - 1], combatTechniquesSelection.value + 6)}${sortStrings(combatTechniquesSelection.sid, locale.id).join(', ')}`;
 
+	const terrainKnowledgeSelection = selections.find(e => {
+		return e.id === 'TERRAIN_KNOWLEDGE';
+	}) as TerrainKnowledgeSelection | undefined;
+
+	let terrainKnowledgeSelectionString: string | undefined;
+
+	if (terrainKnowledgeSelection) {
+		const terrainKnowledge = specialAbilities.get('SA_12')!;
+
+		const optionsString = terrainKnowledgeSelection.sid.map(sid => {
+			return getSelectOptionName(terrainKnowledge, sid)!;
+		});
+
+		const last = optionsString.pop();
+
+		const joinedFirst = optionsString.join(', ');
+		const joined = `${joinedFirst} ${_translate(locale, 'info.or')} ${last}`;
+		terrainKnowledgeSelectionString = `${terrainKnowledge.name} (${joined})`
+	}
+
 	const spellsArray = [
 		...(cantripsSelection ? [`${_translate(locale, 'info.spellscantrips', _translate(locale, 'info.spellscantripscounter')[cantripsSelection.amount - 1])}${sortStrings(cantripsSelection.sid.map(e => cantrips.get(e)!.name), locale.id).join(', ')}`] : []),
 		...sortStrings(currentObject.spells.map(e => `${spells.get(e.id)!.name} ${e.value}`), locale.id)
 	];
 
 	const liturgicalChantsArray = sortStrings([
-		...(currentObject.blessings.length === 12 ? [_translate(locale, 'info.liturgicalchantsthetwelveblessings')] : []),
+		...(currentObject.blessings.length === 12 ? [_translate(locale, 'info.liturgicalchantsthetwelveblessings')] : currentObject.blessings.length === 9 ? [`${_translate(locale, 'info.liturgicalchantsthetwelveblessings')} ${currentObject.twelveBlessingsAdd}`] : []),
 		...currentObject.liturgicalChants.map(e => `${liturgicalChants.get(e.id)!.name} ${e.value}`)
 	], locale.id);
 
@@ -256,6 +294,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 				{[
 					...(languagesLiteracySelection ? [_translate(locale, 'info.specialabilitieslanguagesandliteracy', languagesLiteracySelection.value)] : []),
 					...(specializationSelection ? [specializationSelectionString] : []),
+					...(terrainKnowledgeSelection ? [terrainKnowledgeSelectionString] : []),
 					...(cursesSelection ? [_translate(locale, 'info.specialabilitiescurses', cursesSelection.value)] : []),
 					...sortStrings(currentObject.specialAbilities.map(e => e.combinedName), locale.id)
 				].join(', ') || _translate(locale, 'info.none')}
@@ -322,21 +361,54 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 				<span>{_translate(locale, 'info.variants')}</span>
 			</p>}
 			<ul className="profession-variants">
-				{currentObject.variants.map(e => {
-					const { selections, fullText } = e;
-					let { name } = e;
+				{currentObject.variants.map(variant => {
+					const { selections, fullText } = variant;
+					let { name } = variant;
 
 					if (typeof name === 'object') {
 						name = name[sex];
 					}
 
 					if (fullText) {
-						return <li key={e.id}>
+						return <li key={variant.id}>
 							<span>{name}</span>
-							<span>({currentObject.ap + e.ap} {_translate(locale, 'apshort')})</span>
+							<span>({currentObject.ap + variant.ap} {_translate(locale, 'apshort')})</span>
 							<span>{fullText}</span>
 						</li>;
 					}
+
+					const prerequisitesVariant = sortObjects(variant.prerequisites.map<{
+						id: string;
+						name: string;
+						active?: boolean;
+					}>(e => {
+						if (isRequiringIncreasable(e)) {
+							const instance = attributes.get(e.id) || skills.get(e.id);
+							let name;
+							if (instance && instance.category === ATTRIBUTES) {
+								name = instance.short;
+							}
+							else if (instance) {
+								name = instance.name;
+							}
+							return {
+								id: e.id,
+								name: `${name} ${e.value}`
+							};
+						}
+						return {
+							id: e.id,
+							name: `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`,
+							active: e.active
+						};
+					}), locale.id).map(e => {
+						if (e.active === false) {
+							return <span key={e.id}>
+								<span className="disabled">{e.name}</span>
+							</span>;
+						}
+						return <span key={e.id}>{e.name}</span>;
+					});
 
 					const variantLanguagesLiteracySelection = selections.find(e => e.id === 'LANGUAGES_SCRIPTS') as LanguagesScriptsSelection | undefined;
 					const variantLanguagesLiteracySelectionString = variantLanguagesLiteracySelection ? languagesLiteracySelection ? <span>{_translate(locale, 'info.specialabilitieslanguagesandliteracy', variantLanguagesLiteracySelection.value)} {_translate(locale, 'info.variantsinsteadof')} {languagesLiteracySelection.value}</span> : <span>{_translate(locale, 'info.specialabilitieslanguagesandliteracy', variantLanguagesLiteracySelection.value)}</span> : undefined;
@@ -381,9 +453,9 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 					}
 
 					const skillsString = [
-						...sortStrings(e.combatTechniques.map(({ name, value, previous = 0}) => `${name} ${previous + value + 6} ${_translate(locale, 'info.variantsinsteadof')} ${previous + 6}`), locale.id),
-						...sortStrings(e.skills.map(({ name, value, previous = 0}) => `${name} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id),
-						...sortStrings(combineSpells(e.spells, spells).map(e => {
+						...sortStrings(variant.combatTechniques.map(({ name, value, previous = 0}) => `${name} ${previous + value + 6} ${_translate(locale, 'info.variantsinsteadof')} ${previous + 6}`), locale.id),
+						...sortStrings(variant.skills.map(({ name, value, previous = 0}) => `${name} ${previous + value} ${_translate(locale, 'info.variantsinsteadof')} ${previous}`), locale.id),
+						...sortStrings(combineSpells(variant.spells, spells).map(e => {
 							if (isCombinedSpell(e)) {
 								const { newId, oldId, value } = e;
 								return `${spells.has(newId) ? spells.get(newId)!.name : '...'} ${value} ${_translate(locale, 'info.variantsinsteadof')} ${spells.has(oldId) ? spells.get(oldId)!.name : '...'} ${value}`;
@@ -395,20 +467,35 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 						}), locale.id)
 					].join(', ');
 
-					return <li key={e.id}>
+					let liturgicalChantsString = '';
+
+					if (variant.liturgicalChants.length > 0) {
+						const liturgicalChantsArray = sortStrings([
+							...(variant.blessings.length === 12 ? [_translate(locale, 'info.liturgicalchantsthetwelveblessings')] : []),
+							...variant.liturgicalChants.map(e => `${liturgicalChants.get(e.id)!.name} ${e.value}`)
+						], locale.id).join(', ');
+
+						const start = `; ${_translate(locale, 'info.liturgicalchants')}:`;
+
+						liturgicalChantsString = `${start} ${liturgicalChantsArray}`;
+					}
+
+					return <li key={variant.id}>
 						<span>{name}</span>
-						<span>({currentObject.ap + e.ap} {_translate(locale, 'apshort')})</span>
+						<span>({currentObject.ap + variant.ap} {_translate(locale, 'apshort')})</span>
 						<span>
-							{e.precedingText && <span>{e.precedingText}</span>}
-							{e.prerequisitesModel.length > 0 && <span className="hard-break">{_translate(locale, 'info.prerequisites')}: {e.prerequisitesModel.map(e => {
-								return isRequiringIncreasable(e) && attributes.has(e.id) ? <span key={e.id}>{attributes.get(e.id)!.short} {e.value}</span> : '';
-							})}</span>}
-							{e.specialAbilities.length > 0 && <React.Fragment>{e.specialAbilities.map(e => <span key={e.id}><span className={e.active === false ? 'disabled' : undefined}>{e.combinedName}</span></span>)}</React.Fragment>}
+							{variant.precedingText && <span>{variant.precedingText}</span>}
+
+							{prerequisitesVariant.length > 0 && <span className="hard-break">
+								{_translate(locale, 'info.prerequisites')}: {prerequisitesVariant}
+							</span>}
+
+							{variant.specialAbilities.length > 0 && <React.Fragment>{variant.specialAbilities.map(e => <span key={e.id}><span className={e.active === false ? 'disabled' : undefined}>{e.combinedName}</span></span>)}</React.Fragment>}
 							{variantLanguagesLiteracySelectionString && <span>{variantLanguagesLiteracySelectionString}</span>}
 							{variantSpecializationSelectionString && <span>{variantSpecializationSelectionString}</span>}
 							{variantCombatTechniquesSelectionString && <span>{variantCombatTechniquesSelectionString}</span>}
-							{skillsString && <span>{skillsString}</span>}
-							{e.concludingText && `; ${e.concludingText}`}
+							{skillsString && <span>{skillsString}{liturgicalChantsString}</span>}
+							{variant.concludingText && `; ${variant.concludingText}`}
 							</span>
 					</li>;
 				})}
@@ -482,13 +569,15 @@ function combineSpells(list: IncreasableId[], allSpells: Map<string, Spell>): (I
 	];
 }
 
-function Skills(props: {
+interface SkillsProps {
 	locale: UIMessages;
 	groupIndex: 0 | 1 | 2 | 3 | 4;
 	list: Increasable[];
 	skillsSelectionString: string | undefined;
 	skillsSelection: SkillsSelection | undefined
-}) {
+}
+
+function Skills(props: SkillsProps) {
 	const { groupIndex, list, locale, skillsSelection, skillsSelectionString} = props;
 	return (
 		<p className="skill-group">

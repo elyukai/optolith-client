@@ -4,7 +4,7 @@ import * as Categories from '../constants/Categories';
 import { AllRequirementTypes } from './reusable.d';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
-import { TerrainKnowledgeSelection } from './wiki';
+import * as Wiki from './wiki';
 
 export interface InstanceByCategory {
 	'ADVANTAGES': AdvantageInstance;
@@ -398,8 +398,8 @@ export interface SkillsSelection {
 }
 
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS' | 'TERRAIN_KNOWLEDGE';
-export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
-export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | TerrainKnowledgeSelection;
+export type ProfessionSelection = SpecialisationSelection | LanguagesScriptsSelection | CombatTechniquesSelection | CombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | Wiki.TerrainKnowledgeSelection;
+export type ProfessionVariantSelection = SpecialisationSelection | LanguagesScriptsSelection | VariantCombatTechniquesSelection | VariantCombatTechniquesSecondSelection | CantripsSelection | CursesSelection | SkillsSelection | Wiki.TerrainKnowledgeSelection;
 export type ProfessionSelections = ProfessionSelection[];
 export type ProfessionVariantSelections = ProfessionVariantSelection[];
 
@@ -469,12 +469,13 @@ export interface ProfessionVariantInstance {
 	readonly apOfActivatables: number;
 	readonly dependencies: ProfessionDependencyObject[];
 	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	readonly selections: ProfessionVariantSelections;
+	readonly selections: Wiki.ProfessionVariantSelections;
 	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
 	readonly combatTechniques: [string, number][];
 	readonly talents: [string, number][];
 	readonly spells: [string, number][];
 	readonly liturgies: [string, number][];
+	readonly blessings: string[];
 	precedingText?: string;
 	fullText?: string;
 	concludingText?: string;

@@ -248,7 +248,7 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants } = raw;
+    const { id, ap, apOfActivatables, pre_req, req, sel, sa, combattech, talents, spells, chants, blessings } = raw;
     return {
       ...localeObject,
       ap,
@@ -274,7 +274,8 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
       liturgicalChants: chants.map(e => ({
 				id: `LITURGY_${e[0]}`,
 				value: e[1]
-			}))
+      })),
+      blessings: blessings.map(e => `BLESSING_${e}`)
     };
   }
   return;

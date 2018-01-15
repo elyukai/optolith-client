@@ -7,19 +7,28 @@ export interface BaseObject {
 
 export type AllSortOptions<T> = (keyof T | SortOption<T>)[] | keyof T | SortOption<T>;
 
+export type SortKeyFunction<T, R = any> = (object: T) => R;
+export type SortKeyType<T> = keyof T | SortKeyFunction<T>;
+
 export interface SortOption<T> {
-	key: keyof T | ((object: T) => any);
+	key: SortKeyType<T>;
 	keyOfProperty?: string;
 	mapToIndex?: string[];
 	reverse?: boolean;
 }
+
+type SortFunction<T> = (a: T, b: T) => number;
+
+const keyIsFunction = <T>(key: SortKeyType<T>): key is SortKeyFunction<T> => {
+	return typeof key === 'function';
+};
 
 export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: AllSortOptions<T> = 'name') {
 	if (list.length < 2) {
 		return list;
 	}
 
-	const sortFunctions: ((a: T, b: T) => number)[] = [];
+	const sortFunctions: SortFunction<T>[] = [];
 	const firstItem = first(list);
 
 	if (firstItem) {
@@ -136,60 +145,86 @@ export function filterAndSortStrings(list: string[], locale: string, filterText:
 
 const isSortOptionObject = <T extends BaseObject>(option: keyof T | SortOption<T>): option is SortOption<T> => typeof option === 'object';
 
-function createSortFunction<T extends BaseObject>(option: keyof T | SortOption<T>, firstItem: T, locale: string): ((a: T, b: T) => number) | undefined {
+function createSortFunction<T extends BaseObject>(
+	option: keyof T | SortOption<T>,
+	firstItem: T,
+	locale: string
+): SortFunction<T> | undefined {
 	if (isSortOptionObject(option)) {
 		const { key, mapToIndex, reverse, keyOfProperty } = option;
-		const propertyType = typeof key === 'function' ? typeof (key as (object: T) => any)(firstItem) : typeof firstItem[key];
+		const propertyType = keyIsFunction(key) ? typeof key(firstItem) : typeof firstItem[key];
 		if (reverse === true) {
-			if (typeof key === 'function') {
+			if (keyIsFunction(key)) {
 				if (propertyType === 'string') {
-					return (a: T, b: T) => ((key as (object: T) => any)(a) as string).localeCompare((key as (object: T) => any)(b), locale) * -1;
+					return (a, b) => key(a).localeCompare(key(b), locale) * -1;
 				}
 				else if (propertyType === 'number') {
-					return (a: T, b: T) => ((key as (object: T) => any)(b) as number) - ((key as (object: T) => any)(a) as number);
+					return (a, b) => key(b) - key(a);
 				}
 			}
 			else if (keyOfProperty !== undefined) {
-				return (a: T, b: T) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale) * -1;
+				return (a, b) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale) * -1;
 			}
 			else if (propertyType === 'string') {
-				return (a: T, b: T) => (a[key] as string).localeCompare(b[key], locale) * -1;
+				return (a, b) => (a[key] as string).localeCompare(b[key], locale) * -1;
 			}
 			else if (propertyType === 'number' && mapToIndex !== undefined) {
-				return (a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale) * -1;
+				return (a, b) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale) * -1;
 			}
 			else if (propertyType === 'number') {
-				return (a: T, b: T) => (b[key] as number) - (a[key] as number);
+				return (a, b) => (b[key] as number) - (a[key] as number);
 			}
 		}
-		else if (typeof key === 'function') {
+		else if (keyIsFunction(key)) {
 			if (propertyType === 'string') {
-				return (a: T, b: T) => ((key as (object: T) => any)(a) as string).localeCompare((key as (object: T) => any)(b), locale);
+				return (a, b) => key(a).localeCompare(key(b), locale);
 			}
 			else if (propertyType === 'number') {
-				return (a: T, b: T) => ((key as (object: T) => any)(a) as number) - ((key as (object: T) => any)(b) as number);
+				return (a, b) => key(a) - key(b);
 			}
 		}
 		else if (keyOfProperty !== undefined) {
-			return (a: T, b: T) => (typeof a[key] === 'object' ? a[key][keyOfProperty] as string : a[key] as string).localeCompare((typeof b[key] === 'object' ? b[key][keyOfProperty] as string : b[key] as string), locale);
+			return (a, b) => {
+				if (a[key] === undefined) {
+					return 0;
+				}
+
+				let astring;
+				if (typeof a[key] === 'object') {
+					astring = a[key][keyOfProperty] as string;
+				}
+				else {
+					astring = a[key] as string;
+				}
+
+				let bstring;
+				if (typeof b[key] === 'object') {
+					bstring = b[key][keyOfProperty] as string;
+				}
+				else {
+					bstring = b[key] as string;
+				}
+
+				return astring.localeCompare(bstring, locale);
+			};
 		}
 		else if (propertyType === 'string') {
-			return (a: T, b: T) => (a[key] as string).localeCompare(b[key], locale);
+			return (a, b) => (a[key] as string).localeCompare(b[key], locale);
 		}
 		else if (propertyType === 'number' && mapToIndex !== undefined) {
-			return (a: T, b: T) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale);
+			return (a, b) => (mapToIndex[a[key] as number - 1]).localeCompare(mapToIndex[b[key] as number - 1], locale);
 		}
 		else if (propertyType === 'number') {
-			return (a: T, b: T) => (a[key] as number) - (b[key] as number);
+			return (a, b) => (a[key] as number) - (b[key] as number);
 		}
 	}
 	else {
 		const propertyType = typeof firstItem[option];
 		if (propertyType === 'string') {
-			return (a: T, b: T) => (a[option] as string).localeCompare(b[option], locale);
+			return (a, b) => (a[option] as string).localeCompare(b[option], locale);
 		}
 		else if (propertyType === 'number') {
-			return (a: T, b: T) => (a[option] as number) - (b[option] as number);
+			return (a, b) => (a[option] as number) - (b[option] as number);
 		}
 	}
 	return;
