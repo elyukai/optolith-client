@@ -3,18 +3,15 @@ import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
 import * as Categories from '../constants/Categories';
-// import { DisAdvAdventurePoints } from '../reducers/adventurePoints';
 import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
-// import { getDecreaseRangeAP, getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
-import * as RCPUtils from '../utils/RCPUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
-import { addExtendedSpecialAbilityDependency, addStyleExtendedSpecialAbilityDependencies, removeExtendedSpecialAbilityDependency, removeStyleExtendedSpecialAbilityDependencies } from './activatable';
+import { addExtendedSpecialAbilityDependency, addStyleExtendedSpecialAbilityDependencies } from './activatable';
 import { CurrentHeroInstanceState } from './currentHero';
 import { DependentInstancesState } from './dependentInstances';
 
@@ -60,8 +57,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       const scripts = new Set<number>();
 
       let newlist: Data.ToOptionalKeys<DependentInstancesState> = {};
-      // let calculatedIncreasableCost = 0;
-      // let calculatedActivatableCost = 0;
 
       // Race selections:
 
@@ -206,7 +201,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       // Apply:
 
       function addValue(instance: Data.SkillishInstance, value: number): Data.SkillishInstance {
-        // calculatedIncreasableCost += getIncreaseRangeAP(instance.ic, instance.value, instance.value + value);
         return {
           ...instance,
           value: instance.value + value
@@ -218,12 +212,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       }
 
       function activate(instance: Data.ActivatableSkillishInstance): Data.ActivatableSkillishInstance {
-        // if (instance.category === Categories.BLESSINGS || instance.category === Categories.CANTRIPS) {
-        //   calculatedIncreasableCost += 1;
-        // }
-        // else {
-        //   calculatedIncreasableCost += getIncreaseAP(instance.ic);
-        // }
         return {
           ...instance,
           active: true
@@ -239,8 +227,6 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        // const { currentCost } = ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCost({ id, sid, sid2, tier, index: 0 }, dependent, dependent, true));
-        // calculatedActivatableCost += currentCost;
         const adds = ActivatableUtils.getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
         const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
         if (obj.category === Categories.SPECIAL_ABILITIES) {
@@ -258,52 +244,31 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
         ...SA_27,
         active: [ ...SA_27.active, ...Array.from(scripts.values(), sid => ({ sid }))]
       });
+
       fulllist = setStateItem(fulllist, 'SA_29', {
         ...SA_29,
         active: [ ...SA_29.active, ...Array.from(languages.entries(), ([sid, tier]) => ({ sid, tier }))]
       });
 
-      // AP
-
-      let ap;
       let permanentArcaneEnergyLoss = 0;
 
       if (race && culture && profession) {
-        ap = {
-          // spent: state.ap.spent + calculatedIncreasableCost - profession.ap,
-          spent: state.ap.spent - profession.ap,
-          adv: race.automaticAdvantagesCost,
-          disadv: [0, 0, 0] as [number, number, number]
-        };
-
-        if (action.payload.buyLiteracy) {
-          const id = culture.scripts.length > 1 ? action.payload.litc : culture.scripts[0];
-          const selectionItem = ActivatableUtils.getSelectionItem(get(fulllist, 'SA_27') as Data.SpecialAbilityInstance, id);
-          ap.spent += selectionItem && selectionItem.cost || 0;
-        }
-
         if (profession && profession.id !== 'P_0') {
           const requires = [ ...profession.requires ];
 
-          for (const [key, options] of action.payload.map) {
-            if (RCPUtils.isLanguagesScriptsSelection(key, options)) {
-              ap.spent += options.value;
+          if (professionVariant) {
+            for (const req of professionVariant.requires) {
+              if (RequirementUtils.isRequiringIncreasable(req) || req.active !== false) {
+                requires.push(req);
+              }
+              else {
+                const index = requires.findIndex(e => isEqual(req, e));
+                if (index > -1) {
+                  requires.splice(index, 1);
+                }
+              }
             }
           }
-
-          if (professionVariant) {
-            ap.spent -= professionVariant.ap;
-            requires.push(...professionVariant.requires);
-          }
-
-          // calculatedActivatableCost -= race.automaticAdvantagesCost[0];
-
-          // Test case
-          // if (profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0) !== calculatedActivatableCost) {
-          //   alert(`Calculated different AP value. Do not continue character creation with this profession! ${profession && profession.id} ${professionVariant && professionVariant.id} ${profession.apOfActivatables + (professionVariant ? professionVariant.apOfActivatables : 0)} ${calculatedActivatableCost}`);
-          // }
-
-          // ap.spent += calculatedActivatableCost;
 
           // Assign profession requirements
 
@@ -323,33 +288,13 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
               }
             }
             else {
-              const { id, sid, sid2, tier, active } = req;
+              const { id, sid, sid2, tier } = req;
               const obj = get(fulllist, id) as Data.ActivatableInstance & { tiers?: number };
               const activeObject = { sid, sid2, tier };
 
               const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
-              const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
-              const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-
-              const index = obj.active.findIndex(checkIfActive);
-              if (active === false && index > -1) {
-                fulllist = setStateItem(fulllist, id, {
-                  ...obj,
-                  active: [
-                    ...obj.active.slice(0, index),
-                    ...obj.active.slice(index + 1),
-                  ]
-                });
-                if (obj.category === Categories.SPECIAL_ABILITIES) {
-                  fulllist = removeExtendedSpecialAbilityDependency(
-                    removeStyleExtendedSpecialAbilityDependencies(fulllist, obj),
-                    obj
-                  );
-                }
-                fulllist = mergeIntoState(fulllist, DependentUtils.removeDependencies(fulllist, [...prerequisites, ...adds], obj.id));
-              }
-              else if (active !== false && !obj.active.some(checkIfActive)) {
+              if (!obj.active.some(checkIfActive)) {
                 fulllist = setStateItem(fulllist, id, {
                   ...obj,
                   active: [
@@ -357,6 +302,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
                     activeObject
                   ]
                 });
+                const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
+                const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
                 if (obj.category === Categories.SPECIAL_ABILITIES) {
                   fulllist = addExtendedSpecialAbilityDependency(
                     addStyleExtendedSpecialAbilityDependencies(fulllist, obj),
@@ -386,19 +333,12 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       return {
         ...state,
         dependent: fulllist,
-        ap: {
-          ...state.ap,
-          ...ap
-        },
         energies: {
           ...state.energies,
           permanentArcaneEnergy: {
             ...state.energies.permanentArcaneEnergy,
             lost: state.energies.permanentArcaneEnergy.lost + permanentArcaneEnergyLoss
           }
-        },
-        profile: {
-          ...state.profile
         }
       };
     }
