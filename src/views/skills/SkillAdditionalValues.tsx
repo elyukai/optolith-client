@@ -1,26 +1,30 @@
 import * as React from 'react';
 
 export interface AdditionalValue {
-	className: string;
-	value?: string | number;
+  className: string;
+  value?: string | number;
 }
 
 export interface SkillAdditionalValuesProps {
-	addValues?: AdditionalValue[];
+  addValues?: AdditionalValue[];
 }
 
 export function SkillAdditionalValues(props: SkillAdditionalValuesProps) {
-	const { addValues = [] } = props;
+  const { addValues } = props;
 
-	return (
-		<>
-			{...addValues.map(e => {
-				return (
-					<div key={e.className} className={e.className}>
-						{e.value}
-					</div>
-				);
-			})}
-		</>
-	);
+  if (typeof addValues === 'object') {
+    return (
+      <>
+        {...addValues.map(e => {
+          return (
+            <div key={e.className} className={e.className}>
+              {e.value}
+            </div>
+          );
+        })}
+      </>
+    );
+  }
+
+  return null;
 }

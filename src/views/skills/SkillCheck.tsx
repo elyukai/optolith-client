@@ -39,5 +39,6 @@ export function SkillCheck(props: SkillCheckProps) {
       </>
     );
   }
-  return <></>;
+
+  return null;
 }

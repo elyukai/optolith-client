@@ -17,63 +17,63 @@ export interface SkillButtonsProps {
 }
 
 export function SkillButtons(props: SkillButtonsProps) {
-    const {
-      activateDisabled,
-      addDisabled,
-      ic,
-      id,
-      isNotActive,
-      removeDisabled,
-      sr,
-      activate,
-      addPoint,
-      removePoint,
-      selectForInfo,
-    } = props;
+  const {
+    activateDisabled,
+    addDisabled,
+    ic,
+    id,
+    isNotActive,
+    removeDisabled,
+    sr,
+    activate,
+    addPoint,
+    removePoint,
+    selectForInfo,
+  } = props;
 
-    const boundSelectForInfo = () => selectForInfo(id);
+  const boundSelectForInfo = () => selectForInfo(id);
 
-    const getRemoveIcon = () => {
-      if (ic && sr === 0 && !removeDisabled || !ic) {
-        return '\uE90b';
-      }
-      return '\uE909';
-    };
+  const getRemoveIcon = () => {
+    if (ic && sr === 0 && !removeDisabled || !ic) {
+      return '\uE90b';
+    }
+    return '\uE909';
+  };
 
-    return (
-      <ListItemButtons>
-        {isNotActive ? (
-          <IconButton
-            icon="&#xE916;"
-            onClick={activate}
-            disabled={activateDisabled}
-            flat
-            />
-        ) : (
-          <>
-            {addPoint && (
-              <IconButton
-                icon="&#xE908;"
-                onClick={addPoint}
-                disabled={addDisabled}
-                flat
-                />
-            )}
-            {removePoint && (
-              <IconButton
-                icon={getRemoveIcon()}
-                onClick={removePoint}
-                disabled={removeDisabled}
-                flat
-                />
-            )}
-          </>
-        )}
+  return (
+    <ListItemButtons>
+      {isNotActive ? (
         <IconButton
-          icon="&#xE912;"
-          onClick={boundSelectForInfo}
+          icon="&#xE916;"
+          onClick={activate}
+          disabled={activateDisabled}
           flat
           />
-      </ListItemButtons>
-    );
+      ) : (
+        <>
+          {addPoint && (
+            <IconButton
+              icon="&#xE908;"
+              onClick={addPoint}
+              disabled={addDisabled}
+              flat
+              />
+          )}
+          {removePoint && (
+            <IconButton
+              icon={getRemoveIcon()}
+              onClick={removePoint}
+              disabled={removeDisabled}
+              flat
+              />
+          )}
+        </>
+      )}
+      <IconButton
+        icon="&#xE912;"
+        onClick={boundSelectForInfo}
+        flat
+        />
+    </ListItemButtons>
+  );
 }

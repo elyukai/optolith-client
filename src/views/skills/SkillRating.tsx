@@ -28,5 +28,5 @@ export function SkillRating(props: SkillRatingProps) {
     );
   }
 
-  return <></>;
+  return null;
 }

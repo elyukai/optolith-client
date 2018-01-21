@@ -13,5 +13,5 @@ export function SkillFill(props: SkillFillProps) {
     );
   }
 
-  return <></>;
+  return null;
 }
