@@ -15,7 +15,7 @@ export interface ActivatableRemoveListProps {
 	showRating?: boolean;
 	setTier(id: string, index: number, tier: number): void;
 	removeFromList(args: DeactivateArgs): void;
-	selectForInfo?(id: string): void;
+	selectForInfo(id: string): void;
 }
 
 export function ActivatableRemoveList(props: ActivatableRemoveListProps) {

@@ -112,6 +112,9 @@ export function profile(state: ProfileState = initialState, action: Action): Pro
 			return state;
 		}
 
+		case ActionTypes.SET_CULTURE_AREA_KNOWLEDGE:
+			return { ...state, cultureAreaKnowledge: action.payload.cultureAreaKnowledge };
+
 		default:
 			return state;
 	}

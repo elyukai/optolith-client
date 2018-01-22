@@ -1,12 +1,27 @@
-import { Action } from 'redux';
+interface Action {
+	type: any;
+	payload?: object;
+}
 
-export type Reducer<S> = (state: S | undefined, action: Action) => S;
-export type CrossSliceReducer<S> = (intermediateState: S, action: Action, previousState: S) => S;
+export interface Reducer<S, A extends Action> {
+	// tslint:disable-next-line:callable-types
+	(state: S | undefined, action: A): S;
+}
 
-export function reduceReducers<S>(combinedReducer: Reducer<S>, ...crossSlicereducers: CrossSliceReducer<S>[]) {
-	return (previous: S, action: Action) =>
+export interface CrossSliceReducer<S, A extends Action> {
+	// tslint:disable-next-line:callable-types
+	(intermediateState: S, action: A, previousState: S | undefined): S;
+}
+
+export function reduceReducers<S, A extends Action>(
+	combinedReducer: Reducer<S, A>,
+	...crossSlicereducers: CrossSliceReducer<S, A>[]
+) {
+	return (previous: S | undefined, action: A) =>
 		crossSlicereducers.reduce(
-			(intermediateState, reducer) => reducer(intermediateState, action, previous),
+			(intermediateState, reducer) => {
+				return reducer(intermediateState, action, previous);
+			},
 			combinedReducer(previous, action)
 		);
 }

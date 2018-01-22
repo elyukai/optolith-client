@@ -410,9 +410,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					options={sel2}
 					disabled={sel2.length === 0 || inputText !== undefined || selected === undefined} />
 			);
-			if (selected2 === undefined && inputText === undefined) {
-				disabled = true;
-			}
+			disabled = selected2 === undefined && inputText === undefined;
 		}
 		else if (Array.isArray(sel2)) {
 			selectElement2 = (

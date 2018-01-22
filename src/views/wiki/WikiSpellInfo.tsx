@@ -1,205 +1,130 @@
 import * as React from 'react';
-import { Markdown } from '../../components/Markdown';
-import { Scroll } from '../../components/Scroll';
-import { SecondaryAttribute, SkillExtension } from '../../types/data.d';
+import { SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/view.d';
 import { Attribute, Book, SpecialAbility, Spell } from '../../types/wiki';
-import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
-import { getICName } from '../../utils/ICUtils';
-import { WikiProperty } from './WikiProperty';
+import { WikiCastingTime } from './elements/WikiCastingTime';
+import { WikiCost } from './elements/WikiCost';
+import { WikiDuration } from './elements/WikiDuration';
+import { WikiEffect } from './elements/WikiEffect';
+import { WikiExtensions } from './elements/WikiExtensions';
+import { WikiImprovementCost } from './elements/WikiImprovementCost';
+import { WikiRange } from './elements/WikiRange';
+import { WikiSkillCheck } from './elements/WikiSkillCheck';
+import { WikiSpellProperty } from './elements/WikiSpellProperty';
+import { WikiSpellTraditions } from './elements/WikiSpellTraditions';
+import { WikiTargetCategory } from './elements/WikiTargetCategory';
+import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiSource } from './WikiSource';
 
 export interface WikiSpellInfoProps {
-	attributes: Map<string, Attribute>;
-	books: Map<string, Book>;
-	derivedCharacteristics: Map<string, SecondaryAttribute>;
-	currentObject: Spell;
-	locale: UIMessages;
-	spellExtensions: SpecialAbility | undefined;
+  attributes: Map<string, Attribute>;
+  books: Map<string, Book>;
+  derivedCharacteristics: Map<string, SecondaryAttribute>;
+  currentObject: Spell;
+  locale: UIMessages;
+  spellExtensions: SpecialAbility | undefined;
 }
 
 export function WikiSpellInfo(props: WikiSpellInfoProps) {
-	const { attributes, books, derivedCharacteristics, currentObject, locale, spellExtensions } = props;
+  const {
+    books,
+    currentObject,
+    locale,
+    spellExtensions
+  } = props;
 
-	if (['nl-BE'].includes(locale.id)) {
-		return <Scroll>
-			<div className="info spell-info">
-				<div className="spell-header info-header">
-					<p className="title">{currentObject.name}</p>
-				</div>
-				<WikiProperty locale={locale} title="info.check">
-					{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-				</WikiProperty>
-				<WikiProperty locale={locale} title="info.property">
-					{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-				</WikiProperty>
-				<WikiProperty locale={locale} title="info.traditions">
-					{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
-				</WikiProperty>
-				<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-			</div>
-		</Scroll>;
-	}
+  const {
+    name,
+    gr,
+    src,
+  } = currentObject;
 
-	const filteredSpellExtensions = spellExtensions && (spellExtensions.select as SkillExtension[]).filter(e => e.target === currentObject.id).sort((a, b) => a.tier - b.tier);
+  if (['nl-BE'].includes(locale.id)) {
+    return (
+      <WikiBoxTemplate className="spell" title={name}>
+        <WikiSkillCheck {...props} />
+        <WikiSpellProperty {...props} />
+        <WikiSpellTraditions {...props} />
+        <WikiImprovementCost {...props} />
+      </WikiBoxTemplate>
+    );
+  }
 
-	switch (currentObject.gr) {
-		case 1:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.castingtime">{currentObject.castingTime}</WikiProperty>
-					<WikiProperty locale={locale} title="info.aecost">{currentObject.cost}</WikiProperty>
-					<WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
-					<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
-					<WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.traditions">
-						{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">
-						<span>{_translate(locale, 'spellextensions')}</span>
-					</p>}
-					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <ul className="extensions">
-						{filteredSpellExtensions.map(({ cost, effect, id, name, tier }) => (
-							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
-						))}
-					</ul>}
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-		case 2:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.ritualtime">{currentObject.castingTime}</WikiProperty>
-					<WikiProperty locale={locale} title="info.aecost">{currentObject.cost}</WikiProperty>
-					<WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
-					<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
-					<WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.traditions">
-						{sortStrings(currentObject.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]), locale.id).join(', ')}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <p className="extensions-title">
-						<span>{_translate(locale, 'spellextensions')}</span>
-					</p>}
-					{filteredSpellExtensions && filteredSpellExtensions.length === 3 && <ul className="extensions">
-						{filteredSpellExtensions.map(({ cost, effect, id, name, tier }) => (
-							<Markdown source={`*${name}* (${_translate(locale, 'sr.short')} ${tier * 4 + 4}, ${cost} ${_translate(locale, 'apshort')}): ${effect}`} isListElement key={id} />
-						))}
-					</ul>}
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-		case 3:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.aecost">{currentObject.cost}</WikiProperty>
-					<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-		case 4:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.skill">{currentObject.duration}</WikiProperty>
-					<WikiProperty locale={locale} title="info.aecost">{currentObject.cost}</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-		case 5:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.lengthoftime">{currentObject.castingTime}</WikiProperty>
-					<WikiProperty locale={locale} title="info.skill">{currentObject.duration}</WikiProperty>
-					<WikiProperty locale={locale} title="info.aecost">{currentObject.cost}</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.musictradition">
-						{sortStrings(currentObject.subtradition.map(e => _translate(locale, 'musictraditions')[e - 1]), locale.id).join(', ')}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-		case 6:
-			return <Scroll>
-				<div className="info spell-info">
-					<div className="spell-header info-header">
-						<p className="title">{currentObject.name}</p>
-					</div>
-					<WikiProperty locale={locale} title="info.check">
-						{currentObject.check.map(e => attributes.get(e)!.short).join('/')}{currentObject.checkmod && ` (+${derivedCharacteristics.get(currentObject.checkmod)!.short})`}
-					</WikiProperty>
-					{currentObject.effect && <Markdown source={`**${_translate(locale, 'info.effect')}:** ${currentObject.effect}`} />}
-					<WikiProperty locale={locale} title="info.lengthoftime">
-						{currentObject.castingTime}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.aecost">
-						{currentObject.cost}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.property">
-						{_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.musictradition">
-						{sortStrings(currentObject.subtradition.map(e => _translate(locale, 'musictraditions')[e - 1]), locale.id).join(', ')}
-					</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">
-						{getICName(currentObject.ic)}
-					</WikiProperty>
-					<WikiSource src={currentObject.src} books={books} locale={locale} />
-				</div>
-			</Scroll>;
-	}
+  const sourceElement = (
+    <WikiSource src={src} books={books} locale={locale} />
+  );
 
-	return null;
+
+  switch (gr) {
+    case 1: // Spells
+    case 2: // Rituals
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} />
+          <WikiEffect {...props} />
+          <WikiCastingTime {...props} />
+          <WikiCost {...props} />
+          <WikiRange {...props} />
+          <WikiDuration {...props} />
+          <WikiTargetCategory {...props} />
+          <WikiSpellProperty {...props} />
+          <WikiSpellTraditions {...props} />
+          <WikiImprovementCost {...props} />
+          <WikiExtensions {...props} extensions={spellExtensions} />
+          {sourceElement}
+        </WikiBoxTemplate>
+      );
+    case 3: // Curses
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} />
+          <WikiEffect {...props} />
+          <WikiCost {...props} />
+          <WikiDuration {...props} />
+          <WikiTargetCategory {...props} />
+          {sourceElement}
+        </WikiBoxTemplate>
+      );
+    case 4: // Elven Magical Songs
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} />
+          <WikiEffect {...props} />
+          <WikiDuration {...props} />
+          <WikiCost {...props} />
+          <WikiSpellProperty {...props} />
+          <WikiImprovementCost {...props} />
+          {sourceElement}
+        </WikiBoxTemplate>
+      );
+    case 5:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} />
+          <WikiEffect {...props} />
+          <WikiCastingTime {...props} />
+          <WikiDuration {...props} />
+          <WikiCost {...props} />
+          <WikiSpellProperty {...props} />
+          <WikiSpellTraditions {...props} />
+          <WikiImprovementCost {...props} />
+          {sourceElement}
+        </WikiBoxTemplate>
+      );
+    case 6:
+      return (
+        <WikiBoxTemplate className="spell" title={name}>
+          <WikiSkillCheck {...props} />
+          <WikiEffect {...props} />
+          <WikiCastingTime {...props} />
+          <WikiCost {...props} />
+          <WikiSpellProperty {...props} />
+          <WikiSpellTraditions {...props} />
+          <WikiImprovementCost {...props} />
+          {sourceElement}
+        </WikiBoxTemplate>
+      );
+  }
+
+  return null;
 }

@@ -1101,6 +1101,7 @@ export interface Rules {
 	attributeValueLimit: boolean;
 	enableAllRuleBooks: boolean;
 	enabledRuleBooks: string[];
+	enableLanguageSpecializations: boolean;
 }
 
 export interface HistoryPayload {
