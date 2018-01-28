@@ -810,6 +810,18 @@ export function getCost(obj: ActiveObjectWithId, wiki: WikiState, dependent?: De
       }
       break;
     }
+    case 'SA_699': {
+      currentCost = cost as number;
+      if (typeof dependent === 'object') {
+        const languages = dependent.specialAbilities.get('SA_29');
+        const activeLanguages = languages && languages.active;
+        const baseLanguage = activeLanguages && activeLanguages.find(e => e.sid === sid);
+        if (baseLanguage && baseLanguage.tier === 4) {
+          currentCost = 0;
+        }
+      }
+      break;
+    }
 
     default:
       if (Array.isArray(select) && cost === 'sel') {
@@ -1376,13 +1388,41 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       }
       case 'SA_699': {
         const languages = dependent.specialAbilities.get('SA_29')!;
-        const availableLanguages = languages.active.reduce<number[]>((arr, obj) => {
+
+        interface AvailableLanguage {
+          id: number;
+          tier: number;
+        }
+
+        const availableLanguages = languages.active.reduce<AvailableLanguage[]>((arr, obj) => {
           if (obj.tier === 3 || obj.tier === 4) {
-            return [ ...arr, obj.sid as number ];
+            return [
+              ...arr,
+              {
+                id: obj.sid as number,
+                tier: obj.tier
+              }
+            ];
           }
           return arr;
         }, []);
-        const sel = languages.sel!.filter(e => availableLanguages.includes(e.id as number) && !entry.active.some(a => a.sid === (e.id as number)));
+
+        const sel = languages.sel!.filter(e => {
+          const languageAvailable = availableLanguages.find(l => l.id === e.id);
+          const firstForLanguage = !entry.active.some(a => a.sid === e.id);
+          return languageAvailable && firstForLanguage;
+        }).map(e => {
+          const languageAvailable = availableLanguages.find(l => l.id === e.id);
+          const isMotherTongue = languageAvailable && languageAvailable.tier === 4;
+          if (isMotherTongue) {
+            return {
+              ...e,
+              cost: 0
+            };
+          }
+          return e;
+        });
+
         if (sel.length > 0) {
           return { id, name, sel, cost, instance: entry };
         }
