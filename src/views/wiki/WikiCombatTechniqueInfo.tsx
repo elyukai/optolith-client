@@ -1,44 +1,38 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
-import { Scroll } from '../../components/Scroll';
 import { Attribute, Book, CombatTechnique } from '../../types/wiki';
 import { _translate, UIMessages } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
+import { WikiSource } from './elements/WikiSource';
+import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
-import { WikiSource } from './WikiSource';
 
 export interface WikiCombatTechniqueInfoProps {
-	attributes: Map<string, Attribute>;
-	books: Map<string, Book>;
-	currentObject: CombatTechnique;
-	locale: UIMessages;
-	sex: 'm' | 'f' | undefined;
+  attributes: Map<string, Attribute>;
+  books: Map<string, Book>;
+  currentObject: CombatTechnique;
+  locale: UIMessages;
+  sex: 'm' | 'f' | undefined;
 }
 
 export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
-	const { attributes, books, currentObject, locale } = props;
+  const { attributes, currentObject, locale } = props;
 
-	if (['nl-BE'].includes(locale.id)) {
-		return <Scroll>
-			<div className="info combattechnique-info">
-				<div className="combattechnique-header info-header">
-					<p className="title">{currentObject.name}</p>
-					<WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : '...').join('/')}</WikiProperty>
-					<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-				</div>
-			</div>
-		</Scroll>;
-	}
+  if (['nl-BE'].includes(locale.id)) {
+    return (
+      <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
+        <WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : '...').join('/')}</WikiProperty>
+        <WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
+      </WikiBoxTemplate>
+    );
+  }
 
-	return <Scroll>
-		<div className="info combattechnique-info">
-			<div className="combattechnique-header info-header">
-				<p className="title">{currentObject.name}</p>
-			</div>
-			{currentObject.special && <Markdown source={`**${_translate(locale, 'info.special')}:** ${currentObject.special}`} />}
-			<WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : '...').join('/')}</WikiProperty>
-			<WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-			<WikiSource src={currentObject.src} books={books} locale={locale} />
-		</div>
-	</Scroll>;
+  return (
+    <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
+      {currentObject.special && <Markdown source={`**${_translate(locale, 'info.special')}:** ${currentObject.special}`} />}
+      <WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : '...').join('/')}</WikiProperty>
+      <WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
+      <WikiSource {...props} />
+    </WikiBoxTemplate>
+  );
 }

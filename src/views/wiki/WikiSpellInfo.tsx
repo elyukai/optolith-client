@@ -10,11 +10,11 @@ import { WikiExtensions } from './elements/WikiExtensions';
 import { WikiImprovementCost } from './elements/WikiImprovementCost';
 import { WikiRange } from './elements/WikiRange';
 import { WikiSkillCheck } from './elements/WikiSkillCheck';
+import { WikiSource } from './elements/WikiSource';
 import { WikiSpellProperty } from './elements/WikiSpellProperty';
 import { WikiSpellTraditions } from './elements/WikiSpellTraditions';
 import { WikiTargetCategory } from './elements/WikiTargetCategory';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
-import { WikiSource } from './WikiSource';
 
 export interface WikiSpellInfoProps {
   attributes: Map<string, Attribute>;
@@ -27,7 +27,6 @@ export interface WikiSpellInfoProps {
 
 export function WikiSpellInfo(props: WikiSpellInfoProps) {
   const {
-    books,
     currentObject,
     locale,
     spellExtensions
@@ -36,7 +35,6 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
   const {
     name,
     gr,
-    src,
   } = currentObject;
 
   if (['nl-BE'].includes(locale.id)) {
@@ -49,10 +47,6 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
       </WikiBoxTemplate>
     );
   }
-
-  const sourceElement = (
-    <WikiSource src={src} books={books} locale={locale} />
-  );
 
 
   switch (gr) {
@@ -71,7 +65,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
           <WikiSpellTraditions {...props} />
           <WikiImprovementCost {...props} />
           <WikiExtensions {...props} extensions={spellExtensions} />
-          {sourceElement}
+          <WikiSource {...props} />
         </WikiBoxTemplate>
       );
     case 3: // Curses
@@ -82,7 +76,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
           <WikiCost {...props} />
           <WikiDuration {...props} />
           <WikiTargetCategory {...props} />
-          {sourceElement}
+          <WikiSource {...props} />
         </WikiBoxTemplate>
       );
     case 4: // Elven Magical Songs
@@ -94,7 +88,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
           <WikiCost {...props} />
           <WikiSpellProperty {...props} />
           <WikiImprovementCost {...props} />
-          {sourceElement}
+          <WikiSource {...props} />
         </WikiBoxTemplate>
       );
     case 5:
@@ -108,7 +102,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
           <WikiSpellProperty {...props} />
           <WikiSpellTraditions {...props} />
           <WikiImprovementCost {...props} />
-          {sourceElement}
+          <WikiSource {...props} />
         </WikiBoxTemplate>
       );
     case 6:
@@ -121,7 +115,7 @@ export function WikiSpellInfo(props: WikiSpellInfoProps) {
           <WikiSpellProperty {...props} />
           <WikiSpellTraditions {...props} />
           <WikiImprovementCost {...props} />
-          {sourceElement}
+          <WikiSource {...props} />
         </WikiBoxTemplate>
       );
   }

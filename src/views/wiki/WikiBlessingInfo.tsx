@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
-import { Scroll } from '../../components/Scroll';
 import { Blessing, Book } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../../utils/I18n';
 import { getAspectsOfTradition, getTraditionOfAspect } from '../../utils/LiturgyUtils';
+import { WikiSource } from './elements/WikiSource';
+import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
-import { WikiSource } from './WikiSource';
 
 export interface WikiBlessingInfoProps {
 	books: Map<string, Book>;
@@ -15,7 +15,7 @@ export interface WikiBlessingInfoProps {
 }
 
 export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
-	const { books, currentObject, locale } = props;
+	const { currentObject, locale } = props;
 
 	const traditionsMap = new Map<number, number[]>();
 
@@ -32,27 +32,21 @@ export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
 	}), locale.id).join(', ');
 
 	if (['nl-BE'].includes(locale.id)) {
-		return <Scroll>
-			<div className="info blessing-info">
-				<div className="blessing-header info-header">
-					<p className="title">{currentObject.name}</p>
-					<WikiProperty locale={locale} title="info.aspect">{traditions}</WikiProperty>
-				</div>
-			</div>
-		</Scroll>;
+    return (
+      <WikiBoxTemplate className="blessing" title={currentObject.name}>
+				<WikiProperty locale={locale} title="info.aspect">{traditions}</WikiProperty>
+			</WikiBoxTemplate>
+		);
 	}
 
-	return <Scroll>
-		<div className="info blessing-info">
-			<div className="blessing-header info-header">
-				<p className="title">{currentObject.name}</p>
-			</div>
+	return (
+		<WikiBoxTemplate className="blessing" title={currentObject.name}>
 			<Markdown className="no-indent" source={currentObject.effect} />
 			<WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
 			<WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
 			<WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
 			<WikiProperty locale={locale} title="info.aspect">{traditions}</WikiProperty>
-			<WikiSource src={currentObject.src} books={books} locale={locale} />
-		</div>
-	</Scroll>;
+      <WikiSource {...props} />
+    </WikiBoxTemplate>
+  );
 }

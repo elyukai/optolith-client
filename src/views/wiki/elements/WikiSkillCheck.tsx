@@ -10,7 +10,7 @@ export interface WikiSkillCheckProps {
 		check: string[];
 		checkmod?: 'SPI' | 'TOU';
 	};
-  derivedCharacteristics: Map<string, SecondaryAttribute>;
+  derivedCharacteristics?: Map<string, SecondaryAttribute>;
 	locale: UIMessages;
 }
 
@@ -25,10 +25,21 @@ export function WikiSkillCheck(props: WikiSkillCheckProps) {
     locale
   } = props;
 
+  const checkString = check.map(e => attributes.get(e)!.short).join('/');
+
+  let mod;
+
+  if (typeof checkmod === 'string' && derivedCharacteristics) {
+    mod = ` (+${derivedCharacteristics.get(checkmod)!.short})`;
+  }
+  else if (checkmod) {
+    console.warn('Map of derived characteristics missing.');
+  }
+
   return (
     <WikiProperty locale={locale} title="info.check">
-      {check.map(e => attributes.get(e)!.short).join('/')}
-      {checkmod && ` (+${derivedCharacteristics.get(checkmod)!.short})`}
+      {checkString}
+      {mod}
     </WikiProperty>
   );
 }

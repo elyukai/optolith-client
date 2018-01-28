@@ -479,11 +479,11 @@ export interface Skill {
 	readonly applications?: Application[];
 	readonly applicationsInput?: string;
 	readonly tools?: string;
-	readonly quality?: string;
-	readonly failed?: string;
-	readonly critical?: string;
-	readonly botch?: string;
-	readonly src?: string;
+	readonly quality: string;
+	readonly failed: string;
+	readonly critical: string;
+	readonly botch: string;
+	readonly src: string;
 }
 
 export interface Application {
