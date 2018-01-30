@@ -301,7 +301,7 @@ export const getWT = createSelector(
 	mapGetToSlice(getDisadvantages, 'DISADV_56'),
 	getLocaleMessages,
 	(CON, increase, decrease, locale) => {
-		const base = CON && Math.floor(CON.value / 2) || 0;
+		const base = CON && Math.round(CON.value / 2) || 0;
 		let value = base;
 		if (isActive(increase)) {
 			value++;
