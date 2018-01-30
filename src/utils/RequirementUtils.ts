@@ -296,30 +296,42 @@ export function isActivatableSkillInstance(entry?: Instance): entry is Activatab
   return !!entry && categories.includes(entry.category);
 }
 
+/**
+ * Return flat array of available extended special abilities' IDs.
+ * @param list List of set extended special ability objects.
+ */
+const getAvailableExtendedSpecialAbilities = (list: StyleDependency[]) => {
+  return list.reduce<string[]>((arr, e) => {
+    if (typeof e.active !== 'string') {
+      if (Array.isArray(e.id)) {
+        return [...arr, ...e.id];
+      }
+      return [...arr, e.id];
+    }
+    return arr;
+  }, []);
+}
+
 export const validateAddingExtendedSpecialAbilities = createSelector(
   getBlessedStyleDependencies,
   getCombatStyleDependencies,
   getMagicalStyleDependencies,
   (blessedStyleDependencies, combatStyleDependencies, magicalStyleDependencies) => {
-    const iterate = (list: StyleDependency[]) => list.reduce<string[]>((arr, e) => {
-      if (typeof e.active !== 'string') {
-        if (Array.isArray(e.id)) {
-          return [...arr, ...e.id];
-        }
-        return [...arr, e.id];
-      }
-      return arr;
-    }, []);
-
     return [
-      ...iterate(blessedStyleDependencies),
-      ...iterate(combatStyleDependencies),
-      ...iterate(magicalStyleDependencies),
+      ...getAvailableExtendedSpecialAbilities(blessedStyleDependencies),
+      ...getAvailableExtendedSpecialAbilities(combatStyleDependencies),
+      ...getAvailableExtendedSpecialAbilities(magicalStyleDependencies),
     ];
   }
 );
 
-export function validateRemovingStyle(state: DependentInstancesState, entry?: SpecialAbilityInstance): boolean {
+/**
+ * Checks if the passed special ability is a style and if it is valid to remove
+ * based on registered extended special abilities.
+ * @param state Dependent instances state slice.
+ * @param entry The special ability to check.
+ */
+export function isStyleValidToRemove(state: DependentInstancesState, entry?: SpecialAbilityInstance): boolean {
   if (entry) {
     let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
     if (entry.gr === 9 || entry.gr === 10) {
@@ -332,6 +344,7 @@ export function validateRemovingStyle(state: DependentInstancesState, entry?: Sp
       key = 'blessedStyleDependencies';
     }
     if (typeof key === 'string') {
+      // Split the objects from the ability to remove and remaining objects
       const {
         itemsToRemove,
         leftItems
@@ -350,9 +363,21 @@ export function validateRemovingStyle(state: DependentInstancesState, entry?: Sp
         itemsToRemove: [] as StyleDependency[],
         leftItems: [] as StyleDependency[]
       });
-      for (const dependency of itemsToRemove.filter(e => typeof e.active === 'string')) {
-        const index = leftItems.findIndex(e => !Array.isArray(e.id) ? dependency.active === e.id : e.id.includes(dependency.active!) && e.active === undefined);
-        console.log(dependency, index);
+
+      const usedObjectsToRemove = itemsToRemove.filter(e => {
+        return typeof e.active === 'string';
+      });
+
+      for (const dependency of usedObjectsToRemove) {
+        // Checks if there is a second object to move the active dependency
+        const index = leftItems.findIndex(e => {
+          if (typeof e.id !== 'object') {
+            return dependency.active === e.id;
+          }
+          return e.id.includes(dependency.active!) && e.active === undefined;
+        });
+
+        // if no other object available style entry must not be removed
         if (index === -1) {
           return false;
         }

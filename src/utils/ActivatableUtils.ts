@@ -15,10 +15,10 @@ import * as DependentUtils from './DependentUtils';
 import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getCategoryById } from './IDUtils';
-import { mergeIntoState, setStateItem } from './ListUtils';
+import { InstancesStateReducer, mergeIntoState, setStateItem } from './ListUtils';
 import { getTraditionOfAspect, isOwnTradition } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
-import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateRemovingStyle, validateTier } from './RequirementUtils';
+import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, isStyleValidToRemove, validate, validateObject, validateTier } from './RequirementUtils';
 import { getWikiEntry } from './WikiUtils';
 
 /**
@@ -172,7 +172,7 @@ export function isDeactivatable(state: CurrentHeroInstanceState, obj: Activatabl
     }
   }
   if (obj.category === Categories.SPECIAL_ABILITIES) {
-    const validStyle = validateRemovingStyle(dependent, obj);
+    const validStyle = isStyleValidToRemove(dependent, obj);
     if (validStyle === false) {
       return false;
     }
@@ -285,21 +285,25 @@ export function getSelectionNameAndCost(obj: ActivatableInstance, id?: string | 
   return undefined;
 }
 
+type ActivatablesStateReducer = InstancesStateReducer<ActivatableInstance>;
+
 /**
  * Activates the entry with the given parameters and adds all needed dependencies.
  * @param state The object containing all dependent instances.
  * @param obj The entry.
  * @param activate The object given by the view.
  */
-export function activate(state: DependentInstancesState, obj: ActivatableInstance, activate: ActivateArgs): DependentInstancesState {
-  const active = convertToActiveObject(obj, activate);
-  if (active) {
-    const adds = getGeneratedPrerequisites(obj, active, true);
-    const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active, active]});
-    const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(active.tier && [...obj.reqs].filter(e => e[0] <= active!.tier!).map(e => e[1]) || []);
-    return mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
-  }
-  return state;
+export function activate(activate: ActivateArgs): ActivatablesStateReducer {
+  return (state, obj) => {
+    const active = convertToActiveObject(obj, activate);
+    if (active) {
+      const adds = getGeneratedPrerequisites(obj, active, true);
+      const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active, active]});
+      const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(active.tier && [...obj.reqs].filter(e => e[0] <= active!.tier!).map(e => e[1]) || []);
+      return mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
+    }
+    return {};
+  };
 }
 
 /**
@@ -308,12 +312,14 @@ export function activate(state: DependentInstancesState, obj: ActivatableInstanc
  * @param obj The entry.
  * @param index The index of the `ActiveObject` in `obj.active`.
  */
-export function deactivate(state: DependentInstancesState, obj: ActivatableInstance, index: number): DependentInstancesState {
-  const adds = getGeneratedPrerequisites(obj, obj.active[index], false);
-  const { tier } = obj.active[index];
-  const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active.slice(0, index), ...obj.active.slice(index + 1)]});
-  const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-  return mergeIntoState(firstState, DependentUtils.removeDependencies(firstState, [...prerequisites, ...adds], obj.id));
+export function deactivate(index: number): ActivatablesStateReducer {
+  return (state, obj) => {
+    const adds = getGeneratedPrerequisites(obj, obj.active[index], false);
+    const { tier } = obj.active[index];
+    const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active.slice(0, index), ...obj.active.slice(index + 1)]});
+    const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
+    return mergeIntoState(firstState, DependentUtils.removeDependencies(firstState, [...prerequisites, ...adds], obj.id));
+  };
 }
 
 /**
