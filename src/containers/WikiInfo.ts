@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
+import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { getDependentInstances, getSex, getWiki, getWikiAttributes, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCultures, getWikiItemTemplates, getWikiLiturgicalChants, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills, getWikiSpecialAbilities, getWikiSpells } from '../selectors/stateSelectors';
 import { getAllWikiEntries } from '../selectors/wikiSelectors';
-import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../views/wiki/WikiInfo';
 import { WikiInfoContentStateProps } from '../views/wiki/WikiInfoContent';

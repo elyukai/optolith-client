@@ -10,10 +10,10 @@ import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { CombatTechniqueWithRequirements } from '../../types/view.d';
-import { DCIds } from '../../utils/derivedCharacteristics';
 import { _translate } from '../../utils/I18n';
 import { SkillListItem } from './SkillListItem';
 

@@ -3,11 +3,11 @@ import { Action, Dispatch } from 'redux';
 import * as TalentsActions from '../actions/TalentsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
+import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getPhase, getSkillsFilterText } from '../selectors/stateSelectors';
 import { getFilteredSkills, getTalentsRating } from '../selectors/talentsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
-import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Talents, TalentsDispatchProps, TalentsOwnProps, TalentsStateProps } from '../views/skills/Talents';
 
 function mapStateToProps(state: AppState) {

@@ -4,10 +4,10 @@ import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import { AppState } from '../reducers/app';
 import { getFilteredCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
+import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getCombatTechniquesFilterText, getPhase } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
-import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';
 
 function mapStateToProps(state: AppState) {

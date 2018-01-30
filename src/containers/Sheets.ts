@@ -7,6 +7,7 @@ import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAb
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getForSheet as getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
 import { getForSheet as getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
+import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getPurse, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getBlessingsForSheet, getLiturgiesForSheet } from '../selectors/liturgiesSelectors';
@@ -17,7 +18,6 @@ import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelec
 import { getElState, getSpecialAbilities } from '../selectors/stateSelectors';
 import { getAllSkills } from '../selectors/talentsSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
-import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/profile/Sheets';
 

@@ -4,10 +4,10 @@ import * as AttributesActions from '../actions/AttributesActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/app';
 import { getAdjustmentValue, getAvailableAdjustmentIds, getCurrentAdjustmentId, getForView, getSum } from '../selectors/attributeSelectors';
+import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { isInCharacterCreation, isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAddPermanentEnergy, getEditPermanentEnergy } from '../selectors/stateSelectors';
-import { getDerivedCharacteristics } from '../utils/derivedCharacteristics';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
 function mapStateToProps(state: AppState) {

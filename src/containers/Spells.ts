@@ -4,11 +4,11 @@ import * as ConfigActions from '../actions/ConfigActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
+import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditions, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getAttributes, getBooks, getInactiveSpellsFilterText, getPhase, getSpellsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
-import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/skills/Spells';
 
 function mapStateToProps(state: AppState) {

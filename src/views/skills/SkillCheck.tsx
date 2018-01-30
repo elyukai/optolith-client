@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, SecondaryAttribute } from '../../types/data.d';
-import { DCIds } from '../../utils/derivedCharacteristics';
 
 export interface SkillCheckProps {
   attributes: Map<string, AttributeInstance>;

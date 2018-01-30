@@ -3,11 +3,11 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as LiturgiesActions from '../actions/LiturgiesActions';
 import { AppState } from '../reducers/app';
+import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../selectors/liturgiesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
-import { getDerivedCharacteristicsMap } from '../utils/derivedCharacteristics';
 import { Liturgies, LiturgiesDispatchProps, LiturgiesOwnProps, LiturgiesStateProps } from '../views/skills/Liturgies';
 
 function mapStateToProps(state: AppState) {
