@@ -22,6 +22,7 @@ import { ListItemName } from './ListItemName';
 import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 import { TextField } from './TextField';
+import { getActiveWithDefaultCost } from '../utils/ActivatableUtils';
 
 export interface ActivatableAddListItemOwnProps {
 	item: DeactiveViewObject;
@@ -217,7 +218,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 							disabled={disab} />
 					);
 				}
-				if (selected === 7 && (get(id) as DisadvantageInstance).active.find(e => e.sid === 7) !== undefined) {
+				if (selected === 7 && instance.active.find(e => e.sid === 7) !== undefined) {
 					currentCost = 0;
 				}
 				else if (typeof selected === 'number') {
@@ -232,7 +233,13 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				if (typeof selected === 'string' && typeof inputText === 'string') {
 					disabled = true;
 				}
-				currentCost = id === 'DISADV_36' && (get(id) as DisadvantageInstance).active.length > 2 ? 0 : cost as number;
+				if (id === 'DISADV_36') {
+					const entriesWithDefaultCost = getActiveWithDefaultCost(instance.active);
+					currentCost = entriesWithDefaultCost.length > 2 ? 0 : cost as number;
+				}
+				else {
+					currentCost = cost as number;
+				}
 				args.sel = selected;
 				args.input = inputText;
 				break;
@@ -342,19 +349,21 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			currentCost = selectionItem && selectionItem.cost;
 		}
 
+		let customCostNumber;
+
 		if (typeof customCost === 'string' && isInteger(customCost)) {
-			currentCost = Math.abs(Number.parseInt(customCost));
+			customCostNumber = currentCost = Math.abs(Number.parseInt(customCost));
 		}
 
-		if (category === Categories.DISADVANTAGES && currentCost) {
+		if (category === Categories.DISADVANTAGES && currentCost !== undefined) {
 			currentCost = -currentCost;
 		}
 
 		if (typeof currentCost === 'number') {
 			args.cost = currentCost;
 
-			if (typeof customCost === 'string' && isInteger(customCost)) {
-				args.customCost = currentCost;
+			if (typeof customCostNumber === 'number') {
+				args.customCost = customCostNumber;
 			}
 		}
 

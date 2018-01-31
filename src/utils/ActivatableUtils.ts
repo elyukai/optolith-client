@@ -709,141 +709,144 @@ export function getCost(obj: ActiveObjectWithId, wiki: WikiState, dependent?: De
 
   let currentCost: number | number[] | undefined;
 
-  switch (id) {
-    case 'ADV_4':
-    case 'ADV_47':
-    case 'ADV_16':
-    case 'ADV_17':
-    case 'DISADV_48':
-    case 'SA_231':
-    case 'SA_250':
-    case 'SA_472':
-    case 'SA_473':
-    case 'SA_531':
-    case 'SA_569': {
-      const entry = typeof sid === 'string' ? getWikiEntry<Skillish>(wiki, sid) : undefined;
-      if (entry) {
-        const { ic } = entry;
-        currentCost = (cost as number[])[ic - 1];
-      }
-      else {
-        currentCost = 0;
-      }
-      break;
-    }
-    case 'DISADV_34':
-    case 'DISADV_50': {
-      if (typeof active === 'object') {
-        const compareMaxTier = (a: number, tier: number, cost: number | undefined) => {
-          return tier > a && cost === undefined ? tier : a;
-        };
-        const compareSubMaxTier = (a: number, tier: number, cost: number | undefined, maxCurrentTier: number) => {
-          return tier > a && tier < maxCurrentTier && cost === undefined ? tier : a;
-        };
-
-        const maxCurrentTier = active.reduce((a, { tier, cost }) => compareMaxTier(a, tier!, cost), 0);
-        const subMaxCurrentTier = active.reduce((a, { tier, cost }) => compareSubMaxTier(a, tier!, cost, maxCurrentTier), 0);
-
-        if (maxCurrentTier > tier! || active.filter(e => e.tier === tier).length > (costToAdd ? 0 : 1)) {
-          currentCost = 0;
-        }
-        else {
-          currentCost = (cost as number) * (tier! - subMaxCurrentTier);
-        }
-      }
-      else {
-        currentCost = (cost as number) * tier!;
-      }
-      break;
-    }
-    case 'DISADV_33': {
-      if (sid === 7 && typeof active === 'object' && active.filter(e => e.sid === 7 && e.cost === undefined).length > (costToAdd ? 0 : 1)) {
-        currentCost = 0;
-      }
-      else {
-        currentCost = getSelectOptionCost(instance, sid);
-      }
-      break;
-    }
-    case 'DISADV_36':
-      currentCost = typeof active === 'object' && active.filter(e => e.cost === undefined).length > (costToAdd ? 2 : 3) ? 0 : cost as number;
-      break;
-    case 'SA_9': {
-      const skill = wiki.skills.get(sid as string)!;
-      if (typeof dependent === 'object') {
-        const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid && obj.cost === undefined ? c + 1 : c, 0);
-        currentCost = skill.ic * (counter + (costToAdd ? 1 : 0));
-      }
-      else {
-        currentCost = skill.ic;
-      }
-      break;
-    }
-    case 'SA_29':
-      currentCost = tier === 4 ? 0 : cost as number;
-      break;
-    case 'SA_72': {
-      const apArr = [10, 20, 40];
-      currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
-      break;
-    }
-    case 'SA_87': {
-      const apArr = [15, 25, 45];
-      currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
-      break;
-    }
-    case 'SA_87': {
-      currentCost = cost as number;
-      if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_17'))) {
-        currentCost -= 10;
-      }
-      if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_18'))) {
-        currentCost -= 10;
-      }
-      break;
-    }
-    case 'SA_533': {
-      const entry = typeof sid === 'string' ? wiki.skills.get(sid) : undefined;
-      const SA_531 = dependent && dependent.specialAbilities.get('SA_531')!.active;
-      const firstSID = SA_531 && SA_531[0] && SA_531[0].sid;
-      const firstEntry = typeof firstSID === 'string' ? wiki.skills.get(firstSID) : undefined;
-      if (entry && firstEntry) {
-        const { ic } = entry;
-        currentCost = (cost as number[])[ic - 1] + firstEntry.ic;
-      }
-      else {
-        currentCost = 0;
-      }
-      break;
-    }
-    case 'SA_699': {
-      currentCost = cost as number;
-      if (typeof dependent === 'object') {
-        const languages = dependent.specialAbilities.get('SA_29');
-        const activeLanguages = languages && languages.active;
-        const baseLanguage = activeLanguages && activeLanguages.find(e => e.sid === sid);
-        if (baseLanguage && baseLanguage.tier === 4) {
-          currentCost = 0;
-        }
-      }
-      break;
-    }
-
-    default:
-      if (Array.isArray(select) && cost === 'sel') {
-        currentCost = getSelectOptionCost(instance, sid);
-      }
-      break;
-  }
-
   if (customCost !== undefined) {
     currentCost = customCost;
   }
-  else if (currentCost === undefined) {
-    currentCost = cost as number | number[];
+  else {
+    switch (id) {
+      case 'ADV_4':
+      case 'ADV_47':
+      case 'ADV_16':
+      case 'ADV_17':
+      case 'DISADV_48':
+      case 'SA_231':
+      case 'SA_250':
+      case 'SA_472':
+      case 'SA_473':
+      case 'SA_531':
+      case 'SA_569': {
+        const entry = typeof sid === 'string' ? getWikiEntry<Skillish>(wiki, sid) : undefined;
+        if (entry) {
+          const { ic } = entry;
+          currentCost = (cost as number[])[ic - 1];
+        }
+        else {
+          currentCost = 0;
+        }
+        break;
+      }
+      case 'DISADV_34':
+      case 'DISADV_50': {
+        if (typeof active === 'object') {
+          const compareMaxTier = (a: number, tier: number, cost: number | undefined) => {
+            return tier > a && cost === undefined ? tier : a;
+          };
+          const compareSubMaxTier = (a: number, tier: number, cost: number | undefined, maxCurrentTier: number) => {
+            return tier > a && tier < maxCurrentTier && cost === undefined ? tier : a;
+          };
+
+          const maxCurrentTier = active.reduce((a, { tier, cost }) => compareMaxTier(a, tier!, cost), 0);
+          const subMaxCurrentTier = active.reduce((a, { tier, cost }) => compareSubMaxTier(a, tier!, cost, maxCurrentTier), 0);
+
+          if (maxCurrentTier > tier! || active.filter(e => e.tier === tier).length > (costToAdd ? 0 : 1)) {
+            currentCost = 0;
+          }
+          else {
+            currentCost = (cost as number) * (tier! - subMaxCurrentTier);
+          }
+        }
+        else {
+          currentCost = (cost as number) * tier!;
+        }
+        break;
+      }
+      case 'DISADV_33': {
+        if (sid === 7 && typeof active === 'object' && active.filter(e => e.sid === 7 && e.cost === undefined).length > (costToAdd ? 0 : 1)) {
+          currentCost = 0;
+        }
+        else {
+          currentCost = getSelectOptionCost(instance, sid);
+        }
+        break;
+      }
+      case 'DISADV_36':
+        currentCost = typeof active === 'object' && active.filter(e => e.cost === undefined).length > (costToAdd ? 2 : 3) ? 0 : cost as number;
+        break;
+      case 'SA_9': {
+        const skill = wiki.skills.get(sid as string)!;
+        if (typeof dependent === 'object') {
+          const counter = dependent.specialAbilities.get(id)!.active.reduce((c, obj) => obj.sid === sid && obj.cost === undefined ? c + 1 : c, 0);
+          currentCost = skill.ic * (counter + (costToAdd ? 1 : 0));
+        }
+        else {
+          currentCost = skill.ic;
+        }
+        break;
+      }
+      case 'SA_29':
+        currentCost = tier === 4 ? 0 : cost as number;
+        break;
+      case 'SA_72': {
+        const apArr = [10, 20, 40];
+        currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
+        break;
+      }
+      case 'SA_87': {
+        const apArr = [15, 25, 45];
+        currentCost = active && apArr[active.filter(e => e.cost === undefined).length - (costToAdd ? 0 : 1)];
+        break;
+      }
+      case 'SA_87': {
+        currentCost = cost as number;
+        if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_17'))) {
+          currentCost -= 10;
+        }
+        if (typeof dependent === 'object' && isActive(dependent.disadvantages.get('DISADV_18'))) {
+          currentCost -= 10;
+        }
+        break;
+      }
+      case 'SA_533': {
+        const entry = typeof sid === 'string' ? wiki.skills.get(sid) : undefined;
+        const SA_531 = dependent && dependent.specialAbilities.get('SA_531')!.active;
+        const firstSID = SA_531 && SA_531[0] && SA_531[0].sid;
+        const firstEntry = typeof firstSID === 'string' ? wiki.skills.get(firstSID) : undefined;
+        if (entry && firstEntry) {
+          const { ic } = entry;
+          currentCost = (cost as number[])[ic - 1] + firstEntry.ic;
+        }
+        else {
+          currentCost = 0;
+        }
+        break;
+      }
+      case 'SA_699': {
+        currentCost = cost as number;
+        if (typeof dependent === 'object') {
+          const languages = dependent.specialAbilities.get('SA_29');
+          const activeLanguages = languages && languages.active;
+          const baseLanguage = activeLanguages && activeLanguages.find(e => e.sid === sid);
+          if (baseLanguage && baseLanguage.tier === 4) {
+            currentCost = 0;
+          }
+        }
+        break;
+      }
+
+      default:
+        if (Array.isArray(select) && cost === 'sel') {
+          currentCost = getSelectOptionCost(instance, sid);
+        }
+        break;
+    }
+
+    if (currentCost === undefined) {
+      currentCost = cost as number | number[];
+    }
   }
+
   if (category === Categories.DISADVANTAGES) {
-    currentCost = Array.isArray(currentCost) ? currentCost.map(e => -e) : -currentCost;
+    currentCost = typeof currentCost === 'object' ? currentCost.map(e => -e) : -currentCost;
   }
 
   return currentCost;
@@ -1460,6 +1463,40 @@ export function isExtendedSpecialAbility(entry: ActivatableInstance) {
   return entry.category === 'SPECIAL_ABILITIES' && [11, 14, 26].includes(entry.gr);
 }
 
+interface SplittedActiveObjectsByCustomCost {
+  defaultCostList: ActiveObject[];
+  customCostList: ActiveObject[];
+}
+
+export function getSplittedActiveObjectsByCustomCost(entries: ActiveObject[]) {
+  return entries.reduce<SplittedActiveObjectsByCustomCost>((res, obj) => {
+    if (typeof obj.cost === 'number') {
+      return {
+        ...res,
+        customCostList: [
+          ...res.customCostList,
+          obj,
+        ],
+      };
+    }
+
+    return {
+      ...res,
+      defaultCostList: [
+        ...res.defaultCostList,
+        obj,
+      ],
+    };
+  }, {
+    defaultCostList: [],
+    customCostList: [],
+  });
+}
+
+export function getActiveWithDefaultCost(entries: ActiveObject[]) {
+  return getSplittedActiveObjectsByCustomCost(entries).defaultCostList;
+}
+
 export function getTraditionNameFromFullName(name: string): string {
 	const result = /\((.+)\)/.exec(name);
 	if (result === null) {
@@ -1498,7 +1535,7 @@ export function calculateAdventurePointsSpentDifference(entries: ActiveViewObjec
 
   if (entries.some(e => e.id === 'DISADV_36')) {
     const { active } = state.get('DISADV_36')!;
-    if (active.length > 3) {
+    if (getActiveWithDefaultCost(active).length > 3) {
       diff -= (wiki.disadvantages.get('DISADV_36')!.cost as number) * 3;
     }
   }
