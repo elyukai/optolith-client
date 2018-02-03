@@ -130,8 +130,23 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 										if (obj.active === true) {
 											const { id, name } = obj;
 											const extendedName = name + extendName;
+											let insertTopMargin = false;
+
+											if (sortOrder === 'group' && prevObj) {
+												if (obj.category === Categories.CANTRIPS) {
+													insertTopMargin = prevObj.category !== Categories.CANTRIPS;
+												}
+												else {
+													insertTopMargin = (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr);
+												}
+											}
+
 											return (
-												<ListItem key={id} disabled>
+												<ListItem
+													key={id}
+													disabled
+													insertTopMargin={insertTopMargin}
+													>
 													<ListItemName name={extendedName} />
 												</ListItem>
 											);

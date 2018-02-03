@@ -127,8 +127,23 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 										if (obj.active === true) {
 											const { id, name } = obj;
+											let insertTopMargin = false;
+
+											if (sortOrder === 'group' && prevObj) {
+												if (obj.category === Categories.BLESSINGS) {
+													insertTopMargin = prevObj.category !== Categories.BLESSINGS;
+												}
+												else {
+													insertTopMargin = (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr);
+												}
+											}
+
 											return (
-												<ListItem key={id} disabled>
+												<ListItem
+													key={id}
+													disabled
+													insertTopMargin={insertTopMargin}
+													>
 													<ListItemName name={name} />
 												</ListItem>
 											);
