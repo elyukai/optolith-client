@@ -5,7 +5,8 @@ import { _translate } from '../utils/I18n';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities } from './stateSelectors';
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities, getBooks } from './stateSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
 
 export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WT';
 export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
@@ -367,9 +368,10 @@ export const getDerivedCharacteristicsMap = createSelector(
   getINI,
   getMOV,
   getWT,
-  getLocaleMessages,
-  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, locale) => {
-    if (locale && locale.id === 'de-DE') {
+  getBooks,
+  getRuleBooksEnabled,
+  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, books, ruleBooksEnabled) => {
+    if (ruleBooksEnabled === true ? books.has('US25003') : ruleBooksEnabled.has('US25003')) {
       return new Map<DCIds, SecondaryAttribute<DCIds>>([
         [LP.id, LP],
         [AE.id, AE],
