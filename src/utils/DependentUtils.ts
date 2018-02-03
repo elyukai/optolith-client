@@ -5,7 +5,7 @@ import { ActivatableInstance, AttributeInstance, BlessingInstance, CantripInstan
 import { AbilityInstanceExtended, AllRequirements } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
 import { getPrimaryAttributeId } from './AttributeUtils';
-import { setNewStateItem } from './ListUtils';
+import { setNewStateItem, InstancesStateReducer } from './ListUtils';
 import { isCultureRequirement, isPactRequirement, isRaceRequirement, isRequiringIncreasable, isRequiringPrimaryAttribute, isSexRequirement } from './RequirementUtils';
 
 export type AdditionalRequirements = ActivatableInstance | SpellInstance | CantripInstance | BlessingInstance;
@@ -118,6 +118,17 @@ export function addDependencies(state: DependentInstancesState, requirements: Al
     }
   });
   return instances;
+}
+
+/**
+ * Provides a wrapper for `DependentUtils#addDependencies` to be able to use it
+ * in `ListUtils#mergeOptionalStateReducers`.
+ */
+export function addDependenciesReducer(
+  prerequisites: AllRequirements[],
+  sourceId: string,
+): InstancesStateReducer<ActivatableInstance> {
+  return state => addDependencies(state, prerequisites, sourceId);
 }
 
 /**

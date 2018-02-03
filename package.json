@@ -1,7 +1,7 @@
 {
   "name": "optolyth",
   "productName": "Optolyth",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -30,7 +30,7 @@
     "remark-breaks": "^1.0.0",
     "reselect": "^3.0.1",
     "semver": "^5.4.1",
-    "tslib": "^1.8.1"
+    "tslib": "^1.9.0"
   },
   "devDependencies": {
     "@types/classnames": "^0.0.32",
@@ -51,7 +51,7 @@
     "jest": "^19.0.2",
     "node-sass": "^4.7.2",
     "ts-jest": "^19.0.14",
-    "typescript": "^2.6.2",
+    "typescript": "^2.7.1",
     "xlsx": "^0.10.9"
   },
   "scripts": {

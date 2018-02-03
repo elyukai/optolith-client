@@ -1,4 +1,4 @@
-import { flatten, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import * as ActionTypes from '../constants/ActionTypes';
@@ -9,7 +9,7 @@ import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
-import { mergeIntoState, setNewStateItem, setStateItem } from '../utils/ListUtils';
+import { mergeIntoState, mergeReducedOptionalState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
 import { addExtendedSpecialAbilityDependency, addStyleExtendedSpecialAbilityDependencies } from './activatable';
 import { CurrentHeroInstanceState } from './currentHero';
@@ -175,11 +175,13 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       }
 
       for (const e of action.payload.combattech.values()) {
-        addToSkillRatingList(e, (action.payload.map.get('COMBAT_TECHNIQUES') as Data.CombatTechniquesSelection).value);
+        const obj = action.payload.map.get('COMBAT_TECHNIQUES') as Data.CombatTechniquesSelection;
+        addToSkillRatingList(e, obj.value);
       }
 
       for (const e of action.payload.combatTechniquesSecond.values()) {
-        addToSkillRatingList(e, (action.payload.map.get('COMBAT_TECHNIQUES_SECOND') as Data.CombatTechniquesSecondSelection).value);
+        const obj = action.payload.map.get('COMBAT_TECHNIQUES_SECOND') as Data.CombatTechniquesSecondSelection;
+        addToSkillRatingList(e, obj.value);
       }
 
       for (const e of action.payload.cantrips.values()) {
@@ -208,7 +210,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       }
 
       for (const [id, value] of skillRatingList) {
-        newlist = setNewStateItem(newlist, id, addValue(getLatest(dependent, newlist, id) as Data.SkillishInstance, value));
+        const entry = getLatest(dependent, newlist, id) as Data.SkillishInstance;
+        newlist = setNewStateItem(newlist, id, addValue(entry, value));
       }
 
       function activate(instance: Data.ActivatableSkillishInstance): Data.ActivatableSkillishInstance {
@@ -219,7 +222,8 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       }
 
       for (const id of skillActivateList) {
-        newlist = setNewStateItem(newlist, id, activate(getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance));
+        const entry = getLatest(dependent, newlist, id) as Data.ActivatableSkillishInstance;
+        newlist = setNewStateItem(newlist, id, activate(entry));
       }
 
       let fulllist = mergeIntoState(dependent, newlist);
@@ -227,14 +231,14 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       for (const req of activatable) {
         const { id, sid, sid2, tier } = req;
         const entry = get(fulllist, id as string) as Data.ActivatableInstance;
-        const adds = ActivatableUtils.getGeneratedPrerequisites(entry, { sid, sid2, tier }, true);
-        const obj: Data.ActivatableInstance = {...entry, active: [...entry.active, { sid, sid2, tier }]};
-        if (obj.category === Categories.SPECIAL_ABILITIES) {
-          fulllist = addStyleExtendedSpecialAbilityDependencies(fulllist, obj);
-        }
-        const firstState = setStateItem(fulllist, obj.id, obj);
-        const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-        fulllist = mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
+
+        const activeObject = {
+          sid,
+          sid2,
+          tier
+        };
+
+        fulllist = updateListToContainNewEntry(fulllist, entry, activeObject);
       }
 
       const SA_27 = get(fulllist, 'SA_27') as Data.SpecialAbilityInstance;
@@ -276,14 +280,9 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             if (RequirementUtils.isRequiringIncreasable(req)) {
               const { id, value } = req;
               if (typeof id === 'string') {
-                const obj = get(fulllist, id) as Data.AttributeInstance | Data.TalentInstance;
-                switch (obj.category) {
-                  case Categories.ATTRIBUTES:
-                  case Categories.TALENTS: {
-                    if (typeof value === 'number') {
-                      fulllist = setStateItem(fulllist, id, { ...obj, value });
-                    }
-                  }
+                const obj = get(fulllist, id) as Data.IncreasableInstance;
+                if (typeof value === 'number') {
+                  fulllist = setStateItem(fulllist, id, { ...obj, value });
                 }
               }
             }
@@ -295,22 +294,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
               const checkIfActive = (e: Data.ActiveObject) => isEqual(activeObject, e);
 
               if (!obj.active.some(checkIfActive)) {
-                fulllist = setStateItem(fulllist, id, {
-                  ...obj,
-                  active: [
-                    ...obj.active,
-                    activeObject
-                  ]
-                });
-                const adds = ActivatableUtils.getGeneratedPrerequisites(obj, activeObject, true);
-                const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(tier && [...obj.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-                if (obj.category === Categories.SPECIAL_ABILITIES) {
-                  fulllist = addExtendedSpecialAbilityDependency(
-                    addStyleExtendedSpecialAbilityDependencies(fulllist, obj),
-                    obj
-                  );
-                }
-                fulllist = mergeIntoState(fulllist, DependentUtils.addDependencies(fulllist, [...prerequisites, ...adds], obj.id));
+                fulllist = updateListToContainNewEntry(fulllist, obj, activeObject);
               }
             }
           }
@@ -347,3 +331,46 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
       return state;
   }
 }
+
+function updateListToContainNewEntry(
+  state: DependentInstancesState,
+  entry: Data.ActivatableInstance,
+  activeObject: Data.ActiveObject,
+): DependentInstancesState {
+  const obj: Data.ActivatableInstance = {
+    ...entry,
+    active: [
+      ...entry.active,
+      activeObject
+    ]
+  };
+
+  const { tier } = activeObject;
+
+  const additionalPrerequisites = ActivatableUtils
+    .getGeneratedPrerequisites(entry, activeObject, true);
+  const prerequisites = RequirementUtils
+    .flattenPrerequisitesForActiveLevel(obj.reqs, tier);
+  const combinedPrerequisites = [
+    ...prerequisites,
+    ...additionalPrerequisites
+  ];
+
+  const intermediateState = mergeReducedOptionalState(
+    state,
+    obj,
+    () => setNewStateItem({}, obj.id, obj),
+    DependentUtils.addDependenciesReducer(combinedPrerequisites, obj.id),
+  );
+
+  if (obj.category === Categories.SPECIAL_ABILITIES) {
+    return mergeReducedOptionalState<Data.SpecialAbilityInstance>(
+      intermediateState,
+      obj,
+      addStyleExtendedSpecialAbilityDependencies,
+      addExtendedSpecialAbilityDependency,
+    );
+  }
+
+  return intermediateState;
+};

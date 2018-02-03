@@ -7,6 +7,7 @@ import { WikiState } from '../reducers/wikiReducer';
 import { getSkills, getWiki } from '../selectors/stateSelectors';
 import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, SelectionObject, SkillishInstance, TalentInstance, UIMessages } from '../types/data.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { getActiveWithDefaultCost } from '../utils/ActivatableUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
 import { _translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
@@ -22,7 +23,6 @@ import { ListItemName } from './ListItemName';
 import { ListItemSeparator } from './ListItemSeparator';
 import { ListItemValues } from './ListItemValues';
 import { TextField } from './TextField';
-import { getActiveWithDefaultCost } from '../utils/ActivatableUtils';
 
 export interface ActivatableAddListItemOwnProps {
 	item: DeactiveViewObject;

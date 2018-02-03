@@ -190,6 +190,26 @@ export function getFlatPrerequisites(prerequisites: Map<number, AllRequirements[
 }
 
 /**
+ * Flattens all prerequisites of active level.
+ * @param prerequisites The instance's `prerequisites` property.
+ * @param maxLevel The current selected active level.
+ */
+export function flattenPrerequisitesForActiveLevel(
+  prerequisites: Map<number, AllRequirements[]> | AllRequirements[],
+  maxLevel: number | undefined,
+): AllRequirements[] {
+  if (Array.isArray(prerequisites)) {
+    return prerequisites;
+  }
+  else if (typeof maxLevel === 'number') {
+    const prerequisiteEntries = [...prerequisites];
+    const filteredEntries = prerequisiteEntries.filter(e => e[0] <= maxLevel);
+    return flatten(filteredEntries.map(e => e[1]));
+  }
+  return [];
+}
+
+/**
  * Get flat prerequisites array.
  * @param prerequisites A Map of tier prereqisite arrays.
  */
