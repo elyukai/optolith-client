@@ -4,9 +4,9 @@ import { getSids, isActive } from '../utils/ActivatableUtils';
 import { _translate } from '../utils/I18n';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
-import { getMagicalTraditions } from './spellsSelectors';
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities, getBooks } from './stateSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
+import { getMagicalTraditions } from './spellsSelectors';
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getBooks, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities } from './stateSelectors';
 
 export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WT';
 export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
@@ -371,20 +371,7 @@ export const getDerivedCharacteristicsMap = createSelector(
   getBooks,
   getRuleBooksEnabled,
   (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, books, ruleBooksEnabled) => {
-    if (ruleBooksEnabled === true ? books.has('US25003') : ruleBooksEnabled.has('US25003')) {
-      return new Map<DCIds, SecondaryAttribute<DCIds>>([
-        [LP.id, LP],
-        [AE.id, AE],
-        [KP.id, KP],
-        [SPI.id, SPI],
-        [TOU.id, TOU],
-        [DO.id, DO],
-        [INI.id, INI],
-        [MOV.id, MOV],
-        [WT.id, WT]
-      ]);
-    }
-    return new Map<DCIdsWithoutWT, SecondaryAttribute<DCIds>>([
+    const list: [DCIds, SecondaryAttribute<DCIds>][] = [
       [LP.id, LP],
       [AE.id, AE],
       [KP.id, KP],
@@ -393,7 +380,13 @@ export const getDerivedCharacteristicsMap = createSelector(
       [DO.id, DO],
       [INI.id, INI],
       [MOV.id, MOV]
-    ]);
+    ];
+
+    if (ruleBooksEnabled === true ? books.has('US25003') : ruleBooksEnabled.has('US25003')) {
+      list.push([WT.id, WT]);
+    }
+
+    return new Map(list);
   }
 );
 
