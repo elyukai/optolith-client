@@ -3,7 +3,7 @@ import { calculateAdventurePointsSpentDifference } from '../utils/ActivatableUti
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { getIncreaseAP, getIncreaseRangeAP } from '../utils/ICUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
-import { getCurrentProfession, getCurrentRace } from './rcpSelectors';
+import { getCurrentProfession, getCurrentRace, getCurrentProfessionVariant } from './rcpSelectors';
 import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDependentInstances, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
 
 export const getAdventurePointsSpentForAttributes = createSelector(
@@ -185,10 +185,16 @@ export const getAdventurePointsSpentForRace = createSelector(
 
 export const getAdventurePointsSpentForProfession = createSelector(
 	getCurrentProfession,
+	getCurrentProfessionVariant,
 	getPhase,
-	(profession, phase) => {
-		const professionCost = phase === 1 ? profession ? profession.ap : 0 : undefined;
-		return professionCost;
+	(profession, professionVariant, phase) => {
+		if (phase === 1 && typeof profession === 'object') {
+			if (typeof professionVariant === 'object') {
+				return profession.ap + professionVariant.ap;
+			}
+			return profession.ap;
+		}
+		return;
 	}
 );
 
