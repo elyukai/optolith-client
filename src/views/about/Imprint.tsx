@@ -17,10 +17,10 @@ export function Imprint(props: ImprintProps) {
 
 				<h3>Lukas Obermann</h3>
 				<p>
-					Eekholl 11<br/>
-					24361 Groß Wittensee<br/>
+					Ballastbrücke 29<br/>
+					24937 Flensburg<br/>
 					Germany<br/>
-					<a href="mailto:lukas.obermann@live.de">lukas.obermann@live.de</a><br/>
+					<a href="mailto:lukas.obermann@outlook.de">lukas.obermann@outlook.de</a><br/>
 					<i>{_translate(locale, 'imprint.emailhint')}</i>
 				</p>
 

@@ -134,7 +134,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 													insertTopMargin = prevObj.category !== Categories.BLESSINGS;
 												}
 												else {
-													insertTopMargin = (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr);
+													insertTopMargin = prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr;
 												}
 											}
 
