@@ -247,7 +247,7 @@ export const getAllProfessions = createSelector(
 	getWikiCombatTechniques,
 	getWikiSkills,
 	getLocaleMessages,
-	(wiki, professions, professionVariants, combatTechniquesState, skillsState, locale) => {
+	(wiki, professions, professionVariants, combatTechniquesState, wikiSkills, locale) => {
 		const list: Profession[] = [];
 
 		for (const [id, profession] of professions) {
@@ -283,7 +283,7 @@ export const getAllProfessions = createSelector(
 				knowledgeSkills,
 				craftSkills,
 			} = skills.reduce<SkillGroupLists>((obj, { id, value }) => {
-				const { name, gr } = skillsState.get(id)!;
+				const { name, gr } = wikiSkills.get(id)!;
 
 				let key: keyof SkillGroupLists = 'craftSkills';
 				if (gr === 1) {
@@ -301,7 +301,13 @@ export const getAllProfessions = createSelector(
 
 				return {
 					...obj,
-					[key]: [...obj[key], { name, value }],
+					[key]: [
+						...obj[key],
+						{
+							name,
+							value
+						}
+					],
 				};
 			}, {
 				physicalSkills: [],
@@ -379,7 +385,7 @@ export const getAllProfessions = createSelector(
 						}),
 						skills: skillsVariant.map(({ id, value }) => {
 							const previousObject = skills.find(e => e.id === id);
-							return { name: skillsState.get(id)!.name, value, previous: previousObject && previousObject.value };
+							return { name: wikiSkills.get(id)!.name, value, previous: previousObject && previousObject.value };
 						}),
 						spells: spellsVariant.map(({ id, value }) => {
 							const previousObject = spells.find(e => e.id === id);

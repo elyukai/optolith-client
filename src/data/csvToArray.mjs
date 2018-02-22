@@ -19,11 +19,13 @@ import fs from 'fs';
  * @param csv {string} The CSV table.
  * @returns {CSVEntry[]}
  */
-export function csvToMap(csv) {
+export function csvToArray(csv) {
   const lines = csv.split(/\r?\n/);
   const splittedLines = lines.map(e => e.split(/;;/));
 
-  const header = splittedLines.shift();
+  const validLines = splittedLines.filter(e => e.length > 1 || typeof e[0] === 'number' || typeof e[0] === 'string' && e[0].length > 0);
+
+  const header = validLines.shift();
 
   const idColumnIndex = header.findIndex(e => /id/.test(e));
   header[idColumnIndex] = 'id';
@@ -36,7 +38,7 @@ export function csvToMap(csv) {
   const isLineOfTypeNumber = (element, index) => {
     return [
       element,
-      splittedLines.every(line => /^-?[\d.,]*$/.test(line[index]))
+      validLines.every(line => /^-?[\d.,]*$/.test(line[index]))
     ];
   };
 
@@ -47,7 +49,7 @@ export function csvToMap(csv) {
    */
   const finalMap = new Map();
 
-  for (const line of splittedLines) {
+  for (const line of validLines) {
     if (line.length > 1) {
       /**
        * @type {CSVEntry}
@@ -55,6 +57,10 @@ export function csvToMap(csv) {
       const newEntry = {
         id: line[header.findIndex(e => /id/.test(e))]
       };
+
+      if (typeof newEntry.id === 'string' && /^-?[\d.,]*$/.test(newEntry.id)) {
+        newEntry.id = Number.parseFloat(newEntry.id.replace(/\,/, '.'));
+      }
 
       for (let i = 0; i < header.length; i++) {
         const cell = line[i];

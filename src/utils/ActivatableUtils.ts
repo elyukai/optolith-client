@@ -475,12 +475,18 @@ export function convertToActiveObject(obj: ActivatableInstance, activate: Activa
  * @param add States if the prerequisites should be added or removed (some
  * prerequisites must be calculated based on that).
  */
-export function getGeneratedPrerequisites(obj: ActivatableInstance, { sid }: ActiveObject, add: boolean): AllRequirementTypes[] {
+export function getGeneratedPrerequisites(
+  obj: ActivatableInstance,
+  { sid }: ActiveObject,
+  add: boolean,
+): AllRequirementTypes[] {
   const adds: AllRequirementTypes[] = [];
   switch (obj.id) {
     case 'SA_3': {
-      const selectionItem = getSelectionItem(obj, sid) as SelectionObject & { req: AllRequirementTypes[] };
-      adds.push(...selectionItem.req);
+      const selectionItem = getSelectionItem(obj, sid);
+      if (typeof selectionItem === 'object' && typeof selectionItem.req === 'object') {
+        adds.push(...selectionItem.req);
+      }
       break;
     }
     case 'SA_9':

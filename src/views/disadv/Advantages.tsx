@@ -10,11 +10,12 @@ import { RecommendedReference } from '../../components/RecommendedReference';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
-import { AdventurePointsState } from '../../reducers/adventurePoints';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { ActivateArgs, ActiveViewObject, AdvantageInstance, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
+import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
 import { DeactiveList } from './DeactiveList';
 
 export interface AdvantagesOwnProps {
@@ -23,7 +24,7 @@ export interface AdvantagesOwnProps {
 
 export interface AdvantagesStateProps {
 	activeList: ActiveViewObject[];
-	ap: AdventurePointsState;
+	ap: AdventurePointsObject;
 	deactiveList: DeactiveViewObject[];
 	enableActiveItemHints: boolean;
 	list: AdvantageInstance[];
@@ -78,12 +79,13 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
-						<p>
-							{_translate(locale, 'titlebar.adventurepoints.advantages', ap.adv[0], 80)}<br/>
-							{ap.adv[1] > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesmagic', ap.adv[1], magicalMax)}
-							{ap.adv[1] > 0 && ap.adv[2] > 0 && <br/>}
-							{ap.adv[2] > 0 && _translate(locale, 'titlebar.adventurepoints.advantagesblessed', ap.adv[2], 50)}
-						</p>
+						<AdvantagesDisadvantagesAdventurePoints
+							total={ap.spentOnAdvantages}
+							blessed={ap.spentOnBlessedAdvantages}
+							magical={ap.spentOnMagicalAdvantages}
+							magicalMax={magicalMax}
+							locale={locale}
+							/>
 						{showRating && <RecommendedReference locale={locale} />}
 					</Options>
 					<MainContent>

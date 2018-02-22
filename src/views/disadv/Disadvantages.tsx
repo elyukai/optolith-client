@@ -10,12 +10,13 @@ import { RecommendedReference } from '../../components/RecommendedReference';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
-import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, DisadvantageInstance, InputTextEvent, Instance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { _translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { DeactiveList } from './DeactiveList';
+import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 
 export interface DisadvantagesOwnProps {
 	locale: UIMessages;
@@ -23,7 +24,7 @@ export interface DisadvantagesOwnProps {
 
 export interface DisadvantagesStateProps {
 	activeList: ActiveViewObject[];
-	ap: AdventurePointsState;
+	ap: AdventurePointsObject;
 	deactiveList: DeactiveViewObject[];
 	enableActiveItemHints: boolean;
 	list: DisadvantageInstance[];
@@ -78,6 +79,13 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'disadvantages.options.common')}</Checkbox>
 						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<AdvantagesDisadvantagesAdventurePoints
+							total={ap.spentOnAdvantages}
+							blessed={ap.spentOnBlessedAdvantages}
+							magical={ap.spentOnMagicalAdvantages}
+							magicalMax={magicalMax}
+							locale={locale}
+							/>
 						<p>
 							{_translate(locale, 'titlebar.adventurepoints.disadvantages', ap.disadv[0], 80)}<br/>
 							{ap.disadv[1] > 0 && _translate(locale, 'titlebar.adventurepoints.disadvantagesmagic', ap.disadv[1], magicalMax)}

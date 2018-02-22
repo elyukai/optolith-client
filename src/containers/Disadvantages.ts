@@ -6,16 +6,17 @@ import { AppState } from '../reducers/app';
 import { getDisadvantagesRating, getFilteredActiveDisadvantages, getFilteredInactiveDisadvantages } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAdventurePoints, getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText } from '../selectors/stateSelectors';
+import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from '../views/disadv/Disadvantages';
+import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 
 function mapStateToProps(state: AppState) {
 	return {
 		activeList: getFilteredActiveDisadvantages(state),
-		ap: getAdventurePoints(state),
+		ap: getAdventurePointsObject(state),
 		deactiveList: getFilteredInactiveDisadvantages(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
 		get(id: string) {

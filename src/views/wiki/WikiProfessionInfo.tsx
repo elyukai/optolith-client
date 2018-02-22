@@ -299,41 +299,41 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
         ].join(', ') || '-'}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.skills" />
-      <p className="skill-group">
-        <span>{_translate(locale, 'skills.view.groups')[0]}</span>
-        <span>{currentObject.physicalSkills.length > 0 ? [
-          ...sortStrings(currentObject.physicalSkills.map(e => `${e.name} ${e.value}`), locale.id),
-          ...(skillsSelectionString && skillsSelection!.gr === 1 ? [skillsSelectionString] : [])
-        ].join(', ') : '-'}</span>
-      </p>
-      <p className="skill-group">
-        <span>{_translate(locale, 'skills.view.groups')[1]}</span>
-        <span>{currentObject.socialSkills.length > 0 ? [
-          ...sortStrings(currentObject.socialSkills.map(e => `${e.name} ${e.value}`), locale.id),
-          ...(skillsSelectionString && skillsSelection!.gr === 2 ? [skillsSelectionString] : [])
-        ].join(', ') : '-'}</span>
-      </p>
-      <p className="skill-group">
-        <span>{_translate(locale, 'skills.view.groups')[2]}</span>
-        <span>{currentObject.natureSkills.length > 0 ? [
-          ...sortStrings(currentObject.natureSkills.map(e => `${e.name} ${e.value}`), locale.id),
-          ...(skillsSelectionString && skillsSelection!.gr === 3 ? [skillsSelectionString] : [])
-        ].join(', ') : '-'}</span>
-      </p>
-      <p className="skill-group">
-        <span>{_translate(locale, 'skills.view.groups')[3]}</span>
-        <span>{currentObject.knowledgeSkills.length > 0 ? [
-          ...sortStrings(currentObject.knowledgeSkills.map(e => `${e.name} ${e.value}`), locale.id),
-          ...(skillsSelectionString && skillsSelection!.gr === 4 ? [skillsSelectionString] : [])
-        ].join(', ') : '-'}</span>
-      </p>
-      <p className="skill-group">
-        <span>{_translate(locale, 'skills.view.groups')[4]}</span>
-        <span>{currentObject.craftSkills.length > 0 ? [
-          ...sortStrings(currentObject.craftSkills.map(e => `${e.name} ${e.value}`), locale.id),
-          ...(skillsSelectionString && skillsSelection!.gr === 5 ? [skillsSelectionString] : [])
-        ].join(', ') : '-'}</span>
-      </p>
+      <Skills
+        groupIndex={0}
+        list={currentObject.physicalSkills}
+        locale={locale}
+        skillsSelection={skillsSelection}
+        skillsSelectionString={skillsSelectionString}
+        />
+      <Skills
+        groupIndex={1}
+        list={currentObject.socialSkills}
+        locale={locale}
+        skillsSelection={skillsSelection}
+        skillsSelectionString={skillsSelectionString}
+        />
+      <Skills
+        groupIndex={2}
+        list={currentObject.natureSkills}
+        locale={locale}
+        skillsSelection={skillsSelection}
+        skillsSelectionString={skillsSelectionString}
+        />
+      <Skills
+        groupIndex={3}
+        list={currentObject.knowledgeSkills}
+        locale={locale}
+        skillsSelection={skillsSelection}
+        skillsSelectionString={skillsSelectionString}
+        />
+      <Skills
+        groupIndex={4}
+        list={currentObject.craftSkills}
+        locale={locale}
+        skillsSelection={skillsSelection}
+        skillsSelectionString={skillsSelectionString}
+        />
       {spellsArray.length > 0 && <WikiProperty locale={locale} title="info.spells">{spellsArray.join(', ')}</WikiProperty>}
       {liturgicalChantsArray.length > 0 && <WikiProperty locale={locale} title="info.liturgicalchants">
         {liturgicalChantsArray.join(', ')}
@@ -577,7 +577,7 @@ function Skills(props: SkillsProps) {
       <span>{_translate(locale, 'skills.view.groups')[groupIndex]}</span>
       <span>{list.length > 0 ? [
         ...sortStrings(list.map(e => `${e.name} ${e.value}`), locale.id),
-        ...(skillsSelectionString && skillsSelection && skillsSelection.gr === 1 ? [skillsSelectionString] : [])
+        ...(skillsSelectionString && skillsSelection && typeof skillsSelection.gr === 'number' && skillsSelection.gr - 1 === groupIndex ? [skillsSelectionString] : [])
       ].join(', ') : '-'}</span>
     </p>
   );
