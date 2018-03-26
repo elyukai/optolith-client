@@ -1,4 +1,5 @@
 import { SourceLink } from '../types/data';
+import { Book } from '../types/wiki';
 
 export const isCoreBook = (src: SourceLink) => ['US25001', 'US25002'].includes(src.id);
 
@@ -56,3 +57,21 @@ export const filterByInstancePropertyAvailability = <T extends ObjectWithInstanc
 	}
 	return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance));
 };
+
+/**
+ * Returns if a book is currently enabled or not.
+ * @param books All available books for the selected language.
+ * @param availableBooks The current selection of enabled books or if all books
+ * are enabled.
+ * @param id The book's id.
+ */
+export function isBookEnabled(
+	books: Map<string, Book>,
+	availableBooks: true | Set<string>,
+	id: string,
+): boolean {
+	if (availableBooks === true) {
+		return books.has(id);
+	}
+	return availableBooks.has(id);
+}

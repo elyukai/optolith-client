@@ -330,7 +330,7 @@ const getAvailableExtendedSpecialAbilities = (list: StyleDependency[]) => {
     }
     return arr;
   }, []);
-}
+};
 
 export const validateAddingExtendedSpecialAbilities = createSelector(
   getBlessedStyleDependencies,

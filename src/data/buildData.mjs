@@ -336,6 +336,7 @@ function iterateDisadvantagesObligations(array) {
 
 function iterateAttributes(array) {
   const list = {};
+  console.log(array);
   for (const obj of array) {
     obj.id = `ATTR_${obj.id}`;
     list[obj.id] = obj;

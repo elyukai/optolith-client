@@ -50,7 +50,7 @@ export function csvToArray(csv) {
   const finalMap = new Map();
 
   for (const line of validLines) {
-    if (line.length > 1) {
+    if (line.length > 1 || line.length === 1 && line[0].length > 0) {
       /**
        * @type {CSVEntry}
        */

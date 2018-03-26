@@ -28,7 +28,15 @@
 		"category": "RolePlaying",
 		"executableName": "Optolyth",
 		"icon": "app",
-		"target": "tar.gz"
+		"target": [
+			{
+				"target": "tar.gz",
+				"arch": [
+					"x64",
+					"ia32"
+				]
+			}
+		]
 	},
 	"mac": {
 		"category": "public.app-category.role-playing-games",
