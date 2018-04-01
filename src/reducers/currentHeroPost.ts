@@ -1,8 +1,8 @@
 import { isEqual } from 'lodash';
 import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
-import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
+import { ActionTypes } from '../constants/ActionTypes';
+import { Categories } from '../constants/Categories';
 import { get, getLatest } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import * as Data from '../types/data.d';
@@ -11,9 +11,9 @@ import * as ActivatableUtils from '../utils/ActivatableUtils';
 import * as DependentUtils from '../utils/DependentUtils';
 import { mergeIntoState, mergeReducedOptionalState, setNewStateItem, setStateItem } from '../utils/ListUtils';
 import * as RequirementUtils from '../utils/RequirementUtils';
-import { addExtendedSpecialAbilityDependency, addStyleExtendedSpecialAbilityDependencies } from './activatable';
 import { CurrentHeroInstanceState } from './currentHero';
 import { DependentInstancesState } from './dependentInstances';
+import { addStyleExtendedSpecialAbilityDependencies, addExtendedSpecialAbilityDependency } from '../utils/ExtendedStyleUtils';
 
 type Action = CreateHeroAction | SetSelectionsAction;
 
@@ -22,12 +22,7 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
     case ActionTypes.CREATE_HERO:
       return {
         ...state,
-        ap: {
-          total: getStart(state.el).ap,
-          spent: 0,
-          adv: [0, 0, 0],
-          disadv: [0, 0, 0]
-        }
+        ap: getStart(state.el).ap,
       };
 
     case ActionTypes.ASSIGN_RCP_OPTIONS: {

@@ -19,6 +19,7 @@ import { SelectionsLangLitc } from './SelectionsLangLitc';
 import { SelectionsSkills } from './SelectionsSkills';
 import { SelectionsTalentSpec } from './SelectionsTalentSpec';
 import { TerrainKnowledge } from './SelectionsTerrainKnowledge';
+import { isRemoveCombatTechniquesSelection, isRemoveSecondCombatTechniquesSelection } from '../../utils/WikiUtils';
 
 export interface SelectionsOwnProps {
 	locale: UIMessages;
@@ -230,7 +231,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 
 		if (currentProfessionVariant) {
 			currentProfessionVariant.selections.forEach(e => {
-				if ((e.id === 'COMBAT_TECHNIQUES' || e.id === 'COMBAT_TECHNIQUES_SECOND') && e.active === false) {
+				if ((isRemoveCombatTechniquesSelection(e) || isRemoveSecondCombatTechniquesSelection(e)) && e.active === false) {
 					professionSelections.delete(e.id);
 				}
 				else {

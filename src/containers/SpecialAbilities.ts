@@ -3,13 +3,14 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { AppState } from '../reducers/app';
-import { getFilteredActiveSpecialAbilities, getFilteredInactiveSpecialAbilities } from '../selectors/activatableSelectors';
+import { getFilteredActiveSpecialAbilities } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveSpecialAbilitiesFilterText, getPhase, getSpecialAbilities, getSpecialAbilitiesFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/skills/SpecialAbilities';
+import { getFilteredInactiveSpecialAbilities } from '../selectors/combinedActivatablesSelectors';
 
 function mapStateToProps(state: AppState) {
 	return {

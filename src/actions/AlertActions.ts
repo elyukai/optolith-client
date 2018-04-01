@@ -1,5 +1,5 @@
 import { clipboard } from 'electron';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { Alert } from '../types/data.d';
 import { _translate, UIMessages } from '../utils/I18n';
 

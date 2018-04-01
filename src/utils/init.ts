@@ -1,4 +1,4 @@
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { AdvantageInstanceInInit, DisadvantageInstanceInInit, InstanceInInit, SelectionObject, SkillishInstance, SpecialAbilityInstanceInInit, ToListById } from '../types/data.d';
@@ -98,7 +98,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 
 	function getSelectionCategories(source: SelectionObject[]) {
 		const rawNames = source.reduce<SkillishInstance[]>((arr, e) => {
-			const key = getStateKeyByCategory(e.id as Categories.Category);
+			const key = getStateKeyByCategory(e.id as Categories);
 			if (key) {
 				return [...arr, ...list[key].values()] as SkillishInstance[];
 			}

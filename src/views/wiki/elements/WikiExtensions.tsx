@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Markdown } from '../../../components/Markdown';
+import { Categories } from '../../../constants/Categories';
 import { SkillExtension, SpecialAbility } from '../../../types/wiki';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 import { _translate, UIMessages } from '../../../utils/I18n';
@@ -7,6 +8,7 @@ import { _translate, UIMessages } from '../../../utils/I18n';
 export interface WikiExtensionsProps {
 	currentObject: {
 		id: string;
+    category: Categories;
 	};
   extensions: SpecialAbility | undefined;
 	locale: UIMessages;
@@ -15,13 +17,19 @@ export interface WikiExtensionsProps {
 export function WikiExtensions(props: WikiExtensionsProps) {
   const {
     currentObject: {
-      id
+      id,
+      category,
     },
     extensions,
     locale
   } = props;
 
+  let key: keyof UIMessages = 'spellextensions';
   let extensionsList = extensions && (extensions.select as SkillExtension[]);
+
+  if (category === Categories.LITURGIES) {
+    key = 'liturgicalchantextensions';
+  }
 
   if (typeof extensionsList === 'object') {
     extensionsList = extensionsList.filter(e => e.target === id);
@@ -32,7 +40,7 @@ export function WikiExtensions(props: WikiExtensionsProps) {
     return (
       <>
         <p className="extensions-title">
-          <span>{_translate(locale, 'spellextensions')}</span>
+          <span>{_translate(locale, key)}</span>
         </p>
         <ul className="extensions">
           {extensionsList.map(({ cost, effect, id, name, tier }) => {

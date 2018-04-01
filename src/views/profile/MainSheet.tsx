@@ -2,7 +2,6 @@ import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Options } from '../../components/Options';
 import { TextBox } from '../../components/TextBox';
-import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { ProfileState } from '../../reducers/profile';
 import * as Data from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
@@ -14,10 +13,11 @@ import { MainSheetAttributes } from './MainSheetAttributes';
 import { MainSheetPersonalData } from './MainSheetPersonalData';
 import { Sheet } from './Sheet';
 import { SheetWrapper } from './SheetWrapper';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 
 export interface MainSheetProps {
 	advantagesActive: Data.ActiveViewObject[];
-	ap: AdventurePointsState;
+	ap: AdventurePointsObject;
 	attributes: View.Attribute[];
 	culture: Wiki.Culture | undefined;
 	derivedCharacteristics: Data.SecondaryAttribute[];

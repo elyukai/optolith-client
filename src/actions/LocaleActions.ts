@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { getSystemLocale } from '../selectors/localeSelectors';
 
 export interface SetLocaleAction {

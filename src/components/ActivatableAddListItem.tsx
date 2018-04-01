@@ -1,7 +1,7 @@
 import classNames = require('classnames');
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { WikiState } from '../reducers/wikiReducer';
 import { getSkills, getWiki } from '../selectors/stateSelectors';

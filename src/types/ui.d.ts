@@ -475,7 +475,8 @@ export interface UIMessages {
 	"info.spellscantrips": string;
 	"info.spellscantripscounter": string[];
 	"info.liturgicalchants": string;
-	"info.liturgicalchantsthetwelveblessings": string;
+	"info.thetwelveblessings": string;
+	"info.thetwelveblessingsexceptions": string;
 	"info.suggestedadvantages": string;
 	"info.suggesteddisadvantages": string;
 	"info.unsuitableadvantages": string;
@@ -816,3 +817,5 @@ export interface UIMessages {
 	"wiki.initialmessage": string;
 	"emptylistnoresults": string;
 }
+
+export type UIKey = keyof UIMessages;

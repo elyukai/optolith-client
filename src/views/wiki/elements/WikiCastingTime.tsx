@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CategoryWithGroups, SPELLS, LITURGIES } from '../../../constants/Categories';
+import { CategoryWithGroups, Categories } from '../../../constants/Categories';
 import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
@@ -24,16 +24,16 @@ export function WikiCastingTime(props: WikiCastingTimeProps) {
 
   let key: keyof UIMessages = 'info.castingtime';
 
-  if (category === SPELLS && gr === 2) {
+  if (category === Categories.SPELLS && gr === 2) {
     key = 'info.ritualtime';
   }
-  else if (category === SPELLS && (gr === 5 || gr === 6)) {
+  else if (category === Categories.SPELLS && (gr === 5 || gr === 6)) {
     key = 'info.lengthoftime';
   }
-  else if (category === LITURGIES && gr === 1) {
+  else if (category === Categories.LITURGIES && gr === 1) {
     key = 'info.liturgicaltime';
   }
-  else if (category === LITURGIES && gr === 2) {
+  else if (category === Categories.LITURGIES && gr === 2) {
     key = 'info.ceremonialtime';
   }
 

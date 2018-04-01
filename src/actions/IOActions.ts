@@ -3,7 +3,7 @@ import { ipcRenderer, remote } from 'electron';
 import { UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
 import { extname, join } from 'path';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { getHeroesForSave, getHeroForSave } from '../selectors/herolistSelectors';
 import { getSystemLocale } from '../selectors/I18n';

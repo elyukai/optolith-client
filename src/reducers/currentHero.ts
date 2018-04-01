@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { reduceReducers } from '../utils/reduceReducers';
 import { undo, UndoState } from '../utils/undo';
 import { adventurePoints, AdventurePointsState } from './adventurePoints';

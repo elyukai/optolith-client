@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { getArmorZonesState, getItemsState } from '../selectors/equipmentSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { getNewId } from '../utils/IDUtils';

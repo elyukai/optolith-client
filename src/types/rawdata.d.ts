@@ -386,11 +386,11 @@ export interface RawTalentLocale {
 	spec: Data.Application[];
 	spec_input?: string;
 	tools?: string;
-	quality?: string;
-	failed?: string;
-	critical?: string;
-	botch?: string;
-	src?: string;
+	quality: string;
+	failed: string;
+	critical: string;
+	botch: string;
+	src: string;
 }
 
 export interface RawItem {

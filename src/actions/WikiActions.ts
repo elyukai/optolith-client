@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 export interface SetWikiFilterAction {
 	type: ActionTypes.SET_WIKI_FILTER;

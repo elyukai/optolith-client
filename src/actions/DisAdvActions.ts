@@ -1,5 +1,5 @@
-import * as ActionTypes from '../constants/ActionTypes';
-import { DISADVANTAGES } from '../constants/Categories';
+import { ActionTypes } from '../constants/ActionTypes';
+import { Categories } from '../constants/Categories';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { get } from '../selectors/dependentInstancesSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
@@ -33,7 +33,7 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const { id, cost, ...other } = args;
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
-		const isDisadvantage = entry.category === DISADVANTAGES;
+		const isDisadvantage = entry.category === Categories.DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
@@ -107,7 +107,7 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const negativeCost = cost * -1; // the entry should be removed
 		const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
 		const entryType = isMagicalOrBlessed(entry);
-		const isDisadvantage = entry.category === DISADVANTAGES;
+		const isDisadvantage = entry.category === Categories.DISADVANTAGES;
 		const validCost = validateDisAdvantages(negativeCost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
@@ -187,7 +187,7 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, getWiki(state), dependent, true)).currentCost;
 		const cost = nextCost - previousCost;
 		const entryType = isMagicalOrBlessed(entry);
-		const isDisadvantage = entry.category === DISADVANTAGES;
+		const isDisadvantage = entry.category === Categories.DISADVANTAGES;
 		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({

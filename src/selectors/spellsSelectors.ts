@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { CANTRIPS, SPELLS } from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById } from '../types/data.d';
 import { Spell, SpellWithRequirements } from '../types/view.d';
 import { isActive } from '../utils/ActivatableUtils';
@@ -9,11 +9,11 @@ import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
 import { getPresent } from './currentHeroSelectors';
-import { getStart, getStartEl } from './elSelectors';
+import { getStartEl } from './elSelectors';
 import { getValidPact } from './pactSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
-import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getElState, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiExperienceLevels } from './stateSelectors';
+import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
 export const getMagicalTraditionsResultFunc = (list: Map<string, SpecialAbilityInstance>) => {
@@ -112,7 +112,7 @@ export const getInactiveSpells = createSelector(
 
     if (lastTraditionId === 'SA_679') {
       return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-        if (entry.category === CANTRIPS || entry.gr < 3 && !isMaximumOfSpellsReached && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
+        if (entry.category === Categories.CANTRIPS || entry.gr < 3 && !isMaximumOfSpellsReached && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
           return {
             ...obj,
             valid: [...obj.valid, entry]
@@ -134,7 +134,7 @@ export const getInactiveSpells = createSelector(
       const subtradition = lastTradition.active[0] && lastTradition.active[0].sid;
       if (typeof subtradition === 'number') {
         return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-          if (entry.category === CANTRIPS || entry.subtradition.includes(subtradition)) {
+          if (entry.category === Categories.CANTRIPS || entry.subtradition.includes(subtradition)) {
             return {
               ...obj,
               valid: [...obj.valid, entry]
@@ -157,7 +157,7 @@ export const getInactiveSpells = createSelector(
       };
     }
     return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-      if (entry.category === CANTRIPS || (!isMaximumOfSpellsReached || entry.gr > 2) && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || (entry.gr < 3 && !areMaxUnfamiliar))) {
+      if (entry.category === Categories.CANTRIPS || (!isMaximumOfSpellsReached || entry.gr > 2) && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || (entry.gr < 3 && !areMaxUnfamiliar))) {
         return {
           ...obj,
           valid: [...obj.valid, entry]
@@ -189,7 +189,7 @@ export const getActiveSpells = createSelector(
     const list: (SpellWithRequirements | CantripInstance)[] = [];
     for (const entry of allEntries) {
       if (entry.active === true) {
-        if (entry.category === CANTRIPS) {
+        if (entry.category === Categories.CANTRIPS) {
           list.push(entry)
         }
         else {
@@ -244,7 +244,7 @@ export const getSpellsAndCantripsForSave = createSelector(
     const spells: ToListById<number> = {};
     const cantrips: string[] = [];
     for (const entry of list) {
-      if (entry.category === SPELLS) {
+      if (entry.category === Categories.SPELLS) {
         const { id, value } = entry;
         spells[id] = value;
       }

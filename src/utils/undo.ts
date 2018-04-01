@@ -1,6 +1,6 @@
 import { first, last } from 'lodash';
 import { Action } from 'redux';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 export interface UndoState<S> {
   past: S[];
@@ -10,7 +10,7 @@ export interface UndoState<S> {
 
 export function undo<S, A extends Action = Action>(
   reducer: (state: S | undefined, action: A) => S,
-  resetActionTypes?: string[]
+  resetActionTypes?: ActionTypes[]
 ): (state: UndoState<S>, action: A) => UndoState<S> {
   const initialState: UndoState<S> = {
     past: [],

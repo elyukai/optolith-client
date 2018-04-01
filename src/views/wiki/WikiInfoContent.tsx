@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
-import * as Categories from '../../constants/Categories';
+import { Categories } from '../../constants/Categories';
 import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
 import { ActivatableInstance, SecondaryAttribute } from '../../types/data.d';
@@ -31,6 +31,7 @@ export interface WikiInfoContentOwnProps {
 export interface WikiInfoContentStateProps {
 	attributes: Map<string, Attribute>;
 	books: Map<string, Book>;
+	blessings: Map<string, Blessing>;
 	cantrips: Map<string, Cantrip>;
 	combatTechniques: Map<string, CombatTechnique>;
 	cultures: Map<string, Culture>;

@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { isDialogOpen } from '../selectors/subwindowsSelectors';
 import { AsyncAction } from '../types/actions';
 import { TabId } from '../utils/LocationUtils';

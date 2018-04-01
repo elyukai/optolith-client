@@ -14,7 +14,7 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import * as Categories from '../../constants/Categories';
+import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';

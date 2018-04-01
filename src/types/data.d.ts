@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import * as Reusable from './reusable.d';
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { AllRequirementTypes } from './reusable.d';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';

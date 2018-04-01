@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { AdventurePointsState } from '../../reducers/adventurePoints';
 import { Purse } from '../../reducers/equipment';
 import { ProfileState } from '../../reducers/profile';
 import * as Data from '../../types/data.d';
@@ -15,6 +14,7 @@ import { LiturgiesSheet } from './LiturgiesSheet';
 import { MainSheet } from './MainSheet';
 import { SkillsSheet } from './SkillsSheet';
 import { SpellsSheet } from './SpellsSheet';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 
 export interface SheetsOwnProps {
 	locale: UIMessages;
@@ -22,7 +22,7 @@ export interface SheetsOwnProps {
 
 export interface SheetsStateProps {
 	advantagesActive: Data.ActiveViewObject[];
-	ap: AdventurePointsState;
+	ap: AdventurePointsObject;
 	armors: View.Armor[];
 	armorZones: View.ArmorZone[];
 	attributes: View.Attribute[];

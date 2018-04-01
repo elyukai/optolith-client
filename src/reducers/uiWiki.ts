@@ -1,6 +1,6 @@
 import { SetTabAction } from '../actions/LocationActions';
 import { SetWikiCategory1Action, SetWikiCategory2Action, SetWikiCombatTechniquesGroupAction, SetWikiFilterAction, SetWikiFilterAllAction, SetWikiItemTemplatesGroupAction, SetWikiLiturgicalChantsGroupAction, SetWikiProfessionsGroupAction, SetWikiSkillsGroupAction, SetWikiSpecialAbilitiesGroupAction, SetWikiSpellsGroupAction} from '../actions/WikiActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 type Action = SetTabAction | SetWikiCategory1Action | SetWikiCategory2Action | SetWikiFilterAction | SetWikiFilterAllAction | SetWikiCombatTechniquesGroupAction | SetWikiItemTemplatesGroupAction | SetWikiLiturgicalChantsGroupAction | SetWikiProfessionsGroupAction | SetWikiSkillsGroupAction | SetWikiSpecialAbilitiesGroupAction | SetWikiSpellsGroupAction;
 

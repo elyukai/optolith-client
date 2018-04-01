@@ -2,7 +2,7 @@ import { ProgressInfo } from 'builder-util-runtime';
 import { SetUpdateDownloadProgressAction } from '../actions/IOActions';
 import { SetTabAction } from '../actions/LocationActions';
 import { CloseAddAdventurePointsAction, CloseAddPermanentEnergyLossAction, CloseCharacterCreatorAction, CloseEditCharacterAvatarAction, CloseEditPermanentEnergyAction, CloseEditPetAvatarAction, CloseSettingsAction, OpenAddAdventurePointsAction, OpenAddPermanentEnergyLossAction, OpenCharacterCreatorAction, OpenEditCharacterAvatarAction, OpenEditPermanentEnergyAction, OpenEditPetAvatarAction, OpenSettingsAction } from '../actions/SubwindowsActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 type Action = SetTabAction | SetUpdateDownloadProgressAction | OpenAddPermanentEnergyLossAction | OpenCharacterCreatorAction | OpenEditPermanentEnergyAction | CloseAddPermanentEnergyLossAction | CloseCharacterCreatorAction | CloseEditPermanentEnergyAction | OpenAddAdventurePointsAction | OpenSettingsAction | CloseAddAdventurePointsAction | CloseSettingsAction | OpenEditCharacterAvatarAction | OpenEditPetAvatarAction | CloseEditCharacterAvatarAction | CloseEditPetAvatarAction;
 

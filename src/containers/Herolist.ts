@@ -11,10 +11,12 @@ import { getCurrentId, getHeroesArray, getUsers } from '../selectors/herolistSel
 import { getWikiExperienceLevels, isCharacterCreatorOpen } from '../selectors/stateSelectors';
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../selectors/uisettingsSelectors';
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../views/herolist/Herolist';
+import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 
 function mapStateToProps(state: AppState, props?: HerolistOwnProps) {
 	return {
 		currentHero: getPresent(state),
+		currentHeroAdventurePoints: getAdventurePointsObject(state),
 		currentHeroId: getCurrentId(state),
 		experienceLevels: getWikiExperienceLevels(state),
 		list: getHeroesArray(state),

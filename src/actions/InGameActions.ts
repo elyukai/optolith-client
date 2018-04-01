@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 const AppDispatcher = { dispatch(obj: any) { return obj; }};
 

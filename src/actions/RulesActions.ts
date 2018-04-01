@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 export interface SetHigherParadeValuesAction {
 	type: ActionTypes.SET_HIGHER_PARADE_VALUES;

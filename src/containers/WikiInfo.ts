@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { AppState } from '../reducers/app';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { getDependentInstances, getSex, getWiki, getWikiAttributes, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCultures, getWikiItemTemplates, getWikiLiturgicalChants, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills, getWikiSpecialAbilities, getWikiSpells } from '../selectors/stateSelectors';
+import { getDependentInstances, getSex, getWiki, getWikiAttributes, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCultures, getWikiItemTemplates, getWikiLiturgicalChants, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills, getWikiSpecialAbilities, getWikiSpells, getWikiBlessings } from '../selectors/stateSelectors';
 import { getAllWikiEntries } from '../selectors/wikiSelectors';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../views/wiki/WikiInfo';
@@ -10,6 +10,7 @@ import { WikiInfoContentStateProps } from '../views/wiki/WikiInfoContent';
 function mapStateToProps(state: AppState) {
 	return {
 		attributes: getWikiAttributes(state),
+		blessings: getWikiBlessings(state),
 		books: getWikiBooks(state),
 		cantrips: getWikiCantrips(state),
 		combatTechniques: getWikiCombatTechniques(state),

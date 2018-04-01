@@ -1,4 +1,4 @@
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { ActivatableNameCostActive, ProfessionSelections, SourceLink, ProfessionDependencyObject, LiturgyInstance, SpellInstance } from './data.d';
 import { ProfessionRequiresIncreasableObject, ProfessionRequiresActivatableObject } from './reusable.d';
 import { ProfessionVariantSelections } from './wiki';

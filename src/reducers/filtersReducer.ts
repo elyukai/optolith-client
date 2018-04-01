@@ -9,9 +9,29 @@ import { SetRacesFilterTextAction } from '../actions/RaceActions';
 import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from '../actions/SpecialAbilitiesActions';
 import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from '../actions/SpellsActions';
 import { SetSkillsFilterTextAction } from '../actions/TalentsActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
-type Action = SetTabAction | SetActiveAdvantagesFilterTextAction | SetActiveDisadvantagesFilterTextAction | SetActiveLiturgicalChantsFilterTextAction | SetActiveSpecialAbilitiesFilterTextAction | SetActiveSpellsFilterTextAction | SetCombatTechniquesFilterTextAction | SetCulturesFilterTextAction | SetEquipmentFilterTextAction | SetInactiveAdvantagesFilterTextAction | SetInactiveDisadvantagesFilterTextAction | SetInactiveDisadvantagesFilterTextAction | SetInactiveLiturgicalChantsFilterTextAction | SetInactiveSpecialAbilitiesFilterTextAction | SetInactiveSpellsFilterTextAction | SetItemTemplatesFilterTextAction | SetProfessionsFilterTextAction | SetRacesFilterTextAction | SetSkillsFilterTextAction | SetZoneArmorFilterTextAction;
+type Action =
+	SetTabAction |
+  SetActiveAdvantagesFilterTextAction |
+  SetActiveDisadvantagesFilterTextAction |
+  SetActiveLiturgicalChantsFilterTextAction |
+  SetActiveSpecialAbilitiesFilterTextAction |
+  SetActiveSpellsFilterTextAction |
+  SetCombatTechniquesFilterTextAction |
+  SetCulturesFilterTextAction |
+  SetEquipmentFilterTextAction |
+  SetInactiveAdvantagesFilterTextAction |
+  SetInactiveDisadvantagesFilterTextAction |
+  SetInactiveDisadvantagesFilterTextAction |
+  SetInactiveLiturgicalChantsFilterTextAction |
+  SetInactiveSpecialAbilitiesFilterTextAction |
+  SetInactiveSpellsFilterTextAction |
+  SetItemTemplatesFilterTextAction |
+  SetProfessionsFilterTextAction |
+  SetRacesFilterTextAction |
+  SetSkillsFilterTextAction |
+  SetZoneArmorFilterTextAction;
 
 export interface FiltersState {
 	racesFilterText: string;
@@ -57,7 +77,10 @@ const initialState: FiltersState = {
 	petsFilterText: '',
 };
 
-export function filtersReducer(state: FiltersState = initialState, action: Action): FiltersState {
+export function filtersReducer(
+	state: FiltersState = initialState,
+	action: Action,
+): FiltersState {
 	switch (action.type) {
 		case ActionTypes.SET_TAB:
 			return initialState;

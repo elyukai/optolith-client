@@ -15,6 +15,7 @@ import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 
 export interface HerolistOwnProps {
 	locale: UIMessages;
@@ -22,6 +23,7 @@ export interface HerolistOwnProps {
 
 export interface HerolistStateProps {
 	currentHero: CurrentHeroInstanceState;
+	currentHeroAdventurePoints: AdventurePointsObject;
 	currentHeroId: string | undefined;
 	experienceLevels: Map<string, ExperienceLevel>;
 	list: Hero[];
@@ -64,7 +66,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 	render() {
 		const {
 			currentHero: {
-				ap,
 				dependent: {
 					races,
 					raceVariants,
@@ -76,6 +77,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 				profile: { avatar, professionName, sex },
 				rcp: { culture, profession, professionVariant, race, raceVariant }
 			},
+			currentHeroAdventurePoints,
 			currentHeroId,
 			importHero,
 			list: rawList,
@@ -170,7 +172,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 									{...other}
 									avatar={avatar}
 									name={_translate(locale, 'heroes.view.unsavedhero.title')}
-									ap={ap}
+									ap={currentHeroAdventurePoints}
 									r={race}
 									rv={raceVariant}
 									c={culture}

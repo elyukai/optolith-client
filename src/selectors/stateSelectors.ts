@@ -18,9 +18,9 @@ export const getCurrentHeroPresent = (state: AppState) => state.currentHero.pres
 export const getCurrentHeroPast = (state: AppState) => state.currentHero.past;
 export const getCurrentHeroFuture = (state: AppState) => state.currentHero.future;
 
-export const getAdventurePoints = (state: AppState) => state.currentHero.present.ap;
-export const getTotalAdventurePoints = (state: AppState) => state.currentHero.present.ap.total;
-export const getAdventurePointsSpent = (state: AppState) => state.currentHero.present.ap.spent;
+// export const getAdventurePoints = (state: AppState) => state.currentHero.present.ap;
+export const getTotalAdventurePoints = (state: AppState) => state.currentHero.present.ap;
+// export const getAdventurePointsSpent = (state: AppState) => state.currentHero.present.ap.spent;
 
 export const getDependentInstances = (state: AppState) => state.currentHero.present.dependent;
 export const getAdvantages = (state: AppState) => state.currentHero.present.dependent.advantages;

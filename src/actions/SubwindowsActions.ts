@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 export interface OpenEditPermanentEnergyAction {
 	type: ActionTypes.OPEN_EDIT_PERMANENT_ENERGY;

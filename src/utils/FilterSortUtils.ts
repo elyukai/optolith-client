@@ -19,9 +19,9 @@ export interface SortOption<T> {
 
 type SortFunction<T> = (a: T, b: T) => number;
 
-const keyIsFunction = <T>(key: SortKeyType<T>): key is SortKeyFunction<T> => {
+function keyIsFunction<T>(key: SortKeyType<T>): key is SortKeyFunction<T> {
 	return typeof key === 'function';
-};
+}
 
 export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: AllSortOptions<T> = 'name') {
 	if (list.length < 2) {
@@ -92,11 +92,11 @@ export function filterObjects<T extends BaseObject>(list: T[], filterText: strin
 			});
 		}
 		return list.filter(obj => {
-			if (typeof obj.name === 'string') {
-				return obj.name.toLowerCase().includes(filterText);
-			}
-			else if (typeof obj.name === 'object' && keyOfName) {
+			if (typeof obj.name === 'object' && keyOfName) {
 				return (obj.name[keyOfName] as string).toLowerCase().includes(filterText);
+			}
+			else if (typeof obj.name === 'string') {
+				return obj.name.toLowerCase().includes(filterText);
 			}
 			return true;
 		});

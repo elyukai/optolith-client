@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CategoryWithGroups, SPELLS } from '../../../constants/Categories';
+import { CategoryWithGroups, Categories } from '../../../constants/Categories';
 import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
@@ -24,7 +24,7 @@ export function WikiDuration(props: WikiDurationProps) {
 
   let key: keyof UIMessages = 'info.duration';
 
-  if (category === SPELLS && (gr === 4 || gr === 5)) {
+  if (category === Categories.SPELLS && (gr === 4 || gr === 5)) {
     key = 'info.skill';
   }
 

@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { getCurrentProfessionId, getCurrentProfessionVariantId, getDependentInstances } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { Selections } from '../types/data.d';

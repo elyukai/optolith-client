@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';
-import { getDisadvantagesRating, getFilteredActiveDisadvantages, getFilteredInactiveDisadvantages } from '../selectors/activatableSelectors';
+import { getDisadvantagesRating, getFilteredActiveDisadvantages } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
 import { isRemovingEnabled } from '../selectors/phaseSelectors';
 import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText } from '../selectors/stateSelectors';
@@ -12,6 +12,7 @@ import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { getAdvantagesDisadvantagesSubMax } from '../utils/APUtils';
 import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from '../views/disadv/Disadvantages';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
+import { getFilteredInactiveDisadvantages } from '../selectors/combinedActivatablesSelectors';
 
 function mapStateToProps(state: AppState) {
 	return {

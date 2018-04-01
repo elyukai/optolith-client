@@ -51,7 +51,7 @@
     "jest": "^19.0.2",
     "node-sass": "^4.7.2",
     "ts-jest": "^19.0.14",
-    "typescript": "^2.7.1",
+    "typescript": "^2.8.1",
     "xlsx": "^0.10.9"
   },
   "scripts": {

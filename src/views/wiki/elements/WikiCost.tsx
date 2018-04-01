@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Category, LITURGIES } from '../../../constants/Categories';
+import { Categories } from '../../../constants/Categories';
 import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiCostProps {
 	currentObject: {
     cost: string;
-    category: Category;
+    category: Categories;
 	};
 	locale: UIMessages;
 }
@@ -22,7 +22,7 @@ export function WikiCost(props: WikiCostProps) {
 
   let key: keyof UIMessages = 'info.aecost';
 
-  if (category === LITURGIES) {
+  if (category === Categories.LITURGIES) {
     key = 'info.kpcost';
   }
 

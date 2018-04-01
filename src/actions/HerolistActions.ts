@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { getAdventurePointsSpent } from '../selectors/adventurePointsSelectors';
 import { getMessages } from '../selectors/localeSelectors';
 import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHeroes, getLocaleMessages, getTotalAdventurePoints } from '../selectors/stateSelectors';

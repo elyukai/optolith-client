@@ -12,7 +12,7 @@ import { SwitchSheetAttributeValueVisibilityAction } from '../actions/SheetActio
 import { SetSpecialAbilitiesSortOrderAction } from '../actions/SpecialAbilitiesActions';
 import { SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import { SetTalentsSortOrderAction, SwitchTalentRatingVisibilityAction } from '../actions/TalentsActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 type Action = ReceiveInitialDataAction | SetCombatTechniquesSortOrderAction | SwitchEnableActiveItemHintsAction | SetCulturesSortOrderAction | SetCulturesVisibilityFilterAction | SwitchCultureValueVisibilityAction | SwitchDisAdvRatingVisibilityAction | SetItemsSortOrderAction | SetHerolistSortOrderAction | SetHerolistVisibilityFilterAction | SetLiturgiesSortOrderAction | SetProfessionsGroupVisibilityFilterAction | SetProfessionsSortOrderAction | SetProfessionsVisibilityFilterAction | SwitchProfessionsExpansionVisibilityFilterAction | SetRacesSortOrderAction | SwitchRaceValueVisibilityAction | SetSpecialAbilitiesSortOrderAction | SetSpellsSortOrderAction | SetTalentsSortOrderAction | SwitchTalentRatingVisibilityAction | SwitchSheetAttributeValueVisibilityAction | SetThemeAction | SwitchEnableEditingHeroAfterCreationPhaseAction | SetMeleeItemTemplatesCombatTechniqueFilterAction | SetRangedItemTemplatesCombatTechniqueFilterAction | SwitchEnableAnimationsAction;
 

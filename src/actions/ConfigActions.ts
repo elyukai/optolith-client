@@ -1,4 +1,4 @@
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 
 export interface SwitchEnableActiveItemHintsAction {
 	type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS;

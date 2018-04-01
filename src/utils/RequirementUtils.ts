@@ -1,12 +1,9 @@
 import { flatten } from 'lodash';
-import { createSelector } from 'reselect';
 import { Pact } from '../actions/PactActions';
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
-import { getBlessedStyleDependencies, getCombatStyleDependencies, getMagicalStyleDependencies } from '../selectors/stateSelectors';
-import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, SpecialAbilityInstance, StyleDependency } from '../types/data.d';
+import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
 import { CultureRequirement, PactRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
@@ -314,96 +311,4 @@ export function isActivatableInstance(entry?: Instance): entry is ActivatableIns
 export function isActivatableSkillInstance(entry?: Instance): entry is ActivatableSkillInstance {
   const categories = [Categories.SPELLS, Categories.LITURGIES];
   return !!entry && categories.includes(entry.category);
-}
-
-/**
- * Return flat array of available extended special abilities' IDs.
- * @param list List of set extended special ability objects.
- */
-const getAvailableExtendedSpecialAbilities = (list: StyleDependency[]) => {
-  return list.reduce<string[]>((arr, e) => {
-    if (typeof e.active !== 'string') {
-      if (Array.isArray(e.id)) {
-        return [...arr, ...e.id];
-      }
-      return [...arr, e.id];
-    }
-    return arr;
-  }, []);
-};
-
-export const validateAddingExtendedSpecialAbilities = createSelector(
-  getBlessedStyleDependencies,
-  getCombatStyleDependencies,
-  getMagicalStyleDependencies,
-  (blessedStyleDependencies, combatStyleDependencies, magicalStyleDependencies) => {
-    return [
-      ...getAvailableExtendedSpecialAbilities(blessedStyleDependencies),
-      ...getAvailableExtendedSpecialAbilities(combatStyleDependencies),
-      ...getAvailableExtendedSpecialAbilities(magicalStyleDependencies),
-    ];
-  }
-);
-
-/**
- * Checks if the passed special ability is a style and if it is valid to remove
- * based on registered extended special abilities.
- * @param state Dependent instances state slice.
- * @param entry The special ability to check.
- */
-export function isStyleValidToRemove(state: DependentInstancesState, entry?: SpecialAbilityInstance): boolean {
-  if (entry) {
-    let key: 'combatStyleDependencies' | 'magicalStyleDependencies' | 'blessedStyleDependencies' | undefined;
-    if (entry.gr === 9 || entry.gr === 10) {
-      key = 'combatStyleDependencies';
-    }
-    else if (entry.gr === 13) {
-      key = 'magicalStyleDependencies';
-    }
-    else if (entry.gr === 25) {
-      key = 'blessedStyleDependencies';
-    }
-    if (typeof key === 'string') {
-      // Split the objects from the ability to remove and remaining objects
-      const {
-        itemsToRemove,
-        leftItems
-      } = state[key].reduce((obj, dependency) => {
-        if (dependency.origin === entry.id) {
-          return {
-            ...obj,
-            itemsToRemove: [...obj.itemsToRemove, dependency]
-          };
-        }
-        return {
-          ...obj,
-          leftItems: [...obj.leftItems, dependency]
-        };
-      }, {
-        itemsToRemove: [] as StyleDependency[],
-        leftItems: [] as StyleDependency[]
-      });
-
-      const usedObjectsToRemove = itemsToRemove.filter(e => {
-        return typeof e.active === 'string';
-      });
-
-      for (const dependency of usedObjectsToRemove) {
-        // Checks if there is a second object to move the active dependency
-        const index = leftItems.findIndex(e => {
-          if (typeof e.id !== 'object') {
-            return dependency.active === e.id;
-          }
-          return e.id.includes(dependency.active!) && e.active === undefined;
-        });
-
-        // if no other object available style entry must not be removed
-        if (index === -1) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  return false;
 }

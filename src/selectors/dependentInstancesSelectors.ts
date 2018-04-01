@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Category, CategoryWithGroups } from '../constants/Categories';
+import { CategoryWithGroups, Categories } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { Instance, InstanceByCategory, InstanceWithGroups, ToOptionalKeys } from '../types/data.d';
@@ -34,7 +34,7 @@ export function getLatestFromSlice<T extends Instance>(state: Map<string, T>, ne
 	return newstate && newstate.has(id) ? newstate.get(id) : state.get(id);
 }
 
-export function getAllByCategory<T extends Category>(state: DependentInstancesState, ...categories: T[]) {
+export function getAllByCategory<T extends Categories>(state: DependentInstancesState, ...categories: T[]) {
 	return categories.reduce<InstanceByCategory[T][]>((arr, e) => {
 		const key = getStateKeyByCategory(e);
 		if (key) {
@@ -53,7 +53,7 @@ export function getAllByGroupFromSlice<T extends InstanceWithGroups>(state: Map<
 	return ([...state.values()] as T[]).filter(e => gr.includes(e.gr));
 }
 
-export function getMapByCategory<T extends Category>(state: DependentInstancesState, ...categories: T[]) {
+export function getMapByCategory<T extends Categories>(state: DependentInstancesState, ...categories: T[]) {
 	return categories.reduce<Map<string, InstanceByCategory[T]>>((arr, e) => {
 		const key = getStateKeyByCategory(e);
 		if (key) {

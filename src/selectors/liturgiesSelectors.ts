@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { BLESSINGS, LITURGIES } from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { LiturgicalChantWithRequirements, Liturgy } from '../types/view.d';
 import { isActive } from '../utils/ActivatableUtils';
@@ -54,8 +54,8 @@ export const getActiveLiturgicalChants = createSelector(
 		const list: (LiturgicalChantWithRequirements | BlessingInstance)[] = [];
 		for (const entry of allEntries) {
 			if (entry.active === true) {
-				if (entry.category === BLESSINGS) {
-					list.push(entry)
+				if (entry.category === Categories.BLESSINGS) {
+					list.push(entry);
 				}
 				else {
 					list.push({
@@ -196,7 +196,7 @@ export const getLiturgicalChantsAndBlessingsForSave = createSelector(
 		const liturgies: ToListById<number> = {};
 		const blessings: string[] = [];
 		for (const entry of list) {
-			if (entry.category === LITURGIES) {
+			if (entry.category === Categories.LITURGIES) {
 				const { id, value } = entry;
 				liturgies[id] = value;
 			}

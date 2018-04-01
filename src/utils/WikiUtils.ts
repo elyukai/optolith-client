@@ -1,4 +1,4 @@
-import { ADVANTAGES, DISADVANTAGES, PROFESSIONS, SPECIAL_ABILITIES } from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import { ActivatableInstance } from '../types/data';
 import { Profession as ProfessionView } from '../types/view';
@@ -24,15 +24,15 @@ export function isItemTemplate(obj: Element): obj is ItemTemplate {
 }
 
 export function isProfession(obj: Element): obj is Profession {
-	return !isItemTemplate(obj) && obj.category === PROFESSIONS;
+	return !isItemTemplate(obj) && obj.category === Categories.PROFESSIONS;
 }
 
 export function isSpecialAbility(obj: Element): obj is SpecialAbility {
-	return !isItemTemplate(obj) && obj.category === SPECIAL_ABILITIES;
+	return !isItemTemplate(obj) && obj.category === Categories.SPECIAL_ABILITIES;
 }
 
 export function isActivatableWikiObj(obj: Element): obj is SpecialAbility {
-	return !isItemTemplate(obj) && (obj.category === SPECIAL_ABILITIES || obj.category === ADVANTAGES || obj.category === DISADVANTAGES);
+	return !isItemTemplate(obj) && (obj.category === Categories.SPECIAL_ABILITIES || obj.category === Categories.ADVANTAGES || obj.category === Categories.DISADVANTAGES);
 }
 
 export function isRemoveSpecializationSelection(obj: ProfessionVariantSelection): obj is RemoveSpecializationSelection {

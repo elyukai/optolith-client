@@ -1,6 +1,6 @@
 import { ReceiveInitialDataAction } from '../actions/IOActions';
-import * as ActionTypes from '../constants/ActionTypes';
-import * as Categories from '../constants/Categories';
+import { ActionTypes } from '../constants/ActionTypes';
+import { Categories } from '../constants/Categories';
 import { ToListById } from '../types/data';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata';
 import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, Disadvantage, ExperienceLevel, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, Race, RaceVariant, SelectionObject, Skill, SkillishEntry, SpecialAbility, Spell } from '../types/wiki';
@@ -133,7 +133,7 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 
 			function getSelectionCategories(source: SelectionObject[]) {
 				const rawNames = source.reduce<SkillishEntry[]>((arr, e) => {
-					const key = getWikiStateKeyByCategory(e.id as Categories.Category);
+					const key = getWikiStateKeyByCategory(e.id as Categories);
 					if (key) {
 						return [...arr, ...list[key].values()] as SkillishEntry[];
 					}

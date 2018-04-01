@@ -1,6 +1,6 @@
 import { flatten, last } from 'lodash';
 import { Pact } from '../actions/PactActions';
-import * as Categories from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { WikiState } from '../reducers/wikiReducer';
@@ -18,8 +18,10 @@ import { getCategoryById } from './IDUtils';
 import { InstancesStateReducer, mergeIntoState, setStateItem } from './ListUtils';
 import { getTraditionOfAspect, isOwnTradition } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
-import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, isStyleValidToRemove, validate, validateObject, validateTier } from './RequirementUtils';
+import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateTier } from './RequirementUtils';
 import { getWikiEntry } from './WikiUtils';
+import { isStyleValidToRemove } from './ExtendedStyleUtils';
+import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 
 /**
  * Checks if you can buy the entry multiple times.
@@ -1050,8 +1052,15 @@ export function convertPerTierCostToFinalCost(obj: ActivatableNameCost, locale?:
   };
 }
 
-export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroInstanceState, validExtendedSpecialAbilities: string[], locale: UIMessages, pact: Pact | undefined): DeactiveViewObject | undefined {
-  const { ap, dependent } = state;
+export function getDeactiveView(
+  entry: ActivatableInstance,
+  state: CurrentHeroInstanceState,
+  validExtendedSpecialAbilities: string[],
+  locale: UIMessages,
+  adventurePoints: AdventurePointsObject,
+  pact: Pact | undefined,
+): DeactiveViewObject | undefined {
+  const { dependent } = state;
   const { id, cost, max, active, name, input, tiers, dependencies, reqs } = entry;
   if (isActivatable(state, entry, pact) && !dependencies.includes(false) && (max === undefined || active.length < max) && (!isExtendedSpecialAbility(entry) || validExtendedSpecialAbilities.includes(id))) {
     let maxTier: number | undefined;
@@ -1408,9 +1417,18 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
       case 'SA_678':
       case 'SA_679':
       case 'SA_680': {
-        const { adv, disadv } = ap;
+        const {
+          spentOnMagicalAdvantages,
+          spentOnMagicalDisadvantages,
+        } = adventurePoints;
+
         const magicalTraditions = getMagicalTraditionsResultFunc(dependent.specialAbilities);
-        if (adv[1] <= 25 && disadv[1] <= 25 && magicalTraditions.length === 0) {
+
+        if (
+          spentOnMagicalAdvantages <= 25 &&
+          spentOnMagicalDisadvantages <= 25 &&
+          magicalTraditions.length === 0
+        ) {
           return { id, name, cost, instance: entry };
         }
         break;
@@ -1477,7 +1495,7 @@ export function getDeactiveView(entry: ActivatableInstance, state: CurrentHeroIn
 
 /**
  * Returns if the given entry is an extended (combat/magical/blessed) special ability.
- * @param entry The entry.
+ * @param entry The instance.
  */
 export function isExtendedSpecialAbility(entry: ActivatableInstance) {
   return entry.category === 'SPECIAL_ABILITIES' && [11, 14, 26].includes(entry.gr);

@@ -1,4 +1,4 @@
-import { LITURGIES } from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/reusable.d';
@@ -9,7 +9,7 @@ import { getWikiEntry } from './WikiUtils';
 
 export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyInstance | BlessingInstance): boolean {
 	const isBaseTradition = obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
-	const isSpecial = obj.category === LITURGIES || !getUnavailableBlessingsForTradition(tradition.id).includes(obj.id);
+	const isSpecial = obj.category === Categories.LITURGIES || !getUnavailableBlessingsForTradition(tradition.id).includes(obj.id);
 	return isBaseTradition && isSpecial;
 }
 

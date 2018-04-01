@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ATTRIBUTES, CULTURES, PROFESSIONS, RACES } from '../constants/Categories';
+import { Categories } from '../constants/Categories';
 import { Culture, Increasable, Profession, ProfessionVariant, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -115,7 +115,7 @@ export const getAllRaces = createSelector(
 					};
 				}),
 				src,
-				category: RACES
+				category: Categories.RACES
 			});
 		}
 
@@ -191,7 +191,7 @@ export const getAllCultures = createSelector(
 				culturalPackageAdventurePoints,
 				culturalPackageSkills: culturalPackageSkills.map(({ id, value }) => ({ name: skills.get(id)!.name, value })),
 				src,
-				category: CULTURES
+				category: Categories.CULTURES
 			});
 		}
 
@@ -434,7 +434,7 @@ export const getAllProfessions = createSelector(
 				suggestedDisadvantagesText,
 				unsuitableAdvantagesText,
 				unsuitableDisadvantagesText,
-				category: PROFESSIONS,
+				category: Categories.PROFESSIONS,
 				gr,
 				subgr,
 			});
@@ -458,7 +458,7 @@ export const getCommonProfessions = createSelector(
 			return validateProfession(dependencies, currentRaceId, currentCulture && currentCulture.id, sex) && !prerequisitesModel.some(d => {
 				if (isRequiringIncreasable(d) && typeof d.id === 'string') {
 					const category = getCategoryById(d.id);
-					if (typeof category !== 'undefined' && category === ATTRIBUTES && d.value > startEl.maxAttributeValue) {
+					if (typeof category !== 'undefined' && category === Categories.ATTRIBUTES && d.value > startEl.maxAttributeValue) {
 						return true;
 					}
 					return false;

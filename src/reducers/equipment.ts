@@ -1,12 +1,86 @@
-import { AddArmorZonesAction, AddItemAction, AddItemTemplateAction, ApplyItemTemplateAction, CloseArmorZonesEditorAction, CloseItemEditorAction, CreateArmorZonesAction, CreateItemAction, EditArmorZonesAction, EditItemAction, LockItemTemplateAction, RemoveArmorZonesAction, RemoveItemAction, SaveArmorZonesAction, SaveItemAction, SetAmmunitionAction, SetAmountAction, SetArmorTypeAction, SetArmorZonesHeadAction, SetArmorZonesHeadLossAction, SetArmorZonesLeftArmAction, SetArmorZonesLeftArmLossAction, SetArmorZonesLeftLegAction, SetArmorZonesLeftLegLossAction, SetArmorZonesNameAction, SetArmorZonesRightArmAction, SetArmorZonesRightArmLossAction, SetArmorZonesRightLegAction, SetArmorZonesRightLegLossAction, SetArmorZonesTorsoAction, SetArmorZonesTorsoLossAction, SetAttackAction, SetCombatTechniqueAction, SetDamageDiceNumberAction, SetDamageDiceSidesAction, SetDamageFlatAction, SetDamageThresholdAction, SetDucatesAction, SetEncumbranceAction, SetFirstDamageThresholdAction, SetGroupAction, SetHellersAction, SetImprovisedWeaponGroupAction, SetInitiativeModifierAction, SetItemsSortOrderAction, SetKreutzersAction, SetLengthAction, SetLossAction, SetMovementModifierAction, SetNameAction, SetParryAction, SetPriceAction, SetPrimaryAttributeAction, SetProtectionAction, SetRangeAction, SetReachAction, SetReloadTimeAction, SetSecondDamageThresholdAction, SetSilverthalersAction, SetStabilityModifierAction, SetStructurePointsAction, SetTemplateAction, SetWeightAction, SetWhereAction, SwitchHasAdditionalPenaltiesAction, SwitchIsDamageThresholdSeparatedAction, SwitchIsForArmorZonesOnlyAction, SwitchIsImprovisedWeaponAction, SwitchIsParryingWeaponAction, SwitchIsTwoHandedWeaponAction, UnlockItemTemplateAction } from '../actions/EquipmentActions';
+import * as EquipmentActions from '../actions/EquipmentActions';
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemEditorInstance, ItemInstance } from '../types/data.d';
 import { convertToEdit, convertToSave } from '../utils/ItemUtils';
 import { mergeIntoList, removeListItem, setListItem } from '../utils/ListUtils';
 
-type Action = AddItemAction | AddItemTemplateAction | CreateItemAction | EditItemAction | RemoveItemAction | LoadHeroAction | SaveItemAction | SetDucatesAction | SetSilverthalersAction | SetHellersAction | SetKreutzersAction | ReceiveInitialDataAction | AddArmorZonesAction | RemoveArmorZonesAction | CreateHeroAction | SetAmmunitionAction | SetAmountAction | SetArmorTypeAction | SetAttackAction | SetCombatTechniqueAction | SetDamageDiceNumberAction | SetDamageDiceSidesAction | SetDamageFlatAction | SetDamageThresholdAction | SetEncumbranceAction | SetFirstDamageThresholdAction | SetGroupAction | SetImprovisedWeaponGroupAction | SetInitiativeModifierAction | SetItemsSortOrderAction | SetLengthAction | SetLossAction | SetMovementModifierAction | SetNameAction | SetParryAction | SetPriceAction | SetPrimaryAttributeAction | SetProtectionAction | SetRangeAction | SetReachAction | SetReloadTimeAction | SetSecondDamageThresholdAction | SetStabilityModifierAction | SetStructurePointsAction | SetTemplateAction | SetWeightAction | SetWhereAction | SwitchHasAdditionalPenaltiesAction | SwitchIsDamageThresholdSeparatedAction | SwitchIsForArmorZonesOnlyAction | SwitchIsImprovisedWeaponAction | SwitchIsParryingWeaponAction | SwitchIsTwoHandedWeaponAction | ApplyItemTemplateAction | LockItemTemplateAction | UnlockItemTemplateAction | CloseItemEditorAction | SetArmorZonesHeadAction | SetArmorZonesHeadLossAction | SetArmorZonesLeftArmAction | SetArmorZonesLeftArmLossAction | SetArmorZonesLeftLegAction | SetArmorZonesLeftLegLossAction | SetArmorZonesNameAction | SetArmorZonesRightArmAction | SetArmorZonesRightArmLossAction | SetArmorZonesRightLegAction | SetArmorZonesRightLegLossAction | SetArmorZonesTorsoAction | SetArmorZonesTorsoLossAction | CloseArmorZonesEditorAction | SaveArmorZonesAction | EditArmorZonesAction | CreateArmorZonesAction;
+type Action =
+  EquipmentActions.AddItemAction |
+  EquipmentActions.AddItemTemplateAction |
+  EquipmentActions.CreateItemAction |
+  EquipmentActions.EditItemAction |
+  EquipmentActions.RemoveItemAction |
+  LoadHeroAction |
+  EquipmentActions.SaveItemAction |
+  EquipmentActions.SetDucatesAction |
+  EquipmentActions.SetSilverthalersAction |
+  EquipmentActions.SetHellersAction |
+  EquipmentActions.SetKreutzersAction |
+  ReceiveInitialDataAction |
+  EquipmentActions.AddArmorZonesAction |
+  EquipmentActions.RemoveArmorZonesAction |
+  CreateHeroAction |
+  EquipmentActions.SetAmmunitionAction |
+  EquipmentActions.SetAmountAction |
+  EquipmentActions.SetArmorTypeAction |
+  EquipmentActions.SetAttackAction |
+  EquipmentActions.SetCombatTechniqueAction |
+  EquipmentActions.SetDamageDiceNumberAction |
+  EquipmentActions.SetDamageDiceSidesAction |
+  EquipmentActions.SetDamageFlatAction |
+  EquipmentActions.SetDamageThresholdAction |
+  EquipmentActions.SetEncumbranceAction |
+  EquipmentActions.SetFirstDamageThresholdAction |
+  EquipmentActions.SetGroupAction |
+  EquipmentActions.SetImprovisedWeaponGroupAction |
+  EquipmentActions.SetInitiativeModifierAction |
+  EquipmentActions.SetItemsSortOrderAction |
+  EquipmentActions.SetLengthAction |
+  EquipmentActions.SetLossAction |
+  EquipmentActions.SetMovementModifierAction |
+  EquipmentActions.SetNameAction |
+  EquipmentActions.SetParryAction |
+  EquipmentActions.SetPriceAction |
+  EquipmentActions.SetPrimaryAttributeAction |
+  EquipmentActions.SetProtectionAction |
+  EquipmentActions.SetRangeAction |
+  EquipmentActions.SetReachAction |
+  EquipmentActions.SetReloadTimeAction |
+  EquipmentActions.SetSecondDamageThresholdAction |
+  EquipmentActions.SetStabilityModifierAction |
+  EquipmentActions.SetStructurePointsAction |
+  EquipmentActions.SetTemplateAction |
+  EquipmentActions.SetWeightAction |
+  EquipmentActions.SetWhereAction |
+  EquipmentActions.SwitchHasAdditionalPenaltiesAction |
+  EquipmentActions.SwitchIsDamageThresholdSeparatedAction |
+  EquipmentActions.SwitchIsForArmorZonesOnlyAction |
+  EquipmentActions.SwitchIsImprovisedWeaponAction |
+  EquipmentActions.SwitchIsParryingWeaponAction |
+  EquipmentActions.SwitchIsTwoHandedWeaponAction |
+  EquipmentActions.ApplyItemTemplateAction |
+  EquipmentActions.LockItemTemplateAction |
+  EquipmentActions.UnlockItemTemplateAction |
+  EquipmentActions.CloseItemEditorAction |
+  EquipmentActions.SetArmorZonesHeadAction |
+  EquipmentActions.SetArmorZonesHeadLossAction |
+  EquipmentActions.SetArmorZonesLeftArmAction |
+  EquipmentActions.SetArmorZonesLeftArmLossAction |
+  EquipmentActions.SetArmorZonesLeftLegAction |
+  EquipmentActions.SetArmorZonesLeftLegLossAction |
+  EquipmentActions.SetArmorZonesNameAction |
+  EquipmentActions.SetArmorZonesRightArmAction |
+  EquipmentActions.SetArmorZonesRightArmLossAction |
+  EquipmentActions.SetArmorZonesRightLegAction |
+  EquipmentActions.SetArmorZonesRightLegLossAction |
+  EquipmentActions.SetArmorZonesTorsoAction |
+  EquipmentActions.SetArmorZonesTorsoLossAction |
+  EquipmentActions.CloseArmorZonesEditorAction |
+  EquipmentActions.SaveArmorZonesAction |
+  EquipmentActions.EditArmorZonesAction |
+  EquipmentActions.CreateArmorZonesAction;
 
 export interface EquipmentState {
   items: Map<string, ItemInstance>;
@@ -38,7 +112,10 @@ const initialState: EquipmentState = {
   }
 };
 
-export function equipment(state: EquipmentState = initialState, action: Action): EquipmentState {
+export function equipment(
+  state: EquipmentState = initialState,
+  action: Action,
+): EquipmentState {
   switch (action.type) {
     case ActionTypes.CREATE_HERO:
       return clear(state);

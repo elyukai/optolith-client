@@ -7,7 +7,7 @@ import { ActivateBlessingAction, ActivateLiturgyAction, AddLiturgyPointAction, D
 import { ActivateSpecialAbilityAction, DeactivateSpecialAbilityAction, SetSpecialAbilityTierAction } from '../actions/SpecialAbilitiesActions';
 import { ActivateCantripAction, ActivateSpellAction, AddSpellPointAction, DeactivateCantripAction, DeactivateSpellAction, RemoveSpellPointAction } from '../actions/SpellsActions';
 import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/TalentsActions';
-import * as ActionTypes from '../constants/ActionTypes';
+import { ActionTypes } from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import * as Data from '../types/data.d';
 import { getGeneratedPrerequisites } from '../utils/ActivatableUtils';
@@ -17,7 +17,34 @@ import { activatable } from './activatable';
 import { dependentInstancesClear } from './dependentInstancesClear';
 import { increasable } from './increasable';
 
-type Action = AddAttributePointAction | RemoveAttributePointAction | AddCombatTechniquePointAction | RemoveCombatTechniquePointAction | CreateHeroAction | LoadHeroAction | ActivateLiturgyAction | AddLiturgyPointAction | DeactivateLiturgyAction | RemoveLiturgyPointAction | ActivateSpellAction | AddSpellPointAction | DeactivateSpellAction | RemoveSpellPointAction | AddTalentPointAction | RemoveTalentPointAction | ActivateDisAdvAction | DeactivateDisAdvAction | SetDisAdvTierAction | ActivateSpecialAbilityAction | DeactivateSpecialAbilityAction | SetSpecialAbilityTierAction | ActivateCantripAction | DeactivateCantripAction | ActivateBlessingAction | DeactivateBlessingAction | SetAdjustmentIdAction;
+type Action =
+  AddAttributePointAction |
+  RemoveAttributePointAction |
+  AddCombatTechniquePointAction |
+  RemoveCombatTechniquePointAction |
+  CreateHeroAction |
+  LoadHeroAction |
+  ActivateLiturgyAction |
+  AddLiturgyPointAction |
+  DeactivateLiturgyAction |
+  RemoveLiturgyPointAction |
+  ActivateSpellAction |
+  AddSpellPointAction |
+  DeactivateSpellAction |
+  RemoveSpellPointAction |
+  AddTalentPointAction |
+  RemoveTalentPointAction |
+  ActivateDisAdvAction |
+  DeactivateDisAdvAction |
+  SetDisAdvTierAction |
+  ActivateSpecialAbilityAction |
+  DeactivateSpecialAbilityAction |
+  SetSpecialAbilityTierAction |
+  ActivateCantripAction |
+  DeactivateCantripAction |
+  ActivateBlessingAction |
+  DeactivateBlessingAction |
+  SetAdjustmentIdAction;
 
 export interface DependentInstancesState {
   advantages: Map<string, Data.AdvantageInstance>;
@@ -40,7 +67,22 @@ export interface DependentInstancesState {
   blessedStyleDependencies: Data.StyleDependency[];
 }
 
-export type DependentInstancesStateKeysForMaps = 'advantages' | 'attributes' | 'blessings' | 'cantrips' | 'combatTechniques' | 'cultures' | 'disadvantages' | 'liturgies' | 'professions' | 'professionVariants' | 'races' | 'raceVariants' | 'specialAbilities' | 'spells' | 'talents';
+export type DependentInstancesStateKeysForMaps =
+  'advantages' |
+  'attributes' |
+  'blessings' |
+  'cantrips' |
+  'combatTechniques' |
+  'cultures' |
+  'disadvantages' |
+  'liturgies' |
+  'professions' |
+  'professionVariants' |
+  'races' |
+  'raceVariants' |
+  'specialAbilities' |
+  'spells' |
+  'talents';
 
 const initialState: DependentInstancesState = {
   advantages: new Map(),
