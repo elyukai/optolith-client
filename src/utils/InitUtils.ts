@@ -149,7 +149,7 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
       dependencies: pre_req,
       id,
       liturgies: chants.map<[string, number]>(e => [`LITURGY_${e[0]}`, e[1]]),
-      blessings: blessings.map(e => `BLESSING_${e[0]}`),
+      blessings: blessings.map(e => `BLESSING_${e}`),
       name,
       requires: finalReq,
       selections: sel,

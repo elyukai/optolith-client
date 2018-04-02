@@ -73,29 +73,27 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
         <WikiProperty locale={locale} title="info.apvalue">
           {currentObject.ap} {_translate(locale, 'aptext')}
         </WikiProperty>
-        <WikiProperty locale={locale} title="info.combattechniques">
-          {[
-            ...sortStrings(currentObject.combatTechniques.map(e => `${e.name} ${e.value + 6}`), locale.id),
-            ...(combatTechniquesSelectionString ? [combatTechniquesSelectionString] : [])
-          ].join(', ') || '-'}
-        </WikiProperty>
+        <CombatTechniques
+          combatTechniquesSelectionString={combatTechniquesSelectionString}
+          currentObject={currentObject}
+          locale={locale}
+          />
         <WikiProperty locale={locale} title="info.skills" />
         <SkillsList
           profession={currentObject}
           locale={locale}
           skillsSelection={skillsSelectionJoinedObject}
           />
-        {typeof spellsString === 'string' && (
+        {typeof spellsString === 'string' ? (
           <WikiProperty locale={locale} title="info.spells">
             {spellsString}
           </WikiProperty>
-        )}
-        {typeof liturgicalChantsString === 'string' && (
+        ) : null}
+        {typeof liturgicalChantsString === 'string' ? (
           <WikiProperty locale={locale} title="info.liturgicalchants">
             {liturgicalChantsString}
           </WikiProperty>
-        )}
-        <VariantListHeader locale={locale} profession={currentObject} />
+        ) : null}
         <VariantList
           {...props}
           combatTechniquesSelectionString={combatTechniquesSelectionString}
@@ -146,28 +144,27 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
           ...sortStrings(currentObject.specialAbilities.map(e => e.combinedName), locale.id)
         ].join(', ') || _translate(locale, 'info.none')}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.combattechniques">
-        {[
-          ...sortStrings(currentObject.combatTechniques.map(e => `${e.name} ${e.value + 6}`), locale.id),
-          ...(combatTechniquesSelectionString ? [combatTechniquesSelectionString] : [])
-        ].join(', ') || '-'}
-      </WikiProperty>
+      <CombatTechniques
+        combatTechniquesSelectionString={combatTechniquesSelectionString}
+        currentObject={currentObject}
+        locale={locale}
+        />
       <WikiProperty locale={locale} title="info.skills" />
       <SkillsList
         profession={currentObject}
         locale={locale}
         skillsSelection={skillsSelectionJoinedObject}
         />
-      {typeof spellsString === 'string' && (
+      {typeof spellsString === 'string' ? (
         <WikiProperty locale={locale} title="info.spells">
           {spellsString}
         </WikiProperty>
-      )}
-      {typeof liturgicalChantsString === 'string' && (
+      ) : null}
+      {typeof liturgicalChantsString === 'string' ? (
         <WikiProperty locale={locale} title="info.liturgicalchants">
           {liturgicalChantsString}
         </WikiProperty>
-      )}
+      ) : null}
       <WikiProperty locale={locale} title="info.suggestedadvantages">
         {currentObject.suggestedAdvantagesText || _translate(locale, 'info.none')}
       </WikiProperty>
@@ -180,7 +177,6 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
       <WikiProperty locale={locale} title="info.unsuitabledisadvantages">
         {currentObject.unsuitableDisadvantagesText || _translate(locale, 'info.none')}
       </WikiProperty>
-      <VariantListHeader locale={locale} profession={currentObject} />
       <VariantList
         {...props}
         combatTechniquesSelectionString={combatTechniquesSelectionString}
@@ -228,6 +224,33 @@ function getSpecializationSelection(
   }
 
   return _translate(locale, 'info.specialabilitiesspecialization', value);
+}
+
+interface CombatTechniquesProps {
+  combatTechniquesSelectionString: string | undefined;
+  currentObject: Profession;
+  locale: UIMessages;
+}
+
+function CombatTechniques(props: CombatTechniquesProps): JSX.Element {
+  const {
+    combatTechniquesSelectionString: selectionString,
+    currentObject,
+    locale,
+  } = props;
+
+  const combatTechniquesList = currentObject.combatTechniques.map(e => {
+    return `${e.name} ${e.value + 6}`;
+  });
+
+  return (
+    <WikiProperty locale={locale} title="info.combattechniques">
+      {[
+        ...sortStrings(combatTechniquesList, locale.id),
+        ...(selectionString ? [selectionString] : [])
+      ].join(', ') || '-'}
+    </WikiProperty>
+  );
 }
 
 interface SkillsSelectionJoined {
@@ -361,6 +384,10 @@ function getSpells(
   const spellsArr = profession.spells.map(e => `${spells.get(e.id)!.name} ${e.value}`);
   const sortedSpells = sortStrings(spellsArr, locale.id);
 
+  if (cantripsString.length === 0 || sortedSpells.length === 0) {
+    return;
+  }
+
   return `${cantripsString}${sortedSpells.join(', ')}`;
 }
 
@@ -402,7 +429,7 @@ function getLiturgicalChants(
     ...liturgicalChantsArr
   ], locale.id);
 
-  return sortedList.join(', ');
+  return sortedList.length > 0 ? sortedList.join(', ') : undefined;
 }
 
 interface CombinedSpell {
@@ -493,7 +520,7 @@ function SkillsList(props: SkillsListProps): JSX.Element {
   return (
     <>
       {
-        list.map((list, index) => {
+        list.map((list, index) => (
           <Skills
             key={index}
             groupIndex={index}
@@ -501,7 +528,7 @@ function SkillsList(props: SkillsListProps): JSX.Element {
             locale={locale}
             skillsSelection={skillsSelection}
             />
-        })
+        ))
       }
     </>
   );
@@ -549,24 +576,18 @@ function Skills(props: SkillProps) {
 
 interface VariantListHeaderProps {
   locale: UIMessages;
-  profession: Profession;
 }
 
 function VariantListHeader(props: VariantListHeaderProps): JSX.Element {
   const {
     locale,
-    profession
   } = props;
 
-  if (profession.variants.length > 0) {
-    return (
-      <p className="profession-variants">
-        <span>{_translate(locale, 'info.variants')}</span>
-      </p>
-    );
-  }
-
-  return <></>;
+  return (
+    <p className="profession-variants">
+      <span>{_translate(locale, 'info.variants')}</span>
+    </p>
+  );
 }
 
 interface VariantListProps {
@@ -581,24 +602,32 @@ interface VariantListProps {
   spells: Map<string, Spell>;
 }
 
-function VariantList(props: VariantListProps): JSX.Element {
+function VariantList(props: VariantListProps): JSX.Element | null {
   const {
+    locale,
     profession
   } = props;
 
-  return (
-    <ul className="profession-variants">
-      {
-        profession.variants.map(variant => {
-          <Variant
-            {...props}
-            key={variant.id}
-            variant={variant}
-            />
-        })
-      }
-    </ul>
-  );
+  if (profession.variants.length > 0) {
+    return (
+      <>
+        <VariantListHeader locale={locale} />
+        <ul className="profession-variants">
+          {
+            profession.variants.map(variant => (
+              <Variant
+                {...props}
+                key={variant.id}
+                variant={variant}
+                />
+            ))
+          }
+        </ul>
+      </>
+    );
+  }
+
+  return null;
 }
 
 interface VariantProps {
@@ -637,20 +666,22 @@ function Variant(props: VariantProps) {
     );
   }
 
-  return <li>
-    <span>{name}</span>
-    <span>({profession.ap + variant.ap} {_translate(locale, 'apshort')})</span>
-    <span>
-      {variant.precedingText && <span>{variant.precedingText}</span>}
-      <VariantPrerequisites {...props} />
-      <VariantSpecialAbilities {...props} />
-      <VariantLanguagesLiteracySelection {...props} selections={profession.selections} />
-      <VariantSpecializationSelection {...props} selections={profession.selections} />
-      <VariantCombatTechniquesSelection {...props} selections={profession.selections} />
-      <VariantSkillsSelection {...props} />
-      {variant.concludingText && `; ${variant.concludingText}`}
+  return (
+    <li>
+      <span>{name}</span>
+      <span>({profession.ap + variant.ap} {_translate(locale, 'apshort')})</span>
+      <span>
+        {variant.precedingText && <span>{variant.precedingText}</span>}
+        <VariantPrerequisites {...props} />
+        <VariantSpecialAbilities {...props} />
+        <VariantLanguagesLiteracySelection {...props} selections={profession.selections} />
+        <VariantSpecializationSelection {...props} selections={profession.selections} />
+        <VariantCombatTechniquesSelection {...props} selections={profession.selections} />
+        <VariantSkillsSelection {...props} />
+        {variant.concludingText && `; ${variant.concludingText}`}
       </span>
-  </li>;
+    </li>
+  );
 }
 
 interface VariantPrerequisitesProps {
@@ -739,7 +770,7 @@ interface VariantLanguagesLiteracySelectionProps {
   variant: ProfessionVariant;
 }
 
-function VariantLanguagesLiteracySelection(props: VariantLanguagesLiteracySelectionProps): JSX.Element {
+function VariantLanguagesLiteracySelection(props: VariantLanguagesLiteracySelectionProps): JSX.Element | null {
   const {
     locale,
     selections,
@@ -779,7 +810,7 @@ function VariantLanguagesLiteracySelection(props: VariantLanguagesLiteracySelect
     }
   }
 
-  return <></>;
+  return null;
 }
 
 interface VariantSpecializationSelectionProps {
@@ -790,7 +821,7 @@ interface VariantSpecializationSelectionProps {
   variant: ProfessionVariant;
 }
 
-function VariantSpecializationSelection(props: VariantSpecializationSelectionProps): JSX.Element {
+function VariantSpecializationSelection(props: VariantSpecializationSelectionProps): JSX.Element | null {
   const {
     locale,
     selections,
@@ -854,7 +885,7 @@ function VariantSpecializationSelection(props: VariantSpecializationSelectionPro
     }
   }
 
-  return <></>;
+  return null;
 }
 
 interface VariantCombatTechniquesSelectionProps {
@@ -864,7 +895,7 @@ interface VariantCombatTechniquesSelectionProps {
   variant: ProfessionVariant;
 }
 
-function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectionProps): JSX.Element {
+function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectionProps): JSX.Element | null {
   const {
     combatTechniquesSelectionString,
     locale,
@@ -921,7 +952,7 @@ function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectio
     }
   }
 
-  return <></>;
+  return null;
 }
 
 interface VariantSkillsSelectionProps {
