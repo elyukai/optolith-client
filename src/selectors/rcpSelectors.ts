@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
 import { Culture, Increasable, Profession, ProfessionVariant, Race } from '../types/view.d';
 import * as ActivatableUtils from '../utils/ActivatableUtils';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
@@ -496,7 +496,13 @@ export const getFilteredProfessions = createSelector(
 	getProfessionsFilterText,
 	getProfessionsSortOptions,
 	getLocaleMessages,
-	(list, filterText, sortOptions, locale) => {
-		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
+	getSex,
+	(list, filterText, sortOptions, locale, sex) => {
+		const filterOptions: FilterOptions<Profession> = {
+			addProperty: 'subname',
+			keyOfName: sex
+		};
+
+		return filterAndSortObjects(list, locale!.id, filterText, sortOptions, filterOptions);
 	}
 );

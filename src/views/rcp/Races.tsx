@@ -13,7 +13,6 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Race, UIMessages } from '../../types/view.d';
-import { filterAndSortObjects } from '../../utils/FilterSortUtils';
 import { _translate } from '../../utils/I18n';
 import { RacesListItem } from './RacesListItem';
 import { RaceVariants } from './RaceVariants';
@@ -40,23 +39,12 @@ export interface RacesDispatchProps {
 
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps;
 
-export interface RacesState {
-	filterText: string;
-}
-
-export class Races extends React.Component<RacesProps, RacesState> {
-	state = {
-		filterText: ''
-	};
-
+export class Races extends React.Component<RacesProps> {
 	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 	sort = (option: string) => this.props.setSortOrder(option);
 
 	render() {
-		const { locale, races, setSortOrder, sortOrder } = this.props;
-		const { filterText } = this.state;
-
-		const list = filterAndSortObjects(races, locale.id, filterText, sortOrder === 'cost' ? ['ap', 'name'] : ['name']);
+		const { filterText, locale, races: list, setSortOrder, sortOrder } = this.props;
 
 		return (
 			<Page id="races">

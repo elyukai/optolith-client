@@ -39,15 +39,7 @@ export interface CulturesDispatchProps {
 
 export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps;
 
-export interface CulturesState {
-	filterText: string;
-}
-
-export class Cultures extends React.Component<CulturesProps, CulturesState> {
-	state = {
-		filterText: ''
-	};
-
+export class Cultures extends React.Component<CulturesProps> {
 	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
 
 	render() {
