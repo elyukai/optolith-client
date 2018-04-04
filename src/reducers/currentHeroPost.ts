@@ -115,6 +115,9 @@ export function currentHeroPost(state: CurrentHeroInstanceState, action: Action)
             skillActivateList.delete(id);
           }
         }
+        for (const id of professionVariant.blessings) {
+          skillActivateList.add(id);
+        }
         for (const activeObject of professionVariant.specialAbilities) {
           if (activeObject.active === false) {
             for (const item of activatable) {
