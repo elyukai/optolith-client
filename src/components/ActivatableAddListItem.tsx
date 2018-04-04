@@ -151,7 +151,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				if (typeof selectedTier === 'number') {
 					currentCost = (cost as number) * selectedTier;
 				}
-				if (typeof selected === 'string' && typeof inputText === 'string') {
+				if (selected === undefined && inputText === undefined) {
 					disabled = true;
 				}
 				args.sel = selected;
@@ -174,7 +174,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 							options={newSel}
 							disabled={selectElementDisabled} />
 					);
-					if (typeof selected === 'string' && typeof inputText === 'string') {
+					if (selected === undefined && inputText === undefined) {
 						disabled = true;
 					}
 					args.sel = selected;
@@ -185,7 +185,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			}
 			case 'ADV_32':
 			case 'DISADV_24':
-				if (typeof selected === 'string' && typeof inputText === 'string') {
+				if (selected === undefined && inputText === undefined) {
 					disabled = true;
 				}
 				args.sel = selected;
@@ -230,7 +230,7 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 				break;
 			case 'DISADV_36':
 			case 'DISADV_45':
-				if (typeof selected === 'string' && typeof inputText === 'string') {
+				if (selected === undefined && inputText === undefined) {
 					disabled = true;
 				}
 				if (id === 'DISADV_36') {

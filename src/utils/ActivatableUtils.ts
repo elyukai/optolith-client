@@ -1546,32 +1546,50 @@ export function getTraditionNameFromFullName(name: string): string {
 export function calculateAdventurePointsSpentDifference(entries: ActiveViewObject[], state: Map<string, ActivatableInstance>, wiki: WikiState): number {
   let diff = 0;
 
-  if (entries.some(e => e.id === 'DISADV_34')) {
-    const { active } = state.get('DISADV_34')!;
-    const maxCurrentTier = active.reduce((a, b) => (b.tier as number) > a && b.cost === undefined ? b.tier as number : a, 0);
-    const amountMaxTiers = active.reduce((a, b) => maxCurrentTier === b.tier ? a + 1 : a, 0);
-    if (amountMaxTiers > 1) {
-      diff -= maxCurrentTier * (wiki.disadvantages.get('DISADV_34')!.cost as number);
+  // impure
+  const calculatePrinciplesObligationsDiff = (sourceId: string) => {
+    if (entries.some(e => e.id === sourceId)) {
+      const { active } = state.get(sourceId)!;
+
+      const maxCurrentTier = active.reduce((a, b) => {
+        const isNotCustom = b.cost === undefined;
+        if (typeof b.tier === 'number' && b.tier > a && isNotCustom) {
+          return b.tier;
+        }
+        return a;
+      }, 0);
+
+      // next lower tier
+      const subMaxCurrentTier = active.reduce((a, b) => {
+        const isNotCustom = b.cost === undefined;
+        if (
+          typeof b.tier === 'number' &&
+          b.tier > a &&
+          b.tier < maxCurrentTier &&
+          isNotCustom
+        ) {
+          return b.tier;
+        }
+        return a;
+      }, 0);
+
+      const amountMaxTiers = active.reduce((a, b) => {
+        if (maxCurrentTier === b.tier) {
+          return a + 1;
+        }
+        return a;
+      }, 0);
+
+      const baseCost = wiki.disadvantages.get(sourceId)!.cost as number;
+      const amountDiff = amountMaxTiers > 1 ? maxCurrentTier * -baseCost : 0;
+      const levelDiff = subMaxCurrentTier * -baseCost;
+
+      diff += amountDiff + levelDiff;
     }
   }
 
-  if (entries.some(e => e.id === 'DISADV_50')) {
-    const { active } = state.get('DISADV_50')!;
-    const maxCurrentTier = active.reduce((a, { tier, cost }) => {
-      if (typeof tier === 'number' && tier > a && cost === undefined) {
-        return tier;
-      }
-      return a;
-    }, 0);
-
-    const amountMaxTiers = active.reduce((a, b) => {
-      return maxCurrentTier === b.tier ? a + 1 : a;
-    }, 0);
-
-    if (amountMaxTiers > 1) {
-      diff -= maxCurrentTier * (wiki.disadvantages.get('DISADV_50')!.cost as number);
-    }
-  }
+  calculatePrinciplesObligationsDiff('DISADV_34');
+  calculatePrinciplesObligationsDiff('DISADV_50');
 
   if (entries.some(e => e.id === 'DISADV_33')) {
     const { active } = state.get('DISADV_33')!;
