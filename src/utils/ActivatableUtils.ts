@@ -8,7 +8,7 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/depen
 import { getStart } from '../selectors/elSelectors';
 import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
-import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages } from '../types/data.d';
+import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages, ActivatableBasePrerequisites } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import { Activatable, SelectionObject, Skillish } from '../types/wiki';
 import * as DependentUtils from './DependentUtils';
@@ -305,13 +305,49 @@ type ActivatablesStateReducer = InstancesStateReducer<ActivatableInstance>;
 export function activate(activate: ActivateArgs): ActivatablesStateReducer {
   return (state, obj) => {
     const active = convertToActiveObject(obj, activate);
+
     if (active) {
-      const adds = getGeneratedPrerequisites(obj, active, true);
-      const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active, active]});
-      const prerequisites = Array.isArray(obj.reqs) ? obj.reqs : flatten(active.tier && [...obj.reqs].filter(e => e[0] <= active!.tier!).map(e => e[1]) || []);
-      return mergeIntoState(firstState, DependentUtils.addDependencies(firstState, [...prerequisites, ...adds], obj.id));
+      return activateByObject(active)(state, obj);
     }
+
     return {};
+  };
+}
+
+/**
+ * Activates the entry with the given parameters and adds all needed
+ * dependencies.
+ * @param active The `ActiveObject`.
+ */
+export function activateByObject(active: ActiveObject): ActivatablesStateReducer {
+  return (state, obj) => {
+    const adds = getGeneratedPrerequisites(obj, active, true);
+
+    const newStateItem = {
+      ...obj,
+      active: [...obj.active, active],
+    };
+
+    const firstState = setStateItem(state, obj.id, newStateItem);
+
+    let prerequisites: ActivatableBasePrerequisites = [];
+
+    if (obj.reqs instanceof Map) {
+      if (active.tier) {
+        const clonedMap = [...obj.reqs];
+        const filteredMap = clonedMap.filter(e => e[0] <= active!.tier!);
+
+        prerequisites = flatten(filteredMap.map(e => e[1]));
+      }
+    }
+    else if (obj.reqs) {
+      prerequisites = obj.reqs;
+    }
+
+    const combinedPrerequisites = [...prerequisites, ...adds];
+    const newState = DependentUtils.addDependencies(firstState, combinedPrerequisites, obj.id);
+
+    return mergeIntoState(firstState, newState);
   };
 }
 

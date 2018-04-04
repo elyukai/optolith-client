@@ -92,15 +92,31 @@ export function mergeIntoState(
   return total;
 }
 
-export type InstancesStateReducer<I extends Instance> = (
-  state: DependentInstancesState,
-  instance: I,
-) => ToOptionalKeys<DependentInstancesState>;
+export type InstancesStateReducer<I extends Instance> =
+  (state: DependentInstancesState, instance: I) =>
+    ToOptionalKeys<DependentInstancesState>;
 
+export type InstancesStateReducerNoInstance =
+  (state: DependentInstancesState) =>
+    ToOptionalKeys<DependentInstancesState>;
+
+export type BothInstancesStateReducer<I extends Instance> =
+  (state: DependentInstancesState, instance?: I) =>
+    ToOptionalKeys<DependentInstancesState>;
+
+export function mergeReducedOptionalState(
+  oldState: DependentInstancesState,
+  ...reducers: InstancesStateReducerNoInstance[]
+): DependentInstancesState;
 export function mergeReducedOptionalState<I extends Instance>(
   oldState: DependentInstancesState,
   instance: I,
   ...reducers: InstancesStateReducer<I>[]
+): DependentInstancesState;
+export function mergeReducedOptionalState<I extends Instance>(
+  oldState: DependentInstancesState,
+  instance?: I,
+  ...reducers: BothInstancesStateReducer<I>[]
 ): DependentInstancesState {
   return reducers.reduce(
     (oldState, reducer) => {

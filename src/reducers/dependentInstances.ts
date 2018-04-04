@@ -1,4 +1,3 @@
-import { flatten } from 'lodash';
 import { AddAttributePointAction, RemoveAttributePointAction, SetAdjustmentIdAction } from '../actions/AttributesActions';
 import { AddCombatTechniquePointAction, RemoveCombatTechniquePointAction } from '../actions/CombatTechniquesActions';
 import { ActivateDisAdvAction, DeactivateDisAdvAction, SetDisAdvTierAction } from '../actions/DisAdvActions';
@@ -10,12 +9,14 @@ import { AddTalentPointAction, RemoveTalentPointAction } from '../actions/Talent
 import { ActionTypes } from '../constants/ActionTypes';
 import { get } from '../selectors/dependentInstancesSelectors';
 import * as Data from '../types/data.d';
-import { getGeneratedPrerequisites } from '../utils/ActivatableUtils';
+import { activateByObject } from '../utils/ActivatableUtils';
 import { addDependencies } from '../utils/DependentUtils';
-import { mergeIntoState, setStateItem } from '../utils/ListUtils';
+import * as ExtendedStyleUtils from '../utils/ExtendedStyleUtils';
+import * as ListUtils from '../utils/ListUtils';
 import { activatable } from './activatable';
 import { dependentInstancesClear } from './dependentInstancesClear';
 import { increasable } from './increasable';
+import { Categories } from '../constants/Categories';
 
 type Action =
   AddAttributePointAction |
@@ -142,14 +143,24 @@ export function dependentInstances(state = initialState, action: Action) {
       const { current, next, value } = action.payload;
       const currentAttribute = state.attributes.get(current)!;
       const nextAttribute = state.attributes.get(next)!;
-      return setStateItem(
-        setStateItem(
-          state,
-          current,
-          { ...currentAttribute, mod: currentAttribute.mod - value }
-        ),
-        next,
-        { ...nextAttribute, mod: nextAttribute.mod + value }
+
+      const setItem = (attribute: Data.AttributeInstance) => {
+        return (state: DependentInstancesState) => {
+          return ListUtils.setStateItem(
+            state,
+            attribute.id,
+            {
+              ...attribute,
+              mod: attribute.mod - value
+            }
+          );
+        }
+      };
+
+      return ListUtils.mergeReducedOptionalState(
+        state,
+        setItem(currentAttribute),
+        setItem(nextAttribute),
       );
     }
 
@@ -171,8 +182,8 @@ export function dependentInstances(state = initialState, action: Action) {
 
       for (const [id, value] of Object.entries(spells)) {
         const newObject = { ...newstate.spells.get(id)!, active: true, value };
-        const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
+        const firstState = ListUtils.setStateItem(newstate, newObject.id, newObject);
+        newstate = ListUtils.mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const [id, value] of Object.entries(liturgies)) {
@@ -181,25 +192,37 @@ export function dependentInstances(state = initialState, action: Action) {
 
       for (const id of blessings) {
         const newObject = { ...newstate.blessings.get(id)!, active: true };
-        const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
+        const firstState = ListUtils.setStateItem(newstate, newObject.id, newObject);
+        newstate = ListUtils.mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const id of cantrips) {
         const newObject = { ...newstate.cantrips.get(id)!, active: true };
-        const firstState = setStateItem(newstate, newObject.id, newObject);
-        newstate = mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
+        const firstState = ListUtils.setStateItem(newstate, newObject.id, newObject);
+        newstate = ListUtils.mergeIntoState(firstState, addDependencies(firstState, newObject.reqs, newObject.id));
       }
 
       for (const [id, active] of Object.entries(activatable)) {
-        active.forEach(activeObject => {
-          const { tier } = activeObject;
+        for (const activeObject of active) {
           const entry = get(newstate, id) as Data.ActivatableInstance;
-          const adds = getGeneratedPrerequisites(entry, activeObject, true);
-          const firstState = setStateItem(newstate, id, {...entry, active: [...entry.active, {...activeObject}]});
-          const prerequisites = Array.isArray(entry.reqs) ? entry.reqs : flatten(tier && [...entry.reqs].filter(e => e[0] <= tier).map(e => e[1]) || []);
-          newstate = mergeIntoState(firstState, addDependencies(firstState, [...prerequisites, ...adds], id));
-        });
+
+          if (entry.category === Categories.SPECIAL_ABILITIES) {
+            newstate = ListUtils.mergeReducedOptionalState<Data.SpecialAbilityInstance>(
+              newstate,
+              entry,
+              ExtendedStyleUtils.addStyleExtendedSpecialAbilityDependencies,
+              ExtendedStyleUtils.addExtendedSpecialAbilityDependency,
+              activateByObject(activeObject)
+            );
+          }
+          else {
+            newstate = ListUtils.mergeReducedOptionalState(
+              newstate,
+              entry,
+              activateByObject(activeObject)
+            );
+          }
+        }
       }
 
       return newstate;

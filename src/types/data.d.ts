@@ -660,13 +660,15 @@ export type ActivatableInstanceDependency = boolean | DependencyObject;
 
 export type ActivatableBasePrerequisites = ('RCP' | Reusable.AllRequirementTypes)[];
 
+export type UnionPlainAndMap<T> = T | Map<number, T>;
+
 interface ActivatableInstanceBaseInInit {
 	readonly id: string;
 	readonly name: string;
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly reqs: ActivatableBasePrerequisites | Map<number, ActivatableBasePrerequisites>;
+	readonly reqs: UnionPlainAndMap<ActivatableBasePrerequisites>;
 	readonly tiers?: number;
 	sel?: SelectionObject[];
 	dependencies: ActivatableInstanceDependency[];
