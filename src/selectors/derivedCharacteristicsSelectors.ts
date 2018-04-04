@@ -7,6 +7,7 @@ import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attrib
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getBooks, getCurrentRaceId, getDisadvantages, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getRaces, getSpecialAbilities } from './stateSelectors';
+import { isBookEnabled } from '../utils/RulesUtils';
 
 export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WT';
 export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
@@ -22,11 +23,11 @@ export const getLP = createSelector(
   getLocaleMessages,
   (races, currentRaceId, CON, { lost }, increase, decrease, add, locale) => {
     const currentRace = currentRaceId && races.get(currentRaceId);
-    const base = currentRace && CON && currentRace.lp + CON.value * 2 || 0;
-
-    let mod = -lost;
     const increaseObject = increase && increase.active[0];
     const decreaseObject = decrease && decrease.active[0];
+    const base = currentRace && CON && currentRace.lp + CON.value * 2 || 0;
+    let mod = -lost;
+
     if (increaseObject && increaseObject.tier) {
       mod += increaseObject.tier;
     }
@@ -62,29 +63,29 @@ export const getAE = createSelector(
   getLocaleMessages,
   (tradition, primary, { lost, redeemed }, increase, decrease, add, locale) => {
     const lastTradition = tradition[0];
+    const increaseObject = increase && increase.active[0];
+    const decreaseObject = decrease && decrease.active[0];
     let base = 0;
     let mod = redeemed - lost;
     let maxAdd = 0;
 
-    if (primary !== undefined) {
-      const halfAETradition = ['SA_677', 'SA_678'].includes(lastTradition && lastTradition.id);
-      if (halfAETradition) {
-        maxAdd = Math.round(primary.value / 2);
-      }
-      else {
-        maxAdd = primary.value;
-      }
-    }
-
-    if (maxAdd > 0) {
-      base = 20 + maxAdd;
-    }
-    else if (lastTradition !== undefined) {
+    if (lastTradition !== undefined) {
       base = 20;
+
+      if (primary !== undefined) {
+        const hasTraditionHalfAE = ['SA_677', 'SA_678'].includes(lastTradition.id);
+
+        if (hasTraditionHalfAE) {
+          maxAdd = Math.round(primary.value / 2);
+        }
+        else {
+          maxAdd = primary.value;
+        }
+
+        base += maxAdd;
+      }
     }
 
-    const increaseObject = increase && increase.active[0];
-    const decreaseObject = decrease && decrease.active[0];
     if (increaseObject && increaseObject.tier) {
       mod += increaseObject.tier;
     }
@@ -120,6 +121,8 @@ export const getKP = createSelector(
   getLocaleMessages,
   mapGetToSlice(getSpecialAbilities, 'SA_563'),
   (primary, { lost, redeemed }, increase, decrease, add, locale, highConsecration) => {
+    const increaseObject = increase && increase.active[0];
+    const decreaseObject = decrease && decrease.active[0];
     let base = 0;
     let mod = redeemed - lost;
 
@@ -127,14 +130,13 @@ export const getKP = createSelector(
       base = 20 + primary.value;
     }
 
-    const increaseObject = increase && increase.active[0];
-    const decreaseObject = decrease && decrease.active[0];
     if (increaseObject && increaseObject.tier) {
       mod += increaseObject.tier;
     }
     else if (decreaseObject && decreaseObject.tier) {
       mod -= decreaseObject.tier;
     }
+
     if (highConsecration && isActive(highConsecration)) {
       mod += highConsecration.active[0].tier! * 6;
     }
@@ -169,16 +171,16 @@ export const getSPI = createSelector(
   getLocaleMessages,
   (races, currentRaceId, COU, SGC, INT, increase, decrease, locale) => {
     const currentRace = currentRaceId && races.get(currentRaceId);
+    const increaseObject = isActive(increase);
+    const decreaseObject = isActive(decrease);
     let base = 0;
+    let mod = 0;
 
     if (currentRace && COU && SGC && INT) {
       const { spi } = currentRace;
       base = spi + Math.round((COU.value + SGC.value + INT.value) / 6);
     }
 
-    let mod = 0;
-    const increaseObject = isActive(increase);
-    const decreaseObject = isActive(decrease);
     if (increaseObject) {
       mod++;
     }
@@ -210,16 +212,16 @@ export const getTOU = createSelector(
   getLocaleMessages,
   (races, currentRaceId, CON, STR, increase, decrease, locale) => {
     const currentRace = currentRaceId && races.get(currentRaceId);
+    const increaseObject = isActive(increase);
+    const decreaseObject = isActive(decrease);
     let base = 0;
+    let mod = 0;
 
     if (currentRace && CON && STR) {
       const { tou } = currentRace;
       base = tou + Math.round((CON.value * 2 + STR.value) / 6);
     }
 
-    let mod = 0;
-    const increaseObject = isActive(increase);
-    const decreaseObject = isActive(decrease);
     if (increaseObject) {
       mod++;
     }
@@ -304,13 +306,13 @@ export const getMOV = createSelector(
   (races, currentRaceId, nimble, maimed, slow, locale) => {
     const currentRace = currentRaceId && races.get(currentRaceId);
     let base = currentRace && currentRace.mov || 0;
-
     let mod = 0;
+
     if (isActive(nimble)) {
-      mod = 1;
+      mod++;
     }
     else if (isActive(slow)) {
-      mod = -1;
+      mod--;
     }
 
     if (maimed && getSids(maimed).includes(3)) {
@@ -338,14 +340,16 @@ export const getWT = createSelector(
   getLocaleMessages,
   (CON, increase, decrease, locale) => {
     const base = CON && Math.round(CON.value / 2) || 0;
-    let value = base;
+    let mod = 0;
 
     if (isActive(increase)) {
-      value++;
+      mod++;
     }
     else if (isActive(decrease)) {
-      value++;
+      mod--;
     }
+
+    const value = base + mod;
 
     return {
       calc: _translate(locale, 'secondaryattributes.ws.calc'),
@@ -353,6 +357,7 @@ export const getWT = createSelector(
       name: _translate(locale, 'secondaryattributes.ws.name'),
       short: _translate(locale, 'secondaryattributes.ws.short'),
       base,
+      mod,
       value
     } as SecondaryAttribute<'WT'>;
   }
@@ -382,7 +387,7 @@ export const getDerivedCharacteristicsMap = createSelector(
       [MOV.id, MOV]
     ];
 
-    if (ruleBooksEnabled === true ? books.has('US25003') : ruleBooksEnabled.has('US25003')) {
+    if (isBookEnabled(books, ruleBooksEnabled, 'US25003')) {
       list.push([WT.id, WT]);
     }
 

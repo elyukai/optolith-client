@@ -455,14 +455,28 @@ export const getCommonProfessions = createSelector(
 	(professions, startEl, currentRaceId, currentCulture, sex, groupVisibility, visibility) => {
 		const filterProfession = (e: Profession | ProfessionVariant) => {
 			const { dependencies, prerequisitesModel } = e;
-			return validateProfession(dependencies, currentRaceId, currentCulture && currentCulture.id, sex) && !prerequisitesModel.some(d => {
+
+			const isProfessionValid = validateProfession(
+				dependencies,
+				currentRaceId,
+				currentCulture && currentCulture.id,
+				sex,
+			);
+
+			return isProfessionValid && !prerequisitesModel.some(d => {
 				if (isRequiringIncreasable(d) && typeof d.id === 'string') {
 					const category = getCategoryById(d.id);
-					if (typeof category !== 'undefined' && category === Categories.ATTRIBUTES && d.value > startEl.maxAttributeValue) {
+
+					const isAttribute = category === Categories.ATTRIBUTES;
+					const isGreaterThanMax = d.value > startEl.maxAttributeValue;
+
+					if (isAttribute && isGreaterThanMax) {
 						return true;
 					}
+
 					return false;
 				}
+
 				return false;
 			});
 		};
@@ -482,12 +496,20 @@ export const getCommonProfessions = createSelector(
 	}
 );
 
+const isCustomProfession = (e: Profession) => {
+	return e.id === 'P_0';
+};
+
 export const getAvailableProfessions = createSelector(
 	getCommonProfessions,
 	getRuleBooksEnabled,
 	getProfessionsVisibilityFilter,
 	(list, availablility, visibility) => {
-		return visibility === 'all' ? filterByAvailability(list, availablility, entry => entry.id === 'P_0') : list;
+		if (visibility === 'all') {
+			return filterByAvailability(list, availablility, isCustomProfession);
+		}
+
+		return list;
 	}
 );
 
@@ -503,6 +525,12 @@ export const getFilteredProfessions = createSelector(
 			keyOfName: sex
 		};
 
-		return filterAndSortObjects(list, locale!.id, filterText, sortOptions, filterOptions);
+		return filterAndSortObjects(
+			list,
+			locale!.id,
+			filterText,
+			sortOptions,
+			filterOptions,
+		);
 	}
 );
