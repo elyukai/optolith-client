@@ -46,8 +46,10 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
   shouldComponentUpdate(nextProps: SkillListItemProps) {
     return this.props.sr !== nextProps.sr ||
       this.props.addText !== nextProps.addText ||
+      this.props.activateDisabled !== nextProps.activateDisabled ||
       this.props.attributes !== nextProps.attributes ||
       this.props.derivedCharacteristics !== nextProps.derivedCharacteristics ||
+      this.props.insertTopMargin !== nextProps.insertTopMargin ||
       this.props.typ !== nextProps.typ ||
       this.props.untyp !== nextProps.untyp;
   }

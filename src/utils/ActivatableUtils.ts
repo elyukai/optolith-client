@@ -592,10 +592,10 @@ export function getValidation(obj: ActiveObjectWithId, state: CurrentHeroInstanc
       }
       break;
     }
-    case 'DISADV_59': {
-      const activeSpells = getAllByCategory(dependent, Categories.SPELLS).reduce((n, e) => e.active ? n + 1 : n, 0);
-      if (activeSpells < 3) {
-        maxTier = 3 - activeSpells;
+    case 'ADV_58': {
+      const activeSpells = [...dependent.spells.values()].reduce((n, e) => e.active ? n + 1 : n, 0);
+      if (activeSpells > 3) {
+        minTier = activeSpells - 3;
       }
       break;
     }
@@ -1089,10 +1089,10 @@ export function getDeactiveView(
         const sel = entry.sel!.filter(e => !getSids(get(dependent, 'DISADV_24') as DisadvantageInstance).includes(e.id) && !getDSids(entry).includes(e.id));
         return { id, name, sel, input, cost, instance: entry };
       }
-      case 'ADV_58': {
-        const activeSpells = (getAllByCategory(dependent, Categories.SPELLS) as SpellInstance[]).reduce((n, e) => e.active ? n + 1 : n, 0);
-        if (activeSpells > 3) {
-          return { id, name, cost, tiers, minTier: activeSpells - 3, instance: entry };
+      case 'DISADV_59': {
+        const activeSpells = [...dependent.spells.values()].reduce((n, e) => e.active ? n + 1 : n, 0);
+        if (activeSpells < 3) {
+          return { id, name, cost, tiers, maxTier: 3 - activeSpells, instance: entry };
         }
         break;
       }

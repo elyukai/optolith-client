@@ -282,7 +282,7 @@ export const isActivationDisabled = createSelector(
       else if (penaltyEntry && isActive(penaltyEntry)) {
         const tier = penaltyEntry.active[0].tier;
         if (tier) {
-          maxSpells += tier;
+          maxSpells -= tier;
         }
       }
       if (activeSpells >= maxSpells) {
