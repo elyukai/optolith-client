@@ -527,10 +527,10 @@ function iterateEquipment(array) {
 
     if (gr === 1 || imp === 1 || gr === 2 || imp === 2) {
       result.combatTechnique = 'CT_' + ct;
-      if (typeof df === 'number' && typeof ddn === 'number' && typeof dds === 'number') {
+      if (typeof ddn === 'number' && typeof dds === 'number') {
         result.damageDiceNumber = ddn;
         result.damageDiceSides = dds;
-        result.damageFlat = df;
+        result.damageFlat = df || 0;
       }
     }
     if (gr === 1 || imp === 1) {

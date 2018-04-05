@@ -276,7 +276,6 @@ export function BelongingsSheet(props: BelongingsSheetProps) {
 										<span className="value">
 											<Textfit max={11} min={7} mode="single">{pet && pet.notes}</Textfit>
 										</span>
-										<span className="value">{pet && pet.notes}</span>
 									</div>
 								</div>
 							</div>

@@ -69,7 +69,12 @@ export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
           </tr>
           <tr>
             <td>{_translate(locale, 'equipment.view.list.damage')}</td>
-            <td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && signNull(damageFlat)}</td>
+            <td>
+              {damageDiceNumber}
+              {_translate(locale, 'equipment.view.list.dice')}
+              {damageDiceSides}
+              {typeof damageFlat === 'number' ? signNull(damageFlat) : null}
+            </td>
           </tr>
           <tr>
             <td>{_translate(locale, 'equipment.view.list.primaryattributedamagethreshold')}</td>
@@ -107,7 +112,12 @@ export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
           </tr>
           <tr>
             <td>{_translate(locale, 'equipment.view.list.damage')}</td>
-            <td>{damageDiceNumber}{_translate(locale, 'equipment.view.list.dice')}{damageDiceSides}{damageFlat && signNull(damageFlat)}</td>
+            <td>
+              {damageDiceNumber}
+              {_translate(locale, 'equipment.view.list.dice')}
+              {damageDiceSides}
+              {typeof damageFlat === 'number' ? signNull(damageFlat) : null}
+            </td>
           </tr>
           <tr>
             <td>{_translate(locale, 'equipment.view.list.reloadtime')}</td>
