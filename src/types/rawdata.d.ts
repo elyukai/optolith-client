@@ -377,13 +377,19 @@ export interface RawTalent {
 	skt: number;
 	be: 'true' | 'false' | 'maybe';
 	gr: number;
-	name: string;
+	applications?: {
+		id: number;
+		prerequisites: Reusable.AllRequirementTypes[];
+	}[];
 }
 
 export interface RawTalentLocale {
 	id: string;
 	name: string;
-	spec: Data.Application[];
+	spec: {
+		id: number;
+		name: string;
+	}[];
 	spec_input?: string;
 	tools?: string;
 	quality: string;

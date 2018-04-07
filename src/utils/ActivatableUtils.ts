@@ -8,9 +8,9 @@ import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/depen
 import { getStart } from '../selectors/elSelectors';
 import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
-import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, Application, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages, ActivatableBasePrerequisites } from '../types/data.d';
+import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages, ActivatableBasePrerequisites } from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
-import { Activatable, SelectionObject, Skillish } from '../types/wiki';
+import { Activatable, SelectionObject, Skillish, Application } from '../types/wiki';
 import * as DependentUtils from './DependentUtils';
 import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
@@ -515,10 +515,13 @@ export function convertToActiveObject(obj: ActivatableInstance, activate: Activa
  */
 export function getGeneratedPrerequisites(
   obj: ActivatableInstance,
-  { sid }: ActiveObject,
+  active: ActiveObject,
   add: boolean,
 ): AllRequirementTypes[] {
+  const { sid, sid2 } = active;
+
   const adds: AllRequirementTypes[] = [];
+
   switch (obj.id) {
     case 'SA_3': {
       const selectionItem = getSelectionItem(obj, sid);
@@ -528,7 +531,19 @@ export function getGeneratedPrerequisites(
       break;
     }
     case 'SA_9':
+      type Sel = Array<SelectionObject & { applications?: Application[]; applicationsInput?: string }>;
+
       adds.push({ id: sid as string, value: (obj.active.filter(e => e.sid === sid).length + (add ? 1 : 0)) * 6 });
+
+      const selectedSkill = (obj.sel as Sel).find(e => e.id === sid);
+      const skillApplications = selectedSkill && selectedSkill.applications;
+      const selectedApplication = skillApplications && skillApplications.find(e => e.id === sid2);
+      const applicationPrerequisites = selectedApplication && selectedApplication.prerequisites;
+
+      if (typeof applicationPrerequisites === 'object') {
+        adds.push(...applicationPrerequisites);
+      }
+
       break;
     case 'SA_81':
       adds.push({ id: 'SA_72', active: true, sid });
@@ -1220,7 +1235,12 @@ export function getDeactiveView(
             ...e,
             cost: arr ? e.cost! * (arr.length + 1) : e.cost,
             applications: e.applications && e.applications.filter(n => {
-              return !arr || !arr.includes(n.id);
+              const isInactive = !arr || !arr.includes(n.id);
+              const arePrerequisitesMet =
+                typeof n.prerequisites !== 'object' ||
+                validate(state, n.prerequisites, id, pact);
+
+              return isInactive && arePrerequisitesMet;
             })
           };
         });

@@ -346,14 +346,28 @@ function iterateAttributes(array) {
 function iterateSkills(array) {
   const list = {};
   for (const obj of array) {
-    const { id, check, skt, be, gr, spec, spec_input} = obj;
+    const { id, check, skt, be, gr, applications} = obj;
     const newObject = {
       id: `TAL_${id}`,
-      check: obj.check.split('&').map(e => `ATTR_${e}`),
+      check: check.split('&').map(e => `ATTR_${e}`),
       skt,
       be,
       gr
     };
+    if (applications !== undefined) {
+      const regex = /(-?\d+)\?.+?(&(-?\d+)\?.+?)*/;
+      if (!regex.test(applications)) {
+        throw new Error(`Skills: Column "applications" not valid for ${newObject.id}`);
+      }
+
+      newObject.applications = splitList(applications).map(e => {
+        const src = e.split('?');
+        return {
+          id: Number.parseInt(src[0]),
+          prerequisites: convertRequirements(src[1])
+        };
+      });
+    }
     list[newObject.id] = newObject;
   }
   return list;

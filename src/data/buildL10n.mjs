@@ -166,6 +166,10 @@ function iterateSkillsL10n(array) {
 			name, tools, quality, failed, critical, botch, src
 		};
 		if (spec) {
+			const regex = /(-?\d+)\?[\w\s&]+(&&(-?\d+)\?[\w\s&]+)*/;
+			if (!regex.test(spec)) {
+				throw new Error(`Skills: Column "spec" not valid for ${newObject.id}`);
+			}
 			newObject.spec = splitList(spec).map(e => {
 				const src = e.split('?');
 				return {

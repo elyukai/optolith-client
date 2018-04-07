@@ -489,6 +489,7 @@ export interface Skill {
 export interface Application {
 	readonly id: number;
 	readonly name: string;
+	readonly prerequisites?: AllRequirementTypes[];
 }
 
 export interface ItemTemplate {

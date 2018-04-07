@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { Application, InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
+import { InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
 import { _translate, UIMessages } from '../../utils/I18n';
+import { Application } from '../../types/wiki';
 
 export interface SelectionsTalentSpecProps {
 	active: [number | null, string];

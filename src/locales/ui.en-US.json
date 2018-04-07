@@ -537,6 +537,7 @@
 	"skills.options.commoninculture": "Common Skills",
 	"skills.view.groups": ["Physical", "Social", "Nature", "Knowledge", "Craft"],
 	"info.check": "Check",
+	"info.newapplications": "New Applications",
 	"info.applications": "Applications",
 	"info.encumbrance": "Encumbrance",
 	"info.tools": "Tools",

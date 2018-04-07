@@ -111,16 +111,20 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 
 	for (const [id, obj] of list.advantages as Map<string, AdvantageInstanceInInit>) {
 		if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].includes(id) && obj.sel) {
-			obj.sel = getSelectionCategories(obj.sel);
+			list.advantages.set(id, {
+				...obj,
+				sel: getSelectionCategories(obj.sel)
+			});
 		}
-		list.advantages.set(id, obj);
 	}
 
 	for (const [id, obj] of list.disadvantages as Map<string, DisadvantageInstanceInInit>) {
 		if (['DISADV_48'].includes(id) && obj.sel) {
-			obj.sel = getSelectionCategories(obj.sel);
+			list.disadvantages.set(id, {
+				...obj,
+				sel: getSelectionCategories(obj.sel)
+			});
 		}
-		list.disadvantages.set(id, obj);
 	}
 
 	for (const [id, obj] of list.specialAbilities as Map<string, SpecialAbilityInstanceInInit>) {

@@ -2,6 +2,7 @@ import { Categories } from '../constants/Categories';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, CantripInstance, CombatTechniqueInstance, CultureInstance, DisadvantageInstance, ExperienceLevel, ItemInstance, LiturgyInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, SelectionObject, SpecialAbilityInstance, SpellInstance, TalentInstance, ToListById } from '../types/data.d';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawExperienceLevel, RawExperienceLevelLocale, RawItem, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata.d';
 import * as Reusable from '../types/reusable.d';
+import { Application } from '../types/wiki';
 
 export function initExperienceLevel(raw: RawExperienceLevel, locale: ToListById<RawExperienceLevelLocale>): ExperienceLevel | undefined {
   const { id } = raw;
@@ -484,8 +485,21 @@ export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>):
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, spec, spec_input, ...other } = localeObject;
-    const { be, check, gr, skt } = raw;
+    const {
+      name,
+      spec: applicationNames,
+      spec_input,
+      ...other
+    } = localeObject;
+
+    const {
+      be,
+      check,
+      gr,
+      skt,
+      applications: applicationPrerequisites
+    } = raw;
+
     return {
       category: Categories.TALENTS,
       check,
@@ -494,7 +508,25 @@ export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>):
       gr,
       ic: skt,
       name,
-      applications: spec,
+      applications: applicationNames.map(app => {
+        if (app.id < 0) {
+          const prerequisitesElem =
+            applicationPrerequisites &&
+            applicationPrerequisites.find(e => {
+              return app.id === e.id;
+            });
+
+          if (typeof prerequisitesElem === 'object') {
+            return {
+              ...prerequisitesElem,
+              ...app,
+            };
+          }
+
+          return;
+        }
+        return app;
+      }).filter(e => typeof e === 'object') as Application[],
       applicationsInput: spec_input,
       value: 0,
       ...other

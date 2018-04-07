@@ -888,11 +888,6 @@ export interface CantripInstance {
 
 export type TalentInstanceDependency = number | SkillOptionalDependency;
 
-export interface Application {
-	id: number;
-	name: string;
-}
-
 export interface TalentInstance {
 	readonly category: Categories.TALENTS;
 	readonly check: string[];
@@ -901,7 +896,7 @@ export interface TalentInstance {
 	readonly ic: number;
 	readonly id: string;
 	readonly name: string;
-	readonly applications?: Application[];
+	readonly applications?: Wiki.Application[];
 	readonly applicationsInput?: string;
 	readonly tools?: string;
 	readonly quality?: string;

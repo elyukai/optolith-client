@@ -2,7 +2,8 @@ import { Categories } from '../constants/Categories';
 import { ToListById } from '../types/data';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawExperienceLevel, RawExperienceLevelLocale, RawItem, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata';
 import * as Reusable from '../types/reusable';
-import { Advantage, Attribute, Blessing, Cantrip, CombatTechnique, Culture, Die, Disadvantage, ExperienceLevel, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, Race, RaceVariant, SelectionObject, Skill, SpecialAbility, Spell } from '../types/wiki';
+import { Advantage, Attribute, Blessing, Cantrip, CombatTechnique, Culture, Die, Disadvantage, ExperienceLevel, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, Race, RaceVariant, SelectionObject, Skill, SpecialAbility, Spell, Application } from '../types/wiki';
+import { IdPrefixes } from '../constants/IdPrefixes';
 
 export function initExperienceLevel(raw: RawExperienceLevel, locale: ToListById<RawExperienceLevelLocale>): ExperienceLevel | undefined {
   const { id } = raw;
@@ -85,19 +86,19 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): Race 
     const { ap, attr, attr_sel, auto_adv, autoAdvCost, eyes, gs, hair, imp_adv, imp_dadv, le, src: srcIds, typ_adv, typ_cultures, typ_dadv, size, sk, untyp_adv, untyp_dadv, weight, zk, vars } = raw;
     return {
       ap,
-      attributeAdjustments: attr.map<[number, string]>(e => [e[0], `ATTR_${e[1]}`]),
-      attributeAdjustmentsSelection: [attr_sel[0], attr_sel[1].map(k => `ATTR_${k}`)],
+      attributeAdjustments: attr.map<[number, string]>(e => [e[0], `${IdPrefixes.ATTRIBUTES}_${e[1]}`]),
+      attributeAdjustmentsSelection: [attr_sel[0], attr_sel[1].map(k => `${IdPrefixes.ATTRIBUTES}_${k}`)],
       attributeAdjustmentsText,
-      automaticAdvantages: auto_adv.map(e => `ADV_${e}`),
+      automaticAdvantages: auto_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       automaticAdvantagesCost: autoAdvCost,
       automaticAdvantagesText,
       category: Categories.RACES,
       eyeColors: eyes,
       hairColors: hair,
       id,
-      stronglyRecommendedAdvantages: imp_adv.map(e => `ADV_${e}`),
+      stronglyRecommendedAdvantages: imp_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       stronglyRecommendedAdvantagesText,
-      stronglyRecommendedDisadvantages: imp_dadv.map(e => `DISADV_${e}`),
+      stronglyRecommendedDisadvantages: imp_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
       stronglyRecommendedDisadvantagesText,
       lp: le,
       mov: gs,
@@ -106,16 +107,16 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): Race 
 			...convertWeight(weight),
       spi: sk,
       tou: zk,
-      commonAdvantages: typ_adv.map(e => `ADV_${e}`),
+      commonAdvantages: typ_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       commonAdvantagesText,
-      commonCultures: typ_cultures.map(e => `C_${e}`),
-      commonDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
+      commonCultures: typ_cultures.map(e => `${IdPrefixes.CULTURES}_${e}`),
+      commonDisadvantages: typ_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
       commonDisadvantagesText,
-      uncommonAdvantages: untyp_adv.map(e => `ADV_${e}`),
+      uncommonAdvantages: untyp_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       uncommonAdvantagesText,
-      uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+      uncommonDisadvantages: untyp_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
       uncommonDisadvantagesText,
-      variants: vars.map(e => `RV_${e}`),
+      variants: vars.map(e => `${IdPrefixes.RACE_VARIANTS}_${e}`),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
@@ -141,14 +142,14 @@ export function initRaceVariant(raw: RawRaceVariant, locale: ToListById<RawRaceV
       id,
       name,
 			...convertSize(size),
-      commonAdvantages: typ_adv.map(e => `ADV_${e}`),
+      commonAdvantages: typ_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       commonAdvantagesText,
-      commonCultures: typ_cultures.map(e => `C_${e}`),
-      commonDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
+      commonCultures: typ_cultures.map(e => `${IdPrefixes.CULTURES}_${e}`),
+      commonDisadvantages: typ_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
       commonDisadvantagesText,
-      uncommonAdvantages: untyp_adv.map(e => `ADV_${e}`),
+      uncommonAdvantages: untyp_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
       uncommonAdvantagesText,
-      uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+      uncommonDisadvantages: untyp_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
       uncommonDisadvantagesText
     };
   }
@@ -170,20 +171,20 @@ export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale
       scripts: literacy,
       socialStatus: social,
       culturalPackageSkills: talents.map(e => ({
-				id: `TAL_${e[0]}`,
+				id: `${IdPrefixes.TALENTS}_${e[0]}`,
 				value: e[1]
 			})),
       commonProfessions: typ_prof,
-      commonAdvantages: typ_adv.map(e => `ADV_${e}`),
+      commonAdvantages: typ_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
 			commonAdvantagesText: commonAdvantages,
-      commonDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
+      commonDisadvantages: typ_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
 			commonDisadvantagesText: commonDisadvantages,
-      uncommonAdvantages: untyp_adv.map(e => `ADV_${e}`),
+      uncommonAdvantages: untyp_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
 			uncommonAdvantagesText: uncommonAdvantages,
-      uncommonDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
+      uncommonDisadvantages: untyp_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
 			uncommonDisadvantagesText: uncommonDisadvantages,
-      commonSkills: typ_talents.map(e => `TAL_${e}`),
-			uncommonSkills: untyp_talents.map(e => `TAL_${e}`),
+      commonSkills: typ_talents.map(e => `${IdPrefixes.TALENTS}_${e}`),
+			uncommonSkills: untyp_talents.map(e => `${IdPrefixes.TALENTS}_${e}`),
       src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
     };
   }
@@ -202,34 +203,34 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
       apOfActivatables,
       category: Categories.PROFESSIONS,
       combatTechniques: combattech.map(e => ({
-				id: `CT_${e[0]}`,
+				id: `${IdPrefixes.COMBAT_TECHNIQUES}_${e[0]}`,
 				value: e[1]
 			})),
       dependencies: pre_req,
       id,
       liturgicalChants: chants.map(e => ({
-				id: `LITURGY_${e[0]}`,
+				id: `${IdPrefixes.LITURGIES}_${e[0]}`,
 				value: e[1]
 			})),
-      blessings: blessings.map(e => `BLESSING_${e[0]}`),
+      blessings: blessings.map(e => `${IdPrefixes.BLESSINGS}_${e[0]}`),
       name,
       prerequisites: finalReq,
       selections: sel,
       specialAbilities: sa,
       spells: spells.map(e => ({
-				id: `SPELL_${e[0]}`,
+				id: `${IdPrefixes.SPELLS}_${e[0]}`,
 				value: e[1]
 			})),
       subname,
       skills: talents.map(e => ({
-				id: `TAL_${e[0]}`,
+				id: `${IdPrefixes.TALENTS}_${e[0]}`,
 				value: e[1]
 			})),
-      suggestedAdvantages: typ_adv.map(e => `ADV_${e}`),
-      suggestedDisadvantages: typ_dadv.map(e => `DISADV_${e}`),
-      unsuitableAdvantages: untyp_adv.map(e => `ADV_${e}`),
-      unsuitableDisadvantages: untyp_dadv.map(e => `DISADV_${e}`),
-      variants: vars.map(e => `PV_${e}`),
+      suggestedAdvantages: typ_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
+      suggestedDisadvantages: typ_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
+      unsuitableAdvantages: untyp_adv.map(e => `${IdPrefixes.ADVANTAGES}_${e}`),
+      unsuitableDisadvantages: untyp_dadv.map(e => `${IdPrefixes.DISADVANTAGES}_${e}`),
+      variants: vars.map(e => `${IdPrefixes.PROFESSION_VARIANTS}_${e}`),
       gr,
       subgr: sgr,
       prerequisitesEnd,
@@ -255,7 +256,7 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
       apOfActivatables,
       category: Categories.PROFESSION_VARIANTS,
       combatTechniques: combattech.map(e => ({
-				id: `CT_${e[0]}`,
+				id: `${IdPrefixes.COMBAT_TECHNIQUES}_${e[0]}`,
 				value: e[1]
 			})),
       dependencies: pre_req,
@@ -264,18 +265,18 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
       selections: sel,
       specialAbilities: sa,
       skills: talents.map(e => ({
-				id: `TAL_${e[0]}`,
+				id: `${IdPrefixes.TALENTS}_${e[0]}`,
 				value: e[1]
 			})),
       spells: spells.map(e => ({
-				id: `SPELL_${e[0]}`,
+				id: `${IdPrefixes.SPELLS}_${e[0]}`,
 				value: e[1]
 			})),
       liturgicalChants: chants.map(e => ({
-				id: `LITURGY_${e[0]}`,
+				id: `${IdPrefixes.LITURGIES}_${e[0]}`,
 				value: e[1]
       })),
-      blessings: blessings.map(e => `BLESSING_${e}`)
+      blessings: blessings.map(e => `${IdPrefixes.BLESSINGS}_${e}`)
     };
   }
   return;
@@ -542,8 +543,21 @@ export function initSkill(raw: RawTalent, locale: ToListById<RawTalentLocale>): 
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
-    const { name, spec, spec_input, ...other } = localeObject;
-    const { be, check, gr, skt } = raw;
+    const {
+      name,
+      spec: applicationNames,
+      spec_input,
+      ...other
+    } = localeObject;
+
+    const {
+      be,
+      check,
+      gr,
+      skt,
+      applications: applicationPrerequisites
+    } = raw;
+
     return {
       ...other,
       category: Categories.TALENTS,
@@ -552,7 +566,25 @@ export function initSkill(raw: RawTalent, locale: ToListById<RawTalentLocale>): 
       gr,
       ic: skt,
       name,
-      applications: spec,
+      applications: applicationNames.map(app => {
+        if (app.id < 0) {
+          const prerequisitesElem =
+            applicationPrerequisites &&
+            applicationPrerequisites.find(e => {
+              return app.id === e.id;
+            });
+
+          if (typeof prerequisitesElem === 'object') {
+            return {
+              ...prerequisitesElem,
+              ...app,
+            };
+          }
+
+          return;
+        }
+        return app;
+      }).filter(e => typeof e === 'object') as Application[],
       applicationsInput: spec_input,
     };
   }

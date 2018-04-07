@@ -33,6 +33,7 @@ export function WikiSkillInfo(props: WikiSkillInfoProps) {
   if (['nl-BE'].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="skill" title={name}>
+        <WikiApplications {...props} showNewApplications />
         <WikiSkillCheck {...props} />
         <WikiApplications {...props} />
         <WikiEncumbrance {...props} />
@@ -43,6 +44,7 @@ export function WikiSkillInfo(props: WikiSkillInfoProps) {
 
   return (
     <WikiBoxTemplate className="skill" title={name}>
+      <WikiApplications {...props} showNewApplications />
       <WikiSkillCheck {...props} />
       <WikiApplications {...props} />
       <WikiEncumbrance {...props} />

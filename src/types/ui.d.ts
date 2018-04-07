@@ -547,6 +547,7 @@ export interface UIMessages {
 	"skills.options.commoninculture": string;
 	"skills.view.groups": string[];
 	"info.check": string;
+	"info.newapplications": string;
 	"info.applications": string;
 	"info.encumbrance": string;
 	"info.tools": string;
