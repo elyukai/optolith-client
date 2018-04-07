@@ -5,7 +5,7 @@ import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
 import { ActivatableInstance, SecondaryAttribute } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
-import { Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell, Advantage } from '../../types/wiki';
 import { isItemTemplateFromMixed } from '../../utils/WikiUtils';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
@@ -30,6 +30,7 @@ export interface WikiInfoContentOwnProps {
 
 export interface WikiInfoContentStateProps {
 	attributes: Map<string, Attribute>;
+	advantages: Map<string, Advantage>;
 	books: Map<string, Book>;
 	blessings: Map<string, Blessing>;
 	cantrips: Map<string, Cantrip>;

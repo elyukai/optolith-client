@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UIMessages } from '../../types/data.d';
-import { Attribute, Book, Skill } from '../../types/wiki';
+import { Attribute, Book, Skill, Advantage, SpecialAbility } from '../../types/wiki';
 import { WikiApplications } from './elements/WikiApplications';
 import { WikiBotch } from './elements/WikiBotch';
 import { WikiCriticalSuccess } from './elements/WikiCriticalSuccess';
@@ -15,6 +15,8 @@ import { WikiBoxTemplate } from './WikiBoxTemplate';
 
 export interface WikiSkillInfoProps {
   attributes: Map<string, Attribute>;
+  advantages: Map<string, Advantage>;
+  specialAbilities: Map<string, SpecialAbility>;
   books: Map<string, Book>;
   currentObject: Skill;
   locale: UIMessages;
