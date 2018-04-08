@@ -1,3 +1,77 @@
+# 1.0.0
+
+### New Features / Breaking Changes
+
+- New app name: Optolyth (long version: Optolyth Character Generator)
+- Linux 32-bit build available.
+- Applications that can be purchased using advantages or special abilities can be used for a skill specialization. They are listed in the wiki below *New Applications*, too.
+
+### Rules/Crunch
+
+- Language Specializations can be activated as an Optional Rule in the Rules tab.
+- Added missing entries for *Immunity to [poison/disease]* from **Core Rules** and **Aventuria Almanach**.
+
+### Bug Fixes / Other
+
+- Multiline texts are now multiline on character sheet.
+- If advantage *Stigma (Albino)* is purchased the (lists of available) hair and eye colors change.
+- AP cost for race are now shown in AP tooltip. AP cost for profession are shown only when RCP selection has not been approved.
+- Fixed converting older heroes to new version.
+- The text fields for size and weight are both updated on generating size or weight.
+- In profile overview now always shows the start EL. Before, the EL was calculated based on AP total.
+- Now you can select the source books to use in the very beginning of character creation.
+- Fixed prerequisites of *Cartography*.
+- Fixed list of liturgical chants.
+- Ignoring changes on close now closes the app. Before nothing happened ...
+- Fixed calculation of minimum/maximum liturgical chant SR.
+- Shortcuts!
+  - `Ctrl+Z` => Undo
+  - `Ctrl+Y` or `Ctrl+Shift+Z` => Redo
+  - `Ctrl+O` => Show settings (only when dedicated button is available, too)
+  - `Ctrl+S` => Save hero
+  - `Ctrl+W` => Switches to list of heroes if a hero is currently opened (similar to the back button in the top left corner)
+  - `Cmd+Q` => Close app (macOS)
+- Abbreviations for related source books are shown in the list of professions again.
+- Fixed importing heroes with images encoded in `jpg`.
+- Fixed editing automatic Area Knowledge in profile overview.
+- Fixed calculation total AP for disadvantage *Bad Habit*.
+- The *About ...* menu element is disabled if there is an open dialog window (macOS).
+- The AP cost for profession variants are now considered when calculating AP spent.
+- Activating spells is now disabled the limits of EL are reached.
+- Fixed showing separators when sorting spells or liturgical chants by group.
+- Fxied text fields in animal section of the character sheet breaking layout or showing up twice.
+- Fixed AP used for dis/advantages shown in window used for adding them. Remaining parts of the old AP system have been removed.
+- Fixed saving heroes (previously saved heroes are not currupted).
+- Fixed filters for list of races and list of professions.
+- Fixed calculating AP total for *Obligations/Priciples*.
+- Fixed showing damage info for weapons in wiki (if a weapon has no flat damage 1W6 instead of 1W60 is shown now).
+
+## German Specific (in German)
+
+### New Features / Breaking Changes
+
+- Unter Profil > Pakt kann nun ein Feenpakt eingetragen werden. Die Eingabe richtet sich genau nach den Regeln aus **Die Siebenwindküste** zu Feenpakten. Die Eingabe dort schaltet auch unter erfüllten Voraussetzungen Paktgeschenke frei.
+
+### Rules/Crunch
+
+- Professionen aus **Aventurisches Götterwirken** und **Die Siebenwindküste** hinzugefügt.
+- Fehlende Berufsgeheimnisse aus **Rüstkammer der Streitenden Königreiche** und **Rüstkammer der Siebendwindküste** sowie **Aventurisches Bestiarium** hinzugefügt.
+- Fehlende Einträge für *Immunität gegen [Gift/Krankheit]* aus **Aventurisches Bestiarium**, **Aventurische Magie I** und **Kneipen & Tavernen** hinzugefügt.
+
+### Bug Fixes / Other
+
+- Die Profession *Sangara* funktioniert wieder ordnungsgemäß.
+- Die AP-Kosten für *Tradition (Zauberbarde)* und *Tradition (Zaubertänzer)* werden beim Hinzufügen wieder korrekt angezeigt.
+- Liturgiestilsonderfertigkeiten, die es ermöglichen, Liturgien anderer Gottheiten zu erlernen, ermöglichen dieses Feature nun auch.
+- Die Tradition des Namenlosen Kultes wird im Wiki nun korrekt angezeigt.
+- Die Abhängigkeiten der Beschwörungs/Herbeirufungszauber werden nun in den FAQ behandelt.
+- Die Berechnung der Wundschwelle funktioniert wieder ordnungsgemäß.
+- Stilsonderfertigkeiten und dazugehörige Erweiterte SF können nun wieder ordnungsgemäß hinzugefügt und gelöscht werden.
+- Die Wundschwelle wird nun nur angezeit, wenn **Aventurisches Kompendium** verfügbar und aktiviert ist.
+- Die Reichweite für Waffen der Streitenden Königreiche wurde ergänzt.
+- Vor- und Nachteile für *Intuitive Zauberer* können wieder ordnungsgemäß erworben und verkauft werden.
+- Bei einigen Zaubern wurde die druidische oder scharlatanische Tradition ergänzt.
+
 # 0.51.9
 
 - The AP tooltip (if you hover over the available AP of the currently opened character) now show how many AP you spent on which category of entries - how much you spent on spells, on special abilities, on disadvantages, on cantrips, on energies (LP, AE, KP) and so on.
@@ -273,7 +347,7 @@
 - The used attributes for the skill check of ODEM ARCANUM are SGC/INT/INT now (following the German Regel-Wiki).
 - *Combat Reflexes I-III* now increases INI value.
 - Window is maximizable, unmaximizable and resizable.
-	- Added a title bar on Windows and Linux, providing buttons in Windows 10 UWP style to minimize, (un)maximize and close the app. This bar is also the draggable area of the window.
+  - Added a title bar on Windows and Linux, providing buttons in Windows 10 UWP style to minimize, (un)maximize and close the app. This bar is also the draggable area of the window.
 - Removed the Start tab.
 - Improved general performance.
 - In *Profile Overview* and *Character Sheet* tabs, entries such as `Skill Specialization (Climbing: Trees), Skill Specialization (Survival: Find Campsite)` are now written as `Skill Specialization (Climbing: Trees, Survival: Find Campsite)`, providing a better overview and readability in addition to more space.
@@ -313,8 +387,8 @@
 
 - Aventurian Names, Inns & Taverns, Aventurian Bestiary and The Warring Kingdoms are fully implemented (they should be). All entries from Aventurian Magic I are available. Optional Rules from AMI are not (yet) available.
 - AMI is now basically complete. During reworking the entries some issues occured that might cause your characters to not work properly.
-	- Selecting *Meistertalentierte*, *Zauberbarden* or *Zaubertänzer* as your magical tradition requires a second selection. *Meistertalentierte* choose their *Meistertalent*, *Zauberbarden* or *Zaubertänzer* choose their music/dance tradition (Ceoladir etc). If the affected characters are in character creation phase, you will be able to remove the existing tradition special ability and reactivate it with the correct selection. If character creation is finished, you have to create the respective character(s) again.
-	- *Exorzist I* and *Meistertrick I* were missing selection options. Now they are included. The selection options do not affect the AP cost, so you can try to fix it the same way as you did for the magical tradition above.
+  - Selecting *Meistertalentierte*, *Zauberbarden* or *Zaubertänzer* as your magical tradition requires a second selection. *Meistertalentierte* choose their *Meistertalent*, *Zauberbarden* or *Zaubertänzer* choose their music/dance tradition (Ceoladir etc). If the affected characters are in character creation phase, you will be able to remove the existing tradition special ability and reactivate it with the correct selection. If character creation is finished, you have to create the respective character(s) again.
+  - *Exorzist I* and *Meistertrick I* were missing selection options. Now they are included. The selection options do not affect the AP cost, so you can try to fix it the same way as you did for the magical tradition above.
 
 # 0.47.3
 
