@@ -699,11 +699,42 @@ export function convertHero(hero: Hero) {
     }
     entry.clientVersion = '0.51.4';
   }
-  if (satisfies(entry.clientVersion, '< 0.51.10-alpha.1')) {
+
+  if (satisfies(entry.clientVersion, '< 1.0.0')) {
     if (entry.activatable.hasOwnProperty('DISADV_45') && entry.activatable.DISADV_45.some(e => e.sid === 1)) {
       entry.pers.haircolor = 24;
       entry.pers.eyecolor = 19;
     }
+    entry.clientVersion = '1.0.0';
   }
+
+  if (satisfies(entry.clientVersion, '< 1.0.2')) {
+    let adjValue = 0;
+
+    if (entry.r === 'R_1' || entry.r === 'R_3') {
+      adjValue = 1;
+    }
+    else if (entry.r === 'R_2') {
+      adjValue = -2;
+    }
+    else if (entry.r === 'R_4') {
+      adjValue = -2;
+    }
+
+    let index = entry.attr.values.findIndex(e => e[2] === adjValue);
+
+    if (index === -1) {
+      index = entry.attr.values.findIndex(e => e[2] !== 0);
+    }
+
+    entry.attr.values = entry.attr.values.map((e, i) => {
+      const inter = [...e] as [string, number, number];
+      inter[2] = i === index ? adjValue : 0;
+      return inter;
+    });
+
+    entry.clientVersion = '1.0.2';
+  }
+
   return entry;
 }
