@@ -3,7 +3,7 @@ import { Pact } from '../actions/PactActions';
 import { Categories } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
-import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance } from '../types/data.d';
+import { ActivatableInstance, ActivatableInstanceDependency, ActivatableSkillInstance, AllRequirementObjects, AllRequirements, CultureInstance, IncreasableInstance, Instance, ProfessionInstance, RaceInstance, DependentPrerequisite } from '../types/data.d';
 import { CultureRequirement, PactRequirement, RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute, SexRequirement } from '../types/reusable.d';
 import { getSids, isActive } from './ActivatableUtils';
 import { getPrimaryAttributeId } from './AttributeUtils';
@@ -311,4 +311,12 @@ export function isActivatableInstance(entry?: Instance): entry is ActivatableIns
 export function isActivatableSkillInstance(entry?: Instance): entry is ActivatableSkillInstance {
   const categories = [Categories.SPELLS, Categories.LITURGIES];
   return !!entry && categories.includes(entry.category);
+}
+
+export function isDependentPrerequisite(entry: AllRequirements): entry is DependentPrerequisite {
+  return entry !== 'RCP' &&
+    !isRaceRequirement(entry) &&
+    !isCultureRequirement(entry) &&
+    !isSexRequirement(entry) &&
+    !isPactRequirement(entry);
 }

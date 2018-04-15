@@ -21,6 +21,7 @@ export interface WikiEntryByCategory {
 }
 
 export type WikiEntriesWithGroups = CombatTechnique | LiturgicalChant | SpecialAbility | Spell | Skill;
+export type WikiActivatable = Advantage | Disadvantage | SpecialAbility;
 
 export type SkillishEntry = Spell | LiturgicalChant | Skill | CombatTechnique;
 

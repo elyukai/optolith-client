@@ -10,7 +10,7 @@ import { getSystemLocale } from '../selectors/I18n';
 import { getLocaleId, getLocaleMessages } from '../selectors/stateSelectors';
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { Hero, ToListById, User } from '../types/data.d';
+import { ToListById, User } from '../types/data.d';
 import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
 import { _translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
@@ -187,7 +187,7 @@ export function receiveInitialData(data: Raw): ReceiveInitialDataAction {
 export interface ReceiveImportedHeroAction {
 	type: ActionTypes.RECEIVE_IMPORTED_HERO;
 	payload: {
-		data: Hero;
+		data: RawHero;
 		player?: User;
 	};
 }
@@ -230,14 +230,12 @@ export function getHeroImport(): AsyncAction<Promise<RawHero | undefined>> {
 
 export function receiveHeroImport(raw: RawHero): ReceiveImportedHeroAction {
 	const newId = `H_${getNewIdByDate()}`;
-	const { player, avatar, dateCreated, dateModified, ...other } = raw;
-	const data: Hero = convertHero({
+	const { player, avatar, ...other } = convertHero(raw);
+	const data: RawHero = {
 		...other,
 		id: newId,
-		dateCreated: new Date(dateCreated),
-		dateModified: new Date(dateModified),
 		avatar: avatar && (isBase64Image(avatar) || fs.existsSync(avatar.replace(/file:[\\\/]+/, ''))) ? avatar : undefined
-	});
+	};
 	return {
 		type: ActionTypes.RECEIVE_IMPORTED_HERO,
 		payload: {

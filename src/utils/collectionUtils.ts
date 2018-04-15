@@ -1,7 +1,7 @@
 import { DependentInstancesState, DependentInstancesStateKeysForMaps } from '../reducers/dependentInstances';
 import { ToOptionalKeys, HeroDependent, Dependent } from '../types/data.d';
 import { AbilityInstanceExtended, Instance } from '../types/data.d';
-import { getStateKeyById } from './IDUtils';
+import { getStateKeyById, getHeroStateListKeyById } from './IDUtils';
 
 /**
  * Merges a Map into another Map. Returns a new Map if the second map has entries.
@@ -208,4 +208,25 @@ export function convertObjectToMap<V>(obj: StringObject<V>): Map<string, V> {
   }
 
   return map;
+}
+
+/**
+ * Appends an element to an array and returns a new array.
+ * @param array
+ * @param add
+ */
+export function addToArray<T>(array: T[], add: T): T[] {
+  return [ ...array, add ];
+}
+
+/**
+ * Removes an element at the given index and returns a new array with the
+ * remaining elements.
+ * @param array
+ * @param index
+ */
+export function removeFromArray<T>(array: T[], index: number): T[] {
+  const newArray = [ ...array ];
+  newArray.splice(index, 1);
+  return newArray;
 }

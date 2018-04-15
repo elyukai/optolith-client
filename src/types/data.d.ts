@@ -7,394 +7,412 @@ import { TabId } from '../utils/LocationUtils';
 import * as Wiki from './wiki';
 
 export interface InstanceByCategory {
-	'ADVANTAGES': AdvantageInstance;
-	'ATTRIBUTES': AttributeInstance;
-	'BLESSINGS': BlessingInstance;
-	'CANTRIPS': CantripInstance;
-	'COMBAT_TECHNIQUES': CombatTechniqueInstance;
-	'CULTURES': CultureInstance;
-	'DISADVANTAGES': DisadvantageInstance;
-	'LITURGIES': LiturgyInstance;
-	'PROFESSIONS': ProfessionInstance;
-	'PROFESSION_VARIANTS': ProfessionVariantInstance;
-	'RACES': RaceInstance;
-	'RACE_VARIANTS': RaceVariantInstance;
-	'SPECIAL_ABILITIES': SpecialAbilityInstance;
-	'SPELLS': SpellInstance;
-	'TALENTS': TalentInstance;
+  'ADVANTAGES': AdvantageInstance;
+  'ATTRIBUTES': AttributeInstance;
+  'BLESSINGS': BlessingInstance;
+  'CANTRIPS': CantripInstance;
+  'COMBAT_TECHNIQUES': CombatTechniqueInstance;
+  'CULTURES': CultureInstance;
+  'DISADVANTAGES': DisadvantageInstance;
+  'LITURGIES': LiturgyInstance;
+  'PROFESSIONS': ProfessionInstance;
+  'PROFESSION_VARIANTS': ProfessionVariantInstance;
+  'RACES': RaceInstance;
+  'RACE_VARIANTS': RaceVariantInstance;
+  'SPECIAL_ABILITIES': SpecialAbilityInstance;
+  'SPELLS': SpellInstance;
+  'TALENTS': TalentInstance;
 }
 
 export type InstanceWithGroups = CombatTechniqueInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance;
 
-export interface AdventurePoints {
-	total: number;
-	spent: number;
-	adv: [number, number, number];
-	disadv: [number, number, number];
-}
-
 export interface Book {
-	id: string;
-	short: string;
-	name: string;
+  id: string;
+  short: string;
+  name: string;
 }
 
 export interface ToListById<T> {
-	[id: string]: T;
+  [id: string]: T;
 }
 
 export type ToOptionalKeys<T> = {
-	[K in keyof T]?: T[K];
+  [K in keyof T]?: T[K];
 };
 
 export type SMap<T> = Map<string, T>;
 
 export interface HeroBaseForHerolist {
-	readonly name: string;
-	readonly avatar?: string;
-	readonly ap: {
-		total: number;
-		spent: number;
-	};
-	readonly r: string;
-	readonly rv?: string;
-	readonly c: string;
-	readonly p: string;
-	professionName?: string;
-	readonly pv?: string;
-	readonly sex: 'm' | 'f';
+  readonly name: string;
+  readonly avatar?: string;
+  readonly ap: {
+    total: number;
+    spent: number;
+  };
+  readonly r: string;
+  readonly rv?: string;
+  readonly c: string;
+  readonly p: string;
+  professionName?: string;
+  readonly pv?: string;
+  readonly sex: 'm' | 'f';
 }
 
-export interface HeroBase extends HeroBaseForHerolist {
-	readonly clientVersion: string;
-	readonly phase: number;
-	readonly el: string;
-	readonly pers: {
-		family?: string;
-		placeofbirth?: string;
-		dateofbirth?: string;
-		age?: string;
-		haircolor?: number;
-		eyecolor?: number;
-		size?: string;
-		weight?: string;
-		title?: string;
-		socialstatus?: number;
-		characteristics?: string;
-		otherinfo?: string;
-		cultureAreaKnowledge?: string;
-	};
-	readonly activatable: ToListById<ActiveObject[]>;
-	readonly attr: {
-		values: [string, number, number][];
-		lp: number;
-		ae: number;
-		kp: number;
-		permanentLP?: {
-			lost: number;
-		};
-		permanentAE: {
-			lost: number;
-			redeemed: number;
-		};
-		permanentKP: {
-			lost: number;
-			redeemed: number;
-		};
-	};
-	readonly talents: ToListById<number>;
-	readonly ct: ToListById<number>;
-	readonly spells: ToListById<number>;
-	readonly cantrips: string[];
-	readonly liturgies: ToListById<number>;
-	readonly blessings: string[];
-	readonly belongings: {
-		items: ToListById<ItemInstance>;
-		armorZones: ToListById<ArmorZonesInstance>;
-		purse: {
-			d: string;
-			s: string;
-			h: string;
-			k: string;
-		};
-	};
-	readonly rules: Rules;
-	readonly pets?: ToListById<PetInstance>;
+export interface HeroBaseBase extends HeroBaseForHerolist {
+  readonly clientVersion: string;
+  readonly phase: number;
+  readonly el: string;
+  readonly pers: {
+    family?: string;
+    placeofbirth?: string;
+    dateofbirth?: string;
+    age?: string;
+    haircolor?: number;
+    eyecolor?: number;
+    size?: string;
+    weight?: string;
+    title?: string;
+    socialstatus?: number;
+    characteristics?: string;
+    otherinfo?: string;
+    cultureAreaKnowledge?: string;
+  };
+  readonly activatable: ToListById<ActiveObject[]>;
+  readonly attr: {
+    values: [string, number, number][];
+    lp: number;
+    ae: number;
+    kp: number;
+    permanentLP?: {
+      lost: number;
+    };
+    permanentAE: {
+      lost: number;
+      redeemed: number;
+    };
+    permanentKP: {
+      lost: number;
+      redeemed: number;
+    };
+  };
+  readonly talents: ToListById<number>;
+  readonly ct: ToListById<number>;
+  readonly spells: ToListById<number>;
+  readonly cantrips: string[];
+  readonly liturgies: ToListById<number>;
+  readonly blessings: string[];
+  readonly belongings: {
+    items: ToListById<ItemInstance>;
+    armorZones: ToListById<ArmorZonesInstance>;
+    purse: {
+      d: string;
+      s: string;
+      h: string;
+      k: string;
+    };
+  };
+  readonly pets?: ToListById<PetInstance>;
+}
+
+export interface HeroBase extends HeroBaseBase {
+  readonly rules: Rules;
 }
 
 export interface Hero extends HeroBase {
-	readonly id: string;
-	readonly dateCreated: Date;
-	readonly dateModified: Date;
-	player?: string;
+  readonly id: string;
+  readonly dateCreated: Date;
+  readonly dateModified: Date;
+  player?: string;
 }
 
 export interface ActivatableDependent {
-	id: string;
-	active: ActiveObject[];
-	dependencies: ActivatableInstanceDependency[];
+  id: string;
+  active: ActiveObject[];
+  dependencies: ActivatableInstanceDependency[];
 }
 
 export interface AttributeDependent {
-	id: string;
-	value: number;
-	mod: number;
-	dependencies: AttributeInstanceDependency[];
+  id: string;
+  value: number;
+  mod: number;
+  dependencies: AttributeInstanceDependency[];
 }
 
 export interface SkillDependent {
-	id: string;
-	value: number;
-	dependencies: TalentInstanceDependency[];
+  id: string;
+  value: number;
+  dependencies: TalentInstanceDependency[];
 }
 
 export interface ActivatableSkillDependent {
-	id: string;
-	value: number;
-	active: boolean;
-	dependencies: SpellInstanceDependency[];
+  id: string;
+  value: number;
+  active: boolean;
+  dependencies: SpellInstanceDependency[];
 }
 
+export type ExtendedSkillDependent =
+  SkillDependent |
+  ActivatableSkillDependent;
+
+export type Dependent =
+  ActivatableDependent |
+  AttributeDependent |
+  SkillDependent |
+  ActivatableSkillDependent;
+
 export interface HeroDependent {
-	id: string;
-	clientVersion: string;
-	dateCreated: Date;
-	dateModified: Date;
-	name: string;
-	avatar?: string;
-	adventurePoints: AdventurePoints;
-	race: string;
-	raceVariant?: string;
-	culture: string;
-	profession: string;
-	professionName?: string;
-	professionVariant?: string;
-	sex: 'm' | 'f';
-	phase: number;
-	el: string;
-	personalData: {
-		family?: string;
-		placeOfBirth?: string;
-		dateOfBirth?: string;
-		age?: string;
-		hairColor?: number;
-		eyeColor?: number;
-		size?: string;
-		weight?: string;
-		title?: string;
-		socialStatus?: number;
-		characteristics?: string;
-		otherInfo?: string;
-		cultureAreaKnowledge?: string;
-	};
-	advantages: Map<string, ActivatableDependent>;
-	disadvantages: Map<string, ActivatableDependent>;
-	specialAbilities: Map<string, ActivatableDependent>;
-	attributes: Map<string, AttributeDependent>;
-	energies: {
-		lp: number;
-		ae: number;
-		kp: number;
-		permanentLifePoints: {
-			lost: number;
-		};
-		permanentArcaneEnergyPoints: {
-			lost: number;
-			redeemed: number;
-		};
-		permanentKarmaPoints: {
-			lost: number;
-			redeemed: number;
-		};
-	};
-	talents: Map<string, SkillDependent>;
-	ct: Map<string, SkillDependent>;
-	spells: Map<string, ActivatableSkillDependent>;
-	cantrips: Set<string>;
-	liturgies: Map<string, ActivatableSkillDependent>;
-	blessings: Set<string>;
-	belongings: {
-		items: Map<string, ItemInstance>;
-		armorZones: Map<string, ArmorZonesInstance>;
-		purse: Purse;
-	};
-	rules: Rules;
-	pets: Map<string, PetInstance>;
+  id: string;
+  clientVersion: string;
+  player?: string;
+  dateCreated: Date;
+  dateModified: Date;
+  phase: number;
+  name: string;
+  avatar?: string;
+  adventurePoints: AdventurePoints;
+  race?: string;
+  raceVariant?: string;
+  culture?: string;
+  profession?: string;
+  professionName?: string;
+  professionVariant?: string;
+  sex: 'm' | 'f';
+  experienceLevel: string;
+  personalData: PersonalData;
+  advantages: Map<string, ActivatableDependent>;
+  disadvantages: Map<string, ActivatableDependent>;
+  specialAbilities: Map<string, ActivatableDependent>;
+  attributes: Map<string, AttributeDependent>;
+  energies: Energies;
+  skills: Map<string, SkillDependent>;
+  combatTechniques: Map<string, SkillDependent>;
+  spells: Map<string, ActivatableSkillDependent>;
+  cantrips: Set<string>;
+  liturgicalChants: Map<string, ActivatableSkillDependent>;
+  blessings: Set<string>;
+  belongings: Belongings;
+  rules: Rules;
+  pets: Map<string, PetInstance>;
+}
+
+export interface AdventurePoints {
+  total: number;
+  spent: number;
+}
+
+export interface PersonalData {
+  family?: string;
+  placeOfBirth?: string;
+  dateOfBirth?: string;
+  age?: string;
+  hairColor?: number;
+  eyeColor?: number;
+  size?: string;
+  weight?: string;
+  title?: string;
+  socialStatus?: number;
+  characteristics?: string;
+  otherInfo?: string;
+  cultureAreaKnowledge?: string;
+}
+
+export interface Energies {
+  lp: number;
+  ae: number;
+  kp: number;
+  permanentLifePoints: PermanentEnergyLoss;
+  permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack;
+  permanentKarmaPoints: PermanentEnergyLossAndBoughtBack;
+}
+
+export interface PermanentEnergyLoss {
+  lost: number;
+}
+
+export interface Belongings {
+  items: Map<string, ItemInstance>;
+  armorZones: Map<string, ArmorZonesInstance>;
+  purse: Purse;
+}
+
+export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
+  redeemed: number;
 }
 
 export interface HeroForSave extends HeroBase {
-	id?: string;
-	dateCreated?: Date;
-	dateModified?: Date;
+  id?: string;
+  dateCreated?: Date;
+  dateModified?: Date;
 }
 
 export interface User {
-	id: string;
-	displayName: string;
+  id: string;
+  displayName: string;
 }
 
 export interface RaceInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly ap: number;
-	readonly lp: number;
-	readonly spi: number;
-	readonly tou: number;
-	readonly mov: number;
-	readonly attributeAdjustments: [number, string][];
-	readonly attributeAdjustmentsSelection: [number, string[]];
-	readonly attributeAdjustmentsText: string;
-	readonly commonCultures: string[];
-	readonly automaticAdvantages: string[];
-	readonly automaticAdvantagesCost: [number, number, number];
-	readonly automaticAdvantagesText: string;
-	readonly stronglyRecommendedAdvantages: string[];
-	readonly stronglyRecommendedAdvantagesText: string;
-	readonly stronglyRecommendedDisadvantages: string[];
-	readonly stronglyRecommendedDisadvantagesText: string;
-	readonly commonAdvantages: string[];
-	readonly commonAdvantagesText?: string;
-	readonly commonDisadvantages: string[];
-	readonly commonDisadvantagesText?: string;
-	readonly uncommonAdvantages: string[];
-	readonly uncommonAdvantagesText?: string;
-	readonly uncommonDisadvantages: string[];
-	readonly uncommonDisadvantagesText?: string;
-	readonly hairColors?: number[];
-	readonly eyeColors?: number[];
-	readonly size?: (number | [number, number])[];
-	readonly weight: (number | [number, number])[];
-	readonly variants: string[];
-	readonly category: Categories.RACES;
-	readonly src: SourceLink[];
+  readonly id: string;
+  readonly name: string;
+  readonly ap: number;
+  readonly lp: number;
+  readonly spi: number;
+  readonly tou: number;
+  readonly mov: number;
+  readonly attributeAdjustments: [number, string][];
+  readonly attributeAdjustmentsSelection: [number, string[]];
+  readonly attributeAdjustmentsText: string;
+  readonly commonCultures: string[];
+  readonly automaticAdvantages: string[];
+  readonly automaticAdvantagesCost: [number, number, number];
+  readonly automaticAdvantagesText: string;
+  readonly stronglyRecommendedAdvantages: string[];
+  readonly stronglyRecommendedAdvantagesText: string;
+  readonly stronglyRecommendedDisadvantages: string[];
+  readonly stronglyRecommendedDisadvantagesText: string;
+  readonly commonAdvantages: string[];
+  readonly commonAdvantagesText?: string;
+  readonly commonDisadvantages: string[];
+  readonly commonDisadvantagesText?: string;
+  readonly uncommonAdvantages: string[];
+  readonly uncommonAdvantagesText?: string;
+  readonly uncommonDisadvantages: string[];
+  readonly uncommonDisadvantagesText?: string;
+  readonly hairColors?: number[];
+  readonly eyeColors?: number[];
+  readonly size?: (number | [number, number])[];
+  readonly weight: (number | [number, number])[];
+  readonly variants: string[];
+  readonly category: Categories.RACES;
+  readonly src: SourceLink[];
 }
 
 export interface RaceVariantInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly commonCultures: string[];
-	readonly commonAdvantages: string[];
-	readonly commonAdvantagesText?: string;
-	readonly commonDisadvantages: string[];
-	readonly commonDisadvantagesText?: string;
-	readonly uncommonAdvantages: string[];
-	readonly uncommonAdvantagesText?: string;
-	readonly uncommonDisadvantages: string[];
-	readonly uncommonDisadvantagesText?: string;
-	readonly hairColors?: number[];
-	readonly eyeColors?: number[];
-	readonly size?: (number | [number, number])[];
-	readonly category: Categories.RACE_VARIANTS;
+  readonly id: string;
+  readonly name: string;
+  readonly commonCultures: string[];
+  readonly commonAdvantages: string[];
+  readonly commonAdvantagesText?: string;
+  readonly commonDisadvantages: string[];
+  readonly commonDisadvantagesText?: string;
+  readonly uncommonAdvantages: string[];
+  readonly uncommonAdvantagesText?: string;
+  readonly uncommonDisadvantages: string[];
+  readonly uncommonDisadvantagesText?: string;
+  readonly hairColors?: number[];
+  readonly eyeColors?: number[];
+  readonly size?: (number | [number, number])[];
+  readonly category: Categories.RACE_VARIANTS;
 }
 
 export interface SourceLink {
-	id: string;
-	page: number;
+  id: string;
+  page: number;
 }
 
 export interface CommonProfessionObject {
-	list: (string | number)[];
-	reverse: boolean;
+  list: (string | number)[];
+  reverse: boolean;
 }
 
 export type CommonProfession = boolean | CommonProfessionObject;
 
 export interface CultureInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly ap: number;
-	readonly languages: number[];
-	readonly scripts: number[];
-	readonly socialTiers: number[];
-	readonly typicalProfessions: CommonProfession[];
-	readonly typicalAdvantages: string[];
-	readonly typicalDisadvantages: string[];
-	readonly untypicalAdvantages: string[];
-	readonly untypicalDisadvantages: string[];
-	readonly typicalTalents: string[];
-	readonly untypicalTalents: string[];
-	readonly talents: [string, number][];
-	readonly category: Categories.CULTURES;
-	readonly src: SourceLink[];
-	areaKnowledgeShort: string;
-	areaKnowledge: string;
-	commonMundaneProfessions?: string;
-	commonMagicProfessions?: string;
-	commonBlessedProfessions?: string;
-	commonAdvantages?: string;
-	commonDisadvantages?: string;
-	uncommonAdvantages?: string;
-	uncommonDisadvantages?: string;
-	/**
-	 * Markdown supported.
-	 */
-	commonNames: string;
+  readonly id: string;
+  readonly name: string;
+  readonly ap: number;
+  readonly languages: number[];
+  readonly scripts: number[];
+  readonly socialTiers: number[];
+  readonly typicalProfessions: CommonProfession[];
+  readonly typicalAdvantages: string[];
+  readonly typicalDisadvantages: string[];
+  readonly untypicalAdvantages: string[];
+  readonly untypicalDisadvantages: string[];
+  readonly typicalTalents: string[];
+  readonly untypicalTalents: string[];
+  readonly talents: [string, number][];
+  readonly category: Categories.CULTURES;
+  readonly src: SourceLink[];
+  areaKnowledgeShort: string;
+  areaKnowledge: string;
+  commonMundaneProfessions?: string;
+  commonMagicProfessions?: string;
+  commonBlessedProfessions?: string;
+  commonAdvantages?: string;
+  commonDisadvantages?: string;
+  uncommonAdvantages?: string;
+  uncommonDisadvantages?: string;
+  /**
+   * Markdown supported.
+   */
+  commonNames: string;
 }
 
 export interface SpecialisationSelection {
-	id: 'SPECIALISATION';
-	sid: string | string[];
-	active?: boolean;
+  id: 'SPECIALISATION';
+  sid: string | string[];
+  active?: boolean;
 }
 
 export interface LanguagesScriptsSelection {
-	id: 'LANGUAGES_SCRIPTS';
-	value: number;
+  id: 'LANGUAGES_SCRIPTS';
+  value: number;
 }
 
 export interface CombatTechniquesSelection {
-	id: 'COMBAT_TECHNIQUES';
-	active?: boolean;
-	amount: number;
-	value: number;
-	sid: string[];
+  id: 'COMBAT_TECHNIQUES';
+  active?: boolean;
+  amount: number;
+  value: number;
+  sid: string[];
 }
 
 export interface VariantCombatTechniquesSelection {
-	id: 'COMBAT_TECHNIQUES';
-	active?: boolean;
-	amount?: number;
-	value?: number;
-	sid?: string[];
+  id: 'COMBAT_TECHNIQUES';
+  active?: boolean;
+  amount?: number;
+  value?: number;
+  sid?: string[];
 }
 
 export interface CombatTechniquesSecondSelection {
-	id: 'COMBAT_TECHNIQUES_SECOND';
-	active?: boolean;
-	amount: number;
-	value: number;
-	sid: string[];
+  id: 'COMBAT_TECHNIQUES_SECOND';
+  active?: boolean;
+  amount: number;
+  value: number;
+  sid: string[];
 }
 
 export interface VariantCombatTechniquesSecondSelection {
-	id: 'COMBAT_TECHNIQUES_SECOND';
-	active?: boolean;
-	amount?: number;
-	value?: number;
-	sid?: string[];
+  id: 'COMBAT_TECHNIQUES_SECOND';
+  active?: boolean;
+  amount?: number;
+  value?: number;
+  sid?: string[];
 }
 
 export interface CantripsSelection {
-	id: 'CANTRIPS';
-	amount: number;
-	sid: string[];
+  id: 'CANTRIPS';
+  amount: number;
+  sid: string[];
 }
 
 export interface CursesSelection {
-	id: 'CURSES';
-	value: number;
+  id: 'CURSES';
+  value: number;
 }
 
 export interface SkillsSelection {
-	id: 'SKILLS';
-	/**
-	 * If specified, only choose from skills of the specified group.
-	 */
-	gr?: number;
-	/**
-	 * The AP value the user can spend.
-	 */
-	value: number;
+  id: 'SKILLS';
+  /**
+   * If specified, only choose from skills of the specified group.
+   */
+  gr?: number;
+  /**
+   * The AP value the user can spend.
+   */
+  value: number;
 }
 
 export type ProfessionSelectionIds = 'SPECIALISATION' | 'LANGUAGES_SCRIPTS' | 'COMBAT_TECHNIQUES' | 'COMBAT_TECHNIQUES_SECOND' | 'CANTRIPS' | 'CURSES' | 'SKILLS' | 'TERRAIN_KNOWLEDGE';
@@ -404,229 +422,230 @@ export type ProfessionSelections = ProfessionSelection[];
 export type ProfessionVariantSelections = ProfessionVariantSelection[];
 
 export interface Selections {
-	attrSel: string;
-	useCulturePackage: boolean;
-	lang: number;
-	buyLiteracy: boolean;
-	litc: number;
-	cantrips: Set<string>;
-	combattech: Set<string>;
-	combatTechniquesSecond: Set<string>;
-	curses: Map<string, number>;
-	langLitc: Map<string, number>;
-	spec: string | number;
-	specTalentId?: string;
-	skills: Map<string, number>;
-	map: Map<ProfessionSelectionIds, ProfessionSelection>;
-	terrainKnowledge?: number;
+  attrSel: string;
+  useCulturePackage: boolean;
+  lang: number;
+  buyLiteracy: boolean;
+  litc: number;
+  cantrips: Set<string>;
+  combattech: Set<string>;
+  combatTechniquesSecond: Set<string>;
+  curses: Map<string, number>;
+  langLitc: Map<string, number>;
+  spec: string | number;
+  specTalentId?: string;
+  skills: Map<string, number>;
+  map: Map<ProfessionSelectionIds, ProfessionSelection>;
+  terrainKnowledge?: number;
 }
 
 export interface ProfessionNameForSexes {
-	m: string;
-	f: string;
+  m: string;
+  f: string;
 }
 
 export interface ProfessionInstance {
-	readonly id: string;
-	readonly name: string | ProfessionNameForSexes;
-	readonly subname?: string | ProfessionNameForSexes;
-	readonly ap: number;
-	readonly apOfActivatables: number;
-	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	readonly selections: ProfessionSelections;
-	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
-	readonly combatTechniques: [string, number][];
-	readonly talents: [string, number][];
-	readonly spells: [string, number][];
-	readonly liturgies: [string, number][];
-	readonly blessings: string[];
-	readonly typicalAdvantages: string[];
-	readonly typicalDisadvantages: string[];
-	readonly untypicalAdvantages: string[];
-	readonly untypicalDisadvantages: string[];
-	readonly isVariantRequired?: boolean;
-	readonly variants: string[];
-	readonly category: Categories.PROFESSIONS;
-	readonly gr: number;
-	/**
-	 * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the Twelve Gods" or "Fighter".
-	 */
-	readonly subgr: number;
-	readonly prerequisitesStart?: string;
-	readonly prerequisitesEnd?: string;
-	readonly suggestedAdvantagesText?: string;
-	readonly suggestedDisadvantagesText?: string;
-	readonly unsuitableAdvantagesText?: string;
-	readonly unsuitableDisadvantagesText?: string;
-	readonly src: SourceLink[];
+  readonly id: string;
+  readonly name: string | ProfessionNameForSexes;
+  readonly subname?: string | ProfessionNameForSexes;
+  readonly ap: number;
+  readonly apOfActivatables: number;
+  readonly dependencies: ProfessionDependencyObject[];
+  readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
+  readonly selections: ProfessionSelections;
+  readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
+  readonly combatTechniques: [string, number][];
+  readonly talents: [string, number][];
+  readonly spells: [string, number][];
+  readonly liturgies: [string, number][];
+  readonly blessings: string[];
+  readonly typicalAdvantages: string[];
+  readonly typicalDisadvantages: string[];
+  readonly untypicalAdvantages: string[];
+  readonly untypicalDisadvantages: string[];
+  readonly isVariantRequired?: boolean;
+  readonly variants: string[];
+  readonly category: Categories.PROFESSIONS;
+  readonly gr: number;
+  /**
+   * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the Twelve Gods" or "Fighter".
+   */
+  readonly subgr: number;
+  readonly prerequisitesStart?: string;
+  readonly prerequisitesEnd?: string;
+  readonly suggestedAdvantagesText?: string;
+  readonly suggestedDisadvantagesText?: string;
+  readonly unsuitableAdvantagesText?: string;
+  readonly unsuitableDisadvantagesText?: string;
+  readonly src: SourceLink[];
 }
 
 export interface ProfessionVariantInstance {
-	readonly id: string;
-	readonly name: string | ProfessionNameForSexes;
-	readonly ap: number;
-	readonly apOfActivatables: number;
-	readonly dependencies: ProfessionDependencyObject[];
-	readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	readonly selections: Wiki.ProfessionVariantSelections;
-	readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
-	readonly combatTechniques: [string, number][];
-	readonly talents: [string, number][];
-	readonly spells: [string, number][];
-	readonly liturgies: [string, number][];
-	readonly blessings: string[];
-	precedingText?: string;
-	fullText?: string;
-	concludingText?: string;
-	readonly category: Categories.PROFESSION_VARIANTS;
+  readonly id: string;
+  readonly name: string | ProfessionNameForSexes;
+  readonly ap: number;
+  readonly apOfActivatables: number;
+  readonly dependencies: ProfessionDependencyObject[];
+  readonly requires: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
+  readonly selections: Wiki.ProfessionVariantSelections;
+  readonly specialAbilities: Reusable.ProfessionRequiresActivatableObject[];
+  readonly combatTechniques: [string, number][];
+  readonly talents: [string, number][];
+  readonly spells: [string, number][];
+  readonly liturgies: [string, number][];
+  readonly blessings: string[];
+  precedingText?: string;
+  fullText?: string;
+  concludingText?: string;
+  readonly category: Categories.PROFESSION_VARIANTS;
 }
 
 export interface ActiveObject {
-	sid?: string | number;
-	sid2?: string | number;
-	tier?: number;
-	cost?: number;
+  sid?: string | number;
+  sid2?: string | number;
+  tier?: number;
+  cost?: number;
 }
 
 export interface ActiveObjectName extends ActiveObject {
-	name: string;
+  name: string;
 }
 
 export interface ActiveObjectWithId extends ActiveObject {
-	id: string;
-	index: number;
+  id: string;
+  index: number;
 }
 
 export interface ActivatableNameCost extends ActiveObjectWithId {
-	combinedName: string;
-	baseName: string;
-	addName: string | undefined;
-	currentCost: number | number[];
+  combinedName: string;
+  baseName: string;
+  addName: string | undefined;
+  currentCost: number | number[];
 }
 
 export interface ActivatableNameCostActive extends ActivatableNameCost {
-	active: boolean;
+  active: boolean;
 }
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
-	currentCost: number;
-	tierName?: string;
+  currentCost: number;
+  tierName?: string;
 }
 
 export interface ActiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
-	id: string;
-	index: number;
-	name: string;
-	cost: number;
-	tier?: number;
-	tierName?: string;
-	minTier?: number;
-	maxTier?: number;
-	disabled: boolean;
-	instance: T;
-	customCost?: boolean;
+  id: string;
+  index: number;
+  name: string;
+  cost: number;
+  tier?: number;
+  tierName?: string;
+  minTier?: number;
+  maxTier?: number;
+  disabled: boolean;
+  instance: T;
+  customCost?: boolean;
 }
 
 export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
-	id: string;
-	name: string;
-	cost?: string | number | number[];
-	tiers?: number;
-	minTier?: number;
-	maxTier?: number;
-	sel?: SelectionObject[];
-	input?: string;
-	instance: T;
-	customCostDisabled?: boolean;
+  id: string;
+  name: string;
+  cost?: string | number | number[];
+  tiers?: number;
+  minTier?: number;
+  maxTier?: number;
+  sel?: SelectionObject[];
+  input?: string;
+  instance: T;
+  customCostDisabled?: boolean;
 }
 
 export type SetTierObject = ActiveObject;
 
 export interface ActivateArgs {
-	id: string;
-	sel?: string | number;
-	sel2?: string | number;
-	input?: string;
-	tier?: number;
-	cost: number;
-	customCost?: number;
+  id: string;
+  sel?: string | number;
+  sel2?: string | number;
+  input?: string;
+  tier?: number;
+  cost: number;
+  customCost?: number;
 }
 
 export interface DeactivateArgs {
-	id: string;
-	index: number;
-	cost: number;
+  id: string;
+  index: number;
+  cost: number;
 }
 
 export interface UndoExtendedDeactivateArgs extends DeactivateArgs {
-	activeObject?: ActiveObject;
+  activeObject?: ActiveObject;
 }
 
 export interface ActivateObject {
-	sel?: string | number;
-	sel2?: string | number;
-	input?: string;
-	tier?: number;
-	cost?: number;
+  sel?: string | number;
+  sel2?: string | number;
+  input?: string;
+  tier?: number;
+  cost?: number;
 }
 
 export interface SelectionObject {
-	id: string | number;
-	name: string;
-	cost?: number;
-	req?: AllRequirementTypes[];
-	prerequisites?: AllRequirementTypes[];
-	target?: string;
-	tier?: number;
-	spec?: string[];
-	specInput?: string;
+  id: string | number;
+  name: string;
+  cost?: number;
+  req?: AllRequirementTypes[];
+  prerequisites?: AllRequirementTypes[];
+  target?: string;
+  tier?: number;
+  spec?: string[];
+  specInput?: string;
 }
 
 export interface ActivatableRequirementObject {
-	id: string;
-	active: boolean;
-	sid?: string | number;
-	sid2?: string | number;
+  id: string;
+  active: boolean;
+  sid?: string | number;
+  sid2?: string | number;
 }
 
 export interface IncreasableRequirementObject {
-	id: string;
-	value: number;
-	type?: 1 | 2;
+  id: string;
+  value: number;
+  type?: 1 | 2;
 }
 
 export interface RequirementObject {
-	id: string | string[];
-	active?: boolean;
-	sid?: string | number | number[];
-	sid2?: string | number;
-	tier?: number;
-	value?: number;
-	type?: 1 | 2;
+  id: string | string[];
+  active?: boolean;
+  sid?: string | number | number[];
+  sid2?: string | number;
+  tier?: number;
+  value?: number;
+  type?: 1 | 2;
 }
 
 export interface SkillOptionalDependency {
-	value: number;
-	origin: string;
+  value: number;
+  origin: string;
 }
 
 export interface SexRequirement {
-	id: 'SEX';
-	value: 'm' | 'f';
+  id: 'SEX';
+  value: 'm' | 'f';
 }
 
 export interface RaceRequirement {
-	id: 'RACE';
-	value: number | number[];
+  id: 'RACE';
+  value: number | number[];
 }
 
 export interface CultureRequirement {
-	id: 'CULTURE';
-	value: number | number[];
+  id: 'CULTURE';
+  value: number | number[];
 }
 
 export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
+export type DependentPrerequisite = Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute;
 export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement | Reusable.PactRequirement;
 export type AllRequirements = 'RCP' | Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement | Reusable.PactRequirement;
 
@@ -636,22 +655,22 @@ export type AllRequirements = 'RCP' | Reusable.CultureRequirement | Reusable.Rac
 // }
 
 export interface DependencyObject {
-	origin?: string;
-	active?: boolean;
-	sid?: string | number | number[];
-	sid2?: string | number;
-	tier?: number;
+  origin?: string;
+  active?: boolean;
+  sid?: string | number | number[];
+  sid2?: string | number;
+  tier?: number;
 }
 
 export interface ValidationObject extends ActiveObject {
-	id: string;
-	active: boolean | number;
+  id: string;
+  active: boolean | number;
 }
 
 export interface ProfessionDependencyCost {
-	total: number;
-	adv: [number, number, number];
-	disadv: [number, number, number];
+  total: number;
+  adv: [number, number, number];
+  disadv: [number, number, number];
 }
 
 export type AllDependency = ActivatableInstanceDependency | AttributeInstanceDependency | CombatTechniqueInstanceDependency | SpellInstanceDependency | TalentInstanceDependency;
@@ -663,377 +682,377 @@ export type ActivatableBasePrerequisites = ('RCP' | Reusable.AllRequirementTypes
 export type UnionPlainAndMap<T> = T | Map<number, T>;
 
 interface ActivatableInstanceBaseInInit {
-	readonly id: string;
-	readonly name: string;
-	readonly cost: string | number | number[];
-	readonly input?: string;
-	readonly max?: number;
-	readonly reqs: UnionPlainAndMap<ActivatableBasePrerequisites>;
-	readonly tiers?: number;
-	sel?: SelectionObject[];
-	dependencies: ActivatableInstanceDependency[];
-	active: ActiveObject[];
-	gr: number;
-	prerequisitesText?: string;
-	/**
-	 * 0-based index as key!
-	 */
-	prerequisitesTextIndex: Map<number, string | false>;
-	prerequisitesTextStart?: string;
-	prerequisitesTextEnd?: string;
+  readonly id: string;
+  readonly name: string;
+  readonly cost: string | number | number[];
+  readonly input?: string;
+  readonly max?: number;
+  readonly reqs: UnionPlainAndMap<ActivatableBasePrerequisites>;
+  readonly tiers?: number;
+  sel?: SelectionObject[];
+  dependencies: ActivatableInstanceDependency[];
+  active: ActiveObject[];
+  gr: number;
+  prerequisitesText?: string;
+  /**
+   * 0-based index as key!
+   */
+  prerequisitesTextIndex: Map<number, string | false>;
+  prerequisitesTextStart?: string;
+  prerequisitesTextEnd?: string;
 }
 
 export interface AdvantageInstanceInInit extends ActivatableInstanceBaseInInit {
-	readonly category: Categories.ADVANTAGES;
-	rules: string;
-	range?: string;
-	actions?: string;
-	apValue?: string;
-	apValueAppend?: string;
-	src: SourceLink[];
+  readonly category: Categories.ADVANTAGES;
+  rules: string;
+  range?: string;
+  actions?: string;
+  apValue?: string;
+  apValueAppend?: string;
+  src: SourceLink[];
 }
 
 export interface AdvantageInstance extends AdvantageInstanceInInit {
-	readonly sel?: SelectionObject[];
+  readonly sel?: SelectionObject[];
 }
 
 export interface DisadvantageInstanceInInit extends ActivatableInstanceBaseInInit {
-	readonly category: Categories.DISADVANTAGES;
-	rules: string;
-	range?: string;
-	actions?: string;
-	apValue?: string;
-	apValueAppend?: string;
-	src: SourceLink[];
+  readonly category: Categories.DISADVANTAGES;
+  rules: string;
+  range?: string;
+  actions?: string;
+  apValue?: string;
+  apValueAppend?: string;
+  src: SourceLink[];
 }
 
 export interface DisadvantageInstance extends DisadvantageInstanceInInit {
-	readonly sel?: SelectionObject[];
+  readonly sel?: SelectionObject[];
 }
 
 export interface SpecialAbilityInstanceInInit extends ActivatableInstanceBaseInInit {
-	readonly category: Categories.SPECIAL_ABILITIES;
-	readonly extended?: (string | string[])[];
-	nameInWiki?: string;
-	subgr?: number;
-	combatTechniques?: string;
-	rules?: string;
-	effect?: string;
-	volume?: string;
-	penalty?: string;
-	aeCost?: string;
-	protectiveCircle?: string;
-	wardingCircle?: string;
-	bindingCost?: string;
-	property?: number | string;
-	aspect?: number | string;
-	apValue?: string;
-	apValueAppend?: string;
-	src: SourceLink[];
+  readonly category: Categories.SPECIAL_ABILITIES;
+  readonly extended?: (string | string[])[];
+  nameInWiki?: string;
+  subgr?: number;
+  combatTechniques?: string;
+  rules?: string;
+  effect?: string;
+  volume?: string;
+  penalty?: string;
+  aeCost?: string;
+  protectiveCircle?: string;
+  wardingCircle?: string;
+  bindingCost?: string;
+  property?: number | string;
+  aspect?: number | string;
+  apValue?: string;
+  apValueAppend?: string;
+  src: SourceLink[];
 }
 
 export interface SpecialAbilityInstance extends SpecialAbilityInstanceInInit {
-	readonly sel?: SelectionObject[];
+  readonly sel?: SelectionObject[];
 }
 
 export interface StyleDependency {
-	/**
-	 * The extended special ability or list of available special abilities.
-	 */
-	id: string | string[];
-	/**
-	 * If a ability meets a given id, the id, otherwise `undefined`.
-	 */
-	active?: string;
-	/**
-	 * The style's id.
-	 */
-	origin: string;
+  /**
+   * The extended special ability or list of available special abilities.
+   */
+  id: string | string[];
+  /**
+   * If a ability meets a given id, the id, otherwise `undefined`.
+   */
+  active?: string;
+  /**
+   * The style's id.
+   */
+  origin: string;
 }
 
 export type AttributeInstanceDependency = number | SkillOptionalDependency;
 
 export interface AttributeInstance {
-	readonly category: Categories.ATTRIBUTES;
-	readonly ic: number;
-	readonly id: string;
-	readonly name: string;
-	readonly short: string;
-	dependencies: AttributeInstanceDependency[];
-	mod: number;
-	value: number;
+  readonly category: Categories.ATTRIBUTES;
+  readonly ic: number;
+  readonly id: string;
+  readonly name: string;
+  readonly short: string;
+  dependencies: AttributeInstanceDependency[];
+  mod: number;
+  value: number;
 }
 
 export interface AttributeInstanceDerived extends AttributeInstance {
-	isDecreasable: boolean;
-	isIncreasable: boolean;
+  isDecreasable: boolean;
+  isIncreasable: boolean;
 }
 
 export type CombatTechniqueInstanceDependency = number;
 
 export interface CombatTechniqueInstance {
-	readonly category: Categories.COMBAT_TECHNIQUES;
-	readonly gr: number;
-	readonly ic: number;
-	readonly id: string;
-	readonly name: string;
-	readonly bf: number;
-	readonly primary: string[];
-	dependencies: CombatTechniqueInstanceDependency[];
-	value: number;
-	readonly special?: string;
-	readonly src: SourceLink[];
+  readonly category: Categories.COMBAT_TECHNIQUES;
+  readonly gr: number;
+  readonly ic: number;
+  readonly id: string;
+  readonly name: string;
+  readonly bf: number;
+  readonly primary: string[];
+  dependencies: CombatTechniqueInstanceDependency[];
+  value: number;
+  readonly special?: string;
+  readonly src: SourceLink[];
 }
 
 export type LiturgyInstanceDependency = SpellInstanceDependency;
 
 export interface LiturgyInstance {
-	readonly aspects: number[];
-	readonly category: Categories.LITURGIES;
-	readonly check: [string, string, string];
-	readonly checkmod?: "SPI" | "TOU";
-	readonly gr: number;
-	readonly ic: number;
-	readonly id: string;
-	readonly name: string;
-	readonly tradition: number[];
-	active: boolean;
-	dependencies: LiturgyInstanceDependency[];
-	value: number;
-	readonly effect: string;
-	readonly castingTime: string;
-	readonly castingTimeShort: string;
-	readonly cost: string;
-	readonly costShort: string;
-	readonly range: string;
-	readonly rangeShort: string;
-	readonly duration: string;
-	readonly durationShort: string;
-	readonly target: string;
-	readonly src: SourceLink[];
+  readonly aspects: number[];
+  readonly category: Categories.LITURGIES;
+  readonly check: [string, string, string];
+  readonly checkmod?: "SPI" | "TOU";
+  readonly gr: number;
+  readonly ic: number;
+  readonly id: string;
+  readonly name: string;
+  readonly tradition: number[];
+  active: boolean;
+  dependencies: LiturgyInstanceDependency[];
+  value: number;
+  readonly effect: string;
+  readonly castingTime: string;
+  readonly castingTimeShort: string;
+  readonly cost: string;
+  readonly costShort: string;
+  readonly range: string;
+  readonly rangeShort: string;
+  readonly duration: string;
+  readonly durationShort: string;
+  readonly target: string;
+  readonly src: SourceLink[];
 }
 
 export interface BlessingInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly aspects: number[];
-	readonly tradition: number[];
-	readonly reqs: Reusable.AllRequirementTypes[];
-	readonly category: Categories.BLESSINGS;
-	active: boolean;
-	dependencies: boolean[];
-	ic?: undefined;
-	gr?: undefined;
-	readonly effect: string;
-	readonly range: string;
-	readonly duration: string;
-	readonly target: string;
-	readonly src: SourceLink[];
+  readonly id: string;
+  readonly name: string;
+  readonly aspects: number[];
+  readonly tradition: number[];
+  readonly reqs: Reusable.AllRequirementTypes[];
+  readonly category: Categories.BLESSINGS;
+  active: boolean;
+  dependencies: boolean[];
+  ic?: undefined;
+  gr?: undefined;
+  readonly effect: string;
+  readonly range: string;
+  readonly duration: string;
+  readonly target: string;
+  readonly src: SourceLink[];
 }
 
 export type SpellInstanceDependency = number | boolean | SkillOptionalDependency;
 
 export interface SpellInstance {
-	readonly category: Categories.SPELLS;
-	readonly check: [string, string, string];
-	readonly checkmod?: "SPI" | "TOU";
-	readonly gr: number;
-	readonly ic: number;
-	readonly id: string;
-	readonly name: string;
-	readonly property: number;
-	readonly tradition: number[];
-	readonly subtradition: number[];
-	readonly reqs: Reusable.AllRequirementTypes[];
-	active: boolean;
-	dependencies: SpellInstanceDependency[];
-	value: number;
-	readonly effect: string;
-	readonly castingTime: string;
-	readonly castingTimeShort: string;
-	readonly cost: string;
-	readonly costShort: string;
-	readonly range: string;
-	readonly rangeShort: string;
-	readonly duration: string;
-	readonly durationShort: string;
-	readonly target: string;
-	readonly src: SourceLink[];
+  readonly category: Categories.SPELLS;
+  readonly check: [string, string, string];
+  readonly checkmod?: "SPI" | "TOU";
+  readonly gr: number;
+  readonly ic: number;
+  readonly id: string;
+  readonly name: string;
+  readonly property: number;
+  readonly tradition: number[];
+  readonly subtradition: number[];
+  readonly reqs: Reusable.AllRequirementTypes[];
+  active: boolean;
+  dependencies: SpellInstanceDependency[];
+  value: number;
+  readonly effect: string;
+  readonly castingTime: string;
+  readonly castingTimeShort: string;
+  readonly cost: string;
+  readonly costShort: string;
+  readonly range: string;
+  readonly rangeShort: string;
+  readonly duration: string;
+  readonly durationShort: string;
+  readonly target: string;
+  readonly src: SourceLink[];
 }
 
 export interface SkillExtension extends SelectionObject {
-	target: string;
-	tier: 1 | 2 | 3;
-	effect: string;
+  target: string;
+  tier: 1 | 2 | 3;
+  effect: string;
 }
 
 export interface CantripInstance {
-	readonly id: string;
-	readonly name: string;
-	readonly property: number;
-	readonly tradition: number[];
-	readonly reqs: Reusable.AllRequirementTypes[];
-	readonly category: Categories.CANTRIPS;
-	active: boolean;
-	dependencies: boolean[];
-	ic?: undefined;
-	gr?: undefined;
-	readonly effect: string;
-	readonly range: string;
-	readonly duration: string;
-	readonly target: string;
-	readonly note?: string;
-	readonly src: SourceLink[];
+  readonly id: string;
+  readonly name: string;
+  readonly property: number;
+  readonly tradition: number[];
+  readonly reqs: Reusable.AllRequirementTypes[];
+  readonly category: Categories.CANTRIPS;
+  active: boolean;
+  dependencies: boolean[];
+  ic?: undefined;
+  gr?: undefined;
+  readonly effect: string;
+  readonly range: string;
+  readonly duration: string;
+  readonly target: string;
+  readonly note?: string;
+  readonly src: SourceLink[];
 }
 
 export type TalentInstanceDependency = number | SkillOptionalDependency;
 
 export interface TalentInstance {
-	readonly category: Categories.TALENTS;
-	readonly check: string[];
-	readonly encumbrance: string;
-	readonly gr: number;
-	readonly ic: number;
-	readonly id: string;
-	readonly name: string;
-	readonly applications?: Wiki.Application[];
-	readonly applicationsInput?: string;
-	readonly tools?: string;
-	readonly quality?: string;
-	readonly failed?: string;
-	readonly critical?: string;
-	readonly botch?: string;
-	readonly src?: string;
-	dependencies: TalentInstanceDependency[];
-	value: number;
+  readonly category: Categories.TALENTS;
+  readonly check: string[];
+  readonly encumbrance: string;
+  readonly gr: number;
+  readonly ic: number;
+  readonly id: string;
+  readonly name: string;
+  readonly applications?: Wiki.Application[];
+  readonly applicationsInput?: string;
+  readonly tools?: string;
+  readonly quality?: string;
+  readonly failed?: string;
+  readonly critical?: string;
+  readonly botch?: string;
+  readonly src?: string;
+  dependencies: TalentInstanceDependency[];
+  value: number;
 }
 
 export interface ItemInstanceOld {
-	id: string;
-	name: string;
-	ammunition?: string | null;
-	combatTechnique: string;
-	damageDiceSides: number;
-	gr: number;
-	isParryingWeapon: boolean;
-	isTemplateLocked: boolean;
-	reach: number;
-	template: string;
-	where: string;
-	isTwoHandedWeapon: boolean;
-	improvisedWeaponGroup?: number;
-	at: number;
-	addINIPenalty?: number;
-	addMOVPenalty?: number;
-	damageBonus: number;
-	damageDiceNumber: number;
-	damageFlat: number;
-	enc: number;
-	length: number;
-	amount: number;
-	pa: number;
-	price: number;
-	pro: number;
-	range: [number, number, number];
-	reloadTime: number;
-	stp: number;
-	weight: number;
-	stabilityMod?: number;
+  id: string;
+  name: string;
+  ammunition?: string | null;
+  combatTechnique: string;
+  damageDiceSides: number;
+  gr: number;
+  isParryingWeapon: boolean;
+  isTemplateLocked: boolean;
+  reach: number;
+  template: string;
+  where: string;
+  isTwoHandedWeapon: boolean;
+  improvisedWeaponGroup?: number;
+  at: number;
+  addINIPenalty?: number;
+  addMOVPenalty?: number;
+  damageBonus: number;
+  damageDiceNumber: number;
+  damageFlat: number;
+  enc: number;
+  length: number;
+  amount: number;
+  pa: number;
+  price: number;
+  pro: number;
+  range: [number, number, number];
+  reloadTime: number;
+  stp: number;
+  weight: number;
+  stabilityMod?: number;
 }
 
 export interface ItemBaseInstance {
-	id: string;
-	name: string;
-	ammunition?: string;
-	combatTechnique?: string;
-	damageDiceSides?: number;
-	gr: number;
-	isParryingWeapon?: boolean;
-	isTemplateLocked: boolean;
-	reach?: number;
-	template?: string;
-	where?: string;
-	isTwoHandedWeapon?: boolean;
-	improvisedWeaponGroup?: number;
-	loss?: number;
-	forArmorZoneOnly?: boolean;
-	addPenalties?: boolean;
-	armorType?: number;
+  id: string;
+  name: string;
+  ammunition?: string;
+  combatTechnique?: string;
+  damageDiceSides?: number;
+  gr: number;
+  isParryingWeapon?: boolean;
+  isTemplateLocked: boolean;
+  reach?: number;
+  template?: string;
+  where?: string;
+  isTwoHandedWeapon?: boolean;
+  improvisedWeaponGroup?: number;
+  loss?: number;
+  forArmorZoneOnly?: boolean;
+  addPenalties?: boolean;
+  armorType?: number;
 }
 
 export interface ItemInstance extends ItemBaseInstance {
-	at?: number;
-	iniMod?: number;
-	movMod?: number;
-	damageBonus?: {
-		primary?: string;
-		threshold: number | number[];
-	};
-	damageDiceNumber?: number;
-	damageFlat?: number;
-	enc?: number;
-	length?: number;
-	amount: number;
-	pa?: number;
-	price: number;
-	pro?: number;
-	range?: [number, number, number];
-	reloadTime?: number;
-	stp?: number;
-	weight?: number;
-	stabilityMod?: number;
-	note?: string;
-	rules?: string;
-	advantage?: string;
-	disadvantage?: string;
-	src?: SourceLink[];
+  at?: number;
+  iniMod?: number;
+  movMod?: number;
+  damageBonus?: {
+    primary?: string;
+    threshold: number | number[];
+  };
+  damageDiceNumber?: number;
+  damageFlat?: number;
+  enc?: number;
+  length?: number;
+  amount: number;
+  pa?: number;
+  price: number;
+  pro?: number;
+  range?: [number, number, number];
+  reloadTime?: number;
+  stp?: number;
+  weight?: number;
+  stabilityMod?: number;
+  note?: string;
+  rules?: string;
+  advantage?: string;
+  disadvantage?: string;
+  src?: SourceLink[];
 }
 
 export interface ItemEditorInstance extends ItemBaseInstance {
-	at: string;
-	iniMod: string;
-	movMod: string;
-	damageBonus: {
-		primary?: string;
-		threshold: string | string[];
-	};
-	damageDiceNumber: string;
-	damageFlat: string;
-	enc: string;
-	length: string;
-	amount: string;
-	pa: string;
-	price: string;
-	pro: string;
-	range: [string, string, string];
-	reloadTime: string;
-	stp: string;
-	weight: string;
-	stabilityMod: string;
+  at: string;
+  iniMod: string;
+  movMod: string;
+  damageBonus: {
+    primary?: string;
+    threshold: string | string[];
+  };
+  damageDiceNumber: string;
+  damageFlat: string;
+  enc: string;
+  length: string;
+  amount: string;
+  pa: string;
+  price: string;
+  pro: string;
+  range: [string, string, string];
+  reloadTime: string;
+  stp: string;
+  weight: string;
+  stabilityMod: string;
 }
 
 export interface ArmorZonesBaseInstance {
-	name: string;
-	head?: string;
-	headLoss?: number;
-	leftArm?: string;
-	leftArmLoss?: number;
-	rightArm?: string;
-	rightArmLoss?: number;
-	torso?: string;
-	torsoLoss?: number;
-	leftLeg?: string;
-	leftLegLoss?: number;
-	rightLeg?: string;
-	rightLegLoss?: number;
+  name: string;
+  head?: string;
+  headLoss?: number;
+  leftArm?: string;
+  leftArmLoss?: number;
+  rightArm?: string;
+  rightArmLoss?: number;
+  torso?: string;
+  torsoLoss?: number;
+  leftLeg?: string;
+  leftLegLoss?: number;
+  rightLeg?: string;
+  rightLegLoss?: number;
 }
 
 export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
-	id: string;
+  id: string;
 }
 
 export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
-	id?: string;
+  id?: string;
 }
 
 export type Instance = AbilityInstanceExtended | RaceInstance | RaceVariantInstance | CultureInstance | ProfessionInstance | ProfessionVariantInstance;
@@ -1054,66 +1073,66 @@ export type CantripBlessingInstances = CantripInstance | BlessingInstance;
 export type ActivatableSkillishInstance = ActivatableSkillInstance | CantripBlessingInstances;
 
 export interface SecondaryAttribute<I = string> {
-	id: I;
-	short: string;
-	name: string;
-	calc: string;
-	base: number;
-	add?: number;
-	mod?: number;
-	value: number | undefined;
-	maxAdd?: number;
-	currentAdd?: number;
-	permanentLost?: number;
-	permanentRedeemed?: number;
+  id: I;
+  short: string;
+  name: string;
+  calc: string;
+  base: number;
+  add?: number;
+  mod?: number;
+  value: number | undefined;
+  maxAdd?: number;
+  currentAdd?: number;
+  permanentLost?: number;
+  permanentRedeemed?: number;
 }
 
 export interface Energy<I = string> extends SecondaryAttribute<I> {
-	base: number;
-	add: number;
-	mod: number;
-	maxAdd: number;
-	currentAdd: number;
-	permanentLost: number;
+  base: number;
+  add: number;
+  mod: number;
+  maxAdd: number;
+  currentAdd: number;
+  permanentLost: number;
 }
 
 export interface EnergyWithLoss<I = string> extends Energy<I> {
-	permanentRedeemed: number;
+  permanentRedeemed: number;
 }
 
 export interface ExperienceLevel {
-	id: string;
-	name: string;
-	ap: number;
-	maxAttributeValue: number;
-	maxSkillRating: number;
-	maxCombatTechniqueRating: number;
-	maxTotalAttributeValues: number;
-	maxSpellsLiturgies: number;
-	maxUnfamiliarSpells: number;
+  id: string;
+  name: string;
+  ap: number;
+  maxAttributeValue: number;
+  maxSkillRating: number;
+  maxCombatTechniqueRating: number;
+  maxTotalAttributeValues: number;
+  maxSpellsLiturgies: number;
+  maxUnfamiliarSpells: number;
 }
 
 export interface Rules {
-	higherParadeValues: number;
-	attributeValueLimit: boolean;
-	enableAllRuleBooks: boolean;
-	enabledRuleBooks: string[];
-	enableLanguageSpecializations: boolean;
+  higherParadeValues: number;
+  attributeValueLimit: boolean;
+  enableAllRuleBooks: boolean;
+  enabledRuleBooks: Set<string>;
+  enableLanguageSpecializations: boolean;
 }
 
 export interface HistoryPayload {
-	id?: string | number;
-	activeObject?: ActiveObject;
-	index?: number;
-	list?: (string | [string, number])[];
-	buy?: boolean;
+  id?: string | number;
+  activeObject?: ActiveObject;
+  index?: number;
+  list?: (string | [string, number])[];
+  buy?: boolean;
 }
 
 export interface HistoryObject {
-	type: string;
-	cost: number;
-	payload: HistoryPayload;
-	prevState: HistoryPrevState;
+  type: string;
+  cost: number;
+  payload: HistoryPayload;
+  prevState: HistoryPrevState;
 }
 
 export interface HistoryPrevState {
@@ -1121,132 +1140,132 @@ export interface HistoryPrevState {
 }
 
 export interface HistoryObject {
-	type: string;
-	cost: number;
-	payload: HistoryPayload;
-	prevState: HistoryPrevState;
+  type: string;
+  cost: number;
+  payload: HistoryPayload;
+  prevState: HistoryPrevState;
 }
 
 export interface LanguagesSelectionListItem {
-	id: string;
-	name: string;
-	native?: boolean;
+  id: string;
+  name: string;
+  native?: boolean;
 }
 
 export interface ScriptsSelectionListItem {
-	id: string;
-	name: string;
-	cost: number;
-	native?: boolean;
+  id: string;
+  name: string;
+  cost: number;
+  native?: boolean;
 }
 
 export type InputTextEvent =  React.FormEvent<HTMLInputElement>;
 export type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;
 
 export interface SubTab {
-	id: TabId;
-	label: string;
-	disabled?: boolean;
-	// element: JSX.Element;
+  id: TabId;
+  label: string;
+  disabled?: boolean;
+  // element: JSX.Element;
 }
 
 interface PetBaseInstance {
-	id?: string;
-	name: string;
-	avatar?: string;
+  id?: string;
+  name: string;
+  avatar?: string;
 }
 
 export interface PetInstance extends PetBaseInstance {
-	size?: string;
-	type?: string;
-	attack?: string;
-	dp?: string;
-	reach?: string;
-	actions?: string;
-	talents?: string;
-	skills?: string;
-	notes?: string;
-	spentAp?: string;
-	totalAp?: string;
-	cou?: string;
-	sgc?: string;
-	int?: string;
-	cha?: string;
-	dex?: string;
-	agi?: string;
-	con?: string;
-	str?: string;
-	lp?: string;
-	ae?: string;
-	spi?: string;
-	tou?: string;
-	pro?: string;
-	ini?: string;
-	mov?: string;
-	at?: string;
-	pa?: string;
+  size?: string;
+  type?: string;
+  attack?: string;
+  dp?: string;
+  reach?: string;
+  actions?: string;
+  talents?: string;
+  skills?: string;
+  notes?: string;
+  spentAp?: string;
+  totalAp?: string;
+  cou?: string;
+  sgc?: string;
+  int?: string;
+  cha?: string;
+  dex?: string;
+  agi?: string;
+  con?: string;
+  str?: string;
+  lp?: string;
+  ae?: string;
+  spi?: string;
+  tou?: string;
+  pro?: string;
+  ini?: string;
+  mov?: string;
+  at?: string;
+  pa?: string;
 }
 
 export interface PetEditorInstance extends PetBaseInstance {
-	size: string;
-	type: string;
-	attack: string;
-	dp: string;
-	reach: string;
-	actions: string;
-	talents: string;
-	skills: string;
-	notes: string;
-	spentAp: string;
-	totalAp: string;
-	cou: string;
-	sgc: string;
-	int: string;
-	cha: string;
-	dex: string;
-	agi: string;
-	con: string;
-	str: string;
-	lp: string;
-	ae: string;
-	spi: string;
-	tou: string;
-	pro: string;
-	ini: string;
-	mov: string;
-	at: string;
-	pa: string;
+  size: string;
+  type: string;
+  attack: string;
+  dp: string;
+  reach: string;
+  actions: string;
+  talents: string;
+  skills: string;
+  notes: string;
+  spentAp: string;
+  totalAp: string;
+  cou: string;
+  sgc: string;
+  int: string;
+  cha: string;
+  dex: string;
+  agi: string;
+  con: string;
+  str: string;
+  lp: string;
+  ae: string;
+  spi: string;
+  tou: string;
+  pro: string;
+  ini: string;
+  mov: string;
+  at: string;
+  pa: string;
 }
 
 export interface AlertButtonCore {
-	autoWidth?: boolean;
-	children?: React.ReactNode;
-	className?: string;
-	disabled?: boolean;
-	flat?: boolean;
-	fullWidth?: boolean;
-	label: string | undefined;
-	primary?: boolean;
+  autoWidth?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  flat?: boolean;
+  fullWidth?: boolean;
+  label: string | undefined;
+  primary?: boolean;
 }
 
 export interface AlertButton extends AlertButtonCore {
-	dispatchOnClick?: Action;
+  dispatchOnClick?: Action;
 }
 
 export interface ViewAlertButton extends AlertButtonCore {
-	onClick?(): void;
+  onClick?(): void;
 }
 
 export interface Alert {
-	message: string;
-	title?: string;
-	buttons?: AlertButton[];
-	confirm?: {
-		resolve?: Action;
-		reject?: Action;
-	};
-	confirmYesNo?: boolean;
-	onClose?(): void;
+  message: string;
+  title?: string;
+  buttons?: AlertButton[];
+  confirm?: {
+    resolve?: Action;
+    reject?: Action;
+  };
+  confirmYesNo?: boolean;
+  onClose?(): void;
 }
 
 export { UIMessages } from './ui.d';

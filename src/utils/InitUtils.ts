@@ -1,10 +1,10 @@
 import { Categories } from '../constants/Categories';
-import { AdvantageInstance, AttributeInstance, BlessingInstance, CantripInstance, CombatTechniqueInstance, CultureInstance, DisadvantageInstance, ExperienceLevel, ItemInstance, LiturgyInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, SelectionObject, SpecialAbilityInstance, SpellInstance, TalentInstance, ToListById } from '../types/data.d';
-import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawExperienceLevel, RawExperienceLevelLocale, RawItem, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata.d';
+import * as Data from '../types/data.d';
+import * as Raw from '../types/rawdata.d';
 import * as Reusable from '../types/reusable.d';
 import { Application } from '../types/wiki';
 
-export function initExperienceLevel(raw: RawExperienceLevel, locale: ToListById<RawExperienceLevelLocale>): ExperienceLevel | undefined {
+export function initExperienceLevel(raw: Raw.RawExperienceLevel, locale: Data.ToListById<Raw.RawExperienceLevelLocale>): Data.ExperienceLevel | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -18,7 +18,7 @@ export function initExperienceLevel(raw: RawExperienceLevel, locale: ToListById<
   return;
 }
 
-export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceInstance | undefined {
+export function initRace(raw: Raw.RawRace, locale: Data.ToListById<Raw.RawRaceLocale>): Data.RaceInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -74,7 +74,7 @@ export function initRace(raw: RawRace, locale: ToListById<RawRaceLocale>): RaceI
   return;
 }
 
-export function initRaceVariant(raw: RawRaceVariant, locale: ToListById<RawRaceVariantLocale>): RaceVariantInstance | undefined {
+export function initRaceVariant(raw: Raw.RawRaceVariant, locale: Data.ToListById<Raw.RawRaceVariantLocale>): Data.RaceVariantInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -107,7 +107,7 @@ export function initRaceVariant(raw: RawRaceVariant, locale: ToListById<RawRaceV
   return;
 }
 
-export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale>): CultureInstance | undefined {
+export function initCulture(raw: Raw.RawCulture, locale: Data.ToListById<Raw.RawCultureLocale>): Data.CultureInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -135,7 +135,7 @@ export function initCulture(raw: RawCulture, locale: ToListById<RawCultureLocale
   return;
 }
 
-export function initProfession(raw: RawProfession, locale: ToListById<RawProfessionLocale>): ProfessionInstance | undefined {
+export function initProfession(raw: Raw.RawProfession, locale: Data.ToListById<Raw.RawProfessionLocale>): Data.ProfessionInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -177,7 +177,7 @@ export function initProfession(raw: RawProfession, locale: ToListById<RawProfess
   return;
 }
 
-export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListById<RawProfessionVariantLocale>): ProfessionVariantInstance | undefined {
+export function initProfessionVariant(raw: Raw.RawProfessionVariant, locale: Data.ToListById<Raw.RawProfessionVariantLocale>): Data.ProfessionVariantInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -202,13 +202,13 @@ export function initProfessionVariant(raw: RawProfessionVariant, locale: ToListB
   return;
 }
 
-export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantageLocale>): AdvantageInstance | undefined {
+export function initAdvantage(raw: Raw.RawAdvantage, locale: Data.ToListById<Raw.RawAdvantageLocale>): Data.AdvantageInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
     const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
     const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
-    let finalSel: SelectionObject[] | undefined;
+    let finalSel: Data.SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
     }
@@ -241,13 +241,13 @@ export function initAdvantage(raw: RawAdvantage, locale: ToListById<RawAdvantage
   return;
 }
 
-export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDisadvantageLocale>): DisadvantageInstance | undefined {
+export function initDisadvantage(raw: Raw.RawDisadvantage, locale: Data.ToListById<Raw.RawDisadvantageLocale>): Data.DisadvantageInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
     const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
     const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
-    let finalSel: SelectionObject[] | undefined;
+    let finalSel: Data.SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
     }
@@ -279,13 +279,13 @@ export function initDisadvantage(raw: RawDisadvantage, locale: ToListById<RawDis
   return;
 }
 
-export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<RawSpecialAbilityLocale>): SpecialAbilityInstance | undefined {
+export function initSpecialAbility(raw: Raw.RawSpecialAbility, locale: Data.ToListById<Raw.RawSpecialAbilityLocale>): Data.SpecialAbilityInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
     const { sel: localeSel, src: srcPages, req: reqText, reqEnd, reqStart, reqIndex: reqIndexText, ...otherLocale } = localeObject;
     const { ap, sel, req, src: srcIds, reqIndex: reqIndexIgnore, ...otherData } = raw;
-    let finalSel: SelectionObject[] | undefined;
+    let finalSel: Data.SelectionObject[] | undefined;
     if (localeSel && sel) {
       finalSel = localeSel.map(e => ({ ...sel.find(n => n.id === e.id), ...e }));
     }
@@ -317,7 +317,7 @@ export function initSpecialAbility(raw: RawSpecialAbility, locale: ToListById<Ra
   return;
 }
 
-export function initAttribute(raw: RawAttribute, locale: ToListById<RawAttributeLocale>): AttributeInstance | undefined {
+export function initAttribute(raw: Raw.RawAttribute, locale: Data.ToListById<Raw.RawAttributeLocale>): Data.AttributeInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -336,7 +336,7 @@ export function initAttribute(raw: RawAttribute, locale: ToListById<RawAttribute
   return;
 }
 
-export function initCombatTechnique(raw: RawCombatTechnique, locale: ToListById<RawCombatTechniqueLocale>): CombatTechniqueInstance | undefined {
+export function initCombatTechnique(raw: Raw.RawCombatTechnique, locale: Data.ToListById<Raw.RawCombatTechniqueLocale>): Data.CombatTechniqueInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -358,7 +358,7 @@ export function initCombatTechnique(raw: RawCombatTechnique, locale: ToListById<
   return;
 }
 
-export function initLiturgy(raw: RawLiturgy, locale: ToListById<RawLiturgyLocale>): LiturgyInstance | undefined {
+export function initLiturgy(raw: Raw.RawLiturgy, locale: Data.ToListById<Raw.RawLiturgyLocale>): Data.LiturgyInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -393,7 +393,7 @@ export function initLiturgy(raw: RawLiturgy, locale: ToListById<RawLiturgyLocale
   return;
 }
 
-export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLocale>): BlessingInstance | undefined {
+export function initBlessing(raw: Raw.RawBlessing, locale: Data.ToListById<Raw.RawBlessingLocale>): Data.BlessingInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -418,7 +418,7 @@ export function initBlessing(raw: RawBlessing, locale: ToListById<RawBlessingLoc
   return;
 }
 
-export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): SpellInstance | undefined {
+export function initSpell(raw: Raw.RawSpell, locale: Data.ToListById<Raw.RawSpellLocale>): Data.SpellInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -455,7 +455,7 @@ export function initSpell(raw: RawSpell, locale: ToListById<RawSpellLocale>): Sp
   return;
 }
 
-export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale>): CantripInstance | undefined {
+export function initCantrip(raw: Raw.RawCantrip, locale: Data.ToListById<Raw.RawCantripLocale>): Data.CantripInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -481,7 +481,7 @@ export function initCantrip(raw: RawCantrip, locale: ToListById<RawCantripLocale
   return;
 }
 
-export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>): TalentInstance | undefined {
+export function initTalent(raw: Raw.RawTalent, locale: Data.ToListById<Raw.RawTalentLocale>): Data.TalentInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
@@ -535,7 +535,7 @@ export function initTalent(raw: RawTalent, locale: ToListById<RawTalentLocale>):
   return;
 }
 
-export function initItem(raw: RawItem, locale: ToListById<RawItemLocale>): ItemInstance | undefined {
+export function initItem(raw: Raw.RawItem, locale: Data.ToListById<Raw.RawItemLocale>): Data.ItemInstance | undefined {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {

@@ -3,11 +3,20 @@ import * as Reusable from './reusable.d';
 import * as UI from './ui.d';
 import * as Wiki from './wiki.d';
 
-export interface RawHero extends Data.HeroBase {
+export interface RawHero extends Data.HeroBaseBase {
 	readonly id: string;
 	readonly dateCreated: string;
 	readonly dateModified: string;
 	player?: Data.User;
+	rules: RawRules;
+}
+
+export interface RawRules {
+	higherParadeValues: number;
+	attributeValueLimit: boolean;
+	enableAllRuleBooks: boolean;
+	enabledRuleBooks: string[];
+	enableLanguageSpecializations: boolean;
 }
 
 export type RawHerolist = Data.ToListById<RawHero>;
