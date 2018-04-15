@@ -1,7 +1,7 @@
 {
   "name": "optolyth",
   "productName": "Optolyth",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@std/esm": "^0.9.2",
     "classnames": "^2.2.5",
+    "electron-localshortcut": "^3.1.0",
     "electron-log": "^2.2.12",
     "electron-updater": "^2.17.3",
     "electron-window-state": "^4.1.1",

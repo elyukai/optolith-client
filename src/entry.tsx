@@ -23,14 +23,17 @@ import { addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
 import { AppContainer } from './containers/App';
-import { app, AppState } from './reducers/app';
+import { app } from './reducers/app';
 import { getLocaleMessages } from './selectors/stateSelectors';
 import { _translate } from './utils/I18n';
 import { isDialogOpen } from './utils/SubwindowsUtils';
+import localShortcut = require('electron-localshortcut');
 
-const store = createStore<AppState>(app, applyMiddleware(ReduxThunk));
+const store = createStore(app, applyMiddleware(ReduxThunk));
 
 store.dispatch(requestInitialData()).then(() => {
+  const currentWindow = remote.getCurrentWindow();
+
   if (remote.process.platform === 'darwin') {
     const { dispatch, getState } = store;
     const locale = getLocaleMessages(getState())!;
@@ -91,27 +94,27 @@ store.dispatch(requestInitialData()).then(() => {
       remote.Menu.setApplicationMenu(menu);
     });
 
-    remote.globalShortcut.register('Cmd+Q', () => {
+    localShortcut.register(currentWindow, 'Cmd+Q', () => {
       store.dispatch(quitAccelerator());
     });
   }
 
-  remote.globalShortcut.register('CmdOrCtrl+Z', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+Z', () => {
     store.dispatch(undoAccelerator());
   });
-  remote.globalShortcut.register('CmdOrCtrl+Y', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+Y', () => {
     store.dispatch(redoAccelerator());
   });
-  remote.globalShortcut.register('CmdOrCtrl+Shift+Z', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+Shift+Z', () => {
     store.dispatch(redoAccelerator());
   });
-  remote.globalShortcut.register('CmdOrCtrl+S', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+S', () => {
     store.dispatch(saveHeroAccelerator());
   });
-  remote.globalShortcut.register('CmdOrCtrl+W', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+W', () => {
     store.dispatch(backAccelerator());
   });
-  remote.globalShortcut.register('CmdOrCtrl+O', () => {
+  localShortcut.register(currentWindow, 'CmdOrCtrl+O', () => {
     store.dispatch(openSettingsAccelerator());
   });
   ipcRenderer.send('loading-done');

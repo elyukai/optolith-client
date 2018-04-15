@@ -144,14 +144,14 @@ export function dependentInstances(state = initialState, action: Action) {
       const currentAttribute = state.attributes.get(current)!;
       const nextAttribute = state.attributes.get(next)!;
 
-      const setItem = (attribute: Data.AttributeInstance) => {
+      const setItem = (attribute: Data.AttributeInstance, remove?: boolean) => {
         return (state: DependentInstancesState) => {
           return ListUtils.setStateItem(
             state,
             attribute.id,
             {
               ...attribute,
-              mod: attribute.mod - value
+              mod: attribute.mod + (remove === true ? -value : value)
             }
           );
         }
@@ -159,7 +159,7 @@ export function dependentInstances(state = initialState, action: Action) {
 
       return ListUtils.mergeReducedOptionalState(
         state,
-        setItem(currentAttribute),
+        setItem(currentAttribute, true),
         setItem(nextAttribute),
       );
     }

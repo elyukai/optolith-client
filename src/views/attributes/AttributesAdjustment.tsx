@@ -26,7 +26,7 @@ export function AttributesAdjustment(props: AttributesAdjustmentProps) {
 				}))}
 				value={currentAttributeId}
 				onChange={setAdjustmentId}
-				disabled={currentAttributeId === undefined}
+				disabled={currentAttributeId === undefined || availableAttributeIds.length === 1}
 				/>}
 		</div>
 	);

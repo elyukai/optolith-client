@@ -123,16 +123,27 @@ export function mergeReducedOptionalState<I extends Instance>(
 ): DependentInstancesState;
 export function mergeReducedOptionalState<I extends Instance>(
   oldState: DependentInstancesState,
-  instance?: I,
+  instance?: I | BothInstancesStateReducer<I>,
   ...reducers: BothInstancesStateReducer<I>[]
 ): DependentInstancesState {
-  return reducers.reduce(
+  const allReducers = [...reducers];
+
+  let secondArg: I | undefined;
+
+  if (typeof instance === 'function') {
+    allReducers.unshift(instance);
+  }
+  else {
+    secondArg = instance;
+  }
+
+  return allReducers.reduce(
     (oldState, reducer) => {
       const oldStateCopy = {
         ...oldState
       };
 
-      const newState = reducer(oldStateCopy, instance);
+      const newState = reducer(oldStateCopy, secondArg);
 
       const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
 

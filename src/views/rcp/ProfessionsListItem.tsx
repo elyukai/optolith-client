@@ -37,9 +37,13 @@ export function ProfessionsListItem(props: ProfessionsListItemProps) {
 			<ListItemSeparator />
 			{profession.src.length > 0 && (
 				<ListItemGroup small>
-					{profession.src.map(e => {
-						return <span key={e.id}>{books.get(e.id)!.short}</span>;
-					})}
+					{
+						profession.src
+							.filter(e => books.has(e.id))
+							.map(e => {
+								return <span key={e.id}>{books.get(e.id)!.short}</span>;
+							})
+					}
 				</ListItemGroup>
 			)}
 			<ListItemValues>
