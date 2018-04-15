@@ -6,6 +6,7 @@ import { herolist, HerolistState } from './herolist';
 import { locale, LocaleState } from './locale';
 import { ui, UIState } from './ui';
 import { wiki, WikiState } from './wikiReducer';
+import { Action } from 'redux';
 
 export interface AppState {
   currentHero: CurrentHeroState;
@@ -23,4 +24,4 @@ const appSlices = combineReducers<AppState>({
   wiki
 });
 
-export const app = reduceReducers(appSlices, appPost);
+export const app = reduceReducers<AppState, Action>(appSlices, appPost);

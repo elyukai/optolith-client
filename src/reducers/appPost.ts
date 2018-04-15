@@ -13,7 +13,7 @@ type Action = ReceiveInitialDataAction | RedoAction | UndoAction;
 export function appPost(
   state: AppState,
   action: Action,
-  previousState: AppState,
+  previousState: AppState | undefined,
 ): AppState {
   switch (action.type) {
     case ActionTypes.RECEIVE_INITIAL_DATA: {
@@ -71,7 +71,7 @@ export function appPost(
           },
         };
       }
-      else if ((areAllRuleBooksEnabled(previousState) && !areAllRuleBooksEnabled(state) && !getEnabledRuleBooks(state).has('US25208') || getEnabledRuleBooks(previousState).has('US25208') && !getEnabledRuleBooks(state).has('US25208')) && getCurrentTab(state) === 'zoneArmor') {
+      else if (previousState && (areAllRuleBooksEnabled(previousState) && !areAllRuleBooksEnabled(state) && !getEnabledRuleBooks(state).has('US25208') || getEnabledRuleBooks(previousState).has('US25208') && !getEnabledRuleBooks(state).has('US25208')) && getCurrentTab(state) === 'zoneArmor') {
         return {
           ...state,
           ui: {
@@ -87,7 +87,7 @@ export function appPost(
     }
 
     case ActionTypes.REDO: {
-      if (getPhase(previousState) === 2 && getPhase(state) === 3 && ['advantages', 'disadvantages'].includes(getCurrentTab(state))) {
+      if (previousState && getPhase(previousState) === 2 && getPhase(state) === 3 && ['advantages', 'disadvantages'].includes(getCurrentTab(state))) {
         return {
           ...state,
           ui: {

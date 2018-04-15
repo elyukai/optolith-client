@@ -1,3 +1,27 @@
+# 1.0.2
+
+- Fixed issue with rendering list items of advantages/disadvantages/special abilities.
+- Fixed shortcuts being global.
+- Reloading a hero with `Stigma (Albino)` won't change selected eye color anymore.
+
+## macOS
+
+- App now quits automatically on close.
+
+## English Specific
+
+- Fixed list of professions.
+
+## German Specific
+
+- Fixed typo in failed check description of skill "Driving".
+- Fixed attribute adjustment in attributes tab.
+- Fixed levels of required instances of `Principles` and `Obligations` of `Blessed One of Kor`.
+
+# 1.0.1
+
+- Fixed special abilities tab.
+
 # 1.0.0
 
 ### New Features / Breaking Changes
@@ -39,7 +63,7 @@
 - The AP cost for profession variants are now considered when calculating AP spent.
 - Activating spells is now disabled the limits of EL are reached.
 - Fixed showing separators when sorting spells or liturgical chants by group.
-- Fxied text fields in animal section of the character sheet breaking layout or showing up twice.
+- Fixed text fields in animal section of the character sheet breaking layout or showing up twice.
 - Fixed AP used for dis/advantages shown in window used for adding them. Remaining parts of the old AP system have been removed.
 - Fixed saving heroes (previously saved heroes are not currupted).
 - Fixed filters for list of races and list of professions.

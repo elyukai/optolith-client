@@ -135,19 +135,11 @@ async function main() {
 	createWindow();
 
 	app.on('window-all-closed', () => {
-		if (process.platform !== 'darwin') {
-			app.quit();
-		}
-		else {
-			globalShortcut.register('Cmd+Q', () => {
-				app.quit();
-			});
-		}
+		app.quit();
 	});
 
 	app.on('activate', () => {
 		if (mainWindow === null) {
-			globalShortcut.unregister('Cmd+Q');
 			createWindow();
 		}
 	});

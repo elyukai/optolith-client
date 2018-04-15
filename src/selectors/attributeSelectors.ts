@@ -203,41 +203,64 @@ export const getAdjustmentValue = createSelector(
 	}
 );
 
+export const getCurrentAdjustmentAttribute = createSelector(
+	getAdjustmentValue,
+	getAttributes,
+	getForView,
+	(adjustmentValue, attributes, attributesCalculated) => {
+		const currentAttribute = Array.from(attributes.values()).find(e => {
+			return e.mod === adjustmentValue;
+		});
+
+		return currentAttribute &&
+			attributesCalculated.find(e => {
+				return e.id === currentAttribute.id;
+			});
+	}
+);
+
+export const getCurrentAdjustmentId = createSelector(
+	getCurrentAdjustmentAttribute,
+	attribute => attribute && attribute.id
+);
+
 export const getAvailableAdjustmentIds = createSelector(
 	getCurrentRace,
 	getAdjustmentValue,
 	getAttributes,
 	getForView,
-	(race, adjustmentValue, attributes, attributesCalculated) => {
+	getCurrentAdjustmentAttribute,
+	(race, adjustmentValue, attributes, attributesCalculated, currentAttribute) => {
 		const arr = race && race.attributeAdjustmentsSelection[1];
+
 		if (arr) {
+			if (
+				currentAttribute &&
+				typeof currentAttribute.max === 'number' &&
+				typeof adjustmentValue === 'number' &&
+				currentAttribute.value > currentAttribute.max - adjustmentValue
+			) {
+				return [currentAttribute.id];
+			}
+
 			return arr.filter(id => {
 				const attribute = attributes.get(id);
 				const attributeCalculated = attributesCalculated.find(e => e.id === id);
+
 				if (attribute && attributeCalculated) {
-					if (attribute.mod === adjustmentValue) {
-						return !attributeCalculated.max || attributeCalculated.max - adjustmentValue >= attribute.value;
+					if (
+						attributeCalculated.max === undefined ||
+						currentAttribute && currentAttribute.id === id
+					) {
+						return true;
 					}
 					else if (typeof adjustmentValue === 'number') {
-						return !attributeCalculated.max || attributeCalculated.max + adjustmentValue >= attribute.value;
+						return attributeCalculated.max + adjustmentValue >= attribute.value;
 					}
 				}
 				return false;
 			});
 		}
 		return [];
-	}
-);
-
-export const getCurrentAdjustmentId = createSelector(
-	getAvailableAdjustmentIds,
-	getAdjustmentValue,
-	getAttributes,
-	(availableAdjustmentIds, adjustmentValue, attributes) => {
-		const currentAttribute = [...attributes.values()].find(e => availableAdjustmentIds.includes(e.id) && e.mod === adjustmentValue);
-		if (currentAttribute) {
-			return currentAttribute.id;
-		}
-		return;
 	}
 );
