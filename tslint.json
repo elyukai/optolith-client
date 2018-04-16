@@ -1,0 +1,91 @@
+{
+  // "extends": ["tslint:latest", "tslint-react"],
+	"rules": {
+		// TypeScript Specific
+		"adjacent-overload-signatures": true,
+		"ban-types": [true, ["null", "Use undefined instead of null."]],
+		// "member-ordering": [
+		// 	true,
+		// 	{
+		// 		"order": [
+		// 			"static-field",
+		// 			"instance-field",
+		// 			"constructor",
+		// 			"public-instance-method",
+		// 			"protected-instance-method",
+		// 			"private-instance-method"
+		// 		]
+		// 	}
+		// ],
+		// "no-any": true,
+		// "no-empty-interface": true,
+		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
+		// "no-non-null-assertion": {
+		// 	"severity": "warning"
+		// },
+		// "no-reference": true,
+		"no-var-requires": true,
+		"only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
+		"prefer-for-of": true,
+		"promise-function-async": true,
+		// "typedef": [true, "call-signature", "arrow-call-signature"],
+
+		// Functionality
+		"await-promise": true,
+		"curly": true,
+		"forin": true,
+		"no-conditional-assignment": true,
+		"no-construct": true,
+		"no-duplicate-super": true,
+		"no-duplicate-variable": true,
+		"no-empty": true,
+		"no-eval": true,
+		"no-floating-promises": true,
+		"no-for-in-array": true,
+		"no-inferred-empty-object-type": true,
+		"no-invalid-this": true,
+		"no-misused-new": true,
+		// "no-null-keyword": true,
+		"no-string-literal": true,
+		"no-switch-case-fall-through": true,
+		"no-unsafe-any": true,
+		"no-unsafe-finally": true,
+		// "no-unused-expression": true,
+		"no-unused-variable": [true, "check-parameters", { "ignore-pattern": "^_" }],
+		"no-var-keyword": true,
+		"restrict-plus-operands": true,
+		"strict-type-predicates": true,
+		"triple-equals": true,
+		"typeof-compare": true,
+
+		// Maintainability
+		"eofline": true,
+		// "indent": [true, "spaces"],
+		"max-classes-per-file": [true, 1],
+		"no-default-export": true,
+		// "no-require-imports": true,
+		// "object-literal-sort-keys": true,
+		"prefer-const": true,
+
+		// Style
+		"arrow-parens": [true, "ban-single-arg-parens"],
+		"arrow-return-shorthand": true,
+		"callable-types": true,
+		"class-name": true,
+		"comment-format": [true, "check-space"],
+		"interface-over-type-literal": true,
+		"new-parens": true,
+		"no-angle-bracket-type-assertion": true,
+		"no-consecutive-blank-lines": [true, 2],
+		"no-trailing-whitespace": true,
+		"object-literal-key-quotes": [true, "consistent"],
+		"object-literal-shorthand": true,
+		"one-line": [true, "check-open-brace"],
+		"one-variable-per-declaration": [true, "ignore-for-loop"],
+		"ordered-imports": [true],
+		"quotemark": [true, "single", "jsx-double"],
+		// "semicolon": [true, "always"],
+		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
+		// "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]
+	}
+}

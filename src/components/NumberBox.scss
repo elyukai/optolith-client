@@ -1,8 +1,8 @@
 .number-box {
 	position: absolute;
-	border: 1px solid $color4;
-	background: $background4;
-	color: $color5;
+	border: 1px solid var(--separator-color-transparent);
+	background: var(--background-color);
+	color: var(--text-color);
 	text-align: center;
 	font-size: 12px;
 	line-height: 16px;

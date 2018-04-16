@@ -1,8 +1,9 @@
 #sheets {
-	flex-flow: column nowrap;
-
-	> .options {
-		margin-bottom: 11px;
+	.options {
+		margin-left: 0;
+		margin-right: 24px;
+		padding-top: 0;
+		flex: none;
 	}
 
 	.scroll-inner {
@@ -12,23 +13,41 @@
 	}
 }
 
+table {
+	border-spacing: 0;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.print-document {
+	margin-top: 0;
+}
+
+.sheet-wrapper {
+	display: flex;
+
+	&:not(:first-child) {
+		margin-top: 24px;
+	}
+}
+
+.sheet-options {
+	flex: none;
+	margin-right: 24px;
+}
+
 .sheet {
 	flex: none;
 	width: 21cm;
 	height: 29.7cm;
 	background: white;
-	margin-top: 30px;
 	text-align: left;
-	padding: 0.89cm;
+	padding: 8.5mm;
 	font: 11px/16px Alegreya;
 	color: black;
 	letter-spacing: 0;
 	display: flex;
 	flex-direction: column;
-
-	&:last-child {
-		margin-bottom: 30px;
-	}
 
 	> div {
 		display: flex;
@@ -55,171 +74,34 @@
 		letter-spacing: 0;
 		width: 100%;
 	}
+
+	th, td {
+		border-style: solid;
+		border-color: #c8c8c8;
+		border-width: 0;
+		padding: 0;
+	}
+
+	th {
+		height: 5mm;
+		border-width: 0.3mm 0;
+		font: bold 10px/1 Alegreya SC;
+		border-color: grey;
+	}
+
+	td {
+		height: 4.5mm;
+		border-width: 0 0 0.15mm;
+		font: 500 11px/4.35mm Alegreya Sans;
+	}
+
+	.activatable-list > div {
+		font: 400 16px Alegreya Sans;
+		letter-spacing: 0;
+		padding-top: 8px;
+	}
 }
 
 @import "SheetHeader";
 @import "SheetHeaderAttribute";
-@import "AttributeCheckMods";
-
-// #sheets {
-// 	flex-flow: column nowrap;
-
-// 	> .options {
-// 		margin-bottom: 11px;
-// 	}
-
-// 	.scroll-inner {
-// 		flex-flow: column nowrap;
-// 		align-items: center;
-// 		justify-content: center;
-
-// 		.sheet {
-// 			flex: none;
-// 			width: 21cm;
-// 			height: 29.7cm;
-// 			background: white;
-// 			margin-top: 30px;
-// 			text-align: left;
-// 			padding: 1cm;
-// 			font: 11px/16px Alegreya;
-// 			color: black;
-// 			letter-spacing: 0;
-// 			display: flex;
-// 			flex-direction: column;
-
-// 			&:last-child {
-// 				margin-bottom: 30px;
-// 			}
-
-// 			> div {
-// 				display: flex;
-// 				justify-content: space-between;
-// 			}
-
-// 			h1, h2, h3 {
-// 				color: black;
-// 				margin: 0;
-// 			}
-
-// 			h1 {
-// 				font: italic bold 24px/22px Alegreya;
-// 			}
-
-// 			h2 {
-// 				font: 17px/13px Alegreya SC;
-// 				text-transform: none;
-// 				letter-spacing: 0;
-// 			}
-
-// 			h3 {
-// 				font: bold 16px Alegreya;
-// 				letter-spacing: 0;
-// 			}
-
-// 			> .header {
-// 				margin-bottom: 11px;
-// 				align-items: flex-end;
-// 				flex: none;
-// 				height: 110px;
-
-// 				> .title {
-// 					flex: 1 1 100%;
-// 					height: 50px;
-// 					display: flex;
-// 					flex-direction: column;
-// 					justify-content: center;
-
-// 					h1, h2 {
-// 						text-align: center;
-// 					}
-
-// 					h2 {
-// 						margin-top: 5px;
-// 					}
-// 				}
-
-// 				.attributes {
-// 					flex: none;
-// 					display: flex;
-// 					flex-wrap: wrap-reverse;
-// 					width: 475px;
-
-// 					.attr {
-// 						flex: none;
-// 						margin: 5px 5px 0; // change
-// 						position: relative; // change
-
-// 						> .short {
-// 							font: bold 10px/14px Alegreya; // change
-// 							color: black; // change
-// 							letter-spacing: 0.05em;
-// 							text-transform: uppercase;
-// 							text-align: center;
-// 							position: absolute; // change
-// 							top: 0; // change
-// 							padding: 4px 8px 0; // change
-// 						}
-
-// 						> .value {
-// 							border: 2px solid transparent;
-// 							padding: 0; // change
-
-// 							> div {
-// 								border: 1px solid black; // change
-// 								padding: 0; // change
-
-// 								> div {
-// 									@include size(44px);
-// 									text-align: center;
-// 									font: bold 21px/30px Alegreya Sans; // change
-// 									color: black; // change
-// 									letter-spacing: 0.05em;
-// 									text-transform: uppercase;
-// 									background: transparent; // change
-// 									overflow: hidden;
-// 									padding-top: 14px; // change
-// 								}
-// 							}
-// 						}
-
-// 						&.ATTR_1 > .value {
-// 							border-color: red;
-// 						}
-
-// 						&.ATTR_2 > .value {
-// 							border-color: #90c;
-// 						}
-
-// 						&.ATTR_3 > .value {
-// 							border-color: #3c3;
-// 						}
-
-// 						&.ATTR_4 > .value {
-// 							border-color: black;
-// 						}
-
-// 						&.ATTR_5 > .value {
-// 							border-color: yellow;
-// 						}
-
-// 						&.ATTR_6 > .value {
-// 							border-color: blue;
-// 						}
-
-// 						&.ATTR_7 > .value {
-// 							border-color: white;
-// 						}
-
-// 						&.ATTR_8 {
-// 							margin-right: 0;
-		
-// 							> .value {
-// 								border-color: #f60;
-// 							}
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+@import "AttributeMods";

@@ -1,9 +1,9 @@
-import Activate from './Activate';
-import Icon from './Icon';
+import { Activate } from './Activate';
+import { Icon } from './Icon';
 import React, { Component, PropTypes } from 'react';
-import Text from './Text';
+import { Text } from './Text';
 
-export default class RadioButton extends Component {
+export class RadioButton extends Component {
 
 	static propTypes = {
 		active: PropTypes.bool.isRequired,

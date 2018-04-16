@@ -1,186 +1,51 @@
-.ps-container.ps-theme-tde, .ps-container.ps-theme-tdebg {
-	> .ps-scrollbar-y-rail {
-		width: 11px;
-		transition: none;
-		opacity: 1;
-
-		.ps-scrollbar-y {
-			width: 11px;
-			cursor: pointer;
-			border-radius: 5.5px;
-			background-color: #1e2328;
-			background-clip: padding-box;
-			transition: none;
-			right: 0;
-			border: 3px solid transparent;
-		}
+.scroll {
+	.track-vertical {
+		height: 100%;
+		right: 0;
 	}
 
-	&.ps-in-scrolling.ps-y {
-		> .ps-scrollbar-y-rail {
-			background: none;
-			opacity: 1;
+	.track-horizontal {
+		width: 100%;
+		bottom: 0;
+	}
 
-			.ps-scrollbar-y {
-				background-color: #463714;
-			}
+	.thumb {
+		position: relative;
+		display: block;
+		width: 0;
+		height: 0;
+		cursor: pointer;
+		border: 3px solid transparent;
+		background-clip: padding-box;
+		overflow: hidden;
+
+		&:active div {
+			border-color: var(--accent-color-intense);
+			background-color: var(--accent-color-intense);
+		}
+
+		div {
+			width: 100%;
+			height: 100%;
+			border: 1px solid var(--separator-color-transparent);
 		}
 	}
 
 	&:hover {
-		> .ps-scrollbar-y-rail, > .ps-scrollbar-y-rail:hover {
-			opacity: 1;
-		}
-
-		> .ps-scrollbar-y-rail {
-			.ps-scrollbar-y {
-				background-color: #785a28;
-			}
-
-			&:hover {
-				background: none;
-
-				.ps-scrollbar-y {
-					width: 11px;
-					background-color: #cdbe91;
-				}
-			}
-		}
-	}
-
-	&:active {
-		> .ps-scrollbar-y-rail {
-			&:active {
-				.ps-scrollbar-y {
-					width: 11px;
-					background-color: #463714;
-				}
-			}
-		}
-	}
-}
-
-.ps-container.ps-theme-tdebg {
-	> .ps-scrollbar-y-rail {
-		background: #010a13;
-	}
-}
-
-
-.gm {
-	&-test {
-		width: 100px;
-		height: 100px;
-		position: absolute;
-		top: -9999px;
-		overflow: scroll;
-		-ms-overflow-style: scrollbar;
-	}
-
-	&-scrollbar-disable-selection {
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-	}
-
-	&-prevented {
-		-webkit-overflow-scrolling: touch;
-
-		.gm-scrollbar {
-			display: none;
-		}
-	}
-
-	&-scrollbar-container {
-		position: relative;
-		overflow: hidden;
-		width: 100%;
-		height: 100%;
-
-		.gm-scroll-view {
-			width: calc(100% + 17px);
-			height: 100%;
-			overflow: scroll;
-			-webkit-overflow-scrolling: touch;
-		}
-
-		&.gm-autoshow {
-			.gm-scrollbar {
-				opacity: 0;
-				transition: opacity 120ms ease-out;
-			}
-
-			&:hover, &:focus {
-				.gm-scrollbar {
-					opacity: 1;
-					transition: opacity 340ms ease-out;
-				}
-			}
-		}
-
 		.thumb {
-			background: #1e2328;
-
-			&:active {
-				background-color: #463714;
+			div {
+				border-color: var(--accent-color);
 			}
-		}
 
-		&:hover {
-			.thumb {
-				background-color: #785a28;
-
-				&:hover {
-					background-color: #cdbe91;
-				}
-
-				&:active {
-					background-color: #463714;
-				}
+			&:hover div {
+				border-color: var(--accent-color);
+				background-color: var(--accent-color);
 			}
-		}
-	}
 
-	&-scrollbar {
-		position: absolute;
-		z-index: 20;
-		background: transparent;
-
-		&.-vertical {
-			width: 11px;
-			right: 0;
-			top: 0;
-			bottom: 0;
-
-			.thumb {
-				width: 100%;
+			&:active div {
+				border-color: var(--accent-color-intense);
+				background-color: var(--accent-color-intense);
 			}
-		}
-
-		&.-horizontal {
-			height: 11px;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			display: none;
-
-			.thumb {
-				height: 100%;
-			}
-		}
-
-		.thumb {
-			position: relative;
-			display: block;
-			width: 0;
-			height: 0;
-			cursor: pointer;
-			border-radius: 5.5px;
-			border: 3px solid transparent;
-			background-clip: padding-box;
 		}
 	}
 }

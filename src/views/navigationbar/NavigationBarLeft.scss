@@ -1,0 +1,24 @@
+.navigationbar-left {
+	flex: 1 1 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: stretch;
+
+	> div {
+		margin-left: 24px;
+
+		&.avatar-wrapper {
+			flex-shrink: 0;
+			align-self: center;
+			@include size($avatar-height);
+			margin-left: 28px;
+			margin-right: 4px;
+		}
+
+		&.text {
+			color: var(--headings-color);
+			text-transform: uppercase;
+			letter-spacing: 0.1em;
+		}
+	}
+}

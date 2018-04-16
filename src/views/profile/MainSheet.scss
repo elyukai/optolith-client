@@ -9,31 +9,43 @@
 			align-content: flex-start;
 			overflow: hidden;
 
-			.name, .profession, .title, .characteristics, .other {
+			.plain {
+				align-items: flex-start;
+			}
+
+			.name, .profession, .title, .characteristics, .otherinfo {
 				width: 100%;
+			}
+
+			.otherinfo {
+				height: 56px;
+
+				div.value {
+					height: 48px;
+				}
 			}
 
 			.family, .placeofbirth, .dateofbirth, .race, .haircolor, .eyecolor, .culture, .socialstatus {
 				width: 50%;
 			}
 
-			.age, .gender, .size, .weight {
+			.age, .sex, .size, .weight {
 				width: 25%;
 			}
 
 			.name, .family, .dateofbirth, .race, .haircolor, .culture, .profession, .title, .characteristics, .otherinfo {
 				.label {
-					width: 80px;
+					width: 25mm;
 				}
 			}
 
 			.placeofbirth, .age, .size, .eyecolor, .socialstatus {
 				.label {
-					width: 63px;
+					width: 19mm;
 				}
 			}
 
-			.gender, .weight {
+			.sex, .weight {
 				.label {
 					width: 58px;
 				}
@@ -63,8 +75,14 @@
 					}
 
 					label {
-						margin-left: 0;
 						text-align: center;
+						margin-left: 0;
+					}
+				}
+
+				&.portrait {
+					label {
+						margin-left: 0;
 					}
 				}
 
@@ -104,7 +122,6 @@
 	}
 
 	> .lower {
-		margin-top: 22px;
 		flex: 1 1 100%;
 
 		> .lists {
@@ -116,10 +133,8 @@
 			> .textbox {
 				flex: 1 0 auto;
 
-				> div {
-					font: 400 16px Alegreya Sans;
-					letter-spacing: 0;
-					padding-top: 8px;
+				.textbox-content {
+					height: 54mm;
 				}
 			}
 		}

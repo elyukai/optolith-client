@@ -1,4 +1,4 @@
-#overview {
+#personal-data {
 	.title-wrapper {
 		margin-top: 11px;
 		display: flex;
@@ -6,13 +6,14 @@
 
 		.avatar-wrapper {
 			flex: 1 0 auto;
+			border-width: 4px;
 			@include size(150px);
 
 			&:hover {
 				cursor: pointer;
 
 				.avatar {
-					box-shadow: 0 0 0 71px transparentize(black, .15) inset;
+					box-shadow: 0 0 0 71px var(--separator-color-transparent) inset;
 
 					&::after {
 						display: block;
@@ -20,30 +21,21 @@
 				}
 			}
 
-			&:not(.no-avatar) {
-				padding: 4px;
-				background: #785a28;
-
-				.avatar::after {
-					top: 43px;
-					left: 43px;
-				}
-			}
-			
-			&.no-avatar {
-				border-width: 4px;
+			&:not(.no-avatar) .avatar::after {
+				top: 43px;
+				left: 43px;
 			}
 		}
-		
+
 		.avatar::after {
 			position: absolute;
 			top: 39px;
 			left: 39px;
 			display: none;
-			content: "\E2C6";
+			content: "\E91a";
 			@include size(64px);
-			font: 64px/64px Material;
-			color: $color1;
+			font: 64px/64px TDE Heroes;
+			color: var(--headings-color);
 			text-align: center;
 		}
 
@@ -57,31 +49,29 @@
 				margin: 0;
 				font: 400 #{$size}/#{$size} Alegreya Sans;
 				letter-spacing: 0.025em;
-				color: #f1e6d4;
+				color: var(--headings-color);
 			}
 
 			> h1, > div.change-name {
-				display: flex;
 				height: $size;
-				align-items: center;
-
-				> div.textfield {
-					margin: 0;
-				}
-
-				> div.btn {
-					margin-left: 11px;
-					letter-spacing: 0;
-				}
 			}
 
 			> div:not(.change-name) {
 				margin: 4px 0 0;
-				
+
 				span:last-child {
 					font-weight: 500;
 				}
 			}
+		}
+	}
+
+	.main-profile-actions {
+		display: flex;
+		margin-top: 20px;
+
+		> div {
+			margin: 0 10px 0 0;
 		}
 	}
 
@@ -95,13 +85,24 @@
 		margin-top: 10px;
 
 		> div {
-			flex: none;
+			flex: 1 1 auto;
 			display: flex;
-			flex-wrap: wrap;
-			width: 323px;
+			min-width: 200px;
 			margin-right: 22px;
 			margin-bottom: 10px;
 			align-items: flex-end;
+
+			&:not(.btn-group) {
+				padding-right: 43px;
+			}
+
+			> .textfield, > .dropdown {
+				width: 100%;
+			}
+
+			> .btn {
+				flex: none;
+			}
 		}
 	}
 

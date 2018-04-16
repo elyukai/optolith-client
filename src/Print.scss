@@ -4,7 +4,11 @@
 }
 
 @media only print {
-	html, body, #bodywrapper, #body {
+	.titlebar-inner::after, .navigationbar-inner::after, .navigationbar-subtabs::after {
+		display: none;
+	}
+
+	html, body, #bodywrapper, #body, section {
 		background: none;
 	}
 
@@ -13,114 +17,89 @@
 		@include size(auto);
 	}
 
-	#body, section {
-		background: none;
-	}
-
 	#body {
 		display: block;
+		border: none;
+		background: white;
 	}
 
-	.titlebar, .subtabs {
+	.titlebar, section#content > .navigationbar, section#content > .navigationbar-subtabs, .background-image {
 		display: none;
+		margin: 0;
+		padding: 0;
 	}
 
 	section {
-		padding-top: 0;
-		display: block;
-	}
-
-	.page {
-		padding-top: 0;
-		flex: unset;
-		display: block;
-
-		.options {
-			display: none;
-		}
-	}
-
-	.scroll-sheet-wrapper.scroll.gm-scrollbar-container {
 		overflow: auto;
-		flex: unset;
+		padding: 0;
+		display: block;
 
-		.gm-scroll-view {
-			overflow: auto;
-			height: auto !important;
-			width: auto !important;
-		}
+		> .page#sheets {
+			padding: 0;
+			flex: unset;
+			display: block;
 
-		.gm-scrollbar {
-			display: none;
+			> .scroll {
+				margin: 0;
+				overflow: auto !important;
+				height: auto !important;
+				width: auto !important;
+
+				.scroll-view {
+					overflow: auto !important;
+					height: auto !important;
+					width: auto !important;
+					position: relative !important;
+					top: auto !important;
+					bottom: auto !important;
+					left: auto !important;
+					right: auto !important;
+					margin: auto !important;
+				}
+
+				.scroll-inner {
+					padding: 0;
+
+					.sheet {
+						height: 287.1mm;
+						width: 210mm;
+						margin: 0;
+						padding: 8.9mm 8.9mm 0;
+						-webkit-print-color-adjust: exact;
+						page-break-inside: avoid;
+						overflow: hidden;
+
+						&:not(:first-child) {
+							page-break-before: always;
+						}
+
+						&:first-child {
+							page-break-before: avoid;
+						}
+					}
+				}
+
+				.track {
+					display: none;
+				}
+			}
+
+			.options {
+				margin: 0;
+				padding: 0;
+			}
+
+			.options, .print-document {
+				display: none;
+			}
 		}
 	}
 
-	.scroll-inner {
-		padding: 0 !important;
+	.sheet-wrapper {
+		display: block;
 
-		.sheet {
-			margin-top: 0 !important;
-			height: 296mm !important;
-
-			&:not(:last-child) {
-				page-break-after: always;
-			}
-
-			> .header {
-				.attributes {
-					> .attr {
-						> .value {
-							border-width: calc(0.5mm - 0.57pt/2) !important;
-
-							> div {
-								border-width: 0.57pt !important;
-								position: relative;
-
-								> div {
-									@include size(100%);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			&.main {
-				> .upper {
-					> .ap {
-						> div {
-							span {
-								&:first-child {
-									// border-width: $border-1px !important;
-								}
-							}
-						}
-					}
-
-					> .portrait {
-						.avatar {
-							// border-width: $border-1px !important;
-						}
-					}
-				}
-
-				> .lower {
-					> .calculated {
-						> div {
-							> .values {
-								> div {
-									// border-width: $border-1px !important;
-
-									> div {
-										width: calc(1.2mm - 0.57pt);
-										height: calc(1.2mm - 0.57pt);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+		&:not(:first-child) {
+			margin-top: 0;
 		}
 	}
 }

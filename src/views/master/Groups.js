@@ -1,27 +1,27 @@
-import BorderButton from '../../components/BorderButton';
-import GroupsActions from '../../actions/GroupsActions';
-import GroupsStore from '../../stores/GroupsStore';
+import { BorderButton } from '../../components/BorderButton';
+import { GroupsActions } from '../../actions/GroupsActions';
+import { GroupsStore } from '../../stores/GroupsStore';
 import React, { Component } from 'react';
-import Scroll from '../../components/Scroll';
-import Slidein from '../../components/Slidein';
+import { Scroll } from '../../components/Scroll';
+import { Slidein } from '../../components/Slidein';
 
-export default class Groups extends Component {
+export class Groups extends Component {
 
-	state = { 
+	state = {
 		requestsOpen: GroupsStore.getRequestsSlideinState()
 	};
-	
-	_updateGroupsStore = () => this.setState({ 
+
+	_updateGroupsStore = () => this.setState({
 		requestsOpen: GroupsStore.getRequestsSlideinState()
 	});
 
 	openRequests = () => GroupsActions.checkRequests();
 	closeRequests = () => GroupsActions.closeRequests();
-	
+
 	componentDidMount() {
 		GroupsStore.addChangeListener(this._updateGroupsStore);
 	}
-	
+
 	componentWillUnmount() {
 		GroupsStore.removeChangeListener(this._updateGroupsStore);
 	}
@@ -29,7 +29,7 @@ export default class Groups extends Component {
 	render() {
 		return (
 			<div className="page" id="groups">
-				<Slidein isOpen={this.state.requestsOpen} close={this.closeRequests}>
+				<Slidein isOpened={this.state.requestsOpen} close={this.closeRequests}>
 					Liste mit den Namen der Helden und dazugehörigen Spieler, die ihren Helden freigeben wollen, und Annahme- und Ablehnoptionen
 				</Slidein>
 				<Scroll className="full">

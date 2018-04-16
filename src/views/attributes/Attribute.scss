@@ -1,18 +1,6 @@
 #attribute {
-	.page::before {
-		position: absolute;
-		@include calc(width, "100% - 70px");
-		height: 1px;
-		content: "";
-		background: $color10;
-		// background: #3a322b;
-		// background: #1f282d;
-		top: 0;
-		left: 35px;
-	}
-
 	.scroll-inner {
-		flex-wrap: wrap;
+		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
@@ -22,10 +10,8 @@
 		text-align: center;
 	}
 
-	.main, .calculated {
+	.main, .calculated, .permanent {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
 
 		.number-box {
 			top: 70px;
@@ -40,15 +26,9 @@
 	}
 
 	.main {
+		justify-content: center;
 		padding-bottom: 16px;
 		// border-bottom: 1px solid transparentize(white, .925);
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-
-		.number-box {
-			width: 24px;
-		}
 	}
 
 	.calculated {
@@ -63,30 +43,44 @@
 
 	.short {
 		font: bold 14px/28px Alegreya;
-		color: $color1;
+		color: var(--headings-color);
 		letter-spacing: 0.05em;
-		text-transform: uppercase;
 		text-align: center;
 	}
 
-	.value {
+	.attr .value {
 		border: 2px solid transparent;
 		padding: 2px;
-		background: $background4;
 	}
-	
+
+	.attribute-adjustment {
+		margin: 10px 0 20px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		> span::after {
+			content: ":";
+		}
+
+		> .dropdown {
+			margin: 0 0 0 16px;
+			width: 200px;
+		}
+	}
+
 	.value-inner {
-		border: 1px solid $color4;
+		border: 1px solid var(--separator-color-transparent);
 		padding: 1px;
 
 		> div {
 			@include size(45px);
 			text-align: center;
 			font: bold 28px/45px Alegreya Sans;
-			color: $color1;
+			font-variant-numeric: lining-nums;
+			color: var(--headings-color);
 			letter-spacing: 0.05em;
 			text-transform: uppercase;
-			background: $background2;
 			overflow: hidden;
 		}
 	}
@@ -104,12 +98,52 @@
 		flex: none;
 		position: relative;
 
-		$colors: (1: $attr1, 2: $attr2, 3: $attr3, 4: $attr4, 5: $attr5, 6: $attr6, 7: $attr7, 8: $attr8);
+		&.ATTR_1 > .value {
+			border-color: var(--courage-color);
+		}
 
-		@for $i from 1 through 8 {
-			&.ATTR_#{$i} > .value {
-				border-color: map-get($map: $colors, $key: $i);
-			}
+		&.ATTR_2 > .value {
+			border-color: var(--sagacity-color);
+		}
+
+		&.ATTR_3 > .value {
+			border-color: var(--intuition-color);
+		}
+
+		&.ATTR_4 > .value {
+			border-color: var(--charisma-color);
+		}
+
+		&.ATTR_5 > .value {
+			border-color: var(--dexterity-color);
+		}
+
+		&.ATTR_6 > .value {
+			border-color: var(--agility-color);
+		}
+
+		&.ATTR_7 > .value {
+			border-color: var(--constitution-color);
+		}
+
+		&.ATTR_8 > .value {
+			border-color: var(--strength-color);
+		}
+	}
+
+	.permanent {
+		.value-inner > div {
+			height: 23px;
+			line-height: 23px;
+			font-size: 14px;
+		}
+
+		.number-box {
+			top: 20px;
+		}
+
+		.placeholder {
+			width: 77px;
 		}
 	}
 }
@@ -119,5 +153,60 @@
 
 	p.calc-text {
 		font-style: italic;
+	}
+}
+
+.permanent-points-editor {
+	.modal-header {
+		padding: 16px 0;
+
+		.modal-header-inner {
+			font-size: 16px;
+			text-align: center;
+		}
+	}
+
+	.main {
+		display: flex;
+	}
+
+	.column {
+		flex: 1 1 50%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		padding-bottom: 10px;
+
+		&:nth-child(2) {
+			margin-left: 1px;
+
+			&::before {
+				content: "";
+				position: absolute;
+				height: 100%;
+				width: 1px;
+				background: var(--separator-color-transparent);
+				left: -1px;
+			}
+		}
+	}
+
+	.value {
+		font: bold 40px/1 Alegreya;
+		color: var(--headings-color);
+	}
+
+	.description {
+		margin: 20px 0;
+	}
+
+	.buttons {
+		display: flex;
+
+		.remove {
+			margin-left: 20px;
+		}
 	}
 }

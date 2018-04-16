@@ -2,24 +2,24 @@
 	display: flex;
 	padding: 6px 11px 6px 0;
 	margin: 0 1px;
+	align-items: flex-start;
 
 	&:hover {
-		background: #1e2328;
+		background: var(--separator-color-transparent);
 		cursor: pointer;
 
 		.icon {
 			.border {
-				border-image: linear-gradient(to bottom, #785a28 0%, #ccbe91 100%);
-				border-image-slice: 1;
+				border-color: var(--headings-color);
 			}
 
 			.hook {
-				border-color: #f1e6d4;
+				border-color: var(--headings-color);
 			}
 		}
 
 		.text {
-			color: #f1e6d4;
+			color: var(--headings-color);
 			cursor: pointer;
 		}
 	}
@@ -31,8 +31,7 @@
 		.border {
 			height: 11px;
 			width: 11px;
-			border: 1px solid #785a28;
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 3px 1px rgba(0, 0, 0, 0.15) inset;
+			border: 1px solid var(--accent-color);
 		}
 
 		.hook {
@@ -43,7 +42,7 @@
 			width: 4px;
 			transform: rotate(45deg);
 			border-width: 0 1px 1px 0;
-			border-color: #c8aa6e;
+			border-color: var(--accent-color);
 			border-style: solid;
 		}
 	}
@@ -54,7 +53,7 @@
 		}
 
 		.text {
-			color: #f1e6d4;
+			color: var(--headings-color);
 		}
 	}
 
@@ -66,25 +65,24 @@
 			margin: 4px 0 5px;
 
 			.border {
-				border: 1px solid transparentize(#7a7b76, .5);
+				border: 1px solid var(--separator-color-transparent);
 				box-shadow: 0 none;
 			}
 
 			.hook {
-				border-color: #7a7b76;
+				border-color: var(--separator-color-transparent);
 			}
 		}
 
 		.text {
-			color: #7a7b76;
+			color: var(--separator-color-halftransparent);
 		}
 	}
 
 	.text {
 		flex: 0 100%;
-		color: #c89b3c;
-		font: 400 12px/20px Alegreya Sans;
-		text-transform: uppercase;
+		color: var(--accent-color);
+		font: 500 12px/20px Alegreya Sans;
 		letter-spacing: 0.05em;
 		padding-left: 11px;
 	}

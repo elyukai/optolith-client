@@ -4,15 +4,16 @@
 	margin: 10px 0;
 	position: relative;
 	font: 500 13px/30px "Alegreya Sans";
-	
+
 	.textfield-hint {
 		width: 100%;
 		height: 32px;
 		padding: 1px 12px;
 		pointer-events: none;
 		position: absolute;
-		color: #a09b8c;
-		
+		color: var(--accent-color);
+		margin-top: -32px;
+
 		&.hide {
 			visibility: hidden;
 		}
@@ -21,45 +22,54 @@
 	input, textarea {
 		width: 100%;
 		height: 32px;
-		border: 1px solid #524018;
-		// background: #000307;
-		background: #11161c;
+		border: 1px solid var(--accent-color);
 		padding: 0 11px;
 		margin: 0;
-		color: #f0e6d2;
-		font: 500 13px/30px "Alegreya Sans";
+		color: var(--headings-color);
+		font: 500 13px/30px Alegreya Sans;
 		display: block;
-		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.45) inset;
 		outline: 0 none;
-		
-		&:focus, &:active {
-			// color: #f1e6d4;
-			background: linear-gradient(to bottom, #11161c 0%, #1c2328 100%);
-			border-image: linear-gradient(to bottom, #524018 0%, #ccbe91 100%);
-			border-image-slice: 1;
+		background: none;
+
+		&:hover, &:focus, &:active {
+			color: var(--headings-color);
+			border-color: var(--headings-color);
+
+			+ .textfield-hint {
+				color: var(--headings-color);
+			}
 		}
 	}
-	
+
 	&.fullWidth {
 		width: auto;
 	}
 
 	&.disabled {
 		pointer-events: none;
-	
+
 		.textfield-hint {
-			color: #31353a;
+			color: var(--separator-color-halftransparent);
 		}
 
 		label {
-			color: #31353a;
+			color: var(--separator-color-halftransparent);
 		}
 
 		input, textarea {
-			border: 1px solid #2b2f34;
-			background: none;
-			color: #31353a;
-			box-shadow: none;
+			border-color: var(--separator-color-transparent);
+			color: var(--separator-color-halftransparent);
+		}
+	}
+
+	&.invalid:not(.disabled) {
+		label {
+			color: $unrecommended1;
+		}
+
+		input, textarea {
+			border: 1px solid $unrecommended2;
+			color: $unrecommended1;
 		}
 	}
 

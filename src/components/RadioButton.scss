@@ -3,9 +3,10 @@
 	height: 32px;
 	padding: 6px 11px 6px 0;
 	margin: 0 1px;
+	align-items: flex-start;
 
 	&:hover {
-		background: #1e2328;
+		background: var(--separator-color-transparent);
 		cursor: pointer;
 
 		// .icon {
@@ -15,8 +16,16 @@
 		// 	}
 		// }
 
+		.icon .border {
+			border-color: var(--headings-color);
+		}
+
+		.icon .dot {
+			background: var(--headings-color);
+		}
+
 		.text {
-			color: #f1e6d4;
+			color: var(--headings-color);
 			cursor: pointer;
 		}
 	}
@@ -29,8 +38,7 @@
 		.border {
 			height: 10px;
 			width: 10px;
-			border: 1px solid #785a28;
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 3px 1px rgba(0, 0, 0, 0.15) inset;
+			border: 1px solid var(--accent-color);
 		}
 
 		.dot {
@@ -39,45 +47,56 @@
 			margin-top: -7.5px;
 			height: 5px;
 			width: 5px;
-			background: #c8aa6e;
+			background: var(--accent-color);
 		}
 	}
 
 	&.active {
 		pointer-events: none;
-		
+
 		.dot {
 			visibility: visible;
 		}
 
 		.text {
-			color: #f1e6d4;
+			color: var(--headings-color);
+		}
+
+		&:hover {
+			background: none;
+
+			.icon .border {
+				border-color: var(--accent-color);
+			}
+
+			.icon .dot {
+				background: var(--accent-color);
+			}
 		}
 	}
 
 	&.disabled {
 		pointer-events: none;
-		
+
 		.icon {
 			.border {
-				border: 1px solid #2b2f34;
+				border: 1px solid var(--separator-color-transparent);
 			}
 
 			.dot {
-				background: #2b2f34;
+				background: var(--separator-color-transparent);
 			}
 		}
 
 		.text {
-			color: #31353a;
+			color: var(--separator-color-halftransparent);
 		}
 	}
 
 	.text {
 		flex: 0 100%;
-		color: #c89b3c;
-		font: 400 12px/20px Alegreya Sans;
-		text-transform: uppercase;
+		color: var(--accent-color);
+		font: 500 12px/20px Alegreya Sans;
 		letter-spacing: 0.05em;
 		padding-left: 11px;
 	}

@@ -2,91 +2,136 @@ $modal-padding: 24px;
 
 .modal-backdrop {
 	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	top: 1px;
+	bottom: 1px;
+	left: 1px;
+	right: 1px;
 	display: flex;
-	background: rgba(0, 0, 0, 0.4);
+	background: var(--background-color-transparent06);
 	z-index: 10000;
 	justify-content: center;
 	align-items: center;
-	
+
 	.modal-container {
-		width: 380px;
 		height: auto;
-		background: #010a13;
-		border: 1px solid #785a28;
+		background: var(--background-color);
+		border: 1px solid var(--accent-color);
 		position: relative;
-		
+
 		&:before, &:after {
 			position: absolute;
 			display: block;
 			content: "";
-			@include calc(width, '100% - 10px');
-			height: 2px;
-			left: 4px;
-			background: #785a28;
+			border: 1px solid var(--accent-color);
+			pointer-events: none;
 		}
-		
+
 		&:before {
 			top: -5px;
+			width: calc(100% - 8px);
+			height: calc(100% + 8px);
+			left: 3px;
 		}
-		
+
 		&:after {
-			bottom: -5px;
+			left: -5px;
+			width: calc(100% + 8px);
+			height: calc(100% - 8px);
+			top: 3px;
 		}
-		
+
 		.modal-close {
 			width: 36px;
 			height: 36px;
 			display: block;
 			position: absolute;
 			border-radius: 50%;
-			background: #010a13;
-			border: 1px solid #785a28;
-			right: -18px;
-			top: -18px;
-			
-			> div {
-				border: 1.5px solid #bda36c;
-				border-radius: 50%;
-				color: #bda36c;
-				margin: 2px;
-				font: 14px/27px "C5AUI";
-				text-align: center;
+			background: var(--background-color);
+			border: 1px solid var(--accent-color);
+			right: -21px;
+			top: -21px;
+			z-index: 1100;
+
+			&::before, &::after {
+				display: block;
+				position: absolute;
+				content: "";
+				border: 1px solid var(--accent-color);
+				z-index: 1099;
 			}
-			
+
+			&::before {
+				height: 11px;
+				width: 22px;
+				top: 11px;
+				right: 16px;
+			}
+
+			&::after {
+				height: 22px;
+				width: 11px;
+				top: 16px;
+				right: 11px;
+			}
+
+			> div {
+				border: 2px solid var(--accent-color);
+				border-radius: 50%;
+				color: var(--accent-color);
+				margin: 2px;
+				font: 18px/26px Material;
+				text-align: center;
+				background: var(--background-color);
+				position: absolute;
+				z-index: 1100;
+				width: 30px;
+			}
+
 			&:hover {
 				cursor: pointer;
-				
+
 				> div {
-					color: #f1e6d4;
+					border-color: var(--headings-color);
+					color: var(--headings-color);
 				}
 			}
 		}
-		
+
 		.modal-header {
 			padding: $modal-padding $modal-padding $modal-padding * 5/8;
 
 			.modal-header-inner {
 				font: bold 20px/24px Alegreya SC;
-				color: #f1e6d4;
+				color: var(--headings-color);
 				letter-spacing: 0.1em;
 				text-transform: uppercase;
 			}
 		}
-		
+
+		.modal-close + .modal-content, .modal-content:nth-child(1) {
+			width: 298px;
+
+			.modal-content-inner {
+				padding: 16px 0 47px;
+				font: bold 16px/24px Alegreya SC;
+				color: var(--headings-color);
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				text-align: center;
+			}
+		}
+
 		.modal-content {
 			position: relative;
 			@include calc(height, "100% - 77px");
+			width: 378px;
 
 			.modal-content-inner {
-				color: #878683;
-				font: 11px/16px "Source Sans Pro";
+				color: var(--text-color);
+				font: 500 11px/16px Alegreya Sans;
 				letter-spacing: 0.05em;
 				padding: 0 $modal-padding 55px;
-				
+
 				p {
 					margin-top: 14px;
 
@@ -95,7 +140,7 @@ $modal-padding: 24px;
 						display: block;
 						letter-spacing: 0.03em;
 						line-height: 22px;
-						
+
 						&:hover {
 							color: #3685a7;
 							cursor: pointer;
@@ -104,15 +149,15 @@ $modal-padding: 24px;
 				}
 
 				> div {
-					&:first-child {
-						margin-top: 0;
-					}
-					
 					margin-top: 14px;
+				}
+
+				> div:first-child, > .checkbox + .checkbox {
+					margin-top: 0;
 				}
 			}
 		}
-			
+
 		.dialog-buttons {
 			display: flex;
 			justify-content: center;
@@ -121,30 +166,24 @@ $modal-padding: 24px;
 			height: 32px;
 			left: 0;
 			bottom: -1px;
-			
+
 			> .dialog-buttons-inner {
-				background: #010a13;
+				background: var(--background-color);
 				position: relative;
-				padding: 0 1px;
-				
+				padding: 0 2px;
+				border-width: 0 1px;
+				border-style: solid;
+				border-color: var(--accent-color);
+				z-index: 10001;
+
 				> div {
 					box-shadow: 0 none;
 					margin: 0 1px;
-				
-					&:first-child:before, &:last-child:after {
-						position: absolute;
-						display: block;
-						content: "";
-						height: 11px;
-						width: 1px;
-						bottom: 0;
-						background: #785a28;
-					}
-					
+
 					&:first-child:before {
 						left: -1px;
 					}
-					
+
 					&:last-child:after {
 						right: -1px;
 					}

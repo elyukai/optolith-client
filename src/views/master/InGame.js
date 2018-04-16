@@ -1,21 +1,23 @@
-import BorderButton from '../../components/BorderButton';
-import IconButton from '../../components/IconButton';
-import InGameActions from '../../actions/InGameActions';
-import InGameControls from './InGameControls';
-import InGameEdit from './InGameEdit';
-import InGameStore from '../../stores/InGameStore';
-import InGameTableHealth from './InGameTableHealth';
-import InGameTableIni from './InGameTableIni';
-import InGameTableLeft from './InGameTableLeft';
-import InGameTableRight from './InGameTableRight';
+import { BorderButton } from '../../components/BorderButton';
+import { createOverlay } from '../../utils/createOverlay';
+import { Dialog } from '../../components/Dialog';
+import { IconButton } from '../../components/IconButton';
+import { InGameActions } from '../../actions/InGameActions';
+import { InGameControls } from './InGameControls';
+import { InGameEdit } from './InGameEdit';
+import { InGameStore } from '../../stores/InGameStore';
+import { InGameTableHealth } from './InGameTableHealth';
+import { InGameTableIni } from './InGameTableIni';
+import { InGameTableLeft } from './InGameTableLeft';
+import { InGameTableRight } from './InGameTableRight';
 import React, { Component } from 'react';
-import Scroll from '../../components/Scroll';
-import TextField from '../../components/TextField';
-import classNames from 'classnames';
+import { Scroll } from '../../components/Scroll';
+import { TextField } from '../../components/TextField';
+import { classNames } from 'classnames';
 
-export default class InGame extends Component {
-	
-	state = { 
+export class InGame extends Component {
+
+	state = {
 		options: InGameStore.getOptions(),
 		fighters: InGameStore.getFighters(),
 		status: InGameStore.getStatus(),
@@ -27,8 +29,8 @@ export default class InGame extends Component {
 		editCast: InGameStore.getEditCast(),
 		editDuplicate: InGameStore.getEditDuplicate()
 	};
-	
-	_updateInGameStore = () => this.setState({ 
+
+	_updateInGameStore = () => this.setState({
 		options: InGameStore.getOptions(),
 		fighters: InGameStore.getFighters(),
 		status: InGameStore.getStatus(),
@@ -40,21 +42,30 @@ export default class InGame extends Component {
 		editCast: InGameStore.getEditCast(),
 		editDuplicate: InGameStore.getEditDuplicate()
 	});
-	
+
 	componentDidMount() {
 		InGameStore.addChangeListener(this._updateInGameStore );
 	}
-	
+
 	componentWillUnmount() {
 		InGameStore.removeChangeListener(this._updateInGameStore );
 	}
-	
+
 	load = () => InGameActions.load();
-	resetAll = () => InGameActions.resetAll();
+	resetAll = () => createOverlay(
+		<Dialog
+			title='Liste zurücksetzen'
+			buttons={[
+				{ label: 'Ja', onClick: InGameActions.resetAll },
+				{ label: 'Nein' }
+			]}>
+			Bist du dir sicher, dass du die gesamte Liste zurücksetzen möchtest? Der Vorgang kann nicht rückgängig gemacht werden!
+		</Dialog>
+	);
 	addFighter = () => InGameActions.addFighter();
-	
+
 	setOnline = event => InGameActions.setOnline(event.target.value);
-	
+
 	render() {
 
 		var className = classNames('ingame-table', {

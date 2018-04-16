@@ -1,4 +1,11 @@
 node_modules/
-npm-debug.log
+npm-debug.log*
 .vs/
-.vscode/
+/data/
+~$TDE5*
+/dist/
+.rpt2_cache
+.esm-cache
+app/**/*.js
+/installer/
+electron-builder.env

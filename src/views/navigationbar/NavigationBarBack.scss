@@ -1,0 +1,18 @@
+.navigationbar-back {
+	flex: 1 0 auto;
+	display: flex;
+	position: relative;
+	width: 32px;
+	align-items: center;
+
+	> div {
+		@include size(32px);
+		font: 32px TDE Heroes;
+		color: var(--accent-color);
+
+		&:hover {
+			cursor: pointer;
+			color: var(--headings-color);
+		}
+	}
+}

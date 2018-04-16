@@ -1,19 +1,19 @@
-import InGameActions from '../../actions/InGameActions';
+import { InGameActions } from '../../actions/InGameActions';
 import React, { Component } from 'react';
-import classNames from 'classnames';
+import { classNames } from 'classnames';
 
-export default class InGameTableRight extends Component {
+export class InGameTableRight extends Component {
 
 	static propTypes = {
 		fighters: React.PropTypes.array.isRequired,
 		options: React.PropTypes.object.isRequired
 	};
-	
+
 	useEndurance = id => InGameActions.useEndurance(id);
 	useAction = id => InGameActions.useAction(id);
 	useFreeAction = id => InGameActions.useFreeAction(id);
 	edit = id => InGameActions.edit(id);
-	
+
 	render() {
 		return (
 			<div className="ingame-table-right">
@@ -29,9 +29,9 @@ export default class InGameTableRight extends Component {
 					<tbody>
 						{
 							this.props.fighters.map((fighter) => {
-								
+
 								const className = classNames(fighter.deac && 'deac', fighter.type == 'f' && 'enemy');
-								
+
 								const actionsElement = fighter.cast > 0 ? (
 									<td className="a">
 										<div onClick={this.useAction.bind(null, fighter.id)}>
@@ -45,7 +45,7 @@ export default class InGameTableRight extends Component {
 										</div>
 									</td>
 								);
-								
+
 								return (
 									<tr key={'igtr-' + fighter.id} className={className}>
 										<td className="au">

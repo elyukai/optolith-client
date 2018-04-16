@@ -1,6 +1,5 @@
 .avatar-wrapper {
-	background: linear-gradient(to bottom, #9a7830 0%, #6d5024 100%);
-	padding: 2px;
+	border: 1px solid var(--accent-color);
 	border-radius: 50%;
 	position: relative;
 
@@ -8,13 +7,25 @@
 		@include size(100%);
 	}
 
+	&::after {
+		content: "";
+		position: absolute;
+		@include calc(width, "100% + 8px");
+		@include calc(height, "100% + 8px");
+		border: 1px solid var(--accent-color);
+		border-radius: 50%;
+		top: -5px;
+		left: -5px;
+	}
+
 	&.no-avatar {
-		border: 2px solid #2b2f34;
-		padding: 0;
-		background: none;
+		border-color: var(--separator-color-transparent);
+
+		&::after {
+			display: none;
+		}
 
 		> .avatar {
-			box-shadow: none;
 			background: none;
 		}
 	}

@@ -1,0 +1,33 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"importHelpers": true,
+		"jsx": "react",
+		"lib": [
+			"dom",
+			"esnext"
+		],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noEmitHelpers": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"outDir": "app/",
+		"removeComments": true,
+		"rootDir": "src/",
+		"strict": true,
+		"target": "es2017"
+	},
+	"include": [
+		"src/**/*",
+		"src/*"
+	],
+	"exclude": [
+		"node_modules",
+		"src/data/*"
+	]
+}

@@ -5,56 +5,60 @@
 
 	> div {
 		position: relative;
-		
+
 		> .value {
 			width: 100%;
 			height: 32px;
-			background: #11161c;
 			padding: 0 22px 0 11px;
 			margin: 0;
-			color: #a19b8f;
+			color: var(--headings-color);
 			display: block;
 			position: relative;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			border: 1px solid transparent;
-			border-image: linear-gradient(to bottom, #c6a767 0%, #ad8736 10%, #9a7830 76%, #6d5024 100%);
-			border-image-slice: 1;
-			box-shadow: 0 0 1px black inset;
+			border: 1px solid var(--accent-color);
+
+			&.hint {
+				color: var(--accent-color);
+			}
 
 			&:hover {
 				cursor: pointer;
+				color: var(--headings-color);
+				border-color: var(--headings-color);
+
+				&::before, &::after {
+					border-color: var(--headings-color);
+				}
 			}
 
 			&::before, &::after {
 				position: absolute;
 				content: "";
-				height: 2px;
-				width: 2px;
-				border-width: 1px;
-				border-style: solid;
-				border-color: #c5a461 #c5a461 transparent transparent;
-				right: 11px;
+				height: 6px;
+				width: 6px;
+				border: 1px solid var(--accent-color);
+				right: 9px;
 			}
-			
+
 			&::before {
-				top: 11px;
-				transform: rotate(-45deg);
+				top: 9px;
+				transform: rotate(45deg);
 			}
-			
+
 			&::after {
-				bottom: 11px;
-				transform: rotate(135deg);
+				bottom: 9px;
+				transform: rotate(45deg);
 			}
 		}
-	
+
 		> .down {
 			position: absolute;
 			width: 100%;
 			top: 32px;
 			left: 0;
-			z-index: 100;
+			z-index: 11000;
 			overflow: hidden;
 			height: 1px;
 			pointer-events: none;
@@ -62,24 +66,28 @@
 			> div {
 				position: relative;
 
-				.gm-scroll-view > div {
+				.scroll-view > div {
 					height: 32px;
 					padding: 0 11px;
-					line-height: 30px;
-					color: #ccbe91;
+					line-height: 12px;
+					color: var(--text-color);
 					position: relative;
-					
+					display: flex;
+					flex-wrap: wrap;
+					align-items: center;
+
 					&:not(:last-child) {
 						height: 33px;
-						border-bottom: 1px solid #1f282d;
+						border-bottom: 1px solid var(--separator-color-transparent);
 					}
-					
+
 					&:hover {
 						cursor: pointer;
-						color: #f1e6d4;
-						background: #1c2328;
+						color: var(--headings-color);
+						background: var(--separator-color-transparent);
+						border-color: transparent;
 					}
-				
+
 					&.active {
 						&:after {
 							content: "";
@@ -90,36 +98,45 @@
 							height: 4px;
 							border-width: 0 0 1px 1px;
 							border-style: solid;
-							border-color: #f1e6d4;
+							border-color: var(--headings-color);
 							transform: rotate(-45deg);
 						}
 					}
+
+					&.disabled {
+						color: var(--separator-color-halftransparent);
+						pointer-events: none;
+					}
+				}
+
+				.scroll-active .scroll-view > div.active:after {
+					right: 22px;
 				}
 			}
 		}
 	}
-			
+
+	.track-horizontal {
+		display: none;
+	}
+
 	&.active {
 		> div {
 			> .value {
-				color: #524018;
-				border-image: none;
-				border-color: #524018;
-				box-shadow: none;
-			
+				color: var(--accent-color-intense);
+				border-color: var(--accent-color-intense);
+
 				&::before, &::after {
-					border-color: #524018 #524018 transparent transparent;
+					border-color: var(--accent-color-intense);
 				}
 			}
-		
+
 			> .down {
 				transition: height 0.35s cubic-bezier(0.23, 1, 0.32, 1);
 				pointer-events: all;
 				display: block;
-				border: 1px solid transparent;
-				border-image: linear-gradient(to bottom, #524018 0%, #6d5024 100%);
-				border-image-slice: 1;
-				background: #11161c;
+				border: 1px solid var(--accent-color);
+				background: var(--background-color);
 			}
 		}
 	}
@@ -129,19 +146,37 @@
 
 		> div {
 			> .value {
-				color: #2b2f34;
+				color: var(--separator-color-halftransparent);
 				border-image: none;
-				border-color: #2b2f34;
+				border-color: var(--separator-color-transparent);
 				box-shadow: none;
 				background: transparent;
-			
+
 				&::before, &::after {
-					border-color: #2b2f34 #2b2f34 transparent transparent;
+					border-color: var(--separator-color-transparent);
 				}
 			}
 		}
 	}
-	
+
+	&.invalid:not(.disabled) {
+		label {
+			color: $unrecommended1;
+		}
+
+		> div {
+			> .value {
+				border-image: none;
+				border-color: $unrecommended2;
+				color: $unrecommended1;
+
+				&::before, &::after {
+					border-color: $unrecommended1 $unrecommended1 transparent transparent;
+				}
+			}
+		}
+	}
+
 	&.fullWidth {
 		width: auto;
 	}

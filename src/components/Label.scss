@@ -1,11 +1,11 @@
 label {
-	color: #a19b8f;
+	color: var(--text-color);
 	letter-spacing: 0.05em;
 	display: block;
 	font: 500 12px/1 Alegreya Sans;
 	padding-bottom: 6px;
 
 	&.disabled {
-		color: $color11;
+		color: var(--separator-color-halftransparent);
 	}
 }

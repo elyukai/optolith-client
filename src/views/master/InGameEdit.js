@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import InGameActions from '../../actions/InGameActions';
-import BorderButton from '../../components/BorderButton';
-import Dropdown from '../../components/Dropdown';
-import Slidein from '../../components/Slidein';
-import TextField from '../../components/TextField';
+import { InGameActions } from '../../actions/InGameActions';
+import { BorderButton } from '../../components/BorderButton';
+import { Dropdown } from '../../components/Dropdown';
+import { Slidein } from '../../components/Slidein';
+import { TextField } from '../../components/TextField';
 
-export default class InGameEdit extends Component {
-	
+export class InGameEdit extends Component {
+
 	static propTypes = {
 		editCast: React.PropTypes.string.isRequired,
 		editDuplicate: React.PropTypes.string.isRequired,
@@ -25,10 +25,10 @@ export default class InGameEdit extends Component {
 	duplicateFighter = () => InGameActions.duplicateFighter();
 	removeFighter = () => InGameActions.removeFighter();
 	closeEdit = () => InGameActions.closeEdit();
-	
+
 	render() {
 		return (
-			<Slidein isOpen={this.props.editIndex > -1} close={this.closeEdit}>
+			<Slidein isOpened={this.props.editIndex > -1} close={this.closeEdit}>
 				{
 					this.props.editIndex > -1 ? (
 						<div className="edit-inner">

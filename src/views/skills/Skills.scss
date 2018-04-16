@@ -1,18 +1,33 @@
-#talents {
-	tr {
-		@extend %tr-typ;
-		@extend %tr-untyp;
+#spells, #liturgies, .adding-spells, .adding-liturgical-chants {
+	li {
+		.values {
+			width: 252px;
+		}
+
+		&.no-increase .values {
+			width: 284px;
+
+			.fill {
+				margin-right: 10px;
+			}
+		}
+
+		.fill {
+			background-color: var(--separator-color-transparent);
+
+			&:first-child {
+				margin-right: 12px;
+			}
+
+			&:nth-child(4) {
+				margin-right: 8px;
+			}
+		}
 	}
 }
 
-#specialabilities {
-	tbody {
-		tr {
-			@extend %large-tr;
-
-			td.ap:last-child {
-				padding-right: 11px;
-			}
-		}
+.adding-spells, .adding-liturgical-chants {
+	.slidein li .values {
+		width: 208px;
 	}
 }
