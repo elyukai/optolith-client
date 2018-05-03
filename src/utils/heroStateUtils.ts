@@ -1,7 +1,7 @@
-import { getIdPrefix } from './rework_idUtils';
+import { getIdPrefix } from './IDUtils';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { HeroDependent, Dependent } from '../types/data';
-import { setListItem } from './rework_collectionUtils';
+import { HeroDependent, Dependent } from '../types/data.d';
+import { setListItem, removeListItem } from './collectionUtils';
 
 export type HeroStateListKey =
   'advantages' |
@@ -67,6 +67,22 @@ export function setHeroListStateItem<D extends Dependent = Dependent>(
     return {
       ...state,
       [key]: setListItem(state[key] as Map<string, D>, id, item),
+    };
+  }
+
+  return state;
+}
+
+export function removeHeroListStateItem<D extends Dependent = Dependent>(
+  state: HeroDependent,
+  id: string,
+): HeroDependent {
+  const key = getHeroStateListKeyById(id);
+
+  if (key) {
+    return {
+      ...state,
+      [key]: removeListItem(state[key] as Map<string, D>, id),
     };
   }
 

@@ -24,9 +24,9 @@
     "react-markdown": "^3.1.1",
     "react-portal": "^3.2.0",
     "react-progress-arc": "^1.0.7",
-    "react-redux": "^5.0.6",
+    "react-redux": "^5.0.7",
     "react-textfit": "^1.1.0",
-    "redux": "^3.7.2",
+    "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "remark-breaks": "^1.0.0",
     "reselect": "^3.0.1",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@types/classnames": "^0.0.32",
     "@types/electron-window-state": "^2.0.31",
+    "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.88",
     "@types/node": "^7.0.49",
     "@types/node-sass": "^3.10.32",
@@ -43,16 +44,16 @@
     "@types/react-custom-scrollbars": "^4.0.1",
     "@types/react-dom": "^16.0.3",
     "@types/react-portal": "^3.0.3",
-    "@types/react-redux": "^4.4.47",
+    "@types/react-redux": "^5.0.16",
     "@types/semver": "^5.4.0",
     "electron": "^2.0.0-beta.7",
     "electron-builder": "19.46.9",
     "electron-packager": "^8.7.2",
     "electron-winstaller": "^2.6.3",
-    "jest": "^19.0.2",
+    "jest": "^22.4.2",
     "node-sass": "^4.7.2",
-    "ts-jest": "^19.0.14",
-    "typescript": "^2.8.1",
+    "ts-jest": "^22.4.2",
+    "typescript": "^2.8.3",
     "xlsx": "^0.10.9"
   },
   "scripts": {
@@ -66,8 +67,23 @@
     "start": "electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",
-    "bundle_css": "node -r @std/esm bundleSass.mjs"
+    "bundle_css": "node -r @std/esm bundleSass.mjs",
+    "test": "jest"
   },
   "repository": {},
-  "false": {}
+  "false": {},
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

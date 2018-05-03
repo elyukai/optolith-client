@@ -6,22 +6,21 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import { WikiState } from '../reducers/wikiReducer';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
-import { getBlessedTraditionResultFunc } from '../selectors/liturgiesSelectors';
+import { getBlessedTraditionResultFunc } from '../selectors/liturgicalChantsSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
-import { ActivatableInstance, ActivatableNameCost, ActivatableNameCostEvalTier, ActivateArgs, ActiveObject, ActiveObjectWithId, ActiveViewObject, AdvantageInstance, AllRequirementObjects, CombatTechniqueInstance, DeactiveViewObject, DisadvantageInstance, RequirementObject, SkillInstance, SpecialAbilityInstance, SpellInstance, TalentInstance, ToOptionalKeys, UIMessages, ActivatableBasePrerequisites, ActivatableDependent, HeroDependent } from '../types/data.d';
+import * as Data from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
-import { Activatable, SelectionObject, Skillish, Application, WikiActivatable } from '../types/wiki';
-import * as DependentUtils from './DependentUtils';
+import { Activatable, SelectionObject, Skillish, Application } from '../types/wiki.d';
 import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getCategoryById } from './IDUtils';
-import { mergeIntoState, setStateItem, HeroStateReducer, getHeroStateListItem } from './ListUtils';
 import { getTraditionOfAspect, isOwnTradition } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateTier } from './RequirementUtils';
 import { getWikiEntry } from './WikiUtils';
 import { isStyleValidToRemove } from './ExtendedStyleUtils';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
+import { getHeroStateListItem } from './heroStateUtils';
 
 /**
  * Checks if the entry is active. This will be the case if there is at least one
@@ -38,15 +37,15 @@ export function isActive(obj: Data.ActivatableDependent | undefined): boolean {
  * @param instance The entry.
  */
 export function isActivatable(
-  state: HeroDependent,
+  state: Data.HeroDependent,
   wiki: WikiState,
   pact: Pact | undefined,
-  instance: ActivatableDependent,
+  instance: Data.ActivatableDependent,
 ): boolean {
   const wikiEntry = getWikiEntry<Activatable>(wiki, instance.id);
 
   if (wikiEntry && wikiEntry.category === Categories.SPECIAL_ABILITIES && [9, 10].includes(wikiEntry.gr)) {
-    const combinationSA = getHeroStateListItem<ActivatableDependent>(state, 'SA_164');
+    const combinationSA = getHeroStateListItem<Data.ActivatableDependent>(state, 'SA_164');
     if (!combinationSA) {
       const allStyles = getAllByCategoryGroup(dependent, Categories.SPECIAL_ABILITIES, 9, 10);
       const totalActive = allStyles.filter(e => isActive(e)).length;
@@ -225,18 +224,6 @@ export function getSelectionItem(obj: ActivatableInstance, id?: string | number)
 }
 
 /**
- * Get a selection option with the given id from given wiki entry. Returns
- * `undefined` if not found.
- * @param obj The entry.
- */
-export function findSelectOption(obj: Activatable, id?: string | number): SelectionObject | undefined {
-  if (obj.select) {
-    return obj.select.find(e => e.id === id);
-  }
-  return undefined;
-}
-
-/**
  * Get a selection option's name with the given id from given entry. Returns `undefined` if not found.
  * @param obj The entry.
  */
@@ -324,73 +311,6 @@ export function getSecondSidMap(entry: ActivatableInstance): Map<string, (string
   }
 
   return map;
-}
-
-/**
- * Some advantages, disadvantages and special abilities need more prerequisites
- * than given in their respective main array.
- * @param wikiEntry The entry for which you want to add the dependencies.
- * @param active The actual active object.
- * @param add States if the prerequisites should be added or removed (some
- * prerequisites must be calculated based on that).
- */
-export function getGeneratedPrerequisites(
-  wikiEntry: WikiActivatable,
-  instance: ActivatableDependent,
-  active: ActiveObject,
-  add: boolean,
-): AllRequirementTypes[] {
-  const { sid, sid2 } = active;
-
-  const adds: AllRequirementTypes[] = [];
-
-  switch (wikiEntry.id) {
-    case 'SA_3': {
-      const selectionItem = findSelectOption(wikiEntry, sid);
-      if (typeof selectionItem === 'object' && typeof selectionItem.req === 'object') {
-        adds.push(...selectionItem.req);
-      }
-      break;
-    }
-    case 'SA_9': {
-      interface SkillSelectionObject extends SelectionObject {
-        applications?: Application[];
-        applicationsInput?: string;
-      }
-
-      adds.push({ id: sid as string, value: (instance.active.filter(e => e.sid === sid).length + (add ? 1 : 0)) * 6 });
-
-      const selectedSkill = findSelectOption(wikiEntry, sid) as SkillSelectionObject | undefined;
-      const skillApplications = selectedSkill && selectedSkill.applications;
-      const selectedApplication = skillApplications && skillApplications.find(e => e.id === sid2);
-      const applicationPrerequisites = selectedApplication && selectedApplication.prerequisites;
-
-      if (typeof applicationPrerequisites === 'object') {
-        adds.push(...applicationPrerequisites);
-      }
-
-      break;
-    }
-    case 'SA_81':
-      adds.push({ id: 'SA_72', active: true, sid });
-      break;
-    case 'SA_414':
-    case 'SA_663': {
-      const selectionItem = findSelectOption(wikiEntry, sid) as SelectionObject & { req: RequirementObject[], target: string; tier: number; };
-      adds.push({ id: selectionItem.target, value: selectionItem.tier * 4 + 4 });
-      break;
-    }
-    case 'SA_639': {
-      const selectionItem = findSelectOption(wikiEntry, sid) as SelectionObject & { prerequisites: AllRequirementTypes[] };
-      adds.push(...selectionItem.prerequisites);
-      break;
-    }
-    case 'SA_699': {
-      adds.push({ id: 'SA_29', active: true, sid, tier: 3 });
-      break;
-    }
-  }
-  return adds;
 }
 
 /**

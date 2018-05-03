@@ -1,8 +1,11 @@
-import * as Data from '../types/data';
-import { WikiActivatable } from '../types/wiki';
-import { convertUIStateToActiveObject, flattenPrerequisites } from './rework_activatableConvertUtils';
-import { setHeroListStateItem } from './rework_heroStateUtils';
+import * as Data from '../types/data.d';
+import { WikiActivatable } from '../types/wiki.d';
+import { convertUIStateToActiveObject, flattenPrerequisites } from './activatableConvertUtils';
+import * as DependentUtils from './DependentUtils';
+import { setHeroListStateItem } from './heroStateUtils';
 import { flatten } from 'lodash';
+import { getGeneratedPrerequisites } from './prerequisitesUtils';
+import { ActivatableReducer } from './reducerUtils';
 
 export interface ActivatableActivatePayload extends ActivatableActivateOptions {
   wiki: WikiActivatable;
@@ -18,10 +21,6 @@ export interface ActivatableActivateOptions {
   cost: number;
   customCost?: number;
 }
-
-type ActivatableReducer =
-  (state: Data.HeroDependent, wikiEntry: WikiActivatable, instance: Data.ActivatableDependent) =>
-    Data.HeroDependent;
 
 /**
  * Activates the entry with the given parameters and adds all needed
@@ -42,7 +41,12 @@ export function activate(activate: ActivatableActivateOptions): ActivatableReduc
  */
 export function activateByObject(active: Data.ActiveObject): ActivatableReducer {
   return (state, wikiEntry, instance) => {
-    const adds = getGeneratedPrerequisites(obj, active, true);
+    const adds = getGeneratedPrerequisites(
+      wikiEntry,
+      instance,
+      active,
+      true,
+    );
 
     const newStateItem = {
       ...obj,
@@ -81,7 +85,13 @@ export function activateByObject(active: Data.ActiveObject): ActivatableReducer 
  */
 export function deactivate(index: number): ActivatableReducer {
   return (state, wikiEntry, instance) => {
-    const adds = getGeneratedPrerequisites(obj, obj.active[index], false);
+    const adds = getGeneratedPrerequisites(
+      wikiEntry,
+      instance,
+      instance.active[index],
+      false,
+    );
+
     const { tier } = obj.active[index];
     const firstState = setStateItem(state, obj.id, {...obj, active: [...obj.active.slice(0, index), ...obj.active.slice(index + 1)]});
     const prerequisites = flattenPrerequisites(wikiEntry.prerequisites, tier);

@@ -1,3 +1,6 @@
+import * as Data from '../types/data.d';
+import * as Wiki from '../types/wiki.d';
+
 export function reduce<T>(
 	initial: T
 ): (...reducers: ((current: T) => T)[]) => T;
@@ -16,3 +19,9 @@ export function reduce<T, T2, T3>(
 		}, initial);
 	};
 }
+
+export type ActivatableReducer = (
+  state: Data.HeroDependent,
+  wikiEntry: Wiki.WikiActivatable,
+  instance: Data.ActivatableDependent,
+) => Data.HeroDependent;

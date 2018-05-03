@@ -1,4 +1,4 @@
-export type SID = string | number | (string | number)[];
+export type SID = string | number | number[];
 
 export interface ValueOptionalDependency {
   /**

@@ -1,5 +1,7 @@
 import { UIMessages } from '../types/ui.d';
 
+export { UIMessages };
+
 /**
  * Displays a localized message and inserts values if necessary.
  * @param messages The object containing all translations.
@@ -23,10 +25,8 @@ export function _translate<T extends keyof UIMessages>(messages: UIMessages | un
 	return message;
 }
 
-export { UIMessages };
-
-export function _localizeNumber(number: number, locale: string) {
-	return number.toLocaleString(locale);
+export function _localizeNumber(n: number, locale: string) {
+	return n.toLocaleString(locale);
 }
 
 /**

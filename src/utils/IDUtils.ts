@@ -1,5 +1,6 @@
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
+import { match } from './match';
 
 export function getNewId(keys: string[]) {
   return keys.reduce((n, id) => {
@@ -12,40 +13,23 @@ export function getNewIdByDate() {
 }
 
 export function getCategoryById(id: string): Categories | undefined {
-  switch (getIdPrefix(id)) {
-    case IdPrefixes.ADVANTAGES:
-      return Categories.ADVANTAGES;
-    case IdPrefixes.ATTRIBUTES:
-      return Categories.ATTRIBUTES;
-    case IdPrefixes.BLESSINGS:
-      return Categories.BLESSINGS;
-    case IdPrefixes.CANTRIPS:
-      return Categories.CANTRIPS;
-    case IdPrefixes.COMBAT_TECHNIQUES:
-      return Categories.COMBAT_TECHNIQUES;
-    case IdPrefixes.CULTURES:
-      return Categories.CULTURES;
-    case IdPrefixes.DISADVANTAGES:
-      return Categories.DISADVANTAGES;
-    case IdPrefixes.LITURGIES:
-      return Categories.LITURGIES;
-    case IdPrefixes.PROFESSIONS:
-      return Categories.PROFESSIONS;
-    case IdPrefixes.PROFESSION_VARIANTS:
-      return Categories.PROFESSION_VARIANTS;
-    case IdPrefixes.RACES:
-      return Categories.RACES;
-    case IdPrefixes.RACE_VARIANTS:
-      return Categories.RACE_VARIANTS;
-    case IdPrefixes.SPECIAL_ABILITIES:
-      return Categories.SPECIAL_ABILITIES;
-    case IdPrefixes.SPELLS:
-      return Categories.SPELLS;
-    case IdPrefixes.TALENTS:
-      return Categories.TALENTS;
-    default:
-      return undefined;
-  }
+  return match<IdPrefixes, Categories | undefined>(getIdPrefix(id))
+    .on(pre => pre === IdPrefixes.ADVANTAGES, () => Categories.ADVANTAGES)
+    .on(pre => pre === IdPrefixes.ATTRIBUTES, () => Categories.ATTRIBUTES)
+    .on(pre => pre === IdPrefixes.BLESSINGS, () => Categories.BLESSINGS)
+    .on(pre => pre === IdPrefixes.CANTRIPS, () => Categories.CANTRIPS)
+    .on(pre => pre === IdPrefixes.COMBAT_TECHNIQUES, () => Categories.COMBAT_TECHNIQUES)
+    .on(pre => pre === IdPrefixes.CULTURES, () => Categories.CULTURES)
+    .on(pre => pre === IdPrefixes.DISADVANTAGES, () => Categories.DISADVANTAGES)
+    .on(pre => pre === IdPrefixes.LITURGIES, () => Categories.LITURGIES)
+    .on(pre => pre === IdPrefixes.PROFESSIONS, () => Categories.PROFESSIONS)
+    .on(pre => pre === IdPrefixes.PROFESSION_VARIANTS, () => Categories.PROFESSION_VARIANTS)
+    .on(pre => pre === IdPrefixes.RACES, () => Categories.RACES)
+    .on(pre => pre === IdPrefixes.RACE_VARIANTS, () => Categories.RACE_VARIANTS)
+    .on(pre => pre === IdPrefixes.SPECIAL_ABILITIES, () => Categories.SPECIAL_ABILITIES)
+    .on(pre => pre === IdPrefixes.SPELLS, () => Categories.SPELLS)
+    .on(pre => pre === IdPrefixes.TALENTS, () => Categories.TALENTS)
+    .otherwise(() => undefined);
 }
 
 export function getNumericId(id: string): number {

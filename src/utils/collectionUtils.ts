@@ -1,7 +1,5 @@
 import { DependentInstancesState, DependentInstancesStateKeysForMaps } from '../reducers/dependentInstances';
-import { ToOptionalKeys, HeroDependent, Dependent } from '../types/data.d';
-import { AbilityInstanceExtended, Instance } from '../types/data.d';
-import { getStateKeyById, getHeroStateListKeyById } from './IDUtils';
+import { ToOptionalKeys, HeroDependent, Dependent, AbilityInstanceExtended, Instance } from '../types/data.d';
 
 /**
  * Merges a Map into another Map. Returns a new Map if the second map has entries.
