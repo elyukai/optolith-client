@@ -25,3 +25,9 @@ export type ActivatableReducer = (
   wikiEntry: Wiki.WikiActivatable,
   instance: Data.ActivatableDependent,
 ) => Data.HeroDependent;
+
+export type OptionalActivatableReducer = (
+  state: Data.HeroDependent,
+  wikiEntry: Wiki.WikiActivatable,
+  instance?: Data.ActivatableDependent,
+) => Data.HeroDependent;

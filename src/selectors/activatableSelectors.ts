@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Categories, ACTIVATABLE } from '../constants/Categories';
+import { Categories, ActivatableCategory } from '../constants/Categories';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import * as Data from '../types/data.d';
 import { convertPerTierCostToFinalCost, getActiveFromState, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
@@ -26,7 +26,7 @@ export function getForSave(state: DependentInstancesState): Data.ToListById<Data
   return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
 }
 
-export const getActive = <T extends ACTIVATABLE>(category: T, addTierToName: boolean) => {
+export const getActive = <T extends ActivatableCategory>(category: T, addTierToName: boolean) => {
   return createSelector(
     getAdvantages,
     getDisadvantages,
@@ -86,11 +86,11 @@ export const getActive = <T extends ACTIVATABLE>(category: T, addTierToName: boo
   );
 };
 
-export const getActiveForView = <T extends ACTIVATABLE>(category: T) => {
+export const getActiveForView = <T extends ActivatableCategory>(category: T) => {
   return getActive(category, false);
 };
 
-export const getActiveForEditView = <T extends ACTIVATABLE>(category: T) => {
+export const getActiveForEditView = <T extends ActivatableCategory>(category: T) => {
   return getActive(category, true);
 };
 

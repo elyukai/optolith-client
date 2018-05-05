@@ -2,7 +2,7 @@ import { Categories } from '../constants/Categories';
 import * as Data from "../types/data.d";
 import { ValueOptionalDependency } from '../types/reusable.d';
 import { addToArray } from './collectionUtils';
-import * as CreateDependencyObjectUtils from './createDependencyObjectUtils';
+import * as CreateEntryUtils from './createEntryUtils';
 import { getHeroStateListItem, setHeroListStateItem } from './heroStateUtils';
 import { getCategoryById } from './IDUtils';
 
@@ -29,7 +29,9 @@ export function addAttributeDependency(
   return setHeroListStateItem(
     state,
     id,
-    CreateDependencyObjectUtils.createAttributeDependent(id, 8, 0, [value]),
+    CreateEntryUtils.createAttributeDependent(id, {
+      dependencies: [value],
+    }),
   );
 }
 
@@ -54,14 +56,18 @@ export function addIncreasableDependency(
     return setHeroListStateItem(
       state,
       id,
-      CreateDependencyObjectUtils.createActivatableDependentSkill(id, 0, false, [value]),
+      CreateEntryUtils.createActivatableDependentSkill(id, {
+        dependencies: [value],
+      }),
     );
   }
 
   return setHeroListStateItem(
     state,
     id,
-    CreateDependencyObjectUtils.createDependentSkill(id, 0, [value]),
+    CreateEntryUtils.createDependentSkill(id, {
+      dependencies: [value],
+    }),
   );
 }
 
@@ -83,6 +89,8 @@ export function addActivatableDependency(
   return setHeroListStateItem(
     state,
     id,
-    CreateDependencyObjectUtils.createActivatableDependent(id, [], [value]),
+    CreateEntryUtils.createActivatableDependent(id, {
+      dependencies: [value],
+    }),
   );
 }

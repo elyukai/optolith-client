@@ -1,11 +1,11 @@
-import * as Data from "../types/data.d";
-import { removeFromArray } from './collectionUtils';
-import { getHeroStateListItem, setHeroListStateItem, removeHeroListStateItem } from './heroStateUtils';
-import * as InitHeroUtils from './initHeroUtils';
-import { ValueOptionalDependency } from '../types/reusable';
 import { isEqual } from 'lodash';
+import * as Data from "../types/data.d";
+import { ValueOptionalDependency } from '../types/reusable.d';
+import { removeFromArray } from './collectionUtils';
+import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
+import * as UnusedEntryUtils from './unusedEntryUtils';
 
-function removeDependency<T extends Data.Dependent, D>(obj: T, remove: D): T {
+const removeDependency = <T extends Data.Dependent, D>(obj: T, remove: D): T => {
   let index;
 
   if (typeof remove === 'object') {
@@ -23,7 +23,7 @@ function removeDependency<T extends Data.Dependent, D>(obj: T, remove: D): T {
   }
 
   return obj;
-}
+};
 
 export function removeAttributeDependency(
   state: Data.HeroDependent,
@@ -35,7 +35,7 @@ export function removeAttributeDependency(
   if (entry) {
     const newEntry = removeDependency(entry, value);
 
-    if (InitHeroUtils.isAttributeDependentUnused(newEntry)) {
+    if (UnusedEntryUtils.isAttributeDependentUnused(newEntry)) {
       return removeHeroListStateItem(state, id);
     }
 
@@ -55,15 +55,15 @@ export function removeIncreasableDependency(
   if (entry) {
     const newEntry = removeDependency(entry, value);
 
-    if (InitHeroUtils.isActivatableDependentSkill(newEntry)) {
-      if (InitHeroUtils.isActivatableDependentSkillUnused(newEntry)) {
+    if (UnusedEntryUtils.isActivatableDependentSkill(newEntry)) {
+      if (UnusedEntryUtils.isActivatableDependentSkillUnused(newEntry)) {
         return removeHeroListStateItem(state, id);
       }
 
       return setHeroListStateItem(state, id, newEntry);
     }
 
-    if (InitHeroUtils.isDependentSkillUnused(newEntry)) {
+    if (UnusedEntryUtils.isDependentSkillUnused(newEntry)) {
       return removeHeroListStateItem(state, id);
     }
 
@@ -83,7 +83,7 @@ export function removeActivatableDependency(
   if (entry) {
     const newEntry = removeDependency(entry, value);
 
-    if (InitHeroUtils.isActivatableDependentUnused(newEntry)) {
+    if (UnusedEntryUtils.isActivatableDependentUnused(newEntry)) {
       return removeHeroListStateItem(state, id);
     }
 

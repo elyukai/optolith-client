@@ -1,5 +1,4 @@
-import { DependentInstancesState, DependentInstancesStateKeysForMaps } from '../reducers/dependentInstances';
-import { ToOptionalKeys, HeroDependent, Dependent, AbilityInstanceExtended, Instance } from '../types/data.d';
+import { Dependent, HeroDependent } from '../types/data.d';
 
 /**
  * Merges a Map into another Map. Returns a new Map if the second map has entries.
@@ -34,61 +33,61 @@ export function removeListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey)
   return newlist;
 }
 
-export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToOptionalKeys<DependentInstancesState>, id: string, item: T) {
-  const key = getStateKeyById(id);
-  if (key) {
-    let slice = newstate[key] as Map<string, T> | undefined;
-    if (slice) {
-      slice = setListItem(slice, id, item);
-    }
-    else {
-      slice = new Map().set(id, item);
-    }
-    return {
-      ...newstate,
-      [key]: slice
-    };
-  }
-  return newstate;
-}
+// export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToOptionalKeys<DependentInstancesState>, id: string, item: T) {
+//   const key = getStateKeyById(id);
+//   if (key) {
+//     let slice = newstate[key] as Map<string, T> | undefined;
+//     if (slice) {
+//       slice = setListItem(slice, id, item);
+//     }
+//     else {
+//       slice = new Map().set(id, item);
+//     }
+//     return {
+//       ...newstate,
+//       [key]: slice
+//     };
+//   }
+//   return newstate;
+// }
 
-export function setStateItem<T extends Instance>(newstate: DependentInstancesState, id: string, item: T) {
-  const key = getStateKeyById(id);
-  if (key) {
-    return {
-      ...newstate,
-      [key]: setListItem(newstate[key] as Map<string, T>, id, item)
-    };
-  }
-  return newstate;
-}
+// export function setStateItem<T extends Instance>(newstate: DependentInstancesState, id: string, item: T) {
+//   const key = getStateKeyById(id);
+//   if (key) {
+//     return {
+//       ...newstate,
+//       [key]: setListItem(newstate[key] as Map<string, T>, id, item)
+//     };
+//   }
+//   return newstate;
+// }
 
-export function mergeIntoState(
-  oldState: DependentInstancesState,
-  ...newStates: ToOptionalKeys<DependentInstancesState>[]
-): DependentInstancesState {
-  const total = { ...oldState };
+// export function mergeIntoState(
+//   oldState: DependentInstancesState,
+//   ...newStates: ToOptionalKeys<DependentInstancesState>[]
+// ): DependentInstancesState {
+//   const total = { ...oldState };
 
-  for (const newState of newStates) {
-    const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
+//   for (const newState of newStates) {
+//     const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
 
-    for (const key of keys) {
-      if (key === 'blessedStyleDependencies' ||
-        key === 'combatStyleDependencies' ||
-        key === 'magicalStyleDependencies') {
-        const arr = newState[key];
-        if (typeof arr === 'object') {
-          total[key] = arr;
-        }
-      }
-      else {
-        total[key] = mergeIntoStateSlice(total[key], newState[key]);
-      }
-    }
-  }
+//     for (const key of keys) {
+//       if (key === 'blessedStyleDependencies' ||
+//         key === 'combatStyleDependencies' ||
+//         key === 'magicalStyleDependencies') {
+//         const arr = newState[key];
+//         if (typeof arr === 'object') {
+//           total[key] = arr;
+//         }
+//       }
+//       else {
+//         total[key] = mergeIntoStateSlice(total[key], newState[key]);
+//       }
+//     }
+//   }
 
-  return total;
-}
+//   return total;
+// }
 
 export type HeroStateReducer<I extends Dependent> =
   (state: HeroDependent, instance: I) =>
@@ -98,91 +97,91 @@ export type HeroStateNoInstanceReducer =
   (state: HeroDependent) =>
     HeroDependent;
 
-export type InstancesStateReducer<I extends Instance> =
-  (state: DependentInstancesState, instance: I) =>
-    ToOptionalKeys<DependentInstancesState>;
+// export type InstancesStateReducer<I extends Instance> =
+//   (state: DependentInstancesState, instance: I) =>
+//     ToOptionalKeys<DependentInstancesState>;
 
-export type InstancesStateReducerNoInstance =
-  (state: DependentInstancesState) =>
-    ToOptionalKeys<DependentInstancesState>;
+// export type InstancesStateReducerNoInstance =
+//   (state: DependentInstancesState) =>
+//     ToOptionalKeys<DependentInstancesState>;
 
-export type BothInstancesStateReducer<I extends Instance> =
-  (state: DependentInstancesState, instance?: I) =>
-    ToOptionalKeys<DependentInstancesState>;
+// export type BothInstancesStateReducer<I extends Instance> =
+//   (state: DependentInstancesState, instance?: I) =>
+//     ToOptionalKeys<DependentInstancesState>;
 
-export function mergeReducedOptionalState(
-  oldState: DependentInstancesState,
-  ...reducers: InstancesStateReducerNoInstance[]
-): DependentInstancesState;
-export function mergeReducedOptionalState<I extends Instance>(
-  oldState: DependentInstancesState,
-  instance: I,
-  ...reducers: InstancesStateReducer<I>[]
-): DependentInstancesState;
-export function mergeReducedOptionalState<I extends Instance>(
-  oldState: DependentInstancesState,
-  instance?: I,
-  ...reducers: BothInstancesStateReducer<I>[]
-): DependentInstancesState {
-  return reducers.reduce(
-    (oldState, reducer) => {
-      const oldStateCopy = {
-        ...oldState
-      };
+// export function mergeReducedOptionalState(
+//   oldState: DependentInstancesState,
+//   ...reducers: InstancesStateReducerNoInstance[]
+// ): DependentInstancesState;
+// export function mergeReducedOptionalState<I extends Instance>(
+//   oldState: DependentInstancesState,
+//   instance: I,
+//   ...reducers: InstancesStateReducer<I>[]
+// ): DependentInstancesState;
+// export function mergeReducedOptionalState<I extends Instance>(
+//   oldState: DependentInstancesState,
+//   instance?: I,
+//   ...reducers: BothInstancesStateReducer<I>[]
+// ): DependentInstancesState {
+//   return reducers.reduce(
+//     (oldState, reducer) => {
+//       const oldStateCopy = {
+//         ...oldState
+//       };
 
-      const newState = reducer(oldStateCopy, instance);
+//       const newState = reducer(oldStateCopy, instance);
 
-      const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
+//       const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
 
-      for (const key of keys) {
-        if (key === 'blessedStyleDependencies' ||
-          key === 'combatStyleDependencies' ||
-          key === 'magicalStyleDependencies') {
-          const arr = newState[key];
-          if (typeof arr === 'object') {
-            oldStateCopy[key] = arr;
-          }
-        }
-        else {
-          oldStateCopy[key] = mergeIntoStateSlice(oldStateCopy[key], newState[key]);
-        }
-      }
+//       for (const key of keys) {
+//         if (key === 'blessedStyleDependencies' ||
+//           key === 'combatStyleDependencies' ||
+//           key === 'magicalStyleDependencies') {
+//           const arr = newState[key];
+//           if (typeof arr === 'object') {
+//             oldStateCopy[key] = arr;
+//           }
+//         }
+//         else {
+//           oldStateCopy[key] = mergeIntoStateSlice(oldStateCopy[key], newState[key]);
+//         }
+//       }
 
-      return oldStateCopy;
-    },
-    { ...oldState }
-  );
-}
+//       return oldStateCopy;
+//     },
+//     { ...oldState }
+//   );
+// }
 
-export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
-  const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
+// export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
+//   const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
 
-  const total = { ...oldstate };
-  for (const key of keys) {
-    if (key !== 'blessedStyleDependencies' && key !== 'combatStyleDependencies' && key !== 'magicalStyleDependencies') {
-      total[key] = mergeIntoOptionalStateSlice(total[key], newstate[key]);
-    }
-  }
+//   const total = { ...oldstate };
+//   for (const key of keys) {
+//     if (key !== 'blessedStyleDependencies' && key !== 'combatStyleDependencies' && key !== 'magicalStyleDependencies') {
+//       total[key] = mergeIntoOptionalStateSlice(total[key], newstate[key]);
+//     }
+//   }
 
-  return total;
-}
+//   return total;
+// }
 
-function mergeIntoStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
-  if (newslice) {
-    return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
-  }
-  return oldslice;
-}
+// function mergeIntoStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+//   if (newslice) {
+//     return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+//   }
+//   return oldslice;
+// }
 
-function mergeIntoOptionalStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
-  if (newslice && oldslice) {
-    return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
-  }
-  else if (newslice) {
-    return newslice;
-  }
-  return oldslice;
-}
+// function mergeIntoOptionalStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
+//   if (newslice && oldslice) {
+//     return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
+//   }
+//   else if (newslice) {
+//     return newslice;
+//   }
+//   return oldslice;
+// }
 
 interface StringObject<V> {
   [id: string]: V;
@@ -218,13 +217,26 @@ export function addToArray<T>(array: T[], add: T): T[] {
 }
 
 /**
+ * Sets an element in an array by index and returns a new array.
+ * @param array
+ * @param index
+ * @param add
+ */
+export function setArrayItem<T>(array: T[], index: number, add: T): T[] {
+  const arr = [ ...array ];
+  arr[index] = add;
+  return arr;
+}
+
+/**
  * Removes an element at the given index and returns a new array with the
  * remaining elements.
  * @param array
  * @param index
  */
 export function removeFromArray<T>(array: T[], index: number): T[] {
-  const newArray = [ ...array ];
-  newArray.splice(index, 1);
-  return newArray;
+  return [
+    ...array.slice(0, index),
+    ...array.slice(index + 1)
+  ];
 }

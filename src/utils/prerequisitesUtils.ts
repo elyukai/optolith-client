@@ -1,6 +1,6 @@
 import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
 import * as Reusable from '../types/reusable.d';
+import * as Wiki from '../types/wiki.d';
 import { findSelectOption } from './selectionUtils';
 
 /**
@@ -97,3 +97,17 @@ export function getGeneratedPrerequisites(
   }
   return adds;
 }
+
+export const addDynamicPrerequisites = (
+  wikiEntry: Wiki.WikiActivatable,
+  instance: Data.ActivatableDependent,
+  active: Data.ActiveObject,
+  add: boolean,
+) => (
+  prerequisites: Wiki.AllRequirements[],
+): Wiki.AllRequirements[] => {
+  return [
+    ...prerequisites,
+    ...getGeneratedPrerequisites(wikiEntry, instance, active, add),
+  ];
+};

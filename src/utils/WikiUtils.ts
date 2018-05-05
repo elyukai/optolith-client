@@ -3,8 +3,7 @@ import { WikiState } from '../reducers/wikiReducer';
 import { ActivatableInstance } from '../types/data';
 import { Profession as ProfessionView } from '../types/view';
 import { Advantage, Blessing, Cantrip, CombatTechnique, CombatTechniquesSelection, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, ProfessionVariantSelection, Race, RaceVariant, RemoveCombatTechniquesSecondSelection, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, Spell } from '../types/wiki';
-import { getWikiStateKeyById } from './IDUtils';
-import { getIdPrefix } from './rework_idUtils';
+import { getIdPrefix } from './IDUtils';
 import { IdPrefixes } from '../constants/IdPrefixes';
 
 type Element = Race | RaceVariant | Culture | Profession | ProfessionVariant | Advantage | Disadvantage | Skill | CombatTechnique | SpecialAbility | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate;

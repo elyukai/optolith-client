@@ -1,16 +1,18 @@
-import { flatten, last } from 'lodash';
+import { last } from 'lodash';
 import { Pact } from '../actions/PactActions';
 import { Categories } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { DependentInstancesState } from '../reducers/dependentInstances';
 import { WikiState } from '../reducers/wikiReducer';
+import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { get, getAllByCategory, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
 import { getBlessedTraditionResultFunc } from '../selectors/liturgicalChantsSelectors';
 import { getMagicalTraditionsResultFunc } from '../selectors/spellsSelectors';
 import * as Data from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
-import { Activatable, SelectionObject, Skillish, Application } from '../types/wiki.d';
+import { Activatable, Application, SelectionObject, Skillish } from '../types/wiki.d';
+import { isStyleValidToRemove } from './ExtendedStyleUtils';
 import { sortObjects, sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getCategoryById } from './IDUtils';
@@ -18,8 +20,6 @@ import { getTraditionOfAspect, isOwnTradition } from './LiturgyUtils';
 import { getRoman } from './NumberUtils';
 import { getFlatFirstTierPrerequisites, getFlatPrerequisites, getMinTier, isRequiringActivatable, validate, validateObject, validateTier } from './RequirementUtils';
 import { getWikiEntry } from './WikiUtils';
-import { isStyleValidToRemove } from './ExtendedStyleUtils';
-import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getHeroStateListItem } from './heroStateUtils';
 
 /**

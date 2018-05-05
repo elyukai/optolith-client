@@ -1,4 +1,4 @@
-import { ACTIVATABLE, Categories } from '../constants/Categories';
+import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as stateSelectors from './stateSelectors';
 import { createSelector } from 'reselect';
@@ -19,7 +19,7 @@ export const getExtendedSpecialAbilitiesToAdd = createSelector(
   }
 );
 
-export const getDeactiveForView = <T extends ACTIVATABLE>(category: T) => {
+export const getDeactiveForView = <T extends ActivatableCategory>(category: T) => {
   return createSelector(
     stateSelectors.getCurrentHeroPresent,
     stateSelectors.getLocaleMessages,

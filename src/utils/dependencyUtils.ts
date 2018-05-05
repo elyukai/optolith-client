@@ -1,24 +1,36 @@
-import { HeroDependent, ActivatableInstanceDependency, AllRequirements } from '../types/data.d';
+import { ActivatableInstanceDependency, AllRequirements, HeroDependent } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
-import * as RequirementUtils from './RequirementUtils';
-import { getPrimaryAttributeId } from './AttributeUtils';
-import { ActivatableReducer } from './reducerUtils';
 import * as AddDependencyUtils from './addDependencyUtils';
+import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
+import { getPrimaryAttributeId } from './primaryAttributeUtils';
+import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
+
+type ModifyAttributeDependency =
+  (state: HeroDependent, id: string, value: number) =>
+    HeroDependent;
+
+type ModifyIncreasableDependency =
+  (state: HeroDependent, id: string, value: number | ValueOptionalDependency) =>
+    HeroDependent;
+
+type ModifyActivatableDependency =
+  (state: HeroDependent, id: string, value: ActivatableInstanceDependency) =>
+    HeroDependent;
 
 function modifyDependencies(
   state: HeroDependent,
   prerequisites: AllRequirements[],
   sourceId: string,
-  modifyAttributeDependency: (state: HeroDependent, id: string, value: number) => HeroDependent,
-  modifyIncreasableDependency: (state: HeroDependent, id: string, value: number | ValueOptionalDependency) => HeroDependent,
-  modifyActivatableDependency: (state: HeroDependent, id: string, value: ActivatableInstanceDependency) => HeroDependent,
+  modifyAttributeDependency: ModifyAttributeDependency,
+  modifyIncreasableDependency: ModifyIncreasableDependency,
+  modifyActivatableDependency: ModifyActivatableDependency,
 ): HeroDependent {
   let newState = { ...state };
 
   for (const req of prerequisites) {
-    if (RequirementUtils.isDependentPrerequisite(req)) {
-      if (RequirementUtils.isRequiringPrimaryAttribute(req)) {
+    if (CheckPrerequisiteUtils.isDependentPrerequisite(req)) {
+      if (CheckPrerequisiteUtils.isRequiringPrimaryAttribute(req)) {
         const { type, value } = req;
 
         const id = getPrimaryAttributeId(state.specialAbilities, type);
@@ -27,7 +39,7 @@ function modifyDependencies(
           newState = modifyAttributeDependency(newState, id, value);
         }
       }
-      else if (RequirementUtils.isRequiringIncreasable(req)) {
+      else if (CheckPrerequisiteUtils.isRequiringIncreasable(req)) {
         const { id, value } = req;
 
         if (Array.isArray(id)) {

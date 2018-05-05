@@ -2,13 +2,9 @@ import { Categories } from '../constants/Categories';
 import { CurrentHeroInstanceState } from '../reducers/currentHero';
 import { get, getAllByCategory } from '../selectors/dependentInstancesSelectors';
 import { getStart } from '../selectors/elSelectors';
-import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance, ActivatableDependent } from '../types/data.d';
+import { AttributeInstance, RequirementObject, SpecialAbilityInstance, TalentInstance } from '../types/data.d';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
-import { getNumericBlessedTraditionIdByInstanceId } from './LiturgyUtils';
 import { getFlatPrerequisites } from './RequirementUtils';
-import { getNumericMagicalTraditionIdByInstanceId } from './SpellUtils';
-import { getMagicalTraditionsResultFunc } from '../selectors/rework_spellsSelectors';
-import { getBlessedTraditionResultFunc } from '../selectors/rework_liturgicalChantsSelectors';
 
 export function getSum(list: AttributeInstance[]): number {
   return list.reduce((n, e) => n + e.value, 0);
@@ -77,55 +73,4 @@ export function convertId<T extends string | undefined>(id: T): T {
     default:
       return id;
   }
-}
-
-export function getPrimaryAttributeId(state: Map<string, ActivatableDependent>, type: 1 | 2) {
-  if (type === 1) {
-    const traditions = getMagicalTraditionsResultFunc(state);
-    if (traditions.length > 0) {
-      switch (getNumericMagicalTraditionIdByInstanceId(traditions[0].id)) {
-        case 1:
-        case 4:
-        case 10:
-          return 'ATTR_2';
-        case 3:
-          return 'ATTR_3';
-        case 2:
-        case 5:
-        case 6:
-        case 7:
-          return 'ATTR_4';
-      }
-    }
-  }
-  else if (type === 2) {
-    const tradition = getBlessedTraditionResultFunc(state);
-    if (tradition) {
-      switch (getNumericBlessedTraditionIdByInstanceId(tradition.id)) {
-        case 2:
-        case 3:
-        case 9:
-        case 13:
-        case 16:
-        case 18:
-          return 'ATTR_1';
-        case 1:
-        case 4:
-        case 8:
-        case 17:
-          return 'ATTR_2';
-        case 5:
-        case 6:
-        case 11:
-        case 14:
-          return 'ATTR_3';
-        case 7:
-        case 10:
-        case 12:
-        case 15:
-          return 'ATTR_4';
-      }
-    }
-  }
-  return;
 }

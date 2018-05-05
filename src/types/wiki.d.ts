@@ -1,5 +1,5 @@
-import * as Reusable from './reusable.d';
 import { Categories } from '../constants/Categories';
+import * as Reusable from './reusable.d';
 import { AllRequirementTypes } from './reusable.d';
 
 export interface WikiEntryByCategory {
@@ -307,9 +307,11 @@ export interface SelectionObject {
 }
 
 export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
-export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement;
-export type AllRequirements = 'RCP' | Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement;
+export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement | Reusable.PactRequirement;
+export type AllRequirements = 'RCP' | AllRequirementObjects;
 export type ActivatablePrerequisites = ('RCP' | AllRequirementTypes)[];
+export type LevelAwareActivatablePrerequisites =
+  ActivatablePrerequisites | Map<number, ActivatablePrerequisites>;
 
 interface ActivatableBase {
 	readonly id: string;
@@ -317,7 +319,7 @@ interface ActivatableBase {
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly prerequisites: ActivatablePrerequisites | Map<number, ActivatablePrerequisites>;
+	readonly prerequisites: LevelAwareActivatablePrerequisites;
 	readonly prerequisitesText?: string;
 	/**
 	 * 0-based index as key!

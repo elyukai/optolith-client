@@ -1,7 +1,7 @@
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Raw from '../types/rawdata.d';
-import * as CreateDependencyObjectUtils from './createDependencyObjectUtils';
+import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { convertObjectToMap } from './ListUtils';
 import { getCategoryById } from './IDUtils';
 import { currentVersion } from './VersionUtils';
@@ -202,10 +202,10 @@ function getPets(hero: Raw.RawHero): Map<string, Data.PetInstance> {
 function getActivatableDependent(source: Data.ToListById<Data.ActiveObject[]>): Map<string, Data.ActivatableDependent> {
   return new Map(
     Object.entries(source).map<[string, Data.ActivatableDependent]>(
-      ([id, value]) => {
+      ([id, active]) => {
         return [
           id,
-          CreateDependencyObjectUtils.createActivatableDependent(id, value),
+          CreateDependencyObjectUtils.createActivatableDependent(id, { active }),
         ];
       }
     )
@@ -218,7 +218,7 @@ function getDependentSkills(source: Data.ToListById<number>): Map<string, Data.S
       ([id, value]) => {
         return [
           id,
-          CreateDependencyObjectUtils.createDependentSkill(id, value),
+          CreateDependencyObjectUtils.createDependentSkill(id, { value }),
         ];
       }
     )
@@ -231,36 +231,14 @@ function getActivatableDependentSkills(source: Data.ToListById<number>): Map<str
       ([id, value]) => {
         return [
           id,
-          CreateDependencyObjectUtils.createActivatableDependentSkill(id, value, true),
+          CreateDependencyObjectUtils.createActivatableDependentSkill(id, { active: true, value }),
         ];
       }
     )
   );
 }
 
-export function isAttributeDependentUnused(entry: Data.AttributeDependent): boolean {
-  const { value, mod, dependencies } = entry;
-  return value === 8 && mod === 0 && dependencies.length === 0;
-}
 
-export function isActivatableDependentUnused(entry: Data.ActivatableDependent): boolean {
-  const { active, dependencies } = entry;
-  return active.length === 0 && dependencies.length === 0;
-}
-
-export function isDependentSkillUnused(entry: Data.SkillDependent): boolean {
-  const { value, dependencies } = entry;
-  return value === 0 && dependencies.length === 0;
-}
-
-export function isActivatableDependentSkillUnused(entry: Data.ActivatableSkillDependent): boolean {
-  const { value, active, dependencies } = entry;
-  return value === 0 && active === false && dependencies.length === 0;
-}
-
-export function isActivatableDependentSkill(entry: Data.ExtendedSkillDependent): entry is Data.ActivatableSkillDependent {
-  return entry.hasOwnProperty('active');
-}
 
 export function getInitialHeroObject(
   id: string,

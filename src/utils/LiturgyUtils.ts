@@ -122,60 +122,6 @@ export function getAspectsOfTradition(traditionId: number): number[] {
 	return [...add, ...aspectsByTradition[traditionId]];
 }
 
-const traditionIdByNumericId = new Map([
-	[1, 'SA_86'],
-	[2, 'SA_682'],
-	[3, 'SA_683'],
-	[4, 'SA_684'],
-	[5, 'SA_685'],
-	[6, 'SA_686'],
-	[7, 'SA_687'],
-	[8, 'SA_688'],
-	[9, 'SA_689'],
-	[10, 'SA_690'],
-	[11, 'SA_691'],
-	[12, 'SA_692'],
-	[13, 'SA_693'],
-	[14, 'SA_694'],
-	[15, 'SA_695'],
-	[16, 'SA_696'],
-	[17, 'SA_697'],
-	[18, 'SA_698'],
-]);
-
-const numericIdByTraditionId = new Map([
-	['SA_86', 1],
-	['SA_682', 2],
-	['SA_683', 3],
-	['SA_684', 4],
-	['SA_685', 5],
-	['SA_686', 6],
-	['SA_687', 7],
-	['SA_688', 8],
-	['SA_689', 9],
-	['SA_690', 10],
-	['SA_691', 11],
-	['SA_692', 12],
-	['SA_693', 13],
-	['SA_694', 14],
-	['SA_695', 15],
-	['SA_696', 16],
-	['SA_697', 17],
-	['SA_698', 18],
-]);
-
-export function isBlessedTraditionId(id: string): boolean {
-	return numericIdByTraditionId.has(id);
-}
-
-export function getBlessedTraditionInstanceIdByNumericId(id: number): string {
-	return traditionIdByNumericId.get(id)!;
-}
-
-export function getNumericBlessedTraditionIdByInstanceId(id: string): number {
-	return numericIdByTraditionId.get(id)!;
-}
-
 const unavailableBlessingsByTradition = new Map([
 	['SA_694', ['BLESSING_1', 'BLESSING_5', 'BLESSING_12']],
 	['SA_695', ['BLESSING_4', 'BLESSING_11', 'BLESSING_12']],

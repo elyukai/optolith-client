@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
-import { CantripInstance, SpecialAbilityInstance, SpellInstance, ToListById, ActivatableDependent } from '../types/data.d';
+import { ActivatableDependent, CantripInstance, SpellInstance, ToListById } from '../types/data.d';
 import { Spell, SpellWithRequirements } from '../types/view.d';
+import { isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { validate } from '../utils/RequirementUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
@@ -14,7 +15,6 @@ import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
 import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
-import { isActive } from '../utils/rework_activatable';
 
 export const getMagicalTraditionsResultFunc = (list: Map<string, ActivatableDependent>) => {
   return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));

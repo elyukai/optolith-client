@@ -1,7 +1,8 @@
-import { getIdPrefix } from './IDUtils';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { HeroDependent, Dependent } from '../types/data.d';
-import { setListItem, removeListItem } from './collectionUtils';
+import { Dependent, HeroDependent } from '../types/data.d';
+import { getIdPrefix } from './IDUtils';
+import { removeListItem, setListItem } from './collectionUtils';
+import { match } from './match';
 
 export type HeroStateListKey =
   'advantages' |
@@ -16,30 +17,18 @@ export type HeroStateListKey =
   'spells';
 
 export function getHeroStateListKeyById(id: string): HeroStateListKey | undefined {
-  switch (getIdPrefix(id)) {
-    case IdPrefixes.ADVANTAGES:
-      return 'advantages';
-    case IdPrefixes.ATTRIBUTES:
-      return 'attributes';
-    case IdPrefixes.BLESSINGS:
-      return 'blessings';
-    case IdPrefixes.CANTRIPS:
-      return 'cantrips';
-    case IdPrefixes.COMBAT_TECHNIQUES:
-      return 'combatTechniques';
-    case IdPrefixes.DISADVANTAGES:
-      return 'disadvantages';
-    case IdPrefixes.LITURGIES:
-      return 'liturgicalChants';
-    case IdPrefixes.SPECIAL_ABILITIES:
-      return 'specialAbilities';
-    case IdPrefixes.SPELLS:
-      return 'spells';
-    case IdPrefixes.TALENTS:
-      return 'skills';
-    default:
-      return;
-  }
+  return match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
+    .on(IdPrefixes.ADVANTAGES, () => 'advantages')
+    .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
+    .on(IdPrefixes.BLESSINGS, () => 'blessings')
+    .on(IdPrefixes.CANTRIPS, () => 'cantrips')
+    .on(IdPrefixes.COMBAT_TECHNIQUES, () => 'combatTechniques')
+    .on(IdPrefixes.DISADVANTAGES, () => 'disadvantages')
+    .on(IdPrefixes.LITURGIES, () => 'liturgicalChants')
+    .on(IdPrefixes.SPECIAL_ABILITIES, () => 'specialAbilities')
+    .on(IdPrefixes.SPELLS, () => 'spells')
+    .on(IdPrefixes.TALENTS, () => 'skills')
+    .otherwise(() => undefined);
 }
 
 export function getHeroStateListItem<D extends Dependent = Dependent>(

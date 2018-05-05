@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
-import { BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById, ActivatableDependent } from '../types/data.d';
+import { ActivatableDependent, BlessingInstance, LiturgyInstance, ToListById } from '../types/data.d';
 import { LiturgicalChantWithRequirements, Liturgy } from '../types/view.d';
+import { isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { getAspectsOfTradition, getNumericBlessedTraditionIdByInstanceId, isBlessedTraditionId, isDecreasable, isIncreasable, isOwnTradition } from '../utils/LiturgyUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
@@ -11,7 +12,6 @@ import { getRuleBooksEnabled } from './rulesSelectors';
 import { getLiturgicalChantsSortOptions } from './sortOptionsSelectors';
 import { getAdvantages, getAttributes, getBlessings, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
-import { isActive } from '../utils/rework_activatable';
 
 export const getBlessedTraditionResultFunc = (list: Map<string, ActivatableDependent>) => {
 	return [...list.values()].find(e => isBlessedTraditionId(e.id) && isActive(e));
