@@ -4,10 +4,11 @@ import { convertUIStateToActiveObject, flattenPrerequisites } from './activatabl
 import { addToArray, removeFromArray, setArrayItem } from './collectionUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencyUtils';
-import { setHeroListStateItem } from './heroStateUtils';
+import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import { pipe } from './pipe';
 import { addDynamicPrerequisites } from './prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from './reducerUtils';
+import { isActivatableDependentUnused } from './unusedEntryUtils';
 
 export interface ActivatableActivatePayload extends ActivatableActivateOptions {
   wiki: Wiki.WikiActivatable;
@@ -61,6 +62,15 @@ const getChangedInstance = (
   instance: Data.ActivatableDependent,
   changeActive: ChangeActive,
 ) => {
+  const current = {
+    ...instance,
+    active: changeActive(instance.active),
+  };
+
+  if (isActivatableDependentUnused(current)) {
+    return removeHeroListStateItem(state, instance.id);
+  }
+
   return setHeroListStateItem(state, instance.id, {
     ...instance,
     active: changeActive(instance.active),
@@ -82,7 +92,6 @@ const changeActiveLength = (
 ): OptionalActivatableReducer => {
   return (state, wikiEntry, instance = createActivatableDependent(wikiEntry.id)) => {
     const active = getActive(instance);
-
     return changeDependencies(
       getChangedInstance(state, instance, changeActive),
       getCombinedPrerequisites(wikiEntry, instance, active, add),

@@ -51,22 +51,34 @@ export const convertUIStateToActiveObject =
         };
       })
       .otherwise(() => {
-        if (sel !== undefined && tier !== undefined) {
+        if (sel !== undefined && sel2 !== undefined && tier !== undefined) {
           return {
             sid: input || sel,
             sid2: sel2,
             tier,
           };
         }
-        else if (sel !== undefined) {
+        else if (sel !== undefined && sel2 !== undefined) {
           return {
             sid: input || sel,
             sid2: sel2,
           };
         }
+        else if (sel !== undefined && tier !== undefined) {
+          return {
+            sid: input || sel,
+            tier,
+          };
+        }
+        else if (sel !== undefined) {
+          return {
+            sid: input || sel,
+          };
+        }
         else if (input !== undefined && tier !== undefined) {
           return {
-            sid: input, tier,
+            sid: input,
+            tier,
           };
         }
         else if (input !== undefined) {
@@ -84,10 +96,15 @@ export const convertUIStateToActiveObject =
         }
       });
 
-    return {
-      ...active,
-      cost: customCost
-    };
+    if (typeof customCost === 'number') {
+      return {
+        ...active,
+        cost: customCost
+      };
+    }
+    else {
+      return active;
+    }
   };
 
 export function flattenPrerequisites(

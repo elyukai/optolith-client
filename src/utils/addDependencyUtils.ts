@@ -1,10 +1,10 @@
 import { Categories } from '../constants/Categories';
 import * as Data from "../types/data.d";
 import { ValueOptionalDependency } from '../types/reusable.d';
+import { getCategoryById } from './IDUtils';
 import { addToArray } from './collectionUtils';
 import * as CreateEntryUtils from './createEntryUtils';
 import { getHeroStateListItem, setHeroListStateItem } from './heroStateUtils';
-import { getCategoryById } from './IDUtils';
 
 const addDependency = (obj: Data.Dependent) => (add: any): Data.Dependent => ({
   ...obj,
@@ -14,7 +14,7 @@ const addDependency = (obj: Data.Dependent) => (add: any): Data.Dependent => ({
 export function addAttributeDependency(
   state: Data.HeroDependent,
   id: string,
-  value: number,
+  value: number | ValueOptionalDependency,
 ): Data.HeroDependent {
   const entry = getHeroStateListItem<Data.AttributeDependent>(state, id);
 

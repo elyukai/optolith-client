@@ -1,5 +1,7 @@
+import { Categories } from '../constants/Categories';
 import { ActivatableInstanceDependency, AllRequirements, HeroDependent } from '../types/data.d';
 import { ActiveDependency, ActiveOptionalDependency, ValueOptionalDependency } from '../types/reusable.d';
+import { getCategoryById } from './IDUtils';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
@@ -7,7 +9,7 @@ import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 
 type ModifyAttributeDependency =
-  (state: HeroDependent, id: string, value: number) =>
+  (state: HeroDependent, id: string, value: number | ValueOptionalDependency) =>
     HeroDependent;
 
 type ModifyIncreasableDependency =
@@ -46,15 +48,24 @@ function modifyDependencies(
           const add: ValueOptionalDependency = { value, origin: sourceId };
 
           for (const e of id) {
-            newState = modifyIncreasableDependency(newState, e, add);
+            if (getCategoryById(e) === Categories.ATTRIBUTES) {
+              newState = modifyAttributeDependency(newState, e, add);
+            }
+            else {
+              newState = modifyIncreasableDependency(newState, e, add);
+            }
           }
+        }
+        else if (getCategoryById(id) === Categories.ATTRIBUTES) {
+          newState = modifyAttributeDependency(newState, id, value);
         }
         else {
           newState = modifyIncreasableDependency(newState, id, value);
         }
       }
       else {
-        const { id, active, sid, sid2, tier } = req;
+        const { id, active, ...other } = req;
+        const { sid } = req;
 
         if (sid !== 'GR') {
           if (Array.isArray(id)) {
@@ -64,7 +75,7 @@ function modifyDependencies(
               add = { active, ...add };
             }
             else {
-              add = { sid, sid2, tier, ...add };
+              add = { ...other, ...add };
             }
 
             for (const e of id) {
@@ -78,10 +89,10 @@ function modifyDependencies(
               add = active;
             }
             else if (Array.isArray(sid)) {
-              add = { active, sid, tier };
+              add = { active, ...other };
             }
             else {
-              add = { sid, sid2, tier };
+              add = other;
             }
 
             newState = modifyActivatableDependency(newState, id, add);

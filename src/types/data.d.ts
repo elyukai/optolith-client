@@ -1,9 +1,9 @@
 import { Action } from 'redux';
-import * as Reusable from './reusable.d';
 import { Categories } from '../constants/Categories';
-import { AllRequirementTypes } from './reusable.d';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
+import * as Reusable from './reusable.d';
+import { AllRequirementTypes } from './reusable.d';
 import * as Wiki from './wiki';
 
 export interface InstanceByCategory {
@@ -153,6 +153,10 @@ export interface ActivatableSkillDependent {
 
 export type ExtendedSkillDependent =
   SkillDependent |
+  ActivatableSkillDependent;
+
+export type ExtendedActivatableDependent =
+  ActivatableDependent |
   ActivatableSkillDependent;
 
 export type Dependent =

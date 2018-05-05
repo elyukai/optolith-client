@@ -6,8 +6,6 @@ test('activates special ability and applies prerequisites', () => {
     specialAbilities: new Map(),
   };
 
-  const instance = {};
-
   const wikiEntry = {
     id: 'SA_12345',
     prerequisites: [{ id: 'ATTR_1', value: 10 }],
@@ -17,7 +15,7 @@ test('activates special ability and applies prerequisites', () => {
     id: 'SA_12345',
     cost: 4,
     sel: 1,
-  })(state, wikiEntry, instance);
+  })(state, wikiEntry);
 
   const convertedState = {
     attributes: [...actual.attributes],
@@ -27,7 +25,7 @@ test('activates special ability and applies prerequisites', () => {
   const expected = {
     attributes: [['ATTR_1', {
       id: 'ATTR_1',
-      value: 0,
+      value: 8,
       mod: 0,
       dependencies: [10],
     }]],
@@ -45,7 +43,7 @@ test('deactivates special ability and removes prerequisites', () => {
   const state = {
     attributes: new Map([['ATTR_1', {
       id: 'ATTR_1',
-      value: 0,
+      value: 8,
       mod: 0,
       dependencies: [10],
     }]]),

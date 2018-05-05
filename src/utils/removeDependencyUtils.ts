@@ -28,7 +28,7 @@ const removeDependency = <T extends Data.Dependent, D>(obj: T, remove: D): T => 
 export function removeAttributeDependency(
   state: Data.HeroDependent,
   id: string,
-  value: number,
+  value: number | ValueOptionalDependency,
 ): Data.HeroDependent {
   const entry = getHeroStateListItem<Data.AttributeDependent>(state, id);
 
