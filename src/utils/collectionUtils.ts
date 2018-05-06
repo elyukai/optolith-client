@@ -1,15 +1,57 @@
-import { Dependent, HeroDependent } from '../types/data.d';
+import { pipe } from './pipe';
+
+/**
+ * Appends an element to an array and returns a new array.
+ * @param array
+ * @param add
+ */
+export const addToArray = <T>(array: T[]) => (add: T) => [ ...array, add ];
+export const addToPipedArray = <T>(add: T) => {
+  return (array: T[]) => addToArray(array)(add);
+};
+
+/**
+ * Sets an element in an array by index and returns a new array.
+ * @param array
+ * @param index
+ * @param add
+ */
+export const updateArrayItem = <T>(array: T[]) => (index: number, add: T) => {
+  return array.map((e, i) => i === index ? add : e);
+};
+export const updatePipedArrayItem = <T>(index: number, add: T) => {
+  return (array: T[]) => updateArrayItem(array)(index, add);
+};
+
+/**
+ * Removes an element at the given index and returns a new array with the
+ * remaining elements.
+ * @param array
+ * @param index
+ */
+export const removeFromArray = <T>(array: T[]) => (index: number) => {
+  return [
+    ...array.slice(0, index),
+    ...array.slice(index + 1)
+  ];
+}
+export const removeFromPipedArray = <T>(index: number) => {
+  return (array: T[]) => removeFromArray(array)(index);
+};
+
+export const convertMapToArray = <K, V>(map: Map<K, V>) => [...map.entries()];
+export const convertMapToValueArray = <V>(map: Map<any, V>) => [...map.values()];
 
 /**
  * Merges a Map into another Map. Returns a new Map if the second map has entries.
  * @param oldList The old Map.
  * @param newList The new/updated Map.
  */
-export function mergeIntoList<TKey, TValue>(oldList: Map<TKey, TValue>, newList: Map<TKey, TValue>) {
-  if (newList.size === 0) {
-    return oldList;
-  }
-  return new Map([...oldList, ...newList]);
+export const mergeMaps = <K, V>(...maps: Map<K, V>[]) => {
+  return new Map(maps.reduce<[K, V][]>((merged, current) => [
+    ...merged,
+    ...current,
+  ], []));
 }
 
 /**
@@ -18,225 +60,46 @@ export function mergeIntoList<TKey, TValue>(oldList: Map<TKey, TValue>, newList:
  * @param key The key of the entry.
  * @param value The entry itself.
  */
-export function setListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey, value: TValue) {
-  return new Map(list).set(key, value);
-}
+export const setMapItem = <K, V>(list: Map<K, V>, key: K, value: V) => {
+  return pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
+    convertMapToArray,
+    addToPipedArray<[K, V]>([key, value]),
+    arr => new Map(arr),
+  )(list);
+};
 
 /**
  * Removes an item from a Map and returns a new Map.
  * @param list The current Map.
  * @param key The key of the entry.
  */
-export function removeListItem<TKey, TValue>(list: Map<TKey, TValue>, key: TKey) {
-  const newlist = new Map(list);
-  newlist.delete(key);
-  return newlist;
-}
-
-// export function setNewStateItem<T extends AbilityInstanceExtended>(newstate: ToOptionalKeys<DependentInstancesState>, id: string, item: T) {
-//   const key = getStateKeyById(id);
-//   if (key) {
-//     let slice = newstate[key] as Map<string, T> | undefined;
-//     if (slice) {
-//       slice = setListItem(slice, id, item);
-//     }
-//     else {
-//       slice = new Map().set(id, item);
-//     }
-//     return {
-//       ...newstate,
-//       [key]: slice
-//     };
-//   }
-//   return newstate;
-// }
-
-// export function setStateItem<T extends Instance>(newstate: DependentInstancesState, id: string, item: T) {
-//   const key = getStateKeyById(id);
-//   if (key) {
-//     return {
-//       ...newstate,
-//       [key]: setListItem(newstate[key] as Map<string, T>, id, item)
-//     };
-//   }
-//   return newstate;
-// }
-
-// export function mergeIntoState(
-//   oldState: DependentInstancesState,
-//   ...newStates: ToOptionalKeys<DependentInstancesState>[]
-// ): DependentInstancesState {
-//   const total = { ...oldState };
-
-//   for (const newState of newStates) {
-//     const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
-
-//     for (const key of keys) {
-//       if (key === 'blessedStyleDependencies' ||
-//         key === 'combatStyleDependencies' ||
-//         key === 'magicalStyleDependencies') {
-//         const arr = newState[key];
-//         if (typeof arr === 'object') {
-//           total[key] = arr;
-//         }
-//       }
-//       else {
-//         total[key] = mergeIntoStateSlice(total[key], newState[key]);
-//       }
-//     }
-//   }
-
-//   return total;
-// }
-
-export type HeroStateReducer<I extends Dependent> =
-  (state: HeroDependent, instance: I) =>
-    HeroDependent;
-
-export type HeroStateNoInstanceReducer =
-  (state: HeroDependent) =>
-    HeroDependent;
-
-// export type InstancesStateReducer<I extends Instance> =
-//   (state: DependentInstancesState, instance: I) =>
-//     ToOptionalKeys<DependentInstancesState>;
-
-// export type InstancesStateReducerNoInstance =
-//   (state: DependentInstancesState) =>
-//     ToOptionalKeys<DependentInstancesState>;
-
-// export type BothInstancesStateReducer<I extends Instance> =
-//   (state: DependentInstancesState, instance?: I) =>
-//     ToOptionalKeys<DependentInstancesState>;
-
-// export function mergeReducedOptionalState(
-//   oldState: DependentInstancesState,
-//   ...reducers: InstancesStateReducerNoInstance[]
-// ): DependentInstancesState;
-// export function mergeReducedOptionalState<I extends Instance>(
-//   oldState: DependentInstancesState,
-//   instance: I,
-//   ...reducers: InstancesStateReducer<I>[]
-// ): DependentInstancesState;
-// export function mergeReducedOptionalState<I extends Instance>(
-//   oldState: DependentInstancesState,
-//   instance?: I,
-//   ...reducers: BothInstancesStateReducer<I>[]
-// ): DependentInstancesState {
-//   return reducers.reduce(
-//     (oldState, reducer) => {
-//       const oldStateCopy = {
-//         ...oldState
-//       };
-
-//       const newState = reducer(oldStateCopy, instance);
-
-//       const keys = Object.keys(newState) as (keyof DependentInstancesState)[];
-
-//       for (const key of keys) {
-//         if (key === 'blessedStyleDependencies' ||
-//           key === 'combatStyleDependencies' ||
-//           key === 'magicalStyleDependencies') {
-//           const arr = newState[key];
-//           if (typeof arr === 'object') {
-//             oldStateCopy[key] = arr;
-//           }
-//         }
-//         else {
-//           oldStateCopy[key] = mergeIntoStateSlice(oldStateCopy[key], newState[key]);
-//         }
-//       }
-
-//       return oldStateCopy;
-//     },
-//     { ...oldState }
-//   );
-// }
-
-// export function mergeIntoOptionalState(oldstate: ToOptionalKeys<DependentInstancesState>, newstate: ToOptionalKeys<DependentInstancesState>): ToOptionalKeys<DependentInstancesState> {
-//   const keys = Object.keys(newstate) as (keyof DependentInstancesState)[];
-
-//   const total = { ...oldstate };
-//   for (const key of keys) {
-//     if (key !== 'blessedStyleDependencies' && key !== 'combatStyleDependencies' && key !== 'magicalStyleDependencies') {
-//       total[key] = mergeIntoOptionalStateSlice(total[key], newstate[key]);
-//     }
-//   }
-
-//   return total;
-// }
-
-// function mergeIntoStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
-//   if (newslice) {
-//     return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
-//   }
-//   return oldslice;
-// }
-
-// function mergeIntoOptionalStateSlice<T extends DependentInstancesStateKeysForMaps>(oldslice?: DependentInstancesState[T], newslice?: DependentInstancesState[T]) {
-//   if (newslice && oldslice) {
-//     return mergeIntoList(oldslice, newslice) as DependentInstancesState[T];
-//   }
-//   else if (newslice) {
-//     return newslice;
-//   }
-//   return oldslice;
-// }
+export const deleteMapItem = <K, V>(list: Map<K, V>, key: K) => {
+  return pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
+    convertMapToArray,
+    arr => arr.filter(([k]) => k !== key),
+    arr => new Map(arr),
+  )(list);
+};
 
 interface StringObject<V> {
   [id: string]: V;
 }
 
-export function convertMapToObject<V>(map: Map<string, V>): StringObject<V> {
-  const obj: StringObject<V> = {};
-
-  for (const [id, entry] of map) {
-    obj[id] = entry;
-  }
-
-  return obj;
+export const convertMapToObject = <V>(map: Map<string, V>) => {
+  return convertMapToArray(map).reduce<StringObject<V>>((obj, [k, v]) => ({
+    ...obj,
+    [k]: v,
+  }), {});
 }
 
-export function convertObjectToMap<V>(obj: StringObject<V>): Map<string, V> {
-  const map: Map<string, V> = new Map<string, V>();
+export const convertObjectToMap = <V>(obj: StringObject<V>) => {
+  return new Map<string, V>(Object.entries(obj));
+};
 
-  for (const [id, entry] of Object.entries(obj)) {
-    map.set(id, entry);
-  }
+// export type HeroStateReducer<I extends Dependent> =
+//   (state: HeroDependent, instance: I) =>
+//     HeroDependent;
 
-  return map;
-}
-
-/**
- * Appends an element to an array and returns a new array.
- * @param array
- * @param add
- */
-export function addToArray<T>(array: T[], add: T): T[] {
-  return [ ...array, add ];
-}
-
-/**
- * Sets an element in an array by index and returns a new array.
- * @param array
- * @param index
- * @param add
- */
-export function setArrayItem<T>(array: T[], index: number, add: T): T[] {
-  const arr = [ ...array ];
-  arr[index] = add;
-  return arr;
-}
-
-/**
- * Removes an element at the given index and returns a new array with the
- * remaining elements.
- * @param array
- * @param index
- */
-export function removeFromArray<T>(array: T[], index: number): T[] {
-  return [
-    ...array.slice(0, index),
-    ...array.slice(index + 1)
-  ];
-}
+// export type HeroStateNoInstanceReducer =
+//   (state: HeroDependent) =>
+//     HeroDependent;

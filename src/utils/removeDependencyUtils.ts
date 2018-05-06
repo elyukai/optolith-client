@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash';
 import * as Data from "../types/data.d";
 import { ValueOptionalDependency } from '../types/reusable.d';
+import { isActivatableDependentSkill } from './checkEntryUtils';
 import { removeFromArray } from './collectionUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import * as UnusedEntryUtils from './unusedEntryUtils';
@@ -18,7 +19,7 @@ const removeDependency = <T extends Data.Dependent, D>(obj: T, remove: D): T => 
   if (index > -1) {
     return {
       ...(obj as any),
-      dependencies: removeFromArray(obj.dependencies as D[], index),
+      dependencies: removeFromArray<any>(obj.dependencies)(index),
     } as T;
   }
 
@@ -55,7 +56,7 @@ export function removeIncreasableDependency(
   if (entry) {
     const newEntry = removeDependency(entry, value);
 
-    if (UnusedEntryUtils.isActivatableDependentSkill(newEntry)) {
+    if (isActivatableDependentSkill(newEntry)) {
       if (UnusedEntryUtils.isActivatableDependentSkillUnused(newEntry)) {
         return removeHeroListStateItem(state, id);
       }

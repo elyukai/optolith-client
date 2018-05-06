@@ -3,7 +3,9 @@ const DependencyUtils = require('../dependencyUtils');
 
 test('adds dependencies', () => {
   const actual = DependencyUtils.addDependencies(
-    {},
+    {
+      specialAbilities: new Map()
+    },
     [
       {
         id: 'SA_4',

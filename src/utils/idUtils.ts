@@ -12,8 +12,8 @@ export function getNewIdByDate() {
   return Date.now().valueOf();
 }
 
-export function getCategoryById(id: string): Categories | undefined {
-  return match<IdPrefixes, Categories | undefined>(getIdPrefix(id))
+export function getCategoryByIdPrefix(id: IdPrefixes): Categories | undefined {
+  return match<IdPrefixes, Categories | undefined>(id)
     .on(IdPrefixes.ADVANTAGES, () => Categories.ADVANTAGES)
     .on(IdPrefixes.ATTRIBUTES, () => Categories.ATTRIBUTES)
     .on(IdPrefixes.BLESSINGS, () => Categories.BLESSINGS)
@@ -30,6 +30,10 @@ export function getCategoryById(id: string): Categories | undefined {
     .on(IdPrefixes.SPELLS, () => Categories.SPELLS)
     .on(IdPrefixes.TALENTS, () => Categories.TALENTS)
     .otherwise(() => undefined);
+}
+
+export function getCategoryById(id: string): Categories | undefined {
+  return getCategoryByIdPrefix(getIdPrefix(id));
 }
 
 export function getIdPrefix(id: string): IdPrefixes {

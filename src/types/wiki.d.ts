@@ -20,10 +20,39 @@ export interface WikiEntryByCategory {
 	'TALENTS': Skill;
 }
 
-export type WikiEntriesWithGroups = CombatTechnique | LiturgicalChant | SpecialAbility | Spell | Skill;
-export type WikiActivatable = Advantage | Disadvantage | SpecialAbility;
+export type WikiEntriesWithGroups =
+  CombatTechnique |
+  LiturgicalChant |
+  SpecialAbility |
+  Spell |
+  Skill;
 
-export type SkillishEntry = Spell | LiturgicalChant | Skill | CombatTechnique;
+export type WikiActivatable =
+  Advantage |
+  Disadvantage |
+  SpecialAbility;
+
+export type SkillishEntry =
+  Spell |
+  LiturgicalChant |
+  Skill |
+  CombatTechnique;
+
+export type Entry = Race |
+  RaceVariant |
+  Culture |
+  Profession |
+  ProfessionVariant |
+  Advantage |
+  Disadvantage |
+  Skill |
+  CombatTechnique |
+  SpecialAbility |
+  Spell |
+  Cantrip |
+  LiturgicalChant |
+  Blessing |
+  ItemTemplate;
 
 export interface Book {
 	readonly id: string;
@@ -310,7 +339,7 @@ export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.Race
 export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement | Reusable.PactRequirement;
 export type AllRequirements = 'RCP' | AllRequirementObjects;
 export type ActivatablePrerequisites = ('RCP' | AllRequirementTypes)[];
-export type LevelAwareActivatablePrerequisites =
+export type LevelAwarePrerequisites =
   ActivatablePrerequisites | Map<number, ActivatablePrerequisites>;
 
 interface ActivatableBase {
@@ -319,7 +348,7 @@ interface ActivatableBase {
 	readonly cost: string | number | number[];
 	readonly input?: string;
 	readonly max?: number;
-	readonly prerequisites: LevelAwareActivatablePrerequisites;
+	readonly prerequisites: LevelAwarePrerequisites;
 	readonly prerequisitesText?: string;
 	/**
 	 * 0-based index as key!

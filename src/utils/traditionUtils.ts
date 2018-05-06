@@ -1,11 +1,20 @@
 import { ActivatableDependent } from '../types/data.d';
 import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
+import { convertMapToValueArray } from './collectionUtils';
 import { isActive } from './isActive';
 
+const isActiveMagicalTradition = (e: ActivatableDependent) => {
+  return isMagicalTraditionId(e.id) && isActive(e);
+};
+
+const isActiveBlessedTradition = (e: ActivatableDependent) => {
+  return isBlessedTraditionId(e.id) && isActive(e);
+};
+
 export const getMagicalTraditions = (list: Map<string, ActivatableDependent>) => {
-  return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));
+  return convertMapToValueArray(list).filter(isActiveMagicalTradition);
 };
 
 export const getBlessedTradition = (list: Map<string, ActivatableDependent>) => {
-	return [...list.values()].find(e => isBlessedTraditionId(e.id) && isActive(e));
+	return convertMapToValueArray(list).find(isActiveBlessedTradition);
 };

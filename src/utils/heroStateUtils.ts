@@ -1,7 +1,7 @@
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { getIdPrefix } from './IDUtils';
-import { removeListItem, setListItem } from './collectionUtils';
+import { deleteMapItem, setMapItem } from './collectionUtils';
 import { match } from './match';
 
 export type HeroStateListKey =
@@ -55,7 +55,7 @@ export function setHeroListStateItem<D extends Dependent = Dependent>(
   if (key) {
     return {
       ...state,
-      [key]: setListItem(state[key] as Map<string, D>, id, item),
+      [key]: setMapItem(state[key] as Map<string, D>, id, item),
     };
   }
 
@@ -71,7 +71,7 @@ export function removeHeroListStateItem<D extends Dependent = Dependent>(
   if (key) {
     return {
       ...state,
-      [key]: removeListItem(state[key] as Map<string, D>, id),
+      [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
     };
   }
 

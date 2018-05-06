@@ -56,36 +56,36 @@ export function isRequiringActivatable(
   return req.hasOwnProperty('active') && !!category && Categories.ActivatableLikeCategories.includes(category);
 }
 
-export function isRequiringPrimaryAttribute(
+export const isRequiringPrimaryAttribute = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.RequiresPrimaryAttribute {
+): req is Reusable.RequiresPrimaryAttribute => {
   return req.id === 'ATTR_PRIMARY';
-}
+};
 
-export function isIncreasableInstance(
+export const isIncreasableInstance = (
   entry?: Data.Instance,
-): entry is Data.IncreasableInstance {
+): entry is Data.IncreasableInstance => {
   return !!entry && Categories.IncreasableCategories.includes(entry.category);
-}
+};
 
-export function isActivatableInstance(
+export const isActivatableInstance = (
   entry?: Data.Instance,
-): entry is Data.ActivatableInstance {
+): entry is Data.ActivatableInstance => {
   return !!entry && Categories.ActivatableCategories.includes(entry.category);
-}
+};
 
-export function isActivatableSkillInstance(
+export const isActivatableSkillInstance = (
   entry?: Data.Instance,
-): entry is Data.ActivatableSkillInstance {
+): entry is Data.ActivatableSkillInstance => {
   return !!entry && Categories.ActivatableSkillCategories.includes(entry.category);
-}
+};
 
-export function isDependentPrerequisite(
+export const isDependentPrerequisite = (
   entry: Wiki.AllRequirements,
-): entry is Data.DependentPrerequisite {
+): entry is Data.DependentPrerequisite => {
   return entry !== 'RCP' &&
     !isRaceRequirement(entry) &&
     !isCultureRequirement(entry) &&
     !isSexRequirement(entry) &&
     !isPactRequirement(entry);
-}
+};

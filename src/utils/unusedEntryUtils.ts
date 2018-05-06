@@ -19,7 +19,3 @@ export function isActivatableDependentSkillUnused(entry: Data.ActivatableSkillDe
   const { value, active, dependencies } = entry;
   return value === 0 && active === false && dependencies.length === 0;
 }
-
-export function isActivatableDependentSkill(entry: Data.ExtendedSkillDependent): entry is Data.ActivatableSkillDependent {
-  return entry.hasOwnProperty('active');
-}

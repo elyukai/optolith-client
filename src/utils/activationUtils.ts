@@ -1,9 +1,10 @@
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { convertUIStateToActiveObject, flattenPrerequisites } from './activatableConvertUtils';
-import { addToArray, removeFromArray, setArrayItem } from './collectionUtils';
+import { convertUIStateToActiveObject } from './activatableConvertUtils';
+import { addToPipedArray, removeFromPipedArray, updateArrayItem } from './collectionUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencyUtils';
+import { flattenPrerequisites } from './flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import { pipe } from './pipe';
 import { addDynamicPrerequisites } from './prerequisitesUtils';
@@ -28,7 +29,7 @@ export interface ActivatableActivateOptions {
 type ChangeActive = (activeArr: Data.ActiveObject[]) => Data.ActiveObject[];
 
 const getStaticPrerequisites = (active: Data.ActiveObject) =>
-  (prerequisites: Wiki.LevelAwareActivatablePrerequisites): Wiki.AllRequirements[] => {
+  (prerequisites: Wiki.LevelAwarePrerequisites): Wiki.AllRequirements[] => {
     const { tier = 1 } = active;
     return flattenPrerequisites(prerequisites, tier);
   };
@@ -45,7 +46,7 @@ const getCombinedPrerequisites = (
   active: Data.ActiveObject,
   add: boolean,
 ): Wiki.AllRequirements[] => {
-  return pipe(
+  return pipe<Wiki.LevelAwarePrerequisites, Wiki.AllRequirements[], Wiki.AllRequirements[]>(
     getStaticPrerequisites(active),
     addDynamicPrerequisites(wikiEntry, instance, active, add),
   )(wikiEntry.prerequisites);
@@ -121,7 +122,7 @@ export function activateByObject(active: Data.ActiveObject): OptionalActivatable
   return changeActiveLength(
     () => active,
     DependencyUtils.addDependencies,
-    arr => addToArray(arr, active),
+    addToPipedArray(active),
     true
   );
 }
@@ -137,7 +138,7 @@ export function deactivate(index: number): ActivatableReducer {
   return changeActiveLength(
     instance => instance.active[index],
     DependencyUtils.removeDependencies,
-    arr => removeFromArray(arr, index),
+    removeFromPipedArray(index),
     false
   );
 }
@@ -155,7 +156,7 @@ export function setTier(index: number, tier: number): ActivatableReducer {
 
     const previousTier = target.tier;
 
-    const active = setArrayItem(previousActive, index, {
+    const active = updateArrayItem(previousActive)(index, {
       ...target,
       tier,
     });
