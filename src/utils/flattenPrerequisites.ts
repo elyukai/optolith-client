@@ -6,7 +6,8 @@ type LevelPair = [number, ActivatablePrerequisites];
 type PrerequisiteFilter = (pair: LevelPair) => boolean;
 
 const createLowerFilter = (oldTier: number) =>
-  (pair: LevelPair): boolean => pair[0] <= oldTier;
+  (pair: LevelPair): boolean =>
+    pair[0] <= oldTier;
 
 const createInBetweenFilter = (oldTier: number, newTier: number) => {
   const lower = Math.min(oldTier, newTier);
@@ -59,3 +60,7 @@ export function flattenPrerequisites(
 
   return prerequisites;
 }
+
+export const getFirstTierPrerequisites = (
+  prerequisites: LevelAwarePrerequisites,
+): ActivatablePrerequisites => flattenPrerequisites(prerequisites, 1);

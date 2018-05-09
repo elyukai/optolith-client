@@ -21,6 +21,11 @@ const getAttributeIdByBlessedNumericId = (id: number): string | undefined => {
     .otherwise(() => undefined);
 };
 
+/**
+ *
+ * @param state Special abilities
+ * @param type
+ */
 export function getPrimaryAttributeId(
   state: Map<string, ActivatableDependent>,
   type: 1 | 2,

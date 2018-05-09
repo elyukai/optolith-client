@@ -4,7 +4,7 @@ import { ValueOptionalDependency } from '../types/reusable.d';
 import { getCategoryById } from './IDUtils';
 import { addToArray } from './collectionUtils';
 import * as CreateEntryUtils from './createEntryUtils';
-import { exists } from './exists';
+import { matchExists } from './exists';
 import { getHeroStateListItem, setHeroListStateItem } from './heroStateUtils';
 import { match } from './match';
 import { pipe } from './pipe';
@@ -92,7 +92,7 @@ export function addAttributeDependency(
       match<Data.AttributeDependent | undefined, AttributeDependencyFn>(
         getHeroStateListItem(state, id)
       )
-        .on(exists(), addDependency)
+        .on(matchExists(), addDependency)
         .otherwise(() => createNewAttributeWithDependency(id))
     )(value)
   );
@@ -110,7 +110,7 @@ export function addIncreasableDependency(
       match<Data.ExtendedSkillDependent | undefined, ExtendedSkillDependencyFn>(
         getHeroStateListItem(state, id)
       )
-        .on(exists(), addDependency)
+        .on(matchExists(), addDependency)
         .otherwise(() => createNewIncreasableWithDependency(id))
     )(value)
   );
@@ -128,7 +128,7 @@ export function addActivatableDependency(
       match<Data.ActivatableDependent | undefined, ActivatableDependencyFn>(
         getHeroStateListItem(state, id)
       )
-        .on(exists(), addDependency)
+        .on(matchExists(), addDependency)
         .otherwise(() => createNewActivatableWithDependency(id))
     )(value)
   );

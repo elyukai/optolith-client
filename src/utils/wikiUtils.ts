@@ -4,6 +4,7 @@ import { ActivatableInstance } from '../types/data.d';
 import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
 import { getCategoryById } from './IDUtils';
+import { convertMapToValueArray } from './collectionUtils';
 import { pipe } from './pipe';
 
 interface WikiKeyByCategory {
@@ -61,6 +62,15 @@ export const getWikiEntry = <T extends Wiki.Entry = Wiki.Entry>(
   key => key && state[key],
   slice => slice && slice.get(id) as T | undefined
 )(id);
+
+export const getAllWikiEntriesByGroup =
+  <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>(
+    wiki: Map<string, T>,
+    ...groups: number[],
+  ) => pipe<Map<string, T>, T[]>(
+    convertMapToValueArray,
+    list => list.filter(e => groups.includes(e.gr)),
+  )(wiki);
 
 type ElementMixed =
   ActivatableInstance |

@@ -4,7 +4,7 @@ import * as Reusable from '../types/reusable.d';
 import { getCategoryById } from './IDUtils';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
-import { existsFn } from './exists';
+import { maybe } from './exists';
 import { match } from './match';
 import { pipe } from './pipe';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
@@ -23,9 +23,8 @@ const createPrimaryAttributeDependencyModifier = (
   state: Data.HeroDependent,
   modify: ModifyIncreasableDependency,
 ) => (req: Reusable.RequiresPrimaryAttribute) => pipe(
-  () => getPrimaryAttributeId(state.specialAbilities, req.type),
-  existsFn((id: string) => modify(state, id, req.value), state)
-)();
+  maybe((id: string) => modify(state, id, req.value), state)
+)(getPrimaryAttributeId(state.specialAbilities, req.type));
 
 const createIncreasableDependencyModifier = (
   state: Data.HeroDependent,
@@ -34,17 +33,18 @@ const createIncreasableDependencyModifier = (
   sourceId: string,
 ) => (req: Reusable.RequiresIncreasableObject) => {
   return match<string | string[], Data.HeroDependent>(req.id)
-    .on((id): id is string[] => typeof id === 'object', id => pipe(
-      () => ({ value: req.value, origin: sourceId }),
-      add => id.reduce((state, e) => {
-        if (getCategoryById(e) === Categories.ATTRIBUTES) {
-          return modifyAttribute(state, e, add);
-        }
-        else {
-          return modify(state, e, add);
-        }
-      }, state)
-    )())
+    .on((id): id is string[] => typeof id === 'object', id => {
+      return pipe<Reusable.ValueOptionalDependency, Data.HeroDependent>(
+        add => id.reduce((state, e) => {
+          if (getCategoryById(e) === Categories.ATTRIBUTES) {
+            return modifyAttribute(state, e, add);
+          }
+          else {
+            return modify(state, e, add);
+          }
+        }, state)
+      )({ value: req.value, origin: sourceId });
+    })
     .on(id => getCategoryById(id) === Categories.ATTRIBUTES, id => {
       return modifyAttribute(state, id, req.value);
     })
@@ -63,7 +63,6 @@ const createActivatableDependencyModifier = (
   return match<string | string[], Data.HeroDependent>(req.id)
     .on((id): id is string[] => typeof id === 'object', (id: string[]) => {
       return pipe(
-        () => ({ origin: sourceId }),
         add => {
           if (Object.keys(req).length === 2 && typeof active === 'boolean') {
             return {
@@ -79,23 +78,20 @@ const createActivatableDependencyModifier = (
           }
         },
         add => id.reduce((state, e) => modify(state, e, add), state)
-      )();
+      )({ origin: sourceId });
     })
     .otherwise(id => {
       return pipe<boolean | Reusable.ActiveDependency, Data.HeroDependent>(
-        () => {
-          if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-            return active;
-          }
-          else if (Array.isArray(req.sid)) {
-            return { active, ...other };
-          }
-          else {
-            return other;
-          }
-        },
         add => modify(state, id, add),
-      )();
+      )(
+        match<Reusable.RequiresActivatableObject, boolean | Reusable.ActiveDependency>(req)
+          .on(
+            req => Object.keys(req).length === 2 && typeof active === 'boolean',
+            () => active
+          )
+          .on(req => Array.isArray(req.sid), () => ({ active, ...other }))
+          .otherwise(() => other)
+      );
     });
 };
 

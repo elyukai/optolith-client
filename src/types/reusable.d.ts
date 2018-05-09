@@ -72,4 +72,16 @@ export interface PactRequirement {
   level?: number;
 }
 
-export type AllRequirementTypes = RequiresActivatableObject | RequiresIncreasableObject | RequiresPrimaryAttribute | SexRequirement | RaceRequirement | CultureRequirement | PactRequirement;
+export type ProfessionDependency =
+  SexRequirement |
+  RaceRequirement |
+  CultureRequirement;
+
+export type AllRequirementTypes =
+  RequiresActivatableObject |
+  RequiresIncreasableObject |
+  RequiresPrimaryAttribute |
+  SexRequirement |
+  RaceRequirement |
+  CultureRequirement |
+  PactRequirement;

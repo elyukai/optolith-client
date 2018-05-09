@@ -1,5 +1,6 @@
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { SpecialAbilityInstance, StyleDependency } from '../types/data';
+import { HeroDependent, StyleDependency } from '../types/data.d';
+import { SpecialAbility } from '../types/wiki.d';
 
 export type StyleDependencyStateKeys =
   'combatStyleDependencies' |
@@ -16,7 +17,7 @@ export type StyleDependencyStateKeys =
  */
 export function addStyleExtendedSpecialAbilityDependencies(
   state: DependentInstancesState,
-  instance: SpecialAbilityInstance,
+  instance: SpecialAbility,
 ): ToOptionalKeys<DependentInstancesState> {
   const key = getStyleStateKey(instance);
 
@@ -60,7 +61,7 @@ export function addStyleExtendedSpecialAbilityDependencies(
  */
 export function addExtendedSpecialAbilityDependency(
   state: DependentInstancesState,
-  instance: SpecialAbilityInstance,
+  instance: SpecialAbility,
 ): ToOptionalKeys<DependentInstancesState> {
   const key = getExtendedStateKey(instance);
 
@@ -104,7 +105,7 @@ export function addExtendedSpecialAbilityDependency(
  */
 export function removeStyleExtendedSpecialAbilityDependencies(
   state: DependentInstancesState,
-  instance: SpecialAbilityInstance,
+  instance: SpecialAbility,
 ): ToOptionalKeys<DependentInstancesState> {
   const key = getStyleStateKey(instance);
 
@@ -150,7 +151,7 @@ export function removeStyleExtendedSpecialAbilityDependencies(
  */
 export function removeExtendedSpecialAbilityDependency(
   state: DependentInstancesState,
-  instance: SpecialAbilityInstance,
+  instance: SpecialAbility,
 ): ToOptionalKeys<DependentInstancesState> {
   const key = getExtendedStateKey(instance);
 
@@ -210,8 +211,8 @@ export function getAllAvailableExtendedSpecialAbilities(
  * @param entry The special ability to check.
  */
 export function isStyleValidToRemove(
-  state: DependentInstancesState,
-  entry?: SpecialAbilityInstance,
+  state: HeroDependent,
+  entry?: SpecialAbility,
 ): boolean {
   if (entry) {
     const key = getStyleStateKey(entry);
@@ -286,7 +287,7 @@ function getSplittedRemainingAndToRemove(
  * @returns A state key or `undefined` if not a Style Special Ability.
  */
 function getStyleStateKey(
-  entry: SpecialAbilityInstance,
+  entry: SpecialAbility,
 ): StyleDependencyStateKeys | undefined {
   if (entry.gr === 9 || entry.gr === 10) {
     return 'combatStyleDependencies';
@@ -307,7 +308,7 @@ function getStyleStateKey(
  * @returns A state key or `undefined` if not an Extended Special Ability.
  */
 function getExtendedStateKey(
-  entry: SpecialAbilityInstance,
+  entry: SpecialAbility,
 ): StyleDependencyStateKeys | undefined {
   if (entry.gr === 11) {
     return 'combatStyleDependencies';

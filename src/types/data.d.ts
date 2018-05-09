@@ -198,6 +198,9 @@ export interface HeroDependent {
   belongings: Belongings;
   rules: Rules;
   pets: Map<string, PetInstance>;
+  combatStyleDependencies: StyleDependency[];
+  magicalStyleDependencies: StyleDependency[];
+  blessedStyleDependencies: StyleDependency[];
 }
 
 export interface AdventurePoints {
@@ -550,7 +553,7 @@ export interface ActiveViewObject<T extends ActivatableInstance = ActivatableIns
   customCost?: boolean;
 }
 
-export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableInstance> {
+export interface DeactiveViewObject<T extends Wiki.Activatable = Wiki.Activatable> {
   id: string;
   name: string;
   cost?: string | number | number[];
@@ -559,7 +562,8 @@ export interface DeactiveViewObject<T extends ActivatableInstance = ActivatableI
   maxTier?: number;
   sel?: SelectionObject[];
   input?: string;
-  instance: T;
+  instance: ActivatableDependent;
+  wiki: T;
   customCostDisabled?: boolean;
 }
 

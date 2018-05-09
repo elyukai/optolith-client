@@ -1,8 +1,11 @@
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
+import { EntryWithGroup } from '../types/wiki';
 import { getIdPrefix } from './IDUtils';
-import { deleteMapItem, setMapItem } from './collectionUtils';
+import { convertMapToValueArray, deleteMapItem, setMapItem } from './collectionUtils';
+import { maybe } from './exists';
 import { match } from './match';
+import { pipe } from './pipe';
 
 export type HeroStateListKey =
   'advantages' |
@@ -31,49 +34,47 @@ export function getHeroStateListKeyById(id: string): HeroStateListKey | undefine
     .otherwise(() => undefined);
 }
 
-export function getHeroStateListItem<D extends Dependent = Dependent>(
+export const getHeroStateListItem = <D extends Dependent = Dependent>(
   state: HeroDependent,
   id: string,
-): D | undefined {
-  const key = getHeroStateListKeyById(id);
-  const slice = key && state[key];
+): D | undefined => pipe(
+  getHeroStateListKeyById,
+  key => key && state[key],
+  slice => slice instanceof Map ? slice.get(id) as D | undefined : undefined
+)(id);
 
-  if (slice instanceof Map) {
-    return slice.get(id) as D | undefined;
-  }
-
-  return undefined;
-}
-
-export function setHeroListStateItem<D extends Dependent = Dependent>(
+export const setHeroListStateItem = <D extends Dependent = Dependent>(
   state: HeroDependent,
   id: string,
   item: D,
-): HeroDependent {
-  const key = getHeroStateListKeyById(id);
+): HeroDependent => pipe(
+  getHeroStateListKeyById,
+  maybe(key => ({
+    ...state,
+    [key]: setMapItem(state[key] as Map<string, D>, id, item),
+  }), state)
+)(id);
 
-  if (key) {
-    return {
-      ...state,
-      [key]: setMapItem(state[key] as Map<string, D>, id, item),
-    };
-  }
-
-  return state;
-}
-
-export function removeHeroListStateItem<D extends Dependent = Dependent>(
+export const removeHeroListStateItem = <D extends Dependent = Dependent>(
   state: HeroDependent,
   id: string,
-): HeroDependent {
-  const key = getHeroStateListKeyById(id);
+): HeroDependent => pipe(
+  getHeroStateListKeyById,
+  maybe(key => ({
+    ...state,
+    [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
+  }), state)
+)(id);
 
-  if (key) {
-    return {
-      ...state,
-      [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
-    };
-  }
-
-  return state;
-}
+export const getAllEntriesByGroup =
+  <T extends EntryWithGroup = EntryWithGroup, I extends Dependent = Dependent>(
+    wiki: Map<string, T>,
+    list: Map<string, I>,
+    ...groups: number[],
+  ) => pipe<Map<string, I>, I[]>(
+    convertMapToValueArray,
+    list => list.filter(pipe<I, T | undefined, boolean>(
+      e => wiki.get(e.id),
+      e => typeof e === 'object' && groups.includes(e.gr),
+    )),
+  )(list);

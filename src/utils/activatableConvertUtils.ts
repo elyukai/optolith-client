@@ -12,44 +12,38 @@ export const convertUIStateToActiveObject =
   (activate: Data.ActivateArgs): Data.ActiveObject => {
     const { id, sel, sel2, input, tier, customCost } = activate;
 
-    const active = match<string, Data.ActiveObject>(id)
-      .on('ADV_68', () => ({
-        sid: sel,
-        sid2: input
-      }))
-      .on(pre => ['DISADV_1', 'DISADV_34', 'DISADV_50'].includes(pre), () => ({
-        sid: input || sel,
-        tier,
-      }))
-      .on('DISADV_33', () => pipe<Data.ActiveObject>(
-        obj => ([7, 8].includes(sel as number) && input) ? {
-          ...obj,
+    return pipe(
+      active => typeof customCost === 'number' ? {
+        ...active,
+        cost: customCost
+      } : active,
+    )(
+      match<string, Data.ActiveObject>(id)
+        .on('ADV_68', () => ({
+          sid: sel,
           sid2: input
-        } : obj,
-      )({ sid: sel }))
-      .on('DISADV_36', () => ({
-        sid: input || sel,
-      }))
-      .on('SA_9', () => ({
-        sid: sel,
-        sid2: input || sel2,
-      }))
-      .otherwise(() => pipe<Data.ActiveObject>(
-        () => tier !== undefined ? {
+        }))
+        .on('DISADV_33', () => pipe<Data.ActiveObject>(
+          obj => ([7, 8].includes(sel as number) && input) ? {
+            ...obj,
+            sid2: input
+          } : obj,
+        )({ sid: sel }))
+        .on('SA_9', () => ({
+          sid: sel,
+          sid2: input || sel2,
+        }))
+        .otherwise(() => pipe<Data.ActiveObject>(
+          obj => (sel !== undefined || input !== undefined) ? {
+            ...obj,
+            sid: input || sel,
+          } : obj,
+          obj => (obj.sid !== undefined && sel2 !== undefined) ? {
+            ...obj,
+            sid2: sel2,
+          } : obj,
+        )(tier !== undefined ? {
           tier,
-        } : {},
-        obj => (sel !== undefined || input !== undefined) ? {
-          ...obj,
-          sid: input || sel,
-        } : obj,
-        obj => (obj.sid !== undefined && sel2 !== undefined) ? {
-          ...obj,
-          sid2: sel2,
-        } : obj,
-      )());
-
-    return typeof customCost === 'number' ? {
-      ...active,
-      cost: customCost
-    } : active;
+        } : {}))
+    );
   };

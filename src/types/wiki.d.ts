@@ -20,7 +20,7 @@ export interface WikiEntryByCategory {
 	'TALENTS': Skill;
 }
 
-export type WikiEntriesWithGroups =
+export type EntryWithGroup =
   CombatTechnique |
   LiturgicalChant |
   SpecialAbility |
@@ -38,7 +38,8 @@ export type SkillishEntry =
   Skill |
   CombatTechnique;
 
-export type Entry = Race |
+export type Entry =
+  Race |
   RaceVariant |
   Culture |
   Profession |
@@ -53,6 +54,22 @@ export type Entry = Race |
   LiturgicalChant |
   Blessing |
   ItemTemplate;
+
+export type EntryWithCategory =
+  Race |
+  RaceVariant |
+  Culture |
+  Profession |
+  ProfessionVariant |
+  Advantage |
+  Disadvantage |
+  Skill |
+  CombatTechnique |
+  SpecialAbility |
+  Spell |
+  Cantrip |
+  LiturgicalChant |
+  Blessing;
 
 export interface Book {
 	readonly id: string;
@@ -330,7 +347,8 @@ export interface SelectionObject {
 	cost?: number;
 	req?: AllRequirementTypes[];
 	prerequisites?: AllRequirementTypes[];
-	target?: string;
+  target?: string;
+  tier?: number;
 	spec?: string[];
 	specInput?: string;
 }

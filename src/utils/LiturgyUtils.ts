@@ -2,14 +2,14 @@ import { Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import { AdvantageInstance, AttributeInstance, BlessingInstance, LiturgyInstance, SpecialAbilityInstance, ToListById } from '../types/data.d';
 import { RequiresIncreasableObject } from '../types/reusable.d';
-import { ExperienceLevel, SpecialAbility } from '../types/wiki';
+import { Blessing, ExperienceLevel, LiturgicalChant, SpecialAbility } from '../types/wiki.d';
 import { getSids } from './ActivatableUtils';
-import { getFlatPrerequisites } from './RequirementUtils';
+import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { getWikiEntry } from './WikiUtils';
 
-export function isOwnTradition(tradition: SpecialAbilityInstance, obj: LiturgyInstance | BlessingInstance): boolean {
-	const isBaseTradition = obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
-	const isSpecial = obj.category === Categories.LITURGIES || !getUnavailableBlessingsForTradition(tradition.id).includes(obj.id);
+export function isOwnTradition(tradition: SpecialAbility, obj: LiturgicalChant | Blessing): boolean {
+  const isBaseTradition = obj.tradition.some(e => e === 1 || e === getNumericBlessedTraditionIdByInstanceId(tradition.id) + 1);
+  const isSpecial = obj.category === Categories.LITURGIES || !getUnavailableBlessingsForTradition(tradition.id).includes(obj.id);
 	return isBaseTradition && isSpecial;
 }
 
