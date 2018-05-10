@@ -12,18 +12,20 @@ import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 
 type ModifyIncreasableDependency =
-  (state: Data.HeroDependent, id: string, value: number | Reusable.ValueOptionalDependency) =>
+  (id: string, value: number | Reusable.ValueOptionalDependency) =>
+  (state: Data.HeroDependent) =>
   Data.HeroDependent;
 
 type ModifyActivatableDependency =
-  (state: Data.HeroDependent, id: string, value: Data.ActivatableInstanceDependency) =>
+  (id: string, value: Data.ActivatableInstanceDependency) =>
+  (state: Data.HeroDependent) =>
   Data.HeroDependent;
 
 const createPrimaryAttributeDependencyModifier = (
   state: Data.HeroDependent,
   modify: ModifyIncreasableDependency,
 ) => (req: Reusable.RequiresPrimaryAttribute) => pipe(
-  maybe((id: string) => modify(state, id, req.value), state)
+  maybe((id: string) => modify(id, req.value)(state), state)
 )(getPrimaryAttributeId(state.specialAbilities, req.type));
 
 const createIncreasableDependencyModifier = (
@@ -37,19 +39,19 @@ const createIncreasableDependencyModifier = (
       return pipe<Reusable.ValueOptionalDependency, Data.HeroDependent>(
         add => id.reduce((state, e) => {
           if (getCategoryById(e) === Categories.ATTRIBUTES) {
-            return modifyAttribute(state, e, add);
+            return modifyAttribute(e, add)(state);
           }
           else {
-            return modify(state, e, add);
+            return modify(e, add)(state);
           }
         }, state)
       )({ value: req.value, origin: sourceId });
     })
     .on(id => getCategoryById(id) === Categories.ATTRIBUTES, id => {
-      return modifyAttribute(state, id, req.value);
+      return modifyAttribute(id, req.value)(state);
     })
     .otherwise(id => {
-      return modify(state, id, req.value);
+      return modify(id, req.value)(state);
     });
 };
 
@@ -77,12 +79,12 @@ const createActivatableDependencyModifier = (
             };
           }
         },
-        add => id.reduce((state, e) => modify(state, e, add), state)
+        add => id.reduce((state, e) => modify(e, add)(state), state)
       )({ origin: sourceId });
     })
     .otherwise(id => {
       return pipe<boolean | Reusable.ActiveDependency, Data.HeroDependent>(
-        add => modify(state, id, add),
+        add => modify(id, add)(state),
       )(
         match<Reusable.RequiresActivatableObject, boolean | Reusable.ActiveDependency>(req)
           .on(

@@ -1,12 +1,12 @@
+import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
-import { addToPipedArray, removeFromPipedArray, updateArrayItem } from './collectionUtils';
+import { removeFromPipedArray, updateArrayItem } from './collectionUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencyUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
-import { pipe } from './pipe';
 import { addDynamicPrerequisites } from './prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from './reducerUtils';
 import { isActivatableDependentUnused } from './unusedEntryUtils';
@@ -46,7 +46,7 @@ const getCombinedPrerequisites = (
   active: Data.ActiveObject,
   add: boolean,
 ): Wiki.AllRequirements[] => {
-  return pipe<Wiki.LevelAwarePrerequisites, Wiki.AllRequirements[], Wiki.AllRequirements[]>(
+  return R.pipe(
     getStaticPrerequisites(active),
     addDynamicPrerequisites(wikiEntry, instance, active, add),
   )(wikiEntry.prerequisites);
@@ -54,28 +54,27 @@ const getCombinedPrerequisites = (
 
 /**
  * Calculates changed instance.
- * @param state
  * @param instance
  * @param changeActive
  */
 const getChangedInstance = (
-  state: Data.HeroDependent,
   instance: Data.ActivatableDependent,
   changeActive: ChangeActive,
 ) => {
-  const current = {
-    ...instance,
-    active: changeActive(instance.active),
-  };
+  return R.pipe(
+    changeActive,
+    active => ({
+      ...instance,
+      active,
+    }),
+    current => {
+      if (isActivatableDependentUnused(current)) {
+        return removeHeroListStateItem(instance.id);
+      }
 
-  if (isActivatableDependentUnused(current)) {
-    return removeHeroListStateItem(state, instance.id);
-  }
-
-  return setHeroListStateItem(state, instance.id, {
-    ...instance,
-    active: changeActive(instance.active),
-  });
+      return setHeroListStateItem(instance.id)(current);
+    },
+  )(instance.active);
 };
 
 /**
@@ -84,6 +83,7 @@ const getChangedInstance = (
  * @param getActive
  * @param changeDependencies
  * @param changeActive
+ * @param add If an entry should be added or removed.
  */
 const changeActiveLength = (
   getActive: (instance: Data.ActivatableDependent) => Data.ActiveObject,
@@ -91,10 +91,15 @@ const changeActiveLength = (
   changeActive: ChangeActive,
   add: boolean,
 ): OptionalActivatableReducer => {
-  return (state, wikiEntry, instance = createActivatableDependent(wikiEntry.id)) => {
+  return (
+    state,
+    wikiEntry,
+    instance = createActivatableDependent(wikiEntry.id),
+  ) => {
     const active = getActive(instance);
+
     return changeDependencies(
-      getChangedInstance(state, instance, changeActive),
+      getChangedInstance(instance, changeActive)(state),
       getCombinedPrerequisites(wikiEntry, instance, active, add),
       instance.id,
     );
@@ -104,25 +109,25 @@ const changeActiveLength = (
 /**
  * Activates the entry with the given parameters and adds all needed
  * dependencies.
- * @param state The object containing all dependent instances.
- * @param obj The entry.
- * @param activate The object given by the view.
+ * @param x0 The object given by the view.
  */
-export function activate(activate: ActivatableActivateOptions): OptionalActivatableReducer {
-  const active = convertUIStateToActiveObject(activate);
-  return activateByObject(active);
-}
+export const activate = R.pipe(
+  convertUIStateToActiveObject,
+  activateByObject,
+);
 
 /**
  * Activates the entry with the given parameters and adds all needed
  * dependencies.
  * @param active The `ActiveObject`.
  */
-export function activateByObject(active: Data.ActiveObject): OptionalActivatableReducer {
+export function activateByObject(
+  active: Data.ActiveObject
+): OptionalActivatableReducer {
   return changeActiveLength(
     () => active,
     DependencyUtils.addDependencies,
-    addToPipedArray(active),
+    R.append(active),
     true
   );
 }
@@ -130,8 +135,6 @@ export function activateByObject(active: Data.ActiveObject): OptionalActivatable
 /**
  * Deactivates the entry with the given parameters and removes all previously
  * needed dependencies.
- * @param state The object containing all dependent instances.
- * @param obj The entry.
  * @param index The index of the `ActiveObject` in `obj.active`.
  */
 export function deactivate(index: number): ActivatableReducer {
@@ -161,13 +164,20 @@ export function setTier(index: number, tier: number): ActivatableReducer {
       tier,
     });
 
-    const firstState = setHeroListStateItem(state, instance.id, {
+    const firstState = setHeroListStateItem(instance.id)({
       ...instance,
       active,
-    });
+    })(state);
 
-    if (wikiEntry.prerequisites instanceof Map && typeof previousTier === 'number' && previousTier !== tier) {
-      const prerequisites = flattenPrerequisites(wikiEntry.prerequisites, previousTier, tier);
+    if (
+      wikiEntry.prerequisites instanceof Map
+      && typeof previousTier === 'number'
+      && previousTier !== tier) {
+      const prerequisites = flattenPrerequisites(
+        wikiEntry.prerequisites,
+        previousTier,
+        tier,
+      );
 
       if (previousTier > tier) {
         return DependencyUtils.removeDependencies(

@@ -6,25 +6,25 @@ import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
 const getAttributeIdByMagicalNumericId = (id: number): string | undefined => {
   return match<number, string | undefined>(id)
-    .on(x => [1, 4, 10].includes(x), () => 'ATTR_2')
+    .on([1, 4, 10].includes, () => 'ATTR_2')
     .on(3, () => 'ATTR_3')
-    .on(x => [2, 5, 6, 7].includes(x), () => 'ATTR_4')
+    .on([2, 5, 6, 7].includes, () => 'ATTR_4')
     .otherwise(() => undefined);
 };
 
 const getAttributeIdByBlessedNumericId = (id: number): string | undefined => {
   return match<number, string | undefined>(id)
-    .on(x => [2, 3, 9, 13, 16, 18].includes(x), () => 'ATTR_1')
-    .on(x => [1, 4, 8, 17].includes(x), () => 'ATTR_2')
-    .on(x => [5, 6, 11, 14].includes(x), () => 'ATTR_3')
-    .on(x => [7, 10, 12, 15].includes(x), () => 'ATTR_4')
+    .on([2, 3, 9, 13, 16, 18].includes, () => 'ATTR_1')
+    .on([1, 4, 8, 17].includes, () => 'ATTR_2')
+    .on([5, 6, 11, 14].includes, () => 'ATTR_3')
+    .on([7, 10, 12, 15].includes, () => 'ATTR_4')
     .otherwise(() => undefined);
 };
 
 /**
- *
+ * Returns the primaty attribute id based on given type.
  * @param state Special abilities
- * @param type
+ * @param type 1 = magical, 2 = blessed
  */
 export function getPrimaryAttributeId(
   state: Map<string, ActivatableDependent>,

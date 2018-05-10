@@ -1,12 +1,14 @@
 import { isEqual } from 'lodash';
+import R from 'ramda';
 import * as Data from "../types/data.d";
-import { ValueOptionalDependency } from '../types/reusable.d';
 import { isActivatableSkillDependent } from './checkEntryUtils';
 import { removeFromArray } from './collectionUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import * as UnusedEntryUtils from './unusedEntryUtils';
 
-const removeDependency = <T extends Data.Dependent, D>(obj: T, remove: D): T => {
+type ArrayElement<T> = T extends Array<infer I> ? I : never;
+
+const removeDependency = <T extends Data.Dependent, D extends ArrayElement<T["dependencies"]>>(remove: D) => (obj: T): T => {
   let index;
 
   if (typeof remove === 'object') {
@@ -26,70 +28,58 @@ const removeDependency = <T extends Data.Dependent, D>(obj: T, remove: D): T => 
   return obj;
 };
 
-export function removeAttributeDependency(
-  state: Data.HeroDependent,
+const adjustOrRemove = <T extends Data.Dependent>(
+  isUnused: (entry: T) => boolean,
+) => (
   id: string,
-  value: number | ValueOptionalDependency,
-): Data.HeroDependent {
-  const entry = getHeroStateListItem<Data.AttributeDependent>(state, id);
-
-  if (entry) {
-    const newEntry = removeDependency(entry, value);
-
-    if (UnusedEntryUtils.isAttributeDependentUnused(newEntry)) {
-      return removeHeroListStateItem(state, id);
-    }
-
-    return setHeroListStateItem(state, id, newEntry);
+) => (
+  entry: T,
+) => {
+  if (isUnused(entry)) {
+    return removeHeroListStateItem(id);
   }
 
-  return state;
-}
+  return setHeroListStateItem(id)(entry);
+};
 
-export function removeIncreasableDependency(
-  state: Data.HeroDependent,
+const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(
   id: string,
-  value: number | ValueOptionalDependency,
-): Data.HeroDependent {
-  const entry = getHeroStateListItem<Data.ExtendedSkillDependent>(state, id);
+) => (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent = R.ifElse(
+  isActivatableSkillDependent,
+  adjustOrRemove(
+    UnusedEntryUtils.isActivatableDependentSkillUnused,
+  ),
+  adjustOrRemove(
+    UnusedEntryUtils.isDependentSkillUnused,
+  )
+);
 
-  if (entry) {
-    const newEntry = removeDependency(entry, value);
-
-    if (isActivatableSkillDependent(newEntry)) {
-      if (UnusedEntryUtils.isActivatableDependentSkillUnused(newEntry)) {
-        return removeHeroListStateItem(state, id);
-      }
-
-      return setHeroListStateItem(state, id, newEntry);
-    }
-
-    if (UnusedEntryUtils.isDependentSkillUnused(newEntry)) {
-      return removeHeroListStateItem(state, id);
-    }
-
-    return setHeroListStateItem(state, id, newEntry);
-  }
-
-  return state;
-}
-
-export function removeActivatableDependency(
-  state: Data.HeroDependent,
+const removeDependencyCreator = <T extends Data.Dependent, D extends ArrayElement<T["dependencies"]> = ArrayElement<T["dependencies"]>>(
+  adjustOrRemove: (id: string) => (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent,
+) => (
   id: string,
-  value: Data.ActivatableInstanceDependency,
-): Data.HeroDependent {
-  const entry = getHeroStateListItem<Data.ActivatableDependent>(state, id);
+  value: D,
+) => (state: Data.HeroDependent): Data.HeroDependent => {
+  return R.defaultTo(
+    state,
+    getHeroStateListItem<T>(id)(state)
+      .fmap(R.pipe(
+        removeDependency(value),
+        adjustOrRemove(id),
+      ))
+      .fmap(fn => (fn as any)(state))
+      .value
+  );
+};;
 
-  if (entry) {
-    const newEntry = removeDependency(entry, value);
+export const removeAttributeDependency = removeDependencyCreator(
+  adjustOrRemove(UnusedEntryUtils.isAttributeDependentUnused)
+);
 
-    if (UnusedEntryUtils.isActivatableDependentUnused(newEntry)) {
-      return removeHeroListStateItem(state, id);
-    }
+export const removeIncreasableDependency = removeDependencyCreator(
+  getIncreasableCreator
+);
 
-    return setHeroListStateItem(state, id, newEntry);
-  }
-
-  return state;
-}
+export const removeActivatableDependency = removeDependencyCreator(
+  adjustOrRemove(UnusedEntryUtils.isActivatableDependentUnused)
+);

@@ -1,11 +1,11 @@
+import R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { EntryWithGroup } from '../types/wiki';
 import { getIdPrefix } from './IDUtils';
 import { convertMapToValueArray, deleteMapItem, setMapItem } from './collectionUtils';
-import { maybe } from './exists';
 import { match } from './match';
-import { pipe } from './pipe';
+import { Maybe, MaybeFunctor } from './maybe';
 
 export type HeroStateListKey =
   'advantages' |
@@ -19,62 +19,69 @@ export type HeroStateListKey =
   'specialAbilities' |
   'spells';
 
-export function getHeroStateListKeyById(id: string): HeroStateListKey | undefined {
-  return match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
-    .on(IdPrefixes.ADVANTAGES, () => 'advantages')
-    .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
-    .on(IdPrefixes.BLESSINGS, () => 'blessings')
-    .on(IdPrefixes.CANTRIPS, () => 'cantrips')
-    .on(IdPrefixes.COMBAT_TECHNIQUES, () => 'combatTechniques')
-    .on(IdPrefixes.DISADVANTAGES, () => 'disadvantages')
-    .on(IdPrefixes.LITURGIES, () => 'liturgicalChants')
-    .on(IdPrefixes.SPECIAL_ABILITIES, () => 'specialAbilities')
-    .on(IdPrefixes.SPELLS, () => 'spells')
-    .on(IdPrefixes.TALENTS, () => 'skills')
-    .otherwise(() => undefined);
+export const getHeroStateListKeyById = (
+  id: string,
+): MaybeFunctor<HeroStateListKey | undefined> => {
+  return Maybe(
+    match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
+      .on(IdPrefixes.ADVANTAGES, () => 'advantages')
+      .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
+      .on(IdPrefixes.BLESSINGS, () => 'blessings')
+      .on(IdPrefixes.CANTRIPS, () => 'cantrips')
+      .on(IdPrefixes.COMBAT_TECHNIQUES, () => 'combatTechniques')
+      .on(IdPrefixes.DISADVANTAGES, () => 'disadvantages')
+      .on(IdPrefixes.LITURGIES, () => 'liturgicalChants')
+      .on(IdPrefixes.SPECIAL_ABILITIES, () => 'specialAbilities')
+      .on(IdPrefixes.SPELLS, () => 'spells')
+      .on(IdPrefixes.TALENTS, () => 'skills')
+      .otherwise(() => undefined)
+  );
 }
 
-export const getHeroStateListItem = <D extends Dependent = Dependent>(
-  state: HeroDependent,
-  id: string,
-): D | undefined => pipe(
-  getHeroStateListKeyById,
-  key => key && state[key],
-  slice => slice instanceof Map ? slice.get(id) as D | undefined : undefined
-)(id);
+export const getHeroStateListItem =
+  <D extends Dependent = Dependent>(id: string) =>
+    (state: HeroDependent): MaybeFunctor<D | undefined> =>
+      getHeroStateListKeyById(id)
+        .fmap(key => state[key])
+        .fmap(slice => slice instanceof Map
+          ? slice.get(id) as D | undefined
+          : undefined
+        );
 
-export const setHeroListStateItem = <D extends Dependent = Dependent>(
-  state: HeroDependent,
-  id: string,
-  item: D,
-): HeroDependent => pipe(
-  getHeroStateListKeyById,
-  maybe(key => ({
-    ...state,
-    [key]: setMapItem(state[key] as Map<string, D>, id, item),
-  }), state)
-)(id);
+export const getHeroStateListItemOr =
+  <D extends Dependent = Dependent>(id: string, create: (id: string) => D) =>
+    (state: HeroDependent): D =>
+      R.defaultTo(create(id), getHeroStateListItem<D>(id)(state).value);
 
-export const removeHeroListStateItem = <D extends Dependent = Dependent>(
-  state: HeroDependent,
-  id: string,
-): HeroDependent => pipe(
-  getHeroStateListKeyById,
-  maybe(key => ({
-    ...state,
-    [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
-  }), state)
-)(id);
+export const setHeroListStateItem =
+  <D extends Dependent = Dependent>(id: string) => (item: D) =>
+    (state: HeroDependent): HeroDependent =>
+      R.defaultTo(state, getHeroStateListKeyById(id)
+        .fmap(key => ({
+          ...state,
+          [key]: setMapItem(state[key] as Map<string, D>, id, item),
+        }))
+        .value
+      );
 
+export const removeHeroListStateItem =
+  <D extends Dependent = Dependent>(id: string) =>
+    (state: HeroDependent): HeroDependent =>
+      R.defaultTo(state, getHeroStateListKeyById(id)
+        .fmap(key => ({
+          ...state,
+          [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
+        }))
+        .value
+      );
 export const getAllEntriesByGroup =
-  <T extends EntryWithGroup = EntryWithGroup, I extends Dependent = Dependent>(
+  <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
     wiki: Map<string, T>,
-    list: Map<string, I>,
     ...groups: number[],
-  ) => pipe<Map<string, I>, I[]>(
+  ): ((list: Map<string, I>) => I[]) => R.pipe(
     convertMapToValueArray,
-    list => list.filter(pipe<I, T | undefined, boolean>(
-      e => wiki.get(e.id),
+    list => list.filter(R.pipe(
+      (e: I) => wiki.get(e.id),
       e => typeof e === 'object' && groups.includes(e.gr),
     )),
-  )(list);
+  );

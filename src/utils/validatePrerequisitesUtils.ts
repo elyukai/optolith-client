@@ -1,3 +1,4 @@
+import R from 'ramda';
 import { Pact } from '../actions/PactActions';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
@@ -156,9 +157,9 @@ const isIncreasableValid = (
       });
     })
     .otherwise(pipe(
-      id => getHeroStateListItem(state, id),
+      id => getHeroStateListItem(id)(state),
       instance => {
-        return match<Data.Dependent | undefined, boolean>(instance)
+        return match<Data.Dependent | undefined, boolean>(instance.value)
           .on(isDependentSkillExtended, entry => entry.value >= req.value)
           .otherwise(() => false);
         },
@@ -183,22 +184,25 @@ const isActivatableValid = (
       return match<string | number | number[] | undefined, boolean>(req.sid)
         .on('sel', () => true)
         .on('GR', () => {
-          return maybe<Data.ActivatableDependent, boolean>(target => {
-            return pipe<Skill[], string[], boolean>(
-              arr => arr.map(e => e.id),
-              arr => getActiveSelections(target).every(e => {
-                return !arr.includes(e as string);
+          return R.defaultTo(
+            true,
+            getHeroStateListItem<Data.ActivatableDependent>(id)(state)
+              .fmap(target => {
+                return pipe<Skill[], string[], boolean>(
+                  arr => arr.map(e => e.id),
+                  arr => getActiveSelections(target).every(e => {
+                    return !arr.includes(e as string);
+                  })
+                )(
+                  getAllWikiEntriesByGroup(wiki.skills, req.sid2 as number)
+                );
               })
-            )(
-              getAllWikiEntriesByGroup(wiki.skills, req.sid2 as number)
-            );
-          }, true)(
-            getHeroStateListItem<Data.ActivatableDependent>(state, id)
+              .value
           );
         })
         .otherwise(() => {
           return match<Data.ExtendedActivatableDependent | undefined, boolean>(
-            getHeroStateListItem<Data.ExtendedActivatableDependent>(state, id)
+            getHeroStateListItem<Data.ExtendedActivatableDependent>(id)(state).value
           )
             .on(isActivatableDependent, instance => {
               const activeSelections = getActiveSelections(instance);

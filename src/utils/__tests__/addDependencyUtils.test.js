@@ -6,7 +6,7 @@ test('adds attribute dependency of 10', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addAttributeDependency(state, 'ATTR_6', 10).attributes
+    ...AddDependencyUtils.addAttributeDependency('ATTR_6', 10)(state).attributes
   ];
 
   const expected = [['ATTR_6', {
@@ -30,7 +30,7 @@ test('adds attribute dependency of 10 to existing object', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addAttributeDependency(state, 'ATTR_6', 10).attributes
+    ...AddDependencyUtils.addAttributeDependency('ATTR_6', 10)(state).attributes
   ];
 
   const expected = [['ATTR_6', {
@@ -49,11 +49,11 @@ test('adds activatable dependency', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addActivatableDependency(state, 'SA_8', {
+    ...AddDependencyUtils.addActivatableDependency('SA_8', {
       sid: 2,
       sid2: 4,
       tier: 2,
-    }).specialAbilities
+    })(state).specialAbilities
   ];
 
   const expected = [['SA_8', {
@@ -83,11 +83,11 @@ test('adds activatable dependency to existing object', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addActivatableDependency(state, 'SA_8', {
+    ...AddDependencyUtils.addActivatableDependency('SA_8', {
       sid: 2,
       sid2: 4,
       tier: 2,
-    }).specialAbilities
+    })(state).specialAbilities
   ];
 
   const expected = [['SA_8', {
@@ -114,7 +114,7 @@ test('adds increasable dependency', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addIncreasableDependency(state, 'SPELL_6', 10).spells
+    ...AddDependencyUtils.addIncreasableDependency('SPELL_6', 10)(state).spells
   ];
 
   const expected = [['SPELL_6', {
@@ -138,7 +138,7 @@ test('adds increasable dependency to existing object', () => {
   };
 
   const actual = [
-    ...AddDependencyUtils.addIncreasableDependency(state, 'SPELL_6', 10).spells
+    ...AddDependencyUtils.addIncreasableDependency('SPELL_6', 10)(state).spells
   ];
 
   const expected = [['SPELL_6', {

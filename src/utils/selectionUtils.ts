@@ -1,7 +1,7 @@
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { filterExisting, setMapItem } from './collectionUtils';
-import { maybe } from './exists';
+import { Maybe, MaybeFunctor } from './maybe';
 import { pipe } from './pipe';
 
 /**
@@ -12,9 +12,10 @@ import { pipe } from './pipe';
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id?: string | number,
-): S | undefined => obj.select && obj.select.find<S>((e): e is S => {
-  return e.id === id;
-});
+): MaybeFunctor<S | undefined> => Maybe(obj.select)
+  .fmap(select => select.find<S>((e): e is S => {
+    return e.id === id;
+  }));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
@@ -24,10 +25,9 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
 export const getSelectOptionName = (
   obj: Wiki.Activatable,
   id?: string | number,
-): string | undefined => {
-  return maybe<Wiki.SelectionObject, string>(e => e.name)(
-    findSelectOption(obj, id)
-  );
+): MaybeFunctor<string | undefined> => {
+  return findSelectOption(obj, id)
+    .fmap(e => e.name);
 };
 
 /**
@@ -38,10 +38,9 @@ export const getSelectOptionName = (
 export const getSelectOptionCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): number | undefined => {
-  return maybe<Wiki.SelectionObject, number | undefined>(e => e.cost)(
-    findSelectOption(obj, id)
-  );
+): MaybeFunctor<number | undefined> => {
+  return findSelectOption(obj, id)
+    .fmap(e => e.cost);
 };
 
 interface SelectionNameAndCost {
@@ -57,15 +56,14 @@ interface SelectionNameAndCost {
 export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): SelectionNameAndCost | undefined => {
-  return maybe<Wiki.SelectionObject, SelectionNameAndCost | undefined>(e => {
-    return typeof e.cost === 'number' ? {
-      name: e.name,
-      cost: e.cost,
-    } : undefined;
-  })(
-    findSelectOption(obj, id)
-  );
+): MaybeFunctor<SelectionNameAndCost | undefined> => {
+  return findSelectOption(obj, id)
+    .fmap(e => {
+      return typeof e.cost === 'number' ? {
+        name: e.name,
+        cost: e.cost,
+      } : undefined;
+    });
 };
 
 /**

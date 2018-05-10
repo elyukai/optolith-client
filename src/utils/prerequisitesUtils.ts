@@ -1,3 +1,4 @@
+import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
 import * as Wiki from '../types/wiki.d';
@@ -23,10 +24,11 @@ export function getGeneratedPrerequisites(
 
   switch (wikiEntry.id) {
     case 'SA_3': {
-      const selectionItem = findSelectOption(wikiEntry, sid);
-      if (selectionItem && selectionItem.req) {
-        adds.push(...selectionItem.req);
-      }
+      findSelectOption(wikiEntry, sid)
+        .fmap(item => item.req)
+        .fmap(req => {
+          adds.push(...req);
+        });
       break;
     }
     case 'SA_9': {
@@ -42,14 +44,13 @@ export function getGeneratedPrerequisites(
         value: (sameSkill + (add ? 1 : 0)) * 6,
       });
 
-      const selectedSkill = findSelectOption<SkillSelectionObject>(wikiEntry, sid);
-      const skillApps = selectedSkill && selectedSkill.applications;
-      const selectedApp = skillApps && skillApps.find(e => e.id === sid2);
-      const applicationPrerequisites = selectedApp && selectedApp.prerequisites;
-
-      if (applicationPrerequisites) {
-        adds.push(...applicationPrerequisites);
-      }
+      findSelectOption<SkillSelectionObject>(wikiEntry, sid)
+        .fmap(skill => skill.applications)
+        .fmap(R.find(e => e.id === sid2))
+        .fmap(app => app.prerequisites)
+        .fmap(prerequisites => {
+          adds.push(...prerequisites);
+        });
 
       break;
     }
@@ -68,21 +69,22 @@ export function getGeneratedPrerequisites(
         tier: number;
       }
 
-      const selectionItem = findSelectOption<ExtensionSelectionObject>(wikiEntry, sid);
-
-      if (selectionItem) {
-        adds.push({
-          id: selectionItem.target,
-          value: selectionItem.tier * 4 + 4,
+      findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
+        .fmap(item => {
+          adds.push({
+            id: item.target,
+            value: item.tier * 4 + 4,
+          });
         });
-      }
+
       break;
     }
     case 'SA_639': {
-      const selectionItem = findSelectOption(wikiEntry, sid);
-      if (selectionItem && selectionItem.prerequisites) {
-        adds.push(...selectionItem.prerequisites);
-      }
+      findSelectOption(wikiEntry, sid)
+        .fmap(item => item.prerequisites)
+        .fmap(prerequisites => {
+          adds.push(...prerequisites);
+        });
       break;
     }
     case 'SA_699': {

@@ -5,6 +5,7 @@ import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
 import { getCategoryById } from './IDUtils';
 import { convertMapToValueArray } from './collectionUtils';
+import { Maybe, MaybeFunctor } from './maybe';
 import { pipe } from './pipe';
 
 interface WikiKeyByCategory {
@@ -49,19 +50,17 @@ export const getWikiStateKeyByCategory = <T extends Categories>(
 
 export const getWikiStateKeyById = (
   id: string,
-): keyof WikiState | undefined => pipe(
-  (id: string) => getCategoryById(id),
-  category => category && getWikiStateKeyByCategory(category),
+): MaybeFunctor<keyof WikiState | undefined> => pipe(
+  getCategoryById,
+  category => Maybe(category).fmap(getWikiStateKeyByCategory),
 )(id);
 
 export const getWikiEntry = <T extends Wiki.Entry = Wiki.Entry>(
   state: WikiState,
   id: string,
-): T | undefined => pipe(
-  (id: string) => getWikiStateKeyById(id),
-  key => key && state[key],
-  slice => slice && slice.get(id) as T | undefined
-)(id);
+): MaybeFunctor<T | undefined> => getWikiStateKeyById(id)
+  .fmap(key => state[key])
+  .fmap(slice => slice.get(id) as T | undefined);
 
 export const getAllWikiEntriesByGroup =
   <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>(

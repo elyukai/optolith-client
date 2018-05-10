@@ -8,21 +8,21 @@ import * as Data from '../types/data.d';
 import { AllRequirementTypes } from '../types/reusable.d';
 import * as Wiki from '../types/wiki.d';
 import { sortObjects, sortStrings } from './FilterSortUtils';
-import { _translate } from './I18n';
 import { getTraditionOfAspect } from './LiturgyUtils';
-import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
+import { convertActivatableToArray } from './activatableConvertUtils';
 import { getCost } from './activatableCostUtils';
+import { getName } from './activatableNameUtils';
 import { isRequiringActivatable } from './checkPrerequisiteUtils';
 import { isExtendedSpecialAbility } from './checkStyleUtils';
 import { setMapItem } from './collectionUtils';
 import { getFirstTierPrerequisites } from './flattenPrerequisites';
-import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
+import { getAllEntriesByGroup } from './heroStateUtils';
 import { isActive } from './isActive';
-import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections, getSelectOptionName } from './selectionUtils';
-import { getMagicalTraditions } from './traditionUtils';
-import { isActivatable, isDeactivatable } from './validateActivatableChangeUtils';
-import { getMinTier, validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
+import { MaybeFunctor } from './maybe';
+import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
+import { isActivatable } from './validateActivatableChangeUtils';
+import { validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
 
 export function getFullName(obj: string | Data.ActiveViewObject): string {
   if (typeof obj === 'string') {
@@ -46,13 +46,6 @@ export function isMagicalOrBlessed(obj: Data.ActivatableInstance) {
 }
 
 /**
- * Generates a list of ActiveObjects based on the given instance.
- */
-export function convertActivatableToArray({ active, id }: Data.ActivatableInstance): Data.ActiveObjectWithId[] {
-  return active.map((e, index) => ({ ...e, id, index }));
-}
-
-/**
  * Get all active items in an array.
  * @param state A state slice.
  */
@@ -69,140 +62,6 @@ export function getActiveObjectCore({ sid, sid2, tier }: ActiveObjectAny): Data.
 }
 
 /**
- * Checks if the given ActiveObject can be removed or changed in tier.
- * @param obj The ActiveObject with origin id.
- * @param state The current hero's state.
- */
-export function getValidation(obj: Data.ActiveObjectWithId, wiki: WikiState, state: Data.HeroDependent, pact: Pact | undefined) {
-  const { id, sid } = obj;
-  const instance = getHeroStateListItem<Data.ActivatableDependent>(state, id)!;
-  const wikiEntry = getWikiEntry<Wiki.WikiActivatable>(wiki, id)!;
-
-  const { dependencies, active } = instance;
-  const { prerequisites } = wikiEntry;
-  let { tiers } = wikiEntry;
-
-  let disabled = !isDeactivatable(wiki, state, pact, instance, obj);
-  let maxTier: number | undefined;
-  let minTier = getMinTier(dependencies, sid);
-
-  if (!Array.isArray(prerequisites)) {
-    maxTier = validateTier(wiki, state, prerequisites, dependencies, id, pact);
-  }
-
-  switch (id) {
-    case 'ADV_16': {
-      const { value } = state.skills.get(sid as string)!;
-      const counter = instance.active.reduce((e, obj) => obj.sid === sid ? e + 1 : e, 0);
-      disabled = disabled || wiki.experienceLevels.get(state.experienceLevel)!.maxSkillRating + counter === value;
-      break;
-    }
-    case 'ADV_17': {
-      const { value } = state.combatTechniques.get(sid as string)!;
-      disabled = disabled || wiki.experienceLevels.get(state.experienceLevel)!.maxCombatTechniqueRating + 1 === value;
-      break;
-    }
-    case 'ADV_58': {
-      const activeSpells = state.spells.size;
-      if (activeSpells > 3) {
-        minTier = activeSpells - 3;
-      }
-      break;
-    }
-    case 'ADV_79': {
-      const active = getAllEntriesByGroup(wiki.specialAbilities, state.specialAbilities, 24).filter(isActive).length;
-      if (active > 3) {
-        minTier = active - 3;
-      }
-      break;
-    }
-    case 'ADV_80': {
-      const active = getAllEntriesByGroup(wiki.specialAbilities, state.specialAbilities, 27).filter(isActive).length;
-      if (active > 3) {
-        minTier = active - 3;
-      }
-      break;
-    }
-    case 'DISADV_72': {
-      const active = getAllEntriesByGroup(wiki.specialAbilities, state.specialAbilities, 24).filter(isActive).length;
-      if (active < 3) {
-        minTier = 3 - active;
-      }
-      break;
-    }
-    case 'DISADV_73': {
-      const active = getAllEntriesByGroup(wiki.specialAbilities, state.specialAbilities, 27).filter(isActive).length;
-      if (active < 3) {
-        minTier = 3 - active;
-      }
-      break;
-    }
-    case 'SA_29':
-      tiers = 3;
-      break;
-    case 'SA_70':
-    case 'SA_255':
-    case 'SA_345':
-    case 'SA_346':
-    case 'SA_676':
-    case 'SA_677':
-    case 'SA_678':
-    case 'SA_679':
-    case 'SA_680':
-    case 'SA_681': {
-      const multipleTraditions = getMagicalTraditions(state.specialAbilities).length > 1;
-      if (!multipleTraditions && (state.spells.size > 0 || state.cantrips.size > 0)) {
-        disabled = true;
-      }
-      break;
-    }
-    case 'SA_86':
-    case 'SA_682':
-    case 'SA_683':
-    case 'SA_684':
-    case 'SA_685':
-    case 'SA_686':
-    case 'SA_687':
-    case 'SA_688':
-    case 'SA_689':
-    case 'SA_690':
-    case 'SA_691':
-    case 'SA_692':
-    case 'SA_693':
-    case 'SA_694':
-    case 'SA_695':
-    case 'SA_696':
-    case 'SA_697':
-    case 'SA_698': {
-      if (state.liturgicalChants.size > 0 || state.blessings.size > 0) {
-        disabled = true;
-      }
-      break;
-    }
-    case 'SA_667': {
-      maxTier = pact!.level;
-      break;
-    }
-  }
-
-  if (typeof tiers === 'number' && minTier) {
-    disabled = true;
-  }
-
-  if (!disabled && dependencies.some(e => typeof e === 'boolean' ? e && active.length === 1 : (Object.keys(e) as ('sid' | 'sid2' | 'tier')[]).every(key => obj[key] === e[key]) && Object.keys(obj).length === Object.keys(e).length)) {
-    disabled = true;
-  }
-
-  return {
-    ...obj,
-    disabled,
-    maxTier,
-    minTier,
-    tiers
-  };
-}
-
-/**
  * Returns name, splitted and combined, as well as the AP you get when removing
  * the ActiveObject.
  * @param obj The ActiveObject with origin id.
@@ -211,15 +70,25 @@ export function getValidation(obj: Data.ActiveObjectWithId, wiki: WikiState, sta
  * @param costToAdd If the cost are going to be added or removed from AP left.
  * @param locale The locale-dependent messages.
  */
-export function getNameCost(obj: Data.ActiveObjectWithId, wiki: WikiState, state: Data.HeroDependent, costToAdd: boolean, locale?: Data.UIMessages): Data.ActivatableNameCost {
-  const currentCost = getCost(obj, wiki, state, costToAdd);
-  const names = getName(obj, wiki, locale);
-
-  return {
-    ...obj,
-    ...names,
-    currentCost
-  };
+export function getNameCost(
+  obj: Data.ActiveObjectWithId,
+  wiki: WikiState,
+  state: Data.HeroDependent,
+  costToAdd: boolean,
+  locale?: Data.UIMessages,
+): MaybeFunctor<Data.ActivatableNameCost | undefined> {
+  return getCost(obj, wiki, state, costToAdd)
+    .fmap(currentCost => {
+      return getName(obj, wiki, locale)
+        .fmap(names => {
+          return {
+            ...obj,
+            ...names,
+            currentCost
+          };
+        })
+        .value;
+    })
 }
 
 /**
@@ -229,161 +98,29 @@ export function getNameCost(obj: Data.ActiveObjectWithId, wiki: WikiState, state
  * @param wiki The wiki state.
  * @param locale The locale-dependent messages.
  */
-export function getNameCostForWiki(obj: Data.ActiveObjectWithId, wiki: WikiState, locale?: Data.UIMessages): Data.ActivatableNameCost {
-  const currentCost = getCost(obj, wiki);
-  const names = getName(obj, wiki, locale);
-
-  return {
-    ...obj,
-    ...names,
-    currentCost
-  };
+export function getNameCostForWiki(
+  obj: Data.ActiveObjectWithId,
+  wiki: WikiState,
+  locale?: Data.UIMessages,
+): MaybeFunctor<Data.ActivatableNameCost | undefined> {
+  return getCost(obj, wiki)
+    .fmap(currentCost => {
+      return getName(obj, wiki, locale)
+        .fmap(names => {
+          return {
+            ...obj,
+            ...names,
+            currentCost
+          };
+        })
+        .value;
+    });
 }
 
 export interface CombinedName {
   combinedName: string;
   baseName: string;
   addName: string | undefined;
-}
-
-/**
- * Returns name, splitted and combined, of advantage/disadvantage/special ability.
- * @param obj The ActiveObject with origin id.
- * @param wiki The current hero's state.
- * @param locale The locale-dependent messages.
- */
-export function getName(obj: Data.ActiveObjectWithId, wiki: WikiState, locale?: Data.UIMessages): CombinedName {
-  const { id, sid, sid2, tier } = obj;
-  const instance = getWikiEntry<Wiki.Activatable>(wiki, id)!;
-  const { select, input, name } = instance;
-
-  let combinedName = name;
-  let addName: string | undefined;
-
-  switch (id) {
-    case 'ADV_4':
-    case 'ADV_47':
-    case 'ADV_16':
-    case 'ADV_17':
-    case 'DISADV_48':
-    case 'SA_231':
-    case 'SA_250':
-    case 'SA_472':
-    case 'SA_473':
-    case 'SA_531':
-    case 'SA_569': {
-      const entry = typeof sid === 'string' ? getWikiEntry(wiki, sid) as Wiki.Skillish : undefined;
-      if (entry) {
-        const { name } = entry;
-        addName = name;
-      }
-      break;
-    }
-    case 'ADV_68': {
-      const selectionItem = findSelectOption(instance, sid);
-      addName = selectionItem && `${sid2} (${selectionItem.name})`;
-      break;
-    }
-    case 'DISADV_33': {
-      const selection = getSelectOptionName(instance, sid);
-      if ([7, 8].includes(sid as number)) {
-        addName = `${selection}: ${sid2}`;
-      }
-      else {
-        addName = selection;
-      }
-      break;
-    }
-    case 'SA_9': {
-      const skill = wiki.skills.get(sid as string)!;
-      let name;
-      if (typeof sid2 === 'string') {
-        name = sid2;
-      }
-      else {
-        const selectedApplication = skill.applications && skill.applications.find(e => e.id === sid2);
-        if (typeof selectedApplication === 'object') {
-          name = selectedApplication.name;
-        }
-      }
-      addName = `${skill.name}: ${name}`;
-      break;
-    }
-    case 'SA_677':
-    case 'SA_678':
-      const part = getTraditionNameFromFullName(name);
-      const musictraditionLabels = _translate(locale, 'musictraditions');
-      if (musictraditionLabels && typeof sid2 === 'number') {
-        combinedName = combinedName.replace(part, `${part}: ${musictraditionLabels[sid2 - 1]}`);
-      }
-      break;
-    case 'SA_680':
-      const entry = wiki.skills.get(sid as string);
-      if (entry) {
-        addName += `: ${entry.name}`;
-      }
-      break;
-    case 'SA_533': {
-      const entry = typeof sid === 'string' ? wiki.skills.get(sid) : undefined;
-      if (entry) {
-        const { name } = entry;
-        addName = name;
-      }
-      break;
-    }
-    case 'SA_414':
-    case 'SA_663': {
-      const selectionItem = findSelectOption(instance, sid);
-      const targetInstance = selectionItem && (id === 'SA_414' ? wiki.spells.get(selectionItem.target!) : wiki.liturgicalChants.get(selectionItem.target!));
-      addName = targetInstance && `${targetInstance.name}: ${selectionItem!.name}`;
-      break;
-    }
-    case 'SA_699': {
-      const languages = wiki.specialAbilities.get('SA_29')!;
-      const selectionItem = findSelectOption(languages, sid);
-      addName = selectionItem && `${selectionItem.name}: ${typeof sid2 === 'string' ? sid2 : selectionItem.spec![sid2! - 1]}`;
-      break;
-    }
-
-    default:
-      if (typeof input === 'string' && typeof sid === 'string') {
-        addName = sid;
-      }
-      else if (Array.isArray(select)) {
-        addName = getSelectOptionName(instance, sid);
-      }
-      break;
-  }
-
-  switch (id) {
-    case 'ADV_28':
-    case 'ADV_29':
-      combinedName = `${_translate(locale, 'activatable.view.immunityto')} ${addName}`;
-      break;
-    case 'ADV_68':
-      combinedName = `${_translate(locale, 'activatable.view.hatredof')} ${addName}`;
-      break;
-    case 'DISADV_1':
-      combinedName = `${_translate(locale, 'activatable.view.afraidof')} ${addName}`;
-      break;
-    case 'DISADV_34':
-    case 'DISADV_50':
-      combinedName  += ` ${getRoman(tier as number)} (${addName})`;
-      break;
-    case 'SA_639':
-      combinedName  += ` ${addName}`;
-      break;
-    default:
-      if (addName) {
-        combinedName += ` (${addName})`;
-      }
-  }
-
-  return {
-    combinedName,
-    baseName: name,
-    addName
-  };
 }
 
 export function getDeactiveView(
@@ -892,14 +629,6 @@ export function getSplittedActiveObjectsByCustomCost(entries: Data.ActiveObject[
 
 export function getActiveWithDefaultCost(entries: Data.ActiveObject[]) {
   return getSplittedActiveObjectsByCustomCost(entries).defaultCostList;
-}
-
-export function getTraditionNameFromFullName(name: string): string {
-	const result = /\((.+)\)/.exec(name);
-	if (result === null) {
-		return '';
-	}
-	return result[1];
 }
 
 export function calculateAdventurePointsSpentDifference(entries: Data.ActiveViewObject[], state: Map<string, Data.ActivatableInstance>, wiki: WikiState): number {

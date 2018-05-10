@@ -11,7 +11,7 @@ test('remove attribute dependency of 10 and delete key', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeAttributeDependency(state, 'ATTR_6', 10).attributes
+    ...RemoveDependencyUtils.removeAttributeDependency('ATTR_6', 10)(state).attributes
   ];
 
   const expected = [];
@@ -30,7 +30,7 @@ test('remove attribute dependency of 10', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeAttributeDependency(state, 'ATTR_6', 10).attributes
+    ...RemoveDependencyUtils.removeAttributeDependency('ATTR_6', 10)(state).attributes
   ];
 
   const expected = [['ATTR_6', {
@@ -57,11 +57,11 @@ test('remove activatable dependency and delete key', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeActivatableDependency(state, 'SA_8', {
+    ...RemoveDependencyUtils.removeActivatableDependency('SA_8', {
       sid: 2,
       sid2: 4,
       tier: 2,
-    }).specialAbilities
+    })(state).specialAbilities
   ];
 
   const expected = [];
@@ -88,11 +88,11 @@ test('remove activatable dependency', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeActivatableDependency(state, 'SA_8', {
+    ...RemoveDependencyUtils.removeActivatableDependency('SA_8', {
       sid: 2,
       sid2: 4,
       tier: 2,
-    }).specialAbilities
+    })(state).specialAbilities
   ];
 
   const expected = [['SA_8', {
@@ -119,7 +119,7 @@ test('remove increasable dependency and delete key', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeIncreasableDependency(state, 'SPELL_6', 10).spells
+    ...RemoveDependencyUtils.removeIncreasableDependency('SPELL_6', 10)(state).spells
   ];
 
   const expected = [];
@@ -138,7 +138,7 @@ test('remove increasable dependency', () => {
   };
 
   const actual = [
-    ...RemoveDependencyUtils.removeIncreasableDependency(state, 'SPELL_6', 10).spells
+    ...RemoveDependencyUtils.removeIncreasableDependency('SPELL_6', 10)(state).spells
   ];
 
   const expected = [['SPELL_6', {
