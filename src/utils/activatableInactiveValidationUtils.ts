@@ -1,5 +1,4 @@
 import R from 'ramda';
-import { Pact } from '../actions/PactActions';
 import { Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
@@ -17,13 +16,12 @@ import { validatePrerequisites } from './validatePrerequisitesUtils';
  * @param state The present state of the current hero.
  * @param instance The entry.
  */
-export function isActivatable(
+const isAdditionDisabledEntrySpecific = (
   wiki: WikiState,
   state: Data.HeroDependent,
-  pact: Pact | undefined,
   instance: Data.ActivatableDependent,
-): boolean {
-  return R.defaultTo(false, getWikiEntry<Wiki.Activatable>(wiki, instance.id)
+): boolean => {
+  return R.defaultTo(true, getWikiEntry<Wiki.Activatable>(wiki, instance.id)
     .fmap(entry => {
       if (entry.category === Categories.SPECIAL_ABILITIES) {
         if (CheckStyleUtils.isCombatStyleSpecialAbility(entry)) {
@@ -31,7 +29,7 @@ export function isActivatable(
             getHeroStateListItem<Data.ActivatableDependent>('SA_164')(state);
 
           if (!combinationSA) {
-            if (hasActiveGroupEntry(wiki, 9, 10)(state)) {
+            if (hasActiveGroupEntry(wiki, state, 9, 10)) {
               return false;
             }
           }
@@ -39,16 +37,16 @@ export function isActivatable(
             const combinationAvailable = isActive(combinationSA.value);
 
             if (combinationAvailable) {
-              const totalActive = countActiveGroupEntries(wiki, 9, 10)(state);
+              const totalActive = countActiveGroupEntries(wiki, state, 9, 10);
               const equalTypeStylesActive =
-                countActiveGroupEntries(wiki, entry.gr)(state);
+                countActiveGroupEntries(wiki, state, entry.gr);
 
               if (totalActive >= 3 || equalTypeStylesActive >= 2) {
                 return false;
               }
             }
             else {
-              if (hasActiveGroupEntry(wiki, entry.gr)(state)) {
+              if (hasActiveGroupEntry(wiki, state, entry.gr)) {
                 return false;
               }
             }
@@ -59,7 +57,7 @@ export function isActivatable(
           && entry.gr === 13
         ) {
           const combinationSA = state.specialAbilities.get('SA_266');
-          const totalActive = countActiveGroupEntries(wiki, 13)(state);
+          const totalActive = countActiveGroupEntries(wiki, state, 13);
 
           if (totalActive >= (isActive(combinationSA) ? 2 : 1)) {
             return false;
@@ -69,22 +67,22 @@ export function isActivatable(
           entry.category === Categories.SPECIAL_ABILITIES
           && entry.gr === 25
         ) {
-          if (hasActiveGroupEntry(wiki, 25)(state)) {
+          if (hasActiveGroupEntry(wiki, state, 25)) {
             return false;
           }
         }
         else if (entry.id === 'SA_164') {
-          if (!hasActiveGroupEntry(wiki, 9, 10)(state)) {
+          if (!hasActiveGroupEntry(wiki, state, 9, 10)) {
             return false;
           }
         }
         else if (entry.id === 'SA_266') {
-          if (!hasActiveGroupEntry(wiki, 13)(state)) {
+          if (!hasActiveGroupEntry(wiki, state, 13)) {
             return false;
           }
         }
         else if (entry.id === 'SA_667') {
-          if (hasActiveGroupEntry(wiki, 30)(state)) {
+          if (hasActiveGroupEntry(wiki, state, 30)) {
             return false;
           }
         }
@@ -96,8 +94,9 @@ export function isActivatable(
 
           const allPactPresents = getAllEntriesByGroup<Data.ActivatableDependent>(
             wiki.specialAbilities,
+            state.specialAbilities,
             30,
-          )(state.specialAbilities);
+          );
 
           const countPactPresents = allPactPresents.reduce((n, obj) => {
             if (isActive(obj)) {
@@ -117,8 +116,8 @@ export function isActivatable(
 
           if (
             isActive(darkPactSA)
-            || pact === undefined
-            || pact.level <= countPactPresents
+            || state.pact === undefined
+            || state.pact.level <= countPactPresents
           ) {
             return false;
           }
@@ -135,9 +134,39 @@ export function isActivatable(
         state,
         getFirstTierPrerequisites(entry.prerequisites),
         instance.id,
-        pact,
       );
     })
     .value
   );
-}
+};
+
+/**
+ * Checks if the given entry can be added.
+ * @param obj
+ * @param state The current hero's state.
+ */
+export const isAdditionDisabled = (
+  wiki: WikiState,
+  instance: Data.ActivatableDependent,
+  state: Data.HeroDependent,
+  validExtendedSpecialAbilities: string[],
+  entry: Wiki.Activatable,
+  maxTier: number | undefined,
+) => {
+  return R.allPass([
+    R.always(isAdditionDisabledEntrySpecific(wiki, state, instance)),
+    R.always(R.not(R.contains(false, instance.dependencies))),
+    R.either(
+      R.always(R.equals(entry.max, undefined)),
+      R.always(R.lt(instance.active.length, entry.max!)),
+    ),
+    R.either(
+      R.always(R.equals(entry.tiers, undefined)),
+      R.always(R.not(R.equals(maxTier, 0))),
+    ),
+    R.either(
+      R.always(R.not(CheckStyleUtils.isExtendedSpecialAbility(entry))),
+      R.always(R.contains(entry.id, validExtendedSpecialAbilities)),
+    ),
+  ])();
+};

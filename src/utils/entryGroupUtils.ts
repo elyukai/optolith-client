@@ -4,28 +4,37 @@ import * as Data from '../types/data.d';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { isActive } from './isActive';
 
-type CountActiveStyles =
-  (wiki: WikiState, ...groups: number[]) =>
-    (state: Data.HeroDependent) => number;
-
-export const countActiveGroupEntries: CountActiveStyles = (wiki, ...groups) => R.pipe(
-  state => getAllEntriesByGroup<Data.ActivatableDependent>(
+export const getActiveGroupEntries = (
+  wiki: WikiState,
+  state: Data.HeroDependent,
+  ...groups: number[],
+): Data.ActivatableDependent[] => R.pipe(
+  (state: Data.HeroDependent) => getAllEntriesByGroup(
     wiki.specialAbilities,
+    state.specialAbilities,
     ...groups,
-  )(state.specialAbilities),
+  ),
   all => R.filter(e => isActive(e), all),
+)(state);
+
+export const countActiveGroupEntries = (
+  wiki: WikiState,
+  state: Data.HeroDependent,
+  ...groups: number[],
+): number => R.pipe(
+  (state: Data.HeroDependent) => getActiveGroupEntries(wiki, state, ...groups),
   active => active.length,
-);
+)(state);
 
-type HasActiveStyle =
-  (wiki: WikiState, ...groups: number[]) =>
-    (state: Data.HeroDependent) => boolean;
-
-export const hasActiveGroupEntry: HasActiveStyle = (wiki, ...groups) => R.pipe(
-  state => getAllEntriesByGroup<Data.ActivatableDependent>(
+export const hasActiveGroupEntry = (
+  wiki: WikiState,
+  state: Data.HeroDependent,
+  ...groups: number[],
+): boolean => R.pipe(
+  (state: Data.HeroDependent) => getAllEntriesByGroup(
     wiki.specialAbilities,
+    state.specialAbilities,
     ...groups,
-  )(state.specialAbilities),
-  all => R.find(e => isActive(e), all),
-  isObject,
-);
+  ),
+  all => R.any(e => isActive(e), all),
+)(state);

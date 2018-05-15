@@ -1,5 +1,4 @@
 import R from 'ramda';
-import { Pact } from '../actions/PactActions';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
@@ -22,7 +21,6 @@ interface Validator {
     state: Data.HeroDependent,
     req: Data.AllRequirements,
     sourceId: string,
-    pact: Pact | undefined,
   ): boolean;
 }
 
@@ -101,7 +99,7 @@ const isCultureValid = (
 };
 
 const isPactValid = (
-  pact: Pact | undefined,
+  pact: Data.Pact | undefined,
   req: Reusable.PactRequirement,
 ): boolean => typeof pact === 'object' && [
   () => req.category === pact.category,
@@ -146,14 +144,13 @@ const isIncreasableValid = (
   wiki: WikiState,
   state: Data.HeroDependent,
   sourceId: string,
-  pact: Pact | undefined,
   req: Reusable.RequiresIncreasableObject,
   validateObject: Validator,
 ): boolean => {
   return match<string | string[], boolean>(req.id)
     .on(Array.isArray, id => {
       return id.some(e => {
-        return validateObject(wiki, state, { ...req, id: e }, sourceId, pact);
+        return validateObject(wiki, state, { ...req, id: e }, sourceId);
       });
     })
     .otherwise(pipe(
@@ -170,14 +167,13 @@ const isActivatableValid = (
   wiki: WikiState,
   state: Data.HeroDependent,
   sourceId: string,
-  pact: Pact | undefined,
   req: Reusable.RequiresActivatableObject,
   validateObject: Validator,
 ): boolean => {
   return match<string | string[], boolean>(req.id)
     .on(Array.isArray, id => {
       return id.some(e => {
-        return validateObject(wiki, state, { ...req, id: e }, sourceId, pact);
+        return validateObject(wiki, state, { ...req, id: e }, sourceId);
       });
     })
     .otherwise(id => {
@@ -264,7 +260,6 @@ export const validateObject = (
   state: Data.HeroDependent,
   req: Data.AllRequirements,
   sourceId: string,
-  pact: Pact | undefined,
 ): boolean => {
   return match<Data.AllRequirements, boolean>(req)
     .on('RCP', () => isRCPValid(wiki, state, sourceId))
@@ -278,16 +273,16 @@ export const validateObject = (
       return isCultureValid(state.culture, req);
     })
     .on(CheckPrerequisiteUtils.isPactRequirement, req => {
-      return isPactValid(pact, req);
+      return isPactValid(state.pact, req);
     })
     .on(CheckPrerequisiteUtils.isRequiringPrimaryAttribute, req => {
       return isPrimaryAttributeValid(state, req);
     })
     .on(CheckPrerequisiteUtils.isRequiringIncreasable, req => {
-      return isIncreasableValid(wiki, state, sourceId, pact, req, validateObject);
+      return isIncreasableValid(wiki, state, sourceId, req, validateObject);
     })
     .otherwise(req => {
-      return isActivatableValid(wiki, state, sourceId, pact, req, validateObject);
+      return isActivatableValid(wiki, state, sourceId, req, validateObject);
     });
 };
 
@@ -303,10 +298,9 @@ export const validatePrerequisites = (
   state: Data.HeroDependent,
   requirements: Data.AllRequirements[],
   sourceId: string,
-  pact: Pact | undefined
 ): boolean => {
   return requirements.every(e => {
-    return validateObject(wiki, state, e, sourceId, pact);
+    return validateObject(wiki, state, e, sourceId);
   });
 }
 
@@ -322,9 +316,8 @@ const areAllPrerequisitesValid = (
   state: Data.HeroDependent,
   prerequisites: Data.AllRequirements[],
   sourceId: string,
-  pact: Pact | undefined,
 ) => prerequisites.every(e => {
-  return validateObject(wiki, state, e, sourceId, pact);
+  return validateObject(wiki, state, e, sourceId);
 });
 
 const isProhibitingHigherLevel = (
@@ -347,7 +340,6 @@ export const validateTier = (
   requirements: Map<number, Data.AllRequirements[]>,
   dependencies: Data.ActivatableInstanceDependency[],
   sourceId: string,
-  pact: Pact | undefined,
 ): number | undefined => {
   return pipe<ReqMap, ReqEntries, ReqEntries, number | undefined>(
     convertMapToArray,
@@ -355,7 +347,7 @@ export const validateTier = (
     arr => arr.reduce<number | undefined>((max, entry, index) => {
       const [tier, prerequisites] = entry;
       return !isSkipping(arr, index, max) ||
-        areAllPrerequisitesValid(wiki, state, prerequisites, sourceId, pact)
+        areAllPrerequisitesValid(wiki, state, prerequisites, sourceId)
         ? tier : max;
     }, undefined),
     max => dependencies.reduce((max, dep) => {
@@ -366,27 +358,6 @@ export const validateTier = (
     }, max),
   )(requirements);
 };
-
-/**
- * Get minimum valid tier.
- * @param dependencies The current instance dependencies.
- */
-export function getMinTier(
-  dependencies: Data.ActivatableInstanceDependency[],
-  sid?: string | number,
-): number | undefined {
-  return dependencies.reduce<number | undefined>((min, dependency) => {
-    if (
-      typeof dependency === 'object' &&
-      typeof dependency.tier === 'number' &&
-      dependency.tier > (min || 0) &&
-      (dependency.sid === undefined || dependency.sid === sid)
-    ) {
-        return dependency.tier;
-    }
-    return min;
-  }, undefined);
-}
 
 /**
  * Checks if all profession prerequisites are fulfilled.

@@ -1,9 +1,9 @@
 import { ActivatableDependent } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki';
 import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
-import { convertMapToValueArray, filterExisting } from './collectionUtils';
-import { maybe } from './exists';
+import { convertMapToValues, filterExisting } from './collectionUtils';
 import { isActive } from './isActive';
+import { Maybe } from './maybe';
 import { pipe } from './pipe';
 
 const isActiveMagicalTradition = (e: ActivatableDependent) => {
@@ -21,7 +21,7 @@ const isActiveBlessedTradition = (e: ActivatableDependent) => {
 export const getMagicalTraditions = (
   list: Map<string, ActivatableDependent>,
 ) => {
-  return convertMapToValueArray(list).filter(isActiveMagicalTradition);
+  return convertMapToValues(list).filter(isActiveMagicalTradition);
 };
 
 /**
@@ -45,7 +45,7 @@ export const getMagicalTraditionsFromWiki = (
 export const getBlessedTradition = (
   list: Map<string, ActivatableDependent>,
 ) => {
-	return convertMapToValueArray(list).find(isActiveBlessedTradition);
+	return convertMapToValues(list).find(isActiveBlessedTradition);
 };
 
 /**
@@ -56,7 +56,5 @@ export const getBlessedTradition = (
 export const getBlessedTraditionFromWiki = (
   wiki: Map<string, SpecialAbility>,
   list: Map<string, ActivatableDependent>,
-) => pipe(
-  getBlessedTradition,
-  maybe(e => wiki.get(e.id)),
-)(list);
+) => Maybe(getBlessedTradition(list))
+  .fmap(e => wiki.get(e.id));

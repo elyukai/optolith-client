@@ -4,7 +4,7 @@ import { ActivatableInstance } from '../types/data.d';
 import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
 import { getCategoryById } from './IDUtils';
-import { convertMapToValueArray } from './collectionUtils';
+import { convertMapToValues } from './collectionUtils';
 import { Maybe, MaybeFunctor } from './maybe';
 import { pipe } from './pipe';
 
@@ -67,7 +67,7 @@ export const getAllWikiEntriesByGroup =
     wiki: Map<string, T>,
     ...groups: number[],
   ) => pipe<Map<string, T>, T[]>(
-    convertMapToValueArray,
+    convertMapToValues,
     list => list.filter(e => groups.includes(e.gr)),
   )(wiki);
 

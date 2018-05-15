@@ -72,15 +72,19 @@ export const getSelectionNameAndCost = (
  */
 export const getActiveSelections = (obj: Data.ActivatableDependent | undefined) => {
   return obj ? filterExisting(obj.active.map(e => e.sid)) : [];
-};
+}
+
+type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
 
 /**
  * Get all `ActiveObject.sid2` values from the given instance, sorted by
  * `ActiveObject.sid` in Map.
  * @param entry
  */
-export function getActiveSecondarySelections(entry: Data.ActivatableDependent | undefined) {
-  return (entry ? entry.active : []).reduce<Map<number | string, (string | number)[]>>((map, obj) => {
+export function getActiveSecondarySelections(
+  entry: Data.ActivatableDependent | undefined,
+): SecondarySelections {
+  return (entry ? entry.active : []).reduce<SecondarySelections>((map, obj) => {
     const { sid, sid2 } = obj;
     if (sid !== undefined && sid2 !== undefined) {
       return setMapItem(map, sid, [...(map.get(sid) || []), sid2]);

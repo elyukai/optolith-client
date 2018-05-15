@@ -1,4 +1,4 @@
-import { ExperienceLevel } from '../types/data.d';
+import { ExperienceLevel } from '../types/wiki.d';
 
 /**
  * Returns the experience level that fits the given AP value.

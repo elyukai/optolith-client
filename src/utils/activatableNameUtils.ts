@@ -2,12 +2,12 @@ import R from 'ramda';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { CombinedName } from './ActivatableUtils';
+import { sortStrings } from './FilterSortUtils';
 import { _translate } from './I18n';
 import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
 import { match } from './match';
-import { Maybe, MaybeFunctor } from './maybe';
+import { Maybe, MaybeFunctor, OrNot } from './maybe';
 import { findSelectOption, getSelectOptionName } from './selectionUtils';
 
 /**
@@ -97,7 +97,7 @@ const getEntrySpecificNameAddition = (
           .fmap(skill => {
             return R.pipe(
               (sid2: string | number | undefined) => {
-                return R.unless<string | number | undefined, string | undefined>(
+                return R.unless<string | number | undefined, OrNot<string>>(
                   isString,
                   R.always(
                     Maybe(skill.applications)
@@ -186,13 +186,19 @@ const getEntrySpecificNameReplacements = (
 
   return R.defaultTo(name, match<string, string | undefined>(id)
     .on(['ADV_28', 'ADV_29'].includes, () => {
-      return `${_translate(locale, 'activatable.view.immunityto')} ${nameAddition}`;
+      return `${
+        _translate(locale, 'activatable.view.immunityto')
+      } ${nameAddition}`;
     })
     .on('ADV_68', () => {
-      return `${_translate(locale, 'activatable.view.hatredof')} ${nameAddition}`;
+      return `${
+        _translate(locale, 'activatable.view.hatredof')
+      } ${nameAddition}`;
     })
     .on('DISADV_1', () => {
-      return `${_translate(locale, 'activatable.view.afraidof')} ${nameAddition}`;
+      return `${
+        _translate(locale, 'activatable.view.afraidof')
+      } ${nameAddition}`;
     })
     .on(['DISADV_34', 'DISADV_50'].includes, () => {
       return `${name} ${getRoman(tier as number)} (${nameAddition})`;
@@ -204,10 +210,11 @@ const getEntrySpecificNameReplacements = (
       return Maybe(locale)
         .fmap(locale => {
           const part = getTraditionNameFromFullName(name);
-          const musictraditionLabels = _translate(locale, 'musictraditions');
+          const musicTraditionLabels = _translate(locale, 'musictraditions');
 
           if (typeof sid2 === 'number') {
-            return name.replace(part, `${part}: ${musictraditionLabels[sid2 - 1]}`);
+            const musicTradition = musicTraditionLabels[sid2 - 1];
+            return name.replace(part, `${part}: ${musicTradition}`);
           }
 
           return;
@@ -222,6 +229,12 @@ const getEntrySpecificNameReplacements = (
   );
 }
 
+export interface CombinedName {
+  combinedName: string;
+  baseName: string;
+  addName: string | undefined;
+}
+
 /**
  * Returns name, splitted and combined, of advantage/disadvantage/special
  * ability as a Maybe (in case the wiki entry does not exist).
@@ -229,11 +242,11 @@ const getEntrySpecificNameReplacements = (
  * @param wiki The current hero's state.
  * @param locale The locale-dependent messages.
  */
-export function getName(
+export const getName = (
   instance: Data.ActiveObjectWithId,
   wiki: WikiState,
   locale?: Data.UIMessages,
-): MaybeFunctor<CombinedName | undefined> {
+): MaybeFunctor<CombinedName | undefined> => {
   return getWikiEntry<Wiki.Activatable>(wiki, instance.id)
     .fmap(wikiEntry => {
       const addName = getEntrySpecificNameAddition(
@@ -255,4 +268,59 @@ export function getName(
         addName
       };
     });
+};
+
+interface EnhancedReduce {
+	final: string[];
+	previousLowerTier: boolean;
 }
+
+export const compressList = (
+  list: (Data.ActiveViewObject | string)[],
+  locale: Data.UIMessages,
+): string => {
+	const listToString = sortStrings(list.reduce<string[]>((acc, obj) => {
+    if (isString(obj)) {
+      return R.append(obj, acc);
+    }
+    else if (!['SA_27', 'SA_29'].includes(obj.id)) {
+      return R.append(obj.name, acc);
+    }
+    return acc;
+  }, []), locale.id);
+
+  const levelAfterParenthesis = /\(.+\)(?: [IVX]+)?$/;
+  const insertLevelBeforeParenthesis = /\)((?: [IVX]+)?)$/;
+
+	const finalList = listToString.reduce<EnhancedReduce>((previous, current) => {
+		const prevElement = R.last(previous.final);
+		if (
+      isString(prevElement)
+      && prevElement.split(' (')[0] === current.split(' (')[0]
+      && levelAfterParenthesis.test(prevElement)
+    ) {
+			const prevElementSplitted = prevElement.split(/\)/);
+			const optionalTier = prevElementSplitted.pop() || '';
+			const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;
+			const currentSplitted = current.split(/\(/);
+      const continuing = currentSplitted.slice(1).join('(')
+        .replace(insertLevelBeforeParenthesis, '$1)');
+
+			const other = previous.final.slice(0, -1);
+
+			return {
+				...previous,
+				final: [ ...other, `${beginning}, ${continuing}` ]
+			};
+		}
+		return {
+			final: [ ...previous.final, current ],
+			previousLowerTier: false
+		};
+	}, {
+		final: [],
+		previousLowerTier: false
+	}).final.join(', ');
+
+	return finalList;
+};

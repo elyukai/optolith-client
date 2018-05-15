@@ -3,7 +3,7 @@ import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { EntryWithGroup } from '../types/wiki';
 import { getIdPrefix } from './IDUtils';
-import { convertMapToValueArray, deleteMapItem, setMapItem } from './collectionUtils';
+import { adjustOrM, convertMapToValues, deleteMapItem, setMapItem } from './collectionUtils';
 import { match } from './match';
 import { Maybe, MaybeFunctor } from './maybe';
 
@@ -74,14 +74,47 @@ export const removeHeroListStateItem =
         }))
         .value
       );
+
+export const adjustHeroSlice = <K extends HeroStateListKey>(
+  adjustFn: (slice: HeroDependent[K]) => HeroDependent[K],
+  key: K,
+) => (state: HeroDependent) => {
+  return {
+    ...state,
+    [key]: adjustFn(state[key])
+  };
+};
+
+export const adjustHeroListStateItemOr = <D extends Dependent>(
+  createFn: (id: string) => D,
+  adjustFn: (value: D) => D | undefined,
+  id: string,
+) => (
+  state: HeroDependent,
+) => R.defaultTo(state, getHeroStateListKeyById(id)
+  .fmap(key => ({
+    ...state,
+    [key]: adjustOrM<string, D>(
+      R.pipe(
+        createFn,
+        adjustFn as (x: D) => D,
+      ),
+      adjustFn,
+      id
+    )(state[key] as any),
+  }))
+  .value
+);
+
 export const getAllEntriesByGroup =
   <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
-    wiki: Map<string, T>,
+    wiki: ReadonlyMap<string, T>,
+    list: ReadonlyMap<string, I>,
     ...groups: number[],
-  ): ((list: Map<string, I>) => I[]) => R.pipe(
-    convertMapToValueArray,
+  ): I[] => R.pipe<ReadonlyMap<string, I>, ReadonlyArray<I>, I[]>(
+    convertMapToValues,
     list => list.filter(R.pipe(
       (e: I) => wiki.get(e.id),
       e => typeof e === 'object' && groups.includes(e.gr),
     )),
-  );
+  )(list);

@@ -1,13 +1,5 @@
 import { ActionTypes } from '../constants/ActionTypes';
 
-export interface Pact {
-	category: number;
-	level: number;
-	type: number;
-	domain: number | string;
-	name: string;
-}
-
 export interface SetPactCategoryAction {
 	type: ActionTypes.SET_PACT_CATEGORY;
 	payload: {

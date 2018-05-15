@@ -52,7 +52,33 @@ export const convertUIStateToActiveObject =
  * Generates a list of ActiveObjects based on the given instance.
  */
 export const convertActivatableToArray = (
-  { active, id }: Data.ActivatableInstance,
+  obj: Data.ActivatableDependent,
 ): Data.ActiveObjectWithId[] => {
-  return active.map((e, index) => ({ ...e, id, index }));
+  return obj.active.map((e, index) => ({ ...e, id: obj.id, index }));
+};
+
+/**
+ * Get all active items in an array.
+ * @param state A state slice.
+ */
+export const getActiveFromState = (
+  state: Map<string, Data.ActivatableDependent>,
+): Data.ActiveObjectWithId[] => {
+  return [...state.values()].reduce<Data.ActiveObjectWithId[]>((arr, e) => {
+    return [...arr, ...convertActivatableToArray(e)];
+  }, []);
+};
+
+interface ActiveObjectAny extends Data.ActiveObject {
+	[key: string]: any;
+}
+
+/**
+ * Returns only `sid`, `sid2` and `tier` property of passed `ActiveObject`.
+ * @param activeObject
+ */
+export const getActiveObjectCore = (
+  { sid, sid2, tier }: ActiveObjectAny,
+): Data.ActiveObject => {
+  return { sid, sid2, tier };
 };

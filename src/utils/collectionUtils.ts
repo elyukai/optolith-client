@@ -1,88 +1,78 @@
+import R from 'ramda';
+import { Maybe } from './maybe';
 import { pipe } from './pipe';
+
+export type ArrayElement<T> = T extends Array<infer I> ? I : never;
+export type ArrayFilter<T> = (list: T[]) => T[];
+
+type ReadonlyMapUpdater<K, V> = (list: ReadonlyMap<K, V>) => ReadonlyMap<K, V>;
 
 /**
  * Appends an element to an array and returns a new array.
- * @param array
+ * @param list
  */
-export const addToArray = <T>(array: T[]) => (add: T) => [ ...array, add ];
-
-/**
- * Appends an element to an array and returns a new array. Reversed function
- * order.
- * @param add
- */
-export const addToPipedArray = <T>(add: T) => {
-  return (array: T[]) => addToArray(array)(add);
-};
+export const addToArray = <T>(
+  list: ReadonlyArray<T>,
+) => (add: T) => R.append(add, list);
 
 /**
  * Sets an element in an array by index and returns a new array.
- * @param array
+ * @param list
  */
-export const updateArrayItem = <T>(array: T[]) => (index: number, element: T) => {
-  return array.map((e, i) => i === index ? element : e);
-};
-
-/**
- * Sets an element in an array by index and returns a new array. Reversed
- * function order.
- * @param index
- * @param element
- */
-export const updatePipedArrayItem = <T>(index: number, element: T) => {
-  return (array: T[]) => updateArrayItem(array)(index, element);
-};
+export const updateArrayItem = <T>(
+  list: ReadonlyArray<T>,
+) => (index: number, element: T) => R.update(index, element, list);
 
 /**
  * Removes an element at the given index and returns a new array with the
  * remaining elements.
- * @param array
+ * @param list
  */
-export const removeFromArray = <T>(array: T[]) => (index: number) => {
-  return [
-    ...array.slice(0, index),
-    ...array.slice(index + 1)
-  ];
-};
+export const removeFromArray = <T>(
+  list: ReadonlyArray<T>,
+) => (index: number) => R.remove(index, 1, list);
 
 /**
  * Removes an element at the given index and returns a new array with the
  * remaining elements. Reversed funtion order.
  * @param index
  */
-export const removeFromPipedArray = <T>(index: number) => {
-  return (array: T[]) => removeFromArray(array)(index);
+export const remove = <T>(index: number) => {
+  return R.remove<T>(index, 1);
 };
+
+type FilterJust = <T>(list: ReadonlyArray<T | undefined>) => T[];
 
 /**
  * Removes all `undefined` values from `arr`.
  * @param arr
  */
-export const filterExisting = <T>(arr: (T | undefined)[]) => {
-  return arr.filter((e): e is T => e !== undefined);
-};
+export const filterExisting: FilterJust = R.filter(R.complement(R.isNil));
 
 /**
  * If `add` is defined joins `add` and given `arr` and returns new array,
  * otherwise returns new instance of `arr`.
  * @param add
  */
-export const spreadOptionalInArray = <T>(add: T[] = []) => (arr: T[]) => [
-  ...arr,
-  ...add
-];
+export const spreadOptionalInArray = <T>(
+  add: ReadonlyArray<T> = [],
+) => (list: ReadonlyArray<T>) => [ ...list, ...add ];
 
 /**
  * Converts a Map to an array of key-value pairs.
  * @param map
  */
-export const convertMapToArray = <K, V>(map: Map<K, V>) => [...map.entries()];
+export const convertMapToArray = <K, V>(map: ReadonlyMap<K, V>) => [
+  ...map.entries()
+];
 
 /**
  * Converts a Map to an array of values.
  * @param map
  */
-export const convertMapToValueArray = <V>(map: Map<any, V>) => [...map.values()];
+export const convertMapToValues = <V>(map: ReadonlyMap<any, V>) => [
+  ...map.values()
+];
 
 interface StringKeyObject<V> {
   [id: string]: V;
@@ -90,21 +80,22 @@ interface StringKeyObject<V> {
 
 /**
  * Converts a Map to an object with same key-value pairs as the Map.
- * @param map
+ * @param list
  */
-export const convertMapToObject = <V>(map: Map<string, V>) => {
-  return convertMapToArray(map).reduce<StringKeyObject<V>>((obj, [k, v]) => ({
-    ...obj,
-    [k]: v,
-  }), {});
+export const convertMapToObject = <V>(
+  list: Map<string, V>,
+): StringKeyObject<V> => {
+  return R.reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {}, [...list]);
 };
 
 /**
  * Converts an object to a Map with same key-value pairs as the object.
  * @param obj
  */
-export const convertObjectToMap = <V>(obj: StringKeyObject<V>) => {
-  return new Map<string, V>(Object.entries(obj));
+export const convertObjectToMap = <V>(
+  obj: StringKeyObject<V>,
+): ReadonlyMap<string, V> => {
+  return new Map(Object.entries(obj));
 };
 
 /**
@@ -112,7 +103,9 @@ export const convertObjectToMap = <V>(obj: StringKeyObject<V>) => {
  * @param oldList The old Map.
  * @param newList The new/updated Map.
  */
-export const mergeMaps = <K, V>(...maps: Map<K, V>[]) => {
+export const mergeMaps = <K, V>(
+  ...maps: ReadonlyMap<K, V>[],
+): ReadonlyMap<K, V> => {
   return new Map(maps.reduce<[K, V][]>((merged, current) => [
     ...merged,
     ...current,
@@ -125,12 +118,26 @@ export const mergeMaps = <K, V>(...maps: Map<K, V>[]) => {
  * @param key The key of the entry.
  * @param value The entry itself.
  */
-export const setMapItem = <K, V>(list: Map<K, V>, key: K, value: V) => {
-  return pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
+export const setMapItem = <K, V>(list: ReadonlyMap<K, V>, key: K, value: V) => {
+  return R.pipe<ReadonlyMap<K, V>, [K, V][], [K, V][], ReadonlyMap<K, V>>(
     convertMapToArray,
-    addToPipedArray<[K, V]>([key, value]),
+    R.append<[K, V]>([key, value]),
     arr => new Map(arr),
   )(list);
+};
+
+/**
+ * Sets an item of a Map and returns a new Map.
+ * @param list The current Map.
+ * @param key The key of the entry.
+ * @param value The entry itself.
+ */
+export const setM = <K, V>(key: K, value: V): ReadonlyMapUpdater<K, V> => {
+  return R.pipe(
+    convertMapToArray,
+    R.append<[K, V]>([key, value]),
+    arr => new Map(arr),
+  );
 };
 
 /**
@@ -141,24 +148,61 @@ export const setMapItem = <K, V>(list: Map<K, V>, key: K, value: V) => {
 export const deleteMapItem = <K, V>(list: Map<K, V>, key: K) => {
   return pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
     convertMapToArray,
-    arr => arr.filter(([k]) => k !== key),
+    R.filter<[K, V]>(([k]) => k !== key) as (list: [K, V][]) => [K, V][],
     arr => new Map(arr),
   )(list);
 };
 
 /**
  * Removes an item from a Map and returns a new Map.
- * @param list The current Map.
+ * @param key
+ */
+export const deleteM = <K, V>(key: K): ReadonlyMapUpdater<K, V> => R.pipe(
+  convertMapToArray,
+  R.filter<[K, V]>(([k]) => k !== key) as ArrayFilter<[K, V]>,
+  arr => new Map(arr),
+);
+
+/**
+ * Gets a value from a Map by given key, returns a Maybe of that value.
  * @param key The key of the entry.
  */
-export const getM = <K, V>(key: K) => (list: Map<K, V>) => {
-  return list.get(key);
+export const getM = <K, V>(key: K) => (list: ReadonlyMap<K, V>) => {
+  return Maybe(list.get(key));
 };
 
-// export type HeroStateReducer<I extends Dependent> =
-//   (state: HeroDependent, instance: I) =>
-//     HeroDependent;
+/**
+ * Updates an item of the passed Map based on the passed function and key. If
+ * `undefined` is returned, removes item.
+ * @param adjustFn Updates value of pair. If `undefined` is returned, removes
+ * item.
+ * @param key
+ */
+export const adjustM = <K, V>(
+  adjustFn: (value: V) => V | undefined,
+  key: K,
+): ReadonlyMapUpdater<K, V> => {
+  return R.pipe(
+    convertMapToArray,
+    R.reduce<[K, V], ReadonlyArray<[K, V]>>((acc, elem) => {
+      return R.equals(elem[0], key) ? R.ifElse(
+        R.complement(R.isNil),
+        res => R.append([elem[0], res] as [K, V], acc),
+        R.always(acc)
+      )(adjustFn(elem[1])) : R.append(elem, acc);
+    }, []),
+    arr => new Map(arr),
+  );
+};
 
-// export type HeroStateNoInstanceReducer =
-//   (state: HeroDependent) =>
-//     HeroDependent;
+export const adjustOrM = <K, V>(
+  createFn: (key: K) => V,
+  adjustFn: (value: V) => V | undefined,
+  key: K,
+): ReadonlyMapUpdater<K, V> => {
+  return R.ifElse(
+    list => list.has(key),
+    adjustM(adjustFn, key),
+    setM(key, createFn(key)),
+  );
+}

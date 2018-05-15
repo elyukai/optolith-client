@@ -41,7 +41,7 @@ const getEntrySpecificCost = (
     ].includes, () => {
       return match<string | number | undefined, number>(sid)
         .on(isString, sid => {
-          return R.defaultTo(0, Maybe(getWikiEntry<Wiki.Skillish>(wiki, sid))
+          return R.defaultTo(0, getWikiEntry<Wiki.Skillish>(wiki, sid)
             .fmap(entry => (cost as number[])[entry.ic - 1])
             .value
           );
@@ -240,7 +240,7 @@ export const getCost = (
 ): MaybeFunctor<number | number[] | undefined> => {
   const { id, cost: customCost } = obj;
 
-  return Maybe(getWikiEntry<Wiki.Activatable>(wiki, id))
+  return getWikiEntry<Wiki.Activatable>(wiki, id)
     .fmap(wikiEntry => {
       type F = MaybeFunctor<Data.HeroDependent | undefined>;
 
@@ -283,7 +283,13 @@ export const getCost = (
     });
 };
 
-const adjustCurrentCost = (obj: Data.ActivatableNameCost) => ({
+interface AdjustedCost extends Data.ActivatableNameCost {
+  currentCost: number;
+}
+
+const adjustCurrentCost = (
+  obj: Data.ActivatableNameCost,
+): AdjustedCost => R.merge(obj, {
   currentCost: match<number | number[], number>(obj.currentCost)
     .on(Array.isArray, currentCost => {
       const { tier = 1 } = obj;
@@ -309,10 +315,9 @@ const getSpecialAbilityTier = (tier: number) => {
 };
 
 const adjustTierName = (
-  obj: Data.ActivatableNameCost,
   locale?: Data.UIMessages,
   addTierToCombinedTier?: boolean,
-) => {
+) => (obj: AdjustedCost): Data.ActivatableNameCostEvalTier => {
   let tierName;
 
   if (
@@ -324,7 +329,10 @@ const adjustTierName = (
     if (obj.id === 'SA_29' && obj.tier === 4) {
       tierName = ` ${_translate(locale, 'mothertongue.short')}`;
     }
-    else if (Array.isArray(obj.currentCost) || getCategoryById(obj.id) === 'SPECIAL_ABILITIES') {
+    else if (
+      Array.isArray(obj.currentCost)
+      || getCategoryById(obj.id) === 'SPECIAL_ABILITIES'
+    ) {
       tierName = getSpecialAbilityTier(obj.tier);
     }
     else {
@@ -332,30 +340,61 @@ const adjustTierName = (
     }
   }
 
-  return {
+  return R.merge(obj, {
     combinedName: addTierToCombinedTier !== true && tierName
       ? obj.combinedName + tierName
       : obj.combinedName,
     tierName,
-  };
+  });
 };
 
 /**
  * Calculates level name and level-based cost and (optionally) updates
  * `combinedName`.
- * @param obj
  * @param locale
  * @param addTierToCombinedTier If true, does not add `tierName` to
  * `combinedName`.
  */
 export const convertPerTierCostToFinalCost = (
-  obj: Data.ActivatableNameCost,
   locale?: Data.UIMessages,
   addTierToCombinedTier?: boolean,
-): Data.ActivatableNameCostEvalTier => {
-  return {
-    ...obj,
-    ...adjustTierName(obj, locale, addTierToCombinedTier),
-    ...adjustCurrentCost(obj),
-  };
+): ((obj: Data.ActivatableNameCost) => Data.ActivatableNameCostEvalTier) => {
+  return R.pipe(
+    adjustCurrentCost,
+    adjustTierName(locale, addTierToCombinedTier),
+  );
 };
+
+interface SplittedActiveObjectsByCustomCost {
+  defaultCostList: Data.ActiveObject[];
+  customCostList: Data.ActiveObject[];
+}
+
+const getSplittedActiveObjectsByCustomCost = (entries: Data.ActiveObject[]) => {
+  return entries.reduce<SplittedActiveObjectsByCustomCost>((res, obj) => {
+    if (typeof obj.cost === 'number') {
+      return {
+        ...res,
+        customCostList: [
+          ...res.customCostList,
+          obj,
+        ],
+      };
+    }
+
+    return {
+      ...res,
+      defaultCostList: [
+        ...res.defaultCostList,
+        obj,
+      ],
+    };
+  }, {
+    defaultCostList: [],
+    customCostList: [],
+  });
+}
+
+export const getActiveWithNoCustomCost = (entries: Data.ActiveObject[]) => {
+  return getSplittedActiveObjectsByCustomCost(entries).defaultCostList;
+}

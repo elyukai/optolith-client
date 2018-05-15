@@ -166,41 +166,42 @@ export type Dependent =
   ActivatableSkillDependent;
 
 export interface HeroDependent {
-  id: string;
-  clientVersion: string;
-  player?: string;
-  dateCreated: Date;
-  dateModified: Date;
-  phase: number;
-  name: string;
-  avatar?: string;
-  adventurePoints: AdventurePoints;
-  race?: string;
-  raceVariant?: string;
-  culture?: string;
-  profession?: string;
-  professionName?: string;
-  professionVariant?: string;
-  sex: 'm' | 'f';
-  experienceLevel: string;
-  personalData: PersonalData;
-  advantages: Map<string, ActivatableDependent>;
-  disadvantages: Map<string, ActivatableDependent>;
-  specialAbilities: Map<string, ActivatableDependent>;
-  attributes: Map<string, AttributeDependent>;
-  energies: Energies;
-  skills: Map<string, SkillDependent>;
-  combatTechniques: Map<string, SkillDependent>;
-  spells: Map<string, ActivatableSkillDependent>;
-  cantrips: Set<string>;
-  liturgicalChants: Map<string, ActivatableSkillDependent>;
-  blessings: Set<string>;
-  belongings: Belongings;
-  rules: Rules;
-  pets: Map<string, PetInstance>;
-  combatStyleDependencies: StyleDependency[];
-  magicalStyleDependencies: StyleDependency[];
-  blessedStyleDependencies: StyleDependency[];
+  readonly id: string;
+  readonly clientVersion: string;
+  readonly player?: string;
+  readonly dateCreated: Date;
+  readonly dateModified: Date;
+  readonly phase: number;
+  readonly name: string;
+  readonly avatar?: string;
+  readonly adventurePoints: AdventurePoints;
+  readonly race?: string;
+  readonly raceVariant?: string;
+  readonly culture?: string;
+  readonly profession?: string;
+  readonly professionName?: string;
+  readonly professionVariant?: string;
+  readonly sex: 'm' | 'f';
+  readonly experienceLevel: string;
+  readonly personalData: PersonalData;
+  readonly advantages: Map<string, ActivatableDependent>;
+  readonly disadvantages: Map<string, ActivatableDependent>;
+  readonly specialAbilities: Map<string, ActivatableDependent>;
+  readonly attributes: Map<string, AttributeDependent>;
+  readonly energies: Energies;
+  readonly skills: Map<string, SkillDependent>;
+  readonly combatTechniques: Map<string, SkillDependent>;
+  readonly spells: Map<string, ActivatableSkillDependent>;
+  readonly cantrips: Set<string>;
+  readonly liturgicalChants: Map<string, ActivatableSkillDependent>;
+  readonly blessings: Set<string>;
+  readonly belongings: Belongings;
+  readonly rules: Rules;
+  readonly pets: Map<string, PetInstance>;
+  readonly pact?: Pact;
+  readonly combatStyleDependencies: StyleDependency[];
+  readonly magicalStyleDependencies: StyleDependency[];
+  readonly blessedStyleDependencies: StyleDependency[];
 }
 
 export interface AdventurePoints {
@@ -241,6 +242,14 @@ export interface Belongings {
   items: Map<string, ItemInstance>;
   armorZones: Map<string, ArmorZonesInstance>;
   purse: Purse;
+}
+
+export interface Pact {
+	category: number;
+	level: number;
+	type: number;
+	domain: number | string;
+	name: string;
 }
 
 export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {

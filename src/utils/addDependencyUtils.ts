@@ -3,15 +3,17 @@ import { ActivatableSkillCategories } from '../constants/Categories';
 import * as Data from "../types/data.d";
 import { ValueOptionalDependency } from '../types/reusable.d';
 import { getCategoryById } from './IDUtils';
-import { callTwice } from './callTwice';
+import { ArrayElement } from './collectionUtils';
 import * as CreateEntryUtils from './createEntryUtils';
-import { getHeroStateListItemOr, setHeroListStateItem } from './heroStateUtils';
+import { adjustHeroListStateItemOr } from './heroStateUtils';
 
 type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
 
-const addDependency = <T extends Data.Dependent>(add: any) => (obj: Data.Dependent): T => ({
-  ...obj,
-  dependencies: R.append(add, obj.dependencies),
+const addDependency = <T extends Data.Dependent>(
+  add: ArrayElement<T["dependencies"]>,
+) => (obj: T): T => ({
+  ...(obj as Data.Dependent),
+  dependencies: R.append(add as any, obj.dependencies as T["dependencies"]),
 } as T);
 
 /**
@@ -32,26 +34,26 @@ const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
 export const addAttributeDependency = (
   id: string,
   value: number | ValueOptionalDependency,
-) => callTwice(R.pipe(
-  getHeroStateListItemOr(id, CreateEntryUtils.createAttributeDependent),
-  addDependency(value),
-  setHeroListStateItem(id),
-));
+) => adjustHeroListStateItemOr(
+  CreateEntryUtils.createAttributeDependent,
+  addDependency<Data.AttributeDependent>(value),
+  id
+);
 
 export const addIncreasableDependency = (
   id: string,
   value: number | ValueOptionalDependency,
-) => callTwice(R.pipe(
-  getHeroStateListItemOr(id, getIncreasableCreator(id)),
-  addDependency(value),
-  setHeroListStateItem(id),
-));
+) => adjustHeroListStateItemOr(
+  getIncreasableCreator(id),
+  addDependency<Data.ExtendedSkillDependent>(value),
+  id
+);
 
 export const addActivatableDependency = (
   id: string,
   value: Data.ActivatableInstanceDependency,
-) => callTwice(R.pipe(
-  getHeroStateListItemOr(id, CreateEntryUtils.createActivatableDependent),
-  addDependency(value),
-  setHeroListStateItem(id),
-));
+) => adjustHeroListStateItemOr(
+  CreateEntryUtils.createActivatableDependent,
+  addDependency<Data.ActivatableDependent>(value),
+  id
+);

@@ -1,4 +1,5 @@
 import { flatten } from 'lodash';
+import R from 'ramda';
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki.d';
 import { pipe } from './pipe';
 
@@ -17,12 +18,15 @@ const createInBetweenFilter = (oldTier: number, newTier: number) => {
 };
 
 const createFilter = (newTier?: number) =>
-  (oldTier: number): PrerequisiteFilter => {
-  if (typeof newTier === 'number') {
+  (oldTier?: number): PrerequisiteFilter => {
+  if (isNumber(oldTier) && isNumber(newTier)) {
     return createInBetweenFilter(oldTier, newTier)
   }
-  else {
+  else if (isNumber(oldTier)) {
     return createLowerFilter(oldTier);
+  }
+  else {
+    return R.T;
   }
 };
 
@@ -33,13 +37,16 @@ const createFlattenFiltered = (prerequisites: Map<number, ActivatablePrerequisit
 
 const flattenMap = (
   prerequisites: Map<number, ActivatablePrerequisites>,
-  oldTier: number,
+  oldTier?: number,
   newTier?: number,
 ) => pipe(
   createFilter(newTier),
   createFlattenFiltered(prerequisites),
 )(oldTier);
 
+export function flattenPrerequisites(
+  prerequisites: LevelAwarePrerequisites,
+): ActivatablePrerequisites;
 export function flattenPrerequisites(
   prerequisites: LevelAwarePrerequisites,
   tier: number,
@@ -51,7 +58,7 @@ export function flattenPrerequisites(
 ): ActivatablePrerequisites;
 export function flattenPrerequisites(
   prerequisites: LevelAwarePrerequisites,
-  oldTier: number,
+  oldTier?: number,
   newTier?: number,
 ): ActivatablePrerequisites {
   if (prerequisites instanceof Map) {

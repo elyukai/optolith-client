@@ -2,7 +2,7 @@ import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
-import { removeFromPipedArray, updateArrayItem } from './collectionUtils';
+import { updateArrayItem } from './collectionUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencyUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
@@ -141,7 +141,7 @@ export function deactivate(index: number): ActivatableReducer {
   return changeActiveLength(
     instance => instance.active[index],
     DependencyUtils.removeDependencies,
-    removeFromPipedArray(index),
+    R.remove(index, 1),
     false
   );
 }

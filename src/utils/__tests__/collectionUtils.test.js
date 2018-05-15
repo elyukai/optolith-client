@@ -1,13 +1,9 @@
 const CollectionUtils = require('../collectionUtils');
 const { pipe } = require('../pipe');
+const R = require('ramda');
 
 test('adds element to array', () => {
   expect(CollectionUtils.addToArray([1, 2, 3])(4))
-    .toEqual([1, 2, 3, 4]);
-});
-
-test('adds element to array in reverse function order', () => {
-  expect(CollectionUtils.addToPipedArray(4)([1, 2, 3]))
     .toEqual([1, 2, 3, 4]);
 });
 
@@ -21,24 +17,9 @@ test('does not update array when index not in array', () => {
     .toEqual([1, 2, 3]);
 });
 
-test('updates element of array in reverse function order', () => {
-  expect(CollectionUtils.updatePipedArrayItem(2, 4)([1, 2, 3]))
-    .toEqual([1, 2, 4]);
-});
-
-test('does not update piped array when index not in array', () => {
-  expect(CollectionUtils.updatePipedArrayItem(3, 4)([1, 2, 3]))
-    .toEqual([1, 2, 3]);
-});
-
 test('removes element from array', () => {
   expect(CollectionUtils.removeFromArray([1, 2, 3])(1))
     .toEqual([1, 3]);
-});
-
-test('removes element from array in reverse function order', () => {
-  expect(CollectionUtils.removeFromPipedArray(2)([1, 2, 3]))
-    .toEqual([1, 2]);
 });
 
 test('removes undefined from array', () => {
@@ -126,6 +107,16 @@ test('deletes Map item', () => {
   const expected = [['c', 3], ['a', 1], ['b', 2], ['d', 4]];
   expect(pipe(
     () => CollectionUtils.deleteMapItem(new Map(entries), 'f'),
+    CollectionUtils.convertMapToArray,
+  )())
+    .toEqual(expected);
+});
+
+test('returns adjusted Map', () => {
+  const entries = [['c', 3], ['a', 1], ['b', 2], ['d', 4], ['f', 6]];
+  const expected = [['c', 3], ['a', 1], ['b', 2], ['d', 7], ['f', 6]];
+  expect(R.pipe(
+    () => CollectionUtils.adjustM(value => 7, 'd')(new Map(entries)),
     CollectionUtils.convertMapToArray,
   )())
     .toEqual(expected);

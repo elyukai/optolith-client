@@ -2,20 +2,22 @@ import { isEqual } from 'lodash';
 import R from 'ramda';
 import * as Data from "../types/data.d";
 import { isActivatableSkillDependent } from './checkEntryUtils';
-import { removeFromArray } from './collectionUtils';
+import { ArrayElement, removeFromArray } from './collectionUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import * as UnusedEntryUtils from './unusedEntryUtils';
 
-type ArrayElement<T> = T extends Array<infer I> ? I : never;
-
-const removeDependency = <T extends Data.Dependent, D extends ArrayElement<T["dependencies"]>>(remove: D) => (obj: T): T => {
+const removeDependency = <T extends Data.Dependent>(
+  remove: ArrayElement<T["dependencies"]>,
+) => (obj: T): T => {
   let index;
 
+  type Deps = ArrayElement<T["dependencies"]>[];
+
   if (typeof remove === 'object') {
-    index = (obj.dependencies as D[]).findIndex(e => isEqual(remove, e));
+    index = (obj.dependencies as Deps).findIndex(e => isEqual(remove, e));
   }
   else {
-    index = (obj.dependencies as D[]).findIndex(e => e === remove);
+    index = (obj.dependencies as Deps).findIndex(e => e === remove);
   }
 
   if (index > -1) {
@@ -54,11 +56,12 @@ const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(
   )
 );
 
-const removeDependencyCreator = <T extends Data.Dependent, D extends ArrayElement<T["dependencies"]> = ArrayElement<T["dependencies"]>>(
-  adjustOrRemove: (id: string) => (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent,
+const removeDependencyCreator = <T extends Data.Dependent>(
+  adjustOrRemove: (id: string) =>
+    (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent,
 ) => (
   id: string,
-  value: D,
+  value: ArrayElement<T["dependencies"]>,
 ) => (state: Data.HeroDependent): Data.HeroDependent => {
   return R.defaultTo(
     state,

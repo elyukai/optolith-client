@@ -350,15 +350,37 @@ export interface SelectionObject {
   target?: string;
   tier?: number;
 	spec?: string[];
-	specInput?: string;
+  specInput?: string;
+  applications?: Application[];
+  applicationsInput?: string;
+  talent?: [string, number];
+  gr?: number;
 }
 
-export type ProfessionDependencyObject = Reusable.SexRequirement | Reusable.RaceRequirement | Reusable.CultureRequirement;
-export type AllRequirementObjects = Reusable.CultureRequirement | Reusable.RaceRequirement | Reusable.RequiresActivatableObject | Reusable.RequiresIncreasableObject | Reusable.RequiresPrimaryAttribute | Reusable.SexRequirement | Reusable.PactRequirement;
+export type ProfessionDependencyObject =
+  Reusable.SexRequirement |
+  Reusable.RaceRequirement |
+  Reusable.CultureRequirement;
+
+export type AbilityRequirementObject =
+  Reusable.RequiresActivatableObject |
+  Reusable.RequiresIncreasableObject;
+
+export type AllRequirementObjects =
+  Reusable.CultureRequirement |
+  Reusable.RaceRequirement |
+  Reusable.RequiresActivatableObject |
+  Reusable.RequiresIncreasableObject |
+  Reusable.RequiresPrimaryAttribute |
+  Reusable.SexRequirement |
+  Reusable.PactRequirement;
+
 export type AllRequirements = 'RCP' | AllRequirementObjects;
 export type ActivatablePrerequisites = ('RCP' | AllRequirementTypes)[];
+
 export type LevelAwarePrerequisites =
-  ActivatablePrerequisites | Map<number, ActivatablePrerequisites>;
+  ActivatablePrerequisites |
+  Map<number, ActivatablePrerequisites>;
 
 interface ActivatableBase {
 	readonly id: string;
