@@ -16,7 +16,7 @@ import { CurrentHeroInstanceState } from '../../reducers/currentHero';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute, TalentInstance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { isDecreasable, isIncreasable, isTyp, isUntyp } from '../../utils/TalentUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -63,32 +63,32 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 		return (
 			<Page id="talents">
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
 						sort={setSortOrder}
 						locale={locale}
 						options={['name', 'group', 'ic']}
 						/>
-					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{_translate(locale, 'skills.options.commoninculture')}</Checkbox>
+					<Checkbox checked={ratingVisibility} onClick={switchRatingVisibility}>{translate(locale, 'skills.options.commoninculture')}</Checkbox>
 					{ratingVisibility && <RecommendedReference locale={locale} />}
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'group')}
+							{translate(locale, 'group')}
 						</ListHeaderTag>
-						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
-							{_translate(locale, 'sr.short')}
+						<ListHeaderTag className="value" hint={translate(locale, 'sr.long')}>
+							{translate(locale, 'sr.short')}
 						</ListHeaderTag>
 						<ListHeaderTag className="check">
-							{_translate(locale, 'check')}
+							{translate(locale, 'check')}
 						</ListHeaderTag>
-						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-							{_translate(locale, 'ic.short')}
+						<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+							{translate(locale, 'ic.short')}
 						</ListHeaderTag>
 						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
@@ -118,7 +118,7 @@ export class Talents extends React.Component<TalentsProps, TalentsState> {
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											groupIndex={obj.gr}
-											groupList={_translate(locale, 'skills.view.groups')}
+											groupList={translate(locale, 'skills.view.groups')}
 											/>
 									);
 								})

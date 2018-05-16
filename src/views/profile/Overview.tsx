@@ -12,7 +12,7 @@ import { ProfileState } from '../../reducers/profile';
 import { ActiveViewObject } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { Culture, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../types/wiki';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 
@@ -147,7 +147,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 		) : (
 			<BorderButton
 				className="edit-profession-name-btn"
-				label={_translate(locale, 'profileoverview.view.editprofessionname')}
+				label={translate(locale, 'profileoverview.view.editprofessionname')}
 				onClick={this.editProfessionName}
 				/>
 		));
@@ -162,7 +162,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 							{
 								!isProfessionUndefined && (
 									<VerticalList className="rcp">
-										<span>{_translate(locale, sex === 'm' ? 'profileoverview.view.male' : 'profileoverview.view.female')}</span>
+										<span>{translate(locale, sex === 'm' ? 'profileoverview.view.male' : 'profileoverview.view.female')}</span>
 										<span className="race">
 											{(() => {
 												return race && race.name;
@@ -224,7 +224,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 							phase === 3 && (
 								<BorderButton
 									className="add-ap"
-									label={_translate(locale, 'profileoverview.actions.addadventurepoints')}
+									label={translate(locale, 'profileoverview.actions.addadventurepoints')}
 									onClick={openAddAdventurePoints}
 									/>
 							)
@@ -233,7 +233,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 					</div>
 					{
 						!isProfessionUndefined && (
-							<h3>{_translate(locale, 'profileoverview.view.personaldata')}</h3>
+							<h3>{translate(locale, 'profileoverview.view.personaldata')}</h3>
 						)
 					}
 					{
@@ -242,11 +242,11 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 								{...other}
 								profile={profile}
 								culture={culture}
-								eyecolorTags={_translate(locale, 'eyecolors')}
-								haircolorTags={_translate(locale, 'haircolors')}
+								eyecolorTags={translate(locale, 'eyecolors')}
+								haircolorTags={translate(locale, 'haircolors')}
 								race={race}
 								raceVariant={raceVariant}
-								socialstatusTags={_translate(locale, 'socialstatus')}
+								socialstatusTags={translate(locale, 'socialstatus')}
 								locale={locale}
 								/>
 						)
@@ -256,7 +256,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 							<div>
 								<BorderButton
 									className="end-char-creation"
-									label={_translate(locale, 'profileoverview.actions.endherocreation')}
+									label={translate(locale, 'profileoverview.actions.endherocreation')}
 									onClick={endCharacterCreation}
 									primary
 									disabled={apLeft < 0 || apLeft > 10 && !isEditingHeroAfterCreationPhaseEnabled}
@@ -267,9 +267,9 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
 					{
 						phase === 3 && (
 							<div>
-								<h3>{_translate(locale, 'profileoverview.view.advantages')}</h3>
+								<h3>{translate(locale, 'profileoverview.view.advantages')}</h3>
 								<ActivatableTextList list={advantages} locale={locale} />
-								<h3>{_translate(locale, 'profileoverview.view.disadvantages')}</h3>
+								<h3>{translate(locale, 'profileoverview.view.disadvantages')}</h3>
 								<ActivatableTextList list={disadvantages} locale={locale} />
 							</div>
 						)

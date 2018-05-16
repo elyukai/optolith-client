@@ -8,7 +8,7 @@ import { InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { Culture, Race, RaceVariant } from '../../types/wiki';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { isEmptyOr, isFloat, isNaturalNumber } from '../../utils/RegexUtils';
 
 export interface OverviewPersonalDataOwnProps {
@@ -125,28 +125,28 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 		<div className="personal-data">
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.family')}
+					label={translate(locale, 'personaldata.family')}
 					value={family}
 					onChange={props.changeFamily}
 					/>
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.placeofbirth')}
+					label={translate(locale, 'personaldata.placeofbirth')}
 					value={placeofbirth}
 					onChange={props.changePlaceOfBirth}
 					/>
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.dateofbirth')}
+					label={translate(locale, 'personaldata.dateofbirth')}
 					value={dateofbirth}
 					onChange={props.changeDateOfBirth}
 					/>
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.age')}
+					label={translate(locale, 'personaldata.age')}
 					value={age}
 					onChange={props.changeAge}
 					valid={isEmptyOr(isNaturalNumber, age)}
@@ -154,7 +154,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</div>
 			<InputButtonGroup className="reroll">
 				<Dropdown
-					label={_translate(locale, 'personaldata.haircolor')}
+					label={translate(locale, 'personaldata.haircolor')}
 					value={haircolor}
 					onChange={props.changeHaircolor}
 					options={hairArr}
@@ -164,7 +164,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<Dropdown
-					label={_translate(locale, 'personaldata.eyecolor')}
+					label={translate(locale, 'personaldata.eyecolor')}
 					value={eyecolor}
 					onChange={props.changeEyecolor}
 					options={eyesArr}
@@ -173,7 +173,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<TextField
-					label={_translate(locale, 'personaldata.size')}
+					label={translate(locale, 'personaldata.size')}
 					value={size}
 					onChange={props.changeSize}
 					valid={isEmptyOr(isFloat, size)}
@@ -182,7 +182,7 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</InputButtonGroup>
 			<InputButtonGroup className="reroll">
 				<TextField
-					label={_translate(locale, 'personaldata.weight')}
+					label={translate(locale, 'personaldata.weight')}
 					value={weight}
 					onChange={props.changeWeight}
 					valid={isEmptyOr(isNaturalNumber, weight)}
@@ -191,14 +191,14 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</InputButtonGroup>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.title')}
+					label={translate(locale, 'personaldata.title')}
 					value={title}
 					onChange={props.changeTitle}
 					/>
 			</div>
 			<div>
 				<Dropdown
-					label={_translate(locale, 'personaldata.socialstatus')}
+					label={translate(locale, 'personaldata.socialstatus')}
 					value={socialstatus}
 					onChange={props.changeSocialStatus}
 					options={socialArr}
@@ -206,21 +206,21 @@ export function OverviewPersonalData(props: OverviewPersonalDataProps) {
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.characteristics')}
+					label={translate(locale, 'personaldata.characteristics')}
 					value={characteristics}
 					onChange={props.changeCharacteristics}
 					/>
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.otherinfo')}
+					label={translate(locale, 'personaldata.otherinfo')}
 					value={otherinfo}
 					onChange={props.changeOtherInfo}
 					/>
 			</div>
 			<div>
 				<TextField
-					label={_translate(locale, 'personaldata.cultureareaknowledge')}
+					label={translate(locale, 'personaldata.cultureareaknowledge')}
 					value={cultureAreaKnowledge}
 					onChange={props.changeCultureAreaKnowledge}
 					/>

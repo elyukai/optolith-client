@@ -4,7 +4,7 @@ import { LabelBox } from '../../components/LabelBox';
 import { Plain } from '../../components/Plain';
 import { ProfileState } from '../../reducers/profile';
 import { Culture, ExperienceLevel, Profession, ProfessionVariant, Race } from '../../types/wiki';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface MainSheetPersonalDataProps {
 	ap: {
@@ -53,32 +53,32 @@ export function MainSheetPersonalData(props: MainSheetPersonalDataProps) {
 	return (
 		<div className="upper">
 			<div className="info">
-				<Plain className="name" label={_translate(locale, 'charactersheet.main.heroname')} value={name} />
-				<Plain className="family" label={_translate(locale, 'charactersheet.main.family')} value={family} />
-				<Plain className="placeofbirth" label={_translate(locale, 'charactersheet.main.placeofbirth')} value={placeofbirth} />
-				<Plain className="dateofbirth" label={_translate(locale, 'charactersheet.main.dateofbirth')} value={dateofbirth} />
-				<Plain className="age" label={_translate(locale, 'charactersheet.main.age')} value={age} />
-				<Plain className="sex" label={_translate(locale, 'charactersheet.main.sex')} value={sex} />
-				<Plain className="race" label={_translate(locale, 'charactersheet.main.race')} value={raceName} />
-				<Plain className="size" label={_translate(locale, 'charactersheet.main.size')} value={size} />
-				<Plain className="weight" label={_translate(locale, 'charactersheet.main.weight')} value={weight} />
-				<Plain className="haircolor" label={_translate(locale, 'charactersheet.main.haircolor')} value={haircolorName} />
-				<Plain className="eyecolor" label={_translate(locale, 'charactersheet.main.eyecolor')} value={eyecolorName} />
-				<Plain className="culture" label={_translate(locale, 'charactersheet.main.culture')} value={cultureName} />
-				<Plain className="socialstatus" label={_translate(locale, 'charactersheet.main.socialstatus')} value={socialstatusName} />
-				<Plain className="profession" label={_translate(locale, 'charactersheet.main.profession')} value={professionName} />
-				<Plain className="title" label={_translate(locale, 'charactersheet.main.herotitle')} value={title} />
-				<Plain className="characteristics" label={_translate(locale, 'charactersheet.main.characteristics')} value={characteristics} />
-				<Plain className="otherinfo" label={_translate(locale, 'charactersheet.main.otherinfo')} value={otherinfo} multi />
+				<Plain className="name" label={translate(locale, 'charactersheet.main.heroname')} value={name} />
+				<Plain className="family" label={translate(locale, 'charactersheet.main.family')} value={family} />
+				<Plain className="placeofbirth" label={translate(locale, 'charactersheet.main.placeofbirth')} value={placeofbirth} />
+				<Plain className="dateofbirth" label={translate(locale, 'charactersheet.main.dateofbirth')} value={dateofbirth} />
+				<Plain className="age" label={translate(locale, 'charactersheet.main.age')} value={age} />
+				<Plain className="sex" label={translate(locale, 'charactersheet.main.sex')} value={sex} />
+				<Plain className="race" label={translate(locale, 'charactersheet.main.race')} value={raceName} />
+				<Plain className="size" label={translate(locale, 'charactersheet.main.size')} value={size} />
+				<Plain className="weight" label={translate(locale, 'charactersheet.main.weight')} value={weight} />
+				<Plain className="haircolor" label={translate(locale, 'charactersheet.main.haircolor')} value={haircolorName} />
+				<Plain className="eyecolor" label={translate(locale, 'charactersheet.main.eyecolor')} value={eyecolorName} />
+				<Plain className="culture" label={translate(locale, 'charactersheet.main.culture')} value={cultureName} />
+				<Plain className="socialstatus" label={translate(locale, 'charactersheet.main.socialstatus')} value={socialstatusName} />
+				<Plain className="profession" label={translate(locale, 'charactersheet.main.profession')} value={professionName} />
+				<Plain className="title" label={translate(locale, 'charactersheet.main.herotitle')} value={title} />
+				<Plain className="characteristics" label={translate(locale, 'charactersheet.main.characteristics')} value={characteristics} />
+				<Plain className="otherinfo" label={translate(locale, 'charactersheet.main.otherinfo')} value={otherinfo} multi />
 			</div>
 			<div className="ap-portrait">
-				<LabelBox className="el" label={_translate(locale, 'charactersheet.main.experiencelevel')} value={el.name} />
-				<LabelBox className="ap-total" label={_translate(locale, 'charactersheet.main.totalap')} value={ap.total} />
-				<LabelBox className="portrait" label={_translate(locale, 'charactersheet.main.avatar')}>
+				<LabelBox className="el" label={translate(locale, 'charactersheet.main.experiencelevel')} value={el.name} />
+				<LabelBox className="ap-total" label={translate(locale, 'charactersheet.main.totalap')} value={ap.total} />
+				<LabelBox className="portrait" label={translate(locale, 'charactersheet.main.avatar')}>
 					<Avatar src={avatar} img />
 				</LabelBox>
-				<LabelBox className="ap-available" label={_translate(locale, 'charactersheet.main.apcollected')} value={ap.total - ap.spent} />
-				<LabelBox className="ap-used" label={_translate(locale, 'charactersheet.main.apspent')} value={ap.spent} />
+				<LabelBox className="ap-available" label={translate(locale, 'charactersheet.main.apcollected')} value={ap.total - ap.spent} />
+				<LabelBox className="ap-used" label={translate(locale, 'charactersheet.main.apspent')} value={ap.spent} />
 			</div>
 		</div>
 	);

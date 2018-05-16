@@ -5,7 +5,7 @@ import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { validate } from '../utils/APUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
@@ -26,8 +26,8 @@ export function _addPoint(id: string): AsyncAction {
 		if (messages) {
 			if (!cost) {
 				dispatch(addAlert({
-					title: _translate(messages, 'notenoughap.title'),
-					message: _translate(messages, 'notenoughap.content'),
+					title: translate(messages, 'notenoughap.title'),
+					message: translate(messages, 'notenoughap.content'),
 				}));
 			}
 			else {
@@ -79,8 +79,8 @@ export function _addLifePoint(): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {
@@ -109,8 +109,8 @@ export function _addArcaneEnergyPoint(): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {
@@ -139,8 +139,8 @@ export function _addKarmaPoint(): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {
@@ -225,8 +225,8 @@ export function _addBoughtBackAEPoint(): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {
@@ -339,8 +339,8 @@ export function _addBoughtBackKPPoint(): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {

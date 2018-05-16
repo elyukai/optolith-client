@@ -12,7 +12,7 @@ import { getUISettingsState } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions.d';
 import { ToListById, User } from '../types/data.d';
 import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { bytify, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
 import { isBase64Image } from '../utils/RegexUtils';
@@ -40,8 +40,8 @@ export function requestClose(optionalCall?: () => void): AsyncAction {
 			else {
 				// @ts-ignore
 				dispatch(addAlert({
-					title: _translate(locale, 'heroes.warnings.unsavedactions.title'),
-					message: _translate(locale, 'heroes.warnings.unsavedactions.text'),
+					title: translate(locale, 'heroes.warnings.unsavedactions.title'),
+					message: translate(locale, 'heroes.warnings.unsavedactions.text'),
 					confirm: {
 						resolve: close(true, optionalCall),
 						reject: _setTab('profile'),
@@ -60,7 +60,7 @@ function close(unsaved: boolean, func?: () => void): AsyncAction {
 		const allSaved = await dispatch(requestSaveAll());
 		if (allSaved) {
 			dispatch(addAlert({
-				message: _translate(locale, unsaved ? 'fileapi.everythingelsesaved' : 'fileapi.allsaved'),
+				message: translate(locale, unsaved ? 'fileapi.everythingelsesaved' : 'fileapi.allsaved'),
 				onClose() {
 					if (func) {
 						func();
@@ -220,8 +220,8 @@ export function getHeroImport(): AsyncAction<Promise<RawHero | undefined>> {
 		}
 		catch (error) {
 			dispatch(addAlert({
-				message: `${_translate(locale, 'fileapi.error.message.importhero')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-				title: _translate(locale, 'fileapi.error.title')
+				message: `${translate(locale, 'fileapi.error.message.importhero')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+				title: translate(locale, 'fileapi.error.title')
 			}));
 		}
 		return;
@@ -251,7 +251,7 @@ export function requestHeroExport(id: string): AsyncAction {
 		let hero = getHeroForSave(state, id);
 		const locale = getLocaleMessages(state)!;
 		const filename = await showSaveDialog({
-			title: _translate(locale, 'fileapi.exporthero.title'),
+			title: translate(locale, 'fileapi.exporthero.title'),
 			filters: [
 				{name: 'JSON', extensions: ['json']},
 			],
@@ -273,13 +273,13 @@ export function requestHeroExport(id: string): AsyncAction {
 			try {
 				await writeFile(filename, JSON.stringify(hero));
 				dispatch(addAlert({
-					message: _translate(locale, 'fileapi.exporthero.success')
+					message: translate(locale, 'fileapi.exporthero.success')
 				}));
 			}
 			catch (error) {
 				dispatch(addAlert({
-					message: `${_translate(locale, 'fileapi.error.message.exporthero')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-					title: _translate(locale, 'fileapi.error.title')
+					message: `${translate(locale, 'fileapi.error.message.exporthero')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+					title: translate(locale, 'fileapi.error.title')
 				}));
 			}
 		}
@@ -303,8 +303,8 @@ export function requestConfigSave(): AsyncAction<Promise<boolean>> {
 		}
 		catch (error) {
 			dispatch(addAlert({
-				message: `${_translate(locale, 'fileapi.error.message.saveconfig')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-				title: _translate(locale, 'fileapi.error.title')
+				message: `${translate(locale, 'fileapi.error.message.saveconfig')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+				title: translate(locale, 'fileapi.error.title')
 			}));
 			return false;
 		}
@@ -325,8 +325,8 @@ export function requestHeroesSave(): AsyncAction<Promise<boolean>> {
 		}
 		catch (error) {
 			dispatch(addAlert({
-				message: `${_translate(locale, 'fileapi.error.message.saveconfig')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-				title: _translate(locale, 'fileapi.error.title')
+				message: `${translate(locale, 'fileapi.error.message.saveconfig')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+				title: translate(locale, 'fileapi.error.title')
 			}));
 			return false;
 		}
@@ -352,7 +352,7 @@ export function requestPrintHeroToPDF(): AsyncAction {
 				printBackground: true,
 			});
 			const filename = await showSaveDialog({
-				title: _translate(locale, 'fileapi.printcharactersheettopdf.title'),
+				title: translate(locale, 'fileapi.printcharactersheettopdf.title'),
 				filters: [
 					{name: 'PDF', extensions: ['pdf']},
 				],
@@ -361,21 +361,21 @@ export function requestPrintHeroToPDF(): AsyncAction {
 				try {
 					await writeFile(filename, data);
 					dispatch(addAlert({
-						message: _translate(locale, 'fileapi.printcharactersheettopdf.success')
+						message: translate(locale, 'fileapi.printcharactersheettopdf.success')
 					}));
 				}
 				catch (error) {
 					dispatch(addAlert({
-						message: `${_translate(locale, 'fileapi.error.message.printcharactersheettopdf')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-						title: _translate(locale, 'fileapi.error.title')
+						message: `${translate(locale, 'fileapi.error.message.printcharactersheettopdf')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+						title: translate(locale, 'fileapi.error.title')
 					}));
 				}
 			}
 		}
 		catch (error) {
 			dispatch(addAlert({
-				message: `${_translate(locale, 'fileapi.error.message.printcharactersheettopdfpreparation')} (${_translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
-				title: _translate(locale, 'fileapi.error.title')
+				message: `${translate(locale, 'fileapi.error.message.printcharactersheettopdfpreparation')} (${translate(locale, 'fileapi.error.message.code')}: ${JSON.stringify(error)})`,
+				title: translate(locale, 'fileapi.error.title')
 			}));
 		}
 	};
@@ -387,11 +387,11 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 		const locale = getLocaleMessages(state)!;
 		// @ts-ignore
 		dispatch(addAlert({
-			message: info.files[0] && info.files[0].size ? _translate(locale, 'newversionavailable.messagewithsize', info.version, bytify(info.files[0].size!, locale.id)) : _translate(locale, 'newversionavailable.message', info.version),
-			title: _translate(locale, 'newversionavailable.title'),
+			message: info.files[0] && info.files[0].size ? translate(locale, 'newversionavailable.messagewithsize', info.version, bytify(info.files[0].size!, locale.id)) : translate(locale, 'newversionavailable.message', info.version),
+			title: translate(locale, 'newversionavailable.title'),
 			buttons: [
 				{
-					label: _translate(locale, 'newversionavailable.update'),
+					label: translate(locale, 'newversionavailable.update'),
 					dispatchOnClick: (dispatch => {
 						dispatch(setUpdateDownloadProgress({
 							total: 0,
@@ -404,7 +404,7 @@ export function updateAvailable(info: UpdateInfo): AsyncAction {
 					}) as AsyncAction
 				},
 				{
-					label: _translate(locale, 'cancel')
+					label: translate(locale, 'cancel')
 				}
 			]
 		}));
@@ -416,8 +416,8 @@ export function updateNotAvailable(): AsyncAction {
 		const state = getState();
 		const locale = getLocaleMessages(state)!;
 		dispatch(addAlert({
-			message: _translate(locale, 'nonewversionavailable.message'),
-			title: _translate(locale, 'nonewversionavailable.title')
+			message: translate(locale, 'nonewversionavailable.message'),
+			title: translate(locale, 'nonewversionavailable.title')
 		}));
 	};
 }

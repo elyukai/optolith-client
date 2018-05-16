@@ -1,3 +1,3 @@
-export function dice(sides: number): number {
+export const rollDie = (sides: number): number => {
 	return Math.floor(Math.random() * sides) + 1;
-}
+};

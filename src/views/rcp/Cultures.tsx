@@ -13,7 +13,7 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Culture, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {
@@ -48,11 +48,11 @@ export class Cultures extends React.Component<CulturesProps> {
 		return (
 			<Page id="cultures">
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibilityFilter}
 						onChange={setVisibilityFilter}
-						options={[{ id: 'all', name: _translate(locale, 'cultures.options.allcultures') }, { id: 'common', name: _translate(locale, 'cultures.options.commoncultures') }]}
+						options={[{ id: 'all', name: translate(locale, 'cultures.options.allcultures') }, { id: 'common', name: translate(locale, 'cultures.options.commoncultures') }]}
 						fullWidth
 						/>
 					<SortOptions
@@ -65,7 +65,7 @@ export class Cultures extends React.Component<CulturesProps> {
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />

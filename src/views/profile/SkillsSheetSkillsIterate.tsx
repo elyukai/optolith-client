@@ -3,7 +3,7 @@ import { getFromArray } from '../../selectors/dependentInstancesSelectors';
 import { TalentInstance } from '../../types/data.d';
 import { Attribute, UIMessages } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 import { sign } from '../../utils/NumberUtils';
 import { getRoutineValue } from '../../utils/TalentUtils';
@@ -21,7 +21,7 @@ export function iterateList(talents: TalentInstance[], attributes: Attribute[], 
 				return attribute.short;
 			}
 		}).join('/');
-		const encString = encumbrance === 'true' ? _translate(locale, 'charactersheet.gamestats.skills.enc.yes') : encumbrance === 'false' ? _translate(locale, 'charactersheet.gamestats.skills.enc.no') : _translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
+		const encString = encumbrance === 'true' ? translate(locale, 'charactersheet.gamestats.skills.enc.yes') : encumbrance === 'false' ? translate(locale, 'charactersheet.gamestats.skills.enc.no') : translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
 		const routine = getRoutineValue(value, checkValues);
 		return (
 			<tr key={id}>

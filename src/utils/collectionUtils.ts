@@ -4,6 +4,7 @@ import { pipe } from './pipe';
 
 export type ArrayElement<T> = T extends Array<infer I> ? I : never;
 export type ArrayFilter<T> = (list: T[]) => T[];
+export type MapValueElement<T> = T extends Map<any, infer I> ? I : never;
 
 type ReadonlyMapUpdater<K, V> = (list: ReadonlyMap<K, V>) => ReadonlyMap<K, V>;
 
@@ -74,7 +75,7 @@ export const convertMapToValues = <V>(map: ReadonlyMap<any, V>) => [
   ...map.values()
 ];
 
-interface StringKeyObject<V> {
+export interface StringKeyObject<V> {
   [id: string]: V;
 }
 
@@ -83,7 +84,7 @@ interface StringKeyObject<V> {
  * @param list
  */
 export const convertMapToObject = <V>(
-  list: Map<string, V>,
+  list: ReadonlyMap<string, V>,
 ): StringKeyObject<V> => {
   return R.reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {}, [...list]);
 };

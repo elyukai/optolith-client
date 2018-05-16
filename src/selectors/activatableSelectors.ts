@@ -4,7 +4,7 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import * as Data from '../types/data.d';
 import { convertPerTierCostToFinalCost, getActiveFromState, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getStateKeyByCategory } from '../utils/IDUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getAllByCategory } from './dependentInstancesSelectors';
@@ -201,7 +201,7 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector(
   (specialAbilities, messages, cultureAreaKnowledge = '') => {
     return [
       ...specialAbilities.filter(e => [1, 2, 22, 30].includes(e.instance.gr!)),
-      _translate(messages!, 'charactersheet.main.generalspecialabilites.areaknowledge', cultureAreaKnowledge)
+      translate(messages!, 'charactersheet.main.generalspecialabilites.areaknowledge', cultureAreaKnowledge)
     ];
   }
 );

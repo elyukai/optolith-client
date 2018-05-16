@@ -3,7 +3,7 @@ import { Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { _translate } from './I18n';
+import { translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
@@ -327,7 +327,7 @@ const adjustTierName = (
     && typeof obj.cost !== 'number'
   ) {
     if (obj.id === 'SA_29' && obj.tier === 4) {
-      tierName = ` ${_translate(locale, 'mothertongue.short')}`;
+      tierName = ` ${translate(locale, 'mothertongue.short')}`;
     }
     else if (
       Array.isArray(obj.currentCost)

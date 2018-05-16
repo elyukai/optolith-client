@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { Armor, UIMessages } from '../../types/view.d';
-import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { getRoman, sign } from '../../utils/NumberUtils';
 
 export interface CombatSheetArmorProps {
@@ -15,18 +15,18 @@ export function CombatSheetArmor(props: CombatSheetArmorProps) {
 	const list = ([undefined, undefined, undefined, undefined] as Array<Armor | undefined>);
 	list.splice(0, Math.min(armors.length, 4), ...armors);
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.combat.armor.title')} className="armor">
+		<TextBox label={translate(locale, 'charactersheet.combat.armor.title')} className="armor">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{_translate(locale, 'charactersheet.combat.headers.armor')}</th>
-						<th className="st">{_translate(locale, 'charactersheet.combat.headers.st')}</th>
-						<th className="loss">{_translate(locale, 'charactersheet.combat.headers.loss')}</th>
-						<th className="pro">{_translate(locale, 'charactersheet.combat.headers.pro')}</th>
-						<th className="enc">{_translate(locale, 'charactersheet.combat.headers.enc')}</th>
-						<th className="add-penalties">{_translate(locale, 'charactersheet.combat.headers.addpenalties')}</th>
-						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
-						<th className="where">{_translate(locale, 'charactersheet.combat.headers.where')}</th>
+						<th className="name">{translate(locale, 'charactersheet.combat.headers.armor')}</th>
+						<th className="st">{translate(locale, 'charactersheet.combat.headers.st')}</th>
+						<th className="loss">{translate(locale, 'charactersheet.combat.headers.loss')}</th>
+						<th className="pro">{translate(locale, 'charactersheet.combat.headers.pro')}</th>
+						<th className="enc">{translate(locale, 'charactersheet.combat.headers.enc')}</th>
+						<th className="add-penalties">{translate(locale, 'charactersheet.combat.headers.addpenalties')}</th>
+						<th className="weight">{translate(locale, 'charactersheet.combat.headers.weight')}</th>
+						<th className="where">{translate(locale, 'charactersheet.combat.headers.where')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -36,11 +36,11 @@ export function CombatSheetArmor(props: CombatSheetArmorProps) {
 								const addPenaltiesArr = [];
 
 								if (e.mov !== 0) {
-									addPenaltiesArr.push(`${sign(e.mov)} ${_translate(locale, 'secondaryattributes.mov.short')}`);
+									addPenaltiesArr.push(`${sign(e.mov)} ${translate(locale, 'secondaryattributes.mov.short')}`);
 								}
 
 								if (e.ini !== 0) {
-									addPenaltiesArr.push(`${sign(e.ini)} ${_translate(locale, 'secondaryattributes.ini.short')}`);
+									addPenaltiesArr.push(`${sign(e.ini)} ${translate(locale, 'secondaryattributes.ini.short')}`);
 								}
 
 								return (
@@ -53,7 +53,7 @@ export function CombatSheetArmor(props: CombatSheetArmorProps) {
 										<td className="pro">{e.pro}</td>
 										<td className="enc">{e.enc}</td>
 										<td className="add-penalties">{addPenaltiesArr.length > 0 ? addPenaltiesArr.join(', ') : '-'}</td>
-										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
+										<td className="weight">{localizeNumber(localizeWeight(e.weight, locale.id), locale.id)} {translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 										<td className="where">
 											<Textfit max={11} min={7} mode="single">{e.where}</Textfit>
 										</td>

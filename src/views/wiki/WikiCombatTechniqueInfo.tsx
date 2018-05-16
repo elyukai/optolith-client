@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Attribute, Book, CombatTechnique } from '../../types/wiki';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
@@ -29,7 +29,7 @@ export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
 
   return (
     <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
-      {currentObject.special && <Markdown source={`**${_translate(locale, 'info.special')}:** ${currentObject.special}`} />}
+      {currentObject.special && <Markdown source={`**${translate(locale, 'info.special')}:** ${currentObject.special}`} />}
       <WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : '...').join('/')}</WikiProperty>
       <WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
       <WikiSource {...props} />

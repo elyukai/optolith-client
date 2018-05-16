@@ -2,7 +2,7 @@ import { ProgressInfo } from 'builder-util-runtime';
 import * as React from 'react';
 import { Dialog } from '../../components/DialogNew';
 import { ProgressBar } from '../../components/ProgressBar';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { bytify } from '../../utils/IOUtils';
 
 export interface DownloaderOwnProps {
@@ -24,7 +24,7 @@ export function Downloader(props: DownloaderProps) {
 	return (
 		<Dialog
 			id="downloader"
-			title={_translate(locale, 'downloadupdate')}
+			title={translate(locale, 'downloadupdate')}
 			isOpened={typeof progress === 'object'}
 			close={() => undefined}
 			noCloseButton

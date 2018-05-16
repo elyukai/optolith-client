@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface SelectionsCtProps {
 	active: Set<string>;
@@ -19,9 +19,9 @@ export interface SelectionsCtProps {
 export function SelectionsCt(props: SelectionsCtProps) {
 	const { active, amount, change, disabled, list, locale, value, second } = props;
 
-	const amountTags = [_translate(locale, 'rcpselections.labels.one'), _translate(locale, 'rcpselections.labels.two')];
+	const amountTags = [translate(locale, 'rcpselections.labels.one'), translate(locale, 'rcpselections.labels.two')];
 
-	const text = second ? _translate(locale, 'rcpselections.labels.more') : _translate(locale, 'rcpselections.labels.ofthefollowingcombattechniques');
+	const text = second ? translate(locale, 'rcpselections.labels.more') : translate(locale, 'rcpselections.labels.ofthefollowingcombattechniques');
 
 	return (
 		<div className="ct list">

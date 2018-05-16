@@ -3,7 +3,7 @@ import { Textfit } from 'react-textfit';
 import { SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Liturgy, UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 
 interface LiturgiesSheetLiturgiesTableRowProps {
@@ -27,7 +27,7 @@ export function LiturgiesSheetLiturgiesTableRow(props: LiturgiesSheetLiturgiesTa
 				return attribute.short;
 			}
 		}).join('/');
-		const aspectNames = _translate(locale, 'liturgies.view.aspects');
+		const aspectNames = translate(locale, 'liturgies.view.aspects');
 		const aspects = sortStrings(aspectIds.map(e => aspectNames[e - 1]), locale.id);
 		return (
 			<tr>

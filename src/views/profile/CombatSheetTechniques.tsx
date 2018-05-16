@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { Attribute, CombatTechnique, UIMessages } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 
 export interface CombatSheetTechniquesProps {
@@ -14,16 +14,16 @@ export interface CombatSheetTechniquesProps {
 export function CombatSheetTechniques(props: CombatSheetTechniquesProps) {
 	const { attributes, combatTechniques, locale } = props;
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.combat.combattechniques.title')} className="combat-techniques">
+		<TextBox label={translate(locale, 'charactersheet.combat.combattechniques.title')} className="combat-techniques">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{_translate(locale, 'charactersheet.combat.combattechniques.headers.name')}</th>
-						<th className="primary">{_translate(locale, 'charactersheet.combat.combattechniques.headers.primaryattribute')}</th>
-						<th className="ic">{_translate(locale, 'charactersheet.combat.combattechniques.headers.ic')}</th>
-						<th className="value">{_translate(locale, 'charactersheet.combat.combattechniques.headers.ctr')}</th>
-						<th className="at">{_translate(locale, 'charactersheet.combat.combattechniques.headers.atrc')}</th>
-						<th className="pa">{_translate(locale, 'charactersheet.combat.combattechniques.headers.pa')}</th>
+						<th className="name">{translate(locale, 'charactersheet.combat.combattechniques.headers.name')}</th>
+						<th className="primary">{translate(locale, 'charactersheet.combat.combattechniques.headers.primaryattribute')}</th>
+						<th className="ic">{translate(locale, 'charactersheet.combat.combattechniques.headers.ic')}</th>
+						<th className="value">{translate(locale, 'charactersheet.combat.combattechniques.headers.ctr')}</th>
+						<th className="at">{translate(locale, 'charactersheet.combat.combattechniques.headers.atrc')}</th>
+						<th className="pa">{translate(locale, 'charactersheet.combat.combattechniques.headers.pa')}</th>
 					</tr>
 				</thead>
 				<tbody>

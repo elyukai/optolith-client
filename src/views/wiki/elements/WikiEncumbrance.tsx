@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { _translate, UIMessages } from '../../../utils/I18n';
+import { translate, UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiEncumbranceProps {
@@ -17,13 +17,13 @@ export function WikiEncumbrance(props: WikiEncumbranceProps) {
     locale
   } = props;
 
-  let string = _translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
+  let string = translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
 
   if (encumbrance === 'true') {
-    string = _translate(locale, 'charactersheet.gamestats.skills.enc.yes');
+    string = translate(locale, 'charactersheet.gamestats.skills.enc.yes');
   }
   else if (encumbrance === 'false') {
-    string = _translate(locale, 'charactersheet.gamestats.skills.enc.no');
+    string = translate(locale, 'charactersheet.gamestats.skills.enc.no');
   }
 
   return (

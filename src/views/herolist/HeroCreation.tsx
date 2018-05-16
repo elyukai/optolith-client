@@ -9,7 +9,7 @@ import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { Book, ExperienceLevel } from '../../types/wiki';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface HeroCreationProps extends DialogProps {
 	locale: UIMessages;
@@ -83,16 +83,16 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
 		});
 
 		return (
-			<Dialog {...other} id="herocreation" title={_translate(locale, 'herocreation.title')} close={this.close} buttons={[
+			<Dialog {...other} id="herocreation" title={translate(locale, 'herocreation.title')} close={this.close} buttons={[
 				{
 					disabled: this.state.name === '' || !this.state.gender || !this.state.el,
-					label: _translate(locale, 'herocreation.actions.start'),
+					label: translate(locale, 'herocreation.actions.start'),
 					onClick: this.create,
 					primary: true,
 				},
 			]}>
 				<TextField
-					hint={_translate(locale, 'herocreation.options.nameofhero')}
+					hint={translate(locale, 'herocreation.options.nameofhero')}
 					value={this.state.name}
 					onChange={this.changeName}
 					fullWidth
@@ -101,13 +101,13 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
 				<SegmentedControls
 					active={this.state.gender}
 					onClick={this.changeGender}
-					options={[{value: 'm', name: _translate(locale, 'herocreation.options.selectsex.male')}, {value: 'f', name: _translate(locale, 'herocreation.options.selectsex.female')}]}
+					options={[{value: 'm', name: translate(locale, 'herocreation.options.selectsex.male')}, {value: 'f', name: translate(locale, 'herocreation.options.selectsex.female')}]}
 					/>
 				<Dropdown
 					value={this.state.el}
 					onChange={this.changeEL}
 					options={experienceLevels}
-					hint={_translate(locale, 'herocreation.options.selectexperiencelevel')}
+					hint={translate(locale, 'herocreation.options.selectexperiencelevel')}
 					fullWidth
 					/>
 				<Hr/>
@@ -115,7 +115,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
 					<Checkbox
 						checked={enableAllRuleBooks === true}
 						onClick={this.switchEnableAllRuleBooks}
-						label={_translate(locale, 'rules.enableallrulebooks')}
+						label={translate(locale, 'rules.enableallrulebooks')}
 						/>
 					{sortedBooks.map(e => {
 						const isCore = ['US25001', 'US25002'].includes(e.id);

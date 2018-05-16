@@ -4,7 +4,7 @@ import { Categories } from '../constants/Categories';
 import { ToListById } from '../types/data';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata';
 import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, Disadvantage, ExperienceLevel, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, Race, RaceVariant, SelectionObject, Skill, SkillishEntry, SpecialAbility, Spell } from '../types/wiki';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getWikiStateKeyByCategory } from '../utils/IDUtils';
 import { initAdvantage, initAttribute, initBlessing, initCantrip, initCombatTechnique, initCulture, initDisadvantage, initExperienceLevel, initItemTemplate, initLiturgicalChant, initProfession, initProfessionVariant, initRace, initRaceVariant, initSkill, initSpecialAbility, initSpell } from '../utils/InitWikiUtils';
 
@@ -122,7 +122,7 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 			}, {
 				P_0: {
 					id: 'P_0',
-					name: _translate(ui, 'professions.ownprofession'),
+					name: translate(ui, 'professions.ownprofession'),
 					req: [],
 					src: []
 				}

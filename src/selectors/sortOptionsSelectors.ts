@@ -3,7 +3,7 @@ import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
 import { AllSortOptions } from '../utils/FilterSortUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getLocaleMessages, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 
@@ -108,7 +108,7 @@ export const getSpecialAbilitiesSortOptions = createSelector(
       sortOptions = [
         {
           key: obj => obj.instance.gr,
-          mapToIndex: _translate(locale, 'specialabilities.view.groups')
+          mapToIndex: translate(locale, 'specialabilities.view.groups')
         },
         'name'
       ];
@@ -130,7 +130,7 @@ export const getSpellsSortOptions = createSelector(
       sortOptions = [
         {
           key: 'property',
-          mapToIndex: _translate(locale, 'spells.view.properties')
+          mapToIndex: translate(locale, 'spells.view.properties')
         },
         'name'
       ];
@@ -156,7 +156,7 @@ export const getCantripsSortOptions = createSelector(
       sortOptions = [
         {
           key: 'property',
-          mapToIndex: _translate(locale, 'spells.view.properties')
+          mapToIndex: translate(locale, 'spells.view.properties')
         },
         'name'
       ];
@@ -194,7 +194,7 @@ export const getEquipmentSortOptions = createSelector(
     let sortOptions: AllSortOptions<Targets> = 'name';
 
     if (sortOrder === 'groupname') {
-      const groups = _translate(locale, 'equipment.view.groups');
+      const groups = translate(locale, 'equipment.view.groups');
       sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
     }
     else if (sortOrder === 'weight') {

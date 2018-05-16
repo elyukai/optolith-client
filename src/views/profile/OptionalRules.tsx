@@ -4,7 +4,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { RulesState } from '../../reducers/rules';
 import { Book } from '../../types/data';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface OptionalRulesOwnProps {
 	locale: UIMessages;
@@ -33,11 +33,11 @@ export function OptionalRules(props: OptionalRulesProps) {
 	return (
 		<div className="page" id="optional-rules">
 			<Scroll>
-				<h3>{_translate(locale, 'rules.rulebase')}</h3>
+				<h3>{translate(locale, 'rules.rulebase')}</h3>
 				<Checkbox
 					checked={ruleBooksEnabled === true}
 					onClick={switchEnableAllRuleBooks}
-					label={_translate(locale, 'rules.enableallrulebooks')}
+					label={translate(locale, 'rules.enableallrulebooks')}
 					/>
 				{sortedBooks.map(e => {
 					const isCore = ['US25001', 'US25002'].includes(e.id);
@@ -51,12 +51,12 @@ export function OptionalRules(props: OptionalRulesProps) {
 							/>
 					);
 				})}
-				<h3>{_translate(locale, 'rules.optionalrules')}</h3>
+				<h3>{translate(locale, 'rules.optionalrules')}</h3>
 				<div className="extended">
 					<Checkbox
 						checked={higherParadeValues > 0}
 						onClick={() => changeHigherParadeValues(higherParadeValues > 0 ? 0 : 2)}
-						label={_translate(locale, 'rules.optionalrules.higherdefensestats')}
+						label={translate(locale, 'rules.optionalrules.higherdefensestats')}
 						/>
 					<Dropdown
 						options={[{id: 2, name: '+2'}, {id: 4, name: '+4'}]}
@@ -68,12 +68,12 @@ export function OptionalRules(props: OptionalRulesProps) {
 				<Checkbox
 					checked={attributeValueLimit}
 					onClick={changeAttributeValueLimit}
-					label={_translate(locale, 'rules.optionalrules.maximumattributescores')}
+					label={translate(locale, 'rules.optionalrules.maximumattributescores')}
 					/>
 				<Checkbox
 					checked={enableLanguageSpecializations}
 					onClick={switchEnableLanguageSpecializations}
-					label={_translate(locale, 'rules.optionalrules.languagespecializations')}
+					label={translate(locale, 'rules.optionalrules.languagespecializations')}
 					disabled={isEnableLanguageSpecializationsDeactivatable}
 					/>
 			</Scroll>

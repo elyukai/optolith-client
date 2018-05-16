@@ -5,7 +5,7 @@ import { Dialog } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
 import { SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface SettingsOwnProps {
 	locale: UIMessages;
@@ -39,47 +39,47 @@ export function Settings(props: SettingsProps) {
 	return (
 		<Dialog
 			id="settings"
-			title={_translate(locale, 'settings.title')}
-			buttons={[{label: _translate(locale, 'settings.actions.close'), onClick: saveConfig }]}
+			title={translate(locale, 'settings.title')}
+			buttons={[{label: translate(locale, 'settings.actions.close'), onClick: saveConfig }]}
 			close={close}
 			isOpened={isSettingsOpen}
 			>
 			<Dropdown
 				options={[
-					{name: _translate(locale, 'settings.options.defaultlanguage')},
+					{name: translate(locale, 'settings.options.defaultlanguage')},
 					{id: 'de-DE', name: 'Deutsch (Deutschland)'},
 					{id: 'en-US', name: 'English (United States)'},
 					{id: 'nl-BE', name: 'Nederlands (België)'}
 				]}
 				value={localeType === 'default' ? undefined : localeString}
-				label={_translate(locale, 'settings.options.language')}
+				label={translate(locale, 'settings.options.language')}
 				onChange={setLocale}
 				/>
-			<p>{_translate(locale, 'settings.options.languagehint')}</p>
+			<p>{translate(locale, 'settings.options.languagehint')}</p>
 			<SegmentedControls
 				options={[
-					{name: _translate(locale, 'settings.options.themedark'), value: 'dark'},
-					{name: _translate(locale, 'settings.options.themelight'), value: 'light'}
+					{name: translate(locale, 'settings.options.themedark'), value: 'dark'},
+					{name: translate(locale, 'settings.options.themelight'), value: 'light'}
 				]}
 				active={theme}
 				onClick={setTheme}
-				label={_translate(locale, 'settings.options.theme')}
+				label={translate(locale, 'settings.options.theme')}
 				/>
 			<Checkbox
 				checked={isEditingHeroAfterCreationPhaseEnabled}
 				className="editor-switch"
-				label={_translate(locale, 'enableeditingheroaftercreationphase')}
+				label={translate(locale, 'enableeditingheroaftercreationphase')}
 				onClick={switchEnableEditingHeroAfterCreationPhase}
 				/>
 			<Checkbox
 				checked={areAnimationsEnabled}
 				className="animations"
-				label={_translate(locale, 'settings.options.showanimations')}
+				label={translate(locale, 'settings.options.showanimations')}
 				onClick={switchEnableAnimations}
 				/>
 			{(platform === 'win32' || platform === 'darwin') && (
 				<BorderButton
-					label={_translate(locale, 'checkforupdates')}
+					label={translate(locale, 'checkforupdates')}
 					onClick={checkForUpdates}
 					autoWidth
 					/>

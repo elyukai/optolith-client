@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { Attribute, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeModsListItem } from './AttributeModsListItem';
 
 export interface AttributeModsProps {
@@ -11,7 +11,7 @@ export interface AttributeModsProps {
 
 export function AttributeMods(props: AttributeModsProps) {
 	return (
-		<TextBox className="attribute-mods" label={_translate(props.locale, 'charactersheet.attributemodifiers.title')}>
+		<TextBox className="attribute-mods" label={translate(props.locale, 'charactersheet.attributemodifiers.title')}>
 			<table>
 				<thead>
 					<tr>

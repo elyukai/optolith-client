@@ -9,7 +9,7 @@ import { SettingsContainer } from '../../containers/Settings';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { SubTab } from '../../types/data';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { TabId } from '../../utils/LocationUtils';
 import { ApTooltip } from './ApTooltip';
 import { NavigationBarBack } from './NavigationBarBack';
@@ -73,7 +73,7 @@ export function NavigationBar(props: NavigationBarProps) {
               margin={12}
               content={<ApTooltip {...props} />}
               >
-              <Text className="collected-ap">{adventurePoints.available} {_translate(locale, 'titlebar.view.adventurepoints')}</Text>
+              <Text className="collected-ap">{adventurePoints.available} {translate(locale, 'titlebar.view.adventurepoints')}</Text>
             </TooltipToggle>
             <IconButton
               icon="&#xE90f;"
@@ -86,7 +86,7 @@ export function NavigationBar(props: NavigationBarProps) {
               disabled={!isRedoAvailable}
               />
             <BorderButton
-              label={_translate(locale, 'actions.save')}
+              label={translate(locale, 'actions.save')}
               onClick={saveHero}
               />
           </>}

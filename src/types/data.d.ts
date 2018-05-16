@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import { Categories } from '../constants/Categories';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
+import { RawRules } from './rawdata';
 import * as Reusable from './reusable.d';
 import { AllRequirementTypes } from './reusable.d';
 import * as Wiki from './wiki';
@@ -49,10 +50,10 @@ export interface HeroBaseForHerolist {
     total: number;
     spent: number;
   };
-  readonly r: string;
+  readonly r?: string;
   readonly rv?: string;
-  readonly c: string;
-  readonly p: string;
+  readonly c?: string;
+  readonly p?: string;
   professionName?: string;
   readonly pv?: string;
   readonly sex: 'm' | 'f';
@@ -115,7 +116,7 @@ export interface HeroBaseBase extends HeroBaseForHerolist {
 }
 
 export interface HeroBase extends HeroBaseBase {
-  readonly rules: Rules;
+  readonly rules: RawRules;
 }
 
 export interface Hero extends HeroBase {
@@ -157,6 +158,11 @@ export type ExtendedSkillDependent =
 
 export type ExtendedActivatableDependent =
   ActivatableDependent |
+  ActivatableSkillDependent;
+
+export type ValueBasedDependent =
+  AttributeDependent |
+  SkillDependent |
   ActivatableSkillDependent;
 
 export type Dependent =
@@ -226,9 +232,9 @@ export interface PersonalData {
 }
 
 export interface Energies {
-  lp: number;
-  ae: number;
-  kp: number;
+  addedLifePoints: number;
+  addedArcaneEnergyPoints: number;
+  addedKarmaPoints: number;
   permanentLifePoints: PermanentEnergyLoss;
   permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack;
   permanentKarmaPoints: PermanentEnergyLossAndBoughtBack;

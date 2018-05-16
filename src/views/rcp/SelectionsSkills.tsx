@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { TalentInstance } from '../../types/data';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface SelectionsSkillsProps {
 	active: Map<string, number>;
@@ -19,7 +19,7 @@ export function SelectionsSkills(props: SelectionsSkillsProps) {
 
 	return (
 		<div className="skills list">
-			<h4>{_translate(locale, 'rcpselections.labels.skills', _translate(locale, 'rcpselections.labels.skillgroups')[gr], value, left)}</h4>
+			<h4>{translate(locale, 'rcpselections.labels.skills', translate(locale, 'rcpselections.labels.skillgroups')[gr], value, left)}</h4>
 			{
 				list.map(obj => {
 					const { id, name, ic } = obj;

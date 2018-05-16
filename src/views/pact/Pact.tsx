@@ -5,7 +5,7 @@ import { Page } from '../../components/Page';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getRoman } from '../../utils/NumberUtils';
 
 export interface PactSettingsOwnProps {
@@ -45,12 +45,12 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 			<Page id="pact">
 				<div className="pact-content">
 					<Dropdown
-						label={_translate(locale, 'pact.category')}
+						label={translate(locale, 'pact.category')}
 						options={[
 							{
-								name: _translate(locale, 'pact.nopact'),
+								name: translate(locale, 'pact.nopact'),
 							},
-							..._translate(locale, 'pact.categories').map((name, i) => ({
+							...translate(locale, 'pact.categories').map((name, i) => ({
 								id: i + 1,
 								name,
 							})),
@@ -60,7 +60,7 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 						disabled={!isPactEditable}
 						/>
 					<Dropdown
-						label={_translate(locale, 'pact.level')}
+						label={translate(locale, 'pact.level')}
 						options={Array.from({ length: 3 }, (_, i) => {
 							return {
 								id: i + 1,
@@ -73,8 +73,8 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 						disabled={pact === null}
 						/>
 					<Dropdown
-						label={_translate(locale, 'pact.fairytype')}
-						options={_translate(locale, 'pact.fairytypes').map((name, i) => {
+						label={translate(locale, 'pact.fairytype')}
+						options={translate(locale, 'pact.fairytypes').map((name, i) => {
 							return {
 								id: i + 1,
 								name
@@ -85,8 +85,8 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 						disabled={!isPactEditable || pact === null}
 						/>
 					<Dropdown
-						label={_translate(locale, 'domain')}
-						options={_translate(locale, 'pact.fairydomains').map((name, i) => {
+						label={translate(locale, 'domain')}
+						options={translate(locale, 'pact.fairydomains').map((name, i) => {
 							return {
 								id: i + 1,
 								name
@@ -97,14 +97,14 @@ export class PactSettings extends React.Component<PactSettingsProps> {
 						disabled={!isPactEditable || pact === null || typeof pact.domain === 'string' && pact.domain.length > 0}
 						/>
 					<TextField
-						label={`${_translate(locale, 'domain')} (${_translate(locale, 'userdefined')})`}
-						hint={pact && typeof pact.domain === 'number' ? _translate(locale, 'pact.fairydomains')[pact.domain - 1] : undefined}
+						label={`${translate(locale, 'domain')} (${translate(locale, 'userdefined')})`}
+						hint={pact && typeof pact.domain === 'number' ? translate(locale, 'pact.fairydomains')[pact.domain - 1] : undefined}
 						onChange={(event: InputTextEvent) => setTargetDomain(event.target.value)}
 						value={pact && typeof pact.domain === 'string' ? pact.domain : ''}
 						disabled={!isPactEditable || pact === null}
 						/>
 					<TextField
-						label={_translate(locale, 'name')}
+						label={translate(locale, 'name')}
 						onChange={(event: InputTextEvent) => setTargetName(event.target.value)}
 						value={pact ? pact.name : undefined}
 						disabled={!isPactEditable || pact === null}

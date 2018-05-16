@@ -25,7 +25,7 @@ import { showAbout } from './actions/LocationActions';
 import { AppContainer } from './containers/App';
 import { app } from './reducers/app';
 import { getLocaleMessages } from './selectors/stateSelectors';
-import { _translate } from './utils/I18n';
+import { translate } from './utils/I18n';
 import { isDialogOpen } from './utils/SubwindowsUtils';
 import localShortcut = require('electron-localshortcut');
 
@@ -42,7 +42,7 @@ store.dispatch(requestInitialData()).then(() => {
         label: remote.app.getName(),
         submenu: [
           {
-            label: _translate(locale, 'mac.aboutapp', remote.app.getName()),
+            label: translate(locale, 'mac.aboutapp', remote.app.getName()),
             click: () => dispatch(showAbout())
           },
           {type: 'separator'},
@@ -51,13 +51,13 @@ store.dispatch(requestInitialData()).then(() => {
           {role: 'unhide'},
           {type: 'separator'},
           {
-            label: _translate(locale, 'mac.quit'),
+            label: translate(locale, 'mac.quit'),
             click: () => dispatch(requestClose(() => remote.app.quit()))
           }
         ]
       },
       {
-        label: _translate(locale, 'edit'),
+        label: translate(locale, 'edit'),
         submenu: [
           {role: 'cut'},
           {role: 'copy'},
@@ -67,7 +67,7 @@ store.dispatch(requestInitialData()).then(() => {
         ]
       },
       {
-        label: _translate(locale, 'view'),
+        label: translate(locale, 'view'),
         submenu: [
           {role: 'togglefullscreen'}
         ]

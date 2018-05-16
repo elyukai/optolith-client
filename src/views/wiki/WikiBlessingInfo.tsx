@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Blessing, Book } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { getAspectsOfTradition, getTraditionOfAspect } from '../../utils/LiturgyUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
@@ -26,9 +26,9 @@ export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
 
 	const traditions = sortStrings([...traditionsMap].map(e => {
 		if (getAspectsOfTradition(e[0]).length < 2) {
-			return _translate(locale, 'liturgies.view.traditions')[e[0] - 1];
+			return translate(locale, 'liturgies.view.traditions')[e[0] - 1];
 		}
-		return `${_translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => _translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).join(', ')})`;
+		return `${translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).join(', ')})`;
 	}), locale.id).join(', ');
 
 	if (['nl-BE'].includes(locale.id)) {

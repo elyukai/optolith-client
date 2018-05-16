@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Book, Cantrip } from '../../types/wiki';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
@@ -19,7 +19,7 @@ export function WikiCantripInfo(props: WikiCantripInfoProps) {
     return (
       <WikiBoxTemplate className="cantrip" title={currentObject.name}>
         <WikiProperty locale={locale} title="info.property">
-          {_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
+          {translate(locale, 'spells.view.properties')[currentObject.property - 1]}
         </WikiProperty>
       </WikiBoxTemplate>
     );
@@ -32,7 +32,7 @@ export function WikiCantripInfo(props: WikiCantripInfoProps) {
       <WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
       <WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
       <WikiProperty locale={locale} title="info.property">
-        {_translate(locale, 'spells.view.properties')[currentObject.property - 1]}
+        {translate(locale, 'spells.view.properties')[currentObject.property - 1]}
       </WikiProperty>
       {currentObject.note && <WikiProperty locale={locale} title="info.note">{currentObject.note}</WikiProperty>}
       <WikiSource {...props} />

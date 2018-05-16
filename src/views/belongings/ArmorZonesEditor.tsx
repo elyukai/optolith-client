@@ -4,7 +4,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { ArmorZonesEditorInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface ArmorZonesEditorProps {
 	armorZonesEditor: ArmorZonesEditorInstance;
@@ -54,50 +54,50 @@ export class ArmorZonesEditor extends React.Component<ArmorZonesEditorProps> {
 			...templates.filter(e => e.gr === 4),
 			...items.filter(e => e.gr === 4 && !e.isTemplateLocked)
 		], locale.id);
-		const armorList = [{name: _translate(locale, 'options.none')}, ...combinedArmorList];
+		const armorList = [{name: translate(locale, 'options.none')}, ...combinedArmorList];
 		const tiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
 
 		return (
 			<Dialog
 				id="armor-zones-editor"
-				title={create ? _translate(locale, 'zonearmoreditor.titlecreate') : _translate(locale, 'zonearmoreditor.titleedit')}
+				title={create ? translate(locale, 'zonearmoreditor.titlecreate') : translate(locale, 'zonearmoreditor.titleedit')}
 				isOpened={isOpened}
 				close={closeEditor}
 				buttons={[
 					{
 						autoWidth: true,
 						disabled: name === '',
-						label: _translate(locale, 'actions.save'),
+						label: translate(locale, 'actions.save'),
 						onClick: create ? this.props.addToList : this.props.saveItem,
 					},
 				]}>
 				<div className="main">
 					<div className="row">
-						<TextField className="name" label={_translate(locale, 'zonearmoreditor.options.name')} value={name} onChange={this.changeName} autoFocus={create} />
+						<TextField className="name" label={translate(locale, 'zonearmoreditor.options.name')} value={name} onChange={this.changeName} autoFocus={create} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.head')} value={head} options={armorList} onChange={this.changeHead} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={headLoss} options={tiers} onChange={this.changeHeadLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.head')} value={head} options={armorList} onChange={this.changeHead} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={headLoss} options={tiers} onChange={this.changeHeadLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.torso')} value={torso} options={armorList} onChange={this.changeTorso} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={torsoLoss} options={tiers} onChange={this.changeTorsoLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.torso')} value={torso} options={armorList} onChange={this.changeTorso} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={torsoLoss} options={tiers} onChange={this.changeTorsoLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.leftarm')} value={leftArm} options={armorList} onChange={this.changeLeftArm} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={leftArmLoss} options={tiers} onChange={this.changeLeftArmLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.leftarm')} value={leftArm} options={armorList} onChange={this.changeLeftArm} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={leftArmLoss} options={tiers} onChange={this.changeLeftArmLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.rightarm')} value={rightArm} options={armorList} onChange={this.changeRightArm} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={rightArmLoss} options={tiers} onChange={this.changeRightArmLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.rightarm')} value={rightArm} options={armorList} onChange={this.changeRightArm} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={rightArmLoss} options={tiers} onChange={this.changeRightArmLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.leftleg')} value={leftLeg} options={armorList} onChange={this.changeLeftLeg} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={leftLegLoss} options={tiers} onChange={this.changeLeftLegLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.leftleg')} value={leftLeg} options={armorList} onChange={this.changeLeftLeg} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={leftLegLoss} options={tiers} onChange={this.changeLeftLegLoss} />
 					</div>
 					<div className="row">
-						<Dropdown className="armor" label={_translate(locale, 'zonearmoreditor.options.rightleg')} value={rightLeg} options={armorList} onChange={this.changeRightLeg} />
-						<Dropdown className="loss" label={_translate(locale, 'zonearmoreditor.options.loss')} value={rightLegLoss} options={tiers} onChange={this.changeRightLegLoss} />
+						<Dropdown className="armor" label={translate(locale, 'zonearmoreditor.options.rightleg')} value={rightLeg} options={armorList} onChange={this.changeRightLeg} />
+						<Dropdown className="loss" label={translate(locale, 'zonearmoreditor.options.loss')} value={rightLegLoss} options={tiers} onChange={this.changeRightLegLoss} />
 					</div>
 				</div>
 			</Dialog>

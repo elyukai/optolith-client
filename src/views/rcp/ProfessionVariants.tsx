@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Profession, UIMessages } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface ProfessionVariantsProps {
 	currentProfessionId?: string;
@@ -19,7 +19,7 @@ export function ProfessionVariants(props: ProfessionVariantsProps) {
 	const profession = professions.find(e => e.id === currentProfessionId);
 
 	const variants: { name: string; value: string | undefined }[] = profession ? [
-		{ name: _translate(locale, 'professions.options.novariant'), value: undefined },
+		{ name: translate(locale, 'professions.options.novariant'), value: undefined },
 		...sortObjects(profession.variants.map(e => {
 			const { ap, id } = e;
 			let { name } = e;

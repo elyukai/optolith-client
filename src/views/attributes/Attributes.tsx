@@ -4,7 +4,7 @@ import { Scroll } from '../../components/Scroll';
 import { SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { AttributeWithRequirements } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeCalc } from './AttributeCalc';
 import { AttributeList } from './AttributeList';
 import { AttributesAdjustment } from './AttributesAdjustment';
@@ -65,7 +65,7 @@ export function Attributes(props: AttributesProps) {
 	return (
 		<Page id="attribute">
 			<Scroll>
-				<div className="counter">{_translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
+				<div className="counter">{translate(locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
 				<AttributeList {...props} />
 				<div className="secondary">
 					{isInCharacterCreation && <AttributesAdjustment {...props} />}

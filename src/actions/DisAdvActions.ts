@@ -8,7 +8,7 @@ import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance } from '../types/data.d';
 import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '../utils/ActivatableUtils';
 import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 
@@ -37,26 +37,26 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
-				title: _translate(locale, 'notenoughap.title'),
-				message: _translate(locale, 'notenoughap.content'),
+				title: translate(locale, 'notenoughap.title'),
+				message: translate(locale, 'notenoughap.content'),
 			}));
 		}
 		else if (!validCost[1] && locale) {
-			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedaplimit.title', type),
-					message: _translate(locale, 'reachedaplimit.content', type),
+					title: translate(locale, 'reachedaplimit.title', type),
+					message: translate(locale, 'reachedaplimit.content', type),
 				}));
 			}
 		}
 		else if (!validCost[2] && locale) {
-			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedcategoryaplimit.title', type),
-					message: _translate(locale, 'reachedcategoryaplimit.content', ap, type),
+					title: translate(locale, 'reachedcategoryaplimit.title', type),
+					message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
 				}));
 			}
 		}
@@ -111,26 +111,26 @@ export function _removeFromList(args: DeactivateArgs): AsyncAction {
 		const validCost = validateDisAdvantages(negativeCost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
-				title: _translate(locale, 'notenoughap.title'),
-				message: _translate(locale, 'notenoughap.content'),
+				title: translate(locale, 'notenoughap.title'),
+				message: translate(locale, 'notenoughap.content'),
 			}));
 		}
 		else if (!validCost[1] && locale) {
-			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedaplimit.title', type),
-					message: _translate(locale, 'reachedaplimit.content', type),
+					title: translate(locale, 'reachedaplimit.title', type),
+					message: translate(locale, 'reachedaplimit.content', type),
 				}));
 			}
 		}
 		else if (!validCost[2] && locale) {
-			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedcategoryaplimit.title', type),
-					message: _translate(locale, 'reachedcategoryaplimit.content', ap, type),
+					title: translate(locale, 'reachedcategoryaplimit.title', type),
+					message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
 				}));
 			}
 		}
@@ -191,26 +191,26 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
 		if (!validCost[0] && locale) {
 			dispatch(addAlert({
-				title: _translate(locale, 'notenoughap.title'),
-				message: _translate(locale, 'notenoughap.content'),
+				title: translate(locale, 'notenoughap.title'),
+				message: translate(locale, 'notenoughap.content'),
 			}));
 		}
 		else if (!validCost[1] && locale) {
-			const type = isDisadvantage ? _translate(locale, 'reachedaplimit.disadvantages') : _translate(locale, 'reachedaplimit.advantages');
+			const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedaplimit.title', type),
-					message: _translate(locale, 'reachedaplimit.content', type),
+					title: translate(locale, 'reachedaplimit.title', type),
+					message: translate(locale, 'reachedaplimit.content', type),
 				}));
 			}
 		}
 		else if (!validCost[2] && locale) {
-			const type = isDisadvantage ? entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? _translate(locale, 'reachedcategoryaplimit.blessedadvantages') : _translate(locale, 'reachedcategoryaplimit.magicaladvantages');
+			const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
 			const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
 			if (type) {
 				dispatch(addAlert({
-					title: _translate(locale, 'reachedcategoryaplimit.title', type),
-					message: _translate(locale, 'reachedcategoryaplimit.content', ap, type),
+					title: translate(locale, 'reachedcategoryaplimit.title', type),
+					message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
 				}));
 			}
 		}

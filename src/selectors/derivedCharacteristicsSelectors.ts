@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
 import { getSids, isActive } from '../utils/ActivatableUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
@@ -40,14 +40,14 @@ export const getLP = createSelector(
     return {
       add,
       base,
-      calc: _translate(locale, 'secondaryattributes.lp.calc'),
+      calc: translate(locale, 'secondaryattributes.lp.calc'),
       currentAdd: add,
       id: 'LP',
       maxAdd: CON ? CON.value : 0,
       mod,
-      name: _translate(locale, 'secondaryattributes.lp.name'),
+      name: translate(locale, 'secondaryattributes.lp.name'),
       permanentLost: lost,
-      short: _translate(locale, 'secondaryattributes.lp.short'),
+      short: translate(locale, 'secondaryattributes.lp.short'),
       value,
     } as Energy<'LP'>;
   }
@@ -98,15 +98,15 @@ export const getAE = createSelector(
     return {
       add,
       base,
-      calc: _translate(locale, 'secondaryattributes.ae.calc'),
+      calc: translate(locale, 'secondaryattributes.ae.calc'),
       currentAdd: add,
       id: 'AE',
       maxAdd,
       mod,
-      name: _translate(locale, 'secondaryattributes.ae.name'),
+      name: translate(locale, 'secondaryattributes.ae.name'),
       permanentLost: lost,
       permanentRedeemed: redeemed,
-      short: _translate(locale, 'secondaryattributes.ae.short'),
+      short: translate(locale, 'secondaryattributes.ae.short'),
       value,
     } as EnergyWithLoss<'AE'>;
   }
@@ -146,15 +146,15 @@ export const getKP = createSelector(
     return {
       add,
       base,
-      calc: _translate(locale, 'secondaryattributes.kp.calc'),
+      calc: translate(locale, 'secondaryattributes.kp.calc'),
       currentAdd: add,
       id: 'KP',
       maxAdd: primary ? primary.value : 0,
       mod,
-      name: _translate(locale, 'secondaryattributes.kp.name'),
+      name: translate(locale, 'secondaryattributes.kp.name'),
       permanentLost: lost,
       permanentRedeemed: redeemed,
-      short: _translate(locale, 'secondaryattributes.kp.short'),
+      short: translate(locale, 'secondaryattributes.kp.short'),
       value,
     } as EnergyWithLoss<'KP'>;
   }
@@ -192,11 +192,11 @@ export const getSPI = createSelector(
 
     return {
       base,
-      calc: _translate(locale, 'secondaryattributes.spi.calc'),
+      calc: translate(locale, 'secondaryattributes.spi.calc'),
       id: 'SPI',
       mod,
-      name: _translate(locale, 'secondaryattributes.spi.name'),
-      short: _translate(locale, 'secondaryattributes.spi.short'),
+      name: translate(locale, 'secondaryattributes.spi.name'),
+      short: translate(locale, 'secondaryattributes.spi.short'),
       value,
     } as SecondaryAttribute<'SPI'>;
   }
@@ -233,11 +233,11 @@ export const getTOU = createSelector(
 
     return {
       base,
-      calc: _translate(locale, 'secondaryattributes.tou.calc'),
+      calc: translate(locale, 'secondaryattributes.tou.calc'),
       id: 'TOU',
       mod,
-      name: _translate(locale, 'secondaryattributes.tou.name'),
-      short: _translate(locale, 'secondaryattributes.tou.short'),
+      name: translate(locale, 'secondaryattributes.tou.name'),
+      short: translate(locale, 'secondaryattributes.tou.short'),
       value,
     } as SecondaryAttribute<'TOU'>;
   }
@@ -258,10 +258,10 @@ export const getDO = createSelector(
     const value = base + mod;
 
     return {
-      calc: _translate(locale, 'secondaryattributes.do.calc'),
+      calc: translate(locale, 'secondaryattributes.do.calc'),
       id: 'DO',
-      name: _translate(locale, 'secondaryattributes.do.name'),
-      short: _translate(locale, 'secondaryattributes.do.short'),
+      name: translate(locale, 'secondaryattributes.do.name'),
+      short: translate(locale, 'secondaryattributes.do.short'),
       base,
       mod,
       value
@@ -285,10 +285,10 @@ export const getINI = createSelector(
     const value = base + mod;
 
     return {
-      calc: _translate(locale, 'secondaryattributes.ini.calc'),
+      calc: translate(locale, 'secondaryattributes.ini.calc'),
       id: 'INI',
-      name: _translate(locale, 'secondaryattributes.ini.name'),
-      short: _translate(locale, 'secondaryattributes.ini.short'),
+      name: translate(locale, 'secondaryattributes.ini.name'),
+      short: translate(locale, 'secondaryattributes.ini.short'),
       base,
       mod,
       value
@@ -322,10 +322,10 @@ export const getMOV = createSelector(
     const value = base + mod;
 
     return {
-      calc: _translate(locale, 'secondaryattributes.mov.calc'),
+      calc: translate(locale, 'secondaryattributes.mov.calc'),
       id: 'MOV',
-      name: _translate(locale, 'secondaryattributes.mov.name'),
-      short: _translate(locale, 'secondaryattributes.mov.short'),
+      name: translate(locale, 'secondaryattributes.mov.name'),
+      short: translate(locale, 'secondaryattributes.mov.short'),
       base,
       mod,
       value
@@ -352,10 +352,10 @@ export const getWT = createSelector(
     const value = base + mod;
 
     return {
-      calc: _translate(locale, 'secondaryattributes.ws.calc'),
+      calc: translate(locale, 'secondaryattributes.ws.calc'),
       id: 'WT',
-      name: _translate(locale, 'secondaryattributes.ws.name'),
-      short: _translate(locale, 'secondaryattributes.ws.short'),
+      name: translate(locale, 'secondaryattributes.ws.name'),
+      short: translate(locale, 'secondaryattributes.ws.short'),
       base,
       mod,
       value

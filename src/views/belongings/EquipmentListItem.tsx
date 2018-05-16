@@ -6,7 +6,7 @@ import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ItemInstance, UIMessages } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface EquipmentListItemProps {
 	add?: boolean;
@@ -41,7 +41,7 @@ export function EquipmentListItem(props: EquipmentListItemProps) {
 		<ListItem>
 			<ListItemName name={`${numberValue ? numberValue + 'x ' : ''}${name}`} />
 			<ListItemSeparator />
-			<ListItemGroup list={_translate(locale, 'equipment.view.groups')} index={gr} />
+			<ListItemGroup list={translate(locale, 'equipment.view.groups')} index={gr} />
 			<ListItemButtons>
 				<IconButton
 					icon="&#xE90c;"

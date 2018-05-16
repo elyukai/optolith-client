@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { Item } from '../../types/view.d';
-import { _localizeNumber, _localizeWeight } from '../../utils/I18n';
+import { localizeNumber, localizeWeight } from '../../utils/I18n';
 
 export interface BelongingsSheetTableRowProps {
 	item: Item | undefined;
@@ -17,8 +17,8 @@ export function BelongingsSheetTableRow(props: BelongingsSheetTableRowProps) {
 					<Textfit max={11} min={7} mode="single">{item.name}</Textfit>
 				</td>
 				<td className="amount">{item.amount > 1 && item.amount}</td>
-				<td className="price">{item.price > 0 && _localizeNumber(item.price, localeId)}</td>
-				<td className="weight">{item.weight && item.weight > 0 && _localizeNumber(_localizeWeight(item.weight, localeId), localeId)}</td>
+				<td className="price">{item.price > 0 && localizeNumber(item.price, localeId)}</td>
+				<td className="weight">{item.weight && item.weight > 0 && localizeNumber(localizeWeight(item.weight, localeId), localeId)}</td>
 				<td className="where">
 					<Textfit max={11} min={7} mode="single">{item.where}</Textfit>
 				</td>

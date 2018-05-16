@@ -5,7 +5,7 @@ import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHer
 import { AsyncAction } from '../types/actions.d';
 import { Hero } from '../types/data.d';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
 import { requestHeroesSave, requestHeroExport, requestSaveAll } from './IOActions';
@@ -81,8 +81,8 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string, enableAllR
     }
     else if (messages) {
       dispatch(addAlert({
-        title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
-        message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
+        title: translate(messages, 'heroes.warnings.unsavedactions.title'),
+        message: translate(messages, 'heroes.warnings.unsavedactions.text'),
         confirm: {
           resolve: {
             type: ActionTypes.CREATE_HERO,
@@ -139,8 +139,8 @@ export function loadHeroValidate(id: string): AsyncAction {
     else if (id && messages) {
       // @ts-ignore
       dispatch(addAlert({
-        title: _translate(messages, 'heroes.warnings.unsavedactions.title'),
-        message: _translate(messages, 'heroes.warnings.unsavedactions.text'),
+        title: translate(messages, 'heroes.warnings.unsavedactions.title'),
+        message: translate(messages, 'heroes.warnings.unsavedactions.text'),
         confirm: {
           resolve: _loadHero(id),
           reject: _setTab('profile')
@@ -157,7 +157,7 @@ export function saveHeroes(): AsyncAction {
     if (messages) {
       dispatch(requestSaveAll());
       dispatch(addAlert({
-        message: _translate(messages, 'fileapi.allsaved')
+        message: translate(messages, 'fileapi.allsaved')
       }));
     }
   };
@@ -209,8 +209,8 @@ export function deleteHeroValidate(id: string | undefined): AsyncAction {
     if (id && hero && messages) {
       // @ts-ignore
       dispatch(addAlert({
-        title: _translate(messages, 'heroes.warnings.delete.title', hero.name),
-        message: _translate(messages, 'heroes.warnings.delete.message'),
+        title: translate(messages, 'heroes.warnings.delete.title', hero.name),
+        message: translate(messages, 'heroes.warnings.delete.message'),
         confirm: {
           resolve: (dispatch => {
             dispatch(_deleteHero(id));

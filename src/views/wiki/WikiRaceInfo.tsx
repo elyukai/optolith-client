@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Book, Culture, Race, RaceVariant } from '../../types/wiki';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
@@ -24,7 +24,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
   if (['nl-BE'].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="race" title={name}>
-        <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {_translate(locale, 'aptext')}</WikiProperty>
+        <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {translate(locale, 'aptext')}</WikiProperty>
         <WikiProperty locale={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
         <WikiProperty locale={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
         <WikiProperty locale={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
@@ -44,7 +44,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 
   return (
     <WikiBoxTemplate className="race" title={name}>
-      <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {_translate(locale, 'aptext')}</WikiProperty>
+      <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {translate(locale, 'aptext')}</WikiProperty>
       <WikiProperty locale={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
       <WikiProperty locale={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
       <WikiProperty locale={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
@@ -72,7 +72,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
         })}
       </ul>}
       <WikiProperty locale={locale} title="info.commonadvantages">
-        {sameCommonAdvantages && <span>{currentObject.commonAdvantagesText || _translate(locale, 'info.none')}</span>}
+        {sameCommonAdvantages && <span>{currentObject.commonAdvantagesText || translate(locale, 'info.none')}</span>}
       </WikiProperty>
       {!sameCommonAdvantages && <ul className="race-variant-options">
         {variants.filter(e => typeof e.commonAdvantagesText === 'string').map(e => {
@@ -83,7 +83,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
         })}
       </ul>}
       <WikiProperty locale={locale} title="info.commondisadvantages">
-        {sameCommonDisadvantages && <span>{currentObject.commonDisadvantagesText || _translate(locale, 'info.none')}</span>}
+        {sameCommonDisadvantages && <span>{currentObject.commonDisadvantagesText || translate(locale, 'info.none')}</span>}
       </WikiProperty>
       {!sameCommonDisadvantages && <ul className="race-variant-options">
         {variants.filter(e => typeof e.commonDisadvantagesText === 'string').map(e => {
@@ -94,7 +94,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
         })}
       </ul>}
       <WikiProperty locale={locale} title="info.uncommonadvantages">
-        {sameUncommonAdvantages && <span>{currentObject.uncommonAdvantagesText || _translate(locale, 'info.none')}</span>}
+        {sameUncommonAdvantages && <span>{currentObject.uncommonAdvantagesText || translate(locale, 'info.none')}</span>}
       </WikiProperty>
       {!sameUncommonAdvantages && <ul className="race-variant-options">
         {variants.filter(e => typeof e.uncommonAdvantagesText === 'string').map(e => {
@@ -105,7 +105,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
         })}
       </ul>}
       <WikiProperty locale={locale} title="info.uncommondisadvantages">
-        {sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantagesText || _translate(locale, 'info.none')}</span>}
+        {sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantagesText || translate(locale, 'info.none')}</span>}
       </WikiProperty>
       {!sameUncommonDisadvantages && <ul className="race-variant-options">
         {variants.filter(e => typeof e.uncommonDisadvantagesText === 'string').map(e => {

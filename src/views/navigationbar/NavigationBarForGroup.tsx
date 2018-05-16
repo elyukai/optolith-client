@@ -5,7 +5,7 @@ import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { SettingsContainer } from '../../containers/Settings';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { TabId } from '../../utils/LocationUtils';
 import { NavigationBarBack } from './NavigationBarBack';
 import { NavigationBarLeft } from './NavigationBarLeft';
@@ -34,7 +34,7 @@ export function NavigationBarForGroup(props: NavigationBarForGroupProps) {
 			</NavigationBarLeft>
 			<NavigationBarRight>
 				<BorderButton
-					label={_translate(locale, 'actions.save')}
+					label={translate(locale, 'actions.save')}
 					onClick={saveGroup}
 					/>
 				<IconButton

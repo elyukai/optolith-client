@@ -5,7 +5,7 @@ import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { InputTextEvent, PetEditorInstance, PetInstance, UIMessages } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { convertToEdit, getNewInstance } from '../../utils/PetUtils';
 import { PetEditor } from './PetEditor';
 import { PetsListItem } from './PetsListItem';
@@ -119,7 +119,7 @@ export class Pets extends React.Component<PetsProps, PetsState> {
 					/>
 				{pets.length === 0 && <Options>
 					<BorderButton
-						label={_translate(locale, 'actions.addtolist')}
+						label={translate(locale, 'actions.addtolist')}
 						onClick={this.addPet}
 						/>
 				</Options>}

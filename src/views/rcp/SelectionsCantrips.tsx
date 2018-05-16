@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface SelectionsCantripsProps {
 	active: Set<string>;
@@ -15,11 +15,11 @@ export interface SelectionsCantripsProps {
 
 export function SelectionsCantrips(props: SelectionsCantripsProps) {
 	const { active, change, list, locale, num } = props;
-	const nums = [_translate(locale, 'rcpselections.labels.onecantrip'), _translate(locale, 'rcpselections.labels.twocantrips')];
+	const nums = [translate(locale, 'rcpselections.labels.onecantrip'), translate(locale, 'rcpselections.labels.twocantrips')];
 
 	return (
 		<div className="cantrips list">
-			<h4>{nums[num - 1]} {_translate(locale, 'rcpselections.labels.fromthefollowinglist')}</h4>
+			<h4>{nums[num - 1]} {translate(locale, 'rcpselections.labels.fromthefollowinglist')}</h4>
 			{
 				list.map(obj => {
 					const { id, name } = obj;

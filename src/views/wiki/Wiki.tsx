@@ -10,7 +10,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { UIMessages } from '../../types/ui.d';
 import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { WikiList } from './WikiList';
 
 export interface WikiOwnProps {
@@ -80,28 +80,28 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 			<Page id="wiki">
 				<Options>
 					<TextField
-						hint={_translate(locale, 'options.filtertext')}
+						hint={translate(locale, 'options.filtertext')}
 						onChange={e => setFilter(e.target.value)}
 						value={filterText}
 						/>
 					<Dropdown
 						value={category}
 						onChange={setCategory1}
-						hint={_translate(locale, 'wiki.chooseacategory')}
+						hint={translate(locale, 'wiki.chooseacategory')}
 						options={[
-							{id: 'races', name: _translate(locale, 'races')},
-							{id: 'cultures', name: _translate(locale, 'cultures')},
-							{id: 'professions', name: _translate(locale, 'professions')},
-							{id: 'advantages', name: _translate(locale, 'advantages')},
-							{id: 'disadvantages', name: _translate(locale, 'disadvantages')},
-							{id: 'skills', name: _translate(locale, 'skills')},
-							{id: 'combatTechniques', name: _translate(locale, 'combattechniques')},
-							{id: 'specialAbilities', name: _translate(locale, 'specialabilities')},
-							{id: 'spells', name: _translate(locale, 'spells')},
-							{id: 'cantrips', name: _translate(locale, 'cantrips')},
-							{id: 'liturgicalChants', name: _translate(locale, 'liturgicalChants')},
-							{id: 'blessings', name: _translate(locale, 'blessings')},
-							{id: 'itemTemplates', name: _translate(locale, 'items')},
+							{id: 'races', name: translate(locale, 'races')},
+							{id: 'cultures', name: translate(locale, 'cultures')},
+							{id: 'professions', name: translate(locale, 'professions')},
+							{id: 'advantages', name: translate(locale, 'advantages')},
+							{id: 'disadvantages', name: translate(locale, 'disadvantages')},
+							{id: 'skills', name: translate(locale, 'skills')},
+							{id: 'combatTechniques', name: translate(locale, 'combattechniques')},
+							{id: 'specialAbilities', name: translate(locale, 'specialabilities')},
+							{id: 'spells', name: translate(locale, 'spells')},
+							{id: 'cantrips', name: translate(locale, 'cantrips')},
+							{id: 'liturgicalChants', name: translate(locale, 'liturgicalChants')},
+							{id: 'blessings', name: translate(locale, 'blessings')},
+							{id: 'itemTemplates', name: translate(locale, 'items')},
 						]}
 						/>
 					{category === 'professions' && <Dropdown
@@ -109,19 +109,19 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setProfessionsGroup}
 						options={[
 							{
-								name: _translate(locale, 'professions.options.allprofessiongroups')
+								name: translate(locale, 'professions.options.allprofessiongroups')
 							},
 							{
 								id: 1,
-								name: _translate(locale, 'professions.options.mundaneprofessions')
+								name: translate(locale, 'professions.options.mundaneprofessions')
 							},
 							{
 								id: 2,
-								name: _translate(locale, 'professions.options.magicalprofessions')
+								name: translate(locale, 'professions.options.magicalprofessions')
 							},
 							{
 								id: 3,
-								name: _translate(locale, 'professions.options.blessedprofessions')
+								name: translate(locale, 'professions.options.blessedprofessions')
 							}
 						]}
 						fullWidth
@@ -131,9 +131,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setSkillsGroup}
 						options={[
 							{
-								name: _translate(locale, 'allskillgroups')
+								name: translate(locale, 'allskillgroups')
 							},
-							...sortObjects(_translate(locale, 'skills.view.groups').map((name, index) => ({
+							...sortObjects(translate(locale, 'skills.view.groups').map((name, index) => ({
 								id: index + 1,
 								name
 							})), locale.id)
@@ -145,9 +145,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setCombatTechniquesGroup}
 						options={[
 							{
-								name: _translate(locale, 'allcombattechniquegroups')
+								name: translate(locale, 'allcombattechniquegroups')
 							},
-							...sortObjects(_translate(locale, 'combattechniques.view.groups').map((name, index) => ({
+							...sortObjects(translate(locale, 'combattechniques.view.groups').map((name, index) => ({
 								id: index + 1,
 								name
 							})), locale.id)
@@ -159,7 +159,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setSpecialAbilitiesGroup}
 						options={[
 							{
-								name: _translate(locale, 'allspecialabilitygroups')
+								name: translate(locale, 'allspecialabilitygroups')
 							},
 							...specialAbilityGroups
 						]}
@@ -170,9 +170,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setSpellsGroup}
 						options={[
 							{
-								name: _translate(locale, 'allspellgroups')
+								name: translate(locale, 'allspellgroups')
 							},
-							...sortObjects(_translate(locale, 'spells.view.groups').map((name, index) => ({
+							...sortObjects(translate(locale, 'spells.view.groups').map((name, index) => ({
 								id: index + 1,
 								name
 							})), locale.id)
@@ -184,9 +184,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setLiturgicalChantsGroup}
 						options={[
 							{
-								name: _translate(locale, 'allliturgicalchantgroups')
+								name: translate(locale, 'allliturgicalchantgroups')
 							},
-							...sortObjects(_translate(locale, 'liturgies.view.groups').map((name, index) => ({
+							...sortObjects(translate(locale, 'liturgies.view.groups').map((name, index) => ({
 								id: index + 1,
 								name
 							})), locale.id)
@@ -198,9 +198,9 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 						onChange={setItemTemplatesGroup}
 						options={[
 							{
-								name: _translate(locale, 'allitemtemplategroups')
+								name: translate(locale, 'allitemtemplategroups')
 							},
-							...sortObjects(_translate(locale, 'equipment.view.groups').map((name, index) => ({
+							...sortObjects(translate(locale, 'equipment.view.groups').map((name, index) => ({
 								id: index + 1,
 								name
 							})), locale.id)

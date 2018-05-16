@@ -1,7 +1,7 @@
 import classNames = require('classnames');
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data.d';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';
 import { IconButton } from './IconButton';
@@ -62,7 +62,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 			const max = Math.min(tiers, maxTier);
 			const array = Array.from({ length: max - min + 1 }, (_, index) => ({ id: index + min, name: getRoman(index + min) }));
 			if (id === 'SA_29' && (tier === 4 || isRemovingEnabled)) {
-				array.push({ id: 4, name: _translate(locale, 'mothertongue.short') });
+				array.push({ id: 4, name: translate(locale, 'mothertongue.short') });
 			}
 			if (array.length > 1) {
 				tierElement = (
@@ -91,7 +91,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 					{tierElement}
 				</ListItemSelections>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
+				{!hideGroup && <ListItemGroup list={translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className={classNames('cost', customCost && 'custom-cost')}>{cost}</div>
 				</ListItemValues>

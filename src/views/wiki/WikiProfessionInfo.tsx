@@ -6,7 +6,7 @@ import { Increasable, IncreasableId, Profession, ProfessionVariant, UIMessages, 
 import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, SpecialAbility, Spell, TerrainKnowledgeSelection, ProfessionSelections, Blessing, SpecializationSelection, RemoveSpecializationSelection, RemoveCombatTechniquesSelection } from '../../types/wiki';
 import { getSelectOptionName } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/RequirementUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
@@ -71,7 +71,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
     return (
       <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
         <WikiProperty locale={locale} title="info.apvalue">
-          {currentObject.ap} {_translate(locale, 'aptext')}
+          {currentObject.ap} {translate(locale, 'aptext')}
         </WikiProperty>
         <CombatTechniques
           combatTechniquesSelectionString={combatTechniquesSelectionString}
@@ -104,10 +104,10 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
     );
   }
 
-  const getRaceNameAP = (race: Race) => `${race.name} (${race.ap} ${_translate(locale, 'apshort')})`;
+  const getRaceNameAP = (race: Race) => `${race.name} (${race.ap} ${translate(locale, 'apshort')})`;
 
   const prerequisites = [
-    ...(raceRequirement ? [`${_translate(locale, 'race')}: ${Array.isArray(raceRequirement.value) ? raceRequirement.value.map(e => getRaceNameAP(races.get(`R_${e}`)!)).join(_translate(locale, 'info.or')) : getRaceNameAP(races.get(`R_${raceRequirement.value}`)!)}`] : []),
+    ...(raceRequirement ? [`${translate(locale, 'race')}: ${Array.isArray(raceRequirement.value) ? raceRequirement.value.map(e => getRaceNameAP(races.get(`R_${e}`)!)).join(translate(locale, 'info.or')) : getRaceNameAP(races.get(`R_${raceRequirement.value}`)!)}`] : []),
     ...(currentObject.prerequisitesStart ? [currentObject.prerequisitesStart] : []),
     ...sortStrings(currentObject.prerequisites.map(e => {
       if (isRequiringIncreasable(e)) {
@@ -121,7 +121,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
         }
         return `${name} ${e.value}`;
       }
-      return `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`;
+      return `${e.combinedName} (${e.currentCost} ${translate(locale, 'apshort')})`;
     }), locale.id),
     ...(currentObject.prerequisitesEnd ? [currentObject.prerequisitesEnd] : []),
   ];
@@ -129,20 +129,20 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
   return (
     <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
       <WikiProperty locale={locale} title="info.apvalue">
-        {currentObject.ap} {_translate(locale, 'aptext')}
+        {currentObject.ap} {translate(locale, 'aptext')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.prerequisites">
-        {prerequisites.length > 0 ? prerequisites.join(', ') : _translate(locale, 'info.none')}
-        {sexRequirement && `${prerequisites.length > 0 ? '; ' : ''}${_translate(locale, 'charactersheet.main.sex')}: ${sexRequirement.value === 'm' ? _translate(locale, 'herocreation.options.selectsex.male') : _translate(locale, 'herocreation.options.selectsex.female')}`}
+        {prerequisites.length > 0 ? prerequisites.join(', ') : translate(locale, 'info.none')}
+        {sexRequirement && `${prerequisites.length > 0 ? '; ' : ''}${translate(locale, 'charactersheet.main.sex')}: ${sexRequirement.value === 'm' ? translate(locale, 'herocreation.options.selectsex.male') : translate(locale, 'herocreation.options.selectsex.female')}`}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.specialabilities">
         {[
-          ...(languagesLiteracySelection ? [_translate(locale, 'info.specialabilitieslanguagesandliteracy', languagesLiteracySelection.value)] : []),
+          ...(languagesLiteracySelection ? [translate(locale, 'info.specialabilitieslanguagesandliteracy', languagesLiteracySelection.value)] : []),
           ...(typeof specializationSelectionString === 'string' ? [specializationSelectionString] : []),
           ...(typeof terrainKnowledgeSelectionString === 'string' ? [terrainKnowledgeSelectionString] : []),
-          ...(cursesSelection ? [_translate(locale, 'info.specialabilitiescurses', cursesSelection.value)] : []),
+          ...(cursesSelection ? [translate(locale, 'info.specialabilitiescurses', cursesSelection.value)] : []),
           ...sortStrings(currentObject.specialAbilities.map(e => e.combinedName), locale.id)
-        ].join(', ') || _translate(locale, 'info.none')}
+        ].join(', ') || translate(locale, 'info.none')}
       </WikiProperty>
       <CombatTechniques
         combatTechniquesSelectionString={combatTechniquesSelectionString}
@@ -166,16 +166,16 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
         </WikiProperty>
       ) : null}
       <WikiProperty locale={locale} title="info.suggestedadvantages">
-        {currentObject.suggestedAdvantagesText || _translate(locale, 'info.none')}
+        {currentObject.suggestedAdvantagesText || translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.suggesteddisadvantages">
-        {currentObject.suggestedDisadvantagesText || _translate(locale, 'info.none')}
+        {currentObject.suggestedDisadvantagesText || translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.unsuitableadvantages">
-        {currentObject.unsuitableAdvantagesText || _translate(locale, 'info.none')}
+        {currentObject.unsuitableAdvantagesText || translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.unsuitabledisadvantages">
-        {currentObject.unsuitableDisadvantagesText || _translate(locale, 'info.none')}
+        {currentObject.unsuitableDisadvantagesText || translate(locale, 'info.none')}
       </WikiProperty>
       <VariantList
         {...props}
@@ -216,14 +216,14 @@ function getSpecializationSelection(
   if (Array.isArray(selection.sid)) {
     const selectionArr = selection.sid.map(e => skills.get(e)!.name);
     const sortedArr = sortStrings(selectionArr, locale.id);
-    const separator = _translate(locale, 'info.specialabilitiesspecializationseparator');
+    const separator = translate(locale, 'info.specialabilitiesspecializationseparator');
     value = sortedArr.join(separator);
   }
   else {
     value = skills.get(selection.sid)!.name;
   }
 
-  return _translate(locale, 'info.specialabilitiesspecialization', value);
+  return translate(locale, 'info.specialabilitiesspecialization', value);
 }
 
 interface CombatTechniquesProps {
@@ -270,11 +270,11 @@ function getSkillSelection(
     return;
   }
 
-  const skillGroup = _translate(locale, 'rcpselections.labels.skillgroups')[selection.gr || 0];
+  const skillGroup = translate(locale, 'rcpselections.labels.skillgroups')[selection.gr || 0];
 
   return {
     properties: selection,
-    text: _translate(locale, 'info.skillsselection', selection.value, skillGroup)
+    text: translate(locale, 'info.skillsselection', selection.value, skillGroup)
   };
 }
 
@@ -295,7 +295,7 @@ function getCombatTechniquesSelection(
   }
 
   const counter: keyof UIMessages = 'info.combattechniquesselectioncounter';
-  const firstCounter = _translate(locale, counter)[selection.amount - 1];
+  const firstCounter = translate(locale, counter)[selection.amount - 1];
   const firstValue = selection.value + 6;
   const entryList = sortStrings(selection.sid, locale.id).join(', ');
 
@@ -303,10 +303,10 @@ function getCombatTechniquesSelection(
 
   if (typeof secondSelection === 'object') {
     const mainString: keyof UIMessages = 'info.combattechniquessecondselection';
-    const secondCounter = _translate(locale, counter)[secondSelection.amount - 1];
+    const secondCounter = translate(locale, counter)[secondSelection.amount - 1];
     const secondValue = secondSelection.value + 6;
 
-    const precedingText = _translate(
+    const precedingText = translate(
       locale,
       mainString,
       firstCounter,
@@ -319,7 +319,7 @@ function getCombatTechniquesSelection(
   }
   else {
     const mainString: keyof UIMessages = 'info.combattechniquesselection';
-    const precedingText = _translate(locale, mainString, firstCounter, firstValue);
+    const precedingText = translate(locale, mainString, firstCounter, firstValue);
 
     value = `${precedingText}${entryList}`;
   }
@@ -349,7 +349,7 @@ function getTerrainKnowledgeSelection(
   const last = optionsString.pop();
 
   const joinedFirst = optionsString.join(', ');
-  const joined = `${joinedFirst} ${_translate(locale, 'info.or')} ${last}`;
+  const joined = `${joinedFirst} ${translate(locale, 'info.or')} ${last}`;
 
   return `${terrainKnowledge.name} (${joined})`;
 }
@@ -371,9 +371,9 @@ function getSpells(
     const mainMessage: keyof UIMessages = 'info.spellscantrips';
 
     const counterMessage: keyof UIMessages = 'info.spellscantripscounter';
-    const counter = _translate(locale, counterMessage)[cantripsSelection.amount - 1];
+    const counter = translate(locale, counterMessage)[cantripsSelection.amount - 1];
 
-    const precedingText = _translate(locale, mainMessage, counter);
+    const precedingText = translate(locale, mainMessage, counter);
 
     const options = cantripsSelection.sid.map(e => cantrips.get(e)!.name);
     const sortedOptions = sortStrings(options, locale.id);
@@ -400,7 +400,7 @@ function getLiturgicalChants(
   let blessingsArr = [];
 
   const blessingsKey: keyof UIMessages = 'info.thetwelveblessings';
-  const blessingsMessage = _translate(locale, blessingsKey);
+  const blessingsMessage = translate(locale, blessingsKey);
   const exceptionsKey: keyof UIMessages = 'info.thetwelveblessingsexceptions';
 
   if (profession.blessings.length === 12) {
@@ -415,7 +415,7 @@ function getLiturgicalChants(
 
     const blessingNameArr = notIncluded.map(e => e.name);
     const sortedBlessings = sortStrings(blessingNameArr, locale.id);
-    const exceptionsMessage = _translate(locale, exceptionsKey, ...sortedBlessings);
+    const exceptionsMessage = translate(locale, exceptionsKey, ...sortedBlessings);
 
     blessingsArr.push(`${blessingsMessage}${exceptionsMessage}`);
   }
@@ -568,7 +568,7 @@ function Skills(props: SkillProps) {
 
   return (
     <p className="skill-group">
-      <span>{_translate(locale, 'skills.view.groups')[groupIndex]}</span>
+      <span>{translate(locale, 'skills.view.groups')[groupIndex]}</span>
       <span>{list.length > 0 ? joinedText : '-'}</span>
     </p>
   );
@@ -585,7 +585,7 @@ function VariantListHeader(props: VariantListHeaderProps): JSX.Element {
 
   return (
     <p className="profession-variants">
-      <span>{_translate(locale, 'info.variants')}</span>
+      <span>{translate(locale, 'info.variants')}</span>
     </p>
   );
 }
@@ -660,7 +660,7 @@ function Variant(props: VariantProps) {
     return (
       <li>
         <span>{name}</span>
-        <span>({profession.ap + variant.ap} {_translate(locale, 'apshort')})</span>
+        <span>({profession.ap + variant.ap} {translate(locale, 'apshort')})</span>
         <span>{fullText}</span>
       </li>
     );
@@ -669,7 +669,7 @@ function Variant(props: VariantProps) {
   return (
     <li>
       <span>{name}</span>
-      <span>({profession.ap + variant.ap} {_translate(locale, 'apshort')})</span>
+      <span>({profession.ap + variant.ap} {translate(locale, 'apshort')})</span>
       <span>
         {variant.precedingText && <span>{variant.precedingText}</span>}
         <VariantPrerequisites {...props} />
@@ -722,7 +722,7 @@ function VariantPrerequisites(props: VariantPrerequisitesProps): JSX.Element {
     }
     return {
       id: e.id,
-      name: `${e.combinedName} (${e.currentCost} ${_translate(locale, 'apshort')})`,
+      name: `${e.combinedName} (${e.currentCost} ${translate(locale, 'apshort')})`,
       active: e.active
     };
   });
@@ -731,7 +731,7 @@ function VariantPrerequisites(props: VariantPrerequisitesProps): JSX.Element {
 
   return (
     <span className="hard-break">
-      {`${_translate(locale, 'info.prerequisites')}: `}
+      {`${translate(locale, 'info.prerequisites')}: `}
       {
         sortedReducedNameArray.map(e => {
           if (e.active === false) {
@@ -789,11 +789,11 @@ function VariantLanguagesLiteracySelection(props: VariantLanguagesLiteracySelect
 
   if (typeof variantSelection === 'object') {
     const mainKey: UIKey = 'info.specialabilitieslanguagesandliteracy';
-    const mainString = _translate(locale, mainKey, variantSelection.value);
+    const mainString = translate(locale, mainKey, variantSelection.value);
 
     if (typeof selection === 'object') {
       const insteadKey: UIKey = 'info.variantsinsteadof';
-      const insteadString = _translate(locale, insteadKey);
+      const insteadString = translate(locale, insteadKey);
 
       return (
         <span>
@@ -858,17 +858,17 @@ function VariantSpecializationSelection(props: VariantSpecializationSelectionPro
 
       if (typeof variantSelection.sid === 'object') {
         const skillList = variantSelection.sid.map(e => skills.get(e)!.name);
-        const separator = _translate(locale, separatorKey);
+        const separator = translate(locale, separatorKey);
         skillText = sortStrings(skillList, locale.id).join(separator);
       }
       else {
         skillText = skills.get(variantSelection.sid)!.name;
       }
 
-      const mainText = _translate(locale, mainKey, skillText);
+      const mainText = translate(locale, mainKey, skillText);
 
       if (selection) {
-        const instead = _translate(locale, 'info.variantsinsteadof');
+        const instead = translate(locale, 'info.variantsinsteadof');
         return (
           <span>
             <span>{mainText} {instead} {specializationSelectionString}</span>
@@ -929,8 +929,8 @@ function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectio
         const hasSameAmount = variantSelection.amount === variantSelection.amount;
 
         if (hasSameSids && hasSameAmount) {
-          const separator = _translate(locale, 'info.or');
-          const instead = _translate(locale, 'info.variantsinsteadof');
+          const separator = translate(locale, 'info.or');
+          const instead = translate(locale, 'info.variantsinsteadof');
 
           const joinedList = sortStrings(selection.sid, locale.id).join(separator);
 
@@ -942,7 +942,7 @@ function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectio
         }
       }
       else {
-        const newString = `${_translate(locale, 'info.combattechniquesselection', _translate(locale, 'info.combattechniquesselectioncounter')[variantSelection.amount - 1], variantSelection.value + 6)}${sortStrings(variantSelection.sid, locale.id).join(', ')}`;
+        const newString = `${translate(locale, 'info.combattechniquesselection', translate(locale, 'info.combattechniquesselectioncounter')[variantSelection.amount - 1], variantSelection.value + 6)}${sortStrings(variantSelection.sid, locale.id).join(', ')}`;
         return (
           <span>
             <span>{newString}</span>
@@ -970,7 +970,7 @@ function VariantSkillsSelection(props: VariantSkillsSelectionProps): JSX.Element
     variant
   } = props;
 
-  const instead = _translate(locale, 'info.variantsinsteadof');
+  const instead = translate(locale, 'info.variantsinsteadof');
 
   const combatTechniquesList = variant.combatTechniques.map(e => {
     const { name, value, previous = 0 } = e;
@@ -1004,7 +1004,7 @@ function VariantSkillsSelection(props: VariantSkillsSelectionProps): JSX.Element
   ].join(', ');
 
   if (variant.liturgicalChants.length > 0) {
-    const blessings = _translate(locale, 'info.thetwelveblessings');
+    const blessings = translate(locale, 'info.thetwelveblessings');
 
     const liturgicalChantsArr = [];
 
@@ -1019,7 +1019,7 @@ function VariantSkillsSelection(props: VariantSkillsSelectionProps): JSX.Element
 
     const sortedLiturgicalChants = sortStrings(liturgicalChantsArr, locale.id);
 
-    const main = _translate(locale, 'info.liturgicalchants');
+    const main = translate(locale, 'info.liturgicalchants');
 
     const liturgicalChantsString = `; ${main}: ${sortedLiturgicalChants.join(', ')}`;
 

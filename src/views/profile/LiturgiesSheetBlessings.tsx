@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
 import { BlessingInstance, UIMessages } from '../../types/data.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface LiturgiesSheetBlessingsProps {
 	blessings: BlessingInstance[];
@@ -13,7 +13,7 @@ export interface LiturgiesSheetBlessingsProps {
 export function LiturgiesSheetBlessings(props: LiturgiesSheetBlessingsProps) {
 	const { blessings, locale } = props;
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.chants.blessings.title')} className="blessings activatable-list">
+		<TextBox label={translate(locale, 'charactersheet.chants.blessings.title')} className="blessings activatable-list">
 			<div className="list">
 				{
 					sortStrings(blessings.map(e => e.name), locale.id).join(', ')

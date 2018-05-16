@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dialog, DialogProps } from '../../components/DialogNew';
 import { IconButton } from '../../components/IconButton';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface PermanentPointsProps extends DialogProps {
 	id: 'LP' | 'AE' | 'KP';
@@ -21,13 +21,13 @@ export function PermanentPoints(props: PermanentPointsProps) {
 		<Dialog
 			{...props}
 			className="permanent-points-editor"
-			title={id === 'AE' ? _translate(locale, 'attributes.pae.name') : id === 'KP' ? _translate(locale, 'attributes.pkp.name') : _translate(locale, 'plp.long')}
-			buttons={[{autoWidth: true, label: _translate(locale, 'actions.done')}]}
+			title={id === 'AE' ? translate(locale, 'attributes.pae.name') : id === 'KP' ? translate(locale, 'attributes.pkp.name') : translate(locale, 'plp.long')}
+			buttons={[{autoWidth: true, label: translate(locale, 'actions.done')}]}
 			>
 			<div className="main">
 				{addBoughtBackPoint && removeBoughtBackPoint && typeof permanentBoughtBack === 'number' && <div className="column boughtback">
 					<div className="value">{permanentBoughtBack}</div>
-					<div className="description smallcaps">{_translate(locale, 'permanentpoints.boughtback')}</div>
+					<div className="description smallcaps">{translate(locale, 'permanentpoints.boughtback')}</div>
 					<div className="buttons">
 						<IconButton className="add" icon="&#xE908;" onClick={addBoughtBackPoint} disabled={permanentBoughtBack >= permanentSpent} />
 						<IconButton className="remove" icon="&#xE909;" onClick={removeBoughtBackPoint} disabled={permanentBoughtBack <= 0} />
@@ -35,7 +35,7 @@ export function PermanentPoints(props: PermanentPointsProps) {
 				</div>}
 				<div className="column lost">
 					<div className="value">{permanentSpent}</div>
-					<div className="description smallcaps">{_translate(locale, 'permanentpoints.spent')}</div>
+					<div className="description smallcaps">{translate(locale, 'permanentpoints.spent')}</div>
 					<div className="buttons">
 						<IconButton className="add" icon="&#xE908;" onClick={addLostPoint} />
 						<IconButton className="remove" icon="&#xE909;" onClick={removeLostPoint} disabled={permanentSpent <= 0} />

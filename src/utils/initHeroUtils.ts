@@ -1,10 +1,10 @@
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Raw from '../types/rawdata.d';
-import * as CreateDependencyObjectUtils from './createEntryUtils';
-import { convertObjectToMap } from './ListUtils';
 import { getCategoryById } from './IDUtils';
+import { convertObjectToMap } from './ListUtils';
 import { currentVersion } from './VersionUtils';
+import * as CreateDependencyObjectUtils from './createEntryUtils';
 
 export function getHeroInstance(id: string, hero: Raw.RawHero): Data.HeroDependent {
   return {
@@ -23,6 +23,9 @@ export function getHeroInstance(id: string, hero: Raw.RawHero): Data.HeroDepende
     belongings: getBelongings(hero),
     rules: getRules(hero),
     pets: getPets(hero),
+    combatStyleDependencies: [],
+    magicalStyleDependencies: [],
+    blessedStyleDependencies: [],
   };
 }
 
@@ -131,9 +134,9 @@ function getAttributes(hero: Raw.RawHero): Map<string, Data.AttributeDependent> 
 function getEnergies(hero: Raw.RawHero): Data.Energies {
   const {
     attr: {
-      ae,
-      kp,
-      lp,
+      ae: addedArcaneEnergyPoints,
+      kp: addedKarmaPoints,
+      lp: addedLifePoints,
       permanentAE,
       permanentKP,
       permanentLP,
@@ -141,9 +144,9 @@ function getEnergies(hero: Raw.RawHero): Data.Energies {
   } = hero;
 
   return {
-    ae,
-    kp,
-    lp,
+    addedArcaneEnergyPoints,
+    addedKarmaPoints,
+    addedLifePoints,
     permanentArcaneEnergyPoints: permanentAE,
     permanentKarmaPoints: permanentKP,
     permanentLifePoints: permanentLP || { lost: 0 }
@@ -275,9 +278,9 @@ export function getInitialHeroObject(
     specialAbilities: new Map(),
     attributes: new Map(),
     energies: {
-      ae: 0,
-      kp: 0,
-      lp: 0,
+      addedArcaneEnergyPoints: 0,
+      addedKarmaPoints: 0,
+      addedLifePoints: 0,
       permanentArcaneEnergyPoints: {
         lost: 0,
         redeemed: 0,
@@ -307,5 +310,8 @@ export function getInitialHeroObject(
       },
     },
     pets: new Map(),
+    combatStyleDependencies: [],
+    magicalStyleDependencies: [],
+    blessedStyleDependencies: [],
   };
 }

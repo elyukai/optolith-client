@@ -20,7 +20,7 @@ import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { SpellWithRequirements } from '../../types/view';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -86,32 +86,32 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 			<Page id="spells">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<SortOptions
 							sortOrder={sortOrder}
 							sort={setSortOrder}
 							options={['name', 'group', 'property', 'ic']}
 							locale={locale}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
 					<MainContent>
 						<ListHeader>
 							<ListHeaderTag className="name">
-								{_translate(locale, 'name')} ({_translate(locale, 'unfamiliartraditions')})
+								{translate(locale, 'name')} ({translate(locale, 'unfamiliartraditions')})
 							</ListHeaderTag>
 							<ListHeaderTag className="group">
-								{_translate(locale, 'property')}
-								{sortOrder === 'group' && ` / ${_translate(locale, 'group')}`}
+								{translate(locale, 'property')}
+								{sortOrder === 'group' && ` / ${translate(locale, 'group')}`}
 							</ListHeaderTag>
 							<ListHeaderTag className="check">
-								{_translate(locale, 'check')}
+								{translate(locale, 'check')}
 							</ListHeaderTag>
-							<ListHeaderTag className="mod" hint={_translate(locale, 'mod.long')}>
-								{_translate(locale, 'mod.short')}
+							<ListHeaderTag className="mod" hint={translate(locale, 'mod.long')}>
+								{translate(locale, 'mod.short')}
 							</ListHeaderTag>
-							<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-								{_translate(locale, 'ic.short')}
+							<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+								{translate(locale, 'ic.short')}
 							</ListHeaderTag>
 							{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 							<ListHeaderTag className="btn-placeholder" />
@@ -124,7 +124,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 										let extendName = '';
 										if (!isOwnTradition(traditions, obj)) {
-											extendName += ` (${obj.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
+											extendName += ` (${obj.tradition.filter(e => e <= translate(locale, 'spells.view.traditions').length).map(e => translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 										}
 
 										if (obj.active === true) {
@@ -167,7 +167,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
-													addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.cantrip')}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+													addText={sortOrder === 'group' ? `${translate(locale, 'spells.view.properties')[obj.property - 1]} / ${translate(locale, 'spells.view.cantrip')}` : translate(locale, 'spells.view.properties')[obj.property - 1]}
 													/>
 											);
 										}
@@ -190,7 +190,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+												addText={sortOrder === 'group' ? `${translate(locale, 'spells.view.properties')[obj.property - 1]} / ${translate(locale, 'spells.view.groups')[obj.gr - 1]}` : translate(locale, 'spells.view.properties')[obj.property - 1]}
 												/>
 										);
 									})
@@ -201,7 +201,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
 						sort={setSortOrder}
@@ -209,30 +209,30 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 						locale={locale}
 						/>
 					<BorderButton
-						label={_translate(locale, 'actions.addtolist')}
+						label={translate(locale, 'actions.addtolist')}
 						onClick={this.showAddSlidein}
 						/>
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')} ({_translate(locale, 'unfamiliartraditions')})
+							{translate(locale, 'name')} ({translate(locale, 'unfamiliartraditions')})
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'property')}
-							{sortOrder === 'group' && ` / ${_translate(locale, 'group')}`}
+							{translate(locale, 'property')}
+							{sortOrder === 'group' && ` / ${translate(locale, 'group')}`}
 						</ListHeaderTag>
-						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
-							{_translate(locale, 'sr.short')}
+						<ListHeaderTag className="value" hint={translate(locale, 'sr.long')}>
+							{translate(locale, 'sr.short')}
 						</ListHeaderTag>
 						<ListHeaderTag className="check">
-							{_translate(locale, 'check')}
+							{translate(locale, 'check')}
 						</ListHeaderTag>
-						<ListHeaderTag className="mod" hint={_translate(locale, 'mod.long')}>
-							{_translate(locale, 'mod.short')}
+						<ListHeaderTag className="mod" hint={translate(locale, 'mod.long')}>
+							{translate(locale, 'mod.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-							{_translate(locale, 'ic.short')}
+						<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+							{translate(locale, 'ic.short')}
 						</ListHeaderTag>
 						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
@@ -246,7 +246,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
 									let name = obj.name;
 									if (!isOwnTradition(traditions, obj)) {
-										name += ` (${obj.tradition.filter(e => e <= _translate(locale, 'spells.view.traditions').length).map(e => _translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
+										name += ` (${obj.tradition.filter(e => e <= translate(locale, 'spells.view.traditions').length).map(e => translate(locale, 'spells.view.traditions')[e - 1]).sort().join(', ')})`;
 									}
 
 									if (obj.category === Categories.CANTRIPS) {
@@ -262,7 +262,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
-												addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.cantrip')}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+												addText={sortOrder === 'group' ? `${translate(locale, 'spells.view.properties')[obj.property - 1]} / ${translate(locale, 'spells.view.cantrip')}` : translate(locale, 'spells.view.properties')[obj.property - 1]}
 												/>
 										);
 									}
@@ -291,7 +291,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											addText={sortOrder === 'group' ? `${_translate(locale, 'spells.view.properties')[obj.property - 1]} / ${_translate(locale, 'spells.view.groups')[obj.gr - 1]}` : _translate(locale, 'spells.view.properties')[obj.property - 1]}
+											addText={sortOrder === 'group' ? `${translate(locale, 'spells.view.properties')[obj.property - 1]} / ${translate(locale, 'spells.view.groups')[obj.gr - 1]}` : translate(locale, 'spells.view.properties')[obj.property - 1]}
 											/>
 									);
 								})

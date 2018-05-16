@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dialog } from '../../components/DialogNew';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data.d';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { isInteger, isNaturalNumber } from '../../utils/RegexUtils';
 
 interface Props {
@@ -41,20 +41,20 @@ export class OverviewAddAP extends React.Component<Props, State> {
 			<Dialog
 				{...this.props}
 				id="overview-add-ap"
-				title={_translate(locale, 'addadventurepoints.title')}
+				title={translate(locale, 'addadventurepoints.title')}
 				buttons={[
 					{
 						disabled: isRemovingEnabled ? !isInteger(value) : (!isNaturalNumber(value) || Number.parseInt(value) < 1),
-						label: _translate(locale, 'addadventurepoints.actions.add'),
+						label: translate(locale, 'addadventurepoints.actions.add'),
 						onClick: this.addAP,
 					},
 					{
-						label: _translate(locale, 'addadventurepoints.actions.cancel'),
+						label: translate(locale, 'addadventurepoints.actions.cancel'),
 					},
 				]}
 				>
 				<TextField
-					hint={_translate(locale, 'addadventurepoints.options.adventurepoints')}
+					hint={translate(locale, 'addadventurepoints.options.adventurepoints')}
 					value={value}
 					onChange={this.onChange}
 					fullWidth

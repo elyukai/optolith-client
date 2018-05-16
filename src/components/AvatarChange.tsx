@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 import * as React from 'react';
-import { _translate, UIMessages } from '../utils/I18n';
+import { translate, UIMessages } from '../utils/I18n';
 import { AvatarWrapper } from './AvatarWrapper';
 import { BorderButton } from './BorderButton';
 import { Dialog, DialogProps } from './DialogNew';
@@ -25,7 +25,7 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
 	selectFile = () => {
 		const extensions = ['jpeg', 'png', 'jpg'];
 		remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
-			filters: [{ name: _translate(this.props.locale, 'avatarchange.dialog.image'), extensions }]
+			filters: [{ name: translate(this.props.locale, 'avatarchange.dialog.image'), extensions }]
 		}, fileNames => {
 			if (fileNames) {
 				const fileName = fileNames[0];
@@ -63,18 +63,18 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
 			<Dialog
 				{...this.props}
 				id="avatar-change"
-				title={title || _translate(locale, 'avatarchange.title')}
+				title={title || translate(locale, 'avatarchange.title')}
 				buttons={[
 					{
 						disabled: fileValid === false || url === '',
-						label: _translate(locale, 'avatarchange.actions.change'),
+						label: translate(locale, 'avatarchange.actions.change'),
 						onClick: this.load,
 					},
 				]}
 				>
-				<BorderButton label={_translate(locale, 'avatarchange.actions.selectfile')} onClick={this.selectFile} />
+				<BorderButton label={translate(locale, 'avatarchange.actions.selectfile')} onClick={this.selectFile} />
 				{fileValid === true && url !== '' && <AvatarWrapper src={url} />}
-				{fileValid === false && url !== '' && <p>{_translate(locale, 'avatarchange.view.invalidfile')}</p>}
+				{fileValid === false && url !== '' && <p>{translate(locale, 'avatarchange.view.invalidfile')}</p>}
 			</Dialog>
 		);
 	}

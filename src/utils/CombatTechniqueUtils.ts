@@ -1,53 +1,118 @@
-import { CurrentHeroInstanceState } from '../reducers/currentHero';
-import { DependentInstancesState } from '../reducers/dependentInstances';
-import { get, getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
-import { getStart } from '../selectors/elSelectors';
-import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, SpecialAbilityInstance } from '../types/data.d';
-import { getSids } from './ActivatableUtils';
+import R from 'ramda';
+import * as Data from '../types/data.d';
+import { CombatTechnique, WikiAll } from '../types/wiki';
+import { flattenDependencies } from './flattenDependencies';
+import { getAllEntriesByGroup } from './heroStateUtils';
+import { isActive } from './isActive';
+import { Maybe, isJust } from './maybe';
+import { getActiveSelections } from './selectionUtils';
 
-export function getMaxPrimaryAttributeValueByID(state: DependentInstancesState, array: string[]) {
-	return array.map(attr => (get(state, attr) as AttributeInstance).value).reduce((a, b) => Math.max(a, b), 0);
-}
+const getMaxPrimaryAttributeValueById = (
+  state: Data.HeroDependent,
+  primaryAttributeIds: string[],
+) => {
+  return primaryAttributeIds.reduce((max, id) => {
+    const attribute = Maybe(state.attributes.get(id));
 
-export function getPrimaryAttributeMod(state: DependentInstancesState, array: string[]) {
-	return Math.max(Math.floor((getMaxPrimaryAttributeValueByID(state, array) - 8) / 3), 0);
-}
+    if (isJust(attribute)) {
+      return Math.max(max, attribute.value.value);
+    }
 
-export function getAt(state: DependentInstancesState, obj: CombatTechniqueInstance): number {
-	const array = obj.gr === 2 ? obj.primary : ['ATTR_1'];
+    return max;
+  }, 0);
+};
+
+export const getPrimaryAttributeMod = (
+  state: Data.HeroDependent,
+  primaryAttributeIds: string[],
+) => {
+  return R.pipe(
+    R.add(-8),
+    e => R.divide(e, 3),
+    Math.floor,
+    e => Math.max(e, 0),
+  )(getMaxPrimaryAttributeValueById(state, primaryAttributeIds));
+};
+
+export const getAttack = (
+  state: Data.HeroDependent,
+  wikiEntry: CombatTechnique,
+  instance: Data.SkillDependent,
+): number => {
+	const array = wikiEntry.gr === 2 ? wikiEntry.primary : ['ATTR_1'];
 	const mod = getPrimaryAttributeMod(state, array);
-	return obj.value + mod;
-}
+	return instance.value + mod;
+};
 
-export function getPa(state: DependentInstancesState, obj: CombatTechniqueInstance): number | undefined {
-	const mod = getPrimaryAttributeMod(state, obj.primary);
-	return obj.gr === 2 || obj.id === 'CT_6' || obj.id === 'CT_8' ? undefined : Math.round(obj.value / 2) + mod;
-}
+export const getParry = (
+  state: Data.HeroDependent,
+  wikiEntry: CombatTechnique,
+  instance: Data.SkillDependent,
+): number | undefined => {
+  if (wikiEntry.gr === 2 || instance.id === 'CT_6' || instance.id === 'CT_8') {
+    return;
+  }
 
-export function isIncreasable(state: CurrentHeroInstanceState, obj: CombatTechniqueInstance): boolean {
-	let max = 0;
-	const bonus = getSids(get(state.dependent, 'ADV_17') as AdvantageInstance).includes(obj.id) ? 1 : 0;
+  const mod = getPrimaryAttributeMod(state, wikiEntry.primary);
+	return Math.round(instance.value / 2) + mod;
+};
+
+export const isIncreaseDisabled = (
+  wiki: WikiAll,
+  state: Data.HeroDependent,
+  wikiEntry: CombatTechnique,
+  instance: Data.SkillDependent,
+): boolean => {
+  let max = 0;
+
+  const exceptionalSkill = state.advantages.get('ADV_17');
+  const selectedExceptionalSkills = getActiveSelections(exceptionalSkill);
+	const bonus = selectedExceptionalSkills.includes(instance.id) ? 1 : 0;
 
 	if (state.phase < 3) {
-		max = getStart(state.el).maxCombatTechniqueRating;
+    const startEl = Maybe(wiki.experienceLevels.get(state.experienceLevel));
+    if (isJust(startEl)) {
+      max = startEl.value.maxCombatTechniqueRating;
+    }
 	}
 	else {
-		max = getMaxPrimaryAttributeValueByID(state.dependent, obj.primary) + 2;
+		max = getMaxPrimaryAttributeValueById(state, wikiEntry.primary) + 2;
 	}
 
-	return obj.value < max + bonus;
-}
+	return instance.value >= max + bonus;
+};
 
-export function isDecreasable(state: CurrentHeroInstanceState, obj: CombatTechniqueInstance): boolean {
-	const SA_18_REQ = (get(state.dependent, 'SA_18') as SpecialAbilityInstance).active.length > 0 && (getAllByCategoryGroup(state.dependent, obj.category, 2) as CombatTechniqueInstance[]).filter(e => e.value >= 10).length === 1;
+export const isDecreaseDisabled = (
+  wiki: WikiAll,
+  state: Data.HeroDependent,
+  wikiEntry: CombatTechnique,
+  instance: Data.SkillDependent,
+): boolean => {
+  const hunterActive = isActive(state.specialAbilities.get('SA_18'));
 
-	return (SA_18_REQ && obj.value > 10 && obj.gr === 2) || obj.value > Math.max(6, ...(obj.dependencies));
-}
+  const onlyOneCombatTechniqueForHunter = hunterActive && R.equals(
+    R.length(
+      R.filter(
+        e => e.value >= 10,
+        getAllEntriesByGroup(
+          wiki.combatTechniques,
+          state.combatTechniques,
+          2,
+        )
+      )
+    ),
+    1,
+  );
 
-export function reset(obj: CombatTechniqueInstance): CombatTechniqueInstance {
-	return {
-		...obj,
-		dependencies: [],
-		value: 6,
-	};
-}
+  const disabledByHunter = onlyOneCombatTechniqueForHunter
+    && wikiEntry.gr === 2
+    && instance.value === 10;
+
+  const dependencies = flattenDependencies(
+    wiki,
+    state,
+    instance.dependencies,
+  );
+
+	return disabledByHunter || instance.value <= Math.max(6, ...dependencies);
+};

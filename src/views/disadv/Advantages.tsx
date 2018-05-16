@@ -13,7 +13,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { ActivateArgs, ActiveViewObject, AdvantageInstance, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
 import { DeactiveList } from './DeactiveList';
@@ -76,9 +76,9 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 			<Page id="advantages">
 				<Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
-						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
-						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<Checkbox checked={showRating} onClick={switchRatingVisibility}>{translate(locale, 'advantages.options.common')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
 						<AdvantagesDisadvantagesAdventurePoints
 							total={ap.spentOnAdvantages}
 							blessed={ap.spentOnBlessedAdvantages}
@@ -91,10 +91,10 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 					<MainContent>
 						<ListHeader>
 							<ListHeaderTag className="name">
-								{_translate(locale, 'name')}
+								{translate(locale, 'name')}
 							</ListHeaderTag>
-							<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-								{_translate(locale, 'apshort')}
+							<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+								{translate(locale, 'apshort')}
 							</ListHeaderTag>
 							<ListHeaderTag className="btn-placeholder" />
 							<ListHeaderTag className="btn-placeholder" />
@@ -113,18 +113,18 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{_translate(locale, 'advantages.options.common')}</Checkbox>
-					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<Checkbox checked={showRating} onClick={switchRatingVisibility}>{translate(locale, 'advantages.options.common')}</Checkbox>
+					<BorderButton label={translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 					{showRating && <RecommendedReference locale={locale} />}
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
-						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-							{_translate(locale, 'apshort')}
+						<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+							{translate(locale, 'apshort')}
 						</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />

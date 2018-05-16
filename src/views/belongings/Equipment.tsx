@@ -19,7 +19,7 @@ import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
 
 export interface EquipmentOwnProps {
@@ -95,7 +95,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 		const { carryingCapacity, combatTechniques, hasNoAddedAP, initialStartingWealth, items, locale, purse, sortOrder, templates, totalPrice, totalWeight, meleeItemTemplateCombatTechniqueFilter, rangedItemTemplateCombatTechniqueFilter, setMeleeItemTemplatesCombatTechniqueFilter, setRangedItemTemplatesCombatTechniqueFilter, filterText, templatesFilterText } = this.props;
 		const { filterGroupSlidein, showAddSlidein } = this.state;
 
-		const groups = _translate(locale, 'equipment.view.groups');
+		const groups = translate(locale, 'equipment.view.groups');
 
 		const groupsSelectionItems = sortObjects(groups.map((e, i) => ({ id: i + 1, name: e })), locale.id);
 
@@ -125,7 +125,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 			<Page id="equipment">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={templatesFilterText} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate(locale, 'options.filtertext')} value={templatesFilterText} onChange={this.filterSlidein} fullWidth />
 						<Dropdown
 							value={filterGroupSlidein}
 							onChange={this.filterGroupSlidein}
@@ -136,7 +136,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							value={meleeItemTemplateCombatTechniqueFilter}
 							onChange={setMeleeItemTemplatesCombatTechniqueFilter}
 							options={[
-								{ name: _translate(locale, 'allcombattechniques') },
+								{ name: translate(locale, 'allcombattechniques') },
 								...meleeCombatTechniques
 							]}
 							fullWidth
@@ -145,7 +145,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 							value={rangedItemTemplateCombatTechniqueFilter}
 							onChange={setRangedItemTemplatesCombatTechniqueFilter}
 							options={[
-								{ name: _translate(locale, 'allcombattechniques') },
+								{ name: translate(locale, 'allcombattechniques') },
 								...rangedCombatTechniques
 							]}
 							fullWidth
@@ -154,7 +154,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					<MainContent>
 						<ListHeader>
 							<ListHeaderTag className="name">
-								{_translate(locale, 'name')}
+								{translate(locale, 'name')}
 							</ListHeaderTag>
 							<ListHeaderTag className="btn-placeholder" />
 						</ListHeader>
@@ -169,23 +169,23 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						options={[ 'name', 'groupname', 'where', 'weight' ]}
 						sortOrder={sortOrder}
 						sort={this.sort}
 						locale={locale}
 						/>
-					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
-					<BorderButton label={_translate(locale, 'equipment.actions.create')} onClick={this.props.createItem} />
+					<BorderButton label={translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+					<BorderButton label={translate(locale, 'equipment.actions.create')} onClick={this.props.createItem} />
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'group')}
+							{translate(locale, 'group')}
 							</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder" />
@@ -201,19 +201,19 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 				</MainContent>
 				<Aside>
 					<div className="purse">
-						<h4>{_translate(locale, 'equipment.view.purse')}</h4>
+						<h4>{translate(locale, 'equipment.view.purse')}</h4>
 						<div className="fields">
-							<TextField label={_translate(locale, 'equipment.view.ducates')} value={purse.d} onChange={this.setDucates} />
-							<TextField label={_translate(locale, 'equipment.view.silverthalers')} value={purse.s} onChange={this.setSilverthalers} />
-							<TextField label={_translate(locale, 'equipment.view.hellers')} value={purse.h} onChange={this.setHellers} />
-							<TextField label={_translate(locale, 'equipment.view.kreutzers')} value={purse.k} onChange={this.setKreutzers} />
+							<TextField label={translate(locale, 'equipment.view.ducates')} value={purse.d} onChange={this.setDucates} />
+							<TextField label={translate(locale, 'equipment.view.silverthalers')} value={purse.s} onChange={this.setSilverthalers} />
+							<TextField label={translate(locale, 'equipment.view.hellers')} value={purse.h} onChange={this.setHellers} />
+							<TextField label={translate(locale, 'equipment.view.kreutzers')} value={purse.k} onChange={this.setKreutzers} />
 						</div>
 					</div>
 					<div className="total-points">
-						<h4>{hasNoAddedAP && `${_translate(locale, 'equipment.view.initialstartingwealth')} & `}{_translate(locale, 'equipment.view.carringandliftingcapactity')}</h4>
+						<h4>{hasNoAddedAP && `${translate(locale, 'equipment.view.initialstartingwealth')} & `}{translate(locale, 'equipment.view.carringandliftingcapactity')}</h4>
 						<div className="fields">
-							{hasNoAddedAP && <div>{_localizeNumber(totalPrice, locale.id)} / {_localizeNumber(initialStartingWealth, locale.id)} {_translate(locale, 'equipment.view.price')}</div>}
-							<div>{_localizeNumber(_localizeWeight(totalWeight, locale.id), locale.id)} / {_localizeNumber(_localizeWeight(carryingCapacity, locale.id), locale.id)} {_translate(locale, 'equipment.view.weight')}</div>
+							{hasNoAddedAP && <div>{localizeNumber(totalPrice, locale.id)} / {localizeNumber(initialStartingWealth, locale.id)} {translate(locale, 'equipment.view.price')}</div>}
+							<div>{localizeNumber(localizeWeight(totalWeight, locale.id), locale.id)} / {localizeNumber(localizeWeight(carryingCapacity, locale.id), locale.id)} {translate(locale, 'equipment.view.weight')}</div>
 						</div>
 					</div>
 					<WikiInfoContainer {...this.props} {...this.state} noWrapper />

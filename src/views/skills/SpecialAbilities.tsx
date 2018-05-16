@@ -14,7 +14,7 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, SpecialAbilityInstance } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface SpecialAbilitiesOwnProps {
 	locale: UIMessages;
@@ -72,25 +72,25 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 			<Page id="specialabilities">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<SortOptions
 							sortOrder={sortOrder}
 							sort={setSortOrder}
 							options={['name', 'groupname']}
 							locale={locale}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
 					<MainContent>
 						<ListHeader>
 							<ListHeaderTag className="name">
-								{_translate(locale, 'name')}
+								{translate(locale, 'name')}
 							</ListHeaderTag>
 							<ListHeaderTag className="group">
-								{_translate(locale, 'group')}
+								{translate(locale, 'group')}
 								</ListHeaderTag>
-							<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-								{_translate(locale, 'apshort')}
+							<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+								{translate(locale, 'apshort')}
 							</ListHeaderTag>
 							<ListHeaderTag className="btn-placeholder" />
 							<ListHeaderTag className="btn-placeholder" />
@@ -106,25 +106,25 @@ export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, Spe
 					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId}/>
 				</Slidein>
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
 						sort={setSortOrder}
 						options={['name', 'groupname']}
 						locale={locale}
 						/>
-					<BorderButton label={_translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+					<BorderButton label={translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'group')}
+							{translate(locale, 'group')}
 							</ListHeaderTag>
-						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-							{_translate(locale, 'apshort')}
+						<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+							{translate(locale, 'apshort')}
 						</ListHeaderTag>
 						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />

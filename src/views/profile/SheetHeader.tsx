@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Attribute, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { SheetHeaderAttribute } from './SheetHeaderAttribute';
 
 export interface HeaderValue {
@@ -23,7 +23,7 @@ export function SheetHeader(props: SheetHeaderProps) {
 	return (
 		<div className="sheet-header">
 			<div className="sheet-title">
-				<h1>{_translate(locale, 'charactersheet.title')}</h1>
+				<h1>{translate(locale, 'charactersheet.title')}</h1>
 				<p>{title}</p>
 				<img src="images/icon.svg" alt="" />
 			</div>

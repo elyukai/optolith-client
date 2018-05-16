@@ -3,7 +3,7 @@ import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
 import { SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 import { AttributeBorder } from './AttributeBorder';
 
@@ -59,12 +59,12 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
 							<p>
 								{(mod || mod === 0) && (
 									<span className="mod">
-										{_translate(locale, 'attributes.tooltips.modifier')}: {sign(mod)}<br/>
+										{translate(locale, 'attributes.tooltips.modifier')}: {sign(mod)}<br/>
 									</span>
 								)}
 								{typeof currentAdd === 'number' && !isInCharacterCreation && (
 									<span className="add">
-										{_translate(locale, 'attributes.tooltips.bought')}: {currentAdd} / {maxAdd || '-'}
+										{translate(locale, 'attributes.tooltips.bought')}: {currentAdd} / {maxAdd || '-'}
 									</span>
 								)}
 							</p>

@@ -3,7 +3,7 @@ import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelecto
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages, getSkills } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions.d';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 
@@ -23,8 +23,8 @@ export function _addPoint(id: string): AsyncAction {
 		if (messages) {
 			if (!cost) {
 				dispatch(addAlert({
-					title: _translate(messages, 'notenoughap.title'),
-					message: _translate(messages, 'notenoughap.content'),
+					title: translate(messages, 'notenoughap.title'),
+					message: translate(messages, 'notenoughap.content'),
 				}));
 			}
 			else {

@@ -20,7 +20,7 @@ import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, BlessingInstance, InputTextEvent, LiturgyInstance, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { LiturgicalChantWithRequirements } from '../../types/view';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getAspectsOfTradition } from '../../utils/LiturgyUtils';
 import { SkillListItem } from './SkillListItem';
 
@@ -89,32 +89,32 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 			<Page id="liturgies">
 				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-liturgical-chants">
 					<Options>
-						<TextField hint={_translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+						<TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
 						<SortOptions
 							sortOrder={sortOrder}
 							sort={setSortOrder}
 							options={['name', 'group', 'ic']}
 							locale={locale}
 							/>
-						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{_translate(locale, 'options.showactivated')}</Checkbox>
+						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
 					</Options>
 					<MainContent>
 						<ListHeader>
 							<ListHeaderTag className="name">
-								{_translate(locale, 'name')}
+								{translate(locale, 'name')}
 							</ListHeaderTag>
 							<ListHeaderTag className="group">
-								{_translate(locale, 'aspect')}
-								{sortOrder === 'group' && ` / ${_translate(locale, 'group')}`}
+								{translate(locale, 'aspect')}
+								{sortOrder === 'group' && ` / ${translate(locale, 'group')}`}
 							</ListHeaderTag>
 							<ListHeaderTag className="check">
-								{_translate(locale, 'check')}
+								{translate(locale, 'check')}
 							</ListHeaderTag>
-							<ListHeaderTag className="mod" hint={_translate(locale, 'mod.long')}>
-								{_translate(locale, 'mod.short')}
+							<ListHeaderTag className="mod" hint={translate(locale, 'mod.long')}>
+								{translate(locale, 'mod.short')}
 							</ListHeaderTag>
-							<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-								{_translate(locale, 'ic.short')}
+							<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+								{translate(locale, 'ic.short')}
 							</ListHeaderTag>
 							{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 							<ListHeaderTag className="btn-placeholder" />
@@ -151,7 +151,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 										const { name } = obj;
 
-										const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => _translate(locale, 'liturgies.view.aspects')[e - 1]).sort().join(', ');
+										const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => translate(locale, 'liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 										if (obj.category === Categories.BLESSINGS) {
 											return (
@@ -166,7 +166,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 													attributes={attributes}
 													derivedCharacteristics={derivedCharacteristics}
 													selectForInfo={this.showSlideinInfo}
-													addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.blessing')}` : aspc}
+													addText={sortOrder === 'group' ? `${aspc} / ${translate(locale, 'liturgies.view.blessing')}` : aspc}
 													/>
 											);
 										}
@@ -188,7 +188,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showSlideinInfo}
-												addText={sortOrder === 'group' ? aspc.length === 0 ? _translate(locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+												addText={sortOrder === 'group' ? aspc.length === 0 ? translate(locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
 												/>
 										);
 									})
@@ -199,7 +199,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId} />
 				</Slidein>
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
 						sort={setSortOrder}
@@ -207,30 +207,30 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 						locale={locale}
 						/>
 					<BorderButton
-						label={_translate(locale, 'actions.addtolist')}
+						label={translate(locale, 'actions.addtolist')}
 						onClick={this.showAddSlidein}
 						/>
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'aspect')}
-							{sortOrder === 'group' && ` / ${_translate(locale, 'group')}`}
+							{translate(locale, 'aspect')}
+							{sortOrder === 'group' && ` / ${translate(locale, 'group')}`}
 						</ListHeaderTag>
-						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
-							{_translate(locale, 'sr.short')}
+						<ListHeaderTag className="value" hint={translate(locale, 'sr.long')}>
+							{translate(locale, 'sr.short')}
 						</ListHeaderTag>
 						<ListHeaderTag className="check">
-							{_translate(locale, 'check')}
+							{translate(locale, 'check')}
 						</ListHeaderTag>
-						<ListHeaderTag className="mod" hint={_translate(locale, 'mod.long')}>
-							{_translate(locale, 'mod.short')}
+						<ListHeaderTag className="mod" hint={translate(locale, 'mod.long')}>
+							{translate(locale, 'mod.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-							{_translate(locale, 'ic.short')}
+						<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+							{translate(locale, 'ic.short')}
 						</ListHeaderTag>
 						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
@@ -244,7 +244,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 
 									const name = obj.name;
 
-									const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => _translate(locale, 'liturgies.view.aspects')[e - 1]).sort().join(', ');
+									const aspc = obj.aspects.filter(e => getAspectsOfTradition(traditionId as number + 1).includes(e)).map(e => translate(locale, 'liturgies.view.aspects')[e - 1]).sort().join(', ');
 
 									if (obj.category === Categories.BLESSINGS) {
 										return (
@@ -259,7 +259,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 												attributes={attributes}
 												derivedCharacteristics={derivedCharacteristics}
 												selectForInfo={this.showInfo}
-												addText={sortOrder === 'group' ? `${aspc} / ${_translate(locale, 'liturgies.view.blessing')}` : aspc}
+												addText={sortOrder === 'group' ? `${aspc} / ${translate(locale, 'liturgies.view.blessing')}` : aspc}
 												/>
 										);
 									}
@@ -288,7 +288,7 @@ export class Liturgies extends React.Component<LiturgiesProps, LiturgiesState> {
 											attributes={attributes}
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
-											addText={sortOrder === 'group' ? aspc.length === 0 ? _translate(locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${_translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
+											addText={sortOrder === 'group' ? aspc.length === 0 ? translate(locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${translate(locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
 											/>
 									);
 								})

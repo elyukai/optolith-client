@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { SubTab } from '../types/data';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { isHeroSectionTab, isMainSectionTab, TabId } from '../utils/LocationUtils';
 import { NavigationBarTabProps } from '../views/navigationbar/NavigationBarTabs';
 import { isLiturgicalChantsTabAvailable } from './liturgiesSelectors';
@@ -34,24 +34,24 @@ export const getTabs = createSelector(
 			return [
 				{
 					id: 'herolist',
-					label: _translate(locale, 'titlebar.tabs.heroes'),
+					label: translate(locale, 'titlebar.tabs.heroes'),
 				},
 				{
 					id: 'grouplist',
-					label: _translate(locale, 'titlebar.tabs.groups'),
+					label: translate(locale, 'titlebar.tabs.groups'),
 					disabled: true,
 				},
 				{
 					id: 'wiki',
-					label: _translate(locale, 'titlebar.tabs.wiki'),
+					label: translate(locale, 'titlebar.tabs.wiki'),
 				},
 				{
 					id: 'faq',
-					label: _translate(locale, 'titlebar.tabs.faq'),
+					label: translate(locale, 'titlebar.tabs.faq'),
 				},
 				{
 					id: 'imprint',
-					label: _translate(locale, 'titlebar.tabs.about'),
+					label: translate(locale, 'titlebar.tabs.about'),
 					subTabs: ['imprint', 'thirdPartyLicenses', 'lastChanges'],
 				}
 			];
@@ -61,12 +61,12 @@ export const getTabs = createSelector(
 				return [
 					{
 						id: 'profile',
-						label: _translate(locale, 'titlebar.tabs.profile'),
+						label: translate(locale, 'titlebar.tabs.profile'),
 						subTabs: ['profile', 'personalData', 'pact', 'rules'],
 					},
 					{
 						id: 'races',
-						label: _translate(locale, 'titlebar.tabs.racecultureprofession'),
+						label: translate(locale, 'titlebar.tabs.racecultureprofession'),
 						subTabs: ['races', 'cultures', 'professions'],
 					}
 				];
@@ -75,26 +75,26 @@ export const getTabs = createSelector(
 				return [
 					{
 						id: 'profile',
-						label: _translate(locale, 'titlebar.tabs.profile'),
+						label: translate(locale, 'titlebar.tabs.profile'),
 						subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
 					},
 					{
 						id: 'attributes',
-						label: _translate(locale, 'titlebar.tabs.attributes'),
+						label: translate(locale, 'titlebar.tabs.attributes'),
 					},
 					{
 						id: 'advantages',
-						label: _translate(locale, 'titlebar.tabs.advantagesdisadvantages'),
+						label: translate(locale, 'titlebar.tabs.advantagesdisadvantages'),
 						subTabs: ['advantages', 'disadvantages'],
 					},
 					{
 						id: 'skills',
-						label: _translate(locale, 'titlebar.tabs.skills'),
+						label: translate(locale, 'titlebar.tabs.skills'),
 						subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
 					},
 					{
 						id: 'equipment',
-						label: _translate(locale, 'titlebar.tabs.belongings'),
+						label: translate(locale, 'titlebar.tabs.belongings'),
 						subTabs: ['equipment', 'zoneArmor', 'pets'],
 					}
 				];
@@ -102,21 +102,21 @@ export const getTabs = createSelector(
 			return [
 				{
 					id: 'profile',
-					label: _translate(locale, 'titlebar.tabs.profile'),
+					label: translate(locale, 'titlebar.tabs.profile'),
 					subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
 				},
 				{
 					id: 'attributes',
-					label: _translate(locale, 'titlebar.tabs.attributes'),
+					label: translate(locale, 'titlebar.tabs.attributes'),
 				},
 				{
 					id: 'skills',
-					label: _translate(locale, 'titlebar.tabs.skills'),
+					label: translate(locale, 'titlebar.tabs.skills'),
 					subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
 				},
 				{
 					id: 'equipment',
-					label: _translate(locale, 'titlebar.tabs.belongings'),
+					label: translate(locale, 'titlebar.tabs.belongings'),
 					subTabs: ['equipment', 'zoneArmor', 'pets'],
 				}
 			];
@@ -146,15 +146,15 @@ export const getSubtabs = createSelector(
 					tabs = [
 						{
 							id: 'imprint',
-							label: _translate(locale, 'titlebar.tabs.imprint'),
+							label: translate(locale, 'titlebar.tabs.imprint'),
 						},
 						{
 							id: 'thirdPartyLicenses',
-							label: _translate(locale, 'titlebar.tabs.thirdpartylicenses'),
+							label: translate(locale, 'titlebar.tabs.thirdpartylicenses'),
 						},
 						{
 							id: 'lastChanges',
-							label: _translate(locale, 'titlebar.tabs.lastchanges'),
+							label: translate(locale, 'titlebar.tabs.lastchanges'),
 						},
 					];
 				}
@@ -167,21 +167,21 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'profile',
-								label: _translate(locale, 'titlebar.tabs.profileoverview'),
+								label: translate(locale, 'titlebar.tabs.profileoverview'),
 							},
 							{
 								id: 'personalData',
-								label: _translate(locale, 'titlebar.tabs.personaldata'),
+								label: translate(locale, 'titlebar.tabs.personaldata'),
 								disabled: true,
 							},
 							{
 								id: 'pact',
-								label: _translate(locale, 'titlebar.tabs.pact'),
+								label: translate(locale, 'titlebar.tabs.pact'),
 								disabled: locale.id !== 'de-DE'
 							},
 							{
 								id: 'rules',
-								label: _translate(locale, 'titlebar.tabs.rules'),
+								label: translate(locale, 'titlebar.tabs.rules'),
 							},
 						];
 					}
@@ -189,21 +189,21 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'races',
-								label: _translate(locale, 'titlebar.tabs.race'),
+								label: translate(locale, 'titlebar.tabs.race'),
 							},
 						];
 
 						if (typeof raceId === 'string') {
 							tabs.push({
 								id: 'cultures',
-								label: _translate(locale, 'titlebar.tabs.culture'),
+								label: translate(locale, 'titlebar.tabs.culture'),
 							});
 						}
 
 						if (typeof cultureId === 'string') {
 							tabs.push({
 								id: 'professions',
-								label: _translate(locale, 'titlebar.tabs.profession'),
+								label: translate(locale, 'titlebar.tabs.profession'),
 							});
 						}
 					}
@@ -217,28 +217,28 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'profile',
-								label: _translate(locale, 'titlebar.tabs.profileoverview'),
+								label: translate(locale, 'titlebar.tabs.profileoverview'),
 							},
 							{
 								id: 'personalData',
-								label: _translate(locale, 'titlebar.tabs.personaldata'),
+								label: translate(locale, 'titlebar.tabs.personaldata'),
 								disabled: true,
 							},
 							{
 								id: 'pact',
-								label: _translate(locale, 'titlebar.tabs.pact'),
+								label: translate(locale, 'titlebar.tabs.pact'),
 								disabled: locale.id !== 'de-DE',
 							},
 							{
 								id: 'rules',
-								label: _translate(locale, 'titlebar.tabs.rules'),
+								label: translate(locale, 'titlebar.tabs.rules'),
 							},
 						];
 
 						if (phase === 3) {
 							tabs.splice(2, 0, {
 								id: 'characterSheet',
-								label: _translate(locale, 'titlebar.tabs.charactersheet'),
+								label: translate(locale, 'titlebar.tabs.charactersheet'),
 							});
 						}
 					}
@@ -246,11 +246,11 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'advantages',
-								label: _translate(locale, 'titlebar.tabs.advantages'),
+								label: translate(locale, 'titlebar.tabs.advantages'),
 							},
 							{
 								id: 'disadvantages',
-								label: _translate(locale, 'titlebar.tabs.disadvantages'),
+								label: translate(locale, 'titlebar.tabs.disadvantages'),
 							},
 						];
 					}
@@ -258,29 +258,29 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'skills',
-								label: _translate(locale, 'titlebar.tabs.talents'),
+								label: translate(locale, 'titlebar.tabs.talents'),
 							},
 							{
 								id: 'combatTechniques',
-								label: _translate(locale, 'titlebar.tabs.combattechniques'),
+								label: translate(locale, 'titlebar.tabs.combattechniques'),
 							},
 							{
 								id: 'specialAbilities',
-								label: _translate(locale, 'titlebar.tabs.specialabilities'),
+								label: translate(locale, 'titlebar.tabs.specialabilities'),
 							},
 						];
 
 						if (isSpellsTabAvailable) {
 							tabs.push({
 								id: 'spells',
-								label: _translate(locale, 'titlebar.tabs.spells'),
+								label: translate(locale, 'titlebar.tabs.spells'),
 							});
 						}
 
 						if (isLiturgicalChantsTabAvailable) {
 							tabs.push({
 								id: 'liturgicalChants',
-								label: _translate(locale, 'titlebar.tabs.liturgies'),
+								label: translate(locale, 'titlebar.tabs.liturgies'),
 							});
 						}
 					}
@@ -288,18 +288,18 @@ export const getSubtabs = createSelector(
 						tabs = [
 							{
 								id: 'equipment',
-								label: _translate(locale, 'titlebar.tabs.equipment'),
+								label: translate(locale, 'titlebar.tabs.equipment'),
 							},
 							{
 								id: 'pets',
-								label: _translate(locale, 'titlebar.tabs.pets'),
+								label: translate(locale, 'titlebar.tabs.pets'),
 							},
 						];
 
 						if (locale.id === 'de-DE' && (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208'))) {
 							tabs.splice(1, 0, {
 								id: 'zoneArmor',
-								label: _translate(locale, 'titlebar.tabs.zonearmor'),
+								label: translate(locale, 'titlebar.tabs.zonearmor'),
 							});
 						}
 					}

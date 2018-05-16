@@ -3,7 +3,7 @@ import { DependentInstancesState } from '../reducers/dependentInstances';
 import { getAllByCategoryGroup } from '../selectors/dependentInstancesSelectors';
 import { AdvantageInstanceInInit, DisadvantageInstanceInInit, InstanceInInit, SelectionObject, SkillishInstance, SpecialAbilityInstanceInInit, ToListById } from '../types/data.d';
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTables, RawTalent, RawTalentLocale } from '../types/rawdata.d';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getStateKeyByCategory } from '../utils/IDUtils';
 import * as InitUtils from '../utils/InitUtils';
 
@@ -76,7 +76,7 @@ export function init(raw: RawTables, rawlocale: RawLocale): DependentInstancesSt
 	}, {
 		P_0: {
 			id: 'P_0',
-			name: _translate(rawlocale.ui, 'professions.ownprofession'),
+			name: translate(rawlocale.ui, 'professions.ownprofession'),
 			req: [],
 			src: []
 		}

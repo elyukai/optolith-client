@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Options } from '../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../types/data.d';
 import { ArmorZone, Attribute, CombatTechnique, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { CombatSheetArmorZones } from './CombatSheetArmorZones';
 import { CombatSheetLifePoints } from './CombatSheetLifePoints';
 import { CombatSheetMeleeWeapons } from './CombatSheetMeleeWeapons';
@@ -38,7 +38,7 @@ export function CombatSheetZones(props: CombatSheetZonesProps) {
 			<Options/>
 			<Sheet
 				id="combat-sheet-zones"
-				title={_translate(locale, 'charactersheet.combat.title')}
+				title={translate(locale, 'charactersheet.combat.title')}
 				addHeaderInfo={addHeader}
 				attributes={attributes}
 				locale={locale}

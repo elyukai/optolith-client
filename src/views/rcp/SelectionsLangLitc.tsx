@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown } from '../../components/Dropdown';
 import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../types/data.d';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 export interface SelectionsLangLitcProps {
 	active: Map<string, number>;
@@ -22,7 +22,7 @@ export function SelectionsLangLitc(props: SelectionsLangLitcProps) {
 	return (
 		<div className="lang_lit list">
 			<h4>
-				{_translate(locale, 'rcpselections.labels.languagesandliteracytotaling')} {apTotal} AP ({apLeft} AP {_translate(locale, 'rcpselections.labels.left')})
+				{translate(locale, 'rcpselections.labels.languagesandliteracytotaling')} {apTotal} AP ({apLeft} AP {translate(locale, 'rcpselections.labels.left')})
 			</h4>
 			<div className="languages-scripts">
 				<div className="languages">

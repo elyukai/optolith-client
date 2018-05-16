@@ -3,7 +3,7 @@ import { TextBox } from '../../components/TextBox';
 import { SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Spell, UIMessages } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { SpellsSheetSpellsTableRow } from './SpellsSheetSpellsTableRow';
 
 export interface SpellsSheetSpellsProps {
@@ -21,21 +21,21 @@ export function SpellsSheetSpells(props: SpellsSheetSpellsProps) {
 	list.splice(0, Math.min(sortedSpells.length, 21), ...sortedSpells);
 
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.spells.spellslist.title')} className="skill-list">
+		<TextBox label={translate(locale, 'charactersheet.spells.spellslist.title')} className="skill-list">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{_translate(locale, 'charactersheet.spells.spellslist.headers.spellritual')}</th>
-						<th className="check">{_translate(locale, 'charactersheet.spells.spellslist.headers.check')}</th>
-						<th className="value">{_translate(locale, 'charactersheet.spells.spellslist.headers.sr')}</th>
-						<th className="cost">{_translate(locale, 'charactersheet.spells.spellslist.headers.cost')}</th>
-						<th className="cast-time">{_translate(locale, 'charactersheet.spells.spellslist.headers.castingtime')}</th>
-						<th className="range">{_translate(locale, 'charactersheet.spells.spellslist.headers.range')}</th>
-						<th className="duration">{_translate(locale, 'charactersheet.spells.spellslist.headers.duration')}</th>
-						<th className="property">{_translate(locale, 'charactersheet.spells.spellslist.headers.property')}</th>
-						<th className="ic">{_translate(locale, 'charactersheet.spells.spellslist.headers.ic')}</th>
-						<th className="effect">{_translate(locale, 'charactersheet.spells.spellslist.headers.effect')}</th>
-						<th className="ref">{_translate(locale, 'charactersheet.spells.spellslist.headers.page')}</th>
+						<th className="name">{translate(locale, 'charactersheet.spells.spellslist.headers.spellritual')}</th>
+						<th className="check">{translate(locale, 'charactersheet.spells.spellslist.headers.check')}</th>
+						<th className="value">{translate(locale, 'charactersheet.spells.spellslist.headers.sr')}</th>
+						<th className="cost">{translate(locale, 'charactersheet.spells.spellslist.headers.cost')}</th>
+						<th className="cast-time">{translate(locale, 'charactersheet.spells.spellslist.headers.castingtime')}</th>
+						<th className="range">{translate(locale, 'charactersheet.spells.spellslist.headers.range')}</th>
+						<th className="duration">{translate(locale, 'charactersheet.spells.spellslist.headers.duration')}</th>
+						<th className="property">{translate(locale, 'charactersheet.spells.spellslist.headers.property')}</th>
+						<th className="ic">{translate(locale, 'charactersheet.spells.spellslist.headers.ic')}</th>
+						<th className="effect">{translate(locale, 'charactersheet.spells.spellslist.headers.effect')}</th>
+						<th className="ref">{translate(locale, 'charactersheet.spells.spellslist.headers.page')}</th>
 					</tr>
 				</thead>
 				<tbody>

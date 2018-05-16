@@ -3,7 +3,7 @@ import { getAdvantages, getDisadvantages, getLocaleMessages, getSpecialAbilities
 import { SpecialAbilityInstance } from '../types/data';
 import { Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../types/wiki';
 import { AllSortOptions, filterObjects, sortObjects } from '../utils/FilterSortUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getItems } from './equipmentSelectors';
 import { getAllProfessions } from './rcpSelectors';
 import { getCombatTechniquesSortOrder, getCulturesSortOrder, getEquipmentSortOrder, getLiturgiesSortOrder, getProfessionsSortOrder, getRacesSortOrder, getSpecialAbilitiesSortOrder, getSpellsSortOrder, getTalentsSortOrder } from './uisettingsSelectors';
@@ -338,7 +338,7 @@ export const getSpecialAbilityGroups = createSelector(
   getLocaleMessages,
   (wiki, locale) => {
     const specialAbilities = [...wiki.values()];
-    return sortObjects(_translate(locale!, 'specialabilities.view.groups').map((name, index) => ({
+    return sortObjects(translate(locale!, 'specialabilities.view.groups').map((name, index) => ({
       id: index + 1,
       name
     })).filter(({ id }) => specialAbilities.some(e => e.gr === id)), locale!.id);

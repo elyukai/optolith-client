@@ -9,7 +9,7 @@ import { TextField } from '../../components/TextField';
 import { AttributeInstance, InputTextEvent, ItemEditorInstance, ItemInstance } from '../../types/data.d';
 import { CombatTechnique } from '../../types/view.d';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from '../../utils/RegexUtils';
 
 export interface ItemEditorOwnProps {
@@ -127,16 +127,16 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 		if (item) {
 			const { movMod, iniMod, addPenalties, armorType, stabilityMod, isTwoHandedWeapon, improvisedWeaponGroup, ammunition, amount, at, combatTechnique, damageBonus, damageDiceNumber, damageDiceSides, damageFlat, enc, gr, isParryingWeapon, isTemplateLocked: locked, length, name, pa, price, pro, range: [ range1, range2, range3 ], reach, reloadTime, stp, template, weight, where, loss, forArmorZoneOnly } = item;
 
-			const GROUPS_SELECTION = _translate(locale, 'equipment.view.groups').map((e, i) => ({ id: i + 1, name: e }));
+			const GROUPS_SELECTION = translate(locale, 'equipment.view.groups').map((e, i) => ({ id: i + 1, name: e }));
 			const IMP_GROUPS_SELECTION = [
-				{ id: 1, name: _translate(locale, 'equipment.view.groups')[0] },
-				{ id: 2, name: _translate(locale, 'equipment.view.groups')[1] }
+				{ id: 1, name: translate(locale, 'equipment.view.groups')[0] },
+				{ id: 2, name: translate(locale, 'equipment.view.groups')[1] }
 			];
-			const TEMPLATES = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.map(({ id, name }) => ({ id, name })));
-			const AMMUNITION = [{name: _translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
-			const armorTypes = sortObjects(_translate(locale, 'equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e })), locale.id);
+			const TEMPLATES = [{name: translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.map(({ id, name }) => ({ id, name })));
+			const AMMUNITION = [{name: translate(locale, 'options.none')} as { id?: string; name: string; }].concat(templates.filter(e => e.gr === 3).map(({ id, name }) => ({ id, name })));
+			const armorTypes = sortObjects(translate(locale, 'equipment.view.armortypes').map((e, i) => ({ id: i + 1, name: e })), locale.id);
 
-			const dice = [2, 3, 6].map((e, i) => ({ id: e, name: _translate(locale, 'equipment.view.dice')[i] }));
+			const dice = [2, 3, 6].map((e, i) => ({ id: e, name: translate(locale, 'equipment.view.dice')[i] }));
 			const lossTiers = [{name: '0'}, {id: 1, name: 'I'}, {id: 2, name: 'II'}, {id: 3, name: 'III'}, {id: 4, name: 'IV'}];
 
 			const validName = typeof name === 'string' && name.length > 0;
@@ -169,14 +169,14 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 			return (
 				<Dialog
 					id="item-editor"
-					title={create ? _translate(locale, 'itemeditor.titlecreate') : _translate(locale, 'itemeditor.titleedit')}
+					title={create ? translate(locale, 'itemeditor.titlecreate') : translate(locale, 'itemeditor.titleedit')}
 					close={closeEditor}
 					isOpened
 					buttons={[
 						{
 							autoWidth: true,
 							disabled: !validNumber || !locked && (typeof gr !== 'number' || gr === 1 && !validMelee.every(e => e) || gr === 2 && !validRanged.every(e => e) || gr === 4 && !validArmor.every(e => e) || !validOther.every(e => e)),
-							label: _translate(locale, 'actions.save'),
+							label: translate(locale, 'actions.save'),
 							onClick: create ? this.addItem : this.saveItem,
 						},
 					]}>
@@ -184,14 +184,14 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<TextField
 								className="number"
-								label={_translate(locale, 'itemeditor.options.number')}
+								label={translate(locale, 'itemeditor.options.number')}
 								value={amount}
 								onChange={this.changeAmount}
 								valid={validNumber}
 								/>
 							<TextField
 								className="name"
-								label={_translate(locale, 'itemeditor.options.name')}
+								label={translate(locale, 'itemeditor.options.name')}
 								value={name}
 								onChange={this.changeName}
 								autoFocus={create}
@@ -202,7 +202,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<TextField
 								className="price"
-								label={_translate(locale, 'itemeditor.options.price')}
+								label={translate(locale, 'itemeditor.options.price')}
 								value={price}
 								onChange={this.changePrice}
 								disabled={locked}
@@ -210,7 +210,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<TextField
 								className="weight"
-								label={_translate(locale, 'itemeditor.options.weight')}
+								label={translate(locale, 'itemeditor.options.weight')}
 								value={weight}
 								onChange={this.changeWeight}
 								disabled={locked}
@@ -218,7 +218,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<TextField
 								className="where"
-								label={_translate(locale, 'itemeditor.options.carriedwhere')}
+								label={translate(locale, 'itemeditor.options.carriedwhere')}
 								value={where}
 								onChange={this.changeWhere}
 								/>
@@ -226,8 +226,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="gr"
-								label={_translate(locale, 'itemeditor.options.gr')}
-								hint={_translate(locale, 'itemeditor.options.grhint')}
+								label={translate(locale, 'itemeditor.options.gr')}
+								hint={translate(locale, 'itemeditor.options.grhint')}
 								value={gr}
 								options={GROUPS_SELECTION}
 								onChange={this.changeGroup}
@@ -238,14 +238,14 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						{gr > 4 && <div className="row">
 							<Checkbox
 								className="improvised-weapon"
-								label={_translate(locale, 'itemeditor.options.improvisedweapon')}
+								label={translate(locale, 'itemeditor.options.improvisedweapon')}
 								checked={typeof improvisedWeaponGroup === 'number'}
 								onClick={this.changeImprovisedWeapon}
 								disabled={locked}
 								/>
 							<Dropdown
 								className="gr imp-gr"
-								hint={_translate(locale, 'itemeditor.options.improvisedweapongr')}
+								hint={translate(locale, 'itemeditor.options.improvisedweapongr')}
 								value={improvisedWeaponGroup || 0}
 								options={IMP_GROUPS_SELECTION}
 								onChange={this.changeImprovisedWeaponGroup}
@@ -256,8 +256,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="template"
-								label={_translate(locale, 'itemeditor.options.template')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.template')}
+								hint={translate(locale, 'options.none')}
 								value={template}
 								options={TEMPLATES}
 								onChange={this.changeTemplate}
@@ -287,8 +287,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="combattechnique"
-								label={_translate(locale, 'itemeditor.options.combattechnique')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.combattechnique')}
+								hint={translate(locale, 'options.none')}
 								value={combatTechnique}
 								options={combatTechniques.filter(e => e.gr === 1).map(({ id, name }) => ({ id, name }))}
 								onChange={this.changeCombatTechnique}
@@ -299,10 +299,10 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="primary-attribute-selection"
-								label={_translate(locale, 'itemeditor.options.primaryattribute')}
+								label={translate(locale, 'itemeditor.options.primaryattribute')}
 								value={damageBonus.primary}
 								options={[
-									{name: `${_translate(locale, 'itemeditor.options.primaryattributeshort')} (${combatTechnique && combatTechniques.find(e => e.id === combatTechnique)!.primary.map(e => attributes.get(e)!.short).join('/')})`},
+									{name: `${translate(locale, 'itemeditor.options.primaryattributeshort')} (${combatTechnique && combatTechniques.find(e => e.id === combatTechnique)!.primary.map(e => attributes.get(e)!.short).join('/')})`},
 									{id: 'ATTR_5', name: attributes.get('ATTR_5')!.short},
 									{id: 'ATTR_6', name: attributes.get('ATTR_6')!.short},
 									{id: 'ATTR_6_8', name: `${attributes.get('ATTR_6')!.short}/${attributes.get('ATTR_8')!.short}`},
@@ -313,7 +313,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							{Array.isArray(damageBonus.threshold) ? (
 								<div className="container damage-threshold">
-									<Label text={_translate(locale, 'itemeditor.options.damagethreshold')} disabled={locked || !combatTechnique || combatTechnique === 'CT_7'} />
+									<Label text={translate(locale, 'itemeditor.options.damagethreshold')} disabled={locked || !combatTechnique || combatTechnique === 'CT_7'} />
 									<TextField
 										className="damage-threshold-part"
 										value={damageBonus.threshold[0]}
@@ -332,7 +332,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							) : (
 								<TextField
 									className="damage-threshold"
-									label={_translate(locale, 'itemeditor.options.damagethreshold')}
+									label={translate(locale, 'itemeditor.options.damagethreshold')}
 									value={damageBonus.threshold}
 									onChange={this.changeDamageThreshold}
 									disabled={locked || !combatTechnique || combatTechnique === 'CT_7'}
@@ -343,7 +343,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Checkbox
 								className="damage-threshold-separated"
-								label={_translate(locale, 'itemeditor.options.damagethresholdseparated')}
+								label={translate(locale, 'itemeditor.options.damagethresholdseparated')}
 								checked={Array.isArray(damageBonus.threshold)}
 								onClick={this.changeDamageThresholdSeparation}
 								disabled={locked || !combatTechnique || !(typeof damageBonus.primary === 'string' && damageBonus.primary === 'ATTR_6_8' || typeof combatTechnique === 'string' && combatTechniques.find(e => e.id === combatTechnique)!.primary.length === 2) || combatTechnique === 'CT_7'}
@@ -351,7 +351,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						</div>
 						<div className="row">
 							<div className="container">
-								<Label text={_translate(locale, 'itemeditor.options.damage')} disabled={locked} />
+								<Label text={translate(locale, 'itemeditor.options.damage')} disabled={locked} />
 								<TextField
 									className="damage-dice-number"
 									value={damageDiceNumber}
@@ -361,7 +361,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<Dropdown
 									className="damage-dice-sides"
-									hint={_translate(locale, 'itemeditor.options.damagedice')}
+									hint={translate(locale, 'itemeditor.options.damagedice')}
 									value={damageDiceSides}
 									options={dice}
 									onChange={this.changeDamageDiceSides}
@@ -377,7 +377,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<TextField
 								className="stabilitymod"
-								label={_translate(locale, 'itemeditor.options.bfmod')}
+								label={translate(locale, 'itemeditor.options.bfmod')}
 								value={stabilityMod}
 								onChange={this.changeStabilityMod}
 								disabled={locked}
@@ -385,7 +385,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<Dropdown
 								className="weapon-loss"
-								label={_translate(locale, 'itemeditor.options.weaponloss')}
+								label={translate(locale, 'itemeditor.options.weaponloss')}
 								value={loss}
 								options={lossTiers}
 								onChange={this.changeLoss}
@@ -394,16 +394,16 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="reach"
-								label={_translate(locale, 'itemeditor.options.reach')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.reach')}
+								hint={translate(locale, 'options.none')}
 								value={reach}
-								options={[{id: 1, name: _translate(locale, 'itemeditor.options.reachshort')}, {id: 2, name: _translate(locale, 'itemeditor.options.reachmedium')}, {id: 3, name: _translate(locale, 'itemeditor.options.reachlong')}]}
+								options={[{id: 1, name: translate(locale, 'itemeditor.options.reachshort')}, {id: 2, name: translate(locale, 'itemeditor.options.reachmedium')}, {id: 3, name: translate(locale, 'itemeditor.options.reachlong')}]}
 								onChange={this.changeReach}
 								disabled={locked || combatTechnique === 'CT_7'}
 								required
 								/>
 							<div className="container">
-								<Label text={_translate(locale, 'itemeditor.options.atpamod')} disabled={locked || combatTechnique === 'CT_7'} />
+								<Label text={translate(locale, 'itemeditor.options.atpamod')} disabled={locked || combatTechnique === 'CT_7'} />
 								<TextField
 									className="at"
 									value={at}
@@ -422,7 +422,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							{ combatTechnique === 'CT_10' ? (
 								<TextField
 									className="stp"
-									label={_translate(locale, 'itemeditor.options.structurepoints')}
+									label={translate(locale, 'itemeditor.options.structurepoints')}
 									value={stp}
 									onChange={this.changeStp}
 									disabled={locked}
@@ -431,7 +431,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							) : (
 								<TextField
 									className="length"
-									label={_translate(locale, 'itemeditor.options.length')}
+									label={translate(locale, 'itemeditor.options.length')}
 									value={length}
 									onChange={this.changeLength}
 									disabled={locked}
@@ -442,14 +442,14 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Checkbox
 								className="parrying-weapon"
-								label={_translate(locale, 'itemeditor.options.parryingweapon')}
+								label={translate(locale, 'itemeditor.options.parryingweapon')}
 								checked={!!isParryingWeapon}
 								onClick={this.changeParryingWeapon}
 								disabled={locked}
 								/>
 							<Checkbox
 								className="twohanded-weapon"
-								label={_translate(locale, 'itemeditor.options.twohandedweapon')}
+								label={translate(locale, 'itemeditor.options.twohandedweapon')}
 								checked={!!isTwoHandedWeapon}
 								onClick={this.changeTwoHandedWeapon}
 								disabled={locked}
@@ -460,8 +460,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						<div className="row">
 							<Dropdown
 								className="combattechnique"
-								label={_translate(locale, 'itemeditor.options.combattechnique')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.combattechnique')}
+								hint={translate(locale, 'options.none')}
 								value={combatTechnique}
 								options={combatTechniques.filter(e => e.gr === 2).map(({ id, name }) => ({ id, name }))}
 								onChange={this.changeCombatTechnique}
@@ -470,7 +470,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<TextField
 								className="reloadtime"
-								label={_translate(locale, 'itemeditor.options.reloadtime')}
+								label={translate(locale, 'itemeditor.options.reloadtime')}
 								value={reloadTime}
 								onChange={this.changeReloadTime}
 								disabled={locked}
@@ -478,7 +478,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 						</div>
 						<div className="row">
 							<div className="container">
-								<Label text={_translate(locale, 'itemeditor.options.damage')} disabled={locked} />
+								<Label text={translate(locale, 'itemeditor.options.damage')} disabled={locked} />
 								<TextField
 									className="damage-dice-number"
 									value={damageDiceNumber}
@@ -488,7 +488,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<Dropdown
 									className="damage-dice-sides"
-									hint={_translate(locale, 'itemeditor.options.damagedice')}
+									hint={translate(locale, 'itemeditor.options.damagedice')}
 									value={damageDiceSides}
 									options={dice}
 									onChange={this.changeDamageDiceSides}
@@ -504,7 +504,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<TextField
 								className="stabilitymod"
-								label={_translate(locale, 'itemeditor.options.bfmod')}
+								label={translate(locale, 'itemeditor.options.bfmod')}
 								value={stabilityMod}
 								onChange={this.changeStabilityMod}
 								disabled={locked}
@@ -512,7 +512,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<Dropdown
 								className="weapon-loss"
-								label={_translate(locale, 'itemeditor.options.weaponloss')}
+								label={translate(locale, 'itemeditor.options.weaponloss')}
 								value={loss}
 								options={lossTiers}
 								onChange={this.changeLoss}
@@ -522,7 +522,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							<div className="container">
 								<TextField
 									className="range1"
-									label={_translate(locale, 'itemeditor.options.rangeclose')}
+									label={translate(locale, 'itemeditor.options.rangeclose')}
 									value={range1}
 									onChange={this.changeRange1}
 									disabled={locked}
@@ -530,7 +530,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<TextField
 									className="range2"
-									label={_translate(locale, 'itemeditor.options.rangemedium')}
+									label={translate(locale, 'itemeditor.options.rangemedium')}
 									value={range2}
 									onChange={this.changeRange2}
 									disabled={locked}
@@ -538,7 +538,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<TextField
 									className="range3"
-									label={_translate(locale, 'itemeditor.options.rangefar')}
+									label={translate(locale, 'itemeditor.options.rangefar')}
 									value={range3}
 									onChange={this.changeRange3}
 									disabled={locked}
@@ -547,8 +547,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<Dropdown
 								className="ammunition"
-								label={_translate(locale, 'itemeditor.options.ammunition')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.ammunition')}
+								hint={translate(locale, 'options.none')}
 								value={ammunition}
 								options={AMMUNITION}
 								onChange={this.changeAmmunition}
@@ -556,7 +556,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 								/>
 							<TextField
 								className="length"
-								label={_translate(locale, 'itemeditor.options.length')}
+								label={translate(locale, 'itemeditor.options.length')}
 								value={length}
 								onChange={this.changeLength}
 								disabled={locked}
@@ -569,7 +569,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							<div className="container">
 								<TextField
 									className="pro"
-									label={_translate(locale, 'itemeditor.options.pro')}
+									label={translate(locale, 'itemeditor.options.pro')}
 									value={pro}
 									onChange={this.changePRO}
 									disabled={locked}
@@ -577,7 +577,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<TextField
 									className="enc"
-									label={_translate(locale, 'itemeditor.options.enc')}
+									label={translate(locale, 'itemeditor.options.enc')}
 									value={enc}
 									onChange={this.changeENC}
 									disabled={locked}
@@ -586,8 +586,8 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<Dropdown
 								className="armor-type"
-								label={_translate(locale, 'itemeditor.options.armortype')}
-								hint={_translate(locale, 'options.none')}
+								label={translate(locale, 'itemeditor.options.armortype')}
+								hint={translate(locale, 'options.none')}
 								value={armorType}
 								options={armorTypes}
 								onChange={this.changeArmorType}
@@ -599,7 +599,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							<div className="container armor-loss-container">
 								<TextField
 									className="stabilitymod"
-									label={_translate(locale, 'itemeditor.options.stabilitymod')}
+									label={translate(locale, 'itemeditor.options.stabilitymod')}
 									value={stabilityMod}
 									onChange={this.changeStabilityMod}
 									disabled={locked}
@@ -607,7 +607,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<Dropdown
 									className="loss"
-									label={_translate(locale, 'itemeditor.options.armorloss')}
+									label={translate(locale, 'itemeditor.options.armorloss')}
 									value={loss}
 									options={lossTiers}
 									onChange={this.changeLoss}
@@ -615,7 +615,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<Checkbox
 								className="only-zones"
-								label={_translate(locale, 'itemeditor.options.zonesonly')}
+								label={translate(locale, 'itemeditor.options.zonesonly')}
 								checked={!!forArmorZoneOnly}
 								onClick={this.changeArmorZoneOnly}
 								disabled={locked}
@@ -625,7 +625,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							<div className="container">
 								<TextField
 									className="mov"
-									label={_translate(locale, 'itemeditor.options.movmod')}
+									label={translate(locale, 'itemeditor.options.movmod')}
 									value={movMod}
 									onChange={this.changeMovMod}
 									disabled={locked}
@@ -633,7 +633,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 									/>
 								<TextField
 									className="ini"
-									label={_translate(locale, 'itemeditor.options.inimod')}
+									label={translate(locale, 'itemeditor.options.inimod')}
 									value={iniMod}
 									onChange={this.changeIniMod}
 									disabled={locked}
@@ -642,7 +642,7 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 							</div>
 							<Checkbox
 								className="add-penalties"
-								label={_translate(locale, 'itemeditor.options.additionalpenalties')}
+								label={translate(locale, 'itemeditor.options.additionalpenalties')}
 								checked={!!addPenalties}
 								onClick={this.changeAddPenalties}
 								disabled={locked}

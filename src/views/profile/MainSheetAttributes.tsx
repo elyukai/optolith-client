@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../types/data.d';
 import { Race } from '../../types/wiki';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { MainSheetAttributesItem } from './MainSheetAttributesItem';
 import { MainSheetFatePoints } from './MainSheetFatePoints';
 
@@ -17,10 +17,10 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 	return (
 		<div className="calculated">
 			<div className="calc-header">
-				<div>{_translate(locale, 'charactersheet.main.headers.value')}</div>
-				<div>{_translate(locale, 'charactersheet.main.headers.bonuspenalty')}</div>
-				<div>{_translate(locale, 'charactersheet.main.headers.bought')}</div>
-				<div>{_translate(locale, 'charactersheet.main.headers.max')}</div>
+				<div>{translate(locale, 'charactersheet.main.headers.value')}</div>
+				<div>{translate(locale, 'charactersheet.main.headers.bonuspenalty')}</div>
+				<div>{translate(locale, 'charactersheet.main.headers.bought')}</div>
+				<div>{translate(locale, 'charactersheet.main.headers.max')}</div>
 			</div>
 			<MainSheetAttributesItem
 				label={attributes[0].name}
@@ -29,7 +29,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				max={attributes[0].value}
 				add={attributes[0].mod}
 				purchased={attributes[0].currentAdd}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.basestat')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
 				subArray={[race ? race.lp : 0]}
 				/>
 			<MainSheetAttributesItem
@@ -39,7 +39,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				max={attributes[1].value}
 				add={attributes[1].mod}
 				purchased={attributes[1].currentAdd}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.permanent')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.permanent')}
 				subArray={[attributes[1].permanentLost!, attributes[1].permanentRedeemed!]}
 				empty={typeof attributes[1].value !== 'number'}
 				/>
@@ -50,7 +50,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				max={attributes[2].value}
 				add={attributes[2].mod}
 				purchased={attributes[2].currentAdd}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.permanent')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.permanent')}
 				subArray={[attributes[2].permanentLost!, attributes[2].permanentRedeemed!]}
 				empty={typeof attributes[2].value !== 'number'}
 				/>
@@ -60,7 +60,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				base={attributes[3].base}
 				max={attributes[3].value}
 				add={attributes[3].mod}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.basestat')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
 				subArray={[race ? race.spi : 0]}
 				/>
 			<MainSheetAttributesItem
@@ -69,7 +69,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				base={attributes[4].base}
 				max={attributes[4].value}
 				add={attributes[4].mod}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.basestat')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
 				subArray={[race ? race.tou : 0]}
 				/>
 			<MainSheetAttributesItem
@@ -92,7 +92,7 @@ export function MainSheetAttributes(props: MainSheetAttributesProps) {
 				base={attributes[7].base}
 				max={attributes[7].value}
 				add={attributes[7].mod}
-				subLabel={_translate(locale, 'charactersheet.main.subheaders.basestat')}
+				subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
 				subArray={[race ? race.mov : 0]}
 				/>
 			<MainSheetFatePoints

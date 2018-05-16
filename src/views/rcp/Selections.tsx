@@ -11,7 +11,7 @@ import { UIMessages } from '../../types/view.d';
 import { Culture, Profession, ProfessionVariant, ProfessionVariantSelection, Race, TerrainKnowledgeSelection } from '../../types/wiki';
 import { getSelectionItem } from '../../utils/ActivatableUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { SelectionsCantrips } from './SelectionsCantrips';
 import { SelectionsCt } from './SelectionsCt';
 import { SelectionsCurses } from './SelectionsCurses';
@@ -246,7 +246,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 			const selectionItem = getSelectionItem(specialAbilities.get('SA_27')!, currentCulture.scripts[0]);
 			buyScriptElement = (
 				<Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
-					{_translate(locale, 'rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
+					{translate(locale, 'rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
 				</Checkbox>
 			);
 		}
@@ -452,9 +452,9 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 		return (
 			<Slidein isOpened close={close} className="rcp-selections">
 				<Scroll>
-					<h3>{_translate(locale, 'titlebar.tabs.race')}</h3>
+					<h3>{translate(locale, 'titlebar.tabs.race')}</h3>
 					<Dropdown
-						hint={_translate(locale, 'rcpselections.labels.selectattributeadjustment')}
+						hint={translate(locale, 'rcpselections.labels.selectattributeadjustment')}
 						value={attrSel}
 						onChange={this.changeAttrSel}
 						options={currentRace.attributeAdjustmentsSelection[1].map(e => {
@@ -462,14 +462,14 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 							const value = currentRace.attributeAdjustmentsSelection[0];
 							return attr ? { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` } : { id: e, name: '...' };
 						})} />
-					<h3>{_translate(locale, 'titlebar.tabs.culture')}</h3>
+					<h3>{translate(locale, 'titlebar.tabs.culture')}</h3>
 					<Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-						{_translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.culturalPackageAdventurePoints} AP)
+						{translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.culturalPackageAdventurePoints} AP)
 					</Checkbox>
 					{
 						selectLang && (
 							<Dropdown
-								hint={_translate(locale, 'rcpselections.labels.selectnativetongue')}
+								hint={translate(locale, 'rcpselections.labels.selectnativetongue')}
 								value={lang}
 								onChange={this.changeLang}
 								options={currentCulture.languages.map(e => {
@@ -483,7 +483,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 					{
 						selectLitc ? (
 							<Dropdown
-								hint={_translate(locale, 'rcpselections.labels.selectscript')}
+								hint={translate(locale, 'rcpselections.labels.selectscript')}
 								value={litc}
 								onChange={this.changeLitc}
 								options={currentCulture.scripts.map(e => {
@@ -493,7 +493,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 								disabled={!buyLiteracy || langLitc.size > 0} />
 						) : null
 					}
-					{currentProfession.id !== 'P_0' && <h3>{_translate(locale, 'titlebar.tabs.profession')}</h3>}
+					{currentProfession.id !== 'P_0' && <h3>{translate(locale, 'titlebar.tabs.profession')}</h3>}
 					{specElement}
 					{langLitcElement}
 					{ctElement}
@@ -503,7 +503,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
 					{skillsElement}
 					{terrainKnowledgeElement}
 					<BorderButton
-						label={_translate(locale, 'rcpselections.actions.complete')}
+						label={translate(locale, 'rcpselections.actions.complete')}
 						primary
 						disabled={
 							attrSel === 'ATTR_0' ||

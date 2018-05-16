@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 
 interface SelectionsCursesProps {
 	active: Map<string, number>;
@@ -20,7 +20,7 @@ export function SelectionsCurses(props: SelectionsCursesProps) {
 
 	return (
 		<div className="curses list">
-			<h4>{_translate(locale, 'rcpselections.labels.curses', apTotal, apLeft)}</h4>
+			<h4>{translate(locale, 'rcpselections.labels.curses', apTotal, apLeft)}</h4>
 			{
 				list.map(obj => {
 					const { id, name } = obj;

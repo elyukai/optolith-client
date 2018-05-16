@@ -7,7 +7,7 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
 import { CultureInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, UIMessages, User } from '../../types/data.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export interface HerolistItemProps {
 	currentHeroId?: string;
@@ -67,7 +67,7 @@ export function HerolistItem(props: HerolistItemProps) {
 			<span className="profession">
 				{(() => {
 					if (p === 'P_0') {
-						return professionName || _translate(locale, 'professions.ownprofession');
+						return professionName || translate(locale, 'professions.ownprofession');
 					}
 					let { name, subname } = p && professions.get(p) || { name: '', subname: undefined };
 					if (typeof name === 'object' && sex) {

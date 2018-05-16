@@ -5,7 +5,7 @@ import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById }
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { isAvailable } from '../utils/RulesUtils';
 import { getCombatTechniques } from './combatTechniquesSelectors';
@@ -83,7 +83,7 @@ export const getSortOptions = createSelector(
 	(locale, sortOrder) => {
 		let sortOptions: AllSortOptions<ItemInstance> | undefined;
 		if (sortOrder === 'groupname') {
-			const groups = _translate(locale, 'equipment.view.groups');
+			const groups = translate(locale, 'equipment.view.groups');
 			sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
 		}
 		else if (sortOrder === 'where') {

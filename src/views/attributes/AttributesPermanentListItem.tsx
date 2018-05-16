@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { UIMessages } from '../../types/ui.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeBorder } from './AttributeBorder';
 import { AttributesRemovePermanent } from './AttributesRemovePermanent';
 import { PermanentPoints } from './PermanentPoints';
@@ -42,10 +42,10 @@ export class AttributesPermanentListItem extends React.Component<AttributesPerma
 				tooltip={<div className="calc-attr-overlay">
 					<h4><span>{name}</span><span>{available}</span></h4>
 					{typeof boughtBack === 'number' ? <p>
-						{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
-						{_translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
+						{translate(locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
+						{translate(locale, 'attributes.tooltips.boughtback')}: {boughtBack}
 					</p> : <p>
-						{_translate(locale, 'attributes.tooltips.losttotal')}: {lost}
+						{translate(locale, 'attributes.tooltips.losttotal')}: {lost}
 					</p>}
 				</div>}
 				tooltipMargin={7}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent, SpecialisationSelection, TalentInstance } from '../../types/data.d';
-import { _translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../utils/I18n';
 import { Application } from '../../types/wiki';
 
 export interface SelectionsTalentSpecProps {
@@ -30,7 +30,7 @@ export function SelectionsTalentSpec(props: SelectionsTalentSpecProps) {
 	}
 	if (Array.isArray(sid)) {
 		skillList = sid.map(e => skills.get(e)!);
-		name = skillList.map(e => e.name).join(` ${_translate(locale, 'rcpselections.labels.applicationforskillspecialization')} `);
+		name = skillList.map(e => e.name).join(` ${translate(locale, 'rcpselections.labels.applicationforskillspecialization')} `);
 	}
 	else if (talent !== undefined) {
 		name = talent.name;
@@ -75,7 +75,7 @@ export function SelectionsTalentSpec(props: SelectionsTalentSpecProps) {
 	return (
 		<div className="spec">
 			<h4>
-				{_translate(locale, 'rcpselections.labels.applicationforskillspecialization')} ({name})
+				{translate(locale, 'rcpselections.labels.applicationforskillspecialization')} ({name})
 			</h4>
 			{selectTalentElement}
 			{selectionElement}

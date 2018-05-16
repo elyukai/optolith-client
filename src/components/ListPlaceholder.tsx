@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { _translate, UIMessages } from '../utils/I18n';
+import { translate, UIMessages } from '../utils/I18n';
 import { IconButton } from './IconButton';
 import { List } from './List';
 import { ListItem } from './ListItem';
@@ -213,7 +213,7 @@ export function ListPlaceholder(props: ListPlaceholderProps) {
 			{placeholder}
 			{placeholder}
 			<div className={classNames('placeholder-message', props.wikiInitial && 'wiki-initial')}>
-				{props.wikiInitial ? _translate(props.locale, 'wiki.initialmessage') : props.noResults ? _translate(props.locale, 'emptylistnoresults') : _translate(props.locale, 'emptylist')}
+				{props.wikiInitial ? translate(props.locale, 'wiki.initialmessage') : props.noResults ? translate(props.locale, 'emptylistnoresults') : translate(props.locale, 'emptylist')}
 			</div>
 		</List>
 	);

@@ -13,7 +13,7 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { InputTextEvent } from '../../types/data.d';
 import { Race, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { RacesListItem } from './RacesListItem';
 import { RaceVariants } from './RaceVariants';
 
@@ -49,7 +49,7 @@ export class Races extends React.Component<RacesProps> {
 		return (
 			<Page id="races">
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<SortOptions
 						sortOrder={sortOrder}
 						sort={setSortOrder}
@@ -60,10 +60,10 @@ export class Races extends React.Component<RacesProps> {
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
-						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-							{_translate(locale, 'apshort')}
+						<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+							{translate(locale, 'apshort')}
 						</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder has-border" />

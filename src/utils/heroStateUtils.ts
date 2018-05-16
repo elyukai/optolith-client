@@ -19,6 +19,16 @@ export type HeroStateListKey =
   'specialAbilities' |
   'spells';
 
+export type HeroStateMapKey =
+  'advantages' |
+  'attributes' |
+  'combatTechniques' |
+  'disadvantages' |
+  'liturgicalChants' |
+  'skills' |
+  'specialAbilities' |
+  'spells';
+
 export const getHeroStateListKeyById = (
   id: string,
 ): MaybeFunctor<HeroStateListKey | undefined> => {

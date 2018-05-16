@@ -3,7 +3,7 @@ import { Markdown } from '../../../components/Markdown';
 import { Categories } from '../../../constants/Categories';
 import { SkillExtension, SpecialAbility } from '../../../types/wiki';
 import { sortObjects } from '../../../utils/FilterSortUtils';
-import { _translate, UIMessages } from '../../../utils/I18n';
+import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiExtensionsProps {
 	currentObject: {
@@ -40,12 +40,12 @@ export function WikiExtensions(props: WikiExtensionsProps) {
     return (
       <>
         <p className="extensions-title">
-          <span>{_translate(locale, key)}</span>
+          <span>{translate(locale, key)}</span>
         </p>
         <ul className="extensions">
           {extensionsList.map(({ cost, effect, id, name, tier }) => {
-            const srText = `${_translate(locale, 'sr.short')} ${tier * 4 + 4}`;
-            const apText = `${cost} ${_translate(locale, 'apshort')}`;
+            const srText = `${translate(locale, 'sr.short')} ${tier * 4 + 4}`;
+            const apText = `${cost} ${translate(locale, 'apshort')}`;
             return (
               <Markdown
                 key={id}

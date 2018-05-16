@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Markdown } from '../../../components/Markdown';
-import { _translate, UIMessages } from '../../../utils/I18n';
+import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiToolsProps {
 	currentObject: {
@@ -19,7 +19,7 @@ export function WikiTools(props: WikiToolsProps) {
 
   if (typeof tools === 'string') {
     return (
-      <Markdown source={`**${_translate(locale, 'info.tools')}:** ${tools}`} />
+      <Markdown source={`**${translate(locale, 'info.tools')}:** ${tools}`} />
     );
   }
 

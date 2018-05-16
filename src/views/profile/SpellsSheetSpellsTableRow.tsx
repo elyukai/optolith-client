@@ -3,7 +3,7 @@ import { Textfit } from 'react-textfit';
 import { SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Spell, UIMessages } from '../../types/view.d';
 import { sortStrings } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { getICName } from '../../utils/ICUtils';
 
 interface SpellsSheetSpellsTableRowProps {
@@ -29,10 +29,10 @@ export function SpellsSheetSpellsTableRow(props: SpellsSheetSpellsTableRowProps)
 		}).join('/');
 		let name = spell.name;
 		if (spell.traditions) {
-			const traditionNames = _translate(locale, 'spells.view.traditions');
+			const traditionNames = translate(locale, 'spells.view.traditions');
 			name += ` (${sortStrings(spell.traditions.map(e => traditionNames[e - 1]), locale.id).join(', ')})`;
 		}
-		const propertyNames = _translate(locale, 'spells.view.properties');
+		const propertyNames = translate(locale, 'spells.view.properties');
 		return (
 			<tr>
 				<td className="name">

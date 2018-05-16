@@ -3,7 +3,7 @@ import { Checkbox } from '../../components/Checkbox';
 import { Options } from '../../components/Options';
 import { ActiveViewObject, BlessingInstance, SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Liturgy, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { LiturgiesSheetBlessings } from './LiturgiesSheetBlessings';
 import { LiturgiesSheetLiturgies } from './LiturgiesSheetLiturgies';
@@ -29,8 +29,8 @@ export interface LiturgiesSheetProps {
 export function LiturgiesSheet(props: LiturgiesSheetProps) {
 	const { checkAttributeValueVisibility, derivedCharacteristics, locale, switchAttributeValueVisibility } = props;
 	const addHeader = [
-		{ id: 'KP_MAX', short: _translate(locale, 'charactersheet.chants.headers.kpmax'), value: derivedCharacteristics.find(e => e.id === 'KP')!.value },
-		{ id: 'KP_CURRENT', short: _translate(locale, 'charactersheet.chants.headers.kpcurrent') },
+		{ id: 'KP_MAX', short: translate(locale, 'charactersheet.chants.headers.kpmax'), value: derivedCharacteristics.find(e => e.id === 'KP')!.value },
+		{ id: 'KP_CURRENT', short: translate(locale, 'charactersheet.chants.headers.kpcurrent') },
 	];
 
 	return (
@@ -40,13 +40,13 @@ export function LiturgiesSheet(props: LiturgiesSheetProps) {
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
-					{_translate(locale, 'charactersheet.options.showattributevalues')}
+					{translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
 			</Options>
 			<Sheet
 				{...props}
 				id="liturgies-sheet"
-				title={_translate(locale, 'charactersheet.chants.title')}
+				title={translate(locale, 'charactersheet.chants.title')}
 				addHeaderInfo={addHeader}
 				>
 				<div className="all">

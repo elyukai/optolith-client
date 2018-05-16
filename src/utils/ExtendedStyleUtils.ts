@@ -1,4 +1,3 @@
-import { DependentInstancesState } from '../reducers/dependentInstances';
 import { HeroDependent, StyleDependency } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki.d';
 
@@ -8,6 +7,27 @@ export type StyleDependencyStateKeys =
   'blessedStyleDependencies';
 
 /**
+ * Checks if the given entry is a Style Special Ability and which state key it
+ * belongs to.
+ * @param entry
+ * @returns A state key or `undefined` if not a Style Special Ability.
+ */
+const getStyleStateKey = (
+  entry: SpecialAbility,
+): StyleDependencyStateKeys | undefined => {
+  if (entry.gr === 9 || entry.gr === 10) {
+    return 'combatStyleDependencies';
+  }
+  else if (entry.gr === 13) {
+    return 'magicalStyleDependencies';
+  }
+  else if (entry.gr === 25) {
+    return 'blessedStyleDependencies';
+  }
+  return;
+};
+
+/**
  * Adds extended special ability dependencies if the passed entry is a style
  * special ability.
  * @param state Dependent instances state slice.
@@ -15,10 +35,10 @@ export type StyleDependencyStateKeys =
  * dependencies for.
  * @returns Changed state slice.
  */
-export function addStyleExtendedSpecialAbilityDependencies(
-  state: DependentInstancesState,
+export const addStyleExtendedSpecialAbilityDependencies = (
+  state: HeroDependent,
   instance: SpecialAbility,
-): ToOptionalKeys<DependentInstancesState> {
+): HeroDependent => {
   const key = getStyleStateKey(instance);
 
   if (typeof key === 'string' && instance.extended) {
@@ -42,15 +62,37 @@ export function addStyleExtendedSpecialAbilityDependencies(
     });
 
     return {
+      ...state,
       [key]: [
         ...oldItems,
         ...newItems
-      ]
+      ],
     };
   }
 
-  return {};
-}
+  return state;
+};
+
+/**
+ * Checks if the given entry is an Extended Special Ability and which state key it
+ * belongs to.
+ * @param entry
+ * @returns A state key or `undefined` if not an Extended Special Ability.
+ */
+const getExtendedStateKey = (
+  entry: SpecialAbility,
+): StyleDependencyStateKeys | undefined => {
+  if (entry.gr === 11) {
+    return 'combatStyleDependencies';
+  }
+  else if (entry.gr === 14) {
+    return 'magicalStyleDependencies';
+  }
+  else if (entry.gr === 26) {
+    return 'blessedStyleDependencies';
+  }
+  return;
+};
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
@@ -59,10 +101,10 @@ export function addStyleExtendedSpecialAbilityDependencies(
  * @param instance The special ability you want to modify a dependency for.
  * @returns Changed state slice.
  */
-export function addExtendedSpecialAbilityDependency(
-  state: DependentInstancesState,
+export const addExtendedSpecialAbilityDependency = (
+  state: HeroDependent,
   instance: SpecialAbility,
-): ToOptionalKeys<DependentInstancesState> {
+): HeroDependent => {
   const key = getExtendedStateKey(instance);
 
   if (typeof key === 'string') {
@@ -80,6 +122,7 @@ export function addExtendedSpecialAbilityDependency(
       const prev = entries.slice(0, index);
       const next = entries.slice(index + 1);
       return {
+        ...state,
         [key]: [
           ...prev,
           {
@@ -92,8 +135,36 @@ export function addExtendedSpecialAbilityDependency(
     }
   }
 
-  return {};
-}
+  return state;
+};
+
+/**
+ * Split the objects from the ability to remove and remaining objects.
+ * @param items The respective list of style dependencies.
+ * @param styleId The id of the style to remove.
+ */
+const getSplittedRemainingAndToRemove = (
+  items: StyleDependency[],
+  styleId: string,
+): SplittedRemainingAndToRemove => {
+  const initialObj = {
+    itemsToRemove: [],
+    leftItems: []
+  };
+
+  return items.reduce<SplittedRemainingAndToRemove>((obj, dependency) => {
+    if (dependency.origin === styleId) {
+      return {
+        ...obj,
+        itemsToRemove: [...obj.itemsToRemove, dependency]
+      };
+    }
+    return {
+      ...obj,
+      leftItems: [...obj.leftItems, dependency]
+    };
+  }, initialObj);
+};
 
 /**
  * Removes extended special ability dependencies if the passed entry is a style
@@ -103,10 +174,10 @@ export function addExtendedSpecialAbilityDependency(
  * dependencies for.
  * @returns Changed state slice.
  */
-export function removeStyleExtendedSpecialAbilityDependencies(
-  state: DependentInstancesState,
+export const removeStyleExtendedSpecialAbilityDependencies = (
+  state: HeroDependent,
   instance: SpecialAbility,
-): ToOptionalKeys<DependentInstancesState> {
+): HeroDependent => {
   const key = getStyleStateKey(instance);
 
   if (typeof key === 'string' && instance.extended) {
@@ -135,12 +206,13 @@ export function removeStyleExtendedSpecialAbilityDependencies(
     }
 
     return {
+      ...state,
       [key]: leftItems
     };
   }
 
-  return {};
-}
+  return state;
+};
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
@@ -149,10 +221,10 @@ export function removeStyleExtendedSpecialAbilityDependencies(
  * @param instance The special ability you want to modify a dependency for.
  * @returns Changed state slice.
  */
-export function removeExtendedSpecialAbilityDependency(
-  state: DependentInstancesState,
+export const removeExtendedSpecialAbilityDependency = (
+  state: HeroDependent,
   instance: SpecialAbility,
-): ToOptionalKeys<DependentInstancesState> {
+): HeroDependent => {
   const key = getExtendedStateKey(instance);
 
   if (typeof key === 'string') {
@@ -172,6 +244,7 @@ export function removeExtendedSpecialAbilityDependency(
       const next = entries.slice(index + 1);
 
       return {
+        ...state,
         [key]: [
           ...prev,
           {
@@ -184,8 +257,26 @@ export function removeExtendedSpecialAbilityDependency(
     }
   }
 
-  return {};
-}
+  return state;
+};
+
+/**
+ * Return flat array of available extended special abilities' IDs.
+ * @param list List of set extended special ability objects.
+ */
+const getAvailableExtendedSpecialAbilities = (
+  list: StyleDependency[],
+): string[] => {
+  return list.reduce<string[]>((arr, e) => {
+    if (typeof e.active !== 'string') {
+      if (typeof e.id === 'object') {
+        return [...arr, ...e.id];
+      }
+      return [...arr, e.id];
+    }
+    return arr;
+  }, []);
+};
 
 /**
  * Calculates a list of available Extended Special Abilties. The availability is
@@ -193,16 +284,16 @@ export function removeExtendedSpecialAbilityDependency(
  * to be checked separately.
  * @param styleDependencies
  */
-export function getAllAvailableExtendedSpecialAbilities(
+export const getAllAvailableExtendedSpecialAbilities = (
   ...styleDependencies: StyleDependency[][]
-): string[] {
+): string[] => {
   return styleDependencies.reduce<string[]>((idList, dependencyArr) => {
     return [
       ...idList,
       ...getAvailableExtendedSpecialAbilities(dependencyArr),
     ];
   }, []);
-}
+};
 
 /**
  * Checks if the passed special ability is a style and if it is valid to remove
@@ -210,10 +301,10 @@ export function getAllAvailableExtendedSpecialAbilities(
  * @param state Dependent instances state slice.
  * @param entry The special ability to check.
  */
-export function isStyleValidToRemove(
+export const isStyleValidToRemove = (
   state: HeroDependent,
   entry?: SpecialAbility,
-): boolean {
+): boolean => {
   if (entry) {
     const key = getStyleStateKey(entry);
 
@@ -245,97 +336,9 @@ export function isStyleValidToRemove(
     return true;
   }
   return false;
-}
+};
 
 interface SplittedRemainingAndToRemove {
   itemsToRemove: StyleDependency[];
   leftItems: StyleDependency[];
-}
-
-/**
- * Split the objects from the ability to remove and remaining objects.
- * @param items The respective list of style dependencies.
- * @param styleId The id of the style to remove.
- */
-function getSplittedRemainingAndToRemove(
-  items: StyleDependency[],
-  styleId: string,
-): SplittedRemainingAndToRemove {
-  const initialObj = {
-    itemsToRemove: [],
-    leftItems: []
-  };
-
-  return items.reduce<SplittedRemainingAndToRemove>((obj, dependency) => {
-    if (dependency.origin === styleId) {
-      return {
-        ...obj,
-        itemsToRemove: [...obj.itemsToRemove, dependency]
-      };
-    }
-    return {
-      ...obj,
-      leftItems: [...obj.leftItems, dependency]
-    };
-  }, initialObj);
-}
-
-/**
- * Checks if the given entry is a Style Special Ability and which state key it
- * belongs to.
- * @param entry
- * @returns A state key or `undefined` if not a Style Special Ability.
- */
-function getStyleStateKey(
-  entry: SpecialAbility,
-): StyleDependencyStateKeys | undefined {
-  if (entry.gr === 9 || entry.gr === 10) {
-    return 'combatStyleDependencies';
-  }
-  else if (entry.gr === 13) {
-    return 'magicalStyleDependencies';
-  }
-  else if (entry.gr === 25) {
-    return 'blessedStyleDependencies';
-  }
-  return;
-}
-
-/**
- * Checks if the given entry is an Extended Special Ability and which state key it
- * belongs to.
- * @param entry
- * @returns A state key or `undefined` if not an Extended Special Ability.
- */
-function getExtendedStateKey(
-  entry: SpecialAbility,
-): StyleDependencyStateKeys | undefined {
-  if (entry.gr === 11) {
-    return 'combatStyleDependencies';
-  }
-  else if (entry.gr === 14) {
-    return 'magicalStyleDependencies';
-  }
-  else if (entry.gr === 26) {
-    return 'blessedStyleDependencies';
-  }
-  return;
-}
-
-/**
- * Return flat array of available extended special abilities' IDs.
- * @param list List of set extended special ability objects.
- */
-function getAvailableExtendedSpecialAbilities(
-  list: StyleDependency[],
-): string[] {
-  return list.reduce<string[]>((arr, e) => {
-    if (typeof e.active !== 'string') {
-      if (typeof e.id === 'object') {
-        return [...arr, ...e.id];
-      }
-      return [...arr, e.id];
-    }
-    return arr;
-  }, []);
 }

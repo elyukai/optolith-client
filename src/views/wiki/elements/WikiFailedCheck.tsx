@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Markdown } from '../../../components/Markdown';
-import { _translate, UIMessages } from '../../../utils/I18n';
+import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiFailedCheckProps {
 	currentObject: {
@@ -18,6 +18,6 @@ export function WikiFailedCheck(props: WikiFailedCheckProps) {
   } = props;
 
   return (
-    <Markdown source={`**${_translate(locale, 'info.failedcheck')}:** ${failed}`} />
+    <Markdown source={`**${translate(locale, 'info.failedcheck')}:** ${failed}`} />
   );
 }

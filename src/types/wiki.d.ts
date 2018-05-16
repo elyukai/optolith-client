@@ -2,6 +2,27 @@ import { Categories } from '../constants/Categories';
 import * as Reusable from './reusable.d';
 import { AllRequirementTypes } from './reusable.d';
 
+export interface WikiAll {
+	books: Map<string, Book>;
+	experienceLevels: Map<string, ExperienceLevel>;
+	races: Map<string, Race>;
+	raceVariants: Map<string, RaceVariant>;
+	cultures: Map<string, Culture>;
+	professions: Map<string, Profession>;
+	professionVariants: Map<string, ProfessionVariant>;
+	attributes: Map<string, Attribute>;
+	advantages: Map<string, Advantage>;
+	disadvantages: Map<string, Disadvantage>;
+	specialAbilities: Map<string, SpecialAbility>;
+	skills: Map<string, Skill>;
+	combatTechniques: Map<string, CombatTechnique>;
+	spells: Map<string, Spell>;
+	cantrips: Map<string, Cantrip>;
+	liturgicalChants: Map<string, LiturgicalChant>;
+	blessings: Map<string, Blessing>;
+	itemTemplates: Map<string, ItemTemplate>;
+}
+
 export interface WikiEntryByCategory {
 	'ADVANTAGES': Advantage;
 	'ATTRIBUTES': Attribute;

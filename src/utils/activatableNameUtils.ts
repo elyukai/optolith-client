@@ -3,7 +3,7 @@ import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { sortStrings } from './FilterSortUtils';
-import { _translate } from './I18n';
+import { translate } from './I18n';
 import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
 import { match } from './match';
@@ -187,17 +187,17 @@ const getEntrySpecificNameReplacements = (
   return R.defaultTo(name, match<string, string | undefined>(id)
     .on(['ADV_28', 'ADV_29'].includes, () => {
       return `${
-        _translate(locale, 'activatable.view.immunityto')
+        translate(locale, 'activatable.view.immunityto')
       } ${nameAddition}`;
     })
     .on('ADV_68', () => {
       return `${
-        _translate(locale, 'activatable.view.hatredof')
+        translate(locale, 'activatable.view.hatredof')
       } ${nameAddition}`;
     })
     .on('DISADV_1', () => {
       return `${
-        _translate(locale, 'activatable.view.afraidof')
+        translate(locale, 'activatable.view.afraidof')
       } ${nameAddition}`;
     })
     .on(['DISADV_34', 'DISADV_50'].includes, () => {
@@ -210,7 +210,7 @@ const getEntrySpecificNameReplacements = (
       return Maybe(locale)
         .fmap(locale => {
           const part = getTraditionNameFromFullName(name);
-          const musicTraditionLabels = _translate(locale, 'musictraditions');
+          const musicTraditionLabels = translate(locale, 'musictraditions');
 
           if (typeof sid2 === 'number') {
             const musicTradition = musicTraditionLabels[sid2 - 1];

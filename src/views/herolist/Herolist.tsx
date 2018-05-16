@@ -12,7 +12,7 @@ import { Hero, InputTextEvent, User } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { Book, ExperienceLevel } from '../../types/wiki';
 import { filterAndSortObjects } from '../../utils/FilterSortUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
@@ -132,7 +132,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 			<Page id="herolist">
 				<Options>
 					<TextField
-						hint={_translate(locale, 'options.filtertext')}
+						hint={translate(locale, 'options.filtertext')}
 						value={filterText}
 						onChange={this.filter}
 						fullWidth
@@ -141,9 +141,9 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 						value={visibilityFilter}
 						onChange={setVisibilityFilter}
 						options={[
-							{ id: 'all', name: _translate(locale, 'heroes.options.filter.all') },
-							{ id: 'own', name: _translate(locale, 'heroes.options.filter.own') },
-							{ id: 'shared', name: _translate(locale, 'heroes.options.filter.shared') },
+							{ id: 'all', name: translate(locale, 'heroes.options.filter.all') },
+							{ id: 'own', name: translate(locale, 'heroes.options.filter.own') },
+							{ id: 'shared', name: translate(locale, 'heroes.options.filter.shared') },
 						]}
 						fullWidth
 						/>
@@ -152,17 +152,17 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 						onClick={setSortOrder}
 						array={[
 							{
-								name: _translate(locale, 'options.sortorder.alphabetically'),
+								name: translate(locale, 'options.sortorder.alphabetically'),
 								value: 'name',
 							},
 							{
-								name: _translate(locale, 'options.sortorder.datemodified'),
+								name: translate(locale, 'options.sortorder.datemodified'),
 								value: 'datemodified',
 							},
 						]}
 						/>
-					<BorderButton label={_translate(locale, 'heroes.actions.create')} onClick={openCharacterCreator} primary />
-					<BorderButton label={_translate(locale, 'heroes.actions.import')} onClick={importHero} />
+					<BorderButton label={translate(locale, 'heroes.actions.create')} onClick={openCharacterCreator} primary />
+					<BorderButton label={translate(locale, 'heroes.actions.import')} onClick={importHero} />
 				</Options>
 				<Scroll>
 					<List>
@@ -171,7 +171,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
 								<HerolistItem
 									{...other}
 									avatar={avatar}
-									name={_translate(locale, 'heroes.view.unsavedhero.title')}
+									name={translate(locale, 'heroes.view.unsavedhero.title')}
 									ap={currentHeroAdventurePoints}
 									r={race}
 									rv={raceVariant}

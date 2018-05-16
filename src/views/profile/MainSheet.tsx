@@ -8,7 +8,7 @@ import { UIMessages } from '../../types/ui.d';
 import * as View from '../../types/view.d';
 import * as Wiki from '../../types/wiki';
 import { compressList } from '../../utils/ActivatableUtils';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { MainSheetAttributes } from './MainSheetAttributes';
 import { MainSheetPersonalData } from './MainSheetPersonalData';
 import { Sheet } from './Sheet';
@@ -56,13 +56,13 @@ export function MainSheet(props: MainSheetProps) {
 			<Options>
 				<BorderButton
 					className="print-document"
-					label={_translate(locale, 'charactersheet.actions.printtopdf')}
+					label={translate(locale, 'charactersheet.actions.printtopdf')}
 					onClick={() => printToPDF()}
 					/>
 			</Options>
 			<Sheet
 				id="main-sheet"
-				title={_translate(locale, 'charactersheet.main.title')}
+				title={translate(locale, 'charactersheet.main.title')}
 				attributes={attributes}
 				locale={locale}
 				>
@@ -70,30 +70,30 @@ export function MainSheet(props: MainSheetProps) {
 					ap={ap}
 					culture={culture}
 					el={el}
-					eyecolorTags={_translate(locale, 'eyecolors')}
-					haircolorTags={_translate(locale, 'haircolors')}
+					eyecolorTags={translate(locale, 'eyecolors')}
+					haircolorTags={translate(locale, 'haircolors')}
 					locale={locale}
 					profession={profession}
 					professionVariant={professionVariant}
 					profile={profile}
 					race={race}
-					socialstatusTags={_translate(locale, 'socialstatus')}
+					socialstatusTags={translate(locale, 'socialstatus')}
 					/>
 				<div className="lower">
 					<div className="lists">
 						<TextBox
 							className="activatable-list"
-							label={_translate(locale, 'charactersheet.main.advantages')}
+							label={translate(locale, 'charactersheet.main.advantages')}
 							value={compressList(advantagesActive, locale)}
 							/>
 						<TextBox
 							className="activatable-list"
-							label={_translate(locale, 'charactersheet.main.disadvantages')}
+							label={translate(locale, 'charactersheet.main.disadvantages')}
 							value={compressList(disadvantagesActive, locale)}
 							/>
 						<TextBox
 							className="activatable-list"
-							label={_translate(locale, 'charactersheet.main.generalspecialabilites')}
+							label={translate(locale, 'charactersheet.main.generalspecialabilites')}
 							value={compressList(generalsaActive, locale)}
 							/>
 					</div>

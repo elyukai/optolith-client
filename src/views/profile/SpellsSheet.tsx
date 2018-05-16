@@ -3,7 +3,7 @@ import { Checkbox } from '../../components/Checkbox';
 import { Options } from '../../components/Options';
 import { ActiveViewObject, CantripInstance, SecondaryAttribute } from '../../types/data.d';
 import { Attribute, Spell, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetWrapper } from './SheetWrapper';
@@ -29,8 +29,8 @@ export interface SpellsSheetProps {
 export function SpellsSheet(props: SpellsSheetProps) {
 	const { checkAttributeValueVisibility, derivedCharacteristics, locale, switchAttributeValueVisibility } = props;
 	const addHeader = [
-		{ id: 'AE_MAX', short: _translate(locale, 'charactersheet.spells.headers.aemax'), value: derivedCharacteristics.find(e => e.id === 'AE')!.value },
-		{ id: 'AE_CURRENT', short: _translate(locale, 'charactersheet.spells.headers.aecurrent') },
+		{ id: 'AE_MAX', short: translate(locale, 'charactersheet.spells.headers.aemax'), value: derivedCharacteristics.find(e => e.id === 'AE')!.value },
+		{ id: 'AE_CURRENT', short: translate(locale, 'charactersheet.spells.headers.aecurrent') },
 	];
 
 	return (
@@ -40,13 +40,13 @@ export function SpellsSheet(props: SpellsSheetProps) {
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
-					{_translate(locale, 'charactersheet.options.showattributevalues')}
+					{translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
 			</Options>
 			<Sheet
 				{...props}
 				id="spells-sheet"
-				title={_translate(locale, 'charactersheet.spells.title')}
+				title={translate(locale, 'charactersheet.spells.title')}
 				addHeaderInfo={addHeader}
 				>
 				<div className="all">

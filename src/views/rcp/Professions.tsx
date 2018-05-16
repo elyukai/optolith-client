@@ -15,7 +15,7 @@ import { SelectionsContainer } from '../../containers/RCPSelections';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { Book, CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data.d';
 import { Profession, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
 
@@ -73,17 +73,17 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 					showAddSlidein && <SelectionsContainer close={this.hideAddSlidein} locale={locale} />
 				}
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<Dropdown
 						value={visibilityFilter}
 						onChange={setVisibilityFilter}
-						options={[{id: 'all', name: _translate(locale, 'professions.options.allprofessions')}, {id: 'common', name: _translate(locale, 'professions.options.commonprofessions')}]}
+						options={[{id: 'all', name: translate(locale, 'professions.options.allprofessions')}, {id: 'common', name: translate(locale, 'professions.options.commonprofessions')}]}
 						fullWidth
 						/>
 					<Dropdown
 						value={groupVisibilityFilter}
 						onChange={setGroupVisibilityFilter}
-						options={[{id: 0, name: _translate(locale, 'professions.options.allprofessiongroups')}, {id: 1, name: _translate(locale, 'professions.options.mundaneprofessions')}, {id: 2, name: _translate(locale, 'professions.options.magicalprofessions')}, {id: 3, name: _translate(locale, 'professions.options.blessedprofessions')}]}
+						options={[{id: 0, name: translate(locale, 'professions.options.allprofessiongroups')}, {id: 1, name: translate(locale, 'professions.options.mundaneprofessions')}, {id: 2, name: translate(locale, 'professions.options.magicalprofessions')}, {id: 3, name: translate(locale, 'professions.options.blessedprofessions')}]}
 						fullWidth
 						/>
 					<SortOptions
@@ -96,10 +96,10 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
-						<ListHeaderTag className="cost" hint={_translate(locale, 'aptext')}>
-							{_translate(locale, 'apshort')}
+						<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+							{translate(locale, 'apshort')}
 						</ListHeaderTag>
 						<ListHeaderTag className="btn-placeholder" />
 						<ListHeaderTag className="btn-placeholder has-border" />

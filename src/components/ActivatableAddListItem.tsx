@@ -9,7 +9,7 @@ import { ActivatableInstance, ActivateArgs, DeactiveViewObject, DisadvantageInst
 import * as ActivatableUtils from '../utils/ActivatableUtils';
 import { getActiveWithDefaultCost } from '../utils/ActivatableUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { isInteger } from '../utils/RegexUtils';
 import { Dialog } from './DialogNew';
@@ -268,14 +268,14 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 			case 'SA_677':
 				args.sel = selected;
 				const musictraditionIds = [1, 2, 3];
-				sel = musictraditionIds.map(id => ({ id, name: _translate(locale, 'musictraditions')[id - 1]}));
+				sel = musictraditionIds.map(id => ({ id, name: translate(locale, 'musictraditions')[id - 1]}));
 				currentCost = cost as number;
 				break;
 			case 'SA_678':
 				args.sel = selected;
 				const dancetraditionIds = [4, 5, 6, 7];
 				sel = dancetraditionIds.map(id => {
-					return { id, name: _translate(locale, 'musictraditions')[id - 1]};
+					return { id, name: translate(locale, 'musictraditions')[id - 1]};
 				});
 				currentCost = cost as number;
 				break;
@@ -460,30 +460,30 @@ export class ActivatableAddListItem extends React.Component<ActivatableAddListIt
 					{tierElement2}
 				</ListItemLeft>
 				<ListItemSeparator/>
-				{!hideGroup && <ListItemGroup list={_translate(locale, 'specialabilities.view.groups')} index={gr} />}
+				{!hideGroup && <ListItemGroup list={translate(locale, 'specialabilities.view.groups')} index={gr} />}
 				<ListItemValues>
 					<div className={classNames('cost', hideGroup && 'value-btn', typeof customCost === 'string' && 'custom-cost')} onClick={this.showCustomCostDialog}>{currentCost}</div>
 					<Dialog
 						id="custom-cost-dialog"
 						close={this.closeCustomCostDialog}
 						isOpened={showCustomCostDialog}
-						title={_translate(locale, 'customcost.title')}
+						title={translate(locale, 'customcost.title')}
 						buttons={[
 							{
 								autoWidth: true,
-								label: _translate(locale, 'actions.done'),
+								label: translate(locale, 'actions.done'),
 								disabled: typeof customCostPreview === 'string' && !isInteger(customCostPreview),
 								onClick: this.setCustomCost
 							},
 							{
 								autoWidth: true,
-								label: _translate(locale, 'actions.delete'),
+								label: translate(locale, 'actions.delete'),
 								disabled: customCost === undefined,
 								onClick: this.deleteCustomCost
 							}
 						]}
 						>
-						{_translate(locale, 'customcost.message')}{name}
+						{translate(locale, 'customcost.message')}{name}
 						<TextField
 							value={customCostPreview}
 							onChange={this.setCustomCostPreview}

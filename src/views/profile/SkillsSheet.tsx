@@ -3,7 +3,7 @@ import { Checkbox } from '../../components/Checkbox';
 import { Options } from '../../components/Options';
 import { SpecialAbilityInstance, TalentInstance, UIMessages } from '../../types/data.d';
 import { Attribute } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { AttributeMods } from './AttributeMods';
 import { Sheet } from './Sheet';
 import { SheetWrapper } from './SheetWrapper';
@@ -32,12 +32,12 @@ export function SkillsSheet(props: SkillsSheetProps) {
 					checked={checkAttributeValueVisibility}
 					onClick={switchAttributeValueVisibility}
 					>
-					{_translate(locale, 'charactersheet.options.showattributevalues')}
+					{translate(locale, 'charactersheet.options.showattributevalues')}
 				</Checkbox>
 			</Options>
 			<Sheet
 				id="skills-sheet"
-				title={_translate(locale, 'charactersheet.gamestats.title')}
+				title={translate(locale, 'charactersheet.gamestats.title')}
 				attributes={attributes}
 				locale={locale}
 				>

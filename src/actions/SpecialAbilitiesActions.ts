@@ -6,7 +6,7 @@ import { AsyncAction } from '../types/actions.d';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
 import { convertPerTierCostToFinalCost, getNameCost } from '../utils/ActivatableUtils';
 import { validate } from '../utils/APUtils';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
 
 export interface ActivateSpecialAbilityAction {
@@ -21,8 +21,8 @@ export function _addToList(args: ActivateArgs): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {
@@ -71,8 +71,8 @@ export function _setTier(id: string, index: number, tier: number): AsyncAction {
 		const messages = getLocaleMessages(state);
 		if (!validCost && messages) {
 			dispatch(addAlert({
-				title: _translate(messages, 'notenoughap.title'),
-				message: _translate(messages, 'notenoughap.content'),
+				title: translate(messages, 'notenoughap.title'),
+				message: translate(messages, 'notenoughap.content'),
 			}));
 		}
 		else {

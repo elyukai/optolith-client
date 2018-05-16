@@ -2,7 +2,7 @@ import { remote } from 'electron';
 import * as React from 'react';
 import { Action } from 'redux';
 import { Alert as AlertOptions, UIMessages, ViewAlertButton } from '../types/data.d';
-import { _translate } from '../utils/I18n';
+import { translate } from '../utils/I18n';
 import { Dialog } from './DialogNew';
 
 export interface AlertProps {
@@ -31,11 +31,11 @@ export function Alert(props: AlertProps) {
 
 		buttons = (confirm ? [
 			{
-				label: confirmYesNo ? _translate(locale, 'yes') : _translate(locale, 'ok'),
+				label: confirmYesNo ? translate(locale, 'yes') : translate(locale, 'ok'),
 				dispatchOnClick: confirm.resolve
 			},
 			{
-				label: confirmYesNo ? _translate(locale, 'no') : _translate(locale, 'cancel'),
+				label: confirmYesNo ? translate(locale, 'no') : translate(locale, 'cancel'),
 				dispatchOnClick: confirm.reject
 			}
 		] : buttonsOption).map(e => {

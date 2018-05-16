@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { TextBox } from '../../components/TextBox';
 import { ArmorZone, UIMessages } from '../../types/view.d';
-import { _localizeNumber, _localizeWeight, _translate } from '../../utils/I18n';
+import { localizeNumber, localizeWeight, translate } from '../../utils/I18n';
 
 export interface CombatSheetArmorZonesProps {
 	armorZones: ArmorZone[];
@@ -14,20 +14,20 @@ export function CombatSheetArmorZones(props: CombatSheetArmorZonesProps) {
 	const list = ([undefined, undefined, undefined, undefined] as Array<ArmorZone | undefined>);
 	list.splice(0, Math.min(armorZones.length, 4), ...armorZones);
 	return (
-		<TextBox label={_translate(locale, 'charactersheet.combat.armor.title')} className="armor armor-zones">
+		<TextBox label={translate(locale, 'charactersheet.combat.armor.title')} className="armor armor-zones">
 			<table>
 				<thead>
 					<tr>
-						<th className="name">{_translate(locale, 'charactersheet.combat.headers.armor')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.head')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.torso')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.leftarm')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.rightarm')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.leftleg')}</th>
-						<th className="zone">{_translate(locale, 'charactersheet.combat.headers.rightleg')}</th>
-						<th className="enc">{_translate(locale, 'charactersheet.combat.headers.enc')}</th>
-						<th className="add-penalties">{_translate(locale, 'charactersheet.combat.headers.addpenalties')}</th>
-						<th className="weight">{_translate(locale, 'charactersheet.combat.headers.weight')}</th>
+						<th className="name">{translate(locale, 'charactersheet.combat.headers.armor')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.head')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.torso')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.leftarm')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.rightarm')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.leftleg')}</th>
+						<th className="zone">{translate(locale, 'charactersheet.combat.headers.rightleg')}</th>
+						<th className="enc">{translate(locale, 'charactersheet.combat.headers.enc')}</th>
+						<th className="add-penalties">{translate(locale, 'charactersheet.combat.headers.addpenalties')}</th>
+						<th className="weight">{translate(locale, 'charactersheet.combat.headers.weight')}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -47,7 +47,7 @@ export function CombatSheetArmorZones(props: CombatSheetArmorZonesProps) {
 										<td className="zone">{e.rightLeg}</td>
 										<td className="enc">{e.enc}</td>
 										<td className="add-penalties">{e.addPenalties ? '-1/-1' : '-'}</td>
-										<td className="weight">{_localizeNumber(_localizeWeight(e.weight, locale.id), locale.id)} {_translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
+										<td className="weight">{localizeNumber(localizeWeight(e.weight, locale.id), locale.id)} {translate(locale, 'charactersheet.combat.headers.weightunit')}</td>
 									</tr>
 								);
 							}

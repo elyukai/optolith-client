@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getFromArray } from '../../selectors/dependentInstancesSelectors';
 import { Attribute, UIMessages } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 
 export function iterateGroupHeaders(attributes: Attribute[], checkAttributeValueVisibility: boolean, locale: UIMessages) {
 	const groupChecksIds = [
@@ -30,13 +30,13 @@ export function iterateGroupHeaders(attributes: Attribute[], checkAttributeValue
 		}).join('/');
 		return (
 			<tr className="group">
-				<td className="name">{_translate(locale, `charactersheet.gamestats.skills.subheaders.${groupNameKeys[index]}` as 'charactersheet.gamestats.skills.subheaders.physical')}</td>
+				<td className="name">{translate(locale, `charactersheet.gamestats.skills.subheaders.${groupNameKeys[index]}` as 'charactersheet.gamestats.skills.subheaders.physical')}</td>
 				<td className="check">{check}</td>
 				<td className="enc"></td>
 				<td className="ic"></td>
 				<td className="sr"></td>
 				<td className="routine"></td>
-				<td className="comment">{_translate(locale, `charactersheet.gamestats.skills.subheaders.${groupNameKeys[index]}pages` as 'charactersheet.gamestats.skills.subheaders.physicalpages')}</td>
+				<td className="comment">{translate(locale, `charactersheet.gamestats.skills.subheaders.${groupNameKeys[index]}pages` as 'charactersheet.gamestats.skills.subheaders.physicalpages')}</td>
 			</tr>
 		);
 	});

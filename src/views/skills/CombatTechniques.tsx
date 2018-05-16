@@ -14,7 +14,7 @@ import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute } from '../../types/data.d';
 import { UIMessages } from '../../types/ui.d';
 import { CombatTechniqueWithRequirements } from '../../types/view.d';
-import { _translate } from '../../utils/I18n';
+import { translate } from '../../utils/I18n';
 import { SkillListItem } from './SkillListItem';
 
 export interface CombatTechniquesOwnProps {
@@ -56,39 +56,39 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 		return (
 			<Page id="combattechniques">
 				<Options>
-					<TextField hint={_translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
 					<RadioButtonGroup
 						active={sortOrder}
 						onClick={setSortOrder}
 						array={[
-							{ name: _translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
-							{ name: _translate(locale, 'options.sortorder.group'), value: 'group' },
-							{ name: _translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
+							{ name: translate(locale, 'options.sortorder.alphabetically'), value: 'name' },
+							{ name: translate(locale, 'options.sortorder.group'), value: 'group' },
+							{ name: translate(locale, 'options.sortorder.improvementcost'), value: 'ic' }
 						]}
 						/>
 				</Options>
 				<MainContent>
 					<ListHeader>
 						<ListHeaderTag className="name">
-							{_translate(locale, 'name')}
+							{translate(locale, 'name')}
 						</ListHeaderTag>
 						<ListHeaderTag className="group">
-							{_translate(locale, 'group')}
+							{translate(locale, 'group')}
 							</ListHeaderTag>
-						<ListHeaderTag className="value" hint={_translate(locale, 'sr.long')}>
-							{_translate(locale, 'sr.short')}
+						<ListHeaderTag className="value" hint={translate(locale, 'sr.long')}>
+							{translate(locale, 'sr.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="ic" hint={_translate(locale, 'ic.long')}>
-							{_translate(locale, 'ic.short')}
+						<ListHeaderTag className="ic" hint={translate(locale, 'ic.long')}>
+							{translate(locale, 'ic.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="primary" hint={_translate(locale, 'primaryattribute.long')}>
-							{_translate(locale, 'primaryattribute.short')}
+						<ListHeaderTag className="primary" hint={translate(locale, 'primaryattribute.long')}>
+							{translate(locale, 'primaryattribute.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="at" hint={_translate(locale, 'at.long')}>
-							{_translate(locale, 'at.short')}
+						<ListHeaderTag className="at" hint={translate(locale, 'at.long')}>
+							{translate(locale, 'at.short')}
 						</ListHeaderTag>
-						<ListHeaderTag className="pa" hint={_translate(locale, 'pa.long')}>
-							{_translate(locale, 'pa.short')}
+						<ListHeaderTag className="pa" hint={translate(locale, 'pa.long')}>
+							{translate(locale, 'pa.short')}
 						</ListHeaderTag>
 						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
 						<ListHeaderTag className="btn-placeholder" />
@@ -122,7 +122,7 @@ export class CombatTechniques extends React.Component<CombatTechniquesProps, Com
 											derivedCharacteristics={derivedCharacteristics}
 											selectForInfo={this.showInfo}
 											groupIndex={obj.gr}
-											groupList={_translate(locale, 'combattechniques.view.groups')}
+											groupList={translate(locale, 'combattechniques.view.groups')}
 											/>
 									);
 								})
